@@ -452,7 +452,7 @@ bool InlineTextBox::getEmphasisMarkPosition(RenderStyle* style, TextEmphasisPosi
     if (!containingBlock->parent()->isRubyRun())
         return true; // Cannot get the ruby text.
 
-    RenderRubyText* rubyText = static_cast<RenderRubyRun*>(containingBlock->parent())->rubyText();
+    RenderRubyText* rubyText = toRenderRubyRun(containingBlock->parent())->rubyText();
 
     // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
     return !rubyText || !rubyText->firstLineBox();

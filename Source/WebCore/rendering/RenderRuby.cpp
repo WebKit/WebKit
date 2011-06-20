@@ -52,13 +52,13 @@ static inline bool isAnonymousRubyInlineBlock(RenderObject* object)
 static inline RenderBlock* rubyBeforeBlock(const RenderObject* ruby)
 {
     RenderObject* child = ruby->firstChild();
-    return child && !child->isRubyRun() && child->isRenderBlock() && child->style()->styleType() == BEFORE ? static_cast<RenderBlock*>(child) : 0;
+    return child && !child->isRubyRun() && child->isRenderBlock() && child->style()->styleType() == BEFORE ? toRenderBlock(child) : 0;
 }
 
 static inline RenderBlock* rubyAfterBlock(const RenderObject* ruby)
 {
     RenderObject* child = ruby->lastChild();
-    return child && !child->isRubyRun() && child->isRenderBlock() && child->style()->styleType() == AFTER ? static_cast<RenderBlock*>(child) : 0;
+    return child && !child->isRubyRun() && child->isRenderBlock() && child->style()->styleType() == AFTER ? toRenderBlock(child) : 0;
 }
 
 static RenderBlock* createAnonymousRubyInlineBlock(RenderObject* ruby, PseudoId styleType)
@@ -78,14 +78,14 @@ static RenderRubyRun* lastRubyRun(const RenderObject* ruby)
     if (child && !child->isRubyRun())
         child = child->previousSibling();
     ASSERT(!child || child->isRubyRun() || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
-    return child && child->isRubyRun() ? static_cast<RenderRubyRun*>(child) : 0;
+    return child && child->isRubyRun() ? toRenderRubyRun(child) : 0;
 }
 
 static inline RenderRubyRun* findRubyRunParent(RenderObject* child)
 {
     while (child && !child->isRubyRun())
         child = child->parent();
-    return static_cast<RenderRubyRun*>(child);
+    return toRenderRubyRun(child);
 }
 
 //=== ruby as inline object ===

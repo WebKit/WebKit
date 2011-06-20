@@ -1,3 +1,32 @@
+2011-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove some unsafe static_cast in rendering/
+        https://bugs.webkit.org/show_bug.cgi?id=63014
+
+        Mechanical refactoring, no test needed.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::getEmphasisMarkPosition):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::destroyScrollbar):
+        * rendering/RenderRuby.cpp:
+        (WebCore::rubyBeforeBlock):
+        (WebCore::rubyAfterBlock):
+        (WebCore::lastRubyRun):
+        (WebCore::findRubyRunParent):
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::rubyRun):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+        Use the proper conversion methods at the previous call-sites.
+
 2011-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

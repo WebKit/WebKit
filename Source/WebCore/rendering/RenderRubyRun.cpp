@@ -159,7 +159,7 @@ void RenderRubyRun::removeChild(RenderObject* child)
         RenderObject* rightNeighbour = nextSibling();
         if (base && rightNeighbour && rightNeighbour->isRubyRun()) {
             // Ruby run without a base can happen only at the first run.
-            RenderRubyRun* rightRun = static_cast<RenderRubyRun*>(rightNeighbour);
+            RenderRubyRun* rightRun = toRenderRubyRun(rightNeighbour);
             if (rightRun->hasRubyBase()) {
                 RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
                 // Collect all children in a single base, then swap the bases.

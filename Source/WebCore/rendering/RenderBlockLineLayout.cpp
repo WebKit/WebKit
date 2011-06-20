@@ -2254,7 +2254,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 #if ENABLE(SVG)
                 if (isSVGText && current.m_pos > 0) {
                     // Force creation of new InlineBoxes for each absolute positioned character (those that start new text chunks).
-                    if (static_cast<RenderSVGInlineText*>(t)->characterStartsNewTextChunk(current.m_pos)) {
+                    if (toRenderSVGInlineText(t)->characterStartsNewTextChunk(current.m_pos)) {
                         addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos - 1));
                         addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
                     }
@@ -2272,7 +2272,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 }
 
                 if (collapseWhiteSpace && currentCharacterIsSpace && !ignoringSpaces)
-                    trailingObjects.setTrailingWhitespace(static_cast<RenderText*>(current.m_obj));
+                    trailingObjects.setTrailingWhitespace(toRenderText(current.m_obj));
                 else if (!current.m_obj->style()->collapseWhiteSpace() || !currentCharacterIsSpace)
                     trailingObjects.clear();
 

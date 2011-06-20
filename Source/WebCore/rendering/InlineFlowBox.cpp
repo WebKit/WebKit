@@ -646,7 +646,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
                 else
                     hasAnnotationsAfter = true;
 
-                RenderRubyRun* rubyRun = static_cast<RenderRubyRun*>(curr->renderer());
+                RenderRubyRun* rubyRun = toRenderRubyRun(curr->renderer());
                 if (RenderRubyBase* rubyBase = rubyRun->rubyBase()) {
                     int bottomRubyBaseLeading = (curr->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0);
                     int topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0);
@@ -1308,7 +1308,7 @@ int InlineFlowBox::computeOverAnnotationAdjustment(int allowedPosition) const
             result = max(result, static_cast<InlineFlowBox*>(curr)->computeOverAnnotationAdjustment(allowedPosition));
         
         if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun()) {
-            RenderRubyRun* rubyRun = static_cast<RenderRubyRun*>(curr->renderer());
+            RenderRubyRun* rubyRun = toRenderRubyRun(curr->renderer());
             RenderRubyText* rubyText = rubyRun->rubyText();
             if (!rubyText)
                 continue;
