@@ -1,3 +1,10 @@
+2011-06-20  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, update expected test results on Chromium Mac-Leopard.
+
+        * platform/chromium-mac-leopard/svg/dom/SVGNumberList-basics-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dom/SVGStringList-basics-expected.png: Added.
+
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a few more SVG tests for GTK+.
