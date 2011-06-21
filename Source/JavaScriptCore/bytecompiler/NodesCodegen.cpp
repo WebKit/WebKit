@@ -744,7 +744,7 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     size_t depth = 0;
     JSObject* globalObject = 0;
     bool requiresDynamicChecks = false;
-    if (generator.findScopedProperty(m_ident, index, depth, false, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
+    if (generator.findScopedProperty(m_ident, index, depth, true, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         RefPtr<RegisterID> propDst = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index, globalObject);
         emitPreIncOrDec(generator, propDst.get(), m_operator);
         generator.emitPutScopedVar(depth, index, propDst.get(), globalObject);
@@ -1293,6 +1293,7 @@ RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
 RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
 {
+    // FIXME: This code does not match the behavior of const in Firefox.
     if (RegisterID* local = generator.constRegisterFor(m_ident)) {
         if (!m_init)
             return local;
@@ -1300,17 +1301,30 @@ RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
         return generator.emitNode(local, m_init);
     }
 
-    if (generator.codeType() != EvalCode) {
-        if (m_init)
-            return generator.emitNode(m_init);
-        else
-            return generator.emitResolve(generator.newTemporary(), m_ident);
+    RefPtr<RegisterID> value = m_init ? generator.emitNode(m_init) : generator.emitLoad(0, jsUndefined());
+
+    ScopeChainIterator iter = generator.scopeChain()->begin();
+    ScopeChainIterator end = generator.scopeChain()->end();
+    size_t depth = 0;
+    for (; iter != end; ++iter, ++depth) {
+        JSObject* currentScope = iter->get();
+        if (!currentScope->isVariableObject())
+            continue;
+        JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
+        SymbolTableEntry entry = currentVariableObject->symbolTable().get(m_ident.impl());
+        if (entry.isNull())
+            continue;
+
+        return generator.emitPutScopedVar(depth, entry.getIndex(), value.get(), currentVariableObject->isGlobalObject() ? currentVariableObject : 0);
     }
-    // FIXME: While this code should only be hit in eval code, it will potentially
-    // assign to the wrong base if m_ident exists in an intervening dynamic scope.
+
+    if (generator.codeType() != EvalCode)
+        return value.get();
+
+    // FIXME: While this code should only be hit in an eval block, it will assign
+    // to the wrong base if m_ident exists in an intervening with scope.
     RefPtr<RegisterID> base = generator.emitResolveBase(generator.newTemporary(), m_ident);
-    RegisterID* value = m_init ? generator.emitNode(m_init) : generator.emitLoad(0, jsUndefined());
-    return generator.emitPutById(base.get(), m_ident, value);
+    return generator.emitPutById(base.get(), m_ident, value.get());
 }
 
 RegisterID* ConstDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)

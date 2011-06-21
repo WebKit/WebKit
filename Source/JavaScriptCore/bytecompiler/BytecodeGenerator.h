@@ -399,6 +399,8 @@ namespace JSC {
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
+        
+        ScopeChainNode* scopeChain() const { return m_scopeChain.get(); }
 
     private:
         void emitOpcode(OpcodeID);
