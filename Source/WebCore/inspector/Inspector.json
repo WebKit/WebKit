@@ -161,11 +161,11 @@
                 "description": "Returns content of the given resource.",
                 "parameters": [
                     { "name": "frameId", "type": "string", "description": "Frame id to get resource for." },
-                    { "name": "url", "type": "string", "description": "URL of the resource to get content for." },
-                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64." }
+                    { "name": "url", "type": "string", "description": "URL of the resource to get content for." }
                 ],
                 "returns": [
-                    { "name": "content", "type": "string", "description": "Resource content." }
+                    { "name": "content", "type": "string", "description": "Resource content." },
+                    { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
                 ]
             },
             {
@@ -490,11 +490,11 @@
                 "name": "getResourceContent",
                 "description": "Returns content of the given resource.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Identifier of the resource to get content for." },
-                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64." }
+                    { "name": "identifier", "type": "integer", "description": "Identifier of the resource to get content for." }
                 ],
                 "returns": [
-                    { "name": "content", "type": "string", "description": "Resource content." }
+                    { "name": "content", "type": "string", "description": "Resource content." },
+                    { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
                 ]
             }
         ],

@@ -75,9 +75,9 @@ public:
 
     static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InjectedScriptManager*);
 
-    static bool cachedResourceContent(CachedResource*, bool withBase64Encode, String* result);
+    static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
-    static void resourceContent(ErrorString*, Frame*, const KURL&, bool base64Encode, String* result);
+    static void resourceContent(ErrorString*, Frame*, const KURL&, String* result, bool* base64Encoded);
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const KURL&);
@@ -93,7 +93,7 @@ public:
     void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
     void getResourceTree(ErrorString*, RefPtr<InspectorObject>*);
-    void getResourceContent(ErrorString*, const String& frameId, const String& url, const bool* const base64Encode, String* content);
+    void getResourceContent(ErrorString*, const String& frameId, const String& url, String* content, bool* base64Encoded);
     void searchInResources(ErrorString*, const String&, const bool* const caseSensitive, const bool* const isRegex, RefPtr<InspectorArray>*);
 
     // InspectorInstrumentation API

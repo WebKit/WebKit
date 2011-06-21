@@ -912,10 +912,10 @@ WebInspector.Resource.prototype = {
         if (this._contentRequested)
             return;
         this._contentRequested = true;
-        this._contentEncoded = !WebInspector.Resource.Type.isTextType(this.type);
 
-        function onResourceContent(data)
+        function onResourceContent(data, contentEncoded)
         {
+            this._contentEncoded = contentEncoded;
             this._content = data;
             this._originalContent = data;
             var callbacks = this._pendingContentCallbacks.slice();
@@ -924,7 +924,7 @@ WebInspector.Resource.prototype = {
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }
-        WebInspector.networkManager.requestContent(this, this._contentEncoded, onResourceContent.bind(this));
+        WebInspector.networkManager.requestContent(this, onResourceContent.bind(this));
     }
 }
 

@@ -118,7 +118,7 @@ public:
     void disable(ErrorString*);
     void setUserAgentOverride(ErrorString*, const String& userAgent);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
-    void getResourceContent(ErrorString*, unsigned long identifier, const bool* const base64Encode, String* content);
+    void getResourceContent(ErrorString*, unsigned long identifier, String* content, bool* base64Encoded);
     void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
 
 private:
