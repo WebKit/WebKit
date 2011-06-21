@@ -2,6 +2,16 @@
 
         Reviewed by Tony Chang.
 
+        IndexedDB: should throw TypeError when indexedDB.open() name argument is missing
+        https://bugs.webkit.org/show_bug.cgi?id=63065
+
+        * storage/indexeddb/database-name-undefined-expected.txt:
+        * storage/indexeddb/database-name-undefined.html:
+
+2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         IndexedDB: should throw TypeError when index .get() key argument is missing
         https://bugs.webkit.org/show_bug.cgi?id=63079
 

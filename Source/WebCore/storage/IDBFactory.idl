@@ -26,10 +26,9 @@
 module storage {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=INDEXED_DATABASE
     ] IDBFactory {
-        [CallWith=ScriptExecutionContext] IDBRequest open(in [ConvertUndefinedOrNullToNullString] DOMString name)
+        [CallWith=ScriptExecutionContext] IDBRequest open(in [ConvertNullToNullString] DOMString name)
             raises (IDBDatabaseException);
     };
 

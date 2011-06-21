@@ -26,7 +26,8 @@ function test()
     IDBKeyRange = evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;");
     shouldBeFalse("IDBKeyRange == null");
 
-    evalAndExpectException("indexedDB.open();", "IDBDatabaseException.NON_TRANSIENT_ERR");
+    shouldThrow("indexedDB.open();");
+    shouldThrow("indexedDB.open(null);");
     done();
 }
 

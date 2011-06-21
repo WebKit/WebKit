@@ -11,9 +11,8 @@ IDBCursor = window.IDBCursor || window.webkitIDBCursor;
 PASS IDBCursor == null is false
 IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
 PASS IDBKeyRange == null is false
-Expecting exception from indexedDB.open();
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS indexedDB.open(); threw exception TypeError: Not enough arguments.
+PASS indexedDB.open(null); threw exception Error: NON_TRANSIENT_ERR: DOM IDBDatabase Exception 2.
 PASS successfullyParsed is true
 
 TEST COMPLETE
