@@ -1,5 +1,30 @@
 2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: CRASH if Expanding Event Listener on document
+        https://bugs.webkit.org/show_bug.cgi?id=61834
+
+        Add a test to list the event listeners in the sidebar.
+        This test includes event listeners on the document, and
+        it expands each of the sections which would have caused
+        the CRASH fixed by this patch.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.expandAndDumpSelectedElementEventListeners):
+        (initialize_ElementTest.InspectorTest.expandSelectedElementEventListeners):
+        (initialize_ElementTest.InspectorTest.expandSelectedElementEventListenersSubsections):
+        (initialize_ElementTest.InspectorTest.expandSelectedElementEventListenersEventBars):
+        (initialize_ElementTest.InspectorTest.dumpSelectedElementEventListeners):
+        (initialize_ElementTest.InspectorTest.dumpObjectPropertySection):
+        * inspector/elements/event-listener-sidebar-expected.txt: Added.
+        * inspector/elements/event-listener-sidebar.html: Added.
+        * platform/chromium/inspector/elements/event-listener-sidebar-expected.txt: Added.
+        Chromium has slightly different results. It has more properties
+        and includes extra information, like line numbers, for functions.
+
+2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Darin Adler.
 
         Minimize memory due to layer backing stores for pages in the Page Cache

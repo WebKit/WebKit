@@ -1,5 +1,19 @@
 2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: CRASH if Expanding Event Listener on document
+        https://bugs.webkit.org/show_bug.cgi?id=61834
+
+        Node::ownerDocument returns null for a document node. So, in
+        the case of a document node in resolveNode, use Node::document
+        which returns the node, as a document.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::resolveNode):
+
+2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Simon Fraser.
 
         Minimize memory due to layer backing stores for pages in the Page Cache

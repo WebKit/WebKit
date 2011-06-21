@@ -102,6 +102,81 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
     }
 };
 
+InspectorTest.expandAndDumpSelectedElementEventListeners = function(callback)
+{
+    InspectorTest.expandSelectedElementEventListeners(function() {
+        InspectorTest.dumpSelectedElementEventListeners(callback);
+    });
+}
+
+InspectorTest.expandSelectedElementEventListeners = function(callback)
+{
+    var sidebarPane = WebInspector.panels.elements.sidebarPanes.eventListeners;
+    sidebarPane.expand();
+
+    InspectorTest.runAfterPendingDispatches(function() {
+        InspectorTest.expandSelectedElementEventListenersSubsections(callback);
+    });
+}
+
+InspectorTest.expandSelectedElementEventListenersSubsections = function(callback)
+{
+    var eventListenerSections = WebInspector.panels.elements.sidebarPanes.eventListeners.sections;
+    for (var i = 0; i < eventListenerSections.length; ++i)
+        eventListenerSections[i].expand();
+
+    // Multiple sections may expand.
+    InspectorTest.runAfterPendingDispatches(function() {
+        InspectorTest.expandSelectedElementEventListenersEventBars(callback);
+    });
+}
+
+InspectorTest.expandSelectedElementEventListenersEventBars = function(callback)
+{
+    var eventListenerSections = WebInspector.panels.elements.sidebarPanes.eventListeners.sections;
+    for (var i = 0; i < eventListenerSections.length; ++i) {
+        var eventBarChildren = eventListenerSections[i].eventBars.children;
+        for (var j = 0; j < eventBarChildren.length; ++j)
+            eventBarChildren[j]._section.expand();
+    }
+
+    // Multiple sections may expand.
+    InspectorTest.runAfterPendingDispatches(callback);
+}
+
+InspectorTest.dumpSelectedElementEventListeners = function(callback)
+{
+    var eventListenerSections = WebInspector.panels.elements.sidebarPanes.eventListeners.sections;
+    for (var i = 0; i < eventListenerSections.length; ++i) {
+        var section = eventListenerSections[i];
+        var eventType = section._title;
+        InspectorTest.addResult("");
+        InspectorTest.addResult("======== " + eventType + " ========");
+        var eventBarChildren = section.eventBars.children;
+        for (var j = 0; j < eventBarChildren.length; ++j) {
+            var objectPropertiesSection = eventBarChildren[j]._section;
+            InspectorTest.dumpObjectPropertySection(objectPropertiesSection);
+        }
+    }
+
+    callback();
+}
+
+InspectorTest.dumpObjectPropertySection = function(section)
+{
+    var expandedSubstring = section.expanded ? "[expanded]" : "[collapsed]";
+    InspectorTest.addResult(expandedSubstring + " " + section.titleElement.textContent + " " + section.subtitleAsTextForTest);
+    if (!section.propertiesForTest)
+        return;
+
+    for (var i = 0; i < section.propertiesForTest.length; ++i) {
+        var property = section.propertiesForTest[i];
+        var key = property.name;
+        var value = property.value._description;
+        InspectorTest.addResult("    " + key + ": " + value);
+    }
+}
+
 // FIXME: this returns the first tree item found (may fail for same-named properties in a style).
 InspectorTest.getElementStylePropertyTreeItem = function(propertyName)
 {

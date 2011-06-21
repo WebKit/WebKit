@@ -1447,7 +1447,7 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& pat
 
 PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node)
 {
-    Document* document = node->ownerDocument();
+    Document* document = node->isDocumentNode() ? node->document() : node->ownerDocument();
     Frame* frame = document ? document->frame() : 0;
     if (!frame)
         return 0;
