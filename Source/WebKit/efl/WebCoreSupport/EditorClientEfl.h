@@ -94,7 +94,7 @@ public:
     virtual void undo();
     virtual void redo();
 
-    virtual const char* interpretKeyEvent(const KeyboardEvent* event);
+    virtual const char* interpretKeyEvent(const KeyboardEvent*);
     virtual bool handleEditingKeyboardEvent(KeyboardEvent*);
     virtual void handleKeyboardEvent(KeyboardEvent*);
     virtual void handleInputMethodKeydown(KeyboardEvent*);
@@ -118,7 +118,7 @@ public:
     virtual void getGuessesForWord(const String& word, const String& context, WTF::Vector<String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) {}
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) { }
     virtual TextCheckerClient* textChecker() { return this; }
 
 private:
