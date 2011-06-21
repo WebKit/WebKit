@@ -2,7 +2,8 @@ var initialize_DebuggerTest = function() {
 
 InspectorTest.startDebuggerTest = function(callback, quiet)
 {
-    InspectorTest._quiet = quiet;
+    if (quiet !== undefined)
+        InspectorTest._quiet = quiet;
     WebInspector.showPanel("scripts");
 
     if (WebInspector.panels.scripts._debuggerEnabled)
@@ -173,6 +174,11 @@ InspectorTest.setBreakpoint = function(sourceFrame, lineNumber, condition, enabl
     sourceFrame._delegate.setBreakpoint(lineNumber, condition, enabled);
 };
 
+InspectorTest.removeBreakpoint = function(sourceFrame, lineNumber)
+{
+    sourceFrame._delegate.removeBreakpoint(lineNumber);
+};
+
 
 InspectorTest.expandProperties = function(properties, callback)
 {
@@ -217,6 +223,11 @@ InspectorTest._findChildPropertyTreeElement = function(parent, childName)
         if (property.name === childName)
             return treeElement;
     }
+};
+
+InspectorTest.setQuiet = function(quiet)
+{
+    InspectorTest._quiet = quiet;
 };
 
 };

@@ -1,11 +1,21 @@
 Tests that debugger will stop on breakpoint.
 
 Debugger was enabled.
+
+Running: testSetBreakpoint
 Script source was shown.
 Set timer for test function.
 Script execution paused.
 Call stack:
-    0) testFunction (debugger-pause-on-breakpoint.html:9)
+    0) testFunction (debugger-pause-on-breakpoint.html:17)
 Script execution resumed.
+
+Running: testSetBreakpointOnTheLastLine
+Call stack:
+    0) oneLineTestFunction (debugger-pause-on-breakpoint.html:7)
+
+Running: testSetBreakpointOnTheLastLine2
+Call stack:
+    0) oneLineTestFunction2 (debugger-pause-on-breakpoint.html:11)
 Debugger was disabled.
 

@@ -264,7 +264,7 @@ PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const Stri
     if (scriptIterator == m_scripts.end())
         return 0;
     Script& script = scriptIterator->second;
-    if (breakpoint.lineNumber < script.startLine || script.endLine <= breakpoint.lineNumber)
+    if (breakpoint.lineNumber < script.startLine || script.endLine < breakpoint.lineNumber)
         return 0;
 
     int actualLineNumber;
