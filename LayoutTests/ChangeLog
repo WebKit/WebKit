@@ -1,3 +1,11 @@
+2011-06-21  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Unreviewed update of test expectations after r89381.
+
+        * platform/chromium-linux/svg/custom/pointer-events-text-expected.png:
+        * platform/chromium-win/svg/custom/pointer-events-text-expected.png:
+        * platform/chromium-win/svg/custom/pointer-events-text-expected.txt:
+
 2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.
