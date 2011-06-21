@@ -71,6 +71,8 @@ protected:
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
 
+    virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
+
 public:
     void preferencesChanged();
 };

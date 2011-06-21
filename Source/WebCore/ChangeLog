@@ -1,3 +1,22 @@
+2011-06-20  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [Chromium] Draw search tickmarks on overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=62783
+
+        This change adds search tickmark support for overlay scrollbars. Tickmarks are only drawn when the scroll track is visible.
+
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h:Split the scrollbar drawing code into a track and knob version.
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (wkScrollbarPainterPaint):
+        (wkScrollbarPainterPaintTrack):
+        (wkScrollbarPainterPaintKnob):
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:Factor out the paint tickmark code and call it from the overlay scrollbar drawing code.
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        (WebCore::ScrollbarThemeChromiumMac::paintTickmarks):
+
 2011-06-20  Adam Barth  <abarth@webkit.org>
 
         Mac build fix.  In addition to adding the files to the project, we need

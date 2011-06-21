@@ -152,6 +152,12 @@ void wkScrollbarPainterSetOverlayState(WKScrollbarPainterRef painter, int overla
 
 void wkScrollbarPainterPaint(WKScrollbarPainterRef painter, bool enabled, double value, CGFloat proportion, NSRect frameRect)
 {
+    wkScrollbarPainterPaintTrack(painter, enabled, value, proportion, frameRect);
+    wkScrollbarPainterPaintKnob(painter);
+}
+
+void wkScrollbarPainterPaintTrack(WKScrollbarPainterRef painter, bool enabled, double value, CGFloat proportion, NSRect frameRect)
+{
     [painter setEnabled:enabled];
     [painter setBoundsSize:frameRect.size];
     [painter setDoubleValue:value];
@@ -164,6 +170,10 @@ void wkScrollbarPainterPaint(WKScrollbarPainterRef painter, bool enabled, double
     frameRect.origin = NSZeroPoint;
 
     [painter drawKnobSlotInRect:frameRect highlight:NO];
+}
+
+void wkScrollbarPainterPaintKnob(WKScrollbarPainterRef painter)
+{
     [painter drawKnob];
 }
 
