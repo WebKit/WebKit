@@ -319,7 +319,7 @@ var WebInspector = {
     wireElementWithDOMNode: function(element, nodeId)
     {
         element.addEventListener("click", this._updateFocusedNode.bind(this, nodeId), false);
-        element.addEventListener("mouseover", this.highlightDOMNode.bind(this, nodeId), false);
+        element.addEventListener("mouseover", this.highlightDOMNode.bind(this, nodeId, "all"), false);
         element.addEventListener("mouseout", this.highlightDOMNode.bind(this, 0), false);
     },
 
