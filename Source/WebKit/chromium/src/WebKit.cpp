@@ -36,9 +36,11 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "TextEncoding.h"
+#include "V8Binding.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
 #include "WorkerContextExecutionProxy.h"
+#include "v8.h"
 
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
@@ -74,6 +76,9 @@ void initialize(WebKitClient* webKitClient)
     // the initialization thread-safe, but given that so many code paths use
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
+
+    v8::V8::Initialize();
+    WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 }
 
 void shutdown()
