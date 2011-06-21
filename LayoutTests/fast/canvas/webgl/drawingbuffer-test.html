@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Canvas Conformance Tests</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("This test ensures WebGL implementations correctly implement drawingbufferWidth/Height.");
+
+debug("");
+
+var wtu = WebGLTestUtils;
+var err;
+var maxSize;
+var canvas = document.createElement("canvas");
+var gl = wtu.create3DContext(canvas);
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("");
+  debug("Checking drawingBufferWidth/drawingBufferHeight");
+
+  // Check that a canvas with no width or height is 300x150 pixels
+  shouldBe('gl.drawingBufferWidth', 'canvas.width');
+  shouldBe('gl.drawingBufferHeight', 'canvas.height');
+
+  // Check that changing the canvas size to something too large falls back to reasonable values.
+  maxSize = gl.getParameter(gl.MAX_VIEWPORT_DIMS);
+  shouldBeTrue('maxSize[0] > 0');
+  shouldBeTrue('maxSize[1] > 0');
+
+  // debug("MAX_VIEWPORT_DIMS = " + maxSize[0] + "x" + maxSize[1]);
+  canvas.width = maxSize[0] * 4;
+  canvas.height = maxSize[1] * 4;
+  shouldBeTrue('gl.drawingBufferWidth > 0');
+  shouldBeTrue('gl.drawingBufferHeight > 0');
+  shouldBeTrue('gl.drawingBufferWidth <= maxSize[0]');
+  shouldBeTrue('gl.drawingBufferHeight <= maxSize[1]');
+}
+debug("")
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

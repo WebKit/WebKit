@@ -71,6 +71,9 @@ public:
     virtual bool isAccelerated() const { return true; }
     virtual bool paintsIntoCanvasBuffer() const;
 
+    int drawingBufferWidth() const;
+    int drawingBufferHeight() const;
+
     void activeTexture(GC3Denum texture, ExceptionCode&);
     void attachShader(WebGLProgram*, WebGLShader*, ExceptionCode&);
     void bindAttribLocation(WebGLProgram*, GC3Duint index, const String& name, ExceptionCode&);
@@ -430,6 +433,8 @@ public:
 
     GC3Dint m_maxTextureSize;
     GC3Dint m_maxCubeMapTextureSize;
+    GC3Dint m_maxRenderbufferSize;
+    GC3Dint m_maxViewportDims[2];
     GC3Dint m_maxTextureLevel;
     GC3Dint m_maxCubeMapTextureLevel;
 

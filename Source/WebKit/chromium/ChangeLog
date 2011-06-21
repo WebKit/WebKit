@@ -1,3 +1,15 @@
+2011-06-21  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement drawingBufferWidth/drawingBufferHeight in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=58497
+
+        * src/GraphicsContext3DChromium.cpp: Make getInternalFramebufferSize method const.
+        (WebCore::GraphicsContext3DInternal::getInternalFramebufferSize):
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+        * src/GraphicsContext3DInternal.h:
+
 2011-06-21  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Barth.

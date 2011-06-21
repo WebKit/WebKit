@@ -66,7 +66,7 @@ public:
     bool makeContextCurrent();
 
     void reshape(int width, int height);
-    IntSize getInternalFramebufferSize();
+    IntSize getInternalFramebufferSize() const;
 
     void markContextChanged();
     bool layerComposited() const;

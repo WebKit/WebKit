@@ -1,3 +1,17 @@
+2011-06-21  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement drawingBufferWidth/drawingBufferHeight in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=58497
+
+        * fast/canvas/webgl/webgl-specific-expected.txt:
+        * fast/canvas/webgl/webgl-specific.html: Test drawingBufferWidth/Height attributes.
+        * fast/canvas/webgl/canvas-zero-size-expected.txt:
+        * fast/canvas/webgl/canvas-zero-size.html: Added.
+        * fast/canvas/webgl/drawingbuffer-test-expected.txt:
+        * fast/canvas/webgl/drawingbuffer-test.html: Added.
+
 2011-06-21  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed update of test expectations.

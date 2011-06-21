@@ -109,6 +109,15 @@ namespace {
         return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
     }
 
+    GC3Dint clamp(GC3Dint value, GC3Dint min, GC3Dint max)
+    {
+        if (value < min)
+            value = min;
+        if (value > max)
+            value = max;
+        return value;
+    }
+
     // Return true if a character belongs to the ASCII subset as defined in
     // GLSL ES 1.0 spec section 3.1.
     bool validateCharacter(unsigned char c)
@@ -439,7 +448,11 @@ void WebGLRenderingContext::initializeNewContext()
     m_maxCubeMapTextureSize = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_CUBE_MAP_TEXTURE_SIZE, &m_maxCubeMapTextureSize);
     m_maxCubeMapTextureLevel = WebGLTexture::computeLevelCount(m_maxCubeMapTextureSize, m_maxCubeMapTextureSize);
-    
+    m_maxRenderbufferSize = 0;
+    m_context->getIntegerv(GraphicsContext3D::MAX_RENDERBUFFER_SIZE, &m_maxRenderbufferSize);
+    m_maxViewportDims[0] = m_maxViewportDims[1] = 0;
+    m_context->getIntegerv(GraphicsContext3D::MAX_VIEWPORT_DIMS, m_maxViewportDims);
+
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(this, WebGLVertexArrayObjectOES::VaoTypeDefault);
     addObject(m_defaultVertexArrayObject.get());
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
@@ -593,6 +606,14 @@ bool WebGLRenderingContext::paintsIntoCanvasBuffer() const
 
 void WebGLRenderingContext::reshape(int width, int height)
 {
+    // This is an approximation because at WebGLRenderingContext level we don't
+    // know if the underlying FBO uses textures or renderbuffers.
+    GC3Dint maxSize = std::min(m_maxTextureSize, m_maxRenderbufferSize);
+    GC3Dint maxWidth = std::min(maxSize, m_maxViewportDims[0]);
+    GC3Dint maxHeight = std::min(maxSize, m_maxViewportDims[1]);
+    width = clamp(width, 1, maxWidth);
+    height = clamp(height, 1, maxHeight);
+
     if (m_needsUpdate) {
 #if USE(ACCELERATED_COMPOSITING)
         RenderBox* renderBox = canvas()->renderBox();
@@ -605,6 +626,16 @@ void WebGLRenderingContext::reshape(int width, int height)
     // We don't have to mark the canvas as dirty, since the newly created image buffer will also start off
     // clear (and this matches what reshape will do).
     m_context->reshape(width, height);
+}
+
+int WebGLRenderingContext::drawingBufferWidth() const
+{
+    return m_context->getInternalFramebufferSize().width();
+}
+
+int WebGLRenderingContext::drawingBufferHeight() const
+{
+    return m_context->getInternalFramebufferSize().height();
 }
 
 unsigned int WebGLRenderingContext::sizeInBytes(GC3Denum type)

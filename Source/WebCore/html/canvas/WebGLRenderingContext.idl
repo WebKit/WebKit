@@ -451,6 +451,9 @@ module html {
         const unsigned int UNPACK_COLORSPACE_CONVERSION_WEBGL = 0x9243;
         const unsigned int BROWSER_DEFAULT_WEBGL              = 0x9244;
 
+        readonly attribute long drawingBufferWidth;
+        readonly attribute long drawingBufferHeight;
+
         [StrictTypeChecking] void         activeTexture(in unsigned long texture) raises(DOMException);
         [StrictTypeChecking] void         attachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
         [StrictTypeChecking] void         bindAttribLocation(in WebGLProgram program, in unsigned long index, in DOMString name) raises(DOMException);

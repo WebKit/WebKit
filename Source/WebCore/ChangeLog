@@ -1,3 +1,21 @@
+2011-06-21  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement drawingBufferWidth/drawingBufferHeight in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=58497
+
+        * html/canvas/WebGLRenderingContext.cpp: Add drawingBufferWidth/Height method and call getInternalFramebufferSize().
+        (WebCore::WebGLRenderingContext::drawingBufferWidth):
+        (WebCore::WebGLRenderingContext::drawingBufferHeight):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl: Add readonly attributes drawingBufferWidth/Height.
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp: Make getInternalFramebufferSize const.
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp: Ditto.
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+
 2011-06-21  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Barth.

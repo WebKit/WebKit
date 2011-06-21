@@ -317,7 +317,7 @@ void GraphicsContext3D::reshape(int width, int height)
     ::glFlush();
 }
 
-IntSize GraphicsContext3D::getInternalFramebufferSize()
+IntSize GraphicsContext3D::getInternalFramebufferSize() const
 {
     return IntSize(m_currentWidth, m_currentHeight);
 }

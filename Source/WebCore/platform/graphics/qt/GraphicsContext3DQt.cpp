@@ -750,7 +750,7 @@ void GraphicsContext3D::reshape(int width, int height)
     m_internal->reshape(width, height);
 }
 
-IntSize GraphicsContext3D::getInternalFramebufferSize()
+IntSize GraphicsContext3D::getInternalFramebufferSize() const
 {
     return IntSize(m_currentWidth, m_currentHeight);
 }

@@ -287,7 +287,7 @@ void GraphicsContext3DInternal::reshape(int width, int height)
 #endif // USE(CG)
 }
 
-IntSize GraphicsContext3DInternal::getInternalFramebufferSize()
+IntSize GraphicsContext3DInternal::getInternalFramebufferSize() const
 {
     return IntSize(m_impl->width(), m_impl->height());
 }
@@ -967,6 +967,11 @@ void GraphicsContext3D::prepareTexture()
     return m_internal->prepareTexture();
 }
 
+IntSize GraphicsContext3D::getInternalFramebufferSize() const
+{
+    return m_internal->getInternalFramebufferSize();
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
@@ -978,7 +983,6 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 DELEGATE_TO_INTERNAL(makeContextCurrent)
 DELEGATE_TO_INTERNAL_2(reshape, int, int)
-DELEGATE_TO_INTERNAL_R(getInternalFramebufferSize, IntSize)
 
 DELEGATE_TO_INTERNAL_1(activeTexture, GC3Denum)
 DELEGATE_TO_INTERNAL_2(attachShader, Platform3DObject, Platform3DObject)
