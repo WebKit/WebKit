@@ -145,7 +145,7 @@ WebInspector.DebuggerModel.prototype = {
         return scripts;
     },
 
-    editScriptSource: function(sourceId, newSource, callback)
+    setScriptSource: function(sourceId, newSource, callback)
     {
         this._scripts[sourceId].editSource(newSource, this._didEditScriptSource.bind(this, sourceId, newSource, callback));
     },

@@ -60,6 +60,6 @@ WebInspector.Script.prototype = {
                 this._source = newSource;
             callback(error, callFrames);
         }
-        DebuggerAgent.editScriptSource(this.sourceId, newSource, didEditScriptSource.bind(this));
+        DebuggerAgent.setScriptSource(this.sourceId, newSource, didEditScriptSource.bind(this));
     }
 }

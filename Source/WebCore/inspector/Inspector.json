@@ -1488,7 +1488,7 @@
                 "description": "Resumes JavaScript execution."
             },
             {
-                "name": "editScriptSource",
+                "name": "setScriptSource",
                 "parameters": [
                     { "name": "sourceId", "type": "string", "description": "Id of the script to edit." },
                     { "name": "scriptSource", "type": "string", "description": "New content of the script." },
@@ -1498,7 +1498,7 @@
                     { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
                     { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied." }
                 ],
-                "description": "Edits JavaScript script live."
+                "description": "Edits JavaScript source live."
             },
             {
                 "name": "getScriptSource",

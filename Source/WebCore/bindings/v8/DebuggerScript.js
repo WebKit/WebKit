@@ -173,7 +173,7 @@ DebuggerScript.stepOutOfFunction = function(execState)
     execState.prepareStep(Debug.StepAction.StepOut, 1);
 }
 
-DebuggerScript.editScriptSource = function(scriptId, newSource, preview)
+DebuggerScript.setScriptSource = function(scriptId, newSource, preview)
 {
     var scripts = Debug.scripts();
     var scriptToEdit = null;

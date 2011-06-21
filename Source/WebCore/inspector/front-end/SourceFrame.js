@@ -948,7 +948,7 @@ WebInspector.SourceFrame.prototype = {
 
     editContent: function(newContent, callback)
     {
-        this._delegate.editScriptSource(newContent, callback);
+        this._delegate.setScriptSource(newContent, callback);
     },
 
     cancelEditing: function()
@@ -1014,7 +1014,7 @@ WebInspector.SourceFrameDelegate.prototype = {
         return false;
     },
 
-    editScriptSource: function(text, callback)
+    setScriptSource: function(text, callback)
     {
         // Should be implemented by subclasses.
     },

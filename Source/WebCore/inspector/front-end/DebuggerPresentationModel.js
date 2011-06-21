@@ -181,7 +181,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return !script.lineOffset && !script.columnOffset;
     },
 
-    editScriptSource: function(sourceFileId, newSource, callback)
+    setScriptSource: function(sourceFileId, newSource, callback)
     {
         var script = this._scriptForSourceFileId(sourceFileId);
         var sourceFile = this._sourceFiles[sourceFileId];
@@ -205,7 +205,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var oldSource = sourceFile.requestContent(didReceiveSource.bind(this));
         function didReceiveSource(oldSource)
         {
-            WebInspector.debuggerModel.editScriptSource(script.sourceId, newSource, didEditScriptSource.bind(this, oldSource));
+            WebInspector.debuggerModel.setScriptSource(script.sourceId, newSource, didEditScriptSource.bind(this, oldSource));
         }
     },
 
@@ -817,7 +817,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
                 sourceFile.reload();
             }
         }
-        this._presentationModel.editScriptSource(sourceFile.id, content, callback.bind(this));
+        this._presentationModel.setScriptSource(sourceFile.id, content, callback.bind(this));
     }
 }
 

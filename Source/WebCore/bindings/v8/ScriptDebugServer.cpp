@@ -212,7 +212,7 @@ void ScriptDebugServer::stepOutOfFunction()
     continueProgram();
 }
 
-bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result)
+bool ScriptDebugServer::setScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result)
 {
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
@@ -221,7 +221,7 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
     if (!isPaused())
         contextScope = adoptPtr(new v8::Context::Scope(v8::Debug::GetDebugContext()));
 
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("editScriptSource")));
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setScriptSource")));
     v8::Handle<v8::Value> argv[] = { v8String(sourceID), v8String(newContent), v8Boolean(preview) };
 
     v8::TryCatch tryCatch;

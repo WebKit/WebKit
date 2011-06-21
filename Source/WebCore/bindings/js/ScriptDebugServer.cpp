@@ -190,7 +190,7 @@ void ScriptDebugServer::stepOutOfFunction()
     m_doneProcessingDebuggerEvents = true;
 }
 
-bool ScriptDebugServer::editScriptSource(const String&, const String&, bool, String*, ScriptValue*, ScriptObject*)
+bool ScriptDebugServer::setScriptSource(const String&, const String&, bool, String*, ScriptValue*, ScriptObject*)
 {
     // FIXME(40300): implement this.
     return false;

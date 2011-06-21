@@ -1,3 +1,36 @@
+2011-06-21  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: rename editScriptSource to setScriptSource.
+        https://bugs.webkit.org/show_bug.cgi?id=63059
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setScriptSource):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setScriptSource):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setScriptSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setScriptSource):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.setScriptSource.didReceiveSource):
+        (WebInspector.DebuggerPresentationModel.prototype.setScriptSource):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype._setContentWithInitialContent):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.editSource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.setScriptSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.editContent):
+        (WebInspector.SourceFrameDelegate.prototype.setScriptSource):
+
 2011-06-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
