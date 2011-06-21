@@ -76,6 +76,7 @@ namespace WebCore {
 ChromeClientEfl::ChromeClientEfl(Evas_Object* view)
     : m_view(view)
 {
+    ASSERT(m_view);
 }
 
 ChromeClientEfl::~ChromeClientEfl()
@@ -101,9 +102,6 @@ FloatRect ChromeClientEfl::windowRect()
     Ecore_Evas* ee = 0;
     int x, y, w, h;
 
-    if (!m_view)
-        return FloatRect();
-
     ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
     ecore_evas_geometry_get(ee, &x, &y, &w, &h);
     return FloatRect(x, y, w, h);
@@ -111,14 +109,11 @@ FloatRect ChromeClientEfl::windowRect()
 
 void ChromeClientEfl::setWindowRect(const FloatRect& rect)
 {
-    Ecore_Evas* ee = 0;
-    IntRect intrect = IntRect(rect);
-
-    if (!m_view)
-        return;
-
     if (!ewk_view_setting_enable_auto_resize_window_get(m_view))
         return;
+
+    Ecore_Evas* ee = 0;
+    IntRect intrect = IntRect(rect);
 
     ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
     ecore_evas_move(ee, intrect.x(), intrect.y());
@@ -127,9 +122,6 @@ void ChromeClientEfl::setWindowRect(const FloatRect& rect)
 
 FloatRect ChromeClientEfl::pageRect()
 {
-    if (!m_view)
-        return FloatRect();
-
     return ewk_view_page_rect_get(m_view);
 }
 

@@ -1,3 +1,19 @@
+2011-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] ChromeClientEfl doesn't need to check whether m_view is null.
+        https://bugs.webkit.org/show_bug.cgi?id=62978
+
+        Remove unnecessary check routines of m_view because ChromeClientEfl have
+        valid m_view always.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::ChromeClientEfl): Add ASSERT(m_view)
+        (WebCore::ChromeClientEfl::windowRect):
+        (WebCore::ChromeClientEfl::setWindowRect):
+        (WebCore::ChromeClientEfl::pageRect):
+
 2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         EFL build fix after r89293.
