@@ -1,3 +1,14 @@
+2011-06-20  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        New test for patch introduced in r89250
+        https://bugs.webkit.org/show_bug.cgi?id=63016
+
+        * fast/canvas/script-tests/text-globalAlpha.js: Added.
+        * fast/canvas/text-globalAlpha-expected.txt: Added.
+        * fast/canvas/text-globalAlpha.html: Added.
+
 2011-06-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
