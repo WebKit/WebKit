@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class DOMWindow;
 class InjectedScript;
 class InjectedScriptHost;
 class InspectorObject;
@@ -59,6 +60,7 @@ public:
     InjectedScript injectedScriptForId(long);
     InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
+    void discardInjectedScriptsFor(DOMWindow*);
     void releaseObjectGroup(const String& objectGroup);
 
 

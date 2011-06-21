@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class DOMWindow;
 class InjectedScriptManager;
 class InspectorFrontend;
 class InspectorObject;
@@ -63,6 +64,8 @@ public:
     MessageSource source() const { return m_source; }
     const String& message() const { return m_message; }
     MessageType type() const { return m_type; }
+
+    void windowCleared(DOMWindow*);
 
 private:
     MessageSource m_source;

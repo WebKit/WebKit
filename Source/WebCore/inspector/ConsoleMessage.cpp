@@ -187,6 +187,17 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
         && msg->m_requestId == m_requestId;
 }
 
+void ConsoleMessage::windowCleared(DOMWindow* window)
+{
+    if (!m_arguments)
+        return;
+    if (domWindowFromScriptState(m_arguments->globalState()) != window)
+        return;
+    if (!m_message)
+        m_message = "<message collected>";
+    m_arguments.clear();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

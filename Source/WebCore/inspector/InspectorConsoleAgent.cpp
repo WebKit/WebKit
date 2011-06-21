@@ -30,6 +30,7 @@
 #include "InstrumentingAgents.h"
 #include "Console.h"
 #include "ConsoleMessage.h"
+#include "DOMWindow.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
@@ -190,6 +191,14 @@ void InspectorConsoleAgent::count(PassRefPtr<ScriptArguments> arguments, PassRef
 
     String message = title + ": " + String::number(count);
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL());
+}
+
+void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
+{
+    size_t messageCount = m_consoleMessages.size();
+    for (size_t i = 0; i < messageCount; ++i)
+        m_consoleMessages[i]->windowCleared(window);
+    m_injectedScriptManager->discardInjectedScriptsFor(window);
 }
 
 void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber)

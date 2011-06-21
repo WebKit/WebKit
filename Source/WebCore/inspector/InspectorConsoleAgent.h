@@ -38,6 +38,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
 
 class ConsoleMessage;
+class DOMWindow;
 class InspectorAgent;
 class InspectorDOMAgent;
 class InspectorFrontend;
@@ -71,6 +72,8 @@ public:
     void startTiming(const String& title);
     void stopTiming(const String& title, PassRefPtr<ScriptCallStack>);
     void count(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
+
+    void frameWindowDiscarded(DOMWindow*);
 
     void resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber);
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&);

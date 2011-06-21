@@ -41,6 +41,7 @@ class JSGlobalObject;
 }
 
 namespace WebCore {
+class DOMWindow;
 class DOMWrapperWorld;
 class Frame;
 class Node;
@@ -62,6 +63,8 @@ public:
 private:
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
 };
+
+DOMWindow* domWindowFromScriptState(ScriptState*);
 
 ScriptState* mainWorldScriptState(Frame*);
 

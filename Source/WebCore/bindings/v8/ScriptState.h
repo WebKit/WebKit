@@ -37,6 +37,7 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class DOMWindow;
 class DOMWrapperWorld;
 class Frame;
 class Node;
@@ -57,6 +58,8 @@ public:
     {
         return v8::Local<v8::Context>::New(m_context);
     }
+
+    DOMWindow* domWindow() const;
 
     static ScriptState* forContext(v8::Local<v8::Context>);
     static ScriptState* current();
@@ -103,6 +106,8 @@ private:
     ScriptState* m_scriptState;
     v8::Persistent<v8::Context> m_context;
 };
+
+DOMWindow* domWindowFromScriptState(ScriptState*);
 
 ScriptState* mainWorldScriptState(Frame*);
 

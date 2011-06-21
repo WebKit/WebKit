@@ -166,6 +166,12 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents* i
         domDebuggerAgent->didInvalidateStyleAttr(node);
 }
 
+void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents* instrumentingAgents, DOMWindow* window)
+{
+    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+        consoleAgent->frameWindowDiscarded(window);
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

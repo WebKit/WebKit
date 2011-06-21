@@ -59,6 +59,13 @@ ScriptState* ScriptStateProtectedPtr::get() const
     return 0;
 }
 
+DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
+{
+    JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
+    if (!globalObject->inherits(&JSDOMWindowBase::s_info))
+        return 0;
+    return static_cast<JSDOMWindowBase*>(globalObject)->impl();
+}
 
 ScriptState* mainWorldScriptState(Frame* frame)
 {

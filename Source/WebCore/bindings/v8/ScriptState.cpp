@@ -35,6 +35,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "ScriptController.h"
+#include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
 
 #include "WorkerContext.h"
@@ -56,6 +57,13 @@ ScriptState::~ScriptState()
 {
     m_context.Dispose();
     m_context.Clear();
+}
+
+DOMWindow* ScriptState::domWindow() const
+{
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
+    return V8DOMWindow::toNative(v8RealGlobal);
 }
 
 ScriptState* ScriptState::forContext(v8::Local<v8::Context> context)
@@ -92,6 +100,11 @@ void ScriptState::weakReferenceCallback(v8::Persistent<v8::Value> object, void* 
 {
     ScriptState* scriptState = static_cast<ScriptState*>(parameter);
     delete scriptState;
+}
+
+DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
+{
+    return scriptState->domWindow();
 }
 
 ScriptState* mainWorldScriptState(Frame* frame)

@@ -709,6 +709,7 @@ NotificationCenter* DOMWindow::webkitNotifications() const
 
 void DOMWindow::pageDestroyed()
 {
+    InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
 #if ENABLE(NOTIFICATIONS)
     // Clearing Notifications requests involves accessing the client so it must be done
     // before the frame is detached.

@@ -1,3 +1,39 @@
+2011-06-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: console messages shouldn't prevent garbage collection of iframes
+        https://bugs.webkit.org/show_bug.cgi?id=62996
+
+        When DOMWindow is detached from its frame run through all console messages and clear
+        their arguments and ScriptState references. The message text in this case will be
+        the first argument serialized to string.
+
+        Test: http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html
+
+        * bindings/js/ScriptState.cpp:
+        (WebCore::domWindowFromScriptState):
+        * bindings/js/ScriptState.h:
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::ScriptState::domWindow):
+        (WebCore::domWindowFromScriptState):
+        * bindings/v8/ScriptState.h:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::windowCleared):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::discardInjectedScriptsFor):
+        * inspector/InjectedScriptManager.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::domWindowCleared):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::pageDestroyedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::pageDestroyed):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::pageDestroyed):
+
 2011-06-21  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
