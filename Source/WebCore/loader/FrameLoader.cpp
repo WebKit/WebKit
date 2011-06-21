@@ -156,14 +156,6 @@ bool isBackForwardLoadType(FrameLoadType type)
     return false;
 }
 
-static int numRequests(Document* document)
-{
-    if (!document)
-        return 0;
-    
-    return document->cachedResourceLoader()->requestCount();
-}
-
 // This is not in the FrameLoader class to emphasize that it does not depend on
 // private FrameLoader data, and to avoid increasing the number of public functions
 // with access to private data.  Since only this .cpp file needs it, making it
@@ -722,7 +714,7 @@ void FrameLoader::checkCompleted()
         return;
 
     // Still waiting for images/scripts?
-    if (numRequests(m_frame->document()))
+    if (m_frame->document()->cachedResourceLoader()->requestCount())
         return;
 
     // Still waiting for elements that don't go through a FrameLoader?
@@ -2400,11 +2392,11 @@ void FrameLoader::checkLoadComplete()
 int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 {
     if (!recurse)
-        return numRequests(m_frame->document());
+        return m_frame->document()->cachedResourceLoader()->requestCount();
 
     int count = 0;
     for (Frame* frame = m_frame; frame; frame = frame->tree()->traverseNext(m_frame))
-        count += numRequests(frame->document());
+        count += frame->document()->cachedResourceLoader()->requestCount();
     return count;
 }
 

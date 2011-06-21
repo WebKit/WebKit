@@ -1,3 +1,17 @@
+2011-06-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove numRequests
+        https://bugs.webkit.org/show_bug.cgi?id=63028
+
+        numRequests exists just to cargo-cult null-check m_frame->document(),
+        which is always non-null.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::numPendingOrLoadingRequests):
+
 2011-06-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
