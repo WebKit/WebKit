@@ -248,23 +248,6 @@ http/tests/fileapi/create-blob-url-from-data-url.html
 http/tests/history/back-during-onload-triggered-by-back.html
 http/tests/history/back-to-post.php
 
-# Crashing on debug bots because of failing ASSERT in HashTable.cpp
-# https://bugs.webkit.org/show_bug.cgi?id=62623
-svg/text/text-align-01-b.svg
-fast/borders/bidi-009a.html
-
-# Crashing on debug bots because of failing ASSERT in FontCache.cpp
-# https://bugs.webkit.org/show_bug.cgi?id=62624
-fast/backgrounds/animated-svg-as-background.html
-fast/xsl/xslt-extra-content-at-end.xml
-svg/W3C-SVG-1.1/text-tref-01-b.svg
-svg/carto.net/window.svg
-svg/wicd/rightsizing-grid.xhtml
-
-# Different results on 32-bit and 64-bit bots because of signed zero values
-# https://bugs.webkit.org/show_bug.cgi?id=62003
-svg/custom/embedding-external-svgs.xhtml
-
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
@@ -988,6 +971,9 @@ svg/W3C-SVG-1.1/animate-elem-33-t.svg
 # Fail on 32-bits Debug
 svg/W3C-SVG-1.1/animate-elem-46-t.svg
 svg/W3C-SVG-1.1/animate-elem-82-t.svg
+# Different results on 32-bit and 64-bit bots because of signed zero values
+# https://bugs.webkit.org/show_bug.cgi?id=62003
+svg/custom/embedding-external-svgs.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=57346
 fast/text/justify-ideograph-leading-expansion.html
@@ -1556,3 +1542,20 @@ fast/workers/worker-crash-with-invalid-location-pretty-diff.html
 # [GTK] DumpRenderTree doesn't block external requests
 # https://bugs.webkit.org/show_bug.cgi?id=62585
 fast/workers/worker-crash-with-invalid-location.html
+
+# [GTK] r89314 caused several shadow tests to start failing
+# https://bugs.webkit.org/show_bug.cgi?id=63045
+canvas/philip/tests/2d.shadow.alpha.3.html
+canvas/philip/tests/2d.shadow.alpha.4.html
+canvas/philip/tests/2d.shadow.alpha.5.html
+canvas/philip/tests/2d.shadow.gradient.alpha.html
+canvas/philip/tests/2d.shadow.gradient.transparent.1.html
+canvas/philip/tests/2d.shadow.pattern.alpha.html
+canvas/philip/tests/2d.shadow.pattern.transparent.1.html
+fast/canvas/canvas-fillPath-alpha-shadow.html
+fast/canvas/canvas-fillPath-gradient-shadow.html
+fast/canvas/canvas-fillPath-pattern-shadow.html
+fast/canvas/canvas-strokePath-alpha-shadow.html
+fast/canvas/canvas-strokePath-gradient-shadow.html
+fast/canvas/canvas-strokeRect-alpha-shadow.html
+fast/canvas/canvas-strokeRect-gradient-shadow.html

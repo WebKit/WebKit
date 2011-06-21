@@ -1,3 +1,13 @@
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the GTK+ skipped list.
+
+        Unskip some tests which should now be passing and skip a bunch that
+        were caused by a recent regression. Reclassify one failure that isn't
+        actually a crasher.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-06-20  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Update Chromium test expectation for inspector/elements/event-listener-sidebar.html
