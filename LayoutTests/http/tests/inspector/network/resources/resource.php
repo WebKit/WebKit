@@ -7,6 +7,7 @@
     $jsdelay = $_GET["jsdelay"];
     $jscontent = $_GET["jscontent"];
     $chunked = $_GET["chunked"];
+    $random = $_GET["random"];
 
     # Enable gzip compression if needed
     if ($gzip)
@@ -74,7 +75,8 @@ __foo(<?php echo($jsdelay)?>);
             }
             for ($i = 0; $size && $i < $size - $data_len; ++$i)
                 echo("=");
-        }
+        } else if ($random)
+            echo(rand());
     } else {
         # Generate dummy text/html.
         if ($size) {

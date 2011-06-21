@@ -125,6 +125,15 @@ void NetworkResourcesData::addResourceContent(unsigned long identifier, const St
     }
 }
 
+void NetworkResourcesData::addCachedResource(unsigned long identifier, CachedResource* cachedResource)
+{
+    if (!m_identifierToResourceDataMap.contains(identifier))
+        return;
+    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+
+    resourceData->setCachedResource(cachedResource);
+}
+
 void NetworkResourcesData::addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer> buffer, const String& textEncodingName)
 {
     ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);

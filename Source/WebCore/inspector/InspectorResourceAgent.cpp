@@ -240,6 +240,8 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             // Use mime type from cached resource in case the one in response is empty.
             if (response.mimeType().isEmpty())
                 resourceResponse->setString("mimeType", cachedResource->response().mimeType());
+
+            m_resourcesData->addCachedResource(identifier, cachedResource);
         }
         if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
             type = InspectorPageAgent::ImageResource;
@@ -452,10 +454,12 @@ void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsign
             return;
     }
 
-    if (!resourceData->frameId().isNull() && !resourceData->url().isNull())
-        m_pageAgent->getResourceContent(errorString, resourceData->frameId(), resourceData->url(), optionalBase64Encode, content);
-    else
-        *errorString = "No data found for resource with given identifier";
+    if (resourceData->cachedResource()) {
+        if (InspectorPageAgent::cachedResourceContent(resourceData->cachedResource(), base64Encode, content))
+            return;
+    }
+
+    *errorString = "No data found for resource with given identifier";
 }
 
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)

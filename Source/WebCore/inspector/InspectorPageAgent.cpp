@@ -110,7 +110,7 @@ static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* ha
     return true;
 }
 
-static bool cachedResourceContent(CachedResource* cachedResource, bool withBase64Encode, String* result)
+bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, bool withBase64Encode, String* result)
 {
     bool hasZeroSize;
     bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);

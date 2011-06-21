@@ -78,6 +78,9 @@ public:
         String textEncodingName() const { return m_textEncodingName; }
         void setTextEncodingName(String textEncodingName) { m_textEncodingName = textEncodingName; }
 
+        CachedResource* cachedResource() const { return m_cachedResource.get(); }
+        void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
+
     private:
         unsigned long m_identifier;
         String m_loaderId;
@@ -90,6 +93,7 @@ public:
 
         RefPtr<SharedBuffer> m_buffer;
         String m_textEncodingName;
+        CachedResourceHandle<CachedResource> m_cachedResource;
     };
 
     NetworkResourcesData();
@@ -101,6 +105,7 @@ public:
     void setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(unsigned long identifier);
     void addResourceContent(unsigned long identifier, const String& content);
+    void addCachedResource(unsigned long identifier, CachedResource*);
     void addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer>, const String& textEncodingName);
     ResourceData* data(unsigned long identifier);
     void clear(const String& preservedLoaderId = String());
