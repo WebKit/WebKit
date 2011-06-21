@@ -1,5 +1,17 @@
 2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        IndexedDB: keyrange methods should throw TypeError if required arguments are missing
+        https://bugs.webkit.org/show_bug.cgi?id=63085
+
+        Test: storage/indexeddb/keyrange-required-arguments.html
+
+        * storage/IDBKeyRange.idl: remove LegacyDefaultOptionalArguments flag
+        so missing required arguments throw TypeError, as per WebIDL spec.
+
+2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
+
         Reviewed by Tony Chang.
 
         IndexedDB: should throw TypeError when indexedDB.open() name argument is missing

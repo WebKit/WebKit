@@ -1,0 +1,22 @@
+Test IndexedDB keyrange required arguments
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+IDBCursor = window.IDBCursor || window.webkitIDBCursor;
+PASS IDBCursor == null is false
+IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+PASS IDBKeyRange == null is false
+PASS IDBKeyRange.only(); threw exception TypeError: Not enough arguments.
+PASS IDBKeyRange.lowerBound(); threw exception TypeError: Not enough arguments.
+PASS IDBKeyRange.upperBound(); threw exception TypeError: Not enough arguments.
+PASS IDBKeyRange.bound(1); threw exception TypeError: Not enough arguments.
+PASS IDBKeyRange.bound(); threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
