@@ -1,3 +1,12 @@
+2011-06-20  Adam Barth  <abarth@webkit.org>
+
+        Update image results after mpilgrim's exception type change.
+
+        * platform/chromium-linux/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/chromium-linux/svg/dom/SVGStringList-basics-expected.png:
+        * platform/chromium-mac/svg/dom/SVGNumberList-basics-expected.png: Added.
+        * platform/chromium-mac/svg/dom/SVGStringList-basics-expected.png: Added.
+
 2011-06-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium expectations update. Revert the expectations
