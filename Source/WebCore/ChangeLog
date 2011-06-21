@@ -1,3 +1,22 @@
+2011-06-21  Peter Varga  <pvarga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][V8] Enable marking objects with complex GC rules
+        https://bugs.webkit.org/show_bug.cgi?id=61291
+
+        No new tests needed.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+
 2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
