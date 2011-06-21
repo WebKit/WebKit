@@ -232,7 +232,8 @@ static unsigned startWordBoundary(const UChar* characters, unsigned length, unsi
     }
     needMoreContext = false;
     int start, end;
-    findWordBoundary(characters, length, offset - 1, &start, &end);
+    U16_BACK_1(characters, 0, offset);
+    findWordBoundary(characters, length, offset, &start, &end);
     return start;
 }
 

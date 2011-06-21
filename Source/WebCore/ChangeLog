@@ -1,3 +1,15 @@
+2011-06-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        startWordBoundary() in visible_units.cpp assumes that all characters are 16 bit
+        https://bugs.webkit.org/show_bug.cgi?id=63027
+
+        No new tests, because I don't see this affect any webkit.org ports.
+
+        * editing/visible_units.cpp: (WebCore::startWordBoundary): Previous offset is not just minus
+        one - we need to use a proper macro to iterate.
+
 2011-06-20  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.
