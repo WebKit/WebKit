@@ -1,3 +1,9 @@
+2011-06-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium expectations update. Suppressions after recent commits.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Adam Barth  <abarth@webkit.org>
 
         Update image results after mpilgrim's exception type change.
