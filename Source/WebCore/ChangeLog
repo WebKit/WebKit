@@ -2,6 +2,18 @@
 
         Reviewed by Tony Chang.
 
+        IndexedDB: should throw TypeError when index .get() key argument is missing
+        https://bugs.webkit.org/show_bug.cgi?id=63079
+
+        Test: storage/indexeddb/index-get-key-argument-required.html
+
+        * storage/IDBIndex.idl: remove LegacyDefaultOptionalArguments flag
+        so missing required arguments throw a TypeError as per WebIDL spec.
+
+2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         IndexedDB: cursor update() value argument is required
         https://bugs.webkit.org/show_bug.cgi?id=63032
 
