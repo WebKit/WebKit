@@ -145,7 +145,7 @@ void PluginView::updatePluginWidget()
         return;
 
 #if defined(XP_UNIX)
-    if (!m_isWindowed) {
+    if (!m_isWindowed && !m_windowRect.isEmpty()) {
         Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
         if (m_drawable)
             XFreePixmap(display, m_drawable);

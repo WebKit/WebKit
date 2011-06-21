@@ -1,3 +1,16 @@
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Windowless plugins sometimes crash with a BadMatch error
+        https://bugs.webkit.org/show_bug.cgi?id=63020
+
+        Do not try to create an XPixmap with any of the dimensions as zero.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePluginWidget): Guard against and empty window rect
+        before trying to create a windowless plugin pixmap.
+
 2011-06-20  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Ryosuke Niwa.
