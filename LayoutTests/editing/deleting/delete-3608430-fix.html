@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html> 
 <head>
 
@@ -26,13 +27,14 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
+<p>This test makes sure that deletion of an element auto-removes a blank element before it. Below, you should see "start-deleting", followed by several lines showing the states of the content-editable div over time, ending with 'start-deleting' inside a span id'd as "test".</p>
 <div contenteditable id="root" class="editing">
 <span id="test">foo 
-<br>foo <i>  </i> <img src="../abe.gif""> select-in-me-and-start-deleting</span>
+<br>foo <i>  </i> <img src="../resources/abe.png"> select-in-me-and-start-deleting</span>
 </div>
 
 <script>
-runEditingTest();
+runDumpAsTextEditingTest();
 </script>
 
 </body>

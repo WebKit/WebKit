@@ -1,3 +1,25 @@
+2011-06-21  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        convert editing/deleting/delete-3608430-fix.html to DumpAsTextEditingTest
+        https://bugs.webkit.org/show_bug.cgi?id=62823
+
+        Fixed a superfluous quote, added a doctype, fixed a broken reference to 'abe.gif'
+        (now points to abe.png, in the correct location), added a description, and converted
+        to a DumpAsTextEditingTest. This test checks that deletion over an image will correctly
+        remove an empty element before the image.
+
+        * editing/deleting/delete-3608430-fix-expected.txt: Added.
+        * editing/deleting/delete-3608430-fix.html:
+        * platform/chromium-linux/editing/deleting/delete-3608430-fix-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-3608430-fix-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-3608430-fix-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-3608430-fix-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-3608430-fix-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-3608430-fix-expected.txt: Removed.
+        * platform/qt/editing/deleting/delete-3608430-fix-expected.txt: Removed.
+
 2011-06-21  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.
