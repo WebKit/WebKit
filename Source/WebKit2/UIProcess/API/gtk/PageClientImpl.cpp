@@ -38,6 +38,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyGtk.h"
+#include <WebCore/Cursor.h>
 #include <WebCore/GtkUtilities.h>
 #include <wtf/text/WTFString.h>
 

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
+#include <wtf/text/CString.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>

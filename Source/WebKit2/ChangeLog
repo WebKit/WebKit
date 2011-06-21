@@ -1,3 +1,16 @@
+2011-06-21  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Sam Weinig.
+
+        [GTK] [WK2] WebKit2 build break fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=62950
+
+        When building WebKit2 for GTK there are few build breaks connected with missing include files.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

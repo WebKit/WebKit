@@ -45,6 +45,7 @@
 #if PLATFORM(QT)
 #include <QDir>
 #elif PLATFORM(GTK)
+#include <glib.h>
 #include <wtf/gobject/GOwnPtr.h>
 #endif
 
