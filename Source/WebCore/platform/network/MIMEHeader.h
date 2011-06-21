@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class SharedBufferCRLFLineReader;
+class SharedBufferChunkReader;
 
 // FIXME: This class is a limited MIME parser used to parse the MIME headers of MHTML files.
 class MIMEHeader : public RefCounted<MIMEHeader> {
@@ -49,7 +49,7 @@ public:
         Unknown
     };
 
-    static PassRefPtr<MIMEHeader> parseHeader(SharedBufferCRLFLineReader*);
+    static PassRefPtr<MIMEHeader> parseHeader(SharedBufferChunkReader* crLFLineReader);
 
     bool isMultipart() const { return m_contentType.startsWith("multipart/"); }
 

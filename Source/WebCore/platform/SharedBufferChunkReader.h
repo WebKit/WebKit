@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SharedBufferCRLFLineReader_h
-#define SharedBufferCRLFLineReader_h
+#ifndef SharedBufferChunkReader_h
+#define SharedBufferChunkReader_h
 
 #include <wtf/text/WTFString.h>
 
@@ -41,13 +41,14 @@ namespace WebCore {
 
 class SharedBuffer;
 
-class SharedBufferCRLFLineReader {
+class SharedBufferChunkReader {
 public:
-    explicit SharedBufferCRLFLineReader(SharedBuffer*);
+    SharedBufferChunkReader(SharedBuffer*, const String& separator);
 
-    // Returns the next line read from the buffer.
+    void setSeparator(const String&);
+
     // Returns a null string when the end of the buffer has been reached.
-    String nextLine();
+    String nextChunk(bool includeSeparator = false);
 
 private:
     SharedBuffer* m_buffer;
@@ -56,6 +57,8 @@ private:
     size_t m_segmentLength;
     size_t m_segmentIndex;
     bool m_reachedEndOfFile;
+    String m_separator;
+    size_t m_separatorIndex;
 };
 
 }

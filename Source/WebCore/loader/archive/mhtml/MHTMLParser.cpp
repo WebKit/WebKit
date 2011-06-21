@@ -43,10 +43,10 @@
 
 namespace WebCore {
 
-static bool skipLinesUntilBoundaryFound(SharedBufferCRLFLineReader& lineReader, const String& boundary)
+static bool skipLinesUntilBoundaryFound(SharedBufferChunkReader& lineReader, const String& boundary)
 {
     String line;
-    while (!(line = lineReader.nextLine()).isNull()) {
+    while (!(line = lineReader.nextChunk()).isNull()) {
         if (line == boundary)
             return true;
     }
@@ -54,7 +54,7 @@ static bool skipLinesUntilBoundaryFound(SharedBufferCRLFLineReader& lineReader, 
 }
 
 MHTMLParser::MHTMLParser(SharedBuffer* data)
-    : m_lineReader(data)
+    : m_lineReader(data, "\r\n")
 {
 }
 
@@ -147,7 +147,7 @@ PassRefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHea
     const bool checkBoundary = !endOfPartBoundary.isEmpty();
     bool endOfPartReached = false;
     String line;
-    while (!(line = m_lineReader.nextLine()).isNull()) {
+    while (!(line = m_lineReader.nextChunk()).isNull()) {
         if (checkBoundary && (line == endOfPartBoundary || line == endOfDocumentBoundary)) {
             endOfArchiveReached = (line == endOfDocumentBoundary);
             endOfPartReached = true;

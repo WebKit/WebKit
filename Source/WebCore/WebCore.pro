@@ -1061,7 +1061,7 @@ SOURCES += \
     platform/ScrollView.cpp \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
-    platform/SharedBufferCRLFLineReader.cpp \
+    platform/SharedBufferChunkReader.cpp \
     platform/text/String.cpp \
     platform/text/TextBoundaries.cpp \
     platform/text/TextCodec.cpp \
@@ -2077,7 +2077,7 @@ HEADERS += \
     platform/ScrollView.h \
     platform/SearchPopupMenu.h \
     platform/SharedBuffer.h \
-    platform/SharedBufferCRLFLineReader.h \
+    platform/SharedBufferChunkReader.h \
     platform/sql/SQLiteDatabase.h \
     platform/sql/SQLiteFileSystem.h \
     platform/sql/SQLiteStatement.h \

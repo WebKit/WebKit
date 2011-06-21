@@ -1,3 +1,32 @@
+2011-06-20  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Making SharedBufferCRLFLineReader more generic, so it can be used to read MHTML
+        file with binary parts.
+        https://bugs.webkit.org/show_bug.cgi?id=62966
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::skipLinesUntilBoundaryFound):
+        (WebCore::MHTMLParser::MHTMLParser):
+        (WebCore::MHTMLParser::parseNextPart):
+        * loader/archive/mhtml/MHTMLParser.h:
+        * platform/SharedBufferChunkReader.cpp: Renamed from Source/WebCore/platform/SharedBufferCRLFLineReader.cpp.
+        (WebCore::SharedBufferChunkReader::SharedBufferChunkReader):
+        (WebCore::SharedBufferChunkReader::setSeparator):
+        (WebCore::SharedBufferChunkReader::nextChunk):
+        * platform/SharedBufferChunkReader.h: Renamed from Source/WebCore/platform/SharedBufferCRLFLineReader.h.
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs):
+        (WebCore::MIMEHeader::parseHeader):
+        * platform/network/MIMEHeader.h:
+
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -32,7 +32,7 @@
 #define MHTMLParser_h
 
 #if ENABLE(MHTML)
-#include "SharedBufferCRLFLineReader.h"
+#include "SharedBufferChunkReader.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -61,7 +61,7 @@ private:
 
     void addResourceToArchive(ArchiveResource*, MHTMLArchive*);
 
-    SharedBufferCRLFLineReader m_lineReader;
+    SharedBufferChunkReader m_lineReader;
     Vector<RefPtr<ArchiveResource> > m_resources;
     Vector<RefPtr<MHTMLArchive> > m_frames;
 };

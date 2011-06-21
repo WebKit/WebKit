@@ -804,6 +804,8 @@
 		372C00C4129611F1005C9575 /* TextBoundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372C00C3129611F1005C9575 /* TextBoundaries.cpp */; };
 		372C00D9129619F8005C9575 /* FindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 372C00D8129619F8005C9575 /* FindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */; };
+		37569E0313AF172C00CDBA8E /* SharedBufferChunkReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */; };
+		37569E0513AF172C00CDBA8E /* SharedBufferChunkReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */; };
 		375CD232119D43C800A2A859 /* Hyphenation.h in Headers */ = {isa = PBXBuildFile; fileRef = 375CD231119D43C800A2A859 /* Hyphenation.h */; };
 		375CD23B119D44EA00A2A859 /* HyphenationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 375CD239119D44EA00A2A859 /* HyphenationMac.mm */; };
 		3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -823,8 +825,6 @@
 		379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E61C8126CA5C300B63E8D /* BaseCheckableInputType.h */; };
 		37ACCE420DA2980F0089E602 /* FontRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 37ACCE410DA2980F0089E602 /* FontRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ACCE620DA2AA960089E602 /* FontDescription.cpp */; };
-		37AFFDF61370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AFFDF41370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp */; };
-		37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AFFDF51370A0B800E895C0 /* SharedBufferCRLFLineReader.h */; };
 		37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */; };
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
@@ -7242,6 +7242,8 @@
 		372C00C3129611F1005C9575 /* TextBoundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBoundaries.cpp; sourceTree = "<group>"; };
 		372C00D8129619F8005C9575 /* FindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindOptions.h; sourceTree = "<group>"; };
 		3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyphMap.h; sourceTree = "<group>"; };
+		37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferChunkReader.cpp; sourceTree = "<group>"; };
+		37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferChunkReader.h; sourceTree = "<group>"; };
 		375CD231119D43C800A2A859 /* Hyphenation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hyphenation.h; sourceTree = "<group>"; };
 		375CD239119D44EA00A2A859 /* HyphenationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HyphenationMac.mm; sourceTree = "<group>"; };
 		3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlapTestRequestClient.h; sourceTree = "<group>"; };
@@ -7261,8 +7263,6 @@
 		379E61C8126CA5C300B63E8D /* BaseCheckableInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCheckableInputType.h; sourceTree = "<group>"; };
 		37ACCE410DA2980F0089E602 /* FontRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontRenderingMode.h; sourceTree = "<group>"; };
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
-		37AFFDF41370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCRLFLineReader.cpp; sourceTree = "<group>"; };
-		37AFFDF51370A0B800E895C0 /* SharedBufferCRLFLineReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferCRLFLineReader.h; sourceTree = "<group>"; };
 		37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontComplexTextMac.cpp; sourceTree = "<group>"; };
 		37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
@@ -18857,8 +18857,8 @@
 				33C0CCD3112C5E6200CE057D /* SecureTextInput.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
-				37AFFDF41370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp */,
-				37AFFDF51370A0B800E895C0 /* SharedBufferCRLFLineReader.h */,
+				37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */,
+				37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
@@ -22441,7 +22441,6 @@
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
-				37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */,
 				498770EB1242C535002226BA /* SharedGraphicsContext3D.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				41E1B1D40FF5986900576B3B /* SharedWorker.h in Headers */,
@@ -25330,7 +25329,6 @@
 				B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
-				37AFFDF61370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
 				498770EA1242C535002226BA /* SharedGraphicsContext3D.cpp in Sources */,
 				93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */,

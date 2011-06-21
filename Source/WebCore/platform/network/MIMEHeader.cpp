@@ -32,7 +32,7 @@
 #include "MIMEHeader.h"
 
 #include "ContentTypeParser.h"
-#include "SharedBufferCRLFLineReader.h"
+#include "SharedBufferChunkReader.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -43,13 +43,13 @@ namespace WebCore {
 
 typedef HashMap<String, String> KeyValueMap;
 
-static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferCRLFLineReader* buffer)
+static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader* buffer)
 {
     KeyValueMap keyValuePairs;
     String line;
     String key;
     StringBuilder value;
-    while (!(line = buffer->nextLine()).isNull()) {
+    while (!(line = buffer->nextChunk()).isNull()) {
         if (line.isEmpty())
             break; // Empty line means end of key/value section.
         if (line[0] == '\t') {
@@ -79,7 +79,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferCRLFLineReader* bu
     return keyValuePairs;
 }
 
-PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferCRLFLineReader* buffer)
+PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
 {
     RefPtr<MIMEHeader> mimeHeader = adoptRef(new MIMEHeader);
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);

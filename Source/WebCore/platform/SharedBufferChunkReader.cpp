@@ -29,47 +29,54 @@
  */
 
 #include "config.h"
-#include "SharedBufferCRLFLineReader.h"
+#include "SharedBufferChunkReader.h"
 
 #include "SharedBuffer.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-SharedBufferCRLFLineReader::SharedBufferCRLFLineReader(SharedBuffer* buffer)
+SharedBufferChunkReader::SharedBufferChunkReader(SharedBuffer* buffer, const String& separator)
     : m_buffer(buffer)
     , m_bufferPosition(0)
     , m_segment(0)
     , m_segmentLength(0)
     , m_segmentIndex(0)
     , m_reachedEndOfFile(false)
+    , m_separator(separator)
+    , m_separatorIndex(0)
 {
 }
 
-String SharedBufferCRLFLineReader::nextLine()
+void SharedBufferChunkReader::setSeparator(const String& separator)
+{
+    m_separator = separator;
+}
+
+String SharedBufferChunkReader::nextChunk(bool includeSeparator)
 {
     if (m_reachedEndOfFile)
         return String();
 
-    bool previousCharacterWasCR = false;
     StringBuilder stringBuilder;
     while (true) {
-        bool reachedEndOfLine = false;
         while (m_segmentIndex < m_segmentLength) {
-            reachedEndOfLine = false;
-            char currentCharacter = m_segment[m_segmentIndex];
-            if (previousCharacterWasCR) {
-                if (currentCharacter == '\n')
-                    reachedEndOfLine = true;
-                else
-                    stringBuilder.append('\r');
-            } else if (currentCharacter != '\r')
-                stringBuilder.append(currentCharacter);
-
-            previousCharacterWasCR = (currentCharacter == '\r');
-            m_segmentIndex++;
-            if (reachedEndOfLine)
-                return stringBuilder.toString();
+            char currentCharacter = m_segment[m_segmentIndex++];
+            if (currentCharacter != m_separator[m_separatorIndex]) {
+              if (m_separatorIndex > 0) {
+                stringBuilder.append(m_separator.substring(0, m_separatorIndex));
+                m_separatorIndex = 0;
+              }
+              stringBuilder.append(currentCharacter);
+              continue;
+            }
+            m_separatorIndex++;
+            if (m_separatorIndex == m_separator.length()) {
+              if (includeSeparator)
+                stringBuilder.append(m_separator);
+              m_separatorIndex = 0;
+              return stringBuilder.toString();
+            }
         }
 
         // Read the next segment.
@@ -78,13 +85,12 @@ String SharedBufferCRLFLineReader::nextLine()
         m_segmentLength = m_buffer->getSomeData(m_segment, m_bufferPosition);
         if (!m_segmentLength) {
             m_reachedEndOfFile = true;
-            if (previousCharacterWasCR)
-                stringBuilder.append('\r');
-            String line = stringBuilder.toString();
-            return (line.isEmpty() && !reachedEndOfLine) ? String() : line;
+            if (m_separatorIndex > 0)
+              stringBuilder.append(m_separator.substring(0, m_separatorIndex));
+            return stringBuilder.length() > 0 ? stringBuilder.toString() : String();
         }
     }
-    return String();
+    return String(); // Compiler is unhappy without this.
 }
 
 }

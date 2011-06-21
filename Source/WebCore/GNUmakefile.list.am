@@ -2743,8 +2743,8 @@ webcore_sources += \
 	Source/WebCore/platform/SecureTextInput.h \
 	Source/WebCore/platform/SharedBuffer.cpp \
 	Source/WebCore/platform/SharedBuffer.h \
-	Source/WebCore/platform/SharedBufferCRLFLineReader.cpp \
-	Source/WebCore/platform/SharedBufferCRLFLineReader.h \
+	Source/WebCore/platform/SharedBufferChunkReader.cpp \
+	Source/WebCore/platform/SharedBufferChunkReader.h \
 	Source/WebCore/platform/SharedTimer.h \
 	Source/WebCore/platform/Sound.h \
 	Source/WebCore/platform/sql/SQLiteAuthorizer.cpp \

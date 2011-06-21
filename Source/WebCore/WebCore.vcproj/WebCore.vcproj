@@ -26666,11 +26666,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\SharedBufferCRLFLineReader.cpp"
+				RelativePath="..\platform\SharedBufferChunkReader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\platform\SharedBufferCRLFLineReader.h"
+				RelativePath="..\platform\SharedBufferChunkReader.h"
 				>
 			</File>
 			<File
