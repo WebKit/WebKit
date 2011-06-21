@@ -1,3 +1,12 @@
+2011-06-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GTK] r89314 caused several shadow tests to start failing
+        https://bugs.webkit.org/show_bug.cgi?id=63045
+
+        * platform/gtk/Skipped: Unskip tests that are now passing.
+
 2011-06-21  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

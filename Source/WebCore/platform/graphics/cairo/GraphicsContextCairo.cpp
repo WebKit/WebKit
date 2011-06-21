@@ -129,14 +129,20 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
     // context to preserve things such as the fill rule and stroke width.
     copyContextProperties(cairoContext, shadowContext);
 
-    cairo_append_path(shadowContext, path.get());
+    PlatformContextCairo platformShadowContext(shadowContext);
+    if (drawingStyle & Fill) {
+        cairo_append_path(shadowContext, path.get());
+        platformShadowContext.prepareForFilling(context->state(), PlatformContextCairo::NoAdjustment);
+        cairo_clip_preserve(shadowContext);
+        cairo_paint_with_alpha(shadowContext, context->platformContext()->globalAlpha());
+    }
 
-    // The color of the shadow doesn't matter, since it's simply used as a mask.
-    cairo_set_source_rgb(shadowContext, 1, 0, 0);
-    if (drawingStyle & Fill)
-        cairo_fill_preserve(shadowContext);
-    if (drawingStyle & Stroke)
-        cairo_stroke_preserve(shadowContext);
+    if (drawingStyle & Stroke) {
+        cairo_append_path(shadowContext, path.get());
+        platformShadowContext.prepareForStroking(context->state());
+        cairo_stroke(shadowContext);
+    }
+
     shadow->endShadowLayer(context);
 }
 

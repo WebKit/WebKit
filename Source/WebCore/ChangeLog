@@ -1,3 +1,16 @@
+2011-06-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GTK] r89314 caused several shadow tests to start failing
+        https://bugs.webkit.org/show_bug.cgi?id=63045
+
+        Use prepareForFilling and prepareForStroking when rendering the shadowed
+        image of a path. This ensures that the shadowed image has the proper alpha.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow): Properly prepare the shadow image.
+
 2011-06-21  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
