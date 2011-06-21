@@ -1,5 +1,26 @@
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Rebaseline a few more SVG tests for GTK+.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt:
+        * platform/gtk/svg/batik/text/xmlSpace-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/gtk/svg/text/text-text-04-t-expected.txt:
+        * platform/gtk/svg/text/text-text-05-t-expected.txt:
+        * platform/gtk/svg/text/text-text-06-t-expected.txt:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt:
+
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
         Update the GTK+ skipped list.
 
         Unskip some tests which should now be passing and skip a bunch that
