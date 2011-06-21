@@ -3953,8 +3953,6 @@ BUGCR84157 GPU WIN : fast/canvas/canvas-currentColor.html = TEXT
 BUGCR84157 GPU WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT PASS
 BUGCR84157 BUGCR74979 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 
-BUGCR85051 WIN RELEASE GPU : canvas/philip/tests/2d.composite.canvas.source-over.html = TEXT
-
 BUGWK62255 : animations/animation-iteration-event-destroy-renderer.html = TIMEOUT PASS
 
 BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = TEXT PASS
