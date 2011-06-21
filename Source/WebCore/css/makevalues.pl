@@ -21,18 +21,39 @@
 #   along with this library; see the file COPYING.LIB.  If not, write to
 #   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 #   Boston, MA 02110-1301, USA.
+use Getopt::Long;
+use preprocessor;
 use strict;
 use warnings;
 
-open NAMES, "<CSSValueKeywords.in" || die "Could not open CSSValueKeywords.in";
+my $defines;
+my $preprocessor;
+GetOptions('defines=s' => \$defines,
+           'preprocessor=s' => \$preprocessor);
+
+my @NAMES = applyPreprocessor("CSSValueKeywords.in", $defines, $preprocessor);
+
+my %namesHash;
+my @duplicates = ();
+
 my @names = ();
-while (<NAMES>) {
-  next if (m/(^#)|(^\s*$)/);
+foreach (@NAMES) {
+  next if (m/(^\s*$)/);
   # Input may use a different EOL sequence than $/, so avoid chomp.
   $_ =~ s/[\r\n]+$//g;
+  # CSS values need to be lower case.
+  $_ = lc $_;
+  if (exists $namesHash{$_}) {
+    push @duplicates, $_;
+  } else {
+    $namesHash{$_} = 1;
+  }
   push @names, $_;
 }
-close(NAMES);
+
+if (@duplicates > 0) {
+    die 'Duplicate CSS value keywords  values: ', join(', ', @duplicates) . "\n";
+}
 
 open GPERF, ">CSSValueKeywords.gperf" || die "Could not open CSSValueKeywords.gperf for writing";
 print GPERF << "EOF";

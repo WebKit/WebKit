@@ -35,7 +35,7 @@
 # action_cssvaluekeywords.py is a harness script to connect actions sections of
 # gyp-based builds to makevalues.pl.
 #
-# usage: action_cssvaluekeywords.py OUTPUTS -- INPUTS
+# usage: action_cssvaluekeywords.py OUTPUTS -- [--defines ENABLE_FLAG1 ENABLE_FLAG2 ...] -- INPUTS
 #
 # Exactly two outputs must be specified: a path to each of CSSValueKeywords.c
 # and CSSValueKeywords.h.
@@ -48,6 +48,7 @@
 
 import os
 import posixpath
+import shlex
 import shutil
 import subprocess
 import sys
@@ -77,8 +78,19 @@ def SplitArgsIntoSections(args):
     return sections
 
 
+def SplitDefines(options):
+    # The defines come in as one flat string. Split it up into distinct arguments.
+    if '--defines' in options:
+        definesIndex = options.index('--defines')
+        if definesIndex + 1 < len(options):
+            splitOptions = shlex.split(options[definesIndex + 1])
+            if splitOptions:
+                options[definesIndex + 1] = ' '.join(splitOptions)
+
 def main(args):
-    (outputs, inputs) = SplitArgsIntoSections(args[1:])
+    outputs, options, inputs = SplitArgsIntoSections(args[1:])
+
+    SplitDefines(options)
 
     # Make all output pathnames absolute so that they can be accessed after
     # changing directory.
@@ -118,28 +130,22 @@ def main(args):
     mergedPath = os.path.basename(inFiles[0])
     merged = open(mergedPath, 'wb')    # 'wb' to get \n only on windows
 
-    # Make sure there aren't any duplicate lines in the in files. Lowercase
-    # everything because CSS values are case-insensitive.
-    lineDict = {}
+    # Concatenate all the input files.
     for inFilePath in inFiles:
         inFile = open(inFilePath)
-        for line in inFile:
-            line = line.rstrip()
-            if line.startswith('#'):
-                line = ''
-            if line == '':
-                continue
-            line = line.lower()
-            if line in lineDict:
-                raise KeyError, 'Duplicate value %s' % line
-            lineDict[line] = True
-            print >>merged, line
+        shutil.copyfileobj(inFile, merged)
         inFile.close()
 
     merged.close()
 
+    # scriptsPath is a Perl include directory, located relative to
+    # makevaluesInput.
+    scriptsPath = os.path.normpath(
+        os.path.join(os.path.dirname(makevaluesInput), os.pardir, 'bindings', 'scripts'))
+
     # Build up the command.
-    command = ['perl', makevaluesInput]
+    command = ['perl', '-I', scriptsPath, makevaluesInput]
+    command.extend(options)
 
     # Do it. checkCall is new in 2.5, so simulate its behavior with call and
     # assert.

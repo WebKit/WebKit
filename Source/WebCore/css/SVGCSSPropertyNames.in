@@ -1,12 +1,12 @@
-#
-# all valid SVG CSS2 properties.
-#
+//
+// all valid SVG CSS2 properties.
+//
 
-# SVG style props
+// SVG style props
 clip-path
 clip-rule
 mask
-# opacity
+// opacity
 enable-background
 filter
 flood-color
@@ -14,7 +14,7 @@ flood-opacity
 lighting-color
 stop-color
 stop-opacity
-# pointer-events
+// pointer-events
 color-interpolation
 color-interpolation-filters
 color-profile
@@ -22,8 +22,8 @@ color-rendering
 fill
 fill-opacity
 fill-rule
-#font-size-adjust
-#image-rendering
+//font-size-adjust
+//image-rendering
 marker
 marker-end
 marker-mid
@@ -37,7 +37,7 @@ stroke-linejoin
 stroke-miterlimit
 stroke-opacity
 stroke-width
-# text-rendering
+// text-rendering
 alignment-baseline
 baseline-shift
 dominant-baseline

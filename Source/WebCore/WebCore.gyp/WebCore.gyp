@@ -532,7 +532,9 @@
             'scripts/action_csspropertynames.py',
             '<@(_outputs)',
             '--',
-            '<@(_inputs)'
+            '--defines', '<(feature_defines)',
+            '--',
+            '<@(_inputs)',
           ],
           'conditions': [
             # TODO(maruel): Move it in its own project or generate it anyway?
@@ -558,7 +560,9 @@
             'scripts/action_cssvaluekeywords.py',
             '<@(_outputs)',
             '--',
-            '<@(_inputs)'
+            '--defines', '<(feature_defines)',
+            '--',
+            '<@(_inputs)',
           ],
           'conditions': [
             # TODO(maruel): Move it in its own project or generate it anyway?

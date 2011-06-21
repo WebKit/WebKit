@@ -1,15 +1,15 @@
-#
-# CSS property names
-#
-# Some properties are used internally, but are not part of CSS. They are used to get
-# HTML4 compatibility in the rendering engine.
-#
-# Microsoft extensions are documented here:
-# http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
-#
+//
+// CSS property names
+//
+// Some properties are used internally, but are not part of CSS. They are used to get
+// HTML4 compatibility in the rendering engine.
+//
+// Microsoft extensions are documented here:
+// http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
+//
 
-# high-priority property names have to be listed first, to simplify the check
-# for applying them first.
+// high-priority property names have to be listed first, to simplify the check
+// for applying them first.
 color
 direction
 display
@@ -28,10 +28,10 @@ text-rendering
 -epub-writing-mode = -webkit-writing-mode
 zoom
 
-# line height needs to be right after the above high-priority properties
+// line height needs to be right after the above high-priority properties
 line-height
 
-# The remaining properties are listed in alphabetical order
+// The remaining properties are listed in alphabetical order
 background
 background-attachment
 background-clip
@@ -79,7 +79,7 @@ border-width
 bottom
 box-shadow
 box-sizing
-# -webkit-box-sizing worked in Safari 4 and earlier.
+// -webkit-box-sizing worked in Safari 4 and earlier.
 -webkit-box-sizing = box-sizing
 caption-side
 -epub-caption-side = caption-side
@@ -110,8 +110,8 @@ max-width
 min-height
 min-width
 opacity
-# Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
-# and may be in use on some websites and widgets.
+// Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
+// and may be in use on some websites and widgets.
 -webkit-opacity = opacity
 orphans
 outline
@@ -189,9 +189,9 @@ z-index
 -webkit-background-clip
 -webkit-background-composite
 -webkit-background-origin
-# -webkit-background-size differs from background-size only in the interpretation of
-# a single value: -webkit-background-size: l; is equivalent to background-size: l l;
-# whereas background-size: l; is equivalent to background-size: l auto;
+// -webkit-background-size differs from background-size only in the interpretation of
+// a single value: -webkit-background-size: l; is equivalent to background-size: l l;
+// whereas background-size: l; is equivalent to background-size: l auto;
 -webkit-background-size
 -webkit-border-after
 -webkit-border-after-color
@@ -208,9 +208,9 @@ z-index
 -webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
-# -webkit-border-radius differs from border-radius only in the interpretation of
-# a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
-# to "border-radius: l1 / l2;"
+// -webkit-border-radius differs from border-radius only in the interpretation of
+// a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
+// to "border-radius: l1 / l2;"
 -webkit-border-radius
 -webkit-border-start
 -webkit-border-start-color

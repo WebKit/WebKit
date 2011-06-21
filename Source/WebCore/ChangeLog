@@ -1,3 +1,34 @@
+2011-06-21  Alexandru Chiculita  <achicu@adobe.com>
+
+        Reviewed by Tony Chang.
+
+        "WebCore/css/makeprop.pl" and "WebCore/css/makevalues.pl" should take ENABLE_ flags into account
+        https://bugs.webkit.org/show_bug.cgi?id=62114
+        
+        Changed the line commenting style in WebCore/css/*.in files from "#" prefixed to "//" prefixed.
+        That's needed because we now pre-process the files with the C++ pre-processor. Also, there's 
+        no need to manually strip the comments anymore.
+        
+        Moved the duplication checks from project files to makeprop.pl and makevalues.pl.
+        In addition makevalues.pl will also lower case the values.
+
+        This is a build script refactoring, so no tests are provided.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_csspropertynames.py:
+        * WebCore.gyp/scripts/action_cssvaluekeywords.py:
+        * css/CSSPropertyNames.in: comment style only
+        * css/CSSValueKeywords.in: comment style only
+        * css/SVGCSSPropertyNames.in: comment style only
+        * css/SVGCSSValueKeywords.in: comment style only
+        * css/WCSSValueKeywords.in: comment style only
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+
 2011-06-21  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Andreas Kling.

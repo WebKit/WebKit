@@ -21,23 +21,42 @@
 #   along with this library; see the file COPYING.LIB.  If not, write to
 #   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 #   Boston, MA 02110-1301, USA.
+use Getopt::Long;
+use preprocessor;
 use strict;
 use warnings;
 
-open NAMES, "<CSSPropertyNames.in" || die "Could not find CSSPropertyNames.in";
+my $defines;
+my $preprocessor;
+GetOptions('defines=s' => \$defines,
+           'preprocessor=s' => \$preprocessor);
+
+my @NAMES = applyPreprocessor("CSSPropertyNames.in", $defines, $preprocessor);
+
+my %namesHash;
+my @duplicates = ();
+
 my @names = ();
 my @aliases = ();
-while (<NAMES>) {
-  next if (m/(^#)|(^\s*$)/);
+foreach (@NAMES) {
+  next if (m/(^\s*$)/);
   # Input may use a different EOL sequence than $/, so avoid chomp.
   $_ =~ s/[\r\n]+$//g;
+  if (exists $namesHash{$_}) {
+    push @duplicates, $_;
+  } else {
+    $namesHash{$_} = 1;
+  }
   if ($_ =~ /=/) {
     push @aliases, $_;
   } else {
     push @names, $_;
   }
 }
-close(NAMES);
+
+if (@duplicates > 0) {
+    die 'Duplicate CSS property names: ', join(', ', @duplicates) . "\n";
+}
 
 open GPERF, ">CSSPropertyNames.gperf" || die "Could not open CSSPropertyNames.gperf for writing";
 print GPERF << "EOF";

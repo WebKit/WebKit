@@ -1,27 +1,27 @@
-# These are all values accepted for CSS2.
-#
-# WARNING:
-# --------
-#
-# The Values are sorted according to the properties they belong to,
-# and have to be in the same order as the enums in RenderStyle.h.
-#
-# If not, the optimizations in the cssparser and style selector will fail,
-# and produce incorrect results.
-#
-#
-# CSS_PROP_*_COLOR
-#
+// These are all values accepted for CSS2.
+//
+// WARNING:
+// --------
+//
+// The Values are sorted according to the properties they belong to,
+// and have to be in the same order as the enums in RenderStyle.h.
+//
+// If not, the optimizations in the cssparser and style selector will fail,
+// and produce incorrect results.
+//
+//
+// CSS_PROP_*_COLOR
+//
 aliceblue
 antiquewhite
-# aqua
+// aqua
 aquamarine
 azure
 beige
 bisque
-# black
+// black
 blanchedalmond
-# blue
+// blue
 blueviolet
 brown
 burlywood
@@ -60,14 +60,14 @@ dodgerblue
 firebrick
 floralwhite
 forestgreen
-# fuchsia
+// fuchsia
 gainsboro
 ghostwhite
 gold
 goldenrod
-# gray
-# grey
-# green
+// gray
+// grey
+// green
 greenyellow
 honeydew
 hotpink
@@ -94,11 +94,11 @@ lightslategray
 lightslategrey
 lightsteelblue
 lightyellow
-# lime
+// lime
 limegreen
 linen
 magenta
-# maroon
+// maroon
 mediumaquamarine
 mediumblue
 mediumorchid
@@ -113,11 +113,11 @@ mintcream
 mistyrose
 moccasin
 navajowhite
-# navy
+// navy
 oldlace
-# olive
+// olive
 olivedrab
-# orange
+// orange
 orangered
 orchid
 palegoldenrod
@@ -130,8 +130,8 @@ peru
 pink
 plum
 powderblue
-# purple
-# red
+// purple
+// red
 rosybrown
 royalblue
 saddlebrown
@@ -140,7 +140,7 @@ sandybrown
 seagreen
 seashell
 sienna
-# silver
+// silver
 skyblue
 slateblue
 slategray
@@ -149,102 +149,102 @@ snow
 springgreen
 steelblue
 tan
-# teal
+// teal
 thistle
 tomato
 turquoise
 violet
 wheat
-# white
+// white
 whitesmoke
-# yellow
+// yellow
 yellowgreen
 
-# CSS_PROP_CLIP_PATH
-# CSS_PROP_CLIP_RULE
+// CSS_PROP_CLIP_PATH
+// CSS_PROP_CLIP_RULE
 nonzero
 evenodd
 
-# CSS_PROP_MASK
-# CSS_PROP_OPACITY
-# CSS_PROP_ENABLE_BACKGROUND
+// CSS_PROP_MASK
+// CSS_PROP_OPACITY
+// CSS_PROP_ENABLE_BACKGROUND
 accumulate
 new
 
-# CSS_PROP_FILTER
-# CSS_PROP_FLOOD_COLOR
-#currentColor
+// CSS_PROP_FILTER
+// CSS_PROP_FLOOD_COLOR
+//currentColor
 
-# CSS_PROP_FLOOD_OPACITY
-# CSS_PROP_LIGHTING_COLOR
-#currentColor
+// CSS_PROP_FLOOD_OPACITY
+// CSS_PROP_LIGHTING_COLOR
+//currentColor
 
-# CSS_PROP_STOP_COLOR
-# CSS_PROP_STOP_OPACITY
-# CSS_PROP_COLOR_INTERPOLATION
-#auto
-#sRGB
+// CSS_PROP_STOP_COLOR
+// CSS_PROP_STOP_OPACITY
+// CSS_PROP_COLOR_INTERPOLATION
+//auto
+//sRGB
 linearRGB
 
-# CSS_PROP_COLOR_INTERPOLATION_FILTERS
-#auto
-#sRGB
-#linearRGB
+// CSS_PROP_COLOR_INTERPOLATION_FILTERS
+//auto
+//sRGB
+//linearRGB
 
-# CSS_PROP_COLOR_PROFILE
-#sRGB
+// CSS_PROP_COLOR_PROFILE
+//sRGB
 
-# CSS_PROP_COLOR_RENDERING
-#auto
-#optimizeSpeed
-#optimizeQuality
+// CSS_PROP_COLOR_RENDERING
+//auto
+//optimizeSpeed
+//optimizeQuality
 
-## CSS_PROP_FILL
-#currentColor
+//// CSS_PROP_FILL
+//currentColor
 
-# CSS_PROP_FILL_OPACITY
-# CSS_PROP_FILL_RULE
-#nonzero
-#evenodd
+// CSS_PROP_FILL_OPACITY
+// CSS_PROP_FILL_RULE
+//nonzero
+//evenodd
 
-# CSS_PROP_IMAGE_RENDERING
-#auto
-#optimizeSpeed
-#optimizeQuality
+// CSS_PROP_IMAGE_RENDERING
+//auto
+//optimizeSpeed
+//optimizeQuality
 
-# CSS_PROP_MARKER
-# CSS_PROP_MARKER_END
-# CSS_PROP_MARKER_MID
-# CSS_PROP_MARKER_START
-# CSS_PROP_SHAPE_RENDERING
-#auto
-#optimizeSpeed
+// CSS_PROP_MARKER
+// CSS_PROP_MARKER_END
+// CSS_PROP_MARKER_MID
+// CSS_PROP_MARKER_START
+// CSS_PROP_SHAPE_RENDERING
+//auto
+//optimizeSpeed
 crispEdges
-#geometricPrecision
+//geometricPrecision
 
-# CSS_PROP_STROKE
-# CSS_PROP_STROKE_DASHARRAY
-# CSS_PROP_STROKE_DASHOFFSET
-# CSS_PROP_STROKE_LINECAP
+// CSS_PROP_STROKE
+// CSS_PROP_STROKE_DASHARRAY
+// CSS_PROP_STROKE_DASHOFFSET
+// CSS_PROP_STROKE_LINECAP
 butt
-# round
-# square
+// round
+// square
 
-# CSS_PROP_STROKE_LINEJOIN
+// CSS_PROP_STROKE_LINEJOIN
 miter
-# round
+// round
 bevel
 
-# CSS_PROP_STROKE_MITERLIMIT
-# CSS_PROP_STROKE_OPACITY
-# CSS_PROP_STROKE_WIDTH
+// CSS_PROP_STROKE_MITERLIMIT
+// CSS_PROP_STROKE_OPACITY
+// CSS_PROP_STROKE_WIDTH
 
-# CSS_PROP_ALIGNMENT_BASELINE
-#auto
-# baseline
+// CSS_PROP_ALIGNMENT_BASELINE
+//auto
+// baseline
 before-edge
 after-edge
-#middle
+//middle
 central
 text-before-edge
 text-after-edge
@@ -253,26 +253,26 @@ alphabetic
 hanging
 mathematical
 
-# CSS_PROP_BASELINE_SHIFT
-#baseline
-# sub
-# super
+// CSS_PROP_BASELINE_SHIFT
+//baseline
+// sub
+// super
 
-# CSS_PROP_DOMINANT_BASELINE
-#auto
+// CSS_PROP_DOMINANT_BASELINE
+//auto
 use-script
 no-change
 reset-size
 
-# CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL
+// CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL
 
-# CSS_PROP_GLYPH_ORIENTATION_VERTICAL
-# CSS_PROP_KERNING
-# CSS_PROP_TEXT_ANCHOR
-# start
-# middle
-# end
+// CSS_PROP_GLYPH_ORIENTATION_VERTICAL
+// CSS_PROP_KERNING
+// CSS_PROP_TEXT_ANCHOR
+// start
+// middle
+// end
 
-# CSS_PROP_VECTOR_EFFECT
-# none
+// CSS_PROP_VECTOR_EFFECT
+// none
 non-scaling-stroke
