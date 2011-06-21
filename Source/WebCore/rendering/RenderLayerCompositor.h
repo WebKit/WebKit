@@ -214,6 +214,7 @@ private:
 
     typedef HashMap<RenderLayer*, IntRect> OverlapMap;
     static void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
+    void addToOverlapMapRecursive(OverlapMap&, RenderLayer*);
     static bool overlapsCompositedLayers(OverlapMap&, const IntRect& layerBounds);
 
     void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*);

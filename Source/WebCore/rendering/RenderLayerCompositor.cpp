@@ -569,6 +569,45 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer*
     overlapMap.add(layer, layerBounds);
 }
 
+void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, RenderLayer* layer)
+{
+    if (!canBeComposited(layer) || overlapMap.contains(layer))
+        return;
+
+    IntRect bounds;
+    bool haveComputedBounds = false;
+    addToOverlapMap(overlapMap, layer, bounds, haveComputedBounds);
+
+    if (layer->isStackingContext()) {
+        if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
+            size_t listSize = negZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i) {
+                RenderLayer* curLayer = negZOrderList->at(i);
+                addToOverlapMapRecursive(overlapMap, curLayer);
+            }
+        }
+    }
+
+    ASSERT(!layer->m_normalFlowListDirty);
+    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
+            addToOverlapMapRecursive(overlapMap, curLayer);
+        }
+    }
+
+    if (layer->isStackingContext()) {
+        if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
+            size_t listSize = posZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i) {
+                RenderLayer* curLayer = posZOrderList->at(i);
+                addToOverlapMapRecursive(overlapMap, curLayer);
+            }
+        }
+    }
+}
+
 bool RenderLayerCompositor::overlapsCompositedLayers(OverlapMap& overlapMap, const IntRect& layerBounds)
 {
     RenderLayerCompositor::OverlapMap::const_iterator end = overlapMap.end();
@@ -698,7 +737,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     if (!willBeComposited && canBeComposited(layer) && childState.m_subtreeIsCompositing && requiresCompositingWhenDescendantsAreCompositing(layer->renderer())) {
         layer->setMustOverlapCompositedLayers(true);
         if (overlapMap)
-            addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+            addToOverlapMapRecursive(*overlapMap, layer);
         willBeComposited = true;
     }
 
@@ -717,7 +756,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // so test that again.
     if (!willBeComposited && canBeComposited(layer) && clipsCompositingDescendants(layer)) {
         if (overlapMap)
-            addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+            addToOverlapMapRecursive(*overlapMap, layer);
         willBeComposited = true;
     }
 
@@ -1820,4 +1859,3 @@ void RenderLayerCompositor::updateContentsScale(float scale, RenderLayer* layer)
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
-
