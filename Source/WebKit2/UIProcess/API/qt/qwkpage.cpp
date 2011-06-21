@@ -306,6 +306,18 @@ void QWKPagePrivate::flashBackingStoreUpdates(const Vector<IntRect>&)
     notImplemented();
 }
 
+QWidget* QWKPagePrivate::ownerWidget()
+{
+    if (!view || !view->scene() || view->scene()->views().isEmpty())
+        return 0;
+
+    QList<QGraphicsView*> views = view->scene()->views();
+    if (views.size() > 1)
+        qWarning("Cannot support multiple views");
+
+    return views.at(0);
+}
+
 void QWKPagePrivate::paint(QPainter* painter, QRect area)
 {
     if (page->isValid() && page->drawingArea()) {

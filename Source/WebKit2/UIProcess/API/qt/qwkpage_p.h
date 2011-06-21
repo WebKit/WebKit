@@ -116,6 +116,8 @@ public:
     void updateNavigationActions();
     void updateEditorActions();
 
+    QWidget* ownerWidget();
+
     void _q_webActionTriggered(bool checked);
 
     void touchEvent(QTouchEvent*);
