@@ -241,6 +241,14 @@ static inline bool isIPv6Char(unsigned char c) { return characterClassTable[c] &
 static inline bool isPathSegmentEndChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & PathSegmentEndChar; }
 static inline bool isPathSegmentEndChar(UChar c) { return c <= 0xff && (characterClassTable[c] & PathSegmentEndChar); }
 static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
+    
+static inline bool isSchemeCharacterMatchIgnoringCase(char character, char schemeCharacter)
+{
+    ASSERT(isSchemeChar(character));
+    ASSERT(schemeCharacter & 0x20);
+    ASSERT(isASCIILower(schemeCharacter) || (!isASCIIUpper(schemeCharacter) && isSchemeChar(schemeCharacter)));
+    return (character | 0x20) == schemeCharacter;
+}
 
 static inline int hexDigitValue(UChar c)
 {
@@ -702,7 +710,7 @@ bool KURL::protocolIs(const char* protocol) const
 
     // Do the comparison without making a new string object.
     for (int i = 0; i < m_schemeEnd; ++i) {
-        if (!protocol[i] || !isLetterMatchIgnoringCase(m_string[i], protocol[i]))
+        if (!protocol[i] || !isSchemeCharacterMatchIgnoringCase(m_string[i], protocol[i]))
             return false;
     }
     return !protocol[m_schemeEnd]; // We should have consumed all characters in the argument.

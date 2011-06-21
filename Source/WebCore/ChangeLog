@@ -1,3 +1,22 @@
+2011-06-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        KURL::protocolIs(const char* protocol) asserts in Debug builds with
+        valid protocols
+        https://bugs.webkit.org/show_bug.cgi?id=61572
+
+        No new tests. No code currently calls protocolIs() with a protocol that
+        contains a non-letter character.
+
+        * platform/KURL.cpp:
+        (WebCore::isSchemeCharacterMatchIgnoringCase): A helper function that
+        compares two characters ignoring case. It assumes (and asserts) that
+        both characters are valid scheme characters, and that if the second
+        argument is a letter that it is lowercase.
+        (WebCore::KURL::protocolIs): Call isSchemeCharacterMatchIgnoringCase()
+        instead of isLetterMatchIgnoringCase().
+
 2011-06-20  Dai Mikurube  <dmikurube@chromium.org>
 
         Reviewed by Kent Tamura.
