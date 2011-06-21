@@ -209,6 +209,9 @@ var WebInspector = {
 
         if (WebInspector.searchController)
             WebInspector.searchController.updateSearchLabel();
+
+        if (WebInspector.drawer)
+            WebInspector.drawer.updateHeight();
     },
 
     get errors()

@@ -218,25 +218,30 @@ WebInspector.Drawer.prototype = {
     {
         this._cancelAnimationIfNeeded();
         this.fullPanel = true;
-        
-        if (this.visible) {
-            this._savedHeight = this.element.offsetHeight;
-            var height = window.innerHeight - this._toolbarElement.offsetHeight;
-            this._animateDrawerHeight(height, WebInspector.Drawer.State.Full);
-        }
+        this.updateHeight();
     },
 
     exitPanelMode: function()
     {
         this._cancelAnimationIfNeeded();
         this.fullPanel = false;
+        this.updateHeight();
+    },
 
+    updateHeight: function()
+    {
         if (this.visible) {
-            // If this animation gets cancelled, we want the state of the drawer to be Variable,
-            // so that the new animation can't do an immediate transition between Hidden/Full states.
-            this.state = WebInspector.Drawer.State.Variable;
-            var height = this.savedHeight;
-            this._animateDrawerHeight(height, WebInspector.Drawer.State.Variable);
+            if (this.fullPanel) {
+                this._savedHeight = this.element.offsetHeight;
+                var height = window.innerHeight - this._toolbarElement.offsetHeight;
+                this._animateDrawerHeight(height, WebInspector.Drawer.State.Full);
+            } else {
+                // If this animation gets cancelled, we want the state of the drawer to be Variable,
+                // so that the new animation can't do an immediate transition between Hidden/Full states.
+                this.state = WebInspector.Drawer.State.Variable;
+                var height = this.savedHeight;
+                this._animateDrawerHeight(height, WebInspector.Drawer.State.Variable);
+            }
         }
     },
 

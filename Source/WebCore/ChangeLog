@@ -1,3 +1,17 @@
+2011-06-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Attached state changes do not affect the drawer height
+        https://bugs.webkit.org/show_bug.cgi?id=63061
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.enterPanelMode):
+        (WebInspector.Drawer.prototype.exitPanelMode):
+        (WebInspector.Drawer.prototype.updateHeight):
+        * inspector/front-end/inspector.js:
+        (WebInspector.set attached):
+
 2011-06-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
