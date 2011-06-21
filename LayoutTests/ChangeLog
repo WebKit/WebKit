@@ -1,3 +1,20 @@
+2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Chromium layout test failure after r89317
+        https://bugs.webkit.org/show_bug.cgi?id=63031
+
+        Event Listener sidebar output prints out the full path
+        to the source file in the sourceName property. For testing
+        purposes, since the path will be different per system,
+        clip the early part of the path and leave the expected part.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpSelectedElementEventListeners):
+        (initialize_ElementTest.InspectorTest.dumpObjectPropertySection):
+        * platform/chromium/inspector/elements/event-listener-sidebar-expected.txt:
+
 2011-06-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

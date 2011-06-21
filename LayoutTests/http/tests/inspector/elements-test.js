@@ -146,6 +146,11 @@ InspectorTest.expandSelectedElementEventListenersEventBars = function(callback)
 
 InspectorTest.dumpSelectedElementEventListeners = function(callback)
 {
+    function formatSourceNameProperty(value)
+    {
+        return "[clipped-for-test]/" + value.replace(/(.*?\/)LayoutTests/, "LayoutTests");
+    }
+
     var eventListenerSections = WebInspector.panels.elements.sidebarPanes.eventListeners.sections;
     for (var i = 0; i < eventListenerSections.length; ++i) {
         var section = eventListenerSections[i];
@@ -155,14 +160,16 @@ InspectorTest.dumpSelectedElementEventListeners = function(callback)
         var eventBarChildren = section.eventBars.children;
         for (var j = 0; j < eventBarChildren.length; ++j) {
             var objectPropertiesSection = eventBarChildren[j]._section;
-            InspectorTest.dumpObjectPropertySection(objectPropertiesSection);
+            InspectorTest.dumpObjectPropertySection(objectPropertiesSection, {
+                sourceName: formatSourceNameProperty
+            });
         }
     }
 
     callback();
 }
 
-InspectorTest.dumpObjectPropertySection = function(section)
+InspectorTest.dumpObjectPropertySection = function(section, formatters)
 {
     var expandedSubstring = section.expanded ? "[expanded]" : "[collapsed]";
     InspectorTest.addResult(expandedSubstring + " " + section.titleElement.textContent + " " + section.subtitleAsTextForTest);
@@ -173,6 +180,8 @@ InspectorTest.dumpObjectPropertySection = function(section)
         var property = section.propertiesForTest[i];
         var key = property.name;
         var value = property.value._description;
+        if (key in formatters)
+            value = formatters[key](value);
         InspectorTest.addResult("    " + key + ": " + value);
     }
 }
