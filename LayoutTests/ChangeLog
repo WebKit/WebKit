@@ -1,3 +1,13 @@
+2011-06-21  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Adding version of fast/events/offsetX-offsetY.html without text run or line height deps
+        https://bugs.webkit.org/show_bug.cgi?id=63073
+
+        * fast/events/document-elementFromPoint-expected.txt: Added.
+        * fast/events/document-elementFromPoint.html: Added.
+
 2011-06-21  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.
