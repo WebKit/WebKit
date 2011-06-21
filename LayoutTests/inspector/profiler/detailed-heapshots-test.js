@@ -361,7 +361,7 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
 {
     callback = InspectorTest.safeWrap(callback);
     var uid = InspectorTest._nextUid++;
-    var profile = { typeId: WebInspector.HeapSnapshotProfileType.TypeId, uid: uid, title: UserInitiatedProfileName + "." + uid };
+    var profile = { typeId: WebInspector.DetailedHeapshotProfileType.TypeId, uid: uid, title: UserInitiatedProfileName + "." + uid };
     function pushGeneratedSnapshot(typeId, uid)
     {
         var snapshot = generator();

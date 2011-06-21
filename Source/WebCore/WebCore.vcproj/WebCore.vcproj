@@ -68025,10 +68025,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\HeapSnapshotView.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\HeapSnapshotWorker.js"
 					>
 				</File>

@@ -92,12 +92,9 @@ private:
 PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& title, HeapSnapshotProgress* control)
 {
     v8::HandleScope hs;
-    const v8::HeapSnapshot* snapshot = 0;
-    if (control) {
-        ActivityControlAdapter adapter(control);
-        snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kFull, &adapter);
-    } else
-        snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kAggregated);
+    ASSERT(control);
+    ActivityControlAdapter adapter(control);
+    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kFull, &adapter);
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
 

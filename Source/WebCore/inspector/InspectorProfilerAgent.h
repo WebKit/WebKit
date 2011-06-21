@@ -87,7 +87,7 @@ public:
 
     void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling(bool ignoreProfile = false);
-    void takeHeapSnapshot(ErrorString* error, bool detailed);
+    void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
 
 private:

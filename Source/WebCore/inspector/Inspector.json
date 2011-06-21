@@ -1693,10 +1693,7 @@
                 "name": "clearProfiles"
             },
             {
-                "name": "takeHeapSnapshot",
-                "parameters": [
-                    { "name": "detailed", "type": "boolean" }
-                ]
+                "name": "takeHeapSnapshot"
             },
             {
                 "name": "collectGarbage"

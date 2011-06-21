@@ -634,7 +634,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get profile()
     {
-        return this.parent.getProfile(WebInspector.HeapSnapshotProfileType.TypeId, this._profileUid);
+        return this.parent.getProfile(WebInspector.DetailedHeapshotProfileType.TypeId, this._profileUid);
     },
 
     get profileWrapper()
@@ -644,7 +644,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get baseProfile()
     {
-        return this.parent.getProfile(WebInspector.HeapSnapshotProfileType.TypeId, this._baseProfileUid);
+        return this.parent.getProfile(WebInspector.DetailedHeapshotProfileType.TypeId, this._baseProfileUid);
     },
 
     get baseProfileWrapper()
@@ -863,7 +863,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     _profiles: function()
     {
-        return WebInspector.panels.profiles.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
+        return WebInspector.panels.profiles.getProfiles(WebInspector.DetailedHeapshotProfileType.TypeId);
     },
 
     _loadProfile: function(profileUid, callback)
@@ -1176,8 +1176,10 @@ WebInspector.DetailedHeapshotView.prototype.showHiddenData = true;
 
 WebInspector.DetailedHeapshotProfileType = function()
 {
-    WebInspector.ProfileType.call(this, WebInspector.HeapSnapshotProfileType.TypeId, WebInspector.UIString("HEAP SNAPSHOTS"));
+    WebInspector.ProfileType.call(this, WebInspector.DetailedHeapshotProfileType.TypeId, WebInspector.UIString("HEAP SNAPSHOTS"));
 }
+
+WebInspector.DetailedHeapshotProfileType.TypeId = "HEAP";
 
 WebInspector.DetailedHeapshotProfileType.prototype = {
     get buttonTooltip()
@@ -1192,7 +1194,7 @@ WebInspector.DetailedHeapshotProfileType.prototype = {
 
     buttonClicked: function()
     {
-        WebInspector.panels.profiles.takeHeapSnapshot(true);
+        WebInspector.panels.profiles.takeHeapSnapshot();
     },
 
     get welcomeMessage()

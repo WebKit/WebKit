@@ -6266,7 +6266,6 @@
             'inspector/front-end/HAREntry.js',
             'inspector/front-end/HeapSnapshot.js',
             'inspector/front-end/HeapSnapshotProxy.js',
-            'inspector/front-end/HeapSnapshotView.js',
             'inspector/front-end/HeapSnapshotWorker.js',
             'inspector/front-end/HeapSnapshotWorkerDispatcher.js',
             'inspector/front-end/HelpScreen.js',
