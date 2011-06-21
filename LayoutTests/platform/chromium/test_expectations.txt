@@ -3267,7 +3267,6 @@ BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAG
 BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
@@ -3338,7 +3337,6 @@ BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg =
 BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
@@ -4012,5 +4010,6 @@ BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
 
 BUGWK63056 WIN RELEASE : inspector/elements/elements-panel-styles.html = PASS TEXT
 
-BUGCR86974 : svg/css/composite-shadow-example = TEXT PASS
+BUGCR86974 : svg/css/composite-shadow-example.html = TEXT PASS
 BUGCR86974 : svg/css/composite-shadow-with-opacity.html = TEXT PASS
+
