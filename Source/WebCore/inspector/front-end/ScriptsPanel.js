@@ -127,7 +127,7 @@ WebInspector.ScriptsPanel = function()
     var panelEnablerButton = WebInspector.UIString("Enable Debugging");
 
     this.panelEnablerView = new WebInspector.PanelEnablerView("scripts", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
-    this.panelEnablerView.addEventListener("enable clicked", this.enableDebugging, this);
+    this.panelEnablerView.addEventListener("enable clicked", this._enableDebugging, this);
 
     this.element.appendChild(this.panelEnablerView.element);
     this.element.appendChild(this.viewsContainerElement);
@@ -135,7 +135,7 @@ WebInspector.ScriptsPanel = function()
     this.element.appendChild(this.sidebarResizeElement);
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
-    this.enableToggleButton.addEventListener("click", this.toggleDebugging.bind(this), false);
+    this.enableToggleButton.addEventListener("click", this._toggleDebugging.bind(this), false);
     if (Preferences.debuggerAlwaysEnabled)
         this.enableToggleButton.element.addStyleClass("hidden");
 
@@ -830,26 +830,14 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateBackAndForwardButtons();
     },
 
-    get debuggingEnabled()
-    {
-        return this._debuggerEnabled;
-    },
-
-    enableDebugging: function()
+    _enableDebugging: function()
     {
         if (this._debuggerEnabled)
             return;
-        this.toggleDebugging(this.panelEnablerView.alwaysEnabled);
+        this._toggleDebugging(this.panelEnablerView.alwaysEnabled);
     },
 
-    disableDebugging: function()
-    {
-        if (!this._debuggerEnabled)
-            return;
-        this.toggleDebugging(this.panelEnablerView.alwaysEnabled);
-    },
-
-    toggleDebugging: function(optionalAlways)
+    _toggleDebugging: function(optionalAlways)
     {
         this._paused = false;
         this._waitingToPause = false;

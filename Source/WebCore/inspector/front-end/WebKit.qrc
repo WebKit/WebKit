@@ -58,7 +58,6 @@
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
-    <file>InspectorFrontendAPI.js</file>
     <file>InspectorFrontendHostStub.js</file>
     <file>JavaScriptFormatter.js</file>
     <file>KeyboardShortcut.js</file>

@@ -101,7 +101,7 @@ WebInspector.ProfilesPanel = function()
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling profiling will make scripts run slower.");
     var panelEnablerButton = WebInspector.UIString("Enable Profiling");
     this.panelEnablerView = new WebInspector.PanelEnablerView("profiles", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
-    this.panelEnablerView.addEventListener("enable clicked", this.enableProfiler, this);
+    this.panelEnablerView.addEventListener("enable clicked", this._enableProfiling, this);
 
     this.element.appendChild(this.panelEnablerView.element);
 
@@ -590,21 +590,9 @@ WebInspector.ProfilesPanel.prototype = {
         }
     },
 
-    get profilerEnabled()
-    {
-        return this._profilerEnabled;
-    },
-
-    enableProfiler: function()
+    _enableProfiling: function()
     {
         if (this._profilerEnabled)
-            return;
-        this._toggleProfiling(this.panelEnablerView.alwaysEnabled);
-    },
-
-    disableProfiler: function()
-    {
-        if (!this._profilerEnabled)
             return;
         this._toggleProfiling(this.panelEnablerView.alwaysEnabled);
     },

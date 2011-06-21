@@ -1042,7 +1042,6 @@ protected:
     HWND m_viewWindow;
     WebFrame* m_mainFrame;
     WebCore::Page* m_page;
-    WebInspectorClient* m_inspectorClient;
     
     RefPtr<RefCountedHBITMAP> m_backingStoreBitmap;
     SIZE m_backingStoreSize;

@@ -6270,7 +6270,6 @@
             'inspector/front-end/HeapSnapshotWorkerDispatcher.js',
             'inspector/front-end/HelpScreen.js',
             'inspector/front-end/ImageView.js',
-            'inspector/front-end/InspectorFrontendAPI.js',
             'inspector/front-end/InspectorFrontendHostStub.js',
             'inspector/front-end/InjectedFakeWorker.js',
             'inspector/front-end/inspector.js',

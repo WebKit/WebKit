@@ -29,7 +29,6 @@
 #include "config.h"
 #include "WebInspector.h"
 
-#include "WebInspectorClient.h"
 #include "WebKitDLL.h"
 #include "WebView.h"
 #include <WebCore/InspectorController.h>
@@ -38,17 +37,16 @@
 
 using namespace WebCore;
 
-WebInspector* WebInspector::createInstance(WebView* webView, WebInspectorClient* inspectorClient)
+WebInspector* WebInspector::createInstance(WebView* webView)
 {
-    WebInspector* inspector = new WebInspector(webView, inspectorClient);
+    WebInspector* inspector = new WebInspector(webView);
     inspector->AddRef();
     return inspector;
 }
 
-WebInspector::WebInspector(WebView* webView, WebInspectorClient* inspectorClient)
+WebInspector::WebInspector(WebView* webView)
     : m_refCount(0)
     , m_webView(webView)
-    , m_inspectorClient(inspectorClient)
 {
     ASSERT_ARG(webView, webView);
 
@@ -62,15 +60,9 @@ WebInspector::~WebInspector()
     gClassNameCount.remove("WebInspector");
 }
 
-WebInspectorFrontendClient* WebInspector::frontendClient()
-{
-    return m_inspectorClient ? m_inspectorClient->frontendClient() : 0;
-}
-
 void WebInspector::webViewClosed()
 {
     m_webView = 0;
-    m_inspectorClient = 0;
 }
 
 HRESULT STDMETHODCALLTYPE WebInspector::QueryInterface(REFIID riid, void** ppvObject)
@@ -114,8 +106,9 @@ HRESULT STDMETHODCALLTYPE WebInspector::show()
 
 HRESULT STDMETHODCALLTYPE WebInspector::showConsole()
 {
-    if (frontendClient())
-        frontendClient()->showConsole();
+    if (m_webView)
+        if (Page* page = m_webView->page())
+            page->inspectorController()->showConsole();
 
     return S_OK;
 }
@@ -151,24 +144,32 @@ HRESULT STDMETHODCALLTYPE WebInspector::isDebuggingJavaScript(BOOL* isDebugging)
 
     *isDebugging = FALSE;
 
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    *isDebugging = frontendClient()->isDebuggingEnabled();
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isDebugging = page->inspectorController()->debuggerEnabled();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebInspector::toggleDebuggingJavaScript()
 {
-    show();
-
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    if (frontendClient()->isDebuggingEnabled())
-        frontendClient()->setDebuggingEnabled(false);
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    InspectorController* inspector = page->inspectorController();
+
+    if (inspector->debuggerEnabled())
+        inspector->disableDebugger();
     else
-        frontendClient()->setDebuggingEnabled(true);
+        inspector->showAndEnableDebugger();
 
     return S_OK;
 }
@@ -180,25 +181,32 @@ HRESULT STDMETHODCALLTYPE WebInspector::isProfilingJavaScript(BOOL* isProfiling)
 
     *isProfiling = FALSE;
 
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    *isProfiling = frontendClient()->isProfilingJavaScript();
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
 
+    *isProfiling = page->inspectorController()->isRecordingUserInitiatedProfile();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebInspector::toggleProfilingJavaScript()
 {
-    show();
-
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    if (frontendClient()->isProfilingJavaScript())
-        frontendClient()->stopProfilingJavaScript();
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    InspectorController* inspector = page->inspectorController();
+
+    if (inspector->isRecordingUserInitiatedProfile())
+        inspector->stopUserInitiatedProfiling();
     else
-        frontendClient()->startProfilingJavaScript();
+        inspector->startUserInitiatedProfiling();
 
     return S_OK;
 }
@@ -210,21 +218,31 @@ HRESULT STDMETHODCALLTYPE WebInspector::isJavaScriptProfilingEnabled(BOOL* isPro
 
     *isProfilingEnabled = FALSE;
 
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    *isProfilingEnabled = frontendClient()->isJavaScriptProfilingEnabled();
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isProfilingEnabled = page->inspectorController()->profilerEnabled();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebInspector::setJavaScriptProfilingEnabled(BOOL enabled)
 {
-    show();
-
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    frontendClient()->setJavaScriptProfilingEnabled(enabled);
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    if (enabled)
+        page->inspectorController()->enableProfiler();
+    else
+        page->inspectorController()->disableProfiler();
+
     return S_OK;
 }
 
@@ -249,20 +267,30 @@ HRESULT STDMETHODCALLTYPE WebInspector::isTimelineProfilingEnabled(BOOL* isEnabl
 
     *isEnabled = FALSE;
 
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    *isEnabled = frontendClient()->isTimelineProfilingEnabled();
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isEnabled = page->inspectorController()->timelineProfilerEnabled();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebInspector::setTimelineProfilingEnabled(BOOL enabled)
 {
-    show();
-
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    frontendClient()->setTimelineProfilingEnabled(enabled);
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    if (enabled)
+        page->inspectorController()->startTimelineProfiler();
+    else
+        page->inspectorController()->stopTimelineProfiler();
+
     return S_OK;
 }

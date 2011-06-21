@@ -579,7 +579,6 @@ WebInspector.CPUProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.CPUProfileType.TypeId, WebInspector.UIString("CPU PROFILES"));
     this._recording = false;
-    WebInspector.CPUProfileType.instance = this;
 }
 
 WebInspector.CPUProfileType.TypeId = "CPU";
@@ -608,23 +607,6 @@ WebInspector.CPUProfileType.prototype = {
     get welcomeMessage()
     {
         return WebInspector.UIString("Control CPU profiling by pressing the %s button on the status bar.");
-    },
-
-    isRecordingProfile: function()
-    {
-        return this._recording;
-    },
-
-    startRecordingProfile: function()
-    {
-        this._recording = true;
-        ProfilerAgent.start();
-    },
-
-    stopRecordingProfile: function()
-    {
-        this._recording = false;
-        ProfilerAgent.stop();
     },
 
     setRecordingProfile: function(isProfiling)

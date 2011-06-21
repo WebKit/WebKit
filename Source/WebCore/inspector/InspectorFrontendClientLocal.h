@@ -32,7 +32,6 @@
 #define InspectorFrontendClientLocal_h
 
 #include "InspectorFrontendClient.h"
-#include "PlatformString.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -75,31 +74,12 @@ public:
 
     static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight);
 
-    // Direct Frontend API
-    bool isDebuggingEnabled();
-    void setDebuggingEnabled(bool);
-
-    bool isJavaScriptProfilingEnabled();
-    void setJavaScriptProfilingEnabled(bool);
-
-    bool isTimelineProfilingEnabled();
-    void setTimelineProfilingEnabled(bool);
-
-    bool isProfilingJavaScript();
-    void startProfilingJavaScript();
-    void stopProfilingJavaScript();
-
-    void showConsole();
-
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
     void setAttachedWindow(bool);
     void restoreAttachedWindowHeight();
 
 private:
-    bool evaluateAsBoolean(const String& expression);
-    void evaluateOnLoad(const String& expression);
-
     friend class FrontendMenuProvider;
     InspectorController* m_inspectorController;
     Page* m_frontendPage;
@@ -107,8 +87,6 @@ private:
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
     OwnPtr<InspectorFrontendClientLocal::Settings> m_settings;
-    bool m_frontendLoaded;
-    String m_evaluateOnLoad;
 };
 
 } // namespace WebCore

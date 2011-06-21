@@ -1,3 +1,14 @@
+2011-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89354.
+        http://trac.webkit.org/changeset/89354
+        https://bugs.webkit.org/show_bug.cgi?id=63099
+
+        Broke tests on Mac (Requested by rniwa on #webkit).
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest.disableDebugger):
+
 2011-06-21  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed update of test expectations after r89381.
