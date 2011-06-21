@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -49,6 +49,7 @@ class OutputHLSL : public TIntermTraverser
     bool isSingleStatement(TIntermNode *node);
     bool handleExcessiveLoop(TIntermLoop *node);
     void outputTriplet(Visit visit, const TString &preString, const TString &inString, const TString &postString);
+    void outputLineDirective(int line);
     TString argumentString(const TIntermSymbol *symbol);
     int vectorSize(const TType &type) const;
 
@@ -75,10 +76,13 @@ class OutputHLSL : public TIntermTraverser
     // Parameters determining what goes in the header output
     bool mUsesTexture2D;
     bool mUsesTexture2D_bias;
+    bool mUsesTexture2DLod;
     bool mUsesTexture2DProj;
     bool mUsesTexture2DProj_bias;
+    bool mUsesTexture2DProjLod;
     bool mUsesTextureCube;
     bool mUsesTextureCube_bias;
+    bool mUsesTextureCubeLod;
     bool mUsesDepthRange;
     bool mUsesFragCoord;
     bool mUsesPointCoord;

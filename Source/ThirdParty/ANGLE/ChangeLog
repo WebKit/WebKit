@@ -1,3 +1,552 @@
+2011-06-20  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Update ANGLE to r696
+        https://bugs.webkit.org/show_bug.cgi?id=56396
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * include/EGL/eglext.h:
+        * include/GLSLANG/ShaderLang.h:
+        * src/build_angle.xcodeproj/project.pbxproj:
+        * src/common/debug.cpp:
+        (gl::output):
+        (gl::trace):
+        (gl::perfActive):
+        (gl::ScopedPerfEventHelper::ScopedPerfEventHelper):
+        (gl::ScopedPerfEventHelper::~ScopedPerfEventHelper):
+        * src/common/debug.h:
+        * src/common/version.h: Added.
+        * src/compiler/CodeGenGLSL.cpp:
+        (ConstructCompiler):
+        * src/compiler/CodeGenHLSL.cpp:
+        (ConstructCompiler):
+        * src/compiler/Compiler.cpp:
+        (TCompiler::compile):
+        (TCompiler::mapLongVariableNames):
+        (TCompiler::getMappedNameMaxLength):
+        (TCompiler::getExtensionBehavior):
+        * src/compiler/ConstantUnion.h:
+        (ConstantUnion::operator==):
+        (ConstantUnion::operator>):
+        (ConstantUnion::operator<):
+        * src/compiler/ExtensionBehavior.h:
+        (getBehaviorString):
+        * src/compiler/ForLoopUnroll.cpp: Added.
+        (ForLoopUnroll::FillLoopIndexInfo):
+        (ForLoopUnroll::Step):
+        (ForLoopUnroll::SatisfiesLoopCondition):
+        (ForLoopUnroll::NeedsToReplaceSymbolWithValue):
+        (ForLoopUnroll::GetLoopIndexValue):
+        (ForLoopUnroll::Push):
+        (ForLoopUnroll::Pop):
+        (ForLoopUnroll::getLoopIncrement):
+        (ForLoopUnroll::evaluateIntConstant):
+        * src/compiler/ForLoopUnroll.h: Added.
+        (ForLoopUnroll::ForLoopUnroll):
+        * src/compiler/Initialize.cpp:
+        (BuiltInFunctionsVertex):
+        * src/compiler/MapLongVariableNames.cpp: Added.
+        (MapLongVariableNames::MapLongVariableNames):
+        (MapLongVariableNames::visitSymbol):
+        (MapLongVariableNames::visitConstantUnion):
+        (MapLongVariableNames::visitBinary):
+        (MapLongVariableNames::visitUnary):
+        (MapLongVariableNames::visitSelection):
+        (MapLongVariableNames::visitAggregate):
+        (MapLongVariableNames::visitLoop):
+        (MapLongVariableNames::visitBranch):
+        (MapLongVariableNames::mapVaryingLongName):
+        * src/compiler/MapLongVariableNames.h: Added.
+        * src/compiler/OutputESSL.cpp: Added.
+        (TOutputESSL::TOutputESSL):
+        (TOutputESSL::writeVariablePrecision):
+        * src/compiler/OutputESSL.h: Added.
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::TOutputGLSL):
+        (TOutputGLSL::writeVariablePrecision):
+        * src/compiler/OutputGLSL.h:
+        * src/compiler/OutputGLSLBase.cpp: Added.
+        (TOutputGLSLBase::TOutputGLSLBase):
+        (TOutputGLSLBase::writeTriplet):
+        (TOutputGLSLBase::writeVariableType):
+        (TOutputGLSLBase::writeFunctionParameters):
+        (TOutputGLSLBase::writeConstantUnion):
+        (TOutputGLSLBase::visitSymbol):
+        (TOutputGLSLBase::visitConstantUnion):
+        (TOutputGLSLBase::visitBinary):
+        (TOutputGLSLBase::visitUnary):
+        (TOutputGLSLBase::visitSelection):
+        (TOutputGLSLBase::visitAggregate):
+        (TOutputGLSLBase::visitLoop):
+        (TOutputGLSLBase::visitBranch):
+        (TOutputGLSLBase::visitCodeBlock):
+        * src/compiler/OutputGLSLBase.h: Added.
+        (TOutputGLSLBase::objSink):
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitUnary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitSelection):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::visitBranch):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::outputLineDirective):
+        * src/compiler/OutputHLSL.h:
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::precisionErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::nonInitErrorCheck):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        * src/compiler/ShHandle.h:
+        * src/compiler/ShaderLang.cpp:
+        (getVariableInfo):
+        (ShConstructCompiler):
+        (ShGetInfo):
+        (ShGetActiveAttrib):
+        (ShGetActiveUniform):
+        * src/compiler/TranslatorESSL.cpp: Added.
+        (TranslatorESSL::TranslatorESSL):
+        (TranslatorESSL::translate):
+        (TranslatorESSL::writeExtensionBehavior):
+        * src/compiler/TranslatorESSL.h: Added.
+        * src/compiler/ValidateLimitations.cpp:
+        (ValidateLimitations::visitBinary):
+        (ValidateLimitations::visitLoop):
+        * src/compiler/ValidateLimitations.h:
+        * src/compiler/VariableInfo.cpp:
+        (getVariableInfo):
+        (getBuiltInVariableInfo):
+        (getUserDefinedVariableInfo):
+        (CollectAttribsUniforms::visitAggregate):
+        * src/compiler/VariableInfo.h:
+        * src/compiler/VersionGLSL.cpp:
+        (TVersionGLSL::visitSymbol):
+        (TVersionGLSL::visitConstantUnion):
+        (TVersionGLSL::visitBinary):
+        (TVersionGLSL::visitUnary):
+        (TVersionGLSL::visitSelection):
+        (TVersionGLSL::visitAggregate):
+        (TVersionGLSL::visitLoop):
+        (TVersionGLSL::visitBranch):
+        * src/compiler/VersionGLSL.h:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/glslang_tab.h:
+        * src/compiler/intermediate.h:
+        (TIntermLoop::TIntermLoop):
+        (TIntermLoop::setUnrollFlag):
+        (TIntermLoop::getUnrollFlag):
+        (TIntermSymbol::TIntermSymbol):
+        (TIntermSymbol::setId):
+        (TIntermSymbol::setSymbol):
+        (TIntermSymbol::getOriginalSymbol):
+        (TIntermAggregate::TIntermAggregate):
+        (TIntermAggregate::setEndLine):
+        (TIntermAggregate::getEndLine):
+        * src/compiler/preprocessor/atom.c:
+        (AddString):
+        * src/compiler/preprocessor/compile.h:
+        * src/compiler/preprocessor/cpp.c:
+        (CPPelse):
+        (eval):
+        (CPPif):
+        (CPPifdef):
+        (readCPPline):
+        (ChkCorrectElseNesting):
+        * src/compiler/preprocessor/cppstruct.c:
+        (ResetPreprocessor):
+        * src/compiler/preprocessor/scanner.c:
+        (byte_scan):
+        (yylex_CPP):
+        * src/compiler/preprocessor/scanner.h:
+        * src/libEGL/Config.cpp:
+        (egl::Config::Config):
+        (egl::Config::set):
+        (egl::ConfigSet::add):
+        (egl::ConfigSet::getConfigs):
+        * src/libEGL/Config.h:
+        * src/libEGL/Display.cpp:
+        (egl::Display::Display):
+        (egl::Display::initialize):
+        (egl::Display::terminate):
+        (egl::Display::getConfigAttrib):
+        (egl::Display::createDevice):
+        (egl::Display::createWindowSurface):
+        (egl::Display::createOffscreenSurface):
+        (egl::Display::createContext):
+        (egl::Display::destroyContext):
+        (egl::Display::isInitialized):
+        (egl::Display::getAdapterIdentifier):
+        (egl::Display::isDeviceLost):
+        (egl::Display::getBufferPool):
+        (egl::Display::initExtensionString):
+        (egl::Display::getExtensionString):
+        (egl::Display::getVertexTextureSupport):
+        (egl::Display::getNonPower2TextureSupport):
+        * src/libEGL/Display.h:
+        (egl::Display::isD3d9ExDevice):
+        * src/libEGL/Surface.cpp:
+        (egl::Surface::Surface):
+        (egl::Surface::initialize):
+        (egl::Surface::release):
+        (egl::Surface::resetSwapChain):
+        (egl::SurfaceWindowProc):
+        (egl::Surface::subclassWindow):
+        (egl::Surface::unsubclassWindow):
+        (egl::Surface::swap):
+        (egl::Surface::getRenderTarget):
+        (egl::Surface::getOffscreenTexture):
+        (egl::Surface::getTextureFormat):
+        (egl::Surface::getTextureTarget):
+        (egl::Surface::setBoundTexture):
+        (egl::Surface::getBoundTexture):
+        (egl::Surface::getFormat):
+        * src/libEGL/Surface.h:
+        (egl::Surface::getShareHandle):
+        * src/libEGL/libEGL.cpp:
+        (validateDisplay):
+        (validateConfig):
+        (validateContext):
+        (validateSurface):
+        * src/libEGL/libEGL.rc: Added.
+        * src/libEGL/libEGL.vcproj:
+        * src/libEGL/main.cpp:
+        (DllMain):
+        * src/libEGL/main.h:
+        * src/libEGL/resource.h: Added.
+        * src/libGLESv2/Blit.cpp:
+        (gl::Blit::initGeometry):
+        (gl::Blit::copy):
+        * src/libGLESv2/Blit.h:
+        * src/libGLESv2/Buffer.cpp:
+        (gl::Buffer::Buffer):
+        (gl::Buffer::~Buffer):
+        (gl::Buffer::bufferData):
+        (gl::Buffer::bufferSubData):
+        (gl::Buffer::getStaticVertexBuffer):
+        (gl::Buffer::getStaticIndexBuffer):
+        (gl::Buffer::invalidateStaticData):
+        (gl::Buffer::promoteStaticUsage):
+        * src/libGLESv2/Buffer.h:
+        * src/libGLESv2/Context.cpp:
+        (gl::Context::Context):
+        (gl::Context::~Context):
+        (gl::Context::makeCurrent):
+        (gl::Context::markAllStateDirty):
+        (gl::Context::setActiveSampler):
+        (gl::Context::createFramebuffer):
+        (gl::Context::createFence):
+        (gl::Context::deleteFramebuffer):
+        (gl::Context::deleteFence):
+        (gl::Context::bindTexture2D):
+        (gl::Context::bindTextureCubeMap):
+        (gl::Context::getTexture2D):
+        (gl::Context::getTextureCubeMap):
+        (gl::Context::getSamplerTexture):
+        (gl::Context::getIntegerv):
+        (gl::Context::applyRenderTarget):
+        (gl::Context::applyState):
+        (gl::Context::applyVertexBuffer):
+        (gl::Context::applyShaders):
+        (gl::Context::applyTextures):
+        (gl::Context::readPixels):
+        (gl::Context::clear):
+        (gl::Context::drawArrays):
+        (gl::Context::drawElements):
+        (gl::Context::finish):
+        (gl::Context::flush):
+        (gl::Context::drawClosingLine):
+        (gl::Context::getMaximumVertexTextureImageUnits):
+        (gl::Context::getMaximumCombinedTextureImageUnits):
+        (gl::Context::supportsNonPower2Texture):
+        (gl::Context::detachTexture):
+        (gl::Context::getIncompleteTexture):
+        (gl::Context::initExtensionString):
+        (gl::Context::blitFramebuffer):
+        (gl::VertexDeclarationCache::VertexDeclarationCache):
+        (gl::VertexDeclarationCache::~VertexDeclarationCache):
+        (gl::VertexDeclarationCache::applyDeclaration):
+        * src/libGLESv2/Context.h:
+        * src/libGLESv2/Framebuffer.cpp:
+        (gl::Framebuffer::lookupRenderbuffer):
+        (gl::Framebuffer::completeness):
+        * src/libGLESv2/Framebuffer.h:
+        * src/libGLESv2/HandleAllocator.cpp: Added.
+        (gl::HandleAllocator::HandleAllocator):
+        (gl::HandleAllocator::~HandleAllocator):
+        (gl::HandleAllocator::setBaseHandle):
+        (gl::HandleAllocator::allocate):
+        (gl::HandleAllocator::release):
+        * src/libGLESv2/HandleAllocator.h: Added.
+        * src/libGLESv2/IndexDataManager.cpp: Added.
+        (gl::IndexDataManager::IndexDataManager):
+        (gl::IndexDataManager::~IndexDataManager):
+        (gl::convertIndices):
+        (gl::computeRange):
+        (gl::IndexDataManager::prepareIndexData):
+        (gl::IndexDataManager::indexSize):
+        (gl::IndexDataManager::typeSize):
+        (gl::IndexBuffer::IndexBuffer):
+        (gl::IndexBuffer::~IndexBuffer):
+        (gl::IndexBuffer::getBuffer):
+        (gl::IndexBuffer::unmap):
+        (gl::StreamingIndexBuffer::StreamingIndexBuffer):
+        (gl::StreamingIndexBuffer::~StreamingIndexBuffer):
+        (gl::StreamingIndexBuffer::map):
+        (gl::StreamingIndexBuffer::reserveSpace):
+        (gl::StaticIndexBuffer::StaticIndexBuffer):
+        (gl::StaticIndexBuffer::~StaticIndexBuffer):
+        (gl::StaticIndexBuffer::map):
+        (gl::StaticIndexBuffer::reserveSpace):
+        (gl::StaticIndexBuffer::lookupType):
+        (gl::StaticIndexBuffer::lookupRange):
+        (gl::StaticIndexBuffer::addRange):
+        * src/libGLESv2/IndexDataManager.h: Added.
+        (gl::IndexBuffer::size):
+        * src/libGLESv2/Program.cpp:
+        (gl::Program::getSemanticIndex):
+        (gl::Program::getSamplerMapping):
+        (gl::Program::getSamplerTextureType):
+        (gl::Program::compileToBinary):
+        (gl::Program::packVaryings):
+        (gl::Program::linkVaryings):
+        (gl::Program::link):
+        (gl::Program::linkUniforms):
+        (gl::Program::defineUniform):
+        (gl::Program::applyUniform1iv):
+        (gl::Program::appendToInfoLogSanitized):
+        (gl::Program::unlink):
+        (gl::Program::getActiveUniformMaxLength):
+        (gl::Program::validate):
+        (gl::Program::validateSamplers):
+        * src/libGLESv2/Program.h:
+        * src/libGLESv2/Renderbuffer.cpp:
+        (gl::Renderbuffer::getWidth):
+        (gl::Renderbuffer::getHeight):
+        (gl::Renderbuffer::getInternalFormat):
+        (gl::Renderbuffer::getRedSize):
+        (gl::Renderbuffer::getGreenSize):
+        (gl::Renderbuffer::getBlueSize):
+        (gl::Renderbuffer::getAlphaSize):
+        (gl::Renderbuffer::getDepthSize):
+        (gl::Renderbuffer::getStencilSize):
+        (gl::Renderbuffer::getSamples):
+        (gl::RenderbufferStorage::RenderbufferStorage):
+        (gl::RenderbufferStorage::getWidth):
+        (gl::RenderbufferStorage::getHeight):
+        (gl::RenderbufferStorage::getInternalFormat):
+        (gl::RenderbufferStorage::getRedSize):
+        (gl::RenderbufferStorage::getGreenSize):
+        (gl::RenderbufferStorage::getBlueSize):
+        (gl::RenderbufferStorage::getAlphaSize):
+        (gl::RenderbufferStorage::getDepthSize):
+        (gl::RenderbufferStorage::getStencilSize):
+        (gl::RenderbufferStorage::getD3DFormat):
+        (gl::Colorbuffer::Colorbuffer):
+        (gl::Colorbuffer::getWidth):
+        (gl::Colorbuffer::getHeight):
+        (gl::Colorbuffer::getInternalFormat):
+        (gl::Colorbuffer::getType):
+        (gl::Colorbuffer::getD3DFormat):
+        (gl::Colorbuffer::isColorbuffer):
+        (gl::Colorbuffer::getRenderTarget):
+        (gl::DepthStencilbuffer::DepthStencilbuffer):
+        (gl::Depthbuffer::Depthbuffer):
+        (gl::Stencilbuffer::Stencilbuffer):
+        * src/libGLESv2/Renderbuffer.h:
+        * src/libGLESv2/ResourceManager.cpp:
+        (gl::ResourceManager::createBuffer):
+        (gl::ResourceManager::createShader):
+        (gl::ResourceManager::createProgram):
+        (gl::ResourceManager::createTexture):
+        (gl::ResourceManager::createRenderbuffer):
+        (gl::ResourceManager::deleteBuffer):
+        (gl::ResourceManager::deleteShader):
+        (gl::ResourceManager::deleteProgram):
+        (gl::ResourceManager::deleteTexture):
+        (gl::ResourceManager::deleteRenderbuffer):
+        (gl::ResourceManager::checkTextureAllocation):
+        * src/libGLESv2/ResourceManager.h:
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::Shader):
+        (gl::Shader::compileToHLSL):
+        * src/libGLESv2/Shader.h:
+        * src/libGLESv2/Texture.cpp:
+        (gl::Texture::Image::Image):
+        (gl::Texture::Image::~Image):
+        (gl::Texture::Image::isRenderable):
+        (gl::Texture::Image::getD3DFormat):
+        (gl::Texture::Texture):
+        (gl::Texture::setMinFilter):
+        (gl::Texture::setMagFilter):
+        (gl::Texture::setWrapS):
+        (gl::Texture::setWrapT):
+        (gl::Texture::loadImageData):
+        (gl::Texture::loadAlphaImageData):
+        (gl::Texture::loadAlphaFloatImageData):
+        (gl::Texture::loadAlphaHalfFloatImageData):
+        (gl::Texture::loadLuminanceImageData):
+        (gl::Texture::loadLuminanceFloatImageData):
+        (gl::Texture::loadLuminanceHalfFloatImageData):
+        (gl::Texture::loadLuminanceAlphaImageData):
+        (gl::Texture::loadLuminanceAlphaFloatImageData):
+        (gl::Texture::loadLuminanceAlphaHalfFloatImageData):
+        (gl::Texture::loadRGBUByteImageData):
+        (gl::Texture::loadRGB565ImageData):
+        (gl::Texture::loadRGBFloatImageData):
+        (gl::Texture::loadRGBHalfFloatImageData):
+        (gl::Texture::loadRGBAUByteImageDataSSE2):
+        (gl::Texture::loadRGBAUByteImageData):
+        (gl::Texture::loadRGBA4444ImageData):
+        (gl::Texture::loadRGBA5551ImageData):
+        (gl::Texture::loadRGBAFloatImageData):
+        (gl::Texture::loadRGBAHalfFloatImageData):
+        (gl::Texture::loadBGRAImageData):
+        (gl::Texture::loadCompressedImageData):
+        (gl::Texture::createSurface):
+        (gl::Texture::setImage):
+        (gl::Texture::setCompressedImage):
+        (gl::Texture::subImage):
+        (gl::Texture::subImageCompressed):
+        (gl::Texture::copyToImage):
+        (gl::Texture::getTexture):
+        (gl::Texture::isDirtyParameter):
+        (gl::Texture::isDirtyImage):
+        (gl::Texture::resetDirty):
+        (gl::Texture::getSerial):
+        (gl::Texture::creationLevels):
+        (gl::Texture::levelCount):
+        (gl::Texture::issueSerial):
+        (gl::Texture2D::Texture2D):
+        (gl::Texture2D::~Texture2D):
+        (gl::Texture2D::getWidth):
+        (gl::Texture2D::getHeight):
+        (gl::Texture2D::getInternalFormat):
+        (gl::Texture2D::getType):
+        (gl::Texture2D::getD3DFormat):
+        (gl::Texture2D::redefineTexture):
+        (gl::Texture2D::setImage):
+        (gl::Texture2D::bindTexImage):
+        (gl::Texture2D::releaseTexImage):
+        (gl::Texture2D::setCompressedImage):
+        (gl::Texture2D::commitRect):
+        (gl::Texture2D::copyImage):
+        (gl::Texture2D::copySubImage):
+        (gl::Texture2D::isComplete):
+        (gl::Texture2D::isCompressed):
+        (gl::Texture2D::getBaseTexture):
+        (gl::Texture2D::createTexture):
+        (gl::Texture2D::updateTexture):
+        (gl::Texture2D::convertToRenderTarget):
+        (gl::Texture2D::generateMipmaps):
+        (gl::Texture2D::getRenderbuffer):
+        (gl::Texture2D::getRenderTarget):
+        (gl::TextureCubeMap::getWidth):
+        (gl::TextureCubeMap::getHeight):
+        (gl::TextureCubeMap::getInternalFormat):
+        (gl::TextureCubeMap::getType):
+        (gl::TextureCubeMap::getD3DFormat):
+        (gl::TextureCubeMap::setImagePosX):
+        (gl::TextureCubeMap::setImageNegX):
+        (gl::TextureCubeMap::setImagePosY):
+        (gl::TextureCubeMap::setImageNegY):
+        (gl::TextureCubeMap::setImagePosZ):
+        (gl::TextureCubeMap::setImageNegZ):
+        (gl::TextureCubeMap::setCompressedImage):
+        (gl::TextureCubeMap::commitRect):
+        (gl::TextureCubeMap::isComplete):
+        (gl::TextureCubeMap::isCompressed):
+        (gl::TextureCubeMap::getBaseTexture):
+        (gl::TextureCubeMap::createTexture):
+        (gl::TextureCubeMap::updateTexture):
+        (gl::TextureCubeMap::convertToRenderTarget):
+        (gl::TextureCubeMap::setImage):
+        (gl::TextureCubeMap::redefineTexture):
+        (gl::TextureCubeMap::copyImage):
+        (gl::TextureCubeMap::getCubeMapSurface):
+        (gl::TextureCubeMap::copySubImage):
+        (gl::TextureCubeMap::generateMipmaps):
+        (gl::TextureCubeMap::getRenderbuffer):
+        (gl::TextureCubeMap::getRenderTarget):
+        * src/libGLESv2/Texture.h:
+        * src/libGLESv2/VertexDataManager.cpp: Added.
+        (gl::VertexDataManager::VertexDataManager):
+        (gl::VertexDataManager::~VertexDataManager):
+        (gl::VertexDataManager::writeAttributeData):
+        (gl::VertexDataManager::prepareVertexData):
+        (gl::VertexDataManager::spaceRequired):
+        (gl::VertexDataManager::checkVertexCaps):
+        (gl::VertexDataManager::typeIndex):
+        (gl::VertexBuffer::VertexBuffer):
+        (gl::VertexBuffer::~VertexBuffer):
+        (gl::VertexBuffer::unmap):
+        (gl::VertexBuffer::getBuffer):
+        (gl::ConstantVertexBuffer::ConstantVertexBuffer):
+        (gl::ConstantVertexBuffer::~ConstantVertexBuffer):
+        (gl::ArrayVertexBuffer::ArrayVertexBuffer):
+        (gl::ArrayVertexBuffer::~ArrayVertexBuffer):
+        (gl::ArrayVertexBuffer::addRequiredSpace):
+        (gl::ArrayVertexBuffer::addRequiredSpaceFor):
+        (gl::StreamingVertexBuffer::StreamingVertexBuffer):
+        (gl::StreamingVertexBuffer::~StreamingVertexBuffer):
+        (gl::StreamingVertexBuffer::map):
+        (gl::StreamingVertexBuffer::reserveRequiredSpace):
+        (gl::StaticVertexBuffer::StaticVertexBuffer):
+        (gl::StaticVertexBuffer::~StaticVertexBuffer):
+        (gl::StaticVertexBuffer::map):
+        (gl::StaticVertexBuffer::reserveRequiredSpace):
+        (gl::StaticVertexBuffer::lookupAttribute):
+        (gl::VertexDataManager::formatConverter):
+        * src/libGLESv2/VertexDataManager.h: Added.
+        (gl::ArrayVertexBuffer::size):
+        (gl::VertexDataManager::dirtyCurrentValue):
+        * src/libGLESv2/libGLESv2.cpp:
+        (validImageSize):
+        (Extension::glBindTexImage):
+        * src/libGLESv2/libGLESv2.def:
+        * src/libGLESv2/libGLESv2.rc: Added.
+        * src/libGLESv2/libGLESv2.vcproj:
+        * src/libGLESv2/main.cpp:
+        (error):
+        * src/libGLESv2/mathutil.h:
+        (gl::clamp):
+        (gl::clamp01):
+        (gl::transformPixelRect):
+        (gl::transformPixelYOffset):
+        (gl::adjustWinding):
+        (gl::supportsSSE2):
+        * src/libGLESv2/resource.h: Added.
+        * src/libGLESv2/utilities.cpp:
+        (gl::ComputeCompressedPitch):
+        (es2dx::ConvertCubeFace):
+        (es2dx::ConvertPrimitiveType):
+        (es2dx::ConvertRenderbufferFormat):
+        (es2dx::GetMultisampleTypeFromSamples):
+        (dx2es::GetStencilSize):
+        (dx2es::GetAlphaSize):
+        (dx2es::GetRedSize):
+        (dx2es::GetGreenSize):
+        (dx2es::GetBlueSize):
+        (dx2es::GetDepthSize):
+        (getTempPath):
+        (writeFile):
+        * src/libGLESv2/utilities.h:
+        * src/libGLESv2/vertexconversion.h: Added.
+        (gl::Identity::convert):
+        (gl::Cast::convert):
+        (gl::Normalize::convert):
+        (gl::FixedToFloat::convert):
+        (gl::SimpleDefaultValues::zero):
+        (gl::SimpleDefaultValues::one):
+        (gl::NormalizedDefaultValues::zero):
+        (gl::NormalizedDefaultValues::one):
+        (gl::VertexDataConverter::convertArray):
+        (gl::VertexDataConverter::pointerAddBytes):
+        (gl::VertexDataConverter::copyComponent):
+
 2011-05-24  David Kilzer  <ddkilzer@apple.com>
 
         Part 2 of 2: <http://webkit.org/b/60805> Enable -Wnewline-eof on ANGLE

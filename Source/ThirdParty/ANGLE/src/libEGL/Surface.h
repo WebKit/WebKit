@@ -17,6 +17,11 @@
 
 #include "common/angleutils.h"
 
+namespace gl
+{
+class Texture2D;
+}
+
 namespace egl
 {
 class Display;
@@ -26,11 +31,13 @@ class Surface
 {
   public:
     Surface(Display *display, const egl::Config *config, HWND window);
+    Surface(Display *display, const egl::Config *config, HANDLE shareHandle, EGLint width, EGLint height, EGLenum textureFormat, EGLenum textureTarget);
 
     ~Surface();
 
+    bool initialize();
     void release();
-    void resetSwapChain();
+    bool resetSwapChain();
 
     HWND getWindowHandle();
     bool swap();
@@ -40,32 +47,35 @@ class Surface
 
     virtual IDirect3DSurface9 *getRenderTarget();
     virtual IDirect3DSurface9 *getDepthStencil();
+    virtual IDirect3DTexture9 *getOffscreenTexture();
+
+    HANDLE getShareHandle() { return mShareHandle; }
 
     void setSwapInterval(EGLint interval);
     bool checkForOutOfDateSwapChain();   // Returns true if swapchain changed due to resize or interval update
+
+    virtual EGLenum getTextureFormat() const;
+    virtual EGLenum getTextureTarget() const;
+    virtual D3DFORMAT getFormat() const;
+
+    virtual void setBoundTexture(gl::Texture2D *texture);
+    virtual gl::Texture2D *getBoundTexture() const;
 
 private:
     DISALLOW_COPY_AND_ASSIGN(Surface);
 
     Display *const mDisplay;
     IDirect3DSwapChain9 *mSwapChain;
-    IDirect3DSurface9 *mBackBuffer;
     IDirect3DSurface9 *mDepthStencil;
-    IDirect3DTexture9 *mFlipTexture;
+    IDirect3DSurface9* mRenderTarget;
+    IDirect3DTexture9* mOffscreenTexture;
+
+    HANDLE mShareHandle;
 
     void subclassWindow();
     void unsubclassWindow();
-    void resetSwapChain(int backbufferWidth, int backbufferHeight);
+    bool resetSwapChain(int backbufferWidth, int backbufferHeight);
     static DWORD convertInterval(EGLint interval);
-
-    void applyFlipState(IDirect3DDevice9 *device);
-    void restoreState(IDirect3DDevice9 *device);
-    void writeRecordableFlipState(IDirect3DDevice9 *device);
-    void releaseRecordedState(IDirect3DDevice9 *device);
-    IDirect3DStateBlock9 *mFlipState;
-    IDirect3DStateBlock9 *mPreFlipState;
-    IDirect3DSurface9 *mPreFlipBackBuffer;
-    IDirect3DSurface9 *mPreFlipDepthStencil;
 
     const HWND mWindow;            // Window that the surface is created for.
     bool mWindowSubclassed;        // Indicates whether we successfully subclassed mWindow for WM_RESIZE hooking
@@ -81,13 +91,14 @@ private:
     EGLint mPixelAspectRatio;      // Display aspect ratio
     EGLenum mRenderBuffer;         // Render buffer
     EGLenum mSwapBehavior;         // Buffer swap behavior
-//  EGLenum textureFormat;         // Format of texture: RGB, RGBA, or no texture
-//  EGLenum textureTarget;         // Type of texture: 2D or no texture
+    EGLenum mTextureFormat;        // Format of texture: RGB, RGBA, or no texture
+    EGLenum mTextureTarget;        // Type of texture: 2D or no texture
 //  EGLenum vgAlphaFormat;         // Alpha format for OpenVG
 //  EGLenum vgColorSpace;          // Color space for OpenVG
     EGLint mSwapInterval;
     DWORD mPresentInterval;
     bool mPresentIntervalDirty;
+    gl::Texture2D *mTexture;
 };
 }
 

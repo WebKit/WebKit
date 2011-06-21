@@ -19,10 +19,10 @@ using namespace std;
 
 namespace egl
 {
-Config::Config(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInterval, D3DFORMAT renderTargetFormat, D3DFORMAT depthStencilFormat, EGLint multiSample)
+Config::Config(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInterval, D3DFORMAT renderTargetFormat, D3DFORMAT depthStencilFormat, EGLint multiSample, EGLint texWidth, EGLint texHeight)
     : mDisplayMode(displayMode), mRenderTargetFormat(renderTargetFormat), mDepthStencilFormat(depthStencilFormat), mMultiSample(multiSample)
 {
-    set(displayMode, minInterval, maxInterval, renderTargetFormat, depthStencilFormat, multiSample);
+    set(displayMode, minInterval, maxInterval, renderTargetFormat, depthStencilFormat, multiSample, texWidth, texHeight);
 }
 
 void Config::setDefaults()
@@ -62,8 +62,10 @@ void Config::setDefaults()
     mTransparentBlueValue = EGL_DONT_CARE;
 }
 
-void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInterval, D3DFORMAT renderTargetFormat, D3DFORMAT depthStencilFormat, EGLint multiSample)
+void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInterval, D3DFORMAT renderTargetFormat, D3DFORMAT depthStencilFormat, EGLint multiSample, EGLint texWidth, EGLint texHeight)
 {
+    mBindToTextureRGB = EGL_FALSE;
+    mBindToTextureRGBA = EGL_FALSE;
     switch (renderTargetFormat)
     {
       case D3DFMT_A1R5G5B5:
@@ -86,6 +88,7 @@ void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInter
         mGreenSize = 8;
         mBlueSize = 8;
         mAlphaSize = 8;
+        mBindToTextureRGBA = true;
         break;
       case D3DFMT_R5G6B5:
         mBufferSize = 16;
@@ -100,6 +103,7 @@ void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInter
         mGreenSize = 8;
         mBlueSize = 8;
         mAlphaSize = 0;
+        mBindToTextureRGB = true;
         break;
       default:
         UNREACHABLE();   // Other formats should not be valid
@@ -107,8 +111,6 @@ void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInter
 
     mLuminanceSize = 0;
     mAlphaMaskSize = 0;
-    mBindToTextureRGB = EGL_FALSE;
-    mBindToTextureRGBA = EGL_FALSE;
     mColorBufferType = EGL_RGB_BUFFER;
     mConfigCaveat = (displayMode.Format == renderTargetFormat) ? EGL_NONE : EGL_SLOW_CONFIG;
     mConfigID = 0;
@@ -116,6 +118,10 @@ void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInter
 
     switch (depthStencilFormat)
     {
+      case D3DFMT_UNKNOWN:
+        mDepthSize = 0;
+        mStencilSize = 0;
+        break;
 //    case D3DFMT_D16_LOCKABLE:
 //      mDepthSize = 16;
 //      mStencilSize = 0;
@@ -158,9 +164,9 @@ void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInter
 
     mLevel = 0;
     mMatchNativePixmap = EGL_NONE;
-    mMaxPBufferWidth = 0;
-    mMaxPBufferHeight = 0;
-    mMaxPBufferPixels = 0;
+    mMaxPBufferWidth = texWidth;
+    mMaxPBufferHeight = texHeight;
+    mMaxPBufferPixels = texWidth*texHeight;
     mMaxSwapInterval = maxInterval;
     mMinSwapInterval = minInterval;
     mNativeRenderable = EGL_FALSE;
@@ -282,9 +288,9 @@ ConfigSet::ConfigSet()
 {
 }
 
-void ConfigSet::add(D3DDISPLAYMODE displayMode, EGLint minSwapInterval, EGLint maxSwapInterval, D3DFORMAT renderTargetFormat, D3DFORMAT depthStencilFormat, EGLint multiSample)
+void ConfigSet::add(D3DDISPLAYMODE displayMode, EGLint minSwapInterval, EGLint maxSwapInterval, D3DFORMAT renderTargetFormat, D3DFORMAT depthStencilFormat, EGLint multiSample, EGLint texWidth, EGLint texHeight)
 {
-    Config config(displayMode, minSwapInterval, maxSwapInterval, renderTargetFormat, depthStencilFormat, multiSample);
+    Config config(displayMode, minSwapInterval, maxSwapInterval, renderTargetFormat, depthStencilFormat, multiSample, texWidth, texHeight);
 
     mSet.insert(config);
 }
@@ -337,6 +343,9 @@ bool ConfigSet::getConfigs(EGLConfig *configs, const EGLint *attribList, EGLint 
               case EGL_RENDERABLE_TYPE:           match = (config->mRenderableType & attribute[1]) == attribute[1]; break;
               case EGL_MATCH_NATIVE_PIXMAP:       match = false; UNIMPLEMENTED();                                   break;
               case EGL_CONFORMANT:                match = (config->mConformant & attribute[1]) == attribute[1];     break;
+              case EGL_MAX_PBUFFER_WIDTH:         match = config->mMaxPBufferWidth >= attribute[1];                 break;
+              case EGL_MAX_PBUFFER_HEIGHT:        match = config->mMaxPBufferHeight >= attribute[1];                break;
+              case EGL_MAX_PBUFFER_PIXELS:        match = config->mMaxPBufferPixels >= attribute[1];                break;
               default:
                 return false;
             }

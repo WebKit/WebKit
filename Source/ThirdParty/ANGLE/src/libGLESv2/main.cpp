@@ -119,23 +119,23 @@ void error(GLenum errorCode)
         {
           case GL_INVALID_ENUM:
             context->recordInvalidEnum();
-            gl::trace("\t! Error generated: invalid enum\n");
+            TRACE("\t! Error generated: invalid enum\n");
             break;
           case GL_INVALID_VALUE:
             context->recordInvalidValue();
-            gl::trace("\t! Error generated: invalid value\n");
+            TRACE("\t! Error generated: invalid value\n");
             break;
           case GL_INVALID_OPERATION:
             context->recordInvalidOperation();
-            gl::trace("\t! Error generated: invalid operation\n");
+            TRACE("\t! Error generated: invalid operation\n");
             break;
           case GL_OUT_OF_MEMORY:
             context->recordOutOfMemory();
-            gl::trace("\t! Error generated: out of memory\n");
+            TRACE("\t! Error generated: out of memory\n");
             break;
           case GL_INVALID_FRAMEBUFFER_OPERATION:
             context->recordInvalidFramebufferOperation();
-            gl::trace("\t! Error generated: invalid framebuffer operation\n");
+            TRACE("\t! Error generated: invalid framebuffer operation\n");
             break;
           default: UNREACHABLE();
         }

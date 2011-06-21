@@ -127,8 +127,8 @@ class VertexShader : public Shader
 
     ~VertexShader();
 
-    GLenum getType();
-    void compile();
+    virtual GLenum getType();
+    virtual void compile();
     int getSemanticIndex(const std::string &attributeName);
 
   private:
@@ -146,8 +146,8 @@ class FragmentShader : public Shader
 
     ~FragmentShader();
 
-    GLenum getType();
-    void compile();
+    virtual GLenum getType();
+    virtual void compile();
 
   private:
     DISALLOW_COPY_AND_ASSIGN(FragmentShader);

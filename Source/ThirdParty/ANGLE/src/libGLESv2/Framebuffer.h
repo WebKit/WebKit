@@ -59,7 +59,6 @@ class Framebuffer
     GLuint getStencilbufferHandle();
 
     bool hasStencil();
-    bool isMultisample();
     int getSamples();
 
     virtual GLenum completeness();

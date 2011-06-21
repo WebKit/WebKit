@@ -18,16 +18,16 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
     {
       case DLL_PROCESS_ATTACH:
         {
-            #ifndef NDEBUG
-                FILE *debug = fopen("debug.txt", "rt");
+#if !defined(ANGLE_DISABLE_TRACE)
+            FILE *debug = fopen(TRACE_OUTPUT_FILE, "rt");
 
-                if (debug)
-                {
-                    fclose(debug);
-                    debug = fopen("debug.txt", "wt");   // Erase
-                    fclose(debug);
-                }
-            #endif
+            if (debug)
+            {
+                fclose(debug);
+                debug = fopen(TRACE_OUTPUT_FILE, "wt");   // Erase
+                fclose(debug);
+            }
+#endif
 
             currentTLS = TlsAlloc();
 

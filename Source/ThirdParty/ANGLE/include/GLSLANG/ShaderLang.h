@@ -17,7 +17,7 @@ extern "C" {
 
 // Version number for shader translation API.
 // It is incremented everytime the API changes.
-#define SH_VERSION 103
+#define SH_VERSION 105
 
 //
 // The names of the following enums have been derived by replacing GL prefix
@@ -34,6 +34,12 @@ typedef enum {
   SH_GLES2_SPEC = 0x8B40,
   SH_WEBGL_SPEC = 0x8B41
 } ShShaderSpec;
+
+typedef enum {
+  SH_ESSL_OUTPUT = 0x8B45,
+  SH_GLSL_OUTPUT = 0x8B46,
+  SH_HLSL_OUTPUT = 0x8B47
+} ShShaderOutput;
 
 typedef enum {
   SH_NONE           = 0,
@@ -62,16 +68,20 @@ typedef enum {
   SH_ACTIVE_UNIFORMS             =  0x8B86,
   SH_ACTIVE_UNIFORM_MAX_LENGTH   =  0x8B87,
   SH_ACTIVE_ATTRIBUTES           =  0x8B89,
-  SH_ACTIVE_ATTRIBUTE_MAX_LENGTH =  0x8B8A
+  SH_ACTIVE_ATTRIBUTE_MAX_LENGTH =  0x8B8A,
+  SH_MAPPED_NAME_MAX_LENGTH      =  0x8B8B
 } ShShaderInfo;
 
 // Compile options.
 typedef enum {
-  SH_VALIDATE               = 0,
-  SH_VALIDATE_LOOP_INDEXING = 0x0001,
-  SH_INTERMEDIATE_TREE      = 0x0002,
-  SH_OBJECT_CODE            = 0x0004,
-  SH_ATTRIBUTES_UNIFORMS    = 0x0008
+  SH_VALIDATE                = 0,
+  SH_VALIDATE_LOOP_INDEXING  = 0x0001,
+  SH_INTERMEDIATE_TREE       = 0x0002,
+  SH_OBJECT_CODE             = 0x0004,
+  SH_ATTRIBUTES_UNIFORMS     = 0x0008,
+  SH_LINE_DIRECTIVES         = 0x0010,
+  SH_SOURCE_PATH             = 0x0020,
+  SH_MAP_LONG_VARIABLE_NAMES = 0x0040
 } ShCompileOptions;
 
 //
@@ -124,13 +134,17 @@ typedef void* ShHandle;
 //
 // Driver calls these to create and destroy compiler objects.
 //
-// Returns the handle of constructed compiler.
+// Returns the handle of constructed compiler, null if the requested compiler is
+// not supported.
 // Parameters:
 // type: Specifies the type of shader - SH_FRAGMENT_SHADER or SH_VERTEX_SHADER.
 // spec: Specifies the language spec the compiler must conform to -
 //       SH_GLES2_SPEC or SH_WEBGL_SPEC.
+// output: Specifies the output code type - SH_ESSL_OUTPUT, SH_GLSL_OUTPUT,
+//         or SH_HLSL_OUTPUT.
 // resources: Specifies the built-in resources.
 ShHandle ShConstructCompiler(ShShaderType type, ShShaderSpec spec,
+                             ShShaderOutput output,
                              const ShBuiltInResources* resources);
 void ShDestruct(ShHandle handle);
 
@@ -183,6 +197,8 @@ int ShCompile(
 // SH_ACTIVE_UNIFORM_MAX_LENGTH: the length of the longest active uniform
 //                               variable name including the null
 //                               termination character.
+// SH_MAPPED_NAME_MAX_LENGTH: the length of the mapped variable name including
+//                            the null termination character.
 // 
 // params: Requested parameter
 void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params);
@@ -221,12 +237,18 @@ void ShGetObjectCode(const ShHandle handle, char* objCode);
 //       accomodate the attribute variable name. The size of the buffer
 //       required to store the attribute variable name can be obtained by
 //       calling ShGetInfo with SH_ACTIVE_ATTRIBUTE_MAX_LENGTH.
+// mappedName: Returns a null terminated string containing the mapped name of
+//             the attribute variable, It is assumed that mappedName has enough
+//             memory (SH_MAPPED_NAME_MAX_LENGTH), or NULL if don't care
+//             about the mapped name. If the name is not mapped, then name and
+//             mappedName are the same.
 void ShGetActiveAttrib(const ShHandle handle,
                        int index,
                        int* length,
                        int* size,
                        ShDataType* type,
-                       char* name);
+                       char* name,
+                       char* mappedName);
 
 // Returns information about an active uniform variable.
 // Parameters:
@@ -242,12 +264,18 @@ void ShGetActiveAttrib(const ShHandle handle,
 //       accomodate the uniform variable name. The size of the buffer required
 //       to store the uniform variable name can be obtained by calling
 //       ShGetInfo with SH_ACTIVE_UNIFORMS_MAX_LENGTH.
+// mappedName: Returns a null terminated string containing the mapped name of
+//             the uniform variable, It is assumed that mappedName has enough
+//             memory (SH_MAPPED_NAME_MAX_LENGTH), or NULL if don't care
+//             about the mapped name. If the name is not mapped, then name and
+//             mappedName are the same.
 void ShGetActiveUniform(const ShHandle handle,
                         int index,
                         int* length,
                         int* size,
                         ShDataType* type,
-                        char* name);
+                        char* name,
+                        char* mappedName);
 
 #ifdef __cplusplus
 }

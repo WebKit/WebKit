@@ -26,26 +26,17 @@ public:
 
     bool operator==(const int i) const
     {
-        if (i == iConst)
-            return true;
-
-        return false;
+        return i == iConst;
     }
 
     bool operator==(const float f) const
     {
-        if (f == fConst)
-            return true;
-
-        return false;
+        return f == fConst;
     }
 
     bool operator==(const bool b) const
     {
-        if (b == bConst)
-            return true;
-
-        return false;
+        return b == bConst;
     }
 
     bool operator==(const ConstantUnion& constant) const
@@ -55,20 +46,11 @@ public:
 
         switch (type) {
         case EbtInt:
-            if (constant.iConst == iConst)
-                return true;
-
-            break;
+            return constant.iConst == iConst;
         case EbtFloat:
-            if (constant.fConst == fConst)
-                return true;
-
-            break;
+            return constant.fConst == fConst;
         case EbtBool:
-            if (constant.bConst == bConst)
-                return true;
-
-            break;
+            return constant.bConst == bConst;
         default:
             return false;
         }
@@ -101,18 +83,11 @@ public:
         assert(type == constant.type);
         switch (type) {
         case EbtInt:
-            if (iConst > constant.iConst)
-                return true;
-
-            return false;
+            return iConst > constant.iConst;
         case EbtFloat:
-            if (fConst > constant.fConst)
-                return true;
-
-            return false;
+            return fConst > constant.fConst;
         default:
-            assert(false && "Default missing");
-            return false;
+            return false;   // Invalid operation, handled at semantic analysis
         }
 
         return false;
@@ -123,18 +98,11 @@ public:
         assert(type == constant.type);
         switch (type) {
         case EbtInt:
-            if (iConst < constant.iConst)
-                return true;
-
-            return false;
+            return iConst < constant.iConst;
         case EbtFloat:
-            if (fConst < constant.fConst)
-                return true;
-
-            return false;
+            return fConst < constant.fConst;
         default:
-            assert(false && "Default missing");
-            return false;
+            return false;   // Invalid operation, handled at semantic analysis
         }
 
         return false;

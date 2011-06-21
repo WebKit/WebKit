@@ -13,9 +13,10 @@
 #define GL_APICALL
 #include <GLES2/gl2.h>
 
-#include <map>
+#include <hash_map>
 
 #include "common/angleutils.h"
+#include "libGLESv2/HandleAllocator.h"
 
 namespace gl
 {
@@ -25,12 +26,19 @@ class Program;
 class Texture;
 class Renderbuffer;
 
+enum TextureType
+{
+    TEXTURE_2D,
+    TEXTURE_CUBE,
+
+    TEXTURE_TYPE_COUNT,
+    TEXTURE_UNKNOWN
+};
+
 enum SamplerType
 {
-    SAMPLER_2D,
-    SAMPLER_CUBE,
-
-    SAMPLER_TYPE_COUNT
+    SAMPLER_PIXEL,
+    SAMPLER_VERTEX
 };
 
 class ResourceManager
@@ -63,7 +71,7 @@ class ResourceManager
     void setRenderbuffer(GLuint handle, Renderbuffer *renderbuffer);
 
     void checkBufferAllocation(unsigned int buffer);
-    void checkTextureAllocation(GLuint texture, SamplerType type);
+    void checkTextureAllocation(GLuint texture, TextureType type);
     void checkRenderbufferAllocation(GLuint renderbuffer);
 
   private:
@@ -71,20 +79,24 @@ class ResourceManager
 
     std::size_t mRefCount;
 
-    typedef std::map<GLuint, Buffer*> BufferMap;
+    typedef stdext::hash_map<GLuint, Buffer*> BufferMap;
     BufferMap mBufferMap;
+    HandleAllocator mBufferHandleAllocator;
 
-    typedef std::map<GLuint, Shader*> ShaderMap;
+    typedef stdext::hash_map<GLuint, Shader*> ShaderMap;
     ShaderMap mShaderMap;
 
-    typedef std::map<GLuint, Program*> ProgramMap;
+    typedef stdext::hash_map<GLuint, Program*> ProgramMap;
     ProgramMap mProgramMap;
+    HandleAllocator mProgramShaderHandleAllocator;
 
-    typedef std::map<GLuint, Texture*> TextureMap;
+    typedef stdext::hash_map<GLuint, Texture*> TextureMap;
     TextureMap mTextureMap;
+    HandleAllocator mTextureHandleAllocator;
 
-    typedef std::map<GLuint, Renderbuffer*> RenderbufferMap;
+    typedef stdext::hash_map<GLuint, Renderbuffer*> RenderbufferMap;
     RenderbufferMap mRenderbufferMap;
+    HandleAllocator mRenderbufferHandleAllocator;
 };
 
 }

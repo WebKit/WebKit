@@ -161,3 +161,4 @@ EXPORTS
     glMakeCurrent                   @146 NONAME
     glGetCurrentContext             @147 NONAME
     glGetProcAddress                @148 NONAME
+    glBindTexImage                  @158 NONAME

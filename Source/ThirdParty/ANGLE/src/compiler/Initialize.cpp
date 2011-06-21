@@ -353,17 +353,15 @@ static TString BuiltInFunctionsVertex(const ShBuiltInResources& resources)
     //
     // Texture Functions.
     //
-    if (resources.MaxVertexTextureImageUnits > 0) {
-        s.append(TString("vec4 texture2D(sampler2D sampler, vec2 coord);"));
-        s.append(TString("vec4 texture2DProj(sampler2D sampler, vec3 coord);"));
-        s.append(TString("vec4 texture2DProj(sampler2D sampler, vec4 coord);"));
-        s.append(TString("vec4 textureCube(samplerCube sampler, vec3 coord);"));
+    s.append(TString("vec4 texture2D(sampler2D sampler, vec2 coord);"));
+    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec3 coord);"));
+    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec4 coord);"));
+    s.append(TString("vec4 textureCube(samplerCube sampler, vec3 coord);"));
 
-        s.append(TString("vec4 texture2DLod(sampler2D sampler, vec2 coord, float lod);"));
-        s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec3 coord, float lod);"));
-        s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec4 coord, float lod);"));
-        s.append(TString("vec4 textureCubeLod(samplerCube sampler, vec3 coord, float lod);"));
-    }
+    s.append(TString("vec4 texture2DLod(sampler2D sampler, vec2 coord, float lod);"));
+    s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec3 coord, float lod);"));
+    s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec4 coord, float lod);"));
+    s.append(TString("vec4 textureCubeLod(samplerCube sampler, vec3 coord, float lod);"));
 
     return s;
 }

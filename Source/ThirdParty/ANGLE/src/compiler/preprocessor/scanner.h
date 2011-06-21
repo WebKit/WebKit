@@ -49,7 +49,7 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define __SCANNER_H 1
 
 // These lengths do not include the NULL terminator.
-#define MAX_SYMBOL_NAME_LEN 127
+#define MAX_SYMBOL_NAME_LEN 256
 #define MAX_STRING_LEN 511
 
 #include "compiler/preprocessor/parser.h"

@@ -39,9 +39,10 @@ class Buffer : public RefCountObject
     size_t size() const { return mSize; }
     GLenum usage() const { return mUsage; }
 
-    StaticVertexBuffer *getVertexBuffer();
-    StaticIndexBuffer *getIndexBuffer();
+    StaticVertexBuffer *getStaticVertexBuffer();
+    StaticIndexBuffer *getStaticIndexBuffer();
     void invalidateStaticData();
+    void promoteStaticUsage(int dataSize);
 
   private:
     DISALLOW_COPY_AND_ASSIGN(Buffer);
@@ -50,8 +51,9 @@ class Buffer : public RefCountObject
     size_t mSize;
     GLenum mUsage;
 
-    StaticVertexBuffer *mVertexBuffer;
-    StaticIndexBuffer *mIndexBuffer;
+    StaticVertexBuffer *mStaticVertexBuffer;
+    StaticIndexBuffer *mStaticIndexBuffer;
+    size_t mUnmodifiedDataUse;
 };
 
 }

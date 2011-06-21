@@ -46,7 +46,7 @@ Renderbuffer *Framebuffer::lookupRenderbuffer(GLenum type, GLuint handle) const
     }
     else if (IsTextureTarget(type))
     {
-        buffer = context->getTexture(handle)->getColorbuffer(type);
+        buffer = context->getTexture(handle)->getRenderbuffer(type);
     }
     else
     {
@@ -268,23 +268,6 @@ bool Framebuffer::hasStencil()
     return false;
 }
 
-bool Framebuffer::isMultisample()
-{
-    // If the framebuffer is not complete, attachment samples may be mismatched, and it
-    // cannot be used as a multisample framebuffer. If it is complete, it is required to
-    // have a color attachment, and all its attachments must have the same number of samples,
-    // so the number of samples for the colorbuffer will indicate whether the framebuffer is
-    // multisampled.
-    if (completeness() == GL_FRAMEBUFFER_COMPLETE && getColorbuffer()->getSamples() > 0)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 GLenum Framebuffer::completeness()
 {
     int width = 0;
@@ -307,25 +290,25 @@ GLenum Framebuffer::completeness()
 
         if (mColorbufferType == GL_RENDERBUFFER)
         {
-            if (!gl::IsColorRenderable(colorbuffer->getFormat()))
+            if (!gl::IsColorRenderable(colorbuffer->getInternalFormat()))
             {
                 return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
             }
         }
         else if (IsTextureTarget(mColorbufferType))
         {
-            if (IsCompressed(colorbuffer->getFormat()))
+            if (IsCompressed(colorbuffer->getInternalFormat()))
             {
                 return GL_FRAMEBUFFER_UNSUPPORTED;
             }
 
-            if (colorbuffer->isFloatingPoint() && (!getContext()->supportsFloatRenderableTextures() || 
-                                                   !getContext()->supportsHalfFloatRenderableTextures()))
+            if ((colorbuffer->getType() == GL_FLOAT && !getContext()->supportsFloatRenderableTextures()) || 
+                (colorbuffer->getType() == GL_HALF_FLOAT_OES && !getContext()->supportsHalfFloatRenderableTextures()))
             {
                 return GL_FRAMEBUFFER_UNSUPPORTED;
             }
 
-            if (colorbuffer->getFormat() == GL_LUMINANCE || colorbuffer->getFormat() == GL_LUMINANCE_ALPHA)
+            if (colorbuffer->getInternalFormat() == GL_LUMINANCE || colorbuffer->getInternalFormat() == GL_LUMINANCE_ALPHA)
             {
                 return GL_FRAMEBUFFER_UNSUPPORTED;
             }
@@ -424,8 +407,8 @@ GLenum Framebuffer::completeness()
 
     if (mDepthbufferType == GL_RENDERBUFFER && mStencilbufferType == GL_RENDERBUFFER)
     {
-        if (depthbuffer->getFormat() != GL_DEPTH24_STENCIL8_OES ||
-            stencilbuffer->getFormat() != GL_DEPTH24_STENCIL8_OES ||
+        if (depthbuffer->getInternalFormat() != GL_DEPTH24_STENCIL8_OES ||
+            stencilbuffer->getInternalFormat() != GL_DEPTH24_STENCIL8_OES ||
             depthbuffer->getSerial() != stencilbuffer->getSerial())
         {
             return GL_FRAMEBUFFER_UNSUPPORTED;

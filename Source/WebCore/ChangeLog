@@ -1,3 +1,13 @@
+2011-06-20  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Update ANGLE to r696.
+        https://bugs.webkit.org/show_bug.cgi?id=56396
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::validateShaderSource): Specify backend.
+
 2011-06-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

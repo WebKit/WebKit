@@ -23,6 +23,16 @@
 		90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B11012E11DD6002D4255 /* VariableInfo.h */; };
 		90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */; };
 		90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B11212E11DD6002D4255 /* VersionGLSL.h */; };
+		A0AABE2C13AFE81000F2EBD1 /* ForLoopUnroll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */; };
+		A0AABE2D13AFE81000F2EBD1 /* ForLoopUnroll.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */; };
+		A0AABE3013AFE83000F2EBD1 /* MapLongVariableNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE2E13AFE83000F2EBD1 /* MapLongVariableNames.cpp */; };
+		A0AABE3113AFE83000F2EBD1 /* MapLongVariableNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AABE2F13AFE83000F2EBD1 /* MapLongVariableNames.h */; };
+		A0AABE3413AFE84700F2EBD1 /* OutputGLSLBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE3213AFE84700F2EBD1 /* OutputGLSLBase.cpp */; };
+		A0AABE3513AFE84700F2EBD1 /* OutputGLSLBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AABE3313AFE84700F2EBD1 /* OutputGLSLBase.h */; };
+		A0AABE4413AFE94500F2EBD1 /* OutputESSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE4213AFE94500F2EBD1 /* OutputESSL.cpp */; };
+		A0AABE4513AFE94500F2EBD1 /* OutputESSL.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AABE4313AFE94500F2EBD1 /* OutputESSL.h */; };
+		A0AABE4813AFE96100F2EBD1 /* TranslatorESSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE4613AFE96100F2EBD1 /* TranslatorESSL.cpp */; };
+		A0AABE4913AFE96100F2EBD1 /* TranslatorESSL.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AABE4713AFE96100F2EBD1 /* TranslatorESSL.h */; };
 		FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */; };
 		FB39D2751200F35A00088E69 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2261200F35A00088E69 /* debug.cpp */; };
 		FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D22A1200F35A00088E69 /* InfoSink.cpp */; };
@@ -73,6 +83,16 @@
 		90D9B11012E11DD6002D4255 /* VariableInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableInfo.h; sourceTree = "<group>"; };
 		90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionGLSL.cpp; sourceTree = "<group>"; };
 		90D9B11212E11DD6002D4255 /* VersionGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionGLSL.h; sourceTree = "<group>"; };
+		A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForLoopUnroll.cpp; sourceTree = "<group>"; };
+		A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForLoopUnroll.h; sourceTree = "<group>"; };
+		A0AABE2E13AFE83000F2EBD1 /* MapLongVariableNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapLongVariableNames.cpp; sourceTree = "<group>"; };
+		A0AABE2F13AFE83000F2EBD1 /* MapLongVariableNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapLongVariableNames.h; sourceTree = "<group>"; };
+		A0AABE3213AFE84700F2EBD1 /* OutputGLSLBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputGLSLBase.cpp; sourceTree = "<group>"; };
+		A0AABE3313AFE84700F2EBD1 /* OutputGLSLBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputGLSLBase.h; sourceTree = "<group>"; };
+		A0AABE4213AFE94500F2EBD1 /* OutputESSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputESSL.cpp; sourceTree = "<group>"; };
+		A0AABE4313AFE94500F2EBD1 /* OutputESSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputESSL.h; sourceTree = "<group>"; };
+		A0AABE4613AFE96100F2EBD1 /* TranslatorESSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorESSL.cpp; sourceTree = "<group>"; };
+		A0AABE4713AFE96100F2EBD1 /* TranslatorESSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslatorESSL.h; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libANGLE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLE.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D1861200F26200088E69 /* BaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTypes.h; sourceTree = "<group>"; };
 		FB39D1871200F26200088E69 /* CodeGenGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenGLSL.cpp; sourceTree = "<group>"; };
@@ -340,6 +360,16 @@
 		FB39D2201200F35A00088E69 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				A0AABE3213AFE84700F2EBD1 /* OutputGLSLBase.cpp */,
+				A0AABE3313AFE84700F2EBD1 /* OutputGLSLBase.h */,
+				A0AABE4613AFE96100F2EBD1 /* TranslatorESSL.cpp */,
+				A0AABE4713AFE96100F2EBD1 /* TranslatorESSL.h */,
+				A0AABE4213AFE94500F2EBD1 /* OutputESSL.cpp */,
+				A0AABE4313AFE94500F2EBD1 /* OutputESSL.h */,
+				A0AABE2E13AFE83000F2EBD1 /* MapLongVariableNames.cpp */,
+				A0AABE2F13AFE83000F2EBD1 /* MapLongVariableNames.h */,
+				A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */,
+				A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */,
 				FB39D2441200F35A00088E69 /* preprocessor */,
 				FB39D2211200F35A00088E69 /* BaseTypes.h */,
 				FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */,
@@ -455,6 +485,11 @@
 				90D9B11612E11DD6002D4255 /* ValidateLimitations.h in Headers */,
 				90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */,
 				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
+				A0AABE2D13AFE81000F2EBD1 /* ForLoopUnroll.h in Headers */,
+				A0AABE3113AFE83000F2EBD1 /* MapLongVariableNames.h in Headers */,
+				A0AABE3513AFE84700F2EBD1 /* OutputGLSLBase.h in Headers */,
+				A0AABE4513AFE94500F2EBD1 /* OutputESSL.h in Headers */,
+				A0AABE4913AFE96100F2EBD1 /* TranslatorESSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +575,11 @@
 				90D9B11512E11DD6002D4255 /* ValidateLimitations.cpp in Sources */,
 				90D9B11712E11DD6002D4255 /* VariableInfo.cpp in Sources */,
 				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
+				A0AABE2C13AFE81000F2EBD1 /* ForLoopUnroll.cpp in Sources */,
+				A0AABE3013AFE83000F2EBD1 /* MapLongVariableNames.cpp in Sources */,
+				A0AABE3413AFE84700F2EBD1 /* OutputGLSLBase.cpp in Sources */,
+				A0AABE4413AFE94500F2EBD1 /* OutputESSL.cpp in Sources */,
+				A0AABE4813AFE96100F2EBD1 /* TranslatorESSL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

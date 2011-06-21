@@ -591,17 +591,10 @@ function_call_header
 // Grammar Note:  Constructors look like functions, but are recognized as types.
 
 function_identifier
-    : type_specifier {
+    : type_specifier_nonarray {
         //
         // Constructor
         //
-        if ($1.array) {
-            // Constructors for arrays are not allowed.
-            context->error($1.line, "cannot construct this type", "array", "");
-            context->recover();
-            $1.setArray(false);
-        }
-
         TOperator op = EOpNull;
         if ($1.userDef) {
             op = EOpConstructStruct;
@@ -1176,16 +1169,10 @@ parameter_type_specifier
 init_declarator_list
     : single_declaration {
         $$ = $1;
-        
-        if ($$.type.precision == EbpUndefined) {
-            $$.type.precision = context->symbolTable.getDefaultPrecision($1.type.type);
-            if (context->precisionErrorCheck($1.line, $$.type.precision, $1.type.type)) {
-                context->recover();
-            }
-        }
     }
     | init_declarator_list COMMA IDENTIFIER {
-        $$.intermAggregate = context->intermediate.growAggregate($1.intermNode, context->intermediate.addSymbol(0, *$3.string, TType($1.type), $3.line), $3.line);
+        TIntermSymbol* symbol = context->intermediate.addSymbol(0, *$3.string, TType($1.type), $3.line);
+        $$.intermAggregate = context->intermediate.growAggregate($1.intermNode, symbol, $3.line);
         
         if (context->structQualifierErrorCheck($3.line, $$.type))
             context->recover();
@@ -1193,8 +1180,11 @@ init_declarator_list
         if (context->nonInitConstErrorCheck($3.line, *$3.string, $$.type))
             context->recover();
 
-        if (context->nonInitErrorCheck($3.line, *$3.string, $$.type))
+        TVariable* variable = 0;
+        if (context->nonInitErrorCheck($3.line, *$3.string, $$.type, variable))
             context->recover();
+        if (symbol && variable)
+            symbol->setId(variable->getUniqueId());
     }
     | init_declarator_list COMMA IDENTIFIER LEFT_BRACKET RIGHT_BRACKET {
         if (context->structQualifierErrorCheck($3.line, $1.type))
@@ -1230,12 +1220,12 @@ init_declarator_list
             if (context->arraySizeErrorCheck($4.line, $5, size))
                 context->recover();
             $1.type.setArray(true, size);
-            TVariable* variable;
+            TVariable* variable = 0;
             if (context->arrayErrorCheck($4.line, *$3.string, $1.type, variable))
                 context->recover();
             TType type = TType($1.type);
             type.setArraySize(size);
-            $$.intermAggregate = context->intermediate.growAggregate($1.intermNode, context->intermediate.addSymbol(0, *$3.string, type, $3.line), $3.line);
+            $$.intermAggregate = context->intermediate.growAggregate($1.intermNode, context->intermediate.addSymbol(variable ? variable->getUniqueId() : 0, *$3.string, type, $3.line), $3.line);
         }
     }
     | init_declarator_list COMMA IDENTIFIER EQUAL initializer {
@@ -1266,7 +1256,8 @@ single_declaration
         $$.intermAggregate = context->intermediate.makeAggregate(context->intermediate.addSymbol(0, "", TType($1), $1.line), $1.line);
     }
     | fully_specified_type IDENTIFIER {
-        $$.intermAggregate = context->intermediate.makeAggregate(context->intermediate.addSymbol(0, *$2.string, TType($1), $2.line), $2.line);
+        TIntermSymbol* symbol = context->intermediate.addSymbol(0, *$2.string, TType($1), $2.line);
+        $$.intermAggregate = context->intermediate.makeAggregate(symbol, $2.line);
         
         if (context->structQualifierErrorCheck($2.line, $$.type))
             context->recover();
@@ -1276,28 +1267,19 @@ single_declaration
             
             $$.type = $1;
 
-        if (context->nonInitErrorCheck($2.line, *$2.string, $$.type))
+        TVariable* variable = 0;
+        if (context->nonInitErrorCheck($2.line, *$2.string, $$.type, variable))
             context->recover();
+        if (variable && symbol)
+            symbol->setId(variable->getUniqueId());
     }
     | fully_specified_type IDENTIFIER LEFT_BRACKET RIGHT_BRACKET {
-        $$.intermAggregate = context->intermediate.makeAggregate(context->intermediate.addSymbol(0, *$2.string, TType($1), $2.line), $2.line);
-        
-        if (context->structQualifierErrorCheck($2.line, $1))
-            context->recover();
+        context->error($2.line, "unsized array declarations not supported", $2.string->c_str(), "");
+        context->recover();
 
-        if (context->nonInitConstErrorCheck($2.line, *$2.string, $1))
-            context->recover();
-
+        TIntermSymbol* symbol = context->intermediate.addSymbol(0, *$2.string, TType($1), $2.line);
+        $$.intermAggregate = context->intermediate.makeAggregate(symbol, $2.line);
         $$.type = $1;
-
-        if (context->arrayTypeErrorCheck($3.line, $1) || context->arrayQualifierErrorCheck($3.line, $1))
-            context->recover();
-        else {
-            $1.setArray(true);
-            TVariable* variable;
-            if (context->arrayErrorCheck($3.line, *$2.string, $1, variable))
-                context->recover();
-        }
     }
     | fully_specified_type IDENTIFIER LEFT_BRACKET constant_expression RIGHT_BRACKET {
         TType type = TType($1);
@@ -1305,7 +1287,8 @@ single_declaration
         if (context->arraySizeErrorCheck($2.line, $4, size))
             context->recover();
         type.setArraySize(size);
-        $$.intermAggregate = context->intermediate.makeAggregate(context->intermediate.addSymbol(0, *$2.string, type, $2.line), $2.line);
+        TIntermSymbol* symbol = context->intermediate.addSymbol(0, *$2.string, type, $2.line);
+        $$.intermAggregate = context->intermediate.makeAggregate(symbol, $2.line);
         
         if (context->structQualifierErrorCheck($2.line, $1))
             context->recover();
@@ -1323,9 +1306,11 @@ single_declaration
                 context->recover();
 
             $1.setArray(true, size);
-            TVariable* variable;
+            TVariable* variable = 0;
             if (context->arrayErrorCheck($3.line, *$2.string, $1, variable))
                 context->recover();
+            if (variable && symbol)
+                symbol->setId(variable->getUniqueId());
         }
     }
     | fully_specified_type IDENTIFIER EQUAL initializer {
@@ -1491,6 +1476,13 @@ type_qualifier
 type_specifier
     : type_specifier_no_prec {
         $$ = $1;
+
+        if ($$.precision == EbpUndefined) {
+            $$.precision = context->symbolTable.getDefaultPrecision($1.type);
+            if (context->precisionErrorCheck($1.line, $$.precision, $1.type)) {
+                context->recover();
+            }
+        }
     }
     | precision_qualifier type_specifier_no_prec {
         $$ = $2;
@@ -1694,6 +1686,7 @@ struct_declaration
             type->setBasicType($1.type);
             type->setNominalSize($1.size);
             type->setMatrix($1.matrix);
+            type->setPrecision($1.precision);
 
             // don't allow arrays of arrays
             if (type->isArray()) {
@@ -1770,8 +1763,10 @@ simple_statement
 compound_statement
     : LEFT_BRACE RIGHT_BRACE { $$ = 0; }
     | LEFT_BRACE { context->symbolTable.push(); } statement_list { context->symbolTable.pop(); } RIGHT_BRACE {
-        if ($3 != 0)
+        if ($3 != 0) {
             $3->setOp(EOpSequence);
+            $3->setEndLine($5.line);
+        }
         $$ = $3;
     }
     ;
@@ -1787,8 +1782,10 @@ compound_statement_no_new_scope
         $$ = 0;
     }
     | LEFT_BRACE statement_list RIGHT_BRACE {
-        if ($2)
+        if ($2) {
             $2->setOp(EOpSequence);
+            $2->setEndLine($3.line);
+        }
         $$ = $2;
     }
     ;
@@ -2061,6 +2058,9 @@ function_definition
         $$->getAsAggregate()->setOptimize(context->contextPragma.optimize);
         $$->getAsAggregate()->setDebug(context->contextPragma.debug);
         $$->getAsAggregate()->addToPragmaTable(context->contextPragma.pragmaTable);
+
+        if ($3 && $3->getAsAggregate())
+            $$->getAsAggregate()->setEndLine($3->getAsAggregate()->getEndLine());
     }
     ;
 

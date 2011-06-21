@@ -29,7 +29,8 @@ void main()
 <script id="fshaderWithPrecision" type="text/something-not-javascript">
 void main()
 {
-    gl_FragColor = mediump vec4(1.0,0.0,0.0,1.0);
+    mediump vec4 color = vec4(1.0,0.0,0.0,1.0);
+    gl_FragColor = color;
 }
 </script>
 <script id="vshaderWithDefaultPrecision" type="text/something-not-javascript">

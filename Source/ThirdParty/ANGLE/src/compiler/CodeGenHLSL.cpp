@@ -11,9 +11,15 @@
 // compile object used by higher level code.  It returns
 // a subclass of TCompiler.
 //
-TCompiler* ConstructCompiler(ShShaderType type, ShShaderSpec spec)
+TCompiler* ConstructCompiler(
+    ShShaderType type, ShShaderSpec spec, ShShaderOutput output)
 {
-    return new TranslatorHLSL(type, spec);
+  switch (output) {
+    case SH_HLSL_OUTPUT:
+      return new TranslatorHLSL(type, spec);
+    default:
+      return NULL;
+  }
 }
 
 //

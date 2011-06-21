@@ -1,8 +1,11 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+
+#ifndef COMPILER_VARIABLE_INFO_H_
+#define COMPILER_VARIABLE_INFO_H_
 
 #include "GLSLANG/ShaderLang.h"
 #include "compiler/intermediate.h"
@@ -11,6 +14,7 @@
 // It is currently being used to store info about active attribs and uniforms.
 struct TVariableInfo {
     TPersistString name;
+    TPersistString mappedName;
     ShDataType type;
     int size;
 };
@@ -36,3 +40,4 @@ private:
     TVariableInfoList& mUniforms;
 };
 
+#endif  // COMPILER_VARIABLE_INFO_H_

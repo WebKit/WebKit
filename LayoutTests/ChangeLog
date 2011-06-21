@@ -1,3 +1,13 @@
+2011-06-20  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Update ANGLE to r696
+        https://bugs.webkit.org/show_bug.cgi?id=56396
+
+        * fast/canvas/webgl/glsl-conformance.html: Fix a bug in the test (otherwise after the roll this test will fail).
+        * platform/chromium/test_expectations.txt: Once this test is fixed, it should pass in chromium.
+
 2011-06-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium expectations update. Suppressions after recent commits.

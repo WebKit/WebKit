@@ -36,20 +36,20 @@ Shader::Shader(ResourceManager *manager, GLuint handle) : mHandle(handle), mReso
         {
             ShBuiltInResources resources;
             ShInitBuiltInResources(&resources);
-            Context *context = getContext();            
+            Context *context = getContext();
 
             resources.MaxVertexAttribs = MAX_VERTEX_ATTRIBS;
             resources.MaxVertexUniformVectors = MAX_VERTEX_UNIFORM_VECTORS;
             resources.MaxVaryingVectors = context->getMaximumVaryingVectors();
-            resources.MaxVertexTextureImageUnits = MAX_VERTEX_TEXTURE_IMAGE_UNITS;
-            resources.MaxCombinedTextureImageUnits = MAX_COMBINED_TEXTURE_IMAGE_UNITS;
+            resources.MaxVertexTextureImageUnits = context->getMaximumVertexTextureImageUnits();
+            resources.MaxCombinedTextureImageUnits = context->getMaximumCombinedTextureImageUnits();
             resources.MaxTextureImageUnits = MAX_TEXTURE_IMAGE_UNITS;
             resources.MaxFragmentUniformVectors = context->getMaximumFragmentUniformVectors();
             resources.MaxDrawBuffers = MAX_DRAW_BUFFERS;
             resources.OES_standard_derivatives = 1;
 
-            mFragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_GLES2_SPEC, &resources);
-            mVertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_GLES2_SPEC, &resources);
+            mFragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_GLES2_SPEC, SH_HLSL_OUTPUT, &resources);
+            mVertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_GLES2_SPEC, SH_HLSL_OUTPUT, &resources);
         }
     }
 
@@ -278,12 +278,33 @@ void Shader::compileToHLSL(void *compiler)
         return;
     }
 
-    TRACE("\n%s", mSource);
-
     delete[] mInfoLog;
     mInfoLog = NULL;
 
-    int result = ShCompile(compiler, &mSource, 1, SH_OBJECT_CODE);
+    int compileOptions = SH_OBJECT_CODE;
+    std::string sourcePath;
+    if (perfActive())
+    {
+        sourcePath = getTempPath();
+        writeFile(sourcePath.c_str(), mSource, strlen(mSource));
+        compileOptions |= SH_LINE_DIRECTIVES;
+    }
+
+    int result;
+    if (sourcePath.empty())
+    {
+        result = ShCompile(compiler, &mSource, 1, compileOptions);
+    }
+    else
+    {
+        const char* sourceStrings[2] =
+        {
+            sourcePath.c_str(),
+            mSource
+        };
+
+        result = ShCompile(compiler, sourceStrings, 2, compileOptions | SH_SOURCE_PATH);
+    }
 
     if (result)
     {
@@ -291,8 +312,6 @@ void Shader::compileToHLSL(void *compiler)
         ShGetInfo(compiler, SH_OBJECT_CODE_LENGTH, &objCodeLen);
         mHlsl = new char[objCodeLen];
         ShGetObjectCode(compiler, mHlsl);
-
-        TRACE("\n%s", mHlsl);
     }
     else
     {

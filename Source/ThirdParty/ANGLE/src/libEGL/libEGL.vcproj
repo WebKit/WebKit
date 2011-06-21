@@ -62,9 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib"
+				AdditionalDependencies="d3d9.lib dxguid.lib dwmapi.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libEGL.def"
+				DelayLoadDLLs="dwmapi.dll"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -140,9 +141,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib"
+				AdditionalDependencies="d3d9.lib dxguid.lib dwmapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="libEGL.def"
+				DelayLoadDLLs="dwmapi.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -238,12 +240,24 @@
 				>
 			</File>
 			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Surface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\version.h"
 				>
 			</File>
 		</Filter>
 		<File
 			RelativePath=".\libEGL.def"
+			>
+		</File>
+		<File
+			RelativePath=".\libEGL.rc"
 			>
 		</File>
 	</Files>

@@ -4008,8 +4008,6 @@ BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = I
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE PASS
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE PASS
 
-BUGCR86563 : fast/canvas/webgl/glsl-conformance.html = TEXT
-
 BUGCR86714 MAC GPU : compositing/tiling/huge-layer-resize.html = CRASH
 BUGCR86714 MAC GPU : media/video-controls-rendering.html = CRASH
 BUGCR86714 MAC GPU : media/video-zoom.html = CRASH

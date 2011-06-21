@@ -30,16 +30,18 @@ struct TPragma {
 // they can be passed to the parser without needing a global.
 //
 struct TParseContext {
-    TParseContext(TSymbolTable& symt, const TExtensionBehavior& ext, TIntermediate& interm, ShShaderType type, ShShaderSpec spec, TInfoSink& is) :
-            intermediate(interm), symbolTable(symt), extensionBehavior(ext), infoSink(is), shaderType(type), shaderSpec(spec), treeRoot(0),
+    TParseContext(TSymbolTable& symt, TExtensionBehavior& ext, TIntermediate& interm, ShShaderType type, ShShaderSpec spec, int options, bool checksPrecErrors, const char* sourcePath, TInfoSink& is) :
+            intermediate(interm), symbolTable(symt), extensionBehavior(ext), infoSink(is), shaderType(type), shaderSpec(spec), compileOptions(options), checksPrecisionErrors(checksPrecErrors), sourcePath(sourcePath), treeRoot(0),
             recoveredFromError(false), numErrors(0), lexAfterType(false), loopNestingLevel(0),
             inTypeParen(false), scanner(NULL), contextPragma(true, false) {  }
     TIntermediate& intermediate; // to hold and build a parse tree
     TSymbolTable& symbolTable;   // symbol table that goes with the language currently being parsed
-    TExtensionBehavior extensionBehavior;  // mapping between supported extensions and current behavior.
+    TExtensionBehavior& extensionBehavior;  // mapping between supported extensions and current behavior.
     TInfoSink& infoSink;
     ShShaderType shaderType;              // vertex or fragment language (future: pack or unpack)
     ShShaderSpec shaderSpec;              // The language specification compiler conforms to - GLES2 or WebGL.
+    int compileOptions;
+    const char* sourcePath;      // Path of source file or NULL.
     TIntermNode* treeRoot;       // root of parse tree being created
     bool recoveredFromError;     // true if a parse error has occurred, but we continue to parse
     int numErrors;
@@ -48,6 +50,7 @@ struct TParseContext {
     bool inTypeParen;            // true if in parentheses, looking only for an identifier
     const TType* currentFunctionType;  // the return type of the function that's currently being parsed
     bool functionReturnsValue;   // true if a non-void function has a return
+    bool checksPrecisionErrors;  // true if an error will be generated when a variable is declared without precision, explicit or implicit.
 
     void error(TSourceLoc loc, const char *reason, const char* token,
                const char* extraInfoFormat, ...);
@@ -79,7 +82,7 @@ struct TParseContext {
     bool parameterSamplerErrorCheck(int line, TQualifier qualifier, const TType& type);
     bool containsSampler(TType& type);
     bool nonInitConstErrorCheck(int line, TString& identifier, TPublicType& type);
-    bool nonInitErrorCheck(int line, TString& identifier, TPublicType& type);
+    bool nonInitErrorCheck(int line, TString& identifier, TPublicType& type, TVariable*& variable);
     bool paramErrorCheck(int line, TQualifier qualifier, TQualifier paramQualifier, TType* type);
     bool extensionErrorCheck(int line, const TString&);
     const TFunction* findFunction(int line, TFunction* pfnCall, bool *builtIn = 0);

@@ -373,7 +373,7 @@ static int byte_scan(InputSrc *in, yystypepp * yylvalpp)
                 APPEND_CHAR_S(ch, yylvalpp->symbol_name, len, MAX_SYMBOL_NAME_LEN);
                 ch = cpp->currentInput->getch(cpp->currentInput, yylvalpp);
             } while (ch >= '0' && ch <= '9');
-            if (ch == '.' || ch == 'e' || ch == 'f' || ch == 'h' || ch == 'x'|| ch == 'E') {
+            if (ch == '.' || ch == 'e' || ch == 'E') {
                 return lFloatConst(ch, len, yylvalpp);
             } else {
                 assert(len <= MAX_SYMBOL_NAME_LEN);
@@ -558,11 +558,9 @@ static int byte_scan(InputSrc *in, yystypepp * yylvalpp)
                     return -1;
                 return '\n';
             } else if (ch == '*') {
-                int nlcount = 0;
                 ch = cpp->currentInput->getch(cpp->currentInput, yylvalpp);
                 do {
                     while (ch != '*') {
-                        if (ch == '\n') nlcount++;
                         if (ch == EOF) {
                             CPPErrorToInfoLog("EOF IN COMMENT");
                             return -1;
@@ -575,9 +573,6 @@ static int byte_scan(InputSrc *in, yystypepp * yylvalpp)
                         return -1;
                     }
                 } while (ch != '/');
-                if (nlcount) {
-                    return '\n';
-                }
                 // Go try it again...
             } else if (ch == '=') {
                 return CPP_DIV_ASSIGN;
@@ -621,6 +616,12 @@ int yylex_CPP(char* buf, int maxSize)
         token = cpp->currentInput->scan(cpp->currentInput, &yylvalpp);
         if(check_EOF(token))
             return 0;
+        if (token < 0) {
+            // This check may need to be improved to support UTF-8
+            // characters in comments.
+            CPPErrorToInfoLog("preprocessor encountered non-ASCII character in shader source");
+            return 0;
+        }
         if (token == '#') {
             if (cpp->previous_token == '\n'|| cpp->previous_token == 0) {
                 token = readCPPline(&yylvalpp);

@@ -182,12 +182,13 @@ static int AddString(StringTable *stable, const char *s)
     char *str;
 
     len = (int) strlen(s);
-    if (stable->nextFree + len + 1 >= stable->size) {
+    while (stable->nextFree + len + 1 >= stable->size) {
         assert(stable->size < 1000000);
         str = (char *) malloc(stable->size*2);
         memcpy(str, stable->strings, stable->size);
         free(stable->strings);
         stable->strings = str;
+        stable->size = stable->size*2;
     }
     loc = stable->nextFree;
     strcpy(&stable->strings[loc], s);

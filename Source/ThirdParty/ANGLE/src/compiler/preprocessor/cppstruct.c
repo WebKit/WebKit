@@ -92,12 +92,12 @@ int ResetPreprocessor(void)
 
     cpp->lastSourceLoc.file = 0;
     cpp->lastSourceLoc.line = 0;
-	cpp->pC=0;
-    cpp->CompileError=0; 
-	cpp->ifdepth=0;
-    for(cpp->elsetracker=0; cpp->elsetracker<64; cpp->elsetracker++)
-		cpp->elsedepth[cpp->elsetracker]=0; 
-	cpp->elsetracker=0;
+    cpp->pC = 0;
+    cpp->CompileError = 0;
+    cpp->ifdepth = 0;
+    for(cpp->elsetracker = 0; cpp->elsetracker < MAX_IF_NESTING; cpp->elsetracker++)
+        cpp->elsedepth[cpp->elsetracker] = 0;
+    cpp->elsetracker = 0;
     cpp->tokensBeforeEOF = 0;
     return 1;
 }
