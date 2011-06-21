@@ -1788,11 +1788,12 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
     Vector<FloatQuad> quads;
     toNormalizedRange()->textQuads(quads, true);
 
-    // FIXME: We are appending empty rectangles to the list for those that fall outside visibleContentRect.
-    // It might be better to omit those rectangles entirely.
     size_t size = quads.size();
-    for (size_t i = 0; i < size; ++i)
-        rectangles.append(intersection(quads[i].enclosingBoundingBox(), visibleContentRect));
+    for (size_t i = 0; i < size; ++i) {
+        FloatRect intersectionRect = intersection(quads[i].enclosingBoundingBox(), visibleContentRect);
+        if (!intersectionRect.isEmpty())
+            rectangles.append(intersectionRect);
+    }
 }
 
 // Scans logically forward from "start", including any child frames.

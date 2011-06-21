@@ -1,3 +1,15 @@
+2011-06-20  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop adding empty rects in FrameSelection::getClippedVisibleTextRectangles
+        https://bugs.webkit.org/show_bug.cgi?id=63018
+
+        No new tests needed, since it causes no behavioral change.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles):
+
 2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
