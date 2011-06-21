@@ -848,6 +848,12 @@ void WebFrameImpl::collectGarbage()
 #endif
 }
 
+bool WebFrameImpl::checkIfRunInsecureContent(const WebURL& url) const
+{
+    FrameLoader* frameLoader = m_frame->loader();
+    return frameLoader->checkIfRunInsecureContent(m_frame->document()->securityOrigin(), url);
+}
+
 #if USE(V8)
 v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptSource& source)
 {

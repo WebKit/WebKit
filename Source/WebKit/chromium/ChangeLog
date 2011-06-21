@@ -1,3 +1,15 @@
+2011-06-21  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Wire in checkIfRunInsecureContent to the chromium WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=63026
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::checkIfRunInsecureContent): add in basic plumbing.
+        * src/WebFrameImpl.h:
+
 2011-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled DEPS.
