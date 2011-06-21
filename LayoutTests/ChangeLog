@@ -1,3 +1,11 @@
+2011-06-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium expectations update. Revert the expectations
+        for http/tests/misc/acid3.html after r89233 was rolled out.
+        Commented on other test expectations added for r89233.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

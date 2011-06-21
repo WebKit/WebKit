@@ -911,6 +911,8 @@ BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 
 // Since r89233. May need a new baseline.
+// NOTE that this revision was rolled out, but it isn't clear whether we should remove these
+// expectations because it's likely to get checked in again soon.
 BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
 BUGWK62974 WIN : svg/W3C-SVG-1.1-SE/types-dom-05-b.svg = IMAGE+TEXT
@@ -948,11 +950,6 @@ BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
 BUGWK62974 WIN LINUX SNOWLEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE
 BUGWK62974 LEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
-
-// Regressions from r89233. These expectations already existed and moved from there;
-// when these tests are fixed, please don't forget to uncomment corresponding lines below.
-BUGWK62973 BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = TIMEOUT
-BUGWK62973 BUGCR30536 WIN LINUX : http/tests/misc/acid3.html = TIMEOUT CRASH
 
 // -----------------------------------------------------------------
 // End SVG Regressions
@@ -1117,7 +1114,7 @@ BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = T
 // ----------------------------------------------------------------------------
 
 // This test isn't hanging, it just takes 12-13 seconds to run.
-// BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = FAIL  // Moved to "SVG Tests" section
+BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = FAIL  // See "SVG Tests" section too
 BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
@@ -2979,7 +2976,7 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-// BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE  // Moved to "SVG tests" section
+BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE  // See "SVG tests" section too
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
