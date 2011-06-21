@@ -3326,7 +3326,6 @@ BUGWK58193 WIN7 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
 BUGWK58193 WIN7 : svg/custom/circular-marker-reference-1.svg = TEXT
 BUGWK58193 WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
 BUGWK58193 WIN7 : svg/custom/circular-marker-reference-4.svg = TEXT
-BUGWK58193 WIN7 : fast/filesystem/async-operations.html = TIMEOUT PASS
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = TIMEOUT PASS TEXT
 
 BUGWK58193 VISTA : fast/forms/search-styled.html = IMAGE+TEXT
@@ -4013,3 +4012,4 @@ BUGWK63056 WIN RELEASE : inspector/elements/elements-panel-styles.html = PASS TE
 BUGCR86974 : svg/css/composite-shadow-example.html = TEXT PASS
 BUGCR86974 : svg/css/composite-shadow-with-opacity.html = TEXT PASS
 
+BUGCR87009 : fast/filesystem/async-operations.html = PASS CRASH

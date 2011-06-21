@@ -1,3 +1,9 @@
+2011-06-21  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Unreviewed update of test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-21  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.
