@@ -1,3 +1,10 @@
+2011-06-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Updated Chromium test expectations to fix ui_test
+        WorkerTest.WorkerScriptError after WebKit roll to r89329.
+
+        * platform/chromium-win/fast/workers/worker-script-error-expected.txt:
+
 2011-06-20  Dai Mikurube  <dmikurube@chromium.org>
 
         Reviewed by Kent Tamura.

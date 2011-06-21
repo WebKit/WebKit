@@ -5,8 +5,9 @@ PASS: onerror invoked for a script that has script error 'Uncaught ReferenceErro
 PASS: event listener invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 1.
 PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
 PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: bar is not defined' at line 3.
-PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
-PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
+message from worker: "PASS: onerror in worker context invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 10 in worker-script-error-bubbled.js".
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 10.
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 10.
 PASS: message received from WorkerGlobalScope.onerror: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
 PASS: onerror invoked for an exception in setTimeout callback.
 DONE
