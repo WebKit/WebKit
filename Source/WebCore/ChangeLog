@@ -1,3 +1,15 @@
+2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: cursor update() value argument is required
+        https://bugs.webkit.org/show_bug.cgi?id=63032
+
+        Test: storage/indexeddb/cursor-update-value-argument-required.html
+
+        * storage/IDBCursor.idl: remove LegacyDefaultOptionalArguments flag so
+          calling functions with missing required arguments will raise a TypeError
+
 2011-06-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

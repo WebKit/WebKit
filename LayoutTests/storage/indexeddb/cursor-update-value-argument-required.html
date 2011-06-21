@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB cursor.update required arguments");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+    IDBCursor = evalAndLog("IDBCursor = window.IDBCursor || window.webkitIDBCursor;");
+    shouldBeFalse("IDBCursor == null");
+    IDBKeyRange = evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;");
+    shouldBeFalse("IDBKeyRange == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = testGroup1;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function testGroup1()
+{
+    deleteAllObjectStores(db);
+
+    objectStore = evalAndLog("db.createObjectStore('autoIncrement', { autoIncrement: true });");
+
+    request = evalAndLog("request = objectStore.openCursor();");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function (event) {
+      testGroup2();
+    }
+}
+
+function testGroup2()
+{
+    keys = evalAndLog("keys = [1, -1, 0, 10, 2000, 'q', 'z', 'two', 'b', 'a'];");
+
+    keyIndex = evalAndLog("keyIndex = 0;");
+
+    for (i in keys) {
+      request = evalAndLog("request = objectStore.add('foo', keys[i]);");
+      request.onerror = unexpectedErrorCallback;
+      request.onsuccess = function(event) {
+        if (++keyIndex == keys.length) {
+          testGroup3();
+        }
+      };
+    }
+}
+
+function testGroup3()
+{
+    request = evalAndLog("request = objectStore.openCursor();");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function (event) {
+        cursor = evalAndLog("cursor = event.target.result;");
+        if (cursor) {
+            shouldThrow("cursor.update();");
+        } else {
+            testFailed("cursor was null");
+        }
+        done();
+    }
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
+

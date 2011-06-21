@@ -1,3 +1,13 @@
+2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: cursor update() value argument is required
+        https://bugs.webkit.org/show_bug.cgi?id=63032
+
+        * storage/indexeddb/cursor-update-value-argument-required-expected.txt: Added.
+        * storage/indexeddb/cursor-update-value-argument-required.html: Added.
+
 2011-06-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.
