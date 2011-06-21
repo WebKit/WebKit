@@ -1,5 +1,11 @@
 2011-06-21  Alexey Proskuryakov  <ap@apple.com>
 
+        Clang build fix.
+
+        * platform/mac/WebCoreSystemInterface.h: Give the enum a name.
+
+2011-06-21  Alexey Proskuryakov  <ap@apple.com>
+
         Fix Mac build in some configurations.
 
         * platform/mac/WebCoreSystemInterface.h: Added an enum matching WKSI one, since we cannot use

@@ -167,7 +167,7 @@ typedef enum {
     wkMediaUIControlFastForwardButton,
     wkMediaUIControlVolumeUpButton,
     wkMediaUIControlVolumeDownButton
-};
+} wkMediaUIControlType;
 extern NSControl *(*wkCreateMediaUIControl)(int);
 
 extern void (*wkWindowSetAlpha)(NSWindow *, float);
