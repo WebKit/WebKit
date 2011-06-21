@@ -34,5 +34,7 @@
 
 @interface WebInspector (WebPrivate)
 - (void)evaluateInFrontend:(id)sender callId:(long)callId script:(NSString *)script;
+- (void)showWindow;
 - (void)setFrontend:(WebInspectorFrontend *)frontend;
+- (void)releaseFrontend;
 @end

@@ -267,8 +267,20 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewPane.showTimelines();
     },
 
-    _memoryOverviewItemSelected: function(event) {
+    _memoryOverviewItemSelected: function(event)
+    {
         this._overviewPane.showMemoryGraph(this._rootRecord.children);
+    },
+
+    setTimelineProfilingEnabled: function(enabled)
+    {
+        if (enabled !== this.toggleTimelineButton.toggled)
+            this._toggleTimelineButtonClicked();
+    },
+
+    get timelineProfilingEnabled()
+    {
+        return this.toggleTimelineButton.toggled;
     },
 
     _toggleTimelineButtonClicked: function()

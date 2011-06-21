@@ -445,6 +445,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
 - (void)destroyInspectorView:(bool)notifyInspectorController
 {
+    [[_inspectedWebView.get() inspector] releaseFrontend];
+
     if (_destroyingInspectorView)
         return;
     _destroyingInspectorView = YES;

@@ -337,6 +337,7 @@ WebView::WebView()
     , m_viewWindow(0)
     , m_mainFrame(0)
     , m_page(0)
+    , m_inspectorClient(0)
     , m_hasCustomDropTarget(false)
     , m_useBackForwardList(true)
     , m_userAgentOverridden(false)
@@ -710,6 +711,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     setFormDelegate(0);
     setPluginHalterDelegate(0);
 
+    m_inspectorClient = 0;
     if (m_webInspector)
         m_webInspector->webViewClosed();
 
@@ -2637,12 +2639,14 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
         Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
 
+    m_inspectorClient = new WebInspectorClient(this);
+
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebChromeClient(this);
     pageClients.contextMenuClient = new WebContextMenuClient(this);
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
-    pageClients.inspectorClient = new WebInspectorClient(this);
+    pageClients.inspectorClient = m_inspectorClient;
     pageClients.pluginHalterClient = adoptPtr(new WebPluginHalterClient(this));
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(this);
@@ -5696,7 +5700,7 @@ bool WebView::onIMESetContext(WPARAM wparam, LPARAM)
 HRESULT STDMETHODCALLTYPE WebView::inspector(IWebInspector** inspector)
 {
     if (!m_webInspector)
-        m_webInspector.adoptRef(WebInspector::createInstance(this));
+        m_webInspector.adoptRef(WebInspector::createInstance(this, m_inspectorClient));
 
     return m_webInspector.copyRefTo(inspector);
 }
