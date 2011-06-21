@@ -1,3 +1,9 @@
+2011-06-21  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, update Chromium test expectations for some flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed rollout r89237, r89238 and part of r89243,

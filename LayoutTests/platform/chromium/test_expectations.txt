@@ -2294,7 +2294,8 @@ BUGCR52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PAS
 BUGCR52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
 BUGWK44199 : perf = PASS TEXT
-BUGWK44199 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT
+BUGWK44199 BUGWK63057 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT MISSING
+BUGWK44199 BUGWK63057 RELEASE : perf/array-binary-search.html = PASS TEXT MISSING
 BUGWK44199 DEBUG : perf/class-list-remove.html = PASS TEXT TIMEOUT
 
 // Failing after http://trac.webkit.org/changeset/65665/
@@ -2318,9 +2319,10 @@ BUGCR53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 // special-document machinery still works.
 BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
-// These tests are flaky on Mac and Linux.
-BUGCR53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
-BUGCR53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
+// These tests are consistently failing on Linux, and the latter test is flaky on Win.
+BUGCR53554 LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = IMAGE
+BUGCR53554 WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE PASS
+BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE
 
 // New test, need to verify if it's safe to rebaseline.
 BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT CRASH
@@ -4013,3 +4015,5 @@ BUGWK63031 WIN LINUX DEBUG SLOW : inspector/elements/event-listener-sidebar.html
 BUGWK63031 WIN LINUX RELEASE : inspector/elements/event-listener-sidebar.html = TEXT
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
+
+BUGWK63056 WIN RELEASE : inspector/elements/elements-panel-styles.html = PASS TEXT
