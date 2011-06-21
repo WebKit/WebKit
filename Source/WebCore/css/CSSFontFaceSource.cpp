@@ -108,10 +108,8 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 #else
     if (!m_font) {
 #endif
-        SimpleFontData* fontData = fontCache()->getCachedFontData(fontDescription, m_string);
-
         // We're local. Just return a SimpleFontData from the normal cache.
-        return fontData;
+        return fontCache()->getCachedFontData(fontDescription, m_string);
     }
 
     // See if we have a mapping in our FontData cache.

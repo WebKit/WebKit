@@ -1,3 +1,15 @@
+2011-06-20  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Fix for Bug 62975 - Refactor local variable usage in CSSFontFaceSource::getFontData
+        https://bugs.webkit.org/show_bug.cgi?id=62975
+
+        No new tests because no behavioral changes.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Remove one of fontData variable.
+
 2011-06-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
