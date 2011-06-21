@@ -1,3 +1,17 @@
+2011-06-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION(r89257): It broke 2 jscore tests (Requested by Ossy_away on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=63052
+
+        Release mode only failure, the stack overflow guards were getting there error
+        handling inlined, so that they were essentially causing their own demise.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::updateErrorMessage):
+        (JSC::JSParser::updateErrorWithNameAndMessage):
+
 2011-06-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed.

@@ -391,7 +391,7 @@ private:
         }
     }
         
-    ALWAYS_INLINE void updateErrorMessage() 
+    NEVER_INLINE void updateErrorMessage() 
     {
         m_error = true;
         const char* name = getTokenName(m_token.m_type);
@@ -401,7 +401,7 @@ private:
             m_errorMessage = UString(String::format("Unexpected token '%s'", name).impl());
     }
     
-    ALWAYS_INLINE void updateErrorMessage(JSTokenType expectedToken) 
+    NEVER_INLINE void updateErrorMessage(JSTokenType expectedToken) 
     {
         m_error = true;
         const char* name = getTokenName(expectedToken);
@@ -411,7 +411,7 @@ private:
             m_errorMessage = UString(String::format("Expected token '%s'", name).impl());
     }
     
-    ALWAYS_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, UString name, const char* afterMsg) 
+    NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, UString name, const char* afterMsg) 
     {
         m_error = true;
         String prefix(beforeMsg);
@@ -423,7 +423,7 @@ private:
         m_errorMessage = prefix.impl();
     }
     
-    ALWAYS_INLINE void updateErrorMessage(const char* msg) 
+    NEVER_INLINE void updateErrorMessage(const char* msg) 
     {   
         m_error = true;
         m_errorMessage = UString(msg);
