@@ -1,3 +1,14 @@
+2011-06-20  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] text expectation update for r89116.
+
+        * platform/chromium-linux/media/media-controls-clone-expected.png: Added.
+        * platform/chromium-mac/media/media-controls-clone-expected.png: Added.
+        * platform/chromium-mac/media/media-controls-clone-expected.txt: Added.
+        * platform/chromium-win/media/media-controls-clone-expected.png: Added.
+        * platform/chromium-win/media/media-controls-clone-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
