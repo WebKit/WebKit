@@ -48,6 +48,7 @@ void WebScriptController::registerExtension(v8::Extension* extension)
 
 void WebScriptController::enableV8SingleThreadMode()
 {
+    enableStringImplCache();
     enableFasterDOMStoreAccess();
 }
 

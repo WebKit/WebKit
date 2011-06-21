@@ -467,8 +467,8 @@ void V8GCController::gcPrologue()
     grouperVisitor.applyGrouping();
 
     // Clean single element cache for string conversions.
-    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
-    data->stringCache()->clearOnGC();
+    lastStringImpl = 0;
+    lastV8String.Clear();
 }
 
 class GCEpilogueVisitor : public DOMWrapperMap<void>::Visitor {

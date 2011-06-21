@@ -1,3 +1,22 @@
+2011-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89185.
+        http://trac.webkit.org/changeset/89185
+        https://bugs.webkit.org/show_bug.cgi?id=63068
+
+        For breaking navigation with inspector opened. (Requested by
+        pfeldman on #webkit).
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::enableStringImplCache):
+        (WebCore::getStringCache):
+        (WebCore::cachedStringCallback):
+        (WebCore::v8ExternalStringSlow):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8ExternalString):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::gcPrologue):
+
 2011-06-21  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

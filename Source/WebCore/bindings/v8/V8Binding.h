@@ -50,40 +50,6 @@ namespace WebCore {
     };
     typedef BindingSecurity<V8Binding> V8BindingSecurity;
 
-    class StringCache {
-    public:
-        StringCache() { }
-
-        v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl) 
-        {
-            if (m_lastStringImpl.get() == stringImpl) {
-                ASSERT(!m_lastV8String.IsNearDeath());
-                ASSERT(!m_lastV8String.IsEmpty());
-                return v8::Local<v8::String>::New(m_lastV8String);
-            }
-
-            return v8ExternalStringSlow(stringImpl);
-        }
-
-        void clearOnGC() 
-        {
-            m_lastStringImpl = 0;
-            m_lastV8String.Clear();
-        }
-
-        void remove(StringImpl*);
-
-    private:
-        v8::Local<v8::String> v8ExternalStringSlow(StringImpl*);
-
-        HashMap<StringImpl*, v8::String*> m_stringCache;
-        v8::Persistent<v8::String> m_lastV8String;
-        // Note: RefPtr is a must as we cache by StringImpl* equality, not identity
-        // hence lastStringImpl might be not a key of the cache (in sense of identity)
-        // and hence it's not refed on addition.
-        RefPtr<StringImpl> m_lastStringImpl;
-    };
-
     class V8BindingPerIsolateData {
     public:
         static V8BindingPerIsolateData* create(v8::Isolate*);
@@ -106,7 +72,6 @@ namespace WebCore {
         TemplateMap& templateMap() { return m_templates; }
         v8::Persistent<v8::String>& toStringName() { return m_toStringName; }
         v8::Persistent<v8::FunctionTemplate>& toStringTemplate() { return m_toStringTemplate; }
-        StringCache* stringCache() { return &m_stringCache; }
 
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);
@@ -116,7 +81,6 @@ namespace WebCore {
         TemplateMap m_templates;
         v8::Persistent<v8::String> m_toStringName;
         v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
-        StringCache m_stringCache;
     };
 
 
@@ -146,6 +110,13 @@ namespace WebCore {
     AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value>);
     AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value);
 
+    // Note: RefPtr is a must as we cache by StringImpl* equality, not identity
+    // hence lastStringImpl might be not a key of the cache (in sense of identity)
+    // and hence it's not refed on addition.
+    extern RefPtr<StringImpl> lastStringImpl;
+    extern v8::Persistent<v8::String> lastV8String;
+    v8::Local<v8::String> v8ExternalStringSlow(StringImpl* stringImpl);
+
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
     // underlying buffer alive while the string is still live in the V8 engine.
@@ -155,8 +126,13 @@ namespace WebCore {
         if (!stringImpl)
             return v8::String::Empty();
 
-        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
-        return data->stringCache()->v8ExternalString(stringImpl);
+        if (lastStringImpl.get() == stringImpl) {
+            ASSERT(!lastV8String.IsNearDeath());
+            ASSERT(!lastV8String.IsEmpty());
+            return v8::Local<v8::String>::New(lastV8String);
+        }
+
+        return v8ExternalStringSlow(stringImpl);
     }
 
     // Convert a string to a V8 string.
