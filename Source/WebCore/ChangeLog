@@ -1,3 +1,18 @@
+2011-06-21  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        All pointer-events fail if text has visibility="hidden"
+        https://bugs.webkit.org/show_bug.cgi?id=62209
+
+        Use PointerEventsHitRules to make hit-testing for SVG text inline boxes work.
+
+        No new tests; covered by existing test pointer-events-text.svg.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        * rendering/svg/SVGInlineTextBox.h:
+
 2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.

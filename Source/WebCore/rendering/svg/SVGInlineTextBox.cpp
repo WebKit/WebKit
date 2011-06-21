@@ -26,7 +26,9 @@
 #include "FloatConversion.h"
 #include "FontCache.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "InlineFlowBox.h"
+#include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
@@ -722,6 +724,29 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
     }
 
     return enclosingIntRect(textRect);
+}
+
+bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int, int)
+{
+    // FIXME: integrate with InlineTextBox::nodeAtPoint better.
+    ASSERT(!isLineBreak());
+
+    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_TEXT_HITTESTING, request, renderer()->style()->pointerEvents());
+    bool isVisible = renderer()->style()->visibility() == VISIBLE;
+    if (isVisible || !hitRules.requireVisible) {
+        if ((hitRules.canHitStroke && (renderer()->style()->svgStyle()->hasStroke() || !hitRules.requireStroke))
+            || (hitRules.canHitFill && (renderer()->style()->svgStyle()->hasFill() || !hitRules.requireFill))) {
+            FloatPoint boxOrigin = locationIncludingFlipping();
+            boxOrigin.moveBy(accumulatedOffset);
+            FloatRect rect(boxOrigin, IntSize(width(), height()));
+            if (rect.intersects(result.rectForPoint(pointInContainer))) {
+                renderer()->updateHitTestResult(result, pointInContainer - toSize(accumulatedOffset));
+                if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
+                    return true;
+             }
+        }
+    }
+    return false;
 }
 
 } // namespace WebCore
