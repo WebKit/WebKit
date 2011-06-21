@@ -1,3 +1,11 @@
+2011-06-21  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
+        Skip a test that takes too long on the GPU.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.
