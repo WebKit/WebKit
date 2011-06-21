@@ -1,3 +1,13 @@
+2011-06-20  Dai Mikurube  <dmikurube@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Webkit allows disabled option as value of "required" select
+        https://bugs.webkit.org/show_bug.cgi?id=62668
+
+        * html/HTMLSelectElement.cpp: Removed "disabled" checking due to spec change.
+        (WebCore::HTMLSelectElement::hasPlaceholderLabelOption):
+
 2011-06-20  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

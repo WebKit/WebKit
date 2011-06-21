@@ -129,7 +129,7 @@ bool HTMLSelectElement::hasPlaceholderLabelOption() const
     if (listIndex < 0)
         return false;
     HTMLOptionElement* option = static_cast<HTMLOptionElement*>(listItems()[listIndex]);
-    return !option->disabled() && !listIndex && option->value().isEmpty();
+    return !listIndex && option->value().isEmpty();
 }
 
 bool HTMLSelectElement::valueMissing() const

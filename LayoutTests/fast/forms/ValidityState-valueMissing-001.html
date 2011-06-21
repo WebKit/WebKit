@@ -85,7 +85,7 @@
     shouldBeFalse('valueMissingFor("select-fake-placeholder-selected-size2-multiple")');
     shouldBeFalse('valueMissingFor("select-without-fake-placeholder-size2-multiple")');
     shouldBeFalse('valueMissingFor("select-optgroup")');
-    shouldBeFalse('valueMissingFor("select-disabled-option")');
+    shouldBeTrue('valueMissingFor("select-disabled-option")');
 
     var successfullyParsed = true;
 </script>

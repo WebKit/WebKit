@@ -1,3 +1,13 @@
+2011-06-20  Dai Mikurube  <dmikurube@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Webkit allows disabled option as value of "required" select
+        https://bugs.webkit.org/show_bug.cgi?id=62668
+
+        * fast/forms/ValidityState-valueMissing-001-expected.txt:
+        * fast/forms/ValidityState-valueMissing-001.html: Changed to generate form validation error for disabled placeholder label option.
+
 2011-06-20  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] text expectation update for r89116.
