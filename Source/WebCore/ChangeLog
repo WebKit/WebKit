@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt][V8] Enable ScriptController::disableEval functionality in QtWebkit-V8 build
+        https://bugs.webkit.org/show_bug.cgi?id=61187
+
+        No new tests needed.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::disableEval):
+
+2011-06-21  Peter Varga  <pvarga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt][V8] Enable marking objects with complex GC rules
         https://bugs.webkit.org/show_bug.cgi?id=61291
 
