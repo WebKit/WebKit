@@ -33,7 +33,6 @@
 #import <JavaScriptCore/RetainPtr.h>
 #import <JavaScriptCore/UnusedParam.h>
 #import <WebCore/HTMLMediaElement.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 using namespace std;
@@ -284,6 +283,8 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
 }
 
 #ifndef HAVE_MEDIA_CONTROL
+// FIXME: This code is never compiled, because HAVE_MEDIA_CONTROL is always defined to something, even on Leopard.
+// FIXME: Values in this enum have a different order than ones in WKMediaUIControlType.
 enum {
     WKMediaUIControlPlayPauseButton,
     WKMediaUIControlRewindButton,
@@ -303,6 +304,7 @@ static NSControl *createControlWithMediaUIControlType(int controlType, NSRect fr
     [control setFrame:frame];
     return control;
 #else
+    // FIXME: This code is never compiled, because HAVE_MEDIA_CONTROL is always defined to something, even on Leopard.
     if (controlType == wkMediaUIControlSlider)
         return [[NSSlider alloc] initWithFrame:frame];
     return [[NSControl alloc] initWithFrame:frame];
@@ -350,6 +352,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 #ifdef HAVE_MEDIA_CONTROL
     NSView *background = wkCreateMediaUIBackgroundView();
 #else
+    // FIXME: This code is never compiled, because HAVE_MEDIA_CONTROL is always defined to something, even on Leopard.
     NSView *background = [[NSView alloc] init];
 #endif
     [window setContentView:background];
@@ -360,14 +363,14 @@ static NSTextField *createTimeTextField(NSRect frame)
     NSView *contentView = [window contentView];
 
     CGFloat center = webkit_CGFloor((windowWidth - playButtonWidth) / 2);
-    _playButton = (NSButton *)createControlWithMediaUIControlType(WKMediaUIControlPlayPauseButton, NSMakeRect(center, windowHeight - playButtonTopMargin - playButtonHeight, playButtonWidth, playButtonHeight));
+    _playButton = (NSButton *)createControlWithMediaUIControlType(wkMediaUIControlPlayPauseButton, NSMakeRect(center, windowHeight - playButtonTopMargin - playButtonHeight, playButtonWidth, playButtonHeight));
     ASSERT([_playButton isKindOfClass:[NSButton class]]);
     [_playButton setTarget:self];
     [_playButton setAction:@selector(togglePlaying:)];
     [contentView addSubview:_playButton];
 
     CGFloat closeToRight = windowWidth - horizontalMargin - exitFullscreenButtonWidth;
-    NSControl *exitFullscreenButton = createControlWithMediaUIControlType(WKMediaUIControlExitFullscreenButton, NSMakeRect(closeToRight, windowHeight - exitFullscreenButtonTopMargin - exitFullscreenButtonHeight, exitFullscreenButtonWidth, exitFullscreenButtonHeight));
+    NSControl *exitFullscreenButton = createControlWithMediaUIControlType(wkMediaUIControlExitFullscreenButton, NSMakeRect(closeToRight, windowHeight - exitFullscreenButtonTopMargin - exitFullscreenButtonHeight, exitFullscreenButtonWidth, exitFullscreenButtonHeight));
     [exitFullscreenButton setAction:@selector(exitFullscreen:)];
     [exitFullscreenButton setTarget:self];
     [contentView addSubview:exitFullscreenButton];
@@ -375,29 +378,30 @@ static NSTextField *createTimeTextField(NSRect frame)
     
     CGFloat volumeControlsBottom = windowHeight - volumeControlsTopMargin - volumeButtonHeight;
     CGFloat left = horizontalMargin;
-    NSControl *volumeDownButton = createControlWithMediaUIControlType(WKMediaUIControlVolumeDownButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
+    NSControl *volumeDownButton = createControlWithMediaUIControlType(wkMediaUIControlVolumeDownButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
     [contentView addSubview:volumeDownButton];
     [volumeDownButton setTarget:self];
     [volumeDownButton setAction:@selector(setVolumeToZero:)];
     [volumeDownButton release];
 
     left += volumeButtonWidth;
-    _volumeSlider = createControlWithMediaUIControlType(WKMediaUIControlSlider, NSMakeRect(left, volumeControlsBottom + webkit_CGFloor((volumeButtonHeight - volumeSliderHeight) / 2), volumeSliderWidth, volumeSliderHeight));
+    _volumeSlider = createControlWithMediaUIControlType(wkMediaUIControlSlider, NSMakeRect(left, volumeControlsBottom + webkit_CGFloor((volumeButtonHeight - volumeSliderHeight) / 2), volumeSliderWidth, volumeSliderHeight));
     [_volumeSlider setValue:[NSNumber numberWithDouble:[self maxVolume]] forKey:@"maxValue"];
     [_volumeSlider setTarget:self];
     [_volumeSlider setAction:@selector(volumeChanged:)];
     [contentView addSubview:_volumeSlider];
 
     left += volumeSliderWidth + volumeUpButtonLeftMargin;
-    NSControl *volumeUpButton = createControlWithMediaUIControlType(WKMediaUIControlVolumeUpButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
+    NSControl *volumeUpButton = createControlWithMediaUIControlType(wkMediaUIControlVolumeUpButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
     [volumeUpButton setTarget:self];
     [volumeUpButton setAction:@selector(setVolumeToMaximum:)];
     [contentView addSubview:volumeUpButton];
     [volumeUpButton release];
 
 #ifdef HAVE_MEDIA_CONTROL
-    _timeline = wkCreateMediaUIControl(WKMediaUIControlTimeline);
+    _timeline = wkCreateMediaUIControl(wkMediaUIControlTimeline);
 #else
+    // FIXME: This code is never compiled, because HAVE_MEDIA_CONTROL is always defined to something, even on Leopard.
     _timeline = [[NSSlider alloc] init];
 #endif
     [_timeline setTarget:self];

@@ -157,7 +157,19 @@ extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOO
 extern BOOL (*wkHitTestMediaUIPart)(int part, int themeStyle, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 extern NSView *(*wkCreateMediaUIBackgroundView)(void);
+
+typedef enum {
+    wkMediaUIControlTimeline,
+    wkMediaUIControlSlider,
+    wkMediaUIControlPlayPauseButton,
+    wkMediaUIControlExitFullscreenButton,
+    wkMediaUIControlRewindButton,
+    wkMediaUIControlFastForwardButton,
+    wkMediaUIControlVolumeUpButton,
+    wkMediaUIControlVolumeDownButton
+};
 extern NSControl *(*wkCreateMediaUIControl)(int);
+
 extern void (*wkWindowSetAlpha)(NSWindow *, float);
 extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 extern BOOL (*wkMediaControllerThemeAvailable)(int themeStyle);
