@@ -1,3 +1,8 @@
+2011-06-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed rollout r89237, r89238 and part of r89243,
+        because the original patch r89233 was rolled out by r89320.
+
 2011-06-20  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, update expected test results on Chromium Mac-Leopard.

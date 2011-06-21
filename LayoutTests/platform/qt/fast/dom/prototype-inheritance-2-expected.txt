@@ -298,6 +298,7 @@ Never found Option
 Never found ProcessingInstruction
 Never found Range
 Never found SVGAElement
+Never found SVGAltGlyphElement
 Never found SVGAngle
 Never found SVGAnimateColorElement
 Never found SVGAnimateElement
@@ -353,9 +354,17 @@ Never found SVGFESpotLightElement
 Never found SVGFETileElement
 Never found SVGFETurbulenceElement
 Never found SVGFilterElement
+Never found SVGFontElement
+Never found SVGFontFaceElement
+Never found SVGFontFaceFormatElement
+Never found SVGFontFaceNameElement
+Never found SVGFontFaceSrcElement
+Never found SVGFontFaceUriElement
 Never found SVGForeignObjectElement
 Never found SVGGElement
+Never found SVGGlyphElement
 Never found SVGGradientElement
+Never found SVGHKernElement
 Never found SVGImageElement
 Never found SVGLength
 Never found SVGLengthList
@@ -366,6 +375,7 @@ Never found SVGMarkerElement
 Never found SVGMaskElement
 Never found SVGMatrix
 Never found SVGMetadataElement
+Never found SVGMissingGlyphElement
 Never found SVGNumber
 Never found SVGNumberList
 Never found SVGPathElement
@@ -419,6 +429,7 @@ Never found SVGTransform
 Never found SVGTransformList
 Never found SVGUnitTypes
 Never found SVGUseElement
+Never found SVGVKernElement
 Never found SVGViewElement
 Never found SharedWorker
 Never found StyleSheet
