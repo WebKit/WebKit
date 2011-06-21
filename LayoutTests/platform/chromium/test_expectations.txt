@@ -927,15 +927,15 @@ BUGWK62974 WIN LINUX : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
 BUGWK62974 LEOPARD : svg/batik/text/xmlSpace.svg = IMAGE
 BUGWK62974 WIN : svg/custom/glyph-selection-lang-attribute.svg = IMAGE+TEXT
 BUGWK62974 LINUX : svg/custom/glyph-selection-lang-attribute.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE+TEXT
-BUGWK62974 LEOPARD : svg/custom/svg-fonts-fallback.xhtml = IMAGE
-BUGWK62974 WIN LINUX : svg/custom/svg-fonts-segmented.xhtml = IMAGE+TEXT
-BUGWK62974 WIN LINUX : svg/custom/svg-fonts-word-spacing.html = IMAGE+TEXT
-BUGWK62974 MAC : svg/custom/svg-fonts-word-spacing.html = IMAGE
+//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE+TEXT
+//BUGWK62974 LEOPARD : svg/custom/svg-fonts-fallback.xhtml = IMAGE
+//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-segmented.xhtml = IMAGE+TEXT
+//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-word-spacing.html = IMAGE+TEXT
+//BUGWK62974 MAC : svg/custom/svg-fonts-word-spacing.html = IMAGE
 BUGWK62974 WIN LINUX : svg/text/text-altglyph-01-b.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE+TEXT
-BUGWK62974 LEOPARD : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE
+//BUGWK62974 WIN LINUX : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE+TEXT
+//BUGWK62974 LEOPARD : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE
 BUGWK62974 WIN LINUX : svg/text/text-text-04-t.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
 BUGWK62974 WIN LINUX : svg/text/text-text-05-t.svg = IMAGE+TEXT
@@ -2924,9 +2924,6 @@ BUGWK49629 GPU SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
-
-BUGWK53469 GPU SNOWLEOPARD : compositing/scroll-painted-composited-content.html = CRASH
-BUGWK53469 GPU LEOPARD RELEASE : compositing/scroll-painted-composited-content.html = CRASH
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 GPU MAC SKIP: media/video-canvas-alpha.html = IMAGE

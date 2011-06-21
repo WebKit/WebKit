@@ -2,6 +2,16 @@
 
         Unreviewed.
 
+        Remove a now-passing test from chromium's text_expectations.  Also 
+        comment out expectations for a few newly-added tests which were
+        removed by a revert.  This makes lint-test-files run cleanly.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-21  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
         Removing a now-passing test from chromium's test_expectations.
 
         * platform/chromium/test_expectations.txt:
