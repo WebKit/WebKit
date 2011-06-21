@@ -1,3 +1,28 @@
+2011-06-21  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Update GraphicsContextSkia when the Chromium platform is Mac
+        https://bugs.webkit.org/show_bug.cgi?id=62867
+
+        No new tests. This does not modify existing code;
+        there is no change in functionality.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::drawOuterPath):
+        (WebCore::drawInnerPath):
+        (WebCore::getFocusRingOutset):
+        (WebCore::GraphicsContext::drawFocusRing):
+        The OS X framework draws a fatter focus ring than the
+        Chromium port. Increase the diameter, and add an inner
+        stroke with more transparency, to match the look of
+        Chromium on Mac when Skia is the rendering engine.
+
+        (WebCore::deviceRGBColorSpaceRef):
+        Add deviceRGBColorSpaceRef, a static cache of
+        CGColorSpaceCreateDeviceRGB(). This is called by
+        the Mac-specific UI when Skia is the rendering engine.
+
 2011-06-21  Tony Chang  <tony@chromium.org>
 
         Try to fix WinCE build.  Replace cat with perl -ne "print".

@@ -57,6 +57,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+#include <CoreGraphics/CGColorSpace.h>
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -530,7 +534,38 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, con
     // FIXME: implement
 }
 
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width */, int /* offset */, const Color& color)
+static inline void drawOuterPath(SkCanvas* canvas, const SkPath& path, SkPaint& paint, int width)
+{
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    paint.setAlpha(64);
+    paint.setStrokeWidth(width);
+    paint.setPathEffect(new SkCornerPathEffect((width - 1) * 0.5f))->unref();
+#else
+    paint.setStrokeWidth(1);
+    paint.setPathEffect(new SkCornerPathEffect(1))->unref();
+#endif
+    canvas->drawPath(path, paint);
+}
+
+static inline void drawInnerPath(SkCanvas* canvas, const SkPath& path, SkPaint& paint, int width)
+{
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    paint.setAlpha(128);
+    paint.setStrokeWidth(width * 0.5f);
+    canvas->drawPath(path, paint);
+#endif
+}
+
+static inline SkScalar getFocusRingOutset(int width)
+{
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    return (width * 0.5f) + 0.25f;
+#else
+    return 0.5f;
+#endif
+}
+
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int /* offset */, const Color& color)
 {
     if (paintingDisabled())
         return;
@@ -541,7 +576,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width *
 
     platformContext()->prepareForSoftwareDraw();
     SkRegion focusRingRegion;
-    const SkScalar focusRingOutset = WebCoreFloatToSkScalar(0.5);
+    const SkScalar focusRingOutset = getFocusRingOutset(width);
     for (unsigned i = 0; i < rectCount; i++) {
         SkIRect r = rects[i];
         r.inset(-focusRingOutset, -focusRingOutset);
@@ -554,10 +589,10 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width *
     paint.setStyle(SkPaint::kStroke_Style);
 
     paint.setColor(color.rgb());
-    paint.setStrokeWidth(focusRingOutset * 2);
-    paint.setPathEffect(new SkCornerPathEffect(focusRingOutset * 2))->unref();
     focusRingRegion.getBoundaryPath(&path);
-    platformContext()->canvas()->drawPath(path, paint);
+    SkCanvas* canvas = platformContext()->canvas();
+    drawOuterPath(canvas, path, paint, width);
+    drawInnerPath(canvas, path, paint, width);
 }
 
 // This is only used to draw borders.
@@ -1288,5 +1323,13 @@ void GraphicsContext::markDirtyRect(const IntRect& rect)
 {
     platformContext()->markDirtyRect(rect);
 }
+
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+CGColorSpaceRef deviceRGBColorSpaceRef()
+{
+    static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
+    return deviceSpace;
+}
+#endif
 
 }  // namespace WebCore
