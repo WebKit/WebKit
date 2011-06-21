@@ -3646,6 +3646,14 @@ void RenderLayer::clearBacking()
     m_backing.clear();
 }
 
+void RenderLayer::clearBackingIncludingDescendants()
+{
+    clearBacking();
+
+    for (RenderLayer* l = firstChild(); l; l = l->nextSibling())
+        l->clearBackingIncludingDescendants();
+}
+
 bool RenderLayer::hasCompositedMask() const
 {
     return m_backing && m_backing->hasMaskLayer();

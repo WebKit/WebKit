@@ -1,3 +1,20 @@
+2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Minimize memory due to layer backing stores for pages in the Page Cache
+        https://bugs.webkit.org/show_bug.cgi?id=62675
+
+        Test the layer tree of a page with composited content,
+        including content in iframes, looks like we expect.
+        Enabling clearing backing stores in the PageCache should
+        produce the same expected results.
+
+        * compositing/iframes/page-cache-layer-tree-expected.txt: Added.
+        * compositing/iframes/page-cache-layer-tree.html: Added.
+        * compositing/iframes/resources/page-cache-helper.html: Added.
+        * compositing/iframes/resources/page-cache-iframe.html: Added.
+
 2011-06-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,53 @@
+2011-06-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Minimize memory due to layer backing stores for pages in the Page Cache
+        https://bugs.webkit.org/show_bug.cgi?id=62675
+
+        When a page enters the page cache there is now an option on
+        the PageCache singleton to clear the backing stores and layers
+        of the cached page. This can be useful to minimize the amount
+        of memory the stored page consumes.
+
+        This only affects memory usage and is disabled by default, so no test.
+
+        * history/CachedFrame.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        Save whether or not the page had composited content or not
+        in a new instance variable, m_isComposited.
+
+        (WebCore::CachedFrameBase::restore):
+        When restoring, rebuild the compositing tree if it may have
+        been destroyed.
+
+        (WebCore::CachedFrame::CachedFrame):
+        When saving, clear the backing stores if the page is in
+        compositing mode, and the PageCache setting is enabled.
+        
+        * history/PageCache.cpp:
+        (WebCore::PageCache::PageCache):
+        * history/PageCache.h:
+        (WebCore::PageCache::shouldClearBackingStores):
+        (WebCore::PageCache::setShouldClearBackingStores):
+        A setting to opt-in to the new behavior of clearing
+        the backing stores.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clearBackingStores):
+        (WebCore::FrameView::restoreBackingStores):
+        To clear all backing stores we disable compositing
+        for the frame, to detach the root platform layer,
+        and recursively clear backing stores from the root
+        layer of the FrameView.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clearBackingIncludingDescendants):
+        Recursively call clearBacking.
+
 2011-06-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.

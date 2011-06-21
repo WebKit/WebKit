@@ -64,6 +64,9 @@ protected:
     OwnPtr<ScriptCachedFrameData> m_cachedFrameScriptData;
     OwnPtr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;
+#if USE(ACCELERATED_COMPOSITING)
+    bool m_isComposited;
+#endif
     
     CachedFrameVector m_childFrames;
 };

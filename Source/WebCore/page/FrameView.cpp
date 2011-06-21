@@ -636,6 +636,30 @@ void FrameView::updateCompositingLayers()
 #endif
 }
 
+void FrameView::clearBackingStores()
+{
+    RenderView* root = m_frame->contentRenderer();
+    if (!root)
+        return;
+
+    RenderLayerCompositor* compositor = root->compositor();
+    ASSERT(compositor->inCompositingMode());
+    compositor->enableCompositingMode(false);
+    root->layer()->clearBackingIncludingDescendants();
+}
+
+void FrameView::restoreBackingStores()
+{
+    RenderView* root = m_frame->contentRenderer();
+    if (!root)
+        return;
+
+    RenderLayerCompositor* compositor = root->compositor();
+    compositor->enableCompositingMode(true);
+    compositor->setCompositingLayersNeedRebuild();
+    compositor->scheduleCompositingLayerUpdate();
+}
+
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
 {
     RenderView* view = m_frame->contentRenderer();

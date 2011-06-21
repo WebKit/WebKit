@@ -52,6 +52,10 @@
 #include "ChromeClient.h"
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "PageCache.h"
+#endif
+
 namespace WebCore {
 
 #ifndef NDEBUG
@@ -69,6 +73,9 @@ CachedFrameBase::CachedFrameBase(Frame* frame)
     , m_mousePressNode(frame->eventHandler()->mousePressNode())
     , m_url(frame->document()->url())
     , m_isMainFrame(!frame->tree()->parent())
+#if USE(ACCELERATED_COMPOSITING)
+    , m_isComposited(frame->view()->hasCompositedContent())
+#endif
 {
 }
 
@@ -104,6 +111,11 @@ void CachedFrameBase::restore()
     // It is necessary to update any platform script objects after restoring the
     // cached page.
     frame->script()->updatePlatformScriptObjects();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_isComposited)
+        frame->view()->restoreBackingStores();
+#endif
 
     frame->loader()->client()->didRestoreFromPageCache();
 
@@ -163,6 +175,11 @@ CachedFrame::CachedFrame(Frame* frame)
     m_cachedFrameScriptData = adoptPtr(new ScriptCachedFrameData(frame));
 
     frame->loader()->client()->savePlatformDataToCachedFrame(this);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_isComposited && pageCache()->shouldClearBackingStores())
+        frame->view()->clearBackingStores();
+#endif
 
     // Deconstruct the FrameTree, to restore it later.
     // We do this for two reasons:

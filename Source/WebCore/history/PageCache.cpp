@@ -240,6 +240,9 @@ PageCache::PageCache()
     , m_head(0)
     , m_tail(0)
     , m_autoreleaseTimer(this, &PageCache::releaseAutoreleasedPagesNowOrReschedule)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_shouldClearBackingStores(false)
+#endif
 {
 }
     
