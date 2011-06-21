@@ -1,3 +1,15 @@
+2011-06-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        IndexedDB: IDBObjectStore methods should throw TypeError if required arguments are missing
+        https://bugs.webkit.org/show_bug.cgi?id=63087
+
+        Test: storage/indexeddb/objectStore-required-arguments.html
+
+        * storage/IDBObjectStore.idl: Remove LegacyDefaultOptionalArguments flag
+        so missing required arguments will throw TypeError, as per WebIDL spec.
+
 2011-06-21  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.
