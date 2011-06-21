@@ -1,5 +1,12 @@
 2011-06-20  Adam Barth  <abarth@webkit.org>
 
+        Mac build fix.  In addition to adding the files to the project, we need
+        to add them to the WebCore target.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2011-06-20  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Remove numRequests
