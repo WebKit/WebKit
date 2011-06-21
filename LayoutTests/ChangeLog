@@ -1,3 +1,12 @@
+2011-06-20  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Update Chromium test expectation for inspector/elements/event-listener-sidebar.html
+        and rebaseline SVG tests changed in r89315.
+
+        * platform/chromium-win/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/chromium-win/svg/dom/SVGStringList-basics-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Updated Chromium test expectations to fix ui_test
