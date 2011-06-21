@@ -481,6 +481,16 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     ASSERT(valuesCount > 1);
     
     CalcMode calcMode = this->calcMode();
+    if (hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::animateColorTag)) {
+        const SVGAnimateElement* animateElement = static_cast<const SVGAnimateElement*>(this);
+        AnimatedAttributeType attributeType = animateElement->determineAnimatedAttributeType(targetElement());
+        // Fall back to discrete animations for Strings.
+        if (attributeType == AnimatedBoolean
+            || attributeType == AnimatedEnumeration
+            || attributeType == AnimatedPreserveAspectRatio
+            || attributeType == AnimatedString)
+            calcMode = CalcModeDiscrete;
+    }
     if (!m_keyPoints.isEmpty() && calcMode != CalcModePaced)
         return currentValuesFromKeyPoints(percent, effectivePercent, from, to);
     

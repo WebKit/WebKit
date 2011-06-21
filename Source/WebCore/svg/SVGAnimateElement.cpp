@@ -262,12 +262,6 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         break;
     }
     ASSERT(animationMode == FromToAnimation || animationMode == ToAnimation || animationMode == ValuesAnimation);
-    // Replace 'currentColor' / 'inherit' by their computed property values.
-    if (m_fromPropertyValueType == InheritValue)
-        adjustForInheritance(targetElement, attributeName(), m_fromString);
-    if (m_toPropertyValueType == InheritValue)
-        adjustForInheritance(targetElement, attributeName(), m_toString);
-
     if ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1)
         results->m_animatedString = m_toString;
     else

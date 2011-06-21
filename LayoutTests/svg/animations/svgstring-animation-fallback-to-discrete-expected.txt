@@ -1,0 +1,15 @@
+SVG 1.1 dynamic animation tests
+
+Tests fallback to calcMode='discrete' on animation of SVGString with 'values'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.style.visibility is 'visible'
+PASS rect.style.visibility is 'hidden'
+FAIL rect.style.visibility should be visible. Was hidden.
+PASS rect.style.visibility is 'visible'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

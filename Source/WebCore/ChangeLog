@@ -1,3 +1,25 @@
+2011-06-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        SVG no fallback to discrete animation on attribute 'values' for SVGString
+        https://bugs.webkit.org/show_bug.cgi?id=57085
+
+        Check for AnimatedString, AnimatedBoolean and AnimatedEnumeration on 'values' calculation.
+        If the property type matches one of the above values, fallback to discrete animation.
+
+        The patch also changes behavior for String animation. The animation code doesn't handle inheritance
+        for strings anymore. This is done by the CSS parser itself now, we just need to handle inheritance
+        on animations that interpolate between two values like for calcMode="linear".
+
+        Test: svg/animations/svgstring-animation-fallback-to-discrete.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+
 2011-06-21  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.

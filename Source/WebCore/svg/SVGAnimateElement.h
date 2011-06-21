@@ -44,6 +44,8 @@ public:
     
     static void adjustForCurrentColor(SVGElement* targetElement, Color&);
     void adjustForInheritance(SVGElement* targetElement, const QualifiedName&, String& value);
+    
+    AnimatedAttributeType determineAnimatedAttributeType(SVGElement*) const;
 
 protected:
     SVGAnimateElement(const QualifiedName&, Document*);
@@ -57,7 +59,7 @@ protected:
 
 private:
     SVGAnimatedTypeAnimator* ensureAnimator();
-    
+
     // If we have 'currentColor' or 'inherit' as animation value, we need to grab the value during the animation
     // since the value can be animated itself.
     enum AnimatedPropertyValueType {
@@ -67,7 +69,6 @@ private:
     };
     
     virtual bool hasValidAttributeType() const;
-    AnimatedAttributeType determineAnimatedAttributeType(SVGElement*) const;
     AnimatedAttributeType m_animatedAttributeType;
 
     AnimatedPropertyValueType m_fromPropertyValueType;
