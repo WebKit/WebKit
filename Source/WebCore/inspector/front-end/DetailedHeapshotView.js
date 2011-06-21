@@ -461,7 +461,7 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
     {
         if (this.snapshotView.isTracingToWindowObjects)
             this.pathFinder.updateRoots(
-                "function (node) { return node.name === \"DOMWindow\"; }");
+                "function (node) { return node.name.substr(0, 9) === \"DOMWindow\"; }");
         else
             this.pathFinder.updateRoots();
     },
