@@ -1,3 +1,26 @@
+2011-06-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Regression(60942) wrong default action for drag-and-drop.
+        https://bugs.webkit.org/show_bug.cgi?id=63004
+
+        Added special handling for the case that dragOperation is not initialized.
+        Save the last dropOperation and pass it to the dropEvent, so that it can 
+        be accepted by QDrag.
+        Call event->accepted() and not event->acceptProposedAction(), because the
+        later ignores the dropAction specified in JavaScript.
+
+        Tested with the test page attached to https://bugs.webkit.org/show_bug.cgi?id=40401
+        and did not see any issue.
+        Also manually tested all combinations of LayoutTests/fast/events/drag-and-drop.html
+        and they all pass.
+
+        * Api/qwebpage.cpp:
+        (dropActionToDragOp):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+
 2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

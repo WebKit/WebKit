@@ -269,6 +269,8 @@ static inline DragOperation dropActionToDragOp(Qt::DropActions actions)
         result |= (DragOperationMove | DragOperationGeneric);
     if (actions & Qt::LinkAction)
         result |= DragOperationLink;
+    if (result == (DragOperationCopy | DragOperationMove | DragOperationGeneric | DragOperationLink))
+        result = DragOperationEvery;
     return (DragOperation)result;
 }
 
@@ -315,6 +317,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorFrontend(0)
     , inspector(0)
     , inspectorIsInternalOnly(false)
+    , m_lastDropAction(Qt::IgnoreAction)
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
     ScriptController::initializeThreading();
@@ -1015,10 +1018,10 @@ void QWebPagePrivate::dragMoveEvent(T *ev)
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), QPointF(ev->pos()).toPoint(),
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
-    Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
-    ev->setDropAction(action);
-    if (action != Qt::IgnoreAction)
-        ev->acceptProposedAction();
+    m_lastDropAction = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
+    ev->setDropAction(m_lastDropAction);
+    if (m_lastDropAction != Qt::IgnoreAction)
+        ev->accept();
 #endif
 }
 
@@ -1028,8 +1031,10 @@ void QWebPagePrivate::dropEvent(T *ev)
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), QPointF(ev->pos()).toPoint(),
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
-    if (page->dragController()->performDrag(&dragData))
-        ev->acceptProposedAction();
+    if (page->dragController()->performDrag(&dragData)) {
+        ev->setDropAction(m_lastDropAction);
+        ev->accept();
+    }
 #endif
 }
 
