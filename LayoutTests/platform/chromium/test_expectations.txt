@@ -4002,8 +4002,8 @@ BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IM
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE PASS
 
 BUGCR86714 MAC GPU : compositing/tiling/huge-layer-resize.html = CRASH
-BUGCR86714 MAC GPU : media/video-controls-rendering.html = CRASH
-BUGCR86714 MAC GPU : media/video-zoom.html = CRASH
+BUGCR86714 MAC GPU : media/video-controls-rendering.html = IMAGE CRASH
+BUGCR86714 MAC GPU : media/video-zoom.html = IMAGE CRASH
 
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE

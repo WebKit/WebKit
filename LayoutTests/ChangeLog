@@ -1,3 +1,11 @@
+2011-06-21  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
+        Adjust some GPU test expectations to match bot reality.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89354.
