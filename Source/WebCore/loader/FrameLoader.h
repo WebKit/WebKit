@@ -103,34 +103,43 @@ public:
     SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
     IconController* icon() const { return &m_icon; }
 
-    // FIXME: This is not cool, people. There are too many different functions that all start loads.
-    // We should aim to consolidate these into a smaller set of functions, and try to reuse more of
-    // the logic by extracting common code paths.
-
     void prepareForLoadStart();
     void setupForReplace();
     void setupForReplaceByMIMEType(const String& newMIMEType);
 
+    // FIXME: These are all functions which start loads. We have too many.
     void loadURLIntoChildFrame(const KURL&, const String& referer, Frame*);
-
     void loadFrameRequest(const FrameLoadRequest&, bool lockHistory, bool lockBackForwardList,  // Called by submitForm, calls loadPostRequest and loadURL.
         PassRefPtr<Event>, PassRefPtr<FormState>, ReferrerPolicy);
 
     void load(const ResourceRequest&, bool lockHistory);                                        // Called by WebFrame, calls load(ResourceRequest, SubstituteData).
     void load(const ResourceRequest&, const SubstituteData&, bool lockHistory);                 // Called both by WebFrame and internally, calls load(DocumentLoader*).
     void load(const ResourceRequest&, const String& frameName, bool lockHistory);               // Called by WebPluginController.
-
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     void loadArchive(PassRefPtr<Archive>);
 #endif
+    unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
+
+    void changeLocation(PassRefPtr<SecurityOrigin>, const KURL&, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool refresh = false);
+    void urlSelected(const KURL&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, ReferrerPolicy);
+    void submitForm(PassRefPtr<FormSubmission>);
+
+    void reload(bool endToEndReload = false);
+    void reloadWithOverrideEncoding(const String& overrideEncoding);
+
+    void open(CachedFrameBase&);
+    void loadItem(HistoryItem*, FrameLoadType);
 
     static void reportLocalLoadFailed(Frame*, const String& url);
 
-    unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
-
-    // Also not cool.
+    // FIXME: These are all functions which stop loads. We have too many.
     void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
     void stopForUserCancel(bool deferCheckLoadComplete = false);
+    void stop();
+    void stopLoading(UnloadEventPolicy);
+    bool closeURL();
+    void cancelAndClear();
+    void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
     bool isLoading() const;
@@ -167,9 +176,6 @@ public:
     bool isHostedByObjectElement() const;
     bool isLoadingMainFrame() const;
 
-    void reload(bool endToEndReload = false);
-    void reloadWithOverrideEncoding(const String& overrideEncoding);
-
     void finishedLoadingDocument(DocumentLoader*);
     bool isReplacing() const;
     void setReplacing();
@@ -184,7 +190,6 @@ public:
     CachePolicy subresourceCachePolicy() const;
 
     void didFirstLayout();
-
     void didFirstVisuallyNonEmptyLayout();
 
     void loadedResourceFromMemoryCache(const CachedResource*);
@@ -202,15 +207,6 @@ public:
     FrameLoaderClient* client() const { return m_client; }
 
     void setDefersLoading(bool);
-
-    void changeLocation(PassRefPtr<SecurityOrigin>, const KURL&, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool refresh = false);
-    void urlSelected(const KURL&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, ReferrerPolicy);
-
-    void submitForm(PassRefPtr<FormSubmission>);
-
-    void stop();
-    void stopLoading(UnloadEventPolicy);
-    bool closeURL();
 
     void didExplicitOpen();
 
@@ -258,8 +254,6 @@ public:
 
     bool isComplete() const;
 
-    void cancelAndClear();
-
     void setTitle(const StringWithDirection&);
 
     void commitProvisionalLoad();
@@ -274,15 +268,12 @@ public:
 
     bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
 
-    void open(CachedFrameBase&);
-
     // FIXME: Should these really be public?
     void completed();
     bool allAncestorsAreComplete() const; // including this
     bool allChildrenAreComplete() const; // immediate children, not all descendants
     void clientRedirected(const KURL&, double delay, double fireDate, bool lockBackForwardList);
     void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
-    void loadItem(HistoryItem*, FrameLoadType);
 
     // FIXME: This is public because this asynchronous callback from the FrameLoaderClient
     // uses the policy machinery (and therefore is called via the PolicyChecker).  Once we
@@ -292,8 +283,6 @@ public:
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
 
     static ObjectContentType defaultObjectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
-
-    void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 

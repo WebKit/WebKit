@@ -1,3 +1,14 @@
+2011-06-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Group load-initiating and stopping functions in FrameLoader.h
+        https://bugs.webkit.org/show_bug.cgi?id=63030
+
+        No function change, thus no tests.
+
+        * loader/FrameLoader.h:
+
 2011-06-20  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.
