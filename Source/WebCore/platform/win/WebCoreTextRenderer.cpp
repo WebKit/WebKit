@@ -26,6 +26,7 @@
 #include "WebCoreTextRenderer.h"
 
 #include "Font.h"
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "StringTruncator.h"
@@ -48,6 +49,8 @@ static bool isOneLeftToRightRun(const TextRun& run)
 
 static void doDrawTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const Font& font, const Color& color, int underlinedIndex)
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     TextRun run(text.characters(), text.length());
 
     context.setFillColor(color, ColorSpaceDeviceRGB);
@@ -101,6 +104,8 @@ void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text,
 
 float WebCoreTextFloatWidth(const String& text, const Font& font)
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     return StringTruncator::width(text, font);
 }
 

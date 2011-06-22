@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "Font.h"
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
 #include "Frame.h"
@@ -130,6 +131,7 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, Frame* fra
 
     const Font* labelFont;
     const Font* urlFont;
+    FontCachePurgePreventer fontCachePurgePreventer;
 
     if (frame->settings() && frame->settings()->fontRenderingMode() == AlternateRenderingMode) {
         static const Font alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);
