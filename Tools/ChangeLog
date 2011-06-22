@@ -1,3 +1,19 @@
+2011-06-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        run-webkit-websocketserver fails to stop websocket server
+        https://bugs.webkit.org/show_bug.cgi?id=63123
+
+        There's a ten-character change in new-run-webkit-websocketserver
+        that fixes the actual bug, and then we update the code in
+        new-run-webkit-httpd to do the actual stop call, and add more tests
+        (refactoring the existing test code so that it is shared).
+
+        * Scripts/new-run-webkit-httpd:
+        * Scripts/new-run-webkit-websocketserver:
+        * Scripts/webkitpy/layout_tests/port/http_server_integrationtest.py:
+
 2011-06-22  Adam Roben  <aroben@apple.com>
 
         Add links to existing bugs related to failing tests on TestFailures page

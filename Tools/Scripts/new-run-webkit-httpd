@@ -70,12 +70,8 @@ def run(options):
         if options.server == 'start':
             httpd.start()
         else:
-            # FIXME: We use _shut_down_http_server() instead of stop_http_server()
-            # because stop() only works if start() was called previously in the
-            # same process. _shut_down() is too coarse and may kill unrelated 
-            # web servers, so this is a hack. We should change the interface so we
-            # can rely on pid files or something.
-            port_obj._shut_down_http_server(None)
+            httpd.stop()
+
 
 def main():
     option_parser = optparse.OptionParser()

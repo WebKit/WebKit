@@ -102,7 +102,7 @@ def main():
     if 'start' == options.server:
         pywebsocket.start()
     else:
-        pywebsocket.stop(force=True)
+        pywebsocket.stop()
 
 if '__main__' == __name__:
     main()
