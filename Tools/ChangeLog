@@ -1,3 +1,54 @@
+2011-06-22  Adam Roben  <aroben@apple.com>
+
+        Add links to existing bugs related to failing tests on TestFailures page
+
+        I changed the layout of the page a little to make it easier to read with all the new
+        information. Passing/failing revisions have been moved down below the list of tests to be
+        closer to the existing bugs and the new bug link. And each set of tests and its relevant
+        information is in a light gray box.
+
+        Fixes <http://webkit.org/b/61665> TestFailures page should link to existing bugs when
+        possible
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js: Added.
+        (Bugzilla): This new class represents a single Bugzilla instance.
+        (Bugzilla.prototype.quickSearch): Searches Bugzilla using its Quick Search functionality,
+        passing the resulting bug titles and URLs to the callback when complete. If called multiple
+        times with the same query before the query returns, caches the callbacks so that only one
+        query is sent over the wire. When the query completes, all pending callbacks are called.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (#failure-history): Reduce the margin/padding on the top-level list a bit.
+        (#failure-history > li): Put each set of tests in a gray box, and indent most information
+        inside the box.
+        (.test-list): Unindent the list of failing tests so it is visually at the top level.
+        (.new-and-existing-bugs): Reduce the space at the bottom of this area so that the bottom of
+        each box isn't a big empty space.
+        (.existing-bugs-list): Use a smaller text size for existing bugs, since their titles can be
+        quite long.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (addQueryParametersToURL): New function extracted from
+        ViewController.prototype._domForNewAndExistingBugs.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController): Take and store an optional Bugzilla instance.
+        (ViewController.prototype._displayBuilder): Give the top-level list an id for styling
+        purposes and move the list of failing tests above all other information. Only show bug
+        information once we've determined the most-recent passing revision for a set of tests. It's
+        not that useful to file a new bug before this information has been determined, and searching
+        for existing bugs before we've figured out which tests started failing at the same time
+        would end up giving you information about a bunch of unrelated tests.
+        (ViewController.prototype._domForNewAndExistingBugs): Renamed from _domForNewBugLink. Now
+        returns a DocumentFragment instead of an HTMLParagraphElement. If we don't have a Bugzilla
+        instance, just returns an empty DocumentFragment. Starts a search for bugs related to the
+        failing tests, and adds links to the bugs when the search completes.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pass a
+        Bugzilla instance for bugs.webkit.org to the ViewController.
+
 2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

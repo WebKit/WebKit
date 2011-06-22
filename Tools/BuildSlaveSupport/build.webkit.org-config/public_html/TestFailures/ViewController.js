@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function ViewController(buildbot) {
+function ViewController(buildbot, bugzilla) {
     this._buildbot = buildbot;
+    this._bugzilla = bugzilla;
 
     var self = this;
     addEventListener('load', function() { self.loaded() }, false);
@@ -48,10 +49,31 @@ ViewController.prototype = {
         var self = this;
         builder.startFetchingBuildHistory(function(history) {
             var list = document.createElement('ol');
+            list.id = 'failure-history';
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {
                 var failingTestNames = Object.keys(history[buildName].tests);
                 if (!failingTestNames.length)
                     return;
+
+                var item = document.createElement('li');
+                list.appendChild(item);
+
+                var testList = document.createElement('ol');
+                item.appendChild(testList);
+
+                testList.className = 'test-list';
+                for (var testName in history[buildName].tests) {
+                    var testItem = document.createElement('li');
+                    testItem.appendChild(self._domForFailedTest(builder, buildName, testName, history[buildName].tests[testName]));
+                    testList.appendChild(testItem);
+                }
+
+                if (history[buildName].tooManyFailures) {
+                    var p = document.createElement('p');
+                    p.className = 'info';
+                    p.appendChild(document.createTextNode('run-webkit-tests exited early due to too many failures/crashes/timeouts'));
+                    item.appendChild(p);
+                }
 
                 var passingBuildName;
                 if (buildIndex + 1 < buildNameArray.length)
@@ -62,27 +84,10 @@ ViewController.prototype = {
                 ];
                 if (passingBuildName)
                     dlItems.push([document.createTextNode('Passed'), self._domForBuildName(builder, buildNameArray[buildIndex + 1])]);
-
-                var item = document.createElement('li');
                 item.appendChild(createDefinitionList(dlItems));
-                list.appendChild(item);
 
-                item.appendChild(self._domForNewBugLink(builder, buildName, passingBuildName, failingTestNames));
-
-                if (history[buildName].tooManyFailures) {
-                    var p = document.createElement('p');
-                    p.className = 'info';
-                    p.appendChild(document.createTextNode('run-webkit-tests exited early due to too many failures/crashes/timeouts'));
-                    item.appendChild(p);
-                }
-
-                var testList = document.createElement('ol');
-                for (var testName in history[buildName].tests) {
-                    var testItem = document.createElement('li');
-                    testItem.appendChild(self._domForFailedTest(builder, buildName, testName, history[buildName].tests[testName]));
-                    testList.appendChild(testItem);
-                }
-                item.appendChild(testList);
+                if (passingBuildName)
+                    item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
             });
 
             var header = document.createElement('h1');
@@ -184,7 +189,50 @@ ViewController.prototype = {
         return result;
     },
 
-    _domForNewBugLink: function(tester, failingBuildName, passingBuildName, failingTests) {
+    _domForNewAndExistingBugs: function(tester, failingBuildName, passingBuildName, failingTests) {
+        var result = document.createDocumentFragment();
+
+        if (!this._bugzilla)
+            return result;
+
+        var container = document.createElement('p');
+        result.appendChild(container);
+
+        container.className = 'existing-and-new-bugs';
+
+        var bugsContainer = document.createElement('div');
+        container.appendChild(bugsContainer);
+
+        bugsContainer.appendChild(document.createTextNode('Searching for bugs related to ' + (failingTests.length > 1 ? 'these tests' : 'this test') + '\u2026'));
+
+        this._bugzilla.quickSearch(failingTests.join('|'), function(bugs) {
+            if (!bugs.length) {
+                bugsContainer.parentNode.removeChild(bugsContainer);
+                return;
+            }
+
+            while (bugsContainer.firstChild)
+                bugsContainer.removeChild(bugsContainer.firstChild);
+
+            bugsContainer.appendChild(document.createTextNode('Existing bugs related to ' + (failingTests.length > 1 ? 'these tests' : 'this test') + ':'));
+
+            var list = document.createElement('ul');
+            bugsContainer.appendChild(list);
+
+            list.className = 'existing-bugs-list';
+
+            bugs.forEach(function(bug) {
+                var link = document.createElement('a');
+                link.href = bug.url;
+                link.appendChild(document.createTextNode(bug.title));
+
+                var item = document.createElement('li');
+                item.appendChild(link);
+
+                list.appendChild(item);
+            });
+        });
+
         var parsedFailingBuildName = this._buildbot.parseBuildName(failingBuildName);
         var regressionRangeString = 'r' + parsedFailingBuildName.revision;
         if (passingBuildName) {
@@ -201,6 +249,8 @@ ViewController.prototype = {
             description += encodeURI(tester.resultsPageURL(passingBuildName)) + ' passed\n';
         var failingResultsHTML = tester.resultsPageURL(failingBuildName);
         description += encodeURI(failingResultsHTML) + ' failed\n';
+
+        // FIXME: Some of this code should move into a new method on the Bugzilla class.
 
         // FIXME: When a newly-added test has been failing since its introduction, it isn't really a
         // "regression". We should use a different title and keywords in that case.
@@ -229,17 +279,13 @@ ViewController.prototype = {
                 queryParameters.op_sys = 'Mac OS X 10.5';
         }
 
-        var encodedParameters = Object.keys(queryParameters).map(function(key) {
-            return key + '=' + encodeURIComponent(queryParameters[key])
-        });
-
         var link = document.createElement('a');
-        link.href = 'https://bugs.webkit.org/enter_bug.cgi?' + encodedParameters.join('&');
+        container.appendChild(link);
+
+        link.href = addQueryParametersToURL('https://bugs.webkit.org/enter_bug.cgi', queryParameters);
         link.target = '_blank';
         link.appendChild(document.createTextNode('File bug for ' + (failingTests.length > 1 ? 'these failures' : 'this failure')));
 
-        var p = document.createElement('p');
-        p.appendChild(link);
-        return p;
+        return result;
     },
 };

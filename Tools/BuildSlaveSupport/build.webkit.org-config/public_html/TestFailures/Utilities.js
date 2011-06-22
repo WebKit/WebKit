@@ -51,6 +51,19 @@ function getResource(url, callback, errorCallback) {
     xhr.send();
 }
 
+function addQueryParametersToURL(url, queryParameters) {
+    var encodedParameters = Object.keys(queryParameters).map(function(key) {
+        return key + '=' + encodeURIComponent(queryParameters[key])
+    });
+
+    if (url.indexOf('?') < 0)
+        url += '?';
+    else
+        url += '&';
+
+    return url + encodedParameters.join('&');
+}
+
 Array.prototype.findFirst = function(predicate) {
     for (var i = 0; i < this.length; ++i) {
         if (predicate(this[i]))
