@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import itertools
 import random
 from webkitpy.common.config import irc as config_irc
 
@@ -56,46 +57,65 @@ class Restart(IRCCommand):
 
 class Rollout(IRCCommand):
     def _parse_args(self, args):
-        read_revision = True
-        rollout_reason = []
-        # the first argument must be a revision number
-        svn_revision_list = [args[0].lstrip("r")]
-        if not svn_revision_list[0].isdigit():
-            read_revision = False
+        if not args:
+            return (None, None)
 
+        # the first argument must be a revision number
+        first_revision = args[0].lstrip("r")
+        if not first_revision.isdigit():
+            return (None, None)
+
+        parsing_revision = True
+        svn_revision_list = [int(first_revision)]
+        rollout_reason = []
         for arg in args[1:]:
-            if arg.lstrip("r").isdigit() and read_revision:
-                svn_revision_list.append(arg.lstrip("r"))
+            if arg.lstrip("r").isdigit() and parsing_revision:
+                svn_revision_list.append(int(arg.lstrip("r")))
             else:
-                read_revision = False
+                parsing_revision = False
                 rollout_reason.append(arg)
 
+        rollout_reason = " ".join(rollout_reason)
         return svn_revision_list, rollout_reason
+
+    def _responsible_nicknames_from_revisions(self, tool, sheriff, svn_revision_list):
+        commit_infos = map(tool.checkout().commit_info_for_revision, svn_revision_list)
+        nickname_lists = map(sheriff.responsible_nicknames_from_commit_info, commit_infos)
+        return sorted(set(itertools.chain.from_iterable(nickname_lists)))
+
+    def _nicks_string(self, tool, sheriff, requester_nick, svn_revision_list):
+        # FIXME: _parse_args guarentees that our svn_revision_list is all numbers.
+        # However, it's possible our checkout will not include one of the revisions,
+        # so we may need to catch exceptions from commit_info_for_revision here.
+        target_nicks = [requester_nick] + self._responsible_nicknames_from_revisions(tool, sheriff, svn_revision_list)
+        return ", ".join(target_nicks)
 
     def execute(self, nick, args, tool, sheriff):
         svn_revision_list, rollout_reason = self._parse_args(args)
 
-        if (len(svn_revision_list) == 0) or (len(rollout_reason) == 0):
-            tool.irc().post("%s: Usage: SVN_REVISION [SVN_REVISIONS] REASON" % nick)
-            return
+        if (not svn_revision_list or not rollout_reason):
+            # return is equivalent to an irc().post(), but makes for easier unit testing.
+            return "%s: Usage: SVN_REVISION [SVN_REVISIONS] REASON" % nick
 
-        rollout_reason = " ".join(rollout_reason)
+        # FIXME: IRCCommand should bind to a tool and have a self._tool like Command objects do.
+        # Likewise we should probably have a self._sheriff.
+        nicks_string = self._nicks_string(tool, sheriff, nick, svn_revision_list)
 
-        tool.irc().post("Preparing rollout for %s..." %
-                        join_with_separators(["r" + str(revision) for revision in svn_revision_list]))
+        revision_urls_string = join_with_separators([urls.view_revision_url(revision) for revision in svn_revision_list])
+        tool.irc().post("%s: Preparing rollout for %s..." % (nicks_string, revision_urls_string))
+
         try:
             complete_reason = "%s (Requested by %s on %s)." % (
                 rollout_reason, nick, config_irc.channel)
             bug_id = sheriff.post_rollout_patch(svn_revision_list, complete_reason)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
-            tool.irc().post("%s: Created rollout: %s" % (nick, bug_url))
+            tool.irc().post("%s: Created rollout: %s" % (nicks_string, bug_url))
         except ScriptError, e:
-            tool.irc().post("%s: Failed to create rollout patch:" % nick)
+            tool.irc().post("%s: Failed to create rollout patch:" % nicks_string)
             tool.irc().post("%s" % e)
             bug_id = parse_bug_id(e.output)
             if bug_id:
-                tool.irc().post("Ugg...  Might have created %s" %
-                    tool.bugs.bug_url_for_bug_id(bug_id))
+                tool.irc().post("%s: Ugg...  Might have created %s" % (nicks_string, tool.bugs.bug_url_for_bug_id(bug_id)))
 
 
 class Help(IRCCommand):

@@ -1,3 +1,25 @@
+2011-06-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Make sheriff-bot rollout messages a little nicer
+        https://bugs.webkit.org/show_bug.cgi?id=63107
+
+        It annoyed me this afternoon that I had to convert sheriff-bots "r12345" revisions
+        into urls myself.  So I have now fixed its "preparing" message to include a url.
+
+        I also figured that I should make the messages mention all of the responsible parties
+        so that rollouts are never surprises.  If you're in the channel and were involved
+        in a patch, you will see if someone is using sheriff-bot to rollout a patch.
+
+        As part of doing this I also changed (and tested) _parse_args to fail-fast
+        when given invalid args.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-06-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

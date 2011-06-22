@@ -69,3 +69,18 @@ class IRCCommandTest(unittest.TestCase):
         tool.bugs.create_bug = mock_create_bug
         self.assertEquals("tom: Failed to create bug:\nException from bugzilla!",
                           create_bug.execute("tom", example_args, tool, None))
+
+    def test_rollout(self):
+        rollout = Rollout()
+        self.assertEquals(([1234], "testing foo"),
+                          rollout._parse_args(["1234", "testing", "foo"]))
+
+        # Test invalid argument parsing:
+        self.assertEquals((None, None), rollout._parse_args([]))
+        self.assertEquals((None, None), rollout._parse_args(["--bar", "1234"]))
+
+        # Invalid arguments result in the USAGE message.
+        self.assertEquals("tom: Usage: SVN_REVISION [SVN_REVISIONS] REASON",
+                          rollout.execute("tom", [], None, None))
+
+        # FIXME: We need a better way to test IRCCommands which call tool.irc().post()

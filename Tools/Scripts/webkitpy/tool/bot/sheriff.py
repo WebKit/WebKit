@@ -38,10 +38,11 @@ class Sheriff(object):
         self._tool = tool
         self._sheriffbot = sheriffbot
 
+    def responsible_nicknames_from_commit_info(self, commit_info):
+        return [party.irc_nickname for party in commit_info.responsible_parties() if party.irc_nickname]
+
     def post_irc_warning(self, commit_info, builders):
-        irc_nicknames = sorted([party.irc_nickname for
-                                party in commit_info.responsible_parties()
-                                if party.irc_nickname])
+        irc_nicknames = sorted(self.responsible_nicknames_from_commit_info(commit_info))
         irc_prefix = ": " if irc_nicknames else ""
         irc_message = "%s%s%s might have broken %s" % (
             ", ".join(irc_nicknames),

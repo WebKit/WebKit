@@ -59,19 +59,19 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["last-green-revision"], expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654...\nMOCK: irc.post: mock_nick: Created rollout: http://example.com/36936\n"
+        expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 This patch broke the world"], expected_stderr=expected_stderr)
 
     def test_multi_rollout(self):
-        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654, r21655, and r21656...\nMOCK: irc.post: mock_nick: Created rollout: http://example.com/36936\n"
+        expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654, http://trac.webkit.org/changeset/21655, and http://trac.webkit.org/changeset/21656...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 21655 21656 This 21654 patch broke the world"], expected_stderr=expected_stderr)
 
     def test_rollout_with_r_in_svn_revision(self):
-        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654...\nMOCK: irc.post: mock_nick: Created rollout: http://example.com/36936\n"
+        expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout r21654 This patch broke the world"], expected_stderr=expected_stderr)
 
     def test_multi_rollout_with_r_in_svn_revision(self):
-        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654, r21655, and r21656...\nMOCK: irc.post: mock_nick: Created rollout: http://example.com/36936\n"
+        expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654, http://trac.webkit.org/changeset/21655, and http://trac.webkit.org/changeset/21656...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout r21654 21655 r21656 This r21654 patch broke the world"], expected_stderr=expected_stderr)
 
     def test_rollout_bananas(self):
@@ -79,31 +79,27 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["rollout bananas"], expected_stderr=expected_stderr)
 
     def test_rollout_invalidate_revision(self):
-        expected_stderr = ("MOCK: irc.post: Preparing rollout for r--component=Tools...\n"
-                           "MOCK: irc.post: mock_nick: Failed to create rollout patch:\n"
-                           "MOCK: irc.post: Invalid svn revision number \"--component=Tools\".\n")
+        # When folks pass junk arguments, we should just spit the usage back at them.
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION [SVN_REVISIONS] REASON\n"
         OutputCapture().assert_outputs(self, run,
-                                       args=["rollout "
-                                             "--component=Tools 21654"],
+                                       args=["rollout --component=Tools 21654"],
                                        expected_stderr=expected_stderr)
 
     def test_rollout_invalidate_reason(self):
-        expected_stderr = ("MOCK: irc.post: Preparing rollout for "
-                           "r21654...\nMOCK: irc.post: mock_nick: Failed to "
-                           "create rollout patch:\nMOCK: irc.post: The rollout"
-                           " reason may not begin with - (\"-bad (Requested "
-                           "by mock_nick on #webkit).\").\n")
+        # FIXME: I'm slightly confused as to why this doesn't return the USAGE message.
+        expected_stderr = """MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...
+MOCK: irc.post: mock_nick, abarth, darin, eseidel: Failed to create rollout patch:
+MOCK: irc.post: The rollout reason may not begin with - (\"-bad (Requested by mock_nick on #webkit).\").
+"""
         OutputCapture().assert_outputs(self, run,
-                                       args=["rollout "
-                                             "21654 -bad"],
+                                       args=["rollout 21654 -bad"],
                                        expected_stderr=expected_stderr)
 
     def test_multi_rollout_invalidate_reason(self):
-        expected_stderr = ("MOCK: irc.post: Preparing rollout for "
-                           "r21654, r21655, and r21656...\nMOCK: irc.post: mock_nick: Failed to "
-                           "create rollout patch:\nMOCK: irc.post: The rollout"
-                           " reason may not begin with - (\"-bad (Requested "
-                           "by mock_nick on #webkit).\").\n")
+        expected_stderr = """MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654, http://trac.webkit.org/changeset/21655, and http://trac.webkit.org/changeset/21656...
+MOCK: irc.post: mock_nick, abarth, darin, eseidel: Failed to create rollout patch:
+MOCK: irc.post: The rollout reason may not begin with - (\"-bad (Requested by mock_nick on #webkit).\").
+"""
         OutputCapture().assert_outputs(self, run,
                                        args=["rollout "
                                              "21654 21655 r21656 -bad"],
