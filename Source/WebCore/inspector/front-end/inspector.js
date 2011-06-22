@@ -1283,9 +1283,14 @@ WebInspector.linkifyResourceAsNode = function(url, preferredPanel, oneBasedLineN
     preferredPanel = preferredPanel || "scripts";
     // FIXME(62725): stack trace line/column numbers are one-based.
     var lineNumber = oneBasedLineNumber ? oneBasedLineNumber - 1 : undefined;
-    var node = this.panels[preferredPanel].createAnchor(url, lineNumber, classes, tooltipText);
-    node.setAttribute("preferred_panel", preferredPanel);
-    return node;
+    return this.panels[preferredPanel].createAnchor(url, lineNumber, 0, classes, tooltipText);
+}
+
+WebInspector.linkifyCallFrameAsNode = function(callFrame, classes, tooltipText)
+{
+    // FIXME(62725): stack trace line/column numbers are one-based.
+    var columnNumber = callFrame.columnNumber ? callFrame.columnNumber - 1 : 0;
+    return this.panels.scripts.createAnchor(callFrame.url, callFrame.lineNumber - 1, columnNumber, classes, tooltipText);
 }
 
 WebInspector.resourceURLForRelatedNode = function(node, url)

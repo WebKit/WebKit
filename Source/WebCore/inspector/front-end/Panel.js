@@ -388,10 +388,11 @@ WebInspector.Panel.prototype = {
             visibleView.resize();
     },
 
-    createAnchor: function(url, lineNumber, classes, tooltipText)
+    createAnchor: function(url, lineNumber, columnNumber, classes, tooltipText)
     {
         var linkText = this.formatAnchorText(url, lineNumber);
         var anchor = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
+        anchor.setAttribute("preferred_panel", "resources");
         if (lineNumber !== undefined)
             anchor.setAttribute("line_number", lineNumber);
         return anchor;

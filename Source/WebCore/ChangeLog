@@ -1,3 +1,26 @@
+2011-06-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: use stack trace to create anchors for console messages.
+        https://bugs.webkit.org/show_bug.cgi?id=62856
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._completions.reportCompletions):
+        (WebInspector.ConsoleView.prototype._completions):
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._updateAnchor):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.createAnchor):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.createAnchor):
+        (WebInspector.ScriptsPanel.prototype.showAnchorLocation):
+        (WebInspector.ScriptsPanel.prototype._updateAnchor):
+        * inspector/front-end/inspector.js:
+        (WebInspector.linkifyResourceAsNode):
+        (WebInspector.linkifyCallFrameAsNode):
+
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

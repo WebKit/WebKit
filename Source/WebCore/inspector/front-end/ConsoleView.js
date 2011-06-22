@@ -398,7 +398,7 @@ WebInspector.ConsoleView.prototype = {
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
             }
-            
+
             this._reportCompletions(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, Object.keys(propertyNames));
         }
     },
@@ -783,7 +783,10 @@ WebInspector.ConsoleMessage.prototype = {
         this._formattedMessage = document.createElement("span");
         this._formattedMessage.className = "console-message-text source-code";
 
-        if (this.url && this.url !== "undefined") {
+        if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
+            var urlElement = WebInspector.linkifyCallFrameAsNode(this._stackTrace[0], "console-message-url");
+            this._formattedMessage.appendChild(urlElement);
+        } else if (this.url && this.url !== "undefined") {
             var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url");
             this._formattedMessage.appendChild(urlElement);
         }

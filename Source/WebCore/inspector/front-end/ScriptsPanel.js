@@ -520,16 +520,11 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
-    createAnchor: function(url, lineNumber, classes, tooltipText)
+    createAnchor: function(url, lineNumber, columnNumber, classes, tooltipText)
     {
-        var anchor = WebInspector.Panel.prototype.createAnchor.call(this, url, lineNumber, classes, tooltipText);
-        if (lineNumber !== undefined) {
-            function updateAnchor(url, lineNumber)
-            {
-                anchor.textContent = this.formatAnchorText(url, lineNumber)
-            }
-            this._presentationModel.registerAnchor(url, null, lineNumber, 0, updateAnchor.bind(this));
-        }
+        var anchor = WebInspector.Panel.prototype.createAnchor.call(this, url, lineNumber, columnNumber, classes, tooltipText);
+        if (lineNumber !== undefined)
+            this._presentationModel.registerAnchor(url, null, lineNumber, columnNumber, this._updateAnchor.bind(this, anchor));
         return anchor;
     },
 
@@ -540,16 +535,18 @@ WebInspector.ScriptsPanel.prototype = {
 
     showAnchorLocation: function(anchor)
     {
-        var anchorLineNumber = anchor.hasAttribute("line_number") ? parseInt(anchor.getAttribute("line_number")) : 0;
+        this._showSourceLine(anchor.getAttribute("source_file_id"), parseInt(anchor.getAttribute("line_number")));
+    },
 
-        function didGetUILocation(sourceFileId, lineNumber)
-        {
-            if (anchor.hasAttribute("line_number"))
-                this._showSourceLine(sourceFileId, lineNumber);
-            else
-                this._showSourceFrameAndAddToHistory(sourceFileId);
-        }
-        this._presentationModel.scriptLocationToUILocation(anchor.href, null, anchorLineNumber, 0, didGetUILocation.bind(this));
+    _updateAnchor: function(anchor, sourceFileId, lineNumber)
+    {
+        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+        var url = sourceFile.url || WebInspector.UIString("(program)");
+        anchor.textContent = this.formatAnchorText(url, lineNumber)
+        // Used for showing anchor location.
+        anchor.setAttribute("preferred_panel", "scripts");
+        anchor.setAttribute("source_file_id", sourceFileId);
+        anchor.setAttribute("line_number", lineNumber);
     },
 
     _showSourceLine: function(sourceFileId, lineNumber)

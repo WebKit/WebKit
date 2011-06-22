@@ -115,11 +115,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (!sourceFile)
             return;
 
-        function didGetUILocation(sourceFileId, lineNumber)
-        {
-            anchor.updateHandler(sourceFile.url, lineNumber);
-        }
-        this.scriptLocationToUILocation(anchor.sourceURL, anchor.sourceId, anchor.lineNumber, anchor.columnNumber, didGetUILocation);
+        this.scriptLocationToUILocation(anchor.sourceURL, anchor.sourceId, anchor.lineNumber, anchor.columnNumber, anchor.updateHandler);
     },
 
     _parsedScriptSource: function(event)
