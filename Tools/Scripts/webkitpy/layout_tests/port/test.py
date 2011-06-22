@@ -338,10 +338,16 @@ class TestPort(base.Port):
     def start_websocket_server(self):
         pass
 
+    def acquire_http_lock(self):
+        pass
+
     def stop_http_server(self):
         pass
 
     def stop_websocket_server(self):
+        pass
+
+    def release_http_lock(self):
         pass
 
     def path_to_test_expectations_file(self):

@@ -1,3 +1,13 @@
+2011-06-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        nrwt: don't look for http lock when running the test port
+        https://bugs.webkit.org/show_bug.cgi?id=63158
+
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
