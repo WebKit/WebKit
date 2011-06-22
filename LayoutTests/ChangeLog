@@ -1,3 +1,16 @@
+2011-06-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63174
+        Don't draw the borders as one path unless there really are 4 borders
+        -and corresponding-
+        <rdar://problem/9457997>
+
+        * fast/borders/only-one-border-with-width.html: Added.
+        * platform/mac/fast/borders/only-one-border-with-width-expected.png: Added.
+        * platform/mac/fast/borders/only-one-border-with-width-expected.txt: Added.
+
 2011-06-22  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1383,8 +1383,10 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, const I
             continue;
         }
         
-        if (!currEdge.width)
+        if (!currEdge.width) {
+            allEdgesVisible = false;
             continue;
+        }
 
         if (firstVisibleEdge == -1)
             firstVisibleEdge = i;

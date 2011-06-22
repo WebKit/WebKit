@@ -1,3 +1,17 @@
+2011-06-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63174
+        Don't draw the borders as one path unless there really are 4 borders
+        -and corresponding-
+        <rdar://problem/9457997>
+
+        If any of the border edges have no width, then allEdgesVisible should be set to 
+        false since borders without width will not be visible.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+
 2011-06-22  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Oliver Hunt.
