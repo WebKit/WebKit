@@ -449,6 +449,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSpeechInputResult.h \
 	DerivedSources/WebCore/JSSpeechInputResultList.cpp \
 	DerivedSources/WebCore/JSSpeechInputResultList.h \
+	DerivedSources/WebCore/JSSpellcheckRange.cpp \
+	DerivedSources/WebCore/JSSpellcheckRange.h \
+	DerivedSources/WebCore/JSSpellcheckRangeList.cpp \
+	DerivedSources/WebCore/JSSpellcheckRangeList.h \
 	DerivedSources/WebCore/JSSQLException.h \
 	DerivedSources/WebCore/JSSQLResultSetRowList.h \
 	DerivedSources/WebCore/JSSQLStatementErrorCallback.cpp \

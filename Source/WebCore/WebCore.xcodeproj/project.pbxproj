@@ -3270,6 +3270,8 @@
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A71C30B81381265E00DBC351 /* ShadowContentSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */; };
 		A71C30B91381265E00DBC351 /* ShadowContentSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A71C30B71381265E00DBC351 /* ShadowContentSelector.h */; };
+		A7314F8913AF5C1300AB5534 /* SpellcheckRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BC39D713AF5471001DC01C /* SpellcheckRange.cpp */; };
+		A7314F8A13AF5C1300AB5534 /* SpellcheckRangeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BC39DA13AF5471001DC01C /* SpellcheckRangeList.cpp */; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedIntRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedIntRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedIntRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedIntRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74C2D3C13811E0D00F83572 /* ShadowContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A74C2D3B13811E0D00F83572 /* ShadowContentElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9809,6 +9811,12 @@
 		A7B6E69D0B291A9600D0529F /* DragData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragData.h; sourceTree = "<group>"; };
 		A7BBE26411AFB3F20005EA03 /* JSHTMLMeterElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMeterElement.cpp; sourceTree = "<group>"; };
 		A7BBE26511AFB3F20005EA03 /* JSHTMLMeterElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLMeterElement.h; sourceTree = "<group>"; };
+		A7BC39D713AF5471001DC01C /* SpellcheckRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellcheckRange.cpp; sourceTree = "<group>"; };
+		A7BC39D813AF5471001DC01C /* SpellcheckRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellcheckRange.h; sourceTree = "<group>"; };
+		A7BC39D913AF5471001DC01C /* SpellcheckRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpellcheckRange.idl; sourceTree = "<group>"; };
+		A7BC39DA13AF5471001DC01C /* SpellcheckRangeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellcheckRangeList.cpp; sourceTree = "<group>"; };
+		A7BC39DB13AF5471001DC01C /* SpellcheckRangeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellcheckRangeList.h; sourceTree = "<group>"; };
+		A7BC39DC13AF5471001DC01C /* SpellcheckRangeList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpellcheckRangeList.idl; sourceTree = "<group>"; };
 		A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetailsMarkerControl.cpp; sourceTree = "<group>"; };
 		A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMarkerControl.h; sourceTree = "<group>"; };
 		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
@@ -16210,6 +16218,12 @@
 				F55B3D9C1251F12D003EF269 /* ResetInputType.h */,
 				F55B3D9D1251F12D003EF269 /* SearchInputType.cpp */,
 				F55B3D9E1251F12D003EF269 /* SearchInputType.h */,
+				A7BC39D713AF5471001DC01C /* SpellcheckRange.cpp */,
+				A7BC39D813AF5471001DC01C /* SpellcheckRange.h */,
+				A7BC39D913AF5471001DC01C /* SpellcheckRange.idl */,
+				A7BC39DA13AF5471001DC01C /* SpellcheckRangeList.cpp */,
+				A7BC39DB13AF5471001DC01C /* SpellcheckRangeList.h */,
+				A7BC39DC13AF5471001DC01C /* SpellcheckRangeList.idl */,
 				A5AFB34D115151A700B045CB /* StepRange.cpp */,
 				A5AFB34E115151A700B045CB /* StepRange.h */,
 				F55B3D9F1251F12D003EF269 /* SubmitInputType.cpp */,
@@ -25369,6 +25383,8 @@
 				75415C28129A9920003AD669 /* SpeechInputEvent.cpp in Sources */,
 				758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */,
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
+				A7314F8913AF5C1300AB5534 /* SpellcheckRange.cpp in Sources */,
+				A7314F8A13AF5C1300AB5534 /* SpellcheckRangeList.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
 				A7005CCC1330C4BA000CC0BA /* SpellingCorrectionController.cpp in Sources */,

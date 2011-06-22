@@ -630,6 +630,14 @@ AC_ARG_ENABLE(mathml,
               [],[enable_mathml="no"])
 AC_MSG_RESULT([$enable_mathml])
 
+# check whether to enable Web Spellcheck API support
+AC_MSG_CHECKING([whether to enable Web Spellcheck API support])
+AC_ARG_ENABLE(svg,
+              AC_HELP_STRING([--enable-spellcheck-api],
+                             [enable Web Spellcheck API support [default=no]]),
+              [],[enable_spellcheck_api="no"])
+AC_MSG_RESULT([$enable_spellcheck_api])
+
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -1154,6 +1162,7 @@ AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
+AM_CONDITIONAL([ENABLE_SPELLCHECK_API],[test "$enable_spellcheck_api" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])

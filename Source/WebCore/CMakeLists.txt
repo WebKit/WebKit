@@ -273,6 +273,8 @@ SET(WebCore_IDL_FILES
     html/HTMLVideoElement.idl
     html/ImageData.idl
     html/MediaError.idl
+    html/SpellcheckRange.idl
+    html/SpellcheckRangeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
     html/ValidityState.idl
@@ -796,6 +798,8 @@ SET(WebCore_SOURCES
     html/RangeInputType.cpp
     html/ResetInputType.cpp
     html/SearchInputType.cpp
+    html/SpellcheckRange.cpp
+    html/SpellcheckRangeList.cpp
     html/StepRange.cpp
     html/SubmitInputType.cpp
     html/TelephoneInputType.cpp

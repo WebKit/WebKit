@@ -159,6 +159,14 @@ webcore_cppflags += -DENABLE_PROGRESS_TAG=1
 endif # END ENABLE_PROGRESS_TAG
 
 # ----
+# HTML Meter Element
+# ----
+if ENABLE_SPELLCHECK_API
+FEATURE_DEFINES += ENABLE_SPELLCHECK_API=1
+webcore_cppflags += -DENABLE_SPELLCHECK_API=1
+endif # END ENABLE_SPELLCHECK_API
+
+# ----
 # JavaScript Debugger/Profiler
 # ----
 if ENABLE_JAVASCRIPT_DEBUGGER

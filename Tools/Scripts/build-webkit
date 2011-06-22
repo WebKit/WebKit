@@ -108,6 +108,7 @@ my (
     $quotaSupport,
     $registerProtocolHandlerSupport,
     $sharedWorkersSupport,
+    $spellcheckApiSupport,
     $svgSupport,
     $svgAnimationSupport,
     $svgAsImageSupport,
@@ -266,6 +267,9 @@ my @features = (
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },
+
+    { option => "spellcheck-api", desc => "Toggle Web Spellcheck API support",
+      define => "ENABLE_SPELLCHECK_API", default => 0, value => \$spellcheckApiSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },
