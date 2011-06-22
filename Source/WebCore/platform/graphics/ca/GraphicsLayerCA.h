@@ -264,9 +264,7 @@ private:
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateLayerNames();
     void updateSublayerList();
-    void updateLayerPosition();
-    void updateBounds();
-    void updateAnchorPoint();
+    void updateGeometry();
     void updateTransform();
     void updateChildrenTransform();
     void updateMasksToBounds();
@@ -308,29 +306,27 @@ private:
         NoChange = 0,
         NameChanged = 1 << 1,
         ChildrenChanged = 1 << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
-        PositionChanged = 1 << 3,
-        AnchorPointChanged = 1 << 4,
-        BoundsChanged = 1 << 5,
-        TransformChanged = 1 << 6,
-        ChildrenTransformChanged = 1 << 7,
-        Preserves3DChanged = 1 << 8,
-        MasksToBoundsChanged = 1 << 9,
-        DrawsContentChanged = 1 << 10, // need this?
-        BackgroundColorChanged = 1 << 11,
-        ContentsOpaqueChanged = 1 << 12,
-        BackfaceVisibilityChanged = 1 << 13,
-        OpacityChanged = 1 << 14,
-        AnimationChanged = 1 << 15,
-        DirtyRectsChanged = 1 << 16,
-        ContentsImageChanged = 1 << 17,
-        ContentsMediaLayerChanged = 1 << 18,
-        ContentsCanvasLayerChanged = 1 << 19,
-        ContentsRectChanged = 1 << 20,
-        MaskLayerChanged = 1 << 21,
-        ReplicatedLayerChanged = 1 << 22,
-        ContentsNeedsDisplay = 1 << 23,
-        AcceleratesDrawingChanged = 1 << 24,
-        ContentsScaleChanged = 1 << 25
+        GeometryChanged = 1 << 3,
+        TransformChanged = 1 << 4,
+        ChildrenTransformChanged = 1 << 5,
+        Preserves3DChanged = 1 << 6,
+        MasksToBoundsChanged = 1 << 7,
+        DrawsContentChanged = 1 << 8, // need this?
+        BackgroundColorChanged = 1 << 9,
+        ContentsOpaqueChanged = 1 << 10,
+        BackfaceVisibilityChanged = 1 << 11,
+        OpacityChanged = 1 << 12,
+        AnimationChanged = 1 << 13,
+        DirtyRectsChanged = 1 << 14,
+        ContentsImageChanged = 1 << 15,
+        ContentsMediaLayerChanged = 1 << 16,
+        ContentsCanvasLayerChanged = 1 << 17,
+        ContentsRectChanged = 1 << 18,
+        MaskLayerChanged = 1 << 19,
+        ReplicatedLayerChanged = 1 << 20,
+        ContentsNeedsDisplay = 1 << 21,
+        AcceleratesDrawingChanged = 1 << 22,
+        ContentsScaleChanged = 1 << 23
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);

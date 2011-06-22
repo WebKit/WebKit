@@ -1,3 +1,27 @@
+2011-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update position, bounds and anchor point in GraphicsLayerCA all at once
+        https://bugs.webkit.org/show_bug.cgi?id=63148
+
+        Since position, bounds and anchor point are inter-dependent, avoid
+        redundant work by simply updating them all at the same time.
+        
+        No behavior changes, so no new tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setPosition):
+        (WebCore::GraphicsLayerCA::setAnchorPoint):
+        (WebCore::GraphicsLayerCA::setSize):
+        (WebCore::GraphicsLayerCA::setBoundsOrigin):
+        (WebCore::GraphicsLayerCA::setAllowTiledLayer):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

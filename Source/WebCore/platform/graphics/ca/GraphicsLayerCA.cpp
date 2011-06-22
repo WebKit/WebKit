@@ -381,7 +381,7 @@ void GraphicsLayerCA::setPosition(const FloatPoint& point)
         return;
 
     GraphicsLayer::setPosition(point);
-    noteLayerPropertyChanged(PositionChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
@@ -390,7 +390,7 @@ void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
         return;
 
     GraphicsLayer::setAnchorPoint(point);
-    noteLayerPropertyChanged(AnchorPointChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setSize(const FloatSize& size)
@@ -399,7 +399,7 @@ void GraphicsLayerCA::setSize(const FloatSize& size)
         return;
 
     GraphicsLayer::setSize(size);
-    noteLayerPropertyChanged(BoundsChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setBoundsOrigin(const FloatPoint& origin)
@@ -408,7 +408,7 @@ void GraphicsLayerCA::setBoundsOrigin(const FloatPoint& origin)
         return;
 
     GraphicsLayer::setBoundsOrigin(origin);
-    noteLayerPropertyChanged(BoundsChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
@@ -506,7 +506,7 @@ void GraphicsLayerCA::setAllowTiledLayer(bool allowTiledLayer)
     m_allowTiledLayer = allowTiledLayer;
     
     // Handling this as a BoundsChanged will cause use to switch in or out of tiled layer as needed
-    noteLayerPropertyChanged(BoundsChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -855,14 +855,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
     if (m_uncommittedChanges & ChildrenChanged)
         updateSublayerList();
 
-    if (m_uncommittedChanges & PositionChanged)
-        updateLayerPosition();
-    
-    if (m_uncommittedChanges & AnchorPointChanged)
-        updateAnchorPoint();
-    
-    if (m_uncommittedChanges & BoundsChanged)
-        updateBounds();
+    if (m_uncommittedChanges & GeometryChanged)
+        updateGeometry();
 
     if (m_uncommittedChanges & TransformChanged)
         updateTransform();
@@ -976,14 +970,18 @@ void GraphicsLayerCA::updateSublayerList()
         m_layer->setSublayers(newSublayers);
 }
 
-void GraphicsLayerCA::updateLayerPosition()
+void GraphicsLayerCA::updateGeometry()
 {
-    FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : m_size;
+    bool needTiledLayer = requiresTiledLayer(m_size);
+    if (needTiledLayer != m_usingTiledLayer)
+        swapFromOrToTiledLayer(needTiledLayer);
 
+    FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : m_size;
+    FloatRect boundsRect(m_boundsOrigin, usedSize);
+
+    // Update position.
     // Position is offset on the layer by the layer anchor point.
-    FloatPoint posPoint(m_position.x() + m_anchorPoint.x() * usedSize.width(),
-                          m_position.y() + m_anchorPoint.y() * usedSize.height());
-    
+    FloatPoint posPoint(m_position.x() + m_anchorPoint.x() * usedSize.width(), m_position.y() + m_anchorPoint.y() * usedSize.height());
     primaryLayer()->setPosition(posPoint);
 
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
@@ -998,18 +996,16 @@ void GraphicsLayerCA::updateLayerPosition()
             it->second->setPosition(clonePosition);
         }
     }
-}
 
-void GraphicsLayerCA::updateBounds()
-{
-    FloatRect rect(m_boundsOrigin, m_size);
+    // Update bounds.
+    // Note that we don't resize m_contentsLayer. It's up the caller to do that.
     if (m_structuralLayer) {
-        m_structuralLayer->setBounds(rect);
+        m_structuralLayer->setBounds(boundsRect);
         
         if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
             LayerMap::const_iterator end = layerCloneMap->end();
             for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-                it->second->setBounds(rect);
+                it->second->setBounds(boundsRect);
         }
 
         // The anchor of the contents layer is always at 0.5, 0.5, so the position is center-relative.
@@ -1023,34 +1019,14 @@ void GraphicsLayerCA::updateBounds()
         }
     }
     
-    bool needTiledLayer = requiresTiledLayer(m_size);
-    if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer);
-    
-    if (m_usingTiledLayer) {
-        FloatSize sizeToUse = constrainedSize();
-        rect = CGRectMake(0, 0, sizeToUse.width(), sizeToUse.height());
-    }
-    
-    m_layer->setBounds(rect);
+    m_layer->setBounds(boundsRect);
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->second->setBounds(rect);
+            it->second->setBounds(boundsRect);
     }
     
-    // Contents transform may depend on height.
-    updateContentsTransform();
-
-    // Note that we don't resize m_contentsLayer. It's up the caller to do that.
-
-    // if we've changed the bounds, we need to recalculate the position
-    // of the layer, taking anchor point into account.
-    updateLayerPosition();
-}
-
-void GraphicsLayerCA::updateAnchorPoint()
-{
+    // Update anchor point.
     primaryLayer()->setAnchorPoint(m_anchorPoint);
 
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
@@ -1061,7 +1037,8 @@ void GraphicsLayerCA::updateAnchorPoint()
         }
     }
 
-    updateLayerPosition();
+    // Contents transform may depend on height.
+    updateContentsTransform();
 }
 
 void GraphicsLayerCA::updateTransform()
@@ -1162,9 +1139,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             m_structuralLayer = 0;
 
             // Update the properties of m_layer now that we no longer have a structural layer.
-            updateLayerPosition();
-            updateBounds();
-            updateAnchorPoint();
+            updateGeometry();
             updateTransform();
             updateChildrenTransform();
 
@@ -1200,9 +1175,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     updateLayerNames();
 
     // Update the properties of the structural layer.
-    updateLayerPosition();
-    updateBounds();
-    updateAnchorPoint();
+    updateGeometry();
     updateTransform();
     updateChildrenTransform();
     updateBackfaceVisibility();
@@ -2085,9 +2058,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 
     updateContentsTransform();
 
-    updateLayerPosition();
-    updateBounds();
-    updateAnchorPoint();
+    updateGeometry();
     updateTransform();
     updateChildrenTransform();
     updateMasksToBounds();
