@@ -1,3 +1,23 @@
+2011-06-22  Adam Roben  <aroben@apple.com>
+
+        Disable zoom-svg-through-object-with-*.xhtml
+
+        These tests are flaky. See <http://webkit.org/b/63186>.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        Removed mentions of these tests.
+
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml.
+        * svg/zoom/page/zoom-svg-through-object-with-auto-size.html-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-auto-size.html.
+        * svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml.
+        * svg/zoom/page/zoom-svg-through-object-with-override-size.html-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-override-size.html.
+        * svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml.
+        * svg/zoom/page/zoom-svg-through-object-with-text.xhtml-disabled: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-text.xhtml.
+
 2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
