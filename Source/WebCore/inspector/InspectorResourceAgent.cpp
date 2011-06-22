@@ -434,7 +434,7 @@ void InspectorResourceAgent::initializeBackgroundCollection()
     m_mockFrontend = adoptPtr(new InspectorFrontend::Network(m_inspectorFrontendProxy.get()));
 }
 
-void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsigned long identifier, String* content, bool* base64Encoded)
+void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsigned long identifier, const bool* const optionalBase64Encode, String* content)
 {
     NetworkResourcesData::ResourceData* resourceData = m_resourcesData->data(identifier);
     if (!resourceData) {
@@ -442,20 +442,20 @@ void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsign
         return;
     }
 
+    bool base64Encode = optionalBase64Encode ? *optionalBase64Encode : false;
+
     if (resourceData->hasContent()) {
-        *base64Encoded = false;
         *content = resourceData->content();
         return;
     }
 
     if (resourceData->buffer() && !resourceData->textEncodingName().isNull()) {
-        *base64Encoded = false;
-        if (InspectorPageAgent::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), *base64Encoded, content))
+        if (InspectorPageAgent::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), base64Encode, content))
             return;
     }
 
     if (resourceData->cachedResource()) {
-        if (InspectorPageAgent::cachedResourceContent(resourceData->cachedResource(), content, base64Encoded))
+        if (InspectorPageAgent::cachedResourceContent(resourceData->cachedResource(), base64Encode, content))
             return;
     }
 

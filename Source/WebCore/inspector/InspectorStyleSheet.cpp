@@ -1069,9 +1069,8 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
         return false;
 
     String error;
-    bool base64Encoded;
-    InspectorPageAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result, &base64Encoded);
-    return error.isEmpty() && !base64Encoded;
+    InspectorPageAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), false, result);
+    return error.isEmpty();
 }
 
 bool InspectorStyleSheet::inlineStyleSheetText(String* result) const

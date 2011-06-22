@@ -110,17 +110,14 @@ static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* ha
     return true;
 }
 
-bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
+bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, bool withBase64Encode, String* result)
 {
-    ResourceType type = cachedResourceType(*cachedResource);
-    *base64Encoded = type != StylesheetResource && type != ScriptResource;
-
     bool hasZeroSize;
     bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
     if (!prepared)
         return false;
 
-    if (*base64Encoded) {
+    if (withBase64Encode) {
         RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->data();
 
         if (!buffer)
@@ -176,7 +173,7 @@ PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* i
 }
 
 // static
-void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result, bool* base64Encoded)
+void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, bool base64Encode, String* result)
 {
     if (!frame) {
         *errorString = "No frame to get resource content for";
@@ -193,13 +190,10 @@ void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame,
 
     RefPtr<SharedBuffer> buffer;
     bool success = false;
-    if (equalIgnoringFragmentIdentifier(url, loader->url())) {
-        *base64Encoded = false;
-        success = mainResourceContent(frame, *base64Encoded, result);
-    }
-
+    if (equalIgnoringFragmentIdentifier(url, loader->url()))
+        success = mainResourceContent(frame, base64Encode, result);
     if (!success)
-        success = cachedResourceContent(cachedResource(frame, url), result, base64Encoded);
+        success = cachedResourceContent(cachedResource(frame, url), base64Encode, result);
 
     if (!success)
         *errorString = "No resource with given URL found";
@@ -420,14 +414,15 @@ void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<InspectorObject>* 
     *object = buildObjectForFrameTree(m_page->mainFrame());
 }
 
-void InspectorPageAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, String* content, bool* base64Encoded)
+void InspectorPageAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, const bool* const optionalBase64Encode, String* content)
 {
     Frame* frame = frameForId(frameId);
     if (!frame) {
         *errorString = "No frame for given id found";
         return;
     }
-    resourceContent(errorString, frame, KURL(ParsedURLString, url), content, base64Encoded);
+    bool base64Encode = optionalBase64Encode ? *optionalBase64Encode : false;
+    resourceContent(errorString, frame, KURL(ParsedURLString, url), base64Encode, content);
 }
 
 static String createSearchRegexSource(const String& text)
@@ -483,15 +478,13 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
 
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
         String content;
-        bool base64Encoded;
         Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
         for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
             CachedResource* cachedResource = *it;
             switch (InspectorPageAgent::cachedResourceType(*cachedResource)) {
             case InspectorPageAgent::StylesheetResource:
             case InspectorPageAgent::ScriptResource:
-                if (cachedResourceContent(cachedResource, &content, &base64Encoded)) {
-                    ASSERT(!base64Encoded);
+                if (cachedResourceContent(cachedResource, false, &content)) {
                     int matchesCount = countRegularExpressionMatches(regex, content);
                     if (matchesCount)
                         result->pushValue(buildObjectForSearchMatch(frameId(frame), cachedResource->url(), matchesCount));

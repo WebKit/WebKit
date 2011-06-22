@@ -42,18 +42,18 @@ WebInspector.NetworkManager.EventTypes = {
 }
 
 WebInspector.NetworkManager.prototype = {
-    requestContent: function(resource, callback)
+    requestContent: function(resource, base64Encode, callback)
     {
-        function callbackWrapper(error, content, contentEncoded)
+        function callbackWrapper(error, content)
         {
-            callback(!error ? content : null, contentEncoded);
+            callback(!error ? content : null);
         }
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
         if (resource.identifier)
-            NetworkAgent.getResourceContent(resource.identifier, callbackWrapper);
+            NetworkAgent.getResourceContent(resource.identifier, base64Encode, callbackWrapper);
         else
-            PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
+            PageAgent.getResourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
     inflightResourceForURL: function(url)
