@@ -1,3 +1,37 @@
+2011-06-22  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: DOMAgent.resolveNode should receive objectGroup.
+        https://bugs.webkit.org/show_bug.cgi?id=63137
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::wrapNode):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::resume):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype.update.callback):
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+        (.):
+        ():
+        * inspector/front-end/PropertiesSidebarPane.js:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.resolveNode):
+        (WebInspector.RemoteObjectProperty.fromPrimitiveValue):
+
 2011-06-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

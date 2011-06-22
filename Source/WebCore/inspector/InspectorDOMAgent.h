@@ -125,7 +125,7 @@ public:
     void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const bool* const runSynchronously);
     void cancelSearch(ErrorString*);
-    void resolveNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
+    void resolveNode(ErrorString*, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result);
     void getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result);
     void setInspectModeEnabled(ErrorString*, bool enabled);
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
@@ -158,7 +158,7 @@ public:
 
     String documentURLString(Document*) const;
 
-    PassRefPtr<InspectorObject> resolveNode(Node*);
+    PassRefPtr<InspectorObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
     bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);

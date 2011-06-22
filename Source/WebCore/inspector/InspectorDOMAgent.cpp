@@ -1014,14 +1014,15 @@ void InspectorDOMAgent::hideHighlight(ErrorString*)
     m_client->hideHighlight();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, RefPtr<InspectorObject>* result)
+void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result)
 {
+    String objectGroupName = objectGroup ? *objectGroup : "";
     Node* node = nodeForId(nodeId);
     if (!node) {
         *error = "No node with given id found.";
         return;
     }
-    *result = resolveNode(node);
+    *result = resolveNode(node, objectGroupName);
 }
 
 void InspectorDOMAgent::getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result)
@@ -1171,12 +1172,14 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForEventListener(const
     value->setBoolean("useCapture", registeredEventListener.useCapture);
     value->setBoolean("isAttribute", eventListener->isAttribute());
     value->setNumber("nodeId", pushNodePathToFrontend(node));
-    value->setString("listenerBody", eventListenerHandlerBody(node->document(), eventListener.get()));
+    value->setString("handlerBody", eventListenerHandlerBody(node->document(), eventListener.get()));
     String sourceName;
     int lineNumber;
     if (eventListenerHandlerLocation(node->document(), eventListener.get(), sourceName, lineNumber)) {
-        value->setString("sourceName", sourceName);
-        value->setNumber("lineNumber", lineNumber);
+        RefPtr<InspectorObject> location = InspectorObject::create();
+        location->setString("sourceId", sourceName);
+        location->setNumber("lineNumber", lineNumber);
+        value->setObject("location", location);
     }
     return value.release();
 }
@@ -1445,7 +1448,7 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& pat
         *nodeId = pushNodePathToFrontend(node);
 }
 
-PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node)
+PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
 {
     Document* document = node->isDocumentNode() ? node->document() : node->ownerDocument();
     Frame* frame = document ? document->frame() : 0;
@@ -1456,7 +1459,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node)
     if (injectedScript.hasNoValue())
         return 0;
 
-    return injectedScript.wrapNode(node);
+    return injectedScript.wrapNode(node, objectGroup);
 }
 
 void InspectorDOMAgent::drawNodeHighlight(GraphicsContext& context) const

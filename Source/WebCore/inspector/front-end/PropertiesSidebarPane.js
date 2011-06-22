@@ -31,6 +31,8 @@ WebInspector.PropertiesSidebarPane = function()
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Properties"));
 }
 
+WebInspector.PropertiesSidebarPane._objectGroupName = "properties-sidebar-pane";
+
 WebInspector.PropertiesSidebarPane.prototype = {
     update: function(node)
     {
@@ -42,7 +44,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
             return;
         }
 
-        WebInspector.RemoteObject.resolveNode(node, nodeResolved.bind(this));
+        WebInspector.RemoteObject.resolveNode(node, WebInspector.PropertiesSidebarPane._objectGroupName, nodeResolved.bind(this));
 
         function nodeResolved(object)
         {

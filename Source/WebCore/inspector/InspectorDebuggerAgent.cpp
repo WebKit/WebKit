@@ -48,6 +48,8 @@ static const char debuggerEnabled[] = "debuggerEnabled";
 static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 };
 
+const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
+
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectorState(inspectorState)
@@ -338,7 +340,7 @@ void InspectorDebuggerAgent::pause(ErrorString*)
 
 void InspectorDebuggerAgent::resume(ErrorString*)
 {
-    m_injectedScriptManager->releaseObjectGroup("backtrace");
+    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().continueProgram();
 }
 

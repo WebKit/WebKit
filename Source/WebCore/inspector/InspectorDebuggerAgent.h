@@ -66,6 +66,8 @@ enum DebuggerEventType {
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
+    static const char* backtraceObjectGroup;
+
     virtual ~InspectorDebuggerAgent();
 
     void enable(ErrorString*);

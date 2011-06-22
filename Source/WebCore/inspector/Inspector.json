@@ -718,7 +718,7 @@
             {
                 "name": "addDOMStorage",
                 "parameters": [
-                    { "name": "storage", "$ref": "DOMStorageStorage" }
+                    { "name": "storage", "type": "object" }
                 ]
             },
             {
@@ -760,7 +760,7 @@
         "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, convert it into the JavaScript object, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.",
         "types": [
             {
-                "id": "DOMNode",
+                "id": "Node",
                 "type": "object",
                 "properties": [
                     { "name": "id", "type": "integer", "description": "Node identifier that is passed into the rest of the DOM messages as the <code>nodeId</code>. Backend will only push node with given <code>id</code> once. It is aware of all requested nodes and will only fire DOM events for nodes known to the client." },
@@ -769,7 +769,7 @@
                     { "name": "localName", "type": "string", "description": "<code>Node</code>'s localName." },
                     { "name": "nodeValue", "type": "string", "description": "<code>Node</code>'s nodeValue." },
                     { "name": "childNodeCount", "type": "integer", "optional": true, "description": "Child count for <code>Container</code> nodes." },
-                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "DOMNode" }, "description": "Child nodes of this node when requested with children." },
+                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Child nodes of this node when requested with children." },
                     { "name": "attributes", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]</code>." },
                     { "name": "documentURL", "type": "string", "optional": true, "description": "Document URL that <code>Document</code> or <code>FrameOwner</code> node points to." },
                     { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId. // FIXME" },
@@ -781,16 +781,15 @@
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
             },
             {
-                "id": "DOMEventListener",
+                "id": "EventListener",
                 "type": "object",
                 "properties": [
                     { "name": "type", "type": "string", "description": "<code>EventListener</code>'s type." },
                     { "name": "useCapture", "type": "boolean", "description": "<code>EventListener</code>'s useCapture." },
                     { "name": "isAttribute", "type": "boolean", "description": "<code>EventListener</code>'s isAttribute." },
                     { "name": "nodeId", "type": "integer", "description": "Target <code>DOMNode</code> id." },
-                    { "name": "listenerBody", "type": "string", "description": "Listener function body." },
-                    { "name": "sourceName", "type": "string", "optional": true, "description": "Handler location source name." },
-                    { "name": "lineNumber", "type": "number", "optional": true, "description": "Handler location line number." }
+                    { "name": "handlerBody", "type": "string", "description": "Event handler function body." },
+                    { "name": "location", "$ref": "Debugger.Location", "optional": true, "description": "Handler code location." }
                 ],
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
             },
@@ -808,7 +807,7 @@
             {
                 "name": "getDocument",
                 "returns": [
-                    { "name": "root", "$ref": "DOMNode", "description": "Resulting node." }
+                    { "name": "root", "$ref": "Node", "description": "Resulting node." }
                 ],
                 "description": "Returns the root DOM node to the caller."
             },
@@ -890,7 +889,7 @@
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to get listeners for." }
                 ],
                 "returns": [
-                    { "name": "listeners", "type": "array", "items": { "$ref": "DOMEventListener"}, "description": "Array of relevant listeners." }
+                    { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }
                 ],
                 "description": "Returns event listeners relevant to the node."
             },
@@ -987,7 +986,8 @@
             {
                 "name": "resolveNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to resolve." }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to resolve." },
+                    { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                 ],
                 "returns": [
                     { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given node." }
@@ -1014,7 +1014,7 @@
                 "name": "setChildNodes",
                 "parameters": [
                     { "name": "parentId", "type": "integer", "description": "Parent node id to populate with children." },
-                    { "name": "nodes", "type": "array", "items": { "$ref": "DOMNode"}, "description": "Child nodes array." }
+                    { "name": "nodes", "type": "array", "items": { "$ref": "Node"}, "description": "Child nodes array." }
                 ],
                 "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids."
             },
@@ -1053,7 +1053,7 @@
                 "parameters": [
                     { "name": "parentId", "type": "integer", "description": "Id of the node that has changed." },
                     { "name": "prevId", "type": "integer", "description": "If of the previous siblint." },
-                    { "name": "node", "$ref": "DOMNode", "description": "Inserted node data." }
+                    { "name": "node", "$ref": "Node", "description": "Inserted node data." }
                 ],
                 "description": "Mirrors <code>DOMNodeInserted</code> event."
             },

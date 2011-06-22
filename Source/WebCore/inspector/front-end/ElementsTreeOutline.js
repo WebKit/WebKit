@@ -476,7 +476,7 @@ WebInspector.ElementsTreeElement.prototype = {
             object.evaluate("return '[' + this.offsetWidth + ',' + this.offsetHeight + ',' + this.naturalWidth + ',' + this.naturalHeight + ']'", setTooltip.bind(this));
             object.release();
         }
-        WebInspector.RemoteObject.resolveNode(node, resolvedNode.bind(this));
+        WebInspector.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));
     },
 
     updateSelection: function()

@@ -256,7 +256,8 @@ InjectedScript.prototype = {
             return "Could not find object with given id";
         try {
             inspectedWindow.console._objectToEvaluateOn = object;
-            return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, "(function() {" + expression + "}).call(window.console._objectToEvaluateOn)", parsedObjectId.objectGroup, false, false);
+            var objectGroupName = this._idToObjectGroupName[parsedObjectId.id];
+            return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, "(function() {" + expression + "}).call(window.console._objectToEvaluateOn)", objectGroupName, false, false);
         } finally {
             delete inspectedWindow.console._objectToEvaluateOn;
         }

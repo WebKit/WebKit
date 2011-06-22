@@ -46,7 +46,7 @@ WebInspector.RemoteObject.fromLocalObject = function(value)
     return new WebInspector.LocalJSONObject(value);
 }
 
-WebInspector.RemoteObject.resolveNode = function(node, callback)
+WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
 {
     function mycallback(error, object)
     {
@@ -58,7 +58,7 @@ WebInspector.RemoteObject.resolveNode = function(node, callback)
         else
             callback(WebInspector.RemoteObject.fromPayload(object));
     }
-    DOMAgent.resolveNode(node.id, mycallback);
+    DOMAgent.resolveNode(node.id, objectGroup, mycallback);
 }
 
 WebInspector.RemoteObject.fromPayload = function(payload)
@@ -163,6 +163,11 @@ WebInspector.RemoteObjectProperty = function(name, value)
 {
     this.name = name;
     this.value = value;
+}
+
+WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
+{
+    return new WebInspector.RemoteObjectProperty(name, WebInspector.RemoteObject.fromPrimitiveValue(value));
 }
 
 // The below is a wrapper around a local object that provides an interface comaptible
