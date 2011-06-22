@@ -4030,23 +4030,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyWidows:
-    {
-        HANDLE_INHERIT_AND_INITIAL(widows, Widows)
-        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return;
-        m_style->setWidows(primitiveValue->getIntValue());
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(widows, Widows)
         return;
-    }
-        
     case CSSPropertyOrphans:
-    {
-        HANDLE_INHERIT_AND_INITIAL(orphans, Orphans)
-        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return;
-        m_style->setOrphans(primitiveValue->getIntValue());
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(orphans, Orphans)
         return;
-    }        
-
 // length, percent, number
     case CSSPropertyLineHeight:
     {

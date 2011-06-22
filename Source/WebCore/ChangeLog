@@ -1,3 +1,18 @@
+2011-06-22  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Support cast from CSSPrimitiveValue to short and use for CSSPropertyWidows and CSSPropertyOrphans.
+        https://bugs.webkit.org/show_bug.cgi?id=62964
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValueMappings.h:
+        Support cast to/from short.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use cast to short to allow CSSPropertWidows and CSSPropertyOrphans to use existing macro.
+
 2011-06-22  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Martin Robinson.

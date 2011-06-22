@@ -47,6 +47,22 @@
 
 namespace WebCore {
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
+    : m_type(CSS_NUMBER)
+    , m_hasCachedCSSText(false)
+{
+    m_value.num = static_cast<double>(i);
+}
+
+template<> inline CSSPrimitiveValue::operator short() const
+{
+    if (m_type == CSS_NUMBER) // Valid for CSS outline-style
+        return static_cast<short>(m_value.num);
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderStyle e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
