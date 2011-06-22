@@ -26,9 +26,6 @@
 #include "config.h"
 #include "WebKitAnimationList.h"
 
-#include "Animation.h"
-#include "AnimationBase.h"
-#include "RenderStyle.h"
 #include "WebKitAnimation.h"
 
 namespace WebCore {
@@ -61,12 +58,12 @@ void WebKitAnimationList::deleteAnimation(unsigned index)
     m_animations.remove(index);
 }
 
-void WebKitAnimationList::append(RefPtr<WebKitAnimation> animation)
+void WebKitAnimationList::append(PassRefPtr<WebKitAnimation> animation)
 {
     m_animations.append(animation);
 }
 
-unsigned WebKitAnimationList::insertAnimation(RefPtr<WebKitAnimation> animation, unsigned index)
+unsigned WebKitAnimationList::insertAnimation(PassRefPtr<WebKitAnimation> animation, unsigned index)
 {
     if (!animation)
         return 0;
@@ -79,4 +76,3 @@ unsigned WebKitAnimationList::insertAnimation(RefPtr<WebKitAnimation> animation,
 }
 
 } // namespace WebCore
-

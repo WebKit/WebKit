@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-DataTransferItems::DataTransferItems(RefPtr<Clipboard> clipboard, ScriptExecutionContext* context)
+DataTransferItems::DataTransferItems(PassRefPtr<Clipboard> clipboard, ScriptExecutionContext* context)
     : m_owner(clipboard)
     , m_context(context)
 {

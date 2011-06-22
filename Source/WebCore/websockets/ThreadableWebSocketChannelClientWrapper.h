@@ -73,10 +73,10 @@ protected:
     ThreadableWebSocketChannelClientWrapper(WebSocketChannelClient*);
 
     void processPendingTasks();
-    static void didConnectCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
-    static void didReceiveMessageCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, String message);
-    static void didStartClosingHandshakeCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
-    static void didCloseCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
+    static void didConnectCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
+    static void didReceiveMessageCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, String message);
+    static void didStartClosingHandshakeCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
+    static void didCloseCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;

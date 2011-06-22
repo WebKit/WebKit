@@ -461,8 +461,10 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     rebalanceWhitespaceOnTextSubstring(static_cast<Text*>(node), position.offsetInContainerNode(), position.offsetInContainerNode());
 }
 
-void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(RefPtr<Text> textNode, int startOffset, int endOffset)
+void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text> prpTextNode, int startOffset, int endOffset)
 {
+    RefPtr<Text> textNode = prpTextNode;
+
     String text = textNode->data();
     ASSERT(!text.isEmpty());
 
@@ -490,7 +492,7 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(RefPtr<Text> textN
                                                              isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length());
     
     if (string != rebalancedString)
-        replaceTextInNodePreservingMarkers(textNode, upstream, length, rebalancedString);
+        replaceTextInNodePreservingMarkers(textNode.release(), upstream, length, rebalancedString);
 }
 
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
