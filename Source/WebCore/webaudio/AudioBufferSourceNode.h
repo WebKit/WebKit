@@ -143,9 +143,6 @@ private:
     // A grain envelope will be applied if m_isGrain is set to true.
     void readFromBuffer(AudioBus* destinationBus, size_t framesToProcess);
 
-    // readFromBufferWithGrainEnvelope() is a low-level blitter which reads from the AudioBuffer and applies a grain envelope.
-    void readFromBufferWithGrainEnvelope(float* sourceL, float* sourceR, float* destinationL, float* destinationR, size_t framesToProcess);
-
     // Handles the time when we reach the end of sample data (non-looping) or the noteOff() time has been reached.
     void finish();
 };

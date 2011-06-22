@@ -323,42 +323,13 @@ void AudioBufferSourceNode::readFromBuffer(AudioBus* destinationBus, size_t fram
     if (!isDestinationGood)
         return;
 
-    if (m_isGrain)
-        readFromBufferWithGrainEnvelope(sourceL, sourceR, destinationL, destinationR, framesToProcess);
-    else {
-        // Simply copy the data from the source buffer to the destination.
-        memcpy(destinationL, sourceL, sizeof(float) * framesToProcess);
-        if (numberOfChannels == 2)
-            memcpy(destinationR, sourceR, sizeof(float) * framesToProcess);
-    }
+    // Simply copy the data from the source buffer to the destination.
+    memcpy(destinationL, sourceL, sizeof(float) * framesToProcess);
+    if (numberOfChannels == 2)
+        memcpy(destinationR, sourceR, sizeof(float) * framesToProcess);
 
     // Advance the buffer's read index.
     m_readIndex += framesToProcess;
-}
-
-void AudioBufferSourceNode::readFromBufferWithGrainEnvelope(float* sourceL, float* sourceR, float* destinationL, float* destinationR, size_t framesToProcess)
-{
-    ASSERT(sourceL && destinationL);
-    if (!sourceL || !destinationL)
-        return;
-        
-    int grainFrameLength = static_cast<int>(m_grainDuration * m_buffer->sampleRate());
-    bool isStereo = sourceR && destinationR;
-    
-    int n = framesToProcess;
-    while (n--) {
-        // Apply the grain envelope.
-        float x = static_cast<float>(m_grainFrameCount) / static_cast<float>(grainFrameLength);
-        m_grainFrameCount++;
-
-        x = min(1.0f, x);
-        float grainEnvelope = sinf(piFloat * x);
-        
-        *destinationL++ = grainEnvelope * *sourceL++;
-
-        if (isStereo)
-            *destinationR++ = grainEnvelope * *sourceR++;
-    }
 }
 
 void AudioBufferSourceNode::reset()
