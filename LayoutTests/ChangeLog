@@ -1,5 +1,12 @@
 2011-06-22  Dmitry Titov  <dimich@chromium.org>
 
+        [Chromium] Unreviewed, baseline for new test added in http://trac.webkit.org/changeset/89490
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Added.
+
+2011-06-22  Dmitry Titov  <dimich@chromium.org>
+
         [Chromium] Unreviewed, rebaseline tests after http://trac.webkit.org/changeset/89475/
 
         * platform/chromium-mac-leopard/fast/gradients/gradient-after-transparent-border-expected.png:
