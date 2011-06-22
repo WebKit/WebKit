@@ -1,3 +1,33 @@
+2011-06-20  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Improve speed of heap profiles dominators view.
+        https://bugs.webkit.org/show_bug.cgi?id=62979
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype._createProvider):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotArraySlice.prototype.item):
+        (WebInspector.HeapSnapshotArraySlice.prototype.slice):
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype._dominatedNodesOfNode):
+        (WebInspector.HeapSnapshot.prototype._buildReverseIndex.var):
+        (WebInspector.HeapSnapshot.prototype._buildReverseIndex):
+        (WebInspector.HeapSnapshot.prototype._buildRetainers):
+        (WebInspector.HeapSnapshot.prototype._buildNodeIndex):
+        (WebInspector.HeapSnapshot.prototype._buildDominatedNodes):
+        (WebInspector.HeapSnapshot.prototype._getDominatedIndex):
+        (WebInspector.HeapSnapshot.prototype.createNodesProviderForClass):
+        (WebInspector.HeapSnapshot.prototype.createNodesProviderForDominator):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype._createIterationOrder):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.get length):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.serializeNextItems):
+        (WebInspector.HeapSnapshotNodesProvider):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy.prototype.createNodesProviderForDominator):
+
 2011-06-22  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Reviewed by Pavel Feldman.

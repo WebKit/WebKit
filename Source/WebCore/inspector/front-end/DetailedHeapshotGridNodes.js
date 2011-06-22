@@ -700,12 +700,9 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
     _createProvider: function(snapshot, nodeIndex)
     {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
-        return snapshot.createNodesProvider(
+        return snapshot.createNodesProviderForDominator(nodeIndex,
             "function (node) {" +
-            "     var dominatorIndex = node.dominatorIndex;" +
-            "     return dominatorIndex === " + nodeIndex + 
-            "         && dominatorIndex !== node.nodeIndex" +
-            "         && (" + showHiddenData + " || !node.isHidden);" +
+            "     return " + showHiddenData + " || !node.isHidden;" +
             "}");
     },
 
