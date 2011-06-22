@@ -15,18 +15,17 @@ layer at (0,0) size 800x584
         RenderText {#text} at (0,22) size 430x22
           text run at (0,22) width 430: "Tests drawing and event handling on transformed search fields."
       RenderBlock {P} at (0,150) size 784x22
-        RenderText {#text} at (0,0) size 39x22
-          text run at (0,0) width 39: "FAIL"
+        RenderText {#text} at (0,0) size 40x22
+          text run at (0,0) width 40: "PASS"
 layer at (8,68) size 784x30
   RenderBlock {P} at (0,60) size 784x30
     RenderTextControl {INPUT} at (2,2) size 166x26
-      RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
-        RenderBlock {DIV} at (0,11) size 0x0
-        RenderBlock {DIV} at (0,0) size 151x22
+      RenderBlock {DIV} at (2,2) size 162x22
+        RenderBlock {DIV} at (0,16) size 0x0
         RenderBlock {DIV} at (151,5) size 11x11
     RenderText {#text} at (0,0) size 0x0
 layer at (12,72) size 151x22
   RenderBlock {DIV} at (0,0) size 151x22
     RenderText {#text} at (1,0) size 106x22
       text run at (1,0) width 106: "Some other text"
-caret: position 15 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {P} of body
+caret: position 15 of child 0 {#text} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {P} of body

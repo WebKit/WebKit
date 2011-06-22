@@ -128,11 +128,6 @@ const AtomicString& HTMLInputElement::formControlName() const
     return m_name.isNull() ? emptyAtom : m_name;
 }
 
-HTMLElement* HTMLInputElement::containerElement() const
-{
-    return m_inputType->containerElement();
-}
-
 HTMLElement* HTMLInputElement::innerTextElement() const
 {
     return m_inputType->innerTextElement();

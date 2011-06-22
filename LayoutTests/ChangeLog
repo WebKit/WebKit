@@ -1,3 +1,91 @@
+2011-06-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89407, r89409, r89410, and r89411.
+        http://trac.webkit.org/changeset/89407
+        http://trac.webkit.org/changeset/89409
+        http://trac.webkit.org/changeset/89410
+        http://trac.webkit.org/changeset/89411
+        https://bugs.webkit.org/show_bug.cgi?id=63168
+
+        Broke Chromium tests for Forms and Autofill (Requested by
+        dimich on #webkit).
+
+        * fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * fast/forms/search-abs-pos-cancel-button.html:
+        * fast/forms/search-cancel-button-mouseup.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/gtk/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/placeholder-set-value-expected.txt:
+        * platform/gtk/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/gtk/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/gtk/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/search-transformed-expected.txt:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/gtk/fast/forms/search-zoomed-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+        * platform/gtk/fast/forms/textfield-overflow-expected.txt:
+        * platform/gtk/fast/repaint/search-field-cancel-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/mac/fast/css/input-search-padding-expected.png:
+        * platform/mac/fast/css/input-search-padding-expected.txt:
+        * platform/mac/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/placeholder-set-value-expected.txt:
+        * platform/mac/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/mac/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+        * platform/mac/fast/forms/search-transformed-expected.txt:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.png:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/mac/fast/forms/search-zoomed-expected.txt:
+        * platform/mac/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac/fast/repaint/search-field-cancel-expected.png:
+        * platform/mac/fast/repaint/search-field-cancel-expected.txt:
+        * platform/mac/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/qt/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/qt/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/qt/fast/forms/placeholder-set-value-expected.txt:
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/qt/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/qt/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/qt/fast/forms/search-rtl-expected.txt:
+        * platform/qt/fast/forms/search-styled-expected.txt:
+        * platform/qt/fast/forms/search-transformed-expected.txt:
+        * platform/qt/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/qt/fast/forms/search-zoomed-expected.txt:
+        * platform/qt/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/win/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/win/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/win/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/win/media/media-controls-clone-expected.txt: Removed.
+
 2011-06-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

@@ -16,16 +16,15 @@ layer at (0,0) size 800x600
           text run at (0,26) width 393: "Tests event handling on search fields with zoom."
       RenderBlock {P} at (0,71) size 782x34
         RenderTextControl {INPUT} at (2,2) size 206x30
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 202x26
-            RenderBlock {DIV} at (0,13) size 0x0
-            RenderBlock {DIV} at (0,0) size 189x26
+          RenderBlock {DIV} at (2,2) size 202x26
+            RenderBlock {DIV} at (0,19) size 0x0
             RenderBlock {DIV} at (189,6) size 13x13
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,177) size 782x26
-        RenderText {#text} at (0,0) size 46x26
-          text run at (0,0) width 46: "FAIL"
+        RenderText {#text} at (0,0) size 48x26
+          text run at (0,0) width 48: "PASS"
 layer at (13,84) size 189x26
   RenderBlock {DIV} at (0,0) size 189x26
     RenderText {#text} at (1,0) size 128x26
       text run at (1,0) width 128: "Some other text"
-caret: position 15 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {P} of body
+caret: position 15 of child 0 {#text} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {P} of body

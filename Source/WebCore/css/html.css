@@ -419,34 +419,24 @@ input[type="search"] {
     -webkit-box-sizing: border-box;
 }
 
-input::-webkit-textfield-decoration-container {
-    direction: ltr;
-    display: -webkit-box;
-    -webkit-box-align: center;
-}
-
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
-    display: block;
-    -webkit-box-flex: 0;
+    display: inline-block;
 }
 
 input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: searchfield-decoration;
-    display: block;
-    -webkit-box-flex: 0;
+    display: inline-block;
 }
 
 input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: searchfield-results-decoration;
-    display: block;
-    -webkit-box-flex: 0;
+    display: inline-block;
 }
 
 input[type="search"]::-webkit-search-results-button {
     -webkit-appearance: searchfield-results-button;
-    display: block;
-    -webkit-box-flex: 0;
+    display: inline-block;
 }
 
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
@@ -458,20 +448,18 @@ input::-webkit-input-list-button {
 
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
-    display: block;
+    display: inline-block;
     position: relative;
     cursor: default;
     vertical-align: top;
-    -webkit-box-flex: 0;
     -webkit-user-select: none;
 }
 
 #if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
 input::-webkit-input-speech-button {
     -webkit-appearance: -webkit-input-speech-button;
-    display: block;
+    display: inline-block;
     vertical-align: top;
-    -webkit-box-flex: 0;
 }
 #endif
 

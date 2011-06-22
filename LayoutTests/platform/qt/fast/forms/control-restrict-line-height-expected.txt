@@ -21,9 +21,8 @@ layer at (0,0) size 800x600
         text run at (374,64) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
       RenderTextControl {INPUT} at (2,95) size 166x30
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x26
-          RenderBlock {DIV} at (0,13) size 0x0
-          RenderBlock {DIV} at (0,0) size 151x26
+        RenderBlock {DIV} at (2,2) size 162x26
+          RenderBlock {DIV} at (0,18) size 0x0
           RenderBlock {DIV} at (151,7) size 11x11
       RenderText {#text} at (0,0) size 0x0
 layer at (12,105) size 151x26 scrollWidth 349

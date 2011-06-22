@@ -1,4 +1,4 @@
-layer at (0,0) size 894x584
+layer at (0,0) size 839x584
   RenderView at (0,0) size 800x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
@@ -11,22 +11,19 @@ layer at (0,0) size 800x584
           RenderTableRow {TR} at (0,1) size 784x32
             RenderTableCell {TD} at (1,1) size 168x32 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 166x26
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
-                  RenderBlock {DIV} at (0,11) size 0x0
-                  RenderBlock {DIV} at (0,0) size 151x22
+                RenderBlock {DIV} at (2,2) size 162x22
+                  RenderBlock {DIV} at (0,16) size 0x0
                   RenderBlock {DIV} at (151,5) size 11x11
             RenderTableCell {TD} at (170,1) size 6x32 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x26
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x22
-                  RenderBlock {DIV} at (0,11) size 0x0
-                  RenderBlock {DIV} at (0,0) size 0x22
-                  RenderBlock {DIV} at (0,5) size 11x11
+                RenderBlock {DIV} at (2,2) size 0x33
+                  RenderBlock {DIV} at (0,0) size 0x0
+                  RenderBlock {DIV} at (0,22) size 11x11
             RenderTableCell {TD} at (177,1) size 6x32 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x26
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x22
-                  RenderBlock {DIV} at (0,11) size 0x0
-                  RenderBlock {DIV} at (0,0) size 0x22
-                  RenderBlock {DIV} at (0,5) size 11x11
+                RenderBlock {DIV} at (2,2) size 0x33
+                  RenderBlock {DIV} at (0,0) size 0x0
+                  RenderBlock {DIV} at (0,22) size 11x11
             RenderTableCell {TD} at (184,5) size 599x24 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x22
                 text run at (1,1) width 4: " "
@@ -38,22 +35,19 @@ layer at (0,0) size 800x584
           RenderTableRow {TR} at (0,1) size 831x32
             RenderTableCell {TD} at (1,1) size 808x32 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 806x26
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 802x22
-                  RenderBlock {DIV} at (0,11) size 0x0
-                  RenderBlock {DIV} at (0,0) size 791x22
+                RenderBlock {DIV} at (2,2) size 802x22
+                  RenderBlock {DIV} at (0,16) size 0x0
                   RenderBlock {DIV} at (791,5) size 11x11
             RenderTableCell {TD} at (810,1) size 6x32 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x26
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x22
-                  RenderBlock {DIV} at (0,11) size 0x0
-                  RenderBlock {DIV} at (0,0) size 0x22
-                  RenderBlock {DIV} at (0,5) size 11x11
+                RenderBlock {DIV} at (2,2) size 0x33
+                  RenderBlock {DIV} at (0,0) size 0x0
+                  RenderBlock {DIV} at (0,22) size 11x11
             RenderTableCell {TD} at (817,1) size 6x32 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x26
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x22
-                  RenderBlock {DIV} at (0,11) size 0x0
-                  RenderBlock {DIV} at (0,0) size 0x22
-                  RenderBlock {DIV} at (0,5) size 11x11
+                RenderBlock {DIV} at (2,2) size 0x33
+                  RenderBlock {DIV} at (0,0) size 0x0
+                  RenderBlock {DIV} at (0,22) size 11x11
             RenderTableCell {TD} at (824,5) size 6x24 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x22
                 text run at (1,1) width 4: " "
@@ -61,23 +55,23 @@ layer at (12,36) size 151x22
   RenderBlock {DIV} at (0,0) size 151x22
     RenderText {#text} at (1,0) size 66x22
       text run at (1,0) width 66: "New Mail"
-layer at (181,36) size 42x22
-  RenderBlock {DIV} at (0,0) size 42x22
+layer at (181,36) size 2x22 scrollWidth 42
+  RenderBlock {DIV} at (0,0) size 2x22
     RenderText {#text} at (1,0) size 40x22
       text run at (1,0) width 40: "Reply"
-layer at (188,36) size 66x22
-  RenderBlock {DIV} at (0,0) size 66x22
+layer at (188,36) size 2x22 scrollWidth 66
+  RenderBlock {DIV} at (0,0) size 2x22
     RenderText {#text} at (1,0) size 64x22
       text run at (1,0) width 64: "Reply All"
 layer at (12,114) size 791x22
   RenderBlock {DIV} at (0,0) size 791x22
     RenderText {#text} at (1,0) size 66x22
       text run at (1,0) width 66: "New Mail"
-layer at (821,114) size 42x22
-  RenderBlock {DIV} at (0,0) size 42x22
+layer at (821,114) size 2x22 scrollWidth 42
+  RenderBlock {DIV} at (0,0) size 2x22
     RenderText {#text} at (1,0) size 40x22
       text run at (1,0) width 40: "Reply"
-layer at (828,114) size 66x22
-  RenderBlock {DIV} at (0,0) size 66x22
+layer at (828,114) size 2x22 scrollWidth 66
+  RenderBlock {DIV} at (0,0) size 2x22
     RenderText {#text} at (1,0) size 64x22
       text run at (1,0) width 64: "Reply All"

@@ -11,22 +11,19 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,1) size 784x25
             RenderTableCell {TD} at (1,1) size 127x25 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 119x13
-                  RenderBlock {DIV} at (0,1) size 8x11
-                  RenderBlock {DIV} at (8,0) size 98x13
-                  RenderBlock {DIV} at (106,1) size 13x11
+                RenderBlock {DIV} at (3,3) size 119x13
+                  RenderBlock {DIV} at (0,0) size 8x11
+                  RenderBlock {DIV} at (106,0) size 13x11
             RenderTableCell {TD} at (129,1) size 8x25 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 6x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 0x13
-                  RenderBlock {DIV} at (0,1) size 8x11
-                  RenderBlock {DIV} at (8,0) size 0x13
-                  RenderBlock {DIV} at (8,1) size 13x11
+                RenderBlock {DIV} at (3,3) size 0x35
+                  RenderBlock {DIV} at (0,0) size 8x11
+                  RenderBlock {DIV} at (0,24) size 13x11
             RenderTableCell {TD} at (138,1) size 8x25 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 6x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 0x13
-                  RenderBlock {DIV} at (0,1) size 8x11
-                  RenderBlock {DIV} at (8,0) size 0x13
-                  RenderBlock {DIV} at (8,1) size 13x11
+                RenderBlock {DIV} at (3,3) size 0x35
+                  RenderBlock {DIV} at (0,0) size 8x11
+                  RenderBlock {DIV} at (0,24) size 13x11
             RenderTableCell {TD} at (147,3) size 636x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
@@ -38,46 +35,43 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,1) size 784x25
             RenderTableCell {TD} at (1,1) size 527x25 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 525x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 519x13
-                  RenderBlock {DIV} at (0,1) size 22x11
-                  RenderBlock {DIV} at (22,0) size 484x13
-                  RenderBlock {DIV} at (506,1) size 13x11
+                RenderBlock {DIV} at (3,3) size 519x13
+                  RenderBlock {DIV} at (0,0) size 22x11
+                  RenderBlock {DIV} at (506,0) size 13x11
             RenderTableCell {TD} at (529,1) size 8x25 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 6x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 0x13
-                  RenderBlock {DIV} at (0,1) size 22x11
-                  RenderBlock {DIV} at (22,0) size 0x13
-                  RenderBlock {DIV} at (22,1) size 13x11
+                RenderBlock {DIV} at (3,3) size 0x35
+                  RenderBlock {DIV} at (0,0) size 22x11
+                  RenderBlock {DIV} at (0,24) size 13x11
             RenderTableCell {TD} at (538,1) size 8x25 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 6x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 0x13
-                  RenderBlock {DIV} at (0,1) size 22x11
-                  RenderBlock {DIV} at (22,0) size 0x13
-                  RenderBlock {DIV} at (22,1) size 13x11
+                RenderBlock {DIV} at (3,3) size 0x35
+                  RenderBlock {DIV} at (0,0) size 22x11
+                  RenderBlock {DIV} at (0,24) size 13x11
             RenderTableCell {TD} at (547,3) size 236x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
 layer at (21,33) size 98x13
-  RenderBlock {DIV} at (0,0) size 98x13
+  RenderBlock {DIV} at (8,0) size 98x13
     RenderText {#text} at (1,0) size 49x13
       text run at (1,0) width 49: "New Mail"
-layer at (149,33) size 31x13
-  RenderBlock {DIV} at (0,0) size 31x13
+layer at (141,44) size 2x13 scrollWidth 31
+  RenderBlock {DIV} at (0,11) size 2x13
     RenderText {#text} at (1,0) size 29x13
       text run at (1,0) width 29: "Reply"
-layer at (158,33) size 49x13
-  RenderBlock {DIV} at (0,0) size 49x13
+layer at (150,44) size 2x13 scrollWidth 49
+  RenderBlock {DIV} at (0,11) size 2x13
     RenderText {#text} at (1,0) size 47x13
       text run at (1,0) width 47: "Reply All"
 layer at (35,96) size 484x13
-  RenderBlock {DIV} at (0,0) size 484x13
+  RenderBlock {DIV} at (22,0) size 484x13
     RenderText {#text} at (1,0) size 49x13
       text run at (1,0) width 49: "New Mail"
-layer at (563,96) size 31x13
-  RenderBlock {DIV} at (0,0) size 31x13
+layer at (541,107) size 2x13 scrollWidth 31
+  RenderBlock {DIV} at (0,11) size 2x13
     RenderText {#text} at (1,0) size 29x13
       text run at (1,0) width 29: "Reply"
-layer at (572,96) size 49x13
-  RenderBlock {DIV} at (0,0) size 49x13
+layer at (550,107) size 2x13 scrollWidth 49
+  RenderBlock {DIV} at (0,11) size 2x13
     RenderText {#text} at (1,0) size 47x13
       text run at (1,0) width 47: "Reply All"

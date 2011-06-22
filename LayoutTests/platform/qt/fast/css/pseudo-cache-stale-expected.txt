@@ -14,9 +14,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 571: "This sentence should be extra-extra-large."
       RenderBlock (anonymous) at (0,84) size 784x30
         RenderTextControl {INPUT} at (2,2) size 166x26
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
-            RenderBlock {DIV} at (0,11) size 0x0
-            RenderBlock {DIV} at (0,0) size 151x22
+          RenderBlock {DIV} at (2,2) size 162x22
+            RenderBlock {DIV} at (0,16) size 0x0
             RenderBlock {DIV} at (151,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
