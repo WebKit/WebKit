@@ -188,6 +188,8 @@ class Port(object):
         This step can be skipped with --nocheck-sys-deps.
 
         Returns whether the system is properly configured."""
+        if needs_http:
+            return self.check_httpd()
         return True
 
     def check_image_diff(self, override_step=None, logging=True):
@@ -226,6 +228,18 @@ class Port(object):
             return False
 
         return True
+
+    def check_httpd(self):
+        if self.get_option('use_apache'):
+            path = self._path_to_apache()
+        else:
+            path = self._path_to_lighttpd()
+
+        try:
+            return self._executive.run_command([path, "-v"], return_exit_code=True) == 0
+        except OSError, e:
+            _log.error("No httpd found. Cannot run http tests.")
+            return False
 
     def compare_text(self, expected_text, actual_text):
         """Return whether or not the two strings are *not* equal. This
