@@ -1,5 +1,11 @@
 2011-06-21  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, remove duplicate Chromium test expectation.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-21  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed. Update Chromium test expectations and baselines.
 
         * platform/chromium-win/fast/css/color-leakage-expected.png: Added.
