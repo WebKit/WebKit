@@ -1,5 +1,14 @@
 2011-06-22  Adam Roben  <aroben@apple.com>
 
+        Skip some flaky animation tests on Windows
+
+        See <http://webkit.org/b/62561> and <http://webkit.org/b/62569>.
+
+        * platform/win/Skipped: Added animations/animation-direction-normal.html and
+        animations/play-state-paused.html.
+
+2011-06-22  Adam Roben  <aroben@apple.com>
+
         Disable zoom-svg-through-object-with-*.xhtml
 
         These tests are flaky. See <http://webkit.org/b/63186>.

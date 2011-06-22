@@ -432,6 +432,12 @@ http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
 http/tests/inspector/resource-tree/resource-tree-reload.html
 http/tests/inspector/resource-tree/resource-tree-frame-add.html
 
+# Flaky http://webkit.org/b/62561
+animations/animation-direction-normal.html
+
+# Flaky http://webkit.org/b/62569
+animations/play-state-paused.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
