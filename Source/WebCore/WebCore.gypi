@@ -2288,6 +2288,8 @@
             'css/CSSCharsetRule.h',
             'css/CSSComputedStyleDeclaration.cpp',
             'css/CSSCursorImageValue.cpp',
+            'css/CSSFlexValue.cpp',
+            'css/CSSFlexValue.h',
             'css/CSSFontFace.cpp',
             'css/CSSFontFace.h',
             'css/CSSFontFaceRule.cpp',

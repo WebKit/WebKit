@@ -1,3 +1,24 @@
+2011-06-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        add css parsing of flex()
+        https://bugs.webkit.org/show_bug.cgi?id=62050
+
+        Add a new script-test, but skip it on all platforms since we don't
+        build with ENABLE_CSS3_FLEXBOX anywhere.
+
+        * css3/flexbox/flex-parsing-expected.txt: Added.
+        * css3/flexbox/flex-parsing.html: Added.
+        * css3/flexbox/script-tests/TEMPLATE.html: Added.
+        * css3/flexbox/script-tests/flex-parsing.js: Added.
+        (testFlex):
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove failing test expectations from various tests for Chromium Windows.

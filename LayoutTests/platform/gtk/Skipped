@@ -1535,6 +1535,9 @@ http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 
+# New flexbox is not yet enabled. http://webkit.org/b/62048
+css3/flexbox
+
 # Failing because GTK DumpRenderTree doesn't block external network requests like the
 # willSendRequest method does for other ports (bug 62585).
 fast/workers/worker-crash-with-invalid-location-pretty-diff.html

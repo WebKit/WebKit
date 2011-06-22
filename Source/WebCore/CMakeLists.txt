@@ -429,6 +429,7 @@ SET(WebCore_SOURCES
     css/CSSCharsetRule.cpp
     css/CSSComputedStyleDeclaration.cpp
     css/CSSCursorImageValue.cpp
+    css/CSSFlexValue.cpp
     css/CSSFontFace.cpp
     css/CSSFontFaceRule.cpp
     css/CSSFontFaceSource.cpp

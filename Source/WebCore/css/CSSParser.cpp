@@ -29,6 +29,7 @@
 #include "CSSCanvasValue.h"
 #include "CSSCharsetRule.h"
 #include "CSSCursorImageValue.h"
+#include "CSSFlexValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSGradientValue.h"
@@ -779,6 +780,21 @@ void CSSParser::checkForOrphanedUnits()
     }
 }
 
+inline PassRefPtr<CSSValue> CSSParser::parseValidPrimitive(int id, CSSParserValue* value)
+{
+    if (id)
+        return primitiveValueCache()->createIdentifierValue(id);
+    if (value->unit == CSSPrimitiveValue::CSS_STRING)
+        return primitiveValueCache()->createValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
+    if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
+        return primitiveValueCache()->createValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
+    if (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
+        return primitiveValueCache()->createValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
+    if (value->unit >= CSSParserValue::Q_EMS)
+        return CSSQuirkPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_EMS);
+    return 0;
+}
+
 bool CSSParser::parseValue(int propId, bool important)
 {
     if (!m_valueList)
@@ -1285,13 +1301,15 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSSPropertyHeight:               // <length> | <percentage> | auto | inherit
     case CSSPropertyWidth:                // <length> | <percentage> | auto | inherit
-    case CSSPropertyWebkitLogicalWidth:  
+    case CSSPropertyWebkitLogicalWidth:
     case CSSPropertyWebkitLogicalHeight:
         if (id == CSSValueAuto || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             validPrimitive = true;
-        else
+        else if (!id && validUnit(value, FLength | FPercent | FNonNeg, m_strict))
             // ### handle multilength case where we allow relative units
-            validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg, m_strict));
+            validPrimitive = true;
+        else if (value->unit == CSSParserValue::Function)
+            return parseFlex(propId, important);
         break;
 
     case CSSPropertyBottom:               // <length> | <percentage> | auto | inherit
@@ -2045,16 +2063,7 @@ bool CSSParser::parseValue(int propId, bool important)
     }
 
     if (validPrimitive) {
-        if (id != 0)
-            parsedValue = primitiveValueCache()->createIdentifierValue(id);
-        else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-            parsedValue = primitiveValueCache()->createValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
-        else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
-            parsedValue = primitiveValueCache()->createValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
-        else if (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
-            parsedValue = primitiveValueCache()->createValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
-        else if (value->unit >= CSSParserValue::Q_EMS)
-            parsedValue = CSSQuirkPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_EMS);
+        parsedValue = parseValidPrimitive(id, value);
         m_valueList->next();
     }
     if (parsedValue) {
@@ -4763,6 +4772,58 @@ bool CSSParser::parseReflect(int propId, bool important)
     addProperty(propId, reflectValue.release(), important);
     m_valueList->next();
     return true;
+}
+
+bool CSSParser::parseFlex(int propId, bool important)
+{
+#if ENABLE(CSS3_FLEXBOX)
+    CSSParserValue* value = m_valueList->current();
+    CSSParserValueList* args = value->function->args.get();
+    if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || !args || args->size() > 3 || m_valueList->next())
+        return false;
+
+    static const double unsetValue = -1;
+    double positiveFlex = unsetValue;
+    double negativeFlex = unsetValue;
+    RefPtr<CSSValue> preferredSize;
+
+    while (CSSParserValue* arg = args->current()) {
+        if (validUnit(arg, FNumber | FNonNeg, m_strict)) {
+            if (positiveFlex == unsetValue)
+                positiveFlex = arg->fValue;
+            else if (negativeFlex == unsetValue)
+                negativeFlex = arg->fValue;
+            else if (!arg->fValue) {
+                // flex() only allows a size of 0 if the positive and negative flex values have already been set.
+                preferredSize = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_PX);
+            } else {
+                // We only allow 3 numbers without units if the last value is 0. E.g., flex(1 1 1) is invalid.
+                return false;
+            }
+        } else if (!preferredSize && (arg->id == CSSValueAuto || validUnit(arg, FLength | FPercent | FNonNeg, m_strict)))
+            preferredSize = parseValidPrimitive(arg->id, arg);
+        else {
+            // Not a valid arg for flex().
+            return false;
+        }
+        args->next();
+    }
+
+    if (positiveFlex == unsetValue)
+        positiveFlex = 1;
+    if (negativeFlex == unsetValue)
+        negativeFlex = 0;
+    if (!preferredSize)
+        preferredSize = primitiveValueCache()->createIdentifierValue(CSSValueAuto);
+
+    RefPtr<CSSFlexValue> flex = CSSFlexValue::create(positiveFlex, negativeFlex, preferredSize);
+    addProperty(propId, flex.release(), important);
+    return true;
+#else
+    UNUSED_PARAM(propId);
+    UNUSED_PARAM(important);
+#endif // ENABLE(CSS3_FLEXBOX)
+    return false;
 }
 
 struct BorderImageParseContext {

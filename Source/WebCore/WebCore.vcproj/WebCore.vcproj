@@ -32406,6 +32406,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSFlexValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFlexValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSFontFace.cpp"
 				>
 			</File>

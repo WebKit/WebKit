@@ -64,6 +64,7 @@ namespace WebCore {
         static bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important, bool strict);
         static bool parseColor(RGBA32& color, const String&, bool strict = false);
         static bool parseSystemColor(RGBA32& color, const String&, Document*);
+        PassRefPtr<CSSValue> parseValidPrimitive(int propId, CSSParserValue*);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
         bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* styleSourceData = 0);
         bool parseMediaQuery(MediaList*, const String&);
@@ -161,6 +162,8 @@ namespace WebCore {
         bool parseBorderRadius(int propId, bool important);
 
         bool parseReflect(int propId, bool important);
+
+        bool parseFlex(int propId, bool important);
 
         // Image generators
         bool parseCanvas(RefPtr<CSSValue>&);

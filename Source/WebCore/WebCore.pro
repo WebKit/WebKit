@@ -387,6 +387,7 @@ SOURCES += \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
     css/CSSCursorImageValue.cpp \
+    css/CSSFlexValue.cpp \
     css/CSSFontFace.cpp \
     css/CSSFontFaceRule.cpp \
     css/CSSFontFaceSrcValue.cpp \
@@ -1376,6 +1377,7 @@ HEADERS += \
     css/CSSCharsetRule.h \
     css/CSSComputedStyleDeclaration.h \
     css/CSSCursorImageValue.h \
+    css/CSSFlexValue.h \
     css/CSSFontFace.h \
     css/CSSFontFaceRule.h \
     css/CSSFontFaceSource.h \

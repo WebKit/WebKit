@@ -108,6 +108,7 @@
       'use_skia_gpu%': 0,
       'enable_touch_icon_loading%' : 0,
       'enable_smooth_scrolling%': 0,
+      'enable_css3_flexbox%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'use_threaded_compositing%': '<(use_threaded_compositing)',
@@ -156,6 +157,11 @@
       ['enable_smooth_scrolling==1', {
         'feature_defines': [
           'ENABLE_SMOOTH_SCROLLING=1',
+        ],
+      }],
+      ['enable_css3_flexbox==1', {
+        'feature_defines': [
+          'ENABLE_CSS3_FLEXBOX=1',
         ],
       }],
     ],

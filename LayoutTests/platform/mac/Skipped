@@ -371,5 +371,8 @@ http/tests/media/video-cross-site.html
 # https://bugs.webkit.org/show_bug.cgi?id=61757
 svg/zoom/page/zoom-svg-through-object-with-text.xhtml
 
+# New flexbox is not yet enabled. http://webkit.org/b/62048
+css3/flexbox
+
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
