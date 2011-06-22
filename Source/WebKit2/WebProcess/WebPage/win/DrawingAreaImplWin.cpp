@@ -54,7 +54,10 @@ void DrawingAreaImpl::scheduleChildWindowGeometryUpdate(const WindowGeometry& ge
 PassOwnPtr<GraphicsContext> DrawingAreaImpl::createGraphicsContext(ShareableBitmap* bitmap)
 {
     HDC bitmapDC = bitmap->windowsContext();
-    return adoptPtr(new GraphicsContext(bitmapDC, true));
+    // FIXME: We should really be checking m_webPage->draws[Transparent]Background() to determine
+    // whether to have an alpha channel or not. But currently we always render into a non-layered
+    // window, so the alpha channel doesn't matter anyway.
+    return adoptPtr(new GraphicsContext(bitmapDC, false));
 }
 
 } // namespace WebKit

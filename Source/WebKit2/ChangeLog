@@ -1,3 +1,21 @@
+2011-06-22  Adam Roben  <aroben@apple.com>
+
+        Don't use an alpha channel when drawing the web page on Windows
+
+        We never use the alpha channel in the end anyway (because we never render into a layered
+        window, which is the only kind of window that supports alpha). And using an alpha channel is
+        tricky to get right since GDI doesn't support alpha (and often writes 0x0 into the alpha
+        channel).
+
+        Fixes <http://webkit.org/b/63075> <rdar://problem/9648113> REGRESSION (r88978): Text inside
+        form controls looks really awful on Windows XP
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/win/DrawingAreaImplWin.cpp:
+        (WebKit::DrawingAreaImpl::createGraphicsContext): Specify false for the hasAlpha parameter
+        to the GraphicsContext constructor.
+
 2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
