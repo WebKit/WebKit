@@ -3988,3 +3988,8 @@ BUGCR87009 : fast/filesystem/async-operations.html = PASS CRASH
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
+// The following two tests started to fail since V8 3.4.5.1 roll.
+// This needs rebaselining because "native" is no longer a reserved word.
+BUG87070 : fast/js/reserved-words.html = TEXT
+// Needs rebaselining because we fixed a bug that is in platform expectations.
+BUG87070 : fast/js/parser-xml-close-comment.html = TEXT

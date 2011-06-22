@@ -1,5 +1,11 @@
 2011-06-22  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, add Chromium test expectations for tests started to fail since V8 3.4.5.1 roll.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-22  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, check in new Chromium-Leopard baselines.
 
         * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png: Removed.
