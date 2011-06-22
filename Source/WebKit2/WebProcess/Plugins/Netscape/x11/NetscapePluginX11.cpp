@@ -433,7 +433,7 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
     return NPP_HandleEvent(&xEvent);
 }
 
-void NetscapePlugin::platformSetFocus(bool)
+void NetscapePlugin::platformSetFocus(bool focusIn)
 {
     if (m_isWindowed)
         return;

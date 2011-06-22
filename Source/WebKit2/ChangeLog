@@ -1,5 +1,13 @@
 2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed build fix after r89461.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformSetFocus):
+        Forgot to name the parameter, fix it.
+
+2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
+
         Reviewed by Darin Adler.
 
         [X11][WK2] Implement NetscapePlugin::platformSetFocus
