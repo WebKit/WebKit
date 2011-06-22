@@ -1,3 +1,17 @@
+2011-06-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed unnecessary #include <stdio.h>.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        * Shared/WebMemorySampler.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        * WebProcess/mac/WebProcessMac.mm: Added #include back to places where it
+        was needed.
+
 2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed build fix after r89461.

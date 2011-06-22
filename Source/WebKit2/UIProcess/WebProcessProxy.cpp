@@ -38,6 +38,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/KURL.h>
+#include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

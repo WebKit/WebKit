@@ -42,6 +42,7 @@
 #import <mach/mach.h>
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
+#import <stdio.h>
 
 #if defined(BUILDING_ON_SNOW_LEOPARD)
 #import "KeychainItemShimMethods.h"

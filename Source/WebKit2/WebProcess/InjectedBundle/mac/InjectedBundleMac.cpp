@@ -28,6 +28,7 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
+#include <stdio.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

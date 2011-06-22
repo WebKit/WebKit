@@ -34,7 +34,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>
-#include <stdio.h>
 
 namespace JSC {
 

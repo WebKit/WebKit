@@ -28,6 +28,7 @@
 
 #if ENABLE(MEMORY_SAMPLER)
 
+#include <stdio.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

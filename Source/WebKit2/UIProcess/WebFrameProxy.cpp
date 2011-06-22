@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/DOMImplementation.h>
 #include <WebCore/Image.h>
+#include <stdio.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
