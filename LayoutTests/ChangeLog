@@ -1,3 +1,10 @@
+2011-06-22  Jessie Berlin  <jberlin@apple.com>
+
+        Add more "CONSOLE MESSAGE: line 0: SVG animation pause API missing!" tests to the WK2
+        Skipped list to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-22  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
