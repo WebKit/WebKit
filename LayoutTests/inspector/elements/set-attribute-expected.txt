@@ -5,11 +5,23 @@ Running: testDumpInitial
 ========= Original ========
   <div id="node"></div>
 
-Running: testSetAttribute
-===== Set attribute =====
+Running: testAttributeUpdated
+===== On attribute set =====
   <div id="node" name="value"></div>
 
-Running: testRemoveAttribute
-=== Removed attribute ===
+Running: testAttributeRemoved
+=== On attribute removed ===
   <div id="node"></div>
+
+Running: testSetAttributeValue
+=== Set attribute value ===
+  <div id="node" foo="bar"></div>
+
+Running: testSetAttributeText
+=== Set attribute as text ===
+  <div id="node" foo2="baz2" foo3="baz3"></div>
+
+Running: testRemoveAttributeAsText
+=== Remove attribute as text ===
+  <div id="node" foo2="baz2"></div>
 

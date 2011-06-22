@@ -127,9 +127,14 @@ WebInspector.DOMNode.prototype = {
         return attr ? attr.value : undefined;
     },
 
-    setAttribute: function(name, value, callback)
+    setAttribute: function(name, text, callback)
     {
-        DOMAgent.setAttribute(this.id, name, value, callback);
+        DOMAgent.setAttributesText(this.id, name, text, callback);
+    },
+
+    setAttributeValue: function(name, value, callback)
+    {
+        DOMAgent.setAttributeValue(this.id, name, value, callback);
     },
 
     attributes: function()

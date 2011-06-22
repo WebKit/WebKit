@@ -115,7 +115,8 @@ public:
     void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<InspectorArray>* result);
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
     void getChildNodes(ErrorString*, int nodeId);
-    void setAttribute(ErrorString*, int elementId, const String& name, const String& value);
+    void setAttributeValue(ErrorString*, int elementId, const String& name, const String& value);
+    void setAttributesText(ErrorString*, int elementId, const String* const name, const String& text);
     void removeAttribute(ErrorString*, int elementId, const String& name);
     void removeNode(ErrorString*, int nodeId);
     void setNodeName(ErrorString*, int nodeId, const String& name, int* newId);

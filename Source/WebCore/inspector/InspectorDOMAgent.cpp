@@ -572,7 +572,19 @@ int InspectorDOMAgent::boundNodeId(Node* node)
     return m_documentNodeToIdMap.get(node);
 }
 
-void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, const String& name, const String& value)
+void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementId, const String& name, const String& value)
+{
+    Element* element = assertElement(errorString, elementId);
+    if (!element)
+        return;
+
+    ExceptionCode ec = 0;
+    element->setAttribute(name, value, ec);
+    if (ec)
+        *errorString = "Internal error: could not set attribute value.";
+}
+
+void InspectorDOMAgent::setAttributesText(ErrorString* errorString, int elementId, const String* const name, const String& text)
 {
     Element* element = assertElement(errorString, elementId);
     if (!element)
@@ -585,15 +597,15 @@ void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, co
         return;
     }
 
-    toHTMLElement(parsedElement.get())->setInnerHTML("<span " + value + "></span>", ec);
+    toHTMLElement(parsedElement.get())->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {
         *errorString = "Could not parse value as attributes.";
         return;
     }
 
     const NamedNodeMap* attrMap = toHTMLElement(parsedElement->firstChild())->attributes(true);
-    if (!attrMap) {
-        element->removeAttribute(name, ec);
+    if (!attrMap && name) {
+        element->removeAttribute(*name, ec);
         if (ec)
             *errorString = "Could not remove attribute.";
         return;
@@ -604,7 +616,7 @@ void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, co
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
         const Attribute *attribute = attrMap->attributeItem(i);
-        foundOriginalAttribute = foundOriginalAttribute || attribute->name().toString() == name;
+        foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
         element->setAttribute(attribute->name(), attribute->value(), ec);
         if (ec) {
             *errorString = "Internal error: could not set attribute value.";
@@ -612,8 +624,8 @@ void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, co
         }
     }
 
-    if (!foundOriginalAttribute) {
-        element->removeAttribute(name, ec);
+    if (!foundOriginalAttribute && name) {
+        element->removeAttribute(*name, ec);
         if (ec)
             *errorString = "Could not remove attribute.";
         return;

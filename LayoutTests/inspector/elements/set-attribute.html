@@ -33,27 +33,69 @@ function test()
             InspectorTest.selectNodeWithId("node", callback);
         },
 
-        function testSetAttribute(next)
+        function testAttributeUpdated(next)
         {
             function callback()
             {
-                InspectorTest.addResult("===== Set attribute =====");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                InspectorTest.addResult("===== On attribute set =====");
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
             InspectorTest.evaluateInPage("setAttribute('name', 'value')");
-            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback);
         },
 
-        function testRemoveAttribute(next) {
+        function testAttributeRemoved(next)
+        {
             function callback()
             {
-                InspectorTest.addResult("=== Removed attribute ===");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                InspectorTest.addResult("=== On attribute removed ===");
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
             InspectorTest.evaluateInPage("removeAttribute('name')");
-            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback);
+        },
+
+        function testSetAttributeValue(next)
+        {
+            function callback()
+            {
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                InspectorTest.addResult("=== Set attribute value ===");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            targetNode.setAttributeValue("foo", "bar");
+        },
+
+        function testSetAttributeText(next)
+        {
+            function callback()
+            {
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                InspectorTest.addResult("=== Set attribute as text ===");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            targetNode.setAttribute("foo", "foo2='baz2' foo3='baz3'");
+        },
+
+        function testRemoveAttributeAsText(next)
+        {
+            function callback()
+            {
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                InspectorTest.addResult("=== Remove attribute as text ===");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            targetNode.setAttribute("foo3", "");
         }
     ]);
 }

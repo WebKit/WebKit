@@ -1,3 +1,13 @@
+2011-06-22  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: split setAttributes and setAttributeValue.
+        https://bugs.webkit.org/show_bug.cgi?id=63138
+
+        * inspector/elements/set-attribute.html:
+        * inspector/elements/set-attribute-expected.txt:
+
 2011-06-22  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
