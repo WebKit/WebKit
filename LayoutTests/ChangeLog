@@ -1,3 +1,18 @@
+2011-06-22  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION: Hitting enter in the middle of this span causes the cursor to go to the end of the span
+        https://bugs.webkit.org/show_bug.cgi?id=61594
+
+        Adds two layout tests to verify that hitting enter in the middle of the span splits the span correctly
+        and places the cursor in the correct position.
+
+        * editing/inserting/return-key-before-br-in-span-expected.txt: Added.
+        * editing/inserting/return-key-before-br-in-span.html: Added.
+        * editing/inserting/return-key-middle-of-span-expected.txt: Added.
+        * editing/inserting/return-key-middle-of-span.html: Added.
+
 2011-06-22  Jessie Berlin  <jberlin@apple.com>
 
         Add more "CONSOLE MESSAGE: line 0: SVG animation pause API missing!" tests to the WK2

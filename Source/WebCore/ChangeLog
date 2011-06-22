@@ -1,3 +1,20 @@
+2011-06-22  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION: Hitting enter in the middle of this span causes the cursor to go to the end of the span
+        https://bugs.webkit.org/show_bug.cgi?id=61594
+
+        When the tree is split at the cursor in InsertParagraphSeparatorCommand, it is possible for the position
+        split at to be at the end of a text node. The code assumes the position is at the start of the node, so
+        pass the correct node into splitTreeToNode() in that case.
+
+        Tests: editing/inserting/return-key-before-br-in-span.html
+               editing/inserting/return-key-middle-of-span.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2011-06-22  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
