@@ -348,8 +348,6 @@ DOM_CLASSES = \
     SpeechInputEvent \
     SpeechInputResult \
     SpeechInputResultList \
-    SpellcheckRange \
-    SpellcheckRangeList \
     SQLError \
     SQLException \
     SQLResultSet \

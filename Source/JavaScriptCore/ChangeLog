@@ -1,3 +1,15 @@
+2011-06-21  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r89401 and r89403.
+        http://trac.webkit.org/changeset/89401
+        http://trac.webkit.org/changeset/89403
+        https://bugs.webkit.org/show_bug.cgi?id=62970
+
+        Breaks mac build and mistakenly enables the spellcheck API
+
+        * Configurations/FeatureDefines.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Sort Xcode project files.

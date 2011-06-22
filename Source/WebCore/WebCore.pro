@@ -754,8 +754,6 @@ SOURCES += \
     html/RangeInputType.cpp \
     html/ResetInputType.cpp \
     html/SearchInputType.cpp \
-    html/SpellcheckRange.cpp \
-    html/SpellcheckRangeList.cpp \
     html/StepRange.cpp \
     html/SubmitInputType.cpp \
     html/TelephoneInputType.cpp \
@@ -1744,8 +1742,6 @@ HEADERS += \
     html/MutableTextTrack.h \
     html/MutableTextTrackImpl.h \
     html/PluginDocument.h \
-    html/SpellcheckRange.h \
-    html/SpellcheckRangeList.h \
     html/StepRange.h \
     html/TextDocument.h \
     html/TextTrack.h \

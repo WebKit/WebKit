@@ -3270,8 +3270,6 @@
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A71C30B81381265E00DBC351 /* ShadowContentSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */; };
 		A71C30B91381265E00DBC351 /* ShadowContentSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A71C30B71381265E00DBC351 /* ShadowContentSelector.h */; };
-		A7314F8913AF5C1300AB5534 /* SpellcheckRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BC39D713AF5471001DC01C /* SpellcheckRange.cpp */; };
-		A7314F8A13AF5C1300AB5534 /* SpellcheckRangeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BC39DA13AF5471001DC01C /* SpellcheckRangeList.cpp */; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedIntRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedIntRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedIntRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedIntRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74C2D3C13811E0D00F83572 /* ShadowContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A74C2D3B13811E0D00F83572 /* ShadowContentElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9811,12 +9809,6 @@
 		A7B6E69D0B291A9600D0529F /* DragData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragData.h; sourceTree = "<group>"; };
 		A7BBE26411AFB3F20005EA03 /* JSHTMLMeterElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMeterElement.cpp; sourceTree = "<group>"; };
 		A7BBE26511AFB3F20005EA03 /* JSHTMLMeterElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLMeterElement.h; sourceTree = "<group>"; };
-		A7BC39D713AF5471001DC01C /* SpellcheckRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellcheckRange.cpp; sourceTree = "<group>"; };
-		A7BC39D813AF5471001DC01C /* SpellcheckRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellcheckRange.h; sourceTree = "<group>"; };
-		A7BC39D913AF5471001DC01C /* SpellcheckRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpellcheckRange.idl; sourceTree = "<group>"; };
-		A7BC39DA13AF5471001DC01C /* SpellcheckRangeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellcheckRangeList.cpp; sourceTree = "<group>"; };
-		A7BC39DB13AF5471001DC01C /* SpellcheckRangeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellcheckRangeList.h; sourceTree = "<group>"; };
-		A7BC39DC13AF5471001DC01C /* SpellcheckRangeList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpellcheckRangeList.idl; sourceTree = "<group>"; };
 		A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetailsMarkerControl.cpp; sourceTree = "<group>"; };
 		A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMarkerControl.h; sourceTree = "<group>"; };
 		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
@@ -13630,15 +13622,11 @@
 		417DA4CD13734204007C57FB /* testing */ = {
 			isa = PBXGroup;
 			children = (
-				41815C1B138319630057AAA4 /* js */,
 				B1AD4E7713A12A7200846B27 /* track */,
-				B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */,
-				B1AD4E4C13A12A0B00846B27 /* CueIndex.h */,
 				B1AD4E7113A12A4600846B27 /* CueLoader.cpp */,
 				B1AD4E7213A12A4600846B27 /* CueLoader.h */,
-				417DA4CF13734326007C57FB /* Internals.cpp */,
-				417DA4CE13734326007C57FB /* Internals.h */,
-				41813F9113818AD60057AAA4 /* Internals.idl */,
+				B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */,
+				B1AD4E4C13A12A0B00846B27 /* CueIndex.h */,
 				B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */,
 				B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */,
 				B1AD4E4F13A12A0B00846B27 /* LoadableTextTrackImpl.cpp */,
@@ -13654,6 +13642,10 @@
 				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
 				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
 				B1AD4E5B13A12A0B00846B27 /* TextTrackPrivate.h */,
+				41815C1B138319630057AAA4 /* js */,
+				417DA4CF13734326007C57FB /* Internals.cpp */,
+				417DA4CE13734326007C57FB /* Internals.h */,
+				41813F9113818AD60057AAA4 /* Internals.idl */,
 			);
 			path = testing;
 			sourceTree = "<group>";
@@ -14264,6 +14256,12 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */,
+				CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */,
+				CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */,
+				CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */,
+				CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */,
+				CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */,
 				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -14328,12 +14326,6 @@
 				BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */,
 				E1A3162B134BC32D007C9A4F /* WebNSAttributedStringExtras.h */,
 				E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */,
-				CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */,
-				CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */,
-				CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */,
-				CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */,
-				CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */,
-				CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */,
 				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 			);
@@ -16218,12 +16210,6 @@
 				F55B3D9C1251F12D003EF269 /* ResetInputType.h */,
 				F55B3D9D1251F12D003EF269 /* SearchInputType.cpp */,
 				F55B3D9E1251F12D003EF269 /* SearchInputType.h */,
-				A7BC39D713AF5471001DC01C /* SpellcheckRange.cpp */,
-				A7BC39D813AF5471001DC01C /* SpellcheckRange.h */,
-				A7BC39D913AF5471001DC01C /* SpellcheckRange.idl */,
-				A7BC39DA13AF5471001DC01C /* SpellcheckRangeList.cpp */,
-				A7BC39DB13AF5471001DC01C /* SpellcheckRangeList.h */,
-				A7BC39DC13AF5471001DC01C /* SpellcheckRangeList.idl */,
 				A5AFB34D115151A700B045CB /* StepRange.cpp */,
 				A5AFB34E115151A700B045CB /* StepRange.h */,
 				F55B3D9F1251F12D003EF269 /* SubmitInputType.cpp */,
@@ -18668,9 +18654,9 @@
 				97DCE20010807C750057D394 /* HistoryController.h */,
 				089582530E857A7E00F82C83 /* ImageLoader.cpp */,
 				089582540E857A7E00F82C83 /* ImageLoader.h */,
+				984264EF12D5280A000D88A4 /* LinkLoaderClient.h */,
 				98CE4325129E00BD005821DC /* LinkLoader.cpp */,
 				98CE4329129E00E5005821DC /* LinkLoader.h */,
-				984264EF12D5280A000D88A4 /* LinkLoaderClient.h */,
 				93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */,
 				656D37290ADBA5DE00A4554D /* MainResourceLoader.h */,
 				93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */,
@@ -20359,10 +20345,6 @@
 				A80E6CEE0A1989CA007FB8C5 /* CSSValue.h in Headers */,
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
 				A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */,
-				B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */,
-				B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */,
-				B1AD4E7C13A12A7200846B27 /* CueParser.h in Headers */,
-				B1AD4E7D13A12A7200846B27 /* CueParserPrivate.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
@@ -22014,9 +21996,6 @@
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
 				98CE432A129E00E5005821DC /* LinkLoader.h in Headers */,
 				984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */,
-				985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */,
-				B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */,
-				B1AD4E6113A12A0B00846B27 /* LoadableTextTrackImpl.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
@@ -22091,8 +22070,6 @@
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
 				B12D234213560282002A28D4 /* MultipleTrackList.h in Headers */,
-				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
-				B1AD4E6513A12A0B00846B27 /* MutableTextTrackImpl.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
@@ -22471,7 +22448,6 @@
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
-				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				498770EB1242C535002226BA /* SharedGraphicsContext3D.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				41E1B1D40FF5986900576B3B /* SharedWorker.h in Headers */,
@@ -22851,10 +22827,6 @@
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
-				B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */,
-				B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */,
-				B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */,
-				B1AD4E6C13A12A0B00846B27 /* TextTrackPrivate.h in Headers */,
 				498770F11242C535002226BA /* Texture.h in Headers */,
 				97BC84A512370DC8000C6161 /* TextViewSourceParser.h in Headers */,
 				BCE658FF0EA9248A007E4533 /* Theme.h in Headers */,
@@ -23038,6 +23010,20 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */,
+				B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */,
+				B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */,
+				B1AD4E6113A12A0B00846B27 /* LoadableTextTrackImpl.h in Headers */,
+				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
+				B1AD4E6513A12A0B00846B27 /* MutableTextTrackImpl.h in Headers */,
+				B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */,
+				B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */,
+				B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */,
+				B1AD4E6C13A12A0B00846B27 /* TextTrackPrivate.h in Headers */,
+				B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */,
+				B1AD4E7C13A12A7200846B27 /* CueParser.h in Headers */,
+				B1AD4E7D13A12A7200846B27 /* CueParserPrivate.h in Headers */,
+				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23596,9 +23582,6 @@
 				371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */,
 				1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */,
 				A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */,
-				B1AD4E5C13A12A0B00846B27 /* CueIndex.cpp in Sources */,
-				B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */,
-				B1AD4E7B13A12A7200846B27 /* CueParser.cpp in Sources */,
 				E11AF15111B9A1A300805103 /* Cursor.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
@@ -24995,9 +24978,6 @@
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
 				98CE4326129E00BD005821DC /* LinkLoader.cpp in Sources */,
-				985BB96D13A94058007A0B69 /* LinkRelAttribute.cpp in Sources */,
-				B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */,
-				B1AD4E6013A12A0B00846B27 /* LoadableTextTrackImpl.cpp in Sources */,
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				7EE6846812D26E3800E79415 /* LoaderRunLoopCF.cpp in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
@@ -25067,8 +25047,6 @@
 				85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
 				B12D234113560282002A28D4 /* MultipleTrackList.cpp in Sources */,
-				B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */,
-				B1AD4E6413A12A0B00846B27 /* MutableTextTrackImpl.cpp in Sources */,
 				85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */,
 				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
 				A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */,
@@ -25360,7 +25338,6 @@
 				B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
-				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
 				498770EA1242C535002226BA /* SharedGraphicsContext3D.cpp in Sources */,
 				93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */,
@@ -25393,8 +25370,6 @@
 				758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */,
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
-				A7314F8913AF5C1300AB5534 /* SpellcheckRange.cpp in Sources */,
-				A7314F8A13AF5C1300AB5534 /* SpellcheckRangeList.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
 				A7005CCC1330C4BA000CC0BA /* SpellingCorrectionController.cpp in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
@@ -25470,10 +25445,7 @@
 				65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */,
 				B22279760D00BF220071B782 /* SVGAngle.cpp in Sources */,
 				B22279790D00BF220071B782 /* SVGAnimateColorElement.cpp in Sources */,
-				4362C7B913AC6F1A00344BEB /* SVGAnimatedAngle.cpp in Sources */,
 				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
-				43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */,
-				43A0F0B613ACCCFF00A5F0A7 /* SVGAnimatedType.cpp in Sources */,
 				B222798F0D00BF220071B782 /* SVGAnimateElement.cpp in Sources */,
 				B22279920D00BF220071B782 /* SVGAnimateMotionElement.cpp in Sources */,
 				B22279940D00BF220071B782 /* SVGAnimateTransformElement.cpp in Sources */,
@@ -25644,9 +25616,6 @@
 				93309E1B099E64920056E581 /* TextIterator.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */,
 				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
-				B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */,
-				B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */,
-				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,
 				498770F01242C535002226BA /* Texture.cpp in Sources */,
 				97BC84A412370DC8000C6161 /* TextViewSourceParser.cpp in Sources */,
 				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
@@ -25797,6 +25766,21 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				985BB96D13A94058007A0B69 /* LinkRelAttribute.cpp in Sources */,
+				B1AD4E5C13A12A0B00846B27 /* CueIndex.cpp in Sources */,
+				B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */,
+				B1AD4E6013A12A0B00846B27 /* LoadableTextTrackImpl.cpp in Sources */,
+				B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */,
+				B1AD4E6413A12A0B00846B27 /* MutableTextTrackImpl.cpp in Sources */,
+				B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */,
+				B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */,
+				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,
+				B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */,
+				B1AD4E7B13A12A7200846B27 /* CueParser.cpp in Sources */,
+				4362C7B913AC6F1A00344BEB /* SVGAnimatedAngle.cpp in Sources */,
+				43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */,
+				43A0F0B613ACCCFF00A5F0A7 /* SVGAnimatedType.cpp in Sources */,
+				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -57238,22 +57238,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\SpellcheckRange.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\SpellcheckRange.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\SpellcheckRangeList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\SpellcheckRangeList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\StepRange.cpp"
 				>
 			</File>
