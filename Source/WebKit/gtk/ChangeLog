@@ -1,3 +1,16 @@
+2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Make sure libsoup password manager macro is defined before including libsoup in webkitsoupauthdialog
+        https://bugs.webkit.org/show_bug.cgi?id=63124
+
+        Fixes a crash when building with --enable-debug.
+
+        * webkit/webkitsoupauthdialog.h: Define
+        LIBSOUP_I_HAVE_READ_BUG_594377_AND_KNOW_SOUP_PASSWORD_MANAGER_MIGHT_GO_AWAY
+        before including libsoup.h.
+
 2011-06-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
