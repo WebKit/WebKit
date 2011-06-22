@@ -435,7 +435,17 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
 
 void NetscapePlugin::platformSetFocus(bool)
 {
-    notImplemented();
+    if (m_isWindowed)
+        return;
+
+    XEvent xEvent;
+    initializeXEvent(xEvent);
+    XFocusChangeEvent& focusEvent = xEvent.xfocus;
+    focusEvent.type = focusIn ? kFocusInType : kFocusOutType;
+    focusEvent.mode = NotifyNormal;
+    focusEvent.detail = NotifyDetailNone;
+
+    NPP_HandleEvent(&xEvent);
 }
 
 bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)

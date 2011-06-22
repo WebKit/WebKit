@@ -1,3 +1,14 @@
+2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        [X11][WK2] Implement NetscapePlugin::platformSetFocus
+        https://bugs.webkit.org/show_bug.cgi?id=63154
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformSetFocus):
+        Implement focus setting based on the WebKit1 path.
+
 2011-06-22  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Martin Robinson.
