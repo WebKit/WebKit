@@ -1,5 +1,16 @@
 2011-06-22  Jessie Berlin  <jberlin@apple.com>
 
+        REGRESSION (r89426-r89428): inspector/console/console-trace-in-eval.html failing on
+        SnowLeopard Intel Release (Tests) and Windows 7 Release (Tests).
+        https://bugs.webkit.org/show_bug.cgi?id=63175
+
+        Add platform-specific results to in order to get the bots green.
+
+        * platform/mac/inspector/console: Added.
+        * platform/mac/inspector/console/console-trace-in-eval-expected.txt: Added.
+
+2011-06-22  Jessie Berlin  <jberlin@apple.com>
+
         WebKitTestRunner needs layoutTestController.dumpFrameLoadCallbacks.
         https://bugs.webkit.org/show_bug.cgi?id=42331
 
