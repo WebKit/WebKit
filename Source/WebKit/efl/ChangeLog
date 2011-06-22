@@ -1,3 +1,31 @@
+2011-06-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add DeviceOrientationClientEfl and DeviceMotionClientEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=63125
+
+        Add dummy files to build with ENABLE_DEVICE_ORIENTATION.
+
+        * WebCoreSupport/DeviceMotionClientEfl.cpp: Added.
+        (WebCore::DeviceMotionClientEfl::DeviceMotionClientEfl):
+        (WebCore::DeviceMotionClientEfl::~DeviceMotionClientEfl):
+        (WebCore::DeviceMotionClientEfl::deviceMotionControllerDestroyed):
+        (WebCore::DeviceMotionClientEfl::setController):
+        (WebCore::DeviceMotionClientEfl::startUpdating):
+        (WebCore::DeviceMotionClientEfl::stopUpdating):
+        (WebCore::DeviceMotionClientEfl::currentDeviceMotion):
+        * WebCoreSupport/DeviceMotionClientEfl.h: Added.
+        * WebCoreSupport/DeviceOrientationClientEfl.cpp: Added.
+        (WebCore::DeviceOrientationClientEfl::DeviceOrientationClientEfl):
+        (WebCore::DeviceOrientationClientEfl::~DeviceOrientationClientEfl):
+        (WebCore::DeviceOrientationClientEfl::deviceOrientationControllerDestroyed):
+        (WebCore::DeviceOrientationClientEfl::setController):
+        (WebCore::DeviceOrientationClientEfl::startUpdating):
+        (WebCore::DeviceOrientationClientEfl::stopUpdating):
+        (WebCore::DeviceOrientationClientEfl::lastOrientation):
+        * WebCoreSupport/DeviceOrientationClientEfl.h: Added.
+
 2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
