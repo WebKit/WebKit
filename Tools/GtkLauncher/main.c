@@ -25,6 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <errno.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
@@ -240,52 +241,85 @@ static gchar* filenameToURL(const char* filename)
 }
 
 #ifndef WEBKIT2
-gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gchar *value, gpointer data, GError **error)
+static gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gchar *value, WebKitWebSettings *webSettings, GError **error)
 {
-    WebKitWebSettings *webkitSettings = (WebKitWebSettings *)data;
-
-    g_assert(webkitSettings);
-
-    if (strlen(optionNameFull) <= 2)
+    if (strlen(optionNameFull) <= 2) {
+        g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Invalid option %s", optionNameFull);
         return FALSE;
+    }
 
     /* We have two -- in option name so remove them. */
     const gchar *optionName = optionNameFull + 2;
-    GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(webkitSettings), optionName);
-    if (!spec)
+    GParamSpec *spec = g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), optionName);
+    if (!spec) {
+        g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Cannot find web settings for option %s", optionNameFull);
         return FALSE;
+    }
 
-    /* Convert string to proper type. */
-    GValue valueString = {0, {{0}}};
-    GValue valueProperty = {0, {{0}}};
-    g_value_init(&valueString, G_TYPE_STRING);
-    g_value_init(&valueProperty, G_PARAM_SPEC_VALUE_TYPE(spec));
-    g_value_set_static_string(&valueString, value);
-    if (!g_value_transform(&valueString, &valueProperty))
-        return FALSE;
+    switch (G_PARAM_SPEC_VALUE_TYPE(spec)) {
+    case G_TYPE_BOOLEAN: {
+        gboolean propertyValue = TRUE;
+        if (value && g_ascii_strcasecmp(value, "true") && strcmp(value, "1"))
+            propertyValue = FALSE;
+        g_object_set(G_OBJECT(webSettings), optionName, propertyValue, NULL);
+        break;
+    }
+    case G_TYPE_STRING:
+        g_object_set(G_OBJECT(webSettings), optionName, value, NULL);
+        break;
+    case G_TYPE_INT: {
+        glong propertyValue;
+        gchar *end;
 
-    /* Set WebKitWebSettings properties. */
-    g_object_set_property(G_OBJECT(webkitSettings), optionName, &valueProperty);
+        errno = 0;
+        propertyValue = g_ascii_strtoll(value, &end, 0);
+        if (errno == ERANGE || propertyValue > G_MAXINT || propertyValue < G_MININT) {
+            g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE, "Integer value '%s' for %s out of range", value, optionNameFull);
+            return FALSE;
+        }
+        if (errno || value == end) {
+            g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE, "Cannot parse integer value '%s' for %s", value, optionNameFull);
+            return FALSE;
+        }
+        g_object_set(G_OBJECT(webSettings), optionName, propertyValue, NULL);
+        break;
+    }
+    case G_TYPE_FLOAT: {
+        gdouble propertyValue;
+        gchar *end;
+
+        errno = 0;
+        propertyValue = g_ascii_strtod(value, &end);
+        if (errno == ERANGE || propertyValue > G_MAXFLOAT || propertyValue < G_MINFLOAT) {
+            g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE, "Float value '%s' for %s out of range", value, optionNameFull);
+            return FALSE;
+        }
+        if (errno || value == end) {
+            g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE, "Cannot parse float value '%s' for %s", value, optionNameFull);
+            return FALSE;
+        }
+        g_object_set(G_OBJECT(webSettings), optionName, propertyValue, NULL);
+        break;
+    }
+    default:
+        g_assert_not_reached();
+    }
 
     return TRUE;
 }
 
-static GArray* getOptionEntriesFromWebKitWebSettings(WebKitWebSettings *webkitSettings)
+static GOptionEntry* getOptionEntriesFromWebKitWebSettings(WebKitWebSettings *webSettings)
 {
     GParamSpec **propertySpecs;
-    GArray *optionEntriesArray;
-    guint numProperties, i;
+    GOptionEntry *optionEntries;
+    guint numProperties, numEntries, i;
 
-    propertySpecs = g_object_class_list_properties(G_OBJECT_GET_CLASS(webkitSettings), &numProperties);
+    propertySpecs = g_object_class_list_properties(G_OBJECT_GET_CLASS(webSettings), &numProperties);
     if (!propertySpecs)
         return 0;
 
-    optionEntriesArray = g_array_new(TRUE, TRUE, sizeof(GOptionEntry));
-    if (!optionEntriesArray) {
-        g_free(propertySpecs);
-        return 0;
-    }
-
+    optionEntries = g_new0(GOptionEntry, numProperties + 1);
+    numEntries = 0;
     for (i = 0; i < numProperties; i++) {
         GParamSpec *param = propertySpecs[i];
 
@@ -296,89 +330,82 @@ static GArray* getOptionEntriesFromWebKitWebSettings(WebKitWebSettings *webkitSe
         GType gParamType = G_PARAM_SPEC_VALUE_TYPE(param);
         if (gParamType == G_TYPE_BOOLEAN || gParamType == G_TYPE_STRING || gParamType == G_TYPE_INT
             || gParamType == G_TYPE_FLOAT) {
-            GOptionEntry optionEntry;
-            optionEntry.long_name = g_param_spec_get_name(param);
+            GOptionEntry *optionEntry = &optionEntries[numEntries++];
+            optionEntry->long_name = g_param_spec_get_name(param);
+
             /* There is no easy way to figure our short name for generated option entries.
                optionEntry.short_name=*/
             /* For bool arguments "enable" type make option argument not required. */
-            if (gParamType == G_TYPE_BOOLEAN && (strstr(optionEntry.long_name, "enable")))
-                optionEntry.flags = G_OPTION_FLAG_OPTIONAL_ARG;
-            optionEntry.arg = G_OPTION_ARG_CALLBACK;
-            optionEntry.arg_data = parseOptionEntryCallback;
-            optionEntry.description = g_param_spec_get_blurb(param);
-            optionEntry.arg_description = g_type_name(gParamType);
-            g_array_append_val(optionEntriesArray, optionEntry);
+            if (gParamType == G_TYPE_BOOLEAN && (strstr(optionEntry->long_name, "enable")))
+                optionEntry->flags = G_OPTION_FLAG_OPTIONAL_ARG;
+            optionEntry->arg = G_OPTION_ARG_CALLBACK;
+            optionEntry->arg_data = parseOptionEntryCallback;
+            optionEntry->description = g_param_spec_get_blurb(param);
+            optionEntry->arg_description = g_type_name(gParamType);
         }
     }
     g_free(propertySpecs);
 
-    return optionEntriesArray;
+    return optionEntries;
 }
 
-static void transformStringToBoolean(const GValue *srcValue, GValue *destValue)
+static gboolean addWebSettingsGroupToContext(GOptionContext *context, WebKitWebSettings* webkitSettings)
 {
-    const char* strValue = g_value_get_string(srcValue);
-    if (strValue) {
-        if (!g_ascii_strcasecmp(strValue, "true") || !strcmp(strValue, "1"))
-            g_value_set_boolean(destValue, TRUE);
-        else
-            g_value_set_boolean(destValue, FALSE);
-    } else /* When no option value provided, set "TRUE" by default. */
-        g_value_set_boolean(destValue, TRUE);
-}
-
-static void transformStringToInt(const GValue *srcValue, GValue *destValue)
-{
-    g_value_set_int(destValue, atoi(g_value_get_string(srcValue)));
-}
-
-static void transformStringToFloat(const GValue *srcValue, GValue *destValue)
-{
-    g_value_set_float(destValue, atof(g_value_get_string(srcValue)));
-}
-
-static gboolean parseAdditionalOptions(WebKitWebView *webView, int argc, char* argv[])
-{
-    g_value_register_transform_func(G_TYPE_STRING, G_TYPE_BOOLEAN, transformStringToBoolean);
-    g_value_register_transform_func(G_TYPE_STRING, G_TYPE_INT, transformStringToInt);
-    g_value_register_transform_func(G_TYPE_STRING, G_TYPE_FLOAT, transformStringToFloat);
-
-
-    WebKitWebSettings *webkitSettings = webkit_web_view_get_settings(webView);
-    GArray *optionEntriesArray = getOptionEntriesFromWebKitWebSettings(webkitSettings);
+    GOptionEntry *optionEntries = getOptionEntriesFromWebKitWebSettings(webkitSettings);
+    if (!optionEntries)
+        return FALSE;
 
     GOptionGroup *webSettingsGroup = g_option_group_new("websettings",
                                                         "WebKitWebSettings writable properties for default WebKitWebView",
                                                         "WebKitWebSettings properties",
                                                         webkitSettings,
                                                         NULL);
-    g_option_group_add_entries(webSettingsGroup, (GOptionEntry*) optionEntriesArray->data);
+    g_option_group_add_entries(webSettingsGroup, optionEntries);
+    g_free(optionEntries);
 
-    GOptionContext *context = g_option_context_new("[URL]");
+    /* Option context takes ownership of the group. */
     g_option_context_add_group(context, webSettingsGroup);
 
-    GError *error = 0;
-    if (!g_option_context_parse(context, &argc, &argv, &error)) {
-        g_print("Failed to parse arguments: %s\n", error->message);
-        g_error_free(error);
-        g_option_context_free(context);
-        g_array_free(optionEntriesArray, TRUE);
-        return FALSE;
-    }
-    g_option_context_free(context);
-    g_array_free(optionEntriesArray, TRUE);
     return TRUE;
 }
 #endif
 
 int main(int argc, char* argv[])
 {
-    WebKitWebView *webView;
-    GtkWidget *main_window;
+#ifndef WEBKIT2
+    WebKitWebSettings *webkitSettings = 0;
+#endif
+    const gchar **uriArguments = 0;
+    const GOptionEntry commandLineOptions[] =
+    {
+        { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL]" },
+        { 0, 0, 0, 0, 0, 0, 0 }
+    };
 
     gtk_init(&argc, &argv);
     if (!g_thread_supported())
         g_thread_init(NULL);
+
+    GOptionContext *context = g_option_context_new(0);
+    g_option_context_add_main_entries(context, commandLineOptions, 0);
+    g_option_context_add_group(context, gtk_get_option_group(TRUE));
+#ifndef WEBKIT2
+    webkitSettings = webkit_web_settings_new();
+    if (!addWebSettingsGroupToContext(context, webkitSettings)) {
+        g_object_unref(webkitSettings);
+        webkitSettings = 0;
+    }
+#endif
+
+    GError *error = 0;
+    if (!g_option_context_parse(context, &argc, &argv, &error)) {
+        g_printerr("Cannot parse arguments: %s\n", error->message);
+        g_error_free(error);
+        g_option_context_free(context);
+
+        return 1;
+    }
+    g_option_context_free(context);
 
 #ifndef WEBKIT2
 #ifdef SOUP_TYPE_PROXY_RESOLVER_DEFAULT
@@ -393,14 +420,17 @@ int main(int argc, char* argv[])
 #endif
 #endif
 
-    main_window = createWindow(&webView);
+    WebKitWebView *webView;
+    GtkWidget *main_window = createWindow(&webView);
 
 #ifndef WEBKIT2
-    if (!parseAdditionalOptions(webView, argc, argv))
-        return 1;
+    if (webkitSettings) {
+        webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
+        g_object_unref(webkitSettings);
+    }
 #endif
 
-    gchar *uri =(gchar*)(argc > 1 ? argv[1] : "http://www.google.com/");
+    const gchar *uri = (uriArguments ? uriArguments[0] : "http://www.google.com/");
     gchar *fileURL = filenameToURL(uri);
 
     webkit_web_view_load_uri(webView, fileURL ? fileURL : uri);

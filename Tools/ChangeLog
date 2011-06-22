@@ -1,3 +1,30 @@
+2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Use GOption to parse main arguments in GtkLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=63060
+
+        Instead of getting the settings from the view, create a new
+        settings object not associated with any view so that we can parse
+        the command line arguments before creating the view. It will also
+        allows to use the same settings for more than one view if we
+        eventually support passing more than one uri from the command
+        line.
+
+        * GtkLauncher/main.c:
+        (parseOptionEntryCallback): Make this function static. Also use
+        g_ascii_strtoll/g_ascii_strtod to parse int/float values instead
+        of atoi/atof to provide better error messages. And always fill the
+        error struct when the function fails.
+        (getOptionEntriesFromWebKitWebSettings): Use an array of
+        GOptionEntry structs instead of a GArray, since that is what
+        g_option_group_add_entries() expects and the array size doesn't
+        change.
+        (addWebSettingsGroupToContext): Helper function to add the
+        websettings group to the option context.
+        (main): Create the option context to parse command line arguments.
+
 2011-06-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Roben.
