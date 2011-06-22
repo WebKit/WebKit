@@ -1,3 +1,10 @@
+2011-06-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, whitespace expectations change to trigger a round of
+        builds.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
         [Win][Mac] Correct an accidental change in r89410.
