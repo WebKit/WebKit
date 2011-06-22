@@ -3756,9 +3756,9 @@ BUGWK61415 : platform/mac/fast/forms/input-appearance-spinbutton.html = FAIL
 BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 // Flaky on Linux
-BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
+BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
-BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
+BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = TEXT IMAGE+TEXT PASS
 BUGWK59208 WIN MAC : fast/speech/input-appearance-searchandspeech.html = FAIL
 // Need rebaseline.
 

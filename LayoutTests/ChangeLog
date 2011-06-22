@@ -1,5 +1,11 @@
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update expectation for some speech tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-21  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Avoid custom layout code of RenderTextControlSingleLine
