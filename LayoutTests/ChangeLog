@@ -1,3 +1,12 @@
+2011-06-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Setting expected results for platform/win
+        https://bugs.webkit.org/show_bug.cgi?id=63190
+
+        * platform/win/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
+
 2011-06-22  Adam Roben  <aroben@apple.com>
 
         Add Windows expected results for some new tests from r87779
