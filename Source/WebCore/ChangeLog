@@ -1,3 +1,28 @@
+2011-06-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Move logic for deciding whether resource content should be base64 encoded on backend.
+        https://bugs.webkit.org/show_bug.cgi?id=63069
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        (WebCore::InspectorPageAgent::resourceContent):
+        (WebCore::InspectorPageAgent::getResourceContent):
+        (WebCore::InspectorPageAgent::searchInResources):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._innerRequestContent.onResourceContent):
+        (WebInspector.Resource.prototype._innerRequestContent):
+
 2011-06-22  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.
