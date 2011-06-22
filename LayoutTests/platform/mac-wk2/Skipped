@@ -1102,6 +1102,7 @@ http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.htm
 http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
+webarchive/loading/javascript-url-iframe-crash.html
 webarchive/loading/mainresource-null-mimetype-crash.html
 webarchive/loading/missing-data.html
 
