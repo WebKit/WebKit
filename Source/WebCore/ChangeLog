@@ -1,3 +1,17 @@
+2011-06-21  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        beginTransparencyLayer leaves context color out of sync, bleeds color into text
+        https://bugs.webkit.org/show_bug.cgi?id=63093
+
+        Test: fast/css/color-leakage.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: Swap out CGContextSave/Restore with
+        GraphicsContext::save/restore to keep the context in sync with its CG context
+        (WebCore::GraphicsContext::beginTransparencyLayer): Added save(), removed redundant calls.
+        (WebCore::GraphicsContext::endTransparencyLayer): Added restore(), removed redundant calls.
+
 2011-06-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
