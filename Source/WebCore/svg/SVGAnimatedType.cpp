@@ -22,6 +22,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedType.h"
 
+#include "FloatRect.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGParserUtilities.h"
@@ -44,6 +45,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedNumber:
         delete m_data.number;
+        break;
+    case AnimatedRect:
+        delete m_data.rect;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -75,6 +79,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumber(float* number)
     return animatedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createRect(FloatRect* rect)
+{
+    ASSERT(rect);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedRect));
+    animatedType->m_data.rect = rect;
+    return animatedType.release();
+}
+
 SVGAngle& SVGAnimatedType::angle()
 {
     ASSERT(m_type == AnimatedAngle);
@@ -93,6 +105,12 @@ float& SVGAnimatedType::number()
     return *m_data.number;
 }
 
+FloatRect& SVGAnimatedType::rect()
+{
+    ASSERT(m_type == AnimatedRect);
+    return *m_data.rect;
+}
+
 String SVGAnimatedType::valueAsString()
 {
     switch (m_type) {
@@ -105,6 +123,10 @@ String SVGAnimatedType::valueAsString()
     case AnimatedNumber:
         ASSERT(m_data.number);
         return String::number(*m_data.number);
+    case AnimatedRect:
+        ASSERT(m_data.rect);
+        return String::number(m_data.rect->x()) + ' ' + String::number(m_data.rect->y()) + ' '
+             + String::number(m_data.rect->width()) + ' ' + String::number(m_data.rect->height());
     default:
         break;
     }
@@ -127,6 +149,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedNumber:
         ASSERT(m_data.number);
         parseNumberFromString(value, *m_data.number);
+        break;
+    case AnimatedRect:
+        ASSERT(m_data.rect);
+        parseRect(value, *m_data.rect);
         break;
     default:
         ASSERT_NOT_REACHED();

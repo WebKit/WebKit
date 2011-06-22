@@ -26,7 +26,7 @@
 #include "SVGParserUtilities.h"
 
 #include "Document.h"
-#include "FloatPoint.h"
+#include "FloatRect.h"
 #include "SVGPointList.h"
 
 #include <limits>
@@ -187,6 +187,21 @@ bool parseNumberOptionalNumber(const String& s, float& x, float& y)
         return false;
 
     return cur == end;
+}
+
+bool parseRect(const String& string, FloatRect& rect)
+{
+    const UChar* ptr = string.characters();
+    const UChar* end = ptr + string.length();
+    skipOptionalSpaces(ptr, end);
+    
+    float x = 0;
+    float y = 0;
+    float width = 0;
+    float height = 0;
+    bool valid = parseNumber(ptr, end, x) && parseNumber(ptr, end, y) && parseNumber(ptr, end, width) && parseNumber(ptr, end, height, false);
+    rect = FloatRect(x, y, width, height);
+    return valid;
 }
 
 bool pointsListFromSVGData(SVGPointList& pointsList, const String& points)

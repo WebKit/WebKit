@@ -25,6 +25,7 @@
 
 namespace WebCore {
 
+class FloatRect;
 class SVGAngle;
 class SVGLength;
 
@@ -36,12 +37,14 @@ public:
     static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
+    static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     
     AnimatedAttributeType type() const { return m_type; }
 
     SVGAngle& angle();
     SVGLength& length();
     float& number();
+    FloatRect& rect();
 
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
@@ -61,6 +64,7 @@ private:
         SVGAngle* angle;
         SVGLength* length;
         float* number;
+        FloatRect* rect;
     } m_data;
 };
     

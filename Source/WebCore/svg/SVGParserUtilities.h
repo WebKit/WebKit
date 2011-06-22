@@ -30,12 +30,14 @@ typedef Vector<UnicodeRange> UnicodeRanges;
 
 namespace WebCore {
 
+class FloatRect;
 class SVGPointList;
 
 bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip = true);
 bool parseNumberFromString(const String&, float& number, bool skip = true);
 bool parseNumberOptionalNumber(const String& s, float& h, float& v);
 bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag);
+bool parseRect(const String&, FloatRect&);
 
 // SVG allows several different whitespace characters:
 // http://www.w3.org/TR/SVG/paths.html#PathDataBNF

@@ -5714,6 +5714,7 @@
             'svg/SVGAnimatedAngle.cpp',
             'svg/SVGAnimatedLength.cpp',
             'svg/SVGAnimatedNumber.cpp',
+            'svg/SVGAnimatedRect.cpp',
             'svg/SVGAnimatedType.cpp',
             'svg/SVGAnimateElement.cpp',
             'svg/SVGAnimateElement.h',

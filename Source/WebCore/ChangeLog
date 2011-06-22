@@ -1,3 +1,58 @@
+2011-06-22  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Animate viewBox attribute in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=20057
+
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGRect. With the new animator we support
+        interpolation between SVGRects. A feature that can be used to get smooth zooming animations for SVGs.
+        
+        Added parseRect() to SVGParserUtilities for parsing Strings to FloatRects.
+
+        Tests: svg/animations/svgrect-animation-1.html
+               svg/animations/svgrect-animation-2.html
+
+        * CMakeLists.txt: Added new file SVGAnimatedRect.cpp to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/FloatRect.h: Added new operators + and +=.
+        (WebCore::operator+=):
+        (WebCore::operator+):
+        * svg/SVGAllInOne.cpp: Added SVGAnimatedRect.cpp for Win build.
+        * svg/SVGAnimateElement.cpp: Handle AnimatedRect explicitly.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType): Ditto.
+        (WebCore::SVGAnimateElement::calculateAnimatedValue): Ditto.
+        (WebCore::SVGAnimateElement::calculateFromAndToValues): Ditto.
+        (WebCore::SVGAnimateElement::calculateFromAndByValues): Ditto.
+        (WebCore::SVGAnimateElement::resetToBaseValue): Ditto.
+        (WebCore::SVGAnimateElement::applyResultsToTarget): Ditto.
+        (WebCore::SVGAnimateElement::calculateDistance): Ditto.
+        * svg/SVGAnimatedRect.cpp: Added. The new Animator for SVGRect.
+        (WebCore::SVGAnimatedRectAnimator::SVGAnimatedRectAnimator):
+        (WebCore::SVGAnimatedRectAnimator::constructFromString):
+        (WebCore::SVGAnimatedRectAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedRectAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedRectAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedRectAnimator::calculateDistance):
+        * svg/SVGAnimatedRect.h:
+        (WebCore::SVGAnimatedRectAnimator::~SVGAnimatedRectAnimator):
+        * svg/SVGAnimatedType.cpp: Support for FloatRect.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createRect):
+        (WebCore::SVGAnimatedType::rect):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGParserUtilities.cpp: Parse String as FloatRect.
+        (WebCore::parseRect):
+        * svg/SVGParserUtilities.h:
+
 2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

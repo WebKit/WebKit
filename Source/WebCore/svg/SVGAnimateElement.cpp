@@ -120,7 +120,6 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
     case AnimatedNumberOptionalNumber:
     case AnimatedLengthList:
     case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
     case AnimatedString:
         return AnimatedString;
     case AnimatedLength:
@@ -132,6 +131,8 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedPath;
     case AnimatedPoints:
         return AnimatedPoints;
+    case AnimatedRect:
+        return AnimatedRect;
     case AnimatedColor:
         return AnimatedColor;
     case AnimatedTransformList:
@@ -250,7 +251,8 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     }
     case AnimatedAngle:
     case AnimatedLength:
-    case AnimatedNumber: {
+    case AnimatedNumber:
+    case AnimatedRect: {
         ASSERT(m_animator);
         ASSERT(results->m_animatedType);
         // Target element might have changed.
@@ -337,6 +339,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedRect:
         ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
         return true;
     default:
@@ -379,6 +382,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedRect:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
         return true;
     default:
@@ -414,7 +418,8 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
         return;
     case AnimatedAngle:
     case AnimatedLength:
-    case AnimatedNumber: {
+    case AnimatedNumber:
+    case AnimatedRect: {
         if (!m_animatedType)
             m_animatedType = ensureAnimator()->constructFromString(baseString);
         else
@@ -453,6 +458,7 @@ void SVGAnimateElement::applyResultsToTarget()
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedRect:
         valueToApply = m_animatedType->valueAsString();
         break;
     default:
@@ -481,6 +487,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedRect:
         return ensureAnimator()->calculateDistance(this, fromString, toString);
     default:
         break;

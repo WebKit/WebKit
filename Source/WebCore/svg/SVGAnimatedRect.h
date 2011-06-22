@@ -21,6 +21,7 @@
 #define SVGAnimatedRect_h
 
 #if ENABLE(SVG)
+#include "SVGAnimateElement.h"
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedPropertyTearOff.h"
 #include "SVGRect.h"
@@ -36,7 +37,26 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedRect, FloatRect, UpperProperty, LowerProper
 #define DEFINE_ANIMATED_RECT(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
 
+#if ENABLE(SVG_ANIMATION)
+class SVGAnimatedRectAnimator : public SVGAnimatedTypeAnimator {
+    
+public:
+    SVGAnimatedRectAnimator(SVGElement* contextElement, const QualifiedName&);
+    virtual ~SVGAnimatedRectAnimator() { }
+    
+    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    
+    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
+    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(SVGSMILElement*, float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue,
+                                        bool fromPropertyInherits, bool toPropertyInherits);
+    virtual float calculateDistance(SVGSMILElement*, const String& fromString, const String& toString);
+    
+    static bool parseSVGRect(const String&, FloatRect&);
+};
 } // namespace WebCore
 
+#endif // ENABLE(SVG_ANIMATION)
 #endif // ENABLE(SVG)
 #endif

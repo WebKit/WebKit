@@ -206,6 +206,20 @@ inline FloatRect unionRect(const FloatRect& a, const FloatRect& b)
     return c;
 }
 
+inline FloatRect& operator+=(FloatRect& a, const FloatRect& b)
+{
+    a.move(b.x(), b.y());
+    a.setWidth(a.width() + b.width());
+    a.setHeight(a.height() + b.height());
+    return a;
+}
+
+inline FloatRect operator+(const FloatRect& a, const FloatRect& b)
+{
+    FloatRect c = a;
+    c += b;
+    return c;
+}
 
 inline bool operator==(const FloatRect& a, const FloatRect& b)
 {

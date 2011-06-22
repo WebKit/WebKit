@@ -925,6 +925,7 @@
 		41F584C7104652CB009CAA64 /* JSMessagePortCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */; };
 		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
 		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
+		43142E7A13B1E97700F1C871 /* SVGAnimatedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */; };
 		4358E86A1360A21600E4748C /* DOMSVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */; };
 		4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */; };
 		4358E86C1360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8691360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h */; };
@@ -7373,6 +7374,7 @@
 		41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePortCustom.h; sourceTree = "<group>"; };
 		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
+		43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedRect.cpp; sourceTree = "<group>"; };
 		4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEDropShadowElement.h; sourceTree = "<group>"; };
 		4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEDropShadowElement.mm; sourceTree = "<group>"; };
 		4358E8691360A21600E4748C /* DOMSVGFEDropShadowElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEDropShadowElementInternal.h; sourceTree = "<group>"; };
@@ -17389,6 +17391,7 @@
 				B22277ED0D00BF1F0071B782 /* SVGAnimatedNumberList.idl */,
 				08FE0BC4127E2AC1000C4FB5 /* SVGAnimatedPreserveAspectRatio.h */,
 				B22277F40D00BF1F0071B782 /* SVGAnimatedPreserveAspectRatio.idl */,
+				43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */,
 				08C859BF1274575300A5728D /* SVGAnimatedRect.h */,
 				B22277F50D00BF1F0071B782 /* SVGAnimatedRect.idl */,
 				084DB59A128008CC002A6D64 /* SVGAnimatedString.h */,
@@ -25781,6 +25784,7 @@
 				43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */,
 				43A0F0B613ACCCFF00A5F0A7 /* SVGAnimatedType.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
+				43142E7A13B1E97700F1C871 /* SVGAnimatedRect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
