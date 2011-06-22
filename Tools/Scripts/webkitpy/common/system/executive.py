@@ -234,7 +234,9 @@ class Executive(object):
                         _log.warn("Failed to kill pid %s.  Too many EAGAIN errors." % pid)
                     continue
                 if e.errno == errno.ESRCH:  # The process does not exist.
-                    _log.warn("Called kill_process with a non-existant pid %s" % pid)
+                    return
+                if e.errno == errno.ECHILD:
+                    # Can't wait on a non-child process, but the kill worked.
                     return
                 raise
 

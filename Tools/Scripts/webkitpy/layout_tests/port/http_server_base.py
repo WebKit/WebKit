@@ -87,7 +87,7 @@ class HttpServerBase(object):
         if self._wait_for_action(self._is_server_running_on_all_ports):
             _log.debug("%s successfully started (pid = %d)" % (self._name, self._pid))
         else:
-            self._stop_running_process()
+            self._stop_running_server()
             raise ServerError('Failed to start %s server' % self._name)
 
     def stop(self):
@@ -149,7 +149,7 @@ class HttpServerBase(object):
                 full_path = self._filesystem.join(folder, file)
                 self._filesystem.remove(full_path)
 
-    def _wait_for_action(self, action, wait_secs=10.0, sleep_secs=0.05):
+    def _wait_for_action(self, action, wait_secs=20.0, sleep_secs=1.0):
         """Repeat the action for wait_sec or until it succeeds, sleeping for sleep_secs
         in between each attempt. Returns whether it succeeded."""
         start_time = time.time()
@@ -173,6 +173,12 @@ class HttpServerBase(object):
             try:
                 s.connect(('localhost', port))
                 _log.debug("Server running on %d" % port)
+            except socket.error, e:
+                # this branch is needed on Mac 10.5 / python 2.5
+                if e.args[0] not in (errno.ECONNREFUSED, errno.ECONNRESET):
+                    raise
+                _log.debug("Server NOT running on %d: %s" % (port, e))
+                return False
             except IOError, e:
                 if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
                     raise
