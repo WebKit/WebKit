@@ -910,47 +910,6 @@ BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
 BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 
-// Since r89233. May need a new baseline.
-// NOTE that this revision was rolled out, but it isn't clear whether we should remove these
-// expectations because it's likely to get checked in again soon.
-BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
-BUGWK62974 WIN : svg/W3C-SVG-1.1-SE/types-dom-05-b.svg = IMAGE+TEXT
-BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
-BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE+TEXT
-BUGWK62974 LEOPARD : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/batik/text/textEffect.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/batik/text/textEffect.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/batik/text/textEffect3.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/batik/text/textEffect3.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
-BUGWK62974 LEOPARD : svg/batik/text/xmlSpace.svg = IMAGE
-BUGWK62974 WIN : svg/custom/glyph-selection-lang-attribute.svg = IMAGE+TEXT
-BUGWK62974 LINUX : svg/custom/glyph-selection-lang-attribute.svg = IMAGE
-//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE+TEXT
-//BUGWK62974 LEOPARD : svg/custom/svg-fonts-fallback.xhtml = IMAGE
-//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-segmented.xhtml = IMAGE+TEXT
-//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-word-spacing.html = IMAGE+TEXT
-//BUGWK62974 MAC : svg/custom/svg-fonts-word-spacing.html = IMAGE
-BUGWK62974 WIN LINUX : svg/text/text-altglyph-01-b.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
-//BUGWK62974 WIN LINUX : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE+TEXT
-//BUGWK62974 LEOPARD : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE
-BUGWK62974 WIN LINUX : svg/text/text-text-04-t.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/text/text-text-05-t.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/text/text-text-05-t.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/text/text-text-06-t.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
-BUGWK62974 WIN LINUX : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
-BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
-BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
-BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
-BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
-BUGWK62974 WIN LINUX SNOWLEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE
-BUGWK62974 LEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
-
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
@@ -3025,7 +2984,6 @@ BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-indirect-strict
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-direct-normalcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-direct-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-indirect-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/strict/10.4.3.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
@@ -3976,8 +3934,8 @@ BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 BUGCR86239 MAC GPU : compositing/direct-image-compositing.html = IMAGE CRASH
 
 // Has been timing out since r88913.
-BUGWK62754 RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
-BUGWK62754 DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
+BUGWK62754 MAC LINUX RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
+BUGWK62754 MAC LINUX DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
 BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
 

@@ -1,3 +1,9 @@
+2011-06-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove failing test expectations from various tests for Chromium Windows.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-21  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.
