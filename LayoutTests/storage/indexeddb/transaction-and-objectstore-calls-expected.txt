@@ -62,12 +62,7 @@ Expecting exception from trans.objectStore('x')
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-trans = db.transaction()
-trans.objectStore('a')
-trans.objectStore('b')
-Expecting exception from trans.objectStore('x')
-PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+PASS trans = db.transaction() threw exception TypeError: Not enough arguments.
 
 Expecting exception from db.transaction(['x'])
 PASS Exception was thrown.

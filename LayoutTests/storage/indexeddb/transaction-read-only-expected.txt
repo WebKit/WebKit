@@ -12,15 +12,15 @@ result = db.setVersion('version 1')
 Deleted all object stores.
 store = db.createObjectStore('store')
 store.put('x', 'y')
-trans = db.transaction()
+trans = db.transaction('store')
 Expecting exception from trans.objectStore('store').put('a', 'b')
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.READ_ONLY_ERR
-trans = db.transaction()
+trans = db.transaction('store')
 Expecting exception from trans.objectStore('store').delete('x')
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.READ_ONLY_ERR
-trans = db.transaction()
+trans = db.transaction('store')
 cur = trans.objectStore('store').openCursor()
 PASS !event.target.result is false
 Expecting exception from event.target.result.delete()

@@ -81,10 +81,7 @@ function created()
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction()");
-    evalAndLog("trans.objectStore('a')");
-    evalAndLog("trans.objectStore('b')");
-    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    shouldThrow("trans = db.transaction()");
     debug("");
 
     evalAndExpectException("db.transaction(['x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");

@@ -48,7 +48,8 @@ function cleanDatabase()
 {
     deleteAllObjectStores(db);
 
-    evalAndExpectException("db.createObjectStore(null);", "IDBDatabaseException.NON_TRANSIENT_ERR");
+    objectStore = evalAndLog("objectStore = db.createObjectStore(null);");
+    shouldBe("objectStore.name", "'null'");
 
     done();
 }

@@ -28,7 +28,7 @@ function openSuccess()
 {
     debug("openSuccess():");
     db = evalAndLog("db = event.target.result");
-    evalAndLog("db.transaction()");
+    evalAndLog("db.transaction('foo')");
     evalAndLog("window.gc()");
     done();
 }

@@ -28,7 +28,6 @@ module storage {
 
     interface [
         Conditional=INDEXED_DATABASE,
-        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         EventTarget
     ] IDBDatabase {
@@ -40,23 +39,23 @@ module storage {
         attribute EventListener onerror;
         attribute EventListener onversionchange;
 
-        IDBObjectStore createObjectStore(in [ConvertNullToNullString] DOMString name, in [Optional] OptionsObject options)
+        IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
         void deleteObjectStore(in DOMString name)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in [ConvertUndefinedOrNullToNullString] DOMString version)
+        [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode)
+        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional] unsigned short mode)
             raises (IDBDatabaseException);
         void close();
 
         // EventTarget interface
         void addEventListener(in DOMString type,
                               in EventListener listener,
-                              in boolean useCapture);
+                              in [Optional] boolean useCapture);
         void removeEventListener(in DOMString type,
                                  in EventListener listener,
-                                 in boolean useCapture);
+                                 in [Optional] boolean useCapture);
         boolean dispatchEvent(in Event evt)
             raises(EventException);
     };

@@ -45,13 +45,13 @@ function cleanDatabase()
 
 function setVersionDone()
 {
-    trans = evalAndLog("trans = db.transaction()");
+    trans = evalAndLog("trans = db.transaction('store')");
     evalAndExpectException("trans.objectStore('store').put('a', 'b')", "webkitIDBDatabaseException.READ_ONLY_ERR");
 
-    trans = evalAndLog("trans = db.transaction()");
+    trans = evalAndLog("trans = db.transaction('store')");
     evalAndExpectException("trans.objectStore('store').delete('x')", "webkitIDBDatabaseException.READ_ONLY_ERR");
 
-    trans = evalAndLog("trans = db.transaction()");
+    trans = evalAndLog("trans = db.transaction('store')");
     cur = evalAndLog("cur = trans.objectStore('store').openCursor()");
     cur.onsuccess = gotCursor;
     cur.onerror = unexpectedErrorCallback;

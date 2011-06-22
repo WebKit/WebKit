@@ -11,9 +11,8 @@ indexedDB.open(name, description)
 db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
-Expecting exception from db.createObjectStore(null);
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+objectStore = db.createObjectStore(null);
+PASS objectStore.name is 'null'
 PASS successfullyParsed is true
 
 TEST COMPLETE

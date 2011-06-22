@@ -11,7 +11,7 @@
 <div id="console"></div> 
 <script> 
  
-description("Test IndexedDB version string is required");
+description("Test IndexedDB with null version string");
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
  
@@ -37,7 +37,14 @@ function openSuccess()
 {
     db = evalAndLog("db = event.target.result");
  
-    shouldThrow("db.setVersion();");
+    request = evalAndLog("db.setVersion(null);");
+    request.onsuccess = postSetVersion;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function postSetVersion()
+{
+    shouldBe("db.version", "'null'");
     done();
 }
  

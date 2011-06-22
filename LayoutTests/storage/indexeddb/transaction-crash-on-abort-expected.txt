@@ -8,7 +8,7 @@ PASS webkitIndexedDB == null is false
 webkitIndexedDB.open('transaction-crash-on-abort')
 openSuccess():
 db = event.target.result
-db.transaction()
+db.transaction('foo')
 window.gc()
 PASS successfullyParsed is true
 

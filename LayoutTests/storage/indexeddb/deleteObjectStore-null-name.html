@@ -1,20 +1,20 @@
-<!DOCTYPE html> 
-<html> 
-<head> 
-<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css"> 
-<script src="../../fast/js/resources/js-test-pre.js"></script> 
-<script src="../../fast/js/resources/js-test-post-function.js"></script> 
-<script src="resources/shared.js"></script> 
-</head> 
-<body> 
-<p id="description"></p> 
-<div id="console"></div> 
-<script> 
- 
-description("Test IndexedDB version string is required");
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB deleteObjectStore required argument");
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
- 
+
 function test()
 {
     indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
@@ -25,26 +25,36 @@ function test()
     shouldBeFalse("IDBCursor == null");
     IDBKeyRange = evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;");
     shouldBeFalse("IDBKeyRange == null");
- 
+
     name = window.location.pathname;
     description = "My Test Database";
     request = evalAndLog("indexedDB.open(name, description)");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
- 
+
 function openSuccess()
 {
     db = evalAndLog("db = event.target.result");
- 
-    shouldThrow("db.setVersion();");
+
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = createAndPopulateObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createAndPopulateObjectStore()
+{
+    deleteAllObjectStores(db);
+
+    evalAndLog("db.createObjectStore('null');");
+    evalAndLog("db.deleteObjectStore(null);");
     done();
 }
- 
+
 var successfullyParsed = true;
- 
+
 test();
- 
-</script> 
-</body> 
+
+</script>
+</body>
 </html>

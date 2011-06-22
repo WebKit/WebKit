@@ -1,3 +1,22 @@
+2011-06-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        IndexedDB: fix multiple issues in IDBDatabase.idl
+        https://bugs.webkit.org/show_bug.cgi?id=63140
+
+        Tests: storage/indexeddb/createObjectStore-name-argument-required.html
+               storage/indexeddb/createObjectStore-null-name.html
+               storage/indexeddb/deleteObjectStore-name-argument-required.html
+               storage/indexeddb/deleteObjectStore-null-name.html
+               storage/indexeddb/setVersion-null.html
+               storage/indexeddb/transaction-storeNames-required.html
+
+        * storage/IDBDatabase.idl: remove LegacyDefaultOptionalArguments so
+        all functions will throw TypeError when called with too few arguments,
+        as per WebIDL spec. Also remove ConvertNullToNullString flags so null
+        values are stringified as "null" (also as per WebIDL spec).
+
 2011-06-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
