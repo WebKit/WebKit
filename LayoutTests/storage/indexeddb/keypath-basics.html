@@ -11,7 +11,7 @@
 <div id="console"></div>
 <script>
 
-description("Test IndexedDB key path corner cases");
+description("Test for valid and invalid keypaths");
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
@@ -38,21 +38,35 @@ function openSuccess()
     db = evalAndLog("db = event.target.result");
 
     request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = testGroup1;
+    request.onsuccess = testValidKeyPaths;
     request.onerror = unexpectedErrorCallback;
 }
 
-function testGroup1()
+function testValidKeyPaths()
 {
     deleteAllObjectStores(db);
 
-    debug("test keypath as array");
-    evalAndLog("db.createObjectStore('foo', {keyPath: ['foo'], autoIncrement: true})");
-    evalAndLog("db.createObjectStore('foobar', {keyPath: ['foo', 'bar'], autoIncrement: true})");
-    evalAndLog("db.createObjectStore('empty', {keyPath: [], autoIncrement: true})");
-    evalAndLog("db.createObjectStore('nested', {keyPath: [[]], autoIncrement: true})");
-    evalAndLog("db.createObjectStore('arrayofempty', {keyPath: ['', ''], autoIncrement: true})");
-    evalAndLog("db.createObjectStore('arrayoffloat', {keyPath: [1.0, 2.0], autoIncrement: true})");
+    testKeyPaths = [null, undefined, '', 'foo', 'foo.bar.baz'];
+    testKeyPaths.forEach(function (keyPath) {
+        globalKeyPath = keyPath;
+        evalAndLog("db.createObjectStore('name', {keyPath: globalKeyPath})");
+        deleteAllObjectStores(db);
+    });
+
+    testInvalidKeyPaths();
+}
+
+function testInvalidKeyPaths()
+{
+    deleteAllObjectStores(db);
+
+    testKeyPaths = ['[]', '["foo"]', '["foo", "bar"]', '["", ""]', '[1.0, 2.0]', '[["foo"]]', '["foo", ["bar"]]'];
+    testKeyPaths.forEach(function (keyPath) {
+        globalKeyPath = keyPath;
+        evalAndExpectException("db.createObjectStore('name', {keyPath: globalKeyPath})", "IDBDatabaseException.NON_TRANSIENT_ERR");
+        deleteAllObjectStores(db);
+    });
+
     done();
 }
 
