@@ -16,8 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef GtkWidgetBackingStore_h 
-#define GtkWidgetBackingStore_h 
+#ifndef WidgetBackingStore_h
+#define WidgetBackingStore_h
 
 #include "IntRect.h"
 #include "IntSize.h"
@@ -25,28 +25,35 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 namespace WebCore {
 
-class GtkWidgetBackingStorePrivate;
+class WidgetBackingStorePrivate;
 
-class GtkWidgetBackingStore {
-    WTF_MAKE_NONCOPYABLE(GtkWidgetBackingStore);
+#if PLATFORM(GTK)
+typedef GtkWidget* PlatformWidget;
+#endif
+
+class WidgetBackingStore {
+    WTF_MAKE_NONCOPYABLE(WidgetBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<GtkWidgetBackingStore> create(GtkWidget*, const IntSize&);
+    static PassOwnPtr<WidgetBackingStore> create(PlatformWidget, const IntSize&);
 
-    ~GtkWidgetBackingStore();
+    ~WidgetBackingStore();
     cairo_surface_t* cairoSurface();
     void scroll(const IntRect& scrollRect, const IntSize& scrollOffset);
 
 private:
-    GtkWidgetBackingStore(GtkWidget*, const IntSize&);
+    WidgetBackingStore(PlatformWidget, const IntSize&);
 
-    OwnPtr<GtkWidgetBackingStorePrivate> m_private;
+    OwnPtr<WidgetBackingStorePrivate> m_private;
 };
 
 } // namespace WebCore
 
-#endif // BackingStore_h
-
+#endif // WidgetBackingStore_h

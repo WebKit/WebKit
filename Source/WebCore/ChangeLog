@@ -1,3 +1,40 @@
+2011-06-22  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        Change GtkWidgetBackingStore.h to WidgetBackingStore.h in order to use in the EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=62848
+
+        This patch will make GtkWidgetBackingStore shareable with EFL port.
+        It is a preparation to integrate WebKit2's BackingStoreGtk.cpp and
+        BackingStoreEfl.cpp as a BackingStoreCairo.cpp.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::copyRectFromOneSurfaceToAnother):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/cairo/WidgetBackingStore.h: Added.
+        * platform/gtk/GtkWidgetBackingStore.h: Removed.
+        * platform/gtk/GtkWidgetBackingStoreCairo.cpp:
+        (WebCore::createSurfaceForBackingStore):
+        (WebCore::WidgetBackingStorePrivate::create):
+        (WebCore::WidgetBackingStorePrivate::WidgetBackingStorePrivate):
+        (WebCore::WidgetBackingStore::create):
+        (WebCore::WidgetBackingStore::WidgetBackingStore):
+        (WebCore::WidgetBackingStore::~WidgetBackingStore):
+        (WebCore::WidgetBackingStore::cairoSurface):
+        (WebCore::WidgetBackingStore::scroll):
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp:
+        (WebCore::WidgetBackingStorePrivate::create):
+        (WebCore::WidgetBackingStorePrivate::~WidgetBackingStorePrivate):
+        (WebCore::WidgetBackingStorePrivate::WidgetBackingStorePrivate):
+        (WebCore::WidgetBackingStore::create):
+        (WebCore::WidgetBackingStore::WidgetBackingStore):
+        (WebCore::WidgetBackingStore::~WidgetBackingStore):
+        (WebCore::WidgetBackingStore::cairoSurface):
+        (WebCore::WidgetBackingStore::scroll):
+
 2011-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

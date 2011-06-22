@@ -35,6 +35,7 @@ class Color;
 class FloatRect;
 class FloatPoint;
 class IntSize;
+class IntRect;
 class Path;
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
@@ -46,6 +47,7 @@ cairo_operator_t toCairoOperator(CompositeOperator op);
 void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
                                const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, const FloatRect& destRect);
 PassRefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t*);
+void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize&, const IntRect&);
 
 } // namespace WebCore
 

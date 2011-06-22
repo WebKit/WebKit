@@ -51,7 +51,7 @@ void BackingStore::paint(cairo_t* context, const IntRect& rect)
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
     if (!m_backingStore)
-        m_backingStore = GtkWidgetBackingStore::create(m_webPageProxy->viewWidget(), size());
+        m_backingStore = WidgetBackingStore::create(m_webPageProxy->viewWidget(), size());
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 

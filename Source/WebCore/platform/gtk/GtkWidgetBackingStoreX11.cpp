@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "GtkWidgetBackingStore.h"
+#include "WidgetBackingStore.h"
 
 #ifdef XP_UNIX
 
@@ -27,12 +27,11 @@
 #include <cairo/cairo-xlib.h>
 #include <cairo/cairo.h>
 #include <gdk/gdkx.h>
-#include <gtk/gtk.h>
 
 namespace WebCore {
 
-class GtkWidgetBackingStorePrivate {
-    WTF_MAKE_NONCOPYABLE(GtkWidgetBackingStorePrivate);
+class WidgetBackingStorePrivate {
+    WTF_MAKE_NONCOPYABLE(WidgetBackingStorePrivate);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -41,12 +40,12 @@ public:
     GC m_gc;
     RefPtr<cairo_surface_t> m_surface;
 
-    static PassOwnPtr<GtkWidgetBackingStorePrivate> create(GtkWidget* widget, const IntSize& size)
+    static PassOwnPtr<WidgetBackingStorePrivate> create(GtkWidget* widget, const IntSize& size)
     {
-        return adoptPtr(new GtkWidgetBackingStorePrivate(widget, size));
+        return adoptPtr(new WidgetBackingStorePrivate(widget, size));
     }
 
-    ~GtkWidgetBackingStorePrivate()
+    ~WidgetBackingStorePrivate()
     {
         XFreePixmap(m_display, m_pixmap);
         XFreeGC(m_display, m_gc);
@@ -56,7 +55,7 @@ private:
     // We keep two copies of the surface here, which will double the memory usage, but increase
     // scrolling performance since we do not have to keep reallocating a memory region during
     // quick scrolling requests.
-    GtkWidgetBackingStorePrivate(GtkWidget* widget, const IntSize& size)
+    WidgetBackingStorePrivate(GtkWidget* widget, const IntSize& size)
     {
         GdkVisual* visual = gtk_widget_get_visual(widget);
         GdkScreen* screen = gdk_visual_get_screen(visual);
@@ -73,26 +72,26 @@ private:
     }
 };
 
-PassOwnPtr<GtkWidgetBackingStore> GtkWidgetBackingStore::create(GtkWidget* widget, const IntSize& size)
+PassOwnPtr<WidgetBackingStore> WidgetBackingStore::create(GtkWidget* widget, const IntSize& size)
 {
-    return adoptPtr(new GtkWidgetBackingStore(widget, size));
+    return adoptPtr(new WidgetBackingStore(widget, size));
 }
 
-GtkWidgetBackingStore::GtkWidgetBackingStore(GtkWidget* widget, const IntSize& size)
-    : m_private(GtkWidgetBackingStorePrivate::create(widget, size))
-{
-}
-
-GtkWidgetBackingStore::~GtkWidgetBackingStore()
+WidgetBackingStore::WidgetBackingStore(GtkWidget* widget, const IntSize& size)
+    : m_private(WidgetBackingStorePrivate::create(widget, size))
 {
 }
 
-cairo_surface_t* GtkWidgetBackingStore::cairoSurface()
+WidgetBackingStore::~WidgetBackingStore()
+{
+}
+
+cairo_surface_t* WidgetBackingStore::cairoSurface()
 {
     return m_private->m_surface.get();
 }
 
-void GtkWidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+void WidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     IntRect targetRect(scrollRect);
     targetRect.move(scrollOffset);

@@ -3824,6 +3824,7 @@ webcoregtk_sources += \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
 	Source/WebCore/page/gtk/FrameGtk.cpp \
+	Source/WebCore/platform/cairo/WidgetBackingStore.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
 	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
@@ -3869,7 +3870,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GtkClickCounter.h \
 	Source/WebCore/platform/gtk/GtkUtilities.cpp \
 	Source/WebCore/platform/gtk/GtkUtilities.h \
-	Source/WebCore/platform/gtk/GtkWidgetBackingStore.h \
 	Source/WebCore/platform/gtk/GtkWidgetBackingStoreCairo.cpp \
 	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.cpp \
