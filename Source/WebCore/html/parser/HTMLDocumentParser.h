@@ -73,6 +73,7 @@ public:
     static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
     
     static bool usePreHTML5ParserQuirks(Document*);
+    static unsigned maximumDOMTreeDepth(Document*);
 
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
     String sourceForToken(const HTMLToken&);

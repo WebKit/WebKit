@@ -96,6 +96,10 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(ContainerNode* rawParent, Pas
         return child.release();
     }
 
+    // Add as a sibling of the parent if we have reached the maximum depth allowed.
+    if (m_openElements.stackDepth() > m_maximumDOMTreeDepth)
+        parent = parent->parentNode();
+
     parent->parserAddChild(child);
 
     // An event handler (DOM Mutation, beforeload, et al.) could have removed
@@ -126,21 +130,23 @@ void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<N
         child->attach();
 }
 
-HTMLConstructionSite::HTMLConstructionSite(Document* document)
+HTMLConstructionSite::HTMLConstructionSite(Document* document, unsigned maximumDOMTreeDepth)
     : m_document(document)
     , m_attachmentRoot(document)
     , m_fragmentScriptingPermission(FragmentScriptingAllowed)
     , m_isParsingFragment(false)
     , m_redirectAttachToFosterParent(false)
+    , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
 {
 }
 
-HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission, unsigned maximumDOMTreeDepth)
     : m_document(fragment->document())
     , m_attachmentRoot(fragment)
     , m_fragmentScriptingPermission(scriptingPermission)
     , m_isParsingFragment(true)
     , m_redirectAttachToFosterParent(false)
+    , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
 {
 }
 

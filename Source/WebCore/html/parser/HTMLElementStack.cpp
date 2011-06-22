@@ -164,6 +164,7 @@ HTMLElementStack::HTMLElementStack()
     : m_rootNode(0)
     , m_headElement(0)
     , m_bodyElement(0)
+    , m_stackDepth(0)
 {
 }
 
@@ -207,6 +208,7 @@ void HTMLElementStack::popAll()
     m_rootNode = 0;
     m_headElement = 0;
     m_bodyElement = 0;
+    m_stackDepth = 0;
     while (m_top) {
         topNode()->finishParsingChildren();
         m_top = m_top->releaseNext();
@@ -343,6 +345,7 @@ void HTMLElementStack::insertAbove(PassRefPtr<Element> element, ElementRecord* r
         if (recordAbove->next() != recordBelow)
             continue;
 
+        m_stackDepth++;
         recordAbove->setNext(adoptPtr(new ElementRecord(element, recordAbove->releaseNext())));
         recordAbove->next()->element()->beginParsingChildren();
         return;
@@ -553,6 +556,8 @@ ContainerNode* HTMLElementStack::rootNode() const
 void HTMLElementStack::pushCommon(PassRefPtr<ContainerNode> node)
 {
     ASSERT(m_rootNode);
+
+    m_stackDepth++;
     m_top = adoptPtr(new ElementRecord(node, m_top.release()));
     topNode()->beginParsingChildren();
 }
@@ -564,6 +569,8 @@ void HTMLElementStack::popCommon()
     ASSERT(!top()->hasTagName(HTMLNames::bodyTag) || !m_bodyElement);
     top()->finishParsingChildren();
     m_top = m_top->releaseNext();
+
+    m_stackDepth--;
 }
 
 void HTMLElementStack::removeNonTopCommon(Element* element)
@@ -577,6 +584,7 @@ void HTMLElementStack::removeNonTopCommon(Element* element)
             // when the children aren't actually finished?
             element->finishParsingChildren();
             pos->setNext(pos->next()->releaseNext());
+            m_stackDepth--;
             return;
         }
     }

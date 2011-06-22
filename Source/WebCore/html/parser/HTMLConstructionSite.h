@@ -44,8 +44,8 @@ class Element;
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
-    HTMLConstructionSite(Document*);
-    HTMLConstructionSite(DocumentFragment*, FragmentScriptingPermission);
+    HTMLConstructionSite(Document*, unsigned maximumDOMTreeDepth);
+    HTMLConstructionSite(DocumentFragment*, FragmentScriptingPermission, unsigned maximumDOMTreeDepth);
     ~HTMLConstructionSite();
 
     void detach();
@@ -152,6 +152,8 @@ private:
     // "whenever a node would be inserted into the current node, it must instead
     // be foster parented."  This flag tracks whether we're in that state.
     bool m_redirectAttachToFosterParent;
+
+    unsigned m_maximumDOMTreeDepth;
 };
 
 }

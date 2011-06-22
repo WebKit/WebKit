@@ -1,3 +1,51 @@
+2011-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML parser should limit element depth of produced tree
+        https://bugs.webkit.org/show_bug.cgi?id=63082
+
+        Test by:
+            fast/parser/block-nesting-cap.html
+            fast/parser/element-nesting-cap.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attach):
+        (WebCore::HTMLConstructionSite::HTMLConstructionSite):
+        * html/parser/HTMLConstructionSite.h:
+        Limit the DOM tree depth by turning attempts to add a child passed a certain
+        threshold (configurable by Settings::maximumDOMTreeDepth) into a sibling.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::maximumDOMTreeDepth):
+        * html/parser/HTMLDocumentParser.h:
+        Pass the maximumDOMTreeDepth to the TreeBuilder.
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::HTMLElementStack):
+        (WebCore::HTMLElementStack::popAll):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::pushCommon):
+        (WebCore::HTMLElementStack::popCommon):
+        (WebCore::HTMLElementStack::removeNonTopCommon):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::size):
+        Keep track of the size of the element stack.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::create):
+        Pass the maximumDOMTreeDepth to the construction site.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setMaximumHTMLParserDOMTreeDepth):
+        (WebCore::Settings::maximumHTMLParserDOMTreeDepth):
+        Add a setting to control the maximum DOM tree depth that the parser will produce.
+
 2011-06-22  Adam Barth  <abarth@webkit.org>
 
         Rollout 88332.  As discussed on webkit-dev, we'd like to iterate on

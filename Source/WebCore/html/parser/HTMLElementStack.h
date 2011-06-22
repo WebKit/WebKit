@@ -75,6 +75,8 @@ public:
         OwnPtr<ElementRecord> m_next;
     };
 
+    unsigned stackDepth() const { return m_stackDepth; }
+
     // Inlining this function is a (small) performance win on the parsing
     // benchmark.
     Element* top() const
@@ -167,6 +169,7 @@ private:
     ContainerNode* m_rootNode;
     Element* m_headElement;
     Element* m_bodyElement;
+    unsigned m_stackDepth;
 };
     
 inline bool isInHTMLNamespace(Node* node)

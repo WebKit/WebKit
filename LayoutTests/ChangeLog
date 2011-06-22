@@ -1,3 +1,14 @@
+2011-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        HTML parser should limit element depth of produced tree
+        https://bugs.webkit.org/show_bug.cgi?id=63082
+
+        * fast/parser/block-nesting-cap-expected.txt:
+        * fast/parser/element-nesting-cap-expected.txt:
+        Update expectations for new parser depth limit.
+
 2011-06-22  Adam Barth  <abarth@webkit.org>
 
         Rollout 88332.

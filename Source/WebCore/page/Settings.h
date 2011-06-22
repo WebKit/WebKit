@@ -388,6 +388,10 @@ namespace WebCore {
         void setUsePreHTML5ParserQuirks(bool flag) { m_usePreHTML5ParserQuirks = flag; }
         bool usePreHTML5ParserQuirks() const { return m_usePreHTML5ParserQuirks; }
 
+        static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 4096;
+        void setMaximumHTMLParserDOMTreeDepth(unsigned maximumHTMLParserDOMTreeDepth) { m_maximumHTMLParserDOMTreeDepth = maximumHTMLParserDOMTreeDepth; }
+        unsigned maximumHTMLParserDOMTreeDepth() const { return m_maximumHTMLParserDOMTreeDepth; }
+
         void setHyperlinkAuditingEnabled(bool flag) { m_hyperlinkAuditingEnabled = flag; }
         bool hyperlinkAuditingEnabled() const { return m_hyperlinkAuditingEnabled; }
 
@@ -436,6 +440,7 @@ namespace WebCore {
 #endif
         unsigned m_pluginAllowedRunTime;
         unsigned m_editingBehaviorType;
+        unsigned m_maximumHTMLParserDOMTreeDepth;
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_loadsImagesAutomatically : 1;

@@ -100,6 +100,7 @@ Settings::Settings(Page* page)
 #endif
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
+    , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_loadsImagesAutomatically(false)

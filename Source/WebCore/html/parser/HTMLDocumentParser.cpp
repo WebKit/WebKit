@@ -78,7 +78,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     : ScriptableDocumentParser(document)
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(document)))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
-    , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, usePreHTML5ParserQuirks(document)))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, usePreHTML5ParserQuirks(document), maximumDOMTreeDepth(document)))
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_xssAuditor(this)
     , m_endWasDelayed(false)
@@ -91,7 +91,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(fragment->document())))
-    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document())))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document()), maximumDOMTreeDepth(fragment->document())))
     , m_xssAuditor(this)
     , m_endWasDelayed(false)
     , m_pumpSessionNestingLevel(0)
@@ -567,6 +567,12 @@ bool HTMLDocumentParser::usePreHTML5ParserQuirks(Document* document)
 {
     ASSERT(document);
     return document->settings() && document->settings()->usePreHTML5ParserQuirks();
+}
+
+unsigned HTMLDocumentParser::maximumDOMTreeDepth(Document* document)
+{
+    ASSERT(document);
+    return document->settings() ? document->settings()->maximumHTMLParserDOMTreeDepth() : Settings::defaultMaximumHTMLParserDOMTreeDepth;
 }
 
 void HTMLDocumentParser::suspendScheduledTasks()
