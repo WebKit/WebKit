@@ -35,6 +35,7 @@
 #include "IDBEventDispatcher.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBIndex.h"
+#include "IDBKeyPath.h"
 #include "IDBObjectStore.h"
 #include "IDBVersionChangeEvent.h"
 #include "IDBVersionChangeRequest.h"
@@ -81,6 +82,11 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
 
     String keyPath;
     options.getKeyString("keyPath", keyPath);
+    if (!IDBIsValidKeyPath(keyPath)) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return 0;
+    }
+
     bool autoIncrement = false;
     options.getKeyBool("autoIncrement", autoIncrement);
     // FIXME: Look up evictable and pass that on as well.

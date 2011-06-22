@@ -55,6 +55,7 @@ enum IDBKeyPathParseError {
     IDBKeyPathParseErrorDot,
 };
 
+bool IDBIsValidKeyPath(const String&);
 void IDBParseKeyPath(const String&, Vector<IDBKeyPathElement>&, IDBKeyPathParseError&);
 
 } // namespace WebCore

@@ -158,6 +158,14 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexNumber(IDBKeyPathElement& element
     return TokenNumber;
 }
 
+bool IDBIsValidKeyPath(const String& keyPath)
+{
+    IDBKeyPathParseError error;
+    Vector<IDBKeyPathElement> keyPathElements;
+    IDBParseKeyPath(keyPath, keyPathElements, error);
+    return error == IDBKeyPathParseErrorNone;
+}
+
 void IDBParseKeyPath(const String& keyPath, Vector<IDBKeyPathElement>& elements, IDBKeyPathParseError& error)
 {
     // This is a simplified parser loosely based on LiteralParser.

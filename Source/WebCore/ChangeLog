@@ -1,3 +1,24 @@
+2011-06-22  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Tony Chang.
+
+        Check |keypath| argument of createObjectStore(). Remove storage/indexeddb/keypath-as-array.html.
+        https://bugs.webkit.org/show_bug.cgi?id=63054
+
+        At the head of createObjectStore(), we parse |keypath| argument and throw an exception
+        if the |keypath| is invalid. With this parsing, we remove keypath-as-array.html because
+        the current keypath parser does not support an array of keypath and (more importantly)
+        the current implementation of ObjectStore does not support multiple keypaths.
+        We added keypath-basics.html that demonstrates that we do not support an array of keypaths.
+
+        Tests: storage/indexeddb/keypath-basics.html
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        * storage/IDBKeyPath.cpp:
+        (WebCore::IDBIsValidKeyPath):
+        * storage/IDBKeyPath.h:
+
 2011-06-22  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Simon Fraser.
