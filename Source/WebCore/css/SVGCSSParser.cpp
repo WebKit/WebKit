@@ -186,9 +186,13 @@ bool CSSParser::parseSVGValue(int propId, bool important)
                 parsedValue = SVGPaint::createColor(RenderTheme::defaultTheme()->systemColor(id));
             else if (value->unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
-                if (m_valueList->next() && parseColorFromValue(m_valueList->current(), c)) {
-                    parsedValue = SVGPaint::createURIAndColor(value->string, c);
-                } else
+                if (m_valueList->next()) {
+                    if (parseColorFromValue(m_valueList->current(), c))
+                        parsedValue = SVGPaint::createURIAndColor(value->string, c);
+                    else if (m_valueList->current()->id == CSSValueNone)
+                        parsedValue = SVGPaint::createURIAndNone(value->string);
+                }
+                if (!parsedValue)
                     parsedValue = SVGPaint::createURI(value->string);
             } else
                 parsedValue = parseSVGPaint();

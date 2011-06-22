@@ -1,3 +1,16 @@
+2011-06-22  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG1.1SE test with pointer-events and invalid gradient fill fails
+        https://bugs.webkit.org/show_bug.cgi?id=63109
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg: Added.
+        * svg/custom/pointer-events-invalid-fill-expected.txt: Added.
+        * svg/custom/pointer-events-invalid-fill.svg: Added.
+
 2011-06-22  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Adam Roben.

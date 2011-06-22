@@ -108,7 +108,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     // If no resources are associated with the given renderer, return the color resource.
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
     if (!resources) {
-        if (!inheritColorFromParentStyleIfNeeded(object, applyToFill, color))
+        if (paintType == SVGPaint::SVG_PAINTTYPE_URI_NONE || !inheritColorFromParentStyleIfNeeded(object, applyToFill, color))
             return 0;
 
         colorResource->setColor(color);

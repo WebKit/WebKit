@@ -1,3 +1,23 @@
+2011-06-22  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG1.1SE test with pointer-events and invalid gradient fill fails
+        https://bugs.webkit.org/show_bug.cgi?id=63109
+
+        Properly detect fill/stroke properties of type SVG_PAINTTYPE_URI_NONE, store it in SVGPaint
+        and don't apply the paint if the uri lookup fails.
+
+        Tests: svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg
+               svg/custom/pointer-events-invalid-fill.svg
+
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * svg/SVGPaint.h:
+        (WebCore::SVGPaint::createURIAndNone):
+
 2011-06-22  Cary Clark  <caryclark@google.com>
 
         Reviewed by Darin Fisher.
