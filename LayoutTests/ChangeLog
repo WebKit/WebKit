@@ -1,3 +1,11 @@
+2011-06-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Fixing burning mac SL trees. These tests's expected results needed
+        updating after parts of them were fixed recently.
+
+        * fast/canvas/webgl/data-view-test-expected.txt:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+
 2011-06-22  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
