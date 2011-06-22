@@ -1,5 +1,23 @@
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
+        [Qt] Test expectation update for r89407.
+
+        * platform/qt/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/qt/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/qt/fast/forms/placeholder-set-value-expected.txt:
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/qt/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/qt/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/qt/fast/forms/search-rtl-expected.txt:
+        * platform/qt/fast/forms/search-styled-expected.txt:
+        * platform/qt/fast/forms/search-transformed-expected.txt:
+        * platform/qt/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/qt/fast/forms/search-zoomed-expected.txt:
+        * platform/qt/fast/replaced/width100percent-searchfield-expected.txt:
+
+2011-06-21  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update expectation for some speech tests.
 
         * platform/chromium/test_expectations.txt:
