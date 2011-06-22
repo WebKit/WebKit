@@ -1,3 +1,9 @@
+2011-06-22  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the GTK build after my incomplete rollout of 88332.
+
+        * GNUmakefile.list.am:
+
 2011-06-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

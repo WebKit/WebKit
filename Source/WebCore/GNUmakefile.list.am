@@ -1885,10 +1885,6 @@ webcore_sources += \
 	Source/WebCore/html/ResetInputType.h \
 	Source/WebCore/html/SearchInputType.cpp \
 	Source/WebCore/html/SearchInputType.h \
-	Source/WebCore/html/SpellcheckRange.cpp \
-	Source/WebCore/html/SpellcheckRange.h \
-	Source/WebCore/html/SpellcheckRangeList.cpp \
-	Source/WebCore/html/SpellcheckRangeList.h \
 	Source/WebCore/html/StepRange.cpp \
 	Source/WebCore/html/StepRange.h \
 	Source/WebCore/html/SubmitInputType.cpp \
