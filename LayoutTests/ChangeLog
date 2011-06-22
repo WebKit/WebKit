@@ -1,3 +1,10 @@
+2011-06-21  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Update Chromium test expectations and baselines.
+
+        * platform/chromium-win/fast/css/color-leakage-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-21  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

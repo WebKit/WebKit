@@ -3974,3 +3974,6 @@ BUGCR86974 : svg/css/composite-shadow-example.html = TEXT PASS
 BUGCR86974 : svg/css/composite-shadow-with-opacity.html = TEXT PASS
 
 BUGCR87009 : fast/filesystem/async-operations.html = PASS CRASH
+
+// Strange scrollbar.
+BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
