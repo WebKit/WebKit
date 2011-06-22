@@ -14,8 +14,6 @@
 #include <QWebFrame>
 #include "qdeclarativewebview_p.h"
 
-QT_BEGIN_NAMESPACE
-
 class tst_QDeclarativeWebView : public QObject {
     Q_OBJECT
 
@@ -548,5 +546,3 @@ void tst_QDeclarativeWebView::checkNoErrors(const QDeclarativeComponent& compone
 
 QTEST_MAIN(tst_QDeclarativeWebView)
 #include "tst_qdeclarativewebview.moc"
-
-QT_END_NAMESPACE
