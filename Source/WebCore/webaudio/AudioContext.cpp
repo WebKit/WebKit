@@ -29,7 +29,9 @@
 #include "AudioContext.h"
 
 #include "ArrayBuffer.h"
+#include "AsyncAudioDecoder.h"
 #include "AudioBuffer.h"
+#include "AudioBufferCallback.h"
 #include "AudioBufferSourceNode.h"
 #include "AudioChannelMerger.h"
 #include "AudioChannelSplitter.h"
@@ -244,6 +246,15 @@ PassRefPtr<AudioBuffer> AudioContext::createBuffer(ArrayBuffer* arrayBuffer, boo
         return 0;
     
     return AudioBuffer::createFromAudioFileData(arrayBuffer->data(), arrayBuffer->byteLength(), mixToMono, sampleRate());
+}
+
+void AudioContext::decodeAudioData(ArrayBuffer* audioData, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback, ExceptionCode& ec)
+{
+    if (!audioData) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+    m_audioDecoder.decodeAsync(audioData, sampleRate(), successCallback, errorCallback);
 }
 
 PassRefPtr<AudioBufferSourceNode> AudioContext::createBufferSource()

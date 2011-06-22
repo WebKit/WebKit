@@ -26,6 +26,7 @@
 #define AudioContext_h
 
 #include "ActiveDOMObject.h"
+#include "AsyncAudioDecoder.h"
 #include "AudioBus.h"
 #include "AudioDestinationNode.h"
 #include "EventListener.h"
@@ -44,6 +45,7 @@ namespace WebCore {
 
 class ArrayBuffer;
 class AudioBuffer;
+class AudioBufferCallback;
 class AudioBufferSourceNode;
 class AudioChannelMerger;
 class AudioChannelSplitter;
@@ -92,6 +94,9 @@ public:
 
     PassRefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, double sampleRate);
     PassRefPtr<AudioBuffer> createBuffer(ArrayBuffer* arrayBuffer, bool mixToMono);
+
+    // Asynchronous audio file data decoding.
+    void decodeAudioData(ArrayBuffer*, PassRefPtr<AudioBufferCallback>, PassRefPtr<AudioBufferCallback>, ExceptionCode& ec);
 
     // Keep track of this buffer so we can release memory after the context is shut down...
     void refBuffer(PassRefPtr<AudioBuffer> buffer);
@@ -291,6 +296,8 @@ private:
     RefPtr<AudioBuffer> m_renderTarget;
     
     bool m_isOfflineContext;
+
+    AsyncAudioDecoder m_audioDecoder;
 };
 
 } // WebCore

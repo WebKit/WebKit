@@ -1,3 +1,39 @@
+2011-06-22  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        AudioContext needs non-blocking call to create AudioBuffer from audio file data
+        https://bugs.webkit.org/show_bug.cgi?id=61947
+
+        No new tests since audio API is not yet implemented.
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * webaudio/AsyncAudioDecoder.cpp: Added.
+        (WebCore::AsyncAudioDecoder::AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::~AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::decodeAsync):
+        (WebCore::AsyncAudioDecoder::threadEntry):
+        (WebCore::AsyncAudioDecoder::runLoop):
+        (WebCore::AsyncAudioDecoder::DecodingTask::DecodingTask):
+        (WebCore::AsyncAudioDecoder::DecodingTask::decode):
+        (WebCore::AsyncAudioDecoder::DecodingTask::notifyCompleteDispatch):
+        (WebCore::AsyncAudioDecoder::DecodingTask::notifyComplete):
+        * webaudio/AsyncAudioDecoder.h: Added.
+        (WebCore::AsyncAudioDecoder::DecodingTask::audioData):
+        (WebCore::AsyncAudioDecoder::DecodingTask::sampleRate):
+        (WebCore::AsyncAudioDecoder::DecodingTask::successCallback):
+        (WebCore::AsyncAudioDecoder::DecodingTask::errorCallback):
+        (WebCore::AsyncAudioDecoder::DecodingTask::audioBuffer):
+        * webaudio/AudioBufferCallback.h: Added.
+        (WebCore::AudioBufferCallback::~AudioBufferCallback):
+        * webaudio/AudioBufferCallback.idl: Added.
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::decodeAudioData):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+
 2011-06-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

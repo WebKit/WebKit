@@ -55,6 +55,7 @@ DOM_CLASSES = \
     AbstractWorker \
     Attr \
     AudioBuffer \
+    AudioBufferCallback \
     AudioBufferSourceNode \
     AudioChannelSplitter \
     AudioChannelMerger \

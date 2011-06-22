@@ -52,6 +52,10 @@ module webaudio {
         // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
         [Custom] AudioBuffer createBuffer()
             raises(DOMException);
+            
+        // Asynchronous audio file data decoding.
+        void decodeAudioData(in ArrayBuffer audioData, in [Callback] AudioBufferCallback successCallback, in [Optional, Callback] AudioBufferCallback errorCallback)
+            raises(DOMException);
 
         // Source
         AudioBufferSourceNode createBufferSource();
