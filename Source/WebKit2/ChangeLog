@@ -1,3 +1,18 @@
+2011-06-21  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Fullscreen videos are broken (affects embedded vimeo, vimeo.com, and apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=63098
+        <rdar://problem/9645393>
+
+        Force a repaint after completing entering full-screen mode only after the notification 
+        is sent for the QTMovie to tear down its layer.  Then, the QTMovie will build up its
+        layer again during the repaint.
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+
 2011-06-21  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
