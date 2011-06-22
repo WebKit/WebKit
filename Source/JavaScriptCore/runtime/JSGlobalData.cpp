@@ -197,7 +197,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , exclusiveThread(0)
 #endif
 {
-    interpreter = new Interpreter(*this);
+    interpreter = new Interpreter;
     if (globalDataType == Default)
         m_stack = wtfThreadData().stack();
 

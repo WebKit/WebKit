@@ -238,9 +238,7 @@ namespace JSC {
         void setEvalEnabled(bool enabled) { m_evalEnabled = enabled; }
         bool evalEnabled() { return m_evalEnabled; }
 
-        void copyGlobalsFrom(RegisterFile&);
-        void copyGlobalsTo(RegisterFile&);
-        void resizeRegisters(int oldSize, int newSize);
+        void resizeRegisters(size_t newSize);
 
         void resetPrototype(JSGlobalData&, JSValue prototype);
 

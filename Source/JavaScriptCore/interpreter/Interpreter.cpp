@@ -409,13 +409,12 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     if (UNLIKELY(!eval))
         return throwError(callFrame, exceptionValue);
 
-    return callFrame->globalData().interpreter->execute(eval, callFrame, callFrame->uncheckedR(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->start() + registerOffset, scopeChain);
+    return callFrame->globalData().interpreter->execute(eval, callFrame, callFrame->uncheckedR(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->begin() + registerOffset, scopeChain);
 }
 
-Interpreter::Interpreter(JSGlobalData& globalData)
+Interpreter::Interpreter()
     : m_sampleEntryDepth(0)
     , m_reentryDepth(0)
-    , m_registerFile(globalData)
 {
 #if ENABLE(COMPUTED_GOTO_INTERPRETER)
     privateExecute(InitializeAndReturn, 0, 0);
@@ -445,26 +444,10 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     printf("-----------------------------------------------------------------------------\n");
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    RegisterFile* registerFile = &callFrame->scopeChain()->globalObject->globalData().interpreter->registerFile();
     const Register* it;
     const Register* end;
     JSValue v;
 
-    if (codeBlock->codeType() == GlobalCode) {
-        it = registerFile->lastGlobal();
-        end = it + registerFile->numGlobals();
-        while (it != end) {
-            v = (*it).jsValue();
-#if USE(JSVALUE32_64)
-            printf("[global var]               | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v));
-#else
-            printf("[global var]               | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v));
-#endif
-            ++it;
-        }
-        printf("-----------------------------------------------------------------------------\n");
-    }
-    
     it = callFrame->registers() - RegisterFile::CallFrameHeaderSize - codeBlock->m_numParameters;
     v = (*it).jsValue();
 #if USE(JSVALUE32_64)
@@ -826,10 +809,6 @@ failedJSONP:
     if (!m_registerFile.grow(newEnd))
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    JSGlobalObject* lastGlobalObject = m_registerFile.globalObject();
-    JSGlobalObject* globalObject = callFrame->dynamicGlobalObject();
-    globalObject->copyGlobalsTo(m_registerFile);
-
     CallFrame* newCallFrame = CallFrame::create(oldEnd + codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize);
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, CallFrame::noCaller(), codeBlock->m_numParameters, 0);
@@ -856,9 +835,6 @@ failedJSONP:
 
     if (*profiler)
         (*profiler)->didExecute(callFrame, program->sourceURL(), program->lineNo());
-
-    if (m_reentryDepth && lastGlobalObject && globalObject != lastGlobalObject)
-        lastGlobalObject->copyGlobalsTo(m_registerFile);
 
     m_registerFile.shrink(oldEnd);
 
@@ -1204,14 +1180,14 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     }
 
     Register* oldEnd = m_registerFile.end();
-    Register* newEnd = m_registerFile.start() + globalRegisterOffset + codeBlock->m_numCalleeRegisters;
+    Register* newEnd = m_registerFile.begin() + globalRegisterOffset + codeBlock->m_numCalleeRegisters;
     if (!m_registerFile.grow(newEnd)) {
         if (pushedScope)
             scopeChain->pop();
         return checkedReturn(throwStackOverflowError(callFrame));
     }
 
-    CallFrame* newCallFrame = CallFrame::create(m_registerFile.start() + globalRegisterOffset);
+    CallFrame* newCallFrame = CallFrame::create(m_registerFile.begin() + globalRegisterOffset);
 
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);

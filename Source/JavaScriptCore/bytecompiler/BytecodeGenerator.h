@@ -448,15 +448,8 @@ namespace JSC {
             return newRegister();
         }
 
-        // Returns the RegisterID corresponding to ident.
-        RegisterID* addGlobalVar(const Identifier& ident, bool isConstant)
-        {
-            RegisterID* local;
-            addGlobalVar(ident, isConstant, local);
-            return local;
-        }
-        // Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
-        bool addGlobalVar(const Identifier&, bool isConstant, RegisterID*&);
+        // Returns the index of the added var.
+        int addGlobalVar(const Identifier&, bool isConstant);
 
         void addParameter(const Identifier&, int parameterIndex);
         
@@ -468,12 +461,8 @@ namespace JSC {
             if (index >= 0)
                 return m_calleeRegisters[index];
 
-            if (m_parameters.size()) {
-                ASSERT(!m_globals.size());
-                return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
-            }
-
-            return m_globals[-index - 1];
+            ASSERT(m_parameters.size());
+            return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
         }
 
         unsigned addConstant(const Identifier&);
@@ -505,8 +494,30 @@ namespace JSC {
         Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
         SymbolTable& symbolTable() { return *m_symbolTable; }
 
-        bool shouldOptimizeLocals() { return (m_codeType != EvalCode) && !m_dynamicScopeDepth; }
-        bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval(); }
+        bool shouldOptimizeLocals()
+        {
+            if (m_dynamicScopeDepth)
+                return false;
+
+            if (m_codeType != FunctionCode)
+                return false;
+
+            return true;
+        }
+
+        bool canOptimizeNonLocals()
+        {
+            if (m_dynamicScopeDepth)
+                return false;
+
+            if (m_codeType == EvalCode)
+                return false;
+
+            if (m_codeType == FunctionCode && m_codeBlock->usesEval())
+                return false;
+
+            return true;
+        }
 
         RegisterID* emitThrowExpressionTooDeepException();
 
@@ -533,7 +544,6 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
-        SegmentedVector<RegisterID, 32> m_globals;
         SegmentedVector<Label, 32> m_labels;
         SegmentedVector<LabelScope, 8> m_labelScopes;
         RefPtr<RegisterID> m_lastVar;
@@ -546,7 +556,6 @@ namespace JSC {
         Vector<SwitchInfo> m_switchContextStack;
         Vector<ForInContext> m_forInContextStack;
 
-        int m_nextGlobalIndex;
         int m_firstConstantIndex;
         int m_nextConstantOffset;
         unsigned m_globalConstantIndex;

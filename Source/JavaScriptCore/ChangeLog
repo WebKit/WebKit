@@ -1,3 +1,90 @@
+2011-06-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed the conceit that global variables are local variables when running global code
+        https://bugs.webkit.org/show_bug.cgi?id=63106
+        
+        This is required for write barrier correctness.
+        
+        SunSpider reports about a 0.5% regression, mostly from bitops-bitwise-and.js.
+        I was able to reduce the regression with a tiny peephole optimization in
+        the bytecompiler, but not eliminate it. I'm committing this assuming
+        that turning on generational GC will win back at least 0.5%.
+
+        (FWIW, the DFG JIT can easily eliminate any regression by sharing loads of
+        the global object's var storage. I considered doing the same kind of
+        optimization in the existing JIT, but it seemed like moving in the wrong
+        direction.)
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator): Don't give global variables
+        negative indices, since they're no longer negatively offset from the
+        current stack frame.
+        
+        Do give global variables monotonically increasing positive indices, since
+        that's much easier to work with.
+        
+        Don't limit the number of optimizable global variables, since it's no
+        longer limited by the register file, since they're no longer stored in
+        the register file.
+
+        (JSC::BytecodeGenerator::registerFor): Global code never has any local
+        registers because a var in global code is actually a property of the
+        global object.
+
+        (JSC::BytecodeGenerator::constRegisterFor): Ditto.
+
+        (JSC::BytecodeGenerator::emitResolve): Did a tiny bit of constant
+        propagation and dead code elimination to speed up our compiles and
+        reduce WTFs / minute.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::registerFor): Removed special handling of globals.
+
+        (JSC::BytecodeGenerator::shouldOptimizeLocals): Don't optimize locals in
+        global code, since there are none.
+
+        (JSC::BytecodeGenerator::canOptimizeNonLocals): Do optimize non-locals
+        in global code (i.e., global vars), since there are some.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::execute):
+        * interpreter/Interpreter.h: Updated for deleted / renamed code.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::gatherConservativeRoots):
+        (JSC::RegisterFile::releaseExcessCapacity): Updated for deleted / renamed
+        data members.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::begin):
+        (JSC::RegisterFile::size):
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::shrink): Removed all code and comments dealing with
+        global variables stored in the register file.
+
+        (JSC::RegisterFile::grow): Updated for same.
+        
+        Also, a slight correctness fix: Test the VM commit end, and not just the
+        in-use end, when checking for stack overflow. In theory, it's invalid to
+        commit past the end of your allocation, even if you never touch that
+        memory. This makes the usable size of the stack slightly smaller. No test
+        because we don't know of any case in practice where this crashes.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Updated for changes above.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resizeRegisters):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSGlobalObject.h: Simplified globals to have monotonically 
+        increasing indexes, always located in our external storage.
+
 2011-06-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r89401 and r89403.

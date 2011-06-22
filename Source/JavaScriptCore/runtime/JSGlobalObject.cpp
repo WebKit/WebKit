@@ -378,58 +378,21 @@ bool JSGlobalObject::isDynamicScope(bool&) const
     return true;
 }
 
-void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
+void JSGlobalObject::resizeRegisters(size_t newSize)
 {
-    ASSERT(!m_registerArray);
-    ASSERT(!m_registerArraySize);
-
-    int numGlobals = registerFile.numGlobals();
-    if (!numGlobals) {
-        m_registers = 0;
+    // Previous duplicate symbols may have created spare capacity in m_registerArray.
+    if (newSize <= m_registerArraySize)
         return;
-    }
 
-    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData(), reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.lastGlobal()), numGlobals, numGlobals);
-    WriteBarrier<Unknown>* registers = registerArray.get() + numGlobals;
-    setRegisters(registers, registerArray.release(), numGlobals);
-}
+    size_t oldSize = m_registerArraySize;
+    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
+    for (size_t i = 0; i < oldSize; ++i)
+        registerArray[i].set(globalData(), this, m_registerArray[i].get());
+    for (size_t i = oldSize; i < newSize; ++i)
+        registerArray[i].setUndefined();
 
-void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
-{
-    JSGlobalObject* lastGlobalObject = registerFile.globalObject();
-    if (lastGlobalObject && lastGlobalObject != this)
-        lastGlobalObject->copyGlobalsFrom(registerFile);
-
-    registerFile.setGlobalObject(this);
-    registerFile.setNumGlobals(symbolTable().size());
-
-    if (m_registerArray) {
-        // The register file is always a gc root so no barrier is needed here
-        memcpy(registerFile.start() - m_registerArraySize, m_registerArray.get(), m_registerArraySize * sizeof(WriteBarrier<Unknown>));
-        setRegisters(reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.start()), nullptr, 0);
-    }
-}
-
-void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
-{
-    ASSERT(oldSize <= newSize);
-    if (newSize == oldSize)
-        return;
-    ASSERT(newSize && newSize > oldSize);
-    if (m_registerArray || !m_registers) {
-        ASSERT(static_cast<size_t>(oldSize) == m_registerArraySize);
-        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
-        for (int i = 0; i < oldSize; i++)
-            registerArray[newSize - oldSize + i].set(globalData(), this, m_registerArray[i].get());
-        WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
-        setRegisters(registers, registerArray.release(), newSize);
-    } else {
-        ASSERT(static_cast<size_t>(newSize) < globalData().interpreter->registerFile().maxGlobals());
-        globalData().interpreter->registerFile().setNumGlobals(newSize);
-    }
-
-    for (int i = -newSize; i < -oldSize; ++i)
-        m_registers[i].setUndefined();
+    WriteBarrier<Unknown>* registers = registerArray.get();
+    setRegisters(registers, registerArray.release(), newSize);
 }
 
 void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
@@ -439,20 +402,13 @@ void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 {
-    size_t oldSize = m_registerArraySize;
-    size_t newSize = oldSize + count;
-    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
-    if (m_registerArray) {
-        // memcpy is safe here as we're copying barriers we already own from the existing array
-        memcpy(registerArray.get() + count, m_registerArray.get(), oldSize * sizeof(Register));
-    }
+    resizeRegisters(symbolTable().size() + count);
 
-    WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
-    setRegisters(registers, registerArray.release(), newSize);
-
-    for (int i = 0, index = -static_cast<int>(oldSize) - 1; i < count; ++i, --index) {
+    for (int i = 0; i < count; ++i) {
         GlobalPropertyInfo& global = globals[i];
         ASSERT(global.attributes & DontDelete);
+        
+        int index = symbolTable().size();
         SymbolTableEntry newEntry(index, global.attributes);
         symbolTable().add(global.identifier.impl(), newEntry);
         registerAt(index).set(globalData(), this, global.value);

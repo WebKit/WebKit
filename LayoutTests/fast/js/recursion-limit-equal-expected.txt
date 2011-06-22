@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 11: RangeError: Maximum call stack size exceeded.
+CONSOLE MESSAGE: line 9: RangeError: Maximum call stack size exceeded.
 Tests hitting the recursion limit with equality comparisons. At one point this crashed due to lack of exception checking inside the engine.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

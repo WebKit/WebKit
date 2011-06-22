@@ -175,21 +175,14 @@ bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, Registe
     return true;
 }
 
-bool BytecodeGenerator::addGlobalVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
+int BytecodeGenerator::addGlobalVar(const Identifier& ident, bool isConstant)
 {
-    int index = m_nextGlobalIndex;
+    int index = symbolTable().size();
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
     pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.impl(), newEntry);
-
     if (!result.second)
         index = result.first->second.getIndex();
-    else {
-        --m_nextGlobalIndex;
-        m_globals.append(index + m_globalVarStorageOffset);
-    }
-
-    r0 = &registerFor(index);
-    return result.second;
+    return index;
 }
 
 void BytecodeGenerator::preserveLastVar()
@@ -211,7 +204,6 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     , m_dynamicScopeDepth(0)
     , m_baseScopeDepth(0)
     , m_codeType(GlobalCode)
-    , m_nextGlobalIndex(-1)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
     , m_hasCreatedActivation(true)
@@ -235,89 +227,35 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     // FIXME: Move code that modifies the global object to Interpreter::execute.
     
     m_codeBlock->m_numParameters = 1; // Allocate space for "this"
+    codeBlock->m_numCapturedVars = codeBlock->m_numVars;
 
     JSGlobalObject* globalObject = scopeChain->globalObject.get();
     ExecState* exec = globalObject->globalExec();
-    RegisterFile* registerFile = &exec->globalData().interpreter->registerFile();
     
-    // Shift register indexes in generated code to elide registers allocated by intermediate stack frames.
-    m_globalVarStorageOffset = -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters - registerFile->size();
-
-    // Add previously defined symbols to bookkeeping.
-    m_globals.grow(symbolTable->size());
-    SymbolTable::iterator end = symbolTable->end();
-    for (SymbolTable::iterator it = symbolTable->begin(); it != end; ++it)
-        registerFor(it->second.getIndex()).setIndex(it->second.getIndex() + m_globalVarStorageOffset);
-
     BatchedTransitionOptimizer optimizer(*m_globalData, globalObject);
 
     const VarStack& varStack = programNode->varStack();
     const FunctionStack& functionStack = programNode->functionStack();
-    bool canOptimizeNewGlobals = symbolTable->size() + functionStack.size() + varStack.size() < registerFile->maxGlobals();
-    if (canOptimizeNewGlobals) {
-        // Shift new symbols so they get stored prior to existing symbols.
-        m_nextGlobalIndex -= symbolTable->size();
 
-        HashSet<StringImpl*, IdentifierRepHash> newGlobals;
-        Vector<std::pair<int, bool>, 16> functionInfo(functionStack.size());
-        for (size_t i = 0; i < functionStack.size(); ++i) {
-            FunctionBodyNode* function = functionStack[i];
-            globalObject->removeDirect(*m_globalData, function->ident()); // Make sure our new function is not shadowed by an old property.
-            SymbolTableEntry entry = symbolTable->inlineGet(function->ident().impl());
-            
-            if (entry.isNull())
-                newGlobals.add(function->ident().impl());
-            functionInfo[i] = make_pair(entry.getIndex(), entry.isReadOnly());
-        }
-        
-        Vector<bool, 16> shouldCreateVar(varStack.size());
-        for (size_t i = 0; i < varStack.size(); ++i) {
-            if (newGlobals.contains(varStack[i].first->impl()) || globalObject->hasProperty(exec, *varStack[i].first)) {
-                shouldCreateVar[i] = false;
-                continue;
-            }
-            shouldCreateVar[i] = true;
-            newGlobals.add(varStack[i].first->impl());
-        }
+    size_t newGlobals = varStack.size() + functionStack.size();
+    if (!newGlobals)
+        return;
+    globalObject->resizeRegisters(symbolTable->size() + newGlobals);
 
-        int expectedSize = symbolTable->size() + newGlobals.size();
-        globalObject->resizeRegisters(symbolTable->size(), expectedSize);
-    
-        for (size_t i = 0; i < functionStack.size(); ++i) {
-            FunctionBodyNode* function = functionStack[i];
-            if (functionInfo[i].second)
-                continue;
-            RegisterID* dst = addGlobalVar(function->ident(), false);
-            JSValue value = new (exec) JSFunction(exec, makeFunction(exec, function), scopeChain);
-            globalObject->registerAt(dst->index() - m_globalVarStorageOffset).set(*m_globalData, globalObject, value);
-        }
+    for (size_t i = 0; i < functionStack.size(); ++i) {
+        FunctionBodyNode* function = functionStack[i];
+        globalObject->removeDirect(*m_globalData, function->ident()); // Newly declared functions overwrite existing properties.
 
-        for (size_t i = 0; i < varStack.size(); ++i) {
-            if (!shouldCreateVar[i])
-                continue;
-            addGlobalVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
-        }
-        if (symbolTable->size() != expectedSize)
-            CRASH();
-
-        preserveLastVar();
-    } else {
-        for (size_t i = 0; i < functionStack.size(); ++i) {
-            FunctionBodyNode* function = functionStack[i];
-            globalObject->putWithAttributes(exec, function->ident(), new (exec) JSFunction(exec, makeFunction(exec, function), scopeChain), DontDelete);
-        }
-        for (size_t i = 0; i < varStack.size(); ++i) {
-            if (globalObject->symbolTableHasProperty(*varStack[i].first) || globalObject->hasProperty(exec, *varStack[i].first))
-                continue;
-            int attributes = DontDelete;
-            if (varStack[i].second & DeclarationStacks::IsConstant)
-                attributes |= ReadOnly;
-            globalObject->putWithAttributes(exec, *varStack[i].first, jsUndefined(), attributes);
-        }
-
-        preserveLastVar();
+        JSValue value = new (exec) JSFunction(exec, makeFunction(exec, function), scopeChain);
+        int index = addGlobalVar(function->ident(), false);
+        globalObject->registerAt(index).set(*m_globalData, globalObject, value);
     }
-    codeBlock->m_numCapturedVars = codeBlock->m_numVars;
+
+    for (size_t i = 0; i < varStack.size(); ++i) {
+        if (globalObject->hasProperty(exec, *varStack[i].first))
+            continue;
+        addGlobalVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
+    }
 }
 
 BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainNode* scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock)
@@ -559,6 +497,9 @@ RegisterID* BytecodeGenerator::registerFor(const Identifier& ident)
 {
     if (ident == propertyNames().thisIdentifier)
         return &m_thisRegister;
+        
+    if (m_codeType == GlobalCode)
+        return 0;
 
     if (!shouldOptimizeLocals())
         return 0;
@@ -569,6 +510,21 @@ RegisterID* BytecodeGenerator::registerFor(const Identifier& ident)
 
     if (ident == propertyNames().arguments)
         createArgumentsIfNecessary();
+
+    return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
+}
+
+RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
+{
+    if (m_codeType == EvalCode)
+        return 0;
+
+    if (m_codeType == GlobalCode)
+        return 0;
+
+    SymbolTableEntry entry = symbolTable().get(ident.impl());
+    if (entry.isNull())
+        return 0;
 
     return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
 }
@@ -606,18 +562,6 @@ RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
         return reg;
     emitLazyNewFunction(reg, m_lazyFunctions.get(reg->index()));
     return reg;
-}
-
-RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
-{
-    if (m_codeType == EvalCode)
-        return 0;
-
-    SymbolTableEntry entry = symbolTable().get(ident.impl());
-    if (entry.isNull())
-        return 0;
-
-    return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
 }
 
 bool BytecodeGenerator::isLocal(const Identifier& ident)
@@ -1227,9 +1171,7 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
     }
         
     if (globalObject) {
-        bool forceGlobalResolve = false;
-
-        if (index != missingSymbolMarker() && !forceGlobalResolve && !requiresDynamicChecks) {
+        if (index != missingSymbolMarker() && !requiresDynamicChecks) {
             // Directly index the property lookup across multiple scopes.
             return emitGetScopedVar(dst, depth, index, globalObject);
         }
@@ -1275,6 +1217,15 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
 RegisterID* BytecodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValue globalObject)
 {
     if (globalObject) {
+        if (m_lastOpcodeID == op_put_global_var) {
+            int dstIndex;
+            int srcIndex;
+            retrieveLastUnaryOp(dstIndex, srcIndex);
+            
+            if (dstIndex == index && srcIndex == dst->index())
+                return dst;
+        }
+
         emitOpcode(op_get_global_var);
         instructions().append(dst->index());
         instructions().append(index);
