@@ -1,3 +1,15 @@
+2011-06-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure in RenderBlock::createLineBoxes() when a legend has display: inline
+        https://bugs.webkit.org/show_bug.cgi?id=23753
+
+        The bug got fixed, so landing the test case.
+
+        * fast/dom/legend-display-inline-expected.txt: Added.
+        * fast/dom/legend-display-inline.html: Added.
+
 2011-06-22  Matthew Delaney  <mdelaney@apple.com>
 
         Reverting rebaseline from r89434, because it needs more investigation.

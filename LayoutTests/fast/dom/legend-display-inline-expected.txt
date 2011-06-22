@@ -1,0 +1,4 @@
+foo
+Bug 23753: Assertion failure in RenderBlock::createLineBoxes() when a legend has display: inline
+
+This test PASSED if it did not crash
