@@ -1,3 +1,16 @@
+2011-06-22  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Remove comment that snuck in via copy & paste.
+        https://bugs.webkit.org/show_bug.cgi?id=63177
+
+        No new tests / no code changes.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator short):
+        Removed incorrect comment.
+
 2011-06-22  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.

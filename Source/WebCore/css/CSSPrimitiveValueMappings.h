@@ -56,7 +56,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
 
 template<> inline CSSPrimitiveValue::operator short() const
 {
-    if (m_type == CSS_NUMBER) // Valid for CSS outline-style
+    if (m_type == CSS_NUMBER)
         return static_cast<short>(m_value.num);
 
     ASSERT_NOT_REACHED();
