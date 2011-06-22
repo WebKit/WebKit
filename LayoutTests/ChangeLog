@@ -1,5 +1,39 @@
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
+        [Win][GTK] Test expectation update for r89407.
+
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/gtk/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/placeholder-set-value-expected.txt:
+        * platform/gtk/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/gtk/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/gtk/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/search-transformed-expected.txt:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/gtk/fast/forms/search-zoomed-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+        * platform/gtk/fast/forms/textfield-overflow-expected.txt:
+        * platform/gtk/fast/repaint/search-field-cancel-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/mac/media/media-controls-clone-expected.txt:
+        * platform/win/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/win/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/win/fast/forms/search-placeholder-value-changed-expected.txt:
+
+2011-06-21  Kent Tamura  <tkent@chromium.org>
+
         [Qt] Test expectation update for r89407.
 
         * platform/qt/fast/css/pseudo-cache-stale-expected.txt:
