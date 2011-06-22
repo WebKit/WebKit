@@ -1597,12 +1597,16 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
             error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
                   'WEBKIT_API should not be used with a pure virtual function.')
 
-    # Do checks specific to function declaractions.
-    if not function_state.is_declaration:
-        return
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:
-        if not parameter.name:
+        bad_parameter_type = search('(?=\W|^)(Ref|Own)Ptr(?=\W)', parameter.type)
+        if bad_parameter_type:
+            type_name = bad_parameter_type.group(0)
+            error(parameter.row, 'readability/pass_ptr', 5,
+                  'The parameter type should use Pass%s instead of %s.' % (type_name, type_name))
+
+        # Do checks specific to function declarations and parameter names.
+        if not function_state.is_declaration or not parameter.name:
             continue
 
         # Check the parameter name against the function name for single parameter set functions.
