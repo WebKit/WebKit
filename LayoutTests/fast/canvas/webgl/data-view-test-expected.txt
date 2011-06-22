@@ -305,8 +305,8 @@ PASS view.getInt16() threw exception TypeError: Not enough arguments.
 PASS view.getUint16() threw exception TypeError: Not enough arguments.
 PASS view.getInt32() threw exception TypeError: Not enough arguments.
 PASS view.getUint32() threw exception TypeError: Not enough arguments.
-PASS view.getFloat32() threw exception SyntaxError: Not enough arguments.
-PASS view.getFloat64() threw exception SyntaxError: Not enough arguments.
+PASS view.getFloat32() threw exception TypeError: Not enough arguments.
+PASS view.getFloat64() threw exception TypeError: Not enough arguments.
 
 Test for set methods that work
 PASS view.setInt8(0, 0) is undefined.

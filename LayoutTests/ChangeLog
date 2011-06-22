@@ -1,3 +1,10 @@
+2011-06-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reverting rebaseline from r89434, because it needs more investigation.
+        Filed this bug for figuring it out: https://bugs.webkit.org/show_bug.cgi?id=63151
+
+        * fast/canvas/webgl/data-view-test-expected.txt:
+
 2011-06-22  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
