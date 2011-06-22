@@ -1,3 +1,20 @@
+2011-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add preference for setting the html parser depth limit
+        https://bugs.webkit.org/show_bug.cgi?id=63163
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setMaximumHTMLParserDOMTreeDepth:]):
+        (-[WebPreferences maximumHTMLParserDOMTreeDepth]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Add private preference for setting the parser depth limit.
+
 2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

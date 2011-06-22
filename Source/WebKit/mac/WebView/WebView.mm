@@ -1570,6 +1570,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
     settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
+    settings->setMaximumHTMLParserDOMTreeDepth([preferences maximumHTMLParserDOMTreeDepth]);
     settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
     settings->setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
     settings->setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
