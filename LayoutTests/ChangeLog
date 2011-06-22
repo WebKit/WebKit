@@ -1,3 +1,10 @@
+2011-06-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Adding a mac platform expected result for webgl test to help fix burning bot.
+        Filed https://bugs.webkit.org/show_bug.cgi?id=63151 for a real fix
+
+        * platform/mac/fast/canvas/webgl/data-view-test-expected.txt: Added.
+
 2011-06-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
