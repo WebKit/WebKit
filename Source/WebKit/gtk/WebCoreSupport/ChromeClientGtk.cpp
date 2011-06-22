@@ -619,7 +619,7 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                     NULL);
 
-    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), chooser->allowsMultipleFiles());
+    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), chooser->settings().allowsMultipleFiles);
 
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         if (gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog))) {

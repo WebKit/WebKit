@@ -1,3 +1,13 @@
+2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        FileChooser should be only created when we need to choose files.
+        https://bugs.webkit.org/show_bug.cgi?id=63039
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runOpenPanel): Changed to use settings.
+
 2011-06-22  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Roben.

@@ -141,7 +141,7 @@ public:
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 #if ENABLE(DIRECTORY_UPLOAD)
-    virtual void enumerateChosenDirectory(const WTF::String&, WebCore::FileChooser*);
+    virtual void enumerateChosenDirectory(WebCore::FileChooser*);
 #endif
     virtual void setCursor(const WebCore::Cursor&);
     virtual void formStateDidChange(const WebCore::Node*);

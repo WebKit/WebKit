@@ -582,13 +582,13 @@ void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileC
     RefPtr<FileChooser> fileChooser = prpFileChooser;
     bool supportMulti = m_webPage->supportsExtension(QWebPage::ChooseMultipleFilesExtension);
 
-    if (fileChooser->allowsMultipleFiles() && supportMulti) {
+    if (fileChooser->settings().allowsMultipleFiles && supportMulti) {
         QWebPage::ChooseMultipleFilesExtensionOption option;
         option.parentFrame = QWebFramePrivate::kit(frame);
 
-        if (!fileChooser->filenames().isEmpty())
-            for (unsigned i = 0; i < fileChooser->filenames().size(); ++i)
-                option.suggestedFileNames += fileChooser->filenames()[i];
+        if (!fileChooser->settings().selectedFiles.isEmpty())
+            for (unsigned i = 0; i < fileChooser->settings().selectedFiles.size(); ++i)
+                option.suggestedFileNames += fileChooser->settings().selectedFiles[i];
 
         QWebPage::ChooseMultipleFilesExtensionReturn output;
         m_webPage->extension(QWebPage::ChooseMultipleFilesExtension, &option, &output);
@@ -601,8 +601,8 @@ void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileC
         }
     } else {
         QString suggestedFile;
-        if (!fileChooser->filenames().isEmpty())
-            suggestedFile = fileChooser->filenames()[0];
+        if (!fileChooser->settings().selectedFiles.isEmpty())
+            suggestedFile = fileChooser->settings().selectedFiles[0];
         QString file = m_webPage->chooseFile(QWebFramePrivate::kit(frame), suggestedFile);
         if (!file.isEmpty())
             fileChooser->chooseFile(file);

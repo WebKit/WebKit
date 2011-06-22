@@ -774,7 +774,7 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
 void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    BOOL allowMultipleFiles = chooser->allowsMultipleFiles();
+    BOOL allowMultipleFiles = chooser->settings().allowsMultipleFiles;
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:)])

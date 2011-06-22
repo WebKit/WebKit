@@ -33,26 +33,36 @@ namespace WebCore {
 
 FileChooserClient::~FileChooserClient()
 {
+    discardChooser();
 }
 
-inline FileChooser::FileChooser(FileChooserClient* client, const Vector<String>& initialFilenames)
+FileChooser* FileChooserClient::newFileChooser(const FileChooserSettings& settings)
+{
+    discardChooser();
+
+    m_chooser = FileChooser::create(this, settings);
+    return m_chooser.get();
+}
+
+void FileChooserClient::discardChooser()
+{
+    if (m_chooser)
+        m_chooser->disconnectClient();
+}
+
+inline FileChooser::FileChooser(FileChooserClient* client, const FileChooserSettings& settings)
     : m_client(client)
+    , m_settings(settings)
 {
-    m_filenames = initialFilenames;
 }
 
-PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const Vector<String>& initialFilenames)
+PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const FileChooserSettings& settings)
 {
-    return adoptRef(new FileChooser(client, initialFilenames));
+    return adoptRef(new FileChooser(client, settings));
 }
 
 FileChooser::~FileChooser()
 {
-}
-
-void FileChooser::clear()
-{
-    m_filenames.clear();
 }
 
 void FileChooser::chooseFile(const String& filename)
@@ -64,11 +74,12 @@ void FileChooser::chooseFile(const String& filename)
 
 void FileChooser::chooseFiles(const Vector<String>& filenames)
 {
-    if (m_filenames == filenames)
+    // FIXME: This is inelegant. We should not be looking at settings here.
+    if (m_settings.selectedFiles == filenames)
         return;
-    m_filenames = filenames;
+
     if (m_client)
-        m_client->valueChanged();
+        m_client->filesChosen(filenames);
 }
 
 }

@@ -37,44 +37,46 @@ namespace WebCore {
 
 class FileChooser;
 
+struct FileChooserSettings {
+    bool allowsMultipleFiles;
+#if ENABLE(DIRECTORY_UPLOAD)
+    bool allowsDirectoryUpload;
+#endif
+    String acceptTypes;
+    Vector<String> selectedFiles;
+};
+
 class FileChooserClient {
 public:
-    virtual void valueChanged() = 0;
-    virtual bool allowsMultipleFiles() = 0;
-#if ENABLE(DIRECTORY_UPLOAD)
-    virtual bool allowsDirectoryUpload() = 0;
-#endif
-    virtual String acceptTypes() = 0;
+    virtual void filesChosen(const Vector<String>&) = 0;
     virtual ~FileChooserClient();
+
+protected:
+    FileChooser* newFileChooser(const FileChooserSettings&);
+
+private:
+    void discardChooser();
+
+    RefPtr<FileChooser> m_chooser;
 };
 
 class FileChooser : public RefCounted<FileChooser> {
 public:
-    static PassRefPtr<FileChooser> create(FileChooserClient*, const Vector<String>& initialFilenames);
+    static PassRefPtr<FileChooser> create(FileChooserClient*, const FileChooserSettings&);
     ~FileChooser();
 
     void disconnectClient() { m_client = 0; }
-    bool disconnected() { return !m_client; }
-
-    const Vector<String>& filenames() const { return m_filenames; }
-
-    void clear(); // for use by client; does not call valueChanged
 
     void chooseFile(const String& path);
     void chooseFiles(const Vector<String>& paths);
 
-    bool allowsMultipleFiles() const { return m_client ? m_client->allowsMultipleFiles() : false; }
-#if ENABLE(DIRECTORY_UPLOAD)
-    bool allowsDirectoryUpload() const { return m_client ? m_client->allowsDirectoryUpload() : false; }
-#endif
-    // Acceptable MIME types.  It's an 'accept' attribute value of the corresponding INPUT element.
-    String acceptTypes() const { return m_client ? m_client->acceptTypes() : String(); }
+    const FileChooserSettings& settings() const { return m_settings; }
 
 private:
-    FileChooser(FileChooserClient*, const Vector<String>& initialFilenames);
+    FileChooser(FileChooserClient*, const FileChooserSettings&);
 
     FileChooserClient* m_client;
-    Vector<String> m_filenames;
+    FileChooserSettings m_settings;
 };
 
 } // namespace WebCore

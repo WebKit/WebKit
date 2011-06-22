@@ -668,14 +668,14 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
         return;
 
     WebFileChooserParams params;
-    params.multiSelect = fileChooser->allowsMultipleFiles();
+    params.multiSelect = fileChooser->settings().allowsMultipleFiles;
 #if ENABLE(DIRECTORY_UPLOAD)
-    params.directory = fileChooser->allowsDirectoryUpload();
+    params.directory = fileChooser->settings().allowsDirectoryUpload;
 #else
     params.directory = false;
 #endif
-    params.acceptTypes = fileChooser->acceptTypes();
-    params.selectedFiles = fileChooser->filenames();
+    params.acceptTypes = fileChooser->settings().acceptTypes;
+    params.selectedFiles = fileChooser->settings().selectedFiles;
     if (params.selectedFiles.size() > 0)
         params.initialValue = params.selectedFiles[0];
     WebFileChooserCompletionImpl* chooserCompletion =
@@ -698,7 +698,7 @@ void ChromeClientImpl::loadIconForFiles(const Vector<String>& filenames, FileIco
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-void ChromeClientImpl::enumerateChosenDirectory(const String& path, FileChooser* fileChooser)
+void ChromeClientImpl::enumerateChosenDirectory(FileChooser* fileChooser)
 {
     WebViewClient* client = m_webView->client();
     if (!client)
@@ -707,8 +707,10 @@ void ChromeClientImpl::enumerateChosenDirectory(const String& path, FileChooser*
     WebFileChooserCompletionImpl* chooserCompletion =
         new WebFileChooserCompletionImpl(fileChooser);
 
+    ASSERT(fileChooser && fileChooser->settings().selectedFiles.size());
+
     // If the enumeration can't happen, call the callback with an empty list.
-    if (!client->enumerateChosenDirectory(path, chooserCompletion))
+    if (!client->enumerateChosenDirectory(fileChooser->settings().selectedFiles[0], chooserCompletion))
         chooserCompletion->didChooseFile(WebVector<WebString>());
 }
 #endif

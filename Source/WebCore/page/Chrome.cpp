@@ -453,9 +453,9 @@ void Chrome::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocatio
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-void Chrome::enumerateChosenDirectory(const String& path, FileChooser* fileChooser)
+void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
 {
-    m_client->enumerateChosenDirectory(path, fileChooser);
+    m_client->enumerateChosenDirectory(fileChooser);
 }
 #endif
 

@@ -740,7 +740,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
         return;
 
-    bool multiFile = fileChooser->allowsMultipleFiles();
+    bool multiFile = fileChooser->settings().allowsMultipleFiles;
     Vector<WCHAR> fileBuf(multiFile ? maxFilePathsListSize : MAX_PATH);
 
     OPENFILENAME ofn;

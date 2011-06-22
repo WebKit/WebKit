@@ -1,3 +1,63 @@
+2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        FileChooser should be only created when we need to choose files.
+        https://bugs.webkit.org/show_bug.cgi?id=63039
+
+        1) Introduce FileChooserSettings to decouple setting querying from
+        FileChooser. It's a simple copyable settings object, which allows us
+        to capture the settings atomically and treat them as discardable data.
+
+        2) Encapsulate lifetime management of FileChooser entirely in
+        FileChooserClient. It's now a "smart" client, and allows us to
+        completely remove FileChooser management concerns from a FileChooserClient
+        implementor.
+
+        3) Change creation of FileChooser to be on-demand, only when we actually
+        need to choose file.
+
+        4) Rearrange calling of dispatchFormControlChangeEvent to be at the end
+        of a function and remove "am-I-dead" checks that are now unnecessary.
+
+        5) Clean up directory upload code a bit, and make use of FileChooserSettings
+        to pass directory name.
+
+        Refactoring, covered by existing tests.
+
+        * WebCore.exp.in: Removed unneeded export.
+        * loader/EmptyClients.h: Removed now-unneded param.
+        (WebCore::EmptyChromeClient::enumerateChosenDirectory): Ditto.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::enumerateChosenDirectory): Ditto.
+        * page/Chrome.h: Ditto.
+        * page/ChromeClient.h: Ditto.
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooserClient::~FileChooserClient): Added discarding of chooser.
+        (WebCore::FileChooserClient::newFileChooser): Added.
+        (WebCore::FileChooserClient::discardChooser): Added.
+        (WebCore::FileChooser::FileChooser): Changed to use FileChooserSettings.
+        (WebCore::FileChooser::create): Ditto.
+        (WebCore::FileChooser::~FileChooser): Removed unneeded code.
+        (WebCore::FileChooser::chooseFiles): Changed to pass results to the client.
+        * platform/FileChooser.h:
+        (WebCore::FileChooser::settings): Added.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::filenamesFromFileList): Added a helper.
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl): Changed to use the helper, removed
+            chooser initialization code.
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl): Removed disconnection code, now
+            handled in FileChooserClient.
+        (WebCore::RenderFileUploadControl::filesChosen): Renamed from valueChanged, rearranged to
+            fire dispatchFormControlChangeEvent last.
+        (WebCore::RenderFileUploadControl::receiveDropForDirectoryUpload): Changed to use settings.
+        (WebCore::RenderFileUploadControl::click): Ditto.
+        (WebCore::RenderFileUploadControl::updateFromElement): Removed now-unneeded check.
+        (WebCore::RenderFileUploadControl::receiveDroppedFiles): Changed to avoid using the chooser, since
+            it is not necessary.
+        (WebCore::RenderFileUploadControl::fileTextValue): Changed to use input data, not chooser data.
+        * rendering/RenderFileUploadControl.h: Updated decls.
+
 2011-06-22  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

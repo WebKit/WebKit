@@ -1,3 +1,15 @@
+2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        FileChooser should be only created when we need to choose files.
+        https://bugs.webkit.org/show_bug.cgi?id=63039
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel): Changed to use settings.
+        (WebKit::ChromeClientImpl::enumerateChosenDirectory): Updated decls.
+        * src/ChromeClientImpl.h:
+
 2011-06-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

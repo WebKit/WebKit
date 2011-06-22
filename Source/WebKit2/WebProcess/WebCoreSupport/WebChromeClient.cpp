@@ -625,14 +625,14 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     m_page->setActiveOpenPanelResultListener(WebOpenPanelResultListener::create(m_page, fileChooser.get()));
     
     WebOpenPanelParameters::Data parameters;
-    parameters.allowMultipleFiles = fileChooser->allowsMultipleFiles();
+    parameters.allowMultipleFiles = fileChooser->settings().allowsMultipleFiles;
 #if ENABLE(DIRECTORY_UPLOAD)
-    parameters.allowsDirectoryUpload = fileChooser->allowsDirectoryUpload();
+    parameters.allowsDirectoryUpload = fileChooser->settings().allowsDirectoryUpload;
 #else
     parameters.allowsDirectoryUpload = false;
 #endif
-    parameters.acceptTypes = fileChooser->acceptTypes();
-    parameters.filenames = fileChooser->filenames();
+    parameters.acceptTypes = fileChooser->settings().acceptTypes;
+    parameters.filenames = fileChooser->settings().selectedFiles;
 
     m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), parameters));
 }

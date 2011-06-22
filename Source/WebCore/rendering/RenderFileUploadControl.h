@@ -57,17 +57,15 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
-    // FileChooserClient functions.
-    virtual void valueChanged();
-    virtual bool allowsMultipleFiles();
-#if ENABLE(DIRECTORY_UPLOAD)
-    virtual bool allowsDirectoryUpload();
-    virtual void receiveDropForDirectoryUpload(const Vector<String>&);
-#endif
-    virtual String acceptTypes();
+    // FileChooserClient implementation.
+    virtual void filesChosen(const Vector<String>&);
 
-    // FileIconLoaderClient functions.
+    // FileIconLoaderClient implementation.
     virtual void updateRendering(PassRefPtr<Icon>);
+
+#if ENABLE(DIRECTORY_UPLOAD)
+    void receiveDropForDirectoryUpload(const Vector<String>&);
+#endif
 
     Chrome* chrome() const;
     int maxFilenameWidth() const;
@@ -77,7 +75,6 @@ private:
     HTMLInputElement* uploadButton() const;
     void requestIcon(const Vector<String>&) const;
 
-    RefPtr<FileChooser> m_fileChooser;
     RefPtr<FileIconLoader> m_iconLoader;
     RefPtr<Icon> m_icon;
 };

@@ -193,7 +193,7 @@ public:
 #endif
 
 #if ENABLE(DIRECTORY_UPLOAD)
-    virtual void enumerateChosenDirectory(const String&, FileChooser*) { }
+    virtual void enumerateChosenDirectory(FileChooser*) { }
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }

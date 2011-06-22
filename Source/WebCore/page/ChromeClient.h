@@ -231,7 +231,7 @@ namespace WebCore {
 
 #if ENABLE(DIRECTORY_UPLOAD)
         // Asychronous request to enumerate all files in a directory chosen by the user.
-        virtual void enumerateChosenDirectory(const String&, FileChooser*) = 0;
+        virtual void enumerateChosenDirectory(FileChooser*) = 0;
 #endif
 
         // Notification that the given form element has changed. This function
