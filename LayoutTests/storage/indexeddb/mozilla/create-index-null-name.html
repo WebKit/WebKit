@@ -50,7 +50,9 @@ function cleanDatabase()
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('a', { keyPath: 'id', autoIncrement: true });");
 
-    index = evalAndExpectException("index = objectStore.createIndex(null, null);", "IDBDatabaseException.NON_TRANSIENT_ERR");
+    index = evalAndLog("index = objectStore.createIndex(null, null);");
+    shouldBe("index.name", "'null'");
+    shouldBe("index.keyPath", "'null'");
 
     done();
 }

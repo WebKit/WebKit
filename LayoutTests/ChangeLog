@@ -1,3 +1,13 @@
+2011-06-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        IndexedDB createIndex should NOT throw if name arg is null
+        https://bugs.webkit.org/show_bug.cgi?id=63114
+
+        * storage/indexeddb/mozilla/create-index-null-name-expected.txt:
+        * storage/indexeddb/mozilla/create-index-null-name.html:
+
 2011-06-22  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION (r89449): http/tests/inspector/extensions-resources-redirect.html failing on

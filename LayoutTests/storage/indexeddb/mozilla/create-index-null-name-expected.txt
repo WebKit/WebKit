@@ -12,9 +12,9 @@ db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
 objectStore = db.createObjectStore('a', { keyPath: 'id', autoIncrement: true });
-Expecting exception from index = objectStore.createIndex(null, null);
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+index = objectStore.createIndex(null, null);
+PASS index.name is 'null'
+PASS index.keyPath is 'null'
 PASS successfullyParsed is true
 
 TEST COMPLETE
