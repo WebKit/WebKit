@@ -557,6 +557,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _showSourceFrameAndAddToHistory: function(sourceFileId)
     {
+        if (!(sourceFileId in this._sourceFileIdToFilesSelectOption))
+            return;
+
         var sourceFrame = this._showSourceFrame(sourceFileId);
 
         var oldIndex = this._currentBackForwardIndex;
@@ -684,6 +687,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _filesSelectChanged: function()
     {
+        if (this._filesSelectElement.selectedIndex === -1)
+            return;
+
         var sourceFileId = this._filesSelectElement[this._filesSelectElement.selectedIndex]._sourceFileId;
         this._showSourceFrameAndAddToHistory(sourceFileId);
     },

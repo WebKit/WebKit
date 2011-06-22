@@ -139,7 +139,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         function contentChanged(sourceFile)
         {
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFiles[sourceFileId]);
+            if (this._sourceFiles[sourceFileId] === sourceFile)
+                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFiles[sourceFileId]);
         }
         if (!this._formatSourceFiles)
             sourceFile = new WebInspector.SourceFile(sourceFileId, script, contentChanged.bind(this));

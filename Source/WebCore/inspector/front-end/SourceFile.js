@@ -105,7 +105,7 @@ WebInspector.SourceFile.prototype = {
     {
         if (this._contentLoaded) {
             this._contentLoaded = false;
-            this._contentChangedDelegate();
+            this._contentChangedDelegate(this);
         } else if (this._contentRequested)
             this._reloadContent = true;
         else if (this._requestContentCallbacks.length)

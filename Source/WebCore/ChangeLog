@@ -1,3 +1,22 @@
+2011-06-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix exceptions in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=62865
+
+        Resource.requestContent callback may be fired after navigation when scripts panel
+        is already reset.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._addScript.contentChanged):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showSourceFrameAndAddToHistory):
+        (WebInspector.ScriptsPanel.prototype._filesSelectChanged):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.reload):
+
 2011-06-21  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Adam Roben.
