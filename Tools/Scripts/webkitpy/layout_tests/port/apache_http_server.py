@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,17 +30,12 @@
 """A class to start/stop the apache http server used by layout tests."""
 
 
-from __future__ import with_statement
-
-import codecs
 import logging
-import optparse
 import os
 import re
-import subprocess
 import sys
 
-import http_server_base
+from webkitpy.layout_tests.port import http_server_base
 
 _log = logging.getLogger("webkitpy.layout_tests.port.apache_http_server")
 
@@ -53,24 +48,15 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
           output_dir: the absolute path to the layout test result directory
         """
         http_server_base.HttpServerBase.__init__(self, port_obj)
+        self._name = 'apache'
+        self._mappings = [{'port': 8000},
+                          {'port': 8080},
+                          {'port': 8081},
+                          {'port': 8443, 'sslcert': True}]
         self._output_dir = output_dir
-        self._httpd_proc = None
         port_obj.maybe_make_directory(output_dir)
 
-        self.mappings = [{'port': 8000},
-                         {'port': 8080},
-                         {'port': 8081},
-                         {'port': 8443, 'sslcert': True}]
-
-        # The upstream .conf file assumed the existence of /tmp/WebKit for
-        # placing apache files like the lock file there.
-        self._runtime_path = os.path.join("/tmp", "WebKit")
-        port_obj.maybe_make_directory(self._runtime_path)
-
-        # The PID returned when Apache is started goes away (due to dropping
-        # privileges?). The proper controlling PID is written to a file in the
-        # apache runtime directory.
-        self._pid_file = os.path.join(self._runtime_path, 'httpd.pid')
+        self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         test_dir = self._port_obj.layout_tests_dir()
         js_test_resources_dir = self._cygwin_safe_join(test_dir, "fast", "js",
@@ -89,7 +75,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         if self._is_cygwin():
             executable = self._get_cygwin_path(executable)
 
-        cmd = [executable,
+        start_cmd = [executable,
             '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
             '-C', "\'DocumentRoot \"%s\"\'" % document_root,
             '-c', "\'Alias /js-test-resources \"%s\"'" % js_test_resources_dir,
@@ -100,7 +86,14 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,
             '-C', "\'User \"%s\"\'" % os.environ.get("USERNAME",
-                os.environ.get("USER", ""))]
+                os.environ.get("USER", "")),
+            '-c', "\'PidFile %s'" % self._pid_file,
+            '-k', "start"]
+
+        stop_cmd = [executable,
+            '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
+            '-c', "\'PidFile %s'" % self._pid_file,
+            '-k', "stop"]
 
         if self._is_cygwin():
             cygbin = self._port_obj._path_from_base('third_party', 'cygwin',
@@ -110,16 +103,22 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             self._start_cmd = [
                 os.path.join(cygbin, 'bash.exe'),
                 '-c',
-                'PATH=%s %s' % (self._get_cygwin_path(cygbin), " ".join(cmd)),
+                'PATH=%s %s' % (self._get_cygwin_path(cygbin), " ".join(start_cmd)),
+              ]
+            self._stop_cmd = [
+                os.path.join(cygbin, 'bash.exe'),
+                '-c',
+                'PATH=%s %s' % (self._get_cygwin_path(cygbin), " ".join(stop_cmd)),
               ]
         else:
             # TODO(ojan): When we get cygwin using Apache 2, use set the
             # cert file for cygwin as well.
-            cmd.extend(['-c', "\'SSLCertificateFile %s\'" % cert_file])
+            start_cmd.extend(['-c', "\'SSLCertificateFile %s\'" % cert_file])
             # Join the string here so that Cygwin/Windows and Mac/Linux
             # can use the same code. Otherwise, we could remove the single
             # quotes above and keep cmd as a sequence.
-            self._start_cmd = " ".join(cmd)
+            self._start_cmd = " ".join(start_cmd)
+            self._stop_cmd = " ".join(stop_cmd)
 
     def _is_cygwin(self):
         return sys.platform in ("win32", "cygwin")
@@ -157,9 +156,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         """
         httpd_config = self._port_obj._path_to_apache_config_file()
         httpd_config_copy = os.path.join(output_dir, "httpd.conf")
-        # httpd.conf is always utf-8 according to http://archive.apache.org/gnats/10125
-        with codecs.open(httpd_config, "r", "utf-8") as httpd_config_file:
-            httpd_conf = httpd_config_file.read()
+        httpd_conf = self._filesystem.read_text_file(httpd_config)
         if self._is_cygwin():
             # This is a gross hack, but it lets us use the upstream .conf file
             # and our checked in cygwin. This tells the server the root
@@ -172,62 +169,45 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             httpd_conf = httpd_conf.replace('ServerRoot "/usr"',
                 'ServerRoot "%s"' % self._get_cygwin_path(cygusr))
 
-        with codecs.open(httpd_config_copy, "w", "utf-8") as file:
-            file.write(httpd_conf)
+        self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
         if self._is_cygwin():
             return self._get_cygwin_path(httpd_config_copy)
         return httpd_config_copy
 
-    def _get_virtual_host_config(self, document_root, port, ssl=False):
-        """Returns a <VirtualHost> directive block for an httpd.conf file.
-        It will listen to 127.0.0.1 on each of the given port.
-        """
-        return '\n'.join(('<VirtualHost 127.0.0.1:%s>' % port,
-                          'DocumentRoot "%s"' % document_root,
-                          ssl and 'SSLEngine On' or '',
-                          '</VirtualHost>', ''))
+    def _spawn_process(self):
+        _log.debug('Starting %s server, cmd="%s"' % (self._name, str(self._start_cmd)))
+        retval, err = self._run(self._start_cmd)
+        if retval or len(err):
+            raise http_server_base.ServerError('Failed to start %s: %s' % (self._name, err))
 
-    def _start_httpd_process(self):
-        """Starts the httpd process and returns whether there were errors."""
+        # For some reason apache isn't guaranteed to have created the pid file before
+        # the process exits, so we wait a little while longer.
+        if not self._wait_for_action(lambda: self._filesystem.exists(self._pid_file)):
+            raise http_server_base.ServerError('Failed to start %s: no pid file found' % self._name)
+
+        return int(self._filesystem.read_text_file(self._pid_file))
+
+    def _stop_running_server(self):
+        retval, err = self._run(self._stop_cmd)
+        if retval or len(err):
+            raise http_server_base.ServerError('Failed to stop %s: %s' % (self._name, err))
+
+        # For some reason apache isn't guaranteed to have actually stopped after
+        # the stop command returns, so we wait a little while longer for the
+        # pid file to be removed.
+        if not self._wait_for_action(lambda: not self._filesystem.exists(self._pid_file)):
+            raise http_server_base.ServerError('Failed to stop %s: pid file still exists' % self._name)
+
+    def _run(self, cmd):
         # Use shell=True because we join the arguments into a string for
         # the sake of Window/Cygwin and it needs quoting that breaks
         # shell=False.
         # FIXME: We should not need to be joining shell arguments into strings.
         # shell=True is a trail of tears.
         # Note: Not thread safe: http://bugs.python.org/issue2320
-        _log.debug('Starting http server, cmd="%s"' % str(self._start_cmd))
-        self._httpd_proc = subprocess.Popen(self._start_cmd,
-                                            stderr=subprocess.PIPE,
-            shell=True)
-        err = self._httpd_proc.stderr.read()
-        if len(err):
-            _log.debug(err)
-            return False
-        return True
-
-    def start(self):
-        """Starts the apache http server."""
-        # Stop any currently running servers.
-        self.stop()
-
-        _log.debug("Starting apache http server")
-        server_started = self.wait_for_action(self._start_httpd_process)
-        if server_started:
-            _log.debug("Apache started. Testing ports")
-            server_started = self.wait_for_action(
-                self.is_server_running_on_all_ports)
-
-        if server_started:
-            _log.debug("Server successfully started")
-        else:
-            raise Exception('Failed to start http server')
-
-    def stop(self):
-        """Stops the apache http server."""
-        _log.debug("Shutting down any running http servers")
-        httpd_pid = None
-        if os.path.exists(self._pid_file):
-            httpd_pid = int(open(self._pid_file).readline())
-        # FIXME: We shouldn't be calling a protected method of _port_obj!
-        self._port_obj._shut_down_http_server(httpd_pid)
+        process = self._executive.popen(cmd, shell=True, stderr=self._executive.PIPE)
+        process.wait()
+        retval = process.returncode
+        err = process.stderr.read()
+        return (retval, err)

@@ -646,10 +646,13 @@ class Port(object):
         """Start a web server. Raise an error if it can't start or is already running.
 
         Ports can stub this out if they don't need a web server to be running."""
+        assert not self._http_server, 'Already running an http server.'
+
         if self.get_option('use_apache'):
             server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory())
         else:
             server = http_server.Lighttpd(self, self.results_directory())
+
         server.start()
         self._http_server = server
 
@@ -657,6 +660,8 @@ class Port(object):
         """Start a web server. Raise an error if it can't start or is already running.
 
         Ports can stub this out if they don't need a websocket server to be running."""
+        assert not self._websocket_server, 'Already running a websocket server.'
+
         server = websocket_server.PyWebSocket(self, self.results_directory())
         server.start()
         self._websocket_server = server
@@ -675,11 +680,13 @@ class Port(object):
         """Shut down the http server if it is running. Do nothing if it isn't."""
         if self._http_server:
             self._http_server.stop()
+            self._http_server = None
 
     def stop_websocket_server(self):
         """Shut down the websocket server if it is running. Do nothing if it isn't."""
         if self._websocket_server:
             self._websocket_server.stop()
+            self._websocket_server = None
 
     def release_http_lock(self):
         if self._http_lock:

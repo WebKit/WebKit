@@ -1,3 +1,25 @@
+2011-06-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        nrwt: attempt #3 at fixing server startup/shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=62829
+
+        Attempt yet again to make starting and stopping servers
+        reliable. It turns out that apache has races between when the
+        ctl process exists and when it writes/removes the pid file.
+        This change accounts for the races.
+
+        * Scripts/new-run-webkit-httpd:
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_integrationtest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2011-06-21  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Roben.
