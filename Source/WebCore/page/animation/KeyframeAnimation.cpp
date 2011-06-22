@@ -65,6 +65,19 @@ KeyframeAnimation::~KeyframeAnimation()
         endAnimation();
 }
 
+static const Animation* getAnimationFromStyleByName(const RenderStyle* style, const AtomicString& name)
+{
+    if (!style->animations())
+        return 0;
+
+    for (size_t i = 0; i < style->animations()->size(); i++) {
+        if (name == style->animations()->animation(i)->name())
+            return style->animations()->animation(i);
+    }
+
+    return 0;
+}
+
 void KeyframeAnimation::fetchIntervalEndpointsForProperty(int property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
 {
     // Find the first key
@@ -136,10 +149,8 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(int property, const Re
     scale = 1.0 / (nextKeyframe.key() - prevKeyframe.key());
 
     const TimingFunction* timingFunction = 0;
-    if (fromStyle->animations() && fromStyle->animations()->size() > 0) {
-        // We get the timing function from the first animation, because we've synthesized a RenderStyle for each keyframe.
-        timingFunction = fromStyle->animations()->animation(0)->timingFunction().get();
-    }
+    if (const Animation* matchedAnimation = getAnimationFromStyleByName(fromStyle, name()))
+        timingFunction = matchedAnimation->timingFunction().get();
 
     prog = progress(scale, offset, timingFunction);
 }
