@@ -1,3 +1,15 @@
+2011-06-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas in layer obscures overlapping span
+        https://bugs.webkit.org/show_bug.cgi?id=63161
+
+        * compositing/layer-creation/spanOverlapsCanvas.html: Added.
+        * platform/mac/compositing/layer-creation: Added.
+        * platform/mac/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
+        * platform/mac/compositing/layer-creation/spanOverlapsCanvas-expected.png: Added.
+
 2011-06-22  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION (r89426-r89428): inspector/console/console-trace-in-eval.html failing on
