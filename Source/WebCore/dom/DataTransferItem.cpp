@@ -40,7 +40,7 @@ namespace WebCore {
 const char DataTransferItem::kindString[] = "string";
 const char DataTransferItem::kindFile[] = "file";
 
-DataTransferItem::DataTransferItem(PassRefPtr<Clipboard> owner, const String& kind, const String& type)
+DataTransferItem::DataTransferItem(RefPtr<Clipboard> owner, const String& kind, const String& type)
     : m_owner(owner)
     , m_kind(kind)
     , m_type(type)

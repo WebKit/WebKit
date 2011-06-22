@@ -34,14 +34,14 @@
 
 namespace WebCore {
 
-FEImage::FEImage(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+FEImage::FEImage(Filter* filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
     : FilterEffect(filter)
     , m_image(image)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
-PassRefPtr<FEImage> FEImage::create(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+PassRefPtr<FEImage> FEImage::create(Filter* filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
 {
     return adoptRef(new FEImage(filter, image, preserveAspectRatio));
 }

@@ -1,5 +1,49 @@
 2011-06-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r89402.
+        http://trac.webkit.org/changeset/89402
+        https://bugs.webkit.org/show_bug.cgi?id=63129
+
+        It made 6 tests crash (Requested by Ossy on #webkit).
+
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::DataTransferItem):
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItems.cpp:
+        (WebCore::DataTransferItems::DataTransferItems):
+        * dom/DataTransferItems.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        * editing/CompositeEditCommand.h:
+        * page/WebKitAnimationList.cpp:
+        (WebCore::WebKitAnimationList::append):
+        (WebCore::WebKitAnimationList::insertAnimation):
+        * page/WebKitAnimationList.h:
+        (WebCore::WebKitAnimationList::create):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::create):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::SVGFilterBuilder::add):
+        (WebCore::SVGFilterBuilder::appendEffectToEffectReferences):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::Peer):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::create):
+
+2011-06-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r89368.
         http://trac.webkit.org/changeset/89368
         https://bugs.webkit.org/show_bug.cgi?id=63128

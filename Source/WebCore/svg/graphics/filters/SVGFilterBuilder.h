@@ -39,12 +39,12 @@ public:
 
     static PassRefPtr<SVGFilterBuilder> create(Filter* filter) { return adoptRef(new SVGFilterBuilder(filter)); }
 
-    void add(const AtomicString& id, PassRefPtr<FilterEffect>);
+    void add(const AtomicString& id, RefPtr<FilterEffect> effect);
 
     FilterEffect* getEffectById(const AtomicString& id) const;
     FilterEffect* lastEffect() const { return m_lastEffect.get(); }
 
-    void appendEffectToEffectReferences(PassRefPtr<FilterEffect>, RenderObject*);
+    void appendEffectToEffectReferences(RefPtr<FilterEffect>, RenderObject*);
 
     inline FilterEffectSet& effectReferences(FilterEffect* effect)
     {

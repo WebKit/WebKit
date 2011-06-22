@@ -60,7 +60,7 @@ public:
     virtual PassRefPtr<Blob> getAsFile() = 0;
 
 protected:
-    DataTransferItem(PassRefPtr<Clipboard> owner, const String& kind, const String& type);
+    DataTransferItem(RefPtr<Clipboard> owner, const String& kind, const String& type);
     Clipboard* owner();
 
 private:

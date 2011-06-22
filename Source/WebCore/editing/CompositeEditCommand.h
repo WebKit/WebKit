@@ -69,7 +69,7 @@ protected:
     void mergeIdenticalElements(PassRefPtr<Element>, PassRefPtr<Element>);
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);
-    void rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text>, int startOffset, int endOffset);
+    void rebalanceWhitespaceOnTextSubstring(RefPtr<Text>, int startOffset, int endOffset);
     void prepareWhitespaceAtPositionForSplit(Position&);
     bool canRebalance(const Position&) const;
     bool shouldRebalanceLeadingWhitespaceFor(const String&) const;
