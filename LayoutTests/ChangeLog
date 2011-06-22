@@ -1,3 +1,9 @@
+2011-06-22  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, apply a couple of Chromium test expectation changes to test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Update platform specific exprected results after r89367 and r89381.

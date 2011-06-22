@@ -3877,7 +3877,8 @@ BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT PASS
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK61664 WIN LINUX LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
+BUGWK61664 WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
+BUGWK61664 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT IMAGE PASS
 BUGWK61664 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT PASS
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
@@ -3993,3 +3994,5 @@ BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 BUGCR87070 : fast/js/reserved-words.html = TEXT
 // Needs rebaselining because we fixed a bug that is in platform expectations.
 BUGCR87070 : fast/js/parser-xml-close-comment.html = TEXT
+// Sounds like a real regression.
+BUGCR87070 WIN DEBUG : http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html = CRASH PASS
