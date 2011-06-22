@@ -1,7 +1,6 @@
 noinst_PROGRAMS += \
 	Programs/DumpRenderTree \
-	Programs/GtkLauncher \
-	Programs/ImageDiff
+	Programs/GtkLauncher
 
 if ENABLE_WEBKIT2
 noinst_PROGRAMS += \
@@ -205,35 +204,10 @@ Programs_DumpRenderTree_LDFLAGS = \
 	-no-fast-install \
 	-no-install
 
-# ImageDiff
-Programs_ImageDiff_CPPFLAGS = $(global_cppflags)
-
-Programs_ImageDiff_SOURCES = \
-   Tools/DumpRenderTree/gtk/ImageDiff.cpp
-
-Programs_ImageDiff_CXXFLAGS = \
-   $(global_cxxflags) \
-   $(global_cppflags) \
-   $(Programs_ImageDiff_CFLAGS)
-
-Programs_ImageDiff_CFLAGS = \
-   -fno-strict-aliasing \
-   $(global_cflags) \
-   $(GLOBALDEPS_CFLAGS) \
-   $(GTK_CFLAGS)
-
-Programs_ImageDiff_LDADD = \
-   $(GTK_LIBS)
-
-Programs_ImageDiff_LDFLAGS = \
-   -no-fast-install \
-   -no-install
-
 # clean target
 CLEANFILES += \
 	Programs/DumpRenderTree \
-	Programs/GtkLauncher \
-	Programs/ImageDiff
+	Programs/GtkLauncher
 
 if ENABLE_WEBKIT2
 CLEANFILES += \

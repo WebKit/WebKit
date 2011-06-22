@@ -1,3 +1,16 @@
+2011-06-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Roben.
+
+        [GTK] Implement pixel dump support for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=58242
+
+        * GNUmakefile.am: Added new Cairo specific image handling files to the build.
+        * Shared/API/c/cairo/WKImageCairo.cpp: Copied from Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp.
+        (WKImageCreateCairoSurface): Added
+        (WKImageCreateFromCairoSurface): Added
+        * Shared/API/c/cairo/WKImageCairo.h: Copied from Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp.
+
 2011-06-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r89401 and r89403.

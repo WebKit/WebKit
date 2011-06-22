@@ -130,24 +130,9 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image)
 {
     CGContextRef context = createCGContextFromImage(image);
 
-    // Compute the hash of the bitmap context pixels
     char actualHash[33];
     computeMD5HashStringForContext(context, actualHash);
-    fprintf(stdout, "\nActualHash: %s\n", actualHash);
-
-    // Check the computed hash against the expected one and dump image on mismatch
-    bool hashesMatch = false;
-    if (m_expectedPixelHash.length() > 0) {
-        ASSERT(m_expectedPixelHash.length() == 32);
-
-        fprintf(stdout, "\nExpectedHash: %s\n", m_expectedPixelHash.c_str());
-
-        // FIXME: Do case insensitive compare.
-        if (m_expectedPixelHash == actualHash)
-            hashesMatch = true;
-    }
-
-    if (!hashesMatch)
+    if (!compareActualHashToExpectedAndDumpResults(actualHash))
         dumpBitmap(context);
 }
 

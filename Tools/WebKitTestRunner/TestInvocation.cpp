@@ -174,6 +174,21 @@ void TestInvocation::dump(const char* stringToDump, bool singleEOF)
     fflush(stderr);
 }
 
+bool TestInvocation::compareActualHashToExpectedAndDumpResults(const char actualHash[33])
+{
+    // Compute the hash of the bitmap context pixels
+    fprintf(stdout, "\nActualHash: %s\n", actualHash);
+
+    if (!m_expectedPixelHash.length())
+        return false;
+
+    ASSERT(m_expectedPixelHash.length() == 32);
+    fprintf(stdout, "\nExpectedHash: %s\n", m_expectedPixelHash.c_str());
+
+    // FIXME: Do case insensitive compare.
+    return m_expectedPixelHash == actualHash;
+}
+
 void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "Error")) {

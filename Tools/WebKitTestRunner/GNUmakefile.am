@@ -12,7 +12,7 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/gtk/main.cpp \
 	Tools/WebKitTestRunner/gtk/PlatformWebViewGtk.cpp \
 	Tools/WebKitTestRunner/gtk/TestControllerGtk.cpp \
-	Tools/WebKitTestRunner/gtk/TestInvocationGtk.cpp \
+	Tools/WebKitTestRunner/cairo/TestInvocationCairo.cpp \
 	Tools/WebKitTestRunner/PlatformWebView.h \
 	Tools/WebKitTestRunner/StringFunctions.h \
 	Tools/WebKitTestRunner/TestController.cpp \

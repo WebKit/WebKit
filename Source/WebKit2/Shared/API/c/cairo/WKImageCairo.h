@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +24,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestInvocation_h
-#define TestInvocation_h
+#ifndef WKImageCairo_h
+#define WKImageCairo_h
 
-#include <string>
-#include <WebKit2/WKRetainPtr.h>
-#include <wtf/Noncopyable.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKImage.h>
 
-namespace WTR {
+typedef _cairo_surface cairo_surface_t;
 
-class TestInvocation {
-    WTF_MAKE_NONCOPYABLE(TestInvocation);
-public:
-    TestInvocation(const std::string& pathOrURL);
-    ~TestInvocation();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void setIsPixelTest(const std::string& expectedPixelHash);
-    
-    void invoke();
-    void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
-    WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
+WK_EXPORT cairo_surface_t* WKImageCreateCairoSurface(WKImageRef image);
 
-private:
-    void dump(const char*, bool singleEOF = false);
-    void dumpPixelsAndCompareWithExpected(WKImageRef);
-    bool compareActualHashToExpectedAndDumpResults(const char[33]);
-    
-    WKRetainPtr<WKURLRef> m_url;
-    std::string m_pathOrURL;
-    
-    bool m_dumpPixels;
-    std::string m_expectedPixelHash;
+WK_EXPORT WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKImageOptions options);
 
-    // Invocation state
-    bool m_gotInitialResponse;
-    bool m_gotFinalMessage;
-    bool m_gotRepaint;
-    bool m_error;
-};
+#ifdef __cplusplus
+}
+#endif
 
-} // namespace WTR
-
-#endif // TestInvocation_h
+#endif /* WKImageCairo_h */

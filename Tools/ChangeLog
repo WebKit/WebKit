@@ -1,3 +1,22 @@
+2011-06-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Roben.
+
+        [GTK] Implement pixel dump support for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=58242
+
+        * DumpRenderTree/gtk/GNUmakefile.ImageDiff.am: Added.
+        * GNUmakefile.am: Separate out the ImageDiff bits of the GNUmakefile.
+        * Scripts/old-run-webkit-tests: Update to add support for the GTK+ port.
+        * WebKitTestRunner/GNUmakefile.am: Added Cairo specific files to the build.
+        * WebKitTestRunner/TestInvocation.cpp: Moved this code to the platform-independent
+        file so that we can share it across platforms.
+        (WTR::TestInvocation::compareActualHashToExpectedAndDumpResults):
+        * WebKitTestRunner/TestInvocation.h: Updated method list.
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp: Added Cairo implementation.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Updated to use new helper.
+
 2011-06-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89414.

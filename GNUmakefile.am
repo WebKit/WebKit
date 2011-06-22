@@ -197,6 +197,8 @@ include Source/WebKit/gtk/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
 include Tools/GNUmakefile.am
 include Source/WebKit/gtk/po/GNUmakefile.am
+include Tools/DumpRenderTree/gtk/GNUmakefile.ImageDiff.am
+
 if ENABLE_WEBKIT2
 include Source/WebKit2/GNUmakefile.am
 include Tools/MiniBrowser/gtk/GNUmakefile.am
