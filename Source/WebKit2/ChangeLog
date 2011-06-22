@@ -1,3 +1,23 @@
+2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove Connection::setShouldCloseConnectionOnProcessTermination()
+        https://bugs.webkit.org/show_bug.cgi?id=61627
+
+        Don't use Connection::setShouldCloseConnectionOnProcessTermination() for the
+        GTK port, when the process finishes the connection is closed and
+        the other process is already notified. We still need to monitor
+        the child process so that it doesn't become a zombie when it dntabi
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::childFinishedFunction):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+
 2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

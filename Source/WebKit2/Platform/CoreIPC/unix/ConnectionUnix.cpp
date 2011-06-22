@@ -457,7 +457,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     return true;
 }
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT)
 void Connection::setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier process)
 {
     m_connectionQueue.scheduleWorkOnTermination(process, WorkItem::create(this, &Connection::connectionDidClose));

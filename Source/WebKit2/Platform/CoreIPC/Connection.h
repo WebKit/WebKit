@@ -118,7 +118,7 @@ public:
 
 #if PLATFORM(MAC)
     void setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT) || PLATFORM(GTK)
+#elif PLATFORM(QT)
     void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
 #endif
 
