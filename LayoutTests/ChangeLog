@@ -1,5 +1,16 @@
 2011-06-22  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected results for some new tests from r87779
+
+        These differ from Mac due to some small rounding differences in a path.
+
+        * platform/win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+
+2011-06-22  Adam Roben  <aroben@apple.com>
+
         Skip some flaky animation tests on Windows
 
         See <http://webkit.org/b/62561> and <http://webkit.org/b/62569>.
