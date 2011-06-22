@@ -1,3 +1,10 @@
+2011-06-22  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, check in new Chromium-Leopard baselines.
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/custom/pointer-events-text-expected.png: Added.
+
 2011-06-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, whitespace expectations change to trigger a round of
