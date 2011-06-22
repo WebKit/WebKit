@@ -26,7 +26,7 @@
 #ifndef IntSize_h
 #define IntSize_h
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGSize CGSize;
 #endif
 
@@ -109,7 +109,7 @@ public:
         return IntSize(m_height, m_width);
     }
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
     explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
     operator CGSize() const;
 #endif

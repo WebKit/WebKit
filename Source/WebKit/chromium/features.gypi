@@ -105,7 +105,6 @@
       'enable_svg%': 1,
       'enable_touch_events%': 1,
       'use_skia_gpu%': 0,
-      'use_skia%': 0,
       'enable_touch_icon_loading%' : 0,
       'enable_smooth_scrolling%': 0,
       'enable_css3_flexbox%': 0,
@@ -122,7 +121,7 @@
           'ENABLE_3D_RENDERING=1',
         ],
       }],
-      ['use_accelerated_compositing==1 and (OS!="mac" or use_skia==1)', {
+      ['use_accelerated_compositing==1 and OS!="mac"', {
         'feature_defines': [
           'ENABLE_ACCELERATED_2D_CANVAS=1',
         ],
@@ -148,16 +147,10 @@
         'feature_defines': [
           'WTF_USE_WEBAUDIO_FFMPEG=1',
         ],
-        'use_skia%': 1,
       }],
       ['enable_register_protocol_handler==1', {
         'feature_defines': [
           'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
-        ],
-      }],
-      ['OS=="mac"', {
-        'feature_defines': [
-          'WTF_USE_SKIA_ON_MAC_CHROMIUM=<(use_skia)',
         ],
       }],
       ['enable_smooth_scrolling==1', {

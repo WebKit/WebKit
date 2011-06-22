@@ -29,7 +29,7 @@
 #include "IntPoint.h"
 #include <wtf/Vector.h>
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGRect CGRect;
 #endif
 
@@ -202,7 +202,7 @@ public:
     operator cairo_rectangle_int_t() const;
 #endif
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
     operator CGRect() const;
 #endif
 
@@ -248,7 +248,7 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
     return a.location() != b.location() || a.size() != b.size();
 }
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 IntRect enclosingIntRect(const CGRect&);
 #endif
 

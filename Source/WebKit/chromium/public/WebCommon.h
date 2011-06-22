@@ -39,7 +39,7 @@
 #endif
 
 #if !defined(WEBKIT_USING_SKIA)
-    #if !defined(__APPLE__) || defined(USE_SKIA)
+    #if !defined(__APPLE__)
         #define WEBKIT_USING_SKIA 1
     #else
         #define WEBKIT_USING_SKIA 0

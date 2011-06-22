@@ -684,16 +684,8 @@
                     'include_dirs': [
                         'public/mac',
                     ],
-                    'conditions': [
-                        ['use_skia==0', {
-                            'sources/': [
-                                ['exclude', 'Skia\\.cpp$'],
-                            ],
-                        },{ # use_skia
-                            'sources/': [
-                                ['exclude', 'CG\\.cpp$'],
-                            ],
-                        }],
+                    'sources/': [
+                        ['exclude', 'Skia\\.cpp$'],
                     ],
                 }, { # else: OS!="mac"
                     'sources/': [
