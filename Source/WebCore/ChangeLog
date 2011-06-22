@@ -1,3 +1,18 @@
+2011-06-22  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Restore console messages when restoring inspector state
+        https://bugs.webkit.org/show_bug.cgi?id=63146
+
+        No new tests (no change in functionality, only in display).
+
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::restore):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+
 2011-06-22  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the GTK build after my incomplete rollout of 88332.

@@ -332,6 +332,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     m_domAgent->restore();
     m_resourceAgent->restore();
     m_timelineAgent->restore();
+    m_consoleAgent->restore();
 #if ENABLE(DATABASE)
     m_databaseAgent->restore();
 #endif

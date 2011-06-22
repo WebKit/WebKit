@@ -115,6 +115,15 @@ void InspectorConsoleAgent::reset()
     m_counts.clear();
 }
 
+void InspectorConsoleAgent::restore()
+{
+    if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled)) {
+        ErrorString error;
+        int expiredCount;
+        enable(&error, &expiredCount);
+    }
+}
+
 void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->console();

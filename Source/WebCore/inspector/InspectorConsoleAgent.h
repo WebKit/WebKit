@@ -63,6 +63,7 @@ public:
     void disable(ErrorString*);
     void clearConsoleMessages(ErrorString* error);
     void reset();
+    void restore();
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
 
