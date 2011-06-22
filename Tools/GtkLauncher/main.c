@@ -109,6 +109,7 @@ createWebViewCb(WebKitWebView* webView, WebKitWebFrame* web_frame, GtkWidget* wi
 {
     WebKitWebView *newWebView;
     createWindow(&newWebView);
+    webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
     return newWebView;
 }
 
