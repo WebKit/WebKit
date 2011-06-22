@@ -23,12 +23,6 @@ module html {
         LegacyDefaultOptionalArguments,
     ] HTMLDivElement : HTMLElement {
         attribute [Reflect] DOMString align;
-
-#if defined(ENABLE_SPELLCHECK_API) && ENABLE_SPELLCHECK_API
-        readonly attribute SpellcheckRangeList spellcheckRanges;
-        void addSpellcheckRange(in unsigned long start, in unsigned long length, in [Optional] DOMStringList suggestions, in [Optional] unsigned short options);
-        void removeSpellcheckRange(in SpellcheckRange range);
-#endif
     };
 
 }

@@ -31,12 +31,6 @@ namespace WebCore {
 class BeforeTextInsertedEvent;
 class VisibleSelection;
 
-#if ENABLE(SPELLCHECK_API)
-class DOMStringList;
-class SpellcheckRange;
-class SpellcheckRangeList;
-#endif
-
 class HTMLTextAreaElement : public HTMLTextFormControlElement {
 public:
     static PassRefPtr<HTMLTextAreaElement> create(const QualifiedName&, Document*, HTMLFormElement*);
@@ -65,13 +59,6 @@ public:
     bool lastChangeWasUserEdit() const;
 
     void cacheSelection(int s, int e) { m_cachedSelectionStart = s; m_cachedSelectionEnd = e; };
-
-#if ENABLE(SPELLCHECK_API)
-    PassRefPtr<SpellcheckRangeList> spellcheckRanges();
-    void addSpellcheckRange(unsigned long start, unsigned long length);
-    void addSpellcheckRange(unsigned long start, unsigned long length, RefPtr<DOMStringList>, unsigned short options = 0);
-    void removeSpellcheckRange(RefPtr<SpellcheckRange>);
-#endif
 
 private:
     HTMLTextAreaElement(const QualifiedName&, Document*, HTMLFormElement*);

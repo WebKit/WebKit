@@ -1278,10 +1278,6 @@ storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
 storage/storageinfo-no-callbacks.html
 
-# Spellcheck API is not implemented.
-editing/spelling/spellcheck-api.html
-editing/spelling/spellcheck-api-pixel.html
-
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html

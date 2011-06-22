@@ -34,12 +34,6 @@ class HTMLOptionElement;
 class InputType;
 class KURL;
 
-#if ENABLE(SPELLCHECK_API)
-class DOMStringList;
-class SpellcheckRange;
-class SpellcheckRangeList;
-#endif
-
 class HTMLInputElement : public HTMLTextFormControlElement {
 public:
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
@@ -233,13 +227,6 @@ public:
 
     bool lastChangeWasUserEdit() const;
     void cacheSelection(int start, int end);
-
-#if ENABLE(SPELLCHECK_API)
-    PassRefPtr<SpellcheckRangeList> spellcheckRanges();
-    void addSpellcheckRange(unsigned long start, unsigned long length);
-    void addSpellcheckRange(unsigned long start, unsigned long length, RefPtr<DOMStringList>, unsigned short options = 0);
-    void removeSpellcheckRange(RefPtr<SpellcheckRange>);
-#endif
 
     static const int maximumLength;
 

@@ -73,7 +73,6 @@
       'ENABLE_SANDBOX=1',
       'ENABLE_SHARED_WORKERS=1',
       'ENABLE_SKIA_GPU=<(use_skia_gpu)',
-      'ENABLE_SPELLCHECK_API=1',
       'ENABLE_SVG=<(enable_svg)',
       'ENABLE_SVG_ANIMATION=<(enable_svg)',
       'ENABLE_SVG_AS_IMAGE=<(enable_svg)',

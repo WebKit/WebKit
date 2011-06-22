@@ -109,12 +109,6 @@ module html {
         attribute [Reflect, EnabledAtRuntime] boolean webkitGrammar;
         attribute [DontEnum] EventListener onwebkitspeechchange;
 #endif
-
-#if defined(ENABLE_SPELLCHECK_API) && ENABLE_SPELLCHECK_API
-        readonly attribute SpellcheckRangeList spellcheckRanges;
-        void addSpellcheckRange(in unsigned long start, in unsigned long length, in [Optional] DOMStringList suggestions, in [Optional] unsigned short options);
-        void removeSpellcheckRange(in SpellcheckRange range);
-#endif
     };
 
 }

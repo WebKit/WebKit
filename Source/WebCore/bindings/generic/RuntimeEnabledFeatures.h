@@ -155,11 +155,6 @@ public:
     static void setQuotaEnabled(bool isEnabled) { isQuotaEnabled = isEnabled; }
 #endif
 
-#if ENABLE(SPELLCHECK_API)
-    static bool spellCheckAPIEnabled() { return isSpellCheckAPIEnabled; }
-    static void setSpellCheckAPIEnabled(bool isEnabled) { isSpellCheckAPIEnabled = isEnabled; }
-#endif
-
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -195,10 +190,6 @@ private:
 
 #if ENABLE(QUOTA)
     static bool isQuotaEnabled;
-#endif
-
-#if ENABLE(SPELLCHECK_API)
-    static bool isSpellCheckAPIEnabled;
 #endif
 };
 

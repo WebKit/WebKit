@@ -1,3 +1,34 @@
+2011-06-22  Adam Barth  <abarth@webkit.org>
+
+        Rollout 88332.  As discussed on webkit-dev, we'd like to iterate on
+        both the API and it's implementation a bit.
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::activeMatch):
+        * dom/DocumentMarkerController.cpp:
+        * dom/DocumentMarkerController.h:
+        * html/HTMLDivElement.cpp:
+        * html/HTMLDivElement.h:
+        * html/HTMLDivElement.idl:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+        * html/SpellcheckRange.cpp: Removed.
+        * html/SpellcheckRange.h: Removed.
+        * html/SpellcheckRange.idl: Removed.
+        * html/SpellcheckRangeList.cpp: Removed.
+        * html/SpellcheckRangeList.h: Removed.
+        * html/SpellcheckRangeList.idl: Removed.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::textCheckingLineStyleForMarkerType):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+
 2011-06-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.

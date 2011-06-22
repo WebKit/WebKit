@@ -26,11 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "DOMStringList.h"
-#include "DocumentMarkerController.h"
 #include "HTMLNames.h"
-#include "SpellcheckRange.h"
-#include "SpellcheckRangeList.h"
 
 namespace WebCore {
 
@@ -76,29 +72,5 @@ void HTMLDivElement::parseMappedAttribute(Attribute* attr)
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
-
-#if ENABLE(SPELLCHECK_API)
-PassRefPtr<SpellcheckRangeList> HTMLDivElement::spellcheckRanges()
-{
-    return document()->markers()->userSpellingMarkersForNode(this);
-}
-
-void HTMLDivElement::addSpellcheckRange(unsigned long start, unsigned long length)
-{
-    addSpellcheckRange(start, length, DOMStringList::create(), 0);
-}
-
-void HTMLDivElement::addSpellcheckRange(unsigned long start, unsigned long length, RefPtr<DOMStringList> suggestions, unsigned short options)
-{
-    document()->markers()->addUserSpellingMarker(this, start, length, suggestions, options);
-}
-
-void HTMLDivElement::removeSpellcheckRange(RefPtr<SpellcheckRange> range)
-{
-    if (!range)
-        return;
-    document()->markers()->removeUserSpellingMarker(this, range->start(), range->length());
-}
-#endif
 
 }
