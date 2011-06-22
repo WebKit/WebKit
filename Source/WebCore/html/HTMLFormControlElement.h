@@ -219,7 +219,8 @@ protected:
     void updatePlaceholderVisibility(bool);
 
     virtual void parseMappedAttribute(Attribute*);
-    virtual void setTextAsOfLastFormControlChangeEvent(String text) { m_textAsOfLastFormControlChangeEvent = text; }
+
+    void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
 
 private:
     virtual void dispatchFocusEvent();

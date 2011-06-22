@@ -575,7 +575,7 @@ void HTMLTextFormControlElement::insertedIntoDocument()
 {
     HTMLFormControlElement::insertedIntoDocument();
     String initialValue = value();
-    setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? String("") : initialValue);
+    setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
 }
 
 void HTMLTextFormControlElement::dispatchFocusEvent()
