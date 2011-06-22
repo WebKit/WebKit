@@ -5,3 +5,6 @@
 <FilesMatch ^(localconfig.js|localconfig.rdf)$>
   allow from all
 </FilesMatch>
+
+# Force all connections to HTTPS for 90 days at a time.
+Header set Strict-Transport-Security "max-age=7776000"

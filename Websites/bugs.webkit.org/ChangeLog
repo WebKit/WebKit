@@ -1,3 +1,15 @@
+2011-06-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        bugs.webkit.org should use Strict-Transport-Security
+        https://bugs.webkit.org/show_bug.cgi?id=63097
+
+        Strict-Transport-Security forces all connections to bugs.webkit.org to
+        use HTTPS, preventing sslstrip and other attacks.
+
+        * .htaccess:
+
 2011-05-04  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Adam Roben.
