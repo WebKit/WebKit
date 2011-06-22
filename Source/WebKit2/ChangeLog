@@ -1,3 +1,15 @@
+2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Set up plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=63066
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Force windowless mode for the test plugin because we
+        don't support windowed plugins yet.
+
 2011-06-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

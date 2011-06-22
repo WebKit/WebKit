@@ -1273,6 +1273,9 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
             parameters.values.append("opaque");
         } else if (equalIgnoringCase(parameters.values[wmodeIndex], "window"))
             parameters.values[wmodeIndex] = "opaque";
+    } else if (equalIgnoringCase(mimeType, "application/x-webkit-test-netscape")) {
+        parameters.names.append("windowedPlugin");
+        parameters.values.append("false");
     }
 #endif
 

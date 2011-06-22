@@ -121,8 +121,7 @@ void TestController::initializeInjectedBundlePath()
 
 void TestController::initializeTestPluginDirectory()
 {
-    // This is called after initializeInjectedBundlePath.
-    m_testPluginDirectory = m_injectedBundlePath;
+    m_testPluginDirectory = WKStringCreateWithUTF8CString(qgetenv("QTWEBKIT_PLUGIN_PATH").constData());
 }
 
 void TestController::platformInitializeContext()

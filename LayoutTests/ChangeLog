@@ -1,3 +1,14 @@
+2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Set up plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=63066
+
+        * platform/qt-wk2/Skipped:
+        Unskip passing plugin tests and create a new group for those
+        that still fail for some reason.
+
 2011-06-22  Jessie Berlin  <jberlin@apple.com>
 
         WebKit2 needs layoutTestController.overridePreference.

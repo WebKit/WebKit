@@ -1,3 +1,15 @@
+2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Set up plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=63066
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::initializeTestPluginDirectory):
+        Use the QTWEBKIT_PLUGIN_PATH environment variable as the path
+        of the test plugin like DRT does.
+
 2011-06-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.

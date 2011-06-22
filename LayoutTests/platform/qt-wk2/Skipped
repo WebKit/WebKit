@@ -808,17 +808,6 @@ svg/text/selection-tripleclick.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
-# Qt WebKit2 needs plugins support
-fast/css/acid2-pixel.html
-fast/css/acid2.html
-fast/events/tabindex-focus-blur-all.html
-fast/loader/loadInProgress.html
-http/tests/misc/acid2-pixel.html
-http/tests/misc/acid2.html
-http/tests/plugins
-plugins
-java
-
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
 # Get accelerated compositing working with webkit2
@@ -1500,6 +1489,22 @@ http/tests/security/cross-frame-access-history-get.html
 http/tests/security/cross-frame-access-location-get.html
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
+
+# Unexplained plugin failures
+plugins/document-open.html
+plugins/embed-prefers-plugins-for-images.html
+plugins/geturlnotify-during-document-teardown.html
+plugins/plugin-initiate-popup-window.html
+plugins/mouse-events-fixedpos.html
+plugins/netscape-dom-access.html
+plugins/npp-set-window-called-during-destruction.html
+plugins/open-and-close-window-with-plugin.html
+plugins/plugin-initiatate-popup-window.html
+plugins/plugin-javascript-access.html
+plugins/reloadplugins-and-pages.html
+plugins/destroy-stream-twice.html
+plugins/object-embed-plugin-scripting.html
+plugins/npruntime/npruntime.html
 
 # Unexplained failures
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
