@@ -1,3 +1,12 @@
+2011-06-22  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline tests after http://trac.webkit.org/changeset/89475/
+
+        * platform/chromium-mac-leopard/fast/gradients/gradient-after-transparent-border-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-wide-border-01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-mac/fast/gradients/gradient-after-transparent-border-expected.png:
+
 2011-06-22  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
