@@ -1,3 +1,12 @@
+2011-06-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        video-loop.html sometimes fails on slow system
+        https://bugs.webkit.org/show_bug.cgi?id=63143
+
+        * media/video-loop.html: Don't seek if an exception will be generated.
+
 2011-06-22  Matthew Delaney  <mdelaney@apple.com>
 
         Fixing burning mac SL trees. These tests's expected results needed
