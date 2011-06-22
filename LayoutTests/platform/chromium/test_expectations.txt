@@ -1266,7 +1266,6 @@ BUGCR23488 LEOPARD DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IM
 BUGCR23488 LEOPARD : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 LEOPARD : fast/css/shadow-multiple.html = IMAGE
-BUGCR23488 MAC : fast/forms/search-vertical-alignment.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
 BUGCR23488 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
@@ -1363,7 +1362,7 @@ BUGCR23473 MAC : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR23473 MAC : fast/repaint/reflection-repaint-test.html = IMAGE
 BUGCR23473 MAC : fast/repaint/rel-positioned-inline-with-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/repaint-resized-overflow.html = IMAGE
-BUGCR23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
+//BUGCR23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selected-replaced.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-after-delete.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-clear.html = IMAGE
@@ -1419,9 +1418,6 @@ BUGCR24191 LINUX : fast/css/hsla-color.html = FAIL
 BUGCR5737 LINUX : fast/forms/001.html = FAIL
 BUGCR5737 LINUX : fast/forms/input-first-letter.html = FAIL
 
-// The (x) in type=search inputs appears to be slightly broken.  This test will also need a rebaseline.
-BUGCR20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
-
 // New test. We should fix it, but it doesn't need to block the current release
 BUGCR10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 
@@ -1460,12 +1456,6 @@ BUGCR27486 WIN LINUX : fast/forms/slider-zoomed.html = TEXT
 
 // Mac flaky failures.
 BUGCR10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
-
-// <input type="search">; various failures, some tests may simply need new
-// baselines, others have more problems.
-BUGCR10473 LINUX : fast/forms/placeholder-set-value.html = FAIL
-BUGCR10473 LINUX : fast/forms/search-display-none-cancel-button.html = FAIL
-BUGCR10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 
 // This test isn't just slow -- sometimes it times out indefinitely.
 BUGCR27569 LINUX MAC WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT PASS CRASH
@@ -1936,10 +1926,6 @@ BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 // These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 // They should be moved to the JavaScriptCore test suite.
 BUGCR42875 WONTFIX SKIP : sputnik = TEXT
-
-// WebKit roll 58626:58719
-BUGCR43963 WIN : fast/forms/searchfield-heights.html = IMAGE
-BUGCR43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
 
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
@@ -2568,9 +2554,6 @@ BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 BUGCR62433 MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
 BUGCR62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
 
-// Similar to the above, input-search related failures
-BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
-
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
@@ -2926,7 +2909,6 @@ BUGWK54322 SNOWLEOPARD : fast/forms/file-input-direction.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/forms/input-appearance-bkcolor.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/forms/input-file-re-render.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/forms/preserveFormDuringResidualStyle.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
 //BUGWK54322 SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
@@ -3203,7 +3185,6 @@ BUGCR78998 DEBUG : fast/frames/frame-element-name.html = TEXT PASS
 // Windows 7 failures that need triaging and probably mostly just need
 // new baselines.
 BUGWK58193 WIN7 : fast/css/first-letter-first-line-hover.html = IMAGE+TEXT
-BUGWK58193 WIN7 : fast/forms/search-styled.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
@@ -3285,7 +3266,6 @@ BUGWK58193 WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
 BUGWK58193 WIN7 : svg/custom/circular-marker-reference-4.svg = TEXT
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = TIMEOUT PASS TEXT
 
-BUGWK58193 VISTA : fast/forms/search-styled.html = IMAGE+TEXT
 BUGWK58193 VISTA : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
 BUGWK58193 VISTA : fast/text/international/khmer-selection.html = IMAGE+TEXT
 BUGWK58193 VISTA : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
@@ -3740,6 +3720,37 @@ BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = CRASH TIM
 BUGWK60931 DEBUG :  http/tests/security/aboutBlank/window-open-self-about-blank.html = CRASH
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
+
+// Needs rebaseline.
+BUGWK61415 : fast/css/input-search-padding.html = FAIL
+BUGWK61415 : fast/css/pseudo-cache-stale.html = FAIL
+BUGWK61415 : fast/css/text-input-with-webkit-border-radius.html = FAIL
+BUGWK61415 : fast/forms/box-shadow-override.html = FAIL
+BUGWK61415 : fast/forms/control-restrict-line-height.html = FAIL
+BUGWK61415 : fast/forms/input-appearance-height.html = FAIL
+BUGWK61415 : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
+BUGWK61415 : fast/forms/input-appearance-spinbutton-layer.html = FAIL
+BUGWK61415 : fast/forms/input-appearance-spinbutton-visibility.html = FAIL
+BUGWK61415 : fast/forms/placeholder-position.html = FAIL
+BUGWK61415 : fast/forms/placeholder-pseudo-style.html = FAIL
+BUGWK61415 : fast/forms/placeholder-set-value.html = FAIL
+BUGWK61415 : fast/forms/search-cancel-button-style-sharing.html = FAIL
+BUGWK61415 : fast/forms/search-display-none-cancel-button.html = FAIL
+BUGWK61415 : fast/forms/search-placeholder-value-changed.html = FAIL
+BUGWK61415 : fast/forms/search-rtl.html = FAIL
+BUGWK61415 : fast/forms/search-styled.html = FAIL
+BUGWK61415 : fast/forms/search-transformed.html = FAIL
+BUGWK61415 : fast/forms/search-vertical-alignment.html = FAIL
+BUGWK61415 : fast/forms/search-zoomed.html = FAIL
+BUGWK61415 : fast/forms/searchfield-heights.html = FAIL
+// Do not update an image for search-field-cancel.html.
+BUGWK61415 : fast/repaint/search-field-cancel.html = FAIL
+BUGWK61415 : fast/replaced/width100percent-searchfield.html = FAIL
+BUGWK61415 WIN MAC : fast/speech/input-appearance-numberandspeech.html = FAIL
+BUGWK61415 WIN MAC : fast/speech/input-appearance-speechbutton.html = FAIL
+BUGWK61415 : fast/table/colspanMinWidth-vertical.html = FAIL
+BUGWK61415 : platform/mac/fast/forms/input-appearance-spinbutton-up.html = FAIL
+BUGWK61415 : platform/mac/fast/forms/input-appearance-spinbutton.html = FAIL
 
 // Flaky since added by r86478
 BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT

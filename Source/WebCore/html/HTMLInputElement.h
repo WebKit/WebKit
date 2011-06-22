@@ -114,6 +114,7 @@ public:
     bool isSpeechEnabled() const;
 #endif
 
+    HTMLElement* containerElement() const;
     virtual HTMLElement* innerTextElement() const;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
