@@ -65,7 +65,18 @@ public:
     }
 
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))
-    Position(PassRefPtr<Node> anchorNode, int offset);
+    class LegacyEditingOffset {
+    public:
+        int value() const { return m_offset; }
+
+    private:
+        explicit LegacyEditingOffset(int offset) : m_offset(offset) { }
+
+        friend Position createLegacyEditingPosition(PassRefPtr<Node>, int offset);
+
+        int m_offset;
+    };
+    Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset);
 
     // For creating before/after positions:
     Position(PassRefPtr<Node> anchorNode, AnchorType);
@@ -192,6 +203,11 @@ private:
     unsigned m_anchorType : 2;
     bool m_isLegacyEditingPosition : 1;
 };
+
+inline Position createLegacyEditingPosition(PassRefPtr<Node> node, int offset)
+{
+    return Position(node, Position::LegacyEditingOffset(offset));
+}
 
 inline bool operator==(const Position& a, const Position& b)
 {

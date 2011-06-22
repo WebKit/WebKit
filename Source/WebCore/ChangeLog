@@ -1,3 +1,57 @@
+2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make instantiation of legacy editing position more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=63037
+
+        Replaced the constructor of Position class that used to instantiate a legacy editing position
+        by a function called createLegacyEditingPosition.
+
+        * WebCore.exp.in: Removed the constructor from the list.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData): Calls createLegacyEditingPosition.
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): No longer uses Positions to instantiate a range.
+        * dom/Position.cpp:
+        (WebCore::Position::Position): New constructor takes LegacyEditingOffset, which can only be instantiated
+        by createLegacyEditingPosition.
+        (WebCore::Position::previous): Calls createLegacyEditingPosition.
+        (WebCore::Position::next): Ditto.
+        (WebCore::Position::upstream): Ditto.
+        (WebCore::Position::downstream): Ditto.
+        * dom/Position.h: Added new Position::LegacyEditingOffset class to hide the legacy constructor from the world.
+        (WebCore::Position::LegacyEditingOffset::value): Added.
+        (WebCore::Position::LegacyEditingOffset::LegacyEditingOffset): Added.
+        (WebCore::createLegacyEditingPosition): Added.
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position): Calls createLegacyEditingPosition.
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::toPosition): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performTrivialReplace): Instantiates new Position instead of old one; this is always
+        safe since the anchor node is always a text node.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate): Calls createLegacyEditingPosition.
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate): Ditto.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::renderedText): Ditto.
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary): Ditto.
+        (WebCore::previousLinePosition): Ditto.
+        (WebCore::nextLinePosition): Ditto.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse): Ditto.
+        (WebCore::DOMSelection::setBaseAndExtent): Ditto.
+        (WebCore::DOMSelection::setPosition): Ditto.
+        (WebCore::DOMSelection::extend): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForBox): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint): Calls Position() instead of Position(0, 0).
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition): Calls createLegacyEditingPosition.s
+
 2011-06-22  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

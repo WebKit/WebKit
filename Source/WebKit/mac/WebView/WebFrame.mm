@@ -740,8 +740,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     
     _private->coreFrame->document()->updateLayoutIgnorePendingStylesheets();
 
-    Position start(startContainer, [proposedRange startOffset]);
-    Position end(endContainer, [proposedRange endOffset]);
+    Position start = Position(startContainer, [proposedRange startOffset], Position::PositionIsOffsetInAnchor);
+    Position end = Position(endContainer, [proposedRange endOffset], Position::PositionIsOffsetInAnchor);
     Position newStart = start.upstream().leadingWhitespacePosition(DOWNSTREAM, true);
     if (newStart.isNull())
         newStart = start;
@@ -1104,8 +1104,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Node *startContainer = core([rangeToReplace startContainer]);
     Node *endContainer = core([rangeToReplace endContainer]);
 
-    Position startPos(startContainer, [rangeToReplace startOffset]);
-    Position endPos(endContainer, [rangeToReplace endOffset]);
+    Position startPos(startContainer, [rangeToReplace startOffset], Position::PositionIsOffsetInAnchor);
+    Position endPos(endContainer, [rangeToReplace endOffset], Position::PositionIsOffsetInAnchor);
 
     VisiblePosition startVisiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
     VisiblePosition endVisiblePos = VisiblePosition(endPos, VP_DEFAULT_AFFINITY);

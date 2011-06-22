@@ -46,7 +46,7 @@ PositionIterator::operator Position() const
     }
     if (m_anchorNode->hasChildNodes())
         return lastPositionInOrAfterNode(m_anchorNode);
-    return Position(m_anchorNode, m_offsetInAnchor);
+    return createLegacyEditingPosition(m_anchorNode, m_offsetInAnchor);
 }
 
 void PositionIterator::increment()

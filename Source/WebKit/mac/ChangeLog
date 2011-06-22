@@ -1,3 +1,16 @@
+2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make instantiation of legacy editing position more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=63037
+
+        Create new positions since we can't create a legacy editing position outside of WebCore anymore.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _smartDeleteRangeForProposedRange:]): Calls createLegacyEditingPosition.
+        (-[WebFrame _smartInsertForString:replacingRange:beforeString:afterString:]): Ditto.
+
 2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

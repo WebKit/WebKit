@@ -4090,13 +4090,13 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
         return Position();
 
     if (!box->renderer()->node())
-        return Position(node(), start ? caretMinOffset() : caretMaxOffset());
+        return createLegacyEditingPosition(node(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!box->isInlineTextBox())
-        return Position(box->renderer()->node(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
+        return createLegacyEditingPosition(box->renderer()->node(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
 
     InlineTextBox *textBox = static_cast<InlineTextBox *>(box);
-    return Position(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
+    return createLegacyEditingPosition(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
 // FIXME: This function should go on RenderObject as an instance method. Then

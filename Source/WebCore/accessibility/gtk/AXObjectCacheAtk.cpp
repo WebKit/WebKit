@@ -187,7 +187,7 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
         return;
 
     Node* node = object->node();
-    RefPtr<Range> range = Range::create(node->document(),  Position(node->parentNode(), 0), Position(node, 0));
+    RefPtr<Range> range = Range::create(node->document(), node->parentNode(), 0, node, 0);
     emitTextChanged(object, textChange, offset + TextIterator::rangeLength(range.get()), count);
 }
 

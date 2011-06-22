@@ -3097,7 +3097,7 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
-        return createVisiblePosition(node() ? firstPositionInOrBeforeNode(node()) : Position(0, 0));
+        return createVisiblePosition(node() ? firstPositionInOrBeforeNode(node()) : Position());
 
     int xPos = point.x();
     int yPos = point.y();

@@ -59,7 +59,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         return VisiblePosition();
 
     Document* d = boundary->document();
-    Position start = Position(boundary, 0).parentAnchoredEquivalent();
+    Position start = createLegacyEditingPosition(boundary, 0).parentAnchoredEquivalent();
     Position end = pos.parentAnchoredEquivalent();
     RefPtr<Range> searchRange = Range::create(d);
     
@@ -123,7 +123,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     Node* node = it.range()->startContainer(ec);
     if ((node->isTextNode() && static_cast<int>(next) <= node->maxCharacterOffset()) || (node->renderer() && node->renderer()->isBR() && !next))
         // The next variable contains a usable index into a text node
-        return VisiblePosition(Position(node, next), DOWNSTREAM);
+        return VisiblePosition(createLegacyEditingPosition(node, next), DOWNSTREAM);
 
     // Use the character iterator to translate the next value into a DOM position.
     BackwardsCharacterIterator charIt(searchRange.get());
@@ -555,12 +555,12 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         while (n) {
             if (highestEditableRoot(firstPositionInOrBeforeNode(n)) != highestRoot)
                 break;
-            Position pos(n, caretMinOffset(n));
+            Position pos = createLegacyEditingPosition(n, caretMinOffset(n));
             if (pos.isCandidate()) {
                 RenderObject* o = n->renderer();
                 ASSERT(o);
                 if (canHaveCursor(o)) {
-                    Position maxPos(n, caretMaxOffset(n));
+                    Position maxPos = createLegacyEditingPosition(n, caretMaxOffset(n));
                     maxPos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
                     if (box) {
                         // previous root line box found
@@ -660,7 +660,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lin
         while (n) {
             if (highestEditableRoot(firstPositionInOrBeforeNode(n)) != highestRoot)
                 break;
-            Position pos(n, caretMinOffset(n));
+            Position pos = createLegacyEditingPosition(n, caretMinOffset(n));
             if (pos.isCandidate()) {
                 ASSERT(n->renderer());
                 pos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);

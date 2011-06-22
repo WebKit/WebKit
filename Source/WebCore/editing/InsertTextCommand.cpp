@@ -87,7 +87,7 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
 
     replaceTextInNode(static_cast<Text*>(start.containerNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
 
-    Position endPosition(start.containerNode(), start.offsetInContainerNode() + text.length());
+    Position endPosition(start.containerNode(), start.offsetInContainerNode() + text.length(), Position::PositionIsOffsetInAnchor);
 
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.

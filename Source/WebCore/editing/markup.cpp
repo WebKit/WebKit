@@ -219,8 +219,8 @@ String StyledMarkupAccumulator::renderedText(const Node* node, const Range* rang
     if (range && node == range->endContainer(ec))
         endOffset = range->endOffset(ec);
 
-    Position start(const_cast<Node*>(node), startOffset);
-    Position end(const_cast<Node*>(node), endOffset);
+    Position start = createLegacyEditingPosition(const_cast<Node*>(node), startOffset);
+    Position end = createLegacyEditingPosition(const_cast<Node*>(node), endOffset);
     return plainText(Range::create(node->document(), start, end).get());
 }
 

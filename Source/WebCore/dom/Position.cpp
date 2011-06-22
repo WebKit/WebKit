@@ -74,9 +74,9 @@ static Node* previousRenderedEditable(Node* node)
     return 0;
 }
 
-Position::Position(PassRefPtr<Node> anchorNode, int offset)
+Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
     : m_anchorNode(anchorNode)
-    , m_offset(offset)
+    , m_offset(offset.value())
     , m_anchorType(anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset))
     , m_isLegacyEditingPosition(true)
 {
@@ -265,11 +265,11 @@ Position Position::previous(PositionMoveType moveType) const
         //      Going from 1 to 0 is correct.
         switch (moveType) {
         case CodePoint:
-            return Position(n, o - 1);
+            return createLegacyEditingPosition(n, o - 1);
         case Character:
-            return Position(n, uncheckedPreviousOffset(n, o));
+            return createLegacyEditingPosition(n, uncheckedPreviousOffset(n, o));
         case BackwardDeletion:
-            return Position(n, uncheckedPreviousOffsetForBackwardDeletion(n, o));
+            return createLegacyEditingPosition(n, uncheckedPreviousOffsetForBackwardDeletion(n, o));
         }
     }
 
@@ -277,7 +277,7 @@ Position Position::previous(PositionMoveType moveType) const
     if (!parent)
         return *this;
 
-    return Position(parent, n->nodeIndex());
+    return createLegacyEditingPosition(parent, n->nodeIndex());
 }
 
 Position Position::next(PositionMoveType moveType) const
@@ -302,14 +302,14 @@ Position Position::next(PositionMoveType moveType) const
         //      Going forward one character at a time is correct.
         //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
         //      Going from 0 to 1 is correct.
-        return Position(n, (moveType == Character) ? uncheckedNextOffset(n, o) : o + 1);
+        return createLegacyEditingPosition(n, (moveType == Character) ? uncheckedNextOffset(n, o) : o + 1);
     }
 
     ContainerNode* parent = n->nonShadowBoundaryParentNode();
     if (!parent)
         return *this;
 
-    return Position(parent, n->nodeIndex() + 1);
+    return createLegacyEditingPosition(parent, n->nodeIndex() + 1);
 }
 
 int Position::uncheckedPreviousOffset(const Node* n, int current)
@@ -529,7 +529,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
     // iterate backward from there, looking for a qualified position
     Node* boundary = enclosingVisualBoundary(startNode);
     // FIXME: PositionIterator should respect Before and After positions.
-    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? Position(m_anchorNode, caretMaxOffset(m_anchorNode.get())) : *this;
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? createLegacyEditingPosition(m_anchorNode.get(), caretMaxOffset(m_anchorNode.get())) : *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->rendererIsEditable();
     Node* lastNode = startNode;
@@ -589,7 +589,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
                 // render tree which can have a different length due to case transformation.
                 // Until we resolve that, disable this so we can run the layout tests!
                 //ASSERT(currentOffset >= renderer->caretMaxOffset());
-                return Position(currentNode, renderer->caretMaxOffset());
+                return createLegacyEditingPosition(currentNode, renderer->caretMaxOffset());
             }
 
             unsigned textOffset = currentPos.offsetInLeafNode();
@@ -651,7 +651,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
     // iterate forward from there, looking for a qualified position
     Node* boundary = enclosingVisualBoundary(startNode);
     // FIXME: PositionIterator should respect Before and After positions.
-    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? Position(m_anchorNode, caretMaxOffset(m_anchorNode.get())) : *this;
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? createLegacyEditingPosition(m_anchorNode.get(), caretMaxOffset(m_anchorNode.get())) : *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->rendererIsEditable();
     Node* lastNode = startNode;
@@ -704,7 +704,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         // Return position before tables and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || isTableElement(currentNode)) {
             if (currentPos.offsetInLeafNode() <= renderer->caretMinOffset())
-                return Position(currentNode, renderer->caretMinOffset());
+                return createLegacyEditingPosition(currentNode, renderer->caretMinOffset());
             continue;
         }
 
@@ -712,7 +712,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (renderer->isText() && toRenderText(renderer)->firstTextBox()) {
             if (currentNode != startNode) {
                 ASSERT(currentPos.atStartOfNode());
-                return Position(currentNode, renderer->caretMinOffset());
+                return createLegacyEditingPosition(currentNode, renderer->caretMinOffset());
             }
 
             unsigned textOffset = currentPos.offsetInLeafNode();
