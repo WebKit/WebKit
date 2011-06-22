@@ -1,5 +1,12 @@
 2011-06-21  Kent Tamura  <tkent@chromium.org>
 
+        [Win][Mac] Correct an accidental change in r89410.
+
+        * platform/mac/media/media-controls-clone-expected.txt:
+        * platform/win/media/media-controls-clone-expected.txt: Copied from LayoutTests/platform/mac/media/media-controls-clone-expected.txt.
+
+2011-06-21  Kent Tamura  <tkent@chromium.org>
+
         [Win][GTK] Test expectation update for r89407.
 
         * platform/gtk/fast/css/input-search-padding-expected.txt:
