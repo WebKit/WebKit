@@ -302,19 +302,19 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (385.00,345.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (390,319) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (390.00,335.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (390.00,335.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (442,306) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (442.00,345.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (447,319) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (447.00,335.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (447.00,335.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (499,306) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (499.00,345.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (504,319) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (504.00,335.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (504.00,335.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (0,386) size 17x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 17x22
           chunk 1 text run 1 at (0.00,402.00) startOffset 0 endOffset 4 width 17.00: "fill"
@@ -347,25 +347,25 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (328.00,402.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (333,376) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (333.00,392.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (333.00,392.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (385,363) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (385.00,402.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (390,376) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (390.00,392.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (390.00,392.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (442,363) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (442.00,402.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (447,376) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (447.00,392.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (447.00,392.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (499,363) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (499.00,402.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (504,376) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (504.00,392.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (504.00,392.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (0,443) size 42x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 42x22
           chunk 1 text run 1 at (0.00,459.00) startOffset 0 endOffset 6 width 42.00: "stroke"
@@ -398,25 +398,25 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (328.00,459.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (333,433) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (333.00,449.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (333.00,449.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (385,420) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (385.00,459.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (390,433) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (390.00,449.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (390.00,449.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (442,420) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (442.00,459.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (447,433) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (447.00,449.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (447.00,449.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (499,420) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (499.00,459.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (504,433) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (504.00,449.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (504.00,449.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (0,500) size 16x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 16x22
           chunk 1 text run 1 at (0.00,516.00) startOffset 0 endOffset 3 width 16.00: "all"
@@ -449,25 +449,25 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (328.00,516.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (333,490) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (333.00,506.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (333.00,506.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (385,477) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (385.00,516.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (390,490) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (390.00,506.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (390.00,506.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (442,477) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (442.00,516.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (447,490) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (447.00,506.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (447.00,506.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (499,477) size 20x53 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x53
           chunk 1 text run 1 at (499.00,516.00) startOffset 0 endOffset 1 width 20.00: "#"
       RenderSVGText {text} at (504,490) size 29x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 29x22
-          chunk 1 text run 1 at (504.00,506.00) startOffset 0 endOffset 4 width 29.00: "miss"
+          chunk 1 text run 1 at (504.00,506.00) startOffset 0 endOffset 3 width 29.00: "HIT"
       RenderSVGText {text} at (0,557) size 33x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 33x22
           chunk 1 text run 1 at (0.00,573.00) startOffset 0 endOffset 4 width 33.00: "none"

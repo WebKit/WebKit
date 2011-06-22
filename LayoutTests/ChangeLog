@@ -1,3 +1,12 @@
+2011-06-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Update platform specific exprected results after r89367 and r89381.
+
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        * platform/qt/svg/custom/pointer-events-text-expected.png:
+        * platform/qt/svg/custom/pointer-events-text-expected.txt:
+
 2011-06-22  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, fix a syntax error in the last change in test_expectations.txt.
