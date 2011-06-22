@@ -87,6 +87,9 @@ BUGCR24182 WIN RELEASE SLOW : http/tests/loading/onload-vs-immediate-refresh.pl 
 BUGCR24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 BUGCR24182 WIN DEBUG SLOW : fast/parser/block-nesting-cap.html = PASS
 
+BUGCR24182 DEBUG SLOW : perf/array-push-pop.html = PASS
+BUGCR24182 SLOW : perf/array-reverse.html = PASS
+
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
 BUGCR27335 XP RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
 BUGCR27335 XP DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
@@ -2252,10 +2255,12 @@ BUGCR52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PAS
 // Started to crash around Chromium r56408.
 BUGCR52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
-BUGWK44199 : perf = PASS TEXT
-BUGWK44199 BUGWK63057 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT MISSING
-BUGWK44199 BUGWK63057 RELEASE : perf/array-binary-search.html = PASS TEXT MISSING
-BUGWK44199 DEBUG : perf/class-list-remove.html = PASS TEXT TIMEOUT
+BUGCR66466 SLOW : perf/array-nested-loop.html = PASS TEXT
+BUGWK44199 SLOW : perf/class-list-remove.html = PASS TEXT
+BUGWK44199 : perf/clone-with-focus.html = PASS TEXT TIMEOUT
+BUGWK44199 SLOW : perf/mouse-event.html = PASS TEXT
+BUGWK44199 SLOW : perf/typing-at-end-of-line.html = PASS TEXT
+BUGWK44199 BUGWK63057 : perf/array-binary-search.html = PASS TEXT TIMEOUT MISSING
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 MAC WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
@@ -2660,8 +2665,6 @@ BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 // Needs V8 investigation.  Skipped due to concern that this may be corrupting
 // memory and thus leading to unpredictable results.
 BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = TEXT CRASH TIMEOUT
-
-BUGCR66466 MAC WIN DEBUG SLOW : perf/array-nested-loop.html = PASS TEXT
 
 BUGCR66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
@@ -3537,14 +3540,11 @@ BUGCASEQ LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 
-BUGDPRANKE LINUX DEBUG : perf/array-nested-loop.html = TEXT TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH PASS
 
 // flakiness
 BUGDPRANKE DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
 BUGDPRANKE LINUX RELEASE : http/tests/navigation/forward-to-fragment-fires-onload.html = TIMEOUT PASS
-BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
-BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 

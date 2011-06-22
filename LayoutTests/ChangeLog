@@ -1,3 +1,10 @@
+2011-06-22  Ojan Vafai  <ojan@chromium.org>
+
+        Update listing for perf tests to list each individual test.
+        A number of the tests in this directory are not flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-22  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed, baseline for new test added in http://trac.webkit.org/changeset/89490
