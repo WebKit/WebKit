@@ -73,25 +73,16 @@
 #define WTF_ANNOTATE_HAPPENS_BEFORE(address) WTFAnnotateHappensBefore(__FILE__, __LINE__, address)
 #define WTF_ANNOTATE_HAPPENS_AFTER(address) WTFAnnotateHappensAfter(__FILE__, __LINE__, address)
 
-/* The dynamic annotations must be weak symbols to be interceptable by a linker. */
-#if defined(__GNUC__)
-#define WTF_DYNAMIC_ANNOTATIONS_ATTRIBUTE_WEAK __attribute__((weak))
-#else
-#define WTF_DYNAMIC_ANNOTATIONS_ATTRIBUTE_WEAK
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 /* Don't use these directly, use the above macros instead. */
-void WTFAnnotateBenignRaceSized(const char* file, int line, const volatile void* memory, long size, const char* description) WTF_DYNAMIC_ANNOTATIONS_ATTRIBUTE_WEAK;
-void WTFAnnotateHappensBefore(const char* file, int line, const volatile void* address) WTF_DYNAMIC_ANNOTATIONS_ATTRIBUTE_WEAK;
-void WTFAnnotateHappensAfter(const char* file, int line, const volatile void* address) WTF_DYNAMIC_ANNOTATIONS_ATTRIBUTE_WEAK;
+void WTFAnnotateBenignRaceSized(const char* file, int line, const volatile void* memory, long size, const char* description);
+void WTFAnnotateHappensBefore(const char* file, int line, const volatile void* address);
+void WTFAnnotateHappensAfter(const char* file, int line, const volatile void* address);
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
-#undef WTF_DYNAMIC_ANNOTATIONS_ATTRIBUTE_WEAK
 
 #else // USE(DYNAMIC_ANNOTATIONS)
 /* These macros are empty when dynamic annotations are not enabled so you can

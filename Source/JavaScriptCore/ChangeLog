@@ -1,3 +1,17 @@
+2011-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89547.
+        http://trac.webkit.org/changeset/89547
+        https://bugs.webkit.org/show_bug.cgi?id=63252
+
+        "Chrmium crash on start" (Requested by yurys on #webkit).
+
+        * wtf/DynamicAnnotations.cpp:
+        (WTFAnnotateBenignRaceSized):
+        (WTFAnnotateHappensBefore):
+        (WTFAnnotateHappensAfter):
+        * wtf/DynamicAnnotations.h:
+
 2011-06-23  Timur Iskhodzhanov  <timurrrr@google.com>
 
         Reviewed by David Levin.

@@ -29,22 +29,7 @@
 #include "DynamicAnnotations.h"
 
 #if USE(DYNAMIC_ANNOTATIONS)
-
-/* Identical code folding(-Wl,--icf=all) countermeasures.
- * This makes all Annotate* functions different, which prevents the linker from folding them.
- */
-#ifdef __COUNTER__
-#define DYNAMIC_ANNOTATIONS_IMPL \
-    volatile short lineno = (__LINE__ << 8) + __COUNTER__; \
-    (void)lineno;
-#else
-#define DYNAMIC_ANNOTATIONS_IMPL \
-    volatile short lineno = (__LINE__ << 8); \
-    (void)lineno;
-#endif
-
-void WTFAnnotateBenignRaceSized(const char*, int, const volatile void*, long, const char*) { DYNAMIC_ANNOTATIONS_IMPL }
-void WTFAnnotateHappensBefore(const char*, int, const volatile void*) { DYNAMIC_ANNOTATIONS_IMPL }
-void WTFAnnotateHappensAfter(const char*, int, const volatile void*) { DYNAMIC_ANNOTATIONS_IMPL }
+void WTFAnnotateBenignRaceSized(const char*, int, const volatile void*, long, const char*) { }
+void WTFAnnotateHappensBefore(const char*, int, const volatile void*) { }
+void WTFAnnotateHappensAfter(const char*, int, const volatile void*) { }
 #endif // USE(DYNAMIC_ANNOTATIONS)
-
