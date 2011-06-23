@@ -41,4 +41,13 @@ File* FileList::item(unsigned index) const
     return m_files[index].get();
 }
 
+Vector<String> FileList::filenames() const
+{
+    Vector<String> filenames;
+    for (unsigned i = 0; i < m_files.size(); ++i)
+        filenames.append(m_files[i]->path());
+
+    return filenames;
+}
+
 } // namespace WebCore

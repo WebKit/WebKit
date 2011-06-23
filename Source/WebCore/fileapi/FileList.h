@@ -47,6 +47,7 @@ namespace WebCore {
         bool isEmpty() const { return m_files.isEmpty(); }
         void clear() { m_files.clear(); }
         void append(PassRefPtr<File> file) { m_files.append(file); }
+        Vector<String> filenames() const;
 
     private:
         FileList();

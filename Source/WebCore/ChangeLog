@@ -1,3 +1,20 @@
+2011-06-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add a helper function to FileList to retrieve a list of filenames.
+        https://bugs.webkit.org/show_bug.cgi?id=63222
+
+        Refactoring, covered by existing tests.
+
+        * fileapi/FileList.cpp:
+        (WebCore::FileList::filenames): Added.
+        * fileapi/FileList.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl): Changed to use newly added helper.
+        (WebCore::RenderFileUploadControl::click): Ditto.
+        (WebCore::RenderFileUploadControl::fileTextValue): Ditto.
+
 2011-06-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.

@@ -54,20 +54,12 @@ const int iconFilenameSpacing = 2;
 const int defaultWidthNumChars = 34;
 const int buttonShadowHeight = 2;
 
-static void filenamesFromFileList(const FileList* list, Vector<String>& filenames)
-{
-    unsigned length = list ? list->length() : 0;
-    for (unsigned i = 0; i < length; ++i)
-        filenames.append(list->item(i)->path());
-}
-
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
     , m_iconLoader(FileIconLoader::create(this))
 {
-    Vector<String> filenames;
-    filenamesFromFileList(input->files(), filenames);
-    requestIcon(filenames);
+    ASSERT(input->files());
+    requestIcon(input->files()->filenames());
 }
 
 RenderFileUploadControl::~RenderFileUploadControl()
@@ -133,7 +125,8 @@ void RenderFileUploadControl::click()
         settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
 #endif
         settings.acceptTypes = input->accept();
-        filenamesFromFileList(input->files(), settings.selectedFiles);
+        ASSERT(input->files());
+        settings.selectedFiles = input->files()->filenames();
         chrome->runOpenPanel(frame(), newFileChooser(settings));
     }
 }
@@ -328,9 +321,9 @@ String RenderFileUploadControl::buttonValue()
 
 String RenderFileUploadControl::fileTextValue() const
 {
-    Vector<String> filenames;
-    filenamesFromFileList(static_cast<HTMLInputElement*>(node())->files(), filenames);
-    return theme()->fileListNameForWidth(filenames, style()->font(), maxFilenameWidth());
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    ASSERT(input->files());
+    return theme()->fileListNameForWidth(input->files()->filenames(), style()->font(), maxFilenameWidth());
 }
     
 } // namespace WebCore
