@@ -1,3 +1,15 @@
+2011-06-23  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        input/textarea onchange doesn't fire if value is set in key listener
+        https://bugs.webkit.org/show_bug.cgi?id=63092
+
+        Add test for text field onchange when setting the value in a key listener.
+
+        * fast/events/onchange-setvalue-expected.txt: Added.
+        * fast/events/onchange-setvalue.html: Added.
+
 2011-06-23  Wyatt Carss  <wcarss@chromium.org>
 
         Reviewed by Ryosuke Niwa.

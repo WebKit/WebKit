@@ -1,3 +1,24 @@
+2011-06-23  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        input/textarea onchange doesn't fire if value is set in key listener
+        https://bugs.webkit.org/show_bug.cgi?id=63092
+
+        Change setValue implementation of HTMLInputElement and HTMLTextAreaElement to
+        not call setTextAsOfLastFormControlChangeEvent unless the value truly changed.
+        Thus element.value = element.value will no longer reset the state 
+        m_textAsOfLastFormControlChangeEvent field and suppress the change event.
+
+        Test: fast/events/onchange-setvalue.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue):
+        (WebCore::HTMLTextAreaElement::setNonDirtyValue):
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+
 2011-06-23  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Eric Carlson.

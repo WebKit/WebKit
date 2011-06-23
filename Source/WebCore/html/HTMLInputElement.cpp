@@ -976,19 +976,22 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     if (!m_inputType->canSetValue(value))
         return;
 
+    String sanitizedValue = sanitizeValue(value);
+    bool valueChanged = sanitizedValue != this->value();
+
     setFormControlValueMatchesRenderer(false);
     if (m_inputType->storesValueSeparateFromAttribute()) {
         if (files())
             files()->clear();
         else {
-            m_valueIfDirty = sanitizeValue(value);
+            m_valueIfDirty = sanitizedValue;
             m_wasModifiedByUser = sendChangeEvent;
             if (isTextField())
                 updatePlaceholderVisibility(false);
         }
         setNeedsStyleRecalc();
     } else
-        setAttribute(valueAttr, sanitizeValue(value));
+        setAttribute(valueAttr, sanitizedValue);
 
     setNeedsValidityCheck();
 
@@ -1000,6 +1003,10 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
             cacheSelection(max, max);
         m_suggestedValue = String();
     }
+
+    if (!valueChanged)
+        return;
+    
     m_inputType->valueChanged();
 
     if (sendChangeEvent) {
