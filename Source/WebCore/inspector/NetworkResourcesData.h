@@ -56,10 +56,10 @@ public:
         String loaderId() const { return m_loaderId; }
 
         String frameId() const { return m_frameId; }
-        void setFrameId(String frameId) { m_frameId = frameId; }
+        void setFrameId(const String& frameId) { m_frameId = frameId; }
 
         String url() const { return m_url; }
-        void setUrl(String url) { m_url = url; }
+        void setUrl(const String& url) { m_url = url; }
 
         bool hasContent() const { return m_hasContent; }
         String content();
@@ -76,7 +76,7 @@ public:
         void setBuffer(PassRefPtr<SharedBuffer> buffer) { m_buffer = buffer; }
 
         String textEncodingName() const { return m_textEncodingName; }
-        void setTextEncodingName(String textEncodingName) { m_textEncodingName = textEncodingName; }
+        void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
 
         CachedResource* cachedResource() const { return m_cachedResource.get(); }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
