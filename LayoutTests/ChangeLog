@@ -1,3 +1,9 @@
+2011-06-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add new "CONSOLE MESSAGE: line 0: SVG animation pause API missing!" tests to the WK2 skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: rebaseline chromium expectation.

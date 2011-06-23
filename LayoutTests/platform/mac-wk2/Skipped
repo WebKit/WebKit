@@ -466,6 +466,8 @@ svg/animations/svglength-animation-values.html
 svg/animations/svgnumber-animation-1.html
 svg/animations/svgnumber-animation-2.html
 svg/animations/svgnumber-animation-3.html
+svg/animations/svgpointlist-animation-1.html
+svg/animations/svgpointlist-animation-2.html
 svg/animations/svgrect-animation-1.html
 svg/animations/svgrect-animation-2.html
 svg/animations/svgstring-animation-fallback-to-discrete.html
