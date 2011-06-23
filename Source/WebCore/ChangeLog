@@ -1,5 +1,13 @@
 2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
 
+        Another unreviewed build fix after r89472.
+
+        No new tests, just a build fix.
+
+        * rendering/svg/SVGResources.cpp:
+
+2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
+
         Unreviewed build fix after r89472.
 
         No new tests, just a build fix.

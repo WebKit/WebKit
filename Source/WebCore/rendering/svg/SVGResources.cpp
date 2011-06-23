@@ -33,6 +33,10 @@
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 SVGResources::SVGResources()
