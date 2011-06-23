@@ -3,6 +3,17 @@
         http/tests/multipart/win-boundary-crash.html flakey.
         https://bugs.webkit.org/show_bug.cgi?id=63268
 
+        Disable the test. I was wrong in thinking that the win skipped list inherits from mac.
+
+        * http/tests/multipart/win-boundary-crash.html: Removed.
+        * http/tests/multipart/win-boundary-crash.html-disabled: Copied from LayoutTests/http/tests/multipart/win-boundary-crash.html.
+        * platform/mac/Skipped:
+
+2011-06-23  Jessie Berlin  <jberlin@apple.com>
+
+        http/tests/multipart/win-boundary-crash.html flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=63268
+
         The flakiness is happening on mac as well, move it to the mac skipped list.
 
         * platform/mac/Skipped:

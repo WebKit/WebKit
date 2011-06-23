@@ -234,9 +234,6 @@ perf/
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html
 
-# Flakey http://webkit.org/b/63268
-http/tests/multipart/win-boundary-crash.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
 inspector/debugger/event-listener-breakpoints.html
