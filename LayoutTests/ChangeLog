@@ -1,3 +1,16 @@
+2011-06-23  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2 Tests] svg/zoom/page/zoom-replaced-intrinsic-ratio-001.html failing since
+        introduction in r88913.
+        https://bugs.webkit.org/show_bug.cgi?id=63277
+
+        Add the (failing?) expected results in order to get the WK2 bots green.
+
+        * platform/mac-wk2/svg: Added.
+        * platform/mac-wk2/svg/zoom: Added.
+        * platform/mac-wk2/svg/zoom/page: Added.
+        * platform/mac-wk2/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+
 2011-06-23  Dan Bernstein  <mitz@apple.com>
 
         Added expected results for Snow Leopard and earlier.
