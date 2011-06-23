@@ -1,3 +1,10 @@
+2011-06-23  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: brush up chromium inspector expectations.
+
+        * http/tests/inspector/inspector-test.js:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-23  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Pavel Feldman.

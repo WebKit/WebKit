@@ -423,10 +423,10 @@ function runTest(enableWatchDogWhileDebugging)
     if (enableWatchDogWhileDebugging) {
         function watchDog()
         {
-            console.log("Internal watchdog triggered at 10 seconds. Test timed out.");
+            console.log("Internal watchdog triggered at 20 seconds. Test timed out.");
             closeInspectorAndNotifyDone();
         }
-        window._watchDogTimer = setTimeout(watchDog, 10000);
+        window._watchDogTimer = setTimeout(watchDog, 20000);
     }
 }
 
