@@ -41,6 +41,7 @@ class AudioBufferCallback;
 // Upon successful decoding, a completion callback will be invoked with the decoded PCM data in an AudioBuffer.
 
 class AsyncAudioDecoder {
+    WTF_MAKE_NONCOPYABLE(AsyncAudioDecoder);
 public:
     AsyncAudioDecoder();
     ~AsyncAudioDecoder();
@@ -52,11 +53,13 @@ private:
     class DecodingTask {
         WTF_MAKE_NONCOPYABLE(DecodingTask);
     public:
-        DecodingTask(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
-        
+        static PassOwnPtr<DecodingTask> create(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
+
         void decode();
         
     private:
+        DecodingTask(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
+
         ArrayBuffer* audioData() { return m_audioData.get(); }
         double sampleRate() const { return m_sampleRate; }
         AudioBufferCallback* successCallback() { return m_successCallback.get(); }

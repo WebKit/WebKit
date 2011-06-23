@@ -60,7 +60,7 @@ void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, double sampleRate, P
     if (!audioData)
         return;
 
-    OwnPtr<DecodingTask> decodingTask = adoptPtr(new DecodingTask(audioData, sampleRate, successCallback, errorCallback));
+    OwnPtr<DecodingTask> decodingTask = DecodingTask::create(audioData, sampleRate, successCallback, errorCallback);
     m_queue.append(decodingTask.release()); // note that ownership of the task is effectively taken by the queue.
 }
 
@@ -88,6 +88,11 @@ void AsyncAudioDecoder::runLoop()
         // See DecodingTask::notifyComplete() for cleanup.
         decodingTask.leakPtr()->decode();
     }
+}
+
+PassOwnPtr<AsyncAudioDecoder::DecodingTask> AsyncAudioDecoder::DecodingTask::create(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
+{
+    return adoptPtr(new DecodingTask(audioData, sampleRate, successCallback, errorCallback));
 }
 
 AsyncAudioDecoder::DecodingTask::DecodingTask(ArrayBuffer* audioData, double sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
