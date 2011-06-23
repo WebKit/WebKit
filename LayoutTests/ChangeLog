@@ -1,5 +1,12 @@
 2011-06-23  Csaba Osztrogonác  <ossy@webkit.org>
 
+        REGRESSION (r89449): http/tests/inspector/extensions-resources-redirect.html failing on SnowLeopard Intel Release (Tests), Windows 7 Release (Tests), Qt
+        https://bugs.webkit.org/show_bug.cgi?id=63178
+
+        * platform/qt/Skipped: Skip http/tests/inspector/extensions-resources-redirect.html until fix.
+
+2011-06-23  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt]REGRESSION(r89503): It made 4 fast/notifications tests fail on Qt
         https://bugs.webkit.org/show_bug.cgi?id=63255
 

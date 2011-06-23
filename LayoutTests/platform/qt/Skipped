@@ -2552,3 +2552,7 @@ fast/notifications/notifications-double-show.html
 fast/notifications/notifications-no-icon.html
 fast/notifications/notifications-with-permission.html
 fast/notifications/notifications-without-permission.html
+
+# REGRESSION (r89449): http/tests/inspector/extensions-resources-redirect.html failing on SnowLeopard Intel Release (Tests), Windows 7 Release (Tests), Qt
+# https://bugs.webkit.org/show_bug.cgi?id=63178
+http/tests/inspector/extensions-resources-redirect.html
