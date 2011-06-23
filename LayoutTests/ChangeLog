@@ -1,5 +1,58 @@
 2011-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
+        Unreviewed, add GTK+ baselines for the new CSS2.1 tests added in r88913.
+
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-001-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-002-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-003-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-003-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-004-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-004-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-005-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-005-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-006-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-006-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-007-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-007-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-008-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-008-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-009-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-009-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-010-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-010-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-011-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-011-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-012-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-height-012-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-001-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-002-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-003-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-003-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-004-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-004-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-005-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-005-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-006-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-006-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-007-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-007-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-008-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-008-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-009-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-009-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-010-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-010-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-011-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-011-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-012-expected.png: Added.
+        * platform/gtk/css2.1/20110323/absolute-non-replaced-max-height-012-expected.txt: Added.
+
+2011-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
         Unreviewed, rebaseline a couple of SVG tests for GTK+.
 
         * platform/gtk/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
