@@ -5,6 +5,17 @@
         MediaStream API: Rename Stream, GeneratedStream and StreamRecorder to the latest spec
         https://bugs.webkit.org/show_bug.cgi?id=63122
 
+        Fixing broken makefile.
+
+        * GNUmakefile.list.am:
+
+2011-06-23  Tommy Widenflycht  <tommyw@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        MediaStream API: Rename Stream, GeneratedStream and StreamRecorder to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=63122
+
         No new tests since no code has actually changed.
 
         * CMakeLists.txt:
