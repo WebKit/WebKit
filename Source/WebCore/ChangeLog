@@ -1,3 +1,45 @@
+2011-06-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        RefPtr misused as argument type in a few classes
+        https://bugs.webkit.org/show_bug.cgi?id=62955
+
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::DataTransferItem):
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItems.cpp:
+        (WebCore::DataTransferItems::DataTransferItems):
+        * dom/DataTransferItems.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        * editing/CompositeEditCommand.h:
+        * page/WebKitAnimationList.cpp:
+        (WebCore::WebKitAnimationList::append):
+        (WebCore::WebKitAnimationList::insertAnimation):
+        * page/WebKitAnimationList.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::create):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::SVGFilterBuilder::add):
+        (WebCore::SVGFilterBuilder::appendEffectToEffectReferences):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::Peer):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        Use PassRefPtr or raw pointer as appropriate for RefPtr arguments.
+
 2011-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89591 and r89593.

@@ -54,7 +54,7 @@ public:
     virtual void add(const String& data, const String& type, ExceptionCode&);
 
 protected:
-    DataTransferItems(RefPtr<Clipboard>, ScriptExecutionContext*);
+    DataTransferItems(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
 protected:
     RefPtr<Clipboard> m_owner;
