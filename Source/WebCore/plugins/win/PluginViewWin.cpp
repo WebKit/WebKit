@@ -508,13 +508,13 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
 
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
     setCallingPlugin(true);
-    bool result = m_plugin->pluginFuncs()->event(m_instance, &npEvent);
+    bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &npEvent);
     setCallingPlugin(false);
 
     if (shouldPop) 
         popPopupsEnabledState();
 
-    return result;
+    return accepted;
 }
 
 void PluginView::paintIntoTransformedContext(HDC hdc)
@@ -652,7 +652,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     }
 
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-    if (!dispatchNPEvent(npEvent))
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
 
@@ -720,7 +720,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         return;
 
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
-    if (!dispatchNPEvent(npEvent))
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
 #if !PLATFORM(QT) && !PLATFORM(WX) && !OS(WINCE)

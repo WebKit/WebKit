@@ -107,7 +107,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
     setCallingPlugin(true);
 
-    bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
+    bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &event);
 
     setCallingPlugin(false);
     PluginView::setCurrentPluginView(0);
@@ -303,7 +303,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     xEvent.xkey.y_root = 0;
 #endif
 
-    if (!dispatchNPEvent(xEvent))
+    if (dispatchNPEvent(xEvent))
         event->setDefaultHandled();
 }
 
@@ -435,7 +435,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         return;
 #endif
 
-    if (!dispatchNPEvent(xEvent))
+    if (dispatchNPEvent(xEvent))
         event->setDefaultHandled();
 }
 

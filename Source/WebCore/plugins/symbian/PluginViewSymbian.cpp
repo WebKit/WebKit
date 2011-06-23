@@ -222,7 +222,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
 
     setCallingPlugin(true);
-    bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
+    bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &event);
     setCallingPlugin(false);
     PluginView::setCurrentPluginView(0);
 
@@ -236,7 +236,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 
     ASSERT(event->keyEvent()->qtEvent());
     QEvent& npEvent = *(event->keyEvent()->qtEvent());
-    if (!dispatchNPEvent(npEvent))
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
 
@@ -289,7 +289,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         modifiers |= Qt::MetaModifier;
     QMouseEvent mouseEvent(type, position, button, button, modifiers); 
     QEvent& npEvent = mouseEvent;
-    if (!dispatchNPEvent(npEvent))
+    if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
 

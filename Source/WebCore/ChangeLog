@@ -1,3 +1,33 @@
+2011-06-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        PluginView::dispatchNPEvent is deceptive
+        https://bugs.webkit.org/show_bug.cgi?id=63243
+
+        Straighten the inverted logic of dispatchNPEvent
+        and it's callers.
+
+        No change in behaviour so no new tests.
+        Existing plugin tests cover this.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+
 2011-06-23  Tommy Widenflycht  <tommyw@google.com>
 
         Reviewed by Tony Gentilcore.
