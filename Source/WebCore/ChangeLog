@@ -1,3 +1,18 @@
+2011-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Lower HTML parser DOM depth limit to 2048
+        https://bugs.webkit.org/show_bug.cgi?id=63219
+
+        Lower the default depth limit from 4096 to 2048. There isn't a good
+        reason to have such pathologically nested content, and by-and-large,
+        the rendering code is not setup to support it that well. Adding this
+        aggressive limit now will allow us to see if anything breaks in the
+        nightlies.
+
+        * page/Settings.h:
+
 2011-06-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,22 @@
+2011-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Lower HTML parser DOM depth limit to 2048
+        https://bugs.webkit.org/show_bug.cgi?id=63219
+
+        Update nest test to reflect new limit and remove tests that were
+        testing specific behaviors of the old parser.
+
+        * fast/parser/block-nesting-cap-expected.txt:
+        * fast/parser/block-nesting-cap-table-expected.txt: Removed.
+        * fast/parser/block-nesting-cap-table.html: Removed.
+        * fast/parser/element-nesting-cap-expected.txt: Removed.
+        * fast/parser/element-nesting-cap.html: Removed.
+        * fast/parser/script-tests/block-nesting-cap-table.js: Removed.
+        * fast/parser/script-tests/block-nesting-cap.js:
+        * fast/parser/script-tests/element-nesting-cap.js: Removed.
+
 2011-06-22  Kent Tamura  <tkent@chromium.org>
 
         [Win] media/media-controls-clone.html failing on Windows 7 Release (Tests)
