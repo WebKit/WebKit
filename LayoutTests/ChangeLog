@@ -1,3 +1,10 @@
+2011-06-23  Dan Bernstein  <mitz@apple.com>
+
+        Added expected results for Snow Leopard and earlier.
+
+        * platform/mac-snowleopard/platform/mac/fast/text: Added.
+        * platform/mac-snowleopard/platform/mac/fast/text/line-break-locale-expected.txt: Added.
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         http/tests/multipart/win-boundary-crash.html flakey.
