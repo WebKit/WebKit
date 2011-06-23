@@ -1,3 +1,21 @@
+2011-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add a test for vertical caret movements inside transform
+        https://bugs.webkit.org/show_bug.cgi?id=62834
+
+        Add regression tests for vertical caret movements inside rotated contents.
+
+        * editing/selection/extend-inside-transforms-backward.html: Added.
+        * editing/selection/extend-inside-transforms-forward.html: Added.
+        * platform/chromium/test_expectations.txt: Added test expectations to keep bots green
+        until we rebaseline these tests on Chromium.
+        * platform/mac/editing/selection/extend-inside-transforms-backward-expected.png: Added.
+        * platform/mac/editing/selection/extend-inside-transforms-backward-expected.txt: Added.
+        * platform/mac/editing/selection/extend-inside-transforms-forward-expected.png: Added.
+        * platform/mac/editing/selection/extend-inside-transforms-forward-expected.txt: Added.
+
 2011-06-23  Gregg Tavares  <gman@google.com>
 
         Reviewed by Kenneth Russell.

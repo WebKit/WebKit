@@ -3973,3 +3973,5 @@ BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = 
 // BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGRICOW : fast/js/eval-var-decl.html = TEXT
 
+BUGRNIWA : editing/selection/extend-inside-transforms-backward.html = FAIL PASS
+BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
