@@ -37,6 +37,8 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import log, OutputTee
 
 
+# FIXME: This will be caught by "except Exception:" blocks, we should consider
+# making this inherit from SystemExit instead (or BaseException, except that's not recommended).
 class TerminateQueue(Exception):
     pass
 

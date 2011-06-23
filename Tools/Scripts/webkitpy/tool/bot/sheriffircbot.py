@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.tool.bot import irc_command
-
+from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.common.net.irc.ircbot import IRCBotDelegate
 from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
 
@@ -78,6 +78,9 @@ class SheriffIRCBot(object):
             response = command().execute(requester_nick, args, self._tool, self._sheriff)
             if response:
                 self._tool.irc().post(response)
+        except TerminateQueue:
+            raise
+        # This will catch everything else. SystemExit and KeyboardInterrupt are not subclasses of Exception, so we won't catch those.
         except Exception, e:
             self._tool.irc().post("Exception executing command: %s" % e)
 

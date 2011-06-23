@@ -31,6 +31,7 @@ import random
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot import irc_command
+from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
 from webkitpy.tool.bot.sheriff_unittest import MockSheriffBot
@@ -67,6 +68,14 @@ class SheriffIRCBotTest(unittest.TestCase):
         expected_stderr = 'MOCK: irc.post: Exception executing command: mock_exception\n'
         OutputCapture().assert_outputs(self, bot.process_message, args=["mock_nick", "ignored message"], expected_stderr=expected_stderr)
 
+        class CommandWithException(object):
+            def execute(self, nick, args, tool, sheriff):
+                raise KeyboardInterrupt()
+
+        bot._parse_command_and_args = lambda request: (CommandWithException, [])
+        # KeyboardInterrupt and SystemExit are not subclasses of Exception and thus correctly will not be caught.
+        OutputCapture().assert_outputs(self, bot.process_message, args=["mock_nick", "ignored message"], expected_exception=KeyboardInterrupt)
+
     def test_hi(self):
         random.seed(23324)
         expected_stderr = 'MOCK: irc.post: "Only you can prevent forest fires." -- Smokey the Bear\n'
@@ -79,6 +88,10 @@ class SheriffIRCBotTest(unittest.TestCase):
     def test_lgr(self):
         expected_stderr = "MOCK: irc.post: mock_nick: http://trac.webkit.org/changeset/9479\n"
         OutputCapture().assert_outputs(self, run, args=["last-green-revision"], expected_stderr=expected_stderr)
+
+    def test_restart(self):
+        expected_stderr = "MOCK: irc.post: Restarting...\n"
+        OutputCapture().assert_outputs(self, run, args=["restart"], expected_stderr=expected_stderr, expected_exception=TerminateQueue)
 
     def test_rollout(self):
         expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"

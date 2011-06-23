@@ -1,3 +1,16 @@
+2011-06-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        sheriffbot can no longer restart
+        https://bugs.webkit.org/show_bug.cgi?id=63221
+
+        Fixed and unit tested.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-06-23  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
