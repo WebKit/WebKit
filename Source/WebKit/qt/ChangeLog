@@ -2,6 +2,23 @@
 
         Rubber-stamped by Andreas Kling.
 
+        [Qt] Fix tst_QWebFrame::setHtmlWithResource() API test
+        https://bugs.webkit.org/show_bug.cgi?id=63235
+
+        [Qt] Fix tst_QWebFrame::renderGeometry() API test
+        https://bugs.webkit.org/show_bug.cgi?id=63236
+
+        [Qt] Fix tst_QWebFrame::setUrlWithPendingLoads() API test
+        https://bugs.webkit.org/show_bug.cgi?id=63237
+
+        * tests/qwebframe/tst_qwebframe.cpp: Mark failing test cases as expected fails until real fix.
+        (tst_QWebFrame::setHtmlWithResource):
+        (tst_QWebFrame::renderGeometry):
+
+2011-06-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Andreas Kling.
+
         [Qt] Fix tst_QWebPage::showModalDialog() API test
         https://bugs.webkit.org/show_bug.cgi?id=63244
 
