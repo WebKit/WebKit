@@ -81,7 +81,7 @@ class Rollout(IRCCommand):
     def _responsible_nicknames_from_revisions(self, tool, sheriff, svn_revision_list):
         commit_infos = map(tool.checkout().commit_info_for_revision, svn_revision_list)
         nickname_lists = map(sheriff.responsible_nicknames_from_commit_info, commit_infos)
-        return sorted(set(itertools.chain.from_iterable(nickname_lists)))
+        return sorted(set(itertools.chain(*nickname_lists)))
 
     def _nicks_string(self, tool, sheriff, requester_nick, svn_revision_list):
         # FIXME: _parse_args guarentees that our svn_revision_list is all numbers.
