@@ -45,7 +45,7 @@ void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg te
     Node& node = graph()[nodeIndex];
 
     if (node.isConstant()) {
-        ASSERT(node.op == DoubleConstant);
+        ASSERT(isDoubleConstant(nodeIndex));
         move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), temporary);
         movePtrToDouble(temporary, fpr);
     } else {
@@ -67,7 +67,7 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
     Node& node = graph()[nodeIndex];
 
     if (node.isConstant()) {
-        ASSERT(node.op == Int32Constant);
+        ASSERT(isInt32Constant(nodeIndex));
         move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
     } else {
 #if DFG_JIT_ASSERT

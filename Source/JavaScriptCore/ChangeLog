@@ -1,3 +1,62 @@
+2011-06-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63218
+        DFG JIT - remove machine type guarantees from graph
+
+        The DFG JIT currently makes assumptions about the types of machine registers
+        that certain nodes will be loaded into. This will be broken as we generate
+        nodes to produce both integer and double code paths. Remove int<->double
+        conversions nodes. This design decision also gave rise to multiple types of
+        constant nodes, requiring separate handling for each type. Merge these back
+        into JSConstant.
+
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::equalIgnoringLaterNumericConversion):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getToInt32):
+        (JSC::DFG::ByteCodeParser::getToNumber):
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::toNumber):
+        (JSC::DFG::ByteCodeParser::isInt32Constant):
+        (JSC::DFG::ByteCodeParser::isDoubleConstant):
+        (JSC::DFG::ByteCodeParser::valueOfInt32Constant):
+        (JSC::DFG::ByteCodeParser::valueOfDoubleConstant):
+        (JSC::DFG::ByteCodeParser::one):
+        (JSC::DFG::ByteCodeParser::predictInt32):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::isJSConstant):
+        (JSC::DFG::JITCodeGenerator::isDoubleConstant):
+        (JSC::DFG::JITCodeGenerator::valueOfJSConstantAsImmPtr):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::fillInt32ToInteger):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::isJSConstant):
+        (JSC::DFG::JITCompiler::isInt32Constant):
+        (JSC::DFG::JITCompiler::isDoubleConstant):
+        (JSC::DFG::JITCompiler::valueOfJSConstant):
+        (JSC::DFG::JITCompiler::valueOfInt32Constant):
+        (JSC::DFG::JITCompiler::valueOfDoubleConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::isConstant):
+        (JSC::DFG::Node::notTakenBytecodeOffset):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::isKnownInteger):
+        (JSC::DFG::NonSpeculativeJIT::isKnownNumeric):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-06-23  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

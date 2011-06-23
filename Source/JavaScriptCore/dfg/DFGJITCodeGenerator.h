@@ -203,15 +203,15 @@ protected:
 
         if (registerFormat == DataFormatInteger) {
             if (node.isConstant()) {
-                ASSERT(isIntegerConstant(nodeIndex));
-                m_jit.move(Imm32(valueOfIntegerConstant(nodeIndex)), info.gpr());
+                ASSERT(isInt32Constant(nodeIndex));
+                m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
             } else
                 m_jit.load32(JITCompiler::addressFor(spillMe), info.gpr());
             return;
         }
 
         if (node.isConstant())
-            m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), info.gpr());
+            m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
         else {
             ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
@@ -227,9 +227,11 @@ protected:
         Node& node = m_jit.graph()[nodeIndex];
         ASSERT(info.registerFormat() == DataFormatDouble);
 
-        if (node.isConstant())
-            m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), info.gpr());
-        else {
+        if (node.isConstant()) {
+            ASSERT(isDoubleConstant(nodeIndex));
+            m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfDoubleConstant(nodeIndex))), canTrample);
+            m_jit.movePtrToDouble(canTrample, info.fpr());
+        } else {
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), canTrample);
             unboxDouble(canTrample, info.fpr());
         }
@@ -381,62 +383,12 @@ protected:
 
     // Checks/accessors for constant values.
     bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
+    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.isInt32Constant(nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
-    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.valueOfDoubleConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
-
-    bool isDoubleConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
-    {
-        if (!m_jit.isDoubleConstant(nodeIndex))
-            return false;
-        double value = m_jit.valueOfDoubleConstant(nodeIndex);
-
-        int32_t asInt32 = static_cast<int32_t>(value);
-        if (value != asInt32)
-            return false;
-        if (!asInt32 && signbit(value))
-            return false;
-
-        out = asInt32;
-        return true;
-    }
-
-    bool isJSConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
-    {
-        if (!m_jit.isJSConstant(nodeIndex))
-            return false;
-        JSValue value = m_jit.valueOfJSConstant(nodeIndex);
-
-        if (!value.isInt32())
-            return false;
-        
-        out = value.asInt32();
-        return true;
-    }
-
-    bool isIntegerConstant(NodeIndex nodeIndex)
-    {
-        int32_t unused;
-        return isInt32Constant(nodeIndex)
-            || isDoubleConstantWithInt32Value(nodeIndex, unused)
-            || isJSConstantWithInt32Value(nodeIndex, unused);
-    }
-
-    int32_t valueOfIntegerConstant(NodeIndex nodeIndex)
-    {
-        if (isInt32Constant(nodeIndex))
-            return valueOfInt32Constant(nodeIndex);
-        int32_t result = 0;
-        bool okay = isDoubleConstantWithInt32Value(nodeIndex, result);
-        if (okay)
-            return result;
-        okay = isJSConstantWithInt32Value(nodeIndex, result);
-        ASSERT_UNUSED(okay, okay);
-        return result;
-    }
 
     Identifier* identifier(unsigned index)
     {
@@ -477,20 +429,9 @@ protected:
     }
 #endif
 
-    // Get the JSValue representation of a constant.
-    JSValue constantAsJSValue(NodeIndex nodeIndex)
+    MacroAssembler::ImmPtr valueOfJSConstantAsImmPtr(NodeIndex nodeIndex)
     {
-        Node& node = m_jit.graph()[nodeIndex];
-        if (isInt32Constant(nodeIndex))
-            return jsNumber(node.int32Constant());
-        if (isDoubleConstant(nodeIndex))
-            return JSValue(JSValue::EncodeAsDouble, node.numericConstant());
-        ASSERT(isJSConstant(nodeIndex));
-        return valueOfJSConstant(nodeIndex);
-    }
-    MacroAssembler::ImmPtr constantAsJSValueAsImmPtr(NodeIndex nodeIndex)
-    {
-        return MacroAssembler::ImmPtr(JSValue::encode(constantAsJSValue(nodeIndex)));
+        return MacroAssembler::ImmPtr(JSValue::encode(valueOfJSConstant(nodeIndex)));
     }
 
     // Helper functions to enable code sharing in implementations of bit/shift ops.

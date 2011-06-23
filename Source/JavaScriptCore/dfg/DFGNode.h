@@ -85,9 +85,7 @@ typedef uint32_t ExceptionInfo;
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
     /* Nodes for constants. */\
-    macro(JSConstant, NodeResultJS | NodeIsConstant) \
-    macro(Int32Constant, NodeResultJS | NodeIsConstant) \
-    macro(DoubleConstant, NodeResultJS | NodeIsConstant) \
+    macro(JSConstant, NodeResultJS) \
     macro(ConvertThis, NodeResultJS) \
     \
     /* Nodes for local variable access. */\
@@ -103,7 +101,6 @@ typedef uint32_t ExceptionInfo;
     macro(BitRShift, NodeResultInt32) \
     macro(BitURShift, NodeResultInt32) \
     /* Bitwise operators call ToInt32 on their operands. */\
-    macro(NumberToInt32, NodeResultInt32) \
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultDouble) \
@@ -115,7 +112,6 @@ typedef uint32_t ExceptionInfo;
     macro(ArithDiv, NodeResultDouble) \
     macro(ArithMod, NodeResultDouble) \
     /* Arithmetic operators call ToNumber on their operands. */\
-    macro(Int32ToNumber, NodeResultDouble) \
     macro(ValueToNumber, NodeResultDouble | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
@@ -211,8 +207,8 @@ struct Node {
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
+        , m_opInfo2(imm2.m_value)
     {
-        m_constantValue.opInfo2 = imm2.m_value;
     }
 
     bool mustGenerate()
@@ -222,7 +218,7 @@ struct Node {
 
     bool isConstant()
     {
-        return op & NodeIsConstant;
+        return op == JSConstant;
     }
 
     unsigned constantNumber()
@@ -292,30 +288,6 @@ struct Node {
         return !hasJSResult();
     }
 
-    int32_t int32Constant()
-    {
-        ASSERT(op == Int32Constant);
-        return m_constantValue.asInt32;
-    }
-
-    void setInt32Constant(int32_t value)
-    {
-        ASSERT(op == Int32Constant);
-        m_constantValue.asInt32 = value;
-    }
-
-    double numericConstant()
-    {
-        ASSERT(op == DoubleConstant);
-        return m_constantValue.asDouble;
-    }
-
-    void setDoubleConstant(double value)
-    {
-        ASSERT(op == DoubleConstant);
-        m_constantValue.asDouble = value;
-    }
-
     bool isJump()
     {
         return op & NodeIsJump;
@@ -340,7 +312,7 @@ struct Node {
     unsigned notTakenBytecodeOffset()
     {
         ASSERT(isBranch());
-        return m_constantValue.opInfo2;
+        return m_opInfo2;
     }
 
     VirtualRegister virtualRegister()
@@ -390,14 +362,8 @@ private:
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;
-    // An immediate value, accesses type-checked via accessors above.
-    unsigned m_opInfo;
-    // The value of an int32/double constant.
-    union {
-        int32_t asInt32;
-        double asDouble;
-        unsigned opInfo2;
-    } m_constantValue;
+    // Immediate values, accesses type-checked via accessors above.
+    unsigned m_opInfo, m_opInfo2;
 };
 
 } } // namespace JSC::DFG

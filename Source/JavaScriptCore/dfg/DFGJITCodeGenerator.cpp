@@ -190,13 +190,8 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         FPRReg fpr = fprAllocate();
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-
         m_jit.convertInt32ToDouble(gpr, fpr);
-
-        m_gprs.release(gpr);
         m_gprs.unlock(gpr);
-        m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-        info.fillDouble(fpr);
         return fpr;
     }
 

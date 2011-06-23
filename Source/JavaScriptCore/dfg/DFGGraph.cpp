@@ -103,14 +103,6 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("%sr%u", hasPrinted ? ", " : "", local);
         hasPrinted = true;
     }
-    if (op == Int32Constant) {
-        printf("%s$%u{%d|0x%08x}", hasPrinted ? ", " : "", node.constantNumber(), node.int32Constant(), node.int32Constant());
-        hasPrinted = true;
-    }
-    if (op == DoubleConstant) {
-        printf("%s$%u{%f})", hasPrinted ? ", " : "", node.constantNumber(), node.numericConstant());
-        hasPrinted = true;
-    }
     if (op == JSConstant) {
         printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         hasPrinted = true;

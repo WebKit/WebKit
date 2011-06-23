@@ -49,7 +49,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
                 returnFormat = DataFormatInteger;
                 return gpr;
             }
-            m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), gpr);
+            m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), gpr);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
@@ -185,7 +185,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         GPRReg gpr = allocate();
 
         if (node.isConstant()) {
-            JSValue jsValue = constantAsJSValue(nodeIndex);
+            JSValue jsValue = valueOfJSConstant(nodeIndex);
             if (jsValue.isCell()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
@@ -248,12 +248,13 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
         notTaken = tmp;
     }
 
-    int32_t imm;
-    if (isJSConstantWithInt32Value(node.child1, imm)) {
+    if (isInt32Constant(node.child1)) {
+        int32_t imm = valueOfInt32Constant(node.child1);
         SpeculateIntegerOperand op2(this, node.child2);
         addBranch(m_jit.branch32(condition, JITCompiler::Imm32(imm), op2.gpr()), taken);
-    } else if (isJSConstantWithInt32Value(node.child2, imm)) {
+    } else if (isInt32Constant(node.child2)) {
         SpeculateIntegerOperand op1(this, node.child1);
+        int32_t imm = valueOfInt32Constant(node.child2);
         addBranch(m_jit.branch32(condition, op1.gpr(), JITCompiler::Imm32(imm)), taken);
     } else {
         SpeculateIntegerOperand op1(this, node.child1);
@@ -302,8 +303,6 @@ void SpeculativeJIT::compile(Node& node)
     NodeType op = node.op;
 
     switch (op) {
-    case Int32Constant:
-    case DoubleConstant:
     case JSConstant:
         initConstantInfo(m_compileIndex);
         break;
@@ -422,22 +421,6 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case NumberToInt32: {
-        SpeculateIntegerOperand op1(this, node.child1);
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), m_compileIndex, op1.format());
-        break;
-    }
-
-    case Int32ToNumber: {
-        SpeculateIntegerOperand op1(this, node.child1);
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), m_compileIndex, op1.format());
-        break;
-    }
-
     case ValueToInt32: {
         SpeculateIntegerOperand op1(this, node.child1);
         GPRTemporary result(this, op1);
@@ -456,8 +439,8 @@ void SpeculativeJIT::compile(Node& node)
 
     case ValueAdd:
     case ArithAdd: {
-        int32_t imm1;
-        if (isDoubleConstantWithInt32Value(node.child1, imm1)) {
+        if (isInt32Constant(node.child1)) {
+            int32_t imm1 = valueOfInt32Constant(node.child1);
             SpeculateIntegerOperand op2(this, node.child2);
             GPRTemporary result(this);
 
@@ -467,9 +450,9 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
             
-        int32_t imm2;
-        if (isDoubleConstantWithInt32Value(node.child2, imm2)) {
+        if (isInt32Constant(node.child2)) {
             SpeculateIntegerOperand op1(this, node.child1);
+            int32_t imm2 = valueOfInt32Constant(node.child2);
             GPRTemporary result(this);
 
             speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
@@ -499,9 +482,9 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithSub: {
-        int32_t imm2;
-        if (isDoubleConstantWithInt32Value(node.child2, imm2)) {
+        if (isInt32Constant(node.child2)) {
             SpeculateIntegerOperand op1(this, node.child1);
+            int32_t imm2 = valueOfInt32Constant(node.child2);
             GPRTemporary result(this);
 
             speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));

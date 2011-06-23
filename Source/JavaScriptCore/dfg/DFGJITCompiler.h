@@ -179,35 +179,34 @@ public:
     {
         return graph()[nodeIndex].isConstant();
     }
+    bool isJSConstant(NodeIndex nodeIndex)
+    {
+        return graph()[nodeIndex].isConstant();
+    }
     bool isInt32Constant(NodeIndex nodeIndex)
     {
-        return graph()[nodeIndex].op == Int32Constant;
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
     }
     bool isDoubleConstant(NodeIndex nodeIndex)
     {
-        return graph()[nodeIndex].op == DoubleConstant;
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isNumber();
     }
-    bool isJSConstant(NodeIndex nodeIndex)
-    {
-        return graph()[nodeIndex].op == JSConstant;
-    }
-
     // Helper methods get constant values from nodes.
-    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
-    {
-        ASSERT(isInt32Constant(nodeIndex));
-        return graph()[nodeIndex].int32Constant();
-    }
-    double valueOfDoubleConstant(NodeIndex nodeIndex)
-    {
-        ASSERT(isDoubleConstant(nodeIndex));
-        return graph()[nodeIndex].numericConstant();
-    }
     JSValue valueOfJSConstant(NodeIndex nodeIndex)
     {
         ASSERT(isJSConstant(nodeIndex));
         unsigned constantIndex = graph()[nodeIndex].constantNumber();
         return codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex).get();
+    }
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
+    {
+        ASSERT(isInt32Constant(nodeIndex));
+        return valueOfJSConstant(nodeIndex).asInt32();
+    }
+    double valueOfDoubleConstant(NodeIndex nodeIndex)
+    {
+        ASSERT(isDoubleConstant(nodeIndex));
+        return valueOfJSConstant(nodeIndex).uncheckedGetNumber();
     }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.

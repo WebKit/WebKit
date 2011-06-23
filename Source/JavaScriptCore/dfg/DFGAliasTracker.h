@@ -106,7 +106,7 @@ private:
         if (op1 == op2)
             return true;
         Node& node2 = m_graph[op2];
-        return (node2.op == ValueToNumber || node2.op == ValueToInt32 || node2.op == NumberToInt32) && op1 == node2.child1;
+        return (node2.op == ValueToNumber || node2.op == ValueToInt32) && op1 == node2.child1;
     }
 
     // The graph, to look up potentially aliasing nodes.

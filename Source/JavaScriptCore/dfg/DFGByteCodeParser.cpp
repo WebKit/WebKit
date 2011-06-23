@@ -175,26 +175,10 @@ private:
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
     NodeIndex getToInt32(int operand)
     {
-        // Avoid wastefully adding a JSConstant node to the graph, only to
-        // replace it with a Int32Constant (which is what would happen if
-        // we called 'toInt32(get(operand))' in this case).
-        if (operand >= FirstConstantRegisterIndex) {
-            JSValue v = m_codeBlock->getConstant(operand);
-            if (v.isInt32())
-                return getInt32Constant(v.asInt32(), operand - FirstConstantRegisterIndex);
-        }
         return toInt32(get(operand));
     }
     NodeIndex getToNumber(int operand)
     {
-        // Avoid wastefully adding a JSConstant node to the graph, only to
-        // replace it with a DoubleConstant (which is what would happen if
-        // we called 'toNumber(get(operand))' in this case).
-        if (operand >= FirstConstantRegisterIndex) {
-            JSValue v = m_codeBlock->getConstant(operand);
-            if (v.isNumber())
-                return getDoubleConstant(v.uncheckedGetNumber(), operand - FirstConstantRegisterIndex);
-        }
         return toNumber(get(operand));
     }
 
@@ -206,29 +190,16 @@ private:
         if (node.hasInt32Result())
             return index;
 
-        if (node.hasDoubleResult()) {
-            if (node.op == DoubleConstant)
-                return getInt32Constant(JSC::toInt32(valueOfDoubleConstant(index)), node.constantNumber());
-            // 'NumberToInt32(Int32ToNumber(X))' == X, and 'NumberToInt32(UInt32ToNumber(X)) == X'
-            if (node.op == Int32ToNumber || node.op == UInt32ToNumber)
-                return node.child1;
-
-            // We unique NumberToInt32 nodes in a map to prevent duplicate conversions.
-            pair<UnaryOpMap::iterator, bool> result = m_numberToInt32Nodes.add(index, NoNode);
-            // Either we added a new value, or the existing value in the map is non-zero.
-            ASSERT(result.second == (result.first->second == NoNode));
-            if (result.second)
-                result.first->second = addToGraph(NumberToInt32, index);
-            return result.first->second;
-        }
+        if (node.op == UInt32ToNumber)
+            return node.child1;
 
         // Check for numeric constants boxed as JSValues.
         if (node.op == JSConstant) {
             JSValue v = valueOfJSConstant(index);
             if (v.isInt32())
-                return getInt32Constant(v.asInt32(), node.constantNumber());
+                return getJSConstant(node.constantNumber());
             if (v.isNumber())
-                return getInt32Constant(JSC::toInt32(v.uncheckedGetNumber()), node.constantNumber());
+                return getJSConstant(node.constantNumber());
         }
 
         return addToGraph(ValueToInt32, index);
@@ -239,53 +210,18 @@ private:
     {
         Node& node = m_graph[index];
 
-        if (node.hasDoubleResult())
+        if (node.hasDoubleResult() || node.hasInt32Result())
             return index;
-
-        if (node.hasInt32Result()) {
-            if (node.op == Int32Constant)
-                return getDoubleConstant(valueOfInt32Constant(index), node.constantNumber());
-
-            // We unique Int32ToNumber nodes in a map to prevent duplicate conversions.
-            pair<UnaryOpMap::iterator, bool> result = m_int32ToNumberNodes.add(index, NoNode);
-            // Either we added a new value, or the existing value in the map is non-zero.
-            ASSERT(result.second == (result.first->second == NoNode));
-            if (result.second)
-                result.first->second = addToGraph(Int32ToNumber, index);
-            return result.first->second;
-        }
 
         if (node.op == JSConstant) {
             JSValue v = valueOfJSConstant(index);
             if (v.isNumber())
-                return getDoubleConstant(v.uncheckedGetNumber(), node.constantNumber());
+                return getJSConstant(node.constantNumber());
         }
 
         return addToGraph(ValueToNumber, index);
     }
 
-
-    // Used in implementing get, above, where the operand is a constant.
-    NodeIndex getInt32Constant(int32_t value, unsigned constant)
-    {
-        NodeIndex index = m_constants[constant].asInt32;
-        if (index != NoNode)
-            return index;
-        NodeIndex resultIndex = addToGraph(Int32Constant, OpInfo(constant));
-        m_graph[resultIndex].setInt32Constant(value);
-        m_constants[constant].asInt32 = resultIndex;
-        return resultIndex;
-    }
-    NodeIndex getDoubleConstant(double value, unsigned constant)
-    {
-        NodeIndex index = m_constants[constant].asNumeric;
-        if (index != NoNode)
-            return index;
-        NodeIndex resultIndex = addToGraph(DoubleConstant, OpInfo(constant));
-        m_graph[resultIndex].setDoubleConstant(value);
-        m_constants[constant].asNumeric = resultIndex;
-        return resultIndex;
-    }
     NodeIndex getJSConstant(unsigned constant)
     {
         NodeIndex index = m_constants[constant].asJSValue;
@@ -308,34 +244,36 @@ private:
     }
 
     // Convenience methods for checking nodes for constants.
-    bool isInt32Constant(NodeIndex index)
-    {
-        return m_graph[index].op == Int32Constant;
-    }
-    bool isDoubleConstant(NodeIndex index)
-    {
-        return m_graph[index].op == DoubleConstant;
-    }
     bool isJSConstant(NodeIndex index)
     {
         return m_graph[index].op == JSConstant;
     }
-
+    bool isInt32Constant(NodeIndex nodeIndex)
+    {
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
+    }
+    bool isDoubleConstant(NodeIndex nodeIndex)
+    {
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isNumber();
+    }
     // Convenience methods for getting constant values.
-    int32_t valueOfInt32Constant(NodeIndex index)
-    {
-        ASSERT(isInt32Constant(index));
-        return m_graph[index].int32Constant();
-    }
-    double valueOfDoubleConstant(NodeIndex index)
-    {
-        ASSERT(isDoubleConstant(index));
-        return m_graph[index].numericConstant();
-    }
     JSValue valueOfJSConstant(NodeIndex index)
     {
         ASSERT(isJSConstant(index));
         return m_codeBlock->getConstant(FirstConstantRegisterIndex + m_graph[index].constantNumber());
+    }
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
+    {
+        ASSERT(isInt32Constant(nodeIndex));
+        return valueOfJSConstant(nodeIndex).asInt32();
+    }
+    double valueOfDoubleConstant(NodeIndex nodeIndex)
+    {
+        ASSERT(isDoubleConstant(nodeIndex));
+        double value;
+        bool okay = valueOfJSConstant(nodeIndex).getNumber(value);
+        ASSERT_UNUSED(okay, okay);
+        return value;
     }
 
     // This method returns a JSConstant with the value 'undefined'.
@@ -398,7 +336,7 @@ private:
             for (m_constant1 = 0; m_constant1 < numberOfConstants; ++m_constant1) {
                 JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1);
                 if (testMe.isInt32() && testMe.asInt32() == 1)
-                    return getDoubleConstant(1, m_constant1);
+                    return getJSConstant(m_constant1);
             }
 
             // Add the value 1 to the CodeBlock's constants, and add a corresponding slot in m_constants.
@@ -411,7 +349,7 @@ private:
         // m_constant1 must refer to an entry in the CodeBlock's constant pool that has the integer value 1.
         ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).isInt32());
         ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).asInt32() == 1);
-        return getDoubleConstant(1, m_constant1);
+        return getJSConstant(m_constant1);
     }
 
 
@@ -461,9 +399,6 @@ private:
             nodePtr = &m_graph[nodePtr->child1];
 
         if (nodePtr->op == ValueToInt32)
-            nodePtr = &m_graph[nodePtr->child1];
-
-        if (nodePtr->op == NumberToInt32)
             nodePtr = &m_graph[nodePtr->child1];
 
         if (nodePtr->op == GetLocal)
@@ -533,11 +468,6 @@ private:
     };
     Vector<PhiStackEntry, 16> m_argumentPhiStack;
     Vector<PhiStackEntry, 16> m_localPhiStack;
-
-    // These maps are used to unique ToNumber and ToInt32 operations.
-    typedef HashMap<NodeIndex, NodeIndex> UnaryOpMap;
-    UnaryOpMap m_int32ToNumberNodes;
-    UnaryOpMap m_numberToInt32Nodes;
 };
 
 #define NEXT_OPCODE(name) \
