@@ -41,3 +41,6 @@ class TestInput:
         # FIXME: filename should really be test_name as a relative path.
         self.filename = filename
         self.timeout = timeout
+
+    def __repr__(self):
+        return "TestInput('%s', %d)" % (self.filename, self.timeout)

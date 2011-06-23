@@ -1,3 +1,14 @@
+2011-06-23  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        nrwt: make TestInput objects printable
+        https://bugs.webkit.org/show_bug.cgi?id=63225
+
+        This makes debugging slighlty easier.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_input.py:
+
 2011-06-22  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
