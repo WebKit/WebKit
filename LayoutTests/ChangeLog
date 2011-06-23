@@ -1,3 +1,15 @@
+2011-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Incorrect MIME type used for some media layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=63275
+
+        * media/video-can-play-type-expected.txt: video/mpeg -> video/mp4
+        * media/video-can-play-type.html: Ditto.
+        * media/video-source-error.html: Ditto.
+        * media/video-source-type.html: Ditto.
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2 Tests] svg/zoom/page/zoom-replaced-intrinsic-ratio-001.html failing since
