@@ -2318,14 +2318,14 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         fprintf(stderr, "%s", indent.utf8().data());
         node->showNode();
 
-        ContainerNode* shadow = shadowRoot(const_cast<Node*>(node));
+        ContainerNode* rootNode = shadowRoot(const_cast<Node*>(node));
 
-        if (!shadow && node->renderer() && node->renderer()->isTextControl())
-            shadow = static_cast<RenderTextControl*>(node->renderer())->innerTextElement();
+        if (!rootNode && node->renderer() && node->renderer()->isTextControl())
+            rootNode = static_cast<RenderTextControl*>(node->renderer())->innerTextElement();
 
-        if (shadow) {
+        if (rootNode) {
             indent += "\t";
-            traverseTreeAndMark(indent, shadow, markedNode1, markedLabel1, markedNode2, markedLabel2);
+            traverseTreeAndMark(indent, rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
         }
     }
 }

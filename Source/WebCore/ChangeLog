@@ -1,3 +1,36 @@
+2011-06-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tighten type usage in the Shadow tree code
+        https://bugs.webkit.org/show_bug.cgi?id=63210
+
+        Refactoring only, no new test required.
+
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        * dom/Document.h:
+        Changed the argument of buildAccessKeyMap to TreeScope.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::removeShadowRoot):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::shadowColorSwatch):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::shadowSelect):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbElementOf):
+        Use ShadowRoot for the previous call sites as this is what is
+        returned by shadowRoot().
+
+        * dom/Node.cpp:
+        (WebCore::traverseTreeAndMark): Renamed the parameter here as it is not
+        expected to be a shadow object. Just the rootNode of our traversal.
+
+        * dom/ShadowRoot.h: Made attach() public as it is public in ContainerNode
+        and we would do some casting to avoid the private attribute in ShadowRoot.
+
 2011-06-22  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.

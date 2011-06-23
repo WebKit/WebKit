@@ -618,7 +618,7 @@ Element* Document::getElementByAccessKey(const String& key)
     return m_elementsByAccessKey.get(key.impl());
 }
 
-void Document::buildAccessKeyMap(ContainerNode* root)
+void Document::buildAccessKeyMap(TreeScope* root)
 {
      for (Node* n = root; n; n = n->traverseNextNode(root)) {
         if (!n->isElementNode())

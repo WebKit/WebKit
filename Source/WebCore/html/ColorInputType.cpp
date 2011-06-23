@@ -120,7 +120,7 @@ void ColorInputType::updateColorSwatch()
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
-    Node* shadow = element()->shadowRoot();
+    ShadowRoot* shadow = element()->shadowRoot();
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
 }
 

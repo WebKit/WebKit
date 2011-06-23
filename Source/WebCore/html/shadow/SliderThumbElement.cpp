@@ -66,7 +66,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 SliderThumbElement* sliderThumbElementOf(Node* node)
 {
     ASSERT(node);
-    Node* shadow = node->toInputElement()->shadowRoot();
+    ShadowRoot* shadow = node->toInputElement()->shadowRoot();
     ASSERT(shadow);
     Node* thumb = shadow->firstChild()->firstChild()->firstChild();
     ASSERT(thumb);

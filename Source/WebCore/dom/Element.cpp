@@ -1019,7 +1019,7 @@ void Element::attach()
         parentPusher.push();
     ContainerNode::attach();
 
-    if (Node* shadow = shadowRoot()) {
+    if (ShadowRoot* shadow = shadowRoot()) {
         parentPusher.push();
         shadow->attach();
     }
@@ -1217,7 +1217,7 @@ void Element::removeShadowRoot()
         return;
 
     ElementRareData* data = rareData();
-    if (RefPtr<Node> oldRoot = data->m_shadowRoot) {
+    if (RefPtr<ShadowRoot> oldRoot = data->m_shadowRoot) {
         data->m_shadowRoot = 0;
         document()->removeFocusedNodeOfSubtree(oldRoot.get());
 

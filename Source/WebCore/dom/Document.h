@@ -1130,7 +1130,7 @@ private:
 
     void cacheDocumentElement() const;
 
-    void buildAccessKeyMap(ContainerNode* root);
+    void buildAccessKeyMap(TreeScope* root);
 
     void createStyleSelector();
 

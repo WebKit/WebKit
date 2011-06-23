@@ -44,6 +44,8 @@ public:
     ContainerNode* activeContentContainer();
     void hostChildrenChanged();
 
+    virtual void attach();
+
 private:
     ShadowRoot(Document*);
     virtual ~ShadowRoot();
@@ -53,7 +55,6 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
     virtual bool applyAuthorSheets() const;
-    virtual void attach();
 
     bool hasContentElement() const;
 };

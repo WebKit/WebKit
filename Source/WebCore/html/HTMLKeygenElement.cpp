@@ -132,7 +132,7 @@ void HTMLKeygenElement::reset()
 
 HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
-    Node* shadow = shadowRoot();
+    ShadowRoot* shadow = shadowRoot();
     ASSERT(shadow);
     return shadow ? static_cast<HTMLSelectElement*>(shadow->firstChild()) : 0;
 }
