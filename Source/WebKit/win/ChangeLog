@@ -1,3 +1,12 @@
+2011-06-22  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        Add window.internals to WebKit2's WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=61073
+
+        * WebKit.vcproj/WebKit.sln: InjectedBundle depends on WebCoreTestSupport
+
 2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

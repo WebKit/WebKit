@@ -33,6 +33,7 @@
 		6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */; };
 		6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */; };
 		65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65EB859F11EC67CC0034D300 /* ActivateFonts.mm */; };
+		A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */; };
 		BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4D9120E02D000826C0C /* GCController.cpp */; };
 		BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4E8120E03D800826C0C /* JSGCController.cpp */; };
 		BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934A411906584005EA8E2 /* Cocoa.framework */; };
@@ -78,6 +79,8 @@
 
 /* Begin PBXFileReference section */
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77811EC643800410867 /* ColorBits.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ColorBits.ttf; path = fonts/ColorBits.ttf; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
@@ -159,6 +162,7 @@
 				BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */,
 				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
 				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
+				A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,6 +205,8 @@
 				BC7934A411906584005EA8E2 /* Cocoa.framework */,
 				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
 				BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */,
+				4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */,
+				41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

@@ -1,3 +1,20 @@
+2011-06-22  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        Add window.internals to WebKit2's WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=61073
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pxbproj:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/InjectedBundleCFLite.vsprops:
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops:
+        * WebKitTestRunner/Configurations/InjectedBundleCoreFoundation.vsprops:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2011-06-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
