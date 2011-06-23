@@ -1,3 +1,21 @@
+2011-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Crash when running EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=62628
+
+        Call DocumentWriter::setEncoding when FrameLoaderClientEfl::finishedLoading()
+        like other ports.
+        It will clear parser not to crash when called endIfNotLoadingMainResource().
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::FrameLoaderClientEfl):
+        (WebCore::FrameLoaderClientEfl::makeRepresentation):
+        (WebCore::FrameLoaderClientEfl::revertToProvisionalState):
+        (WebCore::FrameLoaderClientEfl::finishedLoading):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
 2011-06-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

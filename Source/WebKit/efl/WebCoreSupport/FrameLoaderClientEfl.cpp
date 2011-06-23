@@ -74,6 +74,7 @@ FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object *view)
     , m_customUserAgent("")
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
+    , m_hasRepresentation(false)
 {
 }
 
@@ -498,7 +499,7 @@ void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const KURL&)
 
 void FrameLoaderClientEfl::makeRepresentation(DocumentLoader*)
 {
-    notImplemented();
+    m_hasRepresentation = true;
 }
 
 void FrameLoaderClientEfl::forceLayout()
@@ -635,7 +636,7 @@ void FrameLoaderClientEfl::dispatchDidLoadMainResource(DocumentLoader*)
 
 void FrameLoaderClientEfl::revertToProvisionalState(DocumentLoader*)
 {
-    notImplemented();
+    m_hasRepresentation = true;
 }
 
 void FrameLoaderClientEfl::willChangeTitle(DocumentLoader*)
@@ -687,10 +688,13 @@ String FrameLoaderClientEfl::generatedMIMETypeForURLScheme(const String&) const
     return String();
 }
 
-void FrameLoaderClientEfl::finishedLoading(DocumentLoader* loader)
+void FrameLoaderClientEfl::finishedLoading(DocumentLoader* documentLoader)
 {
-    if (!m_pluginView)
+    if (!m_pluginView) {
+        if (m_hasRepresentation)
+            documentLoader->writer()->setEncoding("", false);
         return;
+    }
     m_pluginView->didFinishLoading();
     m_pluginView = 0;
     m_hasSentResponseToPlugin = false;

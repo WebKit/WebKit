@@ -223,6 +223,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     // Plugin view to redirect data to
     PluginView* m_pluginView;
     bool m_hasSentResponseToPlugin;
+    bool m_hasRepresentation;
 };
 
 }
