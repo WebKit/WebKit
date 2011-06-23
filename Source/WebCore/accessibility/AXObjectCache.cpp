@@ -82,6 +82,7 @@ bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
 AXObjectCache::AXObjectCache(const Document* doc)
     : m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
+    , m_childrenUpdateTimer(this, &AXObjectCache::childrenUpdateTimerFired)
 {
     m_document = const_cast<Document*>(doc);
 }
@@ -367,6 +368,7 @@ void AXObjectCache::remove(RenderObject* renderer)
     AXID axID = m_renderObjectMapping.get(renderer);
     remove(axID);
     m_renderObjectMapping.remove(renderer);
+    m_childrenToUpdate.remove(renderer);
 }
 
 void AXObjectCache::remove(Widget* view)
@@ -436,6 +438,24 @@ void AXObjectCache::contentChanged(RenderObject* renderer)
         object->contentChanged(); 
 }
 #endif
+    
+void AXObjectCache::childrenUpdateTimerFired(Timer<AXObjectCache>*)
+{
+    if (m_childrenToUpdate.isEmpty())
+        return;
+    
+    // Make a local copy in case childrenChanged() alters m_childrenToUpdate 
+    // (which might happen if the client asks to update the render tree).
+    HashSet<RenderObject*> updateChildren;
+    m_childrenToUpdate.swap(updateChildren);
+    m_childrenToUpdate.clear();
+    
+    HashSet<RenderObject*>::iterator end = updateChildren.end();
+    for (HashSet<RenderObject*>::iterator it = updateChildren.begin(); it != end; ++it) {
+        if (AccessibilityObject* object = getOrCreate(*it))
+            object->childrenChanged(AccessibilityObject::CreateParentObjects);
+    }    
+}
 
 void AXObjectCache::childrenChanged(RenderObject* renderer)
 {
@@ -443,12 +463,16 @@ void AXObjectCache::childrenChanged(RenderObject* renderer)
         return;
  
     AXID axID = m_renderObjectMapping.get(renderer);
-    if (!axID)
-        return;
-    
-    AccessibilityObject* obj = m_objects.get(axID).get();
-    if (obj)
-        obj->childrenChanged();
+    if (!axID) {
+        // If there's no AX object, creating one right now can be dangerous (because we're in the middle of adding/destroying a tree).
+        // Instead the update should be postponed and updated later.
+        m_childrenToUpdate.add(renderer);
+        if (!m_childrenUpdateTimer.isActive())
+            m_childrenUpdateTimer.startOneShot(0);
+    } else {
+        if (AccessibilityObject* object = m_objects.get(axID).get())
+            object->childrenChanged(AccessibilityObject::DoNotCreateParentObjects);
+    }
 }
     
 void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)

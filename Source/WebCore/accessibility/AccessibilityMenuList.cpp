@@ -68,13 +68,13 @@ void AccessibilityMenuList::addChildren()
     list->addChildren();
 }
 
-void AccessibilityMenuList::childrenChanged()
+void AccessibilityMenuList::childrenChanged(ChildrenChangeOptions options)
 {
     if (m_children.isEmpty())
         return;
 
     ASSERT(m_children.size() == 1);
-    m_children[0]->childrenChanged();
+    m_children[0]->childrenChanged(options);
 }
 
 bool AccessibilityMenuList::isCollapsed() const

@@ -1,3 +1,13 @@
+2011-06-23  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ARIA live regions don't trigger notifications for elements that aren't in the AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=62289
+
+        * platform/mac/accessibility/aria-liveregion-without-element-access-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregion-without-element-access.html: Added.
+
 2011-06-23  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: marking debugger test as slow in chromium expectations.
