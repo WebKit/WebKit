@@ -696,7 +696,8 @@ BUGWK62309 WIN : inspector/styles/styles-iframe.html = PASS TEXT
 BUGWK62309 WIN : inspector/styles/parse-utf8-bom.html = PASS TEXT
 BUGWK62309 WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
-BUGPFELDMAN : inspector/debugger/debugger-activation-crash2.html = PASS TEXT
+BUGPFELDMAN WIN LINUX : inspector/debugger/debugger-activation-crash2.html = PASS TEXT
+BUGPFELDMAN MAC : inspector/debugger/debugger-activation-crash2.html = PASS TIMEOUT
 // -----------------------------------------------------------------
 // Other
 // -----------------------------------------------------------------

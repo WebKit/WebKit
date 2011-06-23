@@ -1,3 +1,9 @@
+2011-06-23  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: updated chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Inspector may close at the start of the next inspector test in DRT
