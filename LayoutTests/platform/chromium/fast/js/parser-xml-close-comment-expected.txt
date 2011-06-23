@@ -7,7 +7,7 @@ PASS 'should be a syntax error' --> threw exception SyntaxError: Unexpected end 
 PASS /**/ 1 --> threw exception SyntaxError: Unexpected end of input.
 PASS 1 /**/ --> threw exception SyntaxError: Unexpected end of input.
 PASS 1/*
-*/--> threw exception SyntaxError: Unexpected end of input.
+*/--> threw exception SyntaxError: Unexpected token >.
 PASS --> is undefined.
 PASS /**/--> is undefined.
 PASS /*

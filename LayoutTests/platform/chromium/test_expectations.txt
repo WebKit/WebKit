@@ -3907,7 +3907,6 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 // New flexbox is not yet enabled.
 BUGWK62048 SKIP : css3/flexbox = PASS
 
-BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62430 WIN LINUX : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
@@ -3974,9 +3973,14 @@ BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 // The following two tests started to fail since V8 3.4.5.1 roll.
 // This needs rebaselining because "native" is no longer a reserved word.
 BUGCR87070 : fast/js/reserved-words.html = TEXT
-// Needs rebaselining because we fixed a bug that is in platform expectations.
-BUGCR87070 : fast/js/parser-xml-close-comment.html = TEXT
 // Sounds like a real regression.
 BUGCR87070 WIN DEBUG : http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html = CRASH PASS
 
 BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
+
+// We now follow the ES5 spec with regards to the semantics of the receiver
+// given through eval to builtins (undefined). Test assumes that the global
+// object is given as receiver.
+// BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
+BUGRICOW : fast/js/eval-var-decl.html = TEXT
+
