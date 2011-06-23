@@ -1,3 +1,15 @@
+2011-06-23  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        IndexedDB: add detail to an ASSERT error message
+        https://bugs.webkit.org/show_bug.cgi?id=60407
+
+        No new tests, this is just a debug ASSERT.
+
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+
 2011-06-22  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Rob Buis.

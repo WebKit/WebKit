@@ -262,7 +262,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(m_enqueuedEvents.size());
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
-    ASSERT(m_readyState < DONE);
+    ASSERT_WITH_MESSAGE(m_readyState < DONE, "m_readyState < DONE(%d), was %d", DONE, m_readyState);
     if (event->type() != eventNames().blockedEvent)
         m_readyState = DONE;
 
