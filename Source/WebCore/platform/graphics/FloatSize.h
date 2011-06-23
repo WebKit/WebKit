@@ -65,6 +65,12 @@ public:
 
     float aspectRatio() const { return m_width / m_height; }
 
+    void expand(float width, float height)
+    {
+        m_width += width;
+        m_height += height;
+    }
+
     void scale(float s) { scale(s, s); }
 
     void scale(float scaleX, float scaleY)
@@ -89,6 +95,11 @@ public:
     float diagonalLengthSquared() const
     {
         return m_width * m_width + m_height * m_height;
+    }
+
+    FloatSize transposedSize() const
+    {
+        return FloatSize(m_height, m_width);
     }
 
 #if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)

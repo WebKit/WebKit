@@ -106,8 +106,41 @@ public:
     FloatPoint center() const { return FloatPoint(x() + width() / 2, y() + height() / 2); }
 
     void move(const FloatSize& delta) { m_location += delta; } 
-    void move(float dx, float dy) { m_location.move(dx, dy); }
     void moveBy(const FloatPoint& delta) { m_location.move(delta.x(), delta.y()); }
+    void move(float dx, float dy) { m_location.move(dx, dy); }
+
+    void expand(const FloatSize& size) { m_size += size; }
+    void expand(float dw, float dh) { m_size.expand(dw, dh); }
+    void contract(const FloatSize& size) { m_size -= size; }
+    void contract(float dw, float dh) { m_size.expand(-dw, -dh); }
+
+    void shiftXEdgeTo(float edge)
+    {
+        float delta = edge - x();
+        setX(edge);
+        setWidth(std::max(0.0f, width() - delta));
+    }
+    void shiftMaxXEdgeTo(float edge)
+    {
+        float delta = edge - maxX();
+        setWidth(std::max(0.0f, width() + delta));
+    }
+    void shiftYEdgeTo(float edge)
+    {
+        float delta = edge - y();
+        setY(edge);
+        setHeight(std::max(0.0f, height() - delta));
+    }
+    void shiftMaxYEdgeTo(float edge)
+    {
+        float delta = edge - maxY();
+        setHeight(std::max(0.0f, height() + delta));
+    }
+
+    FloatPoint minXMinYCorner() const { return m_location; } // typically topLeft
+    FloatPoint maxXMinYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y()); } // typically topRight
+    FloatPoint minXMaxYCorner() const { return FloatPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
+    FloatPoint maxXMaxYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
 
     bool intersects(const FloatRect&) const;
     bool contains(const FloatRect&) const;
@@ -133,6 +166,8 @@ public:
     void inflate(float d) { inflateX(d); inflateY(d); }
     void scale(float s) { scale(s, s); }
     void scale(float sx, float sy);
+
+    FloatRect transposedRect() const { return FloatRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
     // Re-initializes this rectangle to fit the sets of passed points.
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1);

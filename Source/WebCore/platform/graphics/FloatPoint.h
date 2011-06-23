@@ -123,7 +123,12 @@ public:
     FloatPoint expandedTo(const FloatPoint& other) const
     {
         return FloatPoint(std::max(m_x, other.m_x), std::max(m_y, other.m_y));
-    }   
+    }
+
+    FloatPoint transposedPoint() const
+    {
+        return FloatPoint(m_y, m_x);
+    }
 
 #if USE(CG) || USE(SKIA_ON_MAC_CHROME)
     FloatPoint(const CGPoint&);
