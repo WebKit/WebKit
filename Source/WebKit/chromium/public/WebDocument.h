@@ -31,7 +31,9 @@
 #ifndef WebDocument_h
 #define WebDocument_h
 
+#include "WebFormElement.h"
 #include "WebNode.h"
+#include "WebSecurityOrigin.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore {
@@ -64,6 +66,15 @@ public:
     }
     void assign(const WebDocument& e) { WebNode::assign(e); }
 
+    WEBKIT_API WebURL url() const;
+    // Note: Security checks should use the securityOrigin(), not url().
+    WEBKIT_API WebSecurityOrigin securityOrigin() const;
+
+    WEBKIT_API WebString encoding() const;
+
+    // The url of the OpenSearch Desription Document (if any).
+    WEBKIT_API WebURL openSearchDescriptionURL() const;
+
     // Returns the frame the document belongs to or 0 if the document is frameless.
     WEBKIT_API WebFrame* frame() const;
     WEBKIT_API bool isHTMLDocument() const;
@@ -76,11 +87,19 @@ public:
     WEBKIT_API WebElement head();
     WEBKIT_API WebString title() const;
     WEBKIT_API WebNodeCollection all();
+    WEBKIT_API void forms(WebVector<WebFormElement>&) const;
     WEBKIT_API WebURL completeURL(const WebString&) const;
     WEBKIT_API WebElement getElementById(const WebString&) const;
     WEBKIT_API WebNode focusedNode() const;
     WEBKIT_API WebDocumentType doctype() const;
     WEBKIT_API WebAccessibilityObject accessibilityObject() const;
+
+    // Insert the given text as a STYLE element at the beginning of the
+    // document. |elementId| can be empty, but if specified then it is used
+    // as the id for the newly inserted element (replacing an existing one
+    // with the same id, if any).
+    WEBKIT_API bool insertStyleText(const WebString& styleText,
+                                    const WebString& elementId);
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);

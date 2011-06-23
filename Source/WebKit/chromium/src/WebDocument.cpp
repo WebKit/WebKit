@@ -33,13 +33,16 @@
 
 #include "AXObjectCache.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "HTMLAllCollection.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
+#include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
+#include "HTMLNames.h"
 #include "NodeList.h"
 
 #include "WebAccessibilityObject.h"
@@ -55,6 +58,28 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+WebURL WebDocument::url() const
+{
+    return constUnwrap<Document>()->url();
+}
+
+WebSecurityOrigin WebDocument::securityOrigin() const 
+{
+    if (!constUnwrap<Document>())
+        return WebSecurityOrigin();
+    return WebSecurityOrigin(constUnwrap<Document>()->securityOrigin());
+}
+
+WebString WebDocument::encoding() const
+{
+    return constUnwrap<Document>()->loader()->writer()->encoding();
+}
+
+WebURL WebDocument::openSearchDescriptionURL() const
+{
+    return const_cast<Document*>(constUnwrap<Document>())->openSearchDescriptionURL();
+}
 
 WebFrame* WebDocument::frame() const
 {
@@ -111,6 +136,21 @@ WebNodeCollection WebDocument::all()
     return WebNodeCollection(unwrap<Document>()->all());
 }
 
+void WebDocument::forms(WebVector<WebFormElement>& results) const
+{
+    RefPtr<HTMLCollection> forms = const_cast<Document*>(constUnwrap<Document>())->forms();
+    size_t sourceLength = forms->length();
+    Vector<WebFormElement> temp;
+    temp.reserveCapacity(sourceLength);
+    for (size_t i = 0; i < sourceLength; ++i) {
+        Node* node = forms->item(i);
+        // Strange but true, sometimes node can be 0.
+        if (node && node->isHTMLElement())
+            temp.append(WebFormElement(static_cast<HTMLFormElement*>(node)));
+    }
+    results.assign(temp);
+}
+
 WebURL WebDocument::completeURL(const WebString& partialURL) const
 {
     return constUnwrap<Document>()->completeURL(partialURL);
@@ -136,6 +176,35 @@ WebAccessibilityObject WebDocument::accessibilityObject() const
     const Document* document = constUnwrap<Document>();
     return WebAccessibilityObject(
         document->axObjectCache()->getOrCreate(document->renderer()));
+}
+
+bool WebDocument::insertStyleText(const WebString& styleText, const WebString& elementId)
+{
+    RefPtr<Document> document = unwrap<Document>();
+    RefPtr<Element> documentElement = document->documentElement();
+    if (!documentElement)
+        return false;
+
+    ExceptionCode err = 0;
+
+    if (!elementId.isEmpty()) {
+        Element* oldElement = document->getElementById(elementId);
+        if (oldElement) {
+            Node* parent = oldElement->parentNode();
+            if (!parent)
+                return false;
+            parent->removeChild(oldElement, err);
+        }
+    }
+
+    RefPtr<Element> stylesheet = document->createElement(HTMLNames::styleTag, false);
+    if (!elementId.isEmpty())
+        stylesheet->setAttribute(HTMLNames::idAttr, elementId);
+    stylesheet->setTextContent(styleText, err);
+    ASSERT(!err);
+    bool success = documentElement->insertBefore(stylesheet, documentElement->firstChild(), err);
+    ASSERT(success);
+    return success;
 }
 
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)

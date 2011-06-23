@@ -3950,6 +3950,37 @@ String Document::queryCommandValue(const String& commandName)
     return command(this, commandName).value();
 }
 
+KURL Document::openSearchDescriptionURL()
+{
+    static const char* const openSearchMIMEType = "application/opensearchdescription+xml";
+    static const char* const openSearchRelation = "search";
+
+    // FIXME: Why do only top-level frames have openSearchDescriptionURLs?
+    if (!frame() || frame()->tree()->parent())
+        return KURL();
+
+    // FIXME: Why do we need to wait for FrameStateComplete?
+    if (frame()->loader()->state() != FrameStateComplete)
+        return KURL();
+
+    if (!head())
+        return KURL();
+
+    RefPtr<HTMLCollection> children = head()->children();
+    for (Node* child = children->firstItem(); child; child = children->nextItem()) {
+        if (!child->isHTMLElement() || !static_cast<HTMLElement*>(child)->hasTagName(linkTag))
+            continue;
+        HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(child);
+        if (!equalIgnoringCase(linkElement->type(), openSearchMIMEType) || !equalIgnoringCase(linkElement->rel(), openSearchRelation))
+            continue;
+        if (linkElement->href().isEmpty())
+            continue;
+        return linkElement->href();
+    }
+
+    return KURL();
+}
+
 #if ENABLE(XSLT)
 
 void Document::applyXSLTransform(ProcessingInstruction* pi)

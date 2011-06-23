@@ -860,7 +860,9 @@ public:
     bool queryCommandState(const String& command);
     bool queryCommandSupported(const String& command);
     String queryCommandValue(const String& command);
-    
+
+    KURL openSearchDescriptionURL();
+
     // designMode support
     enum InheritedBool { off = false, on = true, inherit };    
     void setDesignMode(InheritedBool value);

@@ -1,3 +1,18 @@
+2011-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add WebDocument APIs for the functions moving from WebFrame
+        https://bugs.webkit.org/show_bug.cgi?id=62831
+
+        * dom/Document.cpp:
+        (WebCore::Document::openSearchDescriptionURL):
+            - This function exists to service a Chromium WebKit API, but it's
+              generally purpose and might be useful to other ports.  The
+              algorithm has some strange early exits, which I've marked with
+              FIXME comments.
+        * dom/Document.h:
+
 2011-06-22  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

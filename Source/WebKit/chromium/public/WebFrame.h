@@ -579,7 +579,6 @@ public:
 
     // Utility -------------------------------------------------------------
 
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     // Returns the contents of this frame as a string.  If the text is
     // longer than maxChars, it will be clipped to that length.  WARNING:
     // This function may be slow depending on the number of characters
@@ -593,7 +592,6 @@ public:
     // Returns HTML text for the contents of this frame.  This is generated
     // from the DOM.
     virtual WebString contentAsMarkup() const = 0;
-#endif
 
     // Returns a text representation of the render tree.  This method is used
     // to support layout tests.

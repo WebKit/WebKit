@@ -1,3 +1,43 @@
+2011-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add WebDocument APIs for the functions moving from WebFrame
+        https://bugs.webkit.org/show_bug.cgi?id=62831
+
+        The next phase will be to change all the callers and then remove all
+        the code inside the ifdef.
+
+        * public/WebDocument.h:
+            - Add new APIs.
+        * public/WebFrame.h:
+            - These two APIs were too disgusting.  I could not, in good
+              conscience, touch them.
+        * public/WebSecurityOrigin.h:
+            - Turns out this API is supposed to be on WebSecurityOrigin, not
+              WebDocument.
+        * src/WebDocument.cpp:
+            - Implement the APIs.
+        (WebKit::WebDocument::url):
+        (WebKit::WebDocument::securityOrigin):
+        (WebKit::WebDocument::encoding):
+        (WebKit::WebDocument::openSearchDescriptionURL):
+        (WebKit::WebDocument::forms):
+        (WebKit::WebDocument::insertStyleText):
+        * src/WebFrameImpl.cpp:
+            - Change these implements to just be stubs that call into the real
+              implementations in WebDocument.
+        (WebKit::WebFrameImpl::url):
+        (WebKit::WebFrameImpl::openSearchDescriptionURL):
+        (WebKit::WebFrameImpl::encoding):
+        (WebKit::WebFrameImpl::forms):
+        (WebKit::WebFrameImpl::securityOrigin):
+        (WebKit::WebFrameImpl::grantUniversalAccess):
+        (WebKit::WebFrameImpl::insertStyleText):
+        (WebKit::WebFrameImpl::contentAsMarkup):
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::grantUniversalAccess):
+
 2011-06-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89489.

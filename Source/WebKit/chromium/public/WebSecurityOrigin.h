@@ -96,6 +96,10 @@ public:
     // passwords stored in password manager.
     WEBKIT_API bool canAccessPasswordManager() const;
 
+    // This grants the associated document access to all security
+    // origins (including file URLs). Use with care.
+    WEBKIT_API void grantUniversalAccess();
+
 #if WEBKIT_IMPLEMENTATION
     WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);
     WebSecurityOrigin& operator=(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);

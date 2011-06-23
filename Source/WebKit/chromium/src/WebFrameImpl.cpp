@@ -188,9 +188,6 @@ static int frameCount = 0;
 // Key for a StatsCounter tracking how many WebFrames are active.
 static const char* const webFrameActiveCount = "WebFrameActiveCount";
 
-static const char* const osdType = "application/opensearchdescription+xml";
-static const char* const osdRel = "search";
-
 // Backend for contentAsPlainText, this is a recursive function that gets
 // the text for the current frame and all of its subframes. It will append
 // the text of each frame in turn to the |output| up to |maxChars| length.
@@ -522,7 +519,7 @@ long long WebFrameImpl::identifier() const
 #if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebURL WebFrameImpl::url() const
 {
-    return m_frame->document()->url();
+    return document().url();
 }
 #endif
 
@@ -539,29 +536,12 @@ WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
 #if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebURL WebFrameImpl::openSearchDescriptionURL() const
 {
-    FrameLoader* frameLoader = m_frame->loader();
-    if (frameLoader->state() == FrameStateComplete
-        && m_frame->document() && m_frame->document()->head()
-        && !m_frame->tree()->parent()) {
-        HTMLHeadElement* head = m_frame->document()->head();
-        if (head) {
-            RefPtr<HTMLCollection> children = head->children();
-            for (Node* child = children->firstItem(); child; child = children->nextItem()) {
-                HTMLLinkElement* linkElement = toHTMLLinkElement(child);
-                if (linkElement
-                    && linkElement->type() == osdType
-                    && linkElement->rel() == osdRel
-                    && !linkElement->href().isEmpty())
-                    return linkElement->href();
-            }
-        }
-    }
-    return WebURL();
+    return document().openSearchDescriptionURL();
 }
 
 WebString WebFrameImpl::encoding() const
 {
-    return frame()->document()->loader()->writer()->encoding();
+    return document().encoding();
 }
 #endif
 
@@ -710,20 +690,7 @@ WebDocument WebFrameImpl::document() const
 #if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
 {
-    if (!m_frame)
-        return;
-
-    RefPtr<HTMLCollection> forms = m_frame->document()->forms();
-    size_t sourceLength = forms->length();
-    Vector<WebFormElement> temp;
-    temp.reserveCapacity(sourceLength);
-    for (size_t i = 0; i < sourceLength; ++i) {
-        Node* node = forms->item(i);
-        // Strange but true, sometimes node can be 0.
-        if (node && node->isHTMLElement())
-            temp.append(WebFormElement(static_cast<HTMLFormElement*>(node)));
-    }
-    results.assign(temp);
+    document().forms(results);
 }
 #endif
 
@@ -743,17 +710,12 @@ WebPerformance WebFrameImpl::performance() const
 #if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebSecurityOrigin WebFrameImpl::securityOrigin() const
 {
-    if (!m_frame || !m_frame->document())
-        return WebSecurityOrigin();
-
-    return WebSecurityOrigin(m_frame->document()->securityOrigin());
+    return document().securityOrigin();
 }
 
 void WebFrameImpl::grantUniversalAccess()
 {
-    ASSERT(m_frame && m_frame->document());
-    if (m_frame && m_frame->document())
-        m_frame->document()->securityOrigin()->grantUniversalAccess();
+    document().securityOrigin().grantUniversalAccess();
 }
 #endif
 
@@ -897,37 +859,9 @@ v8::Handle<v8::Value> WebFrameImpl::createFileEntry(WebFileSystem::Type type,
 #endif
 
 #if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-bool WebFrameImpl::insertStyleText(
-    const WebString& css, const WebString& id) {
-    Document* document = frame()->document();
-    if (!document)
-        return false;
-    Element* documentElement = document->documentElement();
-    if (!documentElement)
-        return false;
-
-    ExceptionCode err = 0;
-
-    if (!id.isEmpty()) {
-        Element* oldElement = document->getElementById(id);
-        if (oldElement) {
-            Node* parent = oldElement->parentNode();
-            if (!parent)
-                return false;
-            parent->removeChild(oldElement, err);
-        }
-    }
-
-    RefPtr<Element> stylesheet = document->createElement(
-        HTMLNames::styleTag, false);
-    if (!id.isEmpty())
-        stylesheet->setAttribute(HTMLNames::idAttr, id);
-    stylesheet->setTextContent(css, err);
-    ASSERT(!err);
-    Node* first = documentElement->firstChild();
-    bool success = documentElement->insertBefore(stylesheet, first, err);
-    ASSERT(success);
-    return success;
+bool WebFrameImpl::insertStyleText(const WebString& styleText, const WebString& elementId)
+{
+    return document().insertStyleText(styleText, elementId);
 }
 #endif
 
@@ -1827,7 +1761,6 @@ void WebFrameImpl::resetMatchCount()
     m_framesScopingCount = 0;
 }
 
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebString WebFrameImpl::contentAsText(size_t maxChars) const
 {
     if (!m_frame)
@@ -1842,7 +1775,6 @@ WebString WebFrameImpl::contentAsMarkup() const
 {
     return createFullMarkup(m_frame->document());
 }
-#endif
 
 WebString WebFrameImpl::renderTreeAsText(bool showDebugInfo) const
 {
