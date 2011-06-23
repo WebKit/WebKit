@@ -389,6 +389,8 @@ class ChromiumDriver(base.Driver):
             cmd.append('--enable-accelerated-compositing')
         if self._port.get_option('accelerated_2d_canvas'):
             cmd.append('--enable-accelerated-2d-canvas')
+        if self._port.get_option('accelerated_drawing'):
+            cmd.append('--enable-accelerated-drawing')
         if self._port.get_option('enable_hardware_gpu'):
             cmd.append('--enable-hardware-gpu')
 
