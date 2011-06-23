@@ -2793,6 +2793,7 @@ void tst_QWebPage::showModalDialog()
     TestModalPage page;
     page.mainFrame()->setHtml(QString("<html></html>"));
     QString res = page.mainFrame()->evaluateJavaScript("window.showModalDialog('javascript:window.returnValue=dialogArguments; window.close();', 'This is a test');").toString();
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63244", Continue);
     QCOMPARE(res, QString("This is a test"));
 }
 
@@ -2805,8 +2806,10 @@ void tst_QWebPage::testStopScheduledPageRefresh()
                                 "<meta http-equiv=\"refresh\"content=\"0;URL=qrc:///resources/index.html\">"
                                 "</head><body><h1>Page redirects immediately...</h1>"
                                 "</body></html>");
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63245", Continue);
     QVERIFY(::waitForSignal(&page1, SIGNAL(loadFinished(bool))));
     QTest::qWait(500);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63245", Continue);
     QCOMPARE(page1.mainFrame()->url(), QUrl(QLatin1String("qrc:///resources/index.html")));
     
     // With QWebPage::StopScheduledPageRefresh
