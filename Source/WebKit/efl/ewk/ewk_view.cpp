@@ -52,6 +52,11 @@
 #include <inttypes.h>
 #include <sys/time.h>
 
+#if ENABLE(DEVICE_ORIENTATION)
+#include "DeviceMotionClientEfl.h"
+#include "DeviceOrientationClientEfl.h"
+#endif
+
 #define ZOOM_MIN (0.05)
 #define ZOOM_MAX (4.0)
 
@@ -543,6 +548,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     pageClients.editorClient = static_cast<WebCore::EditorClient*>(new WebCore::EditorClientEfl(sd->self));
     pageClients.dragClient = static_cast<WebCore::DragClient*>(new WebCore::DragClientEfl);
     pageClients.inspectorClient = static_cast<WebCore::InspectorClient*>(new WebCore::InspectorClientEfl);
+#if ENABLE(DEVICE_ORIENTATION)
+    pageClients.deviceMotionClient = static_cast<WebCore::DeviceMotionClient*>(new WebCore::DeviceMotionClientEfl);
+    pageClients.deviceOrientationClient = static_cast<WebCore::DeviceOrientationClient*>(new WebCore::DeviceOrientationClientEfl);
+#endif
     priv->page = new WebCore::Page(pageClients);
     if (!priv->page) {
         CRITICAL("Could not create WebKit Page");

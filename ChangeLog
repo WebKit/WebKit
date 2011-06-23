@@ -1,3 +1,15 @@
+2011-06-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add an option to enable Device Orientation Event.
+        https://bugs.webkit.org/show_bug.cgi?id=63120
+
+        ADD ENABLE_DEVICE_ORIENTATION.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-06-22  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
