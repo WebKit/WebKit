@@ -31,11 +31,8 @@
 #ifndef SharedBufferChunkReader_h
 #define SharedBufferChunkReader_h
 
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-namespace WTF {
-class StringBuilder;
-}
 
 namespace WebCore {
 
@@ -43,12 +40,21 @@ class SharedBuffer;
 
 class SharedBufferChunkReader {
 public:
-    SharedBufferChunkReader(SharedBuffer*, const String& separator);
+    SharedBufferChunkReader(SharedBuffer*, const Vector<char>& separator);
+    SharedBufferChunkReader(SharedBuffer*, const char* separator);
 
-    void setSeparator(const String&);
+    void setSeparator(const Vector<char>&);
+    void setSeparator(const char*);
+
+    // Returns false when the end of the buffer was reached.
+    bool nextChunk(Vector<char>& data, bool includeSeparator = false);
 
     // Returns a null string when the end of the buffer has been reached.
-    String nextChunk(bool includeSeparator = false);
+    String nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator = false);
+
+    // Reads size bytes at the current location in the buffer, without changing the buffer position.
+    // Returns the number of bytes read. That number might be less than the specified size if the end of the buffer was reached.
+    size_t peek(Vector<char>&, size_t);
 
 private:
     SharedBuffer* m_buffer;
@@ -57,7 +63,7 @@ private:
     size_t m_segmentLength;
     size_t m_segmentIndex;
     bool m_reachedEndOfFile;
-    String m_separator;
+    Vector<char> m_separator;
     size_t m_separatorIndex;
 };
 

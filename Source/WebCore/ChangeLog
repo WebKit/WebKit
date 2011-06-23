@@ -1,3 +1,27 @@
+2011-06-23  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fixing the SharedBufferChunkReader API so it works correctly with
+        binary data (non printable characters).
+        Also adding a method to peek at the data (this is needed for MHTML
+        with binary parts).
+        https://bugs.webkit.org/show_bug.cgi?id=63231
+
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::skipLinesUntilBoundaryFound):
+        (WebCore::MHTMLParser::parseNextPart):
+        * loader/archive/mhtml/MHTMLParser.h:
+        * platform/SharedBufferChunkReader.cpp:
+        (WebCore::SharedBufferChunkReader::SharedBufferChunkReader):
+        (WebCore::SharedBufferChunkReader::setSeparator):
+        (WebCore::SharedBufferChunkReader::nextChunk):
+        (WebCore::SharedBufferChunkReader::nextChunkAsUTF8StringWithLatin1Fallback):
+        (WebCore::SharedBufferChunkReader::peek):
+        * platform/SharedBufferChunkReader.h:
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs):
+
 2011-06-23  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed.

@@ -49,7 +49,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader* buffe
     String line;
     String key;
     StringBuilder value;
-    while (!(line = buffer->nextChunk()).isNull()) {
+    while (!(line = buffer->nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
         if (line.isEmpty())
             break; // Empty line means end of key/value section.
         if (line[0] == '\t') {
