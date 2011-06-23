@@ -39,3 +39,7 @@ dt::after {
 .existing-bugs-list {
     font-size: smaller;
 }
+
+.new-bug-form {
+    display: none;
+}

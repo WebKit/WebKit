@@ -51,7 +51,7 @@ Bugzilla.prototype = {
         };
 
         var self = this;
-        getResource(addQueryParametersToURL(this.baseURL + 'buglist.cgi', queryParameters), function(xhr) {
+        fetchResource(this.baseURL + 'buglist.cgi', 'POST', queryParameters, function(xhr) {
             var entries = xhr.responseXML.getElementsByTagName('entry');
             var results = Array.prototype.map.call(entries, function(entry) {
                 var container = document.createElement('div');
@@ -86,3 +86,6 @@ Bugzilla.isOpenStatus = function(status) {
     };
     return status in openStatuses;
 };
+
+// This value is built-in to all Bugzilla installations. See <http://webkit.org/b/61660>.
+Bugzilla.maximumBugTitleLength = 255;

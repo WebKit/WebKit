@@ -36,7 +36,7 @@ function createDefinitionList(items) {
     return list;
 }
 
-function getResource(url, callback, errorCallback) {
+function fetchResource(url, method, queryParameters, callback, errorCallback) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState !== 4)
@@ -47,21 +47,42 @@ function getResource(url, callback, errorCallback) {
         else if (errorCallback)
             errorCallback(this);
     };
-    xhr.open("GET", url);
-    xhr.send();
+
+    if (method === 'GET' && queryParameters)
+        url = addQueryParametersToURL(url, queryParameters);
+
+    xhr.open(method, url);
+
+    if (method === 'GET') {
+        xhr.send();
+        return;
+    }
+
+    var data = urlEncodeQueryParameters(queryParameters);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('Content-Length', data.length);
+    xhr.setRequestHeader('Connection', 'close');
+    xhr.send(data);
 }
 
-function addQueryParametersToURL(url, queryParameters) {
+function getResource(url, callback, errorCallback) {
+    fetchResource(url, 'GET', null, callback, errorCallback);
+}
+
+function urlEncodeQueryParameters(queryParameters) {
     var encodedParameters = Object.keys(queryParameters).map(function(key) {
         return key + '=' + encodeURIComponent(queryParameters[key]);
     });
+    return encodedParameters.join('&');
+}
 
+function addQueryParametersToURL(url, queryParameters) {
     if (url.indexOf('?') < 0)
         url += '?';
     else
         url += '&';
 
-    return url + encodedParameters.join('&');
+    return url + urlEncodeQueryParameters(queryParameters);
 }
 
 Array.prototype.findFirst = function(predicate) {

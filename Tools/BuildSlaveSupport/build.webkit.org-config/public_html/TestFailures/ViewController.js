@@ -259,49 +259,81 @@ ViewController.prototype = {
                 regressionRangeString = 'r' + parsedPassingBuildName.revision + '-' + regressionRangeString;
         }
 
-        var description = failingTests.join(', ')
-            + (failingTests.length > 1 ? ' have' : ' has') + ' been failing on ' + tester.name
-            + ' since r' + parsedFailingBuildName.revision + '.\n\n';
-
-        if (passingBuildName)
-            description += encodeURI(tester.resultsPageURL(passingBuildName)) + ' passed\n';
-        var failingResultsHTML = tester.resultsPageURL(failingBuildName);
-        description += encodeURI(failingResultsHTML) + ' failed\n';
-
         // FIXME: Some of this code should move into a new method on the Bugzilla class.
 
         // FIXME: When a newly-added test has been failing since its introduction, it isn't really a
         // "regression". We should use a different title and keywords in that case.
         // <http://webkit.org/b/61645>
-        var queryParameters = {
+
+        var titlePrefix = 'REGRESSION (' + regressionRangeString + '): ';
+        var titleSuffix = ' failing on ' + tester.name;
+        var title = titlePrefix + failingTests.join(', ') + titleSuffix;
+        if (title.length > Bugzilla.maximumBugTitleLength)
+            title = titlePrefix + failingTests.length + ' tests' + titleSuffix;
+        console.assert(title.length <= Bugzilla.maximumBugTitleLength);
+
+        var description;
+        if (failingTests.length === 1) {
+            description = failingTests[0] + ' has been failing on ' + tester.name
+                + ' since r' + parsedFailingBuildName.revision + '.\n\n';
+        } else if (failingTests.length === 2) {
+            description = failingTests.join(' and ') + ' have been failing on ' + tester.name
+                + ' since r' + parsedFailingBuildName.revision + '.\n\n';
+        } else {
+            description = 'The following tests have been failing on ' + tester.name
+                + ' since r' + parsedFailingBuildName.revision + ':\n\n'
+                + failingTests.map(function(test) { return '    ' + test }).join('\n')
+                + '\n\n';
+        }
+        if (passingBuildName)
+            description += encodeURI(tester.resultsPageURL(passingBuildName)) + ' passed\n';
+        var failingResultsHTML = tester.resultsPageURL(failingBuildName);
+        description += encodeURI(failingResultsHTML) + ' failed\n';
+
+        var formData = {
             product: 'WebKit',
             version: '528+ (Nightly build)',
             component: 'Tools / Tests',
             keywords: 'LayoutTestFailure, MakingBotsRed, Regression',
-            short_desc: 'REGRESSION (' + regressionRangeString + '): ' + failingTests.join(', ') + ' failing on ' + tester.name,
+            short_desc: title,
             comment: description,
             bug_file_loc: failingResultsHTML,
         };
 
         if (/Windows/.test(tester.name)) {
-            queryParameters.rep_platform = 'PC';
+            formData.rep_platform = 'PC';
             if (/Windows 7/.test(tester.name))
-                queryParameters.op_sys = 'Windows 7';
+                formData.op_sys = 'Windows 7';
             else if (/Windows XP/.test(tester.name))
-                queryParameters.op_sys = 'Windows XP';
+                formData.op_sys = 'Windows XP';
         } else if (/Leopard/.test(tester.name)) {
-            queryParameters.rep_platform = 'Macintosh';
+            formData.rep_platform = 'Macintosh';
             if (/SnowLeopard/.test(tester.name))
-                queryParameters.op_sys = 'Mac OS X 10.6';
+                formData.op_sys = 'Mac OS X 10.6';
             else
-                queryParameters.op_sys = 'Mac OS X 10.5';
+                formData.op_sys = 'Mac OS X 10.5';
+        }
+
+        var form = document.createElement('form');
+        result.appendChild(form);
+        form.className = 'new-bug-form';
+        form.method = 'POST';
+        form.action = this._bugzilla.baseURL + 'enter_bug.cgi';
+        form.target = '_blank';
+
+        for (var key in formData) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = formData[key];
+            form.appendChild(input);
         }
 
         var link = document.createElement('a');
         container.appendChild(link);
 
-        link.href = addQueryParametersToURL('https://bugs.webkit.org/enter_bug.cgi', queryParameters);
-        link.target = '_blank';
+        link.addEventListener('click', function(event) { form.submit(); event.preventDefault(); });
+        link.href = '#';
         link.appendChild(document.createTextNode('File bug for ' + (failingTests.length > 1 ? 'these failures' : 'this failure')));
 
         return result;

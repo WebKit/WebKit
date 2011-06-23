@@ -1,5 +1,39 @@
 2011-06-23  Adam Roben  <aroben@apple.com>
 
+        Make finding existing bugs and filing new bugs work on TestFailures even when lots of tests are failing
+
+        One bug this fixes is <http://webkit.org/b/61660> New bug links on TestFailures page often
+        contain titles that are so long they are rejected by Bugzilla
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js:
+        (Bugzilla.prototype.quickSearch): Use fetchResource to POST the search query rather than
+        using a query string on the URL. If the search query is very long, using a query string can
+        cause the request to be rejected due to the URL being too long. POSTing avoids this issue.
+        (Bugzilla.maximumBugTitleLength): Added this constant based on Bugzilla's implementation.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (.new-bug-form): Hide the form that we secretly use to file a new bug.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (fetchResource): Added. Code came from getResource. If we're using a GET request, add the
+        query parameters to the URL. Otherwise, send them as the body of the request along with the
+        appropriate headers.
+        (getResource): Now just calls through to fetchResource.
+        (urlEncodedQueryParameters): Added. Moved some code here...
+        (addQueryParametersToURL): ...from here.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForNewAndExistingBugs): Shorten the title to just mention the
+        number of failing tests if mentioning all the tests would make the title too long. Improved
+        the description for large numbers of failures by listing the tests one-per-line instead of
+        just having them be comma-separated, which was hard to read. Use a form to file the new bug
+        instead of a link so that we can POST the form data. (Using a URL with a query string can
+        result in the URL being too long.) The new bug link now just submits the form.
+
+2011-06-23  Adam Roben  <aroben@apple.com>
+
         Show closed bugs on the TestFailures page in addition to open ones
 
         Fixes <http://webkit.org/b/63194> TestFailures page should show closed bugs, too
