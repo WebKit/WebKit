@@ -80,6 +80,11 @@ protected:
     virtual void wheelEvent(QGraphicsSceneWheelEvent*);
     virtual void touchEvent(QTouchEvent*);
 
+    virtual void dragEnterEvent(QGraphicsSceneDragDropEvent*);
+    virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent*);
+    virtual void dragMoveEvent(QGraphicsSceneDragDropEvent*);
+    virtual void dropEvent(QGraphicsSceneDragDropEvent*);
+
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent*);
 
     Q_SLOT void updateCursor(const QCursor&);

@@ -27,7 +27,9 @@
 #include "DragClientQt.h"
 
 #include "ClipboardQt.h"
+#include "DragController.h"
 #include "Frame.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "qwebpage.h"
 
@@ -106,6 +108,7 @@ void DragClientQt::startDrag(DragImageRef dragImage, const IntPoint&, const IntP
         PlatformMouseEvent me(m_webPage->view()->mapFromGlobal(QCursor::pos()), QCursor::pos(), LeftButton, MouseEventMoved, 0, false, false, false, false, 0);
         frame->eventHandler()->dragSourceEndedAt(me, dropActionToDragOperation(actualDropAction));
     }
+    frame->page()->dragController()->dragEnded();
 #endif
 }
 

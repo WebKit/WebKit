@@ -79,6 +79,7 @@ void QGraphicsWKView::init(BackingStoreType backingStoreType)
 {
     setFocusPolicy(Qt::StrongFocus);
     setAcceptHoverEvents(true);
+    setAcceptDrops(true);
 
 #if ENABLE(TILED_BACKING_STORE)
     if (backingStoreType == Tiled)
@@ -327,6 +328,64 @@ void QGraphicsWKView::wheelEvent(QGraphicsSceneWheelEvent* ev)
 void QGraphicsWKView::touchEvent(QTouchEvent* ev)
 {
     page()->d->touchEvent(ev);
+}
+
+void QGraphicsWKView::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    if (d->page)
+        d->page->d->dragEnterEvent(ev);
+#else
+    Q_UNUSED(ev);
+#endif
+}
+
+void QGraphicsWKView::dragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
+        d->page->d->dragLeaveEvent(ev);
+        ev->setAccepted(accepted);
+    }
+
+    if (!ev->isAccepted())
+        QGraphicsWidget::dragLeaveEvent(ev);
+#else
+    Q_UNUSED(ev);
+#endif
+}
+
+void QGraphicsWKView::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
+        d->page->d->dragMoveEvent(ev);
+        ev->setAccepted(accepted);
+    }
+
+    if (!ev->isAccepted())
+        QGraphicsWidget::dragMoveEvent(ev);
+#else
+    Q_UNUSED(ev);
+#endif
+}
+
+void QGraphicsWKView::dropEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
+        d->page->d->dropEvent(ev);
+        ev->setAccepted(accepted);
+    }
+
+    if (!ev->isAccepted())
+        QGraphicsWidget::dropEvent(ev);
+#else
+    Q_UNUSED(ev);
+#endif
 }
 
 void QGraphicsWKView::focusInEvent(QFocusEvent*)

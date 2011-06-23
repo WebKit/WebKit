@@ -24,6 +24,7 @@
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
 #include "PageClient.h"
+#include "ShareableBitmap.h"
 #include "qwkpage.h"
 #include "qgraphicswkview.h"
 #include "ViewportArguments.h"
@@ -71,6 +72,7 @@ public:
     virtual void didRelaunchProcess();
     virtual void didChangeContentsSize(const WebCore::IntSize&);
     virtual void didFindZoomableArea(const WebCore::IntRect&);
+    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
     virtual WebCore::IntRect viewportVisibleRect() const;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
@@ -111,6 +113,11 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent*);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
     void wheelEvent(QGraphicsSceneWheelEvent*);
+
+    void dragEnterEvent(QGraphicsSceneDragDropEvent*);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent*);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent*);
+    void dropEvent(QGraphicsSceneDragDropEvent*);
 
     void updateAction(QWKPage::WebAction action);
     void updateNavigationActions();

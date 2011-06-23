@@ -1,3 +1,69 @@
+2011-06-23  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Add drag and drop support
+        https://bugs.webkit.org/show_bug.cgi?id=62838
+
+        Added missing pieces to add support for DnD in QtWebKit.
+
+        * Shared/qt/ArgumentCodersQt.cpp: Added.
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/qt/ArgumentCodersQt.h: Added.
+        Encode DragData so that we can transfer the QMimeData between the
+        WebProcess and the UI Process.
+        I encode the DragData and not QMimeData directly because we don't
+        have an associated QMimeData for each message.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::init):
+        (QGraphicsWKView::dragEnterEvent):
+        (QGraphicsWKView::dragLeaveEvent):
+        (QGraphicsWKView::dragMoveEvent):
+        (QGraphicsWKView::dropEvent):
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (dropActionToDragOperation):
+        (dragOperationToDropAction):
+        (dragOperationToDropActions):
+        (QWKPagePrivate::dragEnterEvent):
+        (QWKPagePrivate::dragLeaveEvent):
+        (QWKPagePrivate::dragMoveEvent):
+        (QWKPagePrivate::dropEvent):
+        (QWKPagePrivate::startDrag):
+
+        Send drag-and-drop related events to WebKit.
+
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::startDrag):
+        * UIProcess/WebPageProxy.h:
+
+         Start the HTML5 drag operation from the UI process, because QDrag
+         needs a handle to the QWidget under the mouse.
+
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add message type that takes DragData as a parameter.
+
+        * WebKit2.pro:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        * WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp: Added.
+        (WebKit::convertImageToBitmap):
+        (WebKit::WebDragClient::startDrag):
+
+        Send a message to the UI process to start the HTML5 drag operation.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Add message type that takes DragData as a parameter.
+
 2011-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

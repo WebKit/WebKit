@@ -103,6 +103,9 @@ public:
 #if PLATFORM(QT)
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
     virtual void didFindZoomableArea(const WebCore::IntRect&) = 0;
+
+    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) = 0;
+
     virtual WebCore::IntRect viewportVisibleRect() const = 0;
 #endif
 

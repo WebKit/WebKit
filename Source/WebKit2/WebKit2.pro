@@ -169,6 +169,7 @@ HEADERS += \
     Shared/Plugins/PluginModuleInfo.h \
     Shared/Plugins/PluginProcessCreationParameters.h \
     Shared/Plugins/PluginQuirks.h \
+    Shared/qt/ArgumentCodersQt.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/WebEventFactoryQt.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
@@ -374,6 +375,7 @@ SOURCES += \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
+    Shared/qt/ArgumentCodersQt.cpp \
     Shared/qt/LayerTreeContextQt.cpp \
     Shared/qt/ShareableBitmapQt.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
@@ -517,6 +519,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
     WebProcess/WebCoreSupport/qt/WebContextMenuClientQt.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
+    WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
     WebProcess/WebPage/DecoderAdapter.cpp \

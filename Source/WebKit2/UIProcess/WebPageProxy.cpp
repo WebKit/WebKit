@@ -88,6 +88,10 @@
 #include <shlobj.h>
 #endif
 
+#if PLATFORM(QT)
+#include "ArgumentCodersQt.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -801,6 +805,8 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     // FIXME: We should pass the drag data map only on DragEnter.
     process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(),
         dragData->draggingSourceOperationMask(), dragData->dragDataMap(), dragData->flags()), m_pageID);
+#elif PLATFORM(QT)
+    process()->send(Messages::WebPage::PerformDragControllerAction(action, *dragData), m_pageID);
 #else
     process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags(), sandboxExtensionHandle), m_pageID);
 #endif
@@ -870,6 +876,17 @@ void WebPageProxy::startDragDrop(const IntPoint& imageOrigin, const IntPoint& dr
     ::ScreenToClient(m_pageClient->nativeWindow(), &localPoint);
 
     dragEnded(localPoint, globalPoint, operation);
+}
+#endif
+
+#if PLATFORM(QT)
+void WebPageProxy::startDrag(const DragData& dragData, const ShareableBitmap::Handle& dragImageHandle)
+{
+    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(dragImageHandle);
+    if (!dragImage)
+        return;
+
+    m_pageClient->startDrag(dragData, dragImage.release());
 }
 #endif
 

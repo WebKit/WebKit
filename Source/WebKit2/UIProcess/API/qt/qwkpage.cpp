@@ -25,6 +25,7 @@
 #include "qwkpreferences_p.h"
 
 #include "ClientImpl.h"
+#include "DragData.h"
 #include "DrawingAreaProxyImpl.h"
 #include "qgraphicswkview.h"
 #include "qwkcontext.h"
@@ -88,6 +89,48 @@ static WebCore::ContextMenuAction contextMenuActionForWebAction(QWKPage::WebActi
         break;
     }
     return WebCore::ContextMenuItemTagNoAction;
+}
+
+static inline DragOperation dropActionToDragOperation(Qt::DropActions actions)
+{
+    unsigned result = 0;
+    if (actions & Qt::CopyAction)
+        result |= DragOperationCopy;
+    if (actions & Qt::MoveAction)
+        result |= (DragOperationMove | DragOperationGeneric);
+    if (actions & Qt::LinkAction)
+        result |= DragOperationLink;
+    if (result == (DragOperationCopy | DragOperationMove | DragOperationGeneric | DragOperationLink))
+        result = DragOperationEvery;
+    return (DragOperation)result;
+}
+
+static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
+{
+    Qt::DropAction result = Qt::IgnoreAction;
+    if (dragOperation & DragOperationCopy)
+        result = Qt::CopyAction;
+    else if (dragOperation & DragOperationMove)
+        result = Qt::MoveAction;
+    else if (dragOperation & DragOperationGeneric)
+        result = Qt::MoveAction;
+    else if (dragOperation & DragOperationLink)
+        result = Qt::LinkAction;
+    return result;
+}
+
+static inline Qt::DropActions dragOperationToDropActions(unsigned dragOperations)
+{
+    Qt::DropActions result = Qt::IgnoreAction;
+    if (dragOperations & DragOperationCopy)
+        result |= Qt::CopyAction;
+    if (dragOperations & DragOperationMove)
+        result |= Qt::MoveAction;
+    if (dragOperations & DragOperationGeneric)
+        result |= Qt::MoveAction;
+    if (dragOperations & DragOperationLink)
+        result |= Qt::LinkAction;
+    return result;
 }
 
 QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c, WKPageGroupRef pageGroupRef)
@@ -450,6 +493,55 @@ void QWKPagePrivate::touchEvent(QTouchEvent* event)
     page->handleTouchEvent(touchEvent);
 #else
     event->ignore();
+#endif
+}
+
+void QWKPagePrivate::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    page->resetDragOperation();
+    DragData dragData(ev->mimeData(), ev->pos().toPoint(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    page->dragEntered(&dragData);
+    ev->acceptProposedAction();
+#else
+    Q_UNUSED(ev)
+#endif
+}
+
+void QWKPagePrivate::dragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
+    page->dragExited(&dragData);
+    page->resetDragOperation();
+#else
+    Q_UNUSED(ev)
+#endif
+}
+
+void QWKPagePrivate::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    DragData dragData(ev->mimeData(), ev->pos().toPoint(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    page->dragUpdated(&dragData);
+    ev->setDropAction(dragOperationToDropAction(page->dragOperation()));
+    if (page->dragOperation() != DragOperationNone)
+        ev->accept();
+#else
+    Q_UNUSED(ev)
+#endif
+}
+
+void QWKPagePrivate::dropEvent(QGraphicsSceneDragDropEvent* ev)
+{
+#ifndef QT_NO_DRAGANDDROP
+    DragData dragData(ev->mimeData(), ev->pos().toPoint(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    SandboxExtension::Handle handle;
+    page->performDrag(&dragData, String(), handle);
+    ev->setDropAction(dragOperationToDropAction(page->dragOperation()));
+    ev->accept();
+#else
+    Q_UNUSED(ev)
 #endif
 }
 
@@ -881,6 +973,24 @@ void QWKPage::findZoomableAreaForPoint(const QPoint& point)
 void QWKPagePrivate::didFindZoomableArea(const IntRect& area)
 {
     emit q->zoomableAreaFound(QRect(area));
+}
+
+void QWKPagePrivate::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
+{
+    QWidget* widget = ownerWidget();
+    if (!widget)
+        return;
+
+    QDrag* drag = new QDrag(widget);
+    if (dragImage)
+        drag->setPixmap(QPixmap::fromImage(dragImage->createQImage()));
+    else if (dragData.platformData() && dragData.platformData()->hasImage())
+        drag->setPixmap(qvariant_cast<QPixmap>(dragData.platformData()->imageData()));
+    DragOperation dragOperationMask = dragData.draggingSourceOperationMask();
+    drag->setMimeData(const_cast<QMimeData*>(dragData.platformData()));
+    Qt::DropAction actualDropAction = drag->exec(dragOperationToDropActions(dragOperationMask));
+
+    page->dragEnded(widget->mapFromGlobal(QCursor::pos()), QCursor::pos(), dropActionToDragOperation(actualDropAction));
 }
 
 WebCore::IntRect QWKPagePrivate::viewportVisibleRect() const

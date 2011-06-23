@@ -1,3 +1,15 @@
+2011-06-23  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Add drag and drop support
+        https://bugs.webkit.org/show_bug.cgi?id=62838
+
+        Call dragEnded from the DragClient to make WebKit1 and WebKit2 consistent.
+
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+
 2011-06-23  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Laszlo Gombos.

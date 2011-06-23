@@ -1694,6 +1694,43 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
         ASSERT_NOT_REACHED();
     }
 }
+
+#elif PLATFORM(QT)
+void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dragData)
+{
+    if (!m_page) {
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+        QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
+        delete data;
+        return;
+    }
+
+    switch (action) {
+    case DragControllerActionEntered:
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragEntered(&dragData)));
+        break;
+
+    case DragControllerActionUpdated:
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragUpdated(&dragData)));
+        break;
+
+    case DragControllerActionExited:
+        m_page->dragController()->dragExited(&dragData);
+        break;
+
+    case DragControllerActionPerformDrag: {
+        m_page->dragController()->performDrag(&dragData);
+        break;
+    }
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    // DragData does not delete its platformData so we need to do that here.
+    QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
+    delete data;
+}
+
 #else
 void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle)
 {

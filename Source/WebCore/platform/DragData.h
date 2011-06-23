@@ -104,7 +104,7 @@ public:
 #endif
     const IntPoint& clientPosition() const { return m_clientPosition; }
     const IntPoint& globalPosition() const { return m_globalPosition; }
-    DragApplicationFlags flags() { return m_applicationFlags; }
+    DragApplicationFlags flags() const { return m_applicationFlags; }
     DragDataRef platformData() const { return m_platformDragData; }
     DragOperation draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
     bool containsURL(Frame*, FilenameConversionPolicy filenamePolicy = ConvertFilenames) const;
@@ -122,6 +122,23 @@ public:
 #if PLATFORM(MAC)
     NSPasteboard *pasteboard() { return m_pasteboard.get(); }
 #endif
+
+#if PLATFORM(QT)
+    // This constructor should used only by WebKit2 IPC because DragData
+    // is initialized by the decoder and not in the constructor.
+    DragData() { }
+
+    DragData& operator =(const DragData& data)
+    {
+        m_clientPosition = data.m_clientPosition;
+        m_globalPosition = data.m_globalPosition;
+        m_platformDragData = data.m_platformDragData;
+        m_draggingSourceOperationMask = data.m_draggingSourceOperationMask;
+        m_applicationFlags = data.m_applicationFlags;
+        return *this;
+    }
+#endif
+
 private:
     IntPoint m_clientPosition;
     IntPoint m_globalPosition;
