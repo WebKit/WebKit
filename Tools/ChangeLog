@@ -1,3 +1,20 @@
+2011-06-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        nrwt: handle missing httpd cleanly
+        https://bugs.webkit.org/show_bug.cgi?id=62027
+
+        We had reverted the change in r89414, so this adds it back in
+        (modifying check_sys_deps() in port/base.py to check for an
+        installed web server).
+
+        This change then fixes the change in r89414 to stub out the
+        check_sys_deps() in the test port so that the unit tests run correctly.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2011-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

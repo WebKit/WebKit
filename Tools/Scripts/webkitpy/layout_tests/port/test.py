@@ -303,6 +303,9 @@ class TestPort(base.Port):
     def check_build(self, needs_http):
         return True
 
+    def check_sys_deps(self, needs_http):
+        return True
+
     def default_configuration(self):
         return 'Release'
 
