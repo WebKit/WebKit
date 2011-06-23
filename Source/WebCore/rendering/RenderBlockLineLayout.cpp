@@ -2110,7 +2110,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
                 if (lineBreakIteratorInfo.first != t) {
                     lineBreakIteratorInfo.first = t;
-                    lineBreakIteratorInfo.second.reset(t->characters(), t->textLength());
+                    lineBreakIteratorInfo.second.reset(t->characters(), t->textLength(), style->locale());
                 }
 
                 bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(lineBreakIteratorInfo.second, current.m_pos, current.m_nextBreakablePosition, breakNBSP)

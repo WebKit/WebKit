@@ -1,3 +1,41 @@
+2011-06-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make line breaking obey the -webkit-locale property
+        https://bugs.webkit.org/show_bug.cgi?id=63209
+
+        Test: platform/mac/fast/text/line-break-locale.html
+
+        * platform/text/TextBreakIterator.h:
+        (WebCore::LazyLineBreakIterator::LazyLineBreakIterator): Take an optional locale identifier and
+        initialize the m_locale member.
+        (WebCore::LazyLineBreakIterator::get): Pass the locale to acquireLineBreakIterator().
+        (WebCore::LazyLineBreakIterator::reset): Pass the locale to releaseLineBreakIterator() and update
+        the m_locale member.
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::LineBreakIteratorPool::sharedPool): Return a shared instance.
+        (WebCore::LineBreakIteratorPool::take): Returns a text iterator for the given locale, either a newly-
+        created one, or an existing one from the pool.
+        (WebCore::LineBreakIteratorPool::put): Puts an iterator back into the pool, removing the least-recently used
+        one if needed.
+        (WebCore::LineBreakIteratorPool::LineBreakIteratorPool):
+        (WebCore::acquireLineBreakIterator): Changed to take an optional local identifier, and to use the pool.
+        (WebCore::releaseLineBreakIterator): Changed to use the pool.
+        * platform/text/brew/TextBreakIteratorBrew.cpp:
+        (WebCore::acquireLineBreakIterator): Updated for new parameter.
+        * platform/text/gtk/TextBreakIteratorGtk.cpp:
+        (WebCore::acquireLineBreakIterator): Ditto.
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::acquireLineBreakIterator): Ditto.
+        * platform/text/wince/TextBreakIteratorWinCE.cpp:
+        (WebCore::acquireLineBreakIterator): Ditto.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Use the locale from the style for the line break
+        iterator.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths): Ditto.
+
 2011-06-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

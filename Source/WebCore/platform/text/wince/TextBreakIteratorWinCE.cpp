@@ -244,7 +244,7 @@ TextBreakIterator* characterBreakIterator(const UChar* string, int length)
 
 static TextBreakIterator* staticLineBreakIterator;
 
-TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length)
+TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString&)
 {
     TextBreakIterator* lineBreakIterator = 0;
     if (staticLineBreakIterator) {

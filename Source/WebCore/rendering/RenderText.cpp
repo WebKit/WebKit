@@ -782,7 +782,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     float wordSpacing = style()->wordSpacing();
     int len = textLength();
     const UChar* txt = characters();
-    LazyLineBreakIterator breakIterator(txt, len);
+    LazyLineBreakIterator breakIterator(txt, len, style()->locale());
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;

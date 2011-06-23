@@ -1,3 +1,14 @@
+2011-06-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make line breaking obey the -webkit-locale property
+        https://bugs.webkit.org/show_bug.cgi?id=63209
+
+        * platform/mac/fast/text/line-break-locale.html: Added.
+        * platform/mac/platform/mac/fast/text/line-break-locale-expected.png: Added.
+        * platform/mac/platform/mac/fast/text/line-break-locale-expected.txt: Added.
+
 2011-06-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
