@@ -1,5 +1,26 @@
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
+        compositing/tiling/huge-layer* flakey
+        https://bugs.webkit.org/show_bug.cgi?id=48454
+
+        These tests have been flaking on multiple platforms, so disable the tests in order to get
+        the bots green.
+
+        * compositing/tiling/huge-layer-add-remove-child.html: Removed.
+        * compositing/tiling/huge-layer-add-remove-child.html-disabled: Copied from LayoutTests/compositing/tiling/huge-layer-add-remove-child.html.
+        * compositing/tiling/huge-layer-img.html: Removed.
+        * compositing/tiling/huge-layer-img.html-disabled: Copied from LayoutTests/compositing/tiling/huge-layer-img.html.
+        * compositing/tiling/huge-layer-resize.html: Removed.
+        * compositing/tiling/huge-layer-resize.html-disabled: Copied from LayoutTests/compositing/tiling/huge-layer-resize.html.
+        * compositing/tiling/huge-layer-with-layer-children-resize.html: Removed.
+        * compositing/tiling/huge-layer-with-layer-children-resize.html-disabled: Copied from LayoutTests/compositing/tiling/huge-layer-with-layer-children-resize.html.
+        * compositing/tiling/huge-layer-with-layer-children.html: Removed.
+        * compositing/tiling/huge-layer-with-layer-children.html-disabled: Copied from LayoutTests/compositing/tiling/huge-layer-with-layer-children.html.
+        * compositing/tiling/huge-layer.html: Removed.
+        * compositing/tiling/huge-layer.html-disabled: Copied from LayoutTests/compositing/tiling/huge-layer.html.
+
+2011-06-23  Jessie Berlin  <jberlin@apple.com>
+
         compositing/iframes/invisible-nested-iframe-show.html failing on SnowLeopard Intel Release
         (WebKit2 Tests) since introduction.
         https://bugs.webkit.org/show_bug.cgi?id=59864
