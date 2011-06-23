@@ -1019,6 +1019,8 @@ BUGCR78458 WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK61470 : fast/canvas/canvas-composite.html = IMAGE
 
+BUGCR87292 DEBUG GPU : fast/canvas/canvas-large-dimensions.html = CRASH
+
 // -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
