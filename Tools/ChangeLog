@@ -1,3 +1,18 @@
+2011-06-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make sheriff-bot robust against exceptions from commands
+        https://bugs.webkit.org/show_bug.cgi?id=63211
+
+        sheriff-bot was acting strange this afternoon.
+        We don't know if this will fix the cause, but
+        at least it adds some unit tests and catches
+        one possible cause.
+
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-06-22  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Levin.

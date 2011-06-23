@@ -62,22 +62,27 @@ class SheriffIRCBot(object):
                                  self._message_queue,
                                  self._tool.wakeup_event)
 
-    def process_message(self, message):
-        (nick, request) = message
+    def _parse_command_and_args(self, request):
         tokenized_request = request.strip().split(" ")
-        if not tokenized_request:
-            return
         command = irc_command.commands.get(tokenized_request[0])
         args = tokenized_request[1:]
         if not command:
             # Give the peoples someone to talk with.
             command = irc_command.Eliza
             args = tokenized_request
-        response = command().execute(nick, args, self._tool, self._sheriff)
-        if response:
-            self._tool.irc().post(response)
+        return (command, args)
+
+    def process_message(self, requester_nick, request):
+        command, args = self._parse_command_and_args(request)
+        try:
+            response = command().execute(requester_nick, args, self._tool, self._sheriff)
+            if response:
+                self._tool.irc().post(response)
+        except Exception, e:
+            self._tool.irc().post("Exception executing command: %s" % e)
 
     def process_pending_messages(self):
         (messages, is_running) = self._message_queue.take_all()
         for message in messages:
-            self.process_message(message)
+            (nick, request) = message
+            self.process_message(nick, request)

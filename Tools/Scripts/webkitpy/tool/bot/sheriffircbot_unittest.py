@@ -30,6 +30,7 @@ import unittest
 import random
 
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.tool.bot import irc_command
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
 from webkitpy.tool.bot.sheriff_unittest import MockSheriffBot
@@ -45,6 +46,27 @@ def run(message):
 
 
 class SheriffIRCBotTest(unittest.TestCase):
+    def test_parse_command_and_args(self):
+        tool = MockTool()
+        bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
+        self.assertEqual(bot._parse_command_and_args(""), (irc_command.Eliza, [""]))
+        self.assertEqual(bot._parse_command_and_args("   "), (irc_command.Eliza, [""]))
+        self.assertEqual(bot._parse_command_and_args(" hi "), (irc_command.Hi, []))
+        self.assertEqual(bot._parse_command_and_args(" hi there "), (irc_command.Hi, ["there"]))
+
+    def test_exception_during_command(self):
+        tool = MockTool()
+        tool.ensure_irc_connected(None)
+        bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
+
+        class CommandWithException(object):
+            def execute(self, nick, args, tool, sheriff):
+                raise Exception("mock_exception")
+
+        bot._parse_command_and_args = lambda request: (CommandWithException, [])
+        expected_stderr = 'MOCK: irc.post: Exception executing command: mock_exception\n'
+        OutputCapture().assert_outputs(self, bot.process_message, args=["mock_nick", "ignored message"], expected_stderr=expected_stderr)
+
     def test_hi(self):
         random.seed(23324)
         expected_stderr = 'MOCK: irc.post: "Only you can prevent forest fires." -- Smokey the Bear\n'
