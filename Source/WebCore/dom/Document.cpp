@@ -387,7 +387,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_ignoreDestructiveWriteCount(0)
     , m_titleSetExplicitly(false)
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
-    , m_loadEventFinished(false)
     , m_startTime(currentTime())
     , m_overMinimumLayoutThreshold(false)
     , m_extraLayoutDelay(0)
@@ -3401,7 +3400,6 @@ void Document::dispatchWindowLoadEvent()
     if (!domWindow)
         return;
     domWindow->dispatchLoadEvent();
-    m_loadEventFinished = true;
 }
 
 void Document::enqueueWindowEvent(PassRefPtr<Event> event)

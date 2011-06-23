@@ -999,7 +999,6 @@ public:
     void statePopped(SerializedScriptValue*);
 
     bool processingLoadEvent() const { return m_processingLoadEvent; }
-    bool loadEventFinished() const { return m_loadEventFinished; }
 
 #if ENABLE(DATABASE)
     virtual bool allowDatabaseAccess() const;
@@ -1281,12 +1280,8 @@ private:
     Timer<Document> m_updateFocusAppearanceTimer;
 
     Element* m_cssTarget;
-
-    // FIXME: Merge these 2 variables into an enum. Also, FrameLoader::m_didCallImplicitClose
-    // is almost a duplication of this data, so that should probably get merged in too.
+    
     bool m_processingLoadEvent;
-    bool m_loadEventFinished;
-
     RefPtr<SerializedScriptValue> m_pendingStateObject;
     double m_startTime;
     bool m_overMinimumLayoutThreshold;

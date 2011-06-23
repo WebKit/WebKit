@@ -441,9 +441,11 @@ bool DocumentLoader::isLoadingInAPISense() const
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
     if (frameLoader()->state() != FrameStateComplete) {
-        Document* doc = m_frame->document();
-        if ((!m_primaryLoadComplete || !m_frame->document()->loadEventFinished()) && isLoading())
+        if (!m_primaryLoadComplete && isLoading())
             return true;
+        if (!m_subresourceLoaders.isEmpty())
+            return true;
+        Document* doc = m_frame->document();
         if (doc->cachedResourceLoader()->requestCount())
             return true;
         if (DocumentParser* parser = doc->parser())

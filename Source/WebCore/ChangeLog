@@ -1,3 +1,18 @@
+2011-06-23  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed.
+
+        Revert production code part of r89503, since it's causing
+        crashes on WebKit2/mac and failures on qt.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::dispatchWindowLoadEvent):
+        * dom/Document.h:
+        (WebCore::Document::processingLoadEvent):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+
 2011-06-23  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Simon Fraser.
