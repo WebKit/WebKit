@@ -537,6 +537,10 @@ window.addEventListener("DOMContentLoaded", windowLoaded, false);
 
 var messagesToDispatch = [];
 
+WebInspector.dispatchQueueIsEmpty = function() {
+    return messagesToDispatch.length == 0;
+}
+
 WebInspector.dispatch = function(message) {
     messagesToDispatch.push(message);
     setTimeout(function() {

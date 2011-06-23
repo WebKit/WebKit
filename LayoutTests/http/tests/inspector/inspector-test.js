@@ -14,7 +14,15 @@ console.info = consoleOutputHook.bind(InspectorTest, "info");
 
 InspectorTest.completeTest = function()
 {
-    RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + InspectorTest.completeTestCallId + ", \"\")", "test");
+    function testDispatchQueueIsEmpty() {
+        if (!WebInspector.dispatchQueueIsEmpty()) {
+            // Wait for unprocessed messages.
+            setTimeout(testDispatchQueueIsEmpty, 10);
+            return;
+        }
+        RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + InspectorTest.completeTestCallId + ", \"\")", "test");
+    }
+    testDispatchQueueIsEmpty();
 }
 
 InspectorTest.evaluateInConsole = function(code, callback)

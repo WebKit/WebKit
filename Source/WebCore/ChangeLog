@@ -1,3 +1,16 @@
+2011-06-23  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Pavel Feldman.
+
+        Inspector may close at the start of the next inspector test in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=60881
+
+        Add a new function to the inspector, which tests whether the
+        dispatch queue is empty.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.dispatchQueueIsEmpty):
+
 2011-06-23  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by Nikolas Zimmermann.

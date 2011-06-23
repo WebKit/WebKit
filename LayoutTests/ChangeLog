@@ -1,3 +1,16 @@
+2011-06-23  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Pavel Feldman.
+
+        Inspector may close at the start of the next inspector test in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=60881
+
+        The didEvaluateForTestInFrontend function call is postponed until
+        all messages in the dispatch queue is processed.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.completeTest):
+
 2011-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, final round of baselines for the new CSS2.1 tests added in r88913.
