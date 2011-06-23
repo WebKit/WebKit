@@ -197,7 +197,7 @@ RenderObject* SVGRadialGradientElement::createRenderer(RenderArena* arena, Rende
     return new (arena) RenderSVGResourceRadialGradient(this);
 }
 
-void SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttributes& attributes)
+bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttributes& attributes)
 {
     HashSet<SVGGradientElement*> processedGradients;
 
@@ -205,6 +205,9 @@ void SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
     SVGGradientElement* current = this;
 
     while (current) {
+        if (!current->renderer())
+            return false;
+
         if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
             attributes.setSpreadMethod(current->spreadMethod());
 
@@ -266,6 +269,8 @@ void SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
 
     if (!attributes.hasFy())
         attributes.setFy(attributes.cy());
+
+    return true;
 }
 
 void SVGRadialGradientElement::calculateFocalCenterPointsAndRadius(const RadialGradientAttributes& attributes, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius)

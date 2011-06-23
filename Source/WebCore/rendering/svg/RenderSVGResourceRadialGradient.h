@@ -41,7 +41,7 @@ public:
 
     virtual bool boundingBoxMode() const { return m_attributes.boundingBoxMode(); }
     virtual void calculateGradientTransform(AffineTransform& transform) { transform = m_attributes.gradientTransform(); }
-    virtual void collectGradientAttributes(SVGGradientElement*);
+    virtual bool collectGradientAttributes(SVGGradientElement*);
     virtual void buildGradient(GradientData*, SVGGradientElement*) const;
 
 private:

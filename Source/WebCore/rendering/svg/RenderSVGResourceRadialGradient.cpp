@@ -39,10 +39,10 @@ RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient()
 {
 }
 
-void RenderSVGResourceRadialGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
+bool RenderSVGResourceRadialGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
 {
     m_attributes = RadialGradientAttributes();
-    static_cast<SVGRadialGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
+    return static_cast<SVGRadialGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
 }
 
 void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const

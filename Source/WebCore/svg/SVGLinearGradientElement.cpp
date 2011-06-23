@@ -180,7 +180,7 @@ RenderObject* SVGLinearGradientElement::createRenderer(RenderArena* arena, Rende
     return new (arena) RenderSVGResourceLinearGradient(this);
 }
 
-void SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttributes& attributes)
+bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttributes& attributes)
 {
     HashSet<SVGGradientElement*> processedGradients;
 
@@ -188,6 +188,9 @@ void SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
     SVGGradientElement* current = this;
 
     while (current) {
+        if (!current->renderer())
+            return false;
+
         if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
             attributes.setSpreadMethod(current->spreadMethod());
 
@@ -239,6 +242,8 @@ void SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
         } else
             current = 0;
     }
+
+    return true;
 }
 
 void SVGLinearGradientElement::calculateStartEndPoints(const LinearGradientAttributes& attributes, FloatPoint& startPoint, FloatPoint& endPoint)

@@ -33,7 +33,7 @@ class SVGLinearGradientElement : public SVGGradientElement {
 public:
     static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
 
-    void collectGradientAttributes(LinearGradientAttributes&);
+    bool collectGradientAttributes(LinearGradientAttributes&);
     void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
 
 private:

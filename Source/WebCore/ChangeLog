@@ -1,3 +1,31 @@
+2011-06-23  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Incorrectly placed SVG gradients can cause crashes when referenced
+        https://bugs.webkit.org/show_bug.cgi?id=62914
+
+        Added a check for gradient rendering contexts. If the contexts can't be found, the gradient must be in an invalid location, so we use the fallback color instead.
+
+        Tests: svg/custom/invalid-gradient-with-xlink.svg
+               svg/custom/xlink-to-invalid-gradient.svg
+
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        (WebCore::RenderSVGResourceLinearGradient::collectGradientAttributes):
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        (WebCore::RenderSVGResourceRadialGradient::collectGradientAttributes):
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGRadialGradientElement.h:
+
 2011-06-23  Dmitriy Vyukov  <dvyukov@google.com>
 
         Reviewed by David Levin.

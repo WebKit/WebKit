@@ -39,10 +39,10 @@ RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient()
 {
 }
 
-void RenderSVGResourceLinearGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
+bool RenderSVGResourceLinearGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
 {
     m_attributes = LinearGradientAttributes();
-    static_cast<SVGLinearGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
+    return static_cast<SVGLinearGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
 }
 
 void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const

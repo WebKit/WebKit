@@ -58,7 +58,7 @@ protected:
 
     virtual bool boundingBoxMode() const = 0;
     virtual void calculateGradientTransform(AffineTransform&) = 0;
-    virtual void collectGradientAttributes(SVGGradientElement*) = 0;
+    virtual bool collectGradientAttributes(SVGGradientElement*) = 0;
     virtual void buildGradient(GradientData*, SVGGradientElement*) const = 0;
 
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGGradientElement::SVGSpreadMethodType) const;

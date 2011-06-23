@@ -1,3 +1,19 @@
+2011-06-23  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Incorrectly placed SVG gradients can cause crashes when referenced
+        https://bugs.webkit.org/show_bug.cgi?id=62914
+
+        Added tests to make sure fallback color is used properly with invalid gradients.
+
+        * svg/custom/invalid-gradient-with-xlink-expected.png: Added.
+        * svg/custom/invalid-gradient-with-xlink-expected.txt: Added.
+        * svg/custom/invalid-gradient-with-xlink.svg: Added.
+        * svg/custom/xlink-to-invalid-gradient-expected.png: Added.
+        * svg/custom/xlink-to-invalid-gradient-expected.txt: Added.
+        * svg/custom/xlink-to-invalid-gradient.svg: Added.
+
 2011-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, another bunch of GTK+ baselines for the new CSS2.1 tests added in r88913.

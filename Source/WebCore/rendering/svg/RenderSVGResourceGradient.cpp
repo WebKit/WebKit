@@ -155,7 +155,9 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
 
     if (m_shouldCollectGradientAttributes) {
         gradientElement->updateAnimatedSVGAttribute(anyQName());
-        collectGradientAttributes(gradientElement);
+        if (!collectGradientAttributes(gradientElement))
+            return false;
+
         m_shouldCollectGradientAttributes = false;
     }
 
