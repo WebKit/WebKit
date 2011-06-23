@@ -163,27 +163,3 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def _path_to_wdiff(self):
         return 'wdiff'
-
-    def _shut_down_http_server(self, server_pid):
-        """Shut down the lighttpd web server. Blocks until it's fully
-        shut down.
-
-        Args:
-            server_pid: The process ID of the running server.
-        """
-        # server_pid is not set when "http_server.py stop" is run manually.
-        if server_pid is None:
-            # TODO(mmoss) This isn't ideal, since it could conflict with
-            # lighttpd processes not started by http_server.py,
-            # but good enough for now.
-            self._executive.kill_all('lighttpd')
-            self._executive.kill_all('httpd')
-        else:
-            try:
-                os.kill(server_pid, signal.SIGTERM)
-                # TODO(mmoss) Maybe throw in a SIGKILL just to be sure?
-            except OSError:
-                # Sometimes we get a bad PID (e.g. from a stale httpd.pid
-                # file), so if kill fails on the given PID, just try to
-                # 'killall' web servers.
-                self._shut_down_http_server(None)

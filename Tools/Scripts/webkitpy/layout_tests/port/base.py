@@ -912,13 +912,6 @@ class Port(object):
         This is likely used only by wdiff_text()"""
         raise NotImplementedError('Port._path_to_wdiff')
 
-    def _shut_down_http_server(self, pid):
-        """Forcefully and synchronously kills the web server.
-
-        This routine should only be called from http_server.py or its
-        subclasses."""
-        raise NotImplementedError('Port._shut_down_http_server')
-
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
         given platform."""

@@ -288,7 +288,6 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port._path_to_lighttpd_modules)
         self.assertVirtual(port._path_to_lighttpd_php)
         self.assertVirtual(port._path_to_wdiff)
-        self.assertVirtual(port._shut_down_http_server, None)
 
     def test_virtual_driver_method(self):
         self.assertRaises(NotImplementedError, base.Driver, base.Port(),

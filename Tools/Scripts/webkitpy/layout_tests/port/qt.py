@@ -29,8 +29,6 @@
 """QtWebKit implementation of the Port interface."""
 
 import logging
-import os
-import signal
 import sys
 
 import webkit
@@ -62,29 +60,6 @@ class QtPort(WebKitPort):
         # FIXME: This needs to detect the distribution and change config files.
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
                                      'apache2-debian-httpd.conf')
-
-    def _shut_down_http_server(self, server_pid):
-        """Shut down the httpd web server. Blocks until it's fully
-        shut down.
-
-        Args:
-            server_pid: The process ID of the running server.
-        """
-        # server_pid is not set when "http_server.py stop" is run manually.
-        if server_pid is None:
-            # FIXME: This isn't ideal, since it could conflict with
-            # lighttpd processes not started by http_server.py,
-            # but good enough for now.
-            self._executive.kill_all('apache2')
-        else:
-            try:
-                os.kill(server_pid, signal.SIGTERM)
-                # TODO(mmoss) Maybe throw in a SIGKILL just to be sure?
-            except OSError:
-                # Sometimes we get a bad PID (e.g. from a stale httpd.pid
-                # file), so if kill fails on the given PID, just try to
-                # 'killall' web servers.
-                self._shut_down_http_server(None)
 
     def _build_driver(self):
         # The Qt port builds DRT as part of the main build step

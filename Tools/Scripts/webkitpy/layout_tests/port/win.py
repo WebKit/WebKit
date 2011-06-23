@@ -52,14 +52,3 @@ class WinPort(WebKitPort):
     def _path_to_apache_config_file(self):
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
                                      'cygwin-httpd.conf')
-
-    def _shut_down_http_server(self, server_pid):
-        """Shut down the httpd web server. Blocks until it's fully
-        shut down.
-
-        Args:
-            server_pid: The process ID of the running server.
-        """
-        # Looks like we ignore server_pid.
-        # Copy/pasted from chromium-win.
-        self._executive.kill_all("httpd.exe")

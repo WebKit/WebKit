@@ -170,15 +170,3 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',
                                             'wdiff.exe')
-
-    def _shut_down_http_server(self, server_pid):
-        """Shut down the lighttpd web server. Blocks until it's fully
-        shut down.
-
-        Args:
-            server_pid: The process ID of the running server.
-        """
-        # FIXME: Why are we ignoring server_pid and calling
-        # _kill_all instead of Executive.kill_process(pid)?
-        self._executive.kill_all("LightTPD.exe")
-        self._executive.kill_all("httpd.exe")
