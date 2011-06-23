@@ -1,3 +1,10 @@
+2011-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Qt build-fix: remove warning that no other platform appears to use.
+        Someone can add it back if they really feel it's needed.
+
+        * Source/WebKit.pri:
+
 2011-06-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.
