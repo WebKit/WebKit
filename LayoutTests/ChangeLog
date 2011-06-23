@@ -1,3 +1,9 @@
+2011-06-23  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: marking debugger test as slow in chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2 Tests] plugins/npruntime/embed-property-equality.html failing since introduction in
