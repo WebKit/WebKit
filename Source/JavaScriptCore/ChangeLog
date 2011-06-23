@@ -1,3 +1,16 @@
+2011-06-23  Timur Iskhodzhanov  <timurrrr@google.com>
+
+        Reviewed by David Levin.
+
+        Make dynamic annotations weak symbols and prevent identical code folding by the linker
+        https://bugs.webkit.org/show_bug.cgi?id=62443
+
+        * wtf/DynamicAnnotations.cpp:
+        (WTFAnnotateBenignRaceSized):
+        (WTFAnnotateHappensBefore):
+        (WTFAnnotateHappensAfter):
+        * wtf/DynamicAnnotations.h:
+
 2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.
