@@ -1,3 +1,17 @@
+2011-06-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove comment about pages with frames not being page-cachable
+        https://bugs.webkit.org/show_bug.cgi?id=63207
+
+        This comment was out of date. Caching pages with Frames in
+        the PageCache has worked since 2009:
+        <http://webkit.org/b/13631> Page Cache should support pages with frames
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::canCache):
+
 2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

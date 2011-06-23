@@ -299,8 +299,6 @@ bool PageCache::canCache(Page* page)
     // store the final page we end up on.
     // No point writing to the cache on a reload or loadSame, since we will just write
     // over it again when we leave that page.
-    // FIXME: <rdar://problem/4886592> - We should work out the complexities of caching pages with frames as they
-    // are the most interesting pages on the web, and often those that would benefit the most from caching!
     FrameLoadType loadType = page->mainFrame()->loader()->loadType();
     
     return canCachePageContainingThisFrame(page->mainFrame())
