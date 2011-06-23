@@ -1,3 +1,15 @@
+2011-06-22  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2 Tests] plugins/npruntime/embed-property-equality.html failing since introduction in
+        r88679.
+        https://bugs.webkit.org/show_bug.cgi?id=63205
+
+        Add expected failing result in order to get the bots green.
+
+        * platform/mac-wk2/plugins: Added.
+        * platform/mac-wk2/plugins/npruntime: Added.
+        * platform/mac-wk2/plugins/npruntime/embed-property-equality-expected.txt: Added.
+
 2011-06-22  Ojan Vafai  <ojan@chromium.org>
 
         Update listing for perf tests to list each individual test.
