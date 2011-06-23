@@ -1,3 +1,13 @@
+2011-06-23  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: HTML preview in network panel should take 100% of resource view height.
+        https://bugs.webkit.org/show_bug.cgi?id=63167
+
+        * inspector/front-end/inspector.css:
+        (.resource-view.html iframe):
+
 2011-06-23  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Pavel Feldman.
