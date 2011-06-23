@@ -67,6 +67,7 @@ public:
     QWKHistoryItem backItem() const;
     QWKHistoryItem forwardItem() const;
     QWKHistoryItem itemAt(int index) const;
+    void goToItemAt(int index) const;
     QList<QWKHistoryItem> backItems(int maxItems) const;
     QList<QWKHistoryItem> forwardItems(int maxItems) const;
 

@@ -29,6 +29,7 @@
 #include <QString>
 #include <QUrl>
 #include "qwkhistory_p.h"
+#include "qwkpage_p.h"
 #include "WebBackForwardList.h"
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -84,15 +85,16 @@ QUrl QWKHistoryItem::url() const
     return WKURLCopyQUrl(url.get());
 }
 
-QWKHistoryPrivate::QWKHistoryPrivate(WebKit::WebBackForwardList* list)
-    : m_backForwardList(list)
+QWKHistoryPrivate::QWKHistoryPrivate(QWKPage* page, WebKit::WebBackForwardList* list)
+    : m_page(page)
+    , m_backForwardList(list)
 {
 }
 
-QWKHistory* QWKHistoryPrivate::createHistory(WebKit::WebBackForwardList* list)
+QWKHistory* QWKHistoryPrivate::createHistory(QWKPage* page, WebKit::WebBackForwardList* list)
 {
     QWKHistory* history = new QWKHistory();
-    history->d = new QWKHistoryPrivate(list);
+    history->d = new QWKHistoryPrivate(page, list);
     return history;
 }
 
@@ -150,6 +152,15 @@ QWKHistoryItem QWKHistory::itemAt(int index) const
     WKRetainPtr<WKBackForwardListItemRef> itemRef = WKBackForwardListGetItemAtIndex(toAPI(d->m_backForwardList), index);
     QWKHistoryItem item(itemRef.get());
     return item;
+}
+
+void QWKHistory::goToItemAt(int index) const
+{
+    WKRetainPtr<WKBackForwardListItemRef> itemRef = WKBackForwardListGetItemAtIndex(toAPI(d->m_backForwardList), index);
+    if (itemRef && d->m_page) {
+        QWKHistoryItem item(itemRef.get());
+        WKPageGoToBackForwardListItem(d->m_page->pageRef(), item.d->m_backForwardListItem.get());
+    }
 }
 
 QList<QWKHistoryItem> QWKHistory::backItems(int maxItems) const

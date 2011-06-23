@@ -147,7 +147,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c, WKPageGroupRef pageGr
 {
     memset(actions, 0, sizeof(actions));
     page = context->d->context->createWebPage(this, toImpl(pageGroupRef));
-    history = QWKHistoryPrivate::createHistory(page->backForwardList());
+    history = QWKHistoryPrivate::createHistory(q, page->backForwardList());
 }
 
 QWKPagePrivate::~QWKPagePrivate()

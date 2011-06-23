@@ -1,3 +1,40 @@
+2011-06-23 Jamie Cooley  <james.cooley@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Qt port needs load-from-history implementation
+        https://bugs.webkit.org/show_bug.cgi?id=57784
+ 
+        Created "random access" BackForwardHistory public API method,
+        QWKHistory::goToItemAt(int)
+
+        * UIProcess/API/qt/qwkhistory.cpp:
+        (QWKHistoryItem::QWKHistoryItem::itemRef):
+        Added access method to fetch WKBackForwardListRef
+
+        (QWKHistoryPrivate::QWKHistoryPrivate):
+        (QWKHistoryPrivate::createHistory):
+        Updated createHistory method and QWKHistoryPrivate constructor to take a pointer
+        to the owning QWKPage in addition to the WebBackForwardList. This will be saved so that the
+        new API can ask the page to load a HistoryItem.
+
+        (QWKHistory::goToItemAt):
+        New Public API. Like QWKHistory::itemAt, callee gives an integer.
+        <0 means jump back to that item, 0 means the current item, >0 means jump forwards.
+        If an out-of-range index is given, the function silently fails.
+        This will invoke WKPageGoToBackForwardListItem.
+
+        * UIProcess/API/qt/qwkhistory.h:
+        * UIProcess/API/qt/qwkhistory_p.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        Update instantiation of QWKHistory to include QWKPage.
+
+        * UIProcess/API/qt/tests/qwkhistory/tst_qwkhistory.cpp:
+        (tst_QWKHistory::historyForwardBackTest_data):
+        (tst_QWKHistory::historyForwardBackTest):
+        Add test content for the new API
+
 2011-06-23  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

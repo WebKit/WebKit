@@ -28,6 +28,8 @@
 #include <qwkhistory.h>
 #include <qwkpage.h>
 
+#define TEST_HISTORY_ACTION_RANGE 10
+
 class TestHistoryItem {
 public:
     TestHistoryItem(const QString& title, const QString& filename);
@@ -70,8 +72,10 @@ private:
     QWKPage* m_page;
     QWKHistory* m_history;
 
+    // Enumerate TestHistoryActions starting at 10 so that other integers
+    // can be used at will to test random access
     enum TestHistoryActions {
-        TestNone,
+        TestNone = TEST_HISTORY_ACTION_RANGE,
         TestLoad,
         TestBack,
         TestFwd
@@ -151,6 +155,31 @@ void tst_QWKHistory::historyForwardBackTest_data()
     QTest::newRow("(a) [b c d]") <<
         int(TestBack) << expectedBackList << expectedBackList.takeLast() << expectedForwardList << true;
 
+    // Test random access and related edge cases
+    QTest::newRow("random (a) [b c d]") <<
+        0 << expectedBackList << m_testItemA.data() << expectedForwardList << true;
+    expectedBackList << m_testItemA.data() << expectedForwardList.takeFirst();
+    QTest::newRow("random [a b] (c) [d]") <<
+        2 << expectedBackList << expectedForwardList.takeFirst() << expectedForwardList << true;
+
+    QTest::newRow("random [a b] (c) [d]") <<
+        2 << expectedBackList << m_testItemC.data() << expectedForwardList << false;
+
+    expectedBackList << m_testItemC.data();
+    QTest::newRow("random [a b c] (d)") <<
+        1 << expectedBackList << expectedForwardList.takeFirst() << expectedForwardList << true;
+
+    QTest::newRow("random [a b c] (d)") <<
+        1 << expectedBackList << m_testItemD.data() << expectedForwardList << false;
+
+    expectedForwardList << m_testItemB.data() << m_testItemC.data() << m_testItemD.data();
+    expectedBackList.clear();
+    QTest::newRow("random (a) [b c d]") <<
+        -3 << expectedBackList << m_testItemA.data() << expectedForwardList << true;
+
+    QTest::newRow("random (a) [b c d]") <<
+        -1 << expectedBackList << m_testItemA.data() << expectedForwardList << false;
+
     // "Branch" the forward list away from where it was by loading a new item. Forward list
     // is now cleared, back list should be as expected.
     expectedBackList.clear();
@@ -195,7 +224,11 @@ void tst_QWKHistory::historyForwardBackTest()
         m_page->triggerAction(QWKPage::Forward);
         break;
     default:
-        QFAIL("undefined test case action");
+        // allow test data to pass in indices between defined enum range
+        if ((command > -TEST_HISTORY_ACTION_RANGE) && (command < TEST_HISTORY_ACTION_RANGE))
+            m_history->goToItemAt(command);
+        else
+            QFAIL("undefined test case action");
         break;
     }
     
