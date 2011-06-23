@@ -36,6 +36,21 @@ namespace WebCore {
 
 FileIconLoaderClient::~FileIconLoaderClient()
 {
+    discardLoader();
+}
+
+FileIconLoader* FileIconLoaderClient::newFileIconLoader()
+{
+    discardLoader();
+
+    m_loader = FileIconLoader::create(this);
+    return m_loader.get();
+}
+
+void FileIconLoaderClient::discardLoader()
+{
+    if (m_loader)
+        m_loader->disconnectClient();
 }
 
 PassRefPtr<FileIconLoader> FileIconLoader::create(FileIconLoaderClient* client)

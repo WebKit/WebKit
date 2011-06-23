@@ -56,7 +56,6 @@ const int buttonShadowHeight = 2;
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
-    , m_iconLoader(FileIconLoader::create(this))
 {
     ASSERT(input->files());
     requestIcon(input->files()->filenames());
@@ -64,16 +63,15 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
 
 RenderFileUploadControl::~RenderFileUploadControl()
 {
-    m_iconLoader->disconnectClient();
 }
 
-void RenderFileUploadControl::requestIcon(const Vector<String>& filenames) const
+void RenderFileUploadControl::requestIcon(const Vector<String>& filenames)
 {
     if (!filenames.size())
         return;
 
     if (Chrome* chrome = this->chrome())
-        chrome->loadIconForFiles(filenames, m_iconLoader.get());
+        chrome->loadIconForFiles(filenames, newFileIconLoader());
 }
 
 void RenderFileUploadControl::filesChosen(const Vector<String>& filenames)

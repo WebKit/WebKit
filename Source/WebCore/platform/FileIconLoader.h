@@ -31,17 +31,26 @@
 #ifndef FileIconLoader_h
 #define FileIconLoader_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class FileIconLoader;
 class Icon;
 
 class FileIconLoaderClient {
 public:
     virtual void updateRendering(PassRefPtr<Icon>) = 0;
     virtual ~FileIconLoaderClient();
+
+protected:
+    FileIconLoader* newFileIconLoader();
+
+private:
+    void discardLoader();
+
+    RefPtr<FileIconLoader> m_loader;
 };
 
 class FileIconLoader : public RefCounted<FileIconLoader> {

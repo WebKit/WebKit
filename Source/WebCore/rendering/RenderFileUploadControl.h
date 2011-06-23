@@ -73,9 +73,8 @@ private:
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
     HTMLInputElement* uploadButton() const;
-    void requestIcon(const Vector<String>&) const;
+    void requestIcon(const Vector<String>&);
 
-    RefPtr<FileIconLoader> m_iconLoader;
     RefPtr<Icon> m_icon;
 };
 

@@ -1,3 +1,23 @@
+2011-06-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Convert FileIconLoaderClient to "smart client" pattern, just like FileChooserClient.
+        https://bugs.webkit.org/show_bug.cgi?id=63224
+
+        Refactoring, covered by existing tests.
+
+        * platform/FileIconLoader.cpp:
+        (WebCore::FileIconLoaderClient::~FileIconLoaderClient): Changed to discard loader.
+        (WebCore::FileIconLoaderClient::newFileIconLoader): Added.
+        (WebCore::FileIconLoaderClient::discardLoader): Added.
+        * platform/FileIconLoader.h: Updated defs.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl): Removed initialization of icon loader.
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl): Remove discarding of loader.
+        (WebCore::RenderFileUploadControl::requestIcon): Changed to use newFileIconLoader.
+        * rendering/RenderFileUploadControl.h: Updated defs.
+
 2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
 
         Another unreviewed build fix after r89472.
