@@ -504,8 +504,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
            break;
 #elif PLUGIN_ARCHITECTURE(X11)
        case NPNVxDisplay: {
-           RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-           if (!plugin)
+           if (!npp)
                return NPERR_GENERIC_ERROR;
 #if PLATFORM(QT)
            *reinterpret_cast<Display**>(value) = QX11Info::display();

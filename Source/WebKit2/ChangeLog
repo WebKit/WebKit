@@ -1,3 +1,16 @@
+2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [UNIX] Check for npp directly when getting X display in NetscapeBrowserFuncs
+        https://bugs.webkit.org/show_bug.cgi?id=63149
+
+        NetscapePlugin::fromNPP() shouldn't be called with a null npp, it
+        contains an assert that make it crash when building with debug enabled.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+
 2011-06-22  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
