@@ -119,7 +119,8 @@ public:
     String getShaderString() const;
 };
 
-class FragmentShaderBGRATexAlpha : public FragmentTexAlphaBinding {
+// Swizzles the red and blue component of sampled texel.
+class FragmentShaderRGBATexSwizzleAlpha : public FragmentTexAlphaBinding {
 public:
     String getShaderString() const;
 };
@@ -139,12 +140,6 @@ private:
     int m_maskSamplerLocation;
     int m_alphaLocation;
 };
-
-#if USE(SKIA) && SK_B32_SHIFT
-typedef FragmentShaderRGBATexAlpha FragmentShaderTexAlpha;
-#else
-typedef FragmentShaderBGRATexAlpha FragmentShaderTexAlpha;
-#endif
 
 class FragmentShaderYUVVideo {
 public:

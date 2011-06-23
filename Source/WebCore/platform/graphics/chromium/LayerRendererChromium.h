@@ -129,6 +129,7 @@ public:
     const RenderSurfaceChromium::Program* renderSurfaceProgram();
     const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram();
     const LayerTilerChromium::Program* tilerProgram();
+    const LayerTilerChromium::ProgramSwizzle* tilerProgramSwizzle();
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
     const CCPluginLayerImpl::Program* pluginLayerProgram();
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
@@ -224,6 +225,7 @@ private:
     OwnPtr<RenderSurfaceChromium::Program> m_renderSurfaceProgram;
     OwnPtr<RenderSurfaceChromium::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
+    OwnPtr<LayerTilerChromium::ProgramSwizzle> m_tilerProgramSwizzle;
     OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
@@ -247,6 +249,8 @@ private:
 
     bool m_contextSupportsLatch;
     bool m_contextSupportsMapSub;
+    bool m_contextSupportsTextureFormatBGRA;
+    bool m_contextSupportsReadFormatBGRA;
 
     bool m_animating;
 

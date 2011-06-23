@@ -70,6 +70,7 @@ public:
     virtual ~LayerTextureUpdaterBitmap() { }
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
     virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
@@ -85,6 +86,7 @@ public:
     virtual ~LayerTextureUpdaterSkPicture();
 
     virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
     virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect);
 

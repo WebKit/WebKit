@@ -115,20 +115,33 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
                                              bool accelerateDrawing)
     : m_viewportScrollPosition(IntPoint(-1, -1))
     , m_rootLayer(0)
-    , m_accelerateDrawing(accelerateDrawing)
+    , m_accelerateDrawing(false)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_compositeOffscreen(false)
     , m_context(context)
     , m_childContextsWereCopied(false)
     , m_contextSupportsLatch(false)
+    , m_contextSupportsTextureFormatBGRA(false)
+    , m_contextSupportsReadFormatBGRA(false)
     , m_animating(false)
     , m_defaultRenderSurface(0)
 {
-    m_contextSupportsLatch = m_context->getExtensions()->supports("GL_CHROMIUM_latch");
-    m_contextSupportsMapSub = m_context->getExtensions()->supports("GL_CHROMIUM_map_sub");
+    WebCore::Extensions3D* extensions = m_context->getExtensions();
+    m_contextSupportsLatch = extensions->supports("GL_CHROMIUM_latch");
+    m_contextSupportsMapSub = extensions->supports("GL_CHROMIUM_map_sub");
     if (m_contextSupportsMapSub)
-        m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_map_sub");
+        extensions->ensureEnabled("GL_CHROMIUM_map_sub");
+    m_contextSupportsTextureFormatBGRA = extensions->supports("GL_EXT_texture_format_BGRA8888");
+    if (m_contextSupportsTextureFormatBGRA)
+        extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
+    m_contextSupportsReadFormatBGRA = extensions->supports("GL_EXT_read_format_bgra");
+    if (m_contextSupportsReadFormatBGRA)
+        extensions->ensureEnabled("GL_EXT_read_format_bgra");
+
+#if USE(SKIA)
+    m_accelerateDrawing = accelerateDrawing && skiaContext();
+#endif
     m_hardwareCompositing = initializeSharedObjects();
 
     m_rootLayerContentTiler = LayerTilerChromium::create(this, createRootLayerTextureUpdater(contentPaint), IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
@@ -151,11 +164,8 @@ GraphicsContext3D* LayerRendererChromium::context()
 #if USE(SKIA)
 GrContext* LayerRendererChromium::skiaContext()
 {
-    if (!m_skiaContext) {
-        WebCore::Extensions3D* extensions = m_context->getExtensions();
-        extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
-        extensions->ensureEnabled("GL_EXT_read_format_bgra");
-
+    if (!m_skiaContext && m_contextSupportsTextureFormatBGRA && m_contextSupportsReadFormatBGRA) {
+        m_context->makeContextCurrent();
         m_skiaContext = adoptPtr(GrContext::CreateGLShaderContext());
         // Limit the number of textures we hold in the bitmap->texture cache.
         static const int maxTextureCacheCount = 512;
@@ -1146,10 +1156,21 @@ const LayerTilerChromium::Program* LayerRendererChromium::tilerProgram()
 {
     ASSERT(m_tilerProgram);
     if (!m_tilerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::tilerProgram::initialize", this, 0);
         m_tilerProgram->initialize();
     }
     return m_tilerProgram.get();
+}
+
+const LayerTilerChromium::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizzle()
+{
+    if (!m_tilerProgramSwizzle)
+        m_tilerProgramSwizzle = adoptPtr(new LayerTilerChromium::ProgramSwizzle(m_context.get()));
+    if (!m_tilerProgramSwizzle->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzle::initialize", this, 0);
+        m_tilerProgramSwizzle->initialize();
+    }
+    return m_tilerProgramSwizzle.get();
 }
 
 const CCCanvasLayerImpl::Program* LayerRendererChromium::canvasLayerProgram()
@@ -1211,6 +1232,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_renderSurfaceProgram.clear();
     m_renderSurfaceMaskProgram.clear();
     m_tilerProgram.clear();
+    m_tilerProgramSwizzle.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 

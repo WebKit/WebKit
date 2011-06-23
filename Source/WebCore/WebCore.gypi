@@ -4124,6 +4124,7 @@
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
             'platform/graphics/chromium/PlatformCanvas.cpp',
             'platform/graphics/chromium/PlatformCanvas.h',
+            'platform/graphics/chromium/PlatformColor.h',
             'platform/graphics/chromium/PlatformIcon.h',
             'platform/graphics/chromium/PlatformImage.cpp',
             'platform/graphics/chromium/PlatformImage.h',

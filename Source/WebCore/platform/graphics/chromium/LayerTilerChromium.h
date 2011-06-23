@@ -70,7 +70,10 @@ public:
 
     bool skipsDraw() const { return m_skipsDraw; }
 
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderTexAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexAlpha> Program;
+    // Shader program that swaps red and blue components of texture.
+    // Used when texture format does not match native color format.
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
 
     // If this tiler has exactly one tile, return its texture. Otherwise, null.
     LayerTexture* getSingleTexture();
@@ -100,11 +103,16 @@ private:
         int m_j;
     };
 
+    // Draw all tiles that intersect with contentRect.
+    template <class T>
+    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program);
+
+    template <class T>
     void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
                           float width, float height, float opacity,
                           float texTranslateX, float texTranslateY,
                           float texScaleX, float texScaleY,
-                          const LayerTilerChromium::Program*);
+                          const T* program);
 
     // Grow layer size to contain this rectangle.
     void growLayerToContain(const IntRect& contentRect);
@@ -122,6 +130,8 @@ private:
     Tile* tileAt(int, int) const;
     IntRect tileContentRect(const Tile*) const;
     IntRect tileLayerRect(const Tile*) const;
+
+    GC3Denum m_textureFormat;
 
     IntSize m_tileSize;
     IntPoint m_layerPosition;

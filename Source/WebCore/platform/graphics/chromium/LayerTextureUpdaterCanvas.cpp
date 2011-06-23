@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
 #include "LayerTexture.h"
+#include "PlatformColor.h"
 #include "TraceEvent.h"
 
 #if USE(SKIA)
@@ -68,6 +69,13 @@ LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap(GraphicsContext3D* context,
 {
 }
 
+LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterBitmap::sampledTexelFormat(GC3Denum textureFormat)
+{
+    // The component order may be bgra if we uploaded bgra pixels to rgba textures.
+    return PlatformColor::sameComponentOrder(textureFormat) ?
+            LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
+}
+
 void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
 {
     m_texSubImage.setSubImageSize(tileSize);
@@ -87,7 +95,7 @@ void LayerTextureUpdaterBitmap::updateTextureRect(LayerTexture* texture, const I
     PlatformCanvas::AutoLocker locker(&m_canvas);
 
     texture->bindTexture();
-    m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, context());
+    m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context());
 }
 
 #if USE(SKIA)
@@ -103,6 +111,12 @@ LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(GraphicsContext3D* co
 LayerTextureUpdaterSkPicture::~LayerTextureUpdaterSkPicture()
 {
     deleteFrameBuffer();
+}
+
+LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterSkPicture::sampledTexelFormat(GC3Denum textureFormat)
+{
+    // Here we directly render to the texture, so the component order is always correct.
+    return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
 void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
@@ -173,12 +187,6 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
 {
     ASSERT(!m_fbo);
     ASSERT(!m_bufferSize.isEmpty());
-
-    // SKIA needs stencil buffer for path rendering.
-    // Make sure it is available.
-    GraphicsContext3D::Attributes contextAttribs = context()->getContextAttributes();
-    if (!contextAttribs.stencil)
-        return false;
 
     // SKIA only needs color and stencil buffers, not depth buffer.
     // But it is very uncommon for cards to support color + stencil FBO config.

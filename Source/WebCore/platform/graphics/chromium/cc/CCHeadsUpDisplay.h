@@ -61,7 +61,7 @@ public:
     bool enabled() const { return m_showPlatformLayerTree || m_showFPSCounter; }
     void draw();
 
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderBGRATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> Program;
 
 private:
     explicit CCHeadsUpDisplay(LayerRendererChromium* owner);

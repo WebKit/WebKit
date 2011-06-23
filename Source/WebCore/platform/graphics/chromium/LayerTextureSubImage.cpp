@@ -55,17 +55,17 @@ void LayerTextureSubImage::setSubImageSize(const IntSize& subImageSize)
 
 void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect,
                                   const IntRect& sourceRect, const IntRect& destRect,
-                                  GraphicsContext3D* context)
+                                  GC3Denum format, GraphicsContext3D* context)
 {
     if (m_useMapTexSubImage)
-        uploadWithMapTexSubImage(image, imageRect, sourceRect, destRect, context);
+        uploadWithMapTexSubImage(image, imageRect, sourceRect, destRect, format, context);
     else
-        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, context);
+        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, format, context);
 }
 
 void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                                  const IntRect& sourceRect, const IntRect& destRect,
-                                                 GraphicsContext3D* context)
+                                                 GC3Denum format, GraphicsContext3D* context)
 {
     TRACE_EVENT("LayerTextureSubImage::uploadWithTexSubImage", this, 0);
     if (!m_subImage)
@@ -87,12 +87,12 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
 
         pixelSource = &m_subImage[0];
     }
-    context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixelSource);
+    context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource);
 }
 
 void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                                     const IntRect& sourceRect, const IntRect& destRect,
-                                                    GraphicsContext3D* context)
+                                                    GC3Denum format, GraphicsContext3D* context)
 {
     TRACE_EVENT("LayerTextureSubImage::uploadWithMapTexSubImage", this, 0);
     // Offset from image-rect to source-rect.
@@ -100,10 +100,10 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
 
     // Upload tile data via a mapped transfer buffer
     Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
-    uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+    uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
     if (!pixelDest) {
-        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, context);
+        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, format, context);
         return;
     }
 

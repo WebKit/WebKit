@@ -36,6 +36,7 @@
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 #include "LayerTextureUpdater.h"
+#include "PlatformColor.h"
 #include "TraceEvent.h"
 
 using namespace std;
@@ -51,7 +52,8 @@ PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium*
 }
 
 LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, PassOwnPtr<LayerTextureUpdater> textureUpdater, const IntSize& tileSize, BorderTexelOption border)
-    : m_skipsDraw(false)
+    : m_textureFormat(PlatformColor::bestTextureFormat(layerRenderer->context()))
+    , m_skipsDraw(false)
     , m_tilingData(max(tileSize.width(), tileSize.height()), 0, 0, border == HasBorderTexels)
     , m_textureUpdater(textureUpdater)
     , m_layerRenderer(layerRenderer)
@@ -245,10 +247,10 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
             Tile* tile = tileAt(i, j);
             if (!tile)
                 tile = createTile(i, j);
-            if (!tile->texture()->isValid(m_tileSize, GraphicsContext3D::RGBA))
+            if (!tile->texture()->isValid(m_tileSize, m_textureFormat))
                 tile->m_dirtyLayerRect = tileLayerRect(tile);
             else
-                tile->texture()->reserve(m_tileSize, GraphicsContext3D::RGBA);
+                tile->texture()->reserve(m_tileSize, m_textureFormat);
             dirtyLayerRect.unite(tile->m_dirtyLayerRect);
         }
     }
@@ -294,7 +296,7 @@ void LayerTilerChromium::updateRect()
                 continue;
 
             if (!tile->texture()->isReserved()) {
-                if (!tile->texture()->reserve(m_tileSize, GraphicsContext3D::RGBA)) {
+                if (!tile->texture()->reserve(m_tileSize, m_textureFormat)) {
                     m_skipsDraw = true;
                     reset();
                     return;
@@ -341,8 +343,33 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
     if (m_skipsDraw || !m_tiles.size() || contentRect.isEmpty())
         return;
 
+    switch (m_textureUpdater->sampledTexelFormat(m_textureFormat)) {
+    case LayerTextureUpdater::SampledTexelFormatRGBA:
+        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram());
+        break;
+    case LayerTextureUpdater::SampledTexelFormatBGRA:
+        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle());
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
+{
+    // Grow the tile array to contain this content rect.
+    IntRect layerRect = contentRectToLayerRect(contentRect);
+    IntSize rectSize = IntSize(layerRect.maxX(), layerRect.maxY());
+
+    IntSize oldLayerSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
+    IntSize newSize = rectSize.expandedTo(oldLayerSize);
+    m_tilingData.setTotalSize(newSize.width(), newSize.height());
+}
+
+template <class T>
+void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program)
+{
     GraphicsContext3D* context = layerRendererContext();
-    const LayerTilerChromium::Program* program = layerRenderer()->tilerProgram();
     GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
@@ -389,22 +416,12 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
     }
 }
 
-void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
-{
-    // Grow the tile array to contain this content rect.
-    IntRect layerRect = contentRectToLayerRect(contentRect);
-    IntSize rectSize = IntSize(layerRect.maxX(), layerRect.maxY());
-
-    IntSize oldLayerSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
-    IntSize newSize = rectSize.expandedTo(oldLayerSize);
-    m_tilingData.setTotalSize(newSize.width(), newSize.height());
-}
-
+template <class T>
 void LayerTilerChromium::drawTexturedQuad(GraphicsContext3D* context, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
-                                     float width, float height, float opacity,
-                                     float texTranslateX, float texTranslateY,
-                                     float texScaleX, float texScaleY,
-                                     const LayerTilerChromium::Program* program)
+                                          float width, float height, float opacity,
+                                          float texTranslateX, float texTranslateY,
+                                          float texScaleX, float texScaleY,
+                                          const T* program)
 {
     static float glMatrix[16];
 

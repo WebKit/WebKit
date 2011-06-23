@@ -29,6 +29,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "GraphicsTypes3D.h"
+
 namespace WebCore {
 
 class GraphicsContext3D;
@@ -45,8 +47,17 @@ public:
         BottomUpOrientation,
         TopDownOrientation
     };
+    enum SampledTexelFormat {
+        SampledTexelFormatRGBA,
+        SampledTexelFormatBGRA
+    };
     // Returns the orientation of the texture uploaded by this interface.
     virtual Orientation orientation() = 0;
+    // Returns the format of the texel uploaded by this interface.
+    // This format should not be confused by texture internal format.
+    // This format specifies the component order in the sampled texel.
+    // If the format is TexelFormatBGRA, vec4.x is blue and vec4.z is red.
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) = 0;
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels) = 0;
     virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
 

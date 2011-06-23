@@ -1,3 +1,59 @@
+2011-06-23  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Red and Blue channels are swapped in images with accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=61442
+
+        We were uploading BGRA pixels into RGBA textures and swapping the components in the pixel shader.
+        This strategy does not work with accelerated drawing because we are directly rendering to the texture, not uploading pixels.
+        This patch uses BGRA textures if available. If not it falls back to the original scheme of swapping the components in the pixel shader. 
+
+        Tests: compositing/color-matching/image-color-matching.html (existing)
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::sampledTexelFormat):
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::skiaContext):
+        (WebCore::LayerRendererChromium::tilerProgram):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzle):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTexture.h:
+        (WebCore::LayerTexture::format):
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::upload):
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/LayerTextureSubImage.h:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterBitmap::sampledTexelFormat):
+        (WebCore::LayerTextureUpdaterBitmap::updateTextureRect):
+        (WebCore::LayerTextureUpdaterSkPicture::sampledTexelFormat):
+        (WebCore::LayerTextureUpdaterSkPicture::createFrameBuffer):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::prepareToUpdate):
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::growLayerToContain):
+        (WebCore::LayerTilerChromium::drawTiles):
+        (WebCore::LayerTilerChromium::drawTexturedQuad):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/PlatformColor.h: Added.
+        (WebCore::PlatformColor::format):
+        (WebCore::PlatformColor::bestTextureFormat):
+        (WebCore::PlatformColor::sameComponentOrder):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::FragmentShaderRGBATexSwizzleAlpha::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+
 2011-06-23  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.

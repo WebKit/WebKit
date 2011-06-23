@@ -40,6 +40,7 @@
 #include "LayerTexture.h"
 #include "LayerTextureSubImage.h"
 #include "LayerTextureUpdater.h"
+#include "PlatformColor.h"
 
 namespace WebCore {
 
@@ -54,6 +55,12 @@ public:
     virtual ~ImageLayerTextureUpdater() { }
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
+
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat)
+    {
+        return PlatformColor::sameComponentOrder(textureFormat) ?
+                LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
+    }
 
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
     {
@@ -73,7 +80,7 @@ public:
         clippedDestRect.move(clippedSourceRect.location() - sourceRect.location());
         clippedDestRect.setSize(clippedSourceRect.size());
 
-        m_texSubImage.upload(m_image.pixels(), imageRect(), clippedSourceRect, clippedDestRect, context());
+        m_texSubImage.upload(m_image.pixels(), imageRect(), clippedSourceRect, clippedDestRect, texture->format(), context());
     }
 
 private:

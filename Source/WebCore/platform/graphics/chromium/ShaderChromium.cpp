@@ -194,7 +194,7 @@ String FragmentShaderRGBATexAlpha::getShaderString() const
     );
 }
 
-String FragmentShaderBGRATexAlpha::getShaderString() const
+String FragmentShaderRGBATexSwizzleAlpha::getShaderString() const
 {
     return SHADER(
         precision mediump float;

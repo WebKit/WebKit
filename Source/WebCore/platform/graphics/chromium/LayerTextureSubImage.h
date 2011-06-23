@@ -29,6 +29,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include <wtf/OwnArrayPtr.h>
@@ -45,15 +46,15 @@ public:
     void setSubImageSize(const IntSize&);
     void upload(const uint8_t* image, const IntRect& imageRect,
                 const IntRect& sourceRect, const IntRect& destRect,
-                GraphicsContext3D*);
+                GC3Denum format, GraphicsContext3D*);
 
 private:
     void uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                const IntRect& sourceRect, const IntRect& destRect,
-                               GraphicsContext3D*);
+                               GC3Denum format, GraphicsContext3D*);
     void uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                   const IntRect& sourceRect, const IntRect& destRect,
-                                  GraphicsContext3D*);
+                                  GC3Denum format, GraphicsContext3D*);
 
     bool m_useMapTexSubImage;
     IntSize m_subImageSize;

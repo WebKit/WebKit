@@ -47,6 +47,7 @@ public:
     }
     ~LayerTexture();
 
+    unsigned format() const { return m_format; }
     bool isValid(const IntSize&, unsigned format);
     bool reserve(const IntSize&, unsigned format);
     bool isReserved()
