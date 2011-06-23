@@ -1,3 +1,20 @@
+2011-06-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] [WebKit2] WebKitTestRunner does not properly load TestNetscapePlugin
+        https://bugs.webkit.org/show_bug.cgi?id=63287
+
+        Send the path to the TestNetscapePlugin to the WKTR via an environment variable
+        so that the plugin loads properly.
+
+        * Scripts/old-run-webkit-tests: Pass the appropriate environment variable to WKTR.
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::getEnvironmentVariableAsUTF8String): Added this helper which abstracts away some
+        of the work for getting an environment variable and converting it to UTF-8.
+        (WTR::TestController::initializeInjectedBundlePath): Use the helper.
+        (WTR::TestController::initializeTestPluginDirectory): Get the path from an environment variable now.
+
 2011-06-23  Adam Roben  <aroben@apple.com>
 
         Record whether old-run-webkit-tests aborted early in results.html

@@ -68,24 +68,27 @@ void TestController::platformRunUntil(bool&, double timeout)
     gtk_main();
 }
 
-void TestController::initializeInjectedBundlePath()
+static char* getEnvironmentVariableAsUTF8String(const char* variableName)
 {
-    const char* bundlePath = g_getenv("TEST_RUNNER_INJECTED_BUNDLE_FILENAME");
-    if (!bundlePath) {
-        fprintf(stderr, "TEST_RUNNER_INJECTED_BUNDLE_FILENAME environment variable not found\n");
+    const char* value = g_getenv(variableName);
+    if (!value) {
+        fprintf(stderr, "%s environment variable not found\n", variableName);
         exit(0);
     }
-
     gsize bytesWritten;
-    GOwnPtr<char> utf8BundlePath(g_filename_to_utf8(bundlePath, -1, 0, &bytesWritten, 0));
+    return g_filename_to_utf8(value, -1, 0, &bytesWritten, 0);
+}
+
+void TestController::initializeInjectedBundlePath()
+{
+    GOwnPtr<char> utf8BundlePath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_INJECTED_BUNDLE_FILENAME"));
     m_injectedBundlePath.adopt(WKStringCreateWithUTF8CString(utf8BundlePath.get()));
 }
 
 void TestController::initializeTestPluginDirectory()
 {
-    // This is called after initializeInjectedBundlePath.
-    ASSERT(m_injectedBundlePath);
-    m_testPluginDirectory = m_injectedBundlePath;
+    GOwnPtr<char> testPluginPath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_TEST_PLUGIN_PATH"));
+    m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(testPluginPath.get()));
 }
 
 void TestController::platformInitializeContext()

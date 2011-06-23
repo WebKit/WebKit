@@ -1502,6 +1502,8 @@ sub openDumpTool()
         if ($useWebKitTestRunner) {
             my $injectedBundlePath = productDir() . "/Libraries/.libs/libTestRunnerInjectedBundle";
             $CLEAN_ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = $injectedBundlePath;
+            my $testPluginPath = productDir() . "/TestNetscapePlugin/.libs";
+            $CLEAN_ENV{TEST_RUNNER_TEST_PLUGIN_PATH} = $testPluginPath;
         }
     }
 
