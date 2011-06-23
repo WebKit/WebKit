@@ -5,26 +5,38 @@
 	<meta name="viewport" content="width=480"/>
 
 	<script>
-	    window.layoutTestController && window.layoutTestController.layerTreeAsText();
 
 	    function init() {
 	        var ctx = document.getElementById("world").getContext("2d");
 	        ctx.fillStyle = "red";
 	        ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+	        
+            if (window.layoutTestController) {
+                window.layoutTestController.dumpAsText(true);
+                var console = document.getElementById("layeroutput");
+                console.innerHTML = window.layoutTestController.layerTreeAsText();
+            }
 	    }
 	</script>
 
 	<style>
-        #headerbar {
+        #output
+        {
             width: 100px;
             height: 50px;
             background-color: green;
             position: absolute;
         }
+        #layeroutput
+        {
+            position: absolute;
+            top: -100%;
+        }
 	</style>
 </head>
 <body onLoad="init()">
-	<div id="headerbar"></div>
+    <pre id="layeroutput"></pre>
+	<div id="output"></div>
 	<canvas id="world" width="100" height="50"></canvas>
 </body>
 </html>

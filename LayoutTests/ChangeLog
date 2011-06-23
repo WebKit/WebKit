@@ -1,3 +1,18 @@
+2011-06-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by James Robinson.
+
+        Fixing test spanOverlapsCanvas.html to properly use layer tree text and rebaselining test off that for windows and mac.
+        https://bugs.webkit.org/show_bug.cgi?id=63190
+
+        * compositing/layer-creation/spanOverlapsCanvas-expected.txt: Copied from LayoutTests/platform/mac/compositing/layer-creation/spanOverlapsCanvas-expected.txt.
+        * compositing/layer-creation/spanOverlapsCanvas.html:
+        * platform/mac-snowleopard/compositing: Added.
+        * platform/mac-snowleopard/compositing/layer-creation: Added.
+        * platform/mac-snowleopard/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
+        * platform/mac/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/spanOverlapsCanvas-expected.txt:
+
 2011-06-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.
