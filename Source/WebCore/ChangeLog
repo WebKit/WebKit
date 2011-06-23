@@ -1,3 +1,14 @@
+2011-06-23  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] Fix showing dominator leaf nodes after r89457
+        https://bugs.webkit.org/show_bug.cgi?id=63250
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.get isEmpty):
+
 2011-06-23  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.

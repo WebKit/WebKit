@@ -912,7 +912,7 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
         var row = event.target.enclosingNodeOrSelfWithNodeName("tr");
         var nodeItem = row._dataGridNode;
-        if (!nodeItem)
+        if (!nodeItem || !nodeItem.route)
             return;
         function expandRoute()
         {

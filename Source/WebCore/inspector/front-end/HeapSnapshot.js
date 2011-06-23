@@ -1075,13 +1075,25 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
     {
         if (this._iterationOrder)
             return !this._iterationOrder.length;
+        if (this._unfilteredIterationOrder && !this._filter)
+            return !this._unfilteredIterationOrder.length;
         var iterator = this._iterator;
-        if (!this._filter) {
+        if (!this._unfilteredIterationOrder && !this._filter) {
             iterator.first();
             return !iterator.hasNext();
+        } else if (!this._unfilteredIterationOrder) {
+            for (iterator.first(); iterator.hasNext(); iterator.next())
+                if (this._filter(iterator.item))
+                    return false;
+        } else {
+            var order = this._unfilteredIterationOrder.constructor === Array ?
+                this._unfilteredIterationOrder : this._unfilteredIterationOrder.slice(0);
+            for (var i = 0, l = order.length; i < l; ++i) {
+                iterator.index = order[i];
+                if (this._filter(iterator.item))
+                    return false;
+            }
         }
-        for (iterator.first(); iterator.hasNext(); iterator.next())
-            if (this._filter(iterator.item)) return false;
         return true;
     },
 
