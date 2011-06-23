@@ -167,7 +167,15 @@ symbian {
 }
 
 contains(DEFINES, ENABLE_XSLT=1) {
-    QT *= xmlpatterns
+    contains(DEFINES, WTF_USE_LIBXML2=1) {
+        PKGCONFIG += libxslt
+    } else {
+        QT *= xmlpatterns
+    }
+}
+
+contains(DEFINES, WTF_USE_LIBXML2=1) {
+    PKGCONFIG += libxml-2.0
 }
 
 contains(DEFINES, ENABLE_SQLITE=1) {

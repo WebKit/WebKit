@@ -565,7 +565,6 @@ SOURCES += \
     dom/WheelEvent.cpp \
     dom/WindowEventContext.cpp \
     dom/XMLDocumentParser.cpp \
-    dom/XMLDocumentParserQt.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyBlockElementCommand.cpp \
@@ -2588,6 +2587,9 @@ SOURCES += \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp
 
+!contains(DEFINES, WTF_USE_LIBXML2=1) {
+    SOURCES += dom/XMLDocumentParserQt.cpp
+}
 
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     HEADERS += platform/qt/QtMobileWebStyle.h
@@ -3079,11 +3081,36 @@ contains(DEFINES, ENABLE_XSLT=1) {
          SOURCES += \
             bindings/js/JSXSLTProcessorCustom.cpp
     }
-    SOURCES += \
-        dom/TransformSourceQt.cpp \
-        xml/XSLStyleSheetQt.cpp \
-        xml/XSLTProcessor.cpp \
-        xml/XSLTProcessorQt.cpp
+
+    contains(DEFINES, WTF_USE_LIBXML2=1) {
+        SOURCES += \
+            xml/XSLTProcessor.cpp \
+            xml/XSLTProcessorLibxslt.cpp \
+            dom/TransformSourceLibxslt.cpp \
+            xml/XSLStyleSheetLibxslt.cpp \
+            xml/XSLImportRule.cpp \
+            xml/XSLTExtensions.cpp \
+            xml/XSLImportRule.cpp \
+            xml/XSLTUnicodeSort.cpp \
+            xml/XMLTreeViewer.cpp \
+            dom/XMLDocumentParserLibxml2.cpp \
+            dom/XMLDocumentParserScope.cpp
+
+            HEADERS += \
+                xml/XSLImportRule.h \
+                xml/XSLTExtensions.h \
+                xml/XSLImportRule.h \
+                xml/XSLTUnicodeSort.h \
+                xml/XMLTreeViewer.h \
+                dom/XMLDocumentParserScope.h
+
+    } else {
+        SOURCES += \
+            dom/TransformSourceQt.cpp \
+            xml/XSLStyleSheetQt.cpp \
+            xml/XSLTProcessor.cpp \
+            xml/XSLTProcessorQt.cpp
+    }
 }
 
 contains(DEFINES, ENABLE_FILTERS=1) {

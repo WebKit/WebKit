@@ -128,6 +128,11 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
     else:DEFINES += ENABLE_XSLT=0
 }
 
+# This is experimental and only works on Linux so far.
+contains(DEFINES, WTF_USE_LIBXML2=1) {
+    DEFINES += ENABLE_XSLT=1
+}
+
 # geolocation support if QtMobility exists
 !CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_GEOLOCATION=.) {
     contains(MOBILITY_CONFIG, location) {

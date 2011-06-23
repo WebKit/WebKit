@@ -1,3 +1,18 @@
+2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add a build flag for building with libxml2 and libxslt.
+        https://bugs.webkit.org/show_bug.cgi?id=63113
+
+        No new tests. If this new flag was set by default, we could unskip
+        existing xmlviewer tests.
+
+        * CodeGenerators.pri:
+        * WebCore.pri:
+        * WebCore.pro:
+        * features.pri:
+
 2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another build fix after r89472.

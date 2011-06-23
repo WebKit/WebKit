@@ -1117,8 +1117,10 @@
 /* Use the QXmlStreamReader implementation for XMLDocumentParser */
 /* Use the QXmlQuery implementation for XSLTProcessor */
 #if PLATFORM(QT)
+#if !USE(LIBXML2)
 #define WTF_USE_QXMLSTREAM 1
 #define WTF_USE_QXMLQUERY 1
+#endif
 #endif
 
 #if PLATFORM(MAC)

@@ -22,6 +22,13 @@ DOCTYPESTRINGS_GPERF = $$PWD/html/DocTypeStrings.gperf
 
 CSSBISON = $$PWD/css/CSSGrammar.y
 
+contains(DEFINES, ENABLE_XSLT=1) {
+    contains(DEFINES, WTF_USE_LIBXML2=1) {
+        XMLVIEWER_CSS = $$PWD/xml/XMLViewer.css
+        XMLVIEWER_JS = $$PWD/xml/XMLViewer.js
+    }
+}
+
 HTML_NAMES = $$PWD/html/HTMLTagNames.in
 
 XML_NAMES = $$PWD/xml/xmlattrs.in
@@ -776,6 +783,30 @@ colordata.commands = perl $$colordata.wkScript $${WC_GENERATED_SOURCES_DIR} $$CO
 colordata.clean = ${QMAKE_FILE_OUT}
 colordata.depends = $$PWD/make-hash-tools.pl
 addExtraCompiler(colordata)
+
+contains(DEFINES, ENABLE_XSLT=1) {
+contains(DEFINES, WTF_USE_LIBXML2=1) {
+# GENERATOR 8-D:
+xmlviewercss.output = $${WC_GENERATED_SOURCES_DIR}/XMLViewerCSS.h
+xmlviewercss.input = XMLVIEWER_CSS
+xmlviewercss.wkScript = $$PWD/inspector/xxd.pl
+xmlviewercss.commands = perl $$xmlviewercss.wkScript XMLViewer_css $$XMLVIEWER_CSS $${WC_GENERATED_SOURCES_DIR}/XMLViewerCSS.h
+xmlviewercss.clean = ${QMAKE_FILE_OUT}
+xmlviewercss.depends = $$PWD/inspector/xxd.pl
+xmlviewercss.wkAddOutputToSources = false
+addExtraCompiler(xmlviewercss)
+
+# GENERATOR 8-E:
+xmlviewerjs.output = $${WC_GENERATED_SOURCES_DIR}/XMLViewerJS.h
+xmlviewerjs.input = XMLVIEWER_JS
+xmlviewerjs.wkScript = $$PWD/inspector/xxd.pl
+xmlviewerjs.commands = perl $$xmlviewerjs.wkScript XMLViewer_js $$XMLVIEWER_JS $${WC_GENERATED_SOURCES_DIR}/XMLViewerJS.h
+xmlviewerjs.clean = ${QMAKE_FILE_OUT}
+xmlviewerjs.depends = $$PWD/inspector/xxd.pl
+xmlviewerjs.wkAddOutputToSources = false
+addExtraCompiler(xmlviewerjs)
+}
+}
 
 # GENERATOR 9:
 stylesheets.wkScript = $$PWD/css/make-css-file-arrays.pl
