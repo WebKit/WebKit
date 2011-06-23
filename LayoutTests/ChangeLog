@@ -1,3 +1,19 @@
+2011-06-22  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test updates for https://bugs.webkit.org/show_bug.cgi?id=62066.
+
+        * fast/preloader/scan-body-from-head-import.html: Use window.internals.
+        * fast/preloader/scan-body-from-head-script.html: Use window.internals.
+        * http/tests/loading/cross-origin-XHR-willLoadRequest-expected.txt:
+        * http/tests/loading/cross-origin-XHR-willLoadRequest.html:
+        * http/tests/loading/preload-append-scan-expected.txt:
+        * http/tests/loading/preload-append-scan.php: Use window.internals.
+        * http/tests/misc/favicon-loads-with-icon-loading-override-expected.txt:
+        * http/tests/misc/link-rel-icon-beforeload-expected.txt:
+        * platform/chromium-linux/fast/preloader/scan-body-from-head-script-expected.txt:  Removed.
+
 2011-06-22  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2 Tests] plugins/npruntime/embed-property-equality.html failing since introduction in

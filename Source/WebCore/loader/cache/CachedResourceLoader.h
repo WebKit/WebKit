@@ -96,7 +96,8 @@ public:
     void incrementRequestCount(const CachedResource*);
     void decrementRequestCount(const CachedResource*);
     int requestCount();
-    
+
+    bool isPreloaded(const String& urlString) const;
     void clearPreloads();
     void clearPendingPreloads();
     void preload(CachedResource::Type, ResourceRequest&, const String& charset, bool referencedFromBody);

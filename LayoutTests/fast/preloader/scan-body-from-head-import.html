@@ -1,10 +1,19 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
+
+function checkForPreload() {
+    var result;
+    if (internals.isPreloaded(document, "resources/image1.png") && internals.isPreloaded(document, "resources/style1.css"))
+        result = "PASS";
+    else
+        result = "FAIL";
+    document.getElementsByTagName("body")[0].appendChild(document.createTextNode(result));
 }
+
+window.addEventListener("DOMContentLoaded", checkForPreload, false);
 </script>
 <script src=resources/non-existant.js></script>
 </head>

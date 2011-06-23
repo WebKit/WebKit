@@ -136,6 +136,7 @@ EXPORTS
 
         ; Re-exports from WebCore for WebCoreTestSupport
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
+        ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
         ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ
         ?create@ShadowContentElement@WebCore@@SA?AV?$PassRefPtr@VShadowContentElement@WebCore@@@WTF@@PAVDocument@2@@Z

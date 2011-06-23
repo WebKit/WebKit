@@ -1,5 +1,3 @@
-script1.js has MIME type application/x-javascript
-image1.png has MIME type image/png
 
 This tests that resources in the body which block parsing (script, css) are preloaded
 ahead of other resources (images). It requires DumpRenderTree to see the log of what
@@ -8,4 +6,4 @@ resources are loaded.
 <script src=resources/script1.js></script>
 </body>
 </html>
-
+PASS

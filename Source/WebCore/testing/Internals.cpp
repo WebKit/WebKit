@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Internals.h"
 
+#include "CachedResourceLoader.h"
+#include "Document.h"
 #include "RenderTreeAsText.h"
 #include "ShadowContentElement.h"
 
@@ -42,6 +44,14 @@ Internals::~Internals()
 
 Internals::Internals()
 {
+}
+
+bool Internals::isPreloaded(Document* document, const String& url)
+{
+    if (!document)
+        return false;
+
+    return document->cachedResourceLoader()->isPreloaded(url);
 }
 
 PassRefPtr<Element> Internals::createShadowContentElement(Document* document, ExceptionCode& ec)

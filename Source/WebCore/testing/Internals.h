@@ -27,6 +27,7 @@
 #define Internals_h
 
 #include "ExceptionCode.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -40,6 +41,8 @@ class Internals : public RefCounted<Internals> {
 public:
     static PassRefPtr<Internals> create();
     virtual ~Internals();
+    
+    bool isPreloaded(Document*, const String& url);
 
     PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
     String elementRenderTreeAsText(Element*, ExceptionCode&);

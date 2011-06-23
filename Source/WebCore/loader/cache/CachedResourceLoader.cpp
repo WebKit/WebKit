@@ -652,6 +652,28 @@ void CachedResourceLoader::requestPreload(CachedResource::Type type, ResourceReq
 #endif
 }
 
+bool CachedResourceLoader::isPreloaded(const String& urlString) const
+{
+    const KURL& url = m_document->completeURL(urlString);
+
+    if (m_preloads) {
+        ListHashSet<CachedResource*>::iterator end = m_preloads->end();
+        for (ListHashSet<CachedResource*>::iterator it = m_preloads->begin(); it != end; ++it) {
+            CachedResource* resource = *it;
+            if (resource->url() == url)
+                return true;
+        }
+    }
+
+    Deque<PendingPreload>::const_iterator dequeEnd = m_pendingPreloads.end();
+    for (Deque<PendingPreload>::const_iterator it = m_pendingPreloads.begin(); it != dequeEnd; ++it) {
+        PendingPreload pendingPreload = *it;
+        if (pendingPreload.m_request.url() == url)
+            return true;
+    }
+    return false;
+}
+
 void CachedResourceLoader::clearPreloads()
 {
 #if PRELOAD_DEBUG

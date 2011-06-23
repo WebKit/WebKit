@@ -1,3 +1,12 @@
+2011-06-22  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add win symbols for new window.internals functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=62066
+
+        * win/WebKit2.def:
+
 2011-06-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

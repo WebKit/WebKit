@@ -111,7 +111,8 @@ libWebCoreInternals_la_CXXFLAGS = \
 
 libWebCoreInternals_la_CFLAGS = \
 	-fno-strict-aliasing \
-	$(javascriptcore_cflags)
+	$(javascriptcore_cflags) \
+        $(LIBSOUP_CFLAGS)
 
 # DumpRenderTree
 Programs_DumpRenderTree_CPPFLAGS = \
