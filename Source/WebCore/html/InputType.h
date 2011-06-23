@@ -48,6 +48,7 @@ class FormDataList;
 class HTMLElement;
 class HTMLFormElement;
 class HTMLInputElement;
+class Icon;
 class KeyboardEvent;
 class MouseEvent;
 class Node;
@@ -209,12 +210,13 @@ public:
     virtual void willMoveToNewOwnerDocument();
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
+    virtual void receiveDroppedFiles(const Vector<String>&);
+    virtual Icon* icon() const;
     // Should return true if the corresponding renderer for a type can display a suggested value.
     virtual bool canSetSuggestedValue();
     virtual bool shouldSendChangeEventAfterCheckedChanged();
     virtual bool canSetValue(const String&);
     virtual bool storesValueSeparateFromAttribute();
-    virtual void setFileList(const Vector<String>& paths);
     virtual bool shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute();
     virtual bool shouldRespectSpeechAttribute();

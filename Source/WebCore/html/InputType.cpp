@@ -537,9 +537,15 @@ bool InputType::hasUnacceptableValue()
     return false;
 }
 
-void InputType::setFileList(const Vector<String>&)
+void InputType::receiveDroppedFiles(const Vector<String>&)
 {
     ASSERT_NOT_REACHED();
+}
+
+Icon* InputType::icon() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 bool InputType::shouldResetOnDocumentActivation()

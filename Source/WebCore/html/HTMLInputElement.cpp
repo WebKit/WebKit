@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "Icon.h"
 #include "InputType.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
@@ -1057,7 +1058,7 @@ bool HTMLInputElement::searchEventsShouldBeDispatched() const
 
 void HTMLInputElement::setValueFromRenderer(const String& value)
 {
-    // File upload controls will always use setFileListFromRenderer.
+    // File upload controls will never use this.
     ASSERT(!isFileUpload());
 
     m_suggestedValue = String();
@@ -1083,15 +1084,6 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 
     // Clear autofill flag (and yellow background) on user edit.
     setAutofilled(false);
-}
-
-void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
-{
-    m_inputType->setFileList(paths);
-
-    setFormControlValueMatchesRenderer(true);
-    notifyFormStateChanged();
-    setNeedsValidityCheck();
 }
 
 void* HTMLInputElement::preDispatchEventHandler(Event* event)
@@ -1273,6 +1265,16 @@ void HTMLInputElement::setAutofilled(bool autofilled)
 FileList* HTMLInputElement::files()
 {
     return m_inputType->files();
+}
+
+void HTMLInputElement::receiveDroppedFiles(const Vector<String>& filenames)
+{
+    m_inputType->receiveDroppedFiles(filenames);
+}
+
+Icon* HTMLInputElement::icon() const
+{
+    return m_inputType->icon();
 }
 
 String HTMLInputElement::visibleValue() const

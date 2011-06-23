@@ -22,15 +22,20 @@
 #include "config.h"
 #include "FileInputType.h"
 
+#include "Chrome.h"
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
 #include "FileSystem.h"
 #include "FormDataList.h"
+#include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "Icon.h"
 #include "LocalizedStrings.h"
+#include "Page.h"
 #include "RenderFileUploadControl.h"
+#include "ScriptController.h"
 #include "ShadowRoot.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -128,7 +133,24 @@ void FileInputType::handleDOMActivateEvent(Event* event)
 {
     if (element()->disabled() || !element()->renderer())
         return;
-    toRenderFileUploadControl(element()->renderer())->click();
+
+    if (!ScriptController::processingUserGesture())
+        return;
+
+    if (Chrome* chrome = this->chrome()) {
+        FileChooserSettings settings;
+        HTMLInputElement* input = element();
+#if ENABLE(DIRECTORY_UPLOAD)
+        settings.allowsDirectoryUpload = input->fastHasAttribute(webkitdirectoryAttr);
+        settings.allowsMultipleFiles = settings.allowsDirectoryUpload || input->fastHasAttribute(multipleAttr);
+#else
+        settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
+#endif
+        settings.acceptTypes = input->accept();
+        ASSERT(input->files());
+        settings.selectedFiles = input->files()->filenames();
+        chrome->runOpenPanel(input->document()->frame(), newFileChooser(settings));
+    }
     event->setDefaultHandled();
 }
 
@@ -228,6 +250,86 @@ void FileInputType::createShadowSubtree()
 {
     ExceptionCode ec = 0;
     element()->ensureShadowRoot()->appendChild(UploadButtonElement::create(element()->document()), ec);
+}
+
+void FileInputType::requestIcon(const Vector<String>& filenames)
+{
+    if (!filenames.size())
+        return;
+
+    if (Chrome* chrome = this->chrome())
+        chrome->loadIconForFiles(filenames, newFileIconLoader());
+}
+
+void FileInputType::filesChosen(const Vector<String>& filenames)
+{
+    HTMLInputElement* input = element();
+    setFileList(filenames);
+
+    input->setFormControlValueMatchesRenderer(true);
+    input->notifyFormStateChanged();
+    input->setNeedsValidityCheck();
+
+    requestIcon(filenames);
+
+    if (input->renderer())
+        input->renderer()->repaint();
+    // This call may cause destruction of this instance and thus must always be last in the function.
+    input->dispatchFormControlChangeEvent();
+}
+
+#if ENABLE(DIRECTORY_UPLOAD)
+void FileInputType::receiveDropForDirectoryUpload(const Vector<String>& paths)
+{
+    if (Chrome* chrome = this->chrome()) {
+        FileChooserSettings settings;
+        settings.allowsDirectoryUpload = true;
+        settings.allowsMultipleFiles = true;
+        settings.selectedFiles.append(paths[0]);
+        chrome->enumerateChosenDirectory(newFileChooser(settings));
+    }
+}
+#endif
+
+void FileInputType::updateRendering(PassRefPtr<Icon> icon)
+{
+    if (m_icon == icon)
+        return;
+
+    m_icon = icon;
+    if (element()->renderer())
+        element()->renderer()->repaint();
+}
+
+Chrome* FileInputType::chrome() const
+{
+    if (Page* page = element()->document()->page())
+        return page->chrome();
+    return 0;
+}
+
+void FileInputType::receiveDroppedFiles(const Vector<String>& paths)
+{
+    HTMLInputElement* input = element();
+#if ENABLE(DIRECTORY_UPLOAD)
+    if (input->fastHasAttribute(webkitdirectoryAttr)) {
+        receiveDropForDirectoryUpload(paths);
+        return;
+    }
+#endif
+
+    if (input->fastHasAttribute(multipleAttr))
+        filesChosen(paths);
+    else {
+        Vector<String> firstPathOnly;
+        firstPathOnly.append(paths[0]);
+        filesChosen(firstPathOnly);
+    }
+}
+
+Icon* FileInputType::icon() const
+{
+    return m_icon.get();
 }
 
 } // namespace WebCore

@@ -31,6 +31,7 @@ namespace WebCore {
 class FileList;
 class HTMLDataListElement;
 class HTMLOptionElement;
+class Icon;
 class InputType;
 class KURL;
 
@@ -163,7 +164,6 @@ public:
     String valueWithDefault() const;
 
     void setValueFromRenderer(const String&);
-    void setFileListFromRenderer(const Vector<String>&);
 
     bool canHaveSelection() const;
 
@@ -202,6 +202,8 @@ public:
     void setAutofilled(bool = true);
 
     FileList* files();
+    void receiveDroppedFiles(const Vector<String>&);
+    Icon* icon() const;
 
     void addSearchResult();
     void onSearch();
@@ -226,6 +228,7 @@ public:
 
     bool lastChangeWasUserEdit() const;
     void cacheSelection(int start, int end);
+    void notifyFormStateChanged();
 
     static const int maximumLength;
 
@@ -318,7 +321,6 @@ private:
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif
-    void notifyFormStateChanged();
     void parseMaxLengthAttribute(Attribute*);
     void updateValueIfNeeded();
 #if ENABLE(WCSS)

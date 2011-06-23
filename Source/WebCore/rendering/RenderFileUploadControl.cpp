@@ -21,24 +21,19 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
-#include "Chrome.h"
 #include "FileList.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
-#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderButton.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
-#include "RenderView.h"
-#include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "TextRun.h"
+#include "VisiblePosition.h"
 #include <math.h>
 
 using namespace std;
@@ -57,106 +52,16 @@ const int buttonShadowHeight = 2;
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
 {
-    ASSERT(input->files());
-    requestIcon(input->files()->filenames());
 }
 
 RenderFileUploadControl::~RenderFileUploadControl()
 {
 }
 
-void RenderFileUploadControl::requestIcon(const Vector<String>& filenames)
-{
-    if (!filenames.size())
-        return;
-
-    if (Chrome* chrome = this->chrome())
-        chrome->loadIconForFiles(filenames, newFileIconLoader());
-}
-
-void RenderFileUploadControl::filesChosen(const Vector<String>& filenames)
-{
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
-    inputElement->setFileListFromRenderer(filenames);
-    requestIcon(filenames);
-
-    repaint();
-    // This call may cause destruction of this instance and thus must always be last in the function.
-    inputElement->dispatchFormControlChangeEvent();
-}
-
-#if ENABLE(DIRECTORY_UPLOAD)
-void RenderFileUploadControl::receiveDropForDirectoryUpload(const Vector<String>& paths)
-{
-    if (Chrome* chrome = this->chrome()) {
-        FileChooserSettings settings;
-        settings.allowsDirectoryUpload = true;
-        settings.allowsMultipleFiles = true;
-        settings.selectedFiles.append(paths[0]);
-        chrome->enumerateChosenDirectory(newFileChooser(settings));
-    }
-}
-#endif
-
-
-void RenderFileUploadControl::updateRendering(PassRefPtr<Icon> icon)
-{
-    if (m_icon == icon)
-        return;
-
-    m_icon = icon;
-    repaint();
-}
-
-void RenderFileUploadControl::click()
-{
-    if (!ScriptController::processingUserGesture())
-        return;
-
-    if (Chrome* chrome = this->chrome()) {
-        FileChooserSettings settings;
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-#if ENABLE(DIRECTORY_UPLOAD)
-        settings.allowsDirectoryUpload = input->fastHasAttribute(webkitdirectoryAttr);
-        settings.allowsMultipleFiles = settings.allowsDirectoryUpload || input->fastHasAttribute(multipleAttr);
-#else
-        settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
-#endif
-        settings.acceptTypes = input->accept();
-        ASSERT(input->files());
-        settings.selectedFiles = input->files()->filenames();
-        chrome->runOpenPanel(frame(), newFileChooser(settings));
-    }
-}
-
-Chrome* RenderFileUploadControl::chrome() const
-{
-    Frame* frame = node()->document()->frame();
-    if (!frame)
-        return 0;
-    Page* page = frame->page();
-    if (!page)
-        return 0;
-    return page->chrome();
-}
-
 void RenderFileUploadControl::updateFromElement()
 {
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
-    ASSERT(inputElement->isFileUpload());
-
-
     if (HTMLInputElement* button = uploadButton())
         button->setDisabled(!theme()->isEnabled(this));
-
-    // This only supports clearing out the files, but that's OK because for
-    // security reasons that's the only change the DOM is allowed to make.
-    FileList* files = inputElement->files();
-    ASSERT(files);
-    if (files && files->isEmpty() && m_icon) {
-        m_icon = 0;
-        repaint();
-    }
 }
 
 static int nodeWidth(Node* node)
@@ -166,8 +71,9 @@ static int nodeWidth(Node* node)
 
 int RenderFileUploadControl::maxFilenameWidth() const
 {
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     return max(0, contentWidth() - nodeWidth(uploadButton()) - afterButtonSpacing
-        - (m_icon ? iconWidth + iconFilenameSpacing : 0));
+        - (input->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
@@ -197,9 +103,10 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
         if (!button)
             return;
 
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
         int buttonWidth = nodeWidth(button);
         int buttonAndIconWidth = buttonWidth + afterButtonSpacing
-            + (m_icon ? iconWidth + iconFilenameSpacing : 0);
+            + (input->icon() ? iconWidth + iconFilenameSpacing : 0);
         int textX;
         if (style()->isLeftToRightDirection())
             textX = contentLeft + buttonAndIconWidth;
@@ -216,7 +123,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
         // Draw the filename
         paintInfo.context->drawBidiText(font, textRun, IntPoint(textX, textY));
         
-        if (m_icon) {
+        if (input->icon()) {
             // Determine where the icon should be placed
             int iconY = paintOffset.y() + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
             int iconX;
@@ -226,7 +133,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
                 iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
             // Draw the file icon
-            m_icon->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
+            input->icon()->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
         }
     }
 
@@ -288,25 +195,6 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 
     Node* buttonNode = input->shadowRoot()->firstChild();
     return buttonNode && buttonNode->isHTMLElement() && buttonNode->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(buttonNode) : 0;
-}
-
-void RenderFileUploadControl::receiveDroppedFiles(const Vector<String>& paths)
-{
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-#if ENABLE(DIRECTORY_UPLOAD)
-    if (input->fastHasAttribute(webkitdirectoryAttr)) {
-        receiveDropForDirectoryUpload(paths);
-        return;
-    }
-#endif
-
-    if (input->fastHasAttribute(multipleAttr))
-        filesChosen(paths);
-    else {
-        Vector<String> firstPathOnly;
-        firstPathOnly.append(paths[0]);
-        filesChosen(firstPathOnly);
-    }
 }
 
 String RenderFileUploadControl::buttonValue()

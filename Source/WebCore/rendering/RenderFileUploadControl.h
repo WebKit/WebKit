@@ -21,29 +21,22 @@
 #ifndef RenderFileUploadControl_h
 #define RenderFileUploadControl_h
 
-#include "FileChooser.h"
-#include "FileIconLoader.h"
 #include "RenderBlock.h"
 
 namespace WebCore {
 
-class Chrome;
 class HTMLInputElement;
 
 // Each RenderFileUploadControl contains a RenderButton (for opening the file chooser), and
 // sufficient space to draw a file icon and filename. The RenderButton has a shadow node
 // associated with it to receive click/hover events.
 
-class RenderFileUploadControl : public RenderBlock, private FileChooserClient, private FileIconLoaderClient {
+class RenderFileUploadControl : public RenderBlock {
 public:
     RenderFileUploadControl(HTMLInputElement*);
     virtual ~RenderFileUploadControl();
 
     virtual bool isFileUploadControl() const { return true; }
-
-    void click();
-
-    void receiveDroppedFiles(const Vector<String>&);
 
     String buttonValue();
     String fileTextValue() const;
@@ -57,25 +50,11 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
-    // FileChooserClient implementation.
-    virtual void filesChosen(const Vector<String>&);
-
-    // FileIconLoaderClient implementation.
-    virtual void updateRendering(PassRefPtr<Icon>);
-
-#if ENABLE(DIRECTORY_UPLOAD)
-    void receiveDropForDirectoryUpload(const Vector<String>&);
-#endif
-
-    Chrome* chrome() const;
     int maxFilenameWidth() const;
     
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
     HTMLInputElement* uploadButton() const;
-    void requestIcon(const Vector<String>&);
-
-    RefPtr<Icon> m_icon;
 };
 
 inline RenderFileUploadControl* toRenderFileUploadControl(RenderObject* object)

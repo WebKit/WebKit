@@ -33,13 +33,16 @@
 #define FileInputType_h
 
 #include "BaseButtonInputType.h"
+#include "FileChooser.h"
+#include "FileIconLoader.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class Chrome;
 class FileList;
 
-class FileInputType : public BaseButtonInputType {
+class FileInputType : public BaseButtonInputType, private FileChooserClient, private FileIconLoaderClient {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
@@ -57,11 +60,26 @@ private:
     virtual bool canSetValue(const String&);
     virtual bool getTypeSpecificValue(String&); // Checked first, before internal storage or the value attribute.
     virtual bool storesValueSeparateFromAttribute();
-    virtual void setFileList(const Vector<String>& paths);
+    virtual void receiveDroppedFiles(const Vector<String>&);
+    virtual Icon* icon() const;
     virtual bool isFileUpload() const;
     virtual void createShadowSubtree();
 
+    // FileChooserClient implementation.
+    virtual void filesChosen(const Vector<String>&);
+
+    // FileIconLoaderClient implementation.
+    virtual void updateRendering(PassRefPtr<Icon>);
+
+    void setFileList(const Vector<String>& paths);
+#if ENABLE(DIRECTORY_UPLOAD)
+    void receiveDropForDirectoryUpload(const Vector<String>&);
+#endif
+    void requestIcon(const Vector<String>&);
+    Chrome* chrome() const;
+
     RefPtr<FileList> m_fileList;
+    RefPtr<Icon> m_icon;
 };
 
 } // namespace WebCore
