@@ -1,3 +1,13 @@
+2011-06-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        IndexedDB open (database) should NOT throw if name is null
+        https://bugs.webkit.org/show_bug.cgi?id=63110
+
+        * storage/IDBFactory.idl: remove ConvertNullToNullString flag on
+        name argument, let IDL code generator stringify null value to "null"
+
 2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

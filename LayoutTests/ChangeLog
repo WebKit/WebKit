@@ -1,3 +1,17 @@
+2011-06-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        IndexedDB open (database) should NOT throw if name is null
+        https://bugs.webkit.org/show_bug.cgi?id=63110
+
+        * storage/indexeddb/database-name-undefined-expected.txt:
+        * storage/indexeddb/database-name-undefined.html: removed some code here
+        because it's duplicated in the mozilla/open-database-null-name test
+        * storage/indexeddb/mozilla/open-database-null-name-expected.txt:
+        * storage/indexeddb/mozilla/open-database-null-name.html: fixed expected
+        behavior (db.name ends up as four-character string "null")
+
 2011-06-22  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

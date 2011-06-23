@@ -1,4 +1,4 @@
-Test IndexedDB: should throw when opening a database with a null name
+Test IndexedDB: should NOT throw when opening a database with a null name
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -9,9 +9,9 @@ IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseEx
 PASS IDBDatabaseException == null is false
 IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
 PASS IDBTransaction == null is false
-Expecting exception from indexedDB.open(null, description)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+indexedDB.open(null);
+db = event.target.result
+PASS db.name is 'null'
 PASS successfullyParsed is true
 
 TEST COMPLETE

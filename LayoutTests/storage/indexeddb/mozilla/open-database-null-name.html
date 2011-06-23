@@ -17,7 +17,7 @@
 <div id="console"></div>
 <script>
 
-description("Test IndexedDB: should throw when opening a database with a null name");
+description("Test IndexedDB: should NOT throw when opening a database with a null name");
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
@@ -31,7 +31,15 @@ function test()
     shouldBeFalse("IDBTransaction == null");
 
     description = "My Test Database";
-    evalAndExpectException("indexedDB.open(null, description)", "IDBDatabaseException.NON_TRANSIENT_ERR");
+    request = evalAndLog("indexedDB.open(null);");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+    shouldBe("db.name", "'null'");
     done();
 }
 
