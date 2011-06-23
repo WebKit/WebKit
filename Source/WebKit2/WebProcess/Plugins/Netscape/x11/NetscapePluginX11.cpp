@@ -359,6 +359,9 @@ static inline void setXButtonEventFields(XEvent& xEvent, const WebMouseEvent& we
     case WebMouseEvent::RightButton:
         xButton.button = Button3;
         break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     }
 }
 
@@ -409,6 +412,23 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     case WebEvent::MouseMove:
         setXMotionEventFields(xEvent, event, m_frameRect.location());
         break;
+    case WebEvent::NoType:
+    case WebEvent::Wheel:
+    case WebEvent::KeyDown:
+    case WebEvent::KeyUp:
+    case WebEvent::RawKeyDown:
+    case WebEvent::Char:
+#if ENABLE(GESTURE_EVENTS)
+    case WebEvent::GestureScrollBegin:
+    case WebEvent::GestureScrollEnd:
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    case WebEvent::TouchStart:
+    case WebEvent::TouchMove:
+    case WebEvent::TouchEnd:
+    case WebEvent::TouchCancel:
+#endif
+        return false;
     }
 
     return NPP_HandleEvent(&xEvent);

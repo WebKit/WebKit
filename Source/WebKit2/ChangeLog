@@ -1,3 +1,14 @@
+2011-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [UNIX] Fix compile warnings in NetscapePluginX11.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=63249
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::setXButtonEventFields):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+
 2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
