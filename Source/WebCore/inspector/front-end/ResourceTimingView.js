@@ -42,18 +42,18 @@ WebInspector.ResourceTimingView.prototype = {
     show: function(parentElement)
     {
         if (!this._resource.timing) {
-            if (!this._emptyMsgElement) {
-                this._emptyMsgElement = document.createElement("div");
-                this._emptyMsgElement.className = "storage-empty-view";
-                this._emptyMsgElement.textContent = WebInspector.UIString("This request has no detailed timing info.");
-                this.element.appendChild(this._emptyMsgElement);
+            if (!this._emptyView) {
+                this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no detailed timing info."));
+                this._emptyView.show(this.element);
             }
             WebInspector.View.prototype.show.call(this, parentElement);
             return;
         }
 
-        if (this._emptyMsgElement)
-            this._emptyMsgElement.parentElement.removeChild(this._emptyMsgElement);
+        if (this._emptyView) {
+            this._emptyView.detach();
+            delete this._emptyView;
+        }
 
         this._refresh();
         WebInspector.View.prototype.show.call(this, parentElement);

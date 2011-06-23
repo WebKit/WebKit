@@ -1611,17 +1611,15 @@ WebInspector.StorageCategoryView = function()
     WebInspector.View.call(this);
 
     this.element.addStyleClass("storage-view");
-
-    this._emptyMsgElement = document.createElement("div");
-    this._emptyMsgElement.className = "storage-empty-view";
-    this.element.appendChild(this._emptyMsgElement);
+    this._emptyView = new WebInspector.EmptyView();
+    this._emptyView.show(this.element);
 }
 
 WebInspector.StorageCategoryView.prototype = {
     setText: function(text)
     {
-        this._emptyMsgElement.textContent = text;
-    }
+        this._emptyView.text = text;    
+    }        
 }
 
 WebInspector.StorageCategoryView.prototype.__proto__ = WebInspector.View.prototype;

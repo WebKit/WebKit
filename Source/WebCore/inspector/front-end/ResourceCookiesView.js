@@ -43,11 +43,9 @@ WebInspector.ResourceCookiesView.prototype = {
     show: function(parentElement)
     {
         if (!this._gotCookies) {
-            if (!this._emptyMsgElement) {
-                this._emptyMsgElement = document.createElement("div");
-                this._emptyMsgElement.className = "storage-empty-view";
-                this._emptyMsgElement.textContent = WebInspector.UIString("This request has no cookies.");
-                this.element.appendChild(this._emptyMsgElement);
+            if (!this._emptyView) {
+                this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no cookies."));
+                this._emptyView.show(this.element);
             }
             WebInspector.View.prototype.show.call(this, parentElement);
             return;

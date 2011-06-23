@@ -61,10 +61,8 @@ WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
     this._treeElement = treeElement;
     this._appcacheDomain = appcacheDomain;
 
-    this._emptyMsgElement = document.createElement("div");
-    this._emptyMsgElement.className = "storage-empty-view";
-    this._emptyMsgElement.textContent = WebInspector.UIString("No Application Cache information available.");
-    this.element.appendChild(this._emptyMsgElement);
+    this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("No Application Cache information available."));
+    this._emptyView.show(this.element);
 
     this.updateStatus(applicationCache.UNCACHED);
 
@@ -164,7 +162,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         var lastPathComponent = applicationCaches.lastPathComponent;
 
         if (!this._manifest) {
-            this._emptyMsgElement.removeStyleClass("hidden");
+            this._emptyView.show(this.element);
             this.deleteButton.visible = false;
             if (this._dataGrid)
                 this._dataGrid.element.addStyleClass("hidden");
@@ -177,7 +175,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this._populateDataGrid();
         this._dataGrid.autoSizeColumns(20, 80);
         this._dataGrid.element.removeStyleClass("hidden");
-        this._emptyMsgElement.addStyleClass("hidden");
+        this._emptyView.hide();
         this.deleteButton.visible = true;
 
         var totalSizeString = Number.bytesToString(this._size);

@@ -1,3 +1,52 @@
+2011-06-23  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Show "no content" message in network panel when resource does not have content available.
+        https://bugs.webkit.org/show_bug.cgi?id=63007
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView):
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/EmptyView.js: Added.
+        (WebInspector.EmptyView):
+        (WebInspector.EmptyView.prototype.show):
+        (WebInspector.EmptyView.prototype.set text):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        (WebInspector.ResourceContentView):
+        (WebInspector.ResourceContentView.prototype.hasContent):
+        (WebInspector.ResourceContentView.prototype.get sourceView):
+        (WebInspector.ResourceContentView.prototype.show):
+        (WebInspector.ResourceContentView.prototype._ensureInnerViewShown.callback):
+        (WebInspector.ResourceContentView.prototype._ensureInnerViewShown):
+        (WebInspector.ResourceContentView.prototype.contentLoaded):
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView.prototype.show):
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView):
+        (WebInspector.ResourcePreviewView.prototype.contentLoaded):
+        (WebInspector.ResourcePreviewView.prototype._createInnerView):
+        * inspector/front-end/ResourceResponseView.js: Added.
+        (WebInspector.ResourceResponseView):
+        (WebInspector.ResourceResponseView.prototype.get sourceView):
+        (WebInspector.ResourceResponseView.prototype.contentLoaded):
+        * inspector/front-end/ResourceTimingView.js:
+        (WebInspector.ResourceTimingView.prototype.show):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.StorageCategoryView):
+        (WebInspector.StorageCategoryView.prototype.setText):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-06-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Adam Roben.

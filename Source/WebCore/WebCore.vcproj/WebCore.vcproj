@@ -67981,6 +67981,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\EmptyView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\EventListenersSidebarPane.js"
 					>
 				</File>
@@ -68206,6 +68210,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourcePreviewView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ResourceResponseView.js"
 					>
 				</File>
 				<File

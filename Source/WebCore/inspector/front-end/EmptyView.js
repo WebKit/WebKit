@@ -28,46 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourcePreviewView = function(resource, responseView)
+WebInspector.EmptyView = function(text)
 {
-    WebInspector.ResourceContentView.call(this, resource);
-    this._responseView = responseView;
+    WebInspector.View.call(this);
+    this._text = text;
 }
 
-WebInspector.ResourcePreviewView.prototype = {
-    contentLoaded: function()
+WebInspector.EmptyView.prototype = {
+    show: function(parentElement)
     {
-        if (!this.resource.content) {
-            if (!this._emptyView) {
-                this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no preview available."));
-                this._emptyView.show(this.element);
-            }
-        } else {
-            if (this._emptyView) {
-                this._emptyView.detach();
-                delete this._emptyView;
-            }
-            var view = this._createInnerView();
-            view.show(this.element);
-        }
+        WebInspector.View.prototype.show.call(this, parentElement);
+
+        this.element.className = "storage-empty-view";
+        this.element.textContent = this._text;
     },
-
-    _createInnerView: function()
+    
+    set text(text)
     {
-        if (this.resource.hasErrorStatusCode() && this.resource.content)
-            return new WebInspector.ResourceHTMLView(this.resource);
-
-        if (this.resource.category === WebInspector.resourceCategories.xhr && this.resource.content) {
-            var parsedJSON = WebInspector.ResourceJSONView.parseJSON(this.resource.content);
-            if (parsedJSON)
-                return new WebInspector.ResourceJSONView(this.resource, parsedJSON);
-        }
-
-        if (this._responseView.sourceView)
-            return this._responseView.sourceView;
-
-        return WebInspector.ResourceView.nonSourceViewForResource(this.resource);
-    }
+        this._text = text;
+        if (this.visible)
+            this.element.textContent = this._text;
+    },
 }
 
-WebInspector.ResourcePreviewView.prototype.__proto__ = WebInspector.ResourceContentView.prototype;
+WebInspector.EmptyView.prototype.__proto__ = WebInspector.View.prototype;

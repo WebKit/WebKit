@@ -38,7 +38,7 @@ WebInspector.NetworkItemView = function(resource)
     var headersView = new WebInspector.ResourceHeadersView(resource);
     this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), headersView);
 
-    var responseView = new WebInspector.ResourceSourceFrame(resource);
+    var responseView = new WebInspector.ResourceResponseView(resource);
     var previewView = new WebInspector.ResourcePreviewView(resource, responseView);
 
     this._tabbedPane.appendTab("preview", WebInspector.UIString("Preview"), previewView);
@@ -99,3 +99,50 @@ WebInspector.NetworkItemView.prototype = {
 }
 
 WebInspector.NetworkItemView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.ResourceContentView = function(resource)
+{
+    WebInspector.ResourceView.call(this, resource);
+}
+
+WebInspector.ResourceContentView.prototype = {
+    hasContent: function()
+    {
+        return true;
+    },
+
+    get sourceView()
+    {
+        if (!this._sourceView && WebInspector.ResourceView.hasTextContent(this.resource))
+            this._sourceView = new WebInspector.ResourceSourceFrame(this.resource);
+        return this._sourceView;
+    },
+
+    show: function(parentElement)
+    {
+        WebInspector.ResourceView.prototype.show.call(this, parentElement);
+        this._ensureInnerViewShown();
+    },
+
+    _ensureInnerViewShown: function()
+    {
+        if (this._innerViewShowRequested)
+            return;
+        this._innerViewShowRequested = true;
+
+        function callback()
+        {
+            this._innerViewShowRequested = false;
+            this.contentLoaded();
+        }
+
+        this.resource.requestContent(callback.bind(this));
+    },
+
+    contentLoaded: function()
+    {
+        // Should be implemented by subclasses.
+    }
+}
+
+WebInspector.ResourceContentView.prototype.__proto__ = WebInspector.ResourceView.prototype;

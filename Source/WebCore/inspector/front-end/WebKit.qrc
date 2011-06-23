@@ -40,6 +40,7 @@
     <file>Drawer.js</file>
     <file>ElementsPanel.js</file>
     <file>ElementsTreeOutline.js</file>
+    <file>EmptyView.js</file>
     <file>EventListenersSidebarPane.js</file>
     <file>ExtensionAPI.js</file>
     <file>ExtensionAuditCategory.js</file>
@@ -85,6 +86,7 @@
     <file>ResourceJSONView.js</file>
     <file>ResourceHTMLView.js</file>
     <file>ResourceHeadersView.js</file>
+    <file>ResourceResponseView.js</file>
     <file>ResourceTimingView.js</file>
     <file>ResourceTreeModel.js</file>
     <file>ResourceView.js</file>

@@ -28,18 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourcePreviewView = function(resource, responseView)
+WebInspector.ResourceResponseView = function(resource)
 {
     WebInspector.ResourceContentView.call(this, resource);
-    this._responseView = responseView;
 }
 
-WebInspector.ResourcePreviewView.prototype = {
+WebInspector.ResourceResponseView.prototype = {
+    get sourceView()
+    {
+        if (!this._sourceView && WebInspector.ResourceView.hasTextContent(this.resource))
+            this._sourceView = new WebInspector.ResourceSourceFrame(this.resource);
+        return this._sourceView;
+    },
+
     contentLoaded: function()
     {
-        if (!this.resource.content) {
+        if (!this.resource.content || !this.sourceView) {
             if (!this._emptyView) {
-                this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no preview available."));
+                this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no response data available."));
                 this._emptyView.show(this.element);
             }
         } else {
@@ -47,27 +53,9 @@ WebInspector.ResourcePreviewView.prototype = {
                 this._emptyView.detach();
                 delete this._emptyView;
             }
-            var view = this._createInnerView();
-            view.show(this.element);
+            this.sourceView.show(this.element);
         }
-    },
-
-    _createInnerView: function()
-    {
-        if (this.resource.hasErrorStatusCode() && this.resource.content)
-            return new WebInspector.ResourceHTMLView(this.resource);
-
-        if (this.resource.category === WebInspector.resourceCategories.xhr && this.resource.content) {
-            var parsedJSON = WebInspector.ResourceJSONView.parseJSON(this.resource.content);
-            if (parsedJSON)
-                return new WebInspector.ResourceJSONView(this.resource, parsedJSON);
-        }
-
-        if (this._responseView.sourceView)
-            return this._responseView.sourceView;
-
-        return WebInspector.ResourceView.nonSourceViewForResource(this.resource);
     }
 }
 
-WebInspector.ResourcePreviewView.prototype.__proto__ = WebInspector.ResourceContentView.prototype;
+WebInspector.ResourceResponseView.prototype.__proto__ = WebInspector.ResourceContentView.prototype;

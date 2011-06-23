@@ -43,10 +43,8 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
     this._treeElement = treeElement;
     this._cookieDomain = cookieDomain;
 
-    this._emptyMsgElement = document.createElement("div");
-    this._emptyMsgElement.className = "storage-empty-view";
-    this._emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
-    this.element.appendChild(this._emptyMsgElement);
+    this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This site has no cookies."));
+    this._emptyView.show(this.element);
 }
 
 WebInspector.CookieItemsView.prototype = {
@@ -84,7 +82,7 @@ WebInspector.CookieItemsView.prototype = {
 
         if (!this._cookies.length) {
             // Nothing to show.
-            this._emptyMsgElement.removeStyleClass("hidden");
+            this._emptyView.show(this.element);
             this._deleteButton.visible = false;
             if (this._cookiesTable)
                 this._cookiesTable.element.addStyleClass("hidden");
@@ -98,7 +96,7 @@ WebInspector.CookieItemsView.prototype = {
 
         this._cookiesTable.setCookies(this._cookies);
         this._cookiesTable.element.removeStyleClass("hidden");
-        this._emptyMsgElement.addStyleClass("hidden");
+        this._emptyView.hide();
         if (isAdvanced) {
             this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), this._cookies.length,
                 Number.bytesToString(this._totalSize));
