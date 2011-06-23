@@ -340,6 +340,19 @@ void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> node, unsigned off
         applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, replacementText));
 }
 
+Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
+{
+    Position start = endingSelection().start();
+    Position end = endingSelection().end();
+    if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode() || isTabSpanTextNode(start.containerNode()))
+        return Position();
+
+    RefPtr<Text> textNode = static_cast<Text*>(start.containerNode());
+    replaceTextInNode(textNode, start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
+
+    return Position(textNode.release(), start.offsetInContainerNode() + text.length());
+}
+
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
@@ -479,8 +492,8 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(RefPtr<Text> textN
     if (!length)
         return;
 
-    VisiblePosition visibleUpstreamPos(Position(textNode, upstream, Position::PositionIsOffsetInAnchor));
-    VisiblePosition visibleDownstreamPos(Position(textNode, downstream, Position::PositionIsOffsetInAnchor));
+    VisiblePosition visibleUpstreamPos(Position(textNode, upstream));
+    VisiblePosition visibleDownstreamPos(Position(textNode, downstream));
     
     String string = text.substring(upstream, length);
     String rebalancedString = stringWithRebalancedWhitespace(string,

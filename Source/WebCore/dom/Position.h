@@ -42,6 +42,7 @@ class InlineBox;
 class Node;
 class Range;
 class RenderObject;
+class Text;
 
 enum PositionMoveType {
     CodePoint,       // Move by a single code point.
@@ -80,7 +81,10 @@ public:
 
     // For creating before/after positions:
     Position(PassRefPtr<Node> anchorNode, AnchorType);
+    Position(PassRefPtr<Text> textNode, unsigned offset);
+
     // For creating offset positions:
+    // FIXME: This constructor should eventually go away. See bug 63040.
     Position(PassRefPtr<Node> anchorNode, int offset, AnchorType);
 
     AnchorType anchorType() const { return static_cast<AnchorType>(m_anchorType); }

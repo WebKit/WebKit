@@ -76,18 +76,11 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     
     if (text.contains('\t') || text.contains(' ') || text.contains('\n'))
         return false;
-    
-    Position start = endingSelection().start().parentAnchoredEquivalent();
-    Position end = endingSelection().end().parentAnchoredEquivalent();
-    ASSERT(start.anchorType() == Position::PositionIsOffsetInAnchor);
-    ASSERT(end.anchorType() == Position::PositionIsOffsetInAnchor);
 
-    if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode() || isTabSpanTextNode(start.containerNode()))
+    Position start = endingSelection().start();
+    Position endPosition = replaceSelectedTextInNode(text);
+    if (endPosition.isNull())
         return false;
-
-    replaceTextInNode(static_cast<Text*>(start.containerNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
-
-    Position endPosition(start.containerNode(), start.offsetInContainerNode() + text.length(), Position::PositionIsOffsetInAnchor);
 
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.
@@ -165,11 +158,11 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
         ASSERT(startPosition.containerNode()->isTextNode());
         if (placeholder.isNotNull())
             removePlaceholderAt(placeholder);
-        Text* textNode = static_cast<Text*>(startPosition.containerNode());
+        RefPtr<Text> textNode = static_cast<Text*>(startPosition.containerNode());
         const unsigned offset = startPosition.offsetInContainerNode();
 
         insertTextIntoNode(textNode, offset, text);
-        endPosition = Position(textNode, offset + text.length(), Position::PositionIsOffsetInAnchor);
+        endPosition = Position(textNode, offset + text.length());
 
         if (whitespaceRebalance == RebalanceLeadingAndTrailingWhitespaces) {
             // The insertion may require adjusting adjacent whitespace, if it is present.
@@ -211,8 +204,9 @@ Position InsertTextCommand::insertTab(const Position& pos)
 
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
-        insertTextIntoNode(static_cast<Text *>(node), offset, "\t");
-        return Position(node, offset + 1, Position::PositionIsOffsetInAnchor);
+        RefPtr<Text> textNode = static_cast<Text*>(node);
+        insertTextIntoNode(textNode, offset, "\t");
+        return Position(textNode.release(), offset + 1);
     }
     
     // create new tab span
@@ -222,17 +216,17 @@ Position InsertTextCommand::insertTab(const Position& pos)
     if (!node->isTextNode()) {
         insertNodeAt(spanNode.get(), insertPos);
     } else {
-        Text *textNode = static_cast<Text *>(node);
-        if (offset >= textNode->length()) {
-            insertNodeAfter(spanNode.get(), textNode);
-        } else {
+        RefPtr<Text> textNode = static_cast<Text*>(node);
+        if (offset >= textNode->length())
+            insertNodeAfter(spanNode, textNode.release());
+        else {
             // split node to make room for the span
             // NOTE: splitTextNode uses textNode for the
             // second node in the split, so we need to
             // insert the span before it.
             if (offset > 0)
                 splitTextNode(textNode, offset);
-            insertNodeBefore(spanNode, textNode);
+            insertNodeBefore(spanNode, textNode.release());
         }
     }
 

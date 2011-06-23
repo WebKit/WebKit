@@ -304,18 +304,14 @@ PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
-        return VisiblePosition(Position(innerTextElement(), 0, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+        return VisiblePosition(firstPositionInNode(innerTextElement()), DOWNSTREAM);
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(document());
     range->selectNodeContents(innerTextElement(), ec);
     ASSERT(!ec);
     CharacterIterator it(range.get());
     it.advance(index - 1);
-    Node* endContainer = it.range()->endContainer(ec);
-    ASSERT(!ec);
-    int endOffset = it.range()->endOffset(ec);
-    ASSERT(!ec);
-    return VisiblePosition(Position(endContainer, endOffset, Position::PositionIsOffsetInAnchor), UPSTREAM);
+    return VisiblePosition(it.range()->endPosition(), UPSTREAM);
 }
 
 int RenderTextControl::indexForVisiblePosition(HTMLElement* innerTextElement, const VisiblePosition& pos)

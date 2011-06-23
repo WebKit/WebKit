@@ -1,3 +1,33 @@
+2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add a Position constructor that takes (Text*, unsigned offset)
+        https://bugs.webkit.org/show_bug.cgi?id=63181
+
+        Added Position::Position(PassRefPtr<Text*>, unsigned offset) and deployed in a couple of places
+        by replacing the calls to the old constructor.
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Added.
+        * dom/Position.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceSelectedTextInNode): Calls new constructor; extracted
+        from InsertTextCommand::performTrivialReplace and ReplaceSelectionCommand::performTrivialReplace.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring): Calls new constructor
+        * editing/CompositeEditCommand.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performTrivialReplace): Calls replaceSelectedTextInNode.
+        (WebCore::InsertTextCommand::input): Calls new constructor.
+        (WebCore::InsertTextCommand::insertTab): Use RefPtr instead of a raw pointer.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace): Calls replaceSelectedTextInNode.
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine): Calls new constructor.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::visiblePositionForIndex): Calls new constructor; calls endPosition
+        on Range instead of avoid manually constructing a VisiblePosition out of endContainer and endOffset.
+
 2011-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

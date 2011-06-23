@@ -1305,19 +1305,11 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     
     Text* textNode = static_cast<Text*>(fragment.firstChild());
     // Our fragment creation code handles tabs, spaces, and newlines, so we don't have to worry about those here.
-    String text(textNode->data());
-    
-    Position start = endingSelection().start().parentAnchoredEquivalent();
-    Position end = endingSelection().end().parentAnchoredEquivalent();
-    ASSERT(start.anchorType() == Position::PositionIsOffsetInAnchor);
-    ASSERT(end.anchorType() == Position::PositionIsOffsetInAnchor);
 
-    if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode())
+    Position start = endingSelection().start();
+    Position end = replaceSelectedTextInNode(textNode->data());
+    if (end.isNull())
         return false;
-
-    replaceTextInNode(static_cast<Text*>(start.containerNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
-
-    end = Position(start.containerNode(), start.offsetInContainerNode() + text.length(), Position::PositionIsOffsetInAnchor);
 
     VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
 

@@ -34,6 +34,7 @@
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
+#include "Text.h"
 #include "TextBoundaries.h"
 #include "TextBreakIterator.h"
 #include "TextIterator.h"
@@ -386,7 +387,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         startBox = startBox->nextLeafChild();
     }
     
-    VisiblePosition visPos = startNode->isTextNode() ? VisiblePosition(Position(startNode, static_cast<InlineTextBox *>(startBox)->start(), Position::PositionIsOffsetInAnchor), DOWNSTREAM)
+    VisiblePosition visPos = startNode->isTextNode() ? VisiblePosition(Position(static_cast<Text*>(startNode), static_cast<InlineTextBox*>(startBox)->start()), DOWNSTREAM)
                                                      : VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
     return positionAvoidingFirstPositionInTable(visPos);
 }

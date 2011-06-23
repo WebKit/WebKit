@@ -103,6 +103,15 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
 
+Position::Position(PassRefPtr<Text> textNode, unsigned offset)
+    : m_anchorNode(textNode)
+    , m_offset(static_cast<int>(offset))
+    , m_anchorType(PositionIsOffsetInAnchor)
+    , m_isLegacyEditingPosition(false)
+{
+    ASSERT(m_anchorNode);
+}
+
 void Position::moveToPosition(PassRefPtr<Node> node, int offset)
 {
     ASSERT(!editingIgnoresContent(node.get()));
