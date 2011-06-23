@@ -1,3 +1,42 @@
+2011-06-23  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow generic font family settings per script code.
+        https://bugs.webkit.org/show_bug.cgi?id=20797
+
+        Make generic font family getters/setters accept an additional
+        argument (script code). It has a default value so that if an embedder
+        does not have/want a per-script font family setting, call-sites
+        don't have to be changed.
+        This is to prepare for fixing bug 10874 (font selection is not
+        language-dependent) and bug 18085.
+
+        uscript.h has been updated to that of ICU 3.6 (the version of ICU on
+        Mac OS 10.5)
+
+        There should be no change in layout and no new layout test
+        is added.
+
+        * WebCore.exp.in:
+        * icu/unicode/uscript.h: updated to ICU 4.6
+        * page/Settings.cpp:
+        (WebCore::setGenericFontFamilyMap): helper to set generic family per script
+        (WebCore::getGenericFontFamilyForScript): helper function used by getters for fooFontFamily.
+        (WebCore::Settings::standardFontFamily):
+        (WebCore::Settings::setStandardFontFamily):
+        (WebCore::Settings::fixedFontFamily):
+        (WebCore::Settings::setFixedFontFamily):
+        (WebCore::Settings::serifFontFamily):
+        (WebCore::Settings::setSerifFontFamily):
+        (WebCore::Settings::sansSerifFontFamily):
+        (WebCore::Settings::setSansSerifFontFamily):
+        (WebCore::Settings::cursiveFontFamily):
+        (WebCore::Settings::setCursiveFontFamily):
+        (WebCore::Settings::fantasyFontFamily):
+        (WebCore::Settings::setFantasyFontFamily):
+        * page/Settings.h: setter and getter for FooFontFamily have a new optional argument, scriptCode.
+
 2011-06-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

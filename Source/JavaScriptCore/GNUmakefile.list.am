@@ -630,6 +630,7 @@ endif # USE_ICU_UNICODE
 if USE_GLIB_UNICODE
 javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/unicode/UnicodeMacrosFromICU.h \
+	Source/JavaScriptCore/wtf/unicode/ScriptCodesFromICU.h \
 	Source/JavaScriptCore/wtf/unicode/glib/UnicodeGLib.h \
 	Source/JavaScriptCore/wtf/unicode/glib/UnicodeGLib.cpp
 endif # USE_GLIB_UNICODE
