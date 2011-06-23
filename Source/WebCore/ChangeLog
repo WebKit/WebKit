@@ -1,3 +1,23 @@
+2011-06-23  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Eric Carlson.
+
+        [Qt] Implement fullscreen support on Mac with the QuickTime backend.
+        https://bugs.webkit.org/show_bug.cgi?id=61728
+
+        Implement fullscreen support for Qt when using the QuickTime backend.
+        We mostly use what is already done for the Mac port.
+
+        * DerivedSources.pro: We use the mac files and they have <WebCore/x> type
+        of includes. We need to generate those headers.
+        * WebCore.pro:
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebVideoFullscreenController.mm:
+        * platform/mac/WebVideoFullscreenHUDWindowController.h:
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        * platform/qt/WebCoreSystemInterface.h:
+        * platform/qt/WebCoreSystemInterface.mm:
+
 2011-06-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ryosuke Niwa.

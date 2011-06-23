@@ -1,3 +1,35 @@
+2011-06-23  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Eric Carlson.
+
+        [Qt] Implement fullscreen support on Mac with the QuickTime backend.
+        https://bugs.webkit.org/show_bug.cgi?id=61728
+
+        Implement fullscreen support for Qt when using the QuickTime backend.
+        We mostly use what is already done for the Mac port.
+
+        * QtWebKit.pro:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::requiresFullScreenForVideoPlayback):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        * WebCoreSupport/QTKitFullScreenVideoHandler.h: Added.
+        * WebCoreSupport/QTKitFullScreenVideoHandler.mm: Added.
+        (QTKitFullScreenVideoHandler::QTKitFullScreenVideoHandler):
+        (QTKitFullScreenVideoHandler::~QTKitFullScreenVideoHandler):
+        (QTKitFullScreenVideoHandler::enterFullScreen):
+        (QTKitFullScreenVideoHandler::exitFullScreen):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-06-23  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

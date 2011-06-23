@@ -35,6 +35,10 @@
 #include "PlatformVideoWindowPrivate.h"
 #endif
 
+#if USE(QTKIT)
+#include "QTKitFullScreenVideoHandler.h"
+#endif
+
 #if USE(QT_MULTIMEDIA)
 #include <QGraphicsVideoItem>
 #include <QMediaPlayer>
@@ -147,6 +151,10 @@ FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
 #if USE(GSTREAMER)
     m_FullScreenVideoHandlerGStreamer = new GStreamerFullScreenVideoHandler;
 #endif
+
+#if USE(QTKIT)
+    m_FullScreenVideoHandlerQTKit = new QTKitFullScreenVideoHandler;
+#endif
 }
 
 FullScreenVideoQt::~FullScreenVideoQt()
@@ -156,6 +164,9 @@ FullScreenVideoQt::~FullScreenVideoQt()
 #endif
 #if USE(GSTREAMER)
     delete m_FullScreenVideoHandlerGStreamer;
+#endif
+#if USE(QTKIT)
+    delete m_FullScreenVideoHandlerQTKit;
 #endif
 }
 
@@ -185,6 +196,10 @@ void FullScreenVideoQt::enterFullScreenForNode(Node* node)
     m_FullScreenVideoHandlerGStreamer->setVideoElement(m_videoElement);
     m_FullScreenVideoHandlerGStreamer->enterFullScreen();
 #endif
+
+#if USE(QTKIT)
+    m_FullScreenVideoHandlerQTKit->enterFullScreen(m_videoElement);
+#endif
 }
 
 void FullScreenVideoQt::exitFullScreenForNode(Node* node)
@@ -211,6 +226,11 @@ void FullScreenVideoQt::exitFullScreenForNode(Node* node)
 #if USE(GSTREAMER)
     m_FullScreenVideoHandlerGStreamer->exitFullScreen();
 #endif
+
+#if USE(QTKIT)
+    m_FullScreenVideoHandlerQTKit->exitFullScreen();
+#endif
+
 }
 
 void FullScreenVideoQt::aboutToClose()
@@ -232,9 +252,6 @@ bool FullScreenVideoQt::requiresFullScreenForVideoPlayback()
 {
 #if USE(QT_MULTIMEDIA)
     return m_FullScreenVideoHandler ? m_FullScreenVideoHandler->requiresFullScreenForVideoPlayback() : false;
-#endif
-#if USE(GSTREAMER)
-    return false;
 #else
     return false;
 #endif
@@ -247,6 +264,8 @@ bool FullScreenVideoQt::isValid() const
 #endif
 #if USE(GSTREAMER)
     return m_FullScreenVideoHandlerGStreamer;
+#elif USE(QTKIT)
+    return m_FullScreenVideoHandlerQTKit;
 #else
     return 0;
 #endif

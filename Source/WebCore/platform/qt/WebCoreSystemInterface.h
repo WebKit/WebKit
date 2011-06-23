@@ -38,14 +38,20 @@ typedef struct _NSRect NSRect;
 
 #ifdef __OBJC__
 @class NSArray;
+@class NSControl;
 @class NSString;
 @class NSURL;
+@class NSView;
+@class NSWindow;
 @class QTMovie;
 @class QTMovieView;
 #else
 class NSArray;
+class NSControl;
 class NSString;
 class NSURL;
+class NSView;
+class NSWindow;
 class QTMovie;
 class QTMovieView;
 #endif
@@ -53,6 +59,8 @@ class QTMovieView;
 extern "C" {
 
 // In alphabetical order.
+extern NSView *(*wkCreateMediaUIBackgroundView)(void);
+extern NSControl *(*wkCreateMediaUIControl)(int);
 extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 extern int (*wkQTMovieDataRate)(QTMovie*);
 extern void (*wkQTMovieDisableComponent)(uint32_t[5]);
@@ -68,6 +76,8 @@ extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 extern NSArray *(*wkQTGetSitesInMediaDownloadCache)();
 extern void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
 extern void (*wkQTClearMediaDownloadCache)();
+extern void (*wkWindowSetAlpha)(NSWindow *, float);
+extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 
 }
 

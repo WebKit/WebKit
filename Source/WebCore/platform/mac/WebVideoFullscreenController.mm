@@ -31,9 +31,8 @@
 
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
-#import <HIToolbox/MacApplication.h>
+#import <Carbon/Carbon.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
-#import <OSServices/Power.h>
 #import <QTKit/QTKit.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/SoftLinking.h>

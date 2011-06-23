@@ -25,6 +25,7 @@
 
 #if ENABLE(VIDEO)
 
+#import <Cocoa/Cocoa.h>
 #import <wtf/RefPtr.h>
 
 namespace WebCore {

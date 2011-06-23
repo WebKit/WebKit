@@ -225,25 +225,33 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         SOURCES += $$PWD/WebCoreSupport/FullScreenVideoWidget.cpp
     }
 
-    contains(DEFINES, USE_GSTREAMER=1) | contains(MOBILITY_CONFIG, multimedia) {
+    contains(DEFINES, USE_QTKIT=1) | contains(DEFINES, USE_GSTREAMER=1) | contains(MOBILITY_CONFIG, multimedia) {
         HEADERS += $$PWD/WebCoreSupport/FullScreenVideoQt.h
         SOURCES += $$PWD/WebCoreSupport/FullScreenVideoQt.cpp
     }
 
     contains(DEFINES, USE_QTKIT=1) {
-        INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/qt/
-        INCLUDEPATH += $$SOURCE_DIR/../WebKitLibraries/
+        INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/qt/ \
+                       $$SOURCE_DIR/WebCore/platform/mac/ \
+                       $$SOURCE_DIR/../WebKitLibraries/
+
         DEFINES+=NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-        HEADERS += $$PWD/WebCoreSupport/WebSystemInterface.h
-        SOURCES += $$PWD/WebCoreSupport/WebSystemInterface.mm
+
+        HEADERS += $$PWD/WebCoreSupport/WebSystemInterface.h \
+                   $$PWD/WebCoreSupport/QTKitFullScreenVideoHandler.h
+
+        OBJECTIVE_SOURCES += $$PWD/WebCoreSupport/WebSystemInterface.mm \
+                   $$PWD/WebCoreSupport/QTKitFullScreenVideoHandler.mm
+
+        LIBS+= -framework Security -framework IOKit
         # We can know the Mac OS version by using the Darwin major version
         DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
         DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
         equals(DARWIN_MAJOR_VERSION, "10") {
-            LIBS+= $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a -framework Security
+            LIBS+= $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a
         } else {
             equals(DARWIN_MAJOR_VERSION, "9") {
-                LIBS+= $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceLeopard.a -framework Security
+                LIBS+= $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceLeopard.a
             }
         }
     }

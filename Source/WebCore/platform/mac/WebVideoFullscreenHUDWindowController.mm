@@ -30,9 +30,9 @@
 
 #import "FloatConversion.h"
 #import "WebCoreSystemInterface.h"
-#import <JavaScriptCore/RetainPtr.h>
-#import <JavaScriptCore/UnusedParam.h>
 #import <WebCore/HTMLMediaElement.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/UnusedParam.h>
 
 using namespace WebCore;
 using namespace std;

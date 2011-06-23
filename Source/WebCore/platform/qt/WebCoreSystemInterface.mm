@@ -27,6 +27,8 @@
 #import "WebCoreSystemInterface.h"
 #import <Foundation/Foundation.h>
 
+NSView *(*wkCreateMediaUIBackgroundView)(void);
+NSControl *(*wkCreateMediaUIControl)(int);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 int (*wkQTMovieDataRate)(QTMovie*);
 void (*wkQTMovieDisableComponent)(uint32_t[5]);
@@ -42,4 +44,6 @@ void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 NSArray *(*wkQTGetSitesInMediaDownloadCache)();
 void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
 void (*wkQTClearMediaDownloadCache)();
+void (*wkWindowSetAlpha)(NSWindow *, float);
+void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 

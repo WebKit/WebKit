@@ -25,6 +25,8 @@
 
 #if ENABLE(VIDEO)
 
+#import <Cocoa/Cocoa.h>
+
 namespace WebCore {
     class HTMLMediaElement;
 }

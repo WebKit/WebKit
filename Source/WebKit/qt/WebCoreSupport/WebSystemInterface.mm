@@ -57,6 +57,10 @@ void InitWebCoreSystemInterface(void)
     INIT(QTGetSitesInMediaDownloadCache);
     INIT(QTClearMediaDownloadCacheForSite);
     INIT(QTClearMediaDownloadCache);
+    INIT(CreateMediaUIBackgroundView);
+    INIT(CreateMediaUIControl);
+    INIT(WindowSetAlpha);
+    INIT(WindowSetScaledFrame);
 
     didInit = true;
 }
