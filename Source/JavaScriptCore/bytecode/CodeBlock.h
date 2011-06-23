@@ -33,6 +33,7 @@
 #include "EvalCodeCache.h"
 #include "Instruction.h"
 #include "JITCode.h"
+#include "JITWriteBarrier.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "Nodes.h"
@@ -103,10 +104,9 @@ namespace JSC {
         CodeLocationNearCall callReturnLocation;
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
-        WriteBarrier<JSFunction> callee;
+        JITWriteBarrier<JSFunction> callee;
         bool hasSeenShouldRepatch;
-        
-        void setUnlinked() { callee.clear(); }
+
         bool isLinked() { return callee; }
 
         bool seenOnce()
@@ -128,7 +128,7 @@ namespace JSC {
         bool seenOnce()
         {
             ASSERT(!cachedStructure);
-            return cachedPrototypeStructure;
+            return cachedPrototypeStructure.isFlagged();
         }
 
         void setSeen()
@@ -140,13 +140,14 @@ namespace JSC {
             //     - Once this transition has been taken once, cachedStructure is
             //       null and cachedPrototypeStructure is set to a nun-null value.
             //     - Once the call is linked both structures are set to non-null values.
-            cachedPrototypeStructure.setWithoutWriteBarrier((Structure*)1);
+            cachedPrototypeStructure.setFlagOnBarrier();
         }
 
         CodeLocationCall callReturnLocation;
-        CodeLocationDataLabelPtr structureLabel;
-        WriteBarrier<Structure> cachedStructure;
-        WriteBarrier<Structure> cachedPrototypeStructure;
+        JITWriteBarrier<Structure> cachedStructure;
+        JITWriteBarrier<Structure> cachedPrototypeStructure;
+        JITWriteBarrier<JSFunction> cachedFunction;
+        JITWriteBarrier<JSObject> cachedPrototype;
     };
 
     struct GlobalResolveInfo {

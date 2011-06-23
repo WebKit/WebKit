@@ -739,6 +739,14 @@ namespace JSC {
 
         static void patchConstantPoolLoad(void* loadAddr, void* constPoolAddr);
 
+        // Read pointers
+        static void* readPointer(void* from)
+        {
+            ARMWord* insn = reinterpret_cast<ARMWord*>(from);
+            void* addr = reinterpret_cast<void*>(getLdrImmAddress(insn));
+            return *addr;
+        }
+        
         // Patch pointers
 
         static void linkPointer(void* code, AssemblerLabel from, void* to)

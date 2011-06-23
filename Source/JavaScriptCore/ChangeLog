@@ -1,3 +1,65 @@
+2011-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add the ability to dynamically modify linked call sites
+        https://bugs.webkit.org/show_bug.cgi?id=63291
+
+        Add JITWriteBarrier as a writebarrier class that allows
+        reading and writing directly into the code stream.
+
+        This required adding logic to all the assemblers to allow
+        us to read values back out of the instruction stream.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::readPointer):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::readPointer):
+        (JSC::ARMv7Assembler::readInt32):
+        (JSC::ARMv7Assembler::decodeTwoWordOp5i6Imm4Reg4EncodedImmFirst):
+        (JSC::ARMv7Assembler::decodeTwoWordOp5i6Imm4Reg4EncodedImmSecond):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::readPointer):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::readInt32):
+        (JSC::MIPSAssembler::readPointer):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::operator!):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::readPCrelativeAddress):
+        (JSC::SH4Assembler::readPointer):
+        (JSC::SH4Assembler::readInt32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::readPointer):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::MethodCallLinkInfo::seenOnce):
+        (JSC::MethodCallLinkInfo::setSeen):
+        * heap/MarkStack.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::linkConstruct):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchMethodCallProto):
+        * jit/JITPropertyAccess32_64.cpp:
+        * jit/JITWriteBarrier.h: Added.
+        (JSC::JITWriteBarrierBase::operator UnspecifiedBoolType*):
+        (JSC::JITWriteBarrierBase::operator!):
+        (JSC::JITWriteBarrierBase::setFlagOnBarrier):
+        (JSC::JITWriteBarrierBase::isFlagged):
+        (JSC::JITWriteBarrierBase::setLocation):
+        (JSC::JITWriteBarrierBase::location):
+        (JSC::JITWriteBarrierBase::JITWriteBarrierBase):
+        (JSC::JITWriteBarrierBase::set):
+        (JSC::JITWriteBarrierBase::get):
+        (JSC::JITWriteBarrier::JITWriteBarrier):
+        (JSC::JITWriteBarrier::set):
+        (JSC::JITWriteBarrier::get):
+        (JSC::MarkStack::append):
+
 2011-06-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

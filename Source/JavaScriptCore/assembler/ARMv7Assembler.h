@@ -340,6 +340,8 @@ public:
         return m_type != TypeInvalid;
     }
 
+    uint16_t asUInt16() const { return m_value.asInt; }
+
     // These methods rely on the format of encoded byte values.
     bool isUInt3() { return !(m_value.asInt & 0xfff8); }
     bool isUInt4() { return !(m_value.asInt & 0xfff0); }
@@ -1776,6 +1778,11 @@ public:
         setPointer(where, value);
     }
 
+    static void* readPointer(void* where)
+    {
+        return reinterpret_cast<void*>(readInt32(where));
+    }
+
 private:
     // VFP operations commonly take one or more 5-bit operands, typically representing a
     // floating point register number.  This will commonly be encoded in the instruction
@@ -1855,6 +1862,23 @@ private:
         location[-1] = twoWordOp5i6Imm4Reg4EncodedImmSecond((location[-1] >> 8) & 0xf, hi16);
 
         ExecutableAllocator::cacheFlush(location - 4, 4 * sizeof(uint16_t));
+    }
+    
+    static int32_t readInt32(void* code)
+    {
+        uint16_t* location = reinterpret_cast<uint16_t*>(code);
+        ASSERT(isMOV_imm_T3(location - 4) && isMOVT(location - 2));
+        
+        ARMThumbImmediate lo16;
+        ARMThumbImmediate hi16;
+        decodeTwoWordOp5i6Imm4Reg4EncodedImmFirst(lo16, location[-4]);
+        decodeTwoWordOp5i6Imm4Reg4EncodedImmSecond(lo16, location[-3]);
+        decodeTwoWordOp5i6Imm4Reg4EncodedImmFirst(hi16, location[-2]);
+        decodeTwoWordOp5i6Imm4Reg4EncodedImmSecond(hi16, location[-1]);
+        uint32_t result = hi16.asUInt16();
+        result <<= 16;
+        result |= lo16.asUInt16();
+        return static_cast<int32_t>(result);
     }
 
     static void setUInt7ForLoad(void* code, ARMThumbImmediate imm)
@@ -2122,9 +2146,21 @@ private:
         return op | (imm.m_value.i << 10) | imm.m_value.imm4;
     }
 
+    static void decodeTwoWordOp5i6Imm4Reg4EncodedImmFirst(ARMThumbImmediate& result, uint16_t value)
+    {
+        result.m_value.i = (value >> 10) & 1;
+        result.m_value.imm4 = value & 15;
+    }
+
     static uint16_t twoWordOp5i6Imm4Reg4EncodedImmSecond(uint16_t rd, ARMThumbImmediate imm)
     {
         return (imm.m_value.imm3 << 12) | (rd << 8) | imm.m_value.imm8;
+    }
+
+    static void decodeTwoWordOp5i6Imm4Reg4EncodedImmSecond(ARMThumbImmediate& result, uint16_t value)
+    {
+        result.m_value.imm3 = (value >> 12) & 7;
+        result.m_value.imm8 = value & 255;
     }
 
     class ARMInstructionFormatter {

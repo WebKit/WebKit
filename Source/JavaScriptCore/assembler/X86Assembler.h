@@ -1565,6 +1565,11 @@ public:
     {
         setPointer(where, value);
     }
+    
+    static void* readPointer(void* where)
+    {
+        return reinterpret_cast<void**>(where)[-1];
+    }
 
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {

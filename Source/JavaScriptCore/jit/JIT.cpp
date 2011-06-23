@@ -584,7 +584,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->addMethodCallLinkInfos(methodCallCount);
     for (unsigned i = 0; i < methodCallCount; ++i) {
         MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
-        info.structureLabel = patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare);
+        info.cachedStructure.setLocation(patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare));
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
@@ -602,8 +602,7 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* ca
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
-        callLinkInfo->callee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
-        repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
+        callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
     }
 
@@ -619,8 +618,7 @@ void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBloc
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
-        callLinkInfo->callee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
-        repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
+        callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
     }
 

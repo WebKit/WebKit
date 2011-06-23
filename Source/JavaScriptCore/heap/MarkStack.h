@@ -42,6 +42,7 @@ namespace JSC {
     class MarkStack;
     class Register;
     template<typename T> class WriteBarrierBase;
+    template<typename T> class JITWriteBarrier;
     
     struct MarkSet {
         MarkSet(JSValue* values, JSValue* end);
@@ -85,7 +86,8 @@ namespace JSC {
         ~MarkStack();
 
         void append(ConservativeRoots&);
-
+        
+        template<typename T> inline void append(JITWriteBarrier<T>*);
         template<typename T> inline void append(WriteBarrierBase<T>*);
         inline void appendValues(WriteBarrierBase<Unknown>*, size_t count);
         

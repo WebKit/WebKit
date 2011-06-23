@@ -41,6 +41,7 @@ class RepatchBuffer;
 template <class AssemblerType>
 class AbstractMacroAssembler {
 public:
+    friend class JITWriteBarrierBase;
     typedef AssemblerType AssemblerType_T;
 
     typedef MacroAssemblerCodePtr CodePtr;
@@ -572,6 +573,11 @@ protected:
     static void repatchPointer(CodeLocationDataLabelPtr dataLabelPtr, void* value)
     {
         AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
+    }
+    
+    static void* readPointer(CodeLocationDataLabelPtr dataLabelPtr)
+    {
+        return AssemblerType::readPointer(dataLabelPtr.dataLocation());
     }
 };
 

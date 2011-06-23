@@ -1508,6 +1508,8 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
             visitor.append(&m_methodCallLinkInfos[i].cachedStructure);
             ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
             visitor.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            visitor.append(&m_methodCallLinkInfos[i].cachedFunction);
+            visitor.append(&m_methodCallLinkInfos[i].cachedPrototype);
         }
     }
 #endif
