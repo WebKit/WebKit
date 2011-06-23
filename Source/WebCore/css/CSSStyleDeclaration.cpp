@@ -31,6 +31,9 @@
 #include "SVGElement.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/CString.h>
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
 
 using namespace WTF;
 
