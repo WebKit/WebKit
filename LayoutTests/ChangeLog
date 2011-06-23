@@ -1,5 +1,11 @@
 2011-06-23  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fix conflicting chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-23  Pavel Feldman  <pfeldman@google.com>
+
         Not reviewed: brush up chromium inspector expectations.
 
         * http/tests/inspector/inspector-test.js:
