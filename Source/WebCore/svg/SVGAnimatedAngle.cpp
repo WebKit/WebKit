@@ -22,10 +22,12 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedAngle.h"
 
+#include "SVGAnimateElement.h"
+
 namespace WebCore {
 
-SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator(SVGElement* contextElement, const QualifiedName&)
-    : SVGAnimatedTypeAnimator(AnimatedAngle, contextElement)
+SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
+    : SVGAnimatedTypeAnimator(AnimatedAngle, animationElement, contextElement)
 {
 }
 
@@ -49,6 +51,11 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const 
 
 void SVGAnimatedAngleAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
+    ASSERT(m_contextElement);
+    ASSERT(m_animationElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
+    animationElement->determinePropertyValueTypes(fromString, toString);
+
     from = constructFromString(fromString);
     to = constructFromString(toString);
 }
@@ -56,6 +63,9 @@ void SVGAnimatedAngleAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>&
 void SVGAnimatedAngleAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
 {
     ASSERT(m_contextElement);
+    ASSERT(m_animationElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
+    animationElement->determinePropertyValueTypes(fromString, byString);
     
     from = constructFromString(fromString);
     to = constructFromString(byString);
@@ -65,13 +75,12 @@ void SVGAnimatedAngleAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>&
     toAngle.setValue(toAngle.value() + fromAngle.value());
 }
 
-void SVGAnimatedAngleAnimator::calculateAnimatedValue(SVGSMILElement* smilElement, float percentage, unsigned repeatCount,
-                                                      OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated,
-                                                      bool fromPropertyInherits, bool toPropertyInherits)
+void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                                      OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
-    ASSERT(smilElement);
+    ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(smilElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
     
     AnimationMode animationMode = animationElement->animationMode();
     // To animation uses contributions from the lower priority animations as the base value.
@@ -84,12 +93,12 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(SVGSMILElement* smilElemen
     float fromAngle = from->angle().value();
     float toAngle = to->angle().value();
     
-    if (fromPropertyInherits) {
+    if (animationElement->fromPropertyValueType() == InheritValue) {
         String fromAngleString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromAngleString);
         fromAngle = sharedSVGAngle(fromAngleString).value();
     }
-    if (toPropertyInherits) {
+    if (animationElement->toPropertyValueType() == InheritValue) {
         String toAngleString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toAngleString);
         toAngle = sharedSVGAngle(toAngleString).value(); 
@@ -112,7 +121,7 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(SVGSMILElement* smilElemen
         animatedSVGAngle.setValue(number);
 }
 
-float SVGAnimatedAngleAnimator::calculateDistance(SVGSMILElement*, const String& fromString, const String& toString)
+float SVGAnimatedAngleAnimator::calculateDistance(const String& fromString, const String& toString)
 {
     ExceptionCode ec = 0;
     SVGAngle from = SVGAngle();

@@ -24,6 +24,7 @@
 
 #include "FloatRect.h"
 #include "SVGAngle.h"
+#include "SVGColor.h"
 #include "SVGLength.h"
 #include "SVGParserUtilities.h"
 #include "SVGPointList.h"
@@ -40,6 +41,9 @@ SVGAnimatedType::~SVGAnimatedType()
     switch (m_type) {
     case AnimatedAngle:
         delete m_data.angle;
+        break;
+    case AnimatedColor:
+        delete m_data.color;
         break;
     case AnimatedLength:
         delete m_data.length;
@@ -64,6 +68,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createAngle(SVGAngle* angle)
     ASSERT(angle);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedAngle));
     animatedType->m_data.angle = angle;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createColor(Color* color)
+{
+    ASSERT(color);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedColor));
+    animatedType->m_data.color = color;
     return animatedType.release();
 }
 
@@ -105,6 +117,12 @@ SVGAngle& SVGAnimatedType::angle()
     return *m_data.angle;
 }
 
+Color& SVGAnimatedType::color()
+{
+    ASSERT(m_type == AnimatedColor);
+    return *m_data.color;
+}
+
 SVGLength& SVGAnimatedType::length()
 {
     ASSERT(m_type == AnimatedLength);
@@ -135,6 +153,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedAngle:
         ASSERT(m_data.angle);
         return m_data.angle->valueAsString();
+    case AnimatedColor:
+        ASSERT(m_data.color);
+        return m_data.color->serialized();
     case AnimatedLength:
         ASSERT(m_data.length);
         return m_data.length->valueAsString();
@@ -162,6 +183,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedAngle:
         ASSERT(m_data.angle);
         m_data.angle->setValueAsString(value, ec);
+        break;
+    case AnimatedColor:
+        ASSERT(m_data.color);
+        *m_data.color = value.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(value);
         break;
     case AnimatedLength:
         ASSERT(m_data.length);

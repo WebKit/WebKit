@@ -22,12 +22,13 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedRect.h"
 
+#include "SVGAnimateElement.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
 
-SVGAnimatedRectAnimator::SVGAnimatedRectAnimator(SVGElement* contextElement, const QualifiedName&)
-    : SVGAnimatedTypeAnimator(AnimatedRect, contextElement)
+SVGAnimatedRectAnimator::SVGAnimatedRectAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
+    : SVGAnimatedTypeAnimator(AnimatedRect, animationElement, contextElement)
 {
 }
 
@@ -54,14 +55,13 @@ void SVGAnimatedRectAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& 
     to->rect() += from->rect();
 }
 
-void SVGAnimatedRectAnimator::calculateAnimatedValue(SVGSMILElement* smilElement, float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated,
-                                                       bool, bool)
+void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
-    ASSERT(smilElement);
+    ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(smilElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
     AnimationMode animationMode = animationElement->animationMode();
     // To animation uses contributions from the lower priority animations as the base value.
     FloatRect& animatedRect = animated->rect();
@@ -93,7 +93,7 @@ void SVGAnimatedRectAnimator::calculateAnimatedValue(SVGSMILElement* smilElement
         animatedRect = newRect;
 }
 
-float SVGAnimatedRectAnimator::calculateDistance(SVGSMILElement*, const String&, const String&)
+float SVGAnimatedRectAnimator::calculateDistance(const String&, const String&)
 {
     // FIXME: Distance calculation is not possible for SVGRect right now. We need the distance of for every single value.
     return -1;

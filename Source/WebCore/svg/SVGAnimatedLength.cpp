@@ -22,11 +22,13 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedLength.h"
 
+#include "SVGAnimateElement.h"
+
 namespace WebCore {
 
-SVGAnimatedLengthAnimator::SVGAnimatedLengthAnimator(SVGElement* contextElement, const QualifiedName& attributeName)
-    : SVGAnimatedTypeAnimator(AnimatedLength, contextElement)
-    , m_lengthMode(SVGLength::lengthModeForAnimatedLengthAttribute(attributeName))
+SVGAnimatedLengthAnimator::SVGAnimatedLengthAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
+    : SVGAnimatedTypeAnimator(AnimatedLength, animationElement, contextElement)
+    , m_lengthMode(SVGLength::lengthModeForAnimatedLengthAttribute(animationElement->attributeName()))
 {
 }
 
@@ -46,6 +48,11 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const
 
 void SVGAnimatedLengthAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
+    ASSERT(m_contextElement);
+    ASSERT(m_animationElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
+    animationElement->determinePropertyValueTypes(fromString, toString);
+    
     from = constructFromString(fromString);
     to = constructFromString(toString);
 }
@@ -53,6 +60,9 @@ void SVGAnimatedLengthAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>
 void SVGAnimatedLengthAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
 {
     ASSERT(m_contextElement);
+    ASSERT(m_animationElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
+    animationElement->determinePropertyValueTypes(fromString, byString);
     
     from = constructFromString(fromString);
     to = constructFromString(byString);
@@ -64,13 +74,12 @@ void SVGAnimatedLengthAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>
     ASSERT(!ec);
 }
 
-void SVGAnimatedLengthAnimator::calculateAnimatedValue(SVGSMILElement* smilElement, float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated,
-                                                       bool fromPropertyInherits, bool toPropertyInherits)
+void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
-    ASSERT(smilElement);
+    ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(smilElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
     
     AnimationMode animationMode = animationElement->animationMode();
     // To animation uses contributions from the lower priority animations as the base value.
@@ -83,12 +92,12 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(SVGSMILElement* smilEleme
     float fromLength = from->length().value(m_contextElement);
     float toLength = to->length().value(m_contextElement);
     
-    if (fromPropertyInherits) {
+    if (animationElement->fromPropertyValueType() == InheritValue) {
         String fromLengthString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromLengthString);
         fromLength = sharedSVGLength(m_lengthMode, fromLengthString).value(m_contextElement);
     }
-    if (toPropertyInherits) {
+    if (animationElement->toPropertyValueType() == InheritValue) {
         String toLengthString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toLengthString);
         toLength = sharedSVGLength(m_lengthMode, toLengthString).value(m_contextElement); 
@@ -113,11 +122,11 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(SVGSMILElement* smilEleme
     ASSERT(!ec);
 }
 
-float SVGAnimatedLengthAnimator::calculateDistance(SVGSMILElement* smilElement, const String& fromString, const String& toString)
+float SVGAnimatedLengthAnimator::calculateDistance(const String& fromString, const String& toString)
 {
-    ASSERT(smilElement);
+    ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(smilElement);    
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);    
     SVGLengthMode lengthMode = SVGLength::lengthModeForAnimatedLengthAttribute(animationElement->attributeName());
     SVGLength from = SVGLength(lengthMode, fromString);
     SVGLength to = SVGLength(lengthMode, toString);

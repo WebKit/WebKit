@@ -22,13 +22,14 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedPointList.h"
 
+#include "SVGAnimateElement.h"
 #include "SVGParserUtilities.h"
 #include "SVGPointList.h"
 
 namespace WebCore {
 
-SVGAnimatedPointListAnimator::SVGAnimatedPointListAnimator(SVGElement* contextElement, const QualifiedName&)
-    : SVGAnimatedTypeAnimator(AnimatedPoints, contextElement)
+SVGAnimatedPointListAnimator::SVGAnimatedPointListAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
+    : SVGAnimatedTypeAnimator(AnimatedPoints, animationElement, contextElement)
 {
 }
 
@@ -61,11 +62,10 @@ void SVGAnimatedPointListAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedTy
     }
 }
 
-void SVGAnimatedPointListAnimator::calculateAnimatedValue(SVGSMILElement* smilElement, float percentage, unsigned,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated,
-                                                       bool, bool)
+void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned,
+                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
-    ASSERT(smilElement);
+    ASSERT(m_animationElement);
     ASSERT(m_contextElement);
     
     SVGPointList& animatedPointList = animated->pointList();
@@ -81,7 +81,7 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(SVGSMILElement* smilEl
             SVGPointList::createAnimated(fromPointList, toPointList, animatedPointList, percentage);
             
         // Fall back to discrete animation if the points are not compatible
-        AnimationMode animationMode = static_cast<SVGAnimateElement*>(smilElement)->animationMode();
+        AnimationMode animationMode = static_cast<SVGAnimateElement*>(m_animationElement)->animationMode();
         if (animatedPointList.isEmpty())
             animatedPointList = ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1) 
             ? toPointList : fromPointList;
@@ -89,7 +89,7 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(SVGSMILElement* smilEl
     return;
 }
 
-float SVGAnimatedPointListAnimator::calculateDistance(SVGSMILElement*, const String&, const String&)
+float SVGAnimatedPointListAnimator::calculateDistance(const String&, const String&)
 {
     // FIXME: Distance calculation is not possible for SVGPointList right now. We need the distance of for every single value.
     return -1;

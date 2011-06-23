@@ -25,6 +25,7 @@
 
 namespace WebCore {
 
+class Color;
 class FloatRect;
 class SVGAngle;
 class SVGLength;
@@ -36,6 +37,7 @@ public:
     virtual ~SVGAnimatedType();
 
     static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
+    static PassOwnPtr<SVGAnimatedType> createColor(Color*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
@@ -44,6 +46,7 @@ public:
     AnimatedAttributeType type() const { return m_type; }
 
     SVGAngle& angle();
+    Color& color();
     SVGLength& length();
     float& number();
     SVGPointList& pointList();
@@ -65,6 +68,7 @@ private:
         
         // FIXME: More SVG primitive types need to be added step by step.
         SVGAngle* angle;
+        Color* color;
         SVGLength* length;
         float* number;
         SVGPointList* pointList;

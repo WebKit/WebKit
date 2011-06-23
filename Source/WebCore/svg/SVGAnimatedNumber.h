@@ -21,9 +21,9 @@
 #define SVGAnimatedNumber_h
 
 #if ENABLE(SVG)
-#include "SVGAnimateElement.h"
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
+#include "SVGAnimatedTypeAnimator.h"
 
 namespace WebCore {
 
@@ -40,20 +40,21 @@ DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGA
 DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedNumber, float, UpperProperty, LowerProperty)
 
 #if ENABLE(SVG_ANIMATION)
+class SVGAnimationElement;
+
 class SVGAnimatedNumberAnimator : public SVGAnimatedTypeAnimator {
     
 public:
-    SVGAnimatedNumberAnimator(SVGElement*, const QualifiedName&);
+    SVGAnimatedNumberAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedNumberAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
     
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
-    virtual void calculateAnimatedValue(SVGSMILElement*, float percentage, unsigned repeatCount,
-                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue,
-                                        bool fromPropertyInherits, bool toPropertyInherits);
-    virtual float calculateDistance(SVGSMILElement*, const String& fromString, const String& toString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
+    virtual float calculateDistance(const String& fromString, const String& toString);
 };
 } // namespace WebCore
 

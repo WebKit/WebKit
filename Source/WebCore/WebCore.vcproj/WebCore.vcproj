@@ -65362,6 +65362,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedColor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedEnumeration.h"
 				>
 			</File>

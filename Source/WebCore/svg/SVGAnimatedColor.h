@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,34 +17,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedRect_h
-#define SVGAnimatedRect_h
+#ifndef SVGAnimatedColor_h
+#define SVGAnimatedColor_h
 
-#if ENABLE(SVG)
-#include "SVGAnimatedPropertyMacros.h"
-#include "SVGAnimatedPropertyTearOff.h"
+#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedTypeAnimator.h"
-#include "SVGRect.h"
 
 namespace WebCore {
-
-typedef SVGAnimatedPropertyTearOff<FloatRect> SVGAnimatedRect;
-
-// Helper macros to declare/define a SVGAnimatedRect object
-#define DECLARE_ANIMATED_RECT(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
-
-#define DEFINE_ANIMATED_RECT(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
-
-#if ENABLE(SVG_ANIMATION)
+    
 class SVGAnimationElement;
 
-class SVGAnimatedRectAnimator : public SVGAnimatedTypeAnimator {
+class SVGAnimatedColorAnimator : public SVGAnimatedTypeAnimator {
     
 public:
-    SVGAnimatedRectAnimator(SVGAnimationElement*, SVGElement*);
-    virtual ~SVGAnimatedRectAnimator() { }
+    SVGAnimatedColorAnimator(SVGAnimationElement*, SVGElement*);
+    virtual ~SVGAnimatedColorAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
     
@@ -53,11 +40,9 @@ public:
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
     virtual float calculateDistance(const String& fromString, const String& toString);
-    
-    static bool parseSVGRect(const String&, FloatRect&);
 };
 } // namespace WebCore
 
-#endif // ENABLE(SVG_ANIMATION)
-#endif // ENABLE(SVG)
+#endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+
 #endif

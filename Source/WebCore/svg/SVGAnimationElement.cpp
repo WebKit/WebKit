@@ -38,6 +38,7 @@
 #include "FloatConversion.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
+#include "SVGAnimateElement.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

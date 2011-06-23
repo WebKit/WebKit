@@ -2330,6 +2330,7 @@ HEADERS += \
     svg/SVGAnimateColorElement.h \
     svg/SVGAnimatedAngle.h \
     svg/SVGAnimatedBoolean.h \
+    svg/SVGAnimatedColor.h \
     svg/SVGAnimatedEnumeration.h \
     svg/SVGAnimatedInteger.h \
     svg/SVGAnimatedLength.h \
@@ -3322,6 +3323,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAngle.cpp \
               svg/SVGAnimateColorElement.cpp \
               svg/SVGAnimatedAngle.cpp \
+              svg/SVGAnimatedColor.cpp \
               svg/SVGAnimatedLength.cpp \
               svg/SVGAnimatedNumber.cpp \
               svg/SVGAnimatedPointList.cpp \

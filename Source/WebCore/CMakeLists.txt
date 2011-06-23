@@ -1655,6 +1655,7 @@ IF (ENABLE_SVG)
         svg/SVGAngle.cpp
         svg/SVGAnimateColorElement.cpp
         svg/SVGAnimatedAngle.cpp
+        svg/SVGAnimatedColor.cpp
         svg/SVGAnimatedLength.cpp
         svg/SVGAnimatedNumber.cpp
         svg/SVGAnimatedPointList.cpp

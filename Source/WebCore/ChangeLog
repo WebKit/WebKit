@@ -1,3 +1,98 @@
+2011-06-23  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Convert SVGColor to SVGAnimatorFactory concept
+        https://bugs.webkit.org/show_bug.cgi?id=63246
+
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGColor.
+
+        Changed constructors of animators to take the animation element SVGAnimationsElement as new argument. Removed attribute name argument instead.
+        This information is already exposed by the animation element. The animators store the pointer of the animation element, so that it is not
+        necessary to pass it as argument to the functions calculateDistance, calculateAnimatedValue.
+        
+        Replace all SVGSMILElement references by SVGAnimationsElement - the common base class of all animation elements.
+
+        Added a new method in SVGAnimateElement to determine the property value type of CSS properties (regular value type, inherit or currentColor).
+        The other two new methods fromPropertyValueType() and toPropertyValueType() avoid passing boolean arguments in calculateAnimatedValue().
+
+        No new tests added. Current tests cover the changes.
+
+        * CMakeLists.txt: Added new files to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp:  Ditto.
+        * svg/SVGAnimateElement.cpp: Use Animator for SVGColor. 
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::determinePropertyValueTypes):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        (WebCore::SVGAnimateElement::ensureAnimator): Pass the animation element as pointer to animator.
+        * svg/SVGAnimateElement.h: Removed unnecessary includes. Some cleanup.
+        (WebCore::SVGAnimateElement::fromPropertyValueType): Get property value type of 'from' property.
+        (WebCore::SVGAnimateElement::toPropertyValueType): Get property value type of 'to' property.
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator): Added SVGSMILElement as new argument, removed attributeName.
+        (WebCore::SVGAnimatedAngleAnimator::calculateFromAndToValues): Determine property value type.
+        (WebCore::SVGAnimatedAngleAnimator::calculateFromAndByValues): Ditto.
+        (WebCore::SVGAnimatedAngleAnimator::calculateAnimatedValue): Use new functions of SVGAnimateElement for handling of 'inherit'.
+            And removed unnecessary arguments.
+        (WebCore::SVGAnimatedAngleAnimator::calculateDistance): Removed animation element argument.
+        * svg/SVGAnimatedAngle.h:
+        * svg/SVGAnimatedColor.cpp: Added.
+        (WebCore::SVGAnimatedColorAnimator::SVGAnimatedColorAnimator): Ditto.
+        (WebCore::SVGAnimatedColorAnimator::constructFromString):
+        (WebCore::SVGAnimatedColorAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedColorAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedColorAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedColorAnimator::calculateDistance):
+        * svg/SVGAnimatedColor.h: Added.
+        (WebCore::SVGAnimatedColorAnimator::~SVGAnimatedColorAnimator):
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::SVGAnimatedLengthAnimator::SVGAnimatedLengthAnimator): Ditto.
+        (WebCore::SVGAnimatedLengthAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedLengthAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedLengthAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedLengthAnimator::calculateDistance):
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedNumber.cpp:
+        (WebCore::SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator): Ditto.
+        (WebCore::SVGAnimatedNumberAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedNumberAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedNumberAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedNumberAnimator::calculateDistance):
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedPointList.cpp:
+        (WebCore::SVGAnimatedPointListAnimator::SVGAnimatedPointListAnimator): Ditto.
+        (WebCore::SVGAnimatedPointListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedPointListAnimator::calculateDistance):
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimatedRect.cpp:
+        (WebCore::SVGAnimatedRectAnimator::SVGAnimatedRectAnimator): Ditto.
+        (WebCore::SVGAnimatedRectAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedRectAnimator::calculateDistance):
+        * svg/SVGAnimatedRect.h:
+        * svg/SVGAnimatedType.cpp: Added handling of Color values.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createColor):
+        (WebCore::SVGAnimatedType::color):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator):
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-23  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

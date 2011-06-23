@@ -22,10 +22,11 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedType.h"
-#include "SVGSMILElement.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+class SVGAnimationElement;
 
 class SVGAnimatedTypeAnimator {
     WTF_MAKE_FAST_ALLOCATED;
@@ -35,21 +36,22 @@ public:
     
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
-    virtual void calculateAnimatedValue(SVGSMILElement*, float percentage, unsigned repeatCount,
-                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue,
-                                        bool fromPropertyInherits, bool toPropertyInherits) = 0;
-    virtual float calculateDistance(SVGSMILElement*, const String& fromString, const String& toString) = 0;
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue) = 0;
+    virtual float calculateDistance(const String& fromString, const String& toString) = 0;
 
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     
 protected:
-    SVGAnimatedTypeAnimator(AnimatedAttributeType type, SVGElement* contextElement)
+    SVGAnimatedTypeAnimator(AnimatedAttributeType type, SVGAnimationElement* animationElement, SVGElement* contextElement)
         : m_type(type)
+        , m_animationElement(animationElement)
         , m_contextElement(contextElement)
     {
     }
 
     AnimatedAttributeType m_type;
+    SVGAnimationElement* m_animationElement;
     SVGElement* m_contextElement;
 };
 

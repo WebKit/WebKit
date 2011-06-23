@@ -22,14 +22,15 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedNumber.h"
 
+#include "SVGAnimateElement.h"
 #include "SVGParserUtilities.h"
 
 using namespace std;
 
 namespace WebCore {
 
-SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGElement* contextElement, const QualifiedName&)
-    : SVGAnimatedTypeAnimator(AnimatedNumber, contextElement)
+SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
+    : SVGAnimatedTypeAnimator(AnimatedNumber, animationElement, contextElement)
 {
 }
 
@@ -44,6 +45,11 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const
 
 void SVGAnimatedNumberAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
+    ASSERT(m_contextElement);
+    ASSERT(m_animationElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
+    animationElement->determinePropertyValueTypes(fromString, toString);
+    
     from = constructFromString(fromString);
     to = constructFromString(toString);
 }
@@ -51,6 +57,9 @@ void SVGAnimatedNumberAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>
 void SVGAnimatedNumberAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
 {
     ASSERT(m_contextElement);
+    ASSERT(m_animationElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
+    animationElement->determinePropertyValueTypes(fromString, byString);
     
     from = constructFromString(fromString);
     to = constructFromString(byString);
@@ -58,13 +67,12 @@ void SVGAnimatedNumberAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>
     to->number() += from->number();
 }
 
-void SVGAnimatedNumberAnimator::calculateAnimatedValue(SVGSMILElement* smilElement, float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated,
-                                                       bool fromPropertyInherits, bool toPropertyInherits)
+void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
-    ASSERT(smilElement);
+    ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(smilElement);
+    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
     
     AnimationMode animationMode = animationElement->animationMode();
     // To animation uses contributions from the lower priority animations as the base value.
@@ -75,12 +83,12 @@ void SVGAnimatedNumberAnimator::calculateAnimatedValue(SVGSMILElement* smilEleme
     // Replace 'inherit' by their computed property values.
     float& fromNumber = from->number();
     float& toNumber = to->number();
-    if (fromPropertyInherits) {
+    if (animationElement->fromPropertyValueType() == InheritValue) {
         String fromNumberString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromNumberString);
         parseNumberFromString(fromNumberString, fromNumber); 
     }
-    if (toPropertyInherits) {
+    if (animationElement->toPropertyValueType() == InheritValue) {
         String toNumberString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toNumberString);
         parseNumberFromString(toNumberString, toNumber); 
@@ -103,7 +111,7 @@ void SVGAnimatedNumberAnimator::calculateAnimatedValue(SVGSMILElement* smilEleme
         animatedNumber = number;
 }
 
-float SVGAnimatedNumberAnimator::calculateDistance(SVGSMILElement*, const String& fromString, const String& toString)
+float SVGAnimatedNumberAnimator::calculateDistance(const String& fromString, const String& toString)
 {
     ASSERT(m_contextElement);
     float from = 0;

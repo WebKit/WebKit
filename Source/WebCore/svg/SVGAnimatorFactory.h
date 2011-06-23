@@ -22,32 +22,40 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedAngle.h"
+#include "SVGAnimatedColor.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedRect.h"
 
 namespace WebCore {
+
+class SVGAnimationElement;
     
 class SVGAnimatorFactory {
 public:
-    static PassOwnPtr<SVGAnimatedTypeAnimator> create(SVGElement* contextElement, AnimatedAttributeType attributeType, const QualifiedName& attributeName)
+    static PassOwnPtr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedAttributeType attributeType)
     {
+        ASSERT(animationElement);
+        ASSERT(contextElement);
+
         // FIXME: Add animation support for all SVG units.
         switch (attributeType) {
         case AnimatedAngle:
-            return adoptPtr(new SVGAnimatedAngleAnimator(contextElement, attributeName));
+            return adoptPtr(new SVGAnimatedAngleAnimator(animationElement, contextElement));
+        case AnimatedColor:
+            return adoptPtr(new SVGAnimatedColorAnimator(animationElement, contextElement));
         case AnimatedLength:
-            return adoptPtr(new SVGAnimatedLengthAnimator(contextElement, attributeName));
+            return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
         case AnimatedNumber:
-            return adoptPtr(new SVGAnimatedNumberAnimator(contextElement, attributeName));
+            return adoptPtr(new SVGAnimatedNumberAnimator(animationElement, contextElement));
         case AnimatedPoints:
-            return adoptPtr(new SVGAnimatedPointListAnimator(contextElement, attributeName));
+            return adoptPtr(new SVGAnimatedPointListAnimator(animationElement, contextElement));
         case AnimatedRect:
-            return adoptPtr(new SVGAnimatedRectAnimator(contextElement, attributeName));
+            return adoptPtr(new SVGAnimatedRectAnimator(animationElement, contextElement));
         default:
             ASSERT_NOT_REACHED();
-            return adoptPtr(new SVGAnimatedLengthAnimator(contextElement, attributeName));
+            return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
         }
     }
 
