@@ -1,5 +1,21 @@
 2011-06-23  Adam Roben  <aroben@apple.com>
 
+        Record whether old-run-webkit-tests aborted early in results.html
+
+        Fixes <http://webkit.org/b/63280> results.html gives no indication of whether
+        old-run-webkit-tests stopped running tests early
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (top level): Switched to heredoc syntax for printing the start of results.html for clarity.
+        Added a <style> element with some styles for the new message. If we stopped running early,
+        put the reason why at the top of results.html.
+        (stopRunningTestsEarlyIfNeeded): Store the message we print in the new
+        $stoppedRunningEarlyMessage global.
+
+2011-06-23  Adam Roben  <aroben@apple.com>
+
         Cache some of the TestFailures page's data in localStorage
 
         This makes reloading TestFailures much faster. Right now we only store the number of failing

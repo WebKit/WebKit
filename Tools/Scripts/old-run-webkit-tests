@@ -643,6 +643,7 @@ my %durations;
 my $count = 0;
 my $leaksOutputFileNumber = 1;
 my $totalLeaks = 0;
+my $stoppedRunningEarlyMessage;
 
 my @toolArgs = ();
 push @toolArgs, "--pixel-tests" if $pixelTests;
@@ -1155,14 +1156,26 @@ printResults();
 mkpath $testResultsDirectory;
 
 open HTML, ">", $testResults or die "Failed to open $testResults. $!";
-print HTML "<html>\n";
-print HTML "<head>\n";
-print HTML "<title>Layout Test Results</title>\n";
-print HTML "</head>\n";
-print HTML "<body>\n";
+print HTML <<EOF;
+<html>
+<head>
+<title>Layout Test Results</title>
+<style>
+.stopped-running-early-message {
+    border: 3px solid #d00;
+    font-weight: bold;
+}
+</style>
+</head>
+</body>
+EOF
 
 if ($ignoreMetrics) {
     print HTML "<h4>Tested with metrics ignored.</h4>";
+}
+
+if ($stoppedRunningEarlyMessage) {
+    print HTML "<p class='stopped-running-early-message'>$stoppedRunningEarlyMessage</p>";
 }
 
 print HTML htmlForResultsSection(@{$tests{mismatch}}, "Tests where results did not match expected results", \&linksForMismatchTest);
@@ -2623,7 +2636,8 @@ sub stopRunningTestsEarlyIfNeeded()
     my $newCount = $counts{new} || 0;
     my $failureCount = $count - $passCount - $newCount; # "Failure" here includes timeouts, crashes, etc.
     if ($exitAfterNFailures && $failureCount >= $exitAfterNFailures) {
-        print "\nExiting early after $failureCount failures. $count tests run.";
+        $stoppedRunningEarlyMessage = "Exiting early after $failureCount failures. $count tests run.";
+        print "\n", $stoppedRunningEarlyMessage;
         closeDumpTool();
         return 1;
     }
@@ -2632,7 +2646,8 @@ sub stopRunningTestsEarlyIfNeeded()
     my $webProcessCrashCount = $counts{webProcessCrash} || 0;
     my $timeoutCount = $counts{timedout} || 0;
     if ($exitAfterNCrashesOrTimeouts && $crashCount + $webProcessCrashCount + $timeoutCount >= $exitAfterNCrashesOrTimeouts) {
-        print "\nExiting early after $crashCount crashes, $webProcessCrashCount web process crashes, and $timeoutCount timeouts. $count tests run.";
+        $stoppedRunningEarlyMessage = "Exiting early after $crashCount crashes, $webProcessCrashCount web process crashes, and $timeoutCount timeouts. $count tests run.";
+        print "\n", $stoppedRunningEarlyMessage;
         closeDumpTool();
         return 1;
     }
