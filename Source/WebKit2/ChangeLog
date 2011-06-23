@@ -2,6 +2,26 @@
 
         Reviewed by Martin Robinson.
 
+        [UNIX] Increment/decrement module load conter in NetscapePluginModule::getPluginInfo()
+        https://bugs.webkit.org/show_bug.cgi?id=63150
+
+        Since the method is static, we are using
+        NetscapePluginModule::getOrCreate() to get the module. If it's
+        created, the load counter is 0, so that when module is deleted,
+        shutdown() hasn't been called and the destructor crashes in the
+        assert that checks the module has been removed from the
+        initialized module list. We should increment the load counter, and
+        decrement it before getPluginInfo() returns, so that
+        decrementLoadCount() will call shutdown() if counter is 0 and the
+        module will be deleted from the list.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+
+2011-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [UNIX] Check for npp directly when getting X display in NetscapeBrowserFuncs
         https://bugs.webkit.org/show_bug.cgi?id=63149
 

@@ -130,17 +130,23 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
     if (!pluginModule)
         return false;
 
+    pluginModule->incrementLoadCount();
+
     plugin.path = pluginPath;
     plugin.info.file = pathGetFileName(pluginPath);
 
     Module* module = pluginModule->module();
     NPP_GetValueProcPtr NPP_GetValue = module->functionPointer<NPP_GetValueProcPtr>("NP_GetValue");
-    if (!NPP_GetValue)
+    if (!NPP_GetValue) {
+        pluginModule->decrementLoadCount();
         return false;
+    }
 
     NP_GetMIMEDescriptionFuncPtr NP_GetMIMEDescription = module->functionPointer<NP_GetMIMEDescriptionFuncPtr>("NP_GetMIMEDescription");
-    if (!NP_GetMIMEDescription)
+    if (!NP_GetMIMEDescription) {
+        pluginModule->decrementLoadCount();
         return false;
+    }
 
     char* buffer = 0;
     NPError err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
@@ -148,10 +154,14 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         plugin.info.desc = buffer;
 
     const char* mimeDescription = NP_GetMIMEDescription();
-    if (!mimeDescription)
+    if (!mimeDescription) {
+        pluginModule->decrementLoadCount();
         return false;
+    }
 
     setMIMEDescription(mimeDescription, plugin);
+
+    pluginModule->decrementLoadCount();
 
     return true;
 }
