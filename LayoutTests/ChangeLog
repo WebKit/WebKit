@@ -1,3 +1,17 @@
+2011-06-23  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        remove references to dump-as-markup in editing/deleting/delete-by-word tests
+        https://bugs.webkit.org/show_bug.cgi?id=62903
+
+        Each of these files had '../../../resources/dump-as-markup.js' referenced, which was broken.
+        Neither of them was using dump-as-markup, so it did not break anything - this fix just removes
+        the unused broken references.
+
+        * editing/deleting/delete-by-word-001.html:
+        * editing/deleting/delete-by-word-002.html:
+
 2011-06-23  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: marking debugger test as slow in chromium expectations.
