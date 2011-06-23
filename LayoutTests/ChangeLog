@@ -1,3 +1,16 @@
+2011-06-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61585
+        Crash running regexp /(?:(?=g))|(?:m).{2147483648,}/
+
+        Add regression tests where an alterative has a size of ~2^31.
+
+        * fast/regex/overflow-expected.txt: Added.
+        * fast/regex/overflow.html: Added.
+        * fast/regex/script-tests/overflow.js: Added.
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         [Snow Leopard WebKit2 Tests]  http/tests/appcache/interrupted-update.html failing, probably

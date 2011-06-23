@@ -1,3 +1,22 @@
+2011-06-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61585
+        Crash running regexp /(?:(?=g))|(?:m).{2147483648,}/
+
+        This is due to use of int instead of unsigned, bad math around
+        the 2^31 boundary.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+            - Change some uses of int to unsigned, refactor compare logic to
+              restrict to the range 0..2^32-1 (rather than -2^32-1..2^32-1).
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+            - Ditto.
+
 2011-06-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
