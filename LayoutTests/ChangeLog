@@ -1,3 +1,13 @@
+2011-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add a test with a single <source> element
+        https://bugs.webkit.org/show_bug.cgi?id=63285
+
+        * media/video-single-valid-source-expected.txt: Added.
+        * media/video-single-valid-source.html: Added.
+
 2011-06-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

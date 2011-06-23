@@ -1,0 +1,6 @@
+Test that a single valid <source> element loads correctly
+
+
+EVENT(loadedmetadata)
+END OF TEST
+

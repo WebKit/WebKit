@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        
+        <script>
+    
+            function errorEvent()
+            {
+                logResult(false, "*** \"" + relativeURL(video.currentSrc) + "\" should not have been processed!" );
+                consoleWrite("");
+                endTest();
+            }
+    
+            function setup()
+            {
+                video = document.createElement("video");
+                video.setAttribute("controls", "controls");
+
+                // The first source should load.
+                var source = document.createElement("source");
+                source.setAttribute("src", findMediaFile("video", "content/test"));
+                source.setAttribute("type", mimeTypeForFile(source.getAttribute("src")));
+                video.appendChild(source);
+
+                // The second source is bogus and won't load, but it should never be processed.
+                source = document.createElement("source");
+                source.setAttribute("src", findMediaFile("video", "content/does-not-exist"));
+                source.setAttribute("type", mimeTypeForFile(source.getAttribute("src")));
+                video.appendChild(source);
+
+                document.body.appendChild(video);
+
+                waitForEvent('error', errorEvent);
+                waitForEvent('loadedmetadata', endTest);
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+<body onload="setup()">
+
+    <p>Test that a single valid &lt;source&gt; element loads correctly</p>
+
+</body>
+</html>
