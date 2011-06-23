@@ -1,3 +1,13 @@
+2011-06-22  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Move macpherson from contributor list to committer list.
+        https://bugs.webkit.org/show_bug.cgi?id=63179
+
+        * Scripts/webkitpy/common/config/committers.py:
+        Move macpherson from contributor list to committer list.
+
 2011-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
