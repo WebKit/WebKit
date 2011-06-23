@@ -1,3 +1,16 @@
+2011-06-23  Dmitriy Vyukov  <dvyukov@google.com>
+
+        Reviewed by David Levin.
+
+        Fix incorrect usage of a condition variable.
+        https://bugs.webkit.org/show_bug.cgi?id=63127
+
+        No new tests. This does not affect existing
+        functionality.
+
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTaskSynchronizer::waitForTaskCompletion):
+
 2011-06-23  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Eric Seidel.

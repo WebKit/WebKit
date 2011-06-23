@@ -46,7 +46,7 @@ DatabaseTaskSynchronizer::DatabaseTaskSynchronizer()
 void DatabaseTaskSynchronizer::waitForTaskCompletion()
 {
     m_synchronousMutex.lock();
-    if (!m_taskCompleted)
+    while (!m_taskCompleted)
         m_synchronousCondition.wait(m_synchronousMutex);
     m_synchronousMutex.unlock();
 }
