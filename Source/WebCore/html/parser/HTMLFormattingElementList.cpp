@@ -29,6 +29,10 @@
 #include "Element.h"
 #include "NotImplemented.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 HTMLFormattingElementList::HTMLFormattingElementList()

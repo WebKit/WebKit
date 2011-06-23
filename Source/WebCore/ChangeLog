@@ -1,5 +1,11 @@
 2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another build fix after r89472.
+
+        * html/parser/HTMLFormattingElementList.cpp:
+
+2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another build fix after r89472.
 
         * dom/DocumentMarkerController.cpp:
