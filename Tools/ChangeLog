@@ -1,3 +1,24 @@
+2011-06-23  Adam Roben  <aroben@apple.com>
+
+        Avoid fetching JSON data when possible on TestFailures page to determine if
+        old-run-webkit-tests exited early
+
+        As of r89610, results.html includes information about whether old-run-webkit-tests exited
+        early, so we don't need to look at JSON data to get this information for builds newer than
+        that.
+
+        Fixes <http://webkit.org/b/63281> TestFailures page fetches build JSON for every build,
+        which is slow and limits history to the last build master restart
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype._getFailingTests): Moved code dealing with results.html into a new
+        function. If we're dealing with a build that has early-exit information in results.html,
+        don't bother fetching JSON data and go straight to parsing results.html. Otherwise first use
+        the JSON data to determine if old-run-webkit-tests exited early, and then parse results.html
+        (as before).
+
 2011-06-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

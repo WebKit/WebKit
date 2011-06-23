@@ -243,28 +243,20 @@ Builder.prototype = {
 
         var tests = {};
 
-        var buildNumber = this.buildbot.parseBuildName(buildName).buildNumber;
+        var parsedBuildName = this.buildbot.parseBuildName(buildName);
+
+        // http://webkit.org/b/62380 was fixed in r89610.
+        var resultsHTMLSupportsTooManyFailuresInfo = parsedBuildName.revision >= 89610;
 
         var self = this;
-        self.getNumberOfFailingTests(buildNumber, function(failingTestCount, tooManyFailures) {
-            if (failingTestCount < 0) {
-                // The number of failing tests couldn't be determined.
-                PersistentCache.set(cacheKey, tests);
-                errorCallback(tests, tooManyFailures);
-                return;
-            }
 
-            if (!failingTestCount) {
-                // All tests passed.
-                PersistentCache.set(cacheKey, tests);
-                callback(tests, tooManyFailures);
-                return;
-            }
-
-            // Find out which tests failed.
+        function fetchAndParseResultsHTMLAndCallCallback(callback, tooManyFailures) {
             getResource(self.resultsPageURL(buildName), function(xhr) {
                 var root = document.createElement('html');
                 root.innerHTML = xhr.responseText;
+
+                if (resultsHTMLSupportsTooManyFailuresInfo)
+                    tooManyFailures = root.getElementsByClassName('stopped-running-early-message').length > 0;
 
                 function testsForResultTable(regex) {
                     var paragraph = Array.prototype.findFirst.call(root.querySelectorAll('p'), function(paragraph) {
@@ -300,6 +292,30 @@ Builder.prototype = {
                 PersistentCache.set(cacheKey, tests);
                 errorCallback(tests, tooManyFailures);
             });
+        }
+
+        if (resultsHTMLSupportsTooManyFailuresInfo) {
+            fetchAndParseResultsHTMLAndCallCallback(callback, false);
+            return;
+        }
+
+        self.getNumberOfFailingTests(parsedBuildName.buildNumber, function(failingTestCount, tooManyFailures) {
+            if (failingTestCount < 0) {
+                // The number of failing tests couldn't be determined.
+                PersistentCache.set(cacheKey, tests);
+                errorCallback(tests, tooManyFailures);
+                return;
+            }
+
+            if (!failingTestCount) {
+                // All tests passed.
+                PersistentCache.set(cacheKey, tests);
+                callback(tests, tooManyFailures);
+                return;
+            }
+
+            // Find out which tests failed.
+            fetchAndParseResultsHTMLAndCallCallback(callback, tooManyFailures);
         });
     },
 
