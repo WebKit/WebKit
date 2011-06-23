@@ -69,6 +69,10 @@ public:
     virtual void getTickmarks(Vector<WebCore::IntRect>&) const;
     virtual WebCore::Scrollbar* horizontalScrollbar() const;
     virtual WebCore::Scrollbar* verticalScrollbar() const;
+    virtual int visibleHeight() const;
+    virtual int visibleWidth() const;
+    virtual WebCore::IntSize contentsSize() const;
+    virtual WebCore::IntSize overhangAmount() const;
 
 private:
     bool onMouseDown(const WebInputEvent& event);

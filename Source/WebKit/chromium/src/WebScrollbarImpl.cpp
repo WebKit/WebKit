@@ -314,4 +314,28 @@ Scrollbar* WebScrollbarImpl::verticalScrollbar() const
     return m_scrollbar->orientation() == VerticalScrollbar ? m_scrollbar.get() : 0;
 }
 
+int WebScrollbarImpl::visibleHeight() const
+{
+    return m_scrollbar->height();
+}
+
+int WebScrollbarImpl::visibleWidth() const
+{
+    return m_scrollbar->width();
+}
+
+IntSize WebScrollbarImpl::contentsSize() const
+{
+    // This isn't technically correct, since we don't have the contentSize. However it's good enough
+    // to make the ScrollAnimator code happy.
+    int thickness = defaultThickness();
+    int length = m_scrollbar->totalSize();
+    return m_scrollbar->orientation() == VerticalScrollbar ? IntSize(thickness, length) : IntSize(length, thickness);
+}
+
+IntSize WebScrollbarImpl::overhangAmount() const
+{
+    return IntSize();
+}
+
 } // namespace WebKit
