@@ -45,7 +45,6 @@ import urllib
 import shutil
 
 from datetime import date
-from .checkout import Checkout
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, run_command, ScriptError

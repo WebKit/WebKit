@@ -1,3 +1,15 @@
+2011-06-22  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        test-webkitpy --all errors out because scm_unittest.py can't find module checkout
+        https://bugs.webkit.org/show_bug.cgi?id=62943
+
+        Remove "from .checkout import Checkout" from scm_unittest.py since it's included
+        by Scripts/webkitpy/common/checkout/__init__.py.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
 2011-06-22  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Mark Rowe.
