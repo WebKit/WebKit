@@ -1,3 +1,12 @@
+2011-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Andreas Kling.
+
+        [EFL][WK2] Add PLATFORM(EFL) to use UNIX_DOMAIN_SOCKETS.
+        https://bugs.webkit.org/show_bug.cgi?id=63228
+
+        * wtf/Platform.h: Add PLATFORM(EFL) guard.
+
 2011-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89547.
