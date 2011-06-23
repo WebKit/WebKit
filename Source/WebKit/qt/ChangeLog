@@ -1,3 +1,18 @@
+2011-06-23  Joe Wild  <joseph.wild@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Export files under Symbian Qt WebKit build
+        https://bugs.webkit.org/show_bug.cgi?id=61207
+
+        Export files for the Symbian platform as this is needed by the
+        production build system.
+
+        Janne Koskinen provided the suggestion to use target_predeps,
+        which is an improvement over the originally suggested patch.
+
+        * QtWebKit.pro:
+
 2011-06-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Andreas Kling.

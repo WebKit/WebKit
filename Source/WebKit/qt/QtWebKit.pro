@@ -322,7 +322,7 @@ contains(CONFIG, texmap) {
         # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
         inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
         inst_headers.input = WEBKIT_INSTALL_HEADERS
-        inst_headers.CONFIG = no_clean
+        inst_headers.CONFIG = no_clean no_link target_predeps
 
         !isEmpty(INSTALL_HEADERS): inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
         else: inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
