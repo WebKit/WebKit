@@ -47,7 +47,7 @@ ViewController.prototype = {
 
     _displayBuilder: function(builder) {
         var self = this;
-        builder.startFetchingBuildHistory(function(history) {
+        builder.startFetchingBuildHistory(function(history, stillFetchingData) {
             var list = document.createElement('ol');
             list.id = 'failure-history';
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {
@@ -86,7 +86,7 @@ ViewController.prototype = {
                     dlItems.push([document.createTextNode('Passed'), self._domForBuildName(builder, buildNameArray[buildIndex + 1])]);
                 item.appendChild(createDefinitionList(dlItems));
 
-                if (passingBuildName)
+                if (passingBuildName || !stillFetchingData)
                     item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
             });
 
@@ -96,6 +96,9 @@ ViewController.prototype = {
             document.title = builder.name;
             document.body.appendChild(header);
             document.body.appendChild(list);
+
+            if (!stillFetchingData)
+                PersistentCache.prune();
         });
     },
 

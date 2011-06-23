@@ -91,9 +91,9 @@ Builder.prototype = {
     },
 
     getNumberOfFailingTests: function(buildNumber, callback) {
-        var cacheKey = 'getNumberOfFailingTests_' + buildNumber;
-        if (cacheKey in this._cache) {
-            callback(this._cache[cacheKey]);
+        var cacheKey = this.name + '_getNumberOfFailingTests_' + buildNumber;
+        if (PersistentCache.contains(cacheKey)) {
+            callback(PersistentCache.get(cacheKey));
             return;
         }
 
@@ -101,22 +101,22 @@ Builder.prototype = {
         self._getBuildJSON(buildNumber, function(data) {
             var layoutTestStep = data.steps.findFirst(function(step) { return step.name === 'layout-test'; });
             if (!layoutTestStep) {
-                self._cache[cacheKey] = -1;
-                callback(self._cache[cacheKey], false);
+                PersistentCache.set(cacheKey, -1);
+                callback(PersistentCache.get(cacheKey), false);
                 return;
             }
 
             if (!('isStarted' in layoutTestStep)) {
                 // run-webkit-tests never even ran.
-                self._cache[cacheKey] = -1;
-                callback(self._cache[cacheKey], false);
+                PersistentCache.set(cacheKey, -1);
+                callback(PersistentCache.get(cacheKey), false);
                 return;
             }
 
             if (!('results' in layoutTestStep) || layoutTestStep.results[0] === 0) {
                 // All tests passed.
-                self._cache[cacheKey] = 0;
-                callback(self._cache[cacheKey], false);
+                PersistentCache.set(cacheKey, -1);
+                callback(PersistentCache.get(cacheKey), false);
                 return;
             }
 
@@ -134,7 +134,7 @@ Builder.prototype = {
                 return sum + parseInt(match[1], 10);
             }, 0);
 
-            self._cache[cacheKey] = failureCount;
+            PersistentCache.set(cacheKey, failureCount);
             callback(failureCount, tooManyFailures);
         });
     },
@@ -174,11 +174,11 @@ Builder.prototype = {
         self._getBuildNames(function(buildNames) {
             function inner(buildIndex) {
                 self._incorporateBuildHistory(buildNames, buildIndex, history, function(callAgain) {
-                    callback(history);
-                    if (!callAgain)
-                        return;
                     var nextIndex = buildIndex + 1;
                     if (nextIndex >= buildNames.length)
+                        callAgain = false;
+                    callback(history, callAgain);
+                    if (!callAgain)
                         return;
                     setTimeout(function() { inner(nextIndex) }, 0);
                 });
@@ -235,14 +235,13 @@ Builder.prototype = {
     },
 
     _getFailingTests: function(buildName, callback, errorCallback) {
-        var cacheKey = '_getFailingTests_' + buildName;
-        if (cacheKey in this._cache) {
-            callback(this._cache[cacheKey]);
+        var cacheKey = this.name + '__getFailingTests_' + buildName;
+        if (PersistentCache.contains(cacheKey)) {
+            callback(PersistentCache.get(cacheKey));
             return;
         }
 
         var tests = {};
-        this._cache[cacheKey] = tests;
 
         var buildNumber = this.buildbot.parseBuildName(buildName).buildNumber;
 
@@ -250,12 +249,14 @@ Builder.prototype = {
         self.getNumberOfFailingTests(buildNumber, function(failingTestCount, tooManyFailures) {
             if (failingTestCount < 0) {
                 // The number of failing tests couldn't be determined.
+                PersistentCache.set(cacheKey, tests);
                 errorCallback(tests, tooManyFailures);
                 return;
             }
 
             if (!failingTestCount) {
                 // All tests passed.
+                PersistentCache.set(cacheKey, tests);
                 callback(tests, tooManyFailures);
                 return;
             }
@@ -291,10 +292,12 @@ Builder.prototype = {
                     tests[name] = 'webprocess crash';
                 });
 
+                PersistentCache.set(cacheKey, tests);
                 callback(tests, tooManyFailures);
             },
             function(xhr) {
                 // We failed to fetch results.html. run-webkit-tests must have aborted early.
+                PersistentCache.set(cacheKey, tests);
                 errorCallback(tests, tooManyFailures);
             });
         });

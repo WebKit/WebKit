@@ -1,5 +1,52 @@
 2011-06-23  Adam Roben  <aroben@apple.com>
 
+        Cache some of the TestFailures page's data in localStorage
+
+        This makes reloading TestFailures much faster. Right now we only store the number of failing
+        tests and the list of failing tests for each build. We may choose to store more later, but
+        it's easy to run up against quota limits.
+
+        Fixes <http://webkit.org/b/61520> TestFailures page should take advantage of LocalStorage
+        APIs (or similar) to improve loading performance
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Changed to use the new PersistentCache object.
+        (Builder.prototype.startFetchingBuildHistory): Changed to pass whether or not we're still
+        fetching data to the callback.
+        (Builder.prototype._getFailingTests): Changed to use the new PersistentCache object. We now
+        store the tests in the cache just before calling the callback. (The previous code in this
+        function relied on being able to modify the tests object after storing it in the cache and
+        having the cached version be updated. This worked while it was a non-serialized cache, but
+        PersistentCache uses serialization.)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/PersistentCache.js: Added.
+        (PersistentCache): This object wraps localStorage. It uses JSON to serialize/deserialize
+        values, and stores the date that each value was initially stored along with it. This is
+        later used for pruning the cache.
+        (PersistentCache.contains): Checks whether the key exists in localStorage.
+        (PersistentCache.get): Fetch the string we stored in localStorage and extract the original
+        value out of it.
+        (PersistentCache.set): Serialize the value, add the date to it, and store it in
+        localStorage. If this fails due to quota limits, empty the whole cache and try again.
+        (PersistentCache.prune): Delete any cached data that is deemed old enough.
+        (PersistentCache._addDateToJSONString): Prepend the current date to the string.
+        (PersistentCache._emptyCache): Delete everything from localStorage.
+        (PersistentCache._parseDateAndJSONFromString): Split apart the date and the JSON string and
+        return them.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Updated for change to callback signature. When
+        we finish fetching data, prune the PersistentCache. While I was here I also fixed a bug
+        where we'd never show the new bug link for tests for which we couldn't determine a passing
+        revision.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        PersistentCache.js.
+
+2011-06-23  Adam Roben  <aroben@apple.com>
+
         Make finding existing bugs and filing new bugs work on TestFailures even when lots of tests are failing
 
         One bug this fixes is <http://webkit.org/b/61660> New bug links on TestFailures page often
