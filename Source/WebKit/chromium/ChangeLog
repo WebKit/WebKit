@@ -1,3 +1,15 @@
+2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Remove calls to Position::deprecatedNode
+        https://bugs.webkit.org/show_bug.cgi?id=63226
+
+        Call containerNode instead of deprecatedNode.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputType):
+
 2011-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

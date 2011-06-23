@@ -1453,7 +1453,7 @@ WebTextInputType WebViewImpl::textInputType()
     if (!selection)
         return type;
 
-    const Node* node = selection->start().deprecatedNode();
+    const Node* node = selection->start().containerNode();
     if (!node)
         return type;
 
