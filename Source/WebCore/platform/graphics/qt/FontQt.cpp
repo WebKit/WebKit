@@ -353,10 +353,10 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
 
     QRawFont rawFont(fontData->platformData().rawFont());
 
-    QGlyphs qtGlyphs;
+    QGlyphRun qtGlyphs;
     qtGlyphs.setGlyphIndexes(glyphIndexes);
     qtGlyphs.setPositions(positions);
-    qtGlyphs.setFont(rawFont);
+    qtGlyphs.setRawFont(rawFont);
 
     QPainter* painter = context->platformContext();
 
@@ -366,7 +366,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
         QPen previousPen = painter->pen();
         painter->setPen(shadow->m_color);
         painter->translate(shadow->offset());
-        painter->drawGlyphs(point, qtGlyphs);
+        painter->drawGlyphRun(point, qtGlyphs);
         painter->translate(-shadow->offset());
         painter->setPen(previousPen);
         break;
@@ -377,7 +377,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
         QPainter* shadowPainter = shadow->beginShadowLayer(context, boundingRect);
         if (shadowPainter) {
             shadowPainter->setPen(shadow->m_color);
-            shadowPainter->drawGlyphs(point, qtGlyphs);
+            shadowPainter->drawGlyphRun(point, qtGlyphs);
             shadow->endShadowLayer(context);
         }
         break;
@@ -391,7 +391,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
 
     QPen previousPen = painter->pen();
     painter->setPen(fillPenForContext(context));
-    painter->drawGlyphs(point, qtGlyphs);
+    painter->drawGlyphRun(point, qtGlyphs);
     painter->setPen(previousPen);
 }
 

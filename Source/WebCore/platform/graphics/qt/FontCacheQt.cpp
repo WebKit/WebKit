@@ -58,17 +58,17 @@ static QRawFont rawFontForCharacters(const QString& string, const QFont& request
     layout.createLine();
     layout.endLayout();
 
-    QList<QGlyphs> glyphList = layout.glyphs();
+    QList<QGlyphRun> glyphList = layout.glyphRuns();
 
     ASSERT(glyphList.size() == 1);
 
-    const QGlyphs& glyphs(glyphList.at(0));
+    const QGlyphRun& glyphs(glyphList.at(0));
     QVector<quint32> glyphIndexes = glyphs.glyphIndexes();
 
     if (glyphIndexes.isEmpty())
         return QRawFont();
 
-    return glyphs.font();
+    return glyphs.rawFont();
 }
 #endif
 
