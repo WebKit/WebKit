@@ -532,7 +532,7 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     // used
     EvalFunc func = gFunctionMap->get(expr->mediaFeature().impl());
     if (func)
-        return func(expr->value(), m_style, m_frame, NoPrefix);
+        return func(expr->value(), m_style.get(), m_frame, NoPrefix);
 
     return false;
 }

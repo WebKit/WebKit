@@ -1,3 +1,13 @@
+2011-06-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Tests that we do not crash when doing a media query match.
+        https://bugs.webkit.org/show_bug.cgi?id=63264
+
+        * fast/css/media-query-evaluator-crash-expected.txt: Added.
+        * fast/css/media-query-evaluator-crash.html: Added.
+
 2011-06-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
