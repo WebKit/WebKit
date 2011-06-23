@@ -1,3 +1,32 @@
+2011-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89591 and r89593.
+        http://trac.webkit.org/changeset/89591
+        http://trac.webkit.org/changeset/89593
+        https://bugs.webkit.org/show_bug.cgi?id=63279
+
+        Caused test crashes in SL and Chromium (Requested by dimich_
+        on #webkit).
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::childrenChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::childrenChanged):
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::childrenChanged):
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::childrenChanged):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::startOfContinuations):
+        (WebCore::AccessibilityRenderObject::updateAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-06-23  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

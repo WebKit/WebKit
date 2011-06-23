@@ -51,7 +51,7 @@ private:
     virtual bool canSetFocusAttribute() const { return true; }
 
     virtual void addChildren();
-    virtual void childrenChanged(ChildrenChangeOptions);
+    virtual void childrenChanged();
 };
 
 } // namespace WebCore
