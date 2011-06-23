@@ -31,13 +31,12 @@
 #include <wtf/RetainPtr.h>
 #if USE(CFNETWORK)
 #include <CoreFoundation/CFStream.h>
-#else
+#endif
 
 #ifdef __OBJC__
 @class NSError;
 #else
 class NSError;
-#endif
 #endif
 
 namespace WebCore {
@@ -68,7 +67,9 @@ public:
     ResourceError(CFStreamError error);
     CFStreamError cfStreamError() const;
     operator CFStreamError() const;
-#else
+#endif
+
+#if PLATFORM(MAC)
     ResourceError(NSError *);
     NSError *nsError() const;
     operator NSError *() const;
@@ -84,6 +85,9 @@ private:
     bool m_dataIsUpToDate;
 #if USE(CFNETWORK)
     mutable RetainPtr<CFErrorRef> m_platformError;
+#if PLATFORM(MAC)
+    mutable RetainPtr<NSError> m_platformNSError;
+#endif
 #if PLATFORM(WIN)
     RetainPtr<CFDataRef> m_certificate;
 #endif

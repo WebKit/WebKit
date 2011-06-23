@@ -1896,7 +1896,9 @@ __ZN7WebCore8Settings20gAVFoundationEnabledE
 #endif
 
 #if USE(CFNETWORK)
+__ZNK7WebCore13ResourceErrorcvP9__CFErrorEv
 __ZN7WebCore12SchedulePairC1EP11__CFRunLoopPK10__CFString
 #else
+__ZNK7WebCore13ResourceErrorcvP7NSErrorEv
 __ZN7WebCore12SchedulePairC1EP9NSRunLoopPK10__CFString
 #endif

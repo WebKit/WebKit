@@ -1,3 +1,24 @@
+2011-06-22  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add NSError wrapper functions in ResourceError when USE(CFNETWORK) is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=63155
+
+        Add wrapper functions to ResourceError when building with USE(CFNETWORK). We need to create
+        a new NSError in ResourceError::nsError() since Safari has category methods on NSError and
+        passing a CFErrorRef back does not work even though CFErrorRef/NSErrror are toll-free
+        bridged.
+
+        No tests because no change in functionality.
+
+        * WebCore.exp.in:
+        * platform/network/cf/ResourceError.h:
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::nsError):
+        (WebCore::ResourceError::operator NSError *):
+
 2011-06-22  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Mark Rowe.
