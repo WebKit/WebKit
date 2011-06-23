@@ -1,5 +1,11 @@
 2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix after r89472.
+
+        * dom/DocumentMarkerController.cpp:
+
+2011-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r89472.
 
         * css/CSSStyleDeclaration.cpp:

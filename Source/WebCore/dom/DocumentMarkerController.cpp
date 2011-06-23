@@ -33,6 +33,10 @@
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 inline bool DocumentMarkerController::possiblyHasMarkers(DocumentMarker::MarkerTypes types)
