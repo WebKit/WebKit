@@ -1,3 +1,16 @@
+2011-06-23  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Simon Fraser.
+
+        runAnimationTest always fails if the pause API is enabled and the test target animation has "infinite" iteration count.
+        https://bugs.webkit.org/show_bug.cgi?id=63152
+
+        The pausing conditions are modified. Now it accepts the infinite-iteration-count,
+        but rejects the zero-iteration-count. There is no reason to consider the zero-count meaning no animation.
+
+        * animations/keyframes-infinite-iterations-expected.txt: Added.
+        * animations/keyframes-infinite-iterations.html: Added.
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] http/tests/multipart/win-boundary-crash.html flakey.

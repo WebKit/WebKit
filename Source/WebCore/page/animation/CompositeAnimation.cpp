@@ -509,7 +509,7 @@ bool CompositeAnimation::pauseAnimationAtTime(const AtomicString& name, double t
         return false;
 
     int count = keyframeAnim->m_animation->iterationCount();
-    if ((t >= 0.0) && (!count || (t <= count * keyframeAnim->duration()))) {
+    if ((t >= 0.0) && ((count == Animation::IterationCountInfinite) || (t <= count * keyframeAnim->duration()))) {
         keyframeAnim->freezeAtTime(t);
         return true;
     }
