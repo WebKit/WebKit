@@ -3942,6 +3942,15 @@ BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = I
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE PASS
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE PASS
 
+// Broken because Chromium disables compositing for RTL pages
+BUGWK56591 GPU : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
+BUGWK56591 GPU : compositing/rtl/rtl-absolute-overflow.html = TEXT
+BUGWK56591 GPU : compositing/rtl/rtl-absolute.html = TEXT
+BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT
+BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow.html = TEXT
+BUGWK56591 GPU : compositing/rtl/rtl-fixed.html = TEXT
+BUGWK56591 GPU : compositing/rtl/rtl-relative.html = TEXT
+
 BUGCR86714 MAC GPU : compositing/tiling/huge-layer-resize.html = CRASH
 BUGCR86714 MAC GPU : media/video-controls-rendering.html = IMAGE CRASH
 BUGCR86714 MAC GPU : media/video-zoom.html = IMAGE CRASH

@@ -1,3 +1,35 @@
+2011-06-23  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Incorrect RenderLayer transforms on overflow RTL pages
+        https://bugs.webkit.org/show_bug.cgi?id=60741
+
+        Fix positioning of the root graphics layer for RTL pages.  The fact
+        that the left side of the page is negative for pages with overflow is
+        not taken into account when calculating the position.  This negative
+        value ends up being double-counted for the root graphics layer (once
+        in the position and once in the offset) and it shifts child layers
+        into the wrong place.
+
+        Tests: compositing/rtl/rtl-absolute-overflow-scrolled.html
+               compositing/rtl/rtl-absolute-overflow.html
+               compositing/rtl/rtl-absolute.html
+               compositing/rtl/rtl-fixed-overflow-scrolled.html
+               compositing/rtl/rtl-fixed-overflow.html
+               compositing/rtl/rtl-fixed.html
+               compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
+               compositing/rtl/rtl-iframe-absolute-overflow.html
+               compositing/rtl/rtl-iframe-absolute.html
+               compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
+               compositing/rtl/rtl-iframe-fixed-overflow.html
+               compositing/rtl/rtl-iframe-fixed.html
+               compositing/rtl/rtl-iframe-relative.html
+               compositing/rtl/rtl-relative.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2011-06-23  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

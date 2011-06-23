@@ -1,3 +1,66 @@
+2011-06-23  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Incorrect RenderLayer transforms on overflow RTL pages
+        https://bugs.webkit.org/show_bug.cgi?id=60741
+
+        Add a number of composited positioning tests on pages with dir=rtl.
+        The reference images are all identical to what the non-composited path
+        generates.
+
+        The overflow-scrolled tests on Safari do not generate the right images
+        due to bug 63284, but the layer tree is correct so they are not
+        skipped.
+
+        * compositing/rtl/rtl-absolute-expected.png: Added.
+        * compositing/rtl/rtl-absolute-expected.txt: Added.
+        * compositing/rtl/rtl-absolute-overflow-expected.png: Added.
+        * compositing/rtl/rtl-absolute-overflow-expected.txt: Added.
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.png: Added.
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Added.
+        * compositing/rtl/rtl-absolute-overflow-scrolled.html: Added.
+        * compositing/rtl/rtl-absolute-overflow.html: Added.
+        * compositing/rtl/rtl-absolute.html: Added.
+        * compositing/rtl/rtl-fixed-expected.png: Added.
+        * compositing/rtl/rtl-fixed-expected.txt: Added.
+        * compositing/rtl/rtl-fixed-overflow-expected.png: Added.
+        * compositing/rtl/rtl-fixed-overflow-expected.txt: Added.
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Added.
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * compositing/rtl/rtl-fixed-overflow-scrolled.html: Added.
+        * compositing/rtl/rtl-fixed-overflow.html: Added.
+        * compositing/rtl/rtl-fixed.html: Added.
+        * compositing/rtl/rtl-iframe-absolute-expected.png: Added.
+        * compositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.png: Added.
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.png: Added.
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html: Added.
+        * compositing/rtl/rtl-iframe-absolute-overflow.html: Added.
+        * compositing/rtl/rtl-iframe-absolute.html: Added.
+        * compositing/rtl/rtl-iframe-fixed-expected.png: Added.
+        * compositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.png: Added.
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.png: Added.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html: Added.
+        * compositing/rtl/rtl-iframe-fixed-overflow.html: Added.
+        * compositing/rtl/rtl-iframe-fixed.html: Added.
+        * compositing/rtl/rtl-iframe-relative-expected.png: Added.
+        * compositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * compositing/rtl/rtl-iframe-relative.html: Added.
+        * compositing/rtl/rtl-relative-expected.png: Added.
+        * compositing/rtl/rtl-relative-expected.txt: Added.
+        * compositing/rtl/rtl-relative.html: Added.
+        * compositing/rtlclipping/rtl-absolute-overflow-scrolled-expected.png: Added.
+        * compositing/rtlclipping/rtl-absolute-overflow-scrolled-expected.txt: Added.
+        * compositing/rtlclipping/rtl-absolute-overflow-scrolled.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         compositing/tiling/huge-layer* flakey
