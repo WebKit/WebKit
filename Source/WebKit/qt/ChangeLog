@@ -1,3 +1,15 @@
+2011-06-23  Joe Wild  <joseph.wild@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] The Qt WebKit Symbian .def file needs to be updated so Symbian will build
+        https://bugs.webkit.org/show_bug.cgi?id=61200
+
+        Revert r87060 as it broke compatibility with QtWebKit 2.1 release
+        and add some newly introduce symbols.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2011-06-23  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Eric Carlson.
