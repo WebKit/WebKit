@@ -1,3 +1,17 @@
+2011-06-22  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        check-webkit-style should detect returning (Own|Ref)Ptr instead of the Pass*Ptr version.
+        https://bugs.webkit.org/show_bug.cgi?id=63204
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Added a check for the return value and combined
+          with similar code for the parameter checking.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Removed pass_ptr checks from
+          those done for single lines since they don't make sense in that case (variable decls look like function decls).
+          Removed some redundant comments (one of which was slightly wrong).
+          Added checks for the new functionality and minor other test changes.
+
 2011-06-22  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

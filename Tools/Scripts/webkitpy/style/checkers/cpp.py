@@ -1566,6 +1566,24 @@ def _check_parameter_name_against_text(parameter, text, error):
     return True
 
 
+def check_function_definition_and_pass_ptr(type_text, row, location_description, error):
+    """Check that function definitions for use Pass*Ptr instead of *Ptr.
+
+    Args:
+       type_text: A string containing the type. (For return values, it may contain more than the type.)
+       row: The row number of the type.
+       location_description: Used to indicate where the type is. This is either 'parameter' or 'return'.
+       error: The function to call with any errors found.
+    """
+    match_ref_or_own_ptr = '(?=\W|^)(Ref|Own)Ptr(?=\W)'
+    bad_type_usage = search(match_ref_or_own_ptr, type_text)
+    if not bad_type_usage:
+        return
+    type_name = bad_type_usage.group(0)
+    error(row, 'readability/pass_ptr', 5,
+          'The %s type should use Pass%s instead of %s.' % (location_description, type_name, type_name))
+
+
 def check_function_definition(filename, file_extension, clean_lines, line_number, function_state, error):
     """Check that function definitions for style issues.
 
@@ -1597,13 +1615,11 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
             error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
                   'WEBKIT_API should not be used with a pure virtual function.')
 
+    check_function_definition_and_pass_ptr(modifiers_and_return_type, function_state.function_name_start_position.row, 'return', error)
+
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:
-        bad_parameter_type = search('(?=\W|^)(Ref|Own)Ptr(?=\W)', parameter.type)
-        if bad_parameter_type:
-            type_name = bad_parameter_type.group(0)
-            error(parameter.row, 'readability/pass_ptr', 5,
-                  'The parameter type should use Pass%s instead of %s.' % (type_name, type_name))
+        check_function_definition_and_pass_ptr(parameter.type, parameter.row, 'parameter', error)
 
         # Do checks specific to function declarations and parameter names.
         if not function_state.is_declaration or not parameter.name:

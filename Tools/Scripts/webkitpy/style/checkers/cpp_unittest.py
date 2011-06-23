@@ -259,6 +259,7 @@ class CppStyleTestBase(unittest.TestCase):
                              '-legal/copyright',
                              '-readability/fn_size',
                              '-readability/parameter_name',
+                             '-readability/pass_ptr',
                              '-whitespace/ending_newline')
         return self.perform_lint(code, filename, basic_error_rules)
 
@@ -3205,7 +3206,6 @@ class PassPtrTest(CppStyleTestBase):
                           self.perform_pass_ptr_check(code))
 
     def test_pass_ref_ptr_in_function(self):
-        # Local variables should never be PassRefPtr.
         self.assert_pass_ptr_check(
             'int myFunction()\n'
             '{\n'
@@ -3215,7 +3215,6 @@ class PassPtrTest(CppStyleTestBase):
             'http://webkit.org/coding/RefPtr.html).  [readability/pass_ptr] [5]')
 
     def test_pass_own_ptr_in_function(self):
-        # Local variables should never be PassRefPtr.
         self.assert_pass_ptr_check(
             'int myFunction()\n'
             '{\n'
@@ -3225,7 +3224,6 @@ class PassPtrTest(CppStyleTestBase):
             'http://webkit.org/coding/RefPtr.html).  [readability/pass_ptr] [5]')
 
     def test_pass_other_type_ptr_in_function(self):
-        # Local variables should never be PassRefPtr.
         self.assert_pass_ptr_check(
             'int myFunction()\n'
             '{\n'
@@ -3249,15 +3247,26 @@ class PassPtrTest(CppStyleTestBase):
         self.assert_pass_ptr_check(
             'PassRefPtr<Type1> myFunction();\n',
             '')
+        self.assert_pass_ptr_check(
+            'OwnRefPtr<Type1> myFunction();\n',
+            '')
+        self.assert_pass_ptr_check(
+            'RefPtr<Type1> myFunction(int)\n'
+            '{\n'
+            '}',
+            'The return type should use PassRefPtr instead of RefPtr.  [readability/pass_ptr] [5]')
+        self.assert_pass_ptr_check(
+            'OwnPtr<Type1> myFunction(int)\n'
+            '{\n'
+            '}',
+            'The return type should use PassOwnPtr instead of OwnPtr.  [readability/pass_ptr] [5]')
 
-    def test_pass_ref_ptr_parameter_value(self):
+    def test_ref_ptr_parameter_value(self):
         self.assert_pass_ptr_check(
             'int myFunction(PassRefPtr<Type1>)\n'
             '{\n'
             '}',
             '')
-
-    def test_ref_ptr_parameter_value(self):
         self.assert_pass_ptr_check(
             'int myFunction(RefPtr<Type1>)\n'
             '{\n'
@@ -3265,6 +3274,11 @@ class PassPtrTest(CppStyleTestBase):
             'The parameter type should use PassRefPtr instead of RefPtr.  [readability/pass_ptr] [5]')
 
     def test_own_ptr_parameter_value(self):
+        self.assert_pass_ptr_check(
+            'int myFunction(PassOwnPtr<Type1>)\n'
+            '{\n'
+            '}',
+            '')
         self.assert_pass_ptr_check(
             'int myFunction(OwnPtr<Type1>)\n'
             '{\n'
