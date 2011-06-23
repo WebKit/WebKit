@@ -22,72 +22,70 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Stream_h
-#define Stream_h
+#ifndef MediaStreamContainer_h
+#define MediaStreamContainer_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "EventNames.h"
-#include "EventTarget.h"
-#include "MediaStreamFrameController.h"
-#include "ScriptExecutionContext.h"
+#include "MediaStream.h"
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Stream : public RefCounted<Stream>,
-               public EventTarget,
-               public MediaStreamFrameController::StreamClient {
+class MediaStreamContainer : public RefCounted<MediaStreamContainer> {
 public:
-    // Must match the constants in the .idl file.
-    enum {
-        LIVE = 1,
-        ENDED = 2
-    };
+    static PassRefPtr<MediaStreamContainer> create() { return adoptRef(new MediaStreamContainer); }
+    virtual ~MediaStreamContainer() { }
 
-    static PassRefPtr<Stream> create(MediaStreamFrameController*, const String& label);
-    virtual ~Stream();
+    unsigned length() const { return m_streams.size(); }
 
-    // FIXME: implement the record method when StreamRecorder is available.
+    PassRefPtr<MediaStream> item(unsigned index) const
+    {
+        HashMap<String, RefPtr<MediaStream> >::const_iterator i = m_streams.begin();
+        for (unsigned j = 0; i != m_streams.end(); ++i, ++j) {
+            if (j == index)
+                return i->second;
+        }
+        return PassRefPtr<MediaStream>();
+    }
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
+    void add(PassRefPtr<MediaStream> stream)
+    {
+        RefPtr<MediaStream> s = stream;
+        ASSERT(!contains(s));
+        m_streams.add(s->label(), s);
+    }
 
-    unsigned short readyState() const { return m_readyState; }
-    const String& label() const { return clientId(); }
+    void remove(PassRefPtr<MediaStream> stream)
+    {
+        RefPtr<MediaStream> s = stream;
+        ASSERT(contains(s));
+        m_streams.remove(s->label());
+    }
 
-    // MediaStreamFrameController::StreamClient implementation.
-    virtual void streamEnded();
+    bool contains(PassRefPtr<MediaStream> stream) const
+    {
+        RefPtr<MediaStream> s = stream;
+        return m_streams.contains(s->label());
+    }
 
-    // EventTarget implementation.
-    virtual Stream* toStream();
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
-
-    using RefCounted<Stream>::ref;
-    using RefCounted<Stream>::deref;
-
-protected:
-    Stream(MediaStreamFrameController*, const String& label, bool isGeneratedStream = false);
-
-    // EventTarget implementation.
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
-
-    unsigned short m_readyState;
+    PassRefPtr<MediaStream> get(const String& key) const
+    {
+        return m_streams.get(key);
+    }
 
 private:
-    void onEnded();
+    MediaStreamContainer() { }
 
-    // EventTarget implementation.
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-
-    EventTargetData m_eventTargetData;
+    HashMap<String, RefPtr<MediaStream> > m_streams;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // Stream_h
+#endif // MediaStreamContainer_h

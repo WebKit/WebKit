@@ -140,9 +140,11 @@ IDL_BINDINGS += \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
     dom/ExclusiveTrackList.idl \
-    dom/GeneratedStream.idl \
     dom/HashChangeEvent.idl \
     dom/KeyboardEvent.idl \
+    dom/LocalMediaStream.idl \
+    dom/MediaStream.idl \
+    dom/MediaStreamList.idl \
     dom/MouseEvent.idl \
     dom/MessageChannel.idl \
     dom/MessageEvent.idl \
@@ -162,9 +164,7 @@ IDL_BINDINGS += \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
     dom/Range.idl \
-    dom/Stream.idl \
     dom/StreamEvent.idl \
-    dom/StreamList.idl \
     dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \

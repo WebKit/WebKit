@@ -206,12 +206,12 @@ IDBVersionChangeRequest* EventTarget::toIDBVersionChangeRequest()
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-Stream* EventTarget::toStream()
+MediaStream* EventTarget::toMediaStream()
 {
     return 0;
 }
 
-GeneratedStream* EventTarget::toGeneratedStream()
+LocalMediaStream* EventTarget::toLocalMediaStream()
 {
     return 0;
 }

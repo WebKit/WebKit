@@ -202,7 +202,6 @@ DOM_CLASSES = \
     FileWriterSync \
     FileSystemCallback \
     WebKitFlags \
-    GeneratedStream \
     Geolocation \
     Geoposition \
     HashChangeEvent \
@@ -296,11 +295,14 @@ DOM_CLASSES = \
     InspectorFrontendHost \
     Internals \
     KeyboardEvent \
+    LocalMediaStream \
     Location \
     MediaError \
     MediaList \
     MediaQueryList \
     MediaQueryListListener \
+    MediaStream \
+    MediaStreamList \
     MemoryInfo \
     MessageChannel \
     MessageEvent \
@@ -366,9 +368,7 @@ DOM_CLASSES = \
     StorageInfoErrorCallback \
     StorageInfoQuotaCallback \
     StorageInfoUsageCallback \
-    Stream \
     StreamEvent \
-    StreamList \
     StringCallback \
     SVGAElement \
     SVGAltGlyphElement \

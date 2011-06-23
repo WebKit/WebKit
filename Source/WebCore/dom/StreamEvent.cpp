@@ -28,7 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "EventNames.h"
-#include "Stream.h"
+#include "MediaStream.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ PassRefPtr<StreamEvent> StreamEvent::create()
     return adoptRef(new StreamEvent);
 }
 
-PassRefPtr<StreamEvent> StreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Stream> stream)
+PassRefPtr<StreamEvent> StreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
 {
     return adoptRef(new StreamEvent(type, canBubble, cancelable, stream));
 }
@@ -47,7 +47,7 @@ StreamEvent::StreamEvent()
 {
 }
 
-StreamEvent::StreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Stream> stream)
+StreamEvent::StreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
     : Event(type, canBubble, cancelable)
     , m_stream(stream)
 {
@@ -57,7 +57,7 @@ StreamEvent::~StreamEvent()
 {
 }
 
-void StreamEvent::initStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Stream> stream)
+void StreamEvent::initStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
 {
     if (dispatched())
         return;
@@ -67,7 +67,7 @@ void StreamEvent::initStreamEvent(const AtomicString& type, bool canBubble, bool
     m_stream = stream;
 }
 
-PassRefPtr<Stream> StreamEvent::stream() const
+PassRefPtr<MediaStream> StreamEvent::stream() const
 {
     return m_stream;
 }

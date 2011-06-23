@@ -22,41 +22,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StreamList.h"
+module core {
+    interface [
+        Conditional=MEDIA_STREAM,
+        GenerateNativeConverter,
+        EventTarget
+    ] LocalMediaStream : MediaStream {
+        void stop();
 
-#if ENABLE(MEDIA_STREAM)
+        // Track control.
+        readonly attribute MultipleTrackList audioTracks;
+        readonly attribute ExclusiveTrackList videoTracks;
+    };
 
-#include <StreamContainer.h>
-
-namespace WebCore {
-
-PassRefPtr<StreamList> StreamList::create(PassRefPtr<StreamContainer> streams)
-{
-    return adoptRef(new StreamList(streams));
 }
-
-StreamList::StreamList(PassRefPtr<StreamContainer> streams)
-    : m_streams(streams)
-{
-}
-
-StreamList::~StreamList()
-{
-}
-
-unsigned StreamList::length() const
-{
-    return m_streams->length();
-}
-
-PassRefPtr<Stream> StreamList::item(unsigned index) const
-{
-    if (index < m_streams->length())
-        return m_streams->item(index);
-    return PassRefPtr<Stream>();
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)

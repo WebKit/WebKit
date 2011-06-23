@@ -1994,10 +1994,10 @@ ENDIF ()
 IF (ENABLE_MEDIA_STREAM)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSNavigatorCustom.cpp
-        dom/GeneratedStream.cpp
-        dom/Stream.cpp
+        dom/LocalMediaStream.cpp
+        dom/MediaStream.cpp
+        dom/MediaStreamList.cpp
         dom/StreamEvent.cpp
-        dom/StreamList.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
     )

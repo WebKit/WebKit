@@ -178,8 +178,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSFloat64Array.cpp \
 	DerivedSources/WebCore/JSFloat64Array.h \
-	DerivedSources/WebCore/JSGeneratedStream.cpp \
-	DerivedSources/WebCore/JSGeneratedStream.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
 	DerivedSources/WebCore/JSGeolocation.h \
 	DerivedSources/WebCore/JSGeoposition.cpp \
@@ -349,6 +347,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSJavaScriptCallFrame.h \
 	DerivedSources/WebCore/JSKeyboardEvent.cpp \
 	DerivedSources/WebCore/JSKeyboardEvent.h \
+	DerivedSources/WebCore/JSLocalMediaStream.cpp \
+	DerivedSources/WebCore/JSLocalMediaStream.h \
 	DerivedSources/WebCore/JSLocation.cpp \
 	DerivedSources/WebCore/JSLocation.h \
 	DerivedSources/WebCore/JSMediaError.cpp \
@@ -1175,15 +1175,20 @@ webcore_sources += \
 	Source/WebCore/dom/ExclusiveTrackList.cpp \
 	Source/WebCore/dom/ExclusiveTrackList.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \
-	Source/WebCore/dom/GeneratedStream.cpp \
-	Source/WebCore/dom/GeneratedStream.h \
 	Source/WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
 	Source/WebCore/dom/IconURL.cpp \
 	Source/WebCore/dom/IconURL.h \
 	Source/WebCore/dom/HashChangeEvent.h \
 	Source/WebCore/dom/KeyboardEvent.cpp \
 	Source/WebCore/dom/KeyboardEvent.h \
+	Source/WebCore/dom/LocalMediaStream.cpp \
+	Source/WebCore/dom/LocalMediaStream.h \
 	Source/WebCore/dom/MappedAttributeEntry.h \
+	Source/WebCore/dom/MediaStream.cpp \
+	Source/WebCore/dom/MediaStream.h \
+	Source/WebCore/dom/MediaStreamContainer.h \
+	Source/WebCore/dom/MediaStreamList.cpp \
+	Source/WebCore/dom/MediaStreamList.h \
 	Source/WebCore/dom/MessageChannel.cpp \
 	Source/WebCore/dom/MessageChannel.h \
 	Source/WebCore/dom/MessageEvent.cpp \
@@ -1276,13 +1281,8 @@ webcore_sources += \
 	Source/WebCore/dom/StaticHashSetNodeList.h \
 	Source/WebCore/dom/StaticNodeList.cpp \
 	Source/WebCore/dom/StaticNodeList.h \
-	Source/WebCore/dom/Stream.cpp \
-	Source/WebCore/dom/Stream.h \
-	Source/WebCore/dom/StreamContainer.h \
 	Source/WebCore/dom/StreamEvent.cpp \
 	Source/WebCore/dom/StreamEvent.h \
-	Source/WebCore/dom/StreamList.cpp \
-	Source/WebCore/dom/StreamList.h \
 	Source/WebCore/dom/StyledElement.cpp \
 	Source/WebCore/dom/StyledElement.h \
 	Source/WebCore/dom/StyleElement.cpp \

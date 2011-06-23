@@ -22,49 +22,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeneratedStream_h
-#define GeneratedStream_h
+#include "config.h"
+#include "MediaStreamList.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Stream.h"
-#include <wtf/Forward.h>
+#include "MediaStreamContainer.h"
 
 namespace WebCore {
 
-class ExclusiveTrackList;
-class MultipleTrackList;
+PassRefPtr<MediaStreamList> MediaStreamList::create(PassRefPtr<MediaStreamContainer> streams)
+{
+    return adoptRef(new MediaStreamList(streams));
+}
 
-class GeneratedStream : public Stream {
-public:
-    static PassRefPtr<GeneratedStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
-    virtual ~GeneratedStream();
+MediaStreamList::MediaStreamList(PassRefPtr<MediaStreamContainer> streams)
+    : m_streams(streams)
+{
+}
 
-    void stop();
+MediaStreamList::~MediaStreamList()
+{
+}
 
-    PassRefPtr<MultipleTrackList> audioTracks() const;
-    PassRefPtr<ExclusiveTrackList> videoTracks() const;
+unsigned MediaStreamList::length() const
+{
+    return m_streams->length();
+}
 
-    // MediaStreamFrameController::StreamClient implementation.
-    virtual void detachEmbedder();
-    virtual void streamEnded();
-
-    // EventTarget.
-    virtual GeneratedStream* toGeneratedStream();
-
-private:
-    GeneratedStream(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
-    class DispatchUpdateTask;
-    friend class DispatchUpdateTask;
-
-    void onStop();
-
-    RefPtr<MultipleTrackList> m_audioTracks;
-    RefPtr<ExclusiveTrackList> m_videoTracks;
-};
+PassRefPtr<MediaStream> MediaStreamList::item(unsigned index) const
+{
+    if (index < m_streams->length())
+        return m_streams->item(index);
+    return PassRefPtr<MediaStream>();
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // GeneratedStream_h

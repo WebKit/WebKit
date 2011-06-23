@@ -50,12 +50,13 @@ namespace WebCore {
     class ExclusiveTrackList;
     class FileReader;
     class FileWriter;
-    class GeneratedStream;
     class IDBDatabase;
     class IDBRequest;
     class IDBTransaction;
     class IDBVersionChangeRequest;
     class JavaScriptAudioNode;
+    class LocalMediaStream;
+    class MediaStream;
     class MessagePort;
     class MultipleTrackList;
     class Node;
@@ -64,7 +65,6 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerContext;
-    class Stream;
     class TrackList;
     class WebSocket;
     class Worker;
@@ -153,8 +153,8 @@ namespace WebCore {
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-        virtual Stream* toStream();
-        virtual GeneratedStream* toGeneratedStream();
+        virtual MediaStream* toMediaStream();
+        virtual LocalMediaStream* toLocalMediaStream();
 #endif
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)

@@ -31,7 +31,7 @@
 #include "Document.h"
 #include "ExclusiveTrackList.h"
 #include "Frame.h"
-#include "GeneratedStream.h"
+#include "LocalMediaStream.h"
 #include "MediaStreamController.h"
 #include "MultipleTrackList.h"
 #include "NavigatorUserMediaErrorCallback.h"
@@ -160,14 +160,14 @@ MediaStreamController* MediaStreamFrameController::pageController() const
     return m_frame && m_frame->page() ? m_frame->page()->mediaStreamController() : 0;
 }
 
-void MediaStreamFrameController::unregister(StreamClient* client)
+void MediaStreamFrameController::unregister(MediaStreamClient* client)
 {
     ASSERT(m_streams.contains(client->clientId()));
 
     // Assuming we should stop any live streams when losing access to the embedder.
-    if (client->isGeneratedStream()) {
-        GeneratedStream* stream = static_cast<GeneratedStream*>(client);
-        if (stream->readyState() == Stream::LIVE)
+    if (client->isLocalMediaStream()) {
+        LocalMediaStream* stream = static_cast<LocalMediaStream*>(client);
+        if (stream->readyState() == MediaStream::LIVE)
             stopGeneratedStream(stream->label());
     }
 
@@ -180,11 +180,11 @@ void MediaStreamFrameController::unregister(GenericClient* client)
     m_clients.remove(client->clientId());
 }
 
-Stream* MediaStreamFrameController::getStreamFromLabel(const String& label) const
+MediaStream* MediaStreamFrameController::getStreamFromLabel(const String& label) const
 {
     ASSERT(m_streams.contains(label));
-    ASSERT(m_streams.get(label)->isStream());
-    return static_cast<Stream*>(m_streams.get(label));
+    ASSERT(m_streams.get(label)->isMediaStream());
+    return static_cast<MediaStream*>(m_streams.get(label));
 }
 
 void MediaStreamFrameController::enterDetachedState()
@@ -301,7 +301,7 @@ void MediaStreamFrameController::generateStream(const String& options,
 void MediaStreamFrameController::stopGeneratedStream(const String& streamLabel)
 {
     ASSERT(m_streams.contains(streamLabel));
-    ASSERT(m_streams.get(streamLabel)->isGeneratedStream());
+    ASSERT(m_streams.get(streamLabel)->isLocalMediaStream());
 
     if (isClientAvailable())
         pageController()->stopGeneratedStream(streamLabel);
@@ -360,7 +360,7 @@ void MediaStreamFrameController::streamGenerated(int requestId, const String& la
     m_clients.add(videoTracksClientId, videoTracks.get());
 
     RefPtr<GenerateStreamRequest> streamRequest = static_cast<GenerateStreamRequest*>(m_requests.get(requestId).get());
-    RefPtr<GeneratedStream> generatedStream = GeneratedStream::create(this, label, audioTracks.release(), videoTracks.release());
+    RefPtr<LocalMediaStream> generatedStream = LocalMediaStream::create(this, label, audioTracks.release(), videoTracks.release());
     m_streams.add(label, generatedStream.get());
     m_requests.remove(requestId);
     streamRequest->successCallback()->handleEvent(generatedStream.get());
@@ -390,16 +390,16 @@ void MediaStreamFrameController::streamFailed(const String& label)
 
 void MediaStreamFrameController::audioTrackFailed(const String& label, unsigned long index)
 {
-    Stream* stream = getStreamFromLabel(label);
-    ASSERT(stream->isGeneratedStream());
-    static_cast<GeneratedStream*>(stream)->audioTracks()->trackFailed(index);
+    MediaStream* stream = getStreamFromLabel(label);
+    ASSERT(stream->isLocalMediaStream());
+    static_cast<LocalMediaStream*>(stream)->audioTracks()->trackFailed(index);
 }
 
 void MediaStreamFrameController::videoTrackFailed(const String& label, unsigned long index)
 {
-    Stream* stream = getStreamFromLabel(label);
-    ASSERT(stream->isGeneratedStream());
-    static_cast<GeneratedStream*>(stream)->videoTracks()->trackFailed(index);
+    MediaStream* stream = getStreamFromLabel(label);
+    ASSERT(stream->isLocalMediaStream());
+    static_cast<LocalMediaStream*>(stream)->videoTracks()->trackFailed(index);
 }
 
 } // namespace WebCore

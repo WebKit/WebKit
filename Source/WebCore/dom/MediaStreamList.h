@@ -22,58 +22,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Stream.h"
+#ifndef MediaStreamList_h
+#define MediaStreamList_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Event.h"
-#include "ScriptExecutionContext.h"
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<Stream> Stream::create(MediaStreamFrameController* frameController, const String& label)
-{
-    return adoptRef(new Stream(frameController, label));
-}
+class MediaStream;
+class MediaStreamContainer;
 
-Stream::Stream(MediaStreamFrameController* frameController, const String& label, bool isGeneratedStream)
-    : StreamClient(frameController, label, isGeneratedStream)
-    , m_readyState(LIVE)
-{
-}
+class MediaStreamList : public RefCounted<MediaStreamList> {
+public:
+    static PassRefPtr<MediaStreamList> create(PassRefPtr<MediaStreamContainer> streams);
+    virtual ~MediaStreamList();
 
-Stream::~Stream()
-{
-}
+    // DOM methods & attributes for MediaStreamList
+    virtual unsigned length() const;
+    virtual PassRefPtr<MediaStream> item(unsigned index) const;
 
-Stream* Stream::toStream()
-{
-    return this;
-}
+private:
+    MediaStreamList(PassRefPtr<MediaStreamContainer> streams);
 
-void Stream::streamEnded()
-{
-    ASSERT(m_readyState != ENDED);
-    m_readyState = ENDED;
-    dispatchEvent(Event::create(eventNames().endedEvent, false, false));
-}
-
-ScriptExecutionContext* Stream::scriptExecutionContext() const
-{
-    return mediaStreamFrameController() ? mediaStreamFrameController()->scriptExecutionContext() : 0;
-}
-
-EventTargetData* Stream::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData* Stream::ensureEventTargetData()
-{
-    return &m_eventTargetData;
-}
+    RefPtr<MediaStreamContainer> m_streams;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // MediaStreamList_h

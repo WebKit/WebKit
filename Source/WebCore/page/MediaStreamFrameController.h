@@ -39,7 +39,8 @@ namespace WebCore {
 
 class ExclusiveTrackList;
 class Frame;
-class GeneratedStream;
+class LocalMediaStream;
+class MediaStream;
 class MediaStreamController;
 class MultipleTrackList;
 class NavigatorUserMediaErrorCallback;
@@ -47,7 +48,6 @@ class NavigatorUserMediaSuccessCallback;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
-class Stream;
 
 class MediaStreamFrameController {
     WTF_MAKE_NONCOPYABLE(MediaStreamFrameController);
@@ -67,8 +67,8 @@ public:
         MediaStreamFrameController* mediaStreamFrameController() const { return m_frameController; }
         const IdType& clientId() const { return m_clientId; }
 
-        virtual bool isStream() const { return false; }
-        virtual bool isGeneratedStream() const { return false; }
+        virtual bool isMediaStream() const { return false; }
+        virtual bool isLocalMediaStream() const { return false; }
         virtual bool isGenericClient() const { return false; }
 
         // Called when the frame controller is being disconnected to the MediaStreamClient embedder.
@@ -104,25 +104,25 @@ public:
         IdType m_clientId;
     };
 
-    class StreamClient : public ClientBase<String> {
+    class MediaStreamClient : public ClientBase<String> {
     public:
-        StreamClient(MediaStreamFrameController* frameController, const String& label, bool isGeneratedStream)
+        MediaStreamClient(MediaStreamFrameController* frameController, const String& label, bool isLocalMediaStream)
             : ClientBase<String>(frameController, label)
-            , m_isGeneratedStream(isGeneratedStream) { }
+            , m_isLocalMediaStream(isLocalMediaStream) { }
 
-        virtual ~StreamClient() { unregister(); }
+        virtual ~MediaStreamClient() { unregister(); }
 
-        virtual bool isStream() const { return true; }
+        virtual bool isMediaStream() const { return true; }
 
         // Accessed by the destructor.
-        virtual bool isGeneratedStream() const { return m_isGeneratedStream; }
+        virtual bool isLocalMediaStream() const { return m_isLocalMediaStream; }
 
         // Stream has ended for some external reason.
         virtual void streamEnded() = 0;
 
     private:
         virtual void unregister() { unregisterClient(this); }
-        bool m_isGeneratedStream;
+        bool m_isLocalMediaStream;
     };
 
     // Generic clients are objects that require access to the frame controller but don't have a global id (like streams do)
@@ -220,10 +220,10 @@ private:
     // Detached from a page, and hence from a embedder client.
     void enterDetachedState();
 
-    void unregister(StreamClient*);
+    void unregister(MediaStreamClient*);
     void unregister(GenericClient*);
     MediaStreamController* pageController() const;
-    Stream* getStreamFromLabel(const String&) const;
+    MediaStream* getStreamFromLabel(const String&) const;
 
     RequestMap m_requests;
     ClientMap m_clients;

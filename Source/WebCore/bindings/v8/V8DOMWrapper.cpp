@@ -49,14 +49,15 @@
 #include "V8ExclusiveTrackList.h"
 #include "V8FileReader.h"
 #include "V8FileWriter.h"
-#include "V8GeneratedStream.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8IDBDatabase.h"
 #include "V8IDBRequest.h"
 #include "V8IDBTransaction.h"
 #include "V8IsolatedContext.h"
+#include "V8LocalMediaStream.h"
 #include "V8Location.h"
+#include "V8MediaStream.h"
 #include "V8MessageChannel.h"
 #include "V8MultipleTrackList.h"
 #include "V8NamedNodeMap.h"
@@ -67,7 +68,6 @@
 #include "V8Proxy.h"
 #include "V8SharedWorker.h"
 #include "V8SharedWorkerContext.h"
-#include "V8Stream.h"
 #include "V8StyleSheet.h"
 #include "V8TrackList.h"
 #include "V8WebSocket.h"
@@ -456,10 +456,10 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #endif    
 
 #if ENABLE(MEDIA_STREAM)
-    if (GeneratedStream* generatedStream = target->toGeneratedStream())
-        return toV8(generatedStream);
+    if (LocalMediaStream* stream = target->toLocalMediaStream())
+        return toV8(stream);
 
-    if (Stream* stream = target->toStream())
+    if (MediaStream* stream = target->toMediaStream())
         return toV8(stream);
 #endif
 

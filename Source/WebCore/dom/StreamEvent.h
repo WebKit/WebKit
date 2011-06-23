@@ -39,20 +39,20 @@ public:
     virtual ~StreamEvent();
 
     static PassRefPtr<StreamEvent> create();
-    static PassRefPtr<StreamEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Stream>);
+    static PassRefPtr<StreamEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
 
-    void initStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Stream>);
+    void initStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
 
     // From EventTarget.
-    virtual bool isStreamEvent() const { return true; }
+    virtual bool isMediaStreamEvent() const { return true; }
 
-    PassRefPtr<Stream> stream() const;
+    PassRefPtr<MediaStream> stream() const;
 
 private:
     StreamEvent();
-    StreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Stream>);
+    StreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
 
-    RefPtr<Stream> m_stream;
+    RefPtr<MediaStream> m_stream;
 };
 
 } // namespace WebCore

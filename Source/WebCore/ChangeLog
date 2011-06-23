@@ -1,3 +1,104 @@
+2011-06-23  Tommy Widenflycht  <tommyw@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        MediaStream API: Rename Stream, GeneratedStream and StreamRecorder to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=63122
+
+        No new tests since no code has actually changed.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/DOMAllInOne.cpp:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toMediaStream):
+        (WebCore::EventTarget::toLocalMediaStream):
+        * dom/EventTarget.h:
+        * dom/LocalMediaStream.cpp: Renamed from Source/WebCore/dom/GeneratedStream.cpp.
+        (WebCore::LocalMediaStream::DispatchUpdateTask::create):
+        (WebCore::LocalMediaStream::DispatchUpdateTask::performTask):
+        (WebCore::LocalMediaStream::DispatchUpdateTask::DispatchUpdateTask):
+        (WebCore::LocalMediaStream::create):
+        (WebCore::LocalMediaStream::LocalMediaStream):
+        (WebCore::LocalMediaStream::~LocalMediaStream):
+        (WebCore::LocalMediaStream::toLocalMediaStream):
+        (WebCore::LocalMediaStream::detachEmbedder):
+        (WebCore::LocalMediaStream::streamEnded):
+        (WebCore::LocalMediaStream::audioTracks):
+        (WebCore::LocalMediaStream::videoTracks):
+        (WebCore::LocalMediaStream::stop):
+        (WebCore::LocalMediaStream::onStop):
+        * dom/LocalMediaStream.h: Renamed from Source/WebCore/dom/GeneratedStream.h.
+        * dom/LocalMediaStream.idl: Renamed from Source/WebCore/dom/GeneratedStream.idl.
+        * dom/MediaStream.cpp: Renamed from Source/WebCore/dom/Stream.cpp.
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::toMediaStream):
+        (WebCore::MediaStream::streamEnded):
+        (WebCore::MediaStream::scriptExecutionContext):
+        (WebCore::MediaStream::eventTargetData):
+        (WebCore::MediaStream::ensureEventTargetData):
+        * dom/MediaStream.h: Renamed from Source/WebCore/dom/Stream.h.
+        (WebCore::MediaStream::readyState):
+        (WebCore::MediaStream::label):
+        (WebCore::MediaStream::refEventTarget):
+        (WebCore::MediaStream::derefEventTarget):
+        * dom/MediaStream.idl: Renamed from Source/WebCore/dom/Stream.idl.
+        * dom/MediaStreamContainer.h: Renamed from Source/WebCore/dom/StreamContainer.h.
+        (WebCore::MediaStreamContainer::create):
+        (WebCore::MediaStreamContainer::~MediaStreamContainer):
+        (WebCore::MediaStreamContainer::length):
+        (WebCore::MediaStreamContainer::item):
+        (WebCore::MediaStreamContainer::add):
+        (WebCore::MediaStreamContainer::remove):
+        (WebCore::MediaStreamContainer::contains):
+        (WebCore::MediaStreamContainer::get):
+        (WebCore::MediaStreamContainer::MediaStreamContainer):
+        * dom/MediaStreamList.cpp: Renamed from Source/WebCore/dom/StreamList.cpp.
+        (WebCore::MediaStreamList::create):
+        (WebCore::MediaStreamList::MediaStreamList):
+        (WebCore::MediaStreamList::~MediaStreamList):
+        (WebCore::MediaStreamList::length):
+        (WebCore::MediaStreamList::item):
+        * dom/MediaStreamList.h: Renamed from Source/WebCore/dom/StreamList.h.
+        * dom/MediaStreamList.idl: Renamed from Source/WebCore/dom/StreamList.idl.
+        * dom/StreamEvent.cpp:
+        (WebCore::StreamEvent::create):
+        (WebCore::StreamEvent::StreamEvent):
+        (WebCore::StreamEvent::initStreamEvent):
+        (WebCore::StreamEvent::stream):
+        * dom/StreamEvent.h:
+        (WebCore::StreamEvent::isMediaStreamEvent):
+        * dom/StreamEvent.idl:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::unregister):
+        (WebCore::MediaStreamFrameController::getStreamFromLabel):
+        (WebCore::MediaStreamFrameController::stopGeneratedStream):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        (WebCore::MediaStreamFrameController::audioTrackFailed):
+        (WebCore::MediaStreamFrameController::videoTrackFailed):
+        * page/MediaStreamFrameController.h:
+        (WebCore::MediaStreamFrameController::ClientBase::isMediaStream):
+        (WebCore::MediaStreamFrameController::ClientBase::isLocalMediaStream):
+        (WebCore::MediaStreamFrameController::MediaStreamClient::MediaStreamClient):
+        (WebCore::MediaStreamFrameController::MediaStreamClient::~MediaStreamClient):
+        (WebCore::MediaStreamFrameController::MediaStreamClient::isMediaStream):
+        (WebCore::MediaStreamFrameController::MediaStreamClient::isLocalMediaStream):
+        * page/NavigatorUserMediaSuccessCallback.h:
+        * page/NavigatorUserMediaSuccessCallback.idl:
+
 2011-06-23  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

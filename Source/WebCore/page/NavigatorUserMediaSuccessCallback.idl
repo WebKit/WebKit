@@ -28,7 +28,7 @@ module window {
         Conditional=MEDIA_STREAM,
         Callback=FunctionOnly
     ] NavigatorUserMediaSuccessCallback {
-        boolean handleEvent(in GeneratedStream stream);
+        boolean handleEvent(in LocalMediaStream stream);
     };
 
 }

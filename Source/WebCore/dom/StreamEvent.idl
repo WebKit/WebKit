@@ -30,12 +30,12 @@ module events {
         LegacyDefaultOptionalArguments,
         Conditional=MEDIA_STREAM,
     ] StreamEvent : Event {
-       readonly attribute Stream stream;
+       readonly attribute MediaStream stream;
 
        void initStreamEvent(in DOMString typeArg,
                             in boolean canBubbleArg,
                             in boolean cancelableArg,
-                            in Stream streamArg);
+                            in MediaStream streamArg);
     };
 
 }

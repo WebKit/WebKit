@@ -22,38 +22,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StreamList_h
-#define StreamList_h
+module core {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=MEDIA_STREAM,
+        EventTarget
+    ] MediaStream {
+        readonly attribute DOMString label;
+        // FIXME: implement the record method when MediaStreamRecorder is available.
 
-#if ENABLE(MEDIA_STREAM)
+        const unsigned short LIVE = 1;
+        const unsigned short ENDED = 2;
+        readonly attribute unsigned short readyState;
+                 attribute EventListener onended;
 
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in boolean useCapture);
+        boolean dispatchEvent(in Event event)
+            raises(EventException);
+    };
 
-namespace WebCore {
-
-class Stream;
-class StreamContainer;
-
-class StreamList : public RefCounted<StreamList> {
-public:
-    static PassRefPtr<StreamList> create(PassRefPtr<StreamContainer> streams);
-    virtual ~StreamList();
-
-    // DOM methods & attributes for StreamList
-    virtual unsigned length() const;
-    virtual PassRefPtr<Stream> item(unsigned index) const;
-
-private:
-    StreamList(PassRefPtr<StreamContainer> streams);
-
-    RefPtr<StreamContainer> m_streams;
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)
-
-#endif // StreamList_h
+}

@@ -23,28 +23,15 @@
  */
 
 module core {
+
     interface [
         LegacyDefaultOptionalArguments,
         Conditional=MEDIA_STREAM,
-        EventTarget
-    ] Stream {
-        readonly attribute DOMString label;
-        // FIXME: implement the record method when StreamRecorder is available.
+        HasIndexGetter
+    ] MediaStreamList {
+        MediaStream item(in [IsIndex] unsigned long index);
 
-        const unsigned short LIVE = 1;
-        const unsigned short ENDED = 2;
-        readonly attribute unsigned short readyState;
-                 attribute EventListener onended;
-
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
+        readonly attribute unsigned long length;
     };
 
 }

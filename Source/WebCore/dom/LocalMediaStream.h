@@ -22,16 +22,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#ifndef LocalMediaStream_h
+#define LocalMediaStream_h
 
-    interface [
-        LegacyDefaultOptionalArguments,
-        Conditional=MEDIA_STREAM,
-        HasIndexGetter
-    ] StreamList {
-        Stream item(in [IsIndex] unsigned long index);
+#if ENABLE(MEDIA_STREAM)
 
-        readonly attribute unsigned long length;
-    };
+#include "MediaStream.h"
+#include <wtf/Forward.h>
 
-}
+namespace WebCore {
+
+class ExclusiveTrackList;
+class MultipleTrackList;
+
+class LocalMediaStream : public MediaStream {
+public:
+    static PassRefPtr<LocalMediaStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
+    virtual ~LocalMediaStream();
+
+    void stop();
+
+    PassRefPtr<MultipleTrackList> audioTracks() const;
+    PassRefPtr<ExclusiveTrackList> videoTracks() const;
+
+    // MediaStreamFrameController::StreamClient implementation.
+    virtual void detachEmbedder();
+    virtual void streamEnded();
+
+    // EventTarget.
+    virtual LocalMediaStream* toLocalMediaStream();
+
+private:
+    LocalMediaStream(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
+    class DispatchUpdateTask;
+    friend class DispatchUpdateTask;
+
+    void onStop();
+
+    RefPtr<MultipleTrackList> m_audioTracks;
+    RefPtr<ExclusiveTrackList> m_videoTracks;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // LocalMediaStream_h

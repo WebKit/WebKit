@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "GeneratedStream.h"
+#include "LocalMediaStream.h"
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -36,11 +36,11 @@
 
 namespace WebCore {
 
-class GeneratedStream::DispatchUpdateTask : public ScriptExecutionContext::Task {
+class LocalMediaStream::DispatchUpdateTask : public ScriptExecutionContext::Task {
 public:
-    typedef void (GeneratedStream::*Callback)();
+    typedef void (LocalMediaStream::*Callback)();
 
-    static PassOwnPtr<DispatchUpdateTask> create(PassRefPtr<GeneratedStream> object, Callback callback)
+    static PassOwnPtr<DispatchUpdateTask> create(PassRefPtr<LocalMediaStream> object, Callback callback)
     {
         return adoptPtr(new DispatchUpdateTask(object, callback));
     }
@@ -51,21 +51,21 @@ public:
     }
 
 public:
-    DispatchUpdateTask(PassRefPtr<GeneratedStream> object, Callback callback)
+    DispatchUpdateTask(PassRefPtr<LocalMediaStream> object, Callback callback)
         : m_object(object)
         , m_callback(callback) { }
 
-    RefPtr<GeneratedStream> m_object;
+    RefPtr<LocalMediaStream> m_object;
     Callback m_callback;
 };
 
-PassRefPtr<GeneratedStream> GeneratedStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
+PassRefPtr<LocalMediaStream> LocalMediaStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
 {
-    return adoptRef(new GeneratedStream(frameController, label, audioTracks, videoTracks));
+    return adoptRef(new LocalMediaStream(frameController, label, audioTracks, videoTracks));
 }
 
-GeneratedStream::GeneratedStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
-    : Stream(frameController, label, true)
+LocalMediaStream::LocalMediaStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
+    : MediaStream(frameController, label, true)
     , m_audioTracks(audioTracks)
     , m_videoTracks(videoTracks)
 {
@@ -75,42 +75,42 @@ GeneratedStream::GeneratedStream(MediaStreamFrameController* frameController, co
     m_videoTracks->associateStream(label);
 }
 
-GeneratedStream::~GeneratedStream()
+LocalMediaStream::~LocalMediaStream()
 {
 }
 
-GeneratedStream* GeneratedStream::toGeneratedStream()
+LocalMediaStream* LocalMediaStream::toLocalMediaStream()
 {
     return this;
 }
 
-void GeneratedStream::detachEmbedder()
+void LocalMediaStream::detachEmbedder()
 {
     // Assuming we should stop any live streams when losing access to the embedder.
     stop();
 
-    Stream::detachEmbedder();
+    MediaStream::detachEmbedder();
 }
 
-void GeneratedStream::streamEnded()
+void LocalMediaStream::streamEnded()
 {
     m_audioTracks->clear();
     m_videoTracks->clear();
 
-    Stream::streamEnded();
+    MediaStream::streamEnded();
 }
 
-PassRefPtr<MultipleTrackList> GeneratedStream::audioTracks() const
+PassRefPtr<MultipleTrackList> LocalMediaStream::audioTracks() const
 {
     return m_audioTracks;
 }
 
-PassRefPtr<ExclusiveTrackList> GeneratedStream::videoTracks() const
+PassRefPtr<ExclusiveTrackList> LocalMediaStream::videoTracks() const
 {
     return m_videoTracks;
 }
 
-void GeneratedStream::stop()
+void LocalMediaStream::stop()
 {
     if (!mediaStreamFrameController() || m_readyState == ENDED)
         return;
@@ -126,10 +126,10 @@ void GeneratedStream::stop()
         return;
 
     ASSERT(scriptExecutionContext()->isContextThread());
-    scriptExecutionContext()->postTask(DispatchUpdateTask::create(this, &GeneratedStream::onStop));
+    scriptExecutionContext()->postTask(DispatchUpdateTask::create(this, &LocalMediaStream::onStop));
 }
 
-void GeneratedStream::onStop()
+void LocalMediaStream::onStop()
 {
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 }

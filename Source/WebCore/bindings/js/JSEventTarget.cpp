@@ -101,8 +101,8 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "GeneratedStream.h"
-#include "Stream.h"
+#include "LocalMediaStream.h"
+#include "MediaStream.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
@@ -201,10 +201,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    if (GeneratedStream* generatedStream = target->toGeneratedStream())
-        return toJS(exec, globalObject, generatedStream);
+    if (LocalMediaStream* stream = target->toLocalMediaStream())
+        return toJS(exec, globalObject, stream);
 
-    if (Stream* stream = target->toStream())
+    if (MediaStream* stream = target->toMediaStream())
         return toJS(exec, globalObject, stream);
 #endif
 
