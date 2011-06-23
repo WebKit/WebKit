@@ -1,3 +1,15 @@
+2011-06-22  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by David Levin.
+
+        <http://webkit.org/b/63212> TestWebKitAPI Xcode project has bogus settings since r86287
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Fix the reference to libgtest.a to
+        be relative to the built products directory rather than using a hard-coded path. Remove the
+        explicit settings of FRAMEWORK_SEARCH_PATHS, HEADER_SEARCH_PATHS and LIBRARY_SEARCH_PATHS
+        as they're all unnecessary. If they were necessary they should be set in the .xcconfig file
+        rather than in the .xcodeproj directly.
+
 2011-06-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
