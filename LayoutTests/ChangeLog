@@ -1,3 +1,13 @@
+2011-06-23  Jessie Berlin  <jberlin@apple.com>
+
+        compositing/iframes/invisible-nested-iframe-show.html failing on SnowLeopard Intel Release
+        (WebKit2 Tests) since introduction.
+        https://bugs.webkit.org/show_bug.cgi?id=59864
+
+        Update the mac-wk2 results to contain the transform line and get the bots green.
+
+        * platform/mac-wk2/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+
 2011-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Simon Fraser.
