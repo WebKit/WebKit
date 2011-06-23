@@ -2757,7 +2757,9 @@ BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 
 // Failing after r75768
-BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
+// BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
+// Times out after r89503
+BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT TIMEOUT
 
 // Behavior changed in http://trac.webkit.org/changeset/76180,
 // need to investigate
@@ -3976,3 +3978,7 @@ BUGCR87070 : fast/js/reserved-words.html = TEXT
 BUGCR87070 : fast/js/parser-xml-close-comment.html = TEXT
 // Sounds like a real regression.
 BUGCR87070 WIN DEBUG : http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html = CRASH PASS
+
+BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
+
+BUGPFELDMAN WIN MAC : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = IMAGE
