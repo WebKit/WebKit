@@ -1,3 +1,9 @@
+2011-06-23  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed. Chromium test expectations updated.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, baselines for the new CSS2.1 tests added in r88913.

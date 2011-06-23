@@ -3984,3 +3984,7 @@ BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = 
 // BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGRICOW : fast/js/eval-var-decl.html = TEXT
 
+// Issues introduced with bug 84157 (gman@)
+BUGCR87238 : plugins/embed-attributes-style.html = IMAGE+TEXT
+BUGCR87238 : fast/dom/object-plugin-hides-properties.html = TEXT
+
