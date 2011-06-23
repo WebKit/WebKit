@@ -1,3 +1,10 @@
+2011-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, rebaseline a couple of SVG tests for GTK+.
+
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        * platform/gtk/svg/custom/pointer-events-text-expected.txt:
+
 2011-06-23  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: updating chromium expectations.
