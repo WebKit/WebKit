@@ -1,5 +1,12 @@
 2011-06-23  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed. Unexpected passes in chromium expectations removed from excludes.
+
+        * platform/chromium/inspector/debugger/debugger-activation-crash2-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-23  Pavel Feldman  <pfeldman@google.com>
+
         Not reviewed. Chromium test expectations updated.
 
         * platform/chromium/test_expectations.txt:

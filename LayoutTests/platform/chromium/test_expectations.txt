@@ -1047,10 +1047,6 @@ BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = FAIL
 // recorded will not be called.
 BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 
-// [V8] [WebKit] fast/js/multiline-comment-newline.html fails
-// WebKit Bug 23611 - Multiline Javascript comments cause incorrect parsing of following script.
-BUGCR86431 : fast/js/multiline-comment-newline.html = FAIL
-
 // Another V8 vs JSC difference since r89109.
 BUGCR86442 : fast/js/keywords-and-reserved_words.html = TEXT
 
@@ -3137,10 +3133,6 @@ BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset3.html = FAIL
 BUGCR77494 WIN LINUX : tables/mozilla/bugs/bug51140.html = TEXT
 // Not included in tests modified by 81992, but started failing at same time:
 BUGCR77494 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
-
-// New test added in r81994.
-BUGCR77582 WIN LINUX RELEASE : inspector/debugger/debugger-activation-crash2.html = TEXT
-BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash2.html = TEXT
 
 // Regression since r82001.
 BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
