@@ -128,6 +128,9 @@ Builder.prototype = {
                 var match = /^(\d+) test case/.exec(outputLine);
                 if (!match)
                     return sum;
+                // Don't count new tests as failures.
+                if (outputLine.indexOf('were new') >= 0)
+                    return sum;
                 return sum + parseInt(match[1], 10);
             }, 0);
 
