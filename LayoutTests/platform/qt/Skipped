@@ -2545,3 +2545,10 @@ fast/parser/xhtml-innerhtml-null-byte.xhtml
 inspector/console/console-trace-in-eval.html
 inspector/debugger/source-frame.html
 inspector/styles/styles-update-from-js.html
+
+# [Qt]REGRESSION(r89503): It made 4 fast/notifications tests fail on Qt
+# https://bugs.webkit.org/show_bug.cgi?id=63255
+fast/notifications/notifications-double-show.html
+fast/notifications/notifications-no-icon.html
+fast/notifications/notifications-with-permission.html
+fast/notifications/notifications-without-permission.html
