@@ -1,3 +1,31 @@
+2011-06-22  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        Convert SVGPointList to SVGAnimatorFactory concept
+        https://bugs.webkit.org/show_bug.cgi?id=63171
+
+        Renamed test animate-points to svgpointlist-animation-1 and cleaned it up.
+        svgpointlist-animation-2 checks from-by animations of SVGPointLists.
+
+        * svg/animations/animate-points-expected.txt: Removed.
+        * svg/animations/animate-points.html: Removed.
+        * svg/animations/script-tests/animate-points.js: Removed.
+        * svg/animations/script-tests/svgpointlist-animation-1.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svgpointlist-animation-2.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/svgpointlist-animation-1-expected.txt: Added.
+        * svg/animations/svgpointlist-animation-1.html: Added.
+        * svg/animations/svgpointlist-animation-2-expected.txt: Added.
+        * svg/animations/svgpointlist-animation-2.html: Added.
+
 2011-06-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium expectations update.

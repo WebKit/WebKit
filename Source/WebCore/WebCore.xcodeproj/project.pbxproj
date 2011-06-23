@@ -995,6 +995,8 @@
 		439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 439D334213A6911C00C20F4F /* SVGAnimatorFactory.h */; };
 		43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A0F0B013AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp */; };
 		43A0F0B613ACCCFF00A5F0A7 /* SVGAnimatedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A0F0B513ACCCFF00A5F0A7 /* SVGAnimatedType.cpp */; };
+		43B9336913B261B1004584BF /* SVGAnimatedPointList.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B9336713B261B1004584BF /* SVGAnimatedPointList.h */; };
+		43B9336A13B261B1004584BF /* SVGAnimatedPointList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */; };
 		43C092BC12D9E4EE00A989C3 /* RenderSVGForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C092BA12D9E4EE00A989C3 /* RenderSVGForeignObject.h */; };
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4415292F0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */; };
@@ -7478,6 +7480,8 @@
 		439D334213A6911C00C20F4F /* SVGAnimatorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatorFactory.h; sourceTree = "<group>"; };
 		43A0F0B013AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedNumber.cpp; sourceTree = "<group>"; };
 		43A0F0B513ACCCFF00A5F0A7 /* SVGAnimatedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedType.cpp; sourceTree = "<group>"; };
+		43B9336713B261B1004584BF /* SVGAnimatedPointList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPointList.h; sourceTree = "<group>"; };
+		43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedPointList.cpp; sourceTree = "<group>"; };
 		43C092B912D9E4EE00A989C3 /* RenderSVGForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGForeignObject.cpp; sourceTree = "<group>"; };
 		43C092BA12D9E4EE00A989C3 /* RenderSVGForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGForeignObject.h; sourceTree = "<group>"; };
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
@@ -17400,6 +17404,8 @@
 				B22277EC0D00BF1F0071B782 /* SVGAnimatedNumber.idl */,
 				08B35B16127B6A88005314DD /* SVGAnimatedNumberList.h */,
 				B22277ED0D00BF1F0071B782 /* SVGAnimatedNumberList.idl */,
+				43B9336713B261B1004584BF /* SVGAnimatedPointList.h */,
+				43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */,
 				08FE0BC4127E2AC1000C4FB5 /* SVGAnimatedPreserveAspectRatio.h */,
 				B22277F40D00BF1F0071B782 /* SVGAnimatedPreserveAspectRatio.idl */,
 				43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */,
@@ -23047,6 +23053,7 @@
 				B1AD4E7C13A12A7200846B27 /* CueParser.h in Headers */,
 				B1AD4E7D13A12A7200846B27 /* CueParserPrivate.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
+				43B9336913B261B1004584BF /* SVGAnimatedPointList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25807,6 +25814,7 @@
 				43A0F0B613ACCCFF00A5F0A7 /* SVGAnimatedType.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				43142E7A13B1E97700F1C871 /* SVGAnimatedRect.cpp in Sources */,
+				43B9336A13B261B1004584BF /* SVGAnimatedPointList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

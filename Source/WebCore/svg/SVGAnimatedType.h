@@ -28,6 +28,7 @@ namespace WebCore {
 class FloatRect;
 class SVGAngle;
 class SVGLength;
+class SVGPointList;
 
 class SVGAnimatedType {
     WTF_MAKE_FAST_ALLOCATED;
@@ -37,6 +38,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
+    static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     
     AnimatedAttributeType type() const { return m_type; }
@@ -44,6 +46,7 @@ public:
     SVGAngle& angle();
     SVGLength& length();
     float& number();
+    SVGPointList& pointList();
     FloatRect& rect();
 
     String valueAsString();
@@ -64,6 +67,7 @@ private:
         SVGAngle* angle;
         SVGLength* length;
         float* number;
+        SVGPointList* pointList;
         FloatRect* rect;
     } m_data;
 };

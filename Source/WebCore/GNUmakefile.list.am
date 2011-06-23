@@ -3412,6 +3412,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedNumber.cpp \
 	Source/WebCore/svg/SVGAnimatedNumber.h \
 	Source/WebCore/svg/SVGAnimatedNumberList.h \
+	Source/WebCore/svg/SVGAnimatedPointList.cpp \
+	Source/WebCore/svg/SVGAnimatedPointList.h \
 	Source/WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	Source/WebCore/svg/SVGAnimatedRect.cpp \
 	Source/WebCore/svg/SVGAnimatedRect.h \

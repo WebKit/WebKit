@@ -65390,6 +65390,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedPointList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedRect.h"
 				>
 			</File>

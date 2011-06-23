@@ -1,5 +1,4 @@
-// FIXME: This test will become useful once we have basic animVal support. For now it's just testing the SVG animation test infrastructure
-description("Tests if points of a polygon are animateable.");
+description("Tests from-to animation of points on polygons.");
 createSVGTestCase();
 
 // Setup test document
@@ -29,28 +28,19 @@ function sample1() {
 }
 
 function sample2() {
-    // FIXME: Add animVal support. Animates baseVal at the moment.
-    // shouldBe("rect.width.animVal.value", "150");
-    // shouldBe("rect.width.baseVal.value", "200");
-
     // Check half-time conditions
     shouldBe("poly.points.getItem(2).x", "150");
     shouldBe("poly.points.getItem(2).y", "150");
-    //shouldBe("poly.animatedPoints.getItem(2).x", "150");
-    //shouldBe("poly.animatedPoints.getItem(2).y", "150");
+    //shouldBe("poly.animatedPoints.getItem(2).x", "250");
+    //shouldBe("poly.animatedPoints.getItem(2).y", "250");
 }
 
 function sample3() {
-    // FIXME: Add animVal support. Animates baseVal at the moment.
-    // shouldBe("rect.width.animVal.value", "100");
-    // shouldBe("rect.width.baseVal.value", "200");
-
     // Check just before-end conditions
-    var ok = isCloseEnough(poly.points.getItem(2).x, 100, 0.01);
-    if (ok)
-        testPassed("poly.points.getItem(2).x is almost 100, just before-end");
-    else
-        testFailed("poly.points.getItem(2).x is NOT almost 100, as expected");
+    shouldBeCloseEnough("poly.points.getItem(2).x", "100", 0.01);
+    shouldBeCloseEnough("poly.points.getItem(2).y", "100", 0.01);
+    //shouldBeCloseEnough("poly.animatedPoints.getItem(2).x", "300", 0.01);
+    //shouldBeCloseEnough("poly.animatedPoints.getItem(2).y", "300", 0.01);
 }
 
 function executeTest() {

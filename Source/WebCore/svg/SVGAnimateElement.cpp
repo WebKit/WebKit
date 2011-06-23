@@ -34,10 +34,7 @@
 #include "SVGAnimatorFactory.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
-#include "SVGParserUtilities.h"
 #include "SVGPathParserFactory.h"
-#include "SVGPathSegList.h"
-#include "SVGPointList.h"
 #include "SVGStyledElement.h"
 
 using namespace std;
@@ -232,26 +229,10 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         }
         return;
     }
-    case AnimatedPoints: {
-        if (!percentage)
-            results->m_animatedPoints = m_fromPoints;
-        else if (percentage == 1)
-            results->m_animatedPoints = m_toPoints;
-        else {
-            if (!m_fromPoints.isEmpty() && !m_toPoints.isEmpty())
-                SVGPointList::createAnimated(m_fromPoints, m_toPoints, results->m_animatedPoints, percentage);
-            else
-                results->m_animatedPoints.clear();
-            // Fall back to discrete animation if the points are not compatible
-            if (results->m_animatedPoints.isEmpty())
-                results->m_animatedPoints = ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1) 
-                    ? m_toPoints : m_fromPoints;
-        }
-        return;
-    }
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPoints:
     case AnimatedRect: {
         ASSERT(m_animator);
         ASSERT(results->m_animatedType);
@@ -327,18 +308,10 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         m_toPath.clear();
         break;
     }
-    case AnimatedPoints: {
-        m_fromPoints.clear();
-        if (pointsListFromSVGData(m_fromPoints, fromString)) {
-            m_toPoints.clear();
-            if (pointsListFromSVGData(m_toPoints, toString))
-                return true;
-        }
-        break;
-    }
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPoints:
     case AnimatedRect:
         ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
         return true;
@@ -382,6 +355,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPoints:
     case AnimatedRect:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
         return true;
@@ -413,12 +387,10 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
         m_animatedPathPointer = m_animatedPath.get();
         return;
     }
-    case AnimatedPoints:
-        m_animatedPoints.clear();
-        return;
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPoints:
     case AnimatedRect: {
         if (!m_animatedType)
             m_animatedType = ensureAnimator()->constructFromString(baseString);
@@ -452,12 +424,10 @@ void SVGAnimateElement::applyResultsToTarget()
         }
         break;
     }
-    case AnimatedPoints:
-        valueToApply = m_animatedPoints.isEmpty() ? m_animatedString : m_animatedPoints.valueAsString();
-        break;
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPoints:
     case AnimatedRect:
         valueToApply = m_animatedType->valueAsString();
         break;
@@ -487,6 +457,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedAngle:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPoints:
     case AnimatedRect:
         return ensureAnimator()->calculateDistance(this, fromString, toString);
     default:

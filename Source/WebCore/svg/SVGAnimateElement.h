@@ -29,12 +29,9 @@
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGAnimationElement.h"
 #include "SVGPathByteStream.h"
-#include "SVGPointList.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
-
-class SVGPathSegList;
 
 class SVGAnimateElement : public SVGAnimationElement {
 public:
@@ -83,9 +80,6 @@ private:
     OwnPtr<SVGPathByteStream> m_toPath;
     OwnPtr<SVGPathByteStream> m_animatedPath;
     SVGPathByteStream* m_animatedPathPointer;
-    SVGPointList m_fromPoints;
-    SVGPointList m_toPoints;
-    SVGPointList m_animatedPoints;
     
     OwnPtr<SVGAnimatedType> m_fromType;
     OwnPtr<SVGAnimatedType> m_toType;

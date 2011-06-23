@@ -24,6 +24,7 @@
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedNumber.h"
+#include "SVGAnimatedPointList.h"
 #include "SVGAnimatedRect.h"
 
 namespace WebCore {
@@ -40,6 +41,8 @@ public:
             return adoptPtr(new SVGAnimatedLengthAnimator(contextElement, attributeName));
         case AnimatedNumber:
             return adoptPtr(new SVGAnimatedNumberAnimator(contextElement, attributeName));
+        case AnimatedPoints:
+            return adoptPtr(new SVGAnimatedPointListAnimator(contextElement, attributeName));
         case AnimatedRect:
             return adoptPtr(new SVGAnimatedRectAnimator(contextElement, attributeName));
         default:

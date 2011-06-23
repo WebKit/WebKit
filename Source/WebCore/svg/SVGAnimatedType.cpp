@@ -26,6 +26,7 @@
 #include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGParserUtilities.h"
+#include "SVGPointList.h"
 
 namespace WebCore {
 
@@ -45,6 +46,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedNumber:
         delete m_data.number;
+        break;
+    case AnimatedPoints:
+        delete m_data.pointList;
         break;
     case AnimatedRect:
         delete m_data.rect;
@@ -79,6 +83,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumber(float* number)
     return animatedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createPointList(SVGPointList* pointList)
+{
+    ASSERT(pointList);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedPoints));
+    animatedType->m_data.pointList = pointList;
+    return animatedType.release();
+}
+
 PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createRect(FloatRect* rect)
 {
     ASSERT(rect);
@@ -105,6 +117,12 @@ float& SVGAnimatedType::number()
     return *m_data.number;
 }
 
+SVGPointList& SVGAnimatedType::pointList()
+{
+    ASSERT(m_type == AnimatedPoints);
+    return *m_data.pointList;
+}
+
 FloatRect& SVGAnimatedType::rect()
 {
     ASSERT(m_type == AnimatedRect);
@@ -123,6 +141,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedNumber:
         ASSERT(m_data.number);
         return String::number(*m_data.number);
+    case AnimatedPoints:
+        ASSERT(m_data.pointList);
+        return m_data.pointList->valueAsString();
     case AnimatedRect:
         ASSERT(m_data.rect);
         return String::number(m_data.rect->x()) + ' ' + String::number(m_data.rect->y()) + ' '
@@ -149,6 +170,11 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedNumber:
         ASSERT(m_data.number);
         parseNumberFromString(value, *m_data.number);
+        break;
+    case AnimatedPoints:
+        ASSERT(m_data.pointList);
+        m_data.pointList->clear();
+        pointsListFromSVGData(*m_data.pointList, value);
         break;
     case AnimatedRect:
         ASSERT(m_data.rect);

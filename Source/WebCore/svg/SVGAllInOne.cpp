@@ -33,6 +33,7 @@
 #include "SVGAnimatedAngle.cpp"
 #include "SVGAnimatedLength.cpp"
 #include "SVGAnimatedNumber.cpp"
+#include "SVGAnimatedPointList.cpp"
 #include "SVGAnimatedRect.cpp"
 #include "SVGAnimatedType.cpp"
 #include "SVGAnimateElement.cpp"
