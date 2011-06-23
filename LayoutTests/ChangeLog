@@ -32,6 +32,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2011-06-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-22  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Mark Rowe.

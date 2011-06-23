@@ -3981,4 +3981,5 @@ BUGCR87070 WIN DEBUG : http/tests/security/javascriptURL/xss-DENIED-to-javascrip
 
 BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
 
-BUGPFELDMAN WIN MAC : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = IMAGE
+BUGPFELDMAN WIN : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = IMAGE+TEXT
+BUGPFELDMAN MAC : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = IMAGE
