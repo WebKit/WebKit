@@ -53,7 +53,7 @@ function getResource(url, callback, errorCallback) {
 
 function addQueryParametersToURL(url, queryParameters) {
     var encodedParameters = Object.keys(queryParameters).map(function(key) {
-        return key + '=' + encodeURIComponent(queryParameters[key])
+        return key + '=' + encodeURIComponent(queryParameters[key]);
     });
 
     if (url.indexOf('?') < 0)
@@ -76,4 +76,9 @@ Array.prototype.last = function() {
     if (!this.length)
         return undefined;
     return this[this.length - 1];
+}
+
+Node.prototype.appendChildren = function(children) {
+    for (var i = 0; i < children.length; ++i)
+        this.appendChild(children[i]);
 }

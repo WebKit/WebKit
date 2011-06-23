@@ -1,5 +1,30 @@
 2011-06-23  Adam Roben  <aroben@apple.com>
 
+        Show closed bugs on the TestFailures page in addition to open ones
+
+        Fixes <http://webkit.org/b/63194> TestFailures page should show closed bugs, too
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js:
+        (Bugzilla.prototype.quickSearch): Added code to extract the bug's status and store it in the
+        returned data.
+        (Bugzilla.isOpenStatus): New function, returns true if the passed-in status indicates that
+        the associated bug is still open.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (addQueryParametersToURL): Add a missing semicolon.
+        (Node.prototype.appendChildren): New function, like appendChild but takes an array-like
+        object and appends each of the values stored within.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForNewAndExistingBugs): Prepend 'ALL' to the query so closed
+        bugs will be included in the results. Split the returned bugs into two sets: those which are
+        open, and those which are closed. Put the open bugs at the top level of the list, and the
+        closed bugs in a second level.
+
+2011-06-23  Adam Roben  <aroben@apple.com>
+
         Don't count new tests as failures on the TestFailures page
 
         Fixes <http://webkit.org/b/63254> TestFailures page calls new tests "failures", even though

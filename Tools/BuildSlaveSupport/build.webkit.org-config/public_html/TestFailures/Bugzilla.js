@@ -54,9 +54,13 @@ Bugzilla.prototype = {
         getResource(addQueryParametersToURL(this.baseURL + 'buglist.cgi', queryParameters), function(xhr) {
             var entries = xhr.responseXML.getElementsByTagName('entry');
             var results = Array.prototype.map.call(entries, function(entry) {
+                var container = document.createElement('div');
+                container.innerHTML = entry.getElementsByTagName('summary')[0].textContent;
+                var statusRow = container.querySelector('tr.bz_feed_bug_status');
                 return {
                     title: entry.getElementsByTagName('title')[0].textContent,
                     url: entry.getElementsByTagName('id')[0].textContent,
+                    status: statusRow.cells[1].textContent,
                 };
             });
 
@@ -70,4 +74,15 @@ Bugzilla.prototype = {
             });
         });
     },
+};
+
+Bugzilla.isOpenStatus = function(status) {
+    const openStatuses = {
+        UNCONFIRMED: true,
+        NEW: true,
+        ASSIGNED: true,
+        REOPENED: true,
+
+    };
+    return status in openStatuses;
 };

@@ -205,7 +205,7 @@ ViewController.prototype = {
 
         bugsContainer.appendChild(document.createTextNode('Searching for bugs related to ' + (failingTests.length > 1 ? 'these tests' : 'this test') + '\u2026'));
 
-        this._bugzilla.quickSearch(failingTests.join('|'), function(bugs) {
+        this._bugzilla.quickSearch('ALL ' + failingTests.join('|'), function(bugs) {
             if (!bugs.length) {
                 bugsContainer.parentNode.removeChild(bugsContainer);
                 return;
@@ -221,7 +221,7 @@ ViewController.prototype = {
 
             list.className = 'existing-bugs-list';
 
-            bugs.forEach(function(bug) {
+            function bugToListItem(bug) {
                 var link = document.createElement('a');
                 link.href = bug.url;
                 link.appendChild(document.createTextNode(bug.title));
@@ -229,8 +229,26 @@ ViewController.prototype = {
                 var item = document.createElement('li');
                 item.appendChild(link);
 
-                list.appendChild(item);
-            });
+                return item;
+            }
+
+            var openBugs = bugs.filter(function(bug) { return Bugzilla.isOpenStatus(bug.status) });
+            var closedBugs = bugs.filter(function(bug) { return !Bugzilla.isOpenStatus(bug.status) });
+
+            list.appendChildren(openBugs.map(bugToListItem));
+
+            if (!closedBugs.length)
+                return;
+
+            var item = document.createElement('li');
+            list.appendChild(item);
+
+            item.appendChild(document.createTextNode('Closed bugs:'));
+
+            var closedList = document.createElement('ul');
+            item.appendChild(closedList);
+
+            closedList.appendChildren(closedBugs.map(bugToListItem));
         });
 
         var parsedFailingBuildName = this._buildbot.parseBuildName(failingBuildName);
