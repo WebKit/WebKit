@@ -1,3 +1,12 @@
+2011-06-22  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed build fix after r89472.
+
+        No new tests, just a build fix.
+
+        * rendering/InlineBox.cpp:
+        * rendering/RenderCounter.cpp:
+
 2011-06-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

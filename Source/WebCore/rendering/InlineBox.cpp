@@ -27,6 +27,10 @@
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 using namespace std;
 
 namespace WebCore {

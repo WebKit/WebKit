@@ -32,6 +32,10 @@
 #include "RenderStyle.h"
 #include <wtf/StdLibExtras.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
