@@ -1,3 +1,13 @@
+2011-06-23  Jessie Berlin  <jberlin@apple.com>
+
+        http/tests/multipart/win-boundary-crash.html flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=63268
+
+        The flakiness is happening on mac as well, move it to the mac skipped list.
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-06-23  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed.
