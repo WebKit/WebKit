@@ -238,9 +238,6 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setUsePreHTML5ParserQuirks:(BOOL)flag;
 - (BOOL)usePreHTML5ParserQuirks;
 
-- (void)setMaximumHTMLParserDOMTreeDepth:(unsigned)depth;
-- (unsigned)maximumHTMLParserDOMTreeDepth;
-
 - (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag;
 - (BOOL)loadsSiteIconsIgnoringImageLoadingPreference;
 

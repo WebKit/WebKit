@@ -39,7 +39,6 @@
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/Settings.h>
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotification";
@@ -376,7 +375,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
-        [NSNumber numberWithUnsignedInt:WebCore::Settings::defaultMaximumHTMLParserDOMTreeDepth], WebKitMaximumHTMLParserDOMTreeDepthKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1408,16 +1406,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setUsePreHTML5ParserQuirks:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitUsePreHTML5ParserQuirksKey];
-}
-
-- (void)setMaximumHTMLParserDOMTreeDepth:(unsigned)depth
-{
-    [self _setIntegerValue:depth forKey:WebKitMaximumHTMLParserDOMTreeDepthKey];
-}
-
-- (unsigned)maximumHTMLParserDOMTreeDepth
-{
-    return [self _integerValueForKey:WebKitMaximumHTMLParserDOMTreeDepthKey];
 }
 
 - (void)didRemoveFromWebView

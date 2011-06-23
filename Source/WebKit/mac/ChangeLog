@@ -1,5 +1,18 @@
 2011-06-22  Sam Weinig  <sam@webkit.org>
 
+        Roll out r89469 (Add preference for setting the html parser depth limit)
+
+        The preference is not needed at this time, so there is no reason to expose it.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
+2011-06-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Barth.
 
         Add preference for setting the html parser depth limit
