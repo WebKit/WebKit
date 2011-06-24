@@ -71,12 +71,6 @@ class Worker(manager_worker_broker.AbstractWorker):
                                                    "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
-        # FIXME: it's goofy that we have to track this at all, but it's due to
-        # the awkward logic in TestShellThread._run(). When we remove that
-        # file, we should rewrite this code so that caller keeps track of whether
-        # the lock is held.
-        self._has_http_lock = False
-
     def cancel(self):
         """Attempt to abort processing (best effort)."""
         self._canceled = True
@@ -118,9 +112,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._worker_connection.post_message('exception', exception_type, exception_value, stack)
 
     def handle_test_list(self, src, list_name, test_list):
-        if list_name == "tests_to_http_lock":
-            self.start_servers_with_lock()
-
         start_time = time.time()
         num_tests = 0
         for test_input in test_list:
@@ -130,8 +121,6 @@ class Worker(manager_worker_broker.AbstractWorker):
 
         elapsed_time = time.time() - start_time
         self._worker_connection.post_message('finished_list', list_name, num_tests, elapsed_time)
-
-        self.stop_servers_with_lock()
 
     def handle_stop(self, src):
         self._done = True
@@ -151,7 +140,6 @@ class Worker(manager_worker_broker.AbstractWorker):
     def cleanup(self):
         _log.debug("%s cleaning up" % self._name)
         self.kill_driver()
-        self.stop_servers_with_lock()
         if self._tests_run_file:
             self._tests_run_file.close()
             self._tests_run_file = None
@@ -171,25 +159,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         thread_padding_sec = 1.0
         thread_timeout_sec = driver_timeout_sec + thread_padding_sec
         return thread_timeout_sec
-
-    def start_servers_with_lock(self):
-        _log.debug('Acquiring http lock ...')
-        self._port.acquire_http_lock()
-        _log.debug('Starting HTTP server ...')
-        self._port.start_http_server()
-        _log.debug('Starting WebSocket server ...')
-        self._port.start_websocket_server()
-        self._has_http_lock = True
-
-    def stop_servers_with_lock(self):
-        if self._has_http_lock:
-            _log.debug('Stopping HTTP server ...')
-            self._port.stop_http_server()
-            _log.debug('Stopping WebSocket server ...')
-            self._port.stop_websocket_server()
-            _log.debug('Releasing server lock ...')
-            self._port.release_http_lock()
-            self._has_http_lock = False
 
     def kill_driver(self):
         if self._driver:

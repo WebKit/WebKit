@@ -262,7 +262,7 @@ class Manager:
         self.HTTP_SUBDIR = self._fs.join('', 'http', '')
         self.WEBSOCKET_SUBDIR = self._fs.join('', 'websocket', '')
         self.LAYOUT_TESTS_DIRECTORY = "LayoutTests" + self._fs.sep
-
+        self._has_http_lock = False
 
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
@@ -281,7 +281,6 @@ class Manager:
 
         # This maps worker names to the state we are tracking for each of them.
         self._worker_states = {}
-
 
     def collect_tests(self, args, last_unexpected_results):
         """Find all the files to test.
@@ -630,6 +629,11 @@ class Manager:
         test_lists = self._shard_tests(file_list,
             int(self._options.child_processes) > 1 and not self._options.experimental_fully_parallel)
 
+        # FIXME: we need a less hard-coded way of figuring out if we need to
+        # start the servers.
+        if test_lists[0][0] == 'tests_to_http_lock':
+            self.start_servers_with_lock()
+
         num_workers = self._num_workers(len(test_lists))
         manager_connection = manager_worker_broker.get(self._port, self._options,
                                                        self, worker.Worker)
@@ -698,6 +702,8 @@ class Manager:
             _log.error("Exception raised, exiting")
             self.cancel_workers()
             raise
+        finally:
+            self.stop_servers_with_lock()
 
         thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]
 
@@ -847,6 +853,25 @@ class Manager:
         # Ignore flaky failures and unexpected passes so we don't turn the
         # bot red for those.
         return unexpected_results['num_regressions']
+
+    def start_servers_with_lock(self):
+        self._printer.print_update('Acquiring http lock ...')
+        self._port.acquire_http_lock()
+        self._printer.print_update('Starting HTTP server ...')
+        self._port.start_http_server()
+        self._printer.print_update('Starting WebSocket server ...')
+        self._port.start_websocket_server()
+        self._has_http_lock = True
+
+    def stop_servers_with_lock(self):
+        if self._has_http_lock:
+            self._printer.print_update('Stopping HTTP server ...')
+            self._port.stop_http_server()
+            self._printer.print_update('Stopping WebSocket server ...')
+            self._port.stop_websocket_server()
+            self._printer.print_update('Releasing server lock ...')
+            self._port.release_http_lock()
+            self._has_http_lock = False
 
     def clean_up_run(self):
         """Restores the system after we're done running tests."""
