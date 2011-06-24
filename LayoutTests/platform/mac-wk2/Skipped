@@ -66,6 +66,11 @@ editing/execCommand/convert-style-elements-to-spans.html
 # https://bugs.webkit.org/show_bug.cgi?id=60648
 fast/frames/flattening/frameset-flattening-subframesets.html
 
+# Time out on Snow Leopard Intel WebKit2 Release Tests
+# https://bugs.webkit.org/show_bug.cgi?id=63325
+http/tests/inspector/extensions-headers.html
+http/tests/inspector/extensions-resources-redirect.html
+
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/deleting/5729680.html
