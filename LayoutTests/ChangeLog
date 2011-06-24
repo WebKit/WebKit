@@ -1,3 +1,14 @@
+2011-06-24  Kent Tamura  <tkent@chromium.org>
+
+        Remove an JavaScript error in media-controls-clone.html.
+        https://bugs.webkit.org/show_bug.cgi?id=63195
+
+        * media/media-controls-clone.html: Remove run() call.
+        * platform/chromium-mac/media/media-controls-clone-expected.txt: Remove an error message.
+        * platform/chromium-win/media/media-controls-clone-expected.txt: ditto.
+        * platform/mac/media/media-controls-clone-expected.txt: ditto.
+        * platform/win/media/media-controls-clone-expected.txt: ditto.
+
 2011-06-24  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: uncommenting chromium devtools tests.
