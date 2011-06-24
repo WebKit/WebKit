@@ -1,3 +1,13 @@
+2011-06-23  John Bates  <jbates@google.com>
+
+        Reviewed by James Robinson.
+
+        Fix latch deadlock when GPU process crashes or context is lost
+        https://bugs.webkit.org/show_bug.cgi?id=63189
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
 2011-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled DEPS.

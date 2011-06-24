@@ -61,9 +61,14 @@ WebGLLayerChromium::~WebGLLayerChromium()
         layerRenderer()->removeChildContext(m_context);
 }
 
+bool WebGLLayerChromium::drawsContent() const
+{
+    return (m_context && m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
+}
+
 void WebGLLayerChromium::updateCompositorResources()
 {
-    if (!m_context)
+    if (!drawsContent())
         return;
 
     if (!m_contentsDirty)
@@ -103,7 +108,8 @@ void WebGLLayerChromium::setTextureUpdated()
 
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
 {
-    if (m_context != context && layerRenderer()) {
+    bool contextChanged = (m_context != context);
+    if (contextChanged && layerRenderer()) {
         if (m_context)
             layerRenderer()->removeChildContext(m_context);
         if (context)
@@ -116,7 +122,7 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
         return;
 
     unsigned int textureId = m_context->platformTexture();
-    if (textureId != m_textureId) {
+    if (textureId != m_textureId || contextChanged) {
         m_textureChanged = true;
         m_textureUpdated = true;
     }

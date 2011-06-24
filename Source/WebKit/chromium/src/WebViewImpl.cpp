@@ -1154,8 +1154,7 @@ void WebViewImpl::composite(bool finish)
     // Put result onscreen.
     m_layerRenderer->present();
 
-    GraphicsContext3D* context = m_layerRenderer->context();
-    if (context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR) {
+    if (m_layerRenderer->isCompositorContextLost()) {
         // Trying to recover the context right here will not work if GPU process
         // died. This is because GpuChannelHost::OnErrorMessage will only be
         // called at the next iteration of the message loop, reverting our

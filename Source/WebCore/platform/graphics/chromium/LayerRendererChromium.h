@@ -150,6 +150,9 @@ public:
     void addChildContext(GraphicsContext3D*);
     void removeChildContext(GraphicsContext3D*);
 
+    // Return true if the compositor context has an error.
+    bool isCompositorContextLost();
+
 #ifndef NDEBUG
     static bool s_inPaintLayerContents;
 #endif
@@ -241,11 +244,6 @@ private:
 #endif
 
     ChildContextMap m_childContexts;
-    // If true, the child contexts were copied to the compositor texture targets
-    // and the compositor will need to wait on the proper latches before using
-    // the target textures. If false, the compositor is reusing the textures
-    // from last frame.
-    bool m_childContextsWereCopied;
 
     bool m_contextSupportsLatch;
     bool m_contextSupportsMapSub;

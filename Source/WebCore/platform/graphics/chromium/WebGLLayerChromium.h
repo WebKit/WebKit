@@ -49,7 +49,7 @@ public:
 
     virtual ~WebGLLayerChromium();
 
-    virtual bool drawsContent() const { return m_context; }
+    virtual bool drawsContent() const;
     virtual void updateCompositorResources();
     void setTextureUpdated();
 

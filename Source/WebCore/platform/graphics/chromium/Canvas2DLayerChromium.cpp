@@ -35,6 +35,7 @@
 #include "Canvas2DLayerChromium.h"
 
 #include "DrawingBuffer.h"
+#include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 
@@ -59,9 +60,17 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
         layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
 }
 
+bool Canvas2DLayerChromium::drawsContent() const
+{
+    GraphicsContext3D* context;
+    return (m_drawingBuffer
+            && (context = m_drawingBuffer->graphicsContext3D().get())
+            && (context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR));
+}
+
 void Canvas2DLayerChromium::updateCompositorResources()
 {
-    if (!m_contentsDirty || !m_drawingBuffer)
+    if (!m_contentsDirty || !drawsContent())
         return;
     if (m_textureChanged) { // We have to generate a new backing texture.
         GraphicsContext3D* context = layerRendererContext();

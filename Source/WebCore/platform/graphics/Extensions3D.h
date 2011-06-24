@@ -106,6 +106,12 @@ public:
     };
 
     // GL_ARB_robustness
+    // Note: This method's behavior differs from the GL_ARB_robustness
+    // specification in the following way:
+    // The implementation must not reset the error state during this call.
+    // If getGraphicsResetStatusARB returns an error, it should continue
+    // returning the same error. Restoring the GraphicsContext3D is handled
+    // externally.
     virtual int getGraphicsResetStatusARB() = 0;
     
     // GL_ANGLE_framebuffer_blit

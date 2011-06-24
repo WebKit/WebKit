@@ -1,3 +1,30 @@
+2011-06-23  John Bates  <jbates@google.com>
+
+        Reviewed by James Robinson.
+
+        Fix latch deadlock when GPU process crashes or context is lost.
+        https://bugs.webkit.org/show_bug.cgi?id=63189
+        The main bug fix is to only set/wait latches if the child context has no errors.
+        Additionally, the LayerChromium classes needed to be modified to not continue drawing when
+        their corresponding contexts have errors. Otherwise, they would draw with invalid texture ids.
+
+        Test: open particles WebGL demo in chrome, kill GPU process from Task Manager; observe no deadlock.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::isCompositorContextLost):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::drawsContent):
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::drawsContent):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+
 2011-06-23  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

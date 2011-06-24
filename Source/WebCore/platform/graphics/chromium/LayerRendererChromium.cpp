@@ -120,7 +120,6 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     , m_offscreenFramebufferId(0)
     , m_compositeOffscreen(false)
     , m_context(context)
-    , m_childContextsWereCopied(false)
     , m_contextSupportsLatch(false)
     , m_contextSupportsTextureFormatBGRA(false)
     , m_contextSupportsReadFormatBGRA(false)
@@ -255,22 +254,19 @@ void LayerRendererChromium::updateAndDrawLayers()
         // thread can execute WebGL calls on the child context at any time,
         // potentially clobbering the parent texture that is being renderered
         // by the compositor thread.
-        if (m_childContextsWereCopied) {
-            Extensions3DChromium* parentExt = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-            // For each child context:
-            //   glWaitLatch(Offscreen->Compositor);
-            ChildContextMap::iterator i = m_childContexts.begin();
-            for (; i != m_childContexts.end(); ++i) {
-                Extensions3DChromium* childExt = static_cast<Extensions3DChromium*>(i->first->getExtensions());
-                GC3Duint latchId;
-                childExt->getChildToParentLatchCHROMIUM(&latchId);
-                parentExt->waitLatchCHROMIUM(latchId);
+        Extensions3DChromium* parentExt = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+        // For each child context:
+        //   glWaitLatch(Offscreen->Compositor);
+        ChildContextMap::iterator i = m_childContexts.begin();
+        for (; i != m_childContexts.end(); ++i) {
+            Extensions3DChromium* childExt = static_cast<Extensions3DChromium*>(i->first->getExtensions());
+            if (childExt->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR) {
+                GC3Duint childToParentLatchId;
+                childExt->getChildToParentLatchCHROMIUM(&childToParentLatchId);
+                childExt->setLatchCHROMIUM(childToParentLatchId);
+                parentExt->waitLatchCHROMIUM(childToParentLatchId);
             }
         }
-        // Reset to false to indicate that we have consumed the dirty child
-        // contexts' parent textures. (This is only useful when the compositor
-        // is multithreaded.)
-        m_childContextsWereCopied = false;
     }
 
     drawLayers(renderSurfaceLayerList);
@@ -285,9 +281,12 @@ void LayerRendererChromium::updateAndDrawLayers()
         ChildContextMap::iterator i = m_childContexts.begin();
         for (; i != m_childContexts.end(); ++i) {
             Extensions3DChromium* childExt = static_cast<Extensions3DChromium*>(i->first->getExtensions());
-            GC3Duint latchId;
-            childExt->getParentToChildLatchCHROMIUM(&latchId);
-            parentExt->setLatchCHROMIUM(latchId);
+            if (childExt->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR) {
+                GC3Duint parentToChildLatchId;
+                childExt->getParentToChildLatchCHROMIUM(&parentToChildLatchId);
+                parentExt->setLatchCHROMIUM(parentToChildLatchId);
+                childExt->waitLatchCHROMIUM(parentToChildLatchId);
+            }
         }
     }
 
@@ -340,52 +339,11 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     s_inPaintLayerContents = false;
 #endif
 
-    // FIXME: Before updateCompositorResources, when the compositor runs in
-    // its own thread, and when the copyTexImage2D bug is fixed, insert
-    // a glWaitLatch(Compositor->Offscreen) on all child contexts here instead
-    // of after updateCompositorResources.
-    // Also uncomment the glSetLatch(Compositor->Offscreen) code in addChildContext.
-//  if (hardwareCompositing() && m_contextSupportsLatch) {
-//      // For each child context:
-//      //   glWaitLatch(Compositor->Offscreen);
-//      ChildContextMap::iterator i = m_childContexts.begin();
-//      for (; i != m_childContexts.end(); ++i) {
-//          Extensions3DChromium* ext = static_cast<Extensions3DChromium*>(i->first->getExtensions());
-//          GC3Duint childToParentLatchId, parentToChildLatchId;
-//          ext->getParentToChildLatchCHROMIUM(&parentToChildLatchId);
-//          ext->waitLatchCHROMIUM(parentToChildLatchId);
-//      }
-//  }
-
     updateCompositorResources(renderSurfaceLayerList);
     // Update compositor resources for root layer.
     {
         TRACE_EVENT("LayerRendererChromium::updateLayer::updateRoot", this, 0);
         m_rootLayerContentTiler->updateRect();
-    }
-
-    // After updateCompositorResources, set/wait latches for all child
-    // contexts. This will prevent the compositor from using any of the child
-    // parent textures while WebGL commands are executing from javascript *and*
-    // while the final parent texture is being blit'd. copyTexImage2D
-    // uses the parent texture as a temporary resolve buffer, so that's why the
-    // waitLatch is below, to block the compositor from using the parent texture
-    // until the next WebGL SwapBuffers (or copyTextureToParentTexture for
-    // Canvas2D).
-    if (hardwareCompositing() && m_contextSupportsLatch) {
-        m_childContextsWereCopied = true;
-        // For each child context:
-        //   glSetLatch(Offscreen->Compositor);
-        //   glWaitLatch(Compositor->Offscreen);
-        ChildContextMap::iterator i = m_childContexts.begin();
-        for (; i != m_childContexts.end(); ++i) {
-            Extensions3DChromium* ext = static_cast<Extensions3DChromium*>(i->first->getExtensions());
-            GC3Duint childToParentLatchId, parentToChildLatchId;
-            ext->getParentToChildLatchCHROMIUM(&parentToChildLatchId);
-            ext->getChildToParentLatchCHROMIUM(&childToParentLatchId);
-            ext->setLatchCHROMIUM(childToParentLatchId);
-            ext->waitLatchCHROMIUM(parentToChildLatchId);
-        }
     }
 }
 
@@ -1293,6 +1251,11 @@ void LayerRendererChromium::removeChildContext(GraphicsContext3D* ctx)
         // error
         ASSERT(0 && "m_childContexts map has mismatched add/remove calls");
     }
+}
+
+bool LayerRendererChromium::isCompositorContextLost()
+{
+    return (m_context.get()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR);
 }
 
 void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, LayerChromium* layer) const
