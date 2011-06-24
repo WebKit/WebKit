@@ -1,6 +1,7 @@
 <html>
 <head>
     <title></title>
+    <script src="resources/common.js"></script>
     <script>
         function test()
         {
@@ -13,16 +14,16 @@
             var s2 = document.getElementById("search2");
             var s3 = document.getElementById("search3");
 
-            var buttonX = s1.offsetLeft + s1.offsetWidth - 6;
+            var s1cancelPos = searchCancelButtonPosition(s1);
+            var buttonX = s1cancelPos.x;
             var middleX = s1.offsetLeft + s1.offsetWidth / 2;
 
-            var y1 = s1.offsetTop + s1.offsetHeight / 2;
             var y2 = s2.offsetTop + s2.offsetHeight / 2;
             var y3 = s3.offsetTop + s3.offsetHeight / 2;
 
-            eventSender.mouseMoveTo(buttonX, y1);
+            eventSender.mouseMoveTo(buttonX, s1cancelPos.y);
             eventSender.mouseDown();
-            eventSender.mouseMoveTo(middleX, y1);
+            eventSender.mouseMoveTo(middleX, s1cancelPos.y);
             eventSender.mouseUp();
             eventSender.leapForward(1000);
 

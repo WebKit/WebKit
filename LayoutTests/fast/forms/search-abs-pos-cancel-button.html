@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>Search Field with Transform</title>
+    <script src="resources/common.js"></script>
     <script type="text/javascript" charset="utf-8">
       if (window.layoutTestController)
         layoutTestController.dumpAsText();
@@ -18,9 +19,8 @@
     <script>
         if (window.eventSender) {
             var target = document.getElementById("target");
-            var x = target.offsetLeft + target.offsetWidth - 4;
-            var y = target.offsetTop + target.offsetHeight / 2;
-            eventSender.mouseMoveTo(x, y);
+            var cancelPos = searchCancelButtonPosition(target);
+            eventSender.mouseMoveTo(cancelPos.x, cancelPos.y);
             eventSender.mouseDown();
             eventSender.mouseUp();
             var result = document.getElementById("result");

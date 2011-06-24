@@ -1,5 +1,48 @@
 2011-06-24  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Clean up some tests for search cancel buttons.
+        https://bugs.webkit.org/show_bug.cgi?id=63121
+
+        - Introduce a function to retrieve a reliable position of a search
+          cancel button.
+        - Convert two tests to dumpAsText().
+
+        * fast/forms/resources/common.js:
+        (searchCancelButtonPosition): Added.
+        * fast/forms/search-abs-pos-cancel-button.html: Use searchCancelButtonPosition().
+        * fast/forms/search-cancel-button-mouseup.html: Use searchCancelButtonPosition().
+        * fast/forms/search-transformed-expected.txt: Added.
+        * fast/forms/search-transformed.html:
+          - Use searchCancelButtonPosition().
+          - Convert to dumpAsText().
+        * fast/forms/search-zoomed-expected.txt: Added.
+        * fast/forms/search-zoomed.html:
+          - Use searchCancelButtonPosition().
+          - Convert to dumpAsText().
+        * platform/chromium/test_expectation.txt:
+          search-transformed.html should pass.
+        * platform/chromium-linux/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/search-transformed-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/search-transformed-expected.png: Removed.
+        * platform/chromium-win/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/chromium-win/fast/forms/search-zoomed-expected.txt: Removed.
+        * platform/gtk/fast/forms/search-transformed-expected.png: Removed.
+        * platform/gtk/fast/forms/search-transformed-expected.txt: Removed.
+        * platform/gtk/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/gtk/fast/forms/search-zoomed-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/mac/fast/forms/search-transformed-expected.png: Removed.
+        * platform/mac/fast/forms/search-transformed-expected.txt: Removed.
+        * platform/mac/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/mac/fast/forms/search-zoomed-expected.txt: Removed.
+        * platform/qt/fast/forms/search-transformed-expected.txt: Removed.
+        * platform/qt/fast/forms/search-zoomed-expected.txt: Removed.
+
+2011-06-24  Kent Tamura  <tkent@chromium.org>
+
         Remove an JavaScript error in media-controls-clone.html.
         https://bugs.webkit.org/show_bug.cgi?id=63195
 

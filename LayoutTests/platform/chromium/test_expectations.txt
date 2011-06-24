@@ -1414,9 +1414,6 @@ BUGCR24191 LINUX : fast/css/hsla-color.html = FAIL
 BUGCR5737 LINUX : fast/forms/001.html = FAIL
 BUGCR5737 LINUX : fast/forms/input-first-letter.html = FAIL
 
-// The (x) in type=search inputs appears to be slightly broken.  This test will also need a rebaseline.
-BUGCR20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
-
 // New test. We should fix it, but it doesn't need to block the current release
 BUGCR10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 

@@ -15,3 +15,10 @@ function getAbsoluteRect(element) {
     rect.right += document.body.scrollLeft;
     return rect;
 }
+
+function searchCancelButtonPosition(element) {
+    var pos = {};
+    pos.x = element.offsetLeft + element.offsetWidth - 9;
+    pos.y = element.offsetTop + element.offsetHeight / 2;
+    return pos;
+}

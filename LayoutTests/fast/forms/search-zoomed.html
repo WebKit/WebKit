@@ -7,6 +7,7 @@
         zoom: 120%;
       }
     </style>
+    <script src="resources/common.js"></script>
 </head>
 <body>
     <p>
@@ -20,13 +21,12 @@
         Clicking the (x) button should clear the field.
     </p>
     <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
         if (window.eventSender) {
             var target = document.getElementById("target");
-            var x = target.offsetLeft + target.offsetWidth - 5;
-            var y = target.offsetTop + target.offsetHeight - 5;
-            x = x * 1.2;
-            y = y * 1.2;
-            eventSender.mouseMoveTo(x, y);
+            var cancelPos = searchCancelButtonPosition(target);
+            eventSender.mouseMoveTo(cancelPos.x * 1.2, cancelPos.y * 1.2);
             eventSender.mouseDown();
             eventSender.mouseUp();
             var result = document.getElementById("result");
