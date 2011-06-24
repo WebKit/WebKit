@@ -1,5 +1,25 @@
 2011-06-24  Adam Roben  <aroben@apple.com>
 
+        Include the directory containing the failing tests in titles of bugs filed from TestFailures
+        when all the tests won't fit
+
+        Fixes <http://webkit.org/b/63350> Short bug titles from TestFailures page give no indication
+        which tests are failing
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (longestCommonPathPrefix): Added. Given a set of paths, returns the longest common prefix
+        that ends in a path separator.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForNewAndExistingBugs): When we can't fit all the test names
+        in the title, first try to include the longest common prefix of the test names, then, if
+        that's still too long or there's no common prefix, fall back to not including any
+        information about which tests are failing.
+
+2011-06-24  Adam Roben  <aroben@apple.com>
+
         Include links to Trac in bugs filed from TestFailures
 
         Fixes <http://webkit.org/b/63348> Bugs filed from TestFailures page should include links to

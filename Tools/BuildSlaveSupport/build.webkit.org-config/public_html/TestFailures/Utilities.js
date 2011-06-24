@@ -85,6 +85,24 @@ function addQueryParametersToURL(url, queryParameters) {
     return url + urlEncodeQueryParameters(queryParameters);
 }
 
+function longestCommonPathPrefix(paths) {
+    const separator = '/';
+
+    var splitPaths = paths.map(function(path) { return path.split(separator) });
+    var firstSplitPath = splitPaths.shift();
+
+    var result = [];
+    for (var i = 0; i < firstSplitPath.length; ++i) {
+        if (!splitPaths.every(function(splitPath) { return splitPath[i] === firstSplitPath[i] }))
+            break;
+        result.push(firstSplitPath[i]);
+    }
+
+    if (!result.length)
+        return null;
+    return result.join(separator);
+}
+
 Array.prototype.findFirst = function(predicate) {
     for (var i = 0; i < this.length; ++i) {
         if (predicate(this[i]))

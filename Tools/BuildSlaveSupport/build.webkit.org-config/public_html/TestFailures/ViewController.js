@@ -295,8 +295,13 @@ ViewController.prototype = {
         var titlePrefix = 'REGRESSION (' + regressionRangeString + '): ';
         var titleSuffix = ' failing on ' + tester.name;
         var title = titlePrefix + failingTests.join(', ') + titleSuffix;
-        if (title.length > Bugzilla.maximumBugTitleLength)
-            title = titlePrefix + failingTests.length + ' tests' + titleSuffix;
+        if (title.length > Bugzilla.maximumBugTitleLength) {
+            var pathPrefix = longestCommonPathPrefix(failingTests);
+            if (pathPrefix)
+                title = titlePrefix + failingTests.length + ' ' + pathPrefix + ' tests' + titleSuffix;
+            if (title.length > Bugzilla.maximumBugTitleLength)
+                title = titlePrefix + failingTests.length + ' tests' + titleSuffix;
+        }
         console.assert(title.length <= Bugzilla.maximumBugTitleLength);
 
         var firstSuspectRevision = parsedPassingBuildName ? parsedPassingBuildName.revision + 1 : parsedFailingBuildName.revision;
