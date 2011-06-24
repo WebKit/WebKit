@@ -665,7 +665,6 @@ BUGCR26734 MAC SKIP : inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
-BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = PASS TEXT
 BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT TIMEOUT
 BUGCR67662 WIN LINUX : http/tests/inspector/console-websocket-error.html = TEXT
 

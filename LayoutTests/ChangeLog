@@ -1,3 +1,10 @@
+2011-06-24  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: uncommenting chromium devtools tests.
+
+        * platform/chromium/inspector/timeline/timeline-layout-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-24  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
