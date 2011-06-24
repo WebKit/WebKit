@@ -1,3 +1,30 @@
+2011-06-24  Henry Song  <hsong@sisa.samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        Correct _sharedTimer value in SharedTimerEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62380
+
+        SharedTimerEfl.cpp set _sharedTimer = 0 is incorrect in 
+        timerEvent(), we have observed addNewTimer() can be triggered 
+        by either inside timerFunction() or others that are not within
+        timerFunction().  We have observed the following case:
+        1. add a new Timer within timerFunction()
+        2. timerFunction returns, set _sharedTimer = 0
+        3. addNewTimer() is triggered again within webkit, don't know
+           it triggers this.
+        4. because at this moment, _sharedTimer == 0, the previous
+           registered timer (in step 1) did not get removed.
+        5. Now in ecore_timer, there are two timers with same callbacks
+        6. From now on, timerFunction() will be called twice back-to-back
+           in each ecore_timer loop.
+        To correct this, we should set _sharedTimer = 0 before
+        timerFunction() so that when addNewTimer() triggered within,
+        we have a valid timer object.
+
+        * platform/efl/SharedTimerEfl.cpp:
+        (WebCore::timerEvent):
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

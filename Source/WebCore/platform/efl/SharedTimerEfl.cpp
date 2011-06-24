@@ -47,10 +47,9 @@ void setSharedTimerFiredFunction(void (*func)())
 
 static Eina_Bool timerEvent(void*)
 {
+    _sharedTimer = 0;
     if (_timerFunction)
         _timerFunction();
-
-    _sharedTimer = 0;
 
     return ECORE_CALLBACK_CANCEL;
 }
