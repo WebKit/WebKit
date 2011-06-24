@@ -1,3 +1,9 @@
+2011-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed, add myself as committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-06-23  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, add myself as committer.
