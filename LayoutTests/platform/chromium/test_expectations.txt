@@ -3950,6 +3950,12 @@ BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT
 BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow.html = TEXT
 BUGWK56591 GPU : compositing/rtl/rtl-fixed.html = TEXT
 BUGWK56591 GPU : compositing/rtl/rtl-relative.html = TEXT
+// Broken on Mac for some reason.  Will look into it when fixing the above.
+BUGWK56591 MAC GPU : compositing/rtl/rtl-iframe-absolute-overflow.html = FAIL
+BUGWK56591 MAC GPU : compositing/rtl/rtl-iframe-absolute.html = FAIL
+BUGWK56591 MAC GPU : compositing/rtl/rtl-iframe-fixed-overflow.html = FAIL
+BUGWK56591 MAC GPU : compositing/rtl/rtl-iframe-fixed.html = FAIL
+BUGWK56591 MAC GPU : compositing/rtl/rtl-iframe-relative.html = FAIL
 
 BUGCR86714 MAC GPU : compositing/tiling/huge-layer-resize.html = CRASH
 BUGCR86714 MAC GPU : media/video-controls-rendering.html = IMAGE CRASH

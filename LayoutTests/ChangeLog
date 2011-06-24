@@ -1,3 +1,10 @@
+2011-06-23  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, mark a few tests failing on OSX after r89632.
+        https://bugs.webkit.org/show_bug.cgi?id=60741
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK Rebaseline after r89627.
