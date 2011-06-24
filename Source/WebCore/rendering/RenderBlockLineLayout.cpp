@@ -258,7 +258,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, const LineInfo& l
             // made, we need to place it at the end of the current line.
             InlineBox* newBox = createInlineBoxForRenderer(obj, obj == this);
             ASSERT(newBox->isInlineFlowBox());
-            parentBox = static_cast<InlineFlowBox*>(newBox);
+            parentBox = toInlineFlowBox(newBox);
             parentBox->setFirstLineStyleBit(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(isHorizontalWritingMode());
             if (!hasDefaultLineBoxContain)
@@ -349,7 +349,7 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
         box->setBidiLevel(r->level());
 
         if (box->isInlineTextBox()) {
-            InlineTextBox* text = static_cast<InlineTextBox*>(box);
+            InlineTextBox* text = toInlineTextBox(box);
             text->setStart(r->m_start);
             text->setLen(r->m_stop - r->m_start);
             text->m_dirOverride = r->dirOverride(visuallyOrdered);
@@ -479,7 +479,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
     
     int hyphenWidth = 0;
-    if (static_cast<InlineTextBox*>(run->m_box)->hasHyphen()) {
+    if (toInlineTextBox(run->m_box)->hasHyphen()) {
         const AtomicString& hyphenString = renderer->style()->hyphenString();
         const Font& font = renderer->style(lineInfo.isFirstLine())->font();
         hyphenWidth = font.width(RenderBlock::constructTextRun(renderer, font, hyphenString.string(), renderer->style()));
@@ -487,14 +487,14 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     run->m_box->setLogicalWidth(renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->m_box->isText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
         ASSERT(it->second.first.isEmpty());
         copyToVector(fallbackFonts, it->second.first);
         run->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
     if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
         ASSERT(run->m_box->isText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
         it->second.second = glyphOverflow;
         run->m_box->clearKnownToHaveNoOverflow();
     }
@@ -517,7 +517,7 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
             
             // Only justify text if whitespace is collapsed.
             if (r->m_object->style()->collapseWhiteSpace()) {
-                InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
+                InlineTextBox* textBox = toInlineTextBox(r->m_box);
                 int expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
                 textBox->setExpansion(expansion);
                 totalLogicalWidth += expansion;
@@ -552,7 +552,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             RenderText* rt = toRenderText(r->m_object);
             if (textAlign == JUSTIFY && r != trailingSpaceRun) {
                 if (!isAfterExpansion)
-                    static_cast<InlineTextBox*>(r->m_box)->setCanHaveLeadingExpansion(true);
+                    toInlineTextBox(r->m_box)->setCanHaveLeadingExpansion(true);
                 unsigned opportunitiesInRun = Font::expansionOpportunityCount(rt->characters() + r->m_start, r->m_stop - r->m_start, r->m_box->direction(), isAfterExpansion);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;

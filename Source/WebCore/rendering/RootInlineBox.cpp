@@ -587,7 +587,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     Vector<const SimpleFontData*>* usedFonts = 0;
     GlyphOverflow* glyphOverflow = 0;
     if (box->isText()) {
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(static_cast<InlineTextBox*>(box));
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(toInlineTextBox(box));
         usedFonts = it == textBoxDataMap.end() ? 0 : &it->second.first;
         glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
     }
@@ -746,7 +746,7 @@ bool RootInlineBox::includeFontForBox(InlineBox* box) const
     if (box->renderer()->isReplaced() || (box->renderer()->isText() && !box->isText()))
         return false;
     
-    if (!box->isText() && box->isInlineFlowBox() && !static_cast<InlineFlowBox*>(box)->hasTextChildren())
+    if (!box->isText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
         return false;
 
     // For now map "glyphs" to "font" in vertical text mode until the bounds returned by glyphs aren't garbage.
@@ -759,7 +759,7 @@ bool RootInlineBox::includeGlyphsForBox(InlineBox* box) const
     if (box->renderer()->isReplaced() || (box->renderer()->isText() && !box->isText()))
         return false;
     
-    if (!box->isText() && box->isInlineFlowBox() && !static_cast<InlineFlowBox*>(box)->hasTextChildren())
+    if (!box->isText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
         return false;
 
     // FIXME: We can't fit to glyphs yet for vertical text, since the bounds returned are garbage.

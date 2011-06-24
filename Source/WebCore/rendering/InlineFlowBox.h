@@ -300,6 +300,21 @@ protected:
 #endif
 };
 
+inline InlineFlowBox* toInlineFlowBox(InlineBox* object)
+{
+    ASSERT(!object || object->isInlineFlowBox());
+    return static_cast<InlineFlowBox*>(object);
+}
+
+inline const InlineFlowBox* toInlineFlowBox(const InlineBox* object)
+{
+    ASSERT(!object || object->isInlineFlowBox());
+    return static_cast<const InlineFlowBox*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toInlineFlowBox(const InlineFlowBox*);
+
 #ifdef NDEBUG
 inline void InlineFlowBox::checkConsistency() const
 {

@@ -1,3 +1,53 @@
+2011-06-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unsafe static_cast inside the InlineBox hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=63077
+
+        Refactoring only, no new test.
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::toInlineFlowBox):
+        * rendering/InlineTextBox.h:
+        (WebCore::toInlineTextBox):
+        Added the proper cast methods to those 2 classes from an InlineBox.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nextLeafChild):
+        (WebCore::InlineBox::prevLeafChild):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::getFlowSpacingLogicalWidth):
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::flipLinesInBlockDirection):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::firstLeafChild):
+        (WebCore::InlineFlowBox::lastLeafChild):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForBox):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::computeExpansionForJustifiedText):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        (WebCore::RenderText::positionLineBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        (WebCore::RootInlineBox::includeFontForBox):
+        (WebCore::RootInlineBox::includeGlyphsForBox):
+        Replaced the static_cast in those previous call sites with the new cast methods.
+
 2011-06-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix.

@@ -523,7 +523,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     if (!inlineBox->isInlineTextBox())
         return IntRect();
 
-    InlineTextBox* box = static_cast<InlineTextBox*>(inlineBox);
+    InlineTextBox* box = toInlineTextBox(inlineBox);
 
     int height = box->root()->selectionHeight();
     int top = box->root()->selectionTop();
@@ -1248,7 +1248,7 @@ InlineTextBox* RenderText::createInlineTextBox()
 
 void RenderText::positionLineBox(InlineBox* box)
 {
-    InlineTextBox* s = static_cast<InlineTextBox*>(box);
+    InlineTextBox* s = toInlineTextBox(box);
 
     // FIXME: should not be needed!!!
     if (!s->len()) {

@@ -4095,7 +4095,7 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     if (!box->isInlineTextBox())
         return createLegacyEditingPosition(box->renderer()->node(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
 
-    InlineTextBox *textBox = static_cast<InlineTextBox *>(box);
+    InlineTextBox* textBox = toInlineTextBox(box);
     return createLegacyEditingPosition(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 

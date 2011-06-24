@@ -282,7 +282,7 @@ InlineBox* InlineBox::nextLeafChild() const
 {
     InlineBox* leaf = 0;
     for (InlineBox* box = nextOnLine(); box && !leaf; box = box->nextOnLine())
-        leaf = box->isLeaf() ? box : static_cast<InlineFlowBox*>(box)->firstLeafChild();
+        leaf = box->isLeaf() ? box : toInlineFlowBox(box)->firstLeafChild();
     if (!leaf && parent())
         leaf = parent()->nextLeafChild();
     return leaf;
@@ -292,7 +292,7 @@ InlineBox* InlineBox::prevLeafChild() const
 {
     InlineBox* leaf = 0;
     for (InlineBox* box = prevOnLine(); box && !leaf; box = box->prevOnLine())
-        leaf = box->isLeaf() ? box : static_cast<InlineFlowBox*>(box)->lastLeafChild();
+        leaf = box->isLeaf() ? box : toInlineFlowBox(box)->lastLeafChild();
     if (!leaf && parent())
         leaf = parent()->prevLeafChild();
     return leaf;

@@ -61,7 +61,7 @@ int InlineFlowBox::getFlowSpacingLogicalWidth()
     int totWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->isInlineFlowBox())
-            totWidth += static_cast<InlineFlowBox*>(curr)->getFlowSpacingLogicalWidth();
+            totWidth += toInlineFlowBox(curr)->getFlowSpacingLogicalWidth();
     }
     return totWidth;
 }
@@ -101,7 +101,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
             m_hasTextChildren = true;
         m_hasTextDescendants = true;
     } else if (child->isInlineFlowBox()) {
-        if (static_cast<InlineFlowBox*>(child)->hasTextDescendants())
+        if (toInlineFlowBox(child)->hasTextDescendants())
             m_hasTextDescendants = true;
     }
 
@@ -127,7 +127,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
             } else {
                 ASSERT(isInlineFlowBox());
-                InlineFlowBox* childFlowBox = static_cast<InlineFlowBox*>(child);
+                InlineFlowBox* childFlowBox = toInlineFlowBox(child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
                 if (!childFlowBox->descendantsHaveSameLineHeightAndBaseline()
                     || !parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
@@ -155,7 +155,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
                    || (child->renderer()->isListMarker() && !toRenderListMarker(child->renderer())->isInside())))
             child->clearKnownToHaveNoOverflow();
         
-        if (knownToHaveNoOverflow() && child->isInlineFlowBox() && !static_cast<InlineFlowBox*>(child)->knownToHaveNoOverflow())
+        if (knownToHaveNoOverflow() && child->isInlineFlowBox() && !toInlineFlowBox(child)->knownToHaveNoOverflow())
             clearKnownToHaveNoOverflow();
     }
 
@@ -333,7 +333,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
     // Recur into our children.
     for (InlineBox* currChild = firstChild(); currChild; currChild = currChild->nextOnLine()) {
         if (currChild->isInlineFlowBox()) {
-            InlineFlowBox* currFlow = static_cast<InlineFlowBox*>(currChild);
+            InlineFlowBox* currFlow = toInlineFlowBox(currChild);
             currFlow->determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
         }
     }
@@ -352,7 +352,7 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isText()) {
-            InlineTextBox* text = static_cast<InlineTextBox*>(curr);
+            InlineTextBox* text = toInlineTextBox(curr);
             RenderText* rt = toRenderText(text->renderer());
             if (rt->textLength()) {
                 if (needsWordSpacing && isSpaceOrNewline(rt->characters()[text->start()]))
@@ -377,7 +377,7 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
                 continue; // The positioned object has no effect on the width.
             }
             if (curr->renderer()->isRenderInline()) {
-                InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
+                InlineFlowBox* flow = toInlineFlowBox(curr);
                 logicalLeft += flow->marginLogicalLeft();
                 if (knownToHaveNoOverflow())
                     minLogicalLeft = min(logicalLeft, minLogicalLeft);
@@ -424,7 +424,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             continue; // Positioned placeholders don't affect calculations.
         
         if (curr->isInlineFlowBox()) {
-            if (static_cast<InlineFlowBox*>(curr)->requiresIdeographicBaseline(textBoxDataMap))
+            if (toInlineFlowBox(curr)->requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
             if (curr->renderer()->style(m_firstLine)->font().primaryFont()->hasVerticalGlyphs())
@@ -432,7 +432,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             
             const Vector<const SimpleFontData*>* usedFonts = 0;
             if (curr->isInlineTextBox()) {
-                GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(static_cast<InlineTextBox*>(curr));
+                GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(toInlineTextBox(curr));
                 usedFonts = it == textBoxDataMap.end() ? 0 : &it->second.first;
             }
 
@@ -471,7 +471,7 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent, i
         }
 
         if (curr->isInlineFlowBox())
-            static_cast<InlineFlowBox*>(curr)->adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
+            toInlineFlowBox(curr)->adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
     }
 }
 
@@ -523,7 +523,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
         if (curr->renderer()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
-        InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? static_cast<InlineFlowBox*>(curr) : 0;
+        InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? toInlineFlowBox(curr) : 0;
         
         bool affectsAscent = false;
         bool affectsDescent = false;
@@ -597,7 +597,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
             continue;
         }
 
-        InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? static_cast<InlineFlowBox*>(curr) : 0;
+        InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? toInlineFlowBox(curr) : 0;
         bool childAffectsTopBottomPos = true;
         if (curr->verticalAlign() == TOP)
             curr->setLogicalTop(top);
@@ -656,7 +656,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
             }
             if (curr->isInlineTextBox()) {
                 TextEmphasisPosition emphasisMarkPosition;
-                if (static_cast<InlineTextBox*>(curr)->getEmphasisMarkPosition(curr->renderer()->style(m_firstLine), emphasisMarkPosition)) {
+                if (toInlineTextBox(curr)->getEmphasisMarkPosition(curr->renderer()->style(m_firstLine), emphasisMarkPosition)) {
                     bool emphasisMarkIsOver = emphasisMarkPosition == TextEmphasisPositionOver;
                     if (emphasisMarkIsOver != curr->renderer()->style(m_firstLine)->isFlippedLinesWritingMode())
                         hasAnnotationsBefore = true;
@@ -713,7 +713,7 @@ void InlineFlowBox::flipLinesInBlockDirection(int lineTop, int lineBottom)
             continue; // Positioned placeholders aren't affected here.
         
         if (curr->isInlineFlowBox())
-            static_cast<InlineFlowBox*>(curr)->flipLinesInBlockDirection(lineTop, lineBottom);
+            toInlineFlowBox(curr)->flipLinesInBlockDirection(lineTop, lineBottom);
         else
             curr->setLogicalTop(lineBottom - (curr->logicalTop() - lineTop) - curr->logicalHeight());
     }
@@ -843,7 +843,7 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
             continue; // Positioned placeholders don't affect calculations.
         
         if (curr->renderer()->isText()) {
-            InlineTextBox* text = static_cast<InlineTextBox*>(curr);
+            InlineTextBox* text = toInlineTextBox(curr);
             RenderText* rt = toRenderText(text->renderer());
             if (rt->isBR())
                 continue;
@@ -851,7 +851,7 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
             addTextBoxVisualOverflow(text, textBoxDataMap, textBoxOverflow);
             logicalVisualOverflow.unite(textBoxOverflow);
         } else  if (curr->renderer()->isRenderInline()) {
-            InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
+            InlineFlowBox* flow = toInlineFlowBox(curr);
             flow->computeOverflow(lineTop, lineBottom, textBoxDataMap);
             if (!flow->boxModelObject()->hasSelfPaintingLayer())
                 logicalVisualOverflow.unite(flow->logicalVisualOverflowRect(lineTop, lineBottom));
@@ -1235,7 +1235,7 @@ InlineBox* InlineFlowBox::firstLeafChild() const
 {
     InlineBox* leaf = 0;
     for (InlineBox* child = firstChild(); child && !leaf; child = child->nextOnLine())
-        leaf = child->isLeaf() ? child : static_cast<InlineFlowBox*>(child)->firstLeafChild();
+        leaf = child->isLeaf() ? child : toInlineFlowBox(child)->firstLeafChild();
     return leaf;
 }
 
@@ -1243,7 +1243,7 @@ InlineBox* InlineFlowBox::lastLeafChild() const
 {
     InlineBox* leaf = 0;
     for (InlineBox* child = lastChild(); child && !leaf; child = child->prevOnLine())
-        leaf = child->isLeaf() ? child : static_cast<InlineFlowBox*>(child)->lastLeafChild();
+        leaf = child->isLeaf() ? child : toInlineFlowBox(child)->lastLeafChild();
     return leaf;
 }
 
@@ -1305,7 +1305,7 @@ int InlineFlowBox::computeOverAnnotationAdjustment(int allowedPosition) const
             continue; // Positioned placeholders don't affect calculations.
         
         if (curr->isInlineFlowBox())
-            result = max(result, static_cast<InlineFlowBox*>(curr)->computeOverAnnotationAdjustment(allowedPosition));
+            result = max(result, toInlineFlowBox(curr)->computeOverAnnotationAdjustment(allowedPosition));
         
         if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun()) {
             RenderRubyRun* rubyRun = toRenderRubyRun(curr->renderer());
@@ -1331,7 +1331,7 @@ int InlineFlowBox::computeOverAnnotationAdjustment(int allowedPosition) const
         if (curr->isInlineTextBox()) {
             RenderStyle* style = curr->renderer()->style(m_firstLine);
             TextEmphasisPosition emphasisMarkPosition;
-            if (style->textEmphasisMark() != TextEmphasisMarkNone && static_cast<InlineTextBox*>(curr)->getEmphasisMarkPosition(style, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
+            if (style->textEmphasisMark() != TextEmphasisMarkNone && toInlineTextBox(curr)->getEmphasisMarkPosition(style, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
                 if (!style->isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = curr->logicalTop() - style->font().emphasisMarkHeight(style->textEmphasisMarkString());
                     result = max(result, allowedPosition - topOfEmphasisMark);
@@ -1353,7 +1353,7 @@ int InlineFlowBox::computeUnderAnnotationAdjustment(int allowedPosition) const
             continue; // Positioned placeholders don't affect calculations.
 
         if (curr->isInlineFlowBox())
-            result = max(result, static_cast<InlineFlowBox*>(curr)->computeUnderAnnotationAdjustment(allowedPosition));
+            result = max(result, toInlineFlowBox(curr)->computeUnderAnnotationAdjustment(allowedPosition));
 
         if (curr->isInlineTextBox()) {
             RenderStyle* style = curr->renderer()->style(m_firstLine);
