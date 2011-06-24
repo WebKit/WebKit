@@ -1,3 +1,27 @@
+2011-06-24  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Darin Adler.
+
+        Change NDEBUG to !LOG_DISABLED macro in databases for logging.
+        https://bugs.webkit.org/show_bug.cgi?id=63346
+
+        Changed NDEBUG to !LOG_DISABLED in databases code which involves logging.
+        This change resolves also build break in Release build when logging enabled.
+
+        No new tests because there is no new behavior or feature exposed.
+
+        * loader/icon/IconDatabase.cpp: Macro fixes.
+        (WebCore::IconDatabase::iconDatabaseSyncThread):
+        (WebCore::IconDatabase::syncThreadMainLoop):
+        (WebCore::IconDatabase::readFromDatabase):
+        (WebCore::IconDatabase::writeToDatabase):
+        (WebCore::IconDatabase::cleanupSyncThread):
+        * storage/AbstractDatabase.h: Macro fixes.
+        * storage/DatabaseTask.cpp: Macro fixes.
+        * storage/DatabaseTask.h: Macro fixes.
+        * storage/SQLTransaction.cpp: Macro fixes.
+        * storage/SQLTransaction.h: Macro fixes.
+
 2011-06-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

@@ -108,7 +108,7 @@ void Database::DatabaseOpenTask::doPerformTask()
     m_success = database()->performOpenAndVerify(m_setVersionInNewDatabase, m_code);
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 const char* Database::DatabaseOpenTask::debugTaskName() const
 {
     return "DatabaseOpenTask";
@@ -128,7 +128,7 @@ void Database::DatabaseCloseTask::doPerformTask()
     database()->close();
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 const char* Database::DatabaseCloseTask::debugTaskName() const
 {
     return "DatabaseCloseTask";
@@ -150,7 +150,7 @@ void Database::DatabaseTransactionTask::doPerformTask()
         m_transaction->database()->inProgressTransactionCompleted();
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 const char* Database::DatabaseTransactionTask::debugTaskName() const
 {
     return "DatabaseTransactionTask";
@@ -172,7 +172,7 @@ void Database::DatabaseTableNamesTask::doPerformTask()
     m_tableNames = database()->performGetTableNames();
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 const char* Database::DatabaseTableNamesTask::debugTaskName() const
 {
     return "DatabaseTableNamesTask";

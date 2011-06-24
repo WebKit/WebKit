@@ -105,7 +105,7 @@ private:
     void deliverTransactionErrorCallback();
     void cleanupAfterTransactionErrorCallback();
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     static const char* debugStepName(TransactionStepMethod);
 #endif
 

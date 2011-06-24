@@ -90,7 +90,7 @@ private:
     Database* m_database;
     DatabaseTaskSynchronizer* m_synchronizer;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     virtual const char* debugTaskName() const = 0;
     bool m_complete;
 #endif
@@ -107,7 +107,7 @@ private:
     DatabaseOpenTask(Database*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, ExceptionCode&, bool& success);
 
     virtual void doPerformTask();
-#ifndef NDEBUG
+#if !LOG_DISABLED
     virtual const char* debugTaskName() const;
 #endif
 
@@ -127,7 +127,7 @@ private:
     DatabaseCloseTask(Database*, DatabaseTaskSynchronizer*);
 
     virtual void doPerformTask();
-#ifndef NDEBUG
+#if !LOG_DISABLED
     virtual const char* debugTaskName() const;
 #endif
 };
@@ -146,7 +146,7 @@ private:
     DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
 
     virtual void doPerformTask();
-#ifndef NDEBUG
+#if !LOG_DISABLED
     virtual const char* debugTaskName() const;
 #endif
 
@@ -164,7 +164,7 @@ private:
     DatabaseTableNamesTask(Database*, DatabaseTaskSynchronizer*, Vector<String>& names);
 
     virtual void doPerformTask();
-#ifndef NDEBUG
+#if !LOG_DISABLED
     virtual const char* debugTaskName() const;
 #endif
 

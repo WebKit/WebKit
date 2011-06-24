@@ -72,7 +72,7 @@ static const int updateTimerDelay = 5;
 
 static bool checkIntegrityOnOpen = false;
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 static String urlForLogging(const String& url)
 {
     static unsigned urlTruncationLength = 120;
@@ -968,7 +968,7 @@ void* IconDatabase::iconDatabaseSyncThread()
     
     LOG(IconDatabase, "(THREAD) IconDatabase sync thread started");
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     double startTime = currentTime();
 #endif
 
@@ -994,7 +994,7 @@ void* IconDatabase::iconDatabaseSyncThread()
     if (shouldStopThreadActivity())
         return syncThreadMainLoop();
         
-#ifndef NDEBUG
+#if !LOG_DISABLED
     double timeStamp = currentTime();
     LOG(IconDatabase, "(THREAD) Open took %.4f seconds", timeStamp - startTime);
 #endif    
@@ -1003,7 +1003,7 @@ void* IconDatabase::iconDatabaseSyncThread()
     if (shouldStopThreadActivity())
         return syncThreadMainLoop();
         
-#ifndef NDEBUG
+#if !LOG_DISABLED
     double newStamp = currentTime();
     LOG(IconDatabase, "(THREAD) performOpenInitialization() took %.4f seconds, now %.4f seconds from thread start", newStamp - timeStamp, newStamp - startTime);
     timeStamp = newStamp;
@@ -1026,7 +1026,7 @@ void* IconDatabase::iconDatabaseSyncThread()
         if (shouldStopThreadActivity())
             return syncThreadMainLoop();
             
-#ifndef NDEBUG
+#if !LOG_DISABLED
         newStamp = currentTime();
         LOG(IconDatabase, "(THREAD) performImport() took %.4f seconds, now %.4f seconds from thread start", newStamp - timeStamp, newStamp - startTime);
         timeStamp = newStamp;
@@ -1043,7 +1043,7 @@ void* IconDatabase::iconDatabaseSyncThread()
     if (shouldStopThreadActivity())
         return syncThreadMainLoop();
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     newStamp = currentTime();
     LOG(IconDatabase, "(THREAD) performURLImport() took %.4f seconds.  Entering main loop %.4f seconds from thread start", newStamp - timeStamp, newStamp - startTime);
 #endif 
@@ -1359,7 +1359,7 @@ void* IconDatabase::syncThreadMainLoop()
     while (!m_threadTerminationRequested) {
         m_syncLock.unlock();
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
         double timeStamp = currentTime();
 #endif
         LOG(IconDatabase, "(THREAD) Main work loop starting");
@@ -1392,7 +1392,7 @@ void* IconDatabase::syncThreadMainLoop()
             // has asked to delay pruning
             static bool prunedUnretainedIcons = false;
             if (didWrite && !m_privateBrowsingEnabled && !prunedUnretainedIcons && !databaseCleanupCounter) {
-#ifndef NDEBUG
+#if !LOG_DISABLED
                 double time = currentTime();
 #endif
                 LOG(IconDatabase, "(THREAD) Starting pruneUnretainedIcons()");
@@ -1411,7 +1411,7 @@ void* IconDatabase::syncThreadMainLoop()
                 break;
         }
         
-#ifndef NDEBUG
+#if !LOG_DISABLED
         double newstamp = currentTime();
         LOG(IconDatabase, "(THREAD) Main work loop ran for %.4f seconds, %s requested to terminate", newstamp - timeStamp, shouldStopThreadActivity() ? "was" : "was not");
 #endif
@@ -1459,7 +1459,7 @@ bool IconDatabase::readFromDatabase()
 {
     ASSERT_ICON_SYNC_THREAD();
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     double timeStamp = currentTime();
 #endif
 
@@ -1568,7 +1568,7 @@ bool IconDatabase::writeToDatabase()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     double timeStamp = currentTime();
 #endif
 
@@ -1773,7 +1773,7 @@ void* IconDatabase::cleanupSyncThread()
 {
     ASSERT_ICON_SYNC_THREAD();
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     double timeStamp = currentTime();
 #endif 
 
@@ -1793,7 +1793,7 @@ void* IconDatabase::cleanupSyncThread()
     deleteAllPreparedStatements();    
     m_syncDB.close();
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     LOG(IconDatabase, "(THREAD) Final closure took %.4f seconds", currentTime() - timeStamp);
 #endif
     
