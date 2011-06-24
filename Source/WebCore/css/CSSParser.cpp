@@ -969,13 +969,17 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyDisplay:
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
-        // table-column-group | table-column | table-cell | table-caption | box | inline-box | none | inherit
+        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
 #if ENABLE(WCSS)
         if ((id >= CSSValueInline && id <= CSSValueWapMarquee) || id == CSSValueNone)
 #else
         if ((id >= CSSValueInline && id <= CSSValueWebkitInlineBox) || id == CSSValueNone)
 #endif
             validPrimitive = true;
+#if ENABLE(CSS3_FLEXBOX)
+        if (id == CSSValueWebkitFlexbox || id == CSSValueWebkitInlineFlexbox)
+            validPrimitive = true;
+#endif
         break;
 
     case CSSPropertyDirection:            // ltr | rtl | inherit

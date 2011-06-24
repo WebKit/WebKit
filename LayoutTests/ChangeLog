@@ -1,3 +1,15 @@
+2011-06-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        add flexbox and inline-flexbox as possible CSS display values
+        https://bugs.webkit.org/show_bug.cgi?id=63361
+
+        * css3/flexbox/display-property-expected.txt: Added.
+        * css3/flexbox/display-property.html: Added.
+        * css3/flexbox/script-tests/display-property.js: Added.
+        (testFlex):
+
 2011-06-24  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.

@@ -1,0 +1,14 @@
+Tests being able to set the display to -webkit-flexbox and -webkit-inline-flexbox.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div.style.display is "-webkit-flexbox"
+PASS div.style.display is "inline"
+PASS div.style.display is "-webkit-inline-flexbox"
+PASS div.style.display is "-webkit-inline-flexbox"
+PASS div.style.display is "block"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
