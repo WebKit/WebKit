@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function ViewController(buildbot, bugzilla) {
+function ViewController(buildbot, bugzilla, trac) {
     this._buildbot = buildbot;
     this._bugzilla = bugzilla;
+    this._trac = trac;
 
     var self = this;
     addEventListener('load', function() { self.loaded() }, false);
@@ -79,12 +80,7 @@ ViewController.prototype = {
                 if (buildIndex + 1 < buildNameArray.length)
                     passingBuildName = buildNameArray[buildIndex + 1];
 
-                var dlItems = [
-                    [document.createTextNode('Failed'), self._domForBuildName(builder, buildName)],
-                ];
-                if (passingBuildName)
-                    dlItems.push([document.createTextNode('Passed'), self._domForBuildName(builder, buildNameArray[buildIndex + 1])]);
-                item.appendChild(createDefinitionList(dlItems));
+                item.appendChild(self._domForRegressionRange(builder, passingBuildName, buildName));
 
                 if (passingBuildName || !stillFetchingData)
                     item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
@@ -143,6 +139,34 @@ ViewController.prototype = {
             document.title = 'Testers';
             document.body.appendChild(list);
         });
+    },
+
+    _domForRegressionRange: function(builder, passingBuildName, failingBuildName) {
+        var result = document.createDocumentFragment();
+
+        var dlItems = [
+            [document.createTextNode('Failed'), this._domForBuildName(builder, failingBuildName)],
+        ];
+        if (passingBuildName)
+            dlItems.push([document.createTextNode('Passed'), this._domForBuildName(builder, passingBuildName)]);
+        result.appendChild(createDefinitionList(dlItems));
+
+        if (!passingBuildName)
+            return result;
+
+        var firstSuspectRevision = this._buildbot.parseBuildName(passingBuildName).revision + 1;
+        var lastSuspectRevision = this._buildbot.parseBuildName(failingBuildName).revision;
+
+        if (firstSuspectRevision === lastSuspectRevision)
+            return result;
+
+        var link = document.createElement('a');
+        result.appendChild(link);
+
+        link.href = this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision);
+        link.appendChild(document.createTextNode('View regression range in Trac'));
+
+        return result;
     },
 
     _domForBuildName: function(builder, buildName) {

@@ -1,3 +1,26 @@
+2011-06-24  Adam Roben  <aroben@apple.com>
+
+        Add links to regression ranges in Trac to the TestFailures page
+
+        Fixes <http://webkit.org/b/61060> <rdar://problem/9452153> TestFailures page should provide
+        links to regression ranges in Trac
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js: Added.
+        (Trac): This new class represents a particular instance of Trac for a single project.
+        (Trac.prototype.logURL): Returns the URL that can be used to see the log of the given
+        repository path between the two specified revisions
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController): Added new trac argument.
+        (ViewController.prototype._displayBuilder): Moved code to create the DOM for the
+        passed/failed builds from here...
+        (ViewController.prototype._domForRegressionRange): ...to here. Now also includes a link to
+        Trac if there are multiple suspect revisions.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        Trac.js and pass a Trac instance for trac.webkit.org to the ViewController.
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.
