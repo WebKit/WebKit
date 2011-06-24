@@ -41,7 +41,7 @@ public:
     virtual bool isShadowBoundary() const { return true; }
     virtual void recalcStyle(StyleChange = NoChange);
 
-    ContainerNode* activeContentContainer();
+    ShadowContentElement* activeContentElement();
     void hostChildrenChanged();
 
     virtual void attach();

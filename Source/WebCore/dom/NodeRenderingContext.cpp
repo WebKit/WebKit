@@ -30,6 +30,7 @@
 #include "Node.h"
 #include "RenderFullScreen.h"
 #include "RenderObject.h"
+#include "ShadowContentElement.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -40,6 +41,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
+    , m_contentElement(0)
     , m_style(0)
 {
     ContainerNode* parent = m_node->parentOrHostNode();
@@ -58,9 +60,9 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         m_visualParentShadowRoot = toElement(parent)->shadowRoot();
 
         if (m_visualParentShadowRoot) {
-            if (ContainerNode* contentContainer = m_visualParentShadowRoot->activeContentContainer()) {
+            if ((m_contentElement = m_visualParentShadowRoot->activeContentElement())) {
                 m_phase = AttachContentForwarded;
-                m_parentNodeForRenderingAndStyle = NodeRenderingContext(contentContainer).parentNodeForRenderingAndStyle();
+                m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_contentElement).parentNodeForRenderingAndStyle();
                 return;
             } 
                 
@@ -79,6 +81,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
+    , m_contentElement(0)
     , m_style(style)
 {
 }
@@ -97,18 +100,44 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
     return m_style.release();
 }
 
+static RenderObject* nextRendererOf(ShadowContentElement* parent, Node* current)
+{
+    size_t currentIndex = parent->inclusionIndexOf(current);
+    if (currentIndex == notFound)
+        return 0;
+
+    for (size_t i = currentIndex + 1; i < parent->inclusionCount(); ++i) {
+        Node* candidate = parent->inclusionAt(i);
+        if (RenderObject* renderer = candidate->renderer())
+            return renderer;
+    }
+
+    return 0;
+}
+
+static RenderObject* previousRendererOf(ShadowContentElement* parent, Node* current)
+{
+    RenderObject* lastRenderer = 0;
+
+    for (size_t i = 0; i < parent->inclusionCount(); ++i) {
+        Node* candidate = parent->inclusionAt(i);
+        if (current == candidate)
+            break;
+        if (RenderObject* renderer = candidate->renderer())
+            lastRenderer = renderer;
+    }
+
+    return lastRenderer;
+}
+
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
     ASSERT(m_node->renderer() || m_location != LocationUndetermined);
     if (RenderObject* renderer = m_node->renderer())
         return renderer->nextSibling();
 
-    if (m_phase == AttachContentForwarded) {
-        // Returns 0 here to insert renderer at the end of child list.
-        // We assume content children are always attached in tree order and
-        // there is no partial render tree creation.
-        return 0;
-    }
+    if (m_phase == AttachContentForwarded)
+        return nextRendererOf(m_contentElement, m_node);
 
     // Avoid an O(n^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
@@ -129,14 +158,8 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
 
-    if (m_phase == AttachContentForwarded) {
-        // Returns lastChild() here to insert renderer at the end of child list.
-        // We assume content children are always attached in tree order and
-        // there is no partial render tree creation.
-        if (RenderObject* parent = parentRenderer())
-            return parent->lastChild();
-        return 0;
-    }
+    if (m_phase == AttachContentForwarded)
+        return previousRendererOf(m_contentElement, m_node);
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.

@@ -14,9 +14,11 @@ layer at (0,0) size 800x600
               text run at (0,0) width 64: "Details1"
           RenderText {#text} at (64,0) size 4x19
             text run at (64,0) width 4: " "
+          RenderText {#text} at (0,0) size 0x0
           RenderBlock {SPAN} at (68,4) size 64x15
             RenderText {#text} at (0,0) size 64x15
               text run at (0,0) width 64: "Details2"
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,38) size 784x32
         RenderButton {INPUT} at (2,2) size 48x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 32x19

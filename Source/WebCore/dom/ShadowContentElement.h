@@ -49,6 +49,7 @@ public:
 
     Node* inclusionAt(size_t) const;
     size_t inclusionCount() const;
+    size_t inclusionIndexOf(Node*) const;
 
 protected:
     ShadowContentElement(const QualifiedName&, Document*);
@@ -69,6 +70,11 @@ inline Node* ShadowContentElement::inclusionAt(size_t index) const
 inline size_t ShadowContentElement::inclusionCount() const
 {
     return m_inclusions.size();
+}
+
+inline size_t ShadowContentElement::inclusionIndexOf(Node* node) const
+{
+    return m_inclusions.find(node);
 }
 
 inline ShadowContentElement* toShadowContentElement(Node* node)

@@ -94,7 +94,7 @@ void ShadowRoot::recalcStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-ContainerNode* ShadowRoot::activeContentContainer()
+ShadowContentElement* ShadowRoot::activeContentElement()
 {
     ShadowContentSelector* selector = ShadowContentSelector::currentInstance();
     if (!selector || selector->shadowRoot() != this)

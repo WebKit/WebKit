@@ -1,3 +1,35 @@
+2011-06-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [ShadowContentElement] should layout child whitespace between span.
+        https://bugs.webkit.org/show_bug.cgi?id=62202
+
+        NodeRenderingContext::nextRenderer() and previousRenderer()
+        ignored forwarded content tree hierarchies and used render-object
+        hierarchies instead, that caused some wrong Text node rendering.
+        
+        This change uses ShadowContentElement::m_inclusions for the lookup.
+        In this way, these methods can reflect hierarchies of forward light tree.
+        
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::nextRendererOf): Added. This traverses content element's children for searching neighboring renderer.
+        (WebCore::previousRendererOf): Added. This traverses content element's children for searching neighboring renderer.
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        * dom/NodeRenderingContext.h:
+        * dom/ShadowContentElement.h:
+        (ShadowContentElement::inclusionIndexOf): Added.
+        * dom/ShadowContentSelector.cpp:
+        (WebCore::ShadowContentSelector::activeElement):
+        * dom/ShadowContentSelector.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::activeContentElement):
+        * dom/ShadowRoot.h:
+        * rendering/RenderTreeAsText.cpp: 
+        (WebCore::externalRepresentation): Fixed an apparent bug introduced at r89230.
+
 2011-05-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

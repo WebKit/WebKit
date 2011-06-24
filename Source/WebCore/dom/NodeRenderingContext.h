@@ -36,6 +36,7 @@ class Document;
 class Node;
 class RenderObject;
 class RenderStyle;
+class ShadowContentElement;
 class ShadowRoot;
 
 class NodeRenderingContext {
@@ -78,6 +79,7 @@ private:
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
+    ShadowContentElement* m_contentElement;
     RefPtr<RenderStyle> m_style;
 };
 

@@ -79,7 +79,7 @@ void ShadowContentSelector::didAttachContent()
     m_activeElement = 0;
 }
 
-Element* ShadowContentSelector::activeElement() const
+ShadowContentElement* ShadowContentSelector::activeElement() const
 {
     return m_activeElement;
 }

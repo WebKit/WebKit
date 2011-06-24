@@ -40,6 +40,7 @@ class Element;
 class Node;
 class ShadowRoot;
 class ShadowContentElement;
+class RenderObject;
 
 class ShadowContentSelector {
     WTF_MAKE_NONCOPYABLE(ShadowContentSelector);
@@ -52,8 +53,7 @@ public:
     void selectInclusion(Vector<RefPtr<Node> >& inclusions);
 
     ShadowRoot* shadowRoot() const { return m_shadowRoot; }
-    Element* activeElement() const;
-
+    ShadowContentElement* activeElement() const;
     static ShadowContentSelector* currentInstance() { return s_currentInstance; }
 
 private:

@@ -760,7 +760,7 @@ static String externalRepresentation(RenderBox* renderer, RenderAsTextBehavior b
 {
     TextStream ts;
     if (!renderer->hasLayer())
-        ts.release();
+        return ts.release();
         
     RenderLayer* layer = renderer->layer();
     writeLayers(ts, layer, layer, layer->rect(), 0, behavior);
