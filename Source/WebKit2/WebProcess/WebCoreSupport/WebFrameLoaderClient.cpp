@@ -1121,8 +1121,8 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
     WebPage* webPage = m_frame->page();
     bool isMainFrame = webPage->mainFrame() == m_frame;
     
-    const String& mimeType = m_frame->coreFrame()->loader()->documentLoader()->response().mimeType();
-    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForMIMEType(mimeType);
+    const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
+    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForResponse(response);
 }
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
@@ -1144,8 +1144,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // The HistoryController will update the scroll position later if needed.
     m_frame->coreFrame()->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
 #else
-    const String& mimeType = m_frame->coreFrame()->loader()->documentLoader()->response().mimeType();
-    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForMIMEType(mimeType);
+    const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
+    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForResponse(response);
 
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, IntSize(), false);
 #endif

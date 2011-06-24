@@ -1,3 +1,30 @@
+2011-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Not possible for plug-ins to override the internal PDF viewer
+        https://bugs.webkit.org/show_bug.cgi?id=63356
+        <rdar://problem/9673382>
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Pass the entire resource response to shouldUseCustomRepresentationForResponse.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::canPluginHandleResponse):
+        Ask for the plug-in path for a plug-in that can handle the given resource response.
+        If we fail to send the message, or if the path comes back empty, we assume that there's no plug-in
+        that can handle it.
+
+        (WebKit::WebProcess::shouldUseCustomRepresentationForResponse):
+        If the response MIME type is in the m_mimeTypesWithCustomRepresentations map, check if there's
+        a plug-in that can handle the given response. If that is the case, it should have precedence over
+        the custom representation.
+
+        * WebProcess/WebProcess.h:
+        Rename shouldUseCustomRepresentationForMIMEType to shouldUseCustomRepresentationForResponse.
+
 2011-06-24  Adam Roben  <aroben@apple.com>
 
         Mac build fix after r89685

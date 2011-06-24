@@ -721,6 +721,25 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
     return result.first->second.get();
 }
 
+static bool canPluginHandleResponse(const ResourceResponse& response)
+{
+    String pluginPath;
+
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebContext::GetPluginPath::Reply(pluginPath), 0))
+        return false;
+
+    return !pluginPath.isEmpty();
+}
+
+bool WebProcess::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const
+{
+    if (!m_mimeTypesWithCustomRepresentations.contains(response.mimeType()))
+        return false;
+
+    // If a plug-in exists that claims to support this response, it should take precedence over the custom representation.
+    return !canPluginHandleResponse(response);
+}
+
 void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)
 {
     platformClearResourceCaches(resourceCachesToClear);
