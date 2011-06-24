@@ -31,6 +31,7 @@
 
 import os
 import os.path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -90,6 +91,7 @@ def run_tests(generator, input_directory, reference_directory, reset_results):
         # Detect changes
         if detect_changes(work_directory, reference_directory):
             passed = False
+        shutil.rmtree(work_directory)
 
     if not passed:
         print '%s generator failed.' % generator
