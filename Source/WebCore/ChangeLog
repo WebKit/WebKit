@@ -1,3 +1,15 @@
+2011-06-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: HTML preview should delete old iframe on show().
+        https://bugs.webkit.org/show_bug.cgi?id=63170
+
+        * inspector/front-end/ResourceHTMLView.js:
+        (WebInspector.ResourceHTMLView.prototype._createIFrame):
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype.contentLoaded):
+
 2011-06-24  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

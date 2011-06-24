@@ -47,8 +47,9 @@ WebInspector.ResourcePreviewView.prototype = {
                 this._emptyView.detach();
                 delete this._emptyView;
             }
-            var view = this._createInnerView();
-            view.show(this.element);
+            if (!this._view)
+                this._view = this._createInnerView();
+            this._view.show(this.element);
         }
     },
 
