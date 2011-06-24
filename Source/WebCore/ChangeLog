@@ -1,3 +1,25 @@
+2011-06-23  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Shorten DOMWindow URLs in heap profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=63238
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype.hasHoverMessage.false.hoverMessage):
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.hoverMessage):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype._updateHasChildren):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.isDOMWindow):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext.pathFound):
+        (WebInspector.DetailedHeapshotView.prototype._getHoverAnchor):
+        (WebInspector.DetailedHeapshotView.prototype._showStringContentPopup.displayString):
+        (WebInspector.DetailedHeapshotView.prototype._showStringContentPopup):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-06-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

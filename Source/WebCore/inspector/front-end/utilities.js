@@ -451,6 +451,15 @@ String.prototype.collapseWhitespace = function()
     return this.replace(/[\s\xA0]+/g, " ");
 }
 
+String.prototype.trimMiddle = function(maxLength)
+{
+    if (this.length <= maxLength)
+        return this;
+    var leftHalf = maxLength >> 1;
+    var rightHalf = maxLength - leftHalf - 1;
+    return this.substr(0, leftHalf) + "\u2026" + this.substr(this.length - rightHalf, rightHalf);
+}
+
 String.prototype.trimURL = function(baseURLDomain)
 {
     var result = this.replace(/^(https|http|file):\/\//i, "");

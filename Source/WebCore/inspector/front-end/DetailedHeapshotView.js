@@ -420,6 +420,8 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
                     this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Can't find any paths."), len:""}, false));
                 return;
             } else if (result !== false) {
+                if (WebInspector.HeapSnapshotGenericObjectNode.prototype.isDOMWindow(result.path))
+                    result.path = WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL(result.path, true);
                 if (this._prefix)
                     result.path = this._prefix + result.path;
                 var node = new WebInspector.DataGridNode(result, false);
@@ -997,15 +999,15 @@ WebInspector.DetailedHeapshotView.prototype = {
     _getHoverAnchor: function(target)
     {
         var span = target.enclosingNodeOrSelfWithNodeName("span");
-        if (!span || !span.hasStyleClass("console-formatted-string"))
+        if (!span)
             return;
         var row = target.enclosingNodeOrSelfWithNodeName("tr");
         if (!row)
             return;
         var gridNode = row._dataGridNode;
-        if (!gridNode.snapshotNodeIndex)
+        if (!gridNode.hasHoverMessage)
             return;
-        span.snapshotNodeIndex = gridNode.snapshotNodeIndex;
+        span.node = gridNode;
         return span;
     },
 
@@ -1031,18 +1033,17 @@ WebInspector.DetailedHeapshotView.prototype = {
     _showStringContentPopup: function(span)
     {
         var stringContentElement = document.createElement("span");
-        stringContentElement.className = "monospace console-formatted-string";
+        stringContentElement.className = "monospace";
         stringContentElement.style.whiteSpace = "pre";
 
         var popover = new WebInspector.Popover(stringContentElement);
-        function displayString(names)
+        function displayString(name, className)
         {
-            if (names.length > 0) {
-                stringContentElement.textContent = "\"" + names[0] + "\"";          
-                popover.show(span);
-            }
+            stringContentElement.textContent = name;
+            stringContentElement.className += " " + className;
+            popover.show(span);
         }
-        this.profileWrapper.nodeFieldValuesByIndex("name", [span.snapshotNodeIndex], displayString);
+        span.node.hoverMessage(displayString);
         return popover;
     },
 

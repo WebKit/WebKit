@@ -54,6 +54,13 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 node.dispose();
     },
 
+    hasHoverMessage: false,
+
+    hoverMessage: function(callback)
+    {
+        callback("");
+    },
+
     _populate: function(event)
     {
         this.removeEventListener("populate", this._populate, this);
@@ -179,6 +186,14 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     this._retainedSize = node.retainedSize;
     this.snapshotNodeId = node.id;
     this.snapshotNodeIndex = node.nodeIndex;
+    if (this._type === "string")
+        this.hasHoverMessage = true;
+    else if (this._type === "object" && this.isDOMWindow(this._name)) {
+        var url = [];
+        this._name = this.shortenWindowURL(this._name, false, url);
+        this._url = url[0];
+        this.hasHoverMessage = true;
+    }
 };
 
 WebInspector.HeapSnapshotGenericObjectNode.prototype = {
@@ -254,6 +269,14 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         return this._enhanceData ? this._enhanceData(data) : data;
     },
 
+    hoverMessage: function(callback)
+    {
+        if (this._type === "string")
+            callback("\"" + this._name + "\"", "console-formatted-string");
+        else if (this._url)
+            callback(this._url, "console-formatted-object");
+    },
+
     get _retainedSizePercent()
     {
         return this._retainedSize / this.dataGrid.snapshot.totalSize * 100.0;
@@ -271,6 +294,27 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             this.hasChildren = !isEmpty;
         }
         this._provider.isEmpty(isEmptyCallback.bind(this));
+    },
+
+    isDOMWindow: function(fullName)
+    {
+        return fullName.substr(0, 9) === "DOMWindow";
+    },
+
+    shortenWindowURL: function(fullName, hasObjectId, fullURLPtr)
+    {
+        var startPos = fullName.indexOf("/");
+        var endPos = hasObjectId ? fullName.indexOf("@") : fullName.length;
+        if (startPos !== -1 && endPos !== -1) {
+            var fullURL = fullName.substring(startPos + 1, endPos).trimLeft();
+            if (fullURLPtr)
+                fullURLPtr[0] = fullURL;
+            var url = fullURL.trimURL();
+            if (url.length > 40)
+                url = url.trimMiddle(40);
+            return fullName.substr(0, startPos + 2) + url + fullName.substr(endPos);
+        } else
+            return fullName;
     }
 }
 
