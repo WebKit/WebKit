@@ -1,3 +1,53 @@
+2011-06-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        Add BeforeChildren and AfterChildren to the Position's anchor types
+        https://bugs.webkit.org/show_bug.cgi?id=63100
+
+        Added PositionIsBeforeChildren and PositionIsAfterChildren to Position::AnchorType and deployed them in
+        firstPositionInNode and lastPositionInNode.
+
+        These new types of positions will let us express the first and the last positions in a non-text node in O(1).
+
+        No new tests because there is no new behavior or feature exposed.
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Assert that the anchor type is not BeforeChildren and AfterChildren for text nodes.
+        (WebCore::Position::containerNode): For BeforeChildren and AfterChildren, the anchor node is the container node.
+        (WebCore::Position::computeOffsetInContainerNode): The offset in the container node is 0 for BeforeChildren and
+        the offset in the anchor node for AfterChildren.
+        (WebCore::Position::offsetForPositionAfterAnchor): Called by deprecatedNode; the anchor type could be AfterChildren.
+        (WebCore::Position::parentAnchoredEquivalent): If the anchor node is before or after children, then do the trick
+        for table and ignored contents like before or after anchor.
+        (WebCore::Position::computeNodeBeforePosition): Returns null for BeforeChildren and returns the last child of
+        the anchor node for AfterChildren.
+        (WebCore::Position::computeNodeAfterPosition): Returns the first child of the anchor node for BeforeChildren
+        (WebCore::Position::atFirstEditingPositionForNode): A position is at the last editing position if the anchor type
+        is BeforeChildren, or the anchor type is AfterChildren or AfterAnchor and the anchor doesn't have any children.
+        (WebCore::Position::atLastEditingPositionForNode): A position is at the last editing position if the anchor type
+        is AfterChildren.
+        (WebCore::Position::showAnchorTypeAndOffset): Supports BeforeChildren and AfterChildren.
+        * dom/Position.h:
+        (WebCore::Position::deprecatedEditingOffset): Returns m_offset if the anchor type is BeforeChildren.
+        (WebCore::firstPositionInNode): Returns a position in offset for a text node. Otherwise returns BeforeChildren.
+        (WebCore::lastPositionInNode): Returns a position in offset for a text node. Otherwise returns AfterChildren.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan): Since the anchor node was a text node,
+        the anchor type shouldn't be BeforeChildren or AfterChildren.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::updatePositionForNodeRemoval): Supports BeforeChildren and AfterChildren.
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Calls updatePositionForNodeRemoval on m_downstremEnd
+        when its anchor node is removed instead of manually updating the offset; also avoid calling moveToOffset
+        on BeforeChildren or AfterChildren position.
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange): Since lastParagraphInBlockNode is used to insert a placeholder
+        after paragraphs below the block is moved into, it needs to be the position after the current last child in
+        the block instead of after children in the block; otherwise the position will move to the end of block.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter): Since the container node is never a text for position before/after
+        children or before/after anchor, just return null for these anchor types.
+
 2011-06-24  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

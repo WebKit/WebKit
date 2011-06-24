@@ -54,8 +54,10 @@ class Position {
 public:
     enum AnchorType {
         PositionIsOffsetInAnchor,
+        PositionIsBeforeAnchor,
         PositionIsAfterAnchor,
-        PositionIsBeforeAnchor
+        PositionIsBeforeChildren,
+        PositionIsAfterChildren,
     };
 
     Position()
@@ -107,7 +109,7 @@ public:
     // New code should not use this function.
     int deprecatedEditingOffset() const
     {
-        if (m_isLegacyEditingPosition || m_anchorType != PositionIsAfterAnchor)
+        if (m_isLegacyEditingPosition || (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren))
             return m_offset;
         return offsetForPositionAfterAnchor();
     }
@@ -204,7 +206,7 @@ private:
     // returns true, then other places in editing will treat m_offset == 0 as "before the anchor"
     // and m_offset > 0 as "after the anchor node".  See parentAnchoredEquivalent for more info.
     int m_offset;
-    unsigned m_anchorType : 2;
+    unsigned m_anchorType : 3;
     bool m_isLegacyEditingPosition : 1;
 };
 
@@ -265,12 +267,16 @@ inline int lastOffsetInNode(Node* node)
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to childNodeCount()
 inline Position firstPositionInNode(Node* anchorNode)
 {
-    return Position(anchorNode, 0, Position::PositionIsOffsetInAnchor);
+    if (anchorNode->isTextNode())
+        return Position(anchorNode, 0, Position::PositionIsOffsetInAnchor);
+    return Position(anchorNode, Position::PositionIsBeforeChildren);
 }
 
 inline Position lastPositionInNode(Node* anchorNode)
 {
-    return Position(anchorNode, lastOffsetInNode(anchorNode), Position::PositionIsOffsetInAnchor);
+    if (anchorNode->isTextNode())
+        return Position(anchorNode, lastOffsetInNode(anchorNode), Position::PositionIsOffsetInAnchor);
+    return Position(anchorNode, Position::PositionIsAfterChildren);
 }
 
 } // namespace WebCore

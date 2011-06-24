@@ -91,6 +91,7 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
 {
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
     ASSERT(anchorType != PositionIsOffsetInAnchor);
+    ASSERT(!((anchorType == PositionIsBeforeChildren || anchorType == PositionIsAfterChildren) && m_anchorNode->isTextNode()));
 }
 
 Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorType)
@@ -135,6 +136,8 @@ Node* Position::containerNode() const
         return 0;
 
     switch (anchorType()) {
+    case PositionIsBeforeChildren:
+    case PositionIsAfterChildren:
     case PositionIsOffsetInAnchor:
         return m_anchorNode.get();
     case PositionIsBeforeAnchor:
@@ -151,6 +154,10 @@ int Position::computeOffsetInContainerNode() const
         return 0;
 
     switch (anchorType()) {
+    case PositionIsBeforeChildren:
+        return 0;
+    case PositionIsAfterChildren:
+        return lastOffsetInNode(m_anchorNode.get());
     case PositionIsOffsetInAnchor:
         return std::min(lastOffsetInNode(m_anchorNode.get()), m_offset);
     case PositionIsBeforeAnchor:
@@ -164,7 +171,7 @@ int Position::computeOffsetInContainerNode() const
 
 int Position::offsetForPositionAfterAnchor() const
 {
-    ASSERT(m_anchorType == PositionIsAfterAnchor);
+    ASSERT(m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren);
     ASSERT(!m_isLegacyEditingPosition);
     return lastOffsetForEditing(m_anchorNode.get());
 }
@@ -177,12 +184,13 @@ Position Position::parentAnchoredEquivalent() const
         return Position();
     
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
-    if (m_offset <= 0 && m_anchorType != PositionIsAfterAnchor) {
+    if (m_offset <= 0 && (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren)) {
         if (m_anchorNode->nonShadowBoundaryParentNode() && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get())))
             return positionInParentBeforeNode(m_anchorNode.get());
-        return firstPositionInOrBeforeNode(m_anchorNode.get());
+        return Position(m_anchorNode.get(), 0, PositionIsOffsetInAnchor);
     }
-    if (!m_anchorNode->offsetInCharacters() && (m_anchorType == PositionIsAfterAnchor || static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount())
+    if (!m_anchorNode->offsetInCharacters()
+        && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount())
         && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get()))
         && containerNode()) {
         return positionInParentAfterNode(m_anchorNode.get());
@@ -197,6 +205,10 @@ Node* Position::computeNodeBeforePosition() const
         return 0;
 
     switch (anchorType()) {
+    case PositionIsBeforeChildren:
+        return 0;
+    case PositionIsAfterChildren:
+        return m_anchorNode->lastChild();
     case PositionIsOffsetInAnchor:
         return m_anchorNode->childNode(m_offset - 1); // -1 converts to childNode((unsigned)-1) and returns null.
     case PositionIsBeforeAnchor:
@@ -214,6 +226,10 @@ Node* Position::computeNodeAfterPosition() const
         return 0;
 
     switch (anchorType()) {
+    case PositionIsBeforeChildren:
+        return m_anchorNode->firstChild();
+    case PositionIsAfterChildren:
+        return 0;
     case PositionIsOffsetInAnchor:
         return m_anchorNode->childNode(m_offset);
     case PositionIsBeforeAnchor:
@@ -340,14 +356,29 @@ bool Position::atFirstEditingPositionForNode() const
 {
     if (isNull())
         return true;
-    return m_anchorType == PositionIsBeforeAnchor || m_offset <= 0;
+    // FIXME: Position before anchor shouldn't be considered as at the first editing position for node
+    // since that position resides outside of the node.
+    switch (m_anchorType) {
+    case PositionIsOffsetInAnchor:
+        return m_offset <= 0;
+    case PositionIsBeforeChildren:
+    case PositionIsBeforeAnchor:
+        return true;
+    case PositionIsAfterChildren:
+    case PositionIsAfterAnchor:
+        return !lastOffsetForEditing(deprecatedNode());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool Position::atLastEditingPositionForNode() const
 {
     if (isNull())
         return true;
-    return m_anchorType == PositionIsAfterAnchor || m_offset >= lastOffsetForEditing(deprecatedNode());
+    // FIXME: Position after anchor shouldn't be considered as at the first editing position for node
+    // since that position resides outside of the node.
+    return m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || m_offset >= lastOffsetForEditing(deprecatedNode());
 }
 
 // A position is considered at editing boundary if one of the following is true:
@@ -1269,11 +1300,17 @@ void Position::showAnchorTypeAndOffset() const
     case PositionIsOffsetInAnchor:
         fputs("offset", stderr);
         break;
-    case PositionIsAfterAnchor:
-        fputs("after", stderr);
+    case PositionIsBeforeChildren:
+        fputs("beforeChildren", stderr);
+        break;
+    case PositionIsAfterChildren:
+        fputs("afterChildren", stderr);
         break;
     case PositionIsBeforeAnchor:
         fputs("before", stderr);
+        break;
+    case PositionIsAfterAnchor:
+        fputs("after", stderr);
         break;
     }
     fprintf(stderr, ", offset:%d\n", m_offset);

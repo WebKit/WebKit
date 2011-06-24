@@ -319,6 +319,14 @@ static void updatePositionForNodeRemoval(Node* node, Position& position)
     if (position.isNull())
         return;
     switch (position.anchorType()) {
+    case Position::PositionIsBeforeChildren:
+        if (position.containerNode() == node)
+            position = positionInParentBeforeNode(node);
+        break;
+    case Position::PositionIsAfterChildren:
+        if (position.containerNode() == node)
+            position = positionInParentAfterNode(node);
+        break;
     case Position::PositionIsOffsetInAnchor:
         if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->nodeIndex())
             position.moveToOffset(position.offsetInContainerNode() - 1);
@@ -498,11 +506,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 RefPtr<Node> nextNode = node->traverseNextSibling();
                 // if we just removed a node from the end container, update end position so the
                 // check above will work
-                if (node->parentNode() == m_downstreamEnd.deprecatedNode()) {
-                    ASSERT(m_downstreamEnd.deprecatedEditingOffset());
-                    ASSERT(node->nodeIndex() < (unsigned)m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd.moveToOffset(m_downstreamEnd.deprecatedEditingOffset() - 1);
-                }
+                updatePositionForNodeRemoval(node.get(), m_downstreamEnd);
                 removeNode(node.get());
                 node = nextNode.get();
             } else {
@@ -542,7 +546,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                             offset = n->nodeIndex() + 1;
                     }
                     removeChildrenInRange(m_downstreamEnd.deprecatedNode(), offset, m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd.moveToOffset(offset);
+                    m_downstreamEnd = createLegacyEditingPosition(m_downstreamEnd.deprecatedNode(), offset);
                 }
             }
         }

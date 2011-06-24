@@ -373,10 +373,18 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     if (!isTabSpanTextNode(pos.anchorNode()))
         return pos;
 
-    if (pos.anchorType() == Position::PositionIsAfterAnchor)
-        return positionInParentAfterNode(pos.anchorNode());
-    if (pos.anchorType() == Position::PositionIsBeforeAnchor)
+    switch (pos.anchorType()) {
+    case Position::PositionIsBeforeChildren:
+    case Position::PositionIsAfterChildren:
+        ASSERT_NOT_REACHED();
+        return pos;
+    case Position::PositionIsOffsetInAnchor:
+        break;
+    case Position::PositionIsBeforeAnchor:
         return positionInParentBeforeNode(pos.anchorNode());
+    case Position::PositionIsAfterAnchor:
+        return positionInParentAfterNode(pos.anchorNode());
+    }
 
     Node* tabSpan = tabSpanNode(pos.containerNode());
 
