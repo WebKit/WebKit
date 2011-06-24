@@ -1086,6 +1086,7 @@ SET(WebCore_SOURCES
     platform/graphics/ShadowBlur.cpp
     platform/graphics/SimpleFontData.cpp
     platform/graphics/StringTruncator.cpp
+    platform/graphics/SurrogatePairAwareTextIterator.cpp
     platform/graphics/WidthIterator.cpp
 
     platform/graphics/filters/DistantLightSource.cpp

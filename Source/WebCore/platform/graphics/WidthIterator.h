@@ -46,7 +46,6 @@ struct WidthIterator {
     const Font* m_font;
 
     const TextRun& m_run;
-    int m_end;
 
     unsigned m_currentCharacter;
     float m_runWidthSoFar;
@@ -55,8 +54,6 @@ struct WidthIterator {
     bool m_isAfterExpansion;
 
 private:
-    UChar32 normalizeVoicingMarks(int currentCharacter);
-
     HashSet<const SimpleFontData*>* m_fallbackFonts;
     bool m_accountForGlyphBounds;
     float m_maxGlyphBoundingBoxY;

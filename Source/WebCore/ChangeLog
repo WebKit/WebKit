@@ -1,3 +1,41 @@
+2011-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Refactor text iterator code respecting surrogate pairs from WidthIterator
+        https://bugs.webkit.org/show_bug.cgi?id=63319
+
+        WidthIterator contains a surrogate pair aware text iterator that is needed in other parts of WebCore.
+        Refactor the code into its own SurrogatePairAwareTextIterator class. It can be used like this:
+
+        UChar32 character = 0;
+        unsigned clusterLength = 0;
+
+        SurrogatePairAwareTextIterator textIterator(myString.characters(), 0, myString.length(), myString.length());
+        while (textIterator.consume(character, clusterLength)) {
+            // Either clusterLength is 1 and UChar32 fits into a single UChar.
+            // Or     clusterLength is 2 and the UChar32 has been computed by combining the high & low surrogate pairs
+            ...
+        
+            textIterator.advance(clusterLength);
+        }
+
+        SVGGlyphMap is the next candidate that wants to make use of SurrogatePairAwareTextIterator.
+        Doesn't affect any tests, just refactoring.
+
+        * CMakeLists.txt: Add SurrogatePairAwareTextIterator.* to build.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp: Copied from platform/graphics/WidthIterator.cpp.
+        * platform/graphics/SurrogatePairAwareTextIterator.h: Added.
+        (WebCore::SurrogatePairAwareTextIterator::currentCharacter):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/WidthIterator.h:
+
 2011-06-24  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.

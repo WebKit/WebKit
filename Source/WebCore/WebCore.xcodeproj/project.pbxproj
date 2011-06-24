@@ -118,6 +118,8 @@
 		087281570F26B9B600AFC596 /* OptionGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087281530F26B9B600AFC596 /* OptionGroupElement.cpp */; };
 		087281580F26B9B600AFC596 /* OptionGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281540F26B9B600AFC596 /* OptionGroupElement.h */; };
 		0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0873B86A136064EA00A522C2 /* GlyphPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		087558C513B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087558C313B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp */; };
+		087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		087B84961272CEC800A14417 /* SVGAnimatedAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 087B84951272CEC700A14417 /* SVGAnimatedAngle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		087E0AF613606D0B00FA4BA8 /* SVGGlyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */; };
 		087E0AF713606D0B00FA4BA8 /* SVGGlyph.h in Headers */ = {isa = PBXBuildFile; fileRef = 087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6487,6 +6489,8 @@
 		087281530F26B9B600AFC596 /* OptionGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionGroupElement.cpp; sourceTree = "<group>"; };
 		087281540F26B9B600AFC596 /* OptionGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionGroupElement.h; sourceTree = "<group>"; };
 		0873B86A136064EA00A522C2 /* GlyphPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphPage.h; sourceTree = "<group>"; };
+		087558C313B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SurrogatePairAwareTextIterator.cpp; sourceTree = "<group>"; };
+		087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurrogatePairAwareTextIterator.h; sourceTree = "<group>"; };
 		087B84951272CEC700A14417 /* SVGAnimatedAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedAngle.h; sourceTree = "<group>"; };
 		087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGlyph.cpp; sourceTree = "<group>"; };
 		087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyph.h; sourceTree = "<group>"; };
@@ -18049,6 +18053,8 @@
 				B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
+				087558C313B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp */,
+				087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */,
 				087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */,
 				087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */,
 				930FC6891072B9280045293E /* TextRenderingMode.h */,
@@ -23064,6 +23070,7 @@
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				43B9336913B261B1004584BF /* SVGAnimatedPointList.h in Headers */,
 				43A625F813B3304000AC94B8 /* SVGAnimatedColor.h in Headers */,
+				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25827,6 +25834,7 @@
 				43B9336A13B261B1004584BF /* SVGAnimatedPointList.cpp in Sources */,
 				43A625F913B3304000AC94B8 /* SVGAnimatedColor.cpp in Sources */,
 				43A6266713B3D11000AC94B8 /* SVGAnimatedString.cpp in Sources */,
+				087558C513B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

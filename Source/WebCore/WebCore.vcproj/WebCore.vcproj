@@ -31345,6 +31345,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\SurrogatePairAwareTextIterator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\SurrogatePairAwareTextIterator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextBoundaries.cpp"
 					>
 				</File>
