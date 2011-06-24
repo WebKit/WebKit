@@ -90,6 +90,7 @@ Libraries_libTestRunnerInjectedBundle_la_CPPFLAGS = \
 	-I$(srcdir)/Tools/WebKitTestRunner \
 	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle \
 	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings \
+	-I$(srcdir)/Source/WebCore/testing/js \
 	-I$(top_builddir)/DerivedSources/InjectedBundle \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \

@@ -1,3 +1,9 @@
+2011-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build.
+
+        * WebKitTestRunner/GNUmakefile.am:
+
 2011-06-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed, add myself as committer.
