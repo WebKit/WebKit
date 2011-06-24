@@ -1,3 +1,16 @@
+2011-06-24  Jessie Berlin  <jberlin@apple.com>
+
+        fast/css/font-face-in-shadow-DOM.html is flaky on Chromium, failing on Win XP Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=63115
+
+        Better solution: this test appears to give different results depending on what other test
+        is run before it, so just disable it.
+
+        * fast/css/font-face-in-shadow-DOM.html: Removed.
+        * fast/css/font-face-in-shadow-DOM.html-disabled: Copied from fast/css/font-face-in-shadow-DOM.html.
+        * platform/win-xp/fast/css: Removed.
+        * platform/win-xp/fast/css/font-face-in-shadow-DOM-expected.txt: Removed.
+
 2011-06-24  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.
