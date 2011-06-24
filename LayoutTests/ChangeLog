@@ -1,3 +1,12 @@
+2011-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK Rebaseline after r89627.
+
+        * platform/gtk/editing/selection/extend-inside-transforms-backward-expected.png: Added.
+        * platform/gtk/editing/selection/extend-inside-transforms-backward-expected.txt: Added.
+        * platform/gtk/editing/selection/extend-inside-transforms-forward-expected.png: Added.
+        * platform/gtk/editing/selection/extend-inside-transforms-forward-expected.txt: Added.
+
 2011-06-23  Jessie Berlin  <jberlin@apple.com>
 
         WKTR: eventSender.keyDown is unimplemented
