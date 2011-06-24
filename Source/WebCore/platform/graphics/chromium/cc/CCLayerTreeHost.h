@@ -22,60 +22,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CCLayerTreeHost_h
+#define CCLayerTreeHost_h
 
-#include "CCThread.h"
-
-#include "LayerRendererChromium.h"
-#include "TraceEvent.h"
-#include <wtf/CurrentTime.h>
+#include "cc/CCLayerTreeHostCommitter.h"
+#include "cc/CCLayerTreeHostImplProxy.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-using namespace WTF;
+class CCLayerTreeHostImpl;
+class CCLayerTreeHostImplClient;
+class GraphicsContext3D;
 
-CCThread::CCThread()
-{
-    MutexLocker lock(m_threadCreationMutex);
-    m_threadID = createThread(CCThread::compositorThreadStart, this, "Chromium Compositor");
-}
+class CCLayerTreeHostClient {
+public:
+    virtual void animateAndLayout(double frameBeginTime) = 0;
+    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
+    virtual void updateLayers() = 0;
 
-CCThread::~CCThread()
-{
-    m_queue.kill();
+protected:
+    virtual ~CCLayerTreeHostClient() { }
+};
 
-    // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
-    m_threadID = 0;
-}
+class CCLayerTreeHost : public RefCounted<CCLayerTreeHost> {
+public:
+    explicit CCLayerTreeHost(CCLayerTreeHostClient*);
+    void init();
+    virtual ~CCLayerTreeHost();
 
-void CCThread::postTask(PassOwnPtr<Task> task)
-{
-    m_queue.append(task);
-}
+    virtual void animateAndLayout(double frameBeginTime);
+    virtual void beginCommit();
+    virtual void commitComplete();
+    virtual PassOwnPtr<CCLayerTreeHostCommitter> createLayerTreeHostCommitter();
 
-void* CCThread::compositorThreadStart(void* userdata)
-{
-    CCThread* ccThread = static_cast<CCThread*>(userdata);
-    return ccThread->runLoop();
-}
+    int frameNumber() const { return m_frameNumber; }
 
-void* CCThread::runLoop()
-{
-    TRACE_EVENT("CCThread::runLoop", this, 0);
-    {
-        // Wait for CCThread::start() to complete to have m_threadID
-        // established before starting the main loop.
-        MutexLocker lock(m_threadCreationMutex);
-    }
+    void setNeedsCommitAndRedraw();
+    void setNeedsRedraw();
 
-    while (OwnPtr<Task> task = m_queue.waitForMessage())
-        task->performTask();
+    virtual void updateLayers();
 
-    return 0;
-}
+protected:
+    virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy() = 0;
+
+private:
+    CCLayerTreeHostClient* m_client;
+    int m_frameNumber;
+    OwnPtr<CCLayerTreeHostImplProxy> m_proxy;
+};
 
 }
+
+#endif

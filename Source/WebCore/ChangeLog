@@ -1,3 +1,93 @@
+2011-05-17  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Implement CCLayerTreeHost and CCLayerTreeHostImpl portions of threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=58408
+
+        Create CCLayerTreeHost and CCLayerTreeHostImpl, which are the main
+        thread and compositor thread halves of a composited view. Communication
+        between the two is based on the design used in FileStreamProxy.
+
+        * WebCore.gypi:
+        * platform/chromium/TraceEvent.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::setViewport):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromiumImpl::create):
+        (WebCore::LayerRendererChromiumImpl::drawLayersAndPresent):
+        (WebCore::LayerRendererChromiumImpl::LayerRendererChromiumImpl):
+        (WebCore::LayerRendererChromiumImpl::drawLayersOnMainThread):
+        (WebCore::LayerRendererChromiumImplProxy::create):
+        (WebCore::LayerRendererChromiumImplProxy::createLayerTreeHostImpl):
+        (WebCore::LayerRendererChromiumImplProxy::LayerRendererChromiumImplProxy):
+        (WebCore::LayerRendererChromium::createLayerTreeHostImplProxy):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::setShowFPSCounter):
+        (WebCore::CCHeadsUpDisplay::setShowPlatformLayerTree):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        (WebCore::CCHeadsUpDisplay::currentFrameNumber):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCThread.cpp.
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::init):
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::beginCommit):
+        (WebCore::CCLayerTreeHost::commitComplete):
+        (WebCore::CCLayerTreeHost::animateAndLayout):
+        (WebCore::CCLayerTreeHost::createLayerTreeHostCommitter):
+        (WebCore::CCLayerTreeHost::setNeedsCommitAndRedraw):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCThread.cpp.
+        (WebCore::CCLayerTreeHost::frameNumber):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommitter.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCThread.cpp.
+        (WebCore::CCLayerTreeHostCommitter::create):
+        (WebCore::CCLayerTreeHostCommitter::commit):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommitter.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCThread.cpp.
+        (WebCore::CCLayerTreeHostCommitter::CCLayerTreeHostCommitter):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp: Added.
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::~CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::beginCommit):
+        (WebCore::CCLayerTreeHostImpl::commitComplete):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::CCLayerTreeHostImpl::setNeedsCommitAndRedraw):
+        (WebCore::CCLayerTreeHostImpl::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCThread.cpp.
+        (WebCore::CCLayerTreeHostImplClient::~CCLayerTreeHostImplClient):
+        (WebCore::CCLayerTreeHostImpl::frameNumber):
+        (WebCore::CCLayerTreeHostImpl::sourceFrameNumber):
+        (WebCore::CCLayerTreeHostImpl::setSourceFrameNumber):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp: Added.
+        (WebCore::CCLayerTreeHostImplProxy::CCLayerTreeHostImplProxy):
+        (WebCore::CCLayerTreeHostImplProxy::start):
+        (WebCore::CCLayerTreeHostImplProxy::~CCLayerTreeHostImplProxy):
+        (WebCore::CCLayerTreeHostImplProxy::isStarted):
+        (WebCore::CCLayerTreeHostImplProxy::setNeedsCommitAndRedraw):
+        (WebCore::CCLayerTreeHostImplProxy::setNeedsRedraw):
+        (WebCore::CCLayerTreeHostImplProxy::stop):
+        (WebCore::CCLayerTreeHostImplProxy::postDrawLayersTaskOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::requestFrameAndCommitOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::isMainThread):
+        (WebCore::CCLayerTreeHostImplProxy::isCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::requestFrameAndCommit):
+        (WebCore::CCLayerTreeHostImplProxy::commitOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::drawLayersOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::setNeedsCommitAndRedrawOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::setNeedsRedrawOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::initImplOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::layerTreeHostClosedOnCCThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.h: Added.
+        (WebCore::CCLayerTreeHostImplProxy::host):
+        * platform/graphics/chromium/cc/CCMainThreadTask.h:
+        * platform/graphics/chromium/cc/CCThread.cpp:
+        (WebCore::CCThread::runLoop):
+        * platform/graphics/chromium/cc/CCThreadTask.h:
+
 2011-06-24  Adrienne Walker  <enne@google.com>
 
         Unreviewed, remove assertion about root layers in RenderLayerBacking.

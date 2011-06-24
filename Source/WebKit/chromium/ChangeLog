@@ -1,3 +1,103 @@
+2011-05-17  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Implement CCLayerTreeHost and CCLayerTreeHostImpl portions of threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=58408
+
+        Redirect invalidates and scheduling into compositor when in
+        threaded compositing mode. Add stress tests for CCLayerTreeHost.
+
+        * WebKit.gypi:
+        * public/WebWidget.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::animate):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::animateAndLayout):
+        (WebKit::WebViewImpl::updateLayers):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::doComposite):
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::reallocateRenderer):
+        (WebKit::WebViewImpl::updateLayerRendererSettings):
+        (WebKit::WebViewImpl::updateLayerRendererViewport):
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp: Added.
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::animateAndLayout):
+        (WTF::CCLayerTreeHostTest::beginCommitOnCCThread):
+        (WTF::CCLayerTreeHostTest::beginCommitOnMainThread):
+        (WTF::CCLayerTreeHostTest::commitOnCCThread):
+        (WTF::CCLayerTreeHostTest::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTest::commitCompleteOnMainThread):
+        (WTF::CCLayerTreeHostTest::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTest::updateLayers):
+        (WTF::CCLayerTreeHostTest::onBeginTest):
+        (WTF::CCLayerTreeHostTest::doEndTest):
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::testTimeout):
+        (WTF::MockLayerTreeHostClient::MockLayerTreeHostClient):
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        (WTF::MockLayerTreeHostClient::animateAndLayout):
+        (WTF::MockLayerTreeHostClient::updateLayers):
+        (WTF::MockLayerTreeHostCommitter::create):
+        (WTF::MockLayerTreeHostCommitter::commit):
+        (WTF::MockLayerTreeHostCommitter::MockLayerTreeHostCommitter):
+        (WTF::MockLayerTreeHostImpl::create):
+        (WTF::MockLayerTreeHostImpl::beginCommit):
+        (WTF::MockLayerTreeHostImpl::commitComplete):
+        (WTF::MockLayerTreeHostImpl::drawLayersAndPresent):
+        (WTF::MockLayerTreeHostImpl::MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHostImplProxy::create):
+        (WTF::MockLayerTreeHostImplProxy::createLayerTreeHostImpl):
+        (WTF::MockLayerTreeHostImplProxy::MockLayerTreeHostImplProxy):
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        (WTF::MockLayerTreeHost::createLayerTreeHostImplProxy):
+        (WTF::MockLayerTreeHost::updateLayers):
+        (WTF::MockLayerTreeHost::createLayerTreeHostCommitter):
+        (WTF::MockLayerTreeHost::beginCommit):
+        (WTF::MockLayerTreeHost::commitComplete):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::CCLayerTreeHostTest::endTest):
+        (WTF::CCLayerTreeHostTestShortlived1::CCLayerTreeHostTestShortlived1):
+        (WTF::CCLayerTreeHostTestShortlived1::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived1::afterTest):
+        (WTF::TEST_F):
+        (WTF::CCLayerTreeHostTestShortlived2::CCLayerTreeHostTestShortlived2):
+        (WTF::CCLayerTreeHostTestShortlived2::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived2::afterTest):
+        (WTF::CCLayerTreeHostTestShortlived3::CCLayerTreeHostTestShortlived3):
+        (WTF::CCLayerTreeHostTestShortlived3::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived3::afterTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::CCLayerTreeHostTestCommitingWithContinuousRedraw):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::afterTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::CCLayerTreeHostTestSetNeedsCommit1):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::commitOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::afterTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::CCLayerTreeHostTestSetNeedsCommit2):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::commitOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::afterTest):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::CCLayerTreeHostTestSetNeedsRedraw):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::commitOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::afterTest):
+        * tests/CCThreadTest.cpp:
+        (WebCore::TEST):
+
 2011-06-24  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

@@ -24,58 +24,76 @@
 
 #include "config.h"
 
-#include "CCThread.h"
+#include "cc/CCLayerTreeHost.h"
 
-#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
+#include "cc/CCLayerTreeHostCommitter.h"
+#include "cc/CCLayerTreeHostImpl.h"
+
 
 namespace WebCore {
 
-using namespace WTF;
-
-CCThread::CCThread()
+CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client)
+    : m_client(client)
+    , m_frameNumber(0)
 {
-    MutexLocker lock(m_threadCreationMutex);
-    m_threadID = createThread(CCThread::compositorThreadStart, this, "Chromium Compositor");
 }
 
-CCThread::~CCThread()
+void CCLayerTreeHost::init()
 {
-    m_queue.kill();
-
-    // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
-    m_threadID = 0;
+#if USE(THREADED_COMPOSITING)
+    m_proxy = createLayerTreeHostImplProxy();
+    ASSERT(m_proxy->isStarted());
+    m_proxy->setNeedsCommitAndRedraw();
+#endif
 }
 
-void CCThread::postTask(PassOwnPtr<Task> task)
+CCLayerTreeHost::~CCLayerTreeHost()
 {
-    m_queue.append(task);
+    TRACE_EVENT("CCLayerTreeHost::~CCLayerTreeHost", this, 0);
+#if USE(THREADED_COMPOSITING)
+    m_proxy->stop();
+    m_proxy.clear();
+#endif
 }
 
-void* CCThread::compositorThreadStart(void* userdata)
+void CCLayerTreeHost::beginCommit()
 {
-    CCThread* ccThread = static_cast<CCThread*>(userdata);
-    return ccThread->runLoop();
 }
 
-void* CCThread::runLoop()
+void CCLayerTreeHost::commitComplete()
 {
-    TRACE_EVENT("CCThread::runLoop", this, 0);
-    {
-        // Wait for CCThread::start() to complete to have m_threadID
-        // established before starting the main loop.
-        MutexLocker lock(m_threadCreationMutex);
-    }
+    m_frameNumber++;
+}
 
-    while (OwnPtr<Task> task = m_queue.waitForMessage())
-        task->performTask();
+void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
+{
+    m_client->animateAndLayout(frameBeginTime);
+}
 
-    return 0;
+PassOwnPtr<CCLayerTreeHostCommitter> CCLayerTreeHost::createLayerTreeHostCommitter()
+{
+    return CCLayerTreeHostCommitter::create();
+}
+
+void CCLayerTreeHost::setNeedsCommitAndRedraw()
+{
+#if USE(THREADED_COMPOSITING)
+    m_proxy->setNeedsCommitAndRedraw();
+#endif
+}
+
+void CCLayerTreeHost::setNeedsRedraw()
+{
+    TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
+#if USE(THREADED_COMPOSITING)
+    m_proxy->setNeedsRedraw();
+#endif
+}
+
+void CCLayerTreeHost::updateLayers()
+{
+    m_client->updateLayers();
 }
 
 }

@@ -22,60 +22,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CCLayerTreeHostCommitter_h
+#define CCLayerTreeHostCommitter_h
 
-#include "CCThread.h"
-
-#include "LayerRendererChromium.h"
-#include "TraceEvent.h"
-#include <wtf/CurrentTime.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
 
-using namespace WTF;
+class CCLayerTreeHost;
+class CCLayerTreeHostImpl;
 
-CCThread::CCThread()
-{
-    MutexLocker lock(m_threadCreationMutex);
-    m_threadID = createThread(CCThread::compositorThreadStart, this, "Chromium Compositor");
-}
+// FIXME: merge in TreeSynchronizer code into here
+class CCLayerTreeHostCommitter {
+    WTF_MAKE_NONCOPYABLE(CCLayerTreeHostCommitter);
+public:
+    static PassOwnPtr<CCLayerTreeHostCommitter> create();
+    virtual void commit(CCLayerTreeHost*, CCLayerTreeHostImpl*);
 
-CCThread::~CCThread()
-{
-    m_queue.kill();
-
-    // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
-    m_threadID = 0;
-}
-
-void CCThread::postTask(PassOwnPtr<Task> task)
-{
-    m_queue.append(task);
-}
-
-void* CCThread::compositorThreadStart(void* userdata)
-{
-    CCThread* ccThread = static_cast<CCThread*>(userdata);
-    return ccThread->runLoop();
-}
-
-void* CCThread::runLoop()
-{
-    TRACE_EVENT("CCThread::runLoop", this, 0);
-    {
-        // Wait for CCThread::start() to complete to have m_threadID
-        // established before starting the main loop.
-        MutexLocker lock(m_threadCreationMutex);
-    }
-
-    while (OwnPtr<Task> task = m_queue.waitForMessage())
-        task->performTask();
-
-    return 0;
-}
+protected:
+    CCLayerTreeHostCommitter() { }
+};
 
 }
+
+#endif
