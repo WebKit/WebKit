@@ -1,3 +1,10 @@
+2011-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Fix Qt Build
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::readPointer):
+
 2011-06-23  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin Adler.
