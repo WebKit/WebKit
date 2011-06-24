@@ -1,3 +1,21 @@
+2011-06-24  Adam Roben  <aroben@apple.com>
+
+        Make the web process pause dialog look better on Vista/7 and robust against executable
+        renames
+
+        Fixes <http://webkit.org/b/63335> Web process pause dialog looks bad on Vista/7
+
+        Reviewed by Brian Weinstein.
+
+        * WebProcess/WebKitMain.cpp:
+        (pauseProcessIfNeeded): Moved code to show the pause dialog here from WebKitMain. We now
+        fetch the executable name using ::GetModuleFileNameW instead of hard-coding it. The string
+        we pass to ::MessageBoxW no longer has embedded newlines, which improves its appearance on
+        Vista/7 (which were doing their own wrapping in addition to our newlines). Appearance is
+        different but fine on XP. Note that the message text now contains the "[_debug].exe" suffix when
+        referring to the process; that is different from before but seems fine.
+        (WebKitMain): Call the new function.
+
 2011-06-24  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
