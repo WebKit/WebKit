@@ -1,3 +1,22 @@
+2011-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix runtime critical warnings in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=63256
+
+        Check whether there's a view widget before trying to use it in
+        PlatformScreenGtk. If there isn't a view widget, which is the case
+        in WebKit2, try to use the default GdkScreen and monitor.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::getToplevel): Helper function to get the toplevel
+        widget.
+        (WebCore::getVisual): Use getToplevel().
+        (WebCore::getScreen): Helper funtion to get the screen of a
+        widget.
+        (WebCore::screenRect): Use getToplevel() and getScreen().
+
 2011-06-24  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Adam Barth.

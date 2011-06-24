@@ -45,25 +45,26 @@
 
 namespace WebCore {
 
+static GtkWidget* getToplevel(GtkWidget* widget)
+{
+    GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
+    return gtk_widget_is_toplevel(toplevel) ? toplevel : 0;
+}
+
 static GdkVisual* getVisual(Widget* widget)
 {
     if (!widget)
         return 0;
 
     GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
-
-    if (!container)
-        return 0;
-
-    if (!gtk_widget_get_realized(container)) {
-        GtkWidget* toplevel = gtk_widget_get_toplevel(container);
-        if (gtk_widget_is_toplevel(toplevel))
-            container = toplevel;
-        else
-            return 0;
+    if (!container) {
+        GdkScreen* screen = gdk_screen_get_default();
+        return screen ? gdk_screen_get_system_visual(screen) : 0;
     }
 
-    return gdk_window_get_visual(gtk_widget_get_window(container));
+    if (!gtk_widget_get_realized(container))
+        container = getToplevel(container);
+    return container ? gdk_window_get_visual(gtk_widget_get_window(container)) : 0;
 }
 
 int screenDepth(Widget* widget)
@@ -88,23 +89,30 @@ bool screenIsMonochrome(Widget* widget)
     return screenDepth(widget) < 2;
 }
 
+
+static GdkScreen* getScreen(GtkWidget* widget)
+{
+    return gtk_widget_has_screen(widget) ? gtk_widget_get_screen(widget) : gdk_screen_get_default();
+}
+
 FloatRect screenRect(Widget* widget)
 {
     if (!widget)
         return FloatRect();
 
-    GtkWidget* container = gtk_widget_get_toplevel(GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()));
-    if (!gtk_widget_is_toplevel(container))
-        return FloatRect();
+    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
+    if (container)
+        container = getToplevel(container);
 
-    GdkScreen* screen = gtk_widget_has_screen(container) ? gtk_widget_get_screen(container) : gdk_screen_get_default();
+    GdkScreen* screen = container ? getScreen(container) : gdk_screen_get_default();
     if (!screen)
         return FloatRect();
 
-    gint monitor = gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(GTK_WIDGET(container)));
+    gint monitor = container ? gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(container)) : 0;
+
     GdkRectangle geometry;
     gdk_screen_get_monitor_geometry(screen, monitor, &geometry);
-    
+
     return FloatRect(geometry.x, geometry.y, geometry.width, geometry.height);
 }
 
