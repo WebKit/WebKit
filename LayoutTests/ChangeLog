@@ -1,3 +1,12 @@
+2011-06-24  Matthew Delaney  <mdelaney@apple.com>
+
+        Fixing burning trees from change to tests in https://bugs.webkit.org/show_bug.cgi?id=63327
+        Adding new platform specific results since the new layout in the tests changes the render tree spew.
+        Pixel tests are still good.
+
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.txt:
+
 2011-06-24  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
