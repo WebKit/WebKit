@@ -1,3 +1,16 @@
+2011-06-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Web Inspector: [Chromium] Successfully prefetched page shows up as an error in console
+        https://bugs.webkit.org/show_bug.cgi?id=62396
+
+        * public/WebURLError.h:
+        (WebKit::WebURLError::WebURLError):
+        * src/WebURLError.cpp:
+        (WebKit::WebURLError::operator=):
+        (WebKit::WebURLError::operator ResourceError):
+
 2011-06-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

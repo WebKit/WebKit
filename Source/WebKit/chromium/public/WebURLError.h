@@ -52,10 +52,14 @@ struct WebURLError {
     // embedder (see for example WebFrameClient).
     int reason;
 
+    // A flag showing whether this error should be treated as a cancellation,
+    // e.g. we do not show console errors for cancellations.
+    bool isCancellation;
+
     // The url that failed to load.
     WebURL unreachableURL;
 
-    WebURLError() : reason(0) { }
+    WebURLError() : reason(0), isCancellation(false) { }
 
 #if defined(WEBKIT_IMPLEMENTATION)
     WebURLError(const WebCore::ResourceError&);

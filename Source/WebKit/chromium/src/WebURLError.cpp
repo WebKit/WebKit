@@ -52,6 +52,7 @@ WebURLError& WebURLError::operator=(const ResourceError& error)
         domain = error.domain();
         reason = error.errorCode();
         unreachableURL = KURL(ParsedURLString, error.failingURL());
+        isCancellation = error.isCancellation();
     }
     return *this;
 }
@@ -61,9 +62,11 @@ WebURLError::operator ResourceError() const
     if (!reason)
         return ResourceError();
     CString spec = unreachableURL.spec();
-    return ResourceError(domain, reason,
-                         String::fromUTF8(spec.data(), spec.length()),
-                         String());
+    ResourceError resourceError = ResourceError(domain, reason,
+                                                String::fromUTF8(spec.data(),
+                                                spec.length()), String());
+    resourceError.setIsCancellation(isCancellation);
+    return resourceError;
 }
 
 } // namespace WebKit
