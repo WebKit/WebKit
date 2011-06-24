@@ -87,7 +87,7 @@ public:
     // The main WebView.
     WebKit::WebView* webView() const { return m_webView; }
     // Returns the host for the main WebView.
-    WebViewHost* webViewHost() const { return m_webViewHost; }
+    WebViewHost* webViewHost() const { return m_webViewHost.get(); }
     LayoutTestController* layoutTestController() const { return m_layoutTestController.get(); }
     EventSender* eventSender() const { return m_eventSender.get(); }
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
@@ -192,8 +192,8 @@ private:
     WebKit::WebView* m_webView;
     WebKit::WebWidget* m_focusedWidget;
     bool m_testShellMode;
-    WebViewHost* m_webViewHost;
     WebViewHost* m_devTools;
+    OwnPtr<WebViewHost> m_webViewHost;
     OwnPtr<WebPermissions> m_webPermissions;
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;

@@ -1,3 +1,16 @@
+2011-06-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Invalid write inside WebKit::FrameLoaderClientImpl::dispatchDidClearWindowObjectInWorld
+        https://bugs.webkit.org/show_bug.cgi?id=63216
+
+        Deleted m_webViewHost which looks leaked.
+        
+        * DumpRenderTree/chromium/TestShell.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell):
+
 2011-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build.

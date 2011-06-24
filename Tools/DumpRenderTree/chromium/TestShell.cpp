@@ -138,7 +138,7 @@ TestShell::TestShell(bool testShellMode)
 void TestShell::createMainWindow()
 {
     m_drtDevToolsAgent = adoptPtr(new DRTDevToolsAgent);
-    m_webViewHost = createNewWindow(WebURL(), m_drtDevToolsAgent.get());
+    m_webViewHost = adoptPtr(createNewWindow(WebURL(), m_drtDevToolsAgent.get()));
     m_webView = m_webViewHost->webView();
     m_drtDevToolsAgent->setWebView(m_webView);
 }
