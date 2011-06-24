@@ -812,6 +812,22 @@ AC_ARG_ENABLE(fast_malloc,
               [],[if test "$enable_debug" = "yes"; then enable_fast_malloc="no"; else enable_fast_malloc="yes"; fi])
 AC_MSG_RESULT([$enable_fast_malloc])
 
+# check whether to enable debug symbols
+AC_MSG_CHECKING([whether to enable debug symbols])
+AC_ARG_ENABLE(debug_symbols,
+              AC_HELP_STRING([--enable-debug-symbols],
+                             [enable debug symbols default=no, default=yes for debug builds]),
+              [],[if test "$enable_debug" = "yes"; then enable_debug_symbols="yes"; else enable_debug_symbols="no"; fi])
+AC_MSG_RESULT([$enable_debug_symbols])
+
+# check whether to enable debug features
+AC_MSG_CHECKING([whether to enable debug features])
+AC_ARG_ENABLE(debug_features,
+              AC_HELP_STRING([--enable-debug-features],
+                             [enable debug features default=no, default=yes for debug builds]),
+              [],[if test "$enable_debug" = "yes"; then enable_debug_features="yes"; else enable_debug_features="no"; fi])
+AC_MSG_RESULT([$enable_debug_features])
+
 AC_MSG_CHECKING([whether to enable JIT compilation])
 AC_ARG_ENABLE([jit],
               AC_HELP_STRING([--enable-jit],
@@ -950,11 +966,13 @@ if test "$host_cpu" = "sh4"; then
    CFLAGS="$CFLAGS -mieee -w"
 fi
 
-# Add '-g' flag to gcc if it's debug build
-if test "$enable_debug" = "yes"; then
+# Add '-g' flag to gcc to build with debug symbols
+if test "$enable_debug_symbols" = "yes"; then
    CXXFLAGS="$CXXFLAGS -g"
    CFLAGS="$CFLAGS -g"
-else
+fi
+
+if test "$enable_debug_features" = "no"; then
    AC_DEFINE([NDEBUG], [1], [Define to disable debugging features])
 fi
 
@@ -1113,7 +1131,7 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 
 # WebKit feature conditionals
-AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
+AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3d_transforms" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
@@ -1216,6 +1234,8 @@ WebKit was configured with the following options:
 
 Build configuration:
  Enable debugging (slow)                                  : $enable_debug
+ Compile with debug symbols (slow)                        : $enable_debug_symbols
+ Enable debug features (slow)                             : $enable_debug_features
  Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
  Unicode backend                                          : $with_unicode_backend

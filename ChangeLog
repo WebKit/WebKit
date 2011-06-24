@@ -1,3 +1,17 @@
+2011-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add more debug options to compilation
+        https://bugs.webkit.org/show_bug.cgi?id=63318
+
+        Add --enable-debug-symbols to enable/disable compilation with
+        debug symbols and --enable-debug-features to enable/disable debug
+        features. Both options are unconditionally enabled for debug
+        builds.
+
+        * configure.ac:
+
 2011-06-23  Oliver Hunt  <oliver@apple.com>
 
         Qt build-fix: remove warning that no other platform appears to use.
