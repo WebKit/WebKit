@@ -493,16 +493,53 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     }
 
     case GetByVal: {
-        JSValueOperand arg1(this, node.child1);
-        JSValueOperand arg2(this, node.child2);
-        GPRReg arg1GPR = arg1.gpr();
-        GPRReg arg2GPR = arg2.gpr();
-        flushRegisters();
+        JSValueOperand base(this, node.child1);
+        JSValueOperand property(this, node.child2);
 
-        GPRResult result(this);
-        callOperation(operationGetByVal, result.gpr(), arg1GPR, arg2GPR);
+        GPRTemporary storage(this);
+        GPRTemporary cleanIndex(this);
 
-        jsValueResult(result.gpr(), m_compileIndex);
+        GPRReg baseGPR = base.gpr();
+        GPRReg propertyGPR = property.gpr();
+        GPRReg storageGPR = storage.gpr();
+        GPRReg cleanIndexGPR = cleanIndex.gpr();
+
+        JITCompiler::Jump baseNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
+
+        JITCompiler::Jump propertyNotInt = m_jit.branchPtr(MacroAssembler::Below, propertyGPR, GPRInfo::tagTypeNumberRegister);
+
+        // Get the array storage. We haven't yet checked this is a JSArray, so this is only safe if
+        // an access with offset JSArray::storageOffset() is valid for all JSCells!
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
+
+        JITCompiler::Jump baseNotArray = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr));
+
+        m_jit.zeroExtend32ToPtr(propertyGPR, cleanIndexGPR);
+
+        JITCompiler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, cleanIndexGPR, MacroAssembler::Address(baseGPR, JSArray::vectorLengthOffset()));
+
+        m_jit.loadPtr(MacroAssembler::BaseIndex(storageGPR, cleanIndexGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), storageGPR);
+
+        JITCompiler::Jump loadFailed = m_jit.branchTestPtr(MacroAssembler::Zero, storageGPR);
+
+        JITCompiler::Jump done = m_jit.jump();
+
+        baseNotCell.link(&m_jit);
+        propertyNotInt.link(&m_jit);
+        baseNotArray.link(&m_jit);
+        outOfBounds.link(&m_jit);
+        loadFailed.link(&m_jit);
+
+        silentSpillAllRegisters(storageGPR, baseGPR, propertyGPR);
+        setupStubArguments(baseGPR, propertyGPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationGetByVal);
+        m_jit.move(GPRInfo::returnValueGPR, storageGPR);
+        silentFillAllRegisters(storageGPR);
+
+        done.link(&m_jit);
+
+        jsValueResult(storageGPR, m_compileIndex);
         break;
     }
 
@@ -526,11 +563,14 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case GetById: {
         JSValueOperand base(this, node.child1);
         GPRReg baseGPR = base.gpr();
-        flushRegisters();
+        GPRTemporary result(this, base);
+        GPRReg resultGPR = result.gpr();
 
-        GPRResult result(this);
-        callOperation(operationGetById, result.gpr(), baseGPR, identifier(node.identifierNumber()));
-        jsValueResult(result.gpr(), m_compileIndex);
+        JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
+
+        cachedGetById(baseGPR, resultGPR, node.identifierNumber(), notCell);
+
+        jsValueResult(resultGPR, m_compileIndex);
         break;
     }
 

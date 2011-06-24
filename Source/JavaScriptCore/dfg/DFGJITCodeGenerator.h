@@ -500,6 +500,8 @@ protected:
         }
     }
 
+    void cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
     // the nodes result, since the node may have the same VirtualRegister as

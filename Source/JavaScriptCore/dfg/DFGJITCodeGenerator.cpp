@@ -320,6 +320,36 @@ void JITCodeGenerator::useChildren(Node& node)
     use(child3);
 }
 
+void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
+{
+    JITCompiler::DataLabelPtr structureToCompare;
+    JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::Equal, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    
+    if (slowPathTarget.isSet())
+        slowPathTarget.link(&m_jit);
+
+    silentSpillAllRegisters(resultGPR, baseGPR);
+    m_jit.move(baseGPR, GPRInfo::argumentGPR1);
+    m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR2);
+    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationGetByIdOptimize);
+    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+    silentFillAllRegisters(resultGPR);
+
+    JITCompiler::Jump handledByC = m_jit.jump();
+    structureCheck.link(&m_jit);
+
+    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+    JITCompiler::DataLabelCompact loadWithPatch = m_jit.loadPtrWithCompactAddressOffsetPatch(JITCompiler::Address(resultGPR, 0), resultGPR);
+
+    intptr_t checkToCall = m_jit.differenceBetween(structureToCompare, functionCall);
+    intptr_t callToLoad = m_jit.differenceBetween(functionCall, loadWithPatch);
+
+    handledByC.link(&m_jit);
+
+    m_jit.addPropertyAccess(functionCall, checkToCall, callToLoad);
+}
+
 #ifndef NDEBUG
 static const char* dataFormatString(DataFormat format)
 {
