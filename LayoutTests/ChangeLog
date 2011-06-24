@@ -1,3 +1,10 @@
+2011-06-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed.
+        Remove non-existent items from the qt-wk2 skipped list.
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

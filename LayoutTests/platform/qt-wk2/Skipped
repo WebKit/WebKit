@@ -520,7 +520,6 @@ scrollbars/scrollbar-miss-mousemove.html
 svg/animations/animate-color-transparent.html
 svg/animations/animate-gradient-transform.html
 svg/animations/animate-keySplines.html
-svg/animations/animate-points.html
 svg/animations/animVal-basics.html
 svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg
@@ -1499,7 +1498,6 @@ plugins/mouse-events-fixedpos.html
 plugins/netscape-dom-access.html
 plugins/npp-set-window-called-during-destruction.html
 plugins/open-and-close-window-with-plugin.html
-plugins/plugin-initiatate-popup-window.html
 plugins/plugin-javascript-access.html
 plugins/reloadplugins-and-pages.html
 plugins/destroy-stream-twice.html
