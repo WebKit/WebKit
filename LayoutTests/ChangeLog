@@ -1,3 +1,13 @@
+2011-06-24  Dominic Cooney  <dominicc@chromium.org>
+
+        Unreviewed: Skipping failing progress-clone.html on win.
+
+        r89682 unskipped fast/dom/HTMLProgressElement/progress-clone.html
+        on win, but it should stay skipped because there is no progress
+        element on win (bug 49769)
+
+        * platform/win/Skipped:
+
 2011-06-24  Jessie Berlin  <jberlin@apple.com>
 
         fast/css/font-face-in-shadow-DOM.html is flaky on Chromium, failing on Win XP Debug.
