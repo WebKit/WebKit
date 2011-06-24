@@ -1,5 +1,11 @@
 2011-06-24  Adam Roben  <aroben@apple.com>
 
+        Mac build fix after r89685
+
+        * WebProcess/WebKitMain.cpp: Make a Windows-only #include really be Windows-only.
+
+2011-06-24  Adam Roben  <aroben@apple.com>
+
         Make the web process pause dialog look better on Vista/7 and robust against executable
         renames
 

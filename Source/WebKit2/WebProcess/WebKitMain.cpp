@@ -29,11 +29,12 @@
 #include "PluginProcessMain.h"
 #include "ProcessLauncher.h"
 #include "WebProcessMain.h"
-#include <shlwapi.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
 #include <objc/objc-auto.h>
+#elif PLATFORM(WIN)
+#include <shlwapi.h>
 #endif
 
 using namespace WebKit;
