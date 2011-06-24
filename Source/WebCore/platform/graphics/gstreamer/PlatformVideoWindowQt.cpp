@@ -61,9 +61,9 @@ void FullScreenVideoWindow::keyPressEvent(QKeyEvent* ev)
 {
     if (m_mediaElement && ev->key() == Qt::Key_Space) {
         if (!m_mediaElement->paused())
-            m_mediaElement->pause(true);
+            m_mediaElement->pause();
         else
-            m_mediaElement->play(true);
+            m_mediaElement->play();
     } else if (ev->key() == Qt::Key_Escape)
         emit closed();
     QWidget::keyPressEvent(ev);
