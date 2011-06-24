@@ -1,3 +1,13 @@
+2011-06-23  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Limit WebGL internal drawingBuffer size to 4k x 4k
+        https://bugs.webkit.org/show_bug.cgi?id=63304
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::reshape): Limit drawing buffer size to 4k x 4k.
+
 2011-06-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
