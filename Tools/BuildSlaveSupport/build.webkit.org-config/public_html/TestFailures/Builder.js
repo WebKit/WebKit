@@ -93,38 +93,45 @@ Builder.prototype = {
     getNumberOfFailingTests: function(buildNumber, callback) {
         var cacheKey = this.name + '_getNumberOfFailingTests_' + buildNumber;
         if (PersistentCache.contains(cacheKey)) {
-            callback(PersistentCache.get(cacheKey));
-            return;
+            var cachedData = PersistentCache.get(cacheKey);
+            // Old versions of this function used to cache a number instead of an object, so we have
+            // to check to see what type we have.
+            if (typeof cachedData === 'object') {
+                callback(cachedData.failureCount, cachedData.tooManyFailures);
+                return;
+            }
         }
+
+        var result = { failureCount: -1, tooManyFailures: false };
 
         var self = this;
         self._getBuildJSON(buildNumber, function(data) {
             var layoutTestStep = data.steps.findFirst(function(step) { return step.name === 'layout-test'; });
             if (!layoutTestStep) {
-                PersistentCache.set(cacheKey, -1);
+                PersistentCache.set(cacheKey, result);
                 callback(PersistentCache.get(cacheKey), false);
                 return;
             }
 
             if (!('isStarted' in layoutTestStep)) {
                 // run-webkit-tests never even ran.
-                PersistentCache.set(cacheKey, -1);
+                PersistentCache.set(cacheKey, result);
                 callback(PersistentCache.get(cacheKey), false);
                 return;
             }
 
             if (!('results' in layoutTestStep) || layoutTestStep.results[0] === 0) {
                 // All tests passed.
-                PersistentCache.set(cacheKey, -1);
+                result.failureCount = 0;
+                PersistentCache.set(cacheKey, result);
                 callback(PersistentCache.get(cacheKey), false);
                 return;
             }
 
-            var tooManyFailures = false;
             if (/^Exiting early/.test(layoutTestStep.results[1][0]))
-                tooManyFailures = true;
+                result.tooManyFailures = true;
 
-            var failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
+            result.failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
                 var match = /^(\d+) test case/.exec(outputLine);
                 if (!match)
                     return sum;
@@ -134,8 +141,8 @@ Builder.prototype = {
                 return sum + parseInt(match[1], 10);
             }, 0);
 
-            PersistentCache.set(cacheKey, failureCount);
-            callback(failureCount, tooManyFailures);
+            PersistentCache.set(cacheKey, result);
+            callback(result.failureCount, result.tooManyFailures);
         });
     },
 
