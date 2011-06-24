@@ -207,45 +207,71 @@ inline float deg2turn(float d) { return d / 360.0f; }
 inline float rad2grad(float r) { return r * 200.0f / piFloat; }
 inline float grad2rad(float g) { return g * piFloat / 200.0f; }
 
-inline int clampToInteger(double d)
+inline int clampToInteger(double x)
 {
-    const double minIntAsDouble = std::numeric_limits<int>::min();
-    const double maxIntAsDouble = std::numeric_limits<int>::max();
-    return static_cast<int>(std::max(std::min(d, maxIntAsDouble), minIntAsDouble));
+    const double intMax = static_cast<double>(std::numeric_limits<int>::max());
+    const double intMin = static_cast<double>(std::numeric_limits<int>::min());
+    
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
+    if (x <= intMin)
+        return std::numeric_limits<int>::min();
+    return static_cast<int>(x);
 }
 
-inline int clampToPositiveInteger(double d)
+inline float clampToFloat(double x)
 {
-    const double maxIntAsDouble = std::numeric_limits<int>::max();
-    return static_cast<int>(std::max<double>(std::min(d, maxIntAsDouble), 0));
+    const double floatMax = static_cast<double>(std::numeric_limits<float>::max());
+    const double floatMin = -static_cast<double>(std::numeric_limits<float>::max());
+    
+    if (x >= floatMax)
+        return std::numeric_limits<float>::max();
+    if (x <= floatMin)
+        return -std::numeric_limits<float>::max();
+    return static_cast<float>(x);
+}
+
+inline int clampToPositiveInteger(double x)
+{
+    const double intMax = static_cast<double>(std::numeric_limits<int>::max());
+    
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
+    if (x <= 0)
+        return 0;
+    return static_cast<int>(x);
 }
 
 inline int clampToInteger(float x)
 {
-    static const int s_intMax = std::numeric_limits<int>::max();
-    static const int s_intMin = std::numeric_limits<int>::min();
+    const float intMax = static_cast<float>(std::numeric_limits<int>::max());
+    const float intMin = static_cast<float>(std::numeric_limits<int>::min());
     
-    if (x >= static_cast<float>(s_intMax))
-        return s_intMax;
-    if (x < static_cast<float>(s_intMin))
-        return s_intMin;
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
+    if (x <= intMin)
+        return std::numeric_limits<int>::min();
     return static_cast<int>(x);
 }
 
 inline int clampToPositiveInteger(float x)
 {
-    static const int s_intMax = std::numeric_limits<int>::max();
+    const float intMax = static_cast<float>(std::numeric_limits<int>::max());
     
-    if (x >= static_cast<float>(s_intMax))
-        return s_intMax;
-    if (x < 0)
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
+    if (x <= 0)
         return 0;
     return static_cast<int>(x);
 }
 
-inline int clampToInteger(unsigned value)
+inline int clampToInteger(unsigned x)
 {
-    return static_cast<int>(std::min(value, static_cast<unsigned>(std::numeric_limits<int>::max())));
+    const unsigned intMax = static_cast<unsigned>(std::numeric_limits<int>::max());
+    
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
+    return static_cast<int>(x);
 }
 
 #if !COMPILER(MSVC) && !(COMPILER(RVCT) && PLATFORM(BREWMP)) && !OS(SOLARIS) && !OS(SYMBIAN)
