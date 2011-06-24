@@ -1,3 +1,57 @@
+2011-06-23  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r89632 and r89640.
+        http://trac.webkit.org/changeset/89632
+        http://trac.webkit.org/changeset/89640
+        https://bugs.webkit.org/show_bug.cgi?id=60741
+
+        Breaks ancestor-overflow-change unexpectedly
+
+        * compositing/rtl/rtl-absolute-expected.png: Removed.
+        * compositing/rtl/rtl-absolute-expected.txt: Removed.
+        * compositing/rtl/rtl-absolute-overflow-expected.png: Removed.
+        * compositing/rtl/rtl-absolute-overflow-expected.txt: Removed.
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Removed.
+        * compositing/rtl/rtl-absolute-overflow-scrolled.html: Removed.
+        * compositing/rtl/rtl-absolute-overflow.html: Removed.
+        * compositing/rtl/rtl-absolute.html: Removed.
+        * compositing/rtl/rtl-fixed-expected.png: Removed.
+        * compositing/rtl/rtl-fixed-expected.txt: Removed.
+        * compositing/rtl/rtl-fixed-overflow-expected.png: Removed.
+        * compositing/rtl/rtl-fixed-overflow-expected.txt: Removed.
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Removed.
+        * compositing/rtl/rtl-fixed-overflow-scrolled.html: Removed.
+        * compositing/rtl/rtl-fixed-overflow.html: Removed.
+        * compositing/rtl/rtl-fixed.html: Removed.
+        * compositing/rtl/rtl-iframe-absolute-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-absolute-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html: Removed.
+        * compositing/rtl/rtl-iframe-absolute-overflow.html: Removed.
+        * compositing/rtl/rtl-iframe-absolute.html: Removed.
+        * compositing/rtl/rtl-iframe-fixed-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-fixed-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow.html: Removed.
+        * compositing/rtl/rtl-iframe-fixed.html: Removed.
+        * compositing/rtl/rtl-iframe-relative-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-relative-expected.txt: Removed.
+        * compositing/rtl/rtl-iframe-relative.html: Removed.
+        * compositing/rtl/rtl-relative-expected.png: Removed.
+        * compositing/rtl/rtl-relative-expected.txt: Removed.
+        * compositing/rtl/rtl-relative.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+
 2011-06-23  Wyatt Carss  <wcarss@chromium.org>
 
         Reviewed by Ryosuke Niwa.

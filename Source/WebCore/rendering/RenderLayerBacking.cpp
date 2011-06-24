@@ -377,12 +377,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // position relative to it.
         IntRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
         graphicsLayerParentLocation = clippingBox.location();
-    } else if (compAncestor)
+    } else
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
-    else {
-        ASSERT(m_owningLayer->isRootLayer());
-        graphicsLayerParentLocation = localCompositingBounds.location();
-    }
     
     if (compAncestor && m_ancestorClippingLayer) {
         // Call calculateRects to get the backgroundRect which is what is used to clip the contents of this

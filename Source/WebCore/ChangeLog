@@ -1,3 +1,15 @@
+2011-06-23  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r89632 and r89640.
+        http://trac.webkit.org/changeset/89632
+        http://trac.webkit.org/changeset/89640
+        https://bugs.webkit.org/show_bug.cgi?id=60741
+
+        Breaks ancestor-overflow-change unexpectedly
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2011-06-23  John Bates  <jbates@google.com>
 
         Reviewed by James Robinson.
