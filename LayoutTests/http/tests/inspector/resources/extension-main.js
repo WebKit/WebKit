@@ -2,7 +2,7 @@ function onError(event)
 {
     window.removeEventListener("error", onError);
     output("Uncaught exception in extension context: " + event.message + " [" + event.filename + ":" + event.lineno + "]");
-    top.postMessage({ command: "extension-tests-done" }, "*");
+    evaluateOnFrontend("InspectorTest.completeTest();");
 }
 
 window.addEventListener("error", onError);
@@ -35,7 +35,7 @@ function runTests()
 function onTestsDone()
 {
     output("All tests done.");
-    top.postMessage({ command: "extension-tests-done" }, "*");
+    evaluateOnFrontend("InspectorTest.completeTest();");
 }
 
 function runTest(test, name)
@@ -46,25 +46,6 @@ function runTest(test, name)
     } catch (e) {
         output(name + ": " + e);
     }
-}
-
-function dispatchOnFrontend(message, callback)
-{
-    function callbackWrapper()
-    {
-        channel.port1.removeEventListener("message", callbackWrapper, false);
-        callback();
-    }
-    var channel = new MessageChannel();
-    channel.port1.start();
-    if (callback)
-        channel.port1.addEventListener("message", callbackWrapper, false);
-    top.postMessage(message, [ channel.port2 ], "*");
-}
-
-function showPanel(panelId, callback)
-{
-    dispatchOnFrontend({ command: "show-panel", panelId: panelId }, callback);
 }
 
 function callbackAndNextTest(callback, nextTest)

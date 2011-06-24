@@ -4,6 +4,20 @@
 <script src="../../http/tests/inspector/extensions-test.js"></script>
 <script type="text/javascript">
 
+function initialize_extensionsUITest()
+{
+    InspectorTest.dumpSidebarContent = function(callback)
+    {
+        var sidebarPanes = WebInspector.panels.elements.sidebarPanes;
+        // the sidebar of interest is presumed to always be last.
+        var sidebar = sidebarPanes[Object.keys(sidebarPanes).pop()];
+        InspectorTest.runAfterPendingDispatches(function() {
+            InspectorTest.addResult("Sidebar content: " + sidebar.bodyElement.textContent);
+            callback();
+        });
+    }
+}
+
 function extension_testCreatePanel(nextTest)
 {
     function onPanelCreated(panel)
@@ -29,7 +43,7 @@ function extension_testSidebarPage(nextTest)
 
 function extension_dumpSidebarContent(nextTest)
 {
-    dispatchOnFrontend({ command: "dump-sidebar-content" }, nextTest);
+    evaluateOnFrontend("InspectorTest.dumpSidebarContent(reply);", nextTest);
 }
 
 function extension_testSidebarWatchObject(nextTest)

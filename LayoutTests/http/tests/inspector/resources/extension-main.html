@@ -35,9 +35,23 @@ function dumpArray(result)
         output(result);
 }
 
+function evaluateOnFrontend(expression, callback)
+{
+    function callbackWrapper(event)
+    {
+        channel.port1.removeEventListener("message", callbackWrapper, false);
+        callback(event.data.response);
+    }
+    var channel = new MessageChannel();
+    channel.port1.start();
+    if (callback)
+        channel.port1.addEventListener("message", callbackWrapper, false);
+    top.postMessage({ expression: expression }, [ channel.port2 ], "*");
+}
+
 function output(message)
 {
-    top.postMessage({ command: "output", text: message }, "*");
+    evaluateOnFrontend("InspectorTest.addResult(unescape('" + escape(message) + "'));");
 }
 
 output("Started extension.");

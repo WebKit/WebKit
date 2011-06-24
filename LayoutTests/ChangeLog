@@ -1,3 +1,25 @@
+2011-06-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [refactoring] extension tests: replace dispatchOnFrontend with a more generic evaluateOnFrontend()
+        https://bugs.webkit.org/show_bug.cgi?id=63160
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest._replyToExtension):
+        (initialize_ExtensionsTest):
+        * http/tests/inspector/resources/extension-main.html:
+        * http/tests/inspector/resources/extension-main.js:
+        (onError):
+        (onTestsDone):
+        * inspector/extensions/extensions-audits-tests.js:
+        (extension_runAudits):
+        (initialize_ExtensionsAuditsTest.InspectorTest.startExtensionAudits.onAuditsDone):
+        (initialize_ExtensionsAuditsTest.InspectorTest.startExtensionAudits):
+        (initialize_ExtensionsAuditsTest):
+        * inspector/extensions/extensions-events.html:
+        * inspector/extensions/extensions.html:
+
 2011-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

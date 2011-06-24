@@ -4,6 +4,21 @@
 <script src="../../http/tests/inspector/extensions-test.js"></script>
 <script type="text/javascript">
 
+function initialize_ExtensionEventTests()
+{
+    InspectorTest.showPanel = function(panelId)
+    {
+        if (panelId === "extension")
+            panelId = WebInspector.panelOrder[WebInspector.panelOrder.length - 1].name;
+        WebInspector.showPanel(panelId);
+    }
+}
+
+function extension_showPanel(panelId, callback)
+{
+    evaluateOnFrontend("InspectorTest.showPanel(unescape('" + escape(panelId) + "')); reply();", callback);
+}
+
 function extension_testOnSelectionChanged(nextTest)
 {
     function onSelectionChanged()
@@ -43,7 +58,7 @@ function extension_testOnNavigated(nextTest)
         if (loadCount !== urls.length)
             return;
         if (loadCount === 1) {
-            dispatchOnFrontend({ command: "run-when-page-loads" }, onLoad);
+            evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply);", onLoad);
             webInspector.inspectedWindow.eval("location.href = location.origin + location.pathname");
         }
         else {
@@ -59,7 +74,7 @@ function extension_testOnNavigated(nextTest)
         processEvent();
     }
     webInspector.resources.onNavigated.addListener(onNavigated);
-    dispatchOnFrontend({ command: "run-when-page-loads" }, onLoad);
+    evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply);", onLoad);
     webInspector.inspectedWindow.eval("location.href = location.href + '?navigated'");
 }
 
@@ -73,7 +88,7 @@ function extension_testPanelShowHide(nextTest)
             return;
         if (panelId === "extension") {
             addListener(webInspector.panels.elements, "elements", "onShown");
-            showPanel("elements");
+            extension_showPanel("elements");
         } else if (panelId === "elements") {
             cleanupListeners();
             nextTest();
@@ -96,9 +111,9 @@ function extension_testPanelShowHide(nextTest)
         addListener(panel, "extension", "onShown");
         addListener(panel, "extension", "onHidden");
         addListener(webInspector.panels.elements, "elements", "onHidden");
-        showPanel("extension");
+        extension_showPanel("extension");
     }
-    showPanel("elements");
+    extension_showPanel("elements");
     webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", onPanelCreated);
 }
 
