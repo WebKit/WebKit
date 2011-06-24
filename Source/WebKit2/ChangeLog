@@ -1,3 +1,13 @@
+2011-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [X11] Do not call NPP_SetWindow with a null window handle on destroy
+        https://bugs.webkit.org/show_bug.cgi?id=62981
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::destroy):
+
 2011-06-23 Jamie Cooley  <james.cooley@nokia.com>
 
         Reviewed by Andreas Kling.
