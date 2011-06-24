@@ -56,7 +56,7 @@ class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
 public:
     static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, SerializationErrorMode = Throwing);
     static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef value, JSValueRef* exception);
-    static PassRefPtr<SerializedScriptValue> create(String string);
+    static PassRefPtr<SerializedScriptValue> create(const String&);
     static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
     {
         return adoptRef(new SerializedScriptValue(buffer));

@@ -58,8 +58,8 @@ public:
     static bool checkNodeSecurity(State<Binding>*, Node* target);
 
     static bool allowPopUp(State<Binding>*);
-    static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, String value);
-    static bool allowSettingSrcToJavascriptURL(State<Binding>*, Element*, String name, String value);
+    static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, const String& value);
+    static bool allowSettingSrcToJavascriptURL(State<Binding>*, Element*, const String& name, const String& value);
 
     static bool shouldAllowNavigation(State<Binding>*, Frame*);
 
@@ -127,7 +127,7 @@ bool BindingSecurity<Binding>::allowPopUp(State<Binding>* state)
 }
 
 template <class Binding>
-bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding>* state, HTMLFrameElementBase* frame, String value)
+bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding>* state, HTMLFrameElementBase* frame, const String& value)
 {
     if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Node* contentDoc = frame->contentDocument();
@@ -138,7 +138,7 @@ bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding
 }
 
 template <class Binding>
-bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* state, Element* element, String name, String value)
+bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* state, Element* element, const String& name, const String& value)
 {
     if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src"))
         return allowSettingFrameSrcToJavascriptUrl(state, static_cast<HTMLFrameElementBase*>(element), value);

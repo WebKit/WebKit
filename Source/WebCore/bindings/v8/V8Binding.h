@@ -307,7 +307,7 @@ namespace WebCore {
 
         v8::Local<v8::Value> object() { return m_v8Object; }
 
-        void setString(String string)
+        void setString(const String& string)
         {
             m_string = string;
             m_v8Object.Clear(); // To signal that String is ready.

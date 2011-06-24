@@ -51,8 +51,8 @@ public:
     // V8. When serialization is successful, |didThrow| is false.
     static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value, bool& didThrow);
     static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>);
-    static PassRefPtr<SerializedScriptValue> createFromWire(String data);
-    static PassRefPtr<SerializedScriptValue> create(String data);
+    static PassRefPtr<SerializedScriptValue> createFromWire(const String& data);
+    static PassRefPtr<SerializedScriptValue> create(const String& data);
     static PassRefPtr<SerializedScriptValue> create();
 
     static SerializedScriptValue* nullValue();
@@ -74,7 +74,7 @@ private:
 
     SerializedScriptValue();
     SerializedScriptValue(v8::Handle<v8::Value>, bool& didThrow);
-    explicit SerializedScriptValue(String wireData);
+    explicit SerializedScriptValue(const String& wireData);
 
     String m_data;
 };

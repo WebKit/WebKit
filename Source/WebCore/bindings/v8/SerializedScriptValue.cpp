@@ -1163,12 +1163,12 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::V
     return adoptRef(new SerializedScriptValue(value, didThrow));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(String data)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const String& data)
 {
     return adoptRef(new SerializedScriptValue(data));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(String data)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data)
 {
     Writer writer;
     writer.writeWebCoreString(data);
@@ -1250,7 +1250,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
     m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
 }
 
-SerializedScriptValue::SerializedScriptValue(String wireData)
+SerializedScriptValue::SerializedScriptValue(const String& wireData)
 {
     m_data = wireData.crossThreadString();
 }

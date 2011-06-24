@@ -256,7 +256,7 @@ public:
         return serializer.serialize(value);
     }
 
-    static bool serialize(String s, Vector<uint8_t>& out)
+    static bool serialize(const String& s, Vector<uint8_t>& out)
     {
         writeLittleEndian(out, CurrentVersion);
         if (s.isEmpty()) {
@@ -1357,7 +1357,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
     return adoptRef(new SerializedScriptValue(buffer));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(String string)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& string)
 {
     Vector<uint8_t> buffer;
     if (!CloneSerializer::serialize(string, buffer))
