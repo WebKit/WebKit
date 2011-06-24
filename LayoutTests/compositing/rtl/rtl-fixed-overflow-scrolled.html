@@ -47,7 +47,8 @@
         window.setTimeout(function() {
             window.scrollTo(offset, 0);
             if (window.layoutTestController) {
-                document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+                if (top == self)
+                    document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
                 layoutTestController.notifyDone();
             }
         }, 0);

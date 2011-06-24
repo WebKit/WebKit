@@ -37,7 +37,8 @@
 <script>
     function doTest() {
         if (window.layoutTestController) {
-            document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+            if (top == self)
+                document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
             layoutTestController.dumpAsText(true);
         }
     }

@@ -1,3 +1,29 @@
+2011-06-24  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r89687): 5 compositing/rtl tests failing on Windows 7 Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=63343
+
+        These tests were failing since they were introduced in r89687.  The
+        layerTreeAsText dump on the iframe document was causing the outer
+        layerTreeAsText dump to be affected by font metrics.  Fixed in this
+        case by not putting layerTreeAsText output in an element when inside
+        an iframe.
+
+        * compositing/rtl/rtl-absolute-overflow-scrolled.html:
+        * compositing/rtl/rtl-absolute-overflow.html:
+        * compositing/rtl/rtl-absolute.html:
+        * compositing/rtl/rtl-fixed-overflow-scrolled.html:
+        * compositing/rtl/rtl-fixed-overflow.html:
+        * compositing/rtl/rtl-fixed.html:
+        * compositing/rtl/rtl-iframe-absolute-expected.txt:
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.txt:
+        * compositing/rtl/rtl-iframe-fixed-expected.txt:
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.txt:
+        * compositing/rtl/rtl-iframe-relative-expected.txt:
+        * compositing/rtl/rtl-relative.html:
+
 2011-06-24  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.

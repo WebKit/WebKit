@@ -16,10 +16,10 @@
                     (GraphicsLayer
                       (children 1
                         (GraphicsLayer
-                          (bounds 400.00 10733.00)
+                          (bounds 400.00 400.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 400.00 10733.00)
+                              (bounds 400.00 400.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer
