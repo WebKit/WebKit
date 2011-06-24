@@ -47,6 +47,7 @@
 namespace WebCore {
 
 namespace WorkerAgentState {
+static const char workerInspectionEnabled[] = "workerInspectionEnabled";
 static const char autoconnectToWorkers[] = "autoconnectToWorkers";
 };
 
@@ -123,8 +124,13 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
 void InspectorWorkerAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_inspectorFrontend = frontend;
-    // Disabled for now.
-    // m_instrumentingAgents->setInspectorWorkerAgent(this);
+    restore();
+}
+
+void InspectorWorkerAgent::restore()
+{
+    if (m_inspectorState->getBoolean(WorkerAgentState::workerInspectionEnabled))
+        m_instrumentingAgents->setInspectorWorkerAgent(this);
 }
 
 void InspectorWorkerAgent::clearFrontend()
@@ -137,6 +143,17 @@ void InspectorWorkerAgent::clearFrontend()
         delete it->second;
     }
     m_idToChannel.clear();
+}
+
+void InspectorWorkerAgent::setWorkerInspectionEnabled(ErrorString*, bool value)
+{
+    m_inspectorState->setBoolean(WorkerAgentState::workerInspectionEnabled, value);
+    if (!m_inspectorFrontend)
+        return;
+    if (value)
+        m_instrumentingAgents->setInspectorWorkerAgent(this);
+    else
+        m_instrumentingAgents->setInspectorWorkerAgent(0);
 }
 
 void InspectorWorkerAgent::connectToWorker(ErrorString* error, int workerId)

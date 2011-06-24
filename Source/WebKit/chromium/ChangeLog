@@ -1,3 +1,13 @@
+2011-06-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Web Inspector: provide context menu item for enabling native worker inspection
+        https://bugs.webkit.org/show_bug.cgi?id=63258
+
+        * src/js/DevTools.js:
+        ():
+
 2011-06-23  John Bates  <jbates@google.com>
 
         Reviewed by James Robinson.

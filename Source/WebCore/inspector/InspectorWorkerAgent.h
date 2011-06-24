@@ -52,6 +52,7 @@ public:
     ~InspectorWorkerAgent();
 
     void setFrontend(InspectorFrontend*);
+    void restore();
     void clearFrontend();
 
     // Called from InspectorInstrumentation
@@ -59,6 +60,7 @@ public:
     void workerContextTerminated(WorkerContextProxy*);
 
     // Called from InspectorBackendDispatcher
+    void setWorkerInspectionEnabled(ErrorString*, bool value);
     void connectToWorker(ErrorString*, int workerId);
     void disconnectFromWorker(ErrorString*, int workerId);
     void sendMessageToWorker(ErrorString*, int workerId, PassRefPtr<InspectorObject> message);

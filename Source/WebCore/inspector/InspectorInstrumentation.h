@@ -166,8 +166,7 @@ public:
 #endif
 
 #if ENABLE(WORKERS)
-    static bool willStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*);
-    static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, bool paused, const KURL&);
+    static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, const KURL&);
     static void didCreateWorker(ScriptExecutionContext*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorker(ScriptExecutionContext*, intptr_t id);
     static void workerContextTerminated(ScriptExecutionContext*, WorkerContextProxy*);
@@ -907,16 +906,9 @@ inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* 
 #endif
 
 #if ENABLE(WORKERS)
-inline bool InspectorInstrumentation::willStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*)
-{
-    return false;
-}
-
-inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, bool paused, const KURL& url)
+inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
-    if (!paused)
-        return;
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         didStartWorkerContextImpl(instrumentingAgents, proxy, url);

@@ -131,9 +131,8 @@ void Worker::notifyFinished()
     if (m_scriptLoader->failed())
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
-        bool shouldStartPaused = InspectorInstrumentation::willStartWorkerContext(scriptExecutionContext(), m_contextProxy);
         m_contextProxy->startWorkerContext(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script());
-        InspectorInstrumentation::didStartWorkerContext(scriptExecutionContext(), m_contextProxy, shouldStartPaused, m_scriptLoader->url());
+        InspectorInstrumentation::didStartWorkerContext(scriptExecutionContext(), m_contextProxy, m_scriptLoader->url());
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }
     m_scriptLoader = nullptr;

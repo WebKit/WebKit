@@ -339,6 +339,9 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
 #if ENABLE(DOM_STORAGE)
     m_domStorageAgent->restore();
 #endif
+#if ENABLE(WORKERS)
+    m_workerAgent->restore();
+#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->restore();
     m_profilerAgent->restore();

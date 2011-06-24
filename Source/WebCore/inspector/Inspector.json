@@ -1757,6 +1757,12 @@
         "types": [],
         "commands": [
             {
+                "name": "setWorkerInspectionEnabled",
+                "parameters": [
+                    { "name": "value", "type": "boolean" }
+                ]
+            },
+            {
                 "name": "sendMessageToWorker",
                 "parameters": [
                     { "name": "workerId", "type": "integer" },
