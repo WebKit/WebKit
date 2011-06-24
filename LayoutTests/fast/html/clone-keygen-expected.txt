@@ -2,7 +2,7 @@ Tests that a cloned keygen has the right shadow pseudo ID. You should see two bi
 
 
 PASS specialK.clientHeight is k.clientHeight
-PASS layoutTestController.shadowPseudoId(cloneShadow.firstChild) is layoutTestController.shadowPseudoId(kShadow.firstChild)
+PASS internals.shadowPseudoId(cloneShadow.firstChild) is internals.shadowPseudoId(kShadow.firstChild)
 PASS successfullyParsed is true
 
 TEST COMPLETE

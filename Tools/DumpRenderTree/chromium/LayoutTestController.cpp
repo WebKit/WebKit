@@ -108,7 +108,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpStatusCallbacks", &LayoutTestController::dumpWindowStatusChanges);
     bindMethod("dumpTitleChanges", &LayoutTestController::dumpTitleChanges);
     bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
-    bindMethod("ensureShadowRoot", &LayoutTestController::ensureShadowRoot);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
     bindMethod("setIsolatedWorldSecurityOrigin", &LayoutTestController::setIsolatedWorldSecurityOrigin);
@@ -136,7 +135,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("queueNonLoadingScript", &LayoutTestController::queueNonLoadingScript);
     bindMethod("queueReload", &LayoutTestController::queueReload);
     bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
-    bindMethod("removeShadowRoot", &LayoutTestController::removeShadowRoot);
     bindMethod("repaintSweepHorizontally", &LayoutTestController::repaintSweepHorizontally);
     bindMethod("resetPageVisibility", &LayoutTestController::resetPageVisibility);
     bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
@@ -184,8 +182,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setWindowIsKey", &LayoutTestController::setWindowIsKey);
     bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
     bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
-    bindMethod("shadowRoot", &LayoutTestController::shadowRoot);
-    bindMethod("shadowPseudoId", &LayoutTestController::shadowPseudoId);
     bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
     bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
@@ -670,73 +666,6 @@ void LayoutTestController::setAsynchronousSpellCheckingEnabled(const CppArgument
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webView()->settings()->setAsynchronousSpellCheckingEnabled(cppVariantToBool(arguments[0]));
     result->setNull();
-}
-
-void LayoutTestController::shadowRoot(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 1 || !arguments[0].isObject()) {
-        result->setNull();
-        return;
-    }
-
-    WebElement element;
-    if (!WebBindings::getElement(arguments[0].value.objectValue, &element)) {
-        result->setNull();
-        return;
-    }
-
-    NPObject* shadowRoot = WebBindings::makeNode(element.shadowRoot());
-    if (!shadowRoot) {
-        result->setNull();
-        return;
-    }
-
-    result->set(shadowRoot);
-    WebBindings::releaseObject(shadowRoot);
-}
-
-void LayoutTestController::ensureShadowRoot(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 1 || !arguments[0].isObject()) {
-        result->setNull();
-        return;
-    }
-
-    WebElement element;
-    if (!WebBindings::getElement(arguments[0].value.objectValue, &element)) {
-        result->setNull();
-        return;
-    }
-
-    NPObject* shadowRoot = WebBindings::makeNode(element.ensureShadowRoot());
-    if (!shadowRoot) {
-        result->setNull();
-        return;
-    }
-
-    result->set(shadowRoot);
-    WebBindings::releaseObject(shadowRoot);
-}
-
-void LayoutTestController::removeShadowRoot(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 1 || !arguments[0].isObject())
-        return;
-
-    WebElement element;
-    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
-        return;
-
-    element.removeShadowRoot();
-}
-
-void LayoutTestController::shadowPseudoId(const CppArgumentList& arguments, CppVariant* result)
-{
-    WebElement element;
-    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
-        result->setNull();
-    else
-        result->set(element.shadowPseudoId().utf8());
 }
 
 void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)

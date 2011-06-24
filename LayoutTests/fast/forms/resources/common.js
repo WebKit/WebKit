@@ -4,7 +4,7 @@ function $(id) {
 
 function getValidationMessageBubbleNode(host) {
     // FIXME: We should search for a pseudo ID.
-    return layoutTestController.shadowRoot(host).lastChild;
+    return internals.shadowRoot(host).lastChild;
 }
 
 function getAbsoluteRect(element) {

@@ -7,31 +7,38 @@
 <keygen id="keys" />
 <p id="peas" />
 <pre id="console">
-This tests that LayoutTestController can access shadow DOM.
+This tests that layout tests can access shadow DOM.
 
 </pre>
 <script>
-if (window.layoutTestController) {
+if (window.internals) {
     // Make assertions about a built-in shadow
     var keygen = document.getElementById('keys');
-    var shadow = layoutTestController.shadowRoot(keygen);
+    var shadow = internals.shadowRoot(keygen);
     shouldBe('shadow.nodeName', '"#shadow-root"');
 
-    // Shadow roots should not have shadows
-    shouldBe('layoutTestController.shadowRoot(shadow)', 'null');
+    // Shadow roots aren't elements, so accessing their shadow should
+    // raise
+    var exceptionCode;
+    try {
+        internals.shadowRoot(shadow);
+    } catch (e) {
+        exceptionCode = e.code;
+    }
+    shouldBe('exceptionCode', 'DOMException.INVALID_ACCESS_ERR');
 
     // Ordinary element should not have shadow
     var p = document.getElementById('peas');
-    shouldBe('layoutTestController.shadowRoot(p)', 'null');
+    shouldBe('internals.shadowRoot(p)', 'null');
 
-    // LayoutTestController can bless ordinary elements with shadows
-    shadow = layoutTestController.ensureShadowRoot(p);
+    // Can bless ordinary elements with shadows
+    shadow = internals.ensureShadowRoot(p);
     shouldBe('shadow.nodeName', '"#shadow-root"');
-    shouldBe('shadow === layoutTestController.shadowRoot(p)', 'true');
+    shouldBe('shadow === internals.shadowRoot(p)', 'true');
 
-    // LayoutTestController can strip elements of shadows
-    layoutTestController.removeShadowRoot(keygen);
-    shouldBe('layoutTestController.shadowRoot(keygen)', 'null');
+    // Can strip elements of shadows
+    internals.removeShadowRoot(keygen);
+    shouldBe('internals.shadowRoot(keygen)', 'null');
 }
 
 var successfullyParsed = true;

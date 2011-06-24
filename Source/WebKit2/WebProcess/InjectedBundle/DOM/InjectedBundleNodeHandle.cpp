@@ -40,7 +40,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
-#include <WebCore/ShadowRoot.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -164,38 +163,6 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElem
         return 0;
 
     return getOrCreate(static_cast<HTMLTableCellElement*>(m_node.get())->cellAbove());
-}
-
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::elementShadowRoot()
-{
-    if (!m_node->isElementNode())
-        return 0;
-
-    return getOrCreate(static_cast<Element*>(m_node.get())->shadowRoot());
-}
-
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::elementEnsureShadowRoot()
-{
-    if (!m_node->isElementNode())
-        return 0;
-
-    return getOrCreate(static_cast<Element*>(m_node.get())->ensureShadowRoot());
-}
-
-void InjectedBundleNodeHandle::elementRemoveShadowRoot()
-{
-    if (!m_node->isElementNode())
-        return;
-
-    static_cast<Element*>(m_node.get())->removeShadowRoot();
-}
-
-String InjectedBundleNodeHandle::elementShadowPseudoId()
-{
-    if (!m_node->isElementNode())
-        return String();
-
-    return static_cast<Element*>(m_node.get())->shadowPseudoId();
 }
 
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()

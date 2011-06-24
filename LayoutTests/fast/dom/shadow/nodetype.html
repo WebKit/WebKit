@@ -13,7 +13,7 @@ This tests the shadow host's and shadow root's nodeType.
         layoutTestController.dumpAsText();
         
         var keygen = document.getElementById('keys');
-        var shadow = layoutTestController.shadowRoot(keygen);
+        var shadow = internals.shadowRoot(keygen);
         var shadowChild = shadow.firstChild;
         shouldBe('keygen.nodeType', 'Node.ELEMENT_NODE');
         shouldBe('shadow.nodeType', '14');

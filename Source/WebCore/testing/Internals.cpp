@@ -28,8 +28,11 @@
 
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "Element.h"
+#include "ExceptionCode.h"
 #include "RenderTreeAsText.h"
 #include "ShadowContentElement.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 
@@ -78,6 +81,46 @@ String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
     }
 
     return representation;
+}
+
+Node* Internals::ensureShadowRoot(Element* host, ExceptionCode& ec)
+{
+    if (!host) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return host->ensureShadowRoot();
+}
+
+Node* Internals::shadowRoot(Element* host, ExceptionCode& ec)
+{
+    if (!host) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return host->shadowRoot();
+}
+
+void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)
+{
+    if (!host) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    host->removeShadowRoot();
+}
+
+String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    return element->shadowPseudoId().string();
 }
 
 }

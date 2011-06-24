@@ -1,3 +1,43 @@
+2011-06-24  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert shadow DOM-related tests to use window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=61671
+
+        Update tests to use internals.{ensureShadowRoot, shadowRoot,
+        shadowPseudoId, removeShadowRoot} instead of layoutTestController.
+
+        * fast/dom/HTMLKeygenElement/keygen-expected.txt:
+        * fast/dom/HTMLKeygenElement/keygen.html:
+        * fast/dom/HTMLMeterElement/meter-clone-expected.txt:
+        * fast/dom/HTMLMeterElement/meter-clone.html:
+        * fast/dom/HTMLProgressElement/progress-clone-expected.txt:
+        * fast/dom/HTMLProgressElement/progress-clone.html:
+        * fast/dom/shadow/activeelement-should-be-shadowhost.html:
+        * fast/dom/shadow/create-content-element.html:
+        * fast/dom/shadow/gc-shadow-expected.txt:
+        * fast/dom/shadow/gc-shadow.html:
+        * fast/dom/shadow/layout-tests-can-access-shadow-expected.txt: shadowRoot of non-element throws now, so verify new behavior.
+        * fast/dom/shadow/layout-tests-can-access-shadow.html:
+        * fast/dom/shadow/nodetype.html:
+        * fast/dom/shadow/tab-order-iframe-and-shadow.html:
+        * fast/events/shadow-boundary-crossing.html:
+        * fast/forms/resources/common.js:
+        (getValidationMessageBubbleNode):
+        * fast/html/clone-keygen-expected.txt:
+        * fast/html/clone-keygen.html:
+        * fast/html/clone-range-expected.txt:
+        * fast/html/clone-range.html:
+        * fast/html/details-clone.html:
+        * fullscreen/video-controls-override-expected.txt:
+        * fullscreen/video-controls-override.html:
+        * media/audio-controls-do-not-fade-out.html:
+        * media/media-controls.js:
+        (mediaControlsButtonCoordinates):
+        * media/video-controls-in-media-document.html:
+        * platform/win/Skipped: shadowRoot and friends now available on win.
+
 2011-06-24  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

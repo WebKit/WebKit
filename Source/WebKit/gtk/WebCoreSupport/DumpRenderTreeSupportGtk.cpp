@@ -53,7 +53,6 @@
 #include "RenderView.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "WebKitDOMRangePrivate.h"
 #include "WorkerThread.h"
@@ -416,16 +415,6 @@ CString DumpRenderTreeSupportGtk::markerTextForListItem(WebKitWebFrame* frame, J
     return WebCore::markerTextForListItem(element).utf8();
 }
 
-CString DumpRenderTreeSupportGtk::shadowPseudoId(JSContextRef context, JSValueRef nodeObject)
-{
-    JSC::ExecState* exec = toJS(context);
-    Element* element = toElement(toJS(exec, nodeObject));
-    if (!element)
-        return CString();
-
-    return element->shadowPseudoId().string().utf8();
-}
-
 unsigned int DumpRenderTreeSupportGtk::numberOfActiveAnimations(WebKitWebFrame* frame)
 {
     Frame* coreFrame = core(frame);
@@ -704,39 +693,6 @@ void DumpRenderTreeSupportGtk::clearOpener(WebKitWebFrame* frame)
     Frame* coreFrame = core(frame);
     if (coreFrame)
         coreFrame->loader()->setOpener(0);
-}
-
-JSValueRef DumpRenderTreeSupportGtk::shadowRoot(JSContextRef context, JSValueRef value)
-{
-    JSLock lock(SilenceAssertionsOnly);
-    JSC::ExecState* exec = toJS(context);
-    Element* element = toElement(toJS(exec, value));
-    if (!element)
-        return JSValueMakeNull(context);
-
-    return toRef(exec, toJS(exec, deprecatedGlobalObjectForPrototype(exec), element->shadowRoot()));
-}
-
-JSValueRef DumpRenderTreeSupportGtk::ensureShadowRoot(JSContextRef context, JSValueRef value)
-{
-    JSLock lock(SilenceAssertionsOnly);
-    JSC::ExecState* exec = toJS(context);
-    Element* element = toElement(toJS(exec, value));
-    if (!element)
-        return JSValueMakeNull(context);
-
-    return toRef(exec, toJS(exec, deprecatedGlobalObjectForPrototype(exec), element->ensureShadowRoot()));
-}
-
-void DumpRenderTreeSupportGtk::removeShadowRoot(JSContextRef context, JSValueRef value)
-{
-    JSLock lock(SilenceAssertionsOnly);
-    JSC::ExecState* exec = toJS(context);
-    Element* element = toElement(toJS(exec, value));
-    if (!element)
-        return;
-
-    element->removeShadowRoot();
 }
 
 unsigned int DumpRenderTreeSupportGtk::workerThreadCount()

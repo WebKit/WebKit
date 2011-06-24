@@ -22,11 +22,11 @@ sheep.insertAdjacentElement('afterEnd', dolly);
 // symptom of a broken clone.
 shouldBe('dolly.clientHeight', 'sheep.clientHeight');
 
-if (window.layoutTestController) {
-    var sheepShadow = layoutTestController.shadowRoot(sheep);
-    var dollyShadow = layoutTestController.shadowRoot(dolly);
-    shouldBe('layoutTestController.shadowPseudoId(dollyShadow.firstChild)',
-             'layoutTestController.shadowPseudoId(sheepShadow.firstChild)');
+if (window.internals) {
+    var sheepShadow = internals.shadowRoot(sheep);
+    var dollyShadow = internals.shadowRoot(dolly);
+    shouldBe('internals.shadowPseudoId(dollyShadow.firstChild)',
+             'internals.shadowPseudoId(sheepShadow.firstChild)');
 }
 
 dolly.value = 0;

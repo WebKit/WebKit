@@ -10,7 +10,7 @@ var iframe = document.getElementById("container");
 
 function timeupdate(event) {
     var video = event.target;
-    controls = layoutTestController.shadowRoot(video).firstChild.firstChild;
+    controls = internals.shadowRoot(video).firstChild.firstChild;
     testExpected("controls.offsetTop + controls.offsetHeight", video.offsetHeight, "<=");
     layoutTestController.notifyDone();
 };

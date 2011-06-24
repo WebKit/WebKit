@@ -20,14 +20,14 @@ function gc() {
         new String(i);
 }
 
-if (window.layoutTestController) {
+if (window.internals) {
     var ps = [];
 
     for (var i = 0; i < 10; i++) {
         var p = document.createElement('p');
         ps.push(p);
 
-        var shadow = layoutTestController.ensureShadowRoot(p);
+        var shadow = internals.ensureShadowRoot(p);
         shadow.tattoo = 'I <3 WebKit';
         shadow = null;
     }
@@ -35,7 +35,7 @@ if (window.layoutTestController) {
     gc();
 
     for (i = 0; i < ps.length; i++) {
-        shouldBe('layoutTestController.shadowRoot(ps[' + i + ']).tattoo', '"I <3 WebKit"');
+        shouldBe('internals.shadowRoot(ps[' + i + ']).tattoo', '"I <3 WebKit"');
     }
 }
 

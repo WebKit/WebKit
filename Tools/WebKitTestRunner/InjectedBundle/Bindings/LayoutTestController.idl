@@ -65,12 +65,6 @@ module WTR {
         DOMString markerTextForListItem(in object element);
         unsigned long windowCount();
 
-        // Shadow DOM.
-        object shadowRoot(in object element);
-        object ensureShadowRoot(in object element);
-        void removeShadowRoot(in object element);
-        DOMString shadowPseudoId(in object element);
-
         // Repaint testing.
         void testRepaint();
         void repaintSweepHorizontally();

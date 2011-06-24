@@ -2,9 +2,9 @@
 function mediaControlsButtonCoordinates(element, id)
 {
     var button;
-    var controlsShadow = layoutTestController.shadowRoot(element).firstChild.firstChild;
+    var controlsShadow = internals.shadowRoot(element).firstChild.firstChild;
     for (child = controlsShadow.firstChild; child; child = child.nextSibling) {
-        if (layoutTestController.shadowPseudoId(child) == "-webkit-media-controls-" + id) {
+        if (internals.shadowPseudoId(child) == "-webkit-media-controls-" + id) {
             button = child;
             break;
         }

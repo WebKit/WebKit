@@ -29,7 +29,7 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
 
   function shadowRoot(shadowHost) {
-    return layoutTestController.ensureShadowRoot(shadowHost);
+    return internals.ensureShadowRoot(shadowHost);
   }
 
   function appendChildToShadow(shadowHost, child) {

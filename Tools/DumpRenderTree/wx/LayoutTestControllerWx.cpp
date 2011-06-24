@@ -526,11 +526,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return 0;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::shadowPseudoId(JSContextRef context, JSValueRef nodeObject) const
-{
-    return 0;
-}
-
 JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef)
 {
     return 0;
@@ -634,23 +629,6 @@ JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
 {
     // FIXME: Implement.
-}
-
-const OpaqueJSValue* LayoutTestController::shadowRoot(const OpaqueJSContext*, const OpaqueJSValue*)
-{
-    // FIXME: Implement.
-    return 0;
-}
-
-JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef jsElement)
-{
-    // FIXME: Implement this.
-    return JSValueMakeUndefined(context);
-}
-
-void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef jsElement)
-{
-    // FIXME: Implement this.
 }
 
 void LayoutTestController::setTextDirection(JSStringRef direction)

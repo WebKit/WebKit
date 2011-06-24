@@ -14,7 +14,7 @@
 
     function playing() {
         setTimeout(function() {
-            var controls = layoutTestController.shadowRoot(document.getElementById("audio")).firstChild.firstChild;
+            var controls = internals.shadowRoot(document.getElementById("audio")).firstChild.firstChild;
             var opacity = getComputedStyle(controls).opacity;
             document.getElementById("result").innerText = opacity < 1 ? "FAIL" : "PASS";
             layoutTestController.notifyDone();

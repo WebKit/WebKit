@@ -1,3 +1,19 @@
+2011-06-24  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert shadow DOM-related tests to use window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=61671
+
+        * WebCore.exp.in: Exports for symbols used by WebCoreTestSupport.
+        * testing/Internals.cpp: The new home of shadowRoot and friends.
+        (WebCore::Internals::ensureShadowRoot):
+        (WebCore::Internals::shadowRoot):
+        (WebCore::Internals::removeShadowRoot):
+        (WebCore::Internals::shadowPseudoId):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-06-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.

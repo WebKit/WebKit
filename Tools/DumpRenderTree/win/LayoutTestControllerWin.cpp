@@ -227,33 +227,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::shadowPseudoId(JSContextRef context, JSValueRef nodeObject) const
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return 0;
-
-    COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
-    if (!webViewPrivate)
-        return 0;
-
-    COMPtr<IDOMElement> element;
-    if (FAILED(webViewPrivate->elementFromJS(context, nodeObject, &element)))
-        return 0;
-
-    COMPtr<IDOMElementPrivate> elementPrivate(Query, element);
-    if (!elementPrivate)
-        return 0;
-
-    BSTR idBSTR = 0;
-    if (FAILED(elementPrivate->shadowPseudoId(&idBSTR)))
-        return 0;
-
-    JSRetainPtr<JSStringRef> id(Adopt, JSStringCreateWithBSTR(idBSTR));
-    SysFreeString(idBSTR);
-    return id;
-}
-
 void LayoutTestController::waitForPolicyDelegate()
 {
     COMPtr<IWebView> webView;
@@ -1471,23 +1444,6 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
         preferences->setEditingBehavior(WebKitEditingWinBehavior);
     else if (behaviorString == "unix")
         preferences->setEditingBehavior(WebKitEditingUnixBehavior);
-}
-
-JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsElement)
-{
-    // FIXME: Implement this.
-    return JSValueMakeUndefined(context);
-}
-
-JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef jsElement)
-{
-    // FIXME: Implement this.
-    return JSValueMakeUndefined(context);
-}
-
-void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef jsElement)
-{
-    // FIXME: Implement this.
 }
 
 void LayoutTestController::abortModal()

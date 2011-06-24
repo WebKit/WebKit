@@ -924,16 +924,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::shadowPseudoId(JSContextRef context, JSValueRef nodeObject) const
-{
-    CString id = DumpRenderTreeSupportGtk::shadowPseudoId(context, nodeObject);
-    if (id.isNull())
-        return 0;
-
-    JSRetainPtr<JSStringRef> result(Adopt, JSStringCreateWithUTF8CString(id.data()));
-    return result;
-}
-
 void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
 }
@@ -949,21 +939,6 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
         g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC, NULL);
     else if (!strcmp(editingBehavior, "unix"))
         g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_UNIX, NULL);
-}
-
-JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef element)
-{
-    return DumpRenderTreeSupportGtk::shadowRoot(context, element);
-}
-
-JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueRef element)
-{
-    return DumpRenderTreeSupportGtk::ensureShadowRoot(context, element);
-}
-
-void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef element)
-{
-    DumpRenderTreeSupportGtk::removeShadowRoot(context, element);
 }
 
 void LayoutTestController::abortModal()

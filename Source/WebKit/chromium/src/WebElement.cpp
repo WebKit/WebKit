@@ -34,7 +34,6 @@
 #include "Element.h"
 #include "RenderBoxModelObject.h"
 #include "RenderObject.h"
-#include "ShadowRoot.h"
 #include <wtf/PassRefPtr.h>
 
 #include "WebNamedNodeMap.h"
@@ -89,26 +88,6 @@ WebNamedNodeMap WebElement::attributes() const
 WebString WebElement::innerText() const
 {
     return constUnwrap<Element>()->innerText();
-}
-
-WebNode WebElement::shadowRoot()
-{
-    return PassRefPtr<Node>(static_cast<Node*>(unwrap<Element>()->shadowRoot()));
-}
-
-WebNode WebElement::ensureShadowRoot()
-{
-    return PassRefPtr<Node>(static_cast<Node*>(unwrap<Element>()->ensureShadowRoot()));
-}
-
-void WebElement::removeShadowRoot()
-{
-    unwrap<Element>()->removeShadowRoot();
-}
-
-WebString WebElement::shadowPseudoId() const
-{
-    return WebString(constUnwrap<Element>()->shadowPseudoId().string());
 }
 
 WebString WebElement::computeInheritedLanguage() const

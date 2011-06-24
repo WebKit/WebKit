@@ -36,16 +36,23 @@ namespace WebCore {
 
 class Document;
 class Element;
+class Node;
 
 class Internals : public RefCounted<Internals> {
 public:
     static PassRefPtr<Internals> create();
     virtual ~Internals();
     
+    String elementRenderTreeAsText(Element*, ExceptionCode&);
+
     bool isPreloaded(Document*, const String& url);
 
+    Node* ensureShadowRoot(Element* host, ExceptionCode&);
+    Node* shadowRoot(Element* host, ExceptionCode&);
+    void removeShadowRoot(Element* host, ExceptionCode&);
+    String shadowPseudoId(Element*, ExceptionCode&);
     PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
-    String elementRenderTreeAsText(Element*, ExceptionCode&);
+
 private:
     Internals();
 };

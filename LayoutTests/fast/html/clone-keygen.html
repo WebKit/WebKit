@@ -25,11 +25,11 @@ k.insertAdjacentElement('afterEnd', specialK);
 
 shouldBe('specialK.clientHeight', 'k.clientHeight');
 
-if (window.layoutTestController) {
-    var kShadow = layoutTestController.shadowRoot(k);
-    var cloneShadow = layoutTestController.shadowRoot(specialK);
-    shouldBe('layoutTestController.shadowPseudoId(cloneShadow.firstChild)',
-             'layoutTestController.shadowPseudoId(kShadow.firstChild)');
+if (window.internals) {
+    var kShadow = internals.shadowRoot(k);
+    var cloneShadow = internals.shadowRoot(specialK);
+    shouldBe('internals.shadowPseudoId(cloneShadow.firstChild)',
+             'internals.shadowPseudoId(kShadow.firstChild)');
 }
 
 var successfullyParsed = true;

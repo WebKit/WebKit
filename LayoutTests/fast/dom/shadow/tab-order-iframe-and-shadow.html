@@ -45,7 +45,7 @@ if (window.layoutTestController) {
     function addShadowHost(doc) {
         var shadowHost = doc.createElement('p');
         shadowHost.tabIndex = -1;  // This shadow host (and a shadow tree in that) should be skipped.
-        var shadow = layoutTestController.ensureShadowRoot(shadowHost);
+        var shadow = internals.ensureShadowRoot(shadowHost);
         doc.body.appendChild(shadowHost);
         shadow.appendChild(createTextInputElement(doc, 'shadow-input-03', 0));
     }
@@ -65,7 +65,7 @@ if (window.layoutTestController) {
         function addShadowHost(doc) {
             var shadowHost = doc.createElement('p');
             shadowHost.tabIndex = 1;
-            var shadow = layoutTestController.ensureShadowRoot(shadowHost);
+            var shadow = internals.ensureShadowRoot(shadowHost);
             doc.body.appendChild(shadowHost);
 
             shadow.appendChild(createTextInputElement(doc, 'iframe-shadow-input-08', 0));

@@ -1264,9 +1264,6 @@ editing/pasteboard/smart-paste-004.html
 # https://bugs.webkit.org/show_bug.cgi?id=56496
 fast/js/array-sort-modifying-tostring.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=56573
-fast/dom/HTMLKeygenElement/keygen.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=57693
 plugins/windowless_plugin_paint_test.html
 
@@ -1297,18 +1294,6 @@ plugins/mouse-click-iframe-to-plugin.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=59062
 fast/images/animated-gif-restored-from-bfcache.html
-
-# Windows DRT needs an implementation of shadowRoot
-# https://bugs.webkit.org/show_bug.cgi?id=59081
-fast/dom/HTMLMeterElement/meter-clone.html
-fast/dom/HTMLProgressElement/progress-clone.html
-fast/dom/shadow
-fast/html/clone-keygen.html
-fast/html/clone-range.html
-fast/html/details-clone.html
-media/audio-controls-do-not-fade-out.html
-media/video-controls-visible-audio-only.html
-fast/events/shadow-boundary-crossing.html
 
 # Causes the next test to fail http://webkit.org/b/59099
 http/tests/security/contentSecurityPolicy/frame-src-blocked.html

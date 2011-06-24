@@ -128,8 +128,17 @@ EXPORTS
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
 
         ; Re-exports from WebCore for WebCoreTestSupport
-        ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
+        ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
+        ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
+        ?ensureShadowRoot@Element@WebCore@@QAEPAVShadowRoot@2@XZ
+        ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
+        ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
+        ?removeShadowRoot@Element@WebCore@@QAEXXZ
+        ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
+        ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
+        ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ
         ?create@ShadowContentElement@WebCore@@SA?AV?$PassRefPtr@VShadowContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z

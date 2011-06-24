@@ -1773,33 +1773,6 @@ static JSValueRef setAsynchronousSpellCheckingEnabledCallback(JSContextRef conte
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef shadowRootCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount != 1)
-        return JSValueMakeUndefined(context);
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return controller->shadowRoot(context, arguments[0]);
-}
-
-static JSValueRef ensureShadowRootCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount != 1)
-        return JSValueMakeUndefined(context);
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return controller->ensureShadowRoot(context, arguments[0]);
-}
-
-static JSValueRef removeShadowRootCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount != 1)
-        return JSValueMakeUndefined(context);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->removeShadowRoot(context, arguments[0]);
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef showWebInspectorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2151,16 +2124,6 @@ static JSValueRef setSerializeHTTPLoadsCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef shadowPseudoIdCallback(JSContextRef context, JSObjectRef thisObject, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-
-    return JSValueMakeString(context, controller->shadowPseudoId(context, arguments[0]).get());
-}
-
 // Static Values
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -2316,7 +2279,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "dumpWillCacheResponse", dumpWillCacheResponseCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementDoesAutoCompleteForElementWithId", elementDoesAutoCompleteForElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "ensureShadowRoot", ensureShadowRootCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "evaluateInWebInspector", evaluateInWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "evaluateScriptInIsolatedWorld", evaluateScriptInIsolatedWorldCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "execCommand", execCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2338,7 +2300,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "suspendAnimations", suspendAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "resumeAnimations", resumeAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "removeShadowRoot", removeShadowRootCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageNumberForElementById", pageNumberForElementByIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageSizeAndMarginsInPixels", pageSizeAndMarginsInPixelsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2418,7 +2379,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setJavaScriptCanAccessClipboard", setJavaScriptCanAccessClipboardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setXSSAuditorEnabled", setXSSAuditorEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAsynchronousSpellCheckingEnabled", setAsynchronousSpellCheckingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "shadowRoot", shadowRootCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "showWebInspector", showWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "testOnscreen", testOnscreenCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "testRepaint", testRepaintCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2436,7 +2396,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "originsWithLocalStorage", originsWithLocalStorageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setShouldPaintBrokenImage", setShouldPaintBrokenImageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTextDirection", setTextDirectionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "shadowPseudoId", shadowPseudoIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

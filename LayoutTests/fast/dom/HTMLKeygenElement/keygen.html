@@ -13,11 +13,10 @@ This tests the keygen element.
 var keygen = document.getElementById('keys');
 shouldBe('keygen.options', 'undefined');  // keygen is not a select
 
-if (window.layoutTestController) {
-  var shadow = layoutTestController.shadowRoot(keygen);
+if (window.internals) {
+  var shadow = internals.shadowRoot(keygen);
   shouldBe('shadow.firstChild.tagName', '"SELECT"');
-  shouldBe('layoutTestController.shadowRoot(shadow)', 'null');
-  shouldBe('layoutTestController.shadowRoot(shadow.firstChild)', 'null');
+  shouldBe('internals.shadowRoot(shadow.firstChild)', 'null');
 }
 
 var successfullyParsed = true;

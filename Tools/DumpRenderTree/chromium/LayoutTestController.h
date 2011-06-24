@@ -283,11 +283,6 @@ public:
     void evaluateScriptInIsolatedWorld(const CppArgumentList&, CppVariant*);
     void setIsolatedWorldSecurityOrigin(const CppArgumentList&, CppVariant*);
 
-    void shadowRoot(const CppArgumentList&, CppVariant*);
-    void ensureShadowRoot(const CppArgumentList&, CppVariant*);
-    void removeShadowRoot(const CppArgumentList&, CppVariant*);
-    void shadowPseudoId(const CppArgumentList&, CppVariant*);
-
     // The fallback method is called when a nonexistent method is called on
     // the layout test controller object.
     // It is usefull to catch typos in the JavaScript code (a few layout tests

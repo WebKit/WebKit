@@ -1,12 +1,12 @@
 
-This tests that LayoutTestController can access shadow DOM.
+This tests that layout tests can access shadow DOM.
 
 PASS shadow.nodeName is "#shadow-root"
-PASS layoutTestController.shadowRoot(shadow) is null
-PASS layoutTestController.shadowRoot(p) is null
+PASS exceptionCode is DOMException.INVALID_ACCESS_ERR
+PASS internals.shadowRoot(p) is null
 PASS shadow.nodeName is "#shadow-root"
-PASS shadow === layoutTestController.shadowRoot(p) is true
-PASS layoutTestController.shadowRoot(keygen) is null
+PASS shadow === internals.shadowRoot(p) is true
+PASS internals.shadowRoot(keygen) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

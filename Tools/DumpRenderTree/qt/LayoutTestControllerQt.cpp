@@ -811,26 +811,6 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
     DumpRenderTreeSupportQt::setMockDeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
-QVariant LayoutTestController::shadowRoot(const QWebElement& element)
-{
-    return DumpRenderTreeSupportQt::shadowRoot(element);
-}
-
-QVariant LayoutTestController::ensureShadowRoot(const QWebElement& element)
-{
-    return DumpRenderTreeSupportQt::ensureShadowRoot(element);
-}
-
-void LayoutTestController::removeShadowRoot(const QWebElement& element)
-{
-    DumpRenderTreeSupportQt::removeShadowRoot(element);
-}
-
-QString LayoutTestController::shadowPseudoId(const QWebElement& element)
-{
-    return DumpRenderTreeSupportQt::shadowPseudoId(element);
-}
-
 void LayoutTestController::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);

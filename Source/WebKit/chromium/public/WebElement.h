@@ -59,11 +59,6 @@ class WebNamedNodeMap;
         WEBKIT_API WebNamedNodeMap attributes() const;
         WEBKIT_API WebString innerText() const;
 
-        WEBKIT_API WebNode shadowRoot();
-        WEBKIT_API WebNode ensureShadowRoot();
-        WEBKIT_API void removeShadowRoot();
-        WEBKIT_API WebString shadowPseudoId() const;
-
         // Returns the language code specified for this element.  This attribute
         // is inherited, so the returned value is drawn from the closest parent
         // element that has the lang attribute set, or from the HTTP

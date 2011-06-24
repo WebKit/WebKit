@@ -12,14 +12,14 @@ function runTest()
     var clonedSummary = targetSummary.cloneNode(true);
     targetDetails.appendChild(clonedSummary);
 
-    if (!window.layoutTestController)
+    if (!window.internals)
         return;
 
     // On cloned <details>, marker shadow element should be created
-    var targetDetailsSummaryShadow = layoutTestController.shadowRoot(targetDetails.querySelector("summary"));
-    targetMarkerPseudoId = layoutTestController.shadowPseudoId(targetDetailsSummaryShadow.firstChild);
-    var clonedDetailsSummaryShadow = layoutTestController.shadowRoot(clonedDetails.querySelector("summary"));
-    clonedMarkerPseudoId = layoutTestController.shadowPseudoId(clonedDetailsSummaryShadow.firstChild);
+    var targetDetailsSummaryShadow = internals.shadowRoot(targetDetails.querySelector("summary"));
+    targetMarkerPseudoId = internals.shadowPseudoId(targetDetailsSummaryShadow.firstChild);
+    var clonedDetailsSummaryShadow = internals.shadowRoot(clonedDetails.querySelector("summary"));
+    clonedMarkerPseudoId = internals.shadowPseudoId(clonedDetailsSummaryShadow.firstChild);
     shouldBe("targetMarkerPseudoId", "clonedMarkerPseudoId");
 }
 </script>

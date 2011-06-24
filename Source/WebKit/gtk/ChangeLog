@@ -1,3 +1,16 @@
+2011-06-24  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert shadow DOM-related tests to use window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=61671
+
+        Remove shadow-DOM related methods from GTK DRT API. These are not
+        required any more.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

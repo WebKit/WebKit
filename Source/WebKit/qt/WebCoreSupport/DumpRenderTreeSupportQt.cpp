@@ -66,7 +66,6 @@
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
-#include "ShadowRoot.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -1091,45 +1090,6 @@ void DumpRenderTreeSupportQt::setAlternateHtml(QWebFrame* frame, const QString& 
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
     WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), failingUrl);
     coreFrame->loader()->load(request, substituteData, false);
-}
-
-QVariant DumpRenderTreeSupportQt::shadowRoot(const QWebElement& element)
-{
-    WebCore::Element* webElement = element.m_element;
-    if (!webElement)
-        return QVariant();
-
-    ShadowRoot* webShadowRoot = webElement->shadowRoot();
-    if (!webShadowRoot)
-        return QVariant();
-
-    return QVariant::fromValue(QDRTNode(webShadowRoot));
-}
-
-QVariant DumpRenderTreeSupportQt::ensureShadowRoot(const QWebElement& element)
-{
-    WebCore::Element* webElement = element.m_element;
-    if (!webElement)
-        return QVariant();
-
-    return QVariant::fromValue(QDRTNode(webElement->ensureShadowRoot()));
-}
-
-void DumpRenderTreeSupportQt::removeShadowRoot(const QWebElement& element)
-{
-    WebCore::Element* webElement = element.m_element;
-    if (!webElement)
-        return;
-    webElement->removeShadowRoot();
-}
-
-QString DumpRenderTreeSupportQt::shadowPseudoId(const QWebElement& element)
-{
-    WebCore::Element* webElement = element.m_element;
-    QString pseudoId;
-    if (webElement)
-        pseudoId = webElement->shadowPseudoId().string();
-    return pseudoId;
 }
 
 void DumpRenderTreeSupportQt::confirmComposition(QWebPage* page, const char* text)
