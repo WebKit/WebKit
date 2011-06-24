@@ -1,3 +1,12 @@
+2011-06-24  Chris Rogers  <crogers@google.com>
+
+        Unreviewed build fix.
+
+        Fix Chromium Linux Build
+        https://bugs.webkit.org/show_bug.cgi?id=63349
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-06-24  Henry Song  <hsong@sisa.samsung.com>
 
         Reviewed by Martin Robinson.
