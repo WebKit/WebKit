@@ -1,3 +1,13 @@
+2011-06-24  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Change transforms/3d/point-mapping/3d-point-mapping{,-preserve-3d}.html to absolutely position divs
+        https://bugs.webkit.org/show_bug.cgi?id=63327
+
+        * transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html:
+        * transforms/3d/point-mapping/3d-point-mapping.html:
+
 2011-06-24  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION (r89457-r89462): fast/forms/textfield-overflow.html failing on SnowLeopard Intel

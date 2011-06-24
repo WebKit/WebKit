@@ -6,12 +6,6 @@
 
     function test()
     {
-      // Scroll so that frame view offsets are non-zero
-      // window.scrollTo(20, 100);
-
-      // document.getElementById('overflow').scrollLeft = 80;
-      // document.getElementById('overflow').scrollTop = 60;
-      
       // In non-test mode, show the mouse coords for testing
       if (!window.layoutTestController)
         document.body.addEventListener('mousemove', mousemoved, false);
@@ -49,12 +43,37 @@
     }
 
     .test {
-      display: inline-block;
+      position: absolute;
       height: 200px;
       width: 200px;
       border: 1px solid black;
       margin: 20px;
     }
+
+	.one {
+      top: 1px;
+	  left: 1px;
+	}
+	.two {
+	  top: 1px;
+	  left: 247px;
+	}
+	.three {
+	  top: 1px;
+	  left: 493px;
+	}
+	.four {
+	  top: 247px;
+	  left: 1px;
+	}
+	.five {
+	  top: 247px;
+	  left: 247px;
+	}
+	.six {
+	  top: 247px;
+	  left: 493px;
+	}
 
     .box {
       height: 100px;
@@ -128,7 +147,7 @@
 
 <div id="results"></div>
 
-<div class="test">
+<div class="test one">
   <!-- Simple transformed div in perpsective; preserve-3d on leaf -->
   <div class="container box" id="box1">
     <div class="transformed-3d box" id="box2">
@@ -136,7 +155,7 @@
   </div>
 </div>
 
-<div class="test">
+<div class="test two">
   <!-- Transformed, preserve-3d div in perpsective with non-layer child -->
   <div class="container box" id="box3">
     <div class="transformed-3d box" id="box4">
@@ -146,7 +165,7 @@
   </div>
 </div>
 
-<div class="test">
+<div class="test three">
   <!-- Transformed, preserve-3d div in perpsective with layer child -->
   <div class="container box" id="box6">
     <div class="transformed-3d box" id="box7">
@@ -155,8 +174,7 @@
     </div>
   </div>
 </div>
-<br>
-<div class="test">
+<div class="test four">
   <!-- Nested transformed, preserve-3d divs in perpsective -->
   <div class="container box" id="box9">
     <div class="transformed-3d box" id="box10">
@@ -165,8 +183,7 @@
     </div>
   </div>
 </div>
-
-<div class="test">
+<div class="test five">
   <!-- Transformed, preserve-3d div in perpsective with non-layer child -->
   <div class="container box" id="box12">
     <div class="transformed-3d box" id="box13">
@@ -177,8 +194,7 @@
     </div>
   </div>
 </div>
-
-<div class="test">
+<div class="test six">
   <!-- Flatten in the middle of 3d -->
   <div class="container box" id="box16">
     <div class="transformed-3d box" id="box17">
