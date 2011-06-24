@@ -1,5 +1,13 @@
 2011-06-24  Adam Roben  <aroben@apple.com>
 
+        Fix typos introduced in r89696
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Pass the result data's constituent parts to the
+        callback, since that's what it expects.
+
+2011-06-24  Adam Roben  <aroben@apple.com>
+
         Make TestFailures correctly remember whether old-run-webkit-tests exited early
 
         Fixes <http://webkit.org/b/63342> TestFailures page incorrectly claims test run ran to

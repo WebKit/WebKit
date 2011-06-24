@@ -109,14 +109,14 @@ Builder.prototype = {
             var layoutTestStep = data.steps.findFirst(function(step) { return step.name === 'layout-test'; });
             if (!layoutTestStep) {
                 PersistentCache.set(cacheKey, result);
-                callback(PersistentCache.get(cacheKey), false);
+                callback(result.failureCount, result.tooManyFailures);
                 return;
             }
 
             if (!('isStarted' in layoutTestStep)) {
                 // run-webkit-tests never even ran.
                 PersistentCache.set(cacheKey, result);
-                callback(PersistentCache.get(cacheKey), false);
+                callback(result.failureCount, result.tooManyFailures);
                 return;
             }
 
@@ -124,7 +124,7 @@ Builder.prototype = {
                 // All tests passed.
                 result.failureCount = 0;
                 PersistentCache.set(cacheKey, result);
-                callback(PersistentCache.get(cacheKey), false);
+                callback(result.failureCount, result.tooManyFailures);
                 return;
             }
 
