@@ -293,29 +293,100 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
 static AtkObject* webkit_accessible_get_parent(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
+    if (!coreObject)
+        return 0;
+
     AccessibilityObject* coreParent = coreObject->parentObjectUnignored();
+
     if (!coreParent && isRootObject(coreObject))
         return atkParentOfRootObject(object);
 
     if (!coreParent)
         return 0;
 
+    // GTK doesn't expose table rows to Assistive technologies, but we
+    // need to have them anyway in the hierarchy from WebCore to
+    // properly perform coordinates calculations when requested.
+    if (coreParent->isTableRow() && coreObject->isTableCell())
+        coreParent = coreParent->parentObjectUnignored();
+
     return coreParent->wrapper();
+}
+
+static gint getNChildrenForTable(AccessibilityObject* coreObject)
+{
+    AccessibilityObject::AccessibilityChildrenVector tableChildren = coreObject->children();
+    size_t tableChildrenCount = tableChildren.size();
+    size_t cellsCount = 0;
+
+    // Look for the actual index of the cell inside the table.
+    for (unsigned i = 0; i < tableChildrenCount; ++i) {
+        if (tableChildren[i]->isTableRow()) {
+            AccessibilityObject::AccessibilityChildrenVector rowChildren = tableChildren[i]->children();
+            cellsCount += rowChildren.size();
+        } else
+            cellsCount++;
+    }
+
+    return cellsCount;
 }
 
 static gint webkit_accessible_get_n_children(AtkObject* object)
 {
-    return core(object)->children().size();
+    AccessibilityObject* coreObject = core(object);
+
+    // Tables should be treated in a different way because rows should
+    // be bypassed for GTK when exposing the accessible hierarchy.
+    if (coreObject->isAccessibilityTable())
+        return getNChildrenForTable(coreObject);
+
+    return coreObject->children().size();
+}
+
+static AccessibilityObject* getChildForTable(AccessibilityObject* coreObject, gint index)
+{
+    AccessibilityObject::AccessibilityChildrenVector tableChildren = coreObject->children();
+    size_t tableChildrenCount = tableChildren.size();
+    size_t cellsCount = 0;
+    AccessibilityObject* coreChild = 0;
+
+    // Look for the actual index of the cell inside the table.
+    size_t current = static_cast<size_t>(index);
+    for (unsigned i = 0; i < tableChildrenCount; ++i) {
+        if (tableChildren[i]->isTableRow()) {
+            AccessibilityObject::AccessibilityChildrenVector rowChildren = tableChildren[i]->children();
+            size_t rowChildrenCount = rowChildren.size();
+            if (current < cellsCount + rowChildrenCount)
+                return rowChildren.at(current - cellsCount).get();
+            cellsCount += rowChildrenCount;
+        } else if (cellsCount == current)
+            return tableChildren[i].get();
+        else
+            cellsCount++;
+    }
+
+    // Shouldn't reach if the child was found.
+    return 0;
 }
 
 static AtkObject* webkit_accessible_ref_child(AtkObject* object, gint index)
 {
-    AccessibilityObject* coreObject = core(object);
-    AccessibilityObject::AccessibilityChildrenVector children = coreObject->children();
-    if (index < 0 || static_cast<unsigned>(index) >= children.size())
+    if (index < 0)
         return 0;
 
-    AccessibilityObject* coreChild = children.at(index).get();
+    AccessibilityObject* coreObject = core(object);
+    AccessibilityObject* coreChild = 0;
+
+    // Tables are special cases in GTK because rows should be
+    // bypassed, but still taking their cells into account.
+    if (coreObject->isAccessibilityTable())
+        coreChild = getChildForTable(coreObject, index);
+    else {
+        AccessibilityObject::AccessibilityChildrenVector children = coreObject->children();
+        if (static_cast<unsigned>(index) >= children.size())
+            return 0;
+        coreChild = children.at(index).get();
+    }
 
     if (!coreChild)
         return 0;
@@ -326,6 +397,42 @@ static AtkObject* webkit_accessible_ref_child(AtkObject* object, gint index)
 
     return child;
 }
+
+static gint getIndexInParentForCellInRow(AccessibilityObject* coreObject)
+{
+    AccessibilityObject* parent = coreObject->parentObjectUnignored();
+    if (!parent)
+        return -1;
+
+    AccessibilityObject* grandParent = parent->parentObjectUnignored();
+    if (!grandParent)
+        return -1;
+
+    AccessibilityObject::AccessibilityChildrenVector rows = grandParent->children();
+    size_t rowsCount = rows.size();
+    size_t previousCellsCount = 0;
+
+    // Look for the actual index of the cell inside the table.
+    for (unsigned i = 0; i < rowsCount; ++i) {
+        if (!rows[i]->isTableRow())
+            continue;
+
+        AccessibilityObject::AccessibilityChildrenVector cells = rows[i]->children();
+        size_t cellsCount = cells.size();
+
+        if (rows[i] == parent) {
+            for (unsigned j = 0; j < cellsCount; ++j) {
+                if (cells[j] == coreObject)
+                    return previousCellsCount + j;
+            }
+        }
+
+        previousCellsCount += cellsCount;
+    }
+
+    return -1;
+}
+
 
 static gint webkit_accessible_get_index_in_parent(AtkObject* object)
 {
@@ -346,6 +453,11 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
                 return i;
         }
     }
+
+    // Need to calculate the index of the cell in the table, as
+    // rows won't be exposed to assistive technologies in GTK.
+    if (parent && parent->isTableRow() && coreObject->isTableCell())
+        return getIndexInParentForCellInRow(coreObject);
 
     AccessibilityObject::AccessibilityChildrenVector children = parent->children();
     unsigned count = children.size();

@@ -1,3 +1,39 @@
+2011-06-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Consider rows being ignored when adding children to tables
+        https://bugs.webkit.org/show_bug.cgi?id=62718
+
+        Hide row objects in tables in GTK's accessibility wrapper.
+
+        This is a different approach in the way WebCore's accessible
+        rows are exposed to assistive technologies in the GTK port,
+        since from now on those objects are kept in WebCore (they do not
+        declare to ignore accessibility) and just bypassed in the mapping
+        to ATK, allowing to hide them in the ATK hierarchy while, at the
+        same time, keeping them internally to be able to provide enough
+        information to determine tables related information, such as rows
+        counting or finding an cell for specific coordinates.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Do not ignore accessibility for table rows here.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_parent): Bypass rows when needed.
+        (getNChildrenForTable): New, find the number of children for a
+        table, which will be the addition of all cells for its rows.
+        (webkit_accessible_get_n_children): Call to getNChildrenForTable
+        for accessibility tables if needed.
+        (getChildForTable): New, bypass rows when needed, retrieving
+        cells as if they were direct children for tables.
+        (webkit_accessible_ref_child): Call to refChildForTable if needed.
+        (getIndexInParentForCellInRow): New, get the index for a given
+        cell in its parent table, considering other rows' cells.
+        (webkit_accessible_get_index_in_parent): Call to
+        getIndexInParentForCellInRow if needed.
+
 2011-06-24  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
