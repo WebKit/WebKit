@@ -1,3 +1,28 @@
+2011-06-24  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION r86838] line numbers do not scroll when script paused
+        https://bugs.webkit.org/show_bug.cgi?id=61653
+
+        roll out r86838
+
+        No new tests - refactoring.
+
+        * dom/Document.h:
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueueTimer::EventQueueTimer):
+        (WebCore::EventQueueTimer::fired):
+        (WebCore::EventQueue::create):
+        (WebCore::EventQueue::EventQueue):
+        (WebCore::EventQueue::~EventQueue):
+        (WebCore::EventQueue::enqueueEvent):
+        (WebCore::EventQueue::cancelEvent):
+        (WebCore::EventQueue::cancelQueuedEvents):
+        (WebCore::EventQueue::pendingEventTimerFired):
+        (WebCore::EventQueue::dispatchEvent):
+        * dom/EventQueue.h:
+
 2011-06-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89594.
