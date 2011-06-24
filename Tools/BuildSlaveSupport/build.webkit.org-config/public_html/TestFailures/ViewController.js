@@ -299,19 +299,31 @@ ViewController.prototype = {
             title = titlePrefix + failingTests.length + ' tests' + titleSuffix;
         console.assert(title.length <= Bugzilla.maximumBugTitleLength);
 
+        var firstSuspectRevision = parsedPassingBuildName ? parsedPassingBuildName.revision + 1 : parsedFailingBuildName.revision;
+        var lastSuspectRevision = parsedFailingBuildName.revision;
+
+        var endOfFirstSentence;
+        if (passingBuildName) {
+            endOfFirstSentence = 'started failing on ' + tester.name;
+            if (firstSuspectRevision === lastSuspectRevision)
+                endOfFirstSentence += ' in r' + firstSuspectRevision + ' <' + this._trac.changesetURL(firstSuspectRevision) + '>';
+            else
+                endOfFirstSentence += ' between r' + firstSuspectRevision + ' and r' + lastSuspectRevision + ' (inclusive)';
+        } else
+            endOfFirstSentence = (failingTests.length === 1 ? 'has' : 'have') + ' been failing on ' + tester.name + ' since at least r' + firstSuspectRevision + ' <' + this._trac.changesetURL(firstSuspectRevision) + '>';
+
         var description;
-        if (failingTests.length === 1) {
-            description = failingTests[0] + ' has been failing on ' + tester.name
-                + ' since r' + parsedFailingBuildName.revision + '.\n\n';
-        } else if (failingTests.length === 2) {
-            description = failingTests.join(' and ') + ' have been failing on ' + tester.name
-                + ' since r' + parsedFailingBuildName.revision + '.\n\n';
-        } else {
-            description = 'The following tests have been failing on ' + tester.name
-                + ' since r' + parsedFailingBuildName.revision + ':\n\n'
+        if (failingTests.length === 1)
+            description = failingTests[0] + ' ' + endOfFirstSentence + '.\n\n';
+        else if (failingTests.length === 2)
+            description = failingTests.join(' and ') + ' ' + endOfFirstSentence + '.\n\n';
+        else {
+            description = 'The following tests ' + endOfFirstSentence + ':\n\n'
                 + failingTests.map(function(test) { return '    ' + test }).join('\n')
                 + '\n\n';
         }
+        if (firstSuspectRevision !== lastSuspectRevision)
+            description += this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision) + '\n\n';
         if (passingBuildName)
             description += encodeURI(tester.resultsPageURL(passingBuildName)) + ' passed\n';
         var failingResultsHTML = tester.resultsPageURL(failingBuildName);

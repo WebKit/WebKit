@@ -1,3 +1,21 @@
+2011-06-24  Adam Roben  <aroben@apple.com>
+
+        Include links to Trac in bugs filed from TestFailures
+
+        Fixes <http://webkit.org/b/63348> Bugs filed from TestFailures page should include links to
+        Trac for suspect revisions
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        (Trac.prototype.changesetURL): New function, returns the URL for a particular revision in
+        Trac.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForNewAndExistingBugs): If there's only one suspect revision,
+        include a link to Trac for it in the first sentence of the description. Otherwise include a
+        link to the suspect range after the list of failing tests.
+
 2011-06-24  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, rolling out r89694.

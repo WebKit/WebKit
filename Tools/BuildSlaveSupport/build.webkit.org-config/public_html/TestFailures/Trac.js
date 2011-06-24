@@ -28,6 +28,10 @@ function Trac(baseURL) {
 }
 
 Trac.prototype = {
+    changesetURL: function(revision) {
+        return this.baseURL + 'changeset/' + revision;
+    },
+
     logURL: function(path, startRevision, endRevision) {
         return addQueryParametersToURL(this.baseURL + 'log/' + path, { rev: endRevision, stop_rev: startRevision });
     },
