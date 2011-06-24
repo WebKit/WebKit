@@ -1,3 +1,15 @@
+2011-06-24  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, remove assertion about root layers in RenderLayerBacking.
+        https://bugs.webkit.org/show_bug.cgi?id=60741
+
+        This was added in r89687, but somehow is not true on Safari Leopard.
+        However, as the tests that were added with that revision are passing
+        correctly, the assertion is most likely not correct.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2011-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
