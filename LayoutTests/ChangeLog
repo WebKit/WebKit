@@ -1,3 +1,12 @@
+2011-06-23  Jessie Berlin  <jberlin@apple.com>
+
+        WKTR: eventSender.keyDown is unimplemented
+        https://bugs.webkit.org/show_bug.cgi?id=57515
+
+        Add another test that uses eventSender.keyDown to the mac-wk2 skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-23  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.
