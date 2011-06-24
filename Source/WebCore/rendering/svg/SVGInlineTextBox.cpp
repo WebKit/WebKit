@@ -736,7 +736,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
     if (isVisible || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (renderer()->style()->svgStyle()->hasStroke() || !hitRules.requireStroke))
             || (hitRules.canHitFill && (renderer()->style()->svgStyle()->hasFill() || !hitRules.requireFill))) {
-            FloatPoint boxOrigin = locationIncludingFlipping();
+            FloatPoint boxOrigin(x(), y());
             boxOrigin.moveBy(accumulatedOffset);
             FloatRect rect(boxOrigin, IntSize(width(), height()));
             if (rect.intersects(result.rectForPoint(pointInContainer))) {
