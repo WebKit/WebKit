@@ -1,3 +1,12 @@
+2011-06-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Exit immediately if the last condition tested fails.
+
+        Make <video> app cache test exit immediately on failure
+        https://bugs.webkit.org/show_bug.cgi?id=63323
+
 2011-06-24  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION (r89657): http/tests/inspector/extensions-headers.html,

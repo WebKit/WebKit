@@ -21,14 +21,29 @@
                 switch(test)
                 {
                     case 1:
-                        logResult(false, "Failed loading file included in manifest!");
-                        endTest();
+                        failTest(false, "Failed loading file included in manifest!");
                         break;
                     case 2:
                         test3()
                         break;
                     case 3:
                         endTest();
+                        break;
+                }
+            }
+
+            function durationchangeEvent()
+            {
+                switch(test)
+                {
+                    case 1:
+                        test2();
+                        break;
+                    case 2:
+                        failTest("<br>Loaded file NOT included in manifest!");
+                        break;
+                    case 3:
+                        failTest("<br>Loaded JavaScript file as media!");
                         break;
                 }
             }
@@ -49,18 +64,6 @@
                 test = 2;
                 video = document.getElementsByTagName('video')[0];
                 video.src = "/media-resources/content/" + findMediaFile("audio", "silence");
-            }
-
-            function durationchangeEvent()
-            {
-                if (test == 2) {
-                    logResult(false, "<br>Loaded file NOT included in manifest!");
-                    consoleWrite("");
-                    endTest();
-                    return;
-                }
-
-                test2();
             }
 
             function test1()
