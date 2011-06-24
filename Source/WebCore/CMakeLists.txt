@@ -1977,9 +1977,7 @@ IF (ENABLE_VIDEO_TRACK)
         html/CueIndex.cpp
         html/HTMLTrackElement.cpp
         html/LoadableTextTrack.cpp
-        html/LoadableTextTrackImpl.cpp
         html/MutableTextTrack.cpp
-        html/MutableTextTrackImpl.cpp
         html/TextTrack.cpp
         html/TextTrackCue.cpp
         html/TextTrackCueList.cpp

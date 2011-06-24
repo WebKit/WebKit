@@ -29,13 +29,14 @@
 
 #include "MutableTextTrack.h"
 
-#include "MutableTextTrackImpl.h"
+#include "TextTrack.h"
+#include "TextTrackCue.h"
 
 namespace WebCore {
 
 MutableTextTrack::MutableTextTrack(const String& kind, const String& label, const String& language)
+    : TextTrack(kind, label, language)
 {
-    m_private = MutableTextTrackImpl::create(kind, label, language);
 }
 
 void MutableTextTrack::addCue(PassRefPtr<TextTrackCue>)
@@ -44,6 +45,16 @@ void MutableTextTrack::addCue(PassRefPtr<TextTrackCue>)
 }
 
 void MutableTextTrack::removeCue(PassRefPtr<TextTrackCue>)
+{
+    // FIXME(62890): Implement.
+}
+
+void MutableTextTrack::newCuesLoaded()
+{
+    // FIXME(62890): Implement.
+}
+
+void MutableTextTrack::fetchNewestCues(Vector<TextTrackCue*>&)
 {
     // FIXME(62890): Implement.
 }

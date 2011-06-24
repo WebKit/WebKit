@@ -63,6 +63,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/sql \
 	-I$(srcdir)/Source/WebCore/platform/text \
 	-I$(srcdir)/Source/WebCore/platform/text/transcoder \
+	-I$(srcdir)/Source/WebCore/platform/track \
 	-I$(srcdir)/Source/WebCore/platform/win \
 	-I$(srcdir)/Source/WebCore/plugins \
 	-I$(srcdir)/Source/WebCore/plugins/win \

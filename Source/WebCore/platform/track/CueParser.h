@@ -42,22 +42,36 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
 class TextTrackCue;
+
+class CueParserClient {
+public:
+    virtual void newCuesParsed() = 0;
+    virtual void trackLoadStarted() = 0;
+    virtual void trackLoadError() = 0;
+    virtual void trackLoadCompleted() = 0;
+};
 
 class CueParser : public ThreadableLoaderClient {
 public:
     CueParser();
     virtual ~CueParser();
 
-    // ThreadableLoaderClient methods.
+    void didReceiveResponse(unsigned long, const ResourceResponse&);
     void didReceiveData(const char*, int);
+    void didFinishLoading(unsigned long);
+    void didFail(const ResourceError&);
 
-    void load(const String&);
-    void fetchParsedCues(Vector<PassRefPtr<TextTrackCue> >&);
+    void load(const String&, ScriptExecutionContext*, CueParserClient*);
+    bool supportsType(const String&);
+
+    void fetchParsedCues(Vector<RefPtr<TextTrackCue> >&);
 
 private:
     RefPtr<ThreadableLoader> m_loader;
     OwnPtr<CueParserPrivateInterface> m_private;
+    CueParserClient* m_client;
 };
 
 } // namespace WebCore

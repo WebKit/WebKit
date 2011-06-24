@@ -84,6 +84,10 @@
 #include "Widget.h"
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+#include "HTMLTrackElement.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -590,6 +594,9 @@ void HTMLMediaElement::loadInternal()
     }
 
     selectMediaResource();
+#if ENABLE(VIDEO_TRACK)
+    loadTextTracks();
+#endif
 }
 
 void HTMLMediaElement::selectMediaResource()
@@ -765,6 +772,18 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     if (renderer())
         renderer()->updateFromElement();
 }
+
+#if ENABLE(VIDEO_TRACK)
+void HTMLMediaElement::loadTextTracks()
+{
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(trackTag)) {
+            HTMLTrackElement* track = static_cast<HTMLTrackElement*>(node);
+            track->load(ActiveDOMObject::scriptExecutionContext());
+        }
+    }
+}
+#endif
 
 bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction actionIfInvalid)
 {

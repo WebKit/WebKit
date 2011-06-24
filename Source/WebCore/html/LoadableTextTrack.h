@@ -28,14 +28,20 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "LoadableTextTrackImpl.h"
-#include "PassRefPtr.h"
+#include "CueLoader.h"
+#include "CueParser.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class LoadableTextTrack : public TextTrack {
+class ScriptExecutionContext;
+class TextTrack;
+class TextTrackCue;
+
+class LoadableTextTrack : public TextTrack, public CueParserClient, public CueLoader {
 public:
     static PassRefPtr<LoadableTextTrack> create(const String& kind, const String& label, const String& language, bool isDefault)
     {
@@ -43,11 +49,23 @@ public:
     }
     virtual ~LoadableTextTrack();
 
-    void load(const String&);
+    void load(const String&, ScriptExecutionContext*);
+    bool supportsType(const String&);
+
+    virtual void newCuesParsed();
+    virtual void trackLoadStarted();
+    virtual void trackLoadError();
+    virtual void trackLoadCompleted();
+
+    virtual void newCuesLoaded();
+    virtual void fetchNewestCues(Vector<TextTrackCue*>&);
 
 private:
     LoadableTextTrack(const String& kind, const String& label, const String& language, bool isDefault);
 
+    CueParser m_parser;
+
+    bool m_isDefault;
 };
 } // namespace WebCore
 

@@ -32,19 +32,53 @@
 namespace WebCore {
 
 LoadableTextTrack::LoadableTextTrack(const String& kind, const String& label, const String& language, bool isDefault)
+    : TextTrack(kind, label, language)
+    , m_isDefault(isDefault)
 {
-    // FIXME(62881): Implement.
-    m_private = LoadableTextTrackImpl::create(kind, label, language, isDefault);
 }
 
 LoadableTextTrack::~LoadableTextTrack()
 {
-    // FIXME(62881): Implement.
 }
 
-void LoadableTextTrack::load(const String&)
+void LoadableTextTrack::load(const String& url, ScriptExecutionContext* context)
 {
-    // FIXME(62881): Implement.
+    return m_parser.load(url, context, this);
+}
+
+bool LoadableTextTrack::supportsType(const String& url)
+{
+    return m_parser.supportsType(url);
+}
+
+void LoadableTextTrack::newCuesParsed()
+{
+    // FIXME(62883): Fetch new cues from parser and temporarily store to give to CueLoaderClient when fetchNewCuesFromLoader is called.
+}
+
+void LoadableTextTrack::trackLoadStarted()
+{
+    setReadyState(TextTrack::LOADING);
+}
+
+void LoadableTextTrack::trackLoadError()
+{
+    setReadyState(TextTrack::ERROR);
+}
+
+void LoadableTextTrack::trackLoadCompleted()
+{
+    setReadyState(TextTrack::LOADED);
+}
+
+void LoadableTextTrack::newCuesLoaded()
+{
+    // FIXME(62885): Tell the client to fetch the latest cues.
+}
+
+void LoadableTextTrack::fetchNewestCues(Vector<TextTrackCue*>&)
+{
+    // FIXME(62885): Implement.
 }
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "HTMLElement.h"
+#include "LoadableTextTrack.h"
 
 namespace WebCore {
 
@@ -47,13 +48,18 @@ public:
     void setSrclang(const String&);
     void setLabel(const String&);
     void setIsDefault(bool);
+    
+    void load(ScriptExecutionContext*);
 
 private:
     HTMLTrackElement(const QualifiedName&, Document*);
+    virtual ~HTMLTrackElement();
 
     virtual void insertedIntoTree(bool);
     virtual void willRemove();
     virtual bool isURLAttribute(Attribute*) const;
+    
+    RefPtr<LoadableTextTrack> m_track;
 };
 
 }

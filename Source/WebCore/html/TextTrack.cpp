@@ -35,34 +35,15 @@
 #include "TextTrack.h"
 
 #include "TextTrackCueList.h"
-#include "TextTrackPrivate.h"
 
 namespace WebCore {
 
-class NullTextTrackPrivate : public TextTrackPrivateInterface {
-public:
-    NullTextTrackPrivate();
-    virtual ~NullTextTrackPrivate();
-
-    // TextTrackPrivateInterface methods
-    virtual String kind() const { return emptyString(); }
-    virtual String label() const { return emptyString(); }
-    virtual String language() const { return emptyString(); }
-    virtual TextTrack::ReadyState readyState() const { return TextTrack::NONE; }
-    virtual TextTrack::Mode mode() const { return TextTrack::OFF; }
-    virtual void setMode(TextTrack::Mode) { }
-    virtual PassRefPtr<TextTrackCueList> cues() const { return 0; }
-    virtual PassRefPtr<TextTrackCueList> activeCues() const { return 0; }
-    virtual void load(const String&) { }
-};
-
-static PassOwnPtr<NullTextTrackPrivate> createNullTextTrackPrivate()
-{
-    return adoptPtr(new NullTextTrackPrivate());
-}
-
-TextTrack::TextTrack()
-    : m_private(createNullTextTrackPrivate())
+TextTrack::TextTrack(const String& kind, const String& label, const String& language)
+    : m_kind(kind)
+    , m_label(label)
+    , m_language(language)
+    , m_readyState(TextTrack::NONE)
+    , m_mode(TextTrack::SHOWING)
 {
 }
 
@@ -72,27 +53,32 @@ TextTrack::~TextTrack()
 
 String TextTrack::kind() const
 {
-    return m_private->kind();
+    return m_kind;
 }
 
 String TextTrack::label() const
 {
-    return m_private->label();
+    return m_label;
 }
 
 String TextTrack::language() const
 {
-    return m_private->language();
+    return m_language;
 }
 
 TextTrack::ReadyState TextTrack::readyState() const
 {
-    return m_private->readyState();
+    return m_readyState;
+}
+
+void TextTrack::setReadyState(ReadyState state)
+{
+    m_readyState = state;
 }
 
 TextTrack::Mode TextTrack::mode() const
 {
-    return m_private->mode();
+    return m_mode;
 }
 
 void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
@@ -100,19 +86,21 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
     // 4.8.10.12.5 On setting the mode, if the new value is not either 0, 1, or 2,
     // the user agent must throw an INVALID_ACCESS_ERR exception.
     if (mode == TextTrack::OFF || mode == TextTrack::HIDDEN || mode == TextTrack::SHOWING)
-        m_private->setMode(static_cast<Mode>(mode));
+        m_mode = static_cast<Mode>(mode);
     else
         ec = INVALID_ACCESS_ERR;
 }
 
 PassRefPtr<TextTrackCueList> TextTrack::cues() const
 {
-    return m_private->cues();
+    // FIXME(62885): Implement.
+    return 0;
 }
 
 PassRefPtr<TextTrackCueList> TextTrack::activeCues() const
 {
-    return m_private->activeCues();
+    // FIXME(62885): Implement.
+    return 0;
 }
 
 } // namespace WebCore

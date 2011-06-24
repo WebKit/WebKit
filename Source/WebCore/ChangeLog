@@ -1,3 +1,41 @@
+2011-06-24  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Loading out-of-band text track files from <track>.
+        https://bugs.webkit.org/show_bug.cgi?id=62881
+
+        Uses the src attribute of <track> urls to load out-of-band text track
+        files using ThreadableLoader.  Also removes TextTrackPrivateInterface
+        (as well as LoadableTextTrackImpl and MutableTextTrackImpl) classes.
+
+        No new tests because feature is hidden behind VIDEO_TRACK feature
+        define, which is turned off.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLTrackElement.cpp:
+        * html/HTMLTrackElement.h:
+        * html/LoadableTextTrack.cpp:
+        * html/LoadableTextTrack.h:
+        * html/LoadableTextTrackImpl.cpp: Removed.
+        * html/LoadableTextTrackImpl.h: Removed.
+        * html/MutableTextTrack.cpp:
+        * html/MutableTextTrack.h:
+        * html/MutableTextTrackImpl.cpp: Removed.
+        * html/MutableTextTrackImpl.h: Removed.
+        * html/TextTrack.cpp:
+        * html/TextTrack.h:
+        * html/TextTrackPrivate.h: Removed.
+        * platform/track/CueParser.cpp:
+        * platform/track/CueParser.h:
+
 2011-06-24  Rob Buis  <rbuis@rim.com>
 
         Rubber-stamped by Nikolas Zimmermann.

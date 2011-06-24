@@ -34,6 +34,9 @@
 
 #include "CueParser.h"
 
+#include "ResourceRequest.h"
+#include "ThreadableLoader.h"
+
 namespace WebCore {
 
 CueParser::CueParser()
@@ -43,19 +46,52 @@ CueParser::CueParser()
 
 CueParser::~CueParser()
 {
+    if (m_loader)
+        m_loader->cancel();
+    m_loader = 0;
 }
 
-void CueParser::load(const String&)
+void CueParser::load(const String& url, ScriptExecutionContext* context, CueParserClient* client)
 {
-    // FIXME(62881): Implement.
+    ResourceRequest request(url);
+
+    ThreadableLoaderOptions options;
+    options.sendLoadCallbacks = true;
+    options.crossOriginRequestPolicy = AllowCrossOriginRequests;
+
+    m_client = client;
+
+    m_loader = ThreadableLoader::create(context, this, request, options);
 }
 
-void CueParser::didReceiveData(const char*, int)
+bool CueParser::supportsType(const String& url)
 {
-    // FIXME(62881): Implement.
+    // FIXME(62893): check against a list of supported types
+    return false;
 }
 
-void CueParser::fetchParsedCues(Vector<PassRefPtr<TextTrackCue> >&)
+void CueParser::didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&)
+{
+    // FIXME(62893): Create m_private based on MIME type.
+    m_client->trackLoadStarted();
+}
+
+void CueParser::didReceiveData(const char* data, int len)
+{
+    // FIXME(62893): Send data along to m_private parser to be parsed.
+}
+
+void CueParser::didFinishLoading(unsigned long)
+{
+    m_client->trackLoadCompleted();
+}
+
+void CueParser::didFail(const ResourceError&)
+{
+    m_client->trackLoadError();
+}
+
+void CueParser::fetchParsedCues(Vector<RefPtr<TextTrackCue> >&)
 {
     // FIXME(62893): Implement.
 }

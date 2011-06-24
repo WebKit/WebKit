@@ -37,7 +37,6 @@ namespace WebCore {
 
 class TextTrack;
 class TextTrackCueList;
-class TextTrackPrivateInterface;
 
 class TextTrackClient {
 public:
@@ -49,9 +48,9 @@ public:
 
 class TextTrack : public RefCounted<TextTrack> {
 public:
-    static PassRefPtr<TextTrack> create()
+    static PassRefPtr<TextTrack> create(const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new TextTrack);
+        return adoptRef(new TextTrack(kind, label, language));
     }
     virtual ~TextTrack();
 
@@ -73,8 +72,18 @@ public:
     void modeChanged();
 
 protected:
-    TextTrack();
-    OwnPtr<TextTrackPrivateInterface> m_private;
+    TextTrack(const String& kind, const String& label, const String& language);
+
+    void setReadyState(ReadyState);
+
+    RefPtr<TextTrackCueList> m_cues;
+
+private:
+    String m_kind;
+    String m_label;
+    String m_language;
+    TextTrack::ReadyState m_readyState;
+    TextTrack::Mode m_mode;
 
 };
 

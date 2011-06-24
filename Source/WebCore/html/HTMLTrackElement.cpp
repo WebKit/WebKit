@@ -45,6 +45,10 @@ inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(trackTag));
 }
 
+HTMLTrackElement::~HTMLTrackElement()
+{
+}
+
 PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new HTMLTrackElement(tagName, document));
@@ -121,6 +125,14 @@ void HTMLTrackElement::setIsDefault(bool isDefault)
 bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
 {
     return attribute->name() == srcAttr;
+}
+
+void HTMLTrackElement::load(ScriptExecutionContext* context)
+{
+    m_track = LoadableTextTrack::create(kind(), label(), srclang(), isDefault());
+
+    if (hasAttribute(srcAttr))
+        m_track->load(getNonEmptyURLAttribute(srcAttr), context);
 }
 
 }

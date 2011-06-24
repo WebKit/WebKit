@@ -4025,19 +4025,14 @@
 		B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4C13A12A0B00846B27 /* CueIndex.h */; };
 		B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */; };
 		B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */; };
-		B1AD4E6013A12A0B00846B27 /* LoadableTextTrackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4F13A12A0B00846B27 /* LoadableTextTrackImpl.cpp */; };
-		B1AD4E6113A12A0B00846B27 /* LoadableTextTrackImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5013A12A0B00846B27 /* LoadableTextTrackImpl.h */; };
 		B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */; };
 		B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */; };
-		B1AD4E6413A12A0B00846B27 /* MutableTextTrackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5313A12A0B00846B27 /* MutableTextTrackImpl.cpp */; };
-		B1AD4E6513A12A0B00846B27 /* MutableTextTrackImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5413A12A0B00846B27 /* MutableTextTrackImpl.h */; };
 		B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */; };
 		B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5613A12A0B00846B27 /* TextTrack.h */; };
 		B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */; };
 		B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */; };
 		B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */; };
 		B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */; };
-		B1AD4E6C13A12A0B00846B27 /* TextTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5B13A12A0B00846B27 /* TextTrackPrivate.h */; };
 		B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E7113A12A4600846B27 /* CueLoader.cpp */; };
 		B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E7213A12A4600846B27 /* CueLoader.h */; };
 		B1AD4E7B13A12A7200846B27 /* CueParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E7813A12A7200846B27 /* CueParser.cpp */; };
@@ -10463,19 +10458,14 @@
 		B1AD4E4C13A12A0B00846B27 /* CueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CueIndex.h; path = html/CueIndex.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadableTextTrack.cpp; path = html/LoadableTextTrack.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadableTextTrack.h; path = html/LoadableTextTrack.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E4F13A12A0B00846B27 /* LoadableTextTrackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadableTextTrackImpl.cpp; path = html/LoadableTextTrackImpl.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E5013A12A0B00846B27 /* LoadableTextTrackImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadableTextTrackImpl.h; path = html/LoadableTextTrackImpl.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MutableTextTrack.cpp; path = html/MutableTextTrack.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutableTextTrack.h; path = html/MutableTextTrack.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E5313A12A0B00846B27 /* MutableTextTrackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MutableTextTrackImpl.cpp; path = html/MutableTextTrackImpl.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E5413A12A0B00846B27 /* MutableTextTrackImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutableTextTrackImpl.h; path = html/MutableTextTrackImpl.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrack.cpp; path = html/TextTrack.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E5613A12A0B00846B27 /* TextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrack.h; path = html/TextTrack.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackCue.cpp; path = html/TextTrackCue.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackCue.h; path = html/TextTrackCue.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackCueList.cpp; path = html/TextTrackCueList.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackCueList.h; path = html/TextTrackCueList.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E5B13A12A0B00846B27 /* TextTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackPrivate.h; path = html/TextTrackPrivate.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E7113A12A4600846B27 /* CueLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CueLoader.cpp; path = loader/CueLoader.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E7213A12A4600846B27 /* CueLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CueLoader.h; path = loader/CueLoader.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E7813A12A7200846B27 /* CueParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CueParser.cpp; sourceTree = "<group>"; };
@@ -13656,19 +13646,14 @@
 				B1AD4E4C13A12A0B00846B27 /* CueIndex.h */,
 				B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */,
 				B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */,
-				B1AD4E4F13A12A0B00846B27 /* LoadableTextTrackImpl.cpp */,
-				B1AD4E5013A12A0B00846B27 /* LoadableTextTrackImpl.h */,
 				B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */,
 				B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */,
-				B1AD4E5313A12A0B00846B27 /* MutableTextTrackImpl.cpp */,
-				B1AD4E5413A12A0B00846B27 /* MutableTextTrackImpl.h */,
 				B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */,
 				B1AD4E5613A12A0B00846B27 /* TextTrack.h */,
 				B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */,
 				B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */,
 				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
 				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
-				B1AD4E5B13A12A0B00846B27 /* TextTrackPrivate.h */,
 				41815C1B138319630057AAA4 /* js */,
 				417DA4CF13734326007C57FB /* Internals.cpp */,
 				417DA4CE13734326007C57FB /* Internals.h */,
@@ -23057,13 +23042,10 @@
 				FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */,
 				B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */,
 				B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */,
-				B1AD4E6113A12A0B00846B27 /* LoadableTextTrackImpl.h in Headers */,
 				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
-				B1AD4E6513A12A0B00846B27 /* MutableTextTrackImpl.h in Headers */,
 				B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */,
 				B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */,
 				B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */,
-				B1AD4E6C13A12A0B00846B27 /* TextTrackPrivate.h in Headers */,
 				B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */,
 				B1AD4E7C13A12A7200846B27 /* CueParser.h in Headers */,
 				B1AD4E7D13A12A7200846B27 /* CueParserPrivate.h in Headers */,
@@ -25818,9 +25800,7 @@
 				FDF7E9C313AC21DB00A51EAC /* JSAudioBufferCallback.cpp in Sources */,
 				B1AD4E5C13A12A0B00846B27 /* CueIndex.cpp in Sources */,
 				B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */,
-				B1AD4E6013A12A0B00846B27 /* LoadableTextTrackImpl.cpp in Sources */,
 				B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */,
-				B1AD4E6413A12A0B00846B27 /* MutableTextTrackImpl.cpp in Sources */,
 				B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */,
 				B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */,
 				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,

@@ -1736,17 +1736,14 @@ HEADERS += \
     html/LabelsNodeList.h \
     html/LinkRelAttribute.h \
     html/LoadableTextTrack.h \
-    html/LoadableTextTrackImpl.h \
     html/MediaDocument.h \
     html/MutableTextTrack.h \
-    html/MutableTextTrackImpl.h \
     html/PluginDocument.h \
     html/StepRange.h \
     html/TextDocument.h \
     html/TextTrack.h \
     html/TextTrackCue.h \
     html/TextTrackCueList.h \
-    html/TextTrackPrivate.h \
     html/TimeRanges.h \
     html/ValidityState.h \
     html/parser/CSSPreloadScanner.h \

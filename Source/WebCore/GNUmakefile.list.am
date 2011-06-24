@@ -1596,6 +1596,8 @@ webcore_sources += \
 	Source/WebCore/html/CollectionType.h \
 	Source/WebCore/html/ColorInputType.cpp \
 	Source/WebCore/html/ColorInputType.h \
+	Source/WebCore/html/CueIndex.cpp \
+	Source/WebCore/html/CueIndex.h \
 	Source/WebCore/html/DateInputType.cpp \
 	Source/WebCore/html/DateInputType.h \
 	Source/WebCore/html/DateTimeInputType.cpp \
@@ -1805,11 +1807,15 @@ webcore_sources += \
 	Source/WebCore/html/LabelsNodeList.h \
 	Source/WebCore/html/LinkRelAttribute.cpp \
 	Source/WebCore/html/LinkRelAttribute.h \
+	Source/WebCore/html/LoadableTextTrack.cpp \
+	Source/WebCore/html/LoadableTextTrack.h \
 	Source/WebCore/html/MediaDocument.cpp \
 	Source/WebCore/html/MediaDocument.h \
 	Source/WebCore/html/MediaError.h \
 	Source/WebCore/html/MonthInputType.cpp \
 	Source/WebCore/html/MonthInputType.h \
+	Source/WebCore/html/MutableTextTrack.cpp \
+	Source/WebCore/html/MutableTextTrack.h \
 	Source/WebCore/html/NumberInputType.cpp \
 	Source/WebCore/html/NumberInputType.h \
 	Source/WebCore/html/parser/CSSPreloadScanner.cpp \
@@ -1898,6 +1904,12 @@ webcore_sources += \
 	Source/WebCore/html/TextInputType.cpp \
 	Source/WebCore/html/TextInputType.h \
 	Source/WebCore/html/TextMetrics.h \
+	Source/WebCore/html/TextTrack.cpp \
+	Source/WebCore/html/TextTrack.h \
+	Source/WebCore/html/TextTrackCue.cpp \
+	Source/WebCore/html/TextTrackCue.h \
+	Source/WebCore/html/TextTrackCueList.cpp \
+	Source/WebCore/html/TextTrackCueList.h \
 	Source/WebCore/html/TimeInputType.cpp \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
@@ -2078,6 +2090,8 @@ webcore_sources += \
 	Source/WebCore/loader/CrossOriginAccessControl.h \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.cpp \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.h \
+	Source/WebCore/loader/CueLoader.cpp \
+	Source/WebCore/loader/CueLoader.h \
 	Source/WebCore/loader/DocumentLoader.cpp \
 	Source/WebCore/loader/DocumentLoader.h \
 	Source/WebCore/loader/DocumentLoadTiming.h \
@@ -2825,6 +2839,9 @@ webcore_sources += \
 	Source/WebCore/platform/ThreadTimers.h \
 	Source/WebCore/platform/Timer.cpp \
 	Source/WebCore/platform/Timer.h \
+	Source/WebCore/platform/track/CueParser.h \
+	Source/WebCore/platform/track/CueParser.cpp \
+	Source/WebCore/platform/track/CueParserPrivate.h \
 	Source/WebCore/platform/TreeShared.h \
 	Source/WebCore/platform/URLString.h \
 	Source/WebCore/platform/UUID.cpp \

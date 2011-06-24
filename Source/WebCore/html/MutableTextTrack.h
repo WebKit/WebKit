@@ -28,13 +28,16 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "CueLoader.h"
 #include "TextTrack.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class TextTrackCue;
 
-class MutableTextTrack : public TextTrack {
+class MutableTextTrack : public TextTrack, public CueLoader {
 public:
     static PassRefPtr<MutableTextTrack> create(const String& kind, const String& label, const String& language)
     {
@@ -44,6 +47,10 @@ public:
 
     void addCue(PassRefPtr<TextTrackCue>);
     void removeCue(PassRefPtr<TextTrackCue>);
+
+    virtual void newCuesLoaded();
+    virtual void fetchNewestCues(Vector<TextTrackCue*>&);
+
 private:
     MutableTextTrack(const String& kind, const String& label, const String& language);
 };

@@ -300,6 +300,10 @@ private:
     KURL selectNextSourceChild(ContentType*, InvalidSourceAction);
     void mediaLoadingFailed(MediaPlayer::NetworkState);
 
+#if ENABLE(VIDEO_TRACK)
+    void loadTextTracks();
+#endif
+
     // These "internal" functions do not check user gesture restrictions.
     void loadInternal();
     void playInternal();
