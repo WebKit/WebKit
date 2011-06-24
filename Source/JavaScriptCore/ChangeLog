@@ -1,5 +1,12 @@
 2011-06-23  Oliver Hunt  <oliver@apple.com>
 
+        Fix Qt again.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::readPointer):
+
+2011-06-23  Oliver Hunt  <oliver@apple.com>
+
         Fix Qt Build
 
         * assembler/ARMAssembler.h:

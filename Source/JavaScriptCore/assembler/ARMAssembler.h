@@ -743,7 +743,7 @@ namespace JSC {
         static void* readPointer(void* from)
         {
             ARMWord* insn = reinterpret_cast<ARMWord*>(from);
-            ARMWord* addr = getLdrImmAddress(insn));
+            ARMWord* addr = getLdrImmAddress(insn);
             return *reinterpret_cast<void**>(addr);
         }
         
