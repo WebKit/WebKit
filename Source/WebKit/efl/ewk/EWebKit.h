@@ -29,6 +29,7 @@
 #ifndef EWebKit_h
 #define EWebKit_h
 
+#include "ewk_auth.h"
 #include "ewk_contextmenu.h"
 #include "ewk_cookies.h"
 #include "ewk_frame.h"
