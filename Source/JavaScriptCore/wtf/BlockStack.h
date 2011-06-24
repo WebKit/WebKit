@@ -27,6 +27,7 @@
 #define BlockStack_h
 
 #include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -57,9 +58,9 @@ template <typename T> BlockStack<T>::BlockStack()
 template <typename T> BlockStack<T>::~BlockStack()
 {
     if (m_spareBlock)
-        free(m_spareBlock);
+        fastFree(m_spareBlock);
     for (size_t i = 0; i < m_blocks.size(); ++i)
-        free(m_blocks[i]);
+        fastFree(m_blocks[i]);
 }
 
 template <typename T> inline const Vector<T*>& BlockStack<T>::blocks()
@@ -69,7 +70,7 @@ template <typename T> inline const Vector<T*>& BlockStack<T>::blocks()
 
 template <typename T> T* BlockStack<T>::grow()
 {
-    T* block = m_spareBlock ? m_spareBlock : static_cast<T*>(malloc(blockSize));
+    T* block = m_spareBlock ? m_spareBlock : static_cast<T*>(fastMalloc(blockSize));
     m_spareBlock = 0;
 
     m_blocks.append(block);
@@ -83,7 +84,7 @@ template <typename T> void BlockStack<T>::shrink(T* newEnd)
     m_blocks.removeLast();
 
     while (m_blocks.last() + blockLength != newEnd) {
-        free(m_blocks.last());
+        fastFree(m_blocks.last());
         m_blocks.removeLast();
     }
 }

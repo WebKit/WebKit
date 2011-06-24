@@ -1,3 +1,15 @@
+2011-06-23  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63298
+        Replace Malloc with FastMalloc to match the rest of wtf.
+
+        * wtf/BlockStack.h:
+        (WTF::::~BlockStack):
+        (WTF::::grow):
+        (WTF::::shrink):
+
 2011-06-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
