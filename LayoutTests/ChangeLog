@@ -1,3 +1,35 @@
+2011-06-23  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        convert editing/deleting/5026848-1.html to dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=63289
+
+        Renamed editing/deleting/5026848* to editing/deleting/delete-across-editable-content-boundaries*,
+        and converted editing/deleting/delete-across-editable-content-boundaries-1 to a dump-as-markup test.
+        Removed old png/txt test results, and added new result. Also included radr number.
+
+        * editing/deleting/delete-across-editable-content-boundaries-1.html: Added.
+        * editing/deleting/delete-across-editable-content-boundaries-1-expected.txt: Added.
+        * editing/deleting/delete-across-editable-content-boundaries-2.html: Added.
+        * editing/deleting/delete-across-editable-content-boundaries-2-expected.txt: Added.
+        * editing/deleting/delete-across-editable-content-boundaries-3.html: Added.
+        * editing/deleting/delete-across-editable-content-boundaries-3-expected.txt: Added.
+        * editing/deleting/5026848-1.html: Removed.
+        * editing/deleting/5026848-2.html: Removed.
+        * editing/deleting/5026848-2-expected.txt: Removed.
+        * editing/deleting/5026848-3.html: Removed.
+        * editing/deleting/5026848-3-expected.txt: Removed.
+        * platform/chromium-linux/editing/deleting/5026848-1-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5026848-1-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5026848-1-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5026848-1-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5026848-1-expected.png: Removed.
+        * platform/mac/editing/deleting/5026848-1-expected.png: Removed.
+        * platform/mac/editing/deleting/5026848-1-expected.txt: Removed.
+        * platform/qt/editing/deleting/5026848-1-expected.png: Removed.
+        * platform/qt/editing/deleting/5026848-1-expected.txt: Removed.
+
 2011-06-23  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, mark a few tests failing on OSX after r89632.
