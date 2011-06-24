@@ -3419,6 +3419,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	Source/WebCore/svg/SVGAnimatedRect.cpp \
 	Source/WebCore/svg/SVGAnimatedRect.h \
+	Source/WebCore/svg/SVGAnimatedString.cpp \
 	Source/WebCore/svg/SVGAnimatedString.h \
 	Source/WebCore/svg/SVGAnimatedTransformList.h \
 	Source/WebCore/svg/SVGAnimatedType.cpp \

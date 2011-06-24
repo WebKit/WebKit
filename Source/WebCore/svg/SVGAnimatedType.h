@@ -42,6 +42,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
+    static PassOwnPtr<SVGAnimatedType> createString(String*);
     
     AnimatedAttributeType type() const { return m_type; }
 
@@ -51,6 +52,7 @@ public:
     float& number();
     SVGPointList& pointList();
     FloatRect& rect();
+    String& string();
 
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
@@ -73,6 +75,7 @@ private:
         float* number;
         SVGPointList* pointList;
         FloatRect* rect;
+        String* string;
     } m_data;
 };
     

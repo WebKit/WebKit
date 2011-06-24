@@ -74,9 +74,6 @@ private:
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;
-    String m_fromString;
-    String m_toString;
-    String m_animatedString;
     OwnPtr<SVGPathByteStream> m_fromPath;
     OwnPtr<SVGPathByteStream> m_toPath;
     OwnPtr<SVGPathByteStream> m_animatedPath;

@@ -27,6 +27,7 @@
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedRect.h"
+#include "SVGAnimatedString.h"
 
 namespace WebCore {
 
@@ -53,9 +54,11 @@ public:
             return adoptPtr(new SVGAnimatedPointListAnimator(animationElement, contextElement));
         case AnimatedRect:
             return adoptPtr(new SVGAnimatedRectAnimator(animationElement, contextElement));
+        case AnimatedString:
+            return adoptPtr(new SVGAnimatedStringAnimator(animationElement, contextElement));
         default:
             ASSERT_NOT_REACHED();
-            return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
+            return nullptr;
         }
     }
 

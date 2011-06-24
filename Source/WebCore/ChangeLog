@@ -1,3 +1,48 @@
+2011-06-24  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Convert AnimatedString to SVGAnimatorFactory concept
+        https://bugs.webkit.org/show_bug.cgi?id=63296
+
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGString.
+
+        No new tests added. No change of functionality.
+
+        * CMakeLists.txt: Added new file to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimatedString.cpp: Added. Animator for SVGString.
+        (WebCore::SVGAnimatedStringAnimator::SVGAnimatedStringAnimator):
+        (WebCore::SVGAnimatedStringAnimator::constructFromString):
+        (WebCore::SVGAnimatedStringAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedStringAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedStringAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedStringAnimator::calculateDistance):
+        * svg/SVGAnimatedString.h:
+        (WebCore::SVGAnimatedStringAnimator::~SVGAnimatedStringAnimator):
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createString):
+        (WebCore::SVGAnimatedType::string):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-24  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

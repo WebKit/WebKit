@@ -3340,6 +3340,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAnimatedNumber.cpp \
               svg/SVGAnimatedPointList.cpp \
               svg/SVGAnimatedRect.cpp \
+              svg/SVGAnimatedString.cpp \
               svg/SVGAnimatedType.cpp \
               svg/SVGAnimateElement.cpp \
               svg/SVGAnimateMotionElement.cpp \

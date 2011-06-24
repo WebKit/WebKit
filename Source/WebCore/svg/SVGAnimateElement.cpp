@@ -200,7 +200,8 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedPoints:
-    case AnimatedRect: {
+    case AnimatedRect:
+    case AnimatedString: {
         ASSERT(m_animator);
         ASSERT(results->m_animatedType);
         // Target element might have changed.
@@ -211,13 +212,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     default:
         break;
     }
-    ASSERT(animationMode == FromToAnimation || animationMode == ToAnimation || animationMode == ValuesAnimation);
-    if ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1)
-        results->m_animatedString = m_toString;
-    else
-        results->m_animatedString = m_fromString;
-    // Higher priority replace animation overrides any additive results so far.
-    results->m_animatedAttributeType = AnimatedString;
+    ASSERT_NOT_REACHED();
 }
 
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
@@ -281,15 +276,14 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     case AnimatedNumber:
     case AnimatedPoints:
     case AnimatedRect:
+    case AnimatedString:
         ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
         return true;
     default:
         break;
     }
-    m_fromString = fromString;
-    m_toString = toString;
-    m_animatedAttributeType = AnimatedString;
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const String& byString)
@@ -307,19 +301,20 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedNumber:
     case AnimatedPoints:
     case AnimatedRect:
+    case AnimatedString:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
         return true;
     default:
         break;
     }
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void SVGAnimateElement::resetToBaseValue(const String& baseString)
 {
     SVGElement* targetElement = this->targetElement();
     ASSERT(targetElement);
-    m_animatedString = baseString;
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
     case AnimatedPath: {
@@ -334,7 +329,8 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedPoints:
-    case AnimatedRect: {
+    case AnimatedRect:
+    case AnimatedString: {
         if (!m_animatedType)
             m_animatedType = ensureAnimator()->constructFromString(baseString);
         else
@@ -344,7 +340,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     default:
         break;
     }
-    m_animatedAttributeType = AnimatedString;
+    ASSERT_NOT_REACHED();
 }
     
 void SVGAnimateElement::applyResultsToTarget()
@@ -353,7 +349,7 @@ void SVGAnimateElement::applyResultsToTarget()
     switch (m_animatedAttributeType) {
     case AnimatedPath: {
         if (!m_animatedPathPointer || m_animatedPathPointer->isEmpty())
-            valueToApply = m_animatedString;
+            valueToApply = String();
         else {
             // We need to keep going to string and back because we are currently only able to paint
             // "processed" paths where complex shapes are replaced with simpler ones. Path 
@@ -370,10 +366,11 @@ void SVGAnimateElement::applyResultsToTarget()
     case AnimatedNumber:
     case AnimatedPoints:
     case AnimatedRect:
+    case AnimatedString:
         valueToApply = m_animatedType->valueAsString();
         break;
     default:
-        valueToApply = m_animatedString;
+        ASSERT_NOT_REACHED();
     }
     setTargetAttributeAnimatedValue(valueToApply);
 }
@@ -392,10 +389,12 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedNumber:
     case AnimatedPoints:
     case AnimatedRect:
+    case AnimatedString:
         return ensureAnimator()->calculateDistance(fromString, toString);
     default:
         break;
     }
+    ASSERT_NOT_REACHED();
     return -1;
 }
 
