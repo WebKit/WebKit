@@ -46,7 +46,7 @@ class LayerTilerChromium {
 public:
     enum BorderTexelOption { HasBorderTexels, NoBorderTexels };
 
-    static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium*, PassOwnPtr<LayerTextureUpdater>, const IntSize& tileSize, BorderTexelOption);
+    static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
     ~LayerTilerChromium();
 
@@ -55,11 +55,11 @@ public:
     void invalidateEntireLayer();
 
     // Prepare data needed to update textures that instersect with contentRect.
-    void prepareToUpdate(const IntRect& contentRect);
+    void prepareToUpdate(const IntRect& contentRect, LayerTextureUpdater*);
     // Update invalid textures that intersect with contentRect provided in prepareToUpdate().
-    void updateRect();
+    void updateRect(LayerTextureUpdater*);
     // Draw all tiles that intersect with the content rect.
-    void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity);
+    void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity, LayerTextureUpdater*);
 
     int numTiles() const { return m_tilingData.numTiles(); }
 
@@ -79,7 +79,7 @@ public:
     LayerTexture* getSingleTexture();
 
 private:
-    LayerTilerChromium(LayerRendererChromium*, PassOwnPtr<LayerTextureUpdater>, const IntSize& tileSize, BorderTexelOption);
+    LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
     class Tile : public RefCounted<Tile> {
         WTF_MAKE_NONCOPYABLE(Tile);
@@ -105,7 +105,7 @@ private:
 
     // Draw all tiles that intersect with contentRect.
     template <class T>
-    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program);
+    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program, LayerTextureUpdater*);
 
     template <class T>
     void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
@@ -162,7 +162,6 @@ private:
 
     TilingData m_tilingData;
 
-    OwnPtr<LayerTextureUpdater> m_textureUpdater;
     LayerRendererChromium* m_layerRenderer;
 };
 

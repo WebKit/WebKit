@@ -143,7 +143,14 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
 #endif
     m_hardwareCompositing = initializeSharedObjects();
 
-    m_rootLayerContentTiler = LayerTilerChromium::create(this, createRootLayerTextureUpdater(contentPaint), IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
+#if USE(SKIA)
+    if (m_accelerateDrawing)
+        m_rootLayerTextureUpdater = LayerTextureUpdaterSkPicture::create(m_context.get(), contentPaint, skiaContext());
+    else
+#endif
+        m_rootLayerTextureUpdater = LayerTextureUpdaterBitmap::create(m_context.get(), contentPaint, m_contextSupportsMapSub);
+
+    m_rootLayerContentTiler = LayerTilerChromium::create(this, IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerContentTiler);
 
     m_headsUpDisplay = CCHeadsUpDisplay::create(this);
@@ -191,7 +198,7 @@ void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 void LayerRendererChromium::updateRootLayerContents()
 {
     TRACE_EVENT("LayerRendererChromium::updateRootLayerContents", this, 0);
-    m_rootLayerContentTiler->prepareToUpdate(m_viewportVisibleRect);
+    m_rootLayerContentTiler->prepareToUpdate(m_viewportVisibleRect, m_rootLayerTextureUpdater.get());
 }
 
 void LayerRendererChromium::drawRootLayer()
@@ -199,7 +206,7 @@ void LayerRendererChromium::drawRootLayer()
     TransformationMatrix scroll;
     scroll.translate(-m_viewportVisibleRect.x(), -m_viewportVisibleRect.y());
 
-    m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
+    m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f, m_rootLayerTextureUpdater.get());
 }
 
 void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
@@ -294,15 +301,6 @@ void LayerRendererChromium::updateAndDrawLayers()
         copyOffscreenTextureToDisplay();
 }
 
-PassOwnPtr<LayerTextureUpdater> LayerRendererChromium::createRootLayerTextureUpdater(PassOwnPtr<LayerPainterChromium> painter)
-{
-#if USE(SKIA)
-    if (accelerateDrawing())
-        return adoptPtr(new LayerTextureUpdaterSkPicture(context(), painter, skiaContext()));
-#endif
-    return adoptPtr(new LayerTextureUpdaterBitmap(context(), painter, contextSupportsMapSub()));
-}
-
 void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::updateLayers", this, 0);
@@ -343,7 +341,7 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     // Update compositor resources for root layer.
     {
         TRACE_EVENT("LayerRendererChromium::updateLayer::updateRoot", this, 0);
-        m_rootLayerContentTiler->updateRect();
+        m_rootLayerContentTiler->updateRect(m_rootLayerTextureUpdater.get());
     }
 }
 

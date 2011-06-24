@@ -69,8 +69,6 @@ protected:
     virtual void cleanupResources();
     virtual void setLayerRenderer(LayerRendererChromium*);
 
-    virtual PassOwnPtr<LayerTextureUpdater> createTextureUpdater();
-
     virtual IntRect layerBounds() const;
 
     virtual TransformationMatrix tilingTransform();
@@ -81,8 +79,10 @@ protected:
 
     void updateLayerSize(const IntSize&);
     void createTilerIfNeeded();
+    virtual void createTextureUpdaterIfNeeded();
     void setTilingOption(TilingOption);
 
+    OwnPtr<LayerTextureUpdater> m_textureUpdater;
     OwnPtr<LayerTilerChromium> m_tiler;
     TilingOption m_tilingOption;
 };

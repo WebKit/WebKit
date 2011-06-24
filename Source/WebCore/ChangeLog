@@ -1,3 +1,61 @@
+2011-05-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix ownership of PlatformImage for ImageLayerChromiums
+        https://bugs.webkit.org/show_bug.cgi?id=61099
+
+        For a composited image, both the ImageLayerChromium and its associated LayerTilerChromium need access to a
+        PlatformImage - the ImageLayerChromium has to update the PlatformImage's contents and the LayerTilerChromium has
+        to upload pixels from it.  This patch makes the ImageLayerTextureUpdater have exclusive ownership of the
+        PlatformImage and moves ownership of the LayerTextureUpdater from the LayerTilerChromium to the owner of the
+        tiler.  The updater is passed in as a parameter to the relevant tiler calls.
+
+        Patch also fixes a number of minor style issues (missing explicit keyword on constructor, etc).
+
+        Refactor only, no new tests.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::create):
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::createTilerIfNeeded):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::create):
+        (WebCore::ImageLayerTextureUpdater::updateFromImage):
+        (WebCore::ImageLayerTextureUpdater::imageSize):
+        (WebCore::ImageLayerTextureUpdater::ImageLayerTextureUpdater):
+        (WebCore::ImageLayerChromium::~ImageLayerChromium):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        (WebCore::ImageLayerChromium::setLayerRenderer):
+        (WebCore::ImageLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ImageLayerChromium::layerBounds):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::updateLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::LayerTextureUpdater):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterBitmap::create):
+        (WebCore::LayerTextureUpdaterSkPicture::create):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::create):
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::prepareToUpdate):
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::draw):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+
 2011-06-23  Adrienne Walker  <enne@google.com>
 
         Unreviewed, rolling out r89632 and r89640.

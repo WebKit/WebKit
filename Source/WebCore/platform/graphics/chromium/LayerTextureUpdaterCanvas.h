@@ -50,23 +50,27 @@ class LayerPainterChromium;
 
 // A LayerTextureUpdater with an internal canvas.
 class LayerTextureUpdaterCanvas : public LayerTextureUpdater {
+    WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterCanvas);
 public:
-    LayerTextureUpdaterCanvas(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>);
     virtual ~LayerTextureUpdaterCanvas() { }
 
 protected:
+    LayerTextureUpdaterCanvas(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>);
+
     void paintContents(GraphicsContext&, const IntRect& contentRect);
     const IntRect& contentRect() const { return m_contentRect; }
 
 private:
+
     IntRect m_contentRect;
     OwnPtr<LayerPainterChromium> m_painter;
 };
 
 // A LayerTextureUpdater with an internal bitmap canvas.
 class LayerTextureUpdaterBitmap : public LayerTextureUpdaterCanvas {
+    WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterBitmap);
 public:
-    LayerTextureUpdaterBitmap(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
+    static PassOwnPtr<LayerTextureUpdaterBitmap> create(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
     virtual ~LayerTextureUpdaterBitmap() { }
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
@@ -75,14 +79,16 @@ public:
     virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
+    LayerTextureUpdaterBitmap(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
     PlatformCanvas m_canvas;
     LayerTextureSubImage m_texSubImage;
 };
 
 #if USE(SKIA)
 class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
+    WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterSkPicture);
 public:
-    LayerTextureUpdaterSkPicture(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, GrContext*);
+    static PassOwnPtr<LayerTextureUpdaterSkPicture> create(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, GrContext*);
     virtual ~LayerTextureUpdaterSkPicture();
 
     virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
@@ -91,6 +97,7 @@ public:
     virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
+    LayerTextureUpdaterSkPicture(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, GrContext*);
     void deleteFrameBuffer();
     bool createFrameBuffer();
 

@@ -49,6 +49,7 @@ class Image;
 class ImageLayerChromium : public ContentLayerChromium {
 public:
     static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
+    virtual ~ImageLayerChromium();
 
     virtual void paintContentsIfDirty(const IntRect& targetSurfaceRect);
     virtual void updateCompositorResources();
@@ -59,14 +60,16 @@ public:
 protected:
     virtual const char* layerTypeAsString() const { return "ImageLayer"; }
 
-    virtual PassOwnPtr<LayerTextureUpdater> createTextureUpdater();
+    virtual void setLayerRenderer(LayerRendererChromium*);
+
     virtual TransformationMatrix tilingTransform();
     virtual IntRect layerBounds() const;
 
 private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
 
-    PlatformImage m_decodedImage;
+    virtual void createTextureUpdaterIfNeeded();
+
     NativeImagePtr m_imageForCurrentFrame;
     RefPtr<Image> m_contents;
 };

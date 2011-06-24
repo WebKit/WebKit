@@ -39,8 +39,8 @@ class IntSize;
 class LayerTexture;
 
 class LayerTextureUpdater {
+    WTF_MAKE_NONCOPYABLE(LayerTextureUpdater);
 public:
-    explicit LayerTextureUpdater(GraphicsContext3D* context) : m_context(context) { }
     virtual ~LayerTextureUpdater() { }
 
     enum Orientation {
@@ -62,6 +62,8 @@ public:
     virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
 
 protected:
+    explicit LayerTextureUpdater(GraphicsContext3D* context) : m_context(context) { }
+
     GraphicsContext3D* context() const { return m_context; }
 
 private:

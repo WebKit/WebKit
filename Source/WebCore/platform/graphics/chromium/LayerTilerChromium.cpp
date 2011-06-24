@@ -43,19 +43,18 @@ using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, PassOwnPtr<LayerTextureUpdater> textureUpdater, const IntSize& tileSize, BorderTexelOption border)
+PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
 {
     if (!layerRenderer || tileSize.isEmpty())
         return nullptr;
 
-    return adoptPtr(new LayerTilerChromium(layerRenderer, textureUpdater, tileSize, border));
+    return adoptPtr(new LayerTilerChromium(layerRenderer, tileSize, border));
 }
 
-LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, PassOwnPtr<LayerTextureUpdater> textureUpdater, const IntSize& tileSize, BorderTexelOption border)
+LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
     : m_textureFormat(PlatformColor::bestTextureFormat(layerRenderer->context()))
     , m_skipsDraw(false)
     , m_tilingData(max(tileSize.width(), tileSize.height()), 0, 0, border == HasBorderTexels)
-    , m_textureUpdater(textureUpdater)
     , m_layerRenderer(layerRenderer)
 {
     setTileSize(tileSize);
@@ -225,7 +224,7 @@ void LayerTilerChromium::invalidateEntireLayer()
     m_tilingData.setTotalSize(0, 0);
 }
 
-void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
+void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextureUpdater* textureUpdater)
 {
     if (m_skipsDraw || contentRect.isEmpty()) {
         m_updateRect = IntRect();
@@ -264,10 +263,10 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
     if (dirtyLayerRect.isEmpty())
         return;
 
-    m_textureUpdater->prepareToUpdate(m_paintRect, m_tileSize, m_tilingData.borderTexels());
+    textureUpdater->prepareToUpdate(m_paintRect, m_tileSize, m_tilingData.borderTexels());
 }
 
-void LayerTilerChromium::updateRect()
+void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY() || m_updateRect.isEmpty())
@@ -327,7 +326,7 @@ void LayerTilerChromium::updateRect()
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
             GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
 
-            m_textureUpdater->updateTextureRect(tile->texture(), sourceRect, destRect);
+            textureUpdater->updateTextureRect(tile->texture(), sourceRect, destRect);
             tile->clearDirty();
         }
     }
@@ -338,17 +337,17 @@ void LayerTilerChromium::setLayerPosition(const IntPoint& layerPosition)
     m_layerPosition = layerPosition;
 }
 
-void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity)
+void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, LayerTextureUpdater* textureUpdater)
 {
     if (m_skipsDraw || !m_tiles.size() || contentRect.isEmpty())
         return;
 
-    switch (m_textureUpdater->sampledTexelFormat(m_textureFormat)) {
+    switch (textureUpdater->sampledTexelFormat(m_textureFormat)) {
     case LayerTextureUpdater::SampledTexelFormatRGBA:
-        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram());
+        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram(), textureUpdater);
         break;
     case LayerTextureUpdater::SampledTexelFormatBGRA:
-        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle());
+        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle(), textureUpdater);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -367,7 +366,7 @@ void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
 }
 
 template <class T>
-void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program)
+void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program, LayerTextureUpdater* textureUpdater)
 {
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->useProgram(program->program()));
@@ -407,7 +406,7 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             float texScaleY = tileRect.height() / tileHeight;
             // OpenGL coordinate system is bottom-up.
             // If tile texture is top-down, we need to flip the texture coordinates.
-            if (m_textureUpdater->orientation() == LayerTextureUpdater::TopDownOrientation) {
+            if (textureUpdater->orientation() == LayerTextureUpdater::TopDownOrientation) {
                 texTranslateY = 1.0 - texTranslateY;
                 texScaleY *= -1.0;
             }

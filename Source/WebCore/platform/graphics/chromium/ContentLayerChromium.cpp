@@ -57,10 +57,11 @@ using namespace std;
 namespace WebCore {
 
 class ContentLayerPainter : public LayerPainterChromium {
+    WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
 public:
-    explicit ContentLayerPainter(GraphicsLayerChromium* owner)
-        : m_owner(owner)
+    static PassOwnPtr<ContentLayerPainter> create(GraphicsLayerChromium* owner)
     {
+        return adoptPtr(new ContentLayerPainter(owner));
     }
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
@@ -75,6 +76,11 @@ public:
         PlatformBridge::histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
     }
 private:
+    explicit ContentLayerPainter(GraphicsLayerChromium* owner)
+        : m_owner(owner)
+    {
+    }
+
     GraphicsLayerChromium* m_owner;
 };
 
@@ -112,12 +118,13 @@ void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect
     if (!drawsContent())
         return;
 
-    m_tiler->prepareToUpdate(layerRect);
+    m_tiler->prepareToUpdate(layerRect, m_textureUpdater.get());
     m_dirtyRect = FloatRect();
 }
 
 void ContentLayerChromium::cleanupResources()
 {
+    m_textureUpdater.clear();
     m_tiler.clear();
     LayerChromium::cleanupResources();
 }
@@ -128,14 +135,17 @@ void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer
     createTilerIfNeeded();
 }
 
-PassOwnPtr<LayerTextureUpdater> ContentLayerChromium::createTextureUpdater()
+void ContentLayerChromium::createTextureUpdaterIfNeeded()
 {
-    OwnPtr<LayerPainterChromium> painter = adoptPtr(new ContentLayerPainter(m_owner));
+    if (m_textureUpdater)
+        return;
 #if USE(SKIA)
-    if (layerRenderer()->accelerateDrawing())
-        return adoptPtr(new LayerTextureUpdaterSkPicture(layerRendererContext(), painter.release(), layerRenderer()->skiaContext()));
+    if (layerRenderer()->accelerateDrawing()) {
+        m_textureUpdater = LayerTextureUpdaterSkPicture::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->skiaContext());
+        return;
+    }
 #endif
-    return adoptPtr(new LayerTextureUpdaterBitmap(layerRendererContext(), painter.release(), layerRenderer()->contextSupportsMapSub()));
+    m_textureUpdater = LayerTextureUpdaterBitmap::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->contextSupportsMapSub());
 }
 
 TransformationMatrix ContentLayerChromium::tilingTransform()
@@ -216,7 +226,7 @@ void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
     const TransformationMatrix transform = tilingTransform();
     IntRect layerRect = visibleLayerRect(targetSurfaceRect);
     if (!layerRect.isEmpty())
-        m_tiler->draw(layerRect, transform, ccLayerImpl()->drawOpacity());
+        m_tiler->draw(layerRect, transform, ccLayerImpl()->drawOpacity(), m_textureUpdater.get());
 }
 
 bool ContentLayerChromium::drawsContent() const
@@ -238,16 +248,17 @@ void ContentLayerChromium::createTilerIfNeeded()
     if (m_tiler)
         return;
 
+    createTextureUpdaterIfNeeded();
+
     m_tiler = LayerTilerChromium::create(
         layerRenderer(),
-        createTextureUpdater(),
         IntSize(defaultTileSize, defaultTileSize),
         LayerTilerChromium::HasBorderTexels);
 }
 
 void ContentLayerChromium::updateCompositorResources()
 {
-    m_tiler->updateRect();
+    m_tiler->updateRect(m_textureUpdater.get());
 }
 
 void ContentLayerChromium::setTilingOption(TilingOption option)

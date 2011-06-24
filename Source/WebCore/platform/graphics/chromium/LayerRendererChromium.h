@@ -165,8 +165,6 @@ private:
 
     LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
 
-    PassOwnPtr<LayerTextureUpdater> createRootLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
-
     void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
     void updatePropertiesAndRenderSurfaces(CCLayerImpl*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
@@ -206,6 +204,7 @@ private:
     TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
+    OwnPtr<LayerTextureUpdater> m_rootLayerTextureUpdater;
     OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
 
     bool m_hardwareCompositing;

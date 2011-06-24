@@ -45,13 +45,13 @@
 namespace WebCore {
 
 class ImageLayerTextureUpdater : public LayerTextureUpdater {
+    WTF_MAKE_NONCOPYABLE(ImageLayerTextureUpdater);
 public:
-    ImageLayerTextureUpdater(GraphicsContext3D* context, const PlatformImage& image, bool useMapTexSubImage)
-        : LayerTextureUpdater(context)
-        , m_image(image)
-        , m_texSubImage(useMapTexSubImage)
+    static PassOwnPtr<ImageLayerTextureUpdater> create(GraphicsContext3D* context, bool useMapTexSubImage)
     {
+        return adoptPtr(new ImageLayerTextureUpdater(context, useMapTexSubImage));
     }
+
     virtual ~ImageLayerTextureUpdater() { }
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
@@ -83,14 +83,29 @@ public:
         m_texSubImage.upload(m_image.pixels(), imageRect(), clippedSourceRect, clippedDestRect, texture->format(), context());
     }
 
+    void updateFromImage(NativeImagePtr nativeImage)
+    {
+        m_image.updateFromImage(nativeImage);
+    }
+
+    IntSize imageSize() const
+    {
+        return m_image.size();
+    }
+
 private:
+    ImageLayerTextureUpdater(GraphicsContext3D* context, bool useMapTexSubImage)
+        : LayerTextureUpdater(context)
+        , m_texSubImage(useMapTexSubImage)
+    {
+    }
+
     IntRect imageRect() const
     {
         return IntRect(IntPoint::zero(), m_image.size());
     }
 
-    // FIXME: ImageLayerTextureUpdater should rather own a PlatformImage rather than keeping a reference.
-    const PlatformImage& m_image;
+    PlatformImage m_image;
     LayerTextureSubImage m_texSubImage;
 };
 
@@ -103,6 +118,10 @@ ImageLayerChromium::ImageLayerChromium(GraphicsLayerChromium* owner)
     : ContentLayerChromium(owner)
     , m_imageForCurrentFrame(0)
     , m_contents(0)
+{
+}
+
+ImageLayerChromium::~ImageLayerChromium()
 {
 }
 
@@ -126,30 +145,43 @@ void ImageLayerChromium::paintContentsIfDirty(const IntRect&)
     ASSERT(layerRenderer());
 
     if (!m_dirtyRect.isEmpty()) {
-        m_decodedImage.updateFromImage(m_contents->nativeImageForCurrentFrame());
-        updateLayerSize(m_decodedImage.size());
-        IntRect paintRect(IntPoint(0, 0), m_decodedImage.size());
+        // FIXME: This downcast is bad. The fix is to make ImageLayerChromium not derive from ContentLayerChromium.
+        ImageLayerTextureUpdater* imageTextureUpdater = static_cast<ImageLayerTextureUpdater*>(m_textureUpdater.get());
+        imageTextureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
+        updateLayerSize(imageTextureUpdater->imageSize());
+        IntRect paintRect(IntPoint(0, 0), imageTextureUpdater->imageSize());
         if (!m_dirtyRect.isEmpty()) {
             m_tiler->invalidateRect(paintRect);
             m_dirtyRect = IntRect();
         }
-        m_tiler->prepareToUpdate(paintRect);
+        m_tiler->prepareToUpdate(paintRect, m_textureUpdater.get());
     }
 }
 
 void ImageLayerChromium::updateCompositorResources()
 {
-    m_tiler->updateRect();
+    m_tiler->updateRect(m_textureUpdater.get());
 }
 
-PassOwnPtr<LayerTextureUpdater> ImageLayerChromium::createTextureUpdater()
+void ImageLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
 {
-    return adoptPtr(new ImageLayerTextureUpdater(layerRendererContext(), m_decodedImage, layerRenderer()->contextSupportsMapSub()));
+    if (newLayerRenderer != layerRenderer())
+        m_textureUpdater.clear();
+    ContentLayerChromium::setLayerRenderer(newLayerRenderer);
+}
+
+void ImageLayerChromium::createTextureUpdaterIfNeeded()
+{
+    if (!m_textureUpdater)
+        m_textureUpdater = ImageLayerTextureUpdater::create(layerRendererContext(), layerRenderer()->contextSupportsMapSub());
 }
 
 IntRect ImageLayerChromium::layerBounds() const
 {
-    return IntRect(IntPoint(0, 0), m_decodedImage.size());
+    if (!m_textureUpdater)
+        return IntRect();
+    ImageLayerTextureUpdater* imageTextureUpdater = static_cast<ImageLayerTextureUpdater*>(m_textureUpdater.get());
+    return IntRect(IntPoint(), imageTextureUpdater->imageSize());
 }
 
 TransformationMatrix ImageLayerChromium::tilingTransform()

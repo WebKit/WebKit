@@ -63,6 +63,11 @@ void LayerTextureUpdaterCanvas::paintContents(GraphicsContext& context, const In
     m_contentRect = contentRect;
 }
 
+PassOwnPtr<LayerTextureUpdaterBitmap> LayerTextureUpdaterBitmap::create(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
+{
+    return adoptPtr(new LayerTextureUpdaterBitmap(context, painter, useMapTexSubImage));
+}
+
 LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
     : LayerTextureUpdaterCanvas(context, painter)
     , m_texSubImage(useMapTexSubImage)
@@ -99,6 +104,11 @@ void LayerTextureUpdaterBitmap::updateTextureRect(LayerTexture* texture, const I
 }
 
 #if USE(SKIA)
+PassOwnPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
+{
+    return adoptPtr(new LayerTextureUpdaterSkPicture(context, painter, skiaContext));
+}
+
 LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
     : LayerTextureUpdaterCanvas(context, painter)
     , m_skiaContext(skiaContext)
