@@ -2526,7 +2526,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     request.setResponseContentDispositionEncodingFallbackArray("UTF-8", activeDocumentLoader()->writer()->deprecatedFrameEncoding(), settings ? settings->defaultTextEncodingName() : String());
 }
 
-void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
+void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& origin)
 {
     if (!request.httpOrigin().isEmpty())
         return;  // Request already has an Origin header.
@@ -2546,7 +2546,8 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
     if (origin.isEmpty()) {
         // If we don't know what origin header to attach, we attach the value
         // for an empty origin.
-        origin = SecurityOrigin::createEmpty()->toString();
+        request.setHTTPOrigin(SecurityOrigin::createEmpty()->toString());
+        return;
     }
 
     request.setHTTPOrigin(origin);

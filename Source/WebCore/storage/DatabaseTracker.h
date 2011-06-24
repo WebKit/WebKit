@@ -173,7 +173,7 @@ private:
     static void notifyDatabasesChanged(void*);
 #else
 public:
-    void getOpenDatabases(String originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases);
+    void getOpenDatabases(const String& originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases);
 
 private:
     typedef HashSet<AbstractDatabase*> DatabaseSet;

@@ -1,3 +1,40 @@
+2011-06-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Pass Strings by const reference to functions
+        https://bugs.webkit.org/show_bug.cgi?id=63341
+
+        Note that since Strings hold a RefPtr to StringImpl, passing Strings
+        by value isn't horrible, but it does cause ref count churn and using
+        const references is more consistent with the rest of the code base.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addHTTPOriginIfNeeded): Rework the code to not
+            change the value of the passed in String.
+        * loader/FrameLoader.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::setFileDescriptorData):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * storage/DatabaseTracker.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::IDBLevelDBBackingStore):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::IDBSQLiteBackingStore):
+        * storage/IDBSQLiteBackingStore.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::SVGPaint):
+        * svg/SVGPaint.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+
 2011-06-24  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.

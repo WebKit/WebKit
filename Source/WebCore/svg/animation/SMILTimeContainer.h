@@ -70,7 +70,7 @@ private:
     
     void timerFired(Timer<SMILTimeContainer>*);
     void startTimer(SMILTime fireTime, SMILTime minimumDelay = 0);
-    void updateAnimations(SMILTime elapsed, double nextManualSampleTime = 0, String nextSamplingTarget = String());
+    void updateAnimations(SMILTime elapsed, double nextManualSampleTime = 0, const String& nextSamplingTarget = String());
     
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);

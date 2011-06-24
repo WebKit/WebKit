@@ -219,7 +219,7 @@ void SMILTimeContainer::sampleAnimationAtTime(const String& elementId, double ne
     updateAnimations(elapsed(), newTime, elementId);
 }
 
-void SMILTimeContainer::updateAnimations(SMILTime elapsed, double nextManualSampleTime, String nextSamplingTarget)
+void SMILTimeContainer::updateAnimations(SMILTime elapsed, double nextManualSampleTime, const String& nextSamplingTarget)
 {
     SMILTime earliersFireTime = SMILTime::unresolved();
 

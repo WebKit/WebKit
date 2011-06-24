@@ -202,7 +202,7 @@ public:
     void addExtraFieldsToSubresourceRequest(ResourceRequest&);
     void addExtraFieldsToMainResourceRequest(ResourceRequest&);
     
-    static void addHTTPOriginIfNeeded(ResourceRequest&, String origin);
+    static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
 
     FrameLoaderClient* client() const { return m_client; }
 

@@ -408,7 +408,7 @@ void getFileContentData(IDataObject* dataObject, int size, void* dataBlob)
     ::ReleaseStgMedium(&store);
 }
 
-void setFileDescriptorData(IDataObject* dataObject, int size, String pathname)
+void setFileDescriptorData(IDataObject* dataObject, int size, const String& pathname)
 {
     STGMEDIUM medium = { 0 };
     medium.tymed = TYMED_HGLOBAL;

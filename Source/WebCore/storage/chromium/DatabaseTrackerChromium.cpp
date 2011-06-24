@@ -152,7 +152,7 @@ void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& nam
     getOpenDatabases(origin->databaseIdentifier(), name, databases);
 }
 
-void DatabaseTracker::getOpenDatabases(String originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
+void DatabaseTracker::getOpenDatabases(const String& originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)

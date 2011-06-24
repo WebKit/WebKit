@@ -104,7 +104,7 @@ private:
     }
 
 private:
-    SVGPaint(const SVGPaintType&, String uri = String());
+    SVGPaint(const SVGPaintType&, const String& uri = String());
 
     virtual bool isSVGPaint() const { return true; }
     virtual String cssText() const;

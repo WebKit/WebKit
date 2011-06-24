@@ -80,7 +80,7 @@ void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<String>& dataStrings
 void setClipboardData(IDataObject*, UINT format, const Vector<String>& dataStrings);
 void getFileDescriptorData(IDataObject*, int& size, String& pathname);
 void getFileContentData(IDataObject*, int size, void* dataBlob);
-void setFileDescriptorData(IDataObject*, int size, String pathname);
+void setFileDescriptorData(IDataObject*, int size, const String& pathname);
 void setFileContentData(IDataObject*, int size, void* dataBlob);
 
 } // namespace WebCore

@@ -151,7 +151,7 @@ void ThreadableWebSocketChannelClientWrapper::didConnectCallback(ScriptExecution
         wrapper->m_client->didConnect();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper, String message)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper, const String& message)
 {
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)

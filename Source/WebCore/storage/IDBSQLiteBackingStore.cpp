@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-IDBSQLiteBackingStore::IDBSQLiteBackingStore(String identifier, IDBFactoryBackendImpl* factory)
+IDBSQLiteBackingStore::IDBSQLiteBackingStore(const String& identifier, IDBFactoryBackendImpl* factory)
     : m_identifier(identifier)
     , m_factory(factory)
 {

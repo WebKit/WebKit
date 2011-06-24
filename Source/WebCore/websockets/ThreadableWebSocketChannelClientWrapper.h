@@ -74,7 +74,7 @@ protected:
 
     void processPendingTasks();
     static void didConnectCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
-    static void didReceiveMessageCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, String message);
+    static void didReceiveMessageCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, const String& message);
     static void didStartClosingHandshakeCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
     static void didCloseCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
 

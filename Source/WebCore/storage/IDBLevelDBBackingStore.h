@@ -79,7 +79,7 @@ public:
     static bool backingStoreExists(SecurityOrigin*, const String& pathBase);
 
 private:
-    IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);
+    IDBLevelDBBackingStore(const String& identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);
 
     String m_identifier;
     RefPtr<IDBFactoryBackendImpl> m_factory;

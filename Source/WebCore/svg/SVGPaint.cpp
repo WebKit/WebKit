@@ -53,7 +53,7 @@ static inline SVGColor::SVGColorType colorTypeForPaintType(const SVGPaint::SVGPa
     return SVGColor::SVG_COLORTYPE_UNKNOWN;
 }
 
-SVGPaint::SVGPaint(const SVGPaintType& paintType, String uri)
+SVGPaint::SVGPaint(const SVGPaintType& paintType, const String& uri)
     : SVGColor(colorTypeForPaintType(paintType))
     , m_paintType(paintType)
     , m_uri(uri)

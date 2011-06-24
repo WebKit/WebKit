@@ -115,7 +115,7 @@ static bool setUpMetadata(LevelDBDatabase* db)
     return true;
 }
 
-IDBLevelDBBackingStore::IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl* factory, PassOwnPtr<LevelDBDatabase> db)
+IDBLevelDBBackingStore::IDBLevelDBBackingStore(const String& identifier, IDBFactoryBackendImpl* factory, PassOwnPtr<LevelDBDatabase> db)
     : m_identifier(identifier)
     , m_factory(factory)
     , m_db(db)

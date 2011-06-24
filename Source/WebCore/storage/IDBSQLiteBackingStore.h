@@ -74,7 +74,7 @@ public:
     static bool backingStoreExists(SecurityOrigin*, const String& pathBase);
 
 private:
-    IDBSQLiteBackingStore(String identifier, IDBFactoryBackendImpl*);
+    IDBSQLiteBackingStore(const String& identifier, IDBFactoryBackendImpl*);
 
     SQLiteDatabase m_db;
     String m_identifier;
