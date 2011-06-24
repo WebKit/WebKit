@@ -119,6 +119,7 @@ static NSDictionary* nullActionsDictionary()
     NSNull* nullValue = [NSNull null];
     NSDictionary* actions = [NSDictionary dictionaryWithObjectsAndKeys:
                              nullValue, @"anchorPoint",
+                             nullValue, @"anchorPointZ",
                              nullValue, @"bounds",
                              nullValue, @"contents",
                              nullValue, @"contentsRect",

@@ -1,3 +1,18 @@
+2011-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Need to turn off default animations for anchorPointZ in PlatformCALayer
+        https://bugs.webkit.org/show_bug.cgi?id=63159
+        
+        When the z-component of transform-origin changed, we ran an implicit
+        animation of anchorPointZ on the CALayer. Turn this off.
+
+        Test: transforms/3d/general/transform-origin-z-change.html
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (nullActionsDictionary):
+
 2011-06-23  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

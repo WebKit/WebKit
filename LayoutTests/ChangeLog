@@ -1,3 +1,17 @@
+2011-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Need to turn off default animations for anchorPointZ in PlatformCALayer
+        https://bugs.webkit.org/show_bug.cgi?id=63159
+        
+        Test that changes transform-origin-z and relies on the pixel result
+        to determine if it's animating.
+
+        * transforms/3d/general/transform-origin-z-change-expected.png: Added.
+        * transforms/3d/general/transform-origin-z-change-expected.txt: Added.
+        * transforms/3d/general/transform-origin-z-change.html: Added.
+
 2011-06-20  MORITA Hajime <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
