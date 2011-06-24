@@ -1,3 +1,55 @@
+function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
+{
+    prefix = prefix || "";
+    firstLinePrefix = firstLinePrefix || prefix;
+    output(firstLinePrefix + "{");
+    for (var prop in object) {
+        var prefixWithName = prefix + "    " + prop + " : ";
+        var propValue = object[prop];
+        if (nondeterministicProps && prop in nondeterministicProps)
+            output(prefixWithName + "<" + typeof propValue + ">");
+        else if (propValue === null)
+            output(prefixWithName + "null");
+        else if (typeof propValue === "object")
+            dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
+        else if (typeof propValue === "string")
+            output(prefixWithName + "\"" + propValue + "\"");
+        else if (typeof propValue === "function")
+            output(prefixWithName + "<function>");
+        else
+            output(prefixWithName + propValue);
+    }
+    output(prefix + "}");
+}
+
+function dumpArray(result)
+{
+    if (result instanceof Array) {
+        for (var i = 0; i < result.length; ++i)
+            output(result[i]);
+    } else
+        output(result);
+}
+
+function evaluateOnFrontend(expression, callback)
+{
+    function callbackWrapper(event)
+    {
+        channel.port1.removeEventListener("message", callbackWrapper, false);
+        callback(event.data.response);
+    }
+    var channel = new MessageChannel();
+    channel.port1.start();
+    if (callback)
+        channel.port1.addEventListener("message", callbackWrapper, false);
+    top.postMessage({ expression: expression }, [ channel.port2 ], "*");
+}
+
+function output(message)
+{
+    evaluateOnFrontend("InspectorTest.addResult(unescape('" + escape(message) + "'));");
+}
+
 function onError(event)
 {
     window.removeEventListener("error", onError);
@@ -63,5 +115,3 @@ function bind(func, thisObject)
     var args = Array.prototype.slice.call(arguments, 2);
     return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))); };
 }
-
-fetchTests();

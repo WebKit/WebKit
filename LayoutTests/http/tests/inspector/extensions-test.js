@@ -33,6 +33,13 @@ function onMessage(event)
 
 window.addEventListener("message", InspectorTest.safeWrap(onMessage), false);
 
+InspectorTest.showPanel = function(panelId)
+{
+    if (panelId === "extension")
+        panelId = WebInspector.panelOrder[WebInspector.panelOrder.length - 1].name;
+    WebInspector.showPanel(panelId);
+}
+
 InspectorTest.runExtensionTests = function()
 {
     RuntimeAgent.evaluate("location.href", "console", false, function(error, result) {
@@ -47,6 +54,11 @@ InspectorTest.runExtensionTests = function()
     });
 }
 
+}
+
+function extension_showPanel(panelId, callback)
+{
+    evaluateOnFrontend("InspectorTest.showPanel(unescape('" + escape(panelId) + "')); reply();", callback);
 }
 
 var test = function()

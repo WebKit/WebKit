@@ -209,7 +209,7 @@ WebInspector.ExtensionServer.prototype = {
         WebInspector.addPanel(panel);
 
         var iframe = this.createClientIframe(panel.element, message.url);
-        iframe.style.height = "100%";
+        iframe.addStyleClass("panel");
         return this._status.OK();
     },
 
@@ -233,7 +233,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         var iframe = document.createElement("iframe");
         iframe.src = url;
-        iframe.style.width = "100%";
+        iframe.addStyleClass("extension");
         parent.appendChild(iframe);
         return iframe;
     },

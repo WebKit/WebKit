@@ -3,7 +3,6 @@ Tests WebInspector extension API
 Started extension.
 Running tests...
 RUNNING TEST: extension_testCreatePanel
-done createPanel
 Panel created
 {
     onShown : {
@@ -19,6 +18,7 @@ Panel created
         removeListener : <function>
     }
 }
+Extension panel size correct
 RUNNING TEST: extension_testSidebarPage
 Sidebar created
 {

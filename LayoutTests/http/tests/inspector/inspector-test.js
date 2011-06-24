@@ -402,7 +402,7 @@ function runTest(enableWatchDogWhileDebugging)
             }
         }
 
-        WebInspector.showPanel("console");
+        WebInspector.showPanel("audits");
         try {
             testFunction();
         } catch (e) {

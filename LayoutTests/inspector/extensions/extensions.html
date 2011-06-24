@@ -16,17 +16,46 @@ function initialize_extensionsUITest()
             callback();
         });
     }
+
+    InspectorTest.panelCallback = function(width, height)
+    {
+        InspectorTest.checkPanelSize(width, height);
+        var callback = InspectorTest._pendingPanelSizeTestCallback;
+        if (callback) {
+            delete InspectorTest._pendingPanelSizeTestCallback;
+            callback();
+        }
+    }
+
+    InspectorTest.waitForPanel = function(callback)
+    {
+         InspectorTest._pendingPanelSizeTestCallback = callback;
+    }
+
+    InspectorTest.checkPanelSize = function(width, height)
+    {
+        var extensionPanel = WebInspector.panelOrder[WebInspector.panelOrder.length - 1];
+        var boundingRect = extensionPanel.element.parentElement.getBoundingClientRect();
+        InspectorTest.assertEquals(boundingRect.width, width, "panel width mismatch");
+        InspectorTest.assertEquals(boundingRect.height, height, "panel height mismatch");
+        InspectorTest.addResult("Extension panel size correct");
+    }
 }
 
 function extension_testCreatePanel(nextTest)
 {
+    var callbackCount = 0;
+
     function onPanelCreated(panel)
     {
         output("Panel created");
         dumpObject(panel);
+        // This will force extension iframe to be really loaded and will cause waitForPanel() callback below.
+        extension_showPanel("extension");
     }
-    webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", callbackAndNextTest(onPanelCreated, nextTest));
-    output("done createPanel");
+    // The panel code is expected to report its size via InspectorTest.panelCallback()
+    evaluateOnFrontend("InspectorTest.waitForPanel(reply);", nextTest);
+    webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", onPanelCreated);
 }
 
 function extension_testSidebarPage(nextTest)

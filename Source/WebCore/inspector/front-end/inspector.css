@@ -929,6 +929,15 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     display: block;
 }
 
+iframe.extension {
+    width: 100%;
+}
+
+iframe.panel.extension {
+    display: block;
+    height: 100%;
+}
+
 .webkit-line-gutter-backdrop {
     /* Keep this in sync with view-source.css (.webkit-line-gutter-backdrop) */
     width: 31px;

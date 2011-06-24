@@ -2,6 +2,30 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: extension panel iframes do not span entire panel client area
+        https://bugs.webkit.org/show_bug.cgi?id=63165
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.showPanel):
+        ():
+        * http/tests/inspector/inspector-test.js:
+        ():
+        * http/tests/inspector/resources/extension-main.html:
+        * http/tests/inspector/resources/extension-main.js:
+        (dumpObject):
+        (dumpArray):
+        (evaluateOnFrontend.callbackWrapper):
+        (evaluateOnFrontend):
+        ():
+        * http/tests/inspector/resources/extension-panel.html:
+        * inspector/extensions/extensions-events.html:
+        * inspector/extensions/extensions-expected.txt:
+        * inspector/extensions/extensions.html:
+
+2011-06-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: [refactoring] extension tests: replace dispatchOnFrontend with a more generic evaluateOnFrontend()
         https://bugs.webkit.org/show_bug.cgi?id=63160
 

@@ -1,2 +1,15 @@
 <html>
+<head>
+<script src="extension-main.js"></script>
+<script type="text/javascript">
+function onLoad()
+{
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    evaluateOnFrontend("if (InspectorTest.panelCallback) InspectorTest.panelCallback(" + width + "," + height +");");
+}
+</script>
+</head>
+<body onload="onLoad()">
+</body>
 </html>
