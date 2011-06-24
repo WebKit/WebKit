@@ -356,6 +356,9 @@ namespace WebCore {
 
         static bool validUnit(CSSParserValue*, Units, bool strict);
 
+        PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
+        PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
+
         friend class TransformOperationInfo;
     };
 

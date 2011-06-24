@@ -1,3 +1,49 @@
+2011-06-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor creation of primitive values in CSSParser
+        https://bugs.webkit.org/show_bug.cgi?id=63270
+
+        Covered by existing tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createPrimitiveNumericValue): Helper method for creating numeric values
+            to keep the cast in one place.
+        (WebCore::CSSParser::createPrimitiveStringValue): Helper method for creating string values.
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseWCSSInputProperty):
+        (WebCore::CSSParser::parsePage):
+        (WebCore::CSSParser::parseSizeParameter):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillPositionX):
+        (WebCore::CSSParser::parseFillPositionY):
+        (WebCore::CSSParser::parseFillPositionComponent):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseAnimationDelay):
+        (WebCore::CSSParser::parseAnimationDuration):
+        (WebCore::CSSParser::parseAnimationIterationCount):
+        (WebCore::CSSParser::parseAnimationName):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::CSSParser::parseBorderRadius):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseGradientColorStops):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin):
+        (WebCore::CSSParser::parseTextEmphasisStyle):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueCache.h:
+        (WebCore::CSSPrimitiveValueCache::createValue): pass String by const reference
+
 2011-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
