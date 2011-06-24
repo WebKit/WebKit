@@ -1226,6 +1226,9 @@
           'dependencies': [
             '<(chromium_src_dir)/third_party/ffmpeg/ffmpeg.gyp:ffmpeg',
           ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/third_party/ffmpeg/ffmpeg.gyp:ffmpeg',
+          ],
         }],
         ['"ENABLE_LEVELDB=1" in feature_defines', {
           'dependencies': [
