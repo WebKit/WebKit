@@ -152,3 +152,5 @@
 #define WebKitMemoryInfoEnabledPreferenceKey "WebKitMemoryInfoEnabled"
 
 #define WebKitFullScreenEnabledPreferenceKey "WebKitFullScreenEnabled"
+
+#define WebKitHixie76WebSocketProtocolEnabledPreferenceKey "WebKitHixie76WebSocketProtocolEnabled"

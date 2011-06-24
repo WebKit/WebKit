@@ -266,6 +266,7 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitMemoryInfoEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey), kCFBooleanTrue);
 
     defaultSettings = defaults;
 }
@@ -939,6 +940,20 @@ HRESULT STDMETHODCALLTYPE WebPreferences::loadsSiteIconsIgnoringImageLoadingPref
     /* [retval][out] */ BOOL* enabled)
 {
     *enabled = boolValueForKey(CFSTR(WebKitLoadSiteIconsKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setHixie76WebSocketProtocolEnabled(
+    /* [in] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::hixie76WebSocketProtocolEnabled(
+    /* [retval][out] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey));
     return S_OK;
 }
 

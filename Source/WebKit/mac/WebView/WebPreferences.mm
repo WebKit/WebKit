@@ -376,6 +376,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
+        [NSNumber numberWithBool:YES],  WebKitHixie76WebSocketProtocolEnabledKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
@@ -1471,6 +1472,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isAVFoundationEnabled
 {
     return [self _boolValueForKey:WebKitAVFoundationEnabledKey];
+}
+
+- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitHixie76WebSocketProtocolEnabledKey];
+}
+
+- (BOOL)isHixie76WebSocketProtocolEnabled
+{
+    return [self _boolValueForKey:WebKitHixie76WebSocketProtocolEnabledKey];
 }
 @end
 

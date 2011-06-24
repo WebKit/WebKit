@@ -1,3 +1,29 @@
+2011-06-24  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        WebSocket: Add run-time flag for new HyBi protocol
+        https://bugs.webkit.org/show_bug.cgi?id=60348
+
+        Add a flag in Setting so that WebSocket protocols can be switched
+        dynamically. The protocol we have implemented so far is based on
+        older Hixie-76 specification. A new protocol is being discussed in
+        IETF HyBi working group, and I'm planning to implement the new protocol
+        behind this Settings flag.
+
+        I will add a method to LayoutTestController which flips this flag in
+        a later patch. In this way, we can put tests for both protocols in
+        the same place and test implementation for both protocols at the same time.
+
+        This patch only adds a flag. The flag is not used yet, thus there is
+        no change in functionality. Therefore, no tests were added.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setUseHixie76WebSocketProtocol):
+        (WebCore::Settings::useHixie76WebSocketProtocol):
+
 2011-06-23  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

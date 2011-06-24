@@ -413,6 +413,10 @@ namespace WebCore {
         void setEnableScrollAnimator(bool flag) { m_scrollAnimatorEnabled = flag; }
         bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
 #endif
+#if ENABLE(WEB_SOCKETS)
+        void setUseHixie76WebSocketProtocol(bool flag) { m_useHixie76WebSocketProtocol = flag; }
+        bool useHixie76WebSocketProtocol() { return m_useHixie76WebSocketProtocol; }
+#endif
 
     private:
         Page* m_page;
@@ -522,6 +526,9 @@ namespace WebCore {
         bool m_allowRunningOfInsecureContent : 1;
 #if ENABLE(SMOOTH_SCROLLING)
         bool m_scrollAnimatorEnabled : 1;
+#endif
+#if ENABLE(WEB_SOCKETS)
+        bool m_useHixie76WebSocketProtocol : 1;
 #endif
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;

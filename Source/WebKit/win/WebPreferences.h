@@ -435,6 +435,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setFullScreenEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE isFullScreenEnabled(BOOL*);
 
+    virtual HRESULT STDMETHODCALLTYPE hixie76WebSocketProtocolEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setHixie76WebSocketProtocolEnabled(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

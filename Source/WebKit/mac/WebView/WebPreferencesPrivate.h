@@ -246,4 +246,8 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setAVFoundationEnabled:(BOOL)flag;
 - (BOOL)isAVFoundationEnabled;
 
+// WebSocket support depends on ENABLE(WEB_SOCKETS).
+- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
+- (BOOL)isHixie76WebSocketProtocolEnabled;
+
 @end

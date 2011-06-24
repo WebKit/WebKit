@@ -185,6 +185,9 @@ Settings::Settings(Page* page)
 #if ENABLE(SMOOTH_SCROLLING)
     , m_scrollAnimatorEnabled(false)
 #endif
+#if ENABLE(WEB_SOCKETS)
+    , m_useHixie76WebSocketProtocol(true)
+#endif
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

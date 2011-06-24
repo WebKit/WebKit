@@ -1,3 +1,23 @@
+2011-06-24  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        WebSocket: Add run-time flag for new HyBi protocol
+        https://bugs.webkit.org/show_bug.cgi?id=60348
+
+        Make a new flag (Setting::m_useHixie76WebSocketProtocol)
+        switchable from WebView and WebPreferences.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setHixie76WebSocketProtocolEnabled):
+        (WebPreferences::hixie76WebSocketProtocolEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2011-06-22  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Mark Rowe.

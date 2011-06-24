@@ -127,4 +127,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setFullScreenEnabled([in] BOOL enabled);
     HRESULT isFullScreenEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setHixie76WebSocketProtocolEnabled([in] BOOL enabled);
+    HRESULT hixie76WebSocketProtocolEnabled([out, retval] BOOL* enabled);
 }
