@@ -53,7 +53,7 @@ TEST(CCThreadTest, pingPongUsingCondition)
     OwnPtr<CCThread> thread = CCThread::create();
     PingPongUsingCondition target;
     CCCompletionEvent completion;
-    thread->postTask(createCCThreadTask(&target, &PingPongUsingCondition::ping,
+    thread->postTask(createCCThreadTask(&target, &PingPongUsingCondition::ping, 
                                         AllowCrossThreadAccess(&completion)));
     completion.wait();
 

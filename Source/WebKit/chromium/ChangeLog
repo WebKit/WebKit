@@ -1,3 +1,36 @@
+2011-06-24  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r89694.
+        http://trac.webkit.org/changeset/89694
+        https://bugs.webkit.org/show_bug.cgi?id=58408
+
+        Test shell still not ready for animate changes.
+
+        * WebKit.gypi:
+        * public/WebWidget.h:
+        (WebKit::WebWidget::animate):
+        (WebKit::WebWidget::composite):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::animate):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::fullFramePluginZoomLevelChanged):
+        (WebKit::WebView::zoomLevelToZoomFactor):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::doComposite):
+        (WebKit::WebViewImpl::reallocateRenderer):
+        (WebKit::WebViewImpl::updateLayerRendererViewport):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp: Removed.
+        * tests/CCThreadTest.cpp:
+        (WebCore::TEST):
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

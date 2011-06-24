@@ -1,3 +1,35 @@
+2011-06-24  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r89694.
+        http://trac.webkit.org/changeset/89694
+        https://bugs.webkit.org/show_bug.cgi?id=58408
+
+        Test shell still not ready for animate changes.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::setViewport):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        (WebCore::CCHeadsUpDisplay::setShowFPSCounter):
+        (WebCore::CCHeadsUpDisplay::setShowPlatformLayerTree):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommitter.cpp: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommitter.h: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.h: Removed.
+        * platform/graphics/chromium/cc/CCMainThreadTask.h:
+        * platform/graphics/chromium/cc/CCThread.cpp:
+        (WebCore::CCThread::runLoop):
+        * platform/graphics/chromium/cc/CCThreadTask.h:
+
 2011-06-24  Chris Rogers  <crogers@google.com>
 
         Unreviewed build fix.

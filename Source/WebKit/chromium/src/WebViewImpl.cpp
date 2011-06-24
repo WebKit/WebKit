@@ -148,7 +148,6 @@
 #include <cmath> // for std::pow
 
 using namespace WebCore;
-using namespace std;
 
 namespace {
 
@@ -1005,8 +1004,8 @@ void WebViewImpl::resize(const WebSize& newSize)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerRenderer && isAcceleratedCompositingActive()) {
-        m_layerRenderer->resizeOnscreenContent(IntSize(max(1, m_size.width),
-                                                       max(1, m_size.height)));
+        m_layerRenderer->resizeOnscreenContent(IntSize(std::max(1, m_size.width),
+                                                       std::max(1, m_size.height)));
     }
 #endif
 }
@@ -1017,21 +1016,17 @@ void WebViewImpl::willEndLiveResize()
         mainFrameImpl()->frameView()->willEndLiveResize();
 }
 
-void WebViewImpl::animate(double frameBeginTime)
+void WebViewImpl::animate()
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     TRACE_EVENT("WebViewImpl::animate", this, 0);
-    // FIXME: remove this zero-check once render_widget has been modified to
-    // pass in a frameBeginTime.
-    if (!frameBeginTime)
-        frameBeginTime = currentTime();
+#if ENABLE(REQUEST_ANIMATION_FRAME)
     WebFrameImpl* webframe = mainFrameImpl();
     if (webframe) {
         FrameView* view = webframe->frameView();
         if (view) {
             if (m_layerRenderer)
                 m_layerRenderer->setIsAnimating(true);
-            view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
+            view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
             if (m_layerRenderer)
                 m_layerRenderer->setIsAnimating(false);
         }
@@ -1100,10 +1095,6 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     if (isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(THREADED_COMPOSITING)
-        // FIXME: do readback in threaded compositing mode rather than returning nothing
-        return;
-#endif
         doComposite();
 
         // If a canvas was passed in, we use it to grab a copy of the
@@ -1137,29 +1128,16 @@ void WebViewImpl::themeChanged()
     view->invalidateRect(damagedRect);
 }
 
-void WebViewImpl::animateAndLayout(double frameBeginTime)
+void WebViewImpl::composite(bool finish)
 {
-    animate(frameBeginTime);
-    layout();
-}
-
-void WebViewImpl::updateLayers()
-{
+#if USE(ACCELERATED_COMPOSITING)
     // Update the compositing requirements for all frame in the tree before doing any painting
     // as the compositing requirements for a RenderLayer within a subframe might change.
     for (Frame* frame = page()->mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->view()->updateCompositingLayers();
     page()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
-}
 
-void WebViewImpl::composite(bool finish)
-{
-#if USE(ACCELERATED_COMPOSITING)
-#if USE(THREADED_COMPOSITING)
-    m_layerRenderer->setNeedsRedraw();
-#else
     TRACE_EVENT("WebViewImpl::composite", this, 0);
-
     if (m_recreatingGraphicsContext) {
         // reallocateRenderer will request a repaint whether or not it succeeded
         // in creating a new context.
@@ -1168,6 +1146,10 @@ void WebViewImpl::composite(bool finish)
         return;
     }
     doComposite();
+
+    // Finish if requested.
+    if (finish)
+        m_layerRenderer->finish();
 
     // Put result onscreen.
     m_layerRenderer->present();
@@ -1182,7 +1164,6 @@ void WebViewImpl::composite(bool finish)
         m_recreatingGraphicsContext = true;
         setRootLayerNeedsDisplay();
     }
-#endif
 #endif
 }
 
@@ -1797,13 +1778,13 @@ void WebViewImpl::fullFramePluginZoomLevelChanged(double zoomLevel)
     if (zoomLevel == m_zoomLevel)
         return;
 
-    m_zoomLevel = max(min(zoomLevel, m_maximumZoomLevel), m_minimumZoomLevel);
+    m_zoomLevel = std::max(std::min(zoomLevel, m_maximumZoomLevel), m_minimumZoomLevel);
     m_client->zoomLevelChanged();
 }
 
 double WebView::zoomLevelToZoomFactor(double zoomLevel)
 {
-    return pow(textSizeMultiplierRatio, zoomLevel);
+    return std::pow(textSizeMultiplierRatio, zoomLevel);
 }
 
 double WebView::zoomFactorToZoomLevel(double factor)
@@ -2437,12 +2418,7 @@ void WebViewImpl::setRootPlatformLayer(WebCore::PlatformLayer* layer)
 
 void WebViewImpl::setRootLayerNeedsDisplay()
 {
-#if USE(THREADED_COMPOSITING)
-    if (m_layerRenderer)
-        m_layerRenderer->setNeedsCommitAndRedraw();
-#else
     m_client->scheduleComposite();
-#endif
 }
 
 
@@ -2514,16 +2490,22 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_client->didActivateAcceleratedCompositing(false);
     } else if (m_layerRenderer) {
         m_isAcceleratedCompositingActive = true;
-        m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(max(1, m_size.width),
-                                                                max(1, m_size.height)));
+        m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(std::max(1, m_size.width),
+                                                                std::max(1, m_size.height)));
 
         m_client->didActivateAcceleratedCompositing(true);
     } else {
         TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
+        RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
+        if (!context) {
+            context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+            if (context)
+                context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+        }
 
-        m_layerRenderer = LayerRendererChromium::create(this, WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
+
+        m_layerRenderer = LayerRendererChromium::create(context.release(), WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
         if (m_layerRenderer) {
-            updateLayerRendererSettings();
             m_client->didActivateAcceleratedCompositing(true);
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
@@ -2551,43 +2533,39 @@ void WebViewImpl::doComposite()
     if (!page())
         return;
 
+    m_layerRenderer->setCompositeOffscreen(settings()->compositeToTextureEnabled());
+
+    CCHeadsUpDisplay* hud = m_layerRenderer->headsUpDisplay();
+    hud->setShowFPSCounter(settings()->showFPSCounter());
+    hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
+
     if (m_pageOverlay)
         m_pageOverlay->update();
 
-    m_layerRenderer->updateLayers();
-    m_layerRenderer->drawLayers();
-}
-
-PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
-{
-    RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
-    if (!context) {
-        context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-        if (context)
-            context->reshape(max(1, m_size.width), max(1, m_size.height));
-    }
-    return context;
+    m_layerRenderer->updateAndDrawLayers();
 }
 
 void WebViewImpl::reallocateRenderer()
 {
+    RefPtr<GraphicsContext3D> newContext = m_temporaryOnscreenGraphicsContext3D.get();
+    WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(newContext.get());
+    if (!newContext || !webContext || webContext->isContextLost())
+        newContext = GraphicsContext3D::create(
+            getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
-    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(this, WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
+    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
 
     // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
     if (layerRenderer) {
         m_layerRenderer->transferRootLayer(layerRenderer.get());
         m_layerRenderer = layerRenderer;
-        updateLayerRendererSettings();
-
         // FIXME: In MacOS newContext->reshape method needs to be called to
         // allocate IOSurfaces. All calls to create a context followed by
         // reshape should really be extracted into one function; it is not
         // immediately obvious that GraphicsContext3D object will not
         // function properly until its reshape method is called.
-        layerRenderer->context()->reshape(max(1, m_size.width), max(1, m_size.height));
+        newContext->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
         setRootPlatformLayer(m_layerRenderer->rootLayer());
-
         // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
         // that the browser process can reacquire surfaces.
         m_client->didActivateAcceleratedCompositing(true);
@@ -2598,18 +2576,10 @@ void WebViewImpl::reallocateRenderer()
 }
 #endif
 
-void WebViewImpl::updateLayerRendererSettings()
-{
-    ASSERT(m_layerRenderer);
-    m_layerRenderer->setCompositeOffscreen(settings()->compositeToTextureEnabled());
-
-    CCHeadsUpDisplay* hud = m_layerRenderer->headsUpDisplay();
-    hud->setShowFPSCounter(settings()->showFPSCounter());
-    hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
-}
-
 void WebViewImpl::updateLayerRendererViewport()
 {
+    ASSERT(m_layerRenderer);
+
     if (!page())
         return;
 
@@ -2637,7 +2607,7 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
         }
         m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
         if (m_temporaryOnscreenGraphicsContext3D)
-            m_temporaryOnscreenGraphicsContext3D->reshape(max(1, m_size.width), max(1, m_size.height));
+            m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
         return GraphicsContext3DInternal::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
     }
 #endif

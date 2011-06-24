@@ -1,3 +1,14 @@
+2011-06-24  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r89694.
+        http://trac.webkit.org/changeset/89694
+        https://bugs.webkit.org/show_bug.cgi?id=58408
+
+        Test shell still not ready for animate changes.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintInvalidatedRegion):
+
 2011-06-24  Adam Roben  <aroben@apple.com>
 
         Fix typos introduced in r89696

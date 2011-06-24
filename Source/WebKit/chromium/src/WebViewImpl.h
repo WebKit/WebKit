@@ -56,7 +56,6 @@ namespace WebCore {
 class ChromiumDataObject;
 class DocumentLoader;
 class Frame;
-class GraphicsContext3D;
 class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
@@ -88,7 +87,7 @@ class WebMouseWheelEvent;
 class WebSettingsImpl;
 class WebTouchEvent;
 
-class WebViewImpl : public WebView, public WebCore::CCLayerTreeHostClient, public RefCounted<WebViewImpl> {
+class WebViewImpl : public WebView, public RefCounted<WebViewImpl> {
 public:
     // WebWidget methods:
     virtual void close();
@@ -96,7 +95,7 @@ public:
     virtual void willStartLiveResize();
     virtual void resize(const WebSize&);
     virtual void willEndLiveResize();
-    virtual void animate(double frameBeginTime);
+    virtual void animate();
     virtual void layout();
     virtual void paint(WebCanvas*, const WebRect&);
     virtual void themeChanged();
@@ -202,11 +201,6 @@ public:
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor);
     virtual void performCustomContextMenuAction(unsigned action);
-
-    // CCLayerTreeHostClient
-    virtual void animateAndLayout(double frameBeginTime);
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual void updateLayers();
 
     // WebViewImpl
 
@@ -362,7 +356,6 @@ public:
     void setRootLayerNeedsDisplay();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
-    void doUpdateAndComposite();
 #endif
 
     // Returns the onscreen 3D context used by the compositor. This is
@@ -430,7 +423,6 @@ private:
     void doComposite();
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
-    void updateLayerRendererSettings();
     void updateLayerRendererViewport();
 #endif
 

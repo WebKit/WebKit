@@ -1486,7 +1486,7 @@ void WebViewHost::paintRect(const WebRect& rect)
 void WebViewHost::paintInvalidatedRegion()
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    webWidget()->animate(0.0);
+    webWidget()->animate();
 #endif
     webWidget()->layout();
     WebSize widgetSize = webWidget()->size();

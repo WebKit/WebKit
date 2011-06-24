@@ -50,8 +50,6 @@
 #include "TraceEvent.h"
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCMainThreadTask.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
 #include "GrContext.h"
@@ -100,26 +98,22 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
 
 }
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostClient* client, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing)
 {
-    RefPtr<GraphicsContext3D> context = client->createLayerTreeHostContext3D();
     if (!context)
         return 0;
 
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(client, context, contentPaint, accelerateDrawing)));
-    layerRenderer->init();
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(context, contentPaint, accelerateDrawing)));
     if (!layerRenderer->hardwareCompositing())
         return 0;
 
     return layerRenderer.release();
 }
 
-LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostClient* client,
-                                             PassRefPtr<GraphicsContext3D> context,
+LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context,
                                              PassOwnPtr<LayerPainterChromium> contentPaint,
                                              bool accelerateDrawing)
-    : CCLayerTreeHost(client)
-    , m_viewportScrollPosition(IntPoint(-1, -1))
+    : m_viewportScrollPosition(IntPoint(-1, -1))
     , m_rootLayer(0)
     , m_accelerateDrawing(false)
     , m_currentRenderSurface(0)
@@ -229,12 +223,10 @@ void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRec
         m_currentRenderSurface = 0;
         m_rootLayerContentTiler->invalidateEntireLayer();
     }
-    setNeedsCommitAndRedraw();
 }
 
-void LayerRendererChromium::updateLayers()
+void LayerRendererChromium::updateAndDrawLayers()
 {
-    CCLayerTreeHost::updateLayers();
     if (m_viewportVisibleRect.isEmpty())
         return;
 
@@ -259,14 +251,9 @@ void LayerRendererChromium::updateLayers()
         m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(m_rootLayer.get(), m_rootCCLayerImpl.get());
     }
 
-    m_computedRenderSurfaceLayerList = adoptPtr(new LayerList());
-    updateLayers(*m_computedRenderSurfaceLayerList);
-}
+    LayerList renderSurfaceLayerList;
+    updateLayers(renderSurfaceLayerList);
 
-void LayerRendererChromium::drawLayers()
-{
-    ASSERT(m_hardwareCompositing);
-    ASSERT(m_computedRenderSurfaceLayerList);
     // Before drawLayers:
     if (hardwareCompositing() && m_contextSupportsLatch) {
         // FIXME: The multithreaded compositor case will not work as long as
@@ -289,7 +276,7 @@ void LayerRendererChromium::drawLayers()
         }
     }
 
-    drawLayers(*m_computedRenderSurfaceLayerList);
+    drawLayers(renderSurfaceLayerList);
 
     m_textureManager->unprotectAllTextures();
 
@@ -1276,74 +1263,6 @@ void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, Layer
 
     for (size_t i = 0; i < layer->children().size(); ++i)
         dumpRenderSurfaces(ts, indent, layer->children()[i].get());
-}
-
-class LayerRendererChromiumImpl : public CCLayerTreeHostImpl {
-public:
-    static PassOwnPtr<LayerRendererChromiumImpl> create(CCLayerTreeHostImplClient* client, LayerRendererChromium* layerRenderer)
-    {
-        return adoptPtr(new LayerRendererChromiumImpl(client, layerRenderer));
-    }
-
-    virtual void drawLayersAndPresent()
-    {
-        CCCompletionEvent completion;
-        bool contextLost;
-        CCMainThread::postTask(createMainThreadTask(this, &LayerRendererChromiumImpl::drawLayersOnMainThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&contextLost)));
-        completion.wait();
-
-        // FIXME: Send the "UpdateRect" message up to the RenderWidget [or moveplugin equivalents...]
-
-        // FIXME: handle context lost
-        if (contextLost)
-            FATAL("LayerRendererChromiumImpl does not handle context lost yet.");
-    }
-
-private:
-    LayerRendererChromiumImpl(CCLayerTreeHostImplClient* client, LayerRendererChromium* layerRenderer)
-        : CCLayerTreeHostImpl(client)
-        , m_layerRenderer(layerRenderer) { }
-
-    void drawLayersOnMainThread(CCCompletionEvent* completion, bool* contextLost)
-    {
-        ASSERT(isMainThread());
-
-        if (m_layerRenderer->rootLayer()) {
-            m_layerRenderer->drawLayers();
-            m_layerRenderer->present();
-
-            GraphicsContext3D* context = m_layerRenderer->context();
-            *contextLost = context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
-        } else
-            *contextLost = false;
-        completion->signal();
-    }
-
-    LayerRendererChromium* m_layerRenderer;
-};
-
-class LayerRendererChromiumImplProxy : public CCLayerTreeHostImplProxy {
-public:
-    static PassOwnPtr<LayerRendererChromiumImplProxy> create(LayerRendererChromium* layerRenderer)
-    {
-        return adoptPtr(new LayerRendererChromiumImplProxy(layerRenderer));
-    }
-
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl()
-    {
-        return LayerRendererChromiumImpl::create(this, static_cast<LayerRendererChromium*>(host()));
-    }
-
-private:
-    LayerRendererChromiumImplProxy(LayerRendererChromium* layerRenderer)
-        : CCLayerTreeHostImplProxy(layerRenderer) { }
-};
-
-PassOwnPtr<CCLayerTreeHostImplProxy> LayerRendererChromium::createLayerTreeHostImplProxy()
-{
-    OwnPtr<CCLayerTreeHostImplProxy> proxy = LayerRendererChromiumImplProxy::create(this);
-    proxy->start();
-    return proxy.release();
 }
 
 } // namespace WebCore

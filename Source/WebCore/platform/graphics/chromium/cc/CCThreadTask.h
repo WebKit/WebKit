@@ -24,9 +24,9 @@
 #ifndef CCThreadTask_h
 #define CCThreadTask_h
 
+#include "CCThread.h"
 #include "CrossThreadCopier.h"
 #include "CrossThreadTask.h"
-#include "cc/CCThread.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 

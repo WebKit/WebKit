@@ -167,7 +167,7 @@ void WebPopupMenuImpl::willEndLiveResize()
 {
 }
 
-void WebPopupMenuImpl::animate(double)
+void WebPopupMenuImpl::animate()
 {
 }
 
