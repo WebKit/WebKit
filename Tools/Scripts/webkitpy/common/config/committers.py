@@ -84,7 +84,6 @@ contributors_who_are_not_committers = [
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
     Contributor("Naoki Takano", "takano.naoki@gmail.com", "honten"),
-    Contributor("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
 ]
 
@@ -223,6 +222,7 @@ committers_unable_to_review = [
     Committer("Mike Lawther", "mikelawther@chromium.org", "mikelawther"),
     Committer("Mike Thole", ["mthole@mikethole.com", "mthole@apple.com"]),
     Committer("Mikhail Naganov", "mnaganov@chromium.org"),
+    Committer("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
     Committer("Nico Weber", ["thakis@chromium.org", "thakis@google.com"], "thakis"),
     Committer("Noam Rosenthal", "noam.rosenthal@nokia.com", "noamr"),
     Committer("Pam Greene", "pam@chromium.org", "pamg"),
