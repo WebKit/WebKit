@@ -1,3 +1,13 @@
+2011-06-24  Jessie Berlin  <jberlin@apple.com>
+
+        REGRESSION (r89457-r89462): fast/forms/textfield-overflow.html failing on SnowLeopard Intel
+        Release (WebKit2 Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=63328
+
+        Add (failing?) expected results for mac-wk2 to get the bots green.
+
+        * platform/mac-wk2/fast/forms/textfield-overflow-expected.txt: Added.
+
 2011-06-24  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
