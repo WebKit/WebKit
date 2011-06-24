@@ -25,7 +25,6 @@
 #ifndef UnicodeBrew_h
 #define UnicodeBrew_h
 
-#include "ScriptCodesFromICU.h"
 #include "UnicodeFromICU.h"
 #include "UnicodeMacrosFromICU.h"
 

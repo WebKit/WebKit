@@ -23,7 +23,6 @@
 #ifndef WTF_UNICODE_QT4_H
 #define WTF_UNICODE_QT4_H
 
-#include "ScriptCodesFromICU.h"
 #include "UnicodeMacrosFromICU.h"
 
 #include <QChar>

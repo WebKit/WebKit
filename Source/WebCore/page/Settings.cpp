@@ -52,20 +52,6 @@ static void setLoadsImagesAutomaticallyInAllFrames(Page* page)
         frame->document()->cachedResourceLoader()->setAutoLoadImages(page->settings()->loadsImagesAutomatically());
 }
 
-static inline void setGenericFontFamilyMap(ScriptFontFamilyMap& fontMap, const AtomicString& family, UScriptCode script, Page* page)
-{
-    fontMap.set(static_cast<int>(script), family);
-    page->setNeedsRecalcStyleInAllFrames();
-}
-
-static inline const AtomicString& getGenericFontFamilyForScript(const ScriptFontFamilyMap& fontMap, UScriptCode script)
-{
-    ScriptFontFamilyMap::const_iterator it = fontMap.find(static_cast<int>(script));
-    if (it != fontMap.end())
-        return it->second;
-    return emptyAtom;
-}
-
 #if USE(SAFARI_THEME)
 bool Settings::gShouldPaintNativeControls = true;
 #endif
@@ -206,64 +192,58 @@ Settings::Settings(Page* page)
     AtomicString::init();
 }
 
-const AtomicString& Settings::standardFontFamily(UScriptCode script) const
+void Settings::setStandardFontFamily(const AtomicString& standardFontFamily)
 {
-    return getGenericFontFamilyForScript(m_standardFontFamilyMap, script);
+    if (standardFontFamily == m_standardFontFamily)
+        return;
+
+    m_standardFontFamily = standardFontFamily;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void Settings::setStandardFontFamily(const AtomicString& family, UScriptCode script)
+void Settings::setFixedFontFamily(const AtomicString& fixedFontFamily)
 {
-    setGenericFontFamilyMap(m_standardFontFamilyMap, family, script, m_page);
+    if (m_fixedFontFamily == fixedFontFamily)
+        return;
+        
+    m_fixedFontFamily = fixedFontFamily;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-const AtomicString& Settings::fixedFontFamily(UScriptCode script) const
+void Settings::setSerifFontFamily(const AtomicString& serifFontFamily)
 {
-    return getGenericFontFamilyForScript(m_fixedFontFamilyMap, script);
+    if (m_serifFontFamily == serifFontFamily)
+        return;
+        
+    m_serifFontFamily = serifFontFamily;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void Settings::setFixedFontFamily(const AtomicString& family, UScriptCode script)
+void Settings::setSansSerifFontFamily(const AtomicString& sansSerifFontFamily)
 {
-    setGenericFontFamilyMap(m_fixedFontFamilyMap, family, script, m_page);
+    if (m_sansSerifFontFamily == sansSerifFontFamily)
+        return;
+        
+    m_sansSerifFontFamily = sansSerifFontFamily; 
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-const AtomicString& Settings::serifFontFamily(UScriptCode script) const
+void Settings::setCursiveFontFamily(const AtomicString& cursiveFontFamily)
 {
-    return getGenericFontFamilyForScript(m_serifFontFamilyMap, script);
+    if (m_cursiveFontFamily == cursiveFontFamily)
+        return;
+        
+    m_cursiveFontFamily = cursiveFontFamily;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void Settings::setSerifFontFamily(const AtomicString& family, UScriptCode script)
+void Settings::setFantasyFontFamily(const AtomicString& fantasyFontFamily)
 {
-     setGenericFontFamilyMap(m_serifFontFamilyMap, family, script, m_page);
-}
-
-const AtomicString& Settings::sansSerifFontFamily(UScriptCode script) const
-{
-    return getGenericFontFamilyForScript(m_sansSerifFontFamilyMap, script);
-}
-
-void Settings::setSansSerifFontFamily(const AtomicString& family, UScriptCode script)
-{
-    setGenericFontFamilyMap(m_sansSerifFontFamilyMap, family, script, m_page);
-}
-
-const AtomicString& Settings::cursiveFontFamily(UScriptCode script) const
-{
-    return getGenericFontFamilyForScript(m_cursiveFontFamilyMap, script);
-}
-
-void Settings::setCursiveFontFamily(const AtomicString& family, UScriptCode script)
-{
-    setGenericFontFamilyMap(m_cursiveFontFamilyMap, family, script, m_page);
-}
-
-const AtomicString& Settings::fantasyFontFamily(UScriptCode script) const
-{
-    return getGenericFontFamilyForScript(m_fantasyFontFamilyMap, script);
-}
-
-void Settings::setFantasyFontFamily(const AtomicString& family, UScriptCode script)
-{
-    setGenericFontFamilyMap(m_fantasyFontFamilyMap, family, script, m_page);
+    if (m_fantasyFontFamily == fantasyFontFamily)
+        return;
+        
+    m_fantasyFontFamily = fantasyFontFamily;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 void Settings::setMinimumFontSize(int minimumFontSize)
