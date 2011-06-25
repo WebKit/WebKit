@@ -53,12 +53,14 @@ public:
     bool loadLink(const LinkRelAttribute&, const String& type, const KURL&, Document*);
 
 private:
-    void linkLoadedTimerFired(Timer<LinkLoader>*);
+    void linkLoadTimerFired(Timer<LinkLoader>*);
+    void linkLoadingErrorTimerFired(Timer<LinkLoader>*);
 
     LinkLoaderClient* m_client;
 
     CachedResourceHandle<CachedResource> m_cachedLinkResource;
-    Timer<LinkLoader> m_linkLoadedTimer;
+    Timer<LinkLoader> m_linkLoadTimer;
+    Timer<LinkLoader> m_linkLoadingErrorTimer;
 };
     
 }

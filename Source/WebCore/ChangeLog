@@ -1,3 +1,31 @@
+2011-06-24  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        fix possible race in LinkLoader
+        https://bugs.webkit.org/show_bug.cgi?id=63360
+
+        In chromium bug 80729
+        http://code.google.com/p/chromium/issues/detail?id=80729 I am
+        seeing some kind of double triggering of the timer; I am concerned
+        that it is possible that a Link element errors out or succeeds,
+        sets a timer, and shortly before the timer is triggered it is
+        editted, launches another request.  After that, the first timer
+        triggers, zeroing out m_cachedResource.  Then, the second load
+        finishes, and *crash*.  If this is the case, this fix should stop
+        it.
+
+        No new tests; I haven't reproduced this.  I hope chrome's crash
+        telemetry will give good feedback; this crash is occuring many times a
+        day so the difference should be obvious.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::LinkLoader):
+        (WebCore::LinkLoader::linkLoadTimerFired):
+        (WebCore::LinkLoader::linkLoadingErrorTimerFired):
+        (WebCore::LinkLoader::notifyFinished):
+        * loader/LinkLoader.h:
+
 2011-06-24  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

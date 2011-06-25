@@ -48,7 +48,8 @@ namespace WebCore {
 
 LinkLoader::LinkLoader(LinkLoaderClient* client)
     : m_client(client)
-    , m_linkLoadedTimer(this, &LinkLoader::linkLoadedTimerFired)
+    , m_linkLoadTimer(this, &LinkLoader::linkLoadTimerFired)
+    , m_linkLoadingErrorTimer(this, &LinkLoader::linkLoadingErrorTimerFired)
 {
 }
 
@@ -58,21 +59,29 @@ LinkLoader::~LinkLoader()
         m_cachedLinkResource->removeClient(this);
 }
 
-void LinkLoader::linkLoadedTimerFired(Timer<LinkLoader>* timer)
+void LinkLoader::linkLoadTimerFired(Timer<LinkLoader>* timer)
 {
-    ASSERT_UNUSED(timer, timer == &m_linkLoadedTimer);
-    if (m_cachedLinkResource->errorOccurred())
-        m_client->linkLoadingErrored();
-    else if (!m_cachedLinkResource->wasCanceled())
-        m_client->linkLoaded();
-    m_cachedLinkResource->removeClient(this);
-    m_cachedLinkResource = 0;
+    ASSERT_UNUSED(timer, timer == &m_linkLoadTimer);
+    m_client->linkLoaded();
+}
+
+void LinkLoader::linkLoadingErrorTimerFired(Timer<LinkLoader>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_linkLoadingErrorTimer);
+    m_client->linkLoadingErrored();
 }
 
 void LinkLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT_UNUSED(resource, m_cachedLinkResource.get() == resource);
-    m_linkLoadedTimer.startOneShot(0);
+
+    if (m_cachedLinkResource->errorOccurred())
+        m_linkLoadingErrorTimer.startOneShot(0);
+    else 
+        m_linkLoadTimer.startOneShot(0);
+
+    m_cachedLinkResource->removeClient(this);
+    m_cachedLinkResource = 0;
 }
 
 bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& type,
