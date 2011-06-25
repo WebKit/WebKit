@@ -1,5 +1,32 @@
 2011-06-24  Michael Saboff  <msaboff@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Arm Assembler, Immediate stack offset values truncated to 8 bits for add & sub
+        https://bugs.webkit.org/show_bug.cgi?id=63345
+
+        The methods ARMThumbImmediate::getUInt9 and ARMThumbImmediate::getUInt10
+        return 9 and 10 bit quantities, therefore changed their return type from
+        uint8_t to uint16_t.  Also casted the places where they are used as they
+        are currently shifted and used as 7 or 8 bit values.
+
+        These methods are currently used for literals for stack offsets, 
+        including creating and destroying stack frames.  The prior truncation of
+        the upper bits caused stack frames to be too small, thus allowing a
+        JIT'ed function to access and overwrite stack space outside of the
+        incorrectly sized stack frame.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMThumbImmediate::getUInt9):
+        (JSC::ARMThumbImmediate::getUInt10):
+        (JSC::ARMv7Assembler::add):
+        (JSC::ARMv7Assembler::ldr):
+        (JSC::ARMv7Assembler::str):
+        (JSC::ARMv7Assembler::sub):
+        (JSC::ARMv7Assembler::sub_S):
+
+2011-06-24  Michael Saboff  <msaboff@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         releaseFastMallocFreeMemory doesn't adjust free counts for scavenger
