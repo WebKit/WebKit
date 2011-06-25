@@ -1,3 +1,22 @@
+2011-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Safari will quit unexpectedly when launching Safari in the first time (crash in initQTSecurityPolicyNoLocalToRemoteSiteAttribute)
+        https://bugs.webkit.org/show_bug.cgi?id=63332
+        <rdar://problem/9661650>
+
+        No new tests; Only affects machines with QTKit < 7.6.3 installed.
+
+        Check to see if QTSecurityPolicyNoRemoteToLocalSiteAttribute is non-NULL before passing it into -[QTMovie initWithAttributes:],
+        as it is only defined in QTKit >= 7.6.3.  If it is NULL, pass QTSecurityPolicyNoCrossSiteAttribute=YES instead, which has
+        the same effect in earlier versions of QTKit as the NoLocalToRemote and NoRemoteToLocal keys.  To avoid ASSERTs when running
+        debug builds with earlier versions of QTKit, add a SOFT_LINK_POINTER_OPTIONAL macro to SoftLinking.h and make these keys optional.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::commonMovieAttributes):
+        * platform/mac/SoftLinking.h: Add SOFT_LINK_POINTER_OPTIONAL macro.
+
 2011-06-24  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build failure.
