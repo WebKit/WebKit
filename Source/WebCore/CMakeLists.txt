@@ -1660,6 +1660,7 @@ IF (ENABLE_SVG)
         svg/SVGAnimatedColor.cpp
         svg/SVGAnimatedLength.cpp
         svg/SVGAnimatedNumber.cpp
+        svg/SVGAnimatedNumberList.cpp
         svg/SVGAnimatedPath.cpp
         svg/SVGAnimatedPointList.cpp
         svg/SVGAnimatedRect.cpp

@@ -48,6 +48,8 @@ public:
     SVGAnimatedNumberAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedNumberAnimator() { }
     
+    static void calculateAnimatedNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
+    
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
     
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);

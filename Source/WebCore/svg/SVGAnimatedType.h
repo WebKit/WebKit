@@ -30,6 +30,7 @@ class Color;
 class FloatRect;
 class SVGAngle;
 class SVGLength;
+class SVGNumberList;
 class SVGPointList;
 
 class SVGAnimatedType {
@@ -41,6 +42,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
+    static PassOwnPtr<SVGAnimatedType> createNumberList(SVGNumberList*);
     static PassOwnPtr<SVGAnimatedType> createPath(PassOwnPtr<SVGPathByteStream>);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
@@ -52,6 +54,7 @@ public:
     Color& color();
     SVGLength& length();
     float& number();
+    SVGNumberList& numberList();
     SVGPathByteStream* path();
     SVGPointList& pointList();
     FloatRect& rect();
@@ -76,6 +79,7 @@ private:
         Color* color;
         SVGLength* length;
         float* number;
+        SVGNumberList* numberList;
         SVGPathByteStream* path;
         SVGPointList* pointList;
         FloatRect* rect;

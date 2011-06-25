@@ -67,6 +67,25 @@ void SVGAnimatedNumberAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>
     to->number() += from->number();
 }
 
+void SVGAnimatedNumberAnimator::calculateAnimatedNumber(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber)
+{
+    float number;
+    if (animationElement->calcMode() == CalcModeDiscrete)
+        number = percentage < 0.5 ? fromNumber : toNumber;
+    else
+        number = (toNumber - fromNumber) * percentage + fromNumber;
+        
+    // FIXME: This is not correct for values animation. Right now we transform values-animation to multiple from-to-animations and
+    // accumulate every single value to the previous one. But accumulation should just take into account after a complete cycle
+    // of values-animaiton. See example at: http://www.w3.org/TR/2001/REC-smil-animation-20010904/#RepeatingAnim
+    if (animationElement->isAccumulated() && repeatCount)
+        number += toNumber * repeatCount;
+    if (animationElement->isAdditive() && animationElement->animationMode() != ToAnimation)
+        animatedNumber += number;
+    else
+        animatedNumber = number;
+}
+
 void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
                                                        OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
@@ -93,22 +112,8 @@ void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigne
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toNumberString);
         parseNumberFromString(toNumberString, toNumber); 
     }
-
-    float number;
-    if (animationElement->calcMode() == CalcModeDiscrete)
-        number = percentage < 0.5f ? fromNumber : toNumber;
-    else
-        number = (toNumber - fromNumber) * percentage + fromNumber;
     
-    // FIXME: This is not correct for values animation. Right now we transform values-animation to multiple from-to-animations and
-    // accumulate every single value to the previous one. But accumulation should just take into account after a complete cycle
-    // of values-animaiton. See example at: http://www.w3.org/TR/2001/REC-smil-animation-20010904/#RepeatingAnim
-    if (animationElement->isAccumulated() && repeatCount)
-        number += toNumber * repeatCount;
-    if (animationElement->isAdditive() && animationMode != ToAnimation)
-        animatedNumber += number;
-    else
-        animatedNumber = number;
+    calculateAnimatedNumber(animationElement, percentage, repeatCount, animatedNumber, fromNumber, toNumber);
 }
 
 float SVGAnimatedNumberAnimator::calculateDistance(const String& fromString, const String& toString)

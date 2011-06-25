@@ -25,6 +25,7 @@
 #include "SVGAnimatedColor.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedNumber.h"
+#include "SVGAnimatedNumberList.h"
 #include "SVGAnimatedPath.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedRect.h"
@@ -51,6 +52,8 @@ public:
             return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
         case AnimatedNumber:
             return adoptPtr(new SVGAnimatedNumberAnimator(animationElement, contextElement));
+        case AnimatedNumberList:
+            return adoptPtr(new SVGAnimatedNumberListAnimator(animationElement, contextElement));
         case AnimatedPath:
             return adoptPtr(new SVGAnimatedPathAnimator(animationElement, contextElement));
         case AnimatedPoints:

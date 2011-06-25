@@ -3433,6 +3433,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedLengthList.h \
 	Source/WebCore/svg/SVGAnimatedNumber.cpp \
 	Source/WebCore/svg/SVGAnimatedNumber.h \
+	Source/WebCore/svg/SVGAnimatedNumberList.cpp \
 	Source/WebCore/svg/SVGAnimatedNumberList.h \
 	Source/WebCore/svg/SVGAnimatedPath.cpp \
 	Source/WebCore/svg/SVGAnimatedPath.h \

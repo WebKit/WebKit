@@ -1,3 +1,55 @@
+2011-06-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatedType should support SVGNumberList animation
+        https://bugs.webkit.org/show_bug.cgi?id=63387
+        
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGNumberList.
+        
+        Animations of attributes with type SVGNumberList can be interpolated now.
+
+        Tests: svg/animations/svgnumberlist-animation-1.html
+               svg/animations/svgnumberlist-animation-2.html
+
+        * CMakeLists.txt: Added new file to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Make use of attribute type AnimatedNumberList.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedNumber.cpp:
+        (WebCore::SVGAnimatedNumberAnimator::calculateAnimatedNumber): Made method static for reuse in SVGAnimatedNumberList (and SVGAnimatedNumberOptionalNumber later).
+        (WebCore::SVGAnimatedNumberAnimator::calculateAnimatedValue): Use new static function.
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedNumberList.cpp: Added. New animator for SVGNumberList.
+        (WebCore::SVGAnimatedNumberListAnimator::SVGAnimatedNumberListAnimator):
+        (WebCore::SVGAnimatedNumberListAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateDistance):
+        * svg/SVGAnimatedNumberList.h:
+        (WebCore::SVGAnimatedNumberListAnimator::~SVGAnimatedNumberListAnimator):
+        * svg/SVGAnimatedType.cpp: Use new Animator.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createNumberList):
+        (WebCore::SVGAnimatedType::numberList):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

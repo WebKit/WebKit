@@ -26,6 +26,7 @@
 #include "SVGAngle.h"
 #include "SVGColor.h"
 #include "SVGLength.h"
+#include "SVGNumberList.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathParserFactory.h"
 #include "SVGPointList.h"
@@ -51,6 +52,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedNumber:
         delete m_data.number;
+        break;
+    case AnimatedNumberList:
+        delete m_data.numberList;
         break;
     case AnimatedPath:
         delete m_data.path;
@@ -99,6 +103,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumber(float* number)
     ASSERT(number);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedNumber));
     animatedType->m_data.number = number;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumberList(SVGNumberList* numberList)
+{
+    ASSERT(numberList);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedNumberList));
+    animatedType->m_data.numberList = numberList;
     return animatedType.release();
 }
 
@@ -158,6 +170,12 @@ float& SVGAnimatedType::number()
     return *m_data.number;
 }
 
+SVGNumberList& SVGAnimatedType::numberList()
+{
+    ASSERT(m_type == AnimatedNumberList);
+    return *m_data.numberList;
+}
+
 SVGPathByteStream* SVGAnimatedType::path()
 {
     ASSERT(m_type == AnimatedPath);
@@ -197,6 +215,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedNumber:
         ASSERT(m_data.number);
         return String::number(*m_data.number);
+    case AnimatedNumberList:
+        ASSERT(m_data.numberList);
+        return m_data.numberList->valueAsString();
     case AnimatedPath: {
         ASSERT(m_data.path);
         String result;
@@ -239,6 +260,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedNumber:
         ASSERT(m_data.number);
         parseNumberFromString(value, *m_data.number);
+        break;
+    case AnimatedNumberList:
+        ASSERT(m_data.numberList);
+        m_data.numberList->parse(value);
         break;
     case AnimatedPath: {
         ASSERT(m_data.path);
