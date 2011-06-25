@@ -1,3 +1,15 @@
+2011-06-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [CMAKE] Replace ";" with space in FEATURE_DEFINES macro
+        https://bugs.webkit.org/show_bug.cgi?id=62211
+
+        html.css file doesn't recognize ENABLE_XXX macro because FEATURE_DEFINES macro has ";"
+        as separator. So, let the html.css to use new feature macro with space separator.
+
+        * CMakeLists.txt:
+
 2011-06-24  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Darin Adler.
