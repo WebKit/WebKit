@@ -1,3 +1,11 @@
+2011-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Qt and Chromium builds.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setEncodedAudioData):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+
 2011-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

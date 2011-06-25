@@ -1854,7 +1854,3 @@ void LayoutTestController::setEncodedAudioData(const CppArgumentList& arguments,
     m_encodedAudioData = arguments[0].toString();
     setShouldDumpAsAudio(true);
 }
-
-void LayoutTestController::allowRoundingHacks()
-{
-}
