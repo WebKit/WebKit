@@ -1,3 +1,11 @@
+2011-06-24  Darin Adler  <darin@apple.com>
+
+        Try to fix Windows build failure.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::setFileDescriptorData): Copy string into a local so we
+        can call charactersWithNullTermination on it.
+
 2011-06-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.
