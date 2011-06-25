@@ -1110,7 +1110,7 @@ IntSize RenderInline::offsetFromContainer(RenderObject* container, const IntPoin
     return offset;
 }
 
-void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
+void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1153,7 +1153,7 @@ void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
         return;
     }
 
-    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
+    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
 void RenderInline::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const

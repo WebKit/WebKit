@@ -53,9 +53,9 @@ void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintCo
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
-void RenderSVGModelObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
+void RenderSVGModelObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
 // Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.

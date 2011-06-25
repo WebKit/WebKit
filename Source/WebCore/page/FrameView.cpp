@@ -2808,10 +2808,13 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
 
 FloatQuad FrameView::convertFromRenderer(const RenderObject* renderer, const FloatQuad& rendererQuad) const
 {
-    FloatQuad quad = renderer->localToAbsoluteQuad(rendererQuad);
+    bool wasFixed = false;
+    FloatQuad quad = renderer->localToAbsoluteQuad(rendererQuad, false, &wasFixed);
 
-    IntPoint scroll = scrollPosition();
-    quad.move(-scroll.x(), -scroll.y());
+    if (!wasFixed) {
+        IntPoint scroll = scrollPosition();
+        quad.move(-scroll.x(), -scroll.y());
+    }
 
     return quad;
 }

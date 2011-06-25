@@ -5,6 +5,72 @@
         Inspector highlight rect is wrong for contents of transformed iframes
         https://bugs.webkit.org/show_bug.cgi?id=53627
 
+        Part 2: Only adjust for the FrameView's scroll position when
+        the localToAbsolute mapping did not end with fixed content.
+        Content that is inside of a fixed position container is already
+        adjusted for the FrameView's scrollPosition when RenderView
+        maps local to container.
+
+        This patch uses a "wasFixed" out parameter to determine if
+        the localToAbsolute transformation ended inside a fixed block,
+        and if so does not apply the scroll position.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRenderer):
+        Respect wasFixed as described above.
+
+        * rendering/RenderBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        This is the only time that "fixed" ever changed. So when
+        fixed changes, update the optional wasFixed out parameter.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        Ignore wasFixed by default, but pipe it though where needed.
+
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        This is the final recursive call, so wasFixed goes no
+        further. We sanity check its value in debug builds.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+        Pipe wasFixed through where needed.
+
+2011-06-25  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Inspector highlight rect is wrong for contents of transformed iframes
+        https://bugs.webkit.org/show_bug.cgi?id=53627
+
         Part 1: Provide FloatQuad versions of convertFromRenderer,
         convertToContainingView, and convertChildToSelf, so that we
         can get the fully transformed quad of a renderer all the

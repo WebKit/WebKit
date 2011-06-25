@@ -130,7 +130,7 @@ private:
     virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed);
 
-    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState&) const;
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState&, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
 
     virtual VisiblePosition positionForPoint(const IntPoint&);
