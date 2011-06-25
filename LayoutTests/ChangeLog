@@ -1,5 +1,16 @@
 2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        Skip svg/text/select-text-svgfont.html on mac-wk2, just like the other svg/text tests.
+
+        * platform/mac-wk2/Skipped:
+
+2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Gardening.
 
         http/tests/inspector/network/network-iframe-load-and-delete.html fails on Leopard

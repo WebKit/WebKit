@@ -868,6 +868,7 @@ svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html
 svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures.html
 svg/filters/filter-width-update.svg
 svg/text/foreignObject-repaint.xml
+svg/text/select-text-svgfont.html
 svg/text/select-textLength-spacing-squeeze-1.svg
 svg/text/select-textLength-spacing-squeeze-2.svg
 svg/text/select-textLength-spacing-squeeze-3.svg
