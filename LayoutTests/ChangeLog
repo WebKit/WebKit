@@ -2,6 +2,20 @@
 
         Not reviewed. Gardening.
 
+        http/tests/inspector/network/network-iframe-load-and-delete.html fails on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=63379
+
+        http/tests/navigation/anchor-basic.html fails on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=63380
+
+        Skip last two tests that kept Leopard red, should turn green again now.
+
+        * platform/mac-leopard/Skipped:
+
+2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Gardening.
+
         REGRESSION (r89305-r89312): webarchive/loading/mainresource-null-mimetype-crash.html failing on Leopard/SnowLeopard release
         https://bugs.webkit.org/show_bug.cgi?id=63169
 

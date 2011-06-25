@@ -240,3 +240,11 @@ fast/preloader/scan-body-from-head-script.html
 
 # Times out http://webkit.org/b/59777
 fast/canvas/canvas-largedraws.html
+
+# http/tests/inspector/network/network-iframe-load-and-delete.html fails on Leopard
+# https://bugs.webkit.org/show_bug.cgi?id=63379
+http/tests/inspector/network/network-iframe-load-and-delete.html
+
+# http/tests/navigation/anchor-basic.html fails on Leopard
+# https://bugs.webkit.org/show_bug.cgi?id=63380
+http/tests/navigation/anchor-basic.html
