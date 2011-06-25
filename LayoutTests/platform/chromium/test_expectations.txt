@@ -912,7 +912,6 @@ BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 // expectations because it's likely to get checked in again soon.
 BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
-BUGWK62974 WIN : svg/W3C-SVG-1.1-SE/types-dom-05-b.svg = IMAGE+TEXT
 BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
 BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE+TEXT
 BUGWK62974 LEOPARD : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE

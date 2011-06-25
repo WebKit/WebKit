@@ -1,3 +1,12 @@
+2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r89732.
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
