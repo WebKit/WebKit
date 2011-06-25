@@ -1,5 +1,20 @@
 2011-06-24  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Drag-and-drop tab in same window makes web process falsely report unresponsiveness
+        https://bugs.webkit.org/show_bug.cgi?id=63369
+        <rdar://problem/9673120>
+
+        If the view becomes invisible, stop the responsiveness timer, because we might not get any
+        messages that will cause it to stop (such as painting notifications since we don't paint
+        when we're not visible).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+
+2011-06-24  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         Not possible for plug-ins to override the internal PDF viewer
