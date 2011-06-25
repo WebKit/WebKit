@@ -43,6 +43,7 @@
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
+#include "RenderTheme.h"
 #include "ewk_private.h"
 
 #include <Ecore.h>
@@ -1199,7 +1200,13 @@ void ewk_view_theme_set(Evas_Object* o, const char* path)
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
     if (!eina_stringshare_replace(&priv->settings.theme, path))
         return;
-    ewk_frame_theme_set(sd->main_frame, path);
+
+    WebCore::FrameView* view = priv->main_frame->view();
+    if (view) {
+        view->setEdjeTheme(WTF::String(path));
+        priv->page->theme()->themeChanged();
+    }
+
 }
 
 /**

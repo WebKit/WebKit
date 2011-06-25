@@ -42,7 +42,6 @@
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
 #include "RefPtr.h"
-#include "RenderTheme.h"
 #include "ResourceRequest.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
@@ -66,7 +65,6 @@ struct Ewk_Frame_Smart_Data {
     Evas_Object* region;
 #endif
     WebCore::Frame* frame;
-    const char* theme;
     const char* title;
     const char* uri;
     const char* name;
@@ -299,45 +297,6 @@ Evas_Object* ewk_frame_view_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     return sd->view;
-}
-
-/**
- * Sets the theme path that will be used by this frame.
- *
- * Frames inherit theme from their parent, this will have all frames
- * with unset theme to use this one.
- *
- * @param o frame object to change theme
- * @param path theme path, may be @c 0 to reset to default theme
- *      or inherit parent's theme.
- *
- * @see ewk_frame_theme_get()
- */
-void ewk_frame_theme_set(Evas_Object* o, const char* path)
-{
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd);
-    if (!eina_stringshare_replace(&sd->theme, path))
-        return;
-    if (sd->frame && sd->frame->view()) {
-        sd->frame->view()->setEdjeTheme(WTF::String(path));
-        sd->frame->page()->theme()->themeChanged();
-    }
-}
-
-/**
- * Gets the theme set on this frame.
- *
- * This returns the value set by ewk_frame_theme_set(). Note that if
- * it is @c 0, the frame will inherit parent's theme.
- *
- * @param o frame object to get theme path
- *
- * @return theme path, may be @c 0 if not set
- */
-const char* ewk_frame_theme_get(Evas_Object* o)
-{
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
-    return sd->theme;
 }
 
 /**

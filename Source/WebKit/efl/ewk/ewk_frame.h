@@ -155,8 +155,6 @@ struct _Ewk_Touch_Point {
 };
 
 EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
-EAPI void         ewk_frame_theme_set(Evas_Object *o, const char *path);
-EAPI const char  *ewk_frame_theme_get(Evas_Object *o);
 
 EAPI Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o);
 EAPI Evas_Object   *ewk_frame_child_find(Evas_Object *o, const char *name);
