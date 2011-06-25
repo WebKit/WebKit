@@ -1,3 +1,14 @@
+2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        Update a stale Leopard result.
+
+        * platform/mac-leopard/svg/foreignObject/text-tref-02-b-expected.txt:
+
 2011-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
