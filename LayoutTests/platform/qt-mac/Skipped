@@ -4548,3 +4548,24 @@ editing/selection/vertical-rl-rtl-extend-line-backward-br.html
 editing/selection/vertical-rl-rtl-extend-line-backward-p.html
 editing/selection/vertical-rl-rtl-extend-line-forward-br.html
 editing/selection/vertical-rl-rtl-extend-line-forward-p.html
+
+# failing tests after r89233 and r89237. 
+svg/W3C-SVG-1.1-SE/coords-dom-01-f.svg 
+svg/W3C-SVG-1.1-SE/coords-dom-02-f.svg 
+svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg 
+svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg 
+svg/W3C-SVG-1.1-SE/filters-image-03-f.svg 
+svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg 
+svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg 
+svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg 
+svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg 
+svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg 
+svg/W3C-SVG-1.1-SE/types-dom-01-b.svg 
+svg/W3C-SVG-1.1-SE/types-dom-02-f.svg 
+svg/W3C-SVG-1.1-SE/types-dom-03-b.svg 
+svg/W3C-SVG-1.1-SE/types-dom-04-b.svg 
+svg/W3C-SVG-1.1-SE/types-dom-06-f.svg 
+svg/W3C-SVG-1.1-SE/types-dom-07-f.svg 
+svg/W3C-SVG-1.1/filters-turb-02-f.svg 
+svg/custom/glyph-transformation-with-hkern.svg 
+svg/foreignObject/text-tref-02-b.svg 

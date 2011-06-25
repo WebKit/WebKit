@@ -21,6 +21,7 @@
 #define SVGGlyphMap_h
 
 #if ENABLE(SVG_FONTS)
+#include "SurrogatePairAwareTextIterator.h"
 #include "SVGGlyph.h"
 #include "SVGGlyphElement.h"
 
@@ -32,7 +33,7 @@ namespace WebCore {
 struct GlyphMapNode;
 class SVGFontData;
 
-typedef HashMap<UChar, RefPtr<GlyphMapNode> > GlyphMapLayer;
+typedef HashMap<UChar32, RefPtr<GlyphMapNode> > GlyphMapLayer;
 
 struct GlyphMapNode : public RefCounted<GlyphMapNode> {
 private:
@@ -46,43 +47,52 @@ public:
 };
 
 class SVGGlyphMap {
-
 public:
     SVGGlyphMap() : m_currentPriority(0) { }
 
-    void addGlyphByUnicodeString(const String& string, const SVGGlyph& glyph)
+    void addGlyph(const String& glyphName, const String& unicodeString, SVGGlyph glyph)
     {
-        size_t len = string.length();
-        GlyphMapLayer* currentLayer = &m_rootLayer;
+        ASSERT(!glyphName.isEmpty() || !unicodeString.isEmpty());
 
+        bool hasGlyphName = !glyphName.isEmpty();
+        if (unicodeString.isEmpty()) {
+            // Register named glyph in the named glyph map and in the glyph table.
+            ASSERT(hasGlyphName);
+            appendToGlyphTable(glyph);
+            m_namedGlyphs.add(glyphName, glyph.tableEntry);
+            return;
+        }
+    
+        GlyphMapLayer* currentLayer = &m_rootLayer;
         RefPtr<GlyphMapNode> node;
-        for (size_t i = 0; i < len; ++i) {
-            UChar curChar = string[i];
-            node = currentLayer->get(curChar);
+        size_t length = unicodeString.length();
+
+        UChar32 character = 0;
+        unsigned clusterLength = 0;
+        SurrogatePairAwareTextIterator textIterator(unicodeString.characters(), 0, length, length);
+        while (textIterator.consume(character, clusterLength)) {
+            node = currentLayer->get(character);
             if (!node) {
                 node = GlyphMapNode::create();
-                currentLayer->set(curChar, node);
+                currentLayer->set(character, node);
             }
             currentLayer = &node->children;
+            textIterator.advance(clusterLength);
         }
 
-        if (node) {
-            node->glyphs.append(glyph);
-
-            SVGGlyph& svgGlyph = node->glyphs.last();
-            svgGlyph.priority = m_currentPriority++;
-            svgGlyph.unicodeStringLength = len;
-            svgGlyph.isValid = true;
-            appendToGlyphTable(svgGlyph);
-        }
-    }
-
-    void addGlyphByName(const String& glyphName, SVGGlyph& glyph)
-    {
-        if (glyphName.isEmpty())
+        if (!node)
             return;
-        appendToGlyphTable(glyph);
-        m_namedGlyphs.add(glyphName, glyph.tableEntry);
+
+        // Register glyph associated with an unicode string into the glyph map.
+        node->glyphs.append(glyph);
+        SVGGlyph& lastGlyph = node->glyphs.last();
+        lastGlyph.priority = m_currentPriority++;
+        lastGlyph.unicodeStringLength = length;
+    
+        // If the glyph is named, also add it to the named glyph name, and to the glyph table in both cases.
+        appendToGlyphTable(lastGlyph);
+        if (hasGlyphName)  
+            m_namedGlyphs.add(glyphName, lastGlyph.tableEntry);
     }
 
     void appendToGlyphTable(SVGGlyph& glyph)
@@ -104,15 +114,21 @@ public:
     {
         GlyphMapLayer* currentLayer = &m_rootLayer;
 
+        const UChar* characters = string.characters();
         size_t length = string.length();
-        for (size_t i = 0; i < length; ++i) {
-            UChar curChar = string[i];
-            RefPtr<GlyphMapNode> node = currentLayer->get(curChar);
+
+        UChar32 character = 0;
+        unsigned clusterLength = 0;
+        SurrogatePairAwareTextIterator textIterator(characters, 0, length, length);
+        while (textIterator.consume(character, clusterLength)) {
+            RefPtr<GlyphMapNode> node = currentLayer->get(character);
             if (!node)
                 break;
             glyphs.append(node->glyphs);
             currentLayer = &node->children;
+            textIterator.advance(clusterLength);
         }
+
         std::sort(glyphs.begin(), glyphs.end(), compareGlyphPriority);
     }
     

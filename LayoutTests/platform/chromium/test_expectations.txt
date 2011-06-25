@@ -907,6 +907,47 @@ BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
 BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 
+// Since r89233. May need a new baseline.
+// NOTE that this revision was rolled out, but it isn't clear whether we should remove these
+// expectations because it's likely to get checked in again soon.
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
+BUGWK62974 WIN : svg/W3C-SVG-1.1-SE/types-dom-05-b.svg = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE+TEXT
+BUGWK62974 LEOPARD : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/batik/text/textEffect.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/batik/text/textEffect.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/batik/text/textEffect3.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/batik/text/textEffect3.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
+BUGWK62974 LEOPARD : svg/batik/text/xmlSpace.svg = IMAGE
+BUGWK62974 WIN : svg/custom/glyph-selection-lang-attribute.svg = IMAGE+TEXT
+BUGWK62974 LINUX : svg/custom/glyph-selection-lang-attribute.svg = IMAGE
+//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE+TEXT
+//BUGWK62974 LEOPARD : svg/custom/svg-fonts-fallback.xhtml = IMAGE
+//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-segmented.xhtml = IMAGE+TEXT
+//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-word-spacing.html = IMAGE+TEXT
+//BUGWK62974 MAC : svg/custom/svg-fonts-word-spacing.html = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-altglyph-01-b.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
+//BUGWK62974 WIN LINUX : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE+TEXT
+//BUGWK62974 LEOPARD : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-text-04-t.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-text-05-t.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-text-05-t.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-text-06-t.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
+BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
+BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
+BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
+BUGWK62974 WIN LINUX SNOWLEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE
+BUGWK62974 LEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------

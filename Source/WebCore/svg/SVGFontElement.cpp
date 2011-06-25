@@ -111,10 +111,8 @@ void SVGFontElement::registerLigaturesInGlyphCache(Vector<String>& ligatures)
                 
             // This glyph is never meant to be used for rendering, only as identifier as a part of a ligature.
             SVGGlyph newGlyphPart;
-            /* FIXME: Enable this once with the next patch.
             newGlyphPart.isPartOfLigature = true;
-            */
-            m_glyphMap.addGlyphByUnicodeString(lookupString, newGlyphPart);
+            m_glyphMap.addGlyph(String(), lookupString, newGlyphPart);
         }
     }
 }
@@ -129,21 +127,16 @@ void SVGFontElement::ensureGlyphCache()
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(SVGNames::glyphTag)) {
             SVGGlyphElement* glyph = static_cast<SVGGlyphElement*>(child);
-            String unicode = glyph->fastGetAttribute(SVGNames::unicodeAttr);
-            SVGGlyph svgGlyph = glyph->buildGlyphIdentifier();
-            unsigned unicodeLength = unicode.length();
-
-            // Register named glyphs in the glyph table as well.
-            if (!unicodeLength) {
-                m_glyphMap.addGlyphByName(glyph->getIdAttribute(), svgGlyph);
+            AtomicString unicode = glyph->fastGetAttribute(SVGNames::unicodeAttr);
+            AtomicString glyphId = glyph->getIdAttribute();
+            if (glyphId.isEmpty() && unicode.isEmpty())
                 continue;
-            }
 
-            // Register ligatures, if needed.
-            if (unicodeLength > 1)
+            m_glyphMap.addGlyph(glyphId, unicode, glyph->buildGlyphIdentifier());
+
+            // Register ligatures, if needed, don't mix up with surrogate pairs though!
+            if (unicode.length() > 1 && !U16_IS_SURROGATE(unicode[0]))
                 ligatures.append(unicode);
-
-            m_glyphMap.addGlyphByUnicodeString(unicode, svgGlyph);
         } else if (child->hasTagName(SVGNames::hkernTag)) {
             SVGHKernElement* hkern = static_cast<SVGHKernElement*>(child);
             hkern->buildHorizontalKerningPair(m_horizontalKerningPairs);
@@ -154,11 +147,9 @@ void SVGFontElement::ensureGlyphCache()
             firstMissingGlyphElement = static_cast<SVGMissingGlyphElement*>(child);
     }
 
-    /* FIXME: Register each character of each ligature, if needed.
-       This is not needed yet, turn it on with the next patch. With the current SVG Fonts code it would break fonts-glyph-04-t.svg
+    // Register each character of each ligature, if needed.
     if (!ligatures.isEmpty())
         registerLigaturesInGlyphCache(ligatures);
-    */
 
     // Register missing-glyph element, if present.
     if (firstMissingGlyphElement) {

@@ -104,4 +104,6 @@ tref interfaceName=SVGTRefElement
 tspan interfaceName=SVGTSpanElement
 use
 view
+#if ENABLE_SVG_FONTS
 vkern interfaceName=SVGVKernElement
+#endif

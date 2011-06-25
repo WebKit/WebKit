@@ -67,13 +67,28 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     }
 }
 
-void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
+GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
+{
+    ASSERT(m_font);
+
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = m_run.renderingContext())
+        return renderingContext->glyphDataForCharacter(*m_font, m_run, *this, character, mirror, currentCharacter, advanceLength);
+#else
+    UNUSED_PARAM(currentCharacter);
+    UNUSED_PARAM(advanceLength);
+#endif
+
+    return m_font->glyphDataForCharacter(character, mirror);
+}
+
+unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 {
     if (offset > m_run.length())
         offset = m_run.length();
 
     if (int(m_currentCharacter) >= offset)
-        return;
+        return 0;
 
     bool rtl = m_run.rtl();
     bool hasExtraSpacing = (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion) && !m_run.spacingDisabled();
@@ -87,7 +102,8 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
     unsigned clusterLength = 0;
     SurrogatePairAwareTextIterator textIterator(m_run.data(m_currentCharacter), m_currentCharacter, offset, m_run.length());
     while (textIterator.consume(character, clusterLength)) {
-        const GlyphData& glyphData = m_font->glyphDataForCharacter(character, rtl);
+        unsigned advanceLength = clusterLength;
+        const GlyphData& glyphData = glyphDataForCharacter(character, rtl, textIterator.currentCharacter(), advanceLength);
         Glyph glyph = glyphData.glyph;
         const SimpleFontData* fontData = glyphData.fontData;
 
@@ -143,7 +159,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
                                 glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
                         }
                     }
-                    if (m_run.allowsTrailingExpansion() || (m_run.ltr() && textIterator.currentCharacter() + clusterLength < static_cast<size_t>(m_run.length()))
+                    if (m_run.allowsTrailingExpansion() || (m_run.ltr() && textIterator.currentCharacter() + advanceLength < static_cast<size_t>(m_run.length()))
                         || (m_run.rtl() && textIterator.currentCharacter())) {
                         m_expansion -= m_expansionPerOpportunity;
                         width += m_expansionPerOpportunity;
@@ -170,7 +186,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             glyph = 0;
 
         // Advance past the character we just dealt with.
-        textIterator.advance(clusterLength);
+        textIterator.advance(advanceLength);
         m_runWidthSoFar += width;
 
         if (glyphBuffer)
@@ -183,7 +199,9 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         }
     }
 
+    unsigned consumedCharacters = textIterator.currentCharacter() - m_currentCharacter;
     m_currentCharacter = textIterator.currentCharacter();
+    return consumedCharacters;
 }
 
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer)

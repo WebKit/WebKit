@@ -51,7 +51,7 @@ struct SVGGlyph {
     };
 
     SVGGlyph()
-        : isValid(false)
+        : isPartOfLigature(false)
         , orientation(Both)
         , arabicForm(None)
         , priority(0)
@@ -73,7 +73,7 @@ struct SVGGlyph {
 
     bool operator==(const SVGGlyph& other) const
     {
-        return isValid == other.isValid
+        return isPartOfLigature == other.isPartOfLigature
             && orientation == other.orientation
             && arabicForm == other.arabicForm
             && tableEntry == other.tableEntry
@@ -86,7 +86,7 @@ struct SVGGlyph {
             && languages == other.languages;
     }
 
-    bool isValid : 1;
+    bool isPartOfLigature : 1;
 
     unsigned orientation : 2; // Orientation
     unsigned arabicForm : 3; // ArabicForm

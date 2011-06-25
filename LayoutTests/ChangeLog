@@ -1,3 +1,165 @@
+2011-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        font substitution doesn't work for HTML text using SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=17608
+
+        Selection rects are wrong for text with SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=25460
+
+        With @font-face, SVG fonts only work as primary, non-segmented
+        https://bugs.webkit.org/show_bug.cgi?id=32227
+
+        When using SVG fonts with @font-face word-spacing and text-align: justify are not being honored
+        https://bugs.webkit.org/show_bug.cgi?id=34236
+
+        SVG @font-face breaks text-overflow: ellipsis
+        https://bugs.webkit.org/show_bug.cgi?id=36840
+
+        REGRESSION: SVG Font selection problems
+        https://bugs.webkit.org/show_bug.cgi?id=41934
+
+        Rewrite the SVG Fonts support to fully integrate within the GlyphPage concept and the "simple" code path used to render platform fonts.
+        That means the special logic for measuring text using SVG Fonts, calculating offset for positions, computing selection rects etc. is all gone now.
+        There's no difference anymore between using a native font or a SVG Font, in terms of these operations.
+
+        Update SVG pixel test baseline. Use all results that have been checked in when I landed the patch the last time.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.png:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.png:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.png: Added.
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.txt: Added.
+        * platform/mac/svg/custom/svg-fonts-segmented-expected.png: Added.
+        * platform/mac/svg/custom/svg-fonts-segmented-expected.txt: Added.
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.txt: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.png:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-expected.png: Added.
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Added.
+        * platform/mac/svg/text/text-text-04-t-expected.png:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.png:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt-wk2/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.png: Added.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.png: Added.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.png: Added.
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.png: Added.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.png: Added.
+        * platform/qt/fast/js/global-constructors-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-06-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-07-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-08-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.txt: Added.
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/qt/svg/custom/svg-features-expected.png: Added.
+        * platform/qt/svg/custom/svg-features-expected.txt: Added.
+        * platform/qt/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/qt/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.txt:
+        * svg/custom/resources/ABCFont.svg:
+        * svg/custom/svg-fonts-fallback.xhtml: Added.
+        * svg/custom/svg-fonts-segmented.xhtml: Added.
+        * svg/custom/svg-fonts-word-spacing.html: Added.
+        * svg/text/select-text-svgfont-expected.txt: Added.
+        * svg/text/select-text-svgfont.html: Added.
+        * svg/text/text-overflow-ellipsis-svgfont.html: Added.
+
 2011-06-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

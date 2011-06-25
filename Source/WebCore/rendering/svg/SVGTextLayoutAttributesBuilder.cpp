@@ -202,7 +202,21 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
 
                 SVGTextMetrics startToCurrentMetrics = SVGTextMetrics::measureCharacterRange(text, 0, textPosition + 1);
                 SVGTextMetrics currentMetrics = SVGTextMetrics::measureCharacterRange(text, textPosition, 1);
+                metricsLength = currentMetrics.length();
 
+                // Eventually handle surrogate pairs here.
+                if (!metricsLength) {
+                    if (textPosition + 1 == textLength)
+                        break;
+
+                    startToCurrentMetrics = SVGTextMetrics::measureCharacterRange(text, 0, textPosition + 2);
+                    currentMetrics = SVGTextMetrics::measureCharacterRange(text, textPosition, 2);
+                    metricsLength = currentMetrics.length();
+                }
+
+                if (!metricsLength)
+                    break;
+                
                 // Frequent case for Arabic text: when measuring a single character the arabic isolated form is taken
                 // when rendering the glyph "in context" (with it's surrounding characters) it changes due to shaping.
                 // So whenever runWidthAdvance != currentMetrics.width(), we are processing a text run whose length is
@@ -212,7 +226,6 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
                     currentMetrics.setWidth(runWidthAdvance);
 
                 lastMetrics = startToCurrentMetrics;
-                metricsLength = currentMetrics.length();
 
                 if (!preserveWhiteSpace && characterIsSpace(currentCharacter) && characterIsSpaceOrNull(lastCharacter)) {
                     attributes.positioningLists().appendEmptyValues();

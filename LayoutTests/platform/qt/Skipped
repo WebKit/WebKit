@@ -2445,6 +2445,10 @@ fast/css/font-face-repeated-url.html
 # will not be in the output.
 http/tests/misc/redirect-to-external-url.html
 
+# Spellcheck API is not implemented.
+editing/spelling/spellcheck-api.html
+editing/spelling/spellcheck-api-pixel.html
+
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html
@@ -2519,10 +2523,17 @@ fast/text/selection-rect-rounding.html
 svg/as-object/object-box-sizing-no-width-height.html
 svg/custom/object-sizing-explicit-height.xhtml
 svg/custom/object-sizing-explicit-width.xhtml
+svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-override-size.html
+svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-text.xhtml
 svg/custom/object-no-size-attributes.xhtml
 svg/custom/painting-marker-07-f-inherit.svg
 svg/custom/small-rect-scale.svg
 svg/filters/feConvolveFilter-y-bounds.svg
+svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
+svg/zoom/page/zoom-svg-through-object-with-auto-size.html
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
 
 # New tests introduced in r88307, but fail on Qt
@@ -2530,8 +2541,10 @@ http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
 fast/events/touch/touch-gesture-click.html
 fast/events/touch/touch-gesture-scroll.html
 
-# New flexbox is not yet enabled. http://webkit.org/b/62048
-css3/flexbox
+# https://bugs.webkit.org/show_bug.cgi?id=62278
+# The profiler test is entirely unrelated to the original change r88337
+# and seems to be highly related to https://bugs.webkit.org/show_bug.cgi?id=60881
+inspector
 
 # new test introduced in r88958, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=62741
@@ -2541,18 +2554,60 @@ http/tests/appcache/video.html
 # https://bugs.webkit.org/show_bug.cgi?id=62847
 fast/parser/xhtml-innerhtml-null-byte.xhtml
 
-# new failing inspector tests
-inspector/console/console-trace-in-eval.html
-inspector/debugger/source-frame.html
-inspector/styles/styles-update-from-js.html
-
-# [Qt]REGRESSION(r89503): It made 4 fast/notifications tests fail on Qt
-# https://bugs.webkit.org/show_bug.cgi?id=63255
-fast/notifications/notifications-double-show.html
-fast/notifications/notifications-no-icon.html
-fast/notifications/notifications-with-permission.html
-fast/notifications/notifications-without-permission.html
-
-# REGRESSION (r89449): http/tests/inspector/extensions-resources-redirect.html failing on SnowLeopard Intel Release (Tests), Windows 7 Release (Tests), Qt
-# https://bugs.webkit.org/show_bug.cgi?id=63178
-http/tests/inspector/extensions-resources-redirect.html
+# Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths
+# from Font, making it possible to reuse the simple text code path for SVG Fonts
+# https://bugs.webkit.org/show_bug.cgi?id=59085
+# Failing tests after http://trac.webkit.org/changeset/89233
+# They will pass again when QRawFont is enabled by default.
+svg/W3C-SVG-1.1/animate-elem-03-t.svg
+svg/W3C-SVG-1.1/animate-elem-24-t.svg
+svg/W3C-SVG-1.1/animate-elem-36-t.svg
+svg/W3C-SVG-1.1/animate-elem-40-t.svg
+svg/W3C-SVG-1.1/fonts-elem-01-t.svg
+svg/W3C-SVG-1.1/fonts-elem-02-t.svg
+svg/W3C-SVG-1.1/fonts-elem-03-b.svg
+svg/W3C-SVG-1.1/fonts-elem-04-b.svg
+svg/W3C-SVG-1.1/fonts-elem-05-t.svg
+svg/W3C-SVG-1.1/fonts-elem-06-t.svg
+svg/W3C-SVG-1.1/fonts-elem-07-b.svg
+svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
+svg/W3C-SVG-1.1/fonts-glyph-03-t.svg
+svg/W3C-SVG-1.1/fonts-kern-01-t.svg
+svg/W3C-SVG-1.1/masking-mask-01-b.svg
+svg/W3C-SVG-1.1/pservers-grad-08-b.svg
+svg/W3C-SVG-1.1/struct-cond-03-t.svg
+svg/W3C-SVG-1.1/struct-image-02-b.svg
+svg/W3C-SVG-1.1/text-align-08-b.svg
+svg/W3C-SVG-1.1/text-altglyph-01-b.svg
+svg/W3C-SVG-1.1/text-fonts-03-t.svg
+svg/W3C-SVG-1.1/text-intro-01-t.svg
+svg/W3C-SVG-1.1/text-intro-02-b.svg
+svg/W3C-SVG-1.1/text-intro-03-b.svg
+svg/W3C-SVG-1.1/text-intro-04-t.svg
+svg/W3C-SVG-1.1/text-text-04-t.svg
+svg/W3C-SVG-1.1/text-text-05-t.svg
+svg/W3C-SVG-1.1/text-text-06-t.svg
+svg/custom/acid3-test-77.html
+svg/custom/altglyph.svg
+svg/custom/font-face-simple.svg
+svg/custom/global-constructors.html
+svg/custom/glyph-selection-lang-attribute.svg
+svg/custom/glyph-setting-d-attribute.svg
+svg/custom/insertItemBefore-from-non-list-origin.svg
+svg/custom/svg-fonts-in-text-controls.html
+svg/custom/svg-fonts-with-no-element-reference.html
+svg/custom/svg-fonts-without-missing-glyph.xhtml
+svg/dom/altGlyph-dom.xhtml
+svg/dom/baseVal-animVal-crash.html
+svg/dom/font-face-elements.html
+svg/text/kerning.svg
+svg/text/multichar-glyph.svg
+svg/text/text-altglyph-01-b.svg
+svg/text/text-hkern-on-vertical-text.svg
+svg/text/text-hkern.svg
+svg/text/text-text-04-t.svg
+svg/text/text-text-05-t.svg
+svg/text/text-text-06-t.svg
+svg/text/text-vkern-on-horizontal-text.svg
+svg/text/text-vkern.svg
+http/tests/misc/SVGFont-delayed-load.html

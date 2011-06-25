@@ -66,7 +66,7 @@ private:
 
 private:
     SVGTextMetrics();
-    SVGTextMetrics(RenderSVGInlineText*, const TextRun&, unsigned position, unsigned textLength);
+    SVGTextMetrics(RenderSVGInlineText*, const TextRun&);
 
     float m_width;
     float m_height;

@@ -34,6 +34,10 @@ class FloatPoint;
 class FloatRect;
 class Font;
 class GraphicsContext;
+class GlyphBuffer;
+class SimpleFontData;
+struct GlyphData;
+struct WidthIterator;
 
 class TextRun {
 public:
@@ -117,12 +121,9 @@ public:
         virtual ~RenderingContext() { }
 
 #if ENABLE(SVG_FONTS)
-        // FIXME: Note that the SVG Font integration APIs will be more abstract and simpler once the SVG Fonts rewrite patch lands (59085).
-        virtual void drawTextUsingSVGFont(const Font&, GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const = 0;
-        virtual float floatWidthUsingSVGFont(const Font&, const TextRun&) const = 0;
-        virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const = 0;
-        virtual FloatRect selectionRectForTextUsingSVGFont(const Font&, const TextRun&, const FloatPoint&, int h, int from, int to) const = 0;
-        virtual int offsetForPositionForTextUsingSVGFont(const Font&, const TextRun&, float position, bool includePartialGlyphs) const = 0;
+        virtual GlyphData glyphDataForCharacter(const Font&, const TextRun&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) = 0;
+        virtual void drawSVGGlyphs(GraphicsContext*, const TextRun&, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
+        virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const = 0;
 #endif
     };
 

@@ -56,7 +56,6 @@ using namespace std;
 namespace WebCore {
   
 const float smallCapsFontSizeMultiplier = 0.7f;
-static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x / unitsPerEm; }
 
 static bool fontHasVerticalGlyphs(CTFontRef ctFont)
 {

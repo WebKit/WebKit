@@ -64,6 +64,7 @@ namespace WebCore {
 
 class FontDescription;
 class SharedBuffer;
+struct WidthIterator;
 
 enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
@@ -74,15 +75,18 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~AdditionalFontData() { }
-    
-        virtual void initializeFontData(SimpleFontData*, int) = 0;
+
+        virtual void initializeFontData(SimpleFontData*, float fontSize) = 0;
+        virtual float widthForSVGGlyph(Glyph, float fontSize) const = 0;
+        virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const = 0;
+        virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength) const = 0;
     };
 
     // Used to create platform fonts.
     SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
 
     // Used to create SVG Fonts.
-    SimpleFontData(PassOwnPtr<AdditionalFontData>, int size, bool syntheticBold, bool syntheticItalic);
+    SimpleFontData(PassOwnPtr<AdditionalFontData>, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     virtual ~SimpleFontData();
 
@@ -321,7 +325,11 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     if (width != cGlyphSizeUnknown)
         return width;
 
-    width = platformWidthForGlyph(glyph);
+    if (m_fontData)
+        width = m_fontData->widthForSVGGlyph(glyph, m_platformData.size());
+    else
+        width = platformWidthForGlyph(glyph);
+
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
     return width;
 }

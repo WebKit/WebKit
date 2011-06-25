@@ -52,7 +52,15 @@ public:
     FontSelector* fontSelector() const { return m_fontSelector.get(); }
     unsigned generation() const { return m_generation; }
 
+    typedef HashMap<int, GlyphPageTreeNode*> GlyphPages;
+    GlyphPageTreeNode* glyphPageZero() const { return m_pageZero; }
+    const GlyphPages& glyphPages() const { return m_pages; }
+
 private:
+    friend class SVGTextRunRenderingContext;
+    void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
+    void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
+
     FontFallbackList();
 
     const SimpleFontData* primarySimpleFontData(const Font* f)
@@ -71,7 +79,7 @@ private:
     void releaseFontData();
 
     mutable Vector<pair<const FontData*, bool>, 1> m_fontList;
-    mutable HashMap<int, GlyphPageTreeNode*> m_pages;
+    mutable GlyphPages m_pages;
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;
     RefPtr<FontSelector> m_fontSelector;
