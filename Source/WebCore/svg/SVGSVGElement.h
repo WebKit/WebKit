@@ -120,7 +120,7 @@ public:
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
-    void inheritViewAttributes(SVGViewElement*);
+    void setupInitialView(const String& fragmentIdentifier, Element* anchorNode);
 
     bool isOutermostSVG() const;
 
@@ -150,6 +150,8 @@ private:
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual bool selfHasRelativeLengths() const;
+
+    void inheritViewAttributes(SVGViewElement*);
 
     // Animated property declarations
     DECLARE_ANIMATED_LENGTH(X, x)

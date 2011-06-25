@@ -212,8 +212,11 @@ void SVGAElement::defaultEventHandler(Event* event)
                 if (SVGSMILElement::isSMILElement(targetElement)) {
                     static_cast<SVGSMILElement*>(targetElement)->beginByLinkActivation();
                     event->setDefaultHandled();
+                    return;
                 }
-                return;
+                // Only allow navigation to internal <view> anchors.
+                if (!targetElement->hasTagName(SVGNames::viewTag))
+                    return;
             }
 #endif
 

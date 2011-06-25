@@ -625,9 +625,43 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     return ctm;
 }
 
+void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* anchorNode)
+{
+    bool hadUseCurrentView = m_useCurrentView;
+    setUseCurrentView(false);
+    if (fragmentIdentifier.startsWith("xpointer(")) {
+        // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
+        return;
+    }
+    if (fragmentIdentifier.startsWith("svgView(")) {
+        if (!currentView()->parseViewSpec(fragmentIdentifier))
+            return;
+        setUseCurrentView(true);
+        return;
+    }
+    if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
+        SVGViewElement* viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0;
+        if (viewElement) {
+            SVGElement* element = SVGLocatable::nearestViewportElement(viewElement);
+            if (element->hasTagName(SVGNames::svgTag)) {
+                SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
+                svg->inheritViewAttributes(viewElement);
+                setUseCurrentView(true);
+            }
+        }
+        return;
+    }
+    if (hadUseCurrentView) {
+        currentView()->setTransform(emptyString());
+        if (RenderObject* object = renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+    }
+    // FIXME: We need to decide which <svg> to focus on, and zoom to it.
+    // FIXME: We need to actually "highlight" the viewTarget(s).
+}
+
 void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
 {
-    setUseCurrentView(true);
     if (viewElement->hasAttribute(SVGNames::viewBoxAttr))
         currentView()->setViewBoxBaseValue(viewElement->viewBox());
     else

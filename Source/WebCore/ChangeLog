@@ -1,3 +1,25 @@
+2011-06-25  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG1.1SE test linking-uri-01-b.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=63322
+
+        Allow navigating to internal <view> targets. When choosing Back ensure
+        the <svg> current view is initialized correctly.
+
+        Tests: svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg
+               svg/custom/linking-uri-01-b.svg
+
+        * page/FrameView.cpp: Delegate to setupInitialView.
+        (WebCore::FrameView::scrollToAnchor):
+        * svg/SVGAElement.cpp: Allow navigating to internal <view> targets.
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setupInitialView): Initialize current view depending on fragment identifier.
+        (WebCore::SVGSVGElement::inheritViewAttributes):
+        * svg/SVGSVGElement.h:
+
 2011-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

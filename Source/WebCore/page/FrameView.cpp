@@ -71,12 +71,7 @@
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"
-#include "SVGLocatable.h"
-#include "SVGNames.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
-#include "SVGViewElement.h"
-#include "SVGViewSpec.h"
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -1462,33 +1457,18 @@ bool FrameView::scrollToAnchor(const String& name)
 
     Element* anchorNode = m_frame->document()->findAnchor(name);
 
+    // Setting to null will clear the current target.
+    m_frame->document()->setCSSTarget(anchorNode);
+
 #if ENABLE(SVG)
     if (m_frame->document()->isSVGDocument()) {
-        if (name.startsWith("xpointer(")) {
-            // We need to parse the xpointer reference here
-        } else if (name.startsWith("svgView(")) {
-            RefPtr<SVGSVGElement> svg = static_cast<SVGDocument*>(m_frame->document())->rootElement();
-            if (!svg->currentView()->parseViewSpec(name))
-                return false;
-            svg->setUseCurrentView(true);
-        } else {
-            if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
-                RefPtr<SVGViewElement> viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0;
-                if (viewElement.get()) {
-                    SVGElement* element = SVGLocatable::nearestViewportElement(viewElement.get());
-                    if (element->hasTagName(SVGNames::svgTag)) {
-                        RefPtr<SVGSVGElement> svg = static_cast<SVGSVGElement*>(element);
-                        svg->inheritViewAttributes(viewElement.get());
-                    }
-                }
-            }
+        if (SVGSVGElement* svg = static_cast<SVGDocument*>(m_frame->document())->rootElement()) {
+            svg->setupInitialView(name, anchorNode);
+            if (!anchorNode)
+                return true;
         }
-        // FIXME: need to decide which <svg> to focus on, and zoom to that one
-        // FIXME: need to actually "highlight" the viewTarget(s)
     }
 #endif
-
-    m_frame->document()->setCSSTarget(anchorNode); // Setting to null will clear the current target.
   
     // Implement the rule that "" and "top" both mean top of page as in other browsers.
     if (!anchorNode && !(name.isEmpty() || equalIgnoringCase(name, "top")))
