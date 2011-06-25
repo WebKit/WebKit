@@ -1,3 +1,10 @@
+2011-06-25  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed. Gardening.
+        Skip css3/flexbox tests on Qt since ENABLE(CSS3_FLEXBOX) is disabled.
+
+        * platform/qt/Skipped:
+
 2011-06-25  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.

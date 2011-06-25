@@ -133,6 +133,9 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
+# ENABLE(CSS3_FLEXBOX) is disabled
+css3/flexbox
+
 # USE(V8)
 
 # v8 i18n extension.
