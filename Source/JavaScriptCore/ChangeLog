@@ -1,3 +1,31 @@
+2011-06-24  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        releaseFastMallocFreeMemory doesn't adjust free counts for scavenger
+        https://bugs.webkit.org/show_bug.cgi?id=63015
+
+        Added code to adjust class TCMalloc_PageHeap variables free_committed_pages_ and
+        min_free_committed_pages_since_last_scavenge_ in ReleaseFreeList().  These 
+        adjustments are a bug.  These need to reflect the pages that are released
+        in ReleaseFreeLsit so that scavenge doesn't try to free that many pages as well.
+        Made ReleaseFreeList a member of TCMalloc_PageHeap in the process.  Updated
+        Check() and helper method CheckList() to check the number of actual free pages
+        with free_committed_pages_.
+
+        The symptom of the problem of the existing code is that the scavenger may
+        run unneccesarily without any real work to do, i.e. pages on the free lists.
+        The scanvenger would also end up freeing too many pages, that is going below 
+        the current 528 target free pages.
+
+        Note that the style of the changes was kept consistent with the
+        existing style.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::Check):
+        (WTF::TCMalloc_PageHeap::CheckList):
+        (WTF::TCMalloc_PageHeap::ReleaseFreeList):
+
 2011-06-24  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.
