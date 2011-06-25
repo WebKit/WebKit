@@ -142,7 +142,7 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, boo
     // then we should have found it by now.
     ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
     ASSERT(!wasFixed || *wasFixed == fixed);
-    UNUSED_PARAM(fixed);
+    UNUSED_PARAM(wasFixed);
 
     if (!repaintContainer && useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
