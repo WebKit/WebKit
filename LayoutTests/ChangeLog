@@ -5,6 +5,32 @@
         Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
         https://bugs.webkit.org/show_bug.cgi?id=59085
 
+        Update gtk baseline. The rebaselines should be done now.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt:
+        * platform/gtk/svg/batik/text/xmlSpace-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/gtk/svg/text/text-text-04-t-expected.txt:
+        * platform/gtk/svg/text/text-text-05-t-expected.txt:
+        * platform/gtk/svg/text/text-text-06-t-expected.txt:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt:
+
+2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
         Update win baseline.
 
         * platform/win-wk2/Skipped: Skip newly added svg/text test just like in mac-wk2.
