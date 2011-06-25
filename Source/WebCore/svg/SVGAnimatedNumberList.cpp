@@ -83,8 +83,6 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
         fromNumberList = animatedNumberList;
 
     SVGNumberList& toNumberList = to->numberList();
-    ASSERT(toNumberList);
-
     unsigned itemsCount = fromNumberList.size();
     if (itemsCount != toNumberList.size()) {
         if (percentage < 0.5) {

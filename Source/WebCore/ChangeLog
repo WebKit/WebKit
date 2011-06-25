@@ -1,5 +1,15 @@
 2011-06-25  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed build fix.
+
+        SVGAnimatedType should support SVGNumberList animation
+        https://bugs.webkit.org/show_bug.cgi?id=63387
+
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::calculateAnimatedValue):
+
+2011-06-25  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         SVGAnimatedType should support SVGNumberList animation
