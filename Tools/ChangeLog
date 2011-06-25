@@ -1,3 +1,12 @@
+2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        run-bindings-tests does not work on Chromium Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=63382
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Removed run-bindings-tests as a build step for cr-win.
+
 2011-06-25  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Qt and Chromium builds.
