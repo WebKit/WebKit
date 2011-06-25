@@ -1,3 +1,19 @@
+2011-06-24  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 89714.
+
+    2011-06-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        REGRESSION (r88984): Infinite recursion in DocumentLoader::detachFromFrame/stopLoading
+
+        No new tests, as there is no known way to reproduce this (but we'll keep investigating, as
+        the rollout will re-introduce the older less frequent crash).
+
+        * loader/DocumentLoader.cpp: (WebCore::DocumentLoader::detachFromFrame): Rollout the fix
+        for bug 62764.
+
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
     Rolled out 89080.

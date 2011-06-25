@@ -400,10 +400,6 @@ void DocumentLoader::detachFromFrame()
 {
     ASSERT(m_frame);
 
-    // It never makes sense to have a document loader that is detached from its
-    // frame have any loads active, so go ahead and kill all the loads.
-    stopLoading();
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheHost->setDOMApplicationCache(0);
 #endif
