@@ -42,7 +42,7 @@ static inline SVGAngle& sharedSVGAngle(const String& valueAsString)
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createAngle(new SVGAngle());
+    OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createAngle(new SVGAngle);
     ExceptionCode ec = 0;
     animatedType->angle().setValueAsString(string, ec);
     ASSERT(!ec);

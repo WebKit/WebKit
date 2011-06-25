@@ -142,7 +142,11 @@ bool SVGPathParserFactory::buildPathFromString(const String& d, Path& result)
 
 bool SVGPathParserFactory::buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, OwnPtr<SVGPathByteStream>& result, PathParsingMode parsingMode)
 {
-    result = SVGPathByteStream::create();
+    if (result)
+        result->clear();
+    else
+        result = SVGPathByteStream::create();
+
     if (list.isEmpty())
         return false;
 
@@ -219,7 +223,11 @@ bool SVGPathParserFactory::buildStringFromSVGPathSegList(const SVGPathSegList& l
 
 bool SVGPathParserFactory::buildSVGPathByteStreamFromString(const String& d, OwnPtr<SVGPathByteStream>& result, PathParsingMode parsingMode)
 {
-    result = SVGPathByteStream::create();
+    if (result)
+        result->clear();
+    else
+        result = SVGPathByteStream::create();
+
     if (d.isEmpty())
         return false;
 
@@ -236,7 +244,11 @@ bool SVGPathParserFactory::buildAnimatedSVGPathByteStream(SVGPathByteStream* fro
 {
     ASSERT(fromStream);
     ASSERT(toStream);
-    result = SVGPathByteStream::create();
+    if (result)
+        result->clear();
+    else
+        result = SVGPathByteStream::create();
+
     if (fromStream->isEmpty() || toStream->isEmpty())
         return false;
 

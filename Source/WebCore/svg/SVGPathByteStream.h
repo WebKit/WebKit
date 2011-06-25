@@ -56,6 +56,12 @@ public:
         return adoptPtr(new SVGPathByteStream(m_data));
     }
 
+    void initializeFrom(SVGPathByteStream* other)
+    {
+        ASSERT(other);
+        m_data = other->m_data;
+    }
+
     typedef Vector<unsigned char> Data;
     typedef Data::const_iterator DataIterator;
 

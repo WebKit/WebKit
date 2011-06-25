@@ -34,6 +34,7 @@
 #include "SVGAnimatedColor.cpp"
 #include "SVGAnimatedLength.cpp"
 #include "SVGAnimatedNumber.cpp"
+#include "SVGAnimatedPath.cpp"
 #include "SVGAnimatedPointList.cpp"
 #include "SVGAnimatedRect.cpp"
 #include "SVGAnimatedString.cpp"

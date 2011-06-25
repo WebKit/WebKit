@@ -1,3 +1,56 @@
+2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Convert SVGPath to SVGAnimatorFactory concept
+        https://bugs.webkit.org/show_bug.cgi?id=63336
+
+        Convert <animate attributeName="d"> parsing to the new SVGAnimatorFactory concept, removing
+        the last special data types from SVGAnimateElement: SVGPathByteStream m_fromPath/m_toPath/m_animatedPath.
+        All existing non-string primitives have been converted to the new concept.
+
+        Doesn't change any functionality.
+
+        * CMakeLists.txt: Added SVGAnimatedPath.*.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimatedPath.cpp: Added.
+        (WebCore::SVGAnimatedPathAnimator::SVGAnimatedPathAnimator):
+        (WebCore::SVGAnimatedPathAnimator::constructFromString):
+        (WebCore::SVGAnimatedPathAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedPathAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedPathAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedPathAnimator::calculateDistance):
+        * svg/SVGAnimatedPath.h: Added.
+        (WebCore::SVGAnimatedPathAnimator::~SVGAnimatedPathAnimator):
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createPath):
+        (WebCore::SVGAnimatedType::path):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::initializeFrom):
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::SVGPathParserFactory::buildSVGPathByteStreamFromSVGPathSegList):
+        (WebCore::SVGPathParserFactory::buildSVGPathByteStreamFromString):
+        (WebCore::SVGPathParserFactory::buildAnimatedSVGPathByteStream):
+
 2011-06-25  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

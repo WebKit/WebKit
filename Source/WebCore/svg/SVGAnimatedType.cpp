@@ -27,6 +27,7 @@
 #include "SVGColor.h"
 #include "SVGLength.h"
 #include "SVGParserUtilities.h"
+#include "SVGPathParserFactory.h"
 #include "SVGPointList.h"
 
 namespace WebCore {
@@ -50,6 +51,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedNumber:
         delete m_data.number;
+        break;
+    case AnimatedPath:
+        delete m_data.path;
         break;
     case AnimatedPoints:
         delete m_data.pointList;
@@ -95,6 +99,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumber(float* number)
     ASSERT(number);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedNumber));
     animatedType->m_data.number = number;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createPath(PassOwnPtr<SVGPathByteStream> path)
+{
+    ASSERT(path);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedPath));
+    animatedType->m_data.path = path.leakPtr();
     return animatedType.release();
 }
 
@@ -146,6 +158,12 @@ float& SVGAnimatedType::number()
     return *m_data.number;
 }
 
+SVGPathByteStream* SVGAnimatedType::path()
+{
+    ASSERT(m_type == AnimatedPath);
+    return m_data.path;
+}
+
 SVGPointList& SVGAnimatedType::pointList()
 {
     ASSERT(m_type == AnimatedPoints);
@@ -179,6 +197,12 @@ String SVGAnimatedType::valueAsString()
     case AnimatedNumber:
         ASSERT(m_data.number);
         return String::number(*m_data.number);
+    case AnimatedPath: {
+        ASSERT(m_data.path);
+        String result;
+        SVGPathParserFactory::self()->buildStringFromByteStream(m_data.path, result, UnalteredParsing);
+        return result;
+    }
     case AnimatedPoints:
         ASSERT(m_data.pointList);
         return m_data.pointList->valueAsString();
@@ -216,6 +240,14 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         ASSERT(m_data.number);
         parseNumberFromString(value, *m_data.number);
         break;
+    case AnimatedPath: {
+        ASSERT(m_data.path);
+        OwnPtr<SVGPathByteStream> pathByteStream = adoptPtr(m_data.path);
+        if (!SVGPathParserFactory::self()->buildSVGPathByteStreamFromString(value, pathByteStream, UnalteredParsing))
+            ec = 1; // Arbitary value > 0, it doesn't matter as we don't report the exception code.
+        m_data.path = pathByteStream.leakPtr();
+        break;
+    }
     case AnimatedPoints:
         ASSERT(m_data.pointList);
         m_data.pointList->clear();

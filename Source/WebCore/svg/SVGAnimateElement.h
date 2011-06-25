@@ -28,7 +28,6 @@
 #include "SVGAnimatedType.h"
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGAnimationElement.h"
-#include "SVGPathByteStream.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -74,11 +73,7 @@ private:
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;
-    OwnPtr<SVGPathByteStream> m_fromPath;
-    OwnPtr<SVGPathByteStream> m_toPath;
-    OwnPtr<SVGPathByteStream> m_animatedPath;
-    SVGPathByteStream* m_animatedPathPointer;
-    
+
     OwnPtr<SVGAnimatedType> m_fromType;
     OwnPtr<SVGAnimatedType> m_toType;
     OwnPtr<SVGAnimatedType> m_animatedType;

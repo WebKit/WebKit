@@ -32,7 +32,6 @@
 #include "RenderObject.h"
 #include "SVGAnimatorFactory.h"
 #include "SVGNames.h"
-#include "SVGPathParserFactory.h"
 #include "SVGStyledElement.h"
 
 using namespace std;
@@ -44,7 +43,6 @@ SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc
     , m_animatedAttributeType(AnimatedString)
     , m_fromPropertyValueType(RegularPropertyValue)
     , m_toPropertyValueType(RegularPropertyValue)
-    , m_animatedPathPointer(0)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag));
 }
@@ -147,7 +145,6 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 {
     ASSERT(percentage >= 0 && percentage <= 1);
     ASSERT(resultElement);
-    AnimationMode animationMode = this->animationMode();
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return;
@@ -162,43 +159,11 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     if (results->m_animatedAttributeType == AnimatedString && m_animatedAttributeType != AnimatedString)
         return;
     switch (m_animatedAttributeType) {
-    case AnimatedPath: {
-        if (animationMode == ToAnimation) {
-            ASSERT(results->m_animatedPathPointer);
-            m_fromPath = results->m_animatedPathPointer->copy();
-        }
-        if (!percentage) {
-            ASSERT(m_fromPath);
-            ASSERT(percentage >= 0);
-            results->m_animatedPathPointer = m_fromPath.get();
-        } else if (percentage == 1) {
-            ASSERT(m_toPath);
-            results->m_animatedPathPointer = m_toPath.get();
-        } else {
-            if (m_fromPath && m_toPath) {
-                SVGPathParserFactory* factory = SVGPathParserFactory::self();
-                if (!factory->buildAnimatedSVGPathByteStream(m_fromPath.get(), m_toPath.get(), results->m_animatedPath, percentage)) {
-                    results->m_animatedPath.clear();
-                    results->m_animatedPathPointer = 0;
-                } else
-                    results->m_animatedPathPointer = results->m_animatedPath.get();
-            } else
-                results->m_animatedPathPointer = 0;
-            // Fall back to discrete animation if the paths are not compatible
-            if (!results->m_animatedPathPointer) {
-                ASSERT(m_fromPath);
-                ASSERT(m_toPath);
-                ASSERT(!results->m_animatedPath);
-                results->m_animatedPathPointer = ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1) 
-                    ? m_toPath.get() : m_fromPath.get();
-            }
-        }
-        return;
-    }
     case AnimatedAngle:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
     case AnimatedString: {
@@ -259,21 +224,11 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     // FIXME: Needs more solid way determine target attribute type.
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
-    case AnimatedPath: {
-        SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        if (factory->buildSVGPathByteStreamFromString(toString, m_toPath, UnalteredParsing)) {
-            // For to-animations the from number is calculated later
-            if (animationMode() == ToAnimation || factory->buildSVGPathByteStreamFromString(fromString, m_fromPath, UnalteredParsing))
-                return true;
-        }
-        m_fromPath.clear();
-        m_toPath.clear();
-        break;
-    }
     case AnimatedAngle:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
     case AnimatedString:
@@ -304,6 +259,9 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedString:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
         return true;
+    case AnimatedPath:
+        ASSERT_NOT_REACHED(); // This state is not reachable for now.
+        break;
     default:
         break;
     }
@@ -317,17 +275,11 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     ASSERT(targetElement);
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
-    case AnimatedPath: {
-        m_animatedPath.clear();
-        SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        factory->buildSVGPathByteStreamFromString(baseString, m_animatedPath, UnalteredParsing);
-        m_animatedPathPointer = m_animatedPath.get();
-        return;
-    }
     case AnimatedAngle:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
     case AnimatedString: {
@@ -347,23 +299,11 @@ void SVGAnimateElement::applyResultsToTarget()
 {
     String valueToApply;
     switch (m_animatedAttributeType) {
-    case AnimatedPath: {
-        if (!m_animatedPathPointer || m_animatedPathPointer->isEmpty())
-            valueToApply = String();
-        else {
-            // We need to keep going to string and back because we are currently only able to paint
-            // "processed" paths where complex shapes are replaced with simpler ones. Path 
-            // morphing needs to be done with unprocessed paths.
-            // FIXME: This could be optimized if paths were not processed at parse time.
-            SVGPathParserFactory* factory = SVGPathParserFactory::self();
-            factory->buildStringFromByteStream(m_animatedPathPointer, valueToApply, UnalteredParsing);
-        }
-        break;
-    }
     case AnimatedAngle:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
     case AnimatedString:
@@ -387,6 +327,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedNumber:
+    case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
     case AnimatedString:

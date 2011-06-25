@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGElement.h"
+#include "SVGPathByteStream.h"
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
+    static PassOwnPtr<SVGAnimatedType> createPath(PassOwnPtr<SVGPathByteStream>);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     static PassOwnPtr<SVGAnimatedType> createString(String*);
@@ -50,6 +52,7 @@ public:
     Color& color();
     SVGLength& length();
     float& number();
+    SVGPathByteStream* path();
     SVGPointList& pointList();
     FloatRect& rect();
     String& string();
@@ -73,6 +76,7 @@ private:
         Color* color;
         SVGLength* length;
         float* number;
+        SVGPathByteStream* path;
         SVGPointList* pointList;
         FloatRect* rect;
         String* string;

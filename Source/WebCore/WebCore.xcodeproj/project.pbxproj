@@ -110,6 +110,7 @@
 		085B92BA0EFDE73D00E6123C /* FormDataBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085B92B80EFDE73D00E6123C /* FormDataBuilder.cpp */; };
 		085B92BB0EFDE73D00E6123C /* FormDataBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 085B92B90EFDE73D00E6123C /* FormDataBuilder.h */; settings = {ATTRIBUTES = (); }; };
 		085CD275138BB8E000907F2D /* SVGTextRunRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 085CD274138BB8E000907F2D /* SVGTextRunRenderingContext.h */; };
+		0863951613B5FE5700BB344D /* SVGAnimatedPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 0863951413B5FE5700BB344D /* SVGAnimatedPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08641D4712142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08641D4512142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp */; };
 		08641D4812142F7D008DE9F6 /* RenderImageResourceStyleImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 08641D4612142F7D008DE9F6 /* RenderImageResourceStyleImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		086BBD0F136039C2008B15D8 /* Glyph.h in Headers */ = {isa = PBXBuildFile; fileRef = 086BBD0E136039C2008B15D8 /* Glyph.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -147,6 +148,7 @@
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
 		08B35B13127B6A7C005314DD /* SVGAnimatedNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B35B12127B6A7C005314DD /* SVGAnimatedNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08B35B17127B6A88005314DD /* SVGAnimatedNumberList.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B35B16127B6A88005314DD /* SVGAnimatedNumberList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08B5F25513B5FFF2002959EC /* SVGAnimatedPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0863951313B5FE5700BB344D /* SVGAnimatedPath.cpp */; };
 		08C7136E128956A3001B107E /* SVGTransformListPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C7136D128956A3001B107E /* SVGTransformListPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08C7A2C710DC7462002D368B /* SVGNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 656581E909D1508D000E61D7 /* SVGNames.h */; };
 		08C859C01274575400A5728D /* SVGAnimatedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C859BF1274575300A5728D /* SVGAnimatedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6477,6 +6479,8 @@
 		085B92B80EFDE73D00E6123C /* FormDataBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataBuilder.cpp; sourceTree = "<group>"; };
 		085B92B90EFDE73D00E6123C /* FormDataBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataBuilder.h; sourceTree = "<group>"; };
 		085CD274138BB8E000907F2D /* SVGTextRunRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextRunRenderingContext.h; sourceTree = "<group>"; };
+		0863951313B5FE5700BB344D /* SVGAnimatedPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedPath.cpp; sourceTree = "<group>"; };
+		0863951413B5FE5700BB344D /* SVGAnimatedPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPath.h; sourceTree = "<group>"; };
 		08641D4512142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImageResourceStyleImage.cpp; sourceTree = "<group>"; };
 		08641D4612142F7D008DE9F6 /* RenderImageResourceStyleImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderImageResourceStyleImage.h; sourceTree = "<group>"; };
 		086BBD0E136039C2008B15D8 /* Glyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glyph.h; sourceTree = "<group>"; };
@@ -17403,6 +17407,8 @@
 				B22277EC0D00BF1F0071B782 /* SVGAnimatedNumber.idl */,
 				08B35B16127B6A88005314DD /* SVGAnimatedNumberList.h */,
 				B22277ED0D00BF1F0071B782 /* SVGAnimatedNumberList.idl */,
+				0863951313B5FE5700BB344D /* SVGAnimatedPath.cpp */,
+				0863951413B5FE5700BB344D /* SVGAnimatedPath.h */,
 				43B9336713B261B1004584BF /* SVGAnimatedPointList.h */,
 				43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */,
 				08FE0BC4127E2AC1000C4FB5 /* SVGAnimatedPreserveAspectRatio.h */,
@@ -23056,6 +23062,7 @@
 				43B9336913B261B1004584BF /* SVGAnimatedPointList.h in Headers */,
 				43A625F813B3304000AC94B8 /* SVGAnimatedColor.h in Headers */,
 				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
+				0863951613B5FE5700BB344D /* SVGAnimatedPath.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25818,6 +25825,7 @@
 				43A625F913B3304000AC94B8 /* SVGAnimatedColor.cpp in Sources */,
 				43A6266713B3D11000AC94B8 /* SVGAnimatedString.cpp in Sources */,
 				087558C513B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp in Sources */,
+				08B5F25513B5FFF2002959EC /* SVGAnimatedPath.cpp in Sources */,
 				376DCCE113B4F966002EBEFC /* TextRun.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
