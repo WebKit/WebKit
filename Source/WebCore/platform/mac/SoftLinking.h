@@ -137,7 +137,8 @@
     static type init##name() \
     { \
         void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
-        pointer##name = static_cast<type>(*pointer); \
+        if (pointer) \
+            pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
         return pointer##name; \
     }

@@ -1,3 +1,14 @@
+2011-06-25  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        SOFT_LINK_POINTER_OPTIONAL isn't optional.
+        https://bugs.webkit.org/show_bug.cgi?id=63378
+
+        Continuation of r89718.  SOFT_LINK_POINTER_OPTIONAL should check the value returned by dlsym before dereferencing it.
+
+        * platform/mac/SoftLinking.h:
+
 2011-06-25  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
