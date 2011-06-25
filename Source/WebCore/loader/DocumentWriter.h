@@ -70,7 +70,7 @@ public:
 
     void setDecoder(TextResourceDecoder*);
 
-    // Exposed for DoucmentParser::appendBytes
+    // Exposed for DocumentParser::appendBytes.
     TextResourceDecoder* createDecoderIfNeeded();
     void reportDataReceived();
 

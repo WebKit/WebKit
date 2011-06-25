@@ -915,4 +915,12 @@ void DocumentLoader::getIconDataForIconURL(const String& urlString)
     iconDatabase().iconDataForIconURL(urlString, m_iconDataCallback);
 }
 
+void DocumentLoader::handledOnloadEvents()
+{
+    m_wasOnloadHandled = true;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    applicationCacheHost()->stopDeferringEvents();
+#endif
+}
+
 } // namespace WebCore

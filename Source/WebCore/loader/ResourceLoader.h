@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -181,6 +181,11 @@ namespace WebCore {
         bool m_defersLoading;
         ResourceRequest m_deferredRequest;
     };
+
+inline const ResourceResponse& ResourceLoader::response() const
+{
+    return m_response;
+}
 
 }
 

@@ -310,11 +310,11 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     if (!reachedTerminalState())
         ResourceLoader::didReceiveResponse(r);
 
-    if (frameLoader() && !frameLoader()->isStopping()) {
+    if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping()) {
         if (m_substituteData.isValid()) {
             if (m_substituteData.content()->size())
                 didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
-            if (frameLoader() && !frameLoader()->isStopping()) 
+            if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping()) 
                 didFinishLoading(0);
         } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->client()->representationExistsForURLScheme(url.protocol()))
             didFinishLoading(0);
@@ -330,7 +330,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
 {
     ASSERT(m_waitingForContentPolicy);
     m_waitingForContentPolicy = false;
-    if (frameLoader() && !frameLoader()->isStopping())
+    if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping())
         continueAfterContentPolicy(policy, m_response);
     deref(); // balances ref in didReceiveResponse
 }
@@ -390,7 +390,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 #endif
 
     if (m_loadingMultipartContent) {
-        frameLoader()->setupForReplaceByMIMEType(r.mimeType());
+        frameLoader()->activeDocumentLoader()->setupForReplaceByMIMEType(r.mimeType());
         clearResourceData();
     }
     

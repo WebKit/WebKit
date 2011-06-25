@@ -41,9 +41,7 @@
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
-#if ENABLE(TOUCH_EVENTS)
 #include "ChromeClient.h"
-#endif
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMImplementation.h"
@@ -983,9 +981,8 @@ void FrameLoader::updateFirstPartyForCookies()
 
 void FrameLoader::setFirstPartyForCookies(const KURL& url)
 {
-    m_frame->document()->setFirstPartyForCookies(url);
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->setFirstPartyForCookies(url);
+    for (Frame* frame = m_frame; frame; frame = frame->tree()->traverseNext(m_frame))
+        frame->document()->setFirstPartyForCookies(url);
 }
 
 // This does the same kind of work that didOpenURL does, except it relies on the fact
@@ -1093,11 +1090,6 @@ void FrameLoader::setupForReplace()
     m_provisionalDocumentLoader = m_documentLoader;
     m_documentLoader = 0;
     detachChildren();
-}
-
-void FrameLoader::setupForReplaceByMIMEType(const String& newMIMEType)
-{
-    activeDocumentLoader()->setupForReplaceByMIMEType(newMIMEType);
 }
 
 // This is a hack to allow keep navigation to http/https feeds working. To remove this
@@ -1555,12 +1547,6 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     return false;
 }
 
-void FrameLoader::stopLoadingSubframes(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
-{
-    for (RefPtr<Frame> child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->stopAllLoaders(clearProvisionalItemPolicy);
-}
-
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
@@ -1580,7 +1566,8 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
     if (clearProvisionalItemPolicy == ShouldClearProvisionalItem)
         history()->setProvisionalItem(0);
 
-    stopLoadingSubframes(clearProvisionalItemPolicy);
+    for (RefPtr<Frame> child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->loader()->stopAllLoaders(clearProvisionalItemPolicy);
     if (m_provisionalDocumentLoader)
         m_provisionalDocumentLoader->stopLoading();
     if (m_documentLoader)
@@ -1711,11 +1698,6 @@ void FrameLoader::clearProvisionalLoad()
     setProvisionalDocumentLoader(0);
     if (Page* page = m_frame->page())
         page->progress()->progressCompleted(m_frame);
-    setState(FrameStateComplete);
-}
-
-void FrameLoader::markLoadComplete()
-{
     setState(FrameStateComplete);
 }
 
@@ -2040,11 +2022,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     cachedFrame.restore();
 }
 
-bool FrameLoader::isStopping() const
-{
-    return activeDocumentLoader()->isStopping();
-}
-
 void FrameLoader::finishedLoading()
 {
     // Retain because the stop may release the last reference to it.
@@ -2240,7 +2217,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (!dl || (dl->isLoadingInAPISense() && !dl->isStopping()))
                 return;
 
-            markLoadComplete();
+            setState(FrameStateComplete);
 
             // FIXME: Is this subsequent work important if we already navigated away?
             // Maybe there are bugs because of that, or extra work we can skip because
@@ -2362,21 +2339,7 @@ void FrameLoader::closeAndRemoveChild(Frame* child)
     m_frame->tree()->removeChild(child);
 }
 
-void FrameLoader::recursiveCheckLoadComplete()
-{
-    Vector<RefPtr<Frame>, 10> frames;
-    
-    for (RefPtr<Frame> frame = m_frame->tree()->firstChild(); frame; frame = frame->tree()->nextSibling())
-        frames.append(frame);
-    
-    unsigned size = frames.size();
-    for (unsigned i = 0; i < size; i++)
-        frames[i]->loader()->recursiveCheckLoadComplete();
-    
-    checkLoadCompleteForThisFrame();
-}
-
-// Called every time a resource is completely loaded, or an error is received.
+// Called every time a resource is completely loaded or an error is received.
 void FrameLoader::checkLoadComplete()
 {
     ASSERT(m_client->hasWebView());
@@ -2385,8 +2348,14 @@ void FrameLoader::checkLoadComplete()
 
     // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
     // is currently needed in order to null out the previous history item for all frames.
-    if (Page* page = m_frame->page())
-        page->mainFrame()->loader()->recursiveCheckLoadComplete();
+    if (Page* page = m_frame->page()) {
+        Vector<RefPtr<Frame>, 10> frames;
+        for (RefPtr<Frame> frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            frames.append(frame);
+        // To process children before their parents, iterate the vector backwards.
+        for (size_t i = frames.size(); i; --i)
+            frames[i - 1]->loader()->checkLoadCompleteForThisFrame();
+    }
 }
 
 int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
@@ -2411,12 +2380,8 @@ void FrameLoader::handledOnloadEvents()
 {
     m_client->dispatchDidHandleOnloadEvents();
 
-    if (documentLoader()) {
+    if (documentLoader())
         documentLoader()->handledOnloadEvents();
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        documentLoader()->applicationCacheHost()->stopDeferringEvents();
-#endif
-    }
 }
 
 void FrameLoader::frameDetached()
@@ -3115,11 +3080,6 @@ void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, const Resour
     checkCompleted();
     if (m_frame->page())
         checkLoadComplete();
-}
-
-void FrameLoader::mainReceivedError(const ResourceError& error, bool isComplete)
-{
-    activeDocumentLoader()->mainReceivedError(error, isComplete);
 }
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const

@@ -132,7 +132,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
 
     willSendRequest(clientRequest, ResourceResponse());
     if (clientRequest.isNull()) {
-        didFail(frameLoader()->cancelledError(m_request));
+        didFail(cancelledError());
         return false;
     }
 
@@ -392,11 +392,6 @@ void ResourceLoader::cancel(const ResourceError& error)
     didCancel(nonNullError);
             
     releaseResources();
-}
-
-const ResourceResponse& ResourceLoader::response() const
-{
-    return m_response;
 }
 
 ResourceError ResourceLoader::cancelledError()

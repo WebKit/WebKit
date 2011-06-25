@@ -1,3 +1,56 @@
+2011-06-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Remove some unneeded functions from FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=63295
+
+        Removing 7 of the functions in FrameLoader.h is probably a step
+        in the right direction.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::handledOnloadEvents):
+        Moved the call to stopDeferringEvents in here from FrameLoader.
+        * loader/DocumentLoader.h: Ditto.
+
+        * loader/DocumentWriter.h: Fixed a typo.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setFirstPartyForCookies): Changed this to
+        use a non-recursive tree walk instead of recursion.
+        (WebCore::FrameLoader::stopAllLoaders): Moved the code from
+        stopLoadingSubframes inline, since it's only two lines of code.
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Moved
+        the code from markLoadComplete inline, since it's only one line.
+        (WebCore::FrameLoader::checkLoadComplete): Changed this to use a
+        non-recursive tree walk instead of recursion, eliminating the
+        recursiveCheckLoadComplete function completely.
+        (WebCore::FrameLoader::handledOnloadEvents): Moved the call to
+        stopDeferringEvents into DocumentLoader.
+
+        * loader/FrameLoader.h: Removed unneeded forward declarations,
+        and now-unneeded functions setupForReplaceByMIMEType,
+        isStopping, isLoadingFromCachedPage, stopLoadingSubframes,
+        markLoadComplete, mainReceivedError, and recursiveCheckLoadComplete.
+        Also made allChildrenAreComplete private.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        Call DocumentLoader::isStopping so we can remove the function
+        from FrameLoader that just calls through. Other call sites were
+        using DocumentLoader::isStopping directly.
+        (WebCore::MainResourceLoader::didReceiveResponse): Call
+        DocumentLoader::setupForReplaceByMIMEType so we can remove the
+        function from FrameLoader that just calls through. This was
+        the only call site.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Call the
+        ResourceLoader::cancelledError function instead of calling
+        directly to FrameLoader.
+
+        * loader/ResourceLoader.h: Made response an inline function.
+
 2011-06-24  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

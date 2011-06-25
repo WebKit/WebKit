@@ -48,39 +48,27 @@
 namespace WebCore {
 
 class Archive;
-class AuthenticationChallenge;
 class CachedFrameBase;
 class CachedPage;
 class CachedResource;
 class Chrome;
 class DOMWrapperWorld;
-class Document;
 class DocumentLoader;
 class Event;
-class FormData;
 class FormState;
 class FormSubmission;
-class Frame;
 class FrameLoaderClient;
 class FrameNetworkingContext;
-class HistoryItem;
-class HTMLFormElement;
 class NavigationAction;
 class NetworkingContext;
 class Page;
-class ProtectionSpace;
 class ResourceError;
-class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
-class ScriptSourceCode;
-class ScriptValue;
 class SecurityOrigin;
 class SerializedScriptValue;
-class SharedBuffer;
 class StringWithDirection;
 class SubstituteData;
-class TextResourceDecoder;
 
 struct FrameLoadRequest;
 struct WindowFeatures;
@@ -105,7 +93,6 @@ public:
 
     void prepareForLoadStart();
     void setupForReplace();
-    void setupForReplaceByMIMEType(const String& newMIMEType);
 
     // FIXME: These are all functions which start loads. We have too many.
     void loadURLIntoChildFrame(const KURL&, const String& referer, Frame*);
@@ -166,11 +153,9 @@ public:
     bool willLoadMediaElementURL(KURL&);
 
     void handleFallbackContent();
-    bool isStopping() const;
 
     void finishedLoading();
 
-    // FIXME: Move this method to ResourceLoader with the rest of the ResourceError accessors.
     ResourceError cancelledError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;
@@ -257,21 +242,18 @@ public:
     void setTitle(const StringWithDirection&);
 
     void commitProvisionalLoad();
-    bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
 
     FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }
 
     bool shouldAllowNavigation(Frame* targetFrame) const;
     Frame* findFrameForNavigation(const AtomicString& name);
 
-    void applyUserAgent(ResourceRequest& request);
+    void applyUserAgent(ResourceRequest&);
 
     bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
 
-    // FIXME: Should these really be public?
     void completed();
     bool allAncestorsAreComplete() const; // including this
-    bool allChildrenAreComplete() const; // immediate children, not all descendants
     void clientRedirected(const KURL&, double delay, double fireDate, bool lockBackForwardList);
     void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
 
@@ -299,6 +281,8 @@ public:
 #endif
 
 private:
+    bool allChildrenAreComplete() const; // immediate children, not all descendants
+
     void checkTimerFired(Timer<FrameLoader>*);
     
     void loadSameDocumentItem(HistoryItem*);
@@ -313,15 +297,9 @@ private:
     
     void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType loadType, bool isMainResource, bool cookiePolicyURLFromRequest);
 
-    // Also not cool.
-    void stopLoadingSubframes(ClearProvisionalItemPolicy);
-
     void clearProvisionalLoad();
-    void markLoadComplete();
     void transitionToCommitted(PassRefPtr<CachedPage>);
     void frameLoadCompleted();
-
-    void mainReceivedError(const ResourceError&, bool isComplete);
 
     static void callContinueLoadAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
     static void callContinueLoadAfterNewWindowPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
@@ -366,8 +344,6 @@ private:
     bool shouldReload(const KURL& currentURL, const KURL& destinationURL);
 
     void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
-
-    void recursiveCheckLoadComplete();
 
     void detachChildren();
     void closeAndRemoveChild(Frame*);

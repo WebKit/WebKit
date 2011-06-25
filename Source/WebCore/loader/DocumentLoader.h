@@ -123,7 +123,7 @@ namespace WebCore {
         void prepareForLoadStart();
         bool isClientRedirect() const { return m_isClientRedirect; }
         void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
-        void handledOnloadEvents() { m_wasOnloadHandled = true; }
+        void handledOnloadEvents();
         bool wasOnloadHandled() { return m_wasOnloadHandled; }
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
