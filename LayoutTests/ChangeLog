@@ -1,3 +1,27 @@
+2011-06-25  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: chromium rebaselines.
+
+        * platform/chromium-linux/svg/custom/svg-fonts-fallback-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-fallback-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-segmented-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/chromium-linux/svg/text/text-overflow-ellipsis-svgfont-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-fallback-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-without-missing-glyph-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/text/text-overflow-ellipsis-svgfont-expected.png: Added.
+        * platform/chromium-mac/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-fallback-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-fallback-expected.txt: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-segmented-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-segmented-expected.txt: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/chromium-win/svg/custom/svg-fonts-word-spacing-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-overflow-ellipsis-svgfont-expected.png: Added.
+        * platform/chromium-win/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

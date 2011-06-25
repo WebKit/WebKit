@@ -944,8 +944,7 @@ BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
-BUGWK62974 WIN LINUX SNOWLEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE
-BUGWK62974 LEOPARD : svg/foreignObject/text-tref-02-b.svg = IMAGE+TEXT
+BUGWK62974 : svg/foreignObject/text-tref-02-b.svg = IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
 // -----------------------------------------------------------------
