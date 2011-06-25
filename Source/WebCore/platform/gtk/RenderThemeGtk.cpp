@@ -705,9 +705,9 @@ String RenderThemeGtk::fileListNameForWidth(const Vector<String>& filenames, con
         gchar* systemBasename = g_path_get_basename(systemFilename.data());
         stringByAdoptingFileSystemRepresentation(systemBasename, string);
     } else if (filenames.size() > 1)
-        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font);
+        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font, StringTruncator::EnableRoundingHacks);
 
-    return StringTruncator::centerTruncate(string, width, font);
+    return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
 
 }

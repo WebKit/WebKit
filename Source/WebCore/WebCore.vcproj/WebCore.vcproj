@@ -27689,6 +27689,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\TextRun.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\TextRun.h"
 					>
 				</File>

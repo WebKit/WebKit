@@ -341,6 +341,8 @@ Could be worth adding to the API.
 // This is the old name of the above method. Needed for Safari versions that call it.
 + (void)_setAlwaysUseATSU:(BOOL)f;
 
++ (void)_setAllowsRoundingHacks:(BOOL)allowsRoundingHacks;
+
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
 
 #if ENABLE_DASHBOARD_SUPPORT

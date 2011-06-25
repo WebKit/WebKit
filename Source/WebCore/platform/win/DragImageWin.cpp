@@ -212,13 +212,13 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, Frame* fra
     static const Color bottomColor(255, 255, 255, 127); // original alpha = 0.5
     if (drawURLString) {
         if (clipURLString)
-            urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), *urlFont);
+            urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), *urlFont, StringTruncator::EnableRoundingHacks);
         IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont->fontMetrics().descent()));
         WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, *urlFont, topColor, bottomColor);
     }
     
     if (clipLabelString)
-        label = StringTruncator::rightTruncate(label, imageSize.width() - (DragLabelBorderX * 2.0f), *labelFont);
+        label = StringTruncator::rightTruncate(label, imageSize.width() - (DragLabelBorderX * 2.0f), *labelFont, StringTruncator::EnableRoundingHacks);
 
     IntPoint textPos(DragLabelBorderX, DragLabelBorderY + labelFont->pixelSize());
     WebCoreDrawDoubledTextAtPoint(context, label, textPos, *labelFont, topColor, bottomColor);

@@ -134,6 +134,7 @@ public:
     float platformWidthForGlyph(Glyph) const;
 
     float spaceWidth() const { return m_spaceWidth; }
+    float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
     void setSpaceWidth(float spaceWidth) { m_spaceWidth = spaceWidth; }
 
 #if USE(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
@@ -243,6 +244,7 @@ private:
     
     Glyph m_spaceGlyph;
     float m_spaceWidth;
+    float m_adjustedSpaceWidth;
 
     Glyph m_zeroWidthSpaceGlyph;
 

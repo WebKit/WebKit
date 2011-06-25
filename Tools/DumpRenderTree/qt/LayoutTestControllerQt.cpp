@@ -949,5 +949,9 @@ void LayoutTestController::setTextDirection(const QString& directionName)
         m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionLeftToRight);
 }
 
+void LayoutTestController::allowRoundingHacks()
+{
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

@@ -1105,10 +1105,9 @@ String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const 
     else if (filenames.size() == 1)
         string = pathGetFileName(filenames[0]);
     else
-        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font);
+        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font, StringTruncator::EnableRoundingHacks);
 
-    return StringTruncator::centerTruncate(string, width, font);
+    return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
-
 
 } // namespace WebCore

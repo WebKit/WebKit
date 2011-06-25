@@ -2062,9 +2062,9 @@ String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, con
     else if (filenames.size() == 1)
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(filenames[0])];
     else
-        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font);
+        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font, StringTruncator::EnableRoundingHacks);
 
-    return StringTruncator::centerTruncate(strToTruncate, width, font);
+    return StringTruncator::centerTruncate(strToTruncate, width, font, StringTruncator::EnableRoundingHacks);
 }
 
 } // namespace WebCore

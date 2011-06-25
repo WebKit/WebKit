@@ -98,6 +98,7 @@ void SimpleFontData::platformGlyphInit()
         LOG_ERROR("Failed to get glyph page zero.");
         m_spaceGlyph = 0;
         m_spaceWidth = 0;
+        m_adjustedSpaceWidth = 0;
         determinePitch();
         m_zeroWidthSpaceGlyph = 0;
         m_missingGlyphData.fontData = this;
@@ -114,6 +115,7 @@ void SimpleFontData::platformGlyphInit()
     float width = widthForGlyph(m_spaceGlyph);
     m_spaceWidth = width;
     determinePitch();
+    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
 
     // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
     // Helvetica is an example of a non-zero width ZERO WIDTH SPACE glyph.

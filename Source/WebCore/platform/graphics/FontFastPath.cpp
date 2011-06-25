@@ -337,8 +337,9 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
     float afterWidth = it.m_runWidthSoFar;
 
     if (run.rtl()) {
+        float finalRoundingWidth = it.m_finalRoundingWidth;
         it.advance(run.length());
-        initialAdvance = it.m_runWidthSoFar - afterWidth;
+        initialAdvance = finalRoundingWidth + it.m_runWidthSoFar - afterWidth;
     } else
         initialAdvance = beforeWidth;
 

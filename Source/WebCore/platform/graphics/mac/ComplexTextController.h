@@ -72,6 +72,8 @@ public:
 
     float totalWidth() const { return m_totalWidth; }
 
+    float finalRoundingWidth() const { return m_finalRoundingWidth; }
+
     float minGlyphBoundingBoxX() const { return m_minGlyphBoundingBoxX; }
     float maxGlyphBoundingBoxX() const { return m_maxGlyphBoundingBoxX; }
     float minGlyphBoundingBoxY() const { return m_minGlyphBoundingBoxY; }
@@ -183,6 +185,7 @@ private:
     size_t m_currentRun;
     unsigned m_glyphInCurrentRun;
     unsigned m_characterInCurrentGlyph;
+    float m_finalRoundingWidth;
     float m_expansion;
     float m_expansionPerOpportunity;
     float m_leadingExpansion;
@@ -194,6 +197,8 @@ private:
     float m_maxGlyphBoundingBoxX;
     float m_minGlyphBoundingBoxY;
     float m_maxGlyphBoundingBoxY;
+
+    unsigned m_lastRoundingGlyph;
 };
 
 } // namespace WebCore

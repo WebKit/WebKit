@@ -1066,6 +1066,11 @@ static NSMutableSet *knownPluginMIMETypes()
     Font::setCodePath(f ? Font::Complex : Font::Auto);
 }
 
++ (void)_setAllowsRoundingHacks:(BOOL)allowsRoundingHacks
+{
+    TextRun::setAllowsRoundingHacks(allowsRoundingHacks);
+}
+
 + (BOOL)canCloseAllWebViews
 {
     return DOMWindow::dispatchAllPendingBeforeUnloadEvents();

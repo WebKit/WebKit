@@ -1,3 +1,14 @@
+2011-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add an option to enable legacy rounding hacks
+        https://bugs.webkit.org/show_bug.cgi?id=63363
+
+        * WebKitGraphics.cpp:
+        (CenterTruncateStringToWidth): Enabled rounding hacks in the string truncator.
+        (RightTruncateStringToWidth): Ditto.
+
 2011-06-24  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Adam Barth.

@@ -113,6 +113,7 @@ void SimpleFontData::platformGlyphInit()
     if (!m_platformData.size())
         return;
     m_spaceGlyph = 0;
+    m_adjustedSpaceWidth = m_spaceWidth;
     determinePitch();
     m_missingGlyphData.fontData = this;
     m_missingGlyphData.glyph = 0;

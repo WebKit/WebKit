@@ -106,7 +106,7 @@ float WebCoreTextFloatWidth(const String& text, const Font& font)
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    return StringTruncator::width(text, font);
+    return StringTruncator::width(text, font, StringTruncator::EnableRoundingHacks);
 }
 
 void WebCoreSetShouldUseFontSmoothing(bool smooth)

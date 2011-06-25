@@ -1,3 +1,32 @@
+2011-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add an option to enable legacy rounding hacks
+        https://bugs.webkit.org/show_bug.cgi?id=63363
+
+        Added layoutTestController.allowRoundingHacks() and implemented it
+        on OS X.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (allowRoundingHacksCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::allowRoundingHacks):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::allowRoundingHacks):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::allowRoundingHacks):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::allowRoundingHacks):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::allowRoundingHacks):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::allowRoundingHacks):
+
 2011-06-24  Adam Roben  <aroben@apple.com>
 
         Include the directory containing the failing tests in titles of bugs filed from TestFailures

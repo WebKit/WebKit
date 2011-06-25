@@ -161,6 +161,7 @@ static float widthWithFont(NSString *string, NSFont *font)
 
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
         TextRun run(buffer.data(), length);
+        run.disableRoundingHacks();
         return webCoreFont.width(run);
     }
     
@@ -201,6 +202,7 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
             
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], Antialiased);
         TextRun run(buffer.data(), length);
+        run.disableRoundingHacks();
 
         CGFloat red;
         CGFloat green;

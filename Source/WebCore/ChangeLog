@@ -1,3 +1,89 @@
+2011-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add an option to enable legacy rounding hacks
+        https://bugs.webkit.org/show_bug.cgi?id=63363
+
+        Restored most of text rounding hacks which were removed in r78846, with a global flag to control
+        whether rounding hacks are allowed, which defaults to false.
+
+        Test: platform/mac/fast/text/rounding-hacks.html
+
+        * CMakeLists.txt: Added TextRun.cpp.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.exp.in: Export new TextRun function and global and updated StringTruncator functions.
+        * WebCore.gypi: Added TextRun.cpp.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Disable rounding hacks in the one place
+        they used to be disabled.
+        * platform/graphics/Font.cpp: Re-added the rounding character table.
+        * platform/graphics/Font.h:
+        (WebCore::Font::isRoundingHackCharacter): Re-added.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText): Account for final rounding width.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::platformGlyphInit): Initialize m_adjustedSpaceWidth.
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::adjustedSpaceWidth): Re-added.
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::stringWidth): Re-added disableRoundingHacks parameter.
+        (WebCore::truncateString): Ditto.
+        (WebCore::StringTruncator::centerTruncate): Added EnableRoundingHacksOrNot parameter.
+        (WebCore::StringTruncator::rightTruncate): Ditto.
+        (WebCore::StringTruncator::width): Ditto.
+        * platform/graphics/StringTruncator.h:
+        * platform/graphics/TextRun.cpp: Added.
+        (WebCore::TextRun::setAllowsRoundingHacks): Added.
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun): Added RoundingHacks parameter to the constructors, used to initialize
+        the m_applyRunRounding and m_applyWordRounding member variables, subject to rounding hacks being allowed.
+        (WebCore::TextRun::applyRunRounding): Re-added this accessor.
+        (WebCore::TextRun::applyWordRounding): Ditto.
+        (WebCore::TextRun::disableRoundingHacks): Re-added.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Re-added code to apply rounding hacks.
+        (WebCore::WidthIterator::advance): Ditto.
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ceilCGFloat): Re-added.
+        (WebCore::ComplexTextController::ComplexTextController): Re-added code to apply rounding hacks.
+        (WebCore::ComplexTextController::advance): Ditto.
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Ditto.
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::finalRoundingWidth): Re-added this accessor.
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText): Accound for final rounding width.
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformGlyphInit): Initialize m_adjustedSpaceWidth.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::fileListNameForWidth): Enabled rounding hacks in the string truncator.
+        * platform/mac/DragImageMac.mm:
+        (WebCore::widthWithFont): Disable rounding hacks when measuring.
+        (WebCore::drawAtPoint): Disable rounding hacks when drawing.
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink): Enable rounding hacks in the string truncator.
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::WebCoreTextFloatWidth): Ditto.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject): Disable rounding hacks.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Ditto.
+        (WebCore::RenderListBox::paintItemForeground): Ditto.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth): Ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::fileListNameForWidth): Enabled rounding hacks in the string truncator.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::fileListNameForWidth): Ditto.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun): Disabled rounding hacks.
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::constructTextRun): Ditto.
+
 2011-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.

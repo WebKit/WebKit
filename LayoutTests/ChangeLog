@@ -1,3 +1,14 @@
+2011-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add an option to enable legacy rounding hacks
+        https://bugs.webkit.org/show_bug.cgi?id=63363
+
+        * platform/mac/fast/text/rounding-hacks.html: Added.
+        * platform/mac/platform/mac/fast/text/rounding-hacks-expected.png: Added.
+        * platform/mac/platform/mac/fast/text/rounding-hacks-expected.txt: Added.
+
 2011-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.
