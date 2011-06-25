@@ -54,6 +54,7 @@ namespace WebCore {
     class IntSize;
     class PageGroup;
     class ResourceRequest;
+    class ResourceResponse;
 }
 
 namespace WebKit {
@@ -111,7 +112,7 @@ public:
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
 #endif
 
-    bool shouldUseCustomRepresentationForMIMEType(const String& mimeType) const { return m_mimeTypesWithCustomRepresentations.contains(mimeType); }
+    bool shouldUseCustomRepresentationForResponse(const WebCore::ResourceResponse&) const;
 
     // Text Checking
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
