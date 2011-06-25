@@ -1576,6 +1576,22 @@ bool Node::isInShadowTree()
     return false;
 }
 
+Element* Node::parentOrHostElement() const
+{
+    ContainerNode* parent = parentOrHostNode();
+    if (!parent)
+        return 0;
+
+    if (parent->isShadowRoot())
+        parent = parent->shadowHost();
+
+    if (!parent->isElementNode())
+        return 0;
+
+    return toElement(parent);
+}
+
+
 bool Node::isBlockFlow() const
 {
     return renderer() && renderer()->isBlockFlow();

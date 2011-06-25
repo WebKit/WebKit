@@ -624,8 +624,8 @@ static inline void collectElementIdentifierHashes(const Element* element, Vector
 void CSSStyleSelector::pushParentStackFrame(Element* parent)
 {
     ASSERT(m_ancestorIdentifierFilter);
-    ASSERT(m_parentStack.isEmpty() || m_parentStack.last().element == parent->parentElement());
-    ASSERT(!m_parentStack.isEmpty() || !parent->parentElement());
+    ASSERT(m_parentStack.isEmpty() || m_parentStack.last().element == parent->parentOrHostElement());
+    ASSERT(!m_parentStack.isEmpty() || !parent->parentOrHostElement());
     m_parentStack.append(ParentStackFrame(parent));
     ParentStackFrame& parentFrame = m_parentStack.last();
     // Mix tags, class names and ids into some sort of weird bouillabaisse.
@@ -657,16 +657,16 @@ void CSSStyleSelector::pushParent(Element* parent)
         ASSERT(!m_ancestorIdentifierFilter);
         m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
         // If the element is not the root itself, build the stack starting from the root.
-        if (parent->parentElement()) {
+        if (parent->parentOrHostNode()) {
             Vector<Element*, 30> ancestors;
-            for (Element* ancestor = parent; ancestor; ancestor = ancestor->parentElement())
+            for (Element* ancestor = parent; ancestor; ancestor = ancestor->parentOrHostElement())
                 ancestors.append(ancestor);
             int count = ancestors.size();
             for (int n = count - 1; n >= 0; --n)
                 pushParentStackFrame(ancestors[n]);
             return;
         }
-    } else if (!parent->parentElement()) {
+    } else if (!parent->parentOrHostElement()) {
         // We are not always invoked consistently. For example, script execution can cause us to enter
         // style recalc in the middle of tree building. Reset the stack if we see a new root element.
         ASSERT(m_ancestorIdentifierFilter);
@@ -676,7 +676,7 @@ void CSSStyleSelector::pushParent(Element* parent)
         ASSERT(m_ancestorIdentifierFilter);
         // We may get invoked for some random elements in some wacky cases during style resolve.
         // Pause maintaining the stack in this case.
-        if (m_parentStack.last().element != parent->parentElement())
+        if (m_parentStack.last().element != parent->parentOrHostElement())
             return;
     }
     pushParentStackFrame(parent);

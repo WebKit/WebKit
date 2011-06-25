@@ -25,7 +25,11 @@ var SELECTORS = [
 'input[type=range]::-webkit-slider-thumb'
 ];
 var DISABLED_SELECTORS = SELECTORS.map(function(selector) { return selector + ':disabled'; });
-var HOVER_SELECTORS = SELECTORS.map(function(selector) { return selector + ':hover'; })
+var HOVER_SELECTORS = SELECTORS.map(function(selector) { return selector + ':hover'; });
+var DESCENDANT_ID_SELECTORS = SELECTORS.map(function(selector) { return '#baz ' + selector; });
+DESCENDANT_ID_SELECTORS.shift();
+var DESCENDANT_CLASS_SELECTORS = SELECTORS.map(function(selector) { return '.qux ' + selector; });
+DESCENDANT_CLASS_SELECTORS.shift();
 
 // convenience constants
 var MATCH = true;
@@ -100,7 +104,10 @@ function runTest()
     }
     log('<br>Should match :hover when the mouse is over the slider thumb:');
     HOVER_SELECTORS.forEach(expectMatch);
-    document.body.removeChild(input);
+    log('<br>Should match when combined with descendant selectors:');
+    DESCENDANT_ID_SELECTORS.forEach(expectMatch);
+    DESCENDANT_CLASS_SELECTORS.forEach(expectMatch);
+    input.parentNode.removeChild(input);
 }
 
 function expectNoMatch(selector) {
@@ -115,7 +122,9 @@ function expectMatch(selector) {
 </head>
 <body onload="runTest()">
     <p>Tests various selector combinations, containing unknown pseudo element selectors.</p>
-    <input id="foo" class="bar" type="range">
+    <div id="baz" class="qux">
+        <input id="foo" class="bar" type="range">
+    </div>
     <div id="log"></div>
 </body>
 </html>

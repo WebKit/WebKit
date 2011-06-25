@@ -1,3 +1,17 @@
+2011-06-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r77740): Shadow DOM pseudo elements aren't matching when combined with descendant selectors
+        https://bugs.webkit.org/show_bug.cgi?id=63373
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::pushParentStackFrame): Changed to use parentOrHostElement.
+        (WebCore::CSSStyleSelector::pushParent): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::parentOrHostElement): Added.
+        * dom/Node.h:
+
 2011-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -49,3 +49,15 @@ input::-webkit-slider-thumb:hover should match: PASS
 input#foo::-webkit-slider-thumb:hover should match: PASS
 input.bar::-webkit-slider-thumb:hover should match: PASS
 input[type=range]::-webkit-slider-thumb:hover should match: PASS
+
+Should match when combined with descendant selectors:
+#baz input::-webkit-slider-thumb should match: PASS
+#baz #foo::-webkit-slider-thumb should match: PASS
+#baz input#foo::-webkit-slider-thumb should match: PASS
+#baz input.bar::-webkit-slider-thumb should match: PASS
+#baz input[type=range]::-webkit-slider-thumb should match: PASS
+.qux input::-webkit-slider-thumb should match: PASS
+.qux #foo::-webkit-slider-thumb should match: PASS
+.qux input#foo::-webkit-slider-thumb should match: PASS
+.qux input.bar::-webkit-slider-thumb should match: PASS
+.qux input[type=range]::-webkit-slider-thumb should match: PASS
