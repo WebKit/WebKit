@@ -1,3 +1,12 @@
+2011-06-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed build fix.  Remove ifdefs around these two functions because
+        we're not planning to move them.  This patch makes WebFrameImpl.h
+        consistent with WebFrame.h so we can build with the new API
+        configuration.
+
+        * src/WebFrameImpl.h:
+
 2011-06-24  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, rolling out r89694.

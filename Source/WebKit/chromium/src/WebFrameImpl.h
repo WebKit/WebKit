@@ -206,10 +206,8 @@ public:
     virtual void notifiyPasswordListenerOfAutocomplete(
         const WebInputElement&);
 
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
-#endif
     virtual WebString renderTreeAsText(bool showDebugInfo = false) const;
     virtual WebString counterValueForElementById(const WebString& id) const;
     virtual WebString markerTextForListItem(const WebElement&) const;
