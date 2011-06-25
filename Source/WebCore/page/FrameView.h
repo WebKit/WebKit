@@ -260,6 +260,10 @@ public:
     virtual IntPoint convertFromRenderer(const RenderObject*, const IntPoint&) const;
     virtual IntPoint convertToRenderer(const RenderObject*, const IntPoint&) const;
 
+    // Conversion with FloatQuads, to keep transformed coordinates.
+    virtual FloatQuad convertFromRenderer(const RenderObject*, const FloatQuad&) const;
+    virtual FloatQuad convertToContainingView(const FloatQuad&) const;
+
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
 
     void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode);

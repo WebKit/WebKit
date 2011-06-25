@@ -27,6 +27,7 @@
 #ifndef ScrollView_h
 #define ScrollView_h
 
+#include "FloatQuad.h"
 #include "IntRect.h"
 #include "Scrollbar.h"
 #include "ScrollableArea.h"
@@ -254,6 +255,16 @@ public:
             newPoint = point + scrollOffset();
         newPoint.move(-child->location());
         return newPoint;
+    }
+
+    FloatQuad convertChildToSelf(const Widget* child, const FloatQuad& quad) const
+    {
+        IntPoint point = quad.enclosingBoundingBox().location();
+        IntPoint newPoint = convertChildToSelf(child, point);
+
+        FloatQuad newQuad = quad;
+        newQuad.move(newPoint.x(), newPoint.y());
+        return newQuad;
     }
 
     // Widget override. Handles painting of the contents of the view as well as the scrollbars.

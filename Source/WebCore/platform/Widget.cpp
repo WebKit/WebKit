@@ -168,6 +168,23 @@ IntPoint Widget::convertFromContainingView(const IntPoint& parentPoint) const
     return parentPoint;
 }
 
+FloatQuad Widget::convertToContainingView(const FloatQuad& localQuad) const
+{
+    if (const ScrollView* parentScrollView = parent())
+        return parentScrollView->convertChildToSelf(this, localQuad);
+
+    return localQuad;
+}
+
+FloatQuad Widget::convertToRootContainingView(const FloatQuad& localQuad) const
+{
+    if (!parent())
+        return localQuad;
+
+    FloatQuad containingQuad = convertToContainingView(localQuad);
+    return parent()->convertToRootContainingView(containingQuad);
+}
+
 #if !PLATFORM(EFL)
 void Widget::frameRectsChanged()
 {

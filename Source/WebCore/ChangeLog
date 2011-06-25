@@ -1,3 +1,39 @@
+2011-06-25  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Inspector highlight rect is wrong for contents of transformed iframes
+        https://bugs.webkit.org/show_bug.cgi?id=53627
+
+        Part 1: Provide FloatQuad versions of convertFromRenderer,
+        convertToContainingView, and convertChildToSelf, so that we
+        can get the fully transformed quad of a renderer all the
+        way up to the root widget.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToContainingView):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::convertChildToSelf):
+        * platform/Widget.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertToContainingView):
+        Provide FloatQuad versions of these already existing functions.
+
+        (WebCore::Widget::convertToRootContainingView):
+        Provide a helper conversion function to recursively
+        convert a given FloatQuad up to the root widget.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::DrawNodeHighlight):
+        Use the new methods to convert the FloatQuad for the highlighted
+        node to the root container, without losing transformation
+        information. Add a FIXME for SVG, which is still broken.
+
+        * WebCore.exp.in:
+        Export the new Widget functions so WebKit can link properly.
+
 2011-06-25  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed build fix.

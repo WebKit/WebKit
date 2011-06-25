@@ -2806,6 +2806,42 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     return parentPoint;
 }
 
+FloatQuad FrameView::convertFromRenderer(const RenderObject* renderer, const FloatQuad& rendererQuad) const
+{
+    FloatQuad quad = renderer->localToAbsoluteQuad(rendererQuad);
+
+    IntPoint scroll = scrollPosition();
+    quad.move(-scroll.x(), -scroll.y());
+
+    return quad;
+}
+
+FloatQuad FrameView::convertToContainingView(const FloatQuad& localQuad) const
+{
+    if (const ScrollView* parentScrollView = parent()) {
+        if (parentScrollView->isFrameView()) {
+            const FrameView* parentView = static_cast<const FrameView*>(parentScrollView);
+
+            // Get our renderer in the parent view.
+            RenderPart* renderer = m_frame->ownerRenderer();
+            if (!renderer)
+                return localQuad;
+
+            // Add borders and padding.
+            FloatQuad quad(localQuad);
+            quad.move(renderer->borderLeft() + renderer->paddingLeft(),
+                      renderer->borderTop() + renderer->paddingTop());
+
+            // Apply the parent's transforms and scroll offset.
+            return parentView->convertFromRenderer(renderer, quad);
+        }
+
+        return Widget::convertToContainingView(localQuad);
+    }
+
+    return localQuad;
+}
+
 // Normal delay
 void FrameView::setRepaintThrottlingDeferredRepaintDelay(double p)
 {

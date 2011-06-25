@@ -267,21 +267,22 @@ void DrawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
         IntRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
                           borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
 
+        FrameView* containingView = containingFrame->view();
+        FloatQuad absContentQuad = containingView->convertFromRenderer(renderer, FloatRect(contentBox));
+        FloatQuad absPaddingQuad = containingView->convertFromRenderer(renderer, FloatRect(paddingBox));
+        FloatQuad absBorderQuad = containingView->convertFromRenderer(renderer, FloatRect(borderBox));
+        FloatQuad absMarginQuad = containingView->convertFromRenderer(renderer, FloatRect(marginBox));
 
-        FloatQuad absContentQuad = renderBox->localToAbsoluteQuad(FloatRect(contentBox));
-        FloatQuad absPaddingQuad = renderBox->localToAbsoluteQuad(FloatRect(paddingBox));
-        FloatQuad absBorderQuad = renderBox->localToAbsoluteQuad(FloatRect(borderBox));
-        FloatQuad absMarginQuad = renderBox->localToAbsoluteQuad(FloatRect(marginBox));
-
-        absContentQuad.move(mainFrameOffset);
-        absPaddingQuad.move(mainFrameOffset);
-        absBorderQuad.move(mainFrameOffset);
-        absMarginQuad.move(mainFrameOffset);
+        absContentQuad = containingView->convertToRootContainingView(absContentQuad);
+        absPaddingQuad = containingView->convertToRootContainingView(absPaddingQuad);
+        absBorderQuad = containingView->convertToRootContainingView(absBorderQuad);
+        absMarginQuad = containingView->convertToRootContainingView(absMarginQuad);
 
         titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
         drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, mode);
     } else if (renderer->isRenderInline() || isSVGRenderer) {
+        // FIXME: Does not handle transformed content correctly.
         // FIXME: We should show margins/padding/border for inlines.
         Vector<FloatQuad> lineBoxQuads;
         renderer->absoluteQuads(lineBoxQuads);

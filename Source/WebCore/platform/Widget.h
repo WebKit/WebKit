@@ -27,6 +27,7 @@
 #ifndef Widget_h
 #define Widget_h
 
+#include "FloatQuad.h"
 #include "IntRect.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -252,6 +253,10 @@ public:
     virtual IntRect convertFromContainingView(const IntRect&) const;
     virtual IntPoint convertToContainingView(const IntPoint&) const;
     virtual IntPoint convertFromContainingView(const IntPoint&) const;
+
+    // Conversion with FloatQuads, to keep transformed coordinates.
+    virtual FloatQuad convertToContainingView(const FloatQuad&) const;
+    virtual FloatQuad convertToRootContainingView(const FloatQuad&) const;
 
     // A means to access the AX cache when this object can get a pointer to it.
     virtual AXObjectCache* axObjectCache() const { return 0; }
