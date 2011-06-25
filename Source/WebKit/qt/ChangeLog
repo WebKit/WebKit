@@ -1,3 +1,25 @@
+2011-06-20  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Duplicate entry in context menu
+        https://bugs.webkit.org/show_bug.cgi?id=62139
+
+        contextMenuController()->populate() is called from
+        ContextMenuController::handleContextMenuEvent() so
+        QWebPage::updatePositionDependentActions() does not need
+        to call it independently.
+
+        Related changesets: 
+         http://trac.webkit.org/changeset/73535
+         http://trac.webkit.org/changeset/32389
+
+        * Api/qwebpage.cpp:
+        (QWebPage::updatePositionDependentActions):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::contextMenuCopy):
+        (tst_QWebPage::contextMenuPopulatedOnce):
+
 2011-06-24  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

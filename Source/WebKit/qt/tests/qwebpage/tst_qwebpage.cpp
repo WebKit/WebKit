@@ -90,6 +90,7 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
     void contextMenuCopy();
+    void contextMenuPopulatedOnce();
     void acceptNavigationRequest();
     void geolocationRequestJS();
     void loadFinished();
@@ -2971,6 +2972,33 @@ void tst_QWebPage::contextMenuCopy()
     QList<QAction *> list = contextMenu->actions();
     int index = list.indexOf(view.page()->action(QWebPage::Copy));
     QVERIFY(index != -1);
+}
+
+// https://bugs.webkit.org/show_bug.cgi?id=62139
+void tst_QWebPage::contextMenuPopulatedOnce()
+{
+    QWebView view;
+
+    view.setHtml("<input type=\"text\">");
+
+    QWebElement link = view.page()->mainFrame()->findFirstElement("input");
+    QPoint pos(link.geometry().center());
+    QContextMenuEvent event(QContextMenuEvent::Mouse, pos);
+    view.page()->swallowContextMenuEvent(&event);
+    view.page()->updatePositionDependentActions(pos);
+
+    QList<QMenu*> contextMenus = view.findChildren<QMenu*>();
+    QVERIFY(!contextMenus.isEmpty());
+    QMenu* contextMenu = contextMenus.first();
+    QVERIFY(contextMenu);
+
+    QList<QAction *> list = contextMenu->actions();
+    QStringList entries;
+    while (!list.isEmpty()) {
+        QString entry = list.takeFirst()->text();
+        QVERIFY(!entries.contains(entry));
+        entries << entry;
+    }
 }
 
 void tst_QWebPage::deleteQWebViewTwice()

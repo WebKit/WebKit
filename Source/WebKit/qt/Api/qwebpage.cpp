@@ -3305,16 +3305,14 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
 
     d->createMainFrame();
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
-    HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos), /*allowShadowContent*/ false);
 
+    HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos), /*allowShadowContent*/ false);
     if (result.scrollbar())
         d->hitTestResult = QWebHitTestResult();
     else
         d->hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(result));
-
     d->page->contextMenuController()->setHitTestResult(result);
-    d->page->contextMenuController()->populate();
-    
+
 #if ENABLE(INSPECTOR)
     if (d->page->inspectorController()->enabled())
         d->page->contextMenuController()->addInspectElementItem();
