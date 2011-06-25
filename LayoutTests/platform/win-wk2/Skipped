@@ -184,6 +184,7 @@ fast/text/international/bold-bengali.html
 media/video-zoom.html
 svg/W3C-SVG-1.1/text-tselect-02-f.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+svg/text/select-text-svgfont.html
 tables/mozilla/bugs/bug30559.html
 transitions/color-transition-all.html
 http/tests/multipart/policy-ignore-crash.php

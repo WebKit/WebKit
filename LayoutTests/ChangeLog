@@ -5,6 +5,20 @@
         Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
         https://bugs.webkit.org/show_bug.cgi?id=59085
 
+        Update win baseline.
+
+        * platform/win-wk2/Skipped: Skip newly added svg/text test just like in mac-wk2.
+        * platform/win-xp/svg/custom: Added.
+        * platform/win-xp/svg/custom/svg-fonts-fallback-expected.txt: Added. XP has different metrics here.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Update result from Win7 slave.
+
+2011-06-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
         Skip svg/text/select-text-svgfont.html on mac-wk2, just like the other svg/text tests.
 
         * platform/mac-wk2/Skipped:
