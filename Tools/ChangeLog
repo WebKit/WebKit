@@ -1,3 +1,12 @@
+2011-06-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction after r89426.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCFLite.vsprops:
+          Link with Cairo DLL for new functionality.
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp: Include compatibility
+          code for snprintf.
+
 2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

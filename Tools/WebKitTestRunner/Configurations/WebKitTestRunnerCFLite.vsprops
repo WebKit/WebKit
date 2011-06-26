@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="CFLite$(LibraryConfigSuffix).lib"
+		AdditionalDependencies="CFLite$(LibraryConfigSuffix).lib cairo.lib"
 	/>
 </VisualStudioPropertySheet>
