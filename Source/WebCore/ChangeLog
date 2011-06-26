@@ -1,3 +1,19 @@
+2011-06-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        With word-break: break-all, words do not break correctly before a surrogate pair
+        https://bugs.webkit.org/show_bug.cgi?id=63401
+
+        The code to check for mid-word breaks accumulates width one character at a time. It was actually
+        measuring the two parts of the surrogate pair individually, so they appeared to have zero width.
+        Fixed by checking for surrogate pairs and measuring the pair as one unit.
+
+        Test: fast/text/midword-break-before-surrogate-pair.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2011-06-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
