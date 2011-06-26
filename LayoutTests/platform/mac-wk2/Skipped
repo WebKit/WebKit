@@ -414,6 +414,8 @@ scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 fast/html/set-text-direction.html
 
 # CONSOLE MESSAGE: line 0: SVG animation pause API missing!
+# [WK2] SVG animation pause API missing
+# https://bugs.webkit.org/show_bug.cgi?id=63396
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
 svg/animations/animate-calcMode-spline-from-by.html
@@ -471,6 +473,12 @@ svg/animations/svglength-animation-values.html
 svg/animations/svgnumber-animation-1.html
 svg/animations/svgnumber-animation-2.html
 svg/animations/svgnumber-animation-3.html
+svg/animations/svgnumberlist-animation-1.html
+svg/animations/svgnumberlist-animation-2.html
+svg/animations/svgnumberoptionalnumber-animation-1.html
+svg/animations/svgnumberoptionalnumber-animation-2.html
+svg/animations/svgnumberoptionalnumber-animation-3.html
+svg/animations/svgnumberoptionalnumber-animation-4.html
 svg/animations/svgpointlist-animation-1.html
 svg/animations/svgpointlist-animation-2.html
 svg/animations/svgrect-animation-1.html

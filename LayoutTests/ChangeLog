@@ -1,3 +1,15 @@
+2011-06-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed gardening.
+
+        [WK2] SVG animation pause API missing
+        https://bugs.webkit.org/show_bug.cgi?id=63396
+
+        Skip new tests that depend on pause API. Put them to the
+        mac list that is used by all WebKit2 platforms.
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-06-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
