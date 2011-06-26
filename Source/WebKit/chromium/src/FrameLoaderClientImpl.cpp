@@ -58,6 +58,7 @@
 #include "StringExtras.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
+#include "WebDocument.h"
 #include "WebFormElement.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -586,7 +587,7 @@ void FrameLoaderClientImpl::dispatchWillPerformClientRedirect(
 {
     // Tells dispatchDidStartProvisionalLoad that if it sees this item it is a
     // redirect and the source item should be added as the start of the chain.
-    m_expectedClientRedirectSrc = m_webFrame->url();
+    m_expectedClientRedirectSrc = m_webFrame->document().url();
     m_expectedClientRedirectDest = url;
 
     // FIXME: bug 1135512. Webkit does not properly notify us of cancelling

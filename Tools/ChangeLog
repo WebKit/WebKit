@@ -1,3 +1,13 @@
+2011-06-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Update WebKit for WEBKIT_FRAME_TO_DOCUMENT_API_MOVE
+        https://bugs.webkit.org/show_bug.cgi?id=63394
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::queueLoad):
+
 2011-06-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction after r89426.

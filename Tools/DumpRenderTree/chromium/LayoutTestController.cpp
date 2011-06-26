@@ -497,7 +497,7 @@ void LayoutTestController::queueLoad(const CppArgumentList& arguments, CppVarian
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         // FIXME: Implement WebURL::resolve() and avoid GURL.
-        GURL currentURL = m_shell->webView()->mainFrame()->url();
+        GURL currentURL = m_shell->webView()->mainFrame()->document().url();
         GURL fullURL = currentURL.Resolve(arguments[0].toString());
 
         string target = "";
