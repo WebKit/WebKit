@@ -1,3 +1,11 @@
+2011-06-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction after r89503.
+        See http://trac.webkit.org/changeset/89503. The modifications
+        to the WebKit2.def need to be mirrored in WebKit2CFLite.def.
+
+        * win/WebKit2CFLite.def: Add new exported symbol for isPreloaded.
+
 2011-06-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction after r89426.
