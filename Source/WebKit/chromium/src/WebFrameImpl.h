@@ -69,14 +69,7 @@ public:
     virtual WebString name() const;
     virtual void setName(const WebString&);
     virtual long long identifier() const;
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-    virtual WebURL url() const;
-#endif
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const;
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-    virtual WebURL openSearchDescriptionURL() const;
-    virtual WebString encoding() const;
-#endif
     virtual WebSize scrollOffset() const;
     virtual void setScrollOffset(const WebSize&);
     virtual WebSize contentsSize() const;
@@ -97,15 +90,8 @@ public:
     virtual WebFrame* findChildByName(const WebString&) const;
     virtual WebFrame* findChildByExpression(const WebString&) const;
     virtual WebDocument document() const;
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-    virtual void forms(WebVector<WebFormElement>&) const;
-#endif
     virtual WebAnimationController* animationController();
     virtual WebPerformance performance() const;
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-    virtual WebSecurityOrigin securityOrigin() const;
-    virtual void grantUniversalAccess();
-#endif
     virtual NPObject* windowObject() const;
     virtual void bindToWindowObject(const WebString& name, NPObject*);
     virtual void executeScript(const WebScriptSource&);
@@ -128,9 +114,6 @@ public:
                                                   const WebString& fileSystemPath,
                                                   const WebString& filePath,
                                                   bool isDirectory);
-#endif
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-    virtual bool insertStyleText(const WebString& css, const WebString& id);
 #endif
     virtual void reload(bool ignoreCache);
     virtual void loadRequest(const WebURLRequest&);

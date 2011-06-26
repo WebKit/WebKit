@@ -1,3 +1,16 @@
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Remove code behind WEBKIT_FRAME_TO_DOCUMENT_API_MOVE
+        https://bugs.webkit.org/show_bug.cgi?id=63402
+
+        These old APIs are no longer needed.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+
 2011-06-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

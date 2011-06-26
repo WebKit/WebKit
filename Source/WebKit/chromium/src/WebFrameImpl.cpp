@@ -516,13 +516,6 @@ long long WebFrameImpl::identifier() const
     return m_identifier;
 }
 
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-WebURL WebFrameImpl::url() const
-{
-    return document().url();
-}
-#endif
-
 WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
 {
     FrameLoader* frameLoader = m_frame->loader();
@@ -532,18 +525,6 @@ WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
         return frameLoader->icon()->urlsForTypes(iconTypes);
     return WebVector<WebIconURL>();
 }
-
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-WebURL WebFrameImpl::openSearchDescriptionURL() const
-{
-    return document().openSearchDescriptionURL();
-}
-
-WebString WebFrameImpl::encoding() const
-{
-    return document().encoding();
-}
-#endif
 
 WebSize WebFrameImpl::scrollOffset() const
 {
@@ -687,13 +668,6 @@ WebDocument WebFrameImpl::document() const
     return WebDocument(m_frame->document());
 }
 
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
-{
-    document().forms(results);
-}
-#endif
-
 WebAnimationController* WebFrameImpl::animationController()
 {
     return &m_animationController;
@@ -706,18 +680,6 @@ WebPerformance WebFrameImpl::performance() const
 
     return WebPerformance(m_frame->domWindow()->performance());
 }
-
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-WebSecurityOrigin WebFrameImpl::securityOrigin() const
-{
-    return document().securityOrigin();
-}
-
-void WebFrameImpl::grantUniversalAccess()
-{
-    document().securityOrigin().grantUniversalAccess();
-}
-#endif
 
 NPObject* WebFrameImpl::windowObject() const
 {
@@ -855,13 +817,6 @@ v8::Handle<v8::Value> WebFrameImpl::createFileEntry(WebFileSystem::Type type,
     if (isDirectory)
         return toV8(DirectoryEntry::create(fileSystem, filePath));
     return toV8(FileEntry::create(fileSystem, filePath));
-}
-#endif
-
-#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
-bool WebFrameImpl::insertStyleText(const WebString& styleText, const WebString& elementId)
-{
-    return document().insertStyleText(styleText, elementId);
 }
 #endif
 
