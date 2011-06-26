@@ -1,3 +1,13 @@
+2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Crash in frameless document with media element.
+        https://bugs.webkit.org/show_bug.cgi?id=63393
+
+        * fast/dom/shadow/frameless-media-element-crash.html: Added.
+        * fast/dom/shadow/frameless-media-element-crash-expected.txt: Added.
+
 2011-06-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

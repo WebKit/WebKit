@@ -338,7 +338,7 @@ private:
     void refreshCachedTime() const;
 
     bool hasMediaControls();
-    void ensureMediaControls();
+    bool createMediaControls();
 
     virtual void* preDispatchEventHandler(Event*);
 

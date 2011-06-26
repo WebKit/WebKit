@@ -1,0 +1,12 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var doc = document.implementation.createHTMLDocument();
+doc.open();
+doc.write('<video controls></video>');
+doc.close();
+
+</script>
+<p>Creating a video element in a frameless document should not crash WebKit.
+<p>This test passes if it does not crash.

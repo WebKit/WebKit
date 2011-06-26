@@ -232,7 +232,9 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         if (controls()) {
             if (!hasMediaControls()) {
-                ensureMediaControls();
+                if (!createMediaControls())
+                    return;
+
                 mediaControls()->reset();
             }
             mediaControls()->show();
@@ -2755,13 +2757,18 @@ bool HTMLMediaElement::hasMediaControls()
     return node && node->isMediaControls();
 }
 
-void HTMLMediaElement::ensureMediaControls()
+bool HTMLMediaElement::createMediaControls()
 {
     if (hasMediaControls())
-        return;
+        return true;
 
     ExceptionCode ec;
-    ensureShadowRoot()->appendChild(MediaControls::create(this), ec);
+    RefPtr<MediaControls> controls = MediaControls::create(this);
+    if (!controls)
+        return false;
+
+    ensureShadowRoot()->appendChild(controls, ec);
+    return true;
 }
 
 void* HTMLMediaElement::preDispatchEventHandler(Event* event)
@@ -2769,7 +2776,9 @@ void* HTMLMediaElement::preDispatchEventHandler(Event* event)
     if (event && event->type() == eventNames().webkitfullscreenchangeEvent) {
         if (controls()) {
             if (!hasMediaControls()) {
-                ensureMediaControls();
+                if (!createMediaControls())
+                    return 0;
+
                 mediaControls()->reset();
             }
             mediaControls()->show();

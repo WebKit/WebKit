@@ -1,3 +1,21 @@
+2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Crash in frameless document with media element.
+        https://bugs.webkit.org/show_bug.cgi?id=63393
+
+        Since MediaControls::create can return 0 (and does for frameless documents), we must anticipate it
+        in the calling code.
+
+        Test: fast/dom/shadow/frameless-media-element-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): Changed to bail out if controls weren't successfully created.
+        (WebCore::HTMLMediaElement::createMediaControls): Renamed to better reflect the purpose, changed to handle failure of creation.
+        (WebCore::HTMLMediaElement::preDispatchEventHandler): Changed to bail out if controls weren't successfully created.
+        * html/HTMLMediaElement.h: Adjusted def.
+
 2011-06-25  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.
