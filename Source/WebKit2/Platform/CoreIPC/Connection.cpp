@@ -236,17 +236,23 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 
 void Connection::addQueueClient(QueueClient* queueClient)
 {
-    MutexLocker locker(m_connectionQueueClientsMutex);
-    ASSERT(!m_connectionQueueClients.contains(queueClient));
-
-    m_connectionQueueClients.append(queueClient);
+    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::addQueueClientOnWorkQueue, queueClient));
 }
 
 void Connection::removeQueueClient(QueueClient* queueClient)
 {
-    MutexLocker locker(m_connectionQueueClientsMutex);
-    size_t index = m_connectionQueueClients.find(queueClient);
+    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::removeQueueClientOnWorkQueue, queueClient));
+}
 
+void Connection::addQueueClientOnWorkQueue(QueueClient* queueClient)
+{
+    ASSERT(!m_connectionQueueClients.contains(queueClient));
+    m_connectionQueueClients.append(queueClient);
+}
+
+void Connection::removeQueueClientOnWorkQueue(QueueClient* queueClient)
+{
+    size_t index = m_connectionQueueClients.find(queueClient);
     ASSERT(index != notFound);
     m_connectionQueueClients.remove(index);
 }
@@ -531,15 +537,11 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
     }
 
     // Hand off the message to the connection queue clients.
-    {
-        MutexLocker locker(m_connectionQueueClientsMutex);
-
-        for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
-            if (!m_connectionQueueClients[i]->willProcessMessageOnClientRunLoop(this, incomingMessage.messageID(), incomingMessage.arguments())) {
-                // A connection queue client handled the message, our work here is done.
-                incomingMessage.releaseArguments();
-                return;
-            }
+    for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
+        if (!m_connectionQueueClients[i]->willProcessMessageOnClientRunLoop(this, incomingMessage.messageID(), incomingMessage.arguments())) {
+            // A connection queue client handled the message, our work here is done.
+            incomingMessage.releaseArguments();
+            return;
         }
     }
 

@@ -1,3 +1,21 @@
+2011-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't use a Mutex for protecting access to the connection queue clients
+        https://bugs.webkit.org/show_bug.cgi?id=63403
+
+        Make sure to only access the queue client vector from the connection work queue.
+        This gets rid of a lock and ensures that adding/removing clients from callbacks works correctly.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::addQueueClient):
+        (CoreIPC::Connection::removeQueueClient):
+        (CoreIPC::Connection::addQueueClientOnWorkQueue):
+        (CoreIPC::Connection::removeQueueClientOnWorkQueue):
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/CoreIPC/Connection.h:
+
 2011-06-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction after r89426.

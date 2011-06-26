@@ -216,6 +216,9 @@ private:
     void processIncomingMessage(MessageID, PassOwnPtr<ArgumentDecoder>);
     void processIncomingSyncReply(PassOwnPtr<ArgumentDecoder>);
 
+    void addQueueClientOnWorkQueue(QueueClient*);
+    void removeQueueClientOnWorkQueue(QueueClient*);
+    
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
@@ -246,7 +249,6 @@ private:
     WorkQueue m_connectionQueue;
     RunLoop* m_clientRunLoop;
 
-    Mutex m_connectionQueueClientsMutex;
     Vector<QueueClient*> m_connectionQueueClients;
 
     unsigned m_inDispatchMessageCount;
