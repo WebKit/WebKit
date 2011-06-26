@@ -49,6 +49,11 @@ typedef double (*D_DFGOperation_DD)(double, double);
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 EncodedJSValue operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
 EncodedJSValue operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty);
 EncodedJSValue operationGetById(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);

@@ -87,7 +87,7 @@ private:
 
     // These methods are used to plant calls out to C++
     // helper routines to convert between types.
-    void valueToNumber(JSValueOperand&, FPRReg result);
+    void valueToNumber(JSValueOperand&, GPRReg result);
     void valueToInt32(JSValueOperand&, GPRReg result);
     void numberToInt32(FPRReg, GPRReg result);
 
@@ -98,7 +98,12 @@ private:
     {
         m_entryLocations.append(EntryLocation(entry, this));
     }
-
+    
+    // internal helpers for add/sub/mul operations
+    void knownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
+    void basicArithOp(NodeType op, Node&);
+    void compare(Node&, MacroAssembler::RelationalCondition, const Z_DFGOperation_EJJ&);
+    
     EntryLocationVector m_entryLocations;
 };
 

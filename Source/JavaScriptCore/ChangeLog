@@ -1,3 +1,23 @@
+2011-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        DFG non-speculative JIT has potentially harmful speculations with respect to arithmetic operations.
+        https://bugs.webkit.org/show_bug.cgi?id=63347
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+            - Changed arithmetic operations to speculate in favor of integers.
+        (JSC::DFG::NonSpeculativeJIT::valueToNumber):
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        * dfg/DFGOperations.cpp:
+            - Added slow-path routines for arithmetic that perform no speculation; the
+              non-speculative JIT will generate calls to these in cases where its
+              speculation fails.
+        * dfg/DFGOperations.h:
+
 2011-06-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.

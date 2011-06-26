@@ -138,6 +138,41 @@ EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, Enc
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
 
+EncodedJSValue operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
+    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    return JSValue::encode(jsNumber(num1 + num2));
+}
+
+EncodedJSValue operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
+    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    return JSValue::encode(jsNumber(num1 - num2));
+}
+
+EncodedJSValue operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
+    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    return JSValue::encode(jsNumber(num1 * num2));
+}
+
+EncodedJSValue operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
+    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    return JSValue::encode(jsNumber(num1 / num2));
+}
+
+EncodedJSValue operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    double num1 = JSValue::decode(encodedOp1).uncheckedGetNumber();
+    double num2 = JSValue::decode(encodedOp2).uncheckedGetNumber();
+    return JSValue::encode(jsNumber(fmod(num1, num2)));
+}
+
 static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
     JSGlobalData* globalData = &exec->globalData();
