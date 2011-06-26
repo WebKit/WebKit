@@ -1,3 +1,30 @@
+2011-06-25  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: new chromium rebaselines.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/linking-a-03-b-all-expected.png:
+        * platform/chromium-linux/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-linux/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-linux/svg/custom/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-linux/svg/custom/linking-uri-01-b-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/custom/linking-a-03-b-all-expected.png:
+        * platform/chromium-mac/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-mac/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-mac/svg/custom/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt: Added.
+        * platform/chromium-win/svg/custom/linking-a-03-b-all-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-all-expected.txt:
+        * platform/chromium-win/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-transform-expected.txt:
+        * platform/chromium-win/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-viewBox-transform-expected.txt:
+        * platform/chromium-win/svg/custom/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-win/svg/custom/linking-uri-01-b-expected.txt: Added.
+
 2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
