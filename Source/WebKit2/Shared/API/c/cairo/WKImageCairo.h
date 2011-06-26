@@ -30,7 +30,7 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKImage.h>
 
-typedef _cairo_surface cairo_surface_t;
+typedef struct _cairo_surface cairo_surface_t;
 
 #ifdef __cplusplus
 extern "C" {

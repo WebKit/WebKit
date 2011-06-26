@@ -1129,6 +1129,50 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="cairo"
+					>
+					<File
+						RelativePath="..\Shared\API\c\cairo\WKImageCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Production|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cairo\WKImageCairo.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="CoreIPCSupport"
