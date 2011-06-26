@@ -1,0 +1,7 @@
+PASS rect.x.baseVal.value is 100
+PASS rect.x.baseVal.value is 200
+PASS rect.x.baseVal.value is 300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

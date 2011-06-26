@@ -422,7 +422,7 @@ unsigned SVGAnimationElement::calculateKeyTimesIndex(float percent) const
     unsigned index;
     unsigned keyTimesCount = m_keyTimes.size();
     for (index = 1; index < keyTimesCount; ++index) {
-        if (m_keyTimes[index] >= percent)
+        if (m_keyTimes[index] > percent)
             break;
     }
     return --index;
