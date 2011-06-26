@@ -1,5 +1,21 @@
 2011-06-25  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Fix some minor style issues
+        https://bugs.webkit.org/show_bug.cgi?id=63391
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::DrawNodeHighlight):
+        The explicit WebCore namespace usage can be dropped.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        Use ASSERT_UNUSED for a parameter that we want to ASSERT
+        on for a debug build, but is UNUSED in a release build.
+
+2011-06-25  Joseph Pecoraro  <joepeck@webkit.org>
+
         Unreviewed build fix.
 
         Use UNUSED_PARAM on the correct param!

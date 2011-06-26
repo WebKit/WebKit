@@ -132,7 +132,7 @@ inline IntSize frameToMainFrameOffset(Frame* frame)
     return mainFramePoint - IntPoint();
 }
 
-void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
+void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, Settings* settings)
 {
     static const int rectInflatePx = 4;
     static const int fontHeightPx = 12;
@@ -297,7 +297,7 @@ void DrawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
     if (!node->isElementNode())
         return;
 
-    WebCore::Settings* settings = containingFrame->settings();
+    Settings* settings = containingFrame->settings();
     if (mode == DOMNodeHighlighter::HighlightAll)
         drawElementTitle(context, node, boundingBox, titleAnchorBox, overlayRect, settings);
 }
