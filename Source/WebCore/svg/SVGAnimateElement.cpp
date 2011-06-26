@@ -111,7 +111,6 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedAngle;
     case AnimatedBoolean:
     case AnimatedEnumeration:
-    case AnimatedNumberOptionalNumber:
     case AnimatedLengthList:
     case AnimatedPreserveAspectRatio:
     case AnimatedString:
@@ -125,6 +124,8 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedNumber;
     case AnimatedNumberList:
         return AnimatedNumberList;
+    case AnimatedNumberOptionalNumber:
+        return AnimatedNumberOptionalNumber;
     case AnimatedPath:
         return AnimatedPath;
     case AnimatedPoints:
@@ -164,7 +165,8 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedNumber:
-    case AnimatedNumberList:            
+    case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
@@ -231,6 +233,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
@@ -258,6 +261,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedPoints:
     case AnimatedRect:
     case AnimatedString:
@@ -284,6 +288,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
@@ -309,6 +314,7 @@ void SVGAnimateElement::applyResultsToTarget()
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:
@@ -334,6 +340,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedLength:
     case AnimatedNumber:
     case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedRect:

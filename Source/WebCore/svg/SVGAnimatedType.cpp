@@ -31,6 +31,8 @@
 #include "SVGPathParserFactory.h"
 #include "SVGPointList.h"
 
+using namespace std;
+
 namespace WebCore {
 
 SVGAnimatedType::SVGAnimatedType(AnimatedAttributeType type)
@@ -55,6 +57,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedNumberList:
         delete m_data.numberList;
+        break;
+    case AnimatedNumberOptionalNumber:
+        delete m_data.numberOptionalNumber;
         break;
     case AnimatedPath:
         delete m_data.path;
@@ -111,6 +116,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumberList(SVGNumberList* num
     ASSERT(numberList);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedNumberList));
     animatedType->m_data.numberList = numberList;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumberOptionalNumber(pair<float, float>* numberOptionalNumber)
+{
+    ASSERT(numberOptionalNumber);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedNumberOptionalNumber));
+    animatedType->m_data.numberOptionalNumber = numberOptionalNumber;
     return animatedType.release();
 }
 
@@ -176,6 +189,12 @@ SVGNumberList& SVGAnimatedType::numberList()
     return *m_data.numberList;
 }
 
+pair<float, float>& SVGAnimatedType::numberOptionalNumber()
+{
+    ASSERT(m_type == AnimatedNumberOptionalNumber);
+    return *m_data.numberOptionalNumber;        
+}
+
 SVGPathByteStream* SVGAnimatedType::path()
 {
     ASSERT(m_type == AnimatedPath);
@@ -218,6 +237,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedNumberList:
         ASSERT(m_data.numberList);
         return m_data.numberList->valueAsString();
+    case AnimatedNumberOptionalNumber:
+        ASSERT(m_data.numberOptionalNumber);
+        return String::number(m_data.numberOptionalNumber->first) + ' ' + String::number(m_data.numberOptionalNumber->second);
     case AnimatedPath: {
         ASSERT(m_data.path);
         String result;
@@ -264,6 +286,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedNumberList:
         ASSERT(m_data.numberList);
         m_data.numberList->parse(value);
+        break;
+    case AnimatedNumberOptionalNumber:
+        ASSERT(m_data.numberOptionalNumber);
+        parseNumberOptionalNumber(value, m_data.numberOptionalNumber->first, m_data.numberOptionalNumber->second);
         break;
     case AnimatedPath: {
         ASSERT(m_data.path);

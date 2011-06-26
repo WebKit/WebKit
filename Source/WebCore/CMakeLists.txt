@@ -1661,6 +1661,7 @@ IF (ENABLE_SVG)
         svg/SVGAnimatedLength.cpp
         svg/SVGAnimatedNumber.cpp
         svg/SVGAnimatedNumberList.cpp
+        svg/SVGAnimatedNumberOptionalNumber.cpp
         svg/SVGAnimatedPath.cpp
         svg/SVGAnimatedPointList.cpp
         svg/SVGAnimatedRect.cpp

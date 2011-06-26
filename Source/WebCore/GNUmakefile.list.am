@@ -3435,6 +3435,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedNumber.h \
 	Source/WebCore/svg/SVGAnimatedNumberList.cpp \
 	Source/WebCore/svg/SVGAnimatedNumberList.h \
+	Source/WebCore/svg/SVGAnimatedNumberOptionalNumber.cpp \
+	Source/WebCore/svg/SVGAnimatedNumberOptionalNumber.h \
 	Source/WebCore/svg/SVGAnimatedPath.cpp \
 	Source/WebCore/svg/SVGAnimatedPath.h \
 	Source/WebCore/svg/SVGAnimatedPointList.cpp \

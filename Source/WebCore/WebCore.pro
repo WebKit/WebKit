@@ -2335,6 +2335,7 @@ HEADERS += \
     svg/SVGAnimatedLengthList.h \
     svg/SVGAnimatedNumber.h \
     svg/SVGAnimatedNumberList.h \
+    svg/SVGAnimatedNumberOptionalNumber.h \
     svg/SVGAnimatedPath.h \
     svg/SVGAnimatedPreserveAspectRatio.h \
     svg/SVGAnimatedPointList.h \
@@ -3340,6 +3341,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAnimatedLength.cpp \
               svg/SVGAnimatedNumber.cpp \
               svg/SVGAnimatedNumberList.cpp \
+              svg/SVGAnimatedNumberOptionalNumber.cpp \
               svg/SVGAnimatedPath.cpp \
               svg/SVGAnimatedPointList.cpp \
               svg/SVGAnimatedRect.cpp \

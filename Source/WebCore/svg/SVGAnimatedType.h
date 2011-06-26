@@ -22,7 +22,8 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGElement.h"
-#include "SVGPathByteStream.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -31,6 +32,7 @@ class FloatRect;
 class SVGAngle;
 class SVGLength;
 class SVGNumberList;
+class SVGPathByteStream;
 class SVGPointList;
 
 class SVGAnimatedType {
@@ -43,6 +45,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     static PassOwnPtr<SVGAnimatedType> createNumberList(SVGNumberList*);
+    static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(pair<float, float>*);
     static PassOwnPtr<SVGAnimatedType> createPath(PassOwnPtr<SVGPathByteStream>);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
@@ -55,6 +58,7 @@ public:
     SVGLength& length();
     float& number();
     SVGNumberList& numberList();
+    pair<float, float>& numberOptionalNumber();
     SVGPathByteStream* path();
     SVGPointList& pointList();
     FloatRect& rect();
@@ -80,6 +84,7 @@ private:
         SVGLength* length;
         float* number;
         SVGNumberList* numberList;
+        pair<float, float>* numberOptionalNumber;
         SVGPathByteStream* path;
         SVGPointList* pointList;
         FloatRect* rect;

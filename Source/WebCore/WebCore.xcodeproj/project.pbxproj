@@ -931,6 +931,8 @@
 		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
 		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
 		43142E7A13B1E97700F1C871 /* SVGAnimatedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */; };
+		431A2F9C13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A2F9A13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h */; };
+		431A2F9D13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A2F9B13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp */; };
 		4331AC7813B6870000A9E5AE /* SVGAnimatedNumberList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */; };
 		4358E86A1360A21600E4748C /* DOMSVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */; };
 		4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */; };
@@ -7391,6 +7393,8 @@
 		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
 		43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedRect.cpp; sourceTree = "<group>"; };
+		431A2F9A13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedNumberOptionalNumber.h; sourceTree = "<group>"; };
+		431A2F9B13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedNumberOptionalNumber.cpp; sourceTree = "<group>"; };
 		4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedNumberList.cpp; sourceTree = "<group>"; };
 		4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEDropShadowElement.h; sourceTree = "<group>"; };
 		4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEDropShadowElement.mm; sourceTree = "<group>"; };
@@ -17410,6 +17414,8 @@
 				4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */,
 				08B35B16127B6A88005314DD /* SVGAnimatedNumberList.h */,
 				B22277ED0D00BF1F0071B782 /* SVGAnimatedNumberList.idl */,
+				431A2F9A13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h */,
+				431A2F9B13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp */,
 				0863951313B5FE5700BB344D /* SVGAnimatedPath.cpp */,
 				0863951413B5FE5700BB344D /* SVGAnimatedPath.h */,
 				43B9336713B261B1004584BF /* SVGAnimatedPointList.h */,
@@ -23066,6 +23072,7 @@
 				43A625F813B3304000AC94B8 /* SVGAnimatedColor.h in Headers */,
 				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
 				0863951613B5FE5700BB344D /* SVGAnimatedPath.h in Headers */,
+				431A2F9C13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25831,6 +25838,7 @@
 				08B5F25513B5FFF2002959EC /* SVGAnimatedPath.cpp in Sources */,
 				376DCCE113B4F966002EBEFC /* TextRun.cpp in Sources */,
 				4331AC7813B6870000A9E5AE /* SVGAnimatedNumberList.cpp in Sources */,
+				431A2F9D13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

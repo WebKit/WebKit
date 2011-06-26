@@ -1,3 +1,55 @@
+2011-06-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatedType should support SVGNumberOptionalNumber animation
+        https://bugs.webkit.org/show_bug.cgi?id=63397
+        
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGAnimatedNumberOptionalNumber.
+        
+        Animations of attributes with type SVGAnimatedNumberOptionalNumber can be interpolated now. This can be used for smooth
+        growing shadows with feGaussianBlur, feDropShadow or other filter effects.
+
+        Tests: svg/animations/svgnumberoptionalnumber-animation-1.html
+               svg/animations/svgnumberoptionalnumber-animation-2.html
+               svg/animations/svgnumberoptionalnumber-animation-3.html
+               svg/animations/svgnumberoptionalnumber-animation-4.html
+
+        * CMakeLists.txt: Added new files to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Make use of attribute type AnimatedNumberOptionalNumber.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedNumberOptionalNumber.cpp: Added. New animator for SVGAnimatedNumberOptionalNumber.
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::SVGAnimatedNumberOptionalNumberAnimator):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::calculateDistance):
+        * svg/SVGAnimatedNumberOptionalNumber.h: Added.
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::~SVGAnimatedNumberOptionalNumberAnimator):
+        * svg/SVGAnimatedType.cpp: Added new type: pair<float, float>.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createNumberOptionalNumber):
+        (WebCore::SVGAnimatedType::numberOptionalNumber):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h: Add new animator to factory.
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
