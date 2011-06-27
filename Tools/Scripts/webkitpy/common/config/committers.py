@@ -84,6 +84,7 @@ contributors_who_are_not_committers = [
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
+    Contributor("Wyatt Carss", "wcarss@chromium.org", "wcarss"),
 ]
 
 
