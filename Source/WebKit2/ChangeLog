@@ -1,5 +1,13 @@
 2011-06-26  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Use a separate file name for Lion's WebKitSystemInterface.
+
+        * Configurations/DebugRelease.xcconfig:
+
+2011-06-26  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Maciej Stachowiak.
 
         <rdar://problem/9679221&9679235> Work around an issue with sandbox.h.
