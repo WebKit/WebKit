@@ -652,7 +652,7 @@ class Manager:
             # FIXME: If we start workers up too quickly, DumpRenderTree appears
             # to thrash on something and time out its first few tests. Until
             # we can figure out what's going on, sleep a bit in between
-            # workers.
+            # workers. This needs a bug filed.
             time.sleep(0.1)
 
         self._printer.print_update("Starting testing ...")

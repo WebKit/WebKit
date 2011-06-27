@@ -143,7 +143,7 @@ class SingleTestRunner:
         return TestResult(self._filename, failures, driver_output.test_time, driver_output.has_stderr())
 
     def _save_baselines(self, driver_output):
-        # Although all test_shell/DumpRenderTree output should be utf-8,
+        # Although all DumpRenderTree output should be utf-8,
         # we do not ever decode it inside run-webkit-tests.  For some tests
         # DumpRenderTree may not output utf-8 text (e.g. webarchives).
         self._save_baseline_data(driver_output.text, ".txt",

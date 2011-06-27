@@ -51,16 +51,22 @@ class MockExecutive2(object):
     def kill_process(self, pid):
         pass
 
-    def run_command(self, arg_list, error_handler=None, return_exit_code=False,
-                    decode_output=False, return_stderr=False):
+    def run_command(self,
+                    args,
+                    cwd=None,
+                    input=None,
+                    error_handler=None,
+                    return_exit_code=False,
+                    return_stderr=True,
+                    decode_output=False):
         if self._exception:
             raise self._exception
         if return_exit_code:
             return self._exit_code
         if self._run_command_fn:
-            return self._run_command_fn(arg_list)
+            return self._run_command_fn(args)
         if self._exit_code and error_handler:
-            script_error = executive.ScriptError(script_args=arg_list,
+            script_error = executive.ScriptError(script_args=args,
                                                  exit_code=self._exit_code,
                                                  output=self._output)
             error_handler(script_error)

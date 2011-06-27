@@ -71,31 +71,20 @@ class Config(object):
     def build_directory(self, configuration):
         """Returns the path to the build directory for the configuration."""
         if configuration:
-            flags = ["--configuration",
-                     self._FLAGS_FROM_CONFIGURATIONS[configuration]]
+            flags = ["--configuration", self.flag_for_configuration(configuration)]
         else:
             configuration = ""
             flags = ["--top-level"]
 
         if not self._build_directories.get(configuration):
-            args = ["perl", self._script_path("webkit-build-directory")] + flags
+            args = ["perl", self.script_path("webkit-build-directory")] + flags
             self._build_directories[configuration] = (
-                self._executive.run_command(args).rstrip())
+                self._executive.run_command(args, cwd=self.webkit_base_dir()).rstrip())
 
         return self._build_directories[configuration]
 
-    def build_dumprendertree(self, configuration):
-        """Builds DRT in the given configuration.
-
-        Returns True if the  build was successful and up-to-date."""
-        flag = self._FLAGS_FROM_CONFIGURATIONS[configuration]
-        exit_code = self._executive.run_command([
-            self._script_path("build-dumprendertree"), flag],
-            return_exit_code=True)
-        if exit_code != 0:
-            _log.error("Failed to build DumpRenderTree")
-            return False
-        return True
+    def flag_for_configuration(self, configuration):
+        return self._FLAGS_FROM_CONFIGURATIONS[configuration]
 
     def default_configuration(self):
         """Returns the default configuration for the user.
@@ -107,15 +96,15 @@ class Config(object):
         if not self._default_configuration:
             self._default_configuration = 'Release'
         if self._default_configuration not in self._FLAGS_FROM_CONFIGURATIONS:
-            _log.warn("Configuration \"%s\" is not a recognized value.\n" %
-                      self._default_configuration)
-            _log.warn("Scripts may fail.  "
-                      "See 'set-webkit-configuration --help'.")
+            _log.warn("Configuration \"%s\" is not a recognized value.\n" % self._default_configuration)
+            _log.warn("Scripts may fail.  See 'set-webkit-configuration --help'.")
         return self._default_configuration
 
     def path_from_webkit_base(self, *comps):
         return self._filesystem.join(self.webkit_base_dir(), *comps)
 
+    # FIXME: We should only have one implementation of this logic,
+    # if scm.find_checkout_root() is broken for Chromium, we should fix (or at least wrap) it!
     def webkit_base_dir(self):
         """Returns the absolute path to the top of the WebKit tree.
 
@@ -133,9 +122,9 @@ class Config(object):
             self._webkit_base_dir = abspath[0:abspath.find('Tools') - 1]
         return self._webkit_base_dir
 
-    def _script_path(self, script_name):
-        return self._filesystem.join(self.webkit_base_dir(), "Tools",
-                                     "Scripts", script_name)
+    def script_path(self, script_name):
+        # This is intentionally relative. Callers should pass the checkout_root/webkit_base_dir to run_command as the cwd.
+        return self._filesystem.join("Tools", "Scripts", script_name)
 
     def _determine_configuration(self):
         # This mirrors the logic in webkitdirs.pm:determineConfiguration().

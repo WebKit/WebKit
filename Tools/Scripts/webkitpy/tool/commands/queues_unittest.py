@@ -166,7 +166,7 @@ class AbstractPatchQueueTest(CommandsTest):
         tool.status_server = MockStatusServer(work_items=[2, 197])
         expected_stdout = "MOCK: fetch_attachment: 2 is not a known attachment id\n"  # A mock-only message to prevent us from making mistakes.
         expected_stderr = "MOCK: release_work_item: None 2\n"
-        patch_id = OutputCapture().assert_outputs(self, queue._next_patch, [], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        patch_id = OutputCapture().assert_outputs(self, queue._next_patch, expected_stdout=expected_stdout, expected_stderr=expected_stderr)
         self.assertEquals(patch_id, None)  # 2 is an invalid patch id
         self.assertEquals(queue._next_patch().id(), 197)
 
