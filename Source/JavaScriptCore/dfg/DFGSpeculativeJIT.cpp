@@ -863,25 +863,23 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutById: {
-        JSValueOperand base(this, node.child1);
+        SpeculateCellOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
-        GPRReg valueGPR = value.gpr();
-        GPRReg baseGPR = base.gpr();
-        flushRegisters();
+        GPRTemporary scratch(this, base);
 
-        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdStrict : operationPutByIdNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
+        cachedPutById(base.gpr(), value.gpr(), scratch.gpr(), node.identifierNumber(), NotDirect);
+        
         noResult(m_compileIndex);
         break;
     }
 
     case PutByIdDirect: {
-        JSValueOperand base(this, node.child1);
+        SpeculateCellOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
-        GPRReg valueGPR = value.gpr();
-        GPRReg baseGPR = base.gpr();
-        flushRegisters();
+        GPRTemporary scratch(this, base);
 
-        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdDirectStrict : operationPutByIdDirectNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
+        cachedPutById(base.gpr(), value.gpr(), scratch.gpr(), node.identifierNumber(), Direct);
+
         noResult(m_compileIndex);
         break;
     }

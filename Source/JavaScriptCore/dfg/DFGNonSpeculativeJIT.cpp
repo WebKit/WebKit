@@ -770,11 +770,14 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case PutById: {
         JSValueOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
+        GPRTemporary scratch(this, base);
         GPRReg valueGPR = value.gpr();
         GPRReg baseGPR = base.gpr();
-        flushRegisters();
+        
+        JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
-        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdStrict : operationPutByIdNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
+        cachedPutById(baseGPR, valueGPR, scratch.gpr(), node.identifierNumber(), NotDirect, notCell);
+
         noResult(m_compileIndex);
         break;
     }
@@ -782,11 +785,14 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case PutByIdDirect: {
         JSValueOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
+        GPRTemporary scratch(this, base);
         GPRReg valueGPR = value.gpr();
         GPRReg baseGPR = base.gpr();
-        flushRegisters();
+        
+        JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
-        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdDirectStrict : operationPutByIdDirectNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
+        cachedPutById(baseGPR, valueGPR, scratch.gpr(), node.identifierNumber(), Direct, notCell);
+
         noResult(m_compileIndex);
         break;
     }

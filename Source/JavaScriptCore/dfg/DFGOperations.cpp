@@ -43,6 +43,7 @@
         "jmp _" STRINGIZE(function) "WithReturnAddress" "\n" \
     );
 #define FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
+#define FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, r8)
 
 namespace JSC { namespace DFG {
 
@@ -282,6 +283,74 @@ void operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValu
 {
     PutPropertySlot slot(false);
     JSValue::decode(encodedBase).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
+}
+
+void operationPutByIdStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdStrictOptimize);
+void operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue base = JSValue::decode(encodedBase);
+    PutPropertySlot slot(true);
+    
+    base.put(exec, *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    if (stubInfo.seen)
+        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, NotDirect);
+    else
+        stubInfo.seen = true;
+}
+
+void operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdNonStrictOptimize);
+void operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue base = JSValue::decode(encodedBase);
+    PutPropertySlot slot(false);
+    
+    base.put(exec, *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    if (stubInfo.seen)
+        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, NotDirect);
+    else
+        stubInfo.seen = true;
+}
+
+void operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectStrictOptimize);
+void operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue base = JSValue::decode(encodedBase);
+    PutPropertySlot slot(true);
+    
+    base.putDirect(exec, *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    if (stubInfo.seen)
+        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, Direct);
+    else
+        stubInfo.seen = true;
+}
+
+void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG5_RETURN_ADDRESS(operationPutByIdDirectNonStrictOptimize);
+void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue base = JSValue::decode(encodedBase);
+    PutPropertySlot slot(false);
+    
+    base.putDirect(exec, *propertyName, value, slot);
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    if (stubInfo.seen)
+        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, Direct);
+    else
+        stubInfo.seen = true;
 }
 
 bool operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

@@ -350,6 +350,47 @@ void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned 
     m_jit.addPropertyAccess(functionCall, checkToCall, callToLoad);
 }
 
+void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
+{
+    JITCompiler::DataLabelPtr structureToCompare;
+    JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::Equal, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    
+    if (slowPathTarget.isSet())
+        slowPathTarget.link(&m_jit);
+
+    silentSpillAllRegisters(InvalidGPRReg, baseGPR, valueGPR);
+    setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(valueGPR, baseGPR);
+    m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR3);
+    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    V_DFGOperation_EJJI optimizedCall;
+    if (m_jit.codeBlock()->isStrictMode()) {
+        if (putKind == Direct)
+            optimizedCall = operationPutByIdDirectStrictOptimize;
+        else
+            optimizedCall = operationPutByIdStrictOptimize;
+    } else {
+        if (putKind == Direct)
+            optimizedCall = operationPutByIdDirectNonStrictOptimize;
+        else
+            optimizedCall = operationPutByIdNonStrictOptimize;
+    }
+    JITCompiler::Call functionCall = appendCallWithExceptionCheck(optimizedCall);
+    silentFillAllRegisters(InvalidGPRReg);
+
+    JITCompiler::Jump handledByC = m_jit.jump();
+    structureCheck.link(&m_jit);
+
+    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+    JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
+
+    intptr_t checkToCall = m_jit.differenceBetween(structureToCompare, functionCall);
+    intptr_t callToStore = m_jit.differenceBetween(functionCall, storeWithPatch);
+
+    handledByC.link(&m_jit);
+
+    m_jit.addPropertyAccess(functionCall, checkToCall, callToStore);
+}
+
 #ifndef NDEBUG
 static const char* dataFormatString(DataFormat format)
 {

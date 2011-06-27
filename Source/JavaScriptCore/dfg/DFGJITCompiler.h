@@ -232,9 +232,9 @@ public:
     void clearSamplingFlag(int32_t flag);
 #endif
 
-    void addPropertyAccess(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoad)
+    void addPropertyAccess(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoadOrStore)
     {
-        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckToCall, deltaCallToLoad));
+        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckToCall, deltaCallToLoadOrStore));
     }
 
 private:
@@ -258,16 +258,16 @@ private:
     Vector<CallRecord> m_calls;
 
     struct PropertyAccessRecord {
-        PropertyAccessRecord(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoad)
+        PropertyAccessRecord(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoadOrStore)
             : m_functionCall(functionCall)
             , m_deltaCheckToCall(deltaCheckToCall)
-            , m_deltaCallToLoad(deltaCallToLoad)
+            , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
         {
         }
 
         JITCompiler::Call m_functionCall;
         intptr_t m_deltaCheckToCall;
-        intptr_t m_deltaCallToLoad;
+        intptr_t m_deltaCallToLoadOrStore;
     };
 
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;

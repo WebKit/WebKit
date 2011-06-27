@@ -29,10 +29,12 @@
 #if ENABLE(DFG_JIT)
 
 #include <dfg/DFGJITCompiler.h>
+#include <dfg/DFGOperations.h>
 
 namespace JSC { namespace DFG {
 
 void dfgRepatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
+void dfgRepatchPutByID(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 
 } } // namespace JSC::DFG
 

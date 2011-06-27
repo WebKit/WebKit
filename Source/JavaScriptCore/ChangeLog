@@ -1,3 +1,33 @@
+2011-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        DFG JIT does not perform put_by_id caching.
+        https://bugs.webkit.org/show_bug.cgi?id=63409
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addPropertyAccess):
+        (JSC::DFG::JITCompiler::PropertyAccessRecord::PropertyAccessRecord):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchByIdSelfAccess):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::appropriatePutByIdFunction):
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::dfgRepatchPutByID):
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-06-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix. One more filed missing during distcheck, for

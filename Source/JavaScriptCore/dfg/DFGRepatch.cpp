@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGOperations.h"
 #include "RepatchBuffer.h"
 
 namespace JSC { namespace DFG {
@@ -39,16 +38,19 @@ static void dfgRepatchCall(CodeBlock* codeblock, CodeLocationCall call, Function
     repatchBuffer.relink(call, newCalleeFunction);
 }
 
-static void dfgRepatchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, size_t offset)
+static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, size_t offset, const FunctionPtr &slowPathFunction, bool compact)
 {
     RepatchBuffer repatchBuffer(codeBlock);
 
     // Only optimize once!
-    repatchBuffer.relink(stubInfo.callReturnLocation, operationGetById);
+    repatchBuffer.relink(stubInfo.callReturnLocation, slowPathFunction);
 
     // Patch the structure check & the offset of the load.
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.u.unset.deltaCheckToCall), structure);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.u.unset.deltaCallToLoad), sizeof(JSValue) * offset);
+    if (compact)
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.u.unset.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
+    else
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.u.unset.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
 }
 
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier&, const PropertySlot& slot, StructureStubInfo& stubInfo)
@@ -76,7 +78,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         if ((slot.cachedPropertyType() != PropertySlot::Value) || ((slot.cachedOffset() * sizeof(JSValue)) > (unsigned)MacroAssembler::MaximumCompactPtrAlignedAddressOffset))
             return false;
 
-        dfgRepatchGetByIdSelf(codeBlock, stubInfo, structure, slot.cachedOffset());
+        dfgRepatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetById, true);
         stubInfo.initGetByIdSelf(*globalData, codeBlock->ownerExecutable(), structure);
         return true;
     }
@@ -90,6 +92,53 @@ void dfgRepatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& pro
     bool cached = tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo);
     if (!cached)
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
+}
+
+static V_DFGOperation_EJJI appropriatePutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
+{
+    if (slot.isStrictMode()) {
+        if (putKind == Direct)
+            return operationPutByIdDirectStrict;
+        return operationPutByIdStrict;
+    }
+    if (putKind == Direct)
+        return operationPutByIdDirectNonStrict;
+    return operationPutByIdNonStrict;
+}
+
+static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier&, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+{
+    CodeBlock* codeBlock = exec->codeBlock();
+    JSGlobalData* globalData = &exec->globalData();
+
+    if (!baseValue.isCell())
+        return false;
+    JSCell* baseCell = baseValue.asCell();
+    Structure* structure = baseCell->structure();
+    if (!slot.isCacheable())
+        return false;
+    if (structure->isUncacheableDictionary())
+        return false;
+
+    // Optimize self access.
+    if (slot.base() == baseValue) {
+        if (slot.type() == PutPropertySlot::NewProperty)
+            return false;
+
+        dfgRepatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), appropriatePutByIdFunction(slot, putKind), false);
+        stubInfo.initPutByIdReplace(*globalData, codeBlock->ownerExecutable(), structure);
+        return true;
+    }
+
+    // FIXME: should support the transition case!
+    return false;
+}
+
+void dfgRepatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+{
+    bool cached = tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind);
+    if (!cached)
+        dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriatePutByIdFunction(slot, putKind));
 }
 
 } } // namespace JSC::DFG

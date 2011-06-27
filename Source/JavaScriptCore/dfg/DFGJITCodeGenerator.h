@@ -501,6 +501,7 @@ protected:
     }
 
     void cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
