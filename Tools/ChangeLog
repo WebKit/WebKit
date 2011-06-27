@@ -1,3 +1,11 @@
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Remove empty directory.
+
+        * Scripts/webkitpy/layout_tests/test_types: Removed.
+
 2011-06-25  Naoki Takano  <honten@chromium.org>
 
         Reviewed by Eric Seidel.
