@@ -422,19 +422,11 @@ void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     RefPtr<FileChooser> chooser = prpFileChooser;
     bool confirm;
     Eina_List* selectedFilenames = 0;
-    Eina_List* suggestedFilenames = 0;
     void* filename;
     Vector<String> filenames;
 
-    for (unsigned i = 0; i < chooser->settings().selectedFiles.size(); i++) {
-        CString str = chooser->settings().selectedFiles[i].utf8();
-        filename = strdup(str.data());
-        suggestedFilenames = eina_list_append(suggestedFilenames, filename);
-    }
-
-    confirm = ewk_view_run_open_panel(m_view, kit(frame), chooser->settings().allowsMultipleFiles, suggestedFilenames, &selectedFilenames);
-    EINA_LIST_FREE(suggestedFilenames, filename)
-        free(filename);
+    CString accept = chooser->settings().acceptTypes.utf8();
+    confirm = ewk_view_run_open_panel(m_view, kit(frame), chooser->settings().allowsMultipleFiles, accept.data(), &selectedFilenames);
 
     if (!confirm)
         return;

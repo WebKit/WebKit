@@ -4006,13 +4006,12 @@ uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, co
  * @param frame Frame in which operation is required.
  * @param allows_multiple_files @c EINA_TRUE when more than one file may be
  * selected, @c EINA_FALSE otherwise
- * @suggested_filenames List of suggested files to select. It's advisable to
- * just ignore this value, since it's a source of security flaw.
+ * @param accept_types accept mime types
  * @selected_filenames List of files selected.
  *
  * @return @EINA_FALSE if user canceled file selection; @EINA_TRUE if confirmed.
  */
-Eina_Bool ewk_view_run_open_panel(Evas_Object* o, Evas_Object* frame, Eina_Bool allows_multiple_files, const Eina_List* suggested_filenames, Eina_List** selected_filenames)
+Eina_Bool ewk_view_run_open_panel(Evas_Object* o, Evas_Object* frame, Eina_Bool allows_multiple_files, const char* accept_types, Eina_List** selected_filenames)
 {
     DBG("o=%p frame=%p allows_multiple_files=%d", o, frame, allows_multiple_files);
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -4024,7 +4023,7 @@ Eina_Bool ewk_view_run_open_panel(Evas_Object* o, Evas_Object* frame, Eina_Bool 
 
     *selected_filenames = 0;
 
-    confirm = sd->api->run_open_panel(sd, frame, allows_multiple_files, suggested_filenames, selected_filenames);
+    confirm = sd->api->run_open_panel(sd, frame, allows_multiple_files, accept_types, selected_filenames);
     if (!confirm && *selected_filenames)
         ERR("Canceled file selection, but selected filenames != 0. Free names before return.");
     return confirm;

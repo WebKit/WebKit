@@ -1,3 +1,21 @@
+2011-06-27  Jongseok Yang  <js45.yang@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Use accept attribute when executing the file picker for input element
+        https://bugs.webkit.org/show_bug.cgi?id=63063
+
+        This patch:
+        - remove the argument "suggested_filenames" from ewk_view_run_open_panel
+        - add the argument "accept" to ewk_view_run_open_panel
+        - get the accept attribute and pass to ewk_view_run_open_panel within runOpenPanel
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::runOpenPanel):
+        * ewk/ewk_view.cpp:
+        (ewk_view_run_open_panel):
+        * ewk/ewk_view.h
+
 2011-06-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix style error.
