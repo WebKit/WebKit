@@ -1,3 +1,15 @@
+2011-06-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove private header files from EWebKit_HEADERS.
+        https://bugs.webkit.org/show_bug.cgi?id=63441
+
+        Remove ewk_tiled_private.h, ewk_tiled_backing_store.h, ewk_tiled_matrix.h,
+        ewk_tiled_model.h and check WTF_USE_SOUP to remove ewk_auth_soup.h.
+
+        * CMakeListsEfl.txt:
+
 2011-06-27  Jongseok Yang  <js45.yang@samsung.com>
 
         Reviewed by Kent Tamura.
