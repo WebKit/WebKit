@@ -101,9 +101,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
             return 1
         return chromium.ChromiumPort.default_child_processes(self)
 
-    def driver_name(self):
-        return "DumpRenderTree"
-
     #
     # PROTECTED METHODS
     #

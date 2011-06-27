@@ -181,9 +181,6 @@ class ChromiumPort(base.Port):
             self._filesystem.rmtree(str(tempdir))
         return result
 
-    def driver_name(self):
-        return "DumpRenderTree"
-
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the
         Chromium source tree and the list of path components in |*comps|."""
