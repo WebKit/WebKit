@@ -29,7 +29,6 @@
 module xml {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=Impl,
         EventTarget,
         NoStaticTables

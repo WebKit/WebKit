@@ -1,3 +1,18 @@
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove LegacyDefaultOptionalArguments from XMLHttpRequest.idl and XMLHttpRequestUpload.idl
+        https://bugs.webkit.org/show_bug.cgi?id=63418
+
+        The XMLHttpRequest.idl interface used to implement the new behavior
+        manually using the RequiresAllArguments attribute.  Now that we have
+        that behavior by default, we can simply remove the
+        LegacyDefaultOptionalArguments attribute.
+
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.idl:
+
 2011-06-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

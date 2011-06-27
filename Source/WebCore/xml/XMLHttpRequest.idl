@@ -29,7 +29,6 @@
 module xml {
 
     interface [
-        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CanBeConstructed,
         CustomConstructFunction,
@@ -72,7 +71,7 @@ module xml {
         [Custom] void open(in DOMString method, in DOMString url, in boolean async, in DOMString user, in DOMString password)
             raises(DOMException);
 
-        [RequiresAllArguments=Raise] void setRequestHeader(in DOMString header, in DOMString value)
+        void setRequestHeader(in DOMString header, in DOMString value)
             raises(DOMException);
 
         // void send();
@@ -87,7 +86,7 @@ module xml {
         // response
         [ConvertNullStringTo=Undefined] DOMString getAllResponseHeaders()
             raises(DOMException);
-        [RequiresAllArguments=Raise, ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
+        [ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
             raises(DOMException);
         readonly attribute [CustomGetter] DOMString responseText // The custom getter implements ConvertNullStringTo=Null
             getter raises(DOMException);
@@ -109,7 +108,7 @@ module xml {
             getter raises(DOMException);
 
         // Extension
-        [RequiresAllArguments=Raise] void overrideMimeType(in DOMString override);
+        void overrideMimeType(in DOMString override);
 
         // EventTarget interface
         void addEventListener(in DOMString type, 
