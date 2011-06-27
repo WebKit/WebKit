@@ -1,5 +1,37 @@
 2011-06-26  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Add [Optional] attributes where appropriate for addEventListener and removeEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=63417
+
+        This patch doesn't actually change behavior because these interfaces
+        have the LegacyDefaultOptionalArguments attribute.  This patch paves
+        the way to removing LegacyDefaultOptionalArguments from some of these
+        interfaces as well as making the project safer for copy-and-pasting
+        these methods into new IDL files that don't have the
+        LegacyDefaultOptionalArguments attribute.
+
+        * bindings/scripts/test/TestObj.idl:
+        * dom/EventTarget.idl:
+        * dom/MediaStream.idl:
+        * dom/MessagePort.idl:
+        * dom/Node.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * notifications/Notification.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * storage/IDBRequest.idl:
+        * storage/IDBTransaction.idl:
+        * svg/SVGElementInstance.idl:
+        * websockets/WebSocket.idl:
+        * workers/AbstractWorker.idl:
+        * workers/WorkerContext.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.idl:
+
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Kent Tamura.
 
         m_formElementsWithFormAttribute doesn't ref the objects it holds

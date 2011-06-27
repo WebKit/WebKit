@@ -340,10 +340,10 @@ module window {
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
                                       in EventListener listener,
-                                      in boolean useCapture);
+                                      in [Optional] boolean useCapture);
         [Custom] void removeEventListener(in DOMString type,
                                           in EventListener listener,
-                                          in boolean useCapture);
+                                          in [Optional] boolean useCapture);
         boolean dispatchEvent(in Event evt)
             raises(EventException);
 
