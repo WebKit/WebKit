@@ -1,3 +1,19 @@
+2011-06-27  Joe Wild  <joseph.wild@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        Crash on www.crave.cnet.com in FrameView::windowClipRect()
+        https://bugs.webkit.org/show_bug.cgi?id=56393
+
+        Check for a null renderer to fix a crash. This situation can
+        arise when external content/plugins is referenced from html
+        elements with style="display:none".
+
+        Test: plugins/hidden-iframe-with-swf-plugin.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+
 2011-06-27  Raymes Khoury  <raymes@chromium.org>
 
         Reviewed by Tony Chang.
