@@ -1,3 +1,9 @@
+2011-06-27  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: updating chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Daily gardening.

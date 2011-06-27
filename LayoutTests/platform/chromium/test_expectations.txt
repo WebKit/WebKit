@@ -4027,4 +4027,5 @@ BUGRNIWA : editing/selection/extend-inside-transforms-backward.html = FAIL PASS
 BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
 
 // This test ASSERTs in skia since it was added.
-BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = CRASH
+BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
+
