@@ -1,3 +1,14 @@
+2011-06-27  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] Add some PLATFORM(EFL) ifdefs to GraphicsContext3D.h
+        https://bugs.webkit.org/show_bug.cgi?id=62959
+
+        Add PLATFORM(EFL) ifdefs to use GraphicsContextInternal.
+
+        * platform/graphics/GraphicsContext3D.h:
+
 2011-06-27  Alexandru Chiculita  <achicu@adobe.com>
 
         Reviewed by Ojan Vafai.

@@ -101,7 +101,7 @@ struct ActiveInfo {
 };
 
 // FIXME: ideally this would be used on all platforms.
-#if PLATFORM(CHROMIUM) || PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(CHROMIUM) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
 class GraphicsContext3DInternal;
 #endif
 
@@ -476,6 +476,11 @@ public:
 #elif PLATFORM(GTK)
     PlatformGraphicsContext3D platformGraphicsContext3D();
     Platform3DObject platformTexture() const { return m_texture; }
+#elif PLATFORM(EFL)
+    PlatformGraphicsContext3D platformGraphicsContext3D() const;
+#if USE(ACCELERATED_COMPOSITING)
+    PlatformLayer* platformLayer() const;
+#endif
 #else
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return NullPlatformGraphicsContext3D; }
     Platform3DObject platformTexture() const { return NullPlatform3DObject; }
@@ -932,7 +937,7 @@ public:
 #endif
 
     // FIXME: ideally this would be used on all platforms.
-#if PLATFORM(CHROMIUM) || PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(CHROMIUM) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     friend class GraphicsContext3DInternal;
     OwnPtr<GraphicsContext3DInternal> m_internal;
 #endif
