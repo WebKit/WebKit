@@ -57,11 +57,6 @@ struct _Ewk_Tiled_Backing_Store_Item {
     struct {
         Evas_Coord x, y, w, h;
     } geometry;
-    struct {
-        Eina_List *process;
-        unsigned long row, col;
-        float zoom;
-    } update;
     Eina_Bool smooth_scale;
 };
 
@@ -104,7 +99,6 @@ struct _Ewk_Tiled_Backing_Store_Data {
     struct {
         Eina_Bool (*cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *area);
         void *data;
-        Eina_List *queue;
         Eina_Bool process_entire_queue;
         Eina_Inlist *pre_render_requests;
         Ecore_Idler *idler;
@@ -377,50 +371,17 @@ static Eina_Bool _ewk_tiled_backing_store_item_process_idler_cb(void *data)
     Ewk_Tiled_Backing_Store_Data *priv = data;
     Ewk_Tiled_Backing_Store_Item *it = NULL;
 
-    while (priv->render.queue) {
-        it = priv->render.queue->data;
-        if (it->tile->zoom == priv->view.tile.zoom) {
-            _ewk_tiled_backing_store_item_request_del(priv, it);
-            it = NULL;
-        } else {
-            unsigned long row, col;
-            float zoom;
-            Ewk_Tile *t;
-            if (it->tile) {
-                double last_used = ecore_loop_time_get();
-                _ewk_tiled_backing_store_tile_dissociate(priv, it, last_used);
-            }
-
-            row = it->update.row;
-            col = it->update.col;
-            zoom = it->update.zoom;
-            t = _ewk_tiled_backing_store_tile_new(priv, col, row, zoom);
-            if (!t) {
-                priv->render.idler = NULL;
-                return EINA_FALSE;
-            }
-
-            _ewk_tiled_backing_store_tile_associate(priv, t, it);
-            it->update.process = NULL;
-            priv->render.queue = eina_list_remove_list(priv->render.queue,
-                                                       priv->render.queue);
-            if (!priv->render.process_entire_queue)
-                break;
-        }
-    }
-
     if (priv->process.pre_cb)
         data = priv->process.pre_cb(priv->process.pre_data, priv->self);
 
     ewk_tile_matrix_updates_process(priv->model.matrix);
 
-    if (!it)
-        _ewk_tiled_backing_store_pre_render_request_process_single(priv);
+    _ewk_tiled_backing_store_pre_render_request_process_single(priv);
 
     if (priv->process.post_cb)
         priv->process.post_cb(priv->process.post_data, data, priv->self);
 
-    if (!priv->render.queue && !priv->render.pre_render_requests) {
+    if (!priv->render.pre_render_requests) {
         priv->render.idler = NULL;
         return EINA_FALSE;
     }
@@ -443,29 +404,6 @@ static inline void _ewk_tiled_backing_store_item_process_idler_start(Ewk_Tiled_B
         return;
     priv->render.idler = ecore_idler_add(
         _ewk_tiled_backing_store_item_process_idler_cb, priv);
-}
-
-static inline void _ewk_tiled_backing_store_item_request_del(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it)
-{
-    priv->render.queue = eina_list_remove_list(priv->render.queue,
-                                               it->update.process);
-    it->update.process = NULL;
-}
-
-static inline void _ewk_tiled_backing_store_item_request_add(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it, int m_col, int m_row, float zoom)
-{
-    if (it->update.process)
-        return;
-
-    it->update.col = m_col;
-    it->update.row = m_row;
-    it->update.zoom = zoom;
-
-    priv->render.queue = eina_list_append(priv->render.queue, it);
-    it->update.process = eina_list_last(priv->render.queue);
-
-    if (!priv->render.suspend)
-        _ewk_tiled_backing_store_item_process_idler_start(priv);
 }
 
 static Eina_Bool _ewk_tiled_backing_store_disable_render(Ewk_Tiled_Backing_Store_Data *priv)
@@ -501,23 +439,11 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
         || (unsigned long)(m_col) >= priv->model.cur.cols
         || (unsigned long)(m_row) >= priv->model.cur.rows) {
 
-        if (it->tile) {
+        if (it->tile)
             _ewk_tiled_backing_store_tile_dissociate(priv, it, last_used);
-            if (it->update.process)
-                _ewk_tiled_backing_store_item_request_del(priv, it);
-        }
     } else {
         Ewk_Tile *t;
         const float zoom = priv->view.tile.zoom;
-
-        if (it->update.process) {
-            if (it->update.row == (unsigned long)(m_row)
-                && it->update.col == (unsigned long)(m_col)
-                && it->update.zoom == zoom)
-                return EINA_TRUE;
-
-            _ewk_tiled_backing_store_item_request_del(priv, it);
-        }
 
         if (it->tile) {
             Ewk_Tile *old = it->tile;
@@ -526,8 +452,7 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
                 || old->zoom != zoom) {
                 _ewk_tiled_backing_store_tile_dissociate(priv, it,
                                                          last_used);
-                if (it->update.process)
-                    _ewk_tiled_backing_store_item_request_del(priv, it);
+
             } else if (old->row == (unsigned long)(m_row)
                        && old->col == (unsigned long)(m_col)
                        && old->zoom == zoom)
@@ -552,12 +477,10 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
                 _ewk_tiled_backing_store_tile_associate(priv, t, it);
             }
         } else if (t != it->tile) {
-            if (!it->update.process) {
-                if (it->tile)
-                    _ewk_tiled_backing_store_tile_dissociate(priv,
+            if (it->tile)
+                _ewk_tiled_backing_store_tile_dissociate(priv,
                                                              it, last_used);
-                _ewk_tiled_backing_store_tile_associate(priv, t, it);
-            }
+            _ewk_tiled_backing_store_tile_associate(priv, t, it);
         }
 
       end:
@@ -583,7 +506,7 @@ static Ewk_Tiled_Backing_Store_Item *_ewk_tiled_backing_store_item_add(Ewk_Tiled
     y = priv->view.offset.base.y + priv->view.y + th  *row;
 
     it->tile = NULL;
-    it->update.process = NULL;
+
     it->smooth_scale = priv->view.tile.zoom_weak_smooth_scale;
     _ewk_tiled_backing_store_item_move(it, x, y);
     _ewk_tiled_backing_store_item_resize(it, tw, th);
@@ -601,8 +524,7 @@ static void _ewk_tiled_backing_store_item_del(Ewk_Tiled_Backing_Store_Data *priv
         double last_used = ecore_loop_time_get();
         _ewk_tiled_backing_store_tile_dissociate(priv, it, last_used);
     }
-    if (it->update.process)
-        _ewk_tiled_backing_store_item_request_del(priv, it);
+
     free(it);
 }
 

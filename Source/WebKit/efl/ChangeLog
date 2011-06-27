@@ -1,3 +1,20 @@
+2011-06-27  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Remove dead code related with Ewk_Tiled_Backing_Store_Item's update field.
+        https://bugs.webkit.org/show_bug.cgi?id=62967
+
+        As some code do not affect any logical flow of tiled backing store except condition check,
+        I would like to clean dead code related with Ewk_Tiled_Backing_Store_Item's update field
+        and Ewk_Tiled_Backing_Store_Data's queue field 
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_item_process_idler_cb):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_del):
+
 2011-06-26  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.
