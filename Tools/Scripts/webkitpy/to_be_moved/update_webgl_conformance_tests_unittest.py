@@ -30,7 +30,7 @@
 """Unit tests for update_webgl_conformance_tests."""
 
 import unittest
-from webkitpy.layout_tests import update_webgl_conformance_tests as webgl
+from webkitpy.to_be_moved import update_webgl_conformance_tests as webgl
 
 
 def construct_script(name):
