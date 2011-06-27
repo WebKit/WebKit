@@ -1,3 +1,24 @@
+2011-06-27  Raymes Khoury  <raymes@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        WebCore fails to compile in thumb mode when neon instructions are
+        enabled.
+
+        There are two files (FELightingNEON.cpp and FEGaussianBlur.cpp)
+        which fail to build when -mthumb is passed to gcc. These contain inline
+        assembly for neon instructions on arm. This patch forces the -marm flag
+        to be passed when compiling these files to work around this.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62916
+
+        Built WebKit in Chromium and checked that -marm is passed
+        only when building these files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62916
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-06-27  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.

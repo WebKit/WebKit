@@ -1315,6 +1315,9 @@
         ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
         ['exclude', 'platform/Theme\\.cpp$'],
         ['exclude', 'platform/graphics/ANGLEWebKitBridge\\.(cpp|h)$'],
+        # *NEON.cpp files need special compile options.
+        # They are moved to the webcore_arm_neon target.
+        ['exclude', 'platform/graphics/filters/arm/.*NEON\\.(cpp|h)'],
         ['exclude', 'platform/image-encoders/JPEGImageEncoder\\.(cpp|h)$'],
         ['exclude', 'platform/image-encoders/PNGImageEncoder\\.(cpp|h)$'],
         ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
@@ -1474,6 +1477,29 @@
             # SystemInfo.cpp is useful and we don't want to copy it.
             ['include', 'platform/win/SystemInfo\\.cpp$'],
           ],
+        }],
+      ],
+    },
+    # The *NEON.cpp files fail to compile when -mthumb is passed. Force
+    # them to build in ARM mode.
+    # See https://bugs.webkit.org/show_bug.cgi?id=62916.
+    {
+      'target_name': 'webcore_arm_neon',
+      'type': 'static_library',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'hard_dependency': 1,
+      'sources': [
+        '<@(webcore_files)',
+      ],
+      'sources/': [
+        ['exclude', '.*'],
+        ['include', 'platform/graphics/filters/arm/.*NEON\\.(cpp|h)'],
+      ],
+      'conditions': [
+        ['OS=="linux" and target_arch=="arm"', {
+          'cflags': ['-marm'],
         }],
       ],
     },
@@ -1677,6 +1703,7 @@
       'target_name': 'webcore',
       'type': 'none',
       'dependencies': [
+        'webcore_arm_neon',
         'webcore_html',
         'webcore_platform',
         'webcore_remaining',
