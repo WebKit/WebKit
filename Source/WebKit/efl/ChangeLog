@@ -1,3 +1,16 @@
+2011-06-26  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Functions needing Ewk_View_Private_Data as parameter are not part of public API.
+        https://bugs.webkit.org/show_bug.cgi?id=62688
+
+        Move functions which use Ewk_View_Private_Data and may not be required by
+        applications to ewk_private.h.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.h:
+
 2011-06-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

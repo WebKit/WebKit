@@ -506,13 +506,6 @@ EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_set(Evas_Object* o, E
 /* to be used by subclass implementations */
 EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o);
 
-EAPI const Eina_Rectangle *ewk_view_repaints_get(const Ewk_View_Private_Data *priv, size_t *count);
-EAPI const Ewk_Scroll_Request *ewk_view_scroll_requests_get(const Ewk_View_Private_Data *priv, size_t *count);
-
-EAPI void ewk_view_repaint_add(Ewk_View_Private_Data *priv, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
-
-EAPI void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data *priv);
-
 EAPI void ewk_view_scrolls_process(Ewk_View_Smart_Data *sd);
 
 /**

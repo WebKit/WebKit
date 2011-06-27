@@ -122,14 +122,19 @@ Ewk_History *ewk_history_new(WebCore::BackForwardListImpl *history);
 void ewk_history_free(Ewk_History *history);
 
 #if ENABLE(CONTEXT_MENUS)
-
 Ewk_Context_Menu *ewk_context_menu_new(Evas_Object *view, WebCore::ContextMenuController *controller);
 Eina_Bool ewk_context_menu_free(Ewk_Context_Menu *o);
 void ewk_context_menu_item_append(Ewk_Context_Menu *o, WebCore::ContextMenuItem& core);
 Ewk_Context_Menu *ewk_context_menu_custom_get(Ewk_Context_Menu *o);
 void ewk_context_menu_show(Ewk_Context_Menu *o);
-
 #endif
+
+const Eina_Rectangle *ewk_view_repaints_get(const Ewk_View_Private_Data *priv, size_t *count);
+const Ewk_Scroll_Request *ewk_view_scroll_requests_get(const Ewk_View_Private_Data *priv, size_t *count);
+
+void ewk_view_repaint_add(Ewk_View_Private_Data *priv, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+
+void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data *priv);
 
 Ewk_Window_Features *ewk_window_features_new_from_core(const WebCore::WindowFeatures* core);
 
