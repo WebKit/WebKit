@@ -1,3 +1,13 @@
+2011-06-27  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed.
+
+        Chromium rebaselines for my commit r89864
+
+        * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-actual.png: Added.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.png: Added.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.txt: Added.
+
 2011-06-27  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Simon Fraser.
