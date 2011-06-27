@@ -1,3 +1,58 @@
+2011-06-27  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Chromium rebaselines for my commit r89836.
+
+        * platform/chromium-linux/fast/block/float/intruding-float-add-in-sibling-block-on-static-position-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/intruding-float-add-in-sibling-block-on-static-position2-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-float-add-in-static-position-block-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-float-add-in-static-position-block2-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-float-remove-from-absolute-position-block-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-float-remove-from-absolute-position-block2-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-float-remove-from-fixed-position-block-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-float-remove-from-fixed-position-block2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/intruding-float-add-in-sibling-block-on-static-position-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/intruding-float-add-in-sibling-block-on-static-position2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/overhanging-float-add-in-static-position-block-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/overhanging-float-add-in-static-position-block2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/overhanging-float-remove-from-absolute-position-block-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/overhanging-float-remove-from-absolute-position-block2-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/overhanging-float-remove-from-fixed-position-block-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/overhanging-float-remove-from-fixed-position-block2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-add-in-sibling-block-on-static-position-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-add-in-sibling-block-on-static-position-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-add-in-sibling-block-on-static-position2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-add-in-sibling-block-on-static-position2-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-add-in-static-position-block-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-add-in-static-position-block-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-add-in-static-position-block2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-add-in-static-position-block2-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-absolute-position-block-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-absolute-position-block-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-absolute-position-block2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-absolute-position-block2-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-fixed-position-block-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-fixed-position-block-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-fixed-position-block2-expected.png: Added.
+        * platform/chromium-win/fast/block/float/overhanging-float-remove-from-fixed-position-block2-expected.txt: Added.
+
 2011-06-27  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.
