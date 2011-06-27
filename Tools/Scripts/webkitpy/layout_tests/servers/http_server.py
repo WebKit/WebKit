@@ -84,7 +84,7 @@ class Lighttpd(http_server_base.HttpServerBase):
 
     def _prepare_config(self):
         base_conf_file = self._port_obj.path_from_webkit_base('Tools',
-            'Scripts', 'webkitpy', 'layout_tests', 'port', 'lighttpd.conf')
+            'Scripts', 'webkitpy', 'layout_tests', 'servers', 'lighttpd.conf')
         out_conf_file = os.path.join(self._output_dir, 'lighttpd.conf')
         time_str = time.strftime("%d%b%Y-%H%M%S")
         access_file_name = "access.log-" + time_str + ".txt"

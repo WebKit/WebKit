@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Move server config files to webkitpy.layout_tests.servers
+        https://bugs.webkit.org/show_bug.cgi?id=63436
+
+        The config files belong with the servers.
+
+        * Scripts/webkitpy/layout_tests/port/httpd2.pem: Removed.
+        * Scripts/webkitpy/layout_tests/port/lighttpd.conf: Removed.
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/httpd2.pem: Copied from Tools/Scripts/webkitpy/layout_tests/port/httpd2.pem.
+        * Scripts/webkitpy/layout_tests/servers/lighttpd.conf: Copied from Tools/Scripts/webkitpy/layout_tests/port/lighttpd.conf.
+
+2011-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move websocket_server and http_server to webkitpy.layout_package.servers
         https://bugs.webkit.org/show_bug.cgi?id=63434
 
