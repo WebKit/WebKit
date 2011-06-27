@@ -160,7 +160,7 @@ class QueueEngineTest(unittest.TestCase):
         if not termination_message:
             termination_message = "Delegate terminated queue."
         expected_stderr = "\n%s\n" % termination_message
-        OutputCapture().assert_outputs(self, engine.run, [], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, engine.run, expected_stderr=expected_stderr)
 
     def _test_terminating_queue(self, exception, termination_message):
         work_item_index = LoggingDelegate.expected_callbacks.index('process_work_item')

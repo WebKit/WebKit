@@ -28,19 +28,25 @@
 import unittest
 
 from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system.outputcapture import OutputCapture
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.layout_tests.port import port_testcase
 
+from webkitpy.tool.mocktool import MockExecutive
+from webkitpy.tool.mocktool import MockOptions
+
 
 class TestWebKitPort(WebKitPort):
     def __init__(self, symbol_list=None, feature_list=None,
-                 expectations_file=None, skips_file=None, **kwargs):
+                 expectations_file=None, skips_file=None,
+                 executive=None, **kwargs):
         self.symbol_list = symbol_list
         self.feature_list = feature_list
         self.expectations_file = expectations_file
         self.skips_file = skips_file
-        WebKitPort.__init__(self, **kwargs)
+        executive = executive or MockExecutive(should_log=False)
+        WebKitPort.__init__(self, executive=executive, **kwargs)
 
     def _runtime_feature_list(self):
         return self.feature_list
@@ -91,8 +97,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
         self.assertEqual(result_directories, expected_directories)
 
     def test_skipped_layout_tests(self):
-        self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(),
-                         set(["media"]))
+        self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(), set(["media"]))
 
     def test_test_expectations(self):
         # Check that we read both the expectations file and anything in a
@@ -109,6 +114,21 @@ class WebKitPortTest(port_testcase.PortTestCase):
 BUG_SKIPPED SKIP : fast/html/keygen.html = FAIL
 BUG_SKIPPED SKIP : media = FAIL""")
 
+    def test_build_driver(self):
+        output = OutputCapture()
+        port = TestWebKitPort()
+        # Delay setting _executive to avoid logging during construction
+        port._executive = MockExecutive(should_log=True)
+        port._options = MockOptions(configuration="Release")  # This should not be necessary, but I think TestWebKitPort is actually reading from disk (and thus detects the current configuration).
+        expected_stderr = "MOCK run_command: ['/Projects/WebKit/Tools/Scripts/build-dumprendertree', '--release']\n"
+        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
-if __name__ == '__main__':
-    unittest.main()
+        # Make sure when passed --webkit-test-runner web build the right tool.
+        port._options = MockOptions(webkit_test_runner=True, configuration="Release")
+        expected_stderr = "MOCK run_command: ['/Projects/WebKit/Tools/Scripts/build-webkittestrunner', '--release']\n"
+        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
+
+        # Make sure that failure to build returns False.
+        port._executive = MockExecutive(should_log=True, should_throw=True)
+        expected_stderr = "MOCK run_command: ['/Projects/WebKit/Tools/Scripts/build-webkittestrunner', '--release']\n"
+        self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
