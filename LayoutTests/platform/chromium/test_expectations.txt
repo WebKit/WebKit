@@ -4029,3 +4029,5 @@ BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
 // This test ASSERTs in skia since it was added.
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
 
+// Caused by http://trac.webkit.org/changeset/89733.
+BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
