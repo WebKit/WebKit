@@ -30,6 +30,8 @@ function WebKitBuildbot() {
 WebKitBuildbot.prototype = {
     parseBuildName: function(buildName) {
         var match = /^r(\d+) \((\d+)\)$/.exec(buildName);
+        if (!match)
+            return null;
         return {
             revision: parseInt(match[1], 10),
             buildNumber: parseInt(match[2], 10),

@@ -1,3 +1,27 @@
+2011-06-27  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures load build names from build.webkit.org/old-results too
+
+        Build results are periodically moved from results to old-results. This change makes those
+        builds still visible to TestFailures.
+
+        Fixes <http://webkit.org/b/63453> TestFailures page doesn't show information for builds that
+        have been moved to build.webkit.org/old-results
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getBuildNames): Extracted code to parse build names from a
+        build.webkit.org directory listing into a separate function. Instead of omitting .zip files,
+        we now only include directory entries whose names are parseable as build names (since
+        old-results sometimes contains other random files/directories from who knows what). We now
+        fetch both results and old-results (with a FIXME about loading old-results on demand),
+        extract build names from each, and concatenate the two sets of names.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.parseBuildName): Changed to return null when the build name isn't
+        parseable, rather than throwing an exception.
+
 2011-06-26  Adam Roben  <aroben@apple.com>
 
         Store analyzed history directly in LayoutTestHistoryAnalyzer instead of in a generic cache

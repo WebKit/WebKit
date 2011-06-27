@@ -177,19 +177,28 @@ Builder.prototype = {
         }
 
         var self = this;
-        getResource(this.buildbot.baseURL + 'results/' + this.name, function(xhr) {
+
+        function buildNamesFromDirectoryXHR(xhr) {
             var root = document.createElement('html');
             root.innerHTML = xhr.responseText;
 
             var buildNames = Array.prototype.map.call(root.querySelectorAll('td:first-child > a > b'), function(elem) {
                 return elem.innerText.replace(/\/$/, '');
             }).filter(function(filename) {
-                return !/\.zip$/.test(filename);
+                return self.buildbot.parseBuildName(filename);
             });
             buildNames.reverse();
 
-            self._cache[cacheKey] = buildNames;
-            callback(buildNames);
+            return buildNames;
+        }
+
+        getResource(self.buildbot.baseURL + 'results/' + self.name, function(xhr) {
+            // FIXME: It would be better for performance if we could avoid loading old-results until needed.
+            getResource(self.buildbot.baseURL + 'old-results/' + self.name, function(oldXHR) {
+                var buildNames = buildNamesFromDirectoryXHR(xhr).concat(buildNamesFromDirectoryXHR(oldXHR));
+                self._cache[cacheKey] = buildNames;
+                callback(buildNames);
+            });
         });
     },
 };
