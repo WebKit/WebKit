@@ -44,13 +44,13 @@
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerSorter.h"
+#include "cc/CCLayerTreeHost.h"
 #include "cc/CCPluginLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if USE(CG)
@@ -66,14 +66,16 @@ namespace WebCore {
 
 class CCHeadsUpDisplay;
 class CCLayerImpl;
+class CCLayerTreeHostCommitter;
+class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
 class LayerPainterChromium;
 
 // Class that handles drawing of composited render layers using GL.
-class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
+class LayerRendererChromium : public CCLayerTreeHost {
 public:
-    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
+    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHostClient*, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
 
     ~LayerRendererChromium();
 
@@ -88,7 +90,8 @@ public:
     void setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
 
     // updates and draws the current layers onto the backbuffer
-    void updateAndDrawLayers();
+    virtual void updateLayers();
+    void drawLayers();
 
     // Set by WebViewImpl when animation callbacks are running.
     // FIXME: When we move scheduling into the compositor, we can remove this flag.
@@ -156,14 +159,17 @@ public:
 #ifndef NDEBUG
     static bool s_inPaintLayerContents;
 #endif
+protected:
+    virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy();
+
 private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
     typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
 
-    // FIXME: This needs to be moved to the CCViewImpl when that class exists.
+    // FIXME: This needs to be moved to the CCLayerTreeHostImpl when that class exists.
     RefPtr<CCLayerImpl> m_rootCCLayerImpl;
 
-    LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
+    LayerRendererChromium(CCLayerTreeHostClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
 
     void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
@@ -209,6 +215,8 @@ private:
 
     bool m_hardwareCompositing;
     bool m_accelerateDrawing;
+
+    OwnPtr<LayerList> m_computedRenderSurfaceLayerList;
 
     RenderSurfaceChromium* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;

@@ -22,60 +22,56 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CCLayerTreeHostImpl_h
+#define CCLayerTreeHostImpl_h
 
-#include "CCThread.h"
-
-#include "LayerRendererChromium.h"
-#include "TraceEvent.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
+#include "cc/CCThread.h"
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-using namespace WTF;
+// Provides scheduling infrastructure for a CCLayerTreeHostImpl
+class CCLayerTreeHostImplClient  {
+public:
+    virtual void postDrawLayersTaskOnCCThread() = 0;
+    virtual void requestFrameAndCommitOnCCThread(double frameBeginTime) = 0;
 
-CCThread::CCThread()
-{
-    MutexLocker lock(m_threadCreationMutex);
-    m_threadID = createThread(CCThread::compositorThreadStart, this, "Chromium Compositor");
-}
+protected:
+    virtual ~CCLayerTreeHostImplClient() { }
+};
 
-CCThread::~CCThread()
-{
-    m_queue.kill();
+// CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
+class CCLayerTreeHostImpl {
+    WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
+public:
+    explicit CCLayerTreeHostImpl(CCLayerTreeHostImplClient*);
+    virtual ~CCLayerTreeHostImpl();
 
-    // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
-    m_threadID = 0;
-}
+    virtual void beginCommit();
+    virtual void commitComplete();
 
-void CCThread::postTask(PassOwnPtr<Task> task)
-{
-    m_queue.append(task);
-}
+    void drawLayers();
+    virtual void drawLayersAndPresent() = 0;
 
-void* CCThread::compositorThreadStart(void* userdata)
-{
-    CCThread* ccThread = static_cast<CCThread*>(userdata);
-    return ccThread->runLoop();
-}
+    int frameNumber() const { return m_frameNumber; }
 
-void* CCThread::runLoop()
-{
-    TRACE_EVENT("CCThread::runLoop", this, 0);
-    {
-        // Wait for CCThread::start() to complete to have m_threadID
-        // established before starting the main loop.
-        MutexLocker lock(m_threadCreationMutex);
-    }
+    void setNeedsRedraw();
+    void setNeedsCommitAndRedraw();
 
-    while (OwnPtr<Task> task = m_queue.waitForMessage())
-        task->performTask();
+    int sourceFrameNumber() const { return m_sourceFrameNumber; }
+    void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
-    return 0;
-}
+protected:
+    int m_sourceFrameNumber;
+    int m_frameNumber;
 
-}
+private:
+    CCLayerTreeHostImplClient* m_client;
+    bool m_commitPending;
+    bool m_redrawPending;
+};
+
+};
+
+#endif

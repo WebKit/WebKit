@@ -47,6 +47,9 @@ class WebString;
 struct WebPoint;
 template <typename T> class WebVector;
 
+// FIXME: remove this define once render_widget has been changed to issue threaded compositor calls
+#define WEBWIDGET_HAS_ANIMATE_CHANGES 1
+
 class WebWidget {
 public:
     // This method closes and deletes the WebWidget.
@@ -68,15 +71,17 @@ public:
     // willStartLiveResize.
     virtual void willEndLiveResize() { }
 
-    // Called to update imperative animation state.  This should be called before
-    // paint, although the client can rate-limit these calls.
-    virtual void animate() { }
+    // Called to update imperative animation state. This should be called before
+    // paint, although the client can rate-limit these calls. When
+    // frameBeginTime is 0.0, the WebWidget will determine the frame begin time
+    // itself.
+    virtual void animate(double frameBeginTime) { }
 
     // Called to layout the WebWidget.  This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
     virtual void layout() { }
 
-    // Called to paint the rectangular region within the WebWidget 
+    // Called to paint the rectangular region within the WebWidget
     // onto the specified canvas at (viewPort.x,viewPort.y). You MUST call
     // Layout before calling this method.  It is okay to call paint
     // multiple times once layout has been called, assuming no other
@@ -85,12 +90,15 @@ public:
     // warranted before painting again).
     virtual void paint(WebCanvas*, const WebRect& viewPort) { }
 
-    // Triggers compositing of the current layers onto the screen.
-    // The finish argument controls whether the compositor will wait for the
-    // GPU to finish rendering before returning. You MUST call Layout
-    // before calling this method, for the same reasons described in
-    // the paint method above.
-    virtual void composite(bool finish) { }
+    // In non-threaded compositing mode, triggers compositing of the current
+    // layers onto the screen. You MUST call Layout before calling this method, for the same
+    // reasons described in the paint method above
+    //
+    // In threaded compositing mode, indicates that the widget should update
+    // itself, for example due to window damage. The redraw will begin
+    // asynchronously and perform layout and animation internally. Do not call
+    // animate or layout in this case.
+    virtual void composite(bool finish) = 0;
 
     // Called to inform the WebWidget of a change in theme.
     // Implementors that cache rendered copies of widgets need to re-render

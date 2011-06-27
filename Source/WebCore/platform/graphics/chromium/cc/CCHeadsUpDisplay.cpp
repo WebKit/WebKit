@@ -247,6 +247,18 @@ void CCHeadsUpDisplay::onPresent()
     m_currentFrameNumber += 1;
 }
 
+void CCHeadsUpDisplay::setShowFPSCounter(bool show)
+{
+    m_showFPSCounter = show;
+    m_layerRenderer->setNeedsRedraw();
+}
+
+void CCHeadsUpDisplay::setShowPlatformLayerTree(bool show)
+{
+    m_showPlatformLayerTree = show;
+    m_layerRenderer->setNeedsRedraw();
+}
+
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

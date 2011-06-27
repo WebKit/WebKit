@@ -49,13 +49,15 @@ public:
 
     ~CCHeadsUpDisplay();
 
+    int currentFrameNumber() const { return m_currentFrameNumber; }
+
     void onFrameBegin(double timestamp);
     void onPresent();
 
-    void setShowFPSCounter(bool enable) { m_showFPSCounter = enable; }
+    void setShowFPSCounter(bool enable);
     bool showFPSCounter() const { return m_showFPSCounter; }
 
-    void setShowPlatformLayerTree(bool enable) { m_showPlatformLayerTree = enable; }
+    void setShowPlatformLayerTree(bool enable);
     bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
 
     bool enabled() const { return m_showPlatformLayerTree || m_showFPSCounter; }

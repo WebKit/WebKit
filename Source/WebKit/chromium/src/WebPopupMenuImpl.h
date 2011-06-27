@@ -65,7 +65,7 @@ public:
     virtual void willStartLiveResize();
     virtual void resize(const WebSize&);
     virtual void willEndLiveResize();
-    virtual void animate();
+    virtual void animate(double frameBeginTime);
     virtual void layout();
     virtual void paint(WebCanvas* canvas, const WebRect& rect);
     virtual void themeChanged();

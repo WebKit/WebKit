@@ -24,58 +24,21 @@
 
 #include "config.h"
 
-#include "CCThread.h"
+#include "cc/CCLayerTreeHostCommitter.h"
 
-#include "LayerRendererChromium.h"
-#include "TraceEvent.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
+#include "cc/CCLayerTreeHost.h"
+#include "cc/CCLayerTreeHostImpl.h"
 
 namespace WebCore {
 
-using namespace WTF;
-
-CCThread::CCThread()
+PassOwnPtr<CCLayerTreeHostCommitter> CCLayerTreeHostCommitter::create()
 {
-    MutexLocker lock(m_threadCreationMutex);
-    m_threadID = createThread(CCThread::compositorThreadStart, this, "Chromium Compositor");
+    return adoptPtr(new CCLayerTreeHostCommitter());
 }
 
-CCThread::~CCThread()
+void CCLayerTreeHostCommitter::commit(CCLayerTreeHost* host, CCLayerTreeHostImpl* hostImpl)
 {
-    m_queue.kill();
-
-    // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
-    m_threadID = 0;
-}
-
-void CCThread::postTask(PassOwnPtr<Task> task)
-{
-    m_queue.append(task);
-}
-
-void* CCThread::compositorThreadStart(void* userdata)
-{
-    CCThread* ccThread = static_cast<CCThread*>(userdata);
-    return ccThread->runLoop();
-}
-
-void* CCThread::runLoop()
-{
-    TRACE_EVENT("CCThread::runLoop", this, 0);
-    {
-        // Wait for CCThread::start() to complete to have m_threadID
-        // established before starting the main loop.
-        MutexLocker lock(m_threadCreationMutex);
-    }
-
-    while (OwnPtr<Task> task = m_queue.waitForMessage())
-        task->performTask();
-
-    return 0;
+    hostImpl->setSourceFrameNumber(host->frameNumber());
 }
 
 }
