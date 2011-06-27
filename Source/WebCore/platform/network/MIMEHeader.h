@@ -46,6 +46,7 @@ public:
         QuotedPrintable,
         Base64,
         SevenBit,
+        Binary,
         Unknown
     };
 

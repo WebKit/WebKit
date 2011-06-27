@@ -146,18 +146,48 @@ PassRefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHea
     RefPtr<SharedBuffer> content = SharedBuffer::create();
     const bool checkBoundary = !endOfPartBoundary.isEmpty();
     bool endOfPartReached = false;
-    String line;
-    while (!(line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
-        if (checkBoundary && (line == endOfPartBoundary || line == endOfDocumentBoundary)) {
-            endOfArchiveReached = (line == endOfDocumentBoundary);
-            endOfPartReached = true;
-            break;
+    if (mimeHeader.contentTransferEncoding() == MIMEHeader::Binary) {
+        if (!checkBoundary) {
+            LOG_ERROR("Binary contents requires end of part");
+            return 0;
         }
-        // Note that we use line.utf8() and not line.ascii() as ascii turns special characters (such as tab, line-feed...) into '?'.
-        content->append(line.utf8().data(), line.length());
-        if (mimeHeader.contentTransferEncoding() == MIMEHeader::QuotedPrintable) {
-            // The line reader removes the \r\n, but we need them for the content in this case as the QuotedPrintable decoder expects CR-LF terminated lines.
-            content->append("\r\n", 2);
+        m_lineReader.setSeparator(endOfPartBoundary.utf8().data());
+        Vector<char> part;
+        if (!m_lineReader.nextChunk(part)) {
+            LOG_ERROR("Binary contents requires end of part");
+            return 0;
+         }
+         content->append(part);
+         m_lineReader.setSeparator("\r\n");
+         Vector<char> nextChars;
+         if (m_lineReader.peek(nextChars, 2) != 2) {
+             LOG_ERROR("Invalid seperator.");
+             return 0;
+         }
+         endOfPartReached = true;
+         ASSERT(nextChars.size() == 2);
+         endOfArchiveReached = (nextChars[0] == '-' && nextChars[1] == '-');
+         if (!endOfArchiveReached) {
+             String line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback();
+             if (!line.isEmpty()) {
+                 LOG_ERROR("No CRLF at end of binary section.");
+                 return 0;
+             }
+         }
+    } else {
+        String line;
+        while (!(line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
+            endOfArchiveReached = (line == endOfDocumentBoundary);
+            if (checkBoundary && (line == endOfPartBoundary || endOfArchiveReached)) {
+                endOfPartReached = true;
+                break;
+            }
+            // Note that we use line.utf8() and not line.ascii() as ascii turns special characters (such as tab, line-feed...) into '?'.
+            content->append(line.utf8().data(), line.length());
+            if (mimeHeader.contentTransferEncoding() == MIMEHeader::QuotedPrintable) {
+                // The line reader removes the \r\n, but we need them for the content in this case as the QuotedPrintable decoder expects CR-LF terminated lines.
+                content->append("\r\n", 2);
+            }
         }
     }
     if (!endOfPartReached && checkBoundary) {
@@ -177,6 +207,7 @@ PassRefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHea
         quotedPrintableDecode(content->data(), content->size(), data);
         break;
     case MIMEHeader::SevenBit:
+    case MIMEHeader::Binary:
         data.append(content->data(), content->size());
         break;
     default:

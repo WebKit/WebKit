@@ -49,8 +49,12 @@ public:
     static PassRefPtr<MHTMLArchive> create(const KURL&, SharedBuffer*);
 
     static PassRefPtr<SharedBuffer> generateMHTMLData(Page*);
+    // Binary encoding results in smaller MHTML files but they might not work in other browsers.
+    static PassRefPtr<SharedBuffer> generateMHTMLDataUsingBinaryEncoding(Page*);
 
 private:
+    static PassRefPtr<SharedBuffer> generateMHTMLData(Page*, bool useBinaryEncoding);
+
     friend class MHTMLParser;
     MHTMLArchive();
 };

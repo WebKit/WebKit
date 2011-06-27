@@ -61,6 +61,10 @@ public:
     // Serializes the WebView contents to a MHTML representation.
     WEBKIT_API static WebCString serializeToMHTML(WebView*);
 
+    // Similar to serializeToMHTML but uses binary encoding for the MHTML parts.
+    // This results in a smaller MHTML file but it might not be supported by other browsers.
+    WEBKIT_API static WebCString serializeToMHTMLUsingBinaryEncoding(WebView*);
+
     // IMPORTANT:
     // The API below is an older implementation of a pageserialization that
     // will be removed soon.

@@ -123,6 +123,8 @@ MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(const String& text
         return QuotedPrintable;
     if (encoding == "7bit")
         return SevenBit;
+    if (encoding == "binary")
+        return Binary;
     LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.ascii().data());
     return Unknown;
 }

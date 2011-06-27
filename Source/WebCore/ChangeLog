@@ -1,3 +1,23 @@
+2011-06-27  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding binary part support to MHTML.
+        https://bugs.webkit.org/show_bug.cgi?id=63310
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData):
+        (WebCore::MHTMLArchive::generateMHTMLDataUsingBinaryEncoding):
+        * loader/archive/mhtml/MHTMLArchive.h:
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseNextPart):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+        * platform/SharedBuffer.h:
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::MIMEHeader::parseContentTransferEncoding):
+        * platform/network/MIMEHeader.h:
+
 2011-06-27  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

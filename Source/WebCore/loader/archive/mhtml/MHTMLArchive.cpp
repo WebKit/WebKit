@@ -57,6 +57,7 @@ namespace WebCore {
 
 const char* const quotedPrintable = "quoted-printable";
 const char* const base64 = "base64";
+const char* const binary = "binary";
 
 static String generateRandomBoundary()
 {
@@ -124,6 +125,16 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create(const KURL& url, SharedBuffer* dat
 
 PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 {
+    return generateMHTMLData(page, false);
+}
+
+PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLDataUsingBinaryEncoding(Page* page)
+{
+    return generateMHTMLData(page, true);
+}
+
+PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page, bool useBinaryEncoding)
+{
     Vector<PageSerializer::Resource> resources;
     PageSerializer pageSerializer(&resources);
     pageSerializer.serialize(page);
@@ -167,7 +178,7 @@ PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         stringBuilder.append("Content-Type: ");
         stringBuilder.append(resource.mimeType);
 
-        const char* contentEncoding = MIMETypeRegistry::isSupportedJavaScriptMIMEType(resource.mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(resource.mimeType) ? quotedPrintable : base64;
+        const char* contentEncoding = useBinaryEncoding ? binary : base64;
         stringBuilder.append("\r\nContent-Transfer-Encoding: ");
         stringBuilder.append(contentEncoding);
         stringBuilder.append("\r\nContent-Location: ");
@@ -177,27 +188,36 @@ PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         asciiString = stringBuilder.toString().utf8();
         mhtmlData->append(asciiString.data(), asciiString.length());
 
-        // FIXME: ideally we would encode the content as a stream without having to fetch it all.
-        const char* data = resource.data->data();
-        size_t dataLength = resource.data->size();
-        Vector<char> encodedData;
-        if (!strcmp(contentEncoding, quotedPrintable)) {
-            quotedPrintableEncode(data, dataLength, encodedData);
-            mhtmlData->append(encodedData.data(), encodedData.size());
-            mhtmlData->append("\r\n", 2);
+        if (!strcmp(contentEncoding, binary)) {
+            const char* data;
+            size_t position = 0;
+            while (size_t length = resource.data->getSomeData(data, position)) {
+                mhtmlData->append(data, length);
+                position += length;
+            }
         } else {
-            ASSERT(!strcmp(contentEncoding, base64));
-            // We are not specifying insertLFs = true below as it would cut the lines with LFs and MHTML requires CRLFs.
-            base64Encode(data, dataLength, encodedData);
-            const size_t maximumLineLength = 76;
-            size_t index = 0;
-            size_t encodedDataLength = encodedData.size();
-            do {
-                size_t lineLength = std::min(encodedDataLength - index, maximumLineLength);
-                mhtmlData->append(encodedData.data() + index, lineLength);
+            // FIXME: ideally we would encode the content as a stream without having to fetch it all.
+            const char* data = resource.data->data();
+            size_t dataLength = resource.data->size();
+            Vector<char> encodedData;
+            if (!strcmp(contentEncoding, quotedPrintable)) {
+                quotedPrintableEncode(data, dataLength, encodedData);
+                mhtmlData->append(encodedData.data(), encodedData.size());
                 mhtmlData->append("\r\n", 2);
-                index += maximumLineLength;
-            } while (index < encodedDataLength);
+            } else {
+                ASSERT(!strcmp(contentEncoding, base64));
+                // We are not specifying insertLFs = true below as it would cut the lines with LFs and MHTML requires CRLFs.
+                base64Encode(data, dataLength, encodedData);
+                const size_t maximumLineLength = 76;
+                size_t index = 0;
+                size_t encodedDataLength = encodedData.size();
+                do {
+                    size_t lineLength = std::min(encodedDataLength - index, maximumLineLength);
+                    mhtmlData->append(encodedData.data() + index, lineLength);
+                    mhtmlData->append("\r\n", 2);
+                    index += maximumLineLength;
+                } while (index < encodedDataLength);
+            }
         }
     }
 

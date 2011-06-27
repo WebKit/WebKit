@@ -86,6 +86,8 @@ public:
 
     void append(SharedBuffer*);
     void append(const char*, unsigned);
+    void append(const Vector<char>&);
+
     void clear();
     const char* platformData() const;
     unsigned platformDataSize() const;

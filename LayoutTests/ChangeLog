@@ -1,3 +1,13 @@
+2011-06-27  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding binary part support to MHTML.
+        https://bugs.webkit.org/show_bug.cgi?id=63310
+
+        * mhtml/multi_frames_binary.mht: Added.
+        * platform/chromium/mhtml/multi_frames_binary-expected.txt: Added.
+
 2011-06-27  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

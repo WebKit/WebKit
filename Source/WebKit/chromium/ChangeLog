@@ -1,3 +1,15 @@
+2011-06-27  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding binary part support to MHTML.
+        https://bugs.webkit.org/show_bug.cgi?id=63310
+
+        * public/WebPageSerializer.h:
+        * src/WebPageSerializer.cpp:
+        (WebKit::WebPageSerializer::serializeToMHTML):
+        (WebKit::WebPageSerializer::serializeToMHTMLUsingBinaryEncoding):
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

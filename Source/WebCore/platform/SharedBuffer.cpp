@@ -165,6 +165,11 @@ void SharedBuffer::append(const char* data, unsigned length)
     }
 }
 
+void SharedBuffer::append(const Vector<char>& data)
+{
+    append(data.data(), data.size());
+}
+
 void SharedBuffer::clear()
 {
     clearPlatformData();

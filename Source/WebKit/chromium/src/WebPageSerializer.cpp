@@ -208,6 +208,13 @@ WebCString WebPageSerializer::serializeToMHTML(WebView* view)
     return WebCString(mhtml->data(), mhtml->size());
 }
 
+WebCString WebPageSerializer::serializeToMHTMLUsingBinaryEncoding(WebView* view)
+{
+    RefPtr<SharedBuffer> mhtml = MHTMLArchive::generateMHTMLDataUsingBinaryEncoding(static_cast<WebViewImpl*>(view)->page());
+    // FIXME: we are copying all the data here. Idealy we would have a WebSharedData().
+    return WebCString(mhtml->data(), mhtml->size());
+}
+
 bool WebPageSerializer::serialize(WebFrame* frame,
                                   bool recursive,
                                   WebPageSerializerClient* client,
