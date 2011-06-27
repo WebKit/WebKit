@@ -127,12 +127,6 @@ bool WebSecurityOrigin::canAccessPasswordManager() const
     return m_private->canAccessPasswordManager();
 }
 
-void WebSecurityOrigin::grantUniversalAccess()
-{
-    ASSERT(m_private);
-    m_private->grantUniversalAccess();
-}
-
 WebSecurityOrigin::WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>& origin)
     : m_private(static_cast<WebSecurityOriginPrivate*>(origin.releaseRef()))
 {
