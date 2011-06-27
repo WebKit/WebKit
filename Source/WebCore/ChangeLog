@@ -1,3 +1,15 @@
+2011-06-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: REGRESSION Scripts panel sidebar pane context menu has no "Remove breakpoint" item
+        https://bugs.webkit.org/show_bug.cgi?id=63421
+
+        Show generic sidebar menu only if no pane-specific menu has been shown.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+
 2011-06-26  Adam Barth  <abarth@webkit.org>
 
         Build fix for clang.  Apparently clang doesn't want us to use the std

@@ -107,7 +107,7 @@ WebInspector.ScriptsPanel = function()
     }
 
     if (Preferences.canInspectWorkers && WebInspector.workerManager)
-        this.sidebarElement.addEventListener("contextmenu", this._contextMenu.bind(this), true);
+        this.sidebarElement.addEventListener("contextmenu", this._contextMenu.bind(this), false);
     if (Preferences.canInspectWorkers && WebInspector.workerManager && WebInspector.settings.workerInspectionEnabled) {
         WorkerAgent.setWorkerInspectionEnabled(true);
         this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
