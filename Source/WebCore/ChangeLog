@@ -1,3 +1,21 @@
+2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Crash in TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=63334
+
+        Fix a crash in TextIterator. Keep m_sortedTextBoxes and renderer consistent
+        and check !m_offset when handling first letter.
+
+        Also add more assertions to help detecting similar bugs.
+
+        Test: editing/text-iterator/first-letter-rtl-crash.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::emitText):
+
 2011-06-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

@@ -459,7 +459,7 @@ bool TextIterator::handleTextNode()
             emitCharacter(' ', m_node, 0, runStart, runStart);
             return false;
         }
-        if (!m_handledFirstLetter && renderer->isTextFragment()) {
+        if (!m_handledFirstLetter && renderer->isTextFragment() && !m_offset) {
             handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
             if (m_firstLetterText) {
                 String firstLetter = m_firstLetterText->text();
@@ -496,6 +496,14 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
+    
+    m_textBox = renderer->firstTextBox();
+    if (!m_handledFirstLetter && renderer->isTextFragment() && !m_offset)
+        handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
+
+    if (m_firstLetterText)
+        renderer = m_firstLetterText;
+
     // Used when text boxes are out of order (Hebrew/Arabic w/ embeded LTR text)
     if (renderer->containsReversedText()) {
         m_sortedTextBoxes.clear();
@@ -504,11 +512,9 @@ bool TextIterator::handleTextNode()
         }
         std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), InlineTextBox::compareByStart); 
         m_sortedTextBoxesPosition = 0;
+        m_textBox = m_sortedTextBoxes.isEmpty() ? 0 : m_sortedTextBoxes[0];
     }
-    
-    m_textBox = renderer->containsReversedText() ? (m_sortedTextBoxes.isEmpty() ? 0 : m_sortedTextBoxes[0]) : renderer->firstTextBox();
-    if (!m_handledFirstLetter && renderer->isTextFragment() && !m_offset)
-        handleTextNodeFirstLetter(static_cast<RenderTextFragment*>(renderer));
+
     handleTextBox();
     return true;
 }
@@ -975,6 +981,9 @@ void TextIterator::emitText(Node* textNode, RenderObject* renderObject, int text
     RenderText* renderer = toRenderText(renderObject);
     m_text = m_emitsTextWithoutTranscoding ? renderer->textWithoutTranscoding() : renderer->text();
     ASSERT(m_text.characters());
+    ASSERT(0 <= textStartOffset && textStartOffset < static_cast<int>(m_text.length()));
+    ASSERT(0 <= textEndOffset && textEndOffset <= static_cast<int>(m_text.length()));
+    ASSERT(textStartOffset <= textEndOffset);
 
     m_positionNode = textNode;
     m_positionOffsetBaseNode = 0;
