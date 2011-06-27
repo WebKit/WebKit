@@ -42,12 +42,13 @@ import os
 import sys
 import tempfile
 
+# FIXME: We should not be hacking around in sys.path.
 scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
 sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
 
 import port
-from port import http_server
+from servers import http_server
 
 def run(options):
     if not options.server:

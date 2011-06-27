@@ -35,7 +35,7 @@ import os
 import re
 import sys
 
-from webkitpy.layout_tests.port import http_server_base
+from webkitpy.layout_tests.servers import http_server_base
 
 _log = logging.getLogger("webkitpy.layout_tests.servers.apache_http_server")
 

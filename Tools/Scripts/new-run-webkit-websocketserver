@@ -35,7 +35,7 @@ import optparse
 import tempfile
 
 import webkitpy.layout_tests.port.factory as factory
-import webkitpy.layout_tests.port.websocket_server as websocket_server
+import webkitpy.layout_tests.servers.websocket_server as websocket_server
 
 
 def main():

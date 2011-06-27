@@ -34,10 +34,10 @@ import os
 import sys
 import time
 
-from webkitpy.layout_tests.port import http_server
-from webkitpy.layout_tests.port import http_server_base
+from webkitpy.layout_tests.servers import http_server
+from webkitpy.layout_tests.servers import http_server_base
 
-_log = logging.getLogger("webkitpy.layout_tests.port.websocket_server")
+_log = logging.getLogger("webkitpy.layout_tests.servers.websocket_server")
 
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
 _WSS_LOG_PREFIX = 'pywebsocket.wss.log-'

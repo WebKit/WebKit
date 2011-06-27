@@ -47,8 +47,8 @@ from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port import builders
-from webkitpy.layout_tests.port import http_server
-from webkitpy.layout_tests.port import websocket_server
+from webkitpy.layout_tests.servers import http_server
+from webkitpy.layout_tests.servers import websocket_server
 
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 

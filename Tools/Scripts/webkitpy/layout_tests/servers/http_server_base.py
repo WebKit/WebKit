@@ -36,7 +36,7 @@ import sys
 import tempfile
 import time
 
-_log = logging.getLogger("webkitpy.layout_tests.port.http_server_base")
+_log = logging.getLogger("webkitpy.layout_tests.servers.http_server_base")
 
 
 class ServerError(Exception):

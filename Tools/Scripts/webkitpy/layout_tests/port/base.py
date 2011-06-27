@@ -57,10 +57,10 @@ from webkitpy.common.system.user import User
 from webkitpy.layout_tests import read_checksum_from_png
 from webkitpy.layout_tests.port import config as port_config
 from webkitpy.layout_tests.port import http_lock
-from webkitpy.layout_tests.port import http_server
 from webkitpy.layout_tests.port import test_files
-from webkitpy.layout_tests.port import websocket_server
 from webkitpy.layout_tests.servers import apache_http_server
+from webkitpy.layout_tests.servers import http_server
+from webkitpy.layout_tests.servers import websocket_server
 
 _log = logutils.get_logger(__file__)
 

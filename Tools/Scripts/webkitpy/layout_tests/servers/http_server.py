@@ -34,9 +34,9 @@ import os
 import sys
 import time
 
-from webkitpy.layout_tests.port import http_server_base
+from webkitpy.layout_tests.servers import http_server_base
 
-_log = logging.getLogger("webkitpy.layout_tests.port.http_server")
+_log = logging.getLogger("webkitpy.layout_tests.servers.http_server")
 
 class Lighttpd(http_server_base.HttpServerBase):
 

@@ -41,7 +41,7 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy.layout_tests.port import http_server_base
+from webkitpy.layout_tests.servers import http_server_base
 
 from webkitpy.tool import mocktool
 mock_options = mocktool.MockOptions(configuration='Release')
