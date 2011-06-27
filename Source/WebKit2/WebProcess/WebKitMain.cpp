@@ -150,7 +150,7 @@ static void pauseProcessIfNeeded(HMODULE module)
     // Show an alert when Ctrl-Alt-Shift is held down during launch to give the user time to attach a
     // debugger. This is useful for debugging problems that happen early in the web process's lifetime.
     const unsigned short highBitMaskShort = 0x8000;
-    if (!getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH") && !(::GetKeyState(VK_CONTROL) & highBitMaskShort) && (::GetKeyState(VK_MENU) & highBitMaskShort) && (::GetKeyState(VK_SHIFT) & highBitMaskShort))
+    if (!getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH") && !((::GetKeyState(VK_CONTROL) & highBitMaskShort) && (::GetKeyState(VK_MENU) & highBitMaskShort) && (::GetKeyState(VK_SHIFT) & highBitMaskShort)))
         return;
 
     wchar_t path[MAX_PATH];
