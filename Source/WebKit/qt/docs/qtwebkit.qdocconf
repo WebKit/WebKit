@@ -146,7 +146,6 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QT_BEGIN_INCLUDE_NAMESPACE \
                           QT_END_NAMESPACE \
                           QT_END_INCLUDE_NAMESPACE \
-                          PHONON_EXPORT \
                           EXTENSIONSYSTEM_EXPORT \
                           QWEBKIT_EXPORT
 Cpp.ignoredirectives    = Q_DECLARE_HANDLE \
@@ -164,10 +163,7 @@ Cpp.ignoredirectives    = Q_DECLARE_HANDLE \
                           Q_ENUMS \
                           Q_FLAGS \
                           Q_INTERFACES \
-                          __attribute__ \
-                          K_DECLARE_PRIVATE \
-                          PHONON_OBJECT \
-                          PHONON_HEIR
+                          __attribute__
 
 
 

@@ -179,7 +179,7 @@ symbian|maemo5|maemo6 {
 !contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1
 
 # HTML5 Media Support
-# We require QtMultimedia or Phonon
+# We require QtMultimedia
 !contains(DEFINES, ENABLE_VIDEO=.) {
     DEFINES -= ENABLE_VIDEO=1
     DEFINES += ENABLE_VIDEO=0
@@ -199,11 +199,6 @@ symbian|maemo5|maemo6 {
         DEFINES += ENABLE_VIDEO=1
         DEFINES -= WTF_USE_QT_MULTIMEDIA=0
         DEFINES += WTF_USE_QT_MULTIMEDIA=1
-    } else:contains(QT_CONFIG, phonon) {
-        DEFINES -= ENABLE_VIDEO=0
-        DEFINES += ENABLE_VIDEO=1
-        DEFINES -= WTF_USE_QT_MULTIMEDIA=1
-        DEFINES += WTF_USE_QT_MULTIMEDIA=0
     }
 }
 

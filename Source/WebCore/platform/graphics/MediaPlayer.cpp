@@ -62,9 +62,6 @@
 #if USE(QT_MULTIMEDIA) && !USE(GSTREAMER)
 #include "MediaPlayerPrivateQt.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQt
-#elif !USE(GSTREAMER) && !USE(QTKIT)
-#include "MediaPlayerPrivatePhonon.h"
-#define PlatformMediaEngineClassName MediaPlayerPrivatePhonon
 #endif
 #elif PLATFORM(CHROMIUM)
 #include "MediaPlayerPrivateChromium.h"

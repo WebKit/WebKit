@@ -4427,8 +4427,6 @@
             'platform/graphics/qt/IntPointQt.cpp',
             'platform/graphics/qt/IntRectQt.cpp',
             'platform/graphics/qt/IntSizeQt.cpp',
-            'platform/graphics/qt/MediaPlayerPrivatePhonon.cpp',
-            'platform/graphics/qt/MediaPlayerPrivatePhonon.h',
             'platform/graphics/qt/MediaPlayerPrivateQt.cpp',
             'platform/graphics/qt/MediaPlayerPrivateQt.h',
             'platform/graphics/qt/PathQt.cpp',

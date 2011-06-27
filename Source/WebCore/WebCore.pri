@@ -273,17 +273,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         CONFIG   *= mobility
         MOBILITY *= multimedia
         DEFINES  += WTF_USE_QT_MULTIMEDIA=1
-    } else:contains(QT_CONFIG, phonon) {
-        # Add phonon manually to prevent it from coming first in
-        # the include paths, as Phonon's path.h conflicts with
-        # WebCore's Path.h on case-insensitive filesystems.
-        qtAddLibrary(phonon)
-        INCLUDEPATH -= $$QT.phonon.includes
-        INCLUDEPATH += $$QT.phonon.includes
-        mac {
-            INCLUDEPATH -= $$QT.phonon.libs/phonon.framework/Headers
-            INCLUDEPATH += $$QT.phonon.libs/phonon.framework/Headers
-        }
     }
 }
 

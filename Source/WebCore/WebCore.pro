@@ -3059,12 +3059,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivateQt.cpp
-    } else:contains(QT_CONFIG, phonon) {
-        HEADERS += \
-            platform/graphics/qt/MediaPlayerPrivatePhonon.h
-
-        SOURCES += \
-            platform/graphics/qt/MediaPlayerPrivatePhonon.cpp
     }
 }
 

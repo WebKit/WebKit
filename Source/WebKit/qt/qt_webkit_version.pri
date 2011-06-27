@@ -7,7 +7,7 @@ QT.webkit.name = QtWebKit
 QT.webkit.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtWebKit
 QT.webkit.sources = $$QT_MODULE_BASE
 QT.webkit.libs = $$QT_MODULE_LIB_BASE
-QT.webkit.depends = core gui opengl network xmlpatterns script phonon
+QT.webkit.depends = core gui opengl network xmlpatterns script
 
 !contains(QT_CONFIG, modular)|contains(QT_ELIGIBLE_MODULES, webkit) {
     QT_CONFIG += webkit
