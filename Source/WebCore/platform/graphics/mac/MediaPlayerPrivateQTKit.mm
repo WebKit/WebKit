@@ -97,11 +97,12 @@ SOFT_LINK_POINTER(QTKit, QTMovieTimeScaleAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieURLAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
-SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoLocalToRemoteSiteAttribute, NSString *)
-SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeClean, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
+
+SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoLocalToRemoteSiteAttribute, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, NSString *)
 
 #define QTMovie getQTMovieClass()
 #define QTMovieView getQTMovieViewClass()
@@ -239,14 +240,21 @@ NSMutableDictionary *MediaPlayerPrivateQTKit::commonMovieAttributes()
     NSMutableDictionary *movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithBool:m_player->preservesPitch()], QTMovieRateChangesPreservePitchAttribute,
             [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
-            [NSNumber numberWithBool:NO], QTSecurityPolicyNoCrossSiteAttribute,
-            [NSNumber numberWithBool:YES], QTSecurityPolicyNoRemoteToLocalSiteAttribute,
-            [NSNumber numberWithBool:YES], QTSecurityPolicyNoLocalToRemoteSiteAttribute,
             [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
             [NSNumber numberWithBool:NO], QTMovieLoopsAttribute,
             [NSNumber numberWithBool:!m_privateBrowsing], @"QTMovieAllowPersistentCacheAttribute",
             QTMovieApertureModeClean, QTMovieApertureModeAttribute,
             nil];
+
+    // Check to see if QTSecurityPolicyNoRemoteToLocalSiteAttribute is defined, which was added in QTKit 7.6.3.
+    // If not, just set NoCrossSite = YES, which does the same thing as NoRemoteToLocal = YES and 
+    // NoLocalToRemote = YES in QTKit < 7.6.3.
+    if (QTSecurityPolicyNoRemoteToLocalSiteAttribute) {
+        [movieAttributes setValue:[NSNumber numberWithBool:NO] forKey:QTSecurityPolicyNoCrossSiteAttribute];
+        [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:QTSecurityPolicyNoRemoteToLocalSiteAttribute];
+        [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:QTSecurityPolicyNoLocalToRemoteSiteAttribute];
+    } else
+        [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:QTSecurityPolicyNoCrossSiteAttribute];
 
     if (m_preload < MediaPlayer::Auto)
         [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:@"QTMovieLimitReadAheadAttribute"];
