@@ -1,5 +1,16 @@
 2011-06-26  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        window.location should use the holder's prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=63411
+
+        * http/tests/security/location-prototype-expected.txt: Added.
+        * http/tests/security/location-prototype.html: Added.
+        * http/tests/security/resources/location-prototype-overwrite.html: Added.
+
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Kent Tamura.
 
         m_formElementsWithFormAttribute doesn't ref the objects it holds

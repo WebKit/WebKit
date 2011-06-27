@@ -717,16 +717,16 @@ PASS inner.getMatchedCSSRules.isInner is true
 PASS inner.getMatchedCSSRules.constructor.isInner is true
 PASS inner.getSelection.isInner is true
 PASS inner.getSelection.constructor.isInner is true
-FAIL inner.history.isInner should be true. Was false.
-FAIL inner.history.constructor.isInner should be true. Was false.
+PASS inner.history.isInner is true
+PASS inner.history.constructor.isInner is true
 PASS inner.isFinite.isInner is true
 PASS inner.isFinite.constructor.isInner is true
 PASS inner.isNaN.isInner is true
 PASS inner.isNaN.constructor.isInner is true
 FAIL inner.localStorage.isInner should be true. Was false.
 FAIL inner.localStorage.constructor.isInner should be true. Was false.
-FAIL inner.location.isInner should be true. Was false.
-FAIL inner.location.constructor.isInner should be true. Was false.
+PASS inner.location.isInner is true
+PASS inner.location.constructor.isInner is true
 FAIL inner.locationbar.isInner should be true. Was false.
 FAIL inner.locationbar.constructor.isInner should be true. Was false.
 PASS inner.matchMedia.isInner is true

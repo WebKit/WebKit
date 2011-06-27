@@ -634,6 +634,12 @@ sub IsNodeSubType
     return IsSubType($dataNode, "Node");
 }
 
+sub IsVisibleAcrossOrigins
+{
+    my $dataNode = shift;
+    return $dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($dataNode->name eq "DOMWindow");
+}
+
 sub GenerateDomainSafeFunctionGetter
 {
     my $function = shift;
@@ -2525,7 +2531,20 @@ END
 END
     }
 
-    if (IsNodeSubType($dataNode)) {
+    # FIXME: We need a better way of recovering the correct prototype chain
+    # for every sort of object. For now, we special-case cross-origin visible
+    # objects (i.e., those with CheckDomainSecurity).
+    if (IsVisibleAcrossOrigins($dataNode)) {
+        push(@implContent, <<END);
+    if (impl->frame()) {
+        proxy = V8Proxy::retrieve(impl->frame());
+        if (proxy)
+            proxy->windowShell()->initContextIfNeeded();
+    }
+END
+    }
+
+    if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);
 
     v8::Handle<v8::Context> context;
@@ -2541,7 +2560,7 @@ END
     push(@implContent, <<END);
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
 END
-    if (IsNodeSubType($dataNode)) {
+    if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())

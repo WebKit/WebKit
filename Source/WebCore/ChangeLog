@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        window.location should use the holder's prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=63411
+
+        This patch corrects the prototype chain for Location, but we really
+        should do a complete cleanup of the prototype chain generation, like we
+        did for JavaScriptCore.
+
+        Test: http/tests/security/location-prototype.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add [Optional] attributes where appropriate for addEventListener and removeEventListener
         https://bugs.webkit.org/show_bug.cgi?id=63417
 
