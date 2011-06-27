@@ -1,5 +1,14 @@
 2011-06-27  Jessie Berlin  <jberlin@apple.com>
 
+        Add Windows-specific results for the test added in r89769.
+
+        I checked these results with Dan - they are not failing expected results.
+
+        * platform/win/fast/text/midword-break-before-surrogate-pair-expected.png: Added.
+        * platform/win/fast/text/midword-break-before-surrogate-pair-expected.txt: Added.
+
+2011-06-27  Jessie Berlin  <jberlin@apple.com>
+
         WebKitTestRunner needs an implemenation of allowRoundingHacks.
         https://bugs.webkit.org/show_bug.cgi?id=63477
 
