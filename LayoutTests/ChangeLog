@@ -1,3 +1,43 @@
+2011-06-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: roll out r88337 for making tests flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=63422
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.selectNodeWithId.onNodeFound):
+        (initialize_ElementTest.InspectorTest.selectNodeWithId):
+        (initialize_ElementTest.InspectorTest.waitForStyles):
+        (initialize_ElementTest.InspectorTest.selectNodeAndWaitForStyles.nodeSelected):
+        (initialize_ElementTest.InspectorTest.selectNodeAndWaitForStyles.stylesUpdated):
+        (initialize_ElementTest.InspectorTest.selectNodeAndWaitForStyles):
+        * http/tests/inspector/inspect-iframe-from-different-domain.html:
+        * inspector/elements/edit-dom-actions.html:
+        * inspector/elements/elements-delete-inline-style.html:
+        * inspector/elements/elements-panel-styles.html:
+        * inspector/styles/metrics-box-sizing.html:
+        * inspector/styles/parse-utf8-bom.html:
+        * inspector/styles/styles-add-blank-property.html:
+        * inspector/styles/styles-add-invalid-property.html:
+        * inspector/styles/styles-cancel-editing.html:
+        * inspector/styles/styles-commit-editing.html:
+        * inspector/styles/styles-computed-trace.html:
+        * inspector/styles/styles-disable-inherited.html:
+        * inspector/styles/styles-disable-then-change.html:
+        * inspector/styles/styles-disable-then-delete.html:
+        * inspector/styles/styles-disable-then-enable.html:
+        * inspector/styles/styles-iframe-expected.txt:
+        * inspector/styles/styles-iframe.html:
+        * inspector/styles/styles-source-lines-expected.txt:
+        * inspector/styles/styles-source-lines-inline.html:
+        * inspector/styles/styles-source-lines.html:
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * inspector/styles/styles-update-from-js.html:
+        * inspector/styles/styles-url-linkify.html:
+        * inspector/styles/up-down-numerics-and-colors-expected.txt:
+        * inspector/styles/up-down-numerics-and-colors.html:
+
 2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] SVG animation pause API missing

@@ -64,19 +64,50 @@ InspectorTest.expandedNodeWithId = function(idValue)
 
 InspectorTest.selectNodeWithId = function(idValue, callback)
 {
+    callback = InspectorTest.safeWrap(callback);
     function onNodeFound(node)
     {
-        InspectorTest.selectNode(node, callback);
+        if (node)
+            WebInspector.updateFocusedNode(node.id);
+        callback(node);
     }
     InspectorTest.nodeWithId(idValue, onNodeFound);
-};
+}
 
-InspectorTest.selectNode = function(node, callback)
+InspectorTest.waitForStyles = function(idValue, callback)
 {
     callback = InspectorTest.safeWrap(callback);
-    if (node)
-        WebInspector.updateFocusedNode(node.id);
-    InspectorTest.runAfterPendingDispatches(callback.bind(null, node));
+
+    (function sniff(node)
+    {
+        if (node && node.getAttribute("id") === idValue) {
+            callback();
+            return;
+        }
+        InspectorTest.addSniffer(WebInspector.ElementsPanel.prototype, "_stylesUpdated", sniff);
+    })(null);
+}
+
+InspectorTest.selectNodeAndWaitForStyles = function(idValue, callback)
+{
+    WebInspector.showPanel("elements");
+
+    callback = InspectorTest.safeWrap(callback);
+
+    var targetNode;
+
+    InspectorTest.waitForStyles(idValue, stylesUpdated);
+    InspectorTest.selectNodeWithId(idValue, nodeSelected);
+
+    function nodeSelected(node)
+    {
+        targetNode = node;
+    }
+
+    function stylesUpdated()
+    {
+        callback(targetNode);
+    }
 }
 
 InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands)

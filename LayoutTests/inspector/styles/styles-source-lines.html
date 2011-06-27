@@ -8,7 +8,7 @@
 -->
 
 <style type="text/css" media="screen">
-body, .at_line_15::/*
+#main, .at_line_15::/*
 Multiline comment
 before pseudo element
               */before 
@@ -23,7 +23,7 @@ Multiline comment followed with whitespace
 
 */
 
-body, .at_line_29
+#main, .at_line_29
 
 
 {
@@ -37,7 +37,7 @@ body, .at_line_29
 }/*Multiline comment
 
 followed by selector
-*/body,
+*/#main,
 .at_line_43
 
 {
@@ -46,7 +46,7 @@ followed by selector
 }
 
 
-body, .at_line_50
+#main, .at_line_50
 {
     border: 1px solid
     red;
@@ -59,7 +59,7 @@ body, .at_line_50
 
 function test()
 {
-    InspectorTest.selectNodeWithId("mainBody", step1);
+    InspectorTest.selectNodeAndWaitForStyles("main", step1);
 
     function step1()
     {
@@ -71,10 +71,12 @@ function test()
 </script>
 </head>
 
-<body onload="runTest()" id="mainBody">
+<body onload="runTest()">
 <p>
 Tests that proper source lines are reported for the parsed styles.
 </p>
+
+<div id="main"></div>
 
 </body>
 </html>

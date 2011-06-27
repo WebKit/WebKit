@@ -6,17 +6,16 @@
 
 function test()
 {
-    InspectorTest.selectNodeWithId("container");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+    InspectorTest.selectNodeAndWaitForStyles("container", step1);
 
-    function step1()
+    function step1(node)
     {
         InspectorTest.addResult("Before disable");
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
         treeItem.toggleEnabled({ target: { checked: false } });
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+        InspectorTest.waitForStyles("container", step2);
     }
 
     function step2()
@@ -26,7 +25,7 @@ function test()
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
         treeItem.toggleEnabled({ target: { checked: true } });
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
+        InspectorTest.waitForStyles("container", step3);
     }
 
     function step3()

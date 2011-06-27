@@ -195,7 +195,7 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    update: function(node, editedSection, forceUpdate)
+    update: function(node, editedSection, forceUpdate, callback)
     {
         var refresh = false;
 
@@ -220,6 +220,8 @@ WebInspector.StylesSidebarPane.prototype = {
             this.bodyElement.removeChildren();
             this._computedStylePane.bodyElement.removeChildren();
             this.sections = {};
+            if (callback)
+                callback();
             return;
         }
 
@@ -227,29 +229,22 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             if (styles)
                 this._rebuildUpdate(node, styles);
+            if (callback)
+                callback();
         }
 
         function computedStyleCallback(computedStyle)
         {
             if (computedStyle)
                 this._refreshUpdate(node, computedStyle, editedSection);
-        }
-
-        function reloadAllStyles()
-        {
-            delete this._reloadAllStylesTimer;
-            WebInspector.cssModel.getStylesAsync(this._allStylesNodeId, stylesCallback.bind(this))
+            if (callback)
+                callback();
         }
 
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
-        else {
-            // Always refresh the node to request styles for.
-            this._allStylesNodeId = node.id;
-            if ("_reloadAllStylesTimer" in this)
-                return;
-            this._reloadAllStylesTimer = setTimeout(reloadAllStyles.bind(this), 0);
-        }
+        else
+            WebInspector.cssModel.getStylesAsync(node.id, stylesCallback.bind(this));
     },
 
     _refreshUpdate: function(node, computedStyle, editedSection)

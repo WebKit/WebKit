@@ -18,17 +18,16 @@ function test()
     var section;
 
     InspectorTest.runTestSuite([
-        function testInit1(next)
+        function testInit(next)
         {
-            InspectorTest.selectNodeWithId("inspected");
-            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", next);
-        },
+            InspectorTest.selectNodeAndWaitForStyles("inspected", expandSection);
 
-        function testInit2(next)
-        {
-            section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
-            section.expand();
-            InspectorTest.runAfterPendingDispatches(next);
+            function expandSection()
+            {
+                section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+                section.expand();
+                next();
+            }
         },
 
         function testAlterColor(next)

@@ -6,12 +6,11 @@ Main frame style:
 [expanded] element.style { ()
 
 ======== Matched CSS Rules ========
-[expanded] body { (styles-iframe.html:5)
+[expanded] #main { (styles-iframe.html:5)
 background: blue;
 
-[expanded] body { (user agent stylesheet)
+[expanded] div { (user agent stylesheet)
 display: block;
-margin: 8px;
 
 
 iframe style:

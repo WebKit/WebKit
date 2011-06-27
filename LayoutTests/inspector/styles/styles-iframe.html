@@ -2,7 +2,7 @@
 <head>
 
 <style type="text/css" media="screen">
-  body { background:blue; }
+  #main { background:blue; }
 </style>
 
 <script src="../../http/tests/inspector/inspector-test.js"></script>
@@ -23,15 +23,14 @@ function test()
 
     function step0()
     {
-        InspectorTest.selectNodeWithId("mainBody", step1);
+        InspectorTest.selectNodeAndWaitForStyles("main", step1);
     }
 
     function step1()
     {
         InspectorTest.addResult("Main frame style:");
         InspectorTest.dumpSelectedElementStyles(true, false, true);
-        InspectorTest.selectNodeWithId("iframeBody");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+        InspectorTest.selectNodeAndWaitForStyles("iframeBody", step2);
     }
 
     function step2()
@@ -44,10 +43,11 @@ function test()
 </script>
 </head>
 
-<body onload="runTest()" id="mainBody">
+<body onload="runTest()">
 <p>
 Tests that proper (and different) styles are returned for body elements of main document and iframe.
 </p>
 
+<div id="main"></div>
 </body>
 </html>

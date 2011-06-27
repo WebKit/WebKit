@@ -37,16 +37,13 @@ div {
 
 function test()
 {
-    InspectorTest.selectNodeWithId("id1");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+    InspectorTest.selectNodeAndWaitForStyles("id1", step1);
 
     function step1()
     {
         InspectorTest.addResult("==== Computed style for ID1 ====");
         InspectorTest.dumpSelectedElementStyles(false, true);
-
-        InspectorTest.selectNodeWithId("id2");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+        InspectorTest.selectNodeAndWaitForStyles("id2", step2);
     }
 
     function step2()

@@ -72,7 +72,7 @@ function test()
     InspectorTest.runTestSuite([
         function testBorderBoxInit1(next)
         {
-            InspectorTest.selectNodeWithId("border-box", next);
+            InspectorTest.selectNodeAndWaitForStyles("border-box", next);
         },
 
         function testBorderBoxInit2(next)

@@ -7,27 +7,24 @@
 function test()
 {
     WebInspector.showPanel("elements");
-    InspectorTest.selectNodeWithId("inspected", step0);
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
 
     var treeElement;
     var section;
 
-    function step0()
+    function step1()
     {
         InspectorTest.addResult("Before append:");
         InspectorTest.dumpSelectedElementStyles(true);
         section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
         section.expand();
-        InspectorTest.runAfterPendingDispatches(step1);
-    }
 
-    function step1()
-    {
         // Create and increment.
         treeElement = section.addNewBlankProperty();
         treeElement.startEditing();
         treeElement.nameElement.textContent = "margin-left";
         treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+
         treeElement.valueElement.textContent = "1px";
         treeElement.valueElement.firstChild.select();
         treeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
@@ -45,12 +42,13 @@ function test()
     {
         // Commit.
         treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-        InspectorTest.selectNodeWithId("other", step4);
+        InspectorTest.selectNodeWithId("other");
+        InspectorTest.runAfterPendingDispatches(step4);
     }
 
     function step4()
     {
-        InspectorTest.selectNodeWithId("inspected", step5);
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step5);
     }
 
     function step5()

@@ -97,8 +97,11 @@ WebInspector.ElementsPanel = function()
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "elements-sidebar";
 
-    for (var pane in this.sidebarPanes)
+    for (var pane in this.sidebarPanes) {
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
+        if (this.sidebarPanes[pane].onattach)
+            this.sidebarPanes[pane].onattach();
+    }
 
     this.sidebarResizeElement = document.createElement("div");
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
@@ -1015,8 +1018,13 @@ WebInspector.ElementsPanel.prototype = {
         if ((!stylesSidebarPane.expanded && !computedStylePane.expanded) || !stylesSidebarPane.needsUpdate || this._isEditingStyle)
             return;
 
-        stylesSidebarPane.update(this.focusedDOMNode, null, forceUpdate);
+        stylesSidebarPane.update(this.focusedDOMNode, null, forceUpdate, this._stylesUpdated.bind(this, this.focusedDOMNode));
         stylesSidebarPane.needsUpdate = false;
+    },
+
+    _stylesUpdated: function(node)
+    {
+        // This method is overriden in tests.
     },
 
     updateMetrics: function()

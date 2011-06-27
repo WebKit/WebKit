@@ -118,7 +118,12 @@ function test()
         InspectorTest.addResult("==== before ====");
         InspectorTest.dumpElementsTree(testNode);
 
-        InspectorTest.selectNodeWithId(dataNode, step1);
+        InspectorTest.selectNodeWithId(dataNode, step0);
+
+        function step0(node)
+        {
+            InspectorTest.runAfterPendingDispatches(step1.bind(null, node));
+        }
 
         function step1(node)
         {

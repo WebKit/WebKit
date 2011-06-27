@@ -13,10 +13,9 @@
 
 function test()
 {
-    InspectorTest.selectNodeWithId("foo");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+    InspectorTest.selectNodeAndWaitForStyles("foo", step2);
 
-    function step1()
+    function step2()
     {
         InspectorTest.dumpSelectedElementStyles(true, false, true);
         InspectorTest.completeTest();

@@ -7,8 +7,7 @@
 function test()
 {
 
-    InspectorTest.selectNodeWithId("nested");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+    InspectorTest.selectNodeAndWaitForStyles("nested", step1);
 
     function step1()
     {
@@ -16,16 +15,14 @@ function test()
         InspectorTest.addResult("Before disable");
         InspectorTest.dumpSelectedElementStyles(true);
 
-        InspectorTest.selectNodeWithId("container");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+        InspectorTest.selectNodeAndWaitForStyles("container", step2);
     }
 
     function step2()
     {
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         treeItem.toggleEnabled({ target: { checked: false } });
-        InspectorTest.selectNodeWithId("nested");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
+        InspectorTest.selectNodeAndWaitForStyles("nested", step3);
     }
 
     function step3()
