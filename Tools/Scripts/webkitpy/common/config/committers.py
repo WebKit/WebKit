@@ -83,7 +83,6 @@ contributors_who_are_not_committers = [
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
-    Contributor("Naoki Takano", "takano.naoki@gmail.com", "honten"),
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
 ]
 
@@ -263,6 +262,7 @@ committers_unable_to_review = [
     Committer("Zhenyao Mo", "zmo@google.com", "zhenyao"),
     Committer("Zoltan Herczeg", "zherczeg@webkit.org", "zherczeg"),
     Committer("Zoltan Horvath", ["zoltan@webkit.org", "hzoltan@inf.u-szeged.hu", "horvath.zoltan.6@stud.u-szeged.hu"], "zoltan"),
+    Committer("Naoki Takano", "honten@chromium.org", "honten"),
 ]
 
 

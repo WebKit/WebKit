@@ -1,3 +1,12 @@
+2011-06-25  Naoki Takano  <honten@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change my entry from contributors to committers.
+        https://bugs.webkit.org/show_bug.cgi?id=63043
+
+        * Scripts/webkitpy/common/config/committers.py: Change my e-mail from takano.naoki@gmail.com to honten@chromium.org. And move the entry to commiters from contributors.
+
 2011-06-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
