@@ -25,7 +25,7 @@
 
 function LayoutTestHistoryAnalyzer(builder) {
     this._builder = builder;
-    this._cache = {};
+    this._history = {};
     this._loader = new LayoutTestResultsLoader(builder);
 }
 
@@ -55,20 +55,14 @@ LayoutTestHistoryAnalyzer.prototype = {
      * in that build.
      */
     start: function(callback) {
-        var cacheKey = '_startFetchingBuildHistory';
-        if (!(cacheKey in this._cache))
-            this._cache[cacheKey] = {};
-
-        var history = this._cache[cacheKey];
-
         var self = this;
         self._builder.getBuildNames(function(buildNames) {
             function inner(buildIndex) {
-                self._incorporateBuildHistory(buildNames, buildIndex, history, function(callAgain) {
+                self._incorporateBuildHistory(buildNames, buildIndex, function(callAgain) {
                     var nextIndex = buildIndex + 1;
                     if (nextIndex >= buildNames.length)
                         callAgain = false;
-                    callback(history, callAgain);
+                    callback(self._history, callAgain);
                     if (!callAgain)
                         return;
                     setTimeout(function() { inner(nextIndex) }, 0);
@@ -78,26 +72,27 @@ LayoutTestHistoryAnalyzer.prototype = {
         });
     },
 
-    _incorporateBuildHistory: function(buildNames, buildIndex, history, callback) {
-        var previousBuildName = Object.keys(history).last();
+    _incorporateBuildHistory: function(buildNames, buildIndex, callback) {
+        var previousBuildName = Object.keys(this._history).last();
         var nextBuildName = buildNames[buildIndex];
 
-        this._loader.start(nextBuildName, function(tests, tooManyFailures) {
-            history[nextBuildName] = {
+        var self = this;
+        self._loader.start(nextBuildName, function(tests, tooManyFailures) {
+            self._history[nextBuildName] = {
                 tooManyFailures: tooManyFailures,
                 tests: {},
             };
 
             for (var testName in tests) {
                 if (previousBuildName) {
-                    if (!(testName in history[previousBuildName].tests))
+                    if (!(testName in self._history[previousBuildName].tests))
                         continue;
-                    delete history[previousBuildName].tests[testName];
+                    delete self._history[previousBuildName].tests[testName];
                 }
-                history[nextBuildName].tests[testName] = tests[testName];
+                self._history[nextBuildName].tests[testName] = tests[testName];
             }
 
-            callback(Object.keys(history[nextBuildName].tests).length);
+            callback(Object.keys(self._history[nextBuildName].tests).length);
         },
         function(tests) {
             // Some tests failed, but we couldn't fetch results.html (perhaps because the test

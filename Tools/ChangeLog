@@ -1,5 +1,22 @@
 2011-06-26  Adam Roben  <aroben@apple.com>
 
+        Store analyzed history directly in LayoutTestHistoryAnalyzer instead of in a generic cache
+
+        It seems silly to have a whole generic cache just to store a single object.
+
+        Fixes <http://webkit.org/b/63407> LayoutTestHistoryAnalyzer has a generic cache but doesn't
+        need one
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer): Replaced this._cache with this._history.
+        (LayoutTestHistoryAnalyzer.prototype.start): Ditto.
+        (LayoutTestHistoryAnalyzer.prototype._incorporateBuildHistory): Ditto, and removed the
+        no-longer-needed history argument.
+
+2011-06-26  Adam Roben  <aroben@apple.com>
+
         Move some inappropriate code out of Builder
 
         Fixes <http://webkit.org/b/63406> TestFailure page's Builder class has a bunch of code that
