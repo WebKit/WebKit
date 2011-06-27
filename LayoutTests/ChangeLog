@@ -1,3 +1,12 @@
+2011-06-27  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows-specific results for the test added in r89745.
+
+        I checked these results with Rob - they are not failing expected results.
+
+        * platform/win/svg/custom/linking-uri-01-b-expected.png: Added.
+        * platform/win/svg/custom/linking-uri-01-b-expected.txt: Added.
+
 2011-06-27  Wyatt Carss  <wcarss@chromium.org>
 
         Reviewed by Ryosuke Niwa.
