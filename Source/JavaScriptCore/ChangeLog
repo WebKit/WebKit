@@ -1,3 +1,10 @@
+2011-06-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix. One more filed missing during distcheck, for
+        the MIPS build.
+
+        * GNUmakefile.list.am:
+
 2011-06-26  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.
