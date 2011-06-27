@@ -1,3 +1,37 @@
+2011-06-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix removal of overhanging floats on style changes to absolute/fixed position.
+        https://bugs.webkit.org/show_bug.cgi?id=63355
+
+        1. If we are not currently positioned.
+        2. And we are not floating. (If we are floating, then this will be automatically
+           done in RenderBox::styleWillChange as part of removeFloatingOrPositionedChildFromBlockLists) 
+        3. And we have overhanging floats from previous sibling blocks.
+        4. And our new new style tells that we will have absolute or fixed position.
+
+        Then, we mark all our descendants with floats for layout. This will make sure that
+        overhanging floats are removed. Also, it is important to do that since if that previous
+        sibling block goes away, it is not able to tell us that to remove those floats thinking 
+        that being a positioned block, we should have removed them already.
+
+        Tests: fast/block/float/intruding-float-add-in-sibling-block-on-static-position.html
+               fast/block/float/intruding-float-add-in-sibling-block-on-static-position2.html
+               fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position.html
+               fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2.html
+               fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position.html
+               fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2.html
+               fast/block/float/overhanging-float-add-in-static-position-block.html
+               fast/block/float/overhanging-float-add-in-static-position-block2.html
+               fast/block/float/overhanging-float-remove-from-absolute-position-block.html
+               fast/block/float/overhanging-float-remove-from-absolute-position-block2.html
+               fast/block/float/overhanging-float-remove-from-fixed-position-block.html
+               fast/block/float/overhanging-float-remove-from-fixed-position-block2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+
 2011-06-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

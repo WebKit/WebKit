@@ -1,3 +1,48 @@
+2011-06-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Tests that overhanging floats are removed during style changes to absolute/fixed
+        position and gets added back when coming back to static position.
+        https://bugs.webkit.org/show_bug.cgi?id=63355
+
+        * fast/block/float/intruding-float-add-in-sibling-block-on-static-position.html: Added.
+        * fast/block/float/intruding-float-add-in-sibling-block-on-static-position2.html: Added.
+        * fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position.html: Added.
+        * fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2.html: Added.
+        * fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position.html: Added.
+        * fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2.html: Added.
+        * fast/block/float/overhanging-float-add-in-static-position-block.html: Added.
+        * fast/block/float/overhanging-float-add-in-static-position-block2.html: Added.
+        * fast/block/float/overhanging-float-remove-from-absolute-position-block.html: Added.
+        * fast/block/float/overhanging-float-remove-from-absolute-position-block2.html: Added.
+        * fast/block/float/overhanging-float-remove-from-fixed-position-block.html: Added.
+        * fast/block/float/overhanging-float-remove-from-fixed-position-block2.html: Added.
+        * platform/mac/fast/block/float/intruding-float-add-in-sibling-block-on-static-position-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-float-add-in-sibling-block-on-static-position-expected.txt: Added.
+        * platform/mac/fast/block/float/intruding-float-add-in-sibling-block-on-static-position2-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-float-add-in-sibling-block-on-static-position2-expected.txt: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position-expected.txt: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2-expected.txt: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position-expected.txt: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2-expected.txt: Added.
+        * platform/mac/fast/block/float/overhanging-float-add-in-static-position-block-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-float-add-in-static-position-block-expected.txt: Added.
+        * platform/mac/fast/block/float/overhanging-float-add-in-static-position-block2-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-float-add-in-static-position-block2-expected.txt: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-absolute-position-block-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-absolute-position-block-expected.txt: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-absolute-position-block2-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-absolute-position-block2-expected.txt: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-fixed-position-block-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-fixed-position-block-expected.txt: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-fixed-position-block2-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-float-remove-from-fixed-position-block2-expected.txt: Added.
+
 2011-06-27  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, chromium expectations update.
