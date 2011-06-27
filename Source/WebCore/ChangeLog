@@ -1,3 +1,22 @@
+2011-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89822.
+        http://trac.webkit.org/changeset/89822
+        https://bugs.webkit.org/show_bug.cgi?id=63461
+
+        Broken builds (Requested by apavlov on #webkit).
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStylesForNode):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.getStyles):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update):
+
 2011-06-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Adam Roben.

@@ -61,7 +61,7 @@ public:
     ~InspectorCSSAgent();
 
     void reset();
-    void getStylesForNode(ErrorString*, int nodeId, const PassRefPtr<InspectorArray>* forcedPseudoClasses, PassRefPtr<InspectorObject>* result);
+    void getStylesForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
     void getInlineStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
     void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
     void getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* styleSheetInfos);

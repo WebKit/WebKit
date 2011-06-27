@@ -46,7 +46,7 @@ WebInspector.CSSStyleModel.Events = {
 }
 
 WebInspector.CSSStyleModel.prototype = {
-    getStylesAsync: function(nodeId, forcedPseudoClasses, userCallback)
+    getStylesAsync: function(nodeId, userCallback)
     {
         function callback(userCallback, error, payload)
         {
@@ -91,7 +91,7 @@ WebInspector.CSSStyleModel.prototype = {
                 userCallback(result);
         }
 
-        CSSAgent.getStylesForNode(nodeId, forcedPseudoClasses || [], callback.bind(null, userCallback));
+        CSSAgent.getStylesForNode(nodeId, callback.bind(null, userCallback));
     },
 
     getComputedStyleAsync: function(nodeId, userCallback)
