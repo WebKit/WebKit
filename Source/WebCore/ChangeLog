@@ -1,3 +1,19 @@
+2011-06-27  Alexandru Chiculita  <achicu@adobe.com>
+
+        Reviewed by Ojan Vafai.
+
+        css combinator "+" in combination with NAV tag is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=47971
+
+        Added a new state in css/tokenizer.flex for the "nth" rule. The state begins
+        at nth-*( functions and ends at the first ")". It avoids parsing selectors 
+        like "#div+nav" as: "#div" "+n" "av".
+
+        Test: fast/css/div_plus_nav_bug47971.html
+
+        * css/maketokenizer:
+        * css/tokenizer.flex:
+
 2011-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89822.

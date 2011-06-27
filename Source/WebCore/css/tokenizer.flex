@@ -4,6 +4,7 @@
 %option stack
 %s mediaquery
 %s forkeyword
+%s nthchild
 
 h               [0-9a-fA-F]
 nonascii        [\200-\377]
@@ -23,6 +24,7 @@ w               [ \t\r\n\f]*
 nl              \n|\r\n|\r|\f
 range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))
 nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
+nthfunc         "nth-"("child"|"of-type"|"last-child"|"last-of-type")
 
 %%
 
@@ -43,7 +45,8 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 
 {string}                {yyTok = STRING; return yyTok;}
 {ident}                 {yyTok = IDENT; return yyTok;}
-{nth}                   {yyTok = NTH; return yyTok;}
+<nthchild>{nth}         {yyTok = NTH; return yyTok;}
+<nthchild>")"           {BEGIN(INITIAL); yyTok = *yytext; return yyTok;}
 
 "#"{h}+                 {yyTok = HEX; return yyTok;}
 "#"{ident}              {yyTok = IDSEL; return yyTok;}
@@ -113,6 +116,7 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 "-webkit-calc("         {yyTok = CALCFUNCTION; return yyTok;}
 "-webkit-min("          {yyTok = MINFUNCTION; return yyTok;}
 "-webkit-max("          {yyTok = MAXFUNCTION; return yyTok;}
+{nthfunc}"("            {BEGIN(nthchild); yyTok = FUNCTION; return yyTok;}
 {ident}"("              {yyTok = FUNCTION; return yyTok;}
 
 U\+{range}              {yyTok = UNICODERANGE; return yyTok;}

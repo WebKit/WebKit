@@ -49,6 +49,7 @@ print<<END
 #define INITIAL 0
 #define mediaquery 1
 #define forkeyword 2
+#define nthchild 3
 
 /* C99 systems have <inttypes.h>. Non-C99 systems may or may not. */
 

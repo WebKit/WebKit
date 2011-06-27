@@ -1,3 +1,13 @@
+2011-06-27  Alexandru Chiculita  <achicu@adobe.com>
+
+        Reviewed by Ojan Vafai.
+
+        css combinator "+" in combination with NAV tag is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=47971
+
+        * fast/css/div_plus_nav_bug47971-expected.txt: Added.
+        * fast/css/div_plus_nav_bug47971.html: Added.
+
 2011-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89822.
