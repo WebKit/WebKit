@@ -3442,6 +3442,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedPath.h \
 	Source/WebCore/svg/SVGAnimatedPointList.cpp \
 	Source/WebCore/svg/SVGAnimatedPointList.h \
+	Source/WebCore/svg/SVGAnimatedPreserveAspectRatio.cpp \
 	Source/WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	Source/WebCore/svg/SVGAnimatedRect.cpp \
 	Source/WebCore/svg/SVGAnimatedRect.h \

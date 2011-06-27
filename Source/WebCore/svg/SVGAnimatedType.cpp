@@ -31,6 +31,7 @@
 #include "SVGParserUtilities.h"
 #include "SVGPathParserFactory.h"
 #include "SVGPointList.h"
+#include "SVGPreserveAspectRatio.h"
 
 using namespace std;
 
@@ -70,6 +71,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedPoints:
         delete m_data.pointList;
+        break;
+    case AnimatedPreserveAspectRatio:
+        delete m_data.preserveAspectRatio;
         break;
     case AnimatedRect:
         delete m_data.rect;
@@ -155,6 +159,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createPointList(SVGPointList* point
     return animatedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createPreserveAspectRatio(SVGPreserveAspectRatio* preserveAspectRatio)
+{
+    ASSERT(preserveAspectRatio);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedPreserveAspectRatio));
+    animatedType->m_data.preserveAspectRatio = preserveAspectRatio;
+    return animatedType.release();
+}
+
 PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createRect(FloatRect* rect)
 {
     ASSERT(rect);
@@ -225,6 +237,12 @@ SVGPointList& SVGAnimatedType::pointList()
     return *m_data.pointList;
 }
 
+SVGPreserveAspectRatio& SVGAnimatedType::preserveAspectRatio()
+{
+    ASSERT(m_type == AnimatedPreserveAspectRatio);
+    return *m_data.preserveAspectRatio;
+}
+
 FloatRect& SVGAnimatedType::rect()
 {
     ASSERT(m_type == AnimatedRect);
@@ -270,6 +288,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedPoints:
         ASSERT(m_data.pointList);
         return m_data.pointList->valueAsString();
+    case AnimatedPreserveAspectRatio:
+        ASSERT(m_data.preserveAspectRatio);
+        return m_data.preserveAspectRatio->valueAsString();
     case AnimatedRect:
         ASSERT(m_data.rect);
         return String::number(m_data.rect->x()) + ' ' + String::number(m_data.rect->y()) + ' '
@@ -329,6 +350,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         m_data.pointList->clear();
         pointsListFromSVGData(*m_data.pointList, value);
         break;
+    case AnimatedPreserveAspectRatio:
+        ASSERT(m_data.preserveAspectRatio);
+        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, value);
+        break;
     case AnimatedRect:
         ASSERT(m_data.rect);
         parseRect(value, *m_data.rect);
@@ -344,6 +369,13 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     return !ec;
 }
 
+void SVGAnimatedType::setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio& preserveAspectRatio)
+{
+    ASSERT(m_type == AnimatedPreserveAspectRatio);
+    *m_data.preserveAspectRatio = preserveAspectRatio;
+}
+
+    
 } // namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)

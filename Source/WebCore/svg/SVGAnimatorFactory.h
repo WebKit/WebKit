@@ -30,6 +30,7 @@
 #include "SVGAnimatedNumberOptionalNumber.h"
 #include "SVGAnimatedPath.h"
 #include "SVGAnimatedPointList.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"
 #include "SVGAnimatedString.h"
 
@@ -64,6 +65,8 @@ public:
             return adoptPtr(new SVGAnimatedPathAnimator(animationElement, contextElement));
         case AnimatedPoints:
             return adoptPtr(new SVGAnimatedPointListAnimator(animationElement, contextElement));
+        case AnimatedPreserveAspectRatio:
+            return adoptPtr(new SVGAnimatedPreserveAspectRatioAnimator(animationElement, contextElement));
         case AnimatedRect:
             return adoptPtr(new SVGAnimatedRectAnimator(animationElement, contextElement));
         case AnimatedString:

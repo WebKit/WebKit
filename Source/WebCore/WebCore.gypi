@@ -5716,6 +5716,7 @@
             'svg/SVGAnimatedNumberOptionalNumber.cpp',
             'svg/SVGAnimatedPath.cpp',
             'svg/SVGAnimatedPointList.cpp',
+            'svg/SVGAnimatedPreserveAspectRatio.cpp',
             'svg/SVGAnimatedRect.cpp',
             'svg/SVGAnimatedString.cpp',
             'svg/SVGAnimatedType.cpp',

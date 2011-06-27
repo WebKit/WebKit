@@ -104,14 +104,12 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
     if (type == AnimatedUnknown || (hasTagName(SVGNames::animateColorTag) && type != AnimatedColor))
         return AnimatedUnknown;
 
-    // FIXME: We need type specific animations in the future. Many animations marked as AnimatedString today will
-    // support continuous animations.
+    // FIXME: Animator for AnimatedBoolean and AnimatedEnumeration missing.
     switch (type) {
     case AnimatedAngle:
         return AnimatedAngle;
     case AnimatedBoolean:
     case AnimatedEnumeration:
-    case AnimatedPreserveAspectRatio:
     case AnimatedString:
         return AnimatedString;
     case AnimatedColor:
@@ -131,6 +129,8 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedPath;
     case AnimatedPoints:
         return AnimatedPoints;
+    case AnimatedPreserveAspectRatio:
+        return AnimatedPreserveAspectRatio;
     case AnimatedRect:
         return AnimatedRect;
     case AnimatedTransformList:
@@ -171,6 +171,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString: {
         ASSERT(m_animator);
@@ -239,6 +240,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
         ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
@@ -267,6 +269,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
     case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
@@ -296,6 +299,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString: {
         if (!m_animatedType)
@@ -323,6 +327,7 @@ void SVGAnimateElement::applyResultsToTarget()
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
         valueToApply = m_animatedType->valueAsString();
@@ -350,6 +355,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
         return ensureAnimator()->calculateDistance(fromString, toString);

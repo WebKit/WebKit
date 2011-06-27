@@ -33,6 +33,7 @@ class SVGLengthList;
 class SVGNumberList;
 class SVGPathByteStream;
 class SVGPointList;
+class SVGPreserveAspectRatio;
 
 class SVGAnimatedType {
     WTF_MAKE_FAST_ALLOCATED;
@@ -48,6 +49,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(std::pair<float, float>*);
     static PassOwnPtr<SVGAnimatedType> createPath(PassOwnPtr<SVGPathByteStream>);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
+    static PassOwnPtr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     static PassOwnPtr<SVGAnimatedType> createString(String*);
 
@@ -62,11 +64,15 @@ public:
     std::pair<float, float>& numberOptionalNumber();
     SVGPathByteStream* path();
     SVGPointList& pointList();
+    SVGPreserveAspectRatio& preserveAspectRatio();
     FloatRect& rect();
     String& string();
 
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
+    
+    // Used for parsing a String to a SVGPreserveAspectRatio object.
+    void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio&);
 
 private:
     SVGAnimatedType(AnimatedAttributeType);
@@ -79,7 +85,6 @@ private:
         {
         }
 
-        // FIXME: More SVG primitive types need to be added step by step.
         SVGAngle* angle;
         Color* color;
         SVGLength* length;
@@ -88,6 +93,7 @@ private:
         SVGNumberList* numberList;
         std::pair<float, float>* numberOptionalNumber;
         SVGPathByteStream* path;
+        SVGPreserveAspectRatio* preserveAspectRatio;
         SVGPointList* pointList;
         FloatRect* rect;
         String* string;

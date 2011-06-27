@@ -1,3 +1,52 @@
+2011-06-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatedType should support SVGPreserveAspectRatio animation
+        https://bugs.webkit.org/show_bug.cgi?id=63456
+        
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGAnimatedPreserveAspectRatio.
+        
+        The new animator does not affect any behavior, since it was animated with SVGAnimatedString before. The new animator is still needed
+        to support animVal and baseVal later.
+
+        Test: svg/animations/svgPreserveAspectRatio-animation-1.html
+
+        * CMakeLists.txt: Added new file.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Handle AnimatedPreserveAspectRatio.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedPreserveAspectRatio.cpp: Added. New animator for SVGAnimatedPreserveAspectRatio.
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::SVGAnimatedPreserveAspectRatioAnimator):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::constructFromString):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateDistance):
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::~SVGAnimatedPreserveAspectRatioAnimator):
+        * svg/SVGAnimatedType.cpp: Support for SVGPreserveAspectRatio.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createPreserveAspectRatio):
+        (WebCore::SVGAnimatedType::preserveAspectRatio):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        (WebCore::SVGAnimatedType::setPreserveAspectRatioBaseValue):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

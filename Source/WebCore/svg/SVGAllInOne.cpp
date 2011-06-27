@@ -39,6 +39,7 @@
 #include "SVGAnimatedNumberOptionalNumber.cpp"
 #include "SVGAnimatedPath.cpp"
 #include "SVGAnimatedPointList.cpp"
+#include "SVGAnimatedPreserveAspectRatio.cpp"
 #include "SVGAnimatedRect.cpp"
 #include "SVGAnimatedString.cpp"
 #include "SVGAnimatedType.cpp"
