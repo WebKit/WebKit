@@ -1,3 +1,14 @@
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        m_formElementsWithFormAttribute doesn't ref the objects it holds
+        https://bugs.webkit.org/show_bug.cgi?id=62956
+
+        Test: fast/forms/form-associated-element-crash3.html
+
+        * dom/Document.h:
+
 2011-06-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
