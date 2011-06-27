@@ -1,3 +1,16 @@
+2011-06-27  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Stop copying obsolete WebKit libraries on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=63474
+        
+        Don't copy obsolete WebKit library directories and files on Windows, they no longer exist and just generate extraneous warnings. These include the CharacterSets directory, dnssd.dll, and icudt40.dll.
+
+        * DumpRenderTree/win/DumpRenderTreePostBuild.cmd:
+        * MiniBrowser/MiniBrowserPostBuild.cmd:
+        * WebKitTestRunner/win/WebKitTestRunnerPostBuild.cmd:
+
 2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Wyatt Carss to the list of non-committer contributors.
