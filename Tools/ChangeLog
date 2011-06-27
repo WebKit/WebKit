@@ -1,3 +1,20 @@
+2011-06-27  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] DRT: Add an ewk_view specialization for EFL's DumpRenderTree.
+        It will be plugged into the build system as soon as the rest of the
+        DRT code is fully upstreamed.
+        https://bugs.webkit.org/show_bug.cgi?id=63086
+
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp: Added.
+        (onConsoleMessage):
+        (onJavaScriptAlert):
+        (onJavaScriptConfirm):
+        (onJavaScriptPrompt):
+        (drtViewTiledAdd):
+        * DumpRenderTree/efl/DumpRenderTreeView.h: Added.
+
 2011-06-27  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kent Tamura.
