@@ -1,3 +1,14 @@
+2011-06-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::overloadedSlots() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37319
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::overloadedSlots): Remove expected failure and
+        fix the comment.
+
 2011-06-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

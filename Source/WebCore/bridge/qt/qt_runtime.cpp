@@ -778,11 +778,21 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             } else if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(hint))) {
                 ret = QtPixmapInstance::variantFromObject(object, static_cast<QMetaType::Type>(hint));
             } else if (hint == (QMetaType::Type) qMetaTypeId<QWebElement>()) {
-                if (object && object->inherits(&JSHTMLElement::s_info))
-                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSHTMLElement*>(object))->impl()));
-                else if (object && object->inherits(&JSDocument::s_info))
+                if (object && object->inherits(&JSElement::s_info)) {
+                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSElement*>(object))->impl()));
+                    dist = 0;
+                    // Allow other objects to reach this one. This won't cause our algorithm to
+                    // loop since when we find an Element we do not recurse.
+                    visitedObjects->remove(object);
+                    break;
+                }
+                if (object && object->inherits(&JSDocument::s_info)) {
+                    // To support LayoutTestControllerQt::nodesFromRect(), used in DRT, we do an implicit
+                    // conversion from 'document' to the QWebElement representing the 'document.documentElement'.
+                    // We can't simply use a QVariantMap in nodesFromRect() because it currently times out
+                    // when serializing DOMMimeType and DOMPlugin, even if we limit the recursion.
                     ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSDocument*>(object))->impl()->documentElement()));
-                else
+                } else
                     ret = QVariant::fromValue<QWebElement>(QWebElement());
             } else if (hint == (QMetaType::Type) qMetaTypeId<QDRTNode>()) {
                 if (object && object->inherits(&JSNode::s_info))

@@ -1,3 +1,23 @@
+2011-06-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::overloadedSlots() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37319
+
+        This patch is based on Noam Rosenthal original patch in the same bug.
+
+        When hinted with QWebElement metatype, we qualify the conversion
+        from JSElement as a "perfect match".
+
+        The test was failing because the wrong slot was called, since the QWebElement
+        match was taken as equal to the others and not chosen when the metacall happened.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant): Identify the conversion between JSElement
+        to QWebElement as a "perfect match" (dist = 0). Add comments to explain the reason
+        why we have the implicit conversion.
+
 2011-06-27  ChangSeok Oh  <shivamidow@gmail.com>
 
         Reviewed by Martin Robinson.

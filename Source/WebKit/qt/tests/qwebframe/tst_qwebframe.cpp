@@ -2004,10 +2004,9 @@ void tst_QWebFrame::overloadedSlots()
     QCOMPARE(m_myObject->qtFunctionInvoked(), 35);
     */
 
-    // should pick myOverloadedSlot(QRegExp)
+    // Should pick myOverloadedSlot(QWebElement).
     m_myObject->resetQtFunctionInvoked();
     evalJS("myObject.myOverloadedSlot(document.body)");
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=37319", Continue);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 36);
 
     // should pick myOverloadedSlot(QObject*)
