@@ -6,7 +6,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=63487
         
         In the absence of the WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH environment variable, only pause the web process on
-        launch if the shift, control, and alt keys are all held down. This regressed in r89855, which always caused the
+        launch if the shift, control, and alt keys are all held down. This regressed in r89685, which always caused the
         web process to pause if the shift and alt keys were not held down.
 
         * WebProcess/WebKitMain.cpp:
