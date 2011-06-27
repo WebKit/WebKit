@@ -6,8 +6,10 @@
 <script>
   if (window.layoutTestController)
       layoutTestController.dumpAsText();
-  // These two calls so not cause a NULL pointer crash:
-  try { window.requestFileSystem(10); } catch (e) {}
-  try { window.resolveLocalFileSystemURI(); } catch (e) {}
-  document.getElementById('log').innerHTML = "PASS";
+  if (window.webkitRequestFileSystem) {
+      // These two calls should not cause a NULL pointer crash:
+      webkitRequestFileSystem(TEMPORARY, 100);
+      webkitResolveLocalFileSystemURL('');
+      document.getElementById('log').innerHTML = "PASS";
+  }
 </script>
