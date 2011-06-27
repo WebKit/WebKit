@@ -1,3 +1,13 @@
+2011-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        The fast/js/recursion-limit-equal test is too fragile
+        https://bugs.webkit.org/show_bug.cgi?id=63352
+
+        * fast/js/recursion-limit-equal-expected.txt:
+        * fast/js/script-tests/recursion-limit-equal.js:
+
 2011-06-27  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.

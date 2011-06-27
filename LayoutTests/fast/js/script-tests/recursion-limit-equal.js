@@ -14,4 +14,5 @@ function test()
 debug('If the test did not crash, it has passed.');
 debug('');
 
-test();
+shouldThrow("test()");
+
