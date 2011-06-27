@@ -1771,6 +1771,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUnicodeBidi e)
         break;
     case Isolate:
         m_value.ident = CSSValueWebkitIsolate;
+        break;
+    case Plaintext:
+        m_value.ident = CSSValueWebkitPlaintext;
+        break;
     }
 }
 
@@ -1785,6 +1789,8 @@ template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
         return Override;
     case CSSValueWebkitIsolate:
         return Isolate;
+    case CSSValueWebkitPlaintext:
+        return Plaintext;
     default:
         ASSERT_NOT_REACHED();
         return UBNormal;

@@ -32,7 +32,8 @@ enum EUnicodeBidi {
     UBNormal,
     Embed,
     Override,
-    Isolate
+    Isolate,
+    Plaintext
 };
 
 }

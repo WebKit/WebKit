@@ -125,7 +125,16 @@ bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry
 
     return StyledElement::mapToEntry(attrName, result);
 }
-    
+
+static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
+{
+    if (element->hasLocalName(bdoTag))
+        return CSSValueBidiOverride;
+    if (element->hasLocalName(preTag) || element->hasLocalName(textareaTag))
+        return CSSValueWebkitPlaintext;
+    return CSSValueEmbed;
+}
+
 void HTMLElement::parseMappedAttribute(Attribute* attr)
 {
     if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
@@ -156,7 +165,7 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         if (!equalIgnoringCase(attr->value(), "auto"))
             addCSSProperty(attr, CSSPropertyDirection, attr->value());
         dirAttributeChanged(attr);
-        addCSSProperty(attr, CSSPropertyUnicodeBidi, hasLocalName(bdoTag) ? CSSValueBidiOverride : CSSValueEmbed);
+        addCSSProperty(attr, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
     } else if (attr->name() == draggableAttr) {
         const AtomicString& value = attr->value();
         if (equalIgnoringCase(value, "true")) {

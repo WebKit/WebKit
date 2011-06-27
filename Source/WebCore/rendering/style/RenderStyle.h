@@ -256,9 +256,9 @@ protected:
         bool _affectedByActive : 1;
         bool _affectedByDrag : 1;
         unsigned _pseudoBits : 7;
-        unsigned _unicodeBidi : 2; // EUnicodeBidi
+        unsigned _unicodeBidi : 3; // EUnicodeBidi
         bool _isLink : 1;
-        // 50 bits
+        // 53 bits
     } noninherited_flags;
 
 // !END SYNC!

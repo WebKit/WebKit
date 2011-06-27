@@ -1,3 +1,16 @@
+2011-06-27  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for unicode-bidi:plaintext CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=50949
+        Adding support for the 'plaintext' mode of unicode-bidi.
+
+        * fast/text/international/unicode-bidi-plaintext.html: Added.
+        * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-expected.txt: added
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-expected.png: Added.
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-expected.txt: Added.
+
 2011-06-27  Jessie Berlin  <jberlin@apple.com>
 
         Add Windows-specific results for the test added in r89745.

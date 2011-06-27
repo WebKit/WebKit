@@ -1,3 +1,38 @@
+2011-06-27  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for unicode-bidi:plaintext CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=50949
+
+        Adding support for unicode-bidi: plaintext. This involves invoking P2 and P3
+        of the Unicode BiDi algorithm on each paragraph of a block with that style.
+        This is similar to dir=auto but done per-paragraph instead of per element.
+
+        Test: fast/text/international/unicode-bidi-plaintext.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):  Added plaintext.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Ditto.
+        (WebCore::CSSPrimitiveValue::operator EUnicodeBidi): Ditto.
+        * css/CSSValueKeywords.in: Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::unicodeBidiAttributeForDirAuto): Helper to map elements with dir=auto
+        to their proper unicode-bidi attribute.
+        (WebCore::HTMLElement::parseMappedAttribute): Assign plaintext to pre and textarea
+        when dir=auto.
+        * platform/text/UnicodeBidi.h: Added plaintext.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::determineParagraphDirection): Determines the direction of a paragraph
+        based on the first strong character. Stops at first paragraph separator.
+        (WebCore::RenderBlock::layoutInlineChildren): Uses determineParagraphDirection
+        when in unicode-bidi: plaintext mode (and operating at the block's BidiContext)
+        to set each paragraph to the proper base BidiContext.
+        (WebCore::RenderBlock::determineStartPosition): Ditto.
+        * rendering/style/RenderStyle.h: Gave _unicodebidi another bit to accomodate
+        for plaintext.
+
 2011-06-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Darin Adler.

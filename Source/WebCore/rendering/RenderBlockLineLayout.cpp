@@ -112,6 +112,26 @@ static int inlineLogicalWidth(RenderObject* child, bool start = true, bool end =
     return extraWidth;
 }
 
+static void determineParagraphDirection(TextDirection& dir, InlineIterator iter)
+{
+    while (!iter.atEnd()) {
+        if (iter.atParagraphSeparator())
+            return;
+        if (UChar current = iter.current()) {
+            Direction charDirection = direction(current);
+            if (charDirection == LeftToRight) {
+                dir = LTR;
+                return;
+            }
+            if (charDirection == RightToLeft || charDirection == RightToLeftArabic) {
+                dir = RTL;
+                return;
+            }
+        }
+        iter.increment();
+    }
+}
+
 static void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator& lBreak)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
@@ -944,6 +964,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
         lineInfo.setEmpty(true);
 
         InlineIterator oldEnd = end;
+        bool isNewUBAParagraph = lineInfo.previousLineBrokeCleanly();
         FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
         end = lineBreaker.nextLineBreak(resolver, lineInfo, lineBreakIteratorInfo, lastFloatFromPreviousLine);
         if (resolver.position().atEnd()) {
@@ -962,6 +983,12 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
                 lastRootBox()->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
         } else {
             VisualDirectionOverride override = (style()->rtlOrdering() == VisualOrder ? (style()->direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
+
+            if (isNewUBAParagraph && style()->unicodeBidi() == Plaintext && !resolver.context()->parent()) {
+                TextDirection direction = style()->direction();
+                determineParagraphDirection(direction, resolver.position());
+                resolver.setStatus(BidiStatus(direction, style()->unicodeBidi() == Override));
+            }
             // FIXME: This ownership is reversed. We should own the BidiRunList and pass it to createBidiRunsForLine.
             BidiRunList<BidiRun>& bidiRuns = resolver.runs();
             resolver.createBidiRunsForLine(end, override, lineInfo.previousLineBrokeCleanly());
@@ -1349,7 +1376,10 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
         resolver.setPosition(InlineIterator(this, last->lineBreakObj(), last->lineBreakPos()));
         resolver.setStatus(last->lineBreakBidiStatus());
     } else {
-        resolver.setStatus(BidiStatus(style()->direction(), style()->unicodeBidi() == Override));
+        TextDirection direction = style()->direction();
+        if (style()->unicodeBidi() == Plaintext)
+            determineParagraphDirection(direction, InlineIterator(this, bidiFirstNotSkippingInlines(this), 0));
+        resolver.setStatus(BidiStatus(direction, style()->unicodeBidi() == Override));
         resolver.setPosition(InlineIterator(this, bidiFirstSkippingInlines(this, &resolver), 0));
     }
     return curr;
