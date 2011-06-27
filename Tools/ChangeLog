@@ -1,3 +1,16 @@
+2011-06-27  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        [Chromium] WebViewHost should be destructed before LayoutTestController, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=63427
+
+        ~WebViewHost() navigates to about:blank, so it calls some
+        callbacks and LayoutTestController functions.
+
+        * DumpRenderTree/chromium/TestShell.h:
+         Move m_printer upper and move m_webViewHost lower.
+
 2011-06-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

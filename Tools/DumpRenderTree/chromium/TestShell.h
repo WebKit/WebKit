@@ -193,7 +193,9 @@ private:
     WebKit::WebWidget* m_focusedWidget;
     bool m_testShellMode;
     WebViewHost* m_devTools;
-    OwnPtr<WebViewHost> m_webViewHost;
+
+    // Be careful of the destruction order of the following objects.
+    OwnPtr<TestEventPrinter> m_printer;
     OwnPtr<WebPermissions> m_webPermissions;
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
@@ -203,7 +205,8 @@ private:
     OwnPtr<PlainTextController> m_plainTextController;
     OwnPtr<TextInputController> m_textInputController;
     OwnPtr<NotificationPresenter> m_notificationPresenter;
-    OwnPtr<TestEventPrinter> m_printer;
+    OwnPtr<WebViewHost> m_webViewHost;
+
     TestParams m_params;
     int m_timeout; // timeout value in millisecond
     bool m_allowExternalPages;
