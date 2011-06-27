@@ -48,7 +48,6 @@ class ORWTResultsHTMLParser(object):
     stderr_key = u'Tests that had stderr output:'
     fail_key = u'Tests where results did not match expected results:'
     timeout_key = u'Tests that timed out:'
-    # FIXME: This may need to be made aware of WebKitTestRunner results for WebKit2.
     crash_key = u'Tests that caused the DumpRenderTree tool to crash:'
     missing_key = u'Tests that had no expected results (probably new):'
     webprocess_crash_key = u'Tests that caused the Web process to crash:'

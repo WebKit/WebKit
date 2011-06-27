@@ -91,6 +91,29 @@ class ConfigTest(unittest.TestCase):
         self.assertTrue(c.build_directory('Debug').endswith('/Debug'))
         self.assertRaises(KeyError, c.build_directory, 'Unknown')
 
+    def test_build_dumprendertree__success(self):
+        c = self.make_config(exit_code=0)
+        self.assertTrue(c.build_dumprendertree("Debug"))
+        self.assertTrue(c.build_dumprendertree("Release"))
+        self.assertRaises(KeyError, c.build_dumprendertree, "Unknown")
+
+    def test_build_dumprendertree__failure(self):
+        c = self.make_config(exit_code=-1)
+
+        # FIXME: Build failures should log errors. However, the message we
+        # get depends on how we're being called; as a standalone test,
+        # we'll get the "no handlers found" message. As part of
+        # test-webkitpy, we get the actual message. Really, we need
+        # outputcapture to install its own handler.
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        self.assertFalse(c.build_dumprendertree('Debug'))
+        oc.restore_output()
+
+        oc.capture_output()
+        self.assertFalse(c.build_dumprendertree('Release'))
+        oc.restore_output()
+
     def test_default_configuration__release(self):
         self.assert_configuration('Release', 'Release')
 

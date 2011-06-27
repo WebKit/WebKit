@@ -41,10 +41,8 @@ import sys
 import time
 import webbrowser
 
-
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.system import ospath
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port import base, builders, server_process
 
 _log = logging.getLogger("webkitpy.layout_tests.port.webkit")
@@ -59,11 +57,6 @@ class WebKitPort(base.Port):
 
         # FIXME: disable pixel tests until they are run by default on the build machines.
         self.set_option_default("pixel_tests", False)
-
-    def driver_name(self):
-        if self.get_option('webkit_test_runner'):
-            return "WebKitTestRunner"
-        return "DumpRenderTree"
 
     def baseline_search_path(self):
         return [self._webkit_baseline_path(self._name)]
@@ -82,27 +75,14 @@ class WebKitPort(base.Port):
         result_set.set_platform(platform)
         return result_set
 
-    def _driver_build_script_name(self):
-        if self.get_option('webkit_test_runner'):
-            return "build-webkittestrunner"
-        return "build-dumprendertree"
-
     def _build_driver(self):
         configuration = self.get_option('configuration')
-        try:
-            # FIXME: We should probably have a run_script helper which automatically adds the configuration flags.
-            self._executive.run_command([
-                self._config.script_path(self._driver_build_script_name()),
-                self._config.flag_for_configuration(configuration)])
-        except ScriptError:
-            _log.error("Failed to build %s" % self.driver_name())
-            return False
-        return True
+        return self._config.build_dumprendertree(configuration)
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
         if not self._filesystem.exists(driver_path):
-            _log.error("%s was not found at %s" % (self.driver_name(), driver_path))
+            _log.error("DumpRenderTree was not found at %s" % driver_path)
             return False
         return True
 
@@ -196,6 +176,10 @@ class WebKitPort(base.Port):
         # Results are store relative to the built products to make it easy
         # to have multiple copies of webkit checked out and built.
         return self._build_path('layout-test-results')
+
+    def setup_test_run(self):
+        # This port doesn't require any specific configuration.
+        pass
 
     def create_driver(self, worker_number):
         return WebKitDriver(self, worker_number)
@@ -443,8 +427,8 @@ class WebKitDriver(base.Driver):
         if error_lines and error_lines[-1] == "#EOF":
             error_lines.pop()  # Remove the expected "#EOF"
         error = "\n".join(error_lines)
-
-        # FIXME: This seems like the wrong section of code to be doing this reset in.
+        # FIXME: This seems like the wrong section of code to be doing
+        # this reset in.
         self._server_process.error = ""
         return base.DriverOutput(text, image, actual_image_hash, audio,
             crash=self._server_process.crashed, test_time=time.time() - start_time,

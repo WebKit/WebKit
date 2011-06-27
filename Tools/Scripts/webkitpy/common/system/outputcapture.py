@@ -32,7 +32,6 @@ import sys
 import unittest
 from StringIO import StringIO
 
-
 class OutputCapture(object):
     def __init__(self):
         self.saved_outputs = dict()

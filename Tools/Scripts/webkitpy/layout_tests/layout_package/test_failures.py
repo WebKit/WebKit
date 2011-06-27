@@ -104,12 +104,14 @@ class TestFailure(object):
         return cPickle.dumps(self)
 
     def should_kill_dump_render_tree(self):
-        """Returns True if we should kill DumpRenderTree before the next test."""
+        """Returns True if we should kill DumpRenderTree before the next
+        test."""
         return False
 
 
 class FailureTimeout(TestFailure):
-    """Test timed out.  We also want to restart DumpRenderTree if this happens."""
+    """Test timed out.  We also want to restart DumpRenderTree if this
+    happens."""
     def __init__(self, is_reftest=False):
         self.is_reftest = is_reftest
 
@@ -128,7 +130,6 @@ class FailureCrash(TestFailure):
 
     @staticmethod
     def message():
-        # FIXME: This is wrong for WebKit2 (which uses WebKitTestRunner).
         return "DumpRenderTree crashed"
 
     def should_kill_dump_render_tree(self):
