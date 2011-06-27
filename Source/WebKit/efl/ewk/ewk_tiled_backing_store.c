@@ -374,8 +374,6 @@ static Eina_Bool _ewk_tiled_backing_store_item_process_idler_cb(void *data)
     if (priv->process.pre_cb)
         data = priv->process.pre_cb(priv->process.pre_data, priv->self);
 
-    ewk_tile_matrix_updates_process(priv->model.matrix);
-
     _ewk_tiled_backing_store_pre_render_request_process_single(priv);
 
     if (priv->process.post_cb)
