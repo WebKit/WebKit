@@ -34,6 +34,7 @@
 #include <wtf/text/StringImpl.h>
 
 #if USE(ICU_UNICODE)
+#include "LineBreakIteratorPoolICU.h"
 #include "TextCodecICU.h"
 #endif
 
@@ -81,6 +82,15 @@ ThreadGlobalData::~ThreadGlobalData()
     destroy();
 }
 
+#if USE(ICU_UNICODE)
+LineBreakIteratorPool& ThreadGlobalData::lineBreakIteratorPool()
+{
+    if (!m_lineBreakIteratorPool)
+        m_lineBreakIteratorPool = LineBreakIteratorPool::create();
+    return *m_lineBreakIteratorPool;
+}
+#endif
+
 void ThreadGlobalData::destroy()
 {
 #if PLATFORM(MAC)
@@ -91,6 +101,7 @@ void ThreadGlobalData::destroy()
 #if USE(ICU_UNICODE)
     delete m_cachedConverterICU;
     m_cachedConverterICU = 0;
+    m_lineBreakIteratorPool = nullptr;
 #endif
 
     delete m_eventNames;

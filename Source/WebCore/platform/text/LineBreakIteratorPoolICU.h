@@ -27,9 +27,11 @@
 #define LineBreakIteratorPoolICU_h
 
 #include "TextBreakIteratorInternalICU.h"
+#include "ThreadGlobalData.h"
 #include <unicode/ubrk.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -39,12 +41,10 @@ class LineBreakIteratorPool {
 public:
     static LineBreakIteratorPool& sharedPool()
     {
-        ASSERT(isMainThread());
-        DEFINE_STATIC_LOCAL(LineBreakIteratorPool, pool, ());
-        return pool;
+        return threadGlobalData().lineBreakIteratorPool();
     }
 
-    LineBreakIteratorPool() { }
+    static PassOwnPtr<LineBreakIteratorPool> create() { return adoptPtr(new LineBreakIteratorPool); }
 
     UBreakIterator* take(const AtomicString& locale)
     {
@@ -84,6 +84,8 @@ public:
     }
 
 private:
+    LineBreakIteratorPool() { }
+
     static const size_t capacity = 4;
 
     typedef pair<AtomicString, UBreakIterator*> Entry;

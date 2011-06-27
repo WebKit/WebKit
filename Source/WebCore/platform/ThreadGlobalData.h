@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(WORKERS)
@@ -41,9 +42,11 @@ using WTF::ThreadSpecific;
 namespace WebCore {
 
     class EventNames;
+    class LineBreakIteratorPool;
+    class ThreadTimers;
+
     struct ICUConverterWrapper;
     struct TECConverterWrapper;
-    class ThreadTimers;
 
     class ThreadGlobalData {
         WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
@@ -57,6 +60,7 @@ namespace WebCore {
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
+        LineBreakIteratorPool& lineBreakIteratorPool();
 #endif
 
 #if PLATFORM(MAC)
@@ -73,6 +77,7 @@ namespace WebCore {
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper* m_cachedConverterICU;
+        OwnPtr<LineBreakIteratorPool> m_lineBreakIteratorPool;
 #endif
 
 #if PLATFORM(MAC)

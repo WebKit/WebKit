@@ -108,6 +108,37 @@
 
         Reviewed by Darin Adler.
 
+        Allow non-main thread text drawing in ICU ports
+        https://bugs.webkit.org/show_bug.cgi?id=63482
+
+        Some ports allow multiple threads to draw strings.
+        LineBreakIteratorPool is not thread safe and the existing
+        ASSERT caught cases where multiple threads were trying
+        to access the shared pool. This makes the pool a lazily
+        created per-thread pool to allow for thread safe pool use.
+
+        * platform/ThreadGlobalData.h:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData): start with null.
+        (WebCore::ThreadGlobalData::lineBreakIteratorPool): lazily create.
+        (WebCore::ThreadGlobalData::destroy): delete.
+        Manage the lifetime of the per-thread pool instance.
+
+        * platform/text/LineBreakIteratorPoolICU.h:
+        (WebCore::LineBreakIteratorPool::sharedPool):
+        Use the per-thread pool instance and remove the ASSERT that
+        this needs to be on the main thread.
+
+        (WebCore::LineBreakIteratorPool::create):
+        Create a PassOwnPtr so we can use OwnPtr on pools.
+
+        (WebCore::LineBreakIteratorPool::LineBreakIteratorPool):
+        Private now that there is a public create function.
+
+2011-06-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Extract LineBreakIteratorPool class into its own file
         https://bugs.webkit.org/show_bug.cgi?id=63471
 
