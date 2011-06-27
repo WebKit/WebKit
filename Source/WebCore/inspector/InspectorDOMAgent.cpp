@@ -1488,7 +1488,7 @@ void InspectorDOMAgent::drawNodeHighlight(GraphicsContext& context) const
         mode = DOMNodeHighlighter::HighlightBorder;
     else if (m_highlightMode == "margin")
         mode = DOMNodeHighlighter::HighlightMargin;
-    DOMNodeHighlighter::DrawNodeHighlight(context, m_highlightedNode.get(), mode);
+    DOMNodeHighlighter::drawNodeHighlight(context, m_highlightedNode.get(), mode);
 }
 
 } // namespace WebCore

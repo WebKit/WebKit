@@ -1,3 +1,18 @@
+2011-06-27  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION r84481] updateLayout called from DrawNodeHighlight
+        https://bugs.webkit.org/show_bug.cgi?id=63405
+
+        We should not call layout from paint.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawNodeHighlight):
+        * inspector/DOMNodeHighlighter.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::drawNodeHighlight):
+
 2011-06-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix style error in EFL port.

@@ -44,7 +44,7 @@ enum HighlightMode {
     HighlightMargin
 };
 
-void DrawNodeHighlight(GraphicsContext&, Node*, HighlightMode);
+void drawNodeHighlight(GraphicsContext&, Node*, HighlightMode);
 
 } // namespace DOMNodeHighlighter
 

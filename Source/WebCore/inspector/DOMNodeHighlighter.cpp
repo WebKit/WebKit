@@ -223,9 +223,8 @@ void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& bound
 
 namespace DOMNodeHighlighter {
 
-void DrawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
+void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
 {
-    node->document()->updateLayoutIgnorePendingStylesheets();
     RenderObject* renderer = node->renderer();
     Frame* containingFrame = node->document()->frame();
 
