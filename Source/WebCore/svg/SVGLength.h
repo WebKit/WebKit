@@ -70,6 +70,7 @@ public:
     };
 
     SVGLength(SVGLengthMode mode = LengthModeOther, const String& valueAsString = String());
+    SVGLength(const SVGElement*, float, SVGLengthMode mode = LengthModeOther, SVGLengthType type = LengthTypeNumber);
     SVGLength(const SVGLength&);
 
     SVGLengthType unitType() const;

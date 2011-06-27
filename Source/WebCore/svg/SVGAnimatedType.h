@@ -31,6 +31,7 @@ class Color;
 class FloatRect;
 class SVGAngle;
 class SVGLength;
+class SVGLengthList;
 class SVGNumberList;
 class SVGPathByteStream;
 class SVGPointList;
@@ -43,6 +44,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
+    static PassOwnPtr<SVGAnimatedType> createLengthList(SVGLengthList*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     static PassOwnPtr<SVGAnimatedType> createNumberList(SVGNumberList*);
     static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(pair<float, float>*);
@@ -56,6 +58,7 @@ public:
     SVGAngle& angle();
     Color& color();
     SVGLength& length();
+    SVGLengthList& lengthList();
     float& number();
     SVGNumberList& numberList();
     pair<float, float>& numberOptionalNumber();
@@ -82,6 +85,7 @@ private:
         SVGAngle* angle;
         Color* color;
         SVGLength* length;
+        SVGLengthList* lengthList;
         float* number;
         SVGNumberList* numberList;
         pair<float, float>* numberOptionalNumber;

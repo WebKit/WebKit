@@ -26,6 +26,7 @@
 #include "SVGAngle.h"
 #include "SVGColor.h"
 #include "SVGLength.h"
+#include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathParserFactory.h"
@@ -51,6 +52,9 @@ SVGAnimatedType::~SVGAnimatedType()
         break;
     case AnimatedLength:
         delete m_data.length;
+        break;
+    case AnimatedLengthList:
+        delete m_data.lengthList;
         break;
     case AnimatedNumber:
         delete m_data.number;
@@ -100,6 +104,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createLength(SVGLength* length)
     ASSERT(length);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedLength));
     animatedType->m_data.length = length;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createLengthList(SVGLengthList* lengthList)
+{
+    ASSERT(lengthList);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedLengthList));
+    animatedType->m_data.lengthList = lengthList;
     return animatedType.release();
 }
 
@@ -177,6 +189,12 @@ SVGLength& SVGAnimatedType::length()
     return *m_data.length;
 }
 
+SVGLengthList& SVGAnimatedType::lengthList()
+{
+    ASSERT(m_type == AnimatedLengthList);
+    return *m_data.lengthList;
+}
+
 float& SVGAnimatedType::number()
 {
     ASSERT(m_type == AnimatedNumber);
@@ -231,6 +249,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedLength:
         ASSERT(m_data.length);
         return m_data.length->valueAsString();
+    case AnimatedLengthList:
+        ASSERT(m_data.lengthList);
+        return m_data.lengthList->valueAsString();
     case AnimatedNumber:
         ASSERT(m_data.number);
         return String::number(*m_data.number);
@@ -278,6 +299,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedLength:
         ASSERT(m_data.length);
         m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName), ec);
+        break;
+    case AnimatedLengthList:
+        ASSERT(m_data.lengthList);
+        m_data.lengthList->parse(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName));
         break;
     case AnimatedNumber:
         ASSERT(m_data.number);

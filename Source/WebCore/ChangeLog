@@ -1,3 +1,56 @@
+2011-06-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatedType should support SVGLengthList animation
+        https://bugs.webkit.org/show_bug.cgi?id=63399
+
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGAnimatedLengthList.
+        
+        Interpolated animations of glyph positions are possible now.
+
+        Tests: svg/animations/svglengthlist-animation-1.html
+               svg/animations/svglengthlist-animation-2.html
+               svg/animations/svglengthlist-animation-3.html
+               svg/animations/svglengthlist-animation-4.html
+
+        * CMakeLists.txt: Add new file to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Make use of AnimatedLengthList.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedLengthList.cpp: Added. New animator for SVGLengthList.
+        (WebCore::SVGAnimatedLengthListAnimator::SVGAnimatedLengthListAnimator):
+        (WebCore::SVGAnimatedLengthListAnimator::constructFromString):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateDistance):
+        * svg/SVGAnimatedLengthList.h:
+        (WebCore::SVGAnimatedLengthListAnimator::~SVGAnimatedLengthListAnimator):
+        * svg/SVGAnimatedType.cpp: Add SVGLengthList.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createLengthList):
+        (WebCore::SVGAnimatedType::lengthList):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGLength.cpp: Add new constructor with LengthType, LengthMode and value.
+        (WebCore::SVGLength::SVGLength):
+        * svg/SVGLength.h:
+
 2011-06-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

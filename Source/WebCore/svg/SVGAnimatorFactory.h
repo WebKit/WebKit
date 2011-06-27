@@ -24,6 +24,7 @@
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedColor.h"
 #include "SVGAnimatedLength.h"
+#include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGAnimatedNumberOptionalNumber.h"
@@ -51,6 +52,8 @@ public:
             return adoptPtr(new SVGAnimatedColorAnimator(animationElement, contextElement));
         case AnimatedLength:
             return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
+        case AnimatedLengthList:
+            return adoptPtr(new SVGAnimatedLengthListAnimator(animationElement, contextElement));
         case AnimatedNumber:
             return adoptPtr(new SVGAnimatedNumberAnimator(animationElement, contextElement));
         case AnimatedNumberList:

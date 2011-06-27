@@ -131,7 +131,16 @@ SVGLength::SVGLength(SVGLengthMode mode, const String& valueAsString)
     ExceptionCode ec = 0;
     setValueAsString(valueAsString, ec);
 }
-    
+
+SVGLength::SVGLength(const SVGElement* context, float value, SVGLengthMode mode, SVGLengthType unitType)
+    : m_valueInSpecifiedUnits(0)
+    , m_unit(storeUnit(mode, unitType))
+{
+    ExceptionCode ec = 0;
+    setValue(value, context, ec);
+    ASSERT(!ec);
+}
+
 void SVGLength::setValueAsString(const String& valueAsString, SVGLengthMode mode, ExceptionCode& ec)
 {
     m_valueInSpecifiedUnits = 0;

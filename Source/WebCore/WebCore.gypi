@@ -5712,6 +5712,7 @@
             'svg/SVGAnimatedAngle.cpp',
             'svg/SVGAnimatedColor.cpp',
             'svg/SVGAnimatedLength.cpp',
+            'svg/SVGAnimatedLengthList.cpp',
             'svg/SVGAnimatedNumber.cpp',
             'svg/SVGAnimatedNumberList.cpp',
             'svg/SVGAnimatedNumberOptionalNumber.cpp',

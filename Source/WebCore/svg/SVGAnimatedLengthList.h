@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedListPropertyTearOff.h"
+#include "SVGAnimatedTypeAnimator.h"
 #include "SVGLengthList.h"
 
 namespace WebCore {
@@ -34,6 +35,28 @@ DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedLengthList, SVGLengthList, UpperProper
 
 #define DEFINE_ANIMATED_LENGTH_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_LIST_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedLengthList, SVGLengthList, UpperProperty, LowerProperty)
+    
+#if ENABLE(SVG_ANIMATION)
+class SVGAnimationElement;
+
+class SVGAnimatedLengthListAnimator : public SVGAnimatedTypeAnimator {
+    
+public:
+    SVGAnimatedLengthListAnimator(SVGAnimationElement*, SVGElement*);
+    virtual ~SVGAnimatedLengthListAnimator() { }
+    
+    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    
+    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
+    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
+    virtual float calculateDistance(const String& fromString, const String& toString);
+    
+private:
+    SVGLengthMode m_lengthMode;
+};
+#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

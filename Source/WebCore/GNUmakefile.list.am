@@ -3430,6 +3430,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedInteger.h \
 	Source/WebCore/svg/SVGAnimatedLength.cpp \
 	Source/WebCore/svg/SVGAnimatedLength.h \
+	Source/WebCore/svg/SVGAnimatedLengthList.cpp \
 	Source/WebCore/svg/SVGAnimatedLengthList.h \
 	Source/WebCore/svg/SVGAnimatedNumber.cpp \
 	Source/WebCore/svg/SVGAnimatedNumber.h \
