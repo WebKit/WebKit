@@ -1,10 +1,22 @@
+2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Add platform specific expected results after r89745.
+
+        * platform/qt/Skipped: Revert accidentally committed (r89732) changes.
+        * platform/qt/svg/custom/linking-a-03-b-all-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-all-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-transform-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-viewBox-transform-expected.txt:
+
 2011-06-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
 
         SVGAnimatedType should support SVGLengthList animation
         https://bugs.webkit.org/show_bug.cgi?id=63399
-        
+
         Test animations of attributes with type SVGLengthList.
 
         * svg/animations/script-tests/svglengthlist-animation-1.js: Added.
@@ -125,7 +137,7 @@
 
         SVGAnimatedType should support SVGNumberOptionalNumber animation
         https://bugs.webkit.org/show_bug.cgi?id=63397
-        
+
         Test animation of SVGNumberOptionalNumber values with and without optional number, as well as 'to' and 'by' animations.
 
         * svg/animations/script-tests/svgnumberoptionalnumber-animation-1.js: Added.
