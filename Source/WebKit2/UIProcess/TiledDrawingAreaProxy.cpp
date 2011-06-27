@@ -42,6 +42,12 @@ namespace WebKit {
 static const int defaultTileWidth = 1024;
 static const int defaultTileHeight = 1024;
 
+static IntPoint innerBottomRight(const IntRect& rect)
+{
+    // Actually, the rect does not contain rect.maxX(). Refer to IntRect::contain.
+    return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
+}
+
 PassOwnPtr<TiledDrawingAreaProxy> TiledDrawingAreaProxy::create(PlatformWebView* webView, WebPageProxy* webPageProxy)
 {
     return adoptPtr(new TiledDrawingAreaProxy(webView, webPageProxy));
@@ -179,7 +185,7 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
     IntRect dirtyRect(mapFromContents(contentsDirtyRect));
 
     TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
 
     IntRect coverRect = calculateCoverRect(m_previousVisibleRect);
 
@@ -277,7 +283,7 @@ bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
     IntRect dirtyRect = mapFromContents(rect);
 
     TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
 
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
@@ -374,7 +380,7 @@ void TiledDrawingAreaProxy::createTiles()
     unsigned requiredTileCount = 0;
     bool hasVisibleCheckers = false;
     TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(visibleRect.location());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(visibleRect.maxX(), visibleRect.maxY()));
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(visibleRect));
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);

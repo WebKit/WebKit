@@ -30,6 +30,13 @@ namespace WebCore {
 static const int defaultTileWidth = 512;
 static const int defaultTileHeight = 512;
 
+static IntPoint innerBottomRight(const IntRect& rect)
+{
+    // Actually, the rect does not contain rect.maxX(). Refer to IntRect::contain.
+    return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
+}
+
+
 TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client)
     : m_client(client)
     , m_tileBufferUpdateTimer(new TileTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired))
@@ -74,7 +81,7 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
     IntRect dirtyRect(mapFromContents(contentsDirtyRect));
     
     Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
+    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
     
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
@@ -133,7 +140,7 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
     IntRect dirtyRect = mapFromContents(rect);
     
     Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
+    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
 
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
@@ -230,7 +237,7 @@ void TiledBackingStore::createTiles()
     Vector<Tile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
     Tile::Coordinate topLeft = tileCoordinateForPoint(coverRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(coverRect.maxX(), coverRect.maxY()));
+    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coverRect));
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
