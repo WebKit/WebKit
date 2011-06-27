@@ -1,3 +1,11 @@
+2011-06-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        <rdar://problem/9679221&9679235> Work around an issue with sandbox.h.
+
+        * WebProcess/mac/WebProcessMac.mm:
+
 2011-06-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

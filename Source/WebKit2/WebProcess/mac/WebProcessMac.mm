@@ -51,9 +51,16 @@
 #endif
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-#import <sandbox.h>
 #import <stdlib.h>
 #import <sysexits.h>
+
+// We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>). 
+#undef __APPLE_API_PRIVATE
+#import <sandbox.h>
+
+#define SANDBOX_NAMED_EXTERNAL 0x0003
+extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
+
 #endif
 
 using namespace WebCore;
