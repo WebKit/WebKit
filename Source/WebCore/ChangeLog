@@ -1,5 +1,12 @@
 2011-06-26  Adam Barth  <abarth@webkit.org>
 
+        Build fix for clang.  Apparently clang doesn't want us to use the std
+        namespace in headers, which makes sense.
+
+        * svg/SVGAnimatedType.h:
+
+2011-06-26  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Remove LegacyDefaultOptionalArguments from XMLHttpRequest.idl and XMLHttpRequestUpload.idl

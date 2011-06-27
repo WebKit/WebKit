@@ -23,8 +23,6 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGElement.h"
 
-using namespace std;
-
 namespace WebCore {
 
 class Color;
@@ -47,12 +45,12 @@ public:
     static PassOwnPtr<SVGAnimatedType> createLengthList(SVGLengthList*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     static PassOwnPtr<SVGAnimatedType> createNumberList(SVGNumberList*);
-    static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(pair<float, float>*);
+    static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(std::pair<float, float>*);
     static PassOwnPtr<SVGAnimatedType> createPath(PassOwnPtr<SVGPathByteStream>);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     static PassOwnPtr<SVGAnimatedType> createString(String*);
-    
+
     AnimatedAttributeType type() const { return m_type; }
 
     SVGAngle& angle();
@@ -61,7 +59,7 @@ public:
     SVGLengthList& lengthList();
     float& number();
     SVGNumberList& numberList();
-    pair<float, float>& numberOptionalNumber();
+    std::pair<float, float>& numberOptionalNumber();
     SVGPathByteStream* path();
     SVGPointList& pointList();
     FloatRect& rect();
@@ -69,18 +67,18 @@ public:
 
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
-    
+
 private:
     SVGAnimatedType(AnimatedAttributeType);
-    
+
     AnimatedAttributeType m_type;
-    
+
     union DataUnion {
         DataUnion()
             : length(0)
         {
         }
-        
+
         // FIXME: More SVG primitive types need to be added step by step.
         SVGAngle* angle;
         Color* color;
@@ -88,7 +86,7 @@ private:
         SVGLengthList* lengthList;
         float* number;
         SVGNumberList* numberList;
-        pair<float, float>* numberOptionalNumber;
+        std::pair<float, float>* numberOptionalNumber;
         SVGPathByteStream* path;
         SVGPointList* pointList;
         FloatRect* rect;
