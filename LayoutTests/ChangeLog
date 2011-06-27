@@ -1,3 +1,10 @@
+2011-06-27  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: naive approach to fixing flaky inspector tests.
+
+        * inspector/styles/styles-cancel-editing.html:
+        * inspector/styles/styles-commit-editing.html:
+
 2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac]REGRESSION?(r89397) It made fast/css/custom-font-xheight.html crash

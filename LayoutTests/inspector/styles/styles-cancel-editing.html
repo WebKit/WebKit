@@ -33,7 +33,8 @@ function test()
 
     function step2()
     {
-        InspectorTest.selectNodeAndWaitForStyles("other", step3);
+        InspectorTest.selectNodeWithId("other");
+        InspectorTest.runAfterPendingDispatches(step3);
     }
 
     function step3()
