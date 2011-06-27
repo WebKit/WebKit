@@ -33,7 +33,7 @@ import unittest
 from webkitpy.layout_tests.layout_package.test_failures import *
 
 
-class Test(unittest.TestCase):
+class TestFailuresest(unittest.TestCase):
     def assert_loads(self, cls):
         failure_obj = cls()
         s = failure_obj.dumps()
@@ -83,6 +83,3 @@ class Test(unittest.TestCase):
         # The hash happens to be the name of the class, but sets still work:
         crash_set = set([FailureCrash(), "FailureCrash"])
         self.assertEqual(len(crash_set), 2)
-
-if __name__ == '__main__':
-    unittest.main()

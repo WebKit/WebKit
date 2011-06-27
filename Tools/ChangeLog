@@ -1,3 +1,17 @@
+2011-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dirk Pranke.
+
+        webkitpy unit tests should have more descriptive names than just "Test"
+        https://bugs.webkit.org/show_bug.cgi?id=63479
+
+        Luckily we kept these classes in separate namespaces in the harness so
+        we were actually running them all even though they had the same name.
+
+        * Scripts/webkitpy/common/system/stack_utils_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_unittest.py:
+
 2011-06-27  Greg Simon  <gregsimon@chromium.org>
 
         No review necessary.

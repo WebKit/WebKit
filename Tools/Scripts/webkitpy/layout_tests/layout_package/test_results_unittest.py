@@ -31,7 +31,7 @@ import unittest
 from test_results import TestResult
 
 
-class Test(unittest.TestCase):
+class TestResultsTest(unittest.TestCase):
     def test_defaults(self):
         result = TestResult("foo")
         self.assertEqual(result.filename, 'foo')
@@ -50,7 +50,3 @@ class Test(unittest.TestCase):
 
         # Also check that != is implemented.
         self.assertFalse(new_result != result)
-
-
-if __name__ == '__main__':
-    unittest.main()

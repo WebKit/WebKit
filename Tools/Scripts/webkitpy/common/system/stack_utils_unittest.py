@@ -38,7 +38,7 @@ def current_thread_id():
     return thread_id
 
 
-class Test(unittest.TestCase):
+class StackUtilsTest(unittest.TestCase):
     def test_find_thread_stack_found(self):
         thread_id = current_thread_id()
         found_stack = stack_utils._find_thread_stack(thread_id)
@@ -70,7 +70,3 @@ class Test(unittest.TestCase):
         except:
             stack_utils.log_traceback(logger, sys.exc_info()[2])
         self.assertTrue(msgs)
-
-
-if __name__ == '__main__':
-    unittest.main()
