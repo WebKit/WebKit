@@ -1,3 +1,21 @@
+2011-06-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove evil uses of hasattr
+        https://bugs.webkit.org/show_bug.cgi?id=63430
+
+        For some reason these classes believe that they may be called with
+        various flavors of "option" elements and so carefully check to make
+        sure that the options element has their option before checking it.
+
+        We had a set_option_default method which was never called, so I made it
+        do what callsites seemed to want it to do and replaced 3 callers
+        who previously used hasattr manually to use set_option_default instead.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-06-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

@@ -136,14 +136,11 @@ class Port(object):
             "bugs.webkit.org", "PrettyPatch", "prettify.rb")
         self._pretty_patch_available = None
 
-        if not hasattr(self._options, 'configuration') or self._options.configuration is None:
-            self._options.configuration = self.default_configuration()
+        self.set_option_default('configuration', self.default_configuration())
         self._test_configuration = None
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
-
-        if not hasattr(self._options, 'use_apache') or self._options.use_apache is None:
-            self._options.use_apache = self._default_to_apache()
+        self.set_option_default('use_apache', self._default_to_apache())
 
     def wdiff_available(self):
         if self._wdiff_available is None:
@@ -582,7 +579,9 @@ class Port(object):
         return default_value
 
     def set_option_default(self, name, default_value):
-        if not hasattr(self._options, name):
+        # FIXME: Callers could also use optparse_parser.Values.ensure_value,
+        # since this should always be a optparse_parser.Values object.
+        if not hasattr(self._options, name) or getattr(self._options, name) is None:
             return setattr(self._options, name, default_value)
 
     def path_from_webkit_base(self, *comps):

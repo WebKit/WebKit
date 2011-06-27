@@ -55,10 +55,8 @@ class WebKitPort(base.Port):
         base.Port.__init__(self, **kwargs)
         self._cached_apache_path = None
 
-        # FIXME: disable pixel tests until they are run by default on the
-        # build machines.
-        if not hasattr(self._options, "pixel_tests") or self._options.pixel_tests == None:
-            self._options.pixel_tests = False
+        # FIXME: disable pixel tests until they are run by default on the build machines.
+        self.set_option_default("pixel_tests", False)
 
     def baseline_search_path(self):
         return [self._webkit_baseline_path(self._name)]
