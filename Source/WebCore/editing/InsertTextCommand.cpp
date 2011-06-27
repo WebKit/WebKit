@@ -97,7 +97,6 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
 
 void InsertTextCommand::input(const String& text, bool selectInsertedText, RebalanceType whitespaceRebalance)
 {
-    
     ASSERT(text.find('\n') == notFound);
 
     if (!endingSelection().isNonOrphanedCaretOrRange())

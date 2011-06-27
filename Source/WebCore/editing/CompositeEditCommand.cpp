@@ -295,33 +295,6 @@ void CompositeEditCommand::splitTextNodeContainingElement(PassRefPtr<Text> text,
     applyCommandToComposite(SplitTextNodeContainingElementCommand::create(text, offset));
 }
 
-void CompositeEditCommand::inputText(const String& text, bool selectInsertedText)
-{
-    unsigned offset = 0;
-    unsigned length = text.length();
-    RefPtr<Range> startRange = Range::create(document(), firstPositionInNode(document()->documentElement()), endingSelection().start());
-    unsigned startIndex = TextIterator::rangeLength(startRange.get());
-    size_t newline;
-    do {
-        newline = text.find('\n', offset);
-        if (newline != offset) {
-            RefPtr<InsertTextCommand> command = InsertTextCommand::create(document());
-            applyCommandToComposite(command);
-            int substringLength = newline == notFound ? length - offset : newline - offset;
-            command->input(text.substring(offset, substringLength), false);
-        }
-        if (newline != notFound)
-            insertLineBreak();
-            
-        offset = newline + 1;
-    } while (newline != notFound && offset != length);
-    
-    if (selectInsertedText) {
-        RefPtr<Range> selectedRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, length);
-        setEndingSelection(VisibleSelection(selectedRange.get()));
-    }
-}
-
 void CompositeEditCommand::insertTextIntoNode(PassRefPtr<Text> node, unsigned offset, const String& text)
 {
     if (!text.isEmpty())

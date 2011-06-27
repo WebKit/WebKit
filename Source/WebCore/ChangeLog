@@ -1,3 +1,15 @@
+2011-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        CompositeEditCommand::inputText(const String& text, bool selectedInsertText) is unused
+        https://bugs.webkit.org/show_bug.cgi?id=62921
+
+        * editing/CompositeEditCommand.cpp:
+        * editing/CompositeEditCommand.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.
