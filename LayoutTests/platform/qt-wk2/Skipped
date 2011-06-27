@@ -1493,7 +1493,6 @@ http/tests/security/cross-frame-access-protocol.html
 plugins/document-open.html
 plugins/embed-prefers-plugins-for-images.html
 plugins/geturlnotify-during-document-teardown.html
-plugins/plugin-initiate-popup-window.html
 plugins/mouse-events-fixedpos.html
 plugins/netscape-dom-access.html
 plugins/npp-set-window-called-during-destruction.html
