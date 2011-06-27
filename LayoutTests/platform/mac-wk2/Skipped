@@ -1590,6 +1590,10 @@ fast/events/popup-blocked-to-post-blank.html
 fast/events/popup-blocking-timers.html
 plugins/plugin-initiate-popup-window.html
 
+# WebKitTestRunner needs an implemenation of allowRoundingHacks
+# http://webkit.org/b/63477
+platform/mac/fast/text/rounding-hacks.html
+
 # Sometimes fails
 # http://webkit.org/b/58990
 editing/undo/undo-iframe-location-change.html
