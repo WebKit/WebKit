@@ -1,3 +1,33 @@
+2011-06-26  Adam Roben  <aroben@apple.com>
+
+        Move some inappropriate code out of Builder
+
+        Fixes <http://webkit.org/b/63406> TestFailure page's Builder class has a bunch of code that
+        isn't really about a builder
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getBuildNames): Renamed from _getBuildNames, since it now needs to be
+        called by other objects.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        Added. Code came from Builder.
+        (LayoutTestHistoryAnalyzer):
+        (LayoutTestHistoryAnalyzer.prototype.start):
+        (LayoutTestHistoryAnalyzer.prototype._incorporateBuildHistory):
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        Added. Code came from Builder.
+        (LayoutTestResultsLoader):
+        (LayoutTestResultsLoader.prototype.start):
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Changed to use LayoutTestHistoryAnalyzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in new
+        scripts.
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

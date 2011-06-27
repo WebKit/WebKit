@@ -48,7 +48,7 @@ ViewController.prototype = {
 
     _displayBuilder: function(builder) {
         var self = this;
-        builder.startFetchingBuildHistory(function(history, stillFetchingData) {
+        (new LayoutTestHistoryAnalyzer(builder)).start(function(history, stillFetchingData) {
             var list = document.createElement('ol');
             list.id = 'failure-history';
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {

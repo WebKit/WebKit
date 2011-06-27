@@ -146,54 +146,6 @@ Builder.prototype = {
         });
     },
 
-    /*
-     * Preiodically calls callback until all current failures have been explained. Callback is
-     * passed an object like the following:
-     * {
-     *     'r12347 (681)': {
-     *         'tooManyFailures': false,
-     *         'tests': {
-     *             'css1/basic/class_as_selector2.html': 'fail',
-     *         },
-     *     },
-     *     'r12346 (680)': {
-     *         'tooManyFailures': false,
-     *         'tests': {},
-     *     },
-     *     'r12345 (679)': {
-     *         'tooManyFailures': false,
-     *         'tests': {
-     *             'css1/basic/class_as_selector.html': 'crash',
-     *         },
-     *     },
-     * },
-     * Each build contains just the failures that a) are still occuring on the bots, and b) were new
-     * in that build.
-     */
-    startFetchingBuildHistory: function(callback) {
-        var cacheKey = '_startFetchingBuildHistory';
-        if (!(cacheKey in this._cache))
-            this._cache[cacheKey] = {};
-
-        var history = this._cache[cacheKey];
-
-        var self = this;
-        self._getBuildNames(function(buildNames) {
-            function inner(buildIndex) {
-                self._incorporateBuildHistory(buildNames, buildIndex, history, function(callAgain) {
-                    var nextIndex = buildIndex + 1;
-                    if (nextIndex >= buildNames.length)
-                        callAgain = false;
-                    callback(history, callAgain);
-                    if (!callAgain)
-                        return;
-                    setTimeout(function() { inner(nextIndex) }, 0);
-                });
-            }
-            inner(0);
-        });
-    },
-
     resultsDirectoryURL: function(buildName) {
         return this.buildbot.resultsDirectoryURL(this.name, buildName);
     },
@@ -217,7 +169,7 @@ Builder.prototype = {
         });
     },
 
-    _getBuildNames: function(callback) {
+    getBuildNames: function(callback) {
         var cacheKey = '_getBuildNames';
         if (cacheKey in this._cache) {
             callback(this._cache[cacheKey]);
@@ -238,119 +190,6 @@ Builder.prototype = {
 
             self._cache[cacheKey] = buildNames;
             callback(buildNames);
-        });
-    },
-
-    _getFailingTests: function(buildName, callback, errorCallback) {
-        var cacheKey = this.name + '__getFailingTests_' + buildName;
-        if (PersistentCache.contains(cacheKey)) {
-            callback(PersistentCache.get(cacheKey));
-            return;
-        }
-
-        var tests = {};
-
-        var parsedBuildName = this.buildbot.parseBuildName(buildName);
-
-        // http://webkit.org/b/62380 was fixed in r89610.
-        var resultsHTMLSupportsTooManyFailuresInfo = parsedBuildName.revision >= 89610;
-
-        var self = this;
-
-        function fetchAndParseResultsHTMLAndCallCallback(callback, tooManyFailures) {
-            getResource(self.resultsPageURL(buildName), function(xhr) {
-                var root = document.createElement('html');
-                root.innerHTML = xhr.responseText;
-
-                if (resultsHTMLSupportsTooManyFailuresInfo)
-                    tooManyFailures = root.getElementsByClassName('stopped-running-early-message').length > 0;
-
-                function testsForResultTable(regex) {
-                    var paragraph = Array.prototype.findFirst.call(root.querySelectorAll('p'), function(paragraph) {
-                        return regex.test(paragraph.innerText);
-                    });
-                    if (!paragraph)
-                        return [];
-                    var table = paragraph.nextElementSibling;
-                    console.assert(table.nodeName === 'TABLE');
-                    return Array.prototype.map.call(table.querySelectorAll('td:first-child > a'), function(elem) {
-                        return elem.innerText;
-                    });
-                }
-
-                testsForResultTable(/did not match expected results/).forEach(function(name) {
-                    tests[name] = 'fail';
-                });
-                testsForResultTable(/timed out/).forEach(function(name) {
-                    tests[name] = 'timeout';
-                });
-                testsForResultTable(/tool to crash/).forEach(function(name) {
-                    tests[name] = 'crash';
-                });
-                testsForResultTable(/Web process to crash/).forEach(function(name) {
-                    tests[name] = 'webprocess crash';
-                });
-
-                PersistentCache.set(cacheKey, tests);
-                callback(tests, tooManyFailures);
-            },
-            function(xhr) {
-                // We failed to fetch results.html. run-webkit-tests must have aborted early.
-                PersistentCache.set(cacheKey, tests);
-                errorCallback(tests, tooManyFailures);
-            });
-        }
-
-        if (resultsHTMLSupportsTooManyFailuresInfo) {
-            fetchAndParseResultsHTMLAndCallCallback(callback, false);
-            return;
-        }
-
-        self.getNumberOfFailingTests(parsedBuildName.buildNumber, function(failingTestCount, tooManyFailures) {
-            if (failingTestCount < 0) {
-                // The number of failing tests couldn't be determined.
-                PersistentCache.set(cacheKey, tests);
-                errorCallback(tests, tooManyFailures);
-                return;
-            }
-
-            if (!failingTestCount) {
-                // All tests passed.
-                PersistentCache.set(cacheKey, tests);
-                callback(tests, tooManyFailures);
-                return;
-            }
-
-            // Find out which tests failed.
-            fetchAndParseResultsHTMLAndCallCallback(callback, tooManyFailures);
-        });
-    },
-
-    _incorporateBuildHistory: function(buildNames, buildIndex, history, callback) {
-        var previousBuildName = Object.keys(history).last();
-        var nextBuildName = buildNames[buildIndex];
-
-        this._getFailingTests(nextBuildName, function(tests, tooManyFailures) {
-            history[nextBuildName] = {
-                tooManyFailures: tooManyFailures,
-                tests: {},
-            };
-
-            for (var testName in tests) {
-                if (previousBuildName) {
-                    if (!(testName in history[previousBuildName].tests))
-                        continue;
-                    delete history[previousBuildName].tests[testName];
-                }
-                history[nextBuildName].tests[testName] = tests[testName];
-            }
-
-            callback(Object.keys(history[nextBuildName].tests).length);
-        },
-        function(tests) {
-            // Some tests failed, but we couldn't fetch results.html (perhaps because the test
-            // run aborted early for some reason). Just skip this build entirely.
-            callback(true);
         });
     },
 };
