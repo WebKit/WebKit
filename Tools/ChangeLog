@@ -1,3 +1,23 @@
+2011-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move deduplicate_tests.py into webkitpy.to_be_moved
+        https://bugs.webkit.org/show_bug.cgi?id=63426
+
+        deduplicate_tests.py doesn't haven anything to do with layout tests.
+        It's really a separate script.  This patch moves it to the (new)
+        to_be_moved package so that it doesn't distract us when working on NRWT.
+
+        * Scripts/deduplicate-tests:
+        * Scripts/webkitpy/layout_tests/deduplicate_tests.py: Removed.
+        * Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py: Removed.
+        * Scripts/webkitpy/test/main.py:
+        * Scripts/webkitpy/to_be_moved: Added.
+        * Scripts/webkitpy/to_be_moved/__init__.py: Added.
+        * Scripts/webkitpy/to_be_moved/deduplicate_tests.py: Copied from Tools/Scripts/webkitpy/layout_tests/deduplicate_tests.py.
+        * Scripts/webkitpy/to_be_moved/deduplicate_tests_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py.
+
 2011-06-26  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

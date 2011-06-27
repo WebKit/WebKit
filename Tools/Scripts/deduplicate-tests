@@ -37,7 +37,7 @@ This command dumps out all such files.  You can use it like this:
 
 import optparse
 import webkitpy.common.system.logutils as logutils
-import webkitpy.layout_tests.deduplicate_tests as deduplicate_tests
+import webkitpy.to_be_moved.deduplicate_tests as deduplicate_tests
 
 
 def parse_args():

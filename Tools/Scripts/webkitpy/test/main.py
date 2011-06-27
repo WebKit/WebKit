@@ -90,7 +90,7 @@ class Tester(object):
 
         return module_path not in [
             # FIXME: This file also requires common.checkout to work
-            'webkitpy.layout_tests.deduplicate_tests_unittest',
+            'webkitpy.to_be_moved.deduplicate_tests_unittest',
         ]
 
     def run_tests(self, sys_argv, external_package_paths=None):
