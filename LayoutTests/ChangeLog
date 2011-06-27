@@ -1,3 +1,9 @@
+2011-06-27  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium expectations update.
+
+        * platform/chromium/fast/js/recursion-limit-equal-expected.txt: Rebaseline after r89842.
+
 2011-06-27  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.
