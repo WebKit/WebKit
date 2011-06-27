@@ -39,7 +39,7 @@ from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive import Executive, ScriptError
 
 from webkitpy.layout_tests import port
-from webkitpy.layout_tests import rebaseline_chromium_webkit_tests
+from webkitpy.to_be_moved import rebaseline_chromium_webkit_tests
 
 
 class MockPort(object):

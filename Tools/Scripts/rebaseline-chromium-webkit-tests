@@ -27,18 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Wrapper around webkitpy/layout_tests/rebaseline.py"""
-import os
 import sys
 
-scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
-sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
-
-# For simplejson
-sys.path.append(os.path.join(webkitpy_directory, "thirdparty"))
-
-import rebaseline_chromium_webkit_tests
+import webkitpy.to_be_moved.rebaseline_chromium_webkit_tests
 
 if __name__ == '__main__':
-    rebaseline_chromium_webkit_tests.main(sys.argv[1:])
+    # FIXME: We shouldn't pass sys.argv to rebaseline_chromium_webkit_tests.
+    sys.exit(webkitpy.to_be_moved.rebaseline_chromium_webkit_tests.main(sys.argv[1:]))
