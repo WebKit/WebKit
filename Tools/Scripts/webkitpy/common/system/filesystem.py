@@ -57,12 +57,13 @@ class FileSystem(object):
     def abspath(self, path):
         return os.path.abspath(path)
 
+    def expanduser(self, path):
+        return os.path.expanduser(path)
+
     def basename(self, path):
-        """Wraps os.path.basename()."""
         return os.path.basename(path)
 
     def chdir(self, path):
-        """Wraps os.chdir()."""
         return os.chdir(path)
 
     def copyfile(self, source, destination):

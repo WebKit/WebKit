@@ -289,6 +289,39 @@ class Executive(object):
 
         assert(False)
 
+    def running_pids(self, process_name_filter=None):
+        if not process_name_filter:
+            process_name_filter = lambda process_name: True
+
+        running_pids = []
+
+        if sys.platform in ("win32", "cygwin"):
+            raise NotImplemented()
+
+        ps_process = self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE)
+        stdout, _ = ps_process.communicate()
+        for line in stdout.splitlines():
+            try:
+                pid, process_name = line.split(' ', 1)
+                if process_name_filter(process_name):
+                    running_pids.append(int(pid))
+            except ValueError, e:
+                pass
+
+        return sorted(running_pids)
+
+    def wait_newest(self, process_name_filter=None):
+        if not process_name_filter:
+            process_name_filter = lambda process_name: True
+
+        running_pids = self.running_pids(process_name_filter)
+        if not running_pids:
+            return
+        pid = running_pids[-1]
+
+        while self.check_running_pid(pid):
+            time.sleep(0.25)
+
     def _windows_image_name(self, process_name):
         name, extension = os.path.splitext(process_name)
         if not extension:

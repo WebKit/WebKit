@@ -70,6 +70,15 @@ class MockFileSystem(object):
     def basename(self, path):
         return self._split(path)[1]
 
+    def expanduser(self, path):
+        if path[0] != "~":
+            return path
+        parts = path.split(self.sep, 1)
+        home_directory = self.sep + "Users" + self.sep + "mock"
+        if len(parts) == 1:
+            return home_directory
+        return home_directory + self.sep + parts[1]
+
     def chdir(self, path):
         path = self.normpath(path)
         if not self.isdir(path):

@@ -199,3 +199,11 @@ class ExecutiveTest(unittest.TestCase):
         self.assertTrue(executive.check_running_pid(os.getpid()))
         # Maximum pid number on Linux is 32768 by default
         self.assertFalse(executive.check_running_pid(100000))
+
+    def test_running_pids(self):
+        if sys.platform in ("win32", "cygwin"):
+            return  # This function isn't implemented on Windows yet.
+
+        executive = Executive()
+        pids = executive.running_pids()
+        self.assertTrue(os.getpid() in pids)

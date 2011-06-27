@@ -36,12 +36,12 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.regressionwindow import RegressionWindow
+from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.layout_tests import port
-
 
 class SuggestReviewers(AbstractDeclarativeCommand):
     name = "suggest-reviewers"
@@ -366,6 +366,15 @@ and displayes the status of each builder."""
         for builder in tool.buildbot.builder_statuses():
             status_string = "ok" if builder["is_green"] else "FAIL"
             print "%s : %s" % (status_string.ljust(4), builder["name"])
+
+
+class CrashLog(AbstractDeclarativeCommand):
+    name = "crash-log"
+    argument_names = "PROCESS_NAME"
+
+    def execute(self, options, args, tool):
+        crash_logs = CrashLogs(tool.executive, tool.filesystem)
+        print crash_logs.find_newest_log(args[0])
 
 
 class SkippedPorts(AbstractDeclarativeCommand):
