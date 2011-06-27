@@ -1,3 +1,11 @@
+2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Daily gardening.
+
+        Remove non-existent svg/animations/animate-points.html from the Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-27  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: naive approach to fixing flaky inspector tests.
