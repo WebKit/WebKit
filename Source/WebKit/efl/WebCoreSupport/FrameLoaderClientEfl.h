@@ -49,17 +49,17 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual ~FrameLoaderClientEfl() { }
     virtual void frameLoaderDestroyed();
 
-    void         setWebFrame(Evas_Object *frame) { m_frame = frame; }
+    void setWebFrame(Evas_Object *frame) { m_frame = frame; }
     Evas_Object* webFrame() const { return m_frame; }
     Evas_Object* webView() const { return m_view; }
 
-    void setCustomUserAgent(const String &agent);
+    void setCustomUserAgent(const String&);
     const String& customUserAgent() const;
 
     virtual bool hasWebView() const;
     virtual bool hasFrameView() const;
 
-    void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
+    void callPolicyFunction(FramePolicyFunction, PolicyAction);
 
     virtual void makeRepresentation(DocumentLoader*);
     virtual void forceLayout();
@@ -133,7 +133,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void postProgressEstimateChangedNotification();
     virtual void postProgressFinishedNotification();
 
-    virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+    virtual PassRefPtr<Frame> createFrame(const KURL&, const String& name, HTMLFrameOwnerElement*,
                                const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
     virtual void didTransferChildFrameToNewDocument(Page*);
     virtual void transferLoadingResourceFromPage(unsigned long, WebCore::DocumentLoader*, const ResourceRequest&, WebCore::Page*);

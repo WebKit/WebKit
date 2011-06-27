@@ -1,3 +1,15 @@
+2011-06-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix style error.
+
+        Remove meaningless parameter from WebCoreSupport's header files.
+
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::scrollRectIntoView):
+        * WebCoreSupport/DragClientEfl.h:
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        (WebCore::FrameLoaderClientEfl::setWebFrame):
+
 2011-06-27  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

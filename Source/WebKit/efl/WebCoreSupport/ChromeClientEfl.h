@@ -74,7 +74,7 @@ public:
     virtual void setMenubarVisible(bool);
     virtual bool menubarVisible();
 
-    virtual void createSelectPopup(PopupMenuClient*, int selected, const IntRect& rect);
+    virtual void createSelectPopup(PopupMenuClient*, int selected, const IntRect&);
     virtual bool destroySelectPopup();
 
     virtual void setResizable(bool);
@@ -83,7 +83,7 @@ public:
                                      unsigned int lineNumber, const String& sourceID);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
-    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
+    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame*);
 
     virtual void closeWindowSoon();
 
@@ -138,7 +138,7 @@ public:
 
     virtual void setCursor(const Cursor&);
 
-    virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
+    virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const { }
 
     virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
     virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
