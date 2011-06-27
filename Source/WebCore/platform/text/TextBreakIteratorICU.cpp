@@ -22,12 +22,8 @@
 #include "config.h"
 #include "TextBreakIterator.h"
 
+#include "LineBreakIteratorPoolICU.h"
 #include "PlatformString.h"
-#include "TextBreakIteratorInternalICU.h"
-#include <unicode/ubrk.h>
-#include <wtf/Assertions.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/CString.h>
 
 using namespace std;
 
@@ -71,64 +67,6 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
     return setUpIterator(createdWordBreakIterator,
         staticWordBreakIterator, UBRK_WORD, string, length);
 }
-
-class LineBreakIteratorPool {
-WTF_MAKE_NONCOPYABLE(LineBreakIteratorPool);
-public:
-    static LineBreakIteratorPool& sharedPool()
-    {
-        ASSERT(isMainThread());
-        DEFINE_STATIC_LOCAL(LineBreakIteratorPool, pool, ());
-        return pool;
-    }
-
-    UBreakIterator* take(const AtomicString& locale)
-    {
-        UBreakIterator* iterator = 0;
-        for (size_t i = 0; i < m_pool.size(); ++i) {
-            if (m_pool[i].first == locale) {
-                iterator = m_pool[i].second;
-                m_pool.remove(i);
-                break;
-            }
-        }
-
-        if (!iterator) {
-            UErrorCode openStatus = U_ZERO_ERROR;
-            iterator = ubrk_open(UBRK_LINE, locale.isEmpty() ? currentTextBreakLocaleID() : locale.string().utf8().data(), 0, 0, &openStatus);
-            if (U_FAILURE(openStatus)) {
-                LOG_ERROR("ubrk_open failed with status %d", openStatus);
-                return 0;
-            }
-        }
-
-        ASSERT(!m_vendedIterators.contains(iterator));
-        m_vendedIterators.set(iterator, locale);
-        return iterator;
-    }
-
-    void put(UBreakIterator* iterator)
-    {
-        ASSERT_ARG(iterator, m_vendedIterators.contains(iterator));
-
-        if (m_pool.size() == capacity) {
-            ubrk_close(m_pool[0].second);
-            m_pool.remove(0);
-        }
-
-        m_pool.append(Entry(m_vendedIterators.take(iterator), iterator));
-    }
-
-private:
-    LineBreakIteratorPool() { }
-
-    static const size_t capacity = 4;
-
-    typedef pair<AtomicString, UBreakIterator*> Entry;
-    typedef Vector<Entry, capacity> Pool;
-    Pool m_pool;
-    HashMap<UBreakIterator*, AtomicString> m_vendedIterators;
-};
 
 TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString& locale)
 {

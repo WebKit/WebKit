@@ -929,6 +929,7 @@
             'platform/text/BidiRunList.h',
             'platform/text/BidiContext.h',
             'platform/text/BidiResolver.h',
+            'platform/text/LineBreakIteratorPoolICU.h',
             'platform/text/LineEnding.h',
             'platform/text/PlatformString.h',
             'platform/text/QuotedPrintable.h',

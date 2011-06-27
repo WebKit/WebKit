@@ -31257,6 +31257,9 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\LineBreakIteratorPoolICU.h"
+					>
+				<File
 					RelativePath="..\platform\text\LineEnding.cpp"
 					>
 				</File>

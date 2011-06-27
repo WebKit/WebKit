@@ -3264,6 +3264,7 @@
 		A5732B0F136A1715005C8D7C /* LocalizedDateNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5732B0E136A1715005C8D7C /* LocalizedDateNone.cpp */; };
 		A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */; };
 		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
+		A5ABB78713B904BC00F197E3 /* LineBreakIteratorPoolICU.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
 		A6148A6212E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6148A6112E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h */; };
@@ -9779,6 +9780,7 @@
 		A5732B0E136A1715005C8D7C /* LocalizedDateNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalizedDateNone.cpp; sourceTree = "<group>"; };
 		A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIPhone.h; path = iphone/KeyEventCodesIPhone.h; sourceTree = "<group>"; };
 		A59E3C1D11580F510072928E /* KeyEventIPhone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIPhone.mm; path = iphone/KeyEventIPhone.mm; sourceTree = "<group>"; };
+		A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBreakIteratorPoolICU.h; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCocoa.h; path = cocoa/KeyEventCocoa.h; sourceTree = "<group>"; };
@@ -18102,6 +18104,7 @@
 				B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */,
 				A8C402921348B2220063F1E5 /* BidiRunList.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
+				A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */,
 				89B5EA9F11E8003D00F2367E /* LineEnding.cpp */,
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
 				A5732B0C136A16C4005C8D7C /* LocalizedDate.h */,
@@ -23079,6 +23082,7 @@
 				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
 				0863951613B5FE5700BB344D /* SVGAnimatedPath.h in Headers */,
 				431A2F9C13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h in Headers */,
+				A5ABB78713B904BC00F197E3 /* LineBreakIteratorPoolICU.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
