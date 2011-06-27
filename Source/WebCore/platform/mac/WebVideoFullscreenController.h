@@ -25,7 +25,9 @@
 
 #if ENABLE(VIDEO)
 
-#import <Cocoa/Cocoa.h>
+#import <AppKit/NSWindowController.h>
+#import <AppKit/NSScreen.h>
+#import <Foundation/NSTimer.h>
 #import <wtf/RefPtr.h>
 
 namespace WebCore {

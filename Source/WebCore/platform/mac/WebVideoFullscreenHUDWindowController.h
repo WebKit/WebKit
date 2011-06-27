@@ -25,7 +25,11 @@
 
 #if ENABLE(VIDEO)
 
-#import <Cocoa/Cocoa.h>
+#import <AppKit/NSButton.h>
+#import <AppKit/NSControl.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSTrackingArea.h>
+#import <AppKit/NSWindowController.h>
 
 namespace WebCore {
     class HTMLMediaElement;

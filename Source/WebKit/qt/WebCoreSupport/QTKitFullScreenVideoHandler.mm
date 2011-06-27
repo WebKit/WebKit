@@ -22,8 +22,6 @@
 
 #include "QTKitFullScreenVideoHandler.h"
 
-#import <Cocoa/Cocoa.h>
-
 #include "HTMLVideoElement.h"
 #include "WebVideoFullscreenController.h"
 

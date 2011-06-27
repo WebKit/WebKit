@@ -1,3 +1,17 @@
+2011-06-27  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Use specific headers includes rather than full system headers.
+        https://bugs.webkit.org/show_bug.cgi?id=63475
+
+        Use only needed headers rather than system headers.
+
+        No new tests, it's just a little cosmetic change.
+
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebVideoFullscreenHUDWindowController.h:
+
 2011-06-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.
