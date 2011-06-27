@@ -210,7 +210,7 @@ String RenderFileUploadControl::fileTextValue() const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     ASSERT(input->files());
-    return theme()->fileListNameForWidth(input->files()->filenames(), style()->font(), maxFilenameWidth());
+    return theme()->fileListNameForWidth(input->files()->paths(), style()->font(), maxFilenameWidth());
 }
     
 } // namespace WebCore

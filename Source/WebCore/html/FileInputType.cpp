@@ -147,8 +147,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
 #endif
         settings.acceptTypes = input->accept();
-        ASSERT(input->files());
-        settings.selectedFiles = input->files()->filenames();
+        settings.selectedFiles = m_fileList->paths();
         chrome->runOpenPanel(input->document()->frame(), newFileChooser(settings));
     }
     event->setDefaultHandled();
@@ -252,25 +251,25 @@ void FileInputType::createShadowSubtree()
     element()->ensureShadowRoot()->appendChild(UploadButtonElement::create(element()->document()), ec);
 }
 
-void FileInputType::requestIcon(const Vector<String>& filenames)
+void FileInputType::requestIcon(const Vector<String>& paths)
 {
-    if (!filenames.size())
+    if (!paths.size())
         return;
 
     if (Chrome* chrome = this->chrome())
-        chrome->loadIconForFiles(filenames, newFileIconLoader());
+        chrome->loadIconForFiles(paths, newFileIconLoader());
 }
 
-void FileInputType::filesChosen(const Vector<String>& filenames)
+void FileInputType::filesChosen(const Vector<String>& paths)
 {
     HTMLInputElement* input = element();
-    setFileList(filenames);
+    setFileList(paths);
 
     input->setFormControlValueMatchesRenderer(true);
     input->notifyFormStateChanged();
     input->setNeedsValidityCheck();
 
-    requestIcon(filenames);
+    requestIcon(paths);
 
     if (input->renderer())
         input->renderer()->repaint();

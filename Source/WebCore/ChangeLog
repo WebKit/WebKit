@@ -1,3 +1,22 @@
+2011-06-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        FileList::filenames should be FileList::paths, because it's more accurate.
+        https://bugs.webkit.org/show_bug.cgi?id=63414
+
+        Refactoring, no change in behavior.
+
+        * fileapi/FileList.cpp:
+        (WebCore::FileList::paths): Renamed from filenames.
+        * fileapi/FileList.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent): Changed to use filenames, also fixed a reach-unto-thyself whoopsie.
+        (WebCore::FileInputType::requestIcon): Ditto.
+        (WebCore::FileInputType::filesChosen): Ditto.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::fileTextValue): Ditto.
+
 2011-06-26  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Dirk Schulze.
