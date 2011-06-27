@@ -415,6 +415,22 @@ class MainTest(unittest.TestCase):
             filesystem=fs)
         self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
+    def test_crash_log(self):
+        mock_crash_report = 'mock-crash-report'
+        fs = port.unit_test_filesystem()
+        fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
+        res, buildbot_output, regular_output, user = logging_run([
+                'failures/unexpected/crash-with-stderr.html',
+            ],
+            tests_included=True,
+            record_results=True,
+            filesystem=fs)
+        expected_crash_log = mock_crash_report
+        # Currently CrashLog uploading only works on Darwin.
+        if sys.platform != "darwin":
+            expected_crash_log = "mock-std-error-output"
+        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
+
     def test_exit_after_n_failures_upload(self):
         fs = port.unit_test_filesystem()
         res, buildbot_output, regular_output, user = logging_run([

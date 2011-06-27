@@ -30,6 +30,7 @@
 import logging
 import os
 
+from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.layout_tests.layout_package import test_failures
 
 
@@ -100,6 +101,7 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_EXPECTED = "-expected"
     FILENAME_SUFFIX_DIFF = "-diff"
     FILENAME_SUFFIX_STDERR = "-stderr"
+    FILENAME_SUFFIX_CRASH_LOG = "-crash-log"
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
     FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
@@ -167,11 +169,15 @@ class TestResultWriter(object):
         fs.write_binary_file(filename, error)
 
     def write_crash_report(self, error):
-        """Write crash information."""
         fs = self._port._filesystem
-        filename = self.output_filename("-stack.txt")
+        filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")
         fs.maybe_make_directory(fs.dirname(filename))
-        fs.write_text_file(filename, error)
+        # FIXME: We shouldn't be grabbing private members of port.
+        crash_logs = CrashLogs(self._port._executive, fs)
+        log = crash_logs.find_newest_log(self._port.driver_name())
+        # CrashLogs doesn't support every platform, so we fall back to
+        # including the stderr output, which is admittedly somewhat redundant.
+        fs.write_text_file(filename, log if log else error)
 
     def write_text_files(self, actual_text, expected_text):
         self.write_output_files(".txt", actual_text, expected_text)

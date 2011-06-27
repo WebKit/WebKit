@@ -1,3 +1,13 @@
+2011-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests should upload crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=55907
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2011-06-27  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium expectations update.

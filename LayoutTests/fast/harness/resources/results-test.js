@@ -174,7 +174,7 @@ function runTests()
         assertTrue(expectationTypes[2].textContent == 'IMAGE');
         
         assertTrue(document.getElementById('crash-tests-table'));
-        assertTrue(document.getElementById('crash-tests-table').textContent.indexOf('stack') != -1);
+        assertTrue(document.getElementById('crash-tests-table').textContent.indexOf('crash log') != -1);
         assertTrue(document.getElementById('timeout-tests-table'));
         assertTrue(document.getElementById('timeout-tests-table').textContent.indexOf('expected actual diff') != -1);
     });

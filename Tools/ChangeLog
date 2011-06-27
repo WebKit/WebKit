@@ -1,3 +1,16 @@
+2011-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests should upload crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=55907
+
+        NRWT used to have a different name for crash logs.  I've changed the
+        name to patch ORWT.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-06-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

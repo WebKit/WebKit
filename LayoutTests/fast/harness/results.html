@@ -588,7 +588,7 @@ function testList(tests, header, tableId)
         else if (tableId == 'passes-table')
             html += testObject.expected;
         else if (tableId == 'crash-tests-table')
-            html += resultLink(stripExtension(test), '-stack.txt', 'crash stack');
+            html += resultLink(stripExtension(test), '-crash-log.txt', 'crash log');
         else if (tableId == 'timeout-tests-table') {
             // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
             html += textResultLinks(stripExtension(test));
