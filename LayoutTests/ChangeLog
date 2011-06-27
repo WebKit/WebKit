@@ -1,5 +1,12 @@
 2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [WK2] SVG animation pause API missing
+        https://bugs.webkit.org/show_bug.cgi?id=63396
+
+        * platform/mac-wk2/Skipped: Skip a new test.
+
+2011-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Add platform specific expected results after r89745.
 
         * platform/qt/Skipped: Revert accidentally committed (r89732) changes.

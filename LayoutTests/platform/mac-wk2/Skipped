@@ -436,6 +436,7 @@ svg/animations/animate-insert-no-begin.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-mpath-insert.html
 svg/animations/animate-number-calcMode-discrete.html
+svg/animations/animate-number-calcMode-discrete-keyTimes.html
 svg/animations/animate-path-animation-Cc-Ss.html
 svg/animations/animate-path-animation-Ll-Vv-Hh.html
 svg/animations/animate-path-animation-Qq-Tt.html
