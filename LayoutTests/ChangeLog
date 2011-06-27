@@ -1,3 +1,14 @@
+2011-06-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Change the inspector model API and backend to allow CSS pseudoclass inspection
+        https://bugs.webkit.org/show_bug.cgi?id=63446
+
+        * inspector/styles/get-set-stylesheet-text.html:
+        * inspector/styles/styles-new-API.html:
+        * inspector/styles/styles-source-offsets.html:
+
 2011-06-27  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: updating chromium expectations.

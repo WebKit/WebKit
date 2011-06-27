@@ -1223,7 +1223,8 @@
             {
                 "name": "getStylesForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "type": "integer" },
+                    { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." }
                 ],
                 "returns": [
                     { "name": "styles", "$ref": "CSSNodeStyles", "description": "All styles for the specified DOM node." }

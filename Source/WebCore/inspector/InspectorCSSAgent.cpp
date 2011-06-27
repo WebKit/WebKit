@@ -130,6 +130,35 @@
 
 namespace WebCore {
 
+static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
+{
+    DEFINE_STATIC_LOCAL(String, active, ("active"));
+    DEFINE_STATIC_LOCAL(String, hover, ("hover"));
+    DEFINE_STATIC_LOCAL(String, focus, ("focus"));
+    DEFINE_STATIC_LOCAL(String, visited, ("visited"));
+    if (!pseudoClassArray || !pseudoClassArray->length())
+        return CSSStyleSelector::DoNotForcePseudoClassMask;
+
+    unsigned result = CSSStyleSelector::ForceNone;
+    for (size_t i = 0; i < pseudoClassArray->length(); ++i) {
+        RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray->get(i);
+        String pseudoClass;
+        bool success = pseudoClassValue->asString(&pseudoClass);
+        if (!success)
+            continue;
+        if (pseudoClass == active)
+            result |= CSSStyleSelector::ForceActive;
+        else if (pseudoClass == hover)
+            result |= CSSStyleSelector::ForceHover;
+        else if (pseudoClass == focus)
+            result |= CSSStyleSelector::ForceFocus;
+        else if (pseudoClass == visited)
+            result |= CSSStyleSelector::ForceVisited;
+    }
+
+    return result;
+}
+
 // static
 CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(StyleBase* styleBase)
 {
@@ -182,7 +211,7 @@ void InspectorCSSAgent::reset()
     m_documentToInspectorStyleSheet.clear();
 }
 
-void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorObject>* result)
+void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, const PassRefPtr<InspectorArray>* forcedPseudoClasses, PassRefPtr<InspectorObject>* result)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -198,15 +227,16 @@ void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, R
     RefPtr<InspectorStyle> computedInspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
     resultObject->setObject("computedStyle", computedInspectorStyle->buildObjectForStyle());
 
+    unsigned forcePseudoClassMask = computePseudoClassMask(forcedPseudoClasses->get());
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
-    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules);
+    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules, forcePseudoClassMask);
     resultObject->setArray("matchedCSSRules", buildArrayForRuleList(matchedRules.get()));
 
     resultObject->setArray("styleAttributes", buildArrayForAttributeStyles(element));
 
     RefPtr<InspectorArray> pseudoElements = InspectorArray::create();
     for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
-        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules);
+        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules, forcePseudoClassMask);
         if (matchedRules && matchedRules->length()) {
             RefPtr<InspectorObject> pseudoStyles = InspectorObject::create();
             pseudoStyles->setNumber("pseudoId", static_cast<int>(pseudoId));

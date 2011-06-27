@@ -244,7 +244,7 @@ WebInspector.StylesSidebarPane.prototype = {
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
         else
-            WebInspector.cssModel.getStylesAsync(node.id, stylesCallback.bind(this));
+            WebInspector.cssModel.getStylesAsync(node.id, undefined, stylesCallback.bind(this));
     },
 
     _refreshUpdate: function(node, computedStyle, editedSection)

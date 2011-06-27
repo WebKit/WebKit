@@ -54,7 +54,7 @@ function test()
         function nodeCallback(node)
         {
             bodyId = node.id;
-            CSSAgent.getStylesForNode(bodyId, callback);
+            CSSAgent.getStylesForNode(bodyId, undefined, callback);
         }
         InspectorTest.selectNodeWithId("mainBody", nodeCallback);
     }
@@ -79,7 +79,7 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, callback);
+            CSSAgent.getStylesForNode(node.id, undefined, callback);
         }
         InspectorTest.nodeWithId("thetable", nodeCallback);
     }
@@ -174,7 +174,7 @@ function test()
                 InspectorTest.addResult("error: " + error);
                 return;
             }
-            CSSAgent.getStylesForNode(bodyId, didGetStyles);
+            CSSAgent.getStylesForNode(bodyId, undefined, didGetStyles);
         }
 
         function ruleAdded(error, rule)
@@ -242,7 +242,7 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, stylesCallback);
+            CSSAgent.getStylesForNode(node.id, undefined, stylesCallback);
         }
         InspectorTest.nodeWithId("toggle", nodeCallback);
     }

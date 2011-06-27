@@ -70,7 +70,7 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, callback);
+            CSSAgent.getStylesForNode(node.id, undefined, callback);
         }
 
         InspectorTest.selectNodeWithId("inspected", nodeCallback);
