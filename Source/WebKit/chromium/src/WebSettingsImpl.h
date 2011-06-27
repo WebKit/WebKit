@@ -118,6 +118,7 @@ public:
     virtual void setAllowRunningOfInsecureContent(bool);
     virtual void setShouldPrintBackgrounds(bool);
     virtual void setEnableScrollAnimator(bool);
+    virtual void setHixie76WebSocketProtocolEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;
