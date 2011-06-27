@@ -39,8 +39,8 @@
 #include <Evas.h>
 #include <stdio.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -29,11 +29,11 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
-#include <wtf/text/CString.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

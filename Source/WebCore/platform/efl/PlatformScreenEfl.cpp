@@ -34,10 +34,11 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include <Ecore_Evas.h>
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "Widget.h"
+
+#include <Ecore_Evas.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
