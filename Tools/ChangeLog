@@ -1,5 +1,19 @@
 2011-06-27  Adam Roben  <aroben@apple.com>
 
+        Make LayoutTestResultsLoader cache whether old-run-webkit-tests exited early due to too many
+        failures
+
+        Fixes <http://webkit.org/b/63470> TestFailures page for a particular builder forgets
+        old-run-webkit-tests exited early after reload
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Store both the set of failing tests and whether
+        old-run-webkit-tests exited early due to too many failures in PersistentCache.
+
+2011-06-27  Adam Roben  <aroben@apple.com>
+
         Make TestFailures load build names from build.webkit.org/old-results too
 
         Build results are periodically moved from results to old-results. This change makes those

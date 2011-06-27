@@ -31,11 +31,15 @@ LayoutTestResultsLoader.prototype = {
     start: function(buildName, callback, errorCallback) {
         var cacheKey = 'LayoutTestResultsLoader.' + this._builder.name + '.' + buildName;
         if (PersistentCache.contains(cacheKey)) {
-            callback(PersistentCache.get(cacheKey));
-            return;
+            var cachedData = PersistentCache.get(cacheKey);
+            // Old versions of this function used to cache only the set of tests.
+            if ('tooManyFailures' in cachedData) {
+                callback(cachedData.tests, cachedData.tooManyFailures);
+                return;
+            }
         }
 
-        var tests = {};
+        var result = { tests: {}, tooManyFailures: false };
 
         var parsedBuildName = this._builder.buildbot.parseBuildName(buildName);
 
@@ -50,7 +54,7 @@ LayoutTestResultsLoader.prototype = {
                 root.innerHTML = xhr.responseText;
 
                 if (resultsHTMLSupportsTooManyFailuresInfo)
-                    tooManyFailures = root.getElementsByClassName('stopped-running-early-message').length > 0;
+                    result.tooManyFailures = root.getElementsByClassName('stopped-running-early-message').length > 0;
 
                 function testsForResultTable(regex) {
                     var paragraph = Array.prototype.findFirst.call(root.querySelectorAll('p'), function(paragraph) {
@@ -66,25 +70,25 @@ LayoutTestResultsLoader.prototype = {
                 }
 
                 testsForResultTable(/did not match expected results/).forEach(function(name) {
-                    tests[name] = 'fail';
+                    result.tests[name] = 'fail';
                 });
                 testsForResultTable(/timed out/).forEach(function(name) {
-                    tests[name] = 'timeout';
+                    result.tests[name] = 'timeout';
                 });
                 testsForResultTable(/tool to crash/).forEach(function(name) {
-                    tests[name] = 'crash';
+                    result.tests[name] = 'crash';
                 });
                 testsForResultTable(/Web process to crash/).forEach(function(name) {
-                    tests[name] = 'webprocess crash';
+                    result.tests[name] = 'webprocess crash';
                 });
 
-                PersistentCache.set(cacheKey, tests);
-                callback(tests, tooManyFailures);
+                PersistentCache.set(cacheKey, result);
+                callback(result.tests, result.tooManyFailures);
             },
             function(xhr) {
                 // We failed to fetch results.html. run-webkit-tests must have aborted early.
-                PersistentCache.set(cacheKey, tests);
-                errorCallback(tests, tooManyFailures);
+                PersistentCache.set(cacheKey, result);
+                errorCallback(result.tests, result.tooManyFailures);
             });
         }
 
@@ -96,15 +100,15 @@ LayoutTestResultsLoader.prototype = {
         self._builder.getNumberOfFailingTests(parsedBuildName.buildNumber, function(failingTestCount, tooManyFailures) {
             if (failingTestCount < 0) {
                 // The number of failing tests couldn't be determined.
-                PersistentCache.set(cacheKey, tests);
-                errorCallback(tests, tooManyFailures);
+                PersistentCache.set(cacheKey, result);
+                errorCallback(result.tests, result.tooManyFailures);
                 return;
             }
 
             if (!failingTestCount) {
                 // All tests passed.
-                PersistentCache.set(cacheKey, tests);
-                callback(tests, tooManyFailures);
+                PersistentCache.set(cacheKey, result);
+                errorCallback(result.tests, result.tooManyFailures);
                 return;
             }
 
