@@ -25,7 +25,6 @@
 
 module webaudio {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         ActiveDOMObject,
         CanBeConstructed,
@@ -48,11 +47,12 @@ module webaudio {
         // All panning is relative to this listener.
         readonly attribute AudioListener listener;
 
+        // FIXME: Switch from [Custom] to using IDL overloads.
         // AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
         // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
         [Custom] AudioBuffer createBuffer()
             raises(DOMException);
-            
+
         // Asynchronous audio file data decoding.
         void decodeAudioData(in ArrayBuffer audioData, in [Callback] AudioBufferCallback successCallback, in [Optional, Callback] AudioBufferCallback errorCallback)
             raises(DOMException);
@@ -75,11 +75,10 @@ module webaudio {
         // Channel splitting and merging
         AudioChannelSplitter createChannelSplitter();
         AudioChannelMerger createChannelMerger();
-        
+
         // Offline rendering
         // void prepareOfflineBufferRendering(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
         attribute EventListener oncomplete;
         void startRendering();
-        
     };
 }

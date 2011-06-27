@@ -24,17 +24,18 @@
 
 module audio {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO
     ] AudioNode {
         readonly attribute AudioContext context;
         readonly attribute unsigned long numberOfInputs;
         readonly attribute unsigned long numberOfOutputs;
 
-        [Custom] void connect(in AudioNode destination, in unsigned long output, in unsigned long input)
+        // FIXME: Why does this method need to be Custom?
+        [Custom] void connect(in AudioNode destination, in [Optional] unsigned long output, in [Optional] unsigned long input)
             raises(DOMException);
 
-        [Custom] void disconnect(in unsigned long output)
+        // FIXME: Why does this method need to be Custom?
+        [Custom] void disconnect(in [Optional] unsigned long output)
             raises(DOMException);
     };
 }

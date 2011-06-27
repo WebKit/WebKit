@@ -28,19 +28,18 @@
 
 module webaudio {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO
     ] AudioParam {
         attribute float value;
         readonly attribute float minValue;
         readonly attribute float maxValue;
         readonly attribute float defaultValue;
-        
+
         readonly attribute DOMString name;
 
         // FIXME: Could define units constants here (seconds, decibels, cents, etc.)...
         readonly attribute unsigned short units;
-        
+
         // Parameter automation.
         void setValueAtTime(in float value, in float time);
         void linearRampToValueAtTime(in float value, in float time);
@@ -52,9 +51,8 @@ module webaudio {
         // Sets an array of arbitrary parameter values starting at time for the given duration.
         // The number of values will be scaled to fit into the desired duration.
         void setValueCurveAtTime(in Float32Array values, in float time, in float duration);
-        
+
         // Cancels all scheduled parameter changes with times greater than or equal to startTime.
         void cancelScheduledValues(in float startTime);
-
     };
 }

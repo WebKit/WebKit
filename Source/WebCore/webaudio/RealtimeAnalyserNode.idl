@@ -24,7 +24,6 @@
 
 module audio {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         GenerateToJS
     ] RealtimeAnalyserNode : AudioNode {
@@ -34,10 +33,10 @@ module audio {
         // minDecibels / maxDecibels represent the range to scale the FFT analysis data for conversion to unsigned byte values.
         attribute float minDecibels;
         attribute float maxDecibels;
-        
+
         // A value from 0.0 -> 1.0 where 0.0 represents no time averaging with the last analysis frame.
         attribute float smoothingTimeConstant;
-        
+
         // Copies the current frequency data into the passed array.
         // If the array has fewer elements than the frequencyBinCount, the excess elements will be dropped.
         void getFloatFrequencyData(in Float32Array array);

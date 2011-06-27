@@ -28,7 +28,6 @@
 
 module audio {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO
     ] AudioBuffer {
         readonly attribute long length; // in sample-frames
