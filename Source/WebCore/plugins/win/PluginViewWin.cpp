@@ -639,17 +639,23 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 {
+    ASSERT(m_plugin && !m_isWindowed);
+
     NPEvent npEvent;
 
-    npEvent.wParam = event->keyCode();    
+    npEvent.wParam = event->keyCode();
 
     if (event->type() == eventNames().keydownEvent) {
         npEvent.event = WM_KEYDOWN;
         npEvent.lParam = 0;
+    } else if (event->type() == eventNames().keypressEvent) {
+        npEvent.event = WM_CHAR;
+        npEvent.lParam = 0;
     } else if (event->type() == eventNames().keyupEvent) {
         npEvent.event = WM_KEYUP;
         npEvent.lParam = 0x8000;
-    }
+    } else
+        return;
 
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
     if (dispatchNPEvent(npEvent))
@@ -662,6 +668,8 @@ extern bool ignoreNextSetCursor;
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
+    ASSERT(m_plugin && !m_isWindowed);
+
     NPEvent npEvent;
 
     IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(IntPoint(event->pageX(), event->pageY()));
@@ -720,6 +728,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         return;
 
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    // FIXME: Consider back porting the http://webkit.org/b/58108 fix here.
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
@@ -728,7 +737,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
     if (Page* page = m_parentFrame->page())
-        page->chrome()->client()->setLastSetCursorToCurrentCursor();    
+        page->chrome()->client()->setLastSetCursorToCurrentCursor();
 #endif
 }
 

@@ -1,3 +1,24 @@
+2011-06-27  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Send keypress events to windowless plugins on the windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=63144
+
+        No new tests.  Covered by existing windowless plugin tests plugins/mouse-events.html
+        and plugins/keyboard-events.html.  Both are not yet working as desired because focus
+        events are not being fowarded to windowed plugins on the win port (bug 62375).  Test
+        plugin logging on the win port was added in bug 61721.  New failing expectations for
+        plugins/keyboard-events.html were subsequently added in bug 33973 so there's no need
+        to update test expectations in this patch.
+
+         * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handleKeyboardEvent): Add an ASSERT(m_plugin && !m_isWindowed)
+        to indicate that the routine is for windowless plugins.  Remove trailing whitespace.
+        Add handling for keyPress events (map to WM_CHAR).
+        (WebCore::PluginView::handleMouseEvent): Add the ASSERT to indicate that the routine
+        is for windowless plugins.  Add FIXME note.  Remove trailing whitespace.
+
 2011-06-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
