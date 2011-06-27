@@ -1,3 +1,13 @@
+2011-06-27  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        [WK2] WebKitTestRunner should reset FrameFlattening flag to disable before each test
+        https://bugs.webkit.org/show_bug.cgi?id=63457
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2011-06-27  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Reviewed by Kent Tamura.

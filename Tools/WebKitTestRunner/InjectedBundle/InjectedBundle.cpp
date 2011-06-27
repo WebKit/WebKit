@@ -181,6 +181,7 @@ void InjectedBundle::beginTesting()
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
     WKBundleSetPrivateBrowsingEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
+    WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
