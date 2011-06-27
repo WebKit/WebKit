@@ -1,3 +1,19 @@
+2011-06-27  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Indirectly including TextPosition.h and XPathGrammar.h causes compile errors
+        https://bugs.webkit.org/show_bug.cgi?id=63392
+        
+        When both TextPosition.h and XPathGrammar.h are included a compile-error
+        is caused, since XPathGrammar.h defines a macro called NUMBER and 
+        TextPosition has a typedef named NUMBER.
+
+        * wtf/text/TextPosition.h:
+        (WTF::TextPosition::TextPosition):
+        (WTF::TextPosition::minimumPosition):
+        (WTF::TextPosition::belowRangePosition):
+
 2011-06-27  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.
