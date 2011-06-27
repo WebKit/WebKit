@@ -1,3 +1,36 @@
+2011-06-27  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Add an EventSender implementation to EFL's DumpRenderTree along
+        with support files.
+        Build system changes will be made as soon as the whole DumpRenderTree
+        is upstreamed.
+        https://bugs.webkit.org/show_bug.cgi?id=61962
+
+        * DumpRenderTree/efl/EventSender.cpp: Added.
+        (setEvasModifiers):
+        (translateMouseButtonNumber):
+        (sendMouseEvent):
+        (sendClick):
+        (scheduleAsynchronousClickCallback):
+        (updateClickCount):
+        (modifierFromJSValue):
+        (modifiersFromJSValue):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (mouseMoveToCallback):
+        (evasMouseEventFromHorizontalAndVerticalOffsets):
+        (mouseScrollByCallback):
+        (continuousMouseScrollByCallback):
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+        (keyDownCallback):
+        (scalePageByCallback):
+        (getClass):
+        (makeEventSender):
+        * DumpRenderTree/efl/EventSender.h: Added.
+
 2011-06-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
