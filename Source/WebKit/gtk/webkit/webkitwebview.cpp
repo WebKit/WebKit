@@ -3226,7 +3226,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if ENABLE(WEBGL)
-    coreSettings->setWebGLEnabled(settingsPrivate->enableWebGL);
+    coreSettings->setWebGLEnabled(settingsPrivate->enableWebgl);
 #endif
 
     if (Page* page = core(webView))

@@ -4606,6 +4606,8 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/ConstantUnion.h \
 	Source/ThirdParty/ANGLE/src/compiler/debug.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/debug.h \
+	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.h \
 	Source/ThirdParty/ANGLE/src/compiler/InfoSink.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/InfoSink.h \
 	Source/ThirdParty/ANGLE/src/compiler/Initialize.cpp \
@@ -4619,11 +4621,17 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/intermOut.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/IntermTraverse.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/localintermediate.h \
+	Source/ThirdParty/ANGLE/src/compiler/MapLongVariableNames.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/MapLongVariableNames.h \
 	Source/ThirdParty/ANGLE/src/compiler/MMap.h \
 	Source/ThirdParty/ANGLE/src/compiler/osinclude.h \
 	Source/ThirdParty/ANGLE/src/compiler/ossource_posix.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/OutputESSL.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/OutputESSL.h \
 	Source/ThirdParty/ANGLE/src/compiler/OutputGLSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/OutputGLSL.h \
+	Source/ThirdParty/ANGLE/src/compiler/OutputGLSLBase.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/OutputGLSLBase.h \
 	Source/ThirdParty/ANGLE/src/compiler/OutputHLSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/OutputHLSL.h \
 	Source/ThirdParty/ANGLE/src/compiler/parseConst.cpp \
@@ -4661,6 +4669,8 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/SymbolTable.h \
 	Source/ThirdParty/ANGLE/src/compiler/VersionGLSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/VersionGLSL.h \
+	Source/ThirdParty/ANGLE/src/compiler/TranslatorESSL.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/TranslatorESSL.h \
 	Source/ThirdParty/ANGLE/src/compiler/TranslatorGLSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/TranslatorGLSL.h \
 	Source/ThirdParty/ANGLE/src/compiler/TranslatorHLSL.cpp \
