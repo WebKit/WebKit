@@ -227,7 +227,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
         function stylesCallback(styles)
         {
-            if (styles)
+            if (this.node === node && styles)
                 this._rebuildUpdate(node, styles);
             if (callback)
                 callback();
@@ -235,7 +235,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
         function computedStyleCallback(computedStyle)
         {
-            if (computedStyle)
+            if (this.node === node && computedStyle)
                 this._refreshUpdate(node, computedStyle, editedSection);
             if (callback)
                 callback();
