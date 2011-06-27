@@ -140,7 +140,7 @@ class SingleTestRunner:
         # FIXME: It the test crashed or timed out, it might be bettter to avoid
         # to write new baselines.
         self._save_baselines(driver_output)
-        return TestResult(self._filename, failures, driver_output.test_time)
+        return TestResult(self._filename, failures, driver_output.test_time, driver_output.has_stderr())
 
     def _save_baselines(self, driver_output):
         # Although all test_shell/DumpRenderTree output should be utf-8,
@@ -220,13 +220,13 @@ class SingleTestRunner:
         if driver_output.crash:
             # Don't continue any more if we already have a crash.
             # In case of timeouts, we continue since we still want to see the text and image output.
-            return TestResult(self._filename, failures, driver_output.test_time)
+            return TestResult(self._filename, failures, driver_output.test_time, driver_output.has_stderr())
 
         failures.extend(self._compare_text(driver_output.text, expected_driver_output.text))
         failures.extend(self._compare_audio(driver_output.audio, expected_driver_output.audio))
         if self._options.pixel_tests:
             failures.extend(self._compare_image(driver_output, expected_driver_output))
-        return TestResult(self._filename, failures, driver_output.test_time)
+        return TestResult(self._filename, failures, driver_output.test_time, driver_output.has_stderr())
 
     def _compare_text(self, actual_text, expected_text):
         failures = []
@@ -281,18 +281,19 @@ class SingleTestRunner:
 
     def _compare_output_with_reference(self, driver_output1, driver_output2):
         total_test_time = driver_output1.test_time + driver_output2.test_time
+        has_stderr = driver_output1.has_stderr() or driver_output2.has_stderr()
         failures = []
         failures.extend(self._handle_error(driver_output1))
         if failures:
             # Don't continue any more if we already have crash or timeout.
-            return TestResult(self._filename, failures, total_test_time)
+            return TestResult(self._filename, failures, total_test_time, has_stderr)
         failures.extend(self._handle_error(driver_output2, reference_filename=self._reference_filename))
         if failures:
-            return TestResult(self._filename, failures, total_test_time)
+            return TestResult(self._filename, failures, total_test_time, has_stderr)
 
         if self._is_mismatch_reftest:
             if driver_output1.image_hash == driver_output2.image_hash:
                 failures.append(test_failures.FailureReftestMismatchDidNotOccur())
         elif driver_output1.image_hash != driver_output2.image_hash:
             failures.append(test_failures.FailureReftestMismatch())
-        return TestResult(self._filename, failures, total_test_time)
+        return TestResult(self._filename, failures, total_test_time, has_stderr)

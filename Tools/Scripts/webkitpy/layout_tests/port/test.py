@@ -137,6 +137,8 @@ def unit_test_list():
               expected_text="foo\r\r\r\n", actual_text="foo\n")
     tests.add('failures/expected/text.html', actual_text='text_fail-png')
     tests.add('failures/unexpected/crash.html', crash=True)
+    tests.add('failures/unexpected/crash-with-stderr.html', crash=True,
+              error="mock-std-error-output")
     tests.add('failures/unexpected/text-image-checksum.html',
               actual_text='text-image-checksum_fail-txt',
               actual_checksum='text-image-checksum_fail-checksum')

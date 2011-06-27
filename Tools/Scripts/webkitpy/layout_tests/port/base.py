@@ -961,6 +961,9 @@ class DriverOutput(object):
         self.timeout = timeout
         self.error = error
 
+    def has_stderr(self):
+        return bool(self.error)
+
 
 class Driver:
     """Abstract interface for the DumpRenderTree interface."""

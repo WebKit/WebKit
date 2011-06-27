@@ -38,11 +38,12 @@ class TestResult(object):
     def loads(str):
         return cPickle.loads(str)
 
-    def __init__(self, filename, failures=None, test_run_time=None):
+    def __init__(self, filename, failures=None, test_run_time=None, has_stderr=False):
         # FIXME: s/filename/name to be consistent with the rest of layout_package.
         self.filename = filename
         self.failures = failures or []
         self.test_run_time = test_run_time or 0
+        self.has_stderr = has_stderr
         # FIXME: Setting this in the constructor makes this class hard to mutate.
         self.type = test_failures.determine_result_type(failures)
 

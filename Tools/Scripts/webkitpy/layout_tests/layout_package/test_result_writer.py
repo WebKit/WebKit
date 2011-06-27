@@ -99,6 +99,7 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_ACTUAL = "-actual"
     FILENAME_SUFFIX_EXPECTED = "-expected"
     FILENAME_SUFFIX_DIFF = "-diff"
+    FILENAME_SUFFIX_STDERR = "-stderr"
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
     FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
@@ -161,7 +162,7 @@ class TestResultWriter(object):
 
     def write_stderr(self, error):
         fs = self._port._filesystem
-        filename = self.output_filename("-stderr.txt")
+        filename = self.output_filename(self.FILENAME_SUFFIX_STDERR + ".txt")
         fs.maybe_make_directory(fs.dirname(filename))
         fs.write_binary_file(filename, error)
 

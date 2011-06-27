@@ -348,7 +348,7 @@ class MainTest(unittest.TestCase):
 
     def test_run_singly_actually_runs_tests(self):
         res, _, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
-        self.assertEquals(res, 5)
+        self.assertEquals(res, 6)
 
     def test_single_file(self):
         # FIXME: We should consider replacing more of the get_tests_run()-style tests
@@ -398,12 +398,22 @@ class MainTest(unittest.TestCase):
 
         # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
         # FIXME: It's nice to have a routine in port/test.py that returns this number.
-        unexpected_tests_count = 5
+        unexpected_tests_count = 6
 
         self.assertEqual(res, unexpected_tests_count)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
         self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
+
+    def test_crash_with_stderr(self):
+        fs = port.unit_test_filesystem()
+        res, buildbot_output, regular_output, user = logging_run([
+                'failures/unexpected/crash-with-stderr.html',
+            ],
+            tests_included=True,
+            record_results=True,
+            filesystem=fs)
+        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
     def test_exit_after_n_failures_upload(self):
         fs = port.unit_test_filesystem()

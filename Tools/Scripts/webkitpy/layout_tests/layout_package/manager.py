@@ -132,7 +132,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
             continue
 
         test_dict = {}
-        if False:
+        if result.has_stderr:
             test_dict['has_stderr'] = True
 
         if result_type == test_expectations.PASS:
