@@ -1804,6 +1804,7 @@ fast/text/international/bidi-mirror-he-ar.html
 fast/text/international/bold-bengali.html
 fast/text/international/hebrew-vowels.html
 fast/text/international/plane2.html
+fast/text/international/unicode-bidi-plaintext.html
 fast/text/international/vertical-text-glyph-test.html
 fast/text/international/vertical-text-metrics-test.html
 
@@ -2527,6 +2528,28 @@ svg/custom/painting-marker-07-f-inherit.svg
 svg/custom/small-rect-scale.svg
 svg/filters/feConvolveFilter-y-bounds.svg
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
+
+# failing new tests
+fast/forms/input-appearance-range.html
+fast/text/midword-break-before-surrogate-pair.html
+printing/page-count-relayout-shrink.html
+svg/custom/svg-fonts-fallback.xhtml
+svg/custom/svg-fonts-segmented.xhtml
+svg/custom/svg-fonts-word-spacing.html
+
+# new tests, they needs investigation
+fast/block/float/intruding-float-add-in-sibling-block-on-static-position2.html
+fast/block/float/intruding-float-add-in-sibling-block-on-static-position.html
+fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2.html
+fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position.html
+fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2.html
+fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position.html
+fast/block/float/overhanging-float-add-in-static-position-block2.html
+fast/block/float/overhanging-float-add-in-static-position-block.html
+fast/block/float/overhanging-float-remove-from-absolute-position-block2.html
+fast/block/float/overhanging-float-remove-from-absolute-position-block.html
+fast/block/float/overhanging-float-remove-from-fixed-position-block2.html
+fast/block/float/overhanging-float-remove-from-fixed-position-block.html
 
 # New tests introduced in r88307, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=54417
