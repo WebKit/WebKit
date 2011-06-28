@@ -153,6 +153,11 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
 #endif
 
 #if ENABLE(JIT)
+#if ENABLE(INTERPRETER)
+    if (!m_jitCodeForCall)
+        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
+    else
+#endif
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
@@ -230,7 +235,12 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
 #endif
 
 #if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall.size());
+#if ENABLE(INTERPRETER)
+    if (!m_jitCodeForCall)
+        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
+    else
+#endif
+        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
 #endif
@@ -331,7 +341,12 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #endif
 
 #if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall.size());
+#if ENABLE(INTERPRETER)
+    if (!m_jitCodeForCall)
+        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
+    else
+#endif
+        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
 #endif
@@ -382,6 +397,11 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 #endif
 
 #if ENABLE(JIT)
+#if ENABLE(INTERPRETER)
+    if (!m_jitCodeForConstruct)
+        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
+    else
+#endif
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
