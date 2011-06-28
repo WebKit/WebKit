@@ -37,6 +37,6 @@ class CrashLogsTest(unittest.TestCase):
         files = {}
         files['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150719_quadzen.crash'] = mock_crash_report
         filesystem = MockFileSystem(files)
-        crash_logs = CrashLogs(Mock(), filesystem)
+        crash_logs = CrashLogs(filesystem)
         log = crash_logs.find_newest_log("TextMate")
         self.assertTrue(log, mock_crash_report)

@@ -167,6 +167,10 @@ class ServerProcess:
         select_fds = (out_fd, err_fd)
         deadline = time.time() + timeout
         while not self.timed_out and not self.crashed:
+            if self._executive.running_pids(self._port.is_crash_reporter):
+                _log.warning('%s is waiting for crash reporter...' % self._name)
+                self._executive.wait_newest(self._port.is_crash_reporter)
+
             # poll() is not threadsafe and can throw OSError due to:
             # http://bugs.python.org/issue1731717
             if self._proc.poll() != None:
