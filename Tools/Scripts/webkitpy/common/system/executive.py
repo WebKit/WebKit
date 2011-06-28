@@ -296,8 +296,7 @@ class Executive(object):
         running_pids = []
 
         if sys.platform in ("win32", "cygwin"):
-            # FIXME: running_pids isn't implemented on Windows yet...
-            return []
+            raise NotImplemented()
 
         ps_process = self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE)
         stdout, _ = ps_process.communicate()

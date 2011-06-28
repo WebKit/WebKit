@@ -30,7 +30,6 @@
 
 import logging
 import platform
-import re
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
@@ -99,9 +98,6 @@ class MacPort(WebKitPort):
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
            'mac', 'test_expectations.txt')
-
-    def is_crash_reporter(self, process_name):
-        return re.search(r'ReportCrash', process_name)
 
     def _skipped_file_paths(self):
         # FIXME: This method will need to be made work for non-mac

@@ -36,7 +36,8 @@ def _is_crash_reporter(process_name):
 
 
 class CrashLogs(object):
-    def __init__(self, filesystem):
+    def __init__(self, executive, filesystem):
+        self._executive = executive
         self._filesystem = filesystem
 
     def find_newest_log(self, process_name):
@@ -60,4 +61,8 @@ class CrashLogs(object):
         logs = self._filesystem.files_under(log_directory, file_filter=is_crash_log)
         if not logs:
             return
+
+        # FIXME: We should wait for the CrashReporter to finish, but that causes tests to timeout.
+        if False:
+            self._executive.wait_newest(_is_crash_reporter)
         return self._filesystem.read_text_file(sorted(logs)[-1])

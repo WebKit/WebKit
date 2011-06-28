@@ -373,7 +373,7 @@ class CrashLog(AbstractDeclarativeCommand):
     argument_names = "PROCESS_NAME"
 
     def execute(self, options, args, tool):
-        crash_logs = CrashLogs(tool.filesystem)
+        crash_logs = CrashLogs(tool.executive, tool.filesystem)
         print crash_logs.find_newest_log(args[0])
 
 

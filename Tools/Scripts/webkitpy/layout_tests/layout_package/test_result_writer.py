@@ -173,7 +173,7 @@ class TestResultWriter(object):
         filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")
         fs.maybe_make_directory(fs.dirname(filename))
         # FIXME: We shouldn't be grabbing private members of port.
-        crash_logs = CrashLogs(fs)
+        crash_logs = CrashLogs(self._port._executive, fs)
         log = crash_logs.find_newest_log(self._port.driver_name())
         # CrashLogs doesn't support every platform, so we fall back to
         # including the stderr output, which is admittedly somewhat redundant.
