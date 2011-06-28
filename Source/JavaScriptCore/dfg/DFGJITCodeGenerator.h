@@ -39,6 +39,7 @@ namespace JSC { namespace DFG {
 
 class SpeculateIntegerOperand;
 class SpeculateStrictInt32Operand;
+class SpeculateDoubleOperand;
 class SpeculateCellOperand;
 
 
@@ -1035,6 +1036,8 @@ public:
     FPRTemporary(JITCodeGenerator*);
     FPRTemporary(JITCodeGenerator*, DoubleOperand&);
     FPRTemporary(JITCodeGenerator*, DoubleOperand&, DoubleOperand&);
+    FPRTemporary(JITCodeGenerator*, SpeculateDoubleOperand&);
+    FPRTemporary(JITCodeGenerator*, SpeculateDoubleOperand&, SpeculateDoubleOperand&);
 
     ~FPRTemporary()
     {

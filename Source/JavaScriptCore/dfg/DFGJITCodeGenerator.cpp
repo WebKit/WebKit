@@ -636,6 +636,28 @@ FPRTemporary::FPRTemporary(JITCodeGenerator* jit, DoubleOperand& op1, DoubleOper
         m_fpr = m_jit->fprAllocate();
 }
 
+FPRTemporary::FPRTemporary(JITCodeGenerator* jit, SpeculateDoubleOperand& op1)
+    : m_jit(jit)
+    , m_fpr(InvalidFPRReg)
+{
+    if (m_jit->canReuse(op1.index()))
+        m_fpr = m_jit->reuse(op1.fpr());
+    else
+        m_fpr = m_jit->fprAllocate();
+}
+
+FPRTemporary::FPRTemporary(JITCodeGenerator* jit, SpeculateDoubleOperand& op1, SpeculateDoubleOperand& op2)
+    : m_jit(jit)
+    , m_fpr(InvalidFPRReg)
+{
+    if (m_jit->canReuse(op1.index()))
+        m_fpr = m_jit->reuse(op1.fpr());
+    else if (m_jit->canReuse(op2.index()))
+        m_fpr = m_jit->reuse(op2.fpr());
+    else
+        m_fpr = m_jit->fprAllocate();
+}
+
 } } // namespace JSC::DFG
 
 #endif

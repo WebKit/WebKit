@@ -129,6 +129,7 @@ public:
     // machine registers, implicitly generating speculation checks as needed.
     GPRReg fillSpeculateInt(NodeIndex, DataFormat& returnFormat);
     GPRReg fillSpeculateIntStrict(NodeIndex);
+    FPRReg fillSpeculateDouble(NodeIndex);
     GPRReg fillSpeculateCell(NodeIndex);
 
 private:
@@ -315,6 +316,42 @@ private:
     SpeculativeJIT* m_jit;
     NodeIndex m_index;
     GPRReg m_gprOrInvalid;
+};
+
+class SpeculateDoubleOperand {
+public:
+    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, NodeIndex index)
+        : m_jit(jit)
+        , m_index(index)
+        , m_fprOrInvalid(InvalidFPRReg)
+    {
+        ASSERT(m_jit);
+        if (jit->isFilled(index))
+            fpr();
+    }
+
+    ~SpeculateDoubleOperand()
+    {
+        ASSERT(m_fprOrInvalid != InvalidFPRReg);
+        m_jit->unlock(m_fprOrInvalid);
+    }
+
+    NodeIndex index() const
+    {
+        return m_index;
+    }
+
+    FPRReg fpr()
+    {
+        if (m_fprOrInvalid == InvalidFPRReg)
+            m_fprOrInvalid = m_jit->fillSpeculateDouble(index());
+        return m_fprOrInvalid;
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    NodeIndex m_index;
+    FPRReg m_fprOrInvalid;
 };
 
 class SpeculateCellOperand {

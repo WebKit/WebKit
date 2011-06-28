@@ -174,6 +174,121 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
     return result;
 }
 
+FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+
+    if (info.registerFormat() == DataFormatNone) {
+        GPRReg gpr = allocate();
+
+        if (node.isConstant()) {
+            if (isInt32Constant(nodeIndex)) {
+                FPRReg fpr = fprAllocate();
+                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(static_cast<double>(valueOfInt32Constant(nodeIndex))))), gpr);
+                m_jit.movePtrToDouble(gpr, fpr);
+                unlock(gpr);
+
+                m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
+                info.fillDouble(fpr);
+                return fpr;
+            }
+            if (isDoubleConstant(nodeIndex)) {
+                FPRReg fpr = fprAllocate();
+                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), gpr);
+                m_jit.movePtrToDouble(gpr, fpr);
+                unlock(gpr);
+
+                m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
+                info.fillDouble(fpr);
+                return fpr;
+            }
+            ASSERT(isJSConstant(nodeIndex));
+            JSValue jsValue = valueOfJSConstant(nodeIndex);
+            m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
+            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+            info.fillJSValue(gpr, DataFormatJS);
+            unlock(gpr);
+        } else {
+            DataFormat spillFormat = info.spillFormat();
+            ASSERT(spillFormat & DataFormatJS);
+            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+            info.fillJSValue(gpr, spillFormat);
+            unlock(gpr);
+        }
+    }
+
+    switch (info.registerFormat()) {
+    case DataFormatNone:
+        // Should have filled, above.
+        ASSERT_NOT_REACHED();
+        
+    case DataFormatCell:
+    case DataFormatJSCell:
+    case DataFormatJS: {
+        GPRReg jsValueGpr = info.gpr();
+        m_gprs.lock(jsValueGpr);
+        FPRReg fpr = fprAllocate();
+        GPRReg tempGpr = allocate();
+
+        JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
+
+        speculationCheck(m_jit.branchTestPtr(MacroAssembler::Zero, jsValueGpr, GPRInfo::tagTypeNumberRegister));
+
+        // First, if we get here we have a double encoded as a JSValue
+        m_jit.move(jsValueGpr, tempGpr);
+        m_jit.addPtr(GPRInfo::tagTypeNumberRegister, tempGpr);
+        m_jit.movePtrToDouble(tempGpr, fpr);
+        JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
+
+        // Finally, handle integers.
+        isInteger.link(&m_jit);
+        m_jit.convertInt32ToDouble(jsValueGpr, fpr);
+        hasUnboxedDouble.link(&m_jit);
+
+        m_gprs.release(jsValueGpr);
+        m_gprs.unlock(jsValueGpr);
+        m_gprs.unlock(tempGpr);
+        m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
+        info.fillDouble(fpr);
+        return fpr;
+    }
+
+    case DataFormatJSInteger:
+    case DataFormatInteger: {
+        FPRReg fpr = fprAllocate();
+        GPRReg gpr = info.gpr();
+        m_gprs.lock(gpr);
+        m_jit.convertInt32ToDouble(gpr, fpr);
+        m_gprs.unlock(gpr);
+        return fpr;
+    }
+
+    // Unbox the double
+    case DataFormatJSDouble: {
+        GPRReg gpr = info.gpr();
+        FPRReg fpr = unboxDouble(gpr);
+
+        m_gprs.release(gpr);
+        m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
+
+        info.fillDouble(fpr);
+        return fpr;
+    }
+
+    case DataFormatDouble: {
+        FPRReg fpr = info.fpr();
+        m_fprs.lock(fpr);
+        return fpr;
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return InvalidFPRReg;
+}
+
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];
@@ -430,120 +545,180 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueToNumber: {
-        SpeculateIntegerOperand op1(this, node.child1);
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), m_compileIndex, op1.format());
+        if (isInteger(node.child1)) {
+            SpeculateIntegerOperand op1(this, node.child1);
+            GPRTemporary result(this, op1);
+            m_jit.move(op1.gpr(), result.gpr());
+            integerResult(result.gpr(), m_compileIndex, op1.format());
+            break;
+        }
+        SpeculateDoubleOperand op1(this, node.child1);
+        FPRTemporary result(this, op1);
+        m_jit.moveDouble(op1.fpr(), result.fpr());
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
     case ValueAdd:
     case ArithAdd: {
-        if (isInt32Constant(node.child1)) {
-            int32_t imm1 = valueOfInt32Constant(node.child1);
-            SpeculateIntegerOperand op2(this, node.child2);
-            GPRTemporary result(this);
+        if (isInteger(node.child1) || isInteger(node.child2)) {
+            if (isInt32Constant(node.child1)) {
+                int32_t imm1 = valueOfInt32Constant(node.child1);
+                SpeculateIntegerOperand op2(this, node.child2);
+                GPRTemporary result(this);
 
-            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op2.gpr(), Imm32(imm1), result.gpr()));
+                speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op2.gpr(), Imm32(imm1), result.gpr()));
 
-            integerResult(result.gpr(), m_compileIndex);
-            break;
-        }
-            
-        if (isInt32Constant(node.child2)) {
+                integerResult(result.gpr(), m_compileIndex);
+                break;
+            }
+                
+            if (isInt32Constant(node.child2)) {
+                SpeculateIntegerOperand op1(this, node.child1);
+                int32_t imm2 = valueOfInt32Constant(node.child2);
+                GPRTemporary result(this);
+
+                speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+
+                integerResult(result.gpr(), m_compileIndex);
+                break;
+            }
+                
             SpeculateIntegerOperand op1(this, node.child1);
-            int32_t imm2 = valueOfInt32Constant(node.child2);
-            GPRTemporary result(this);
+            SpeculateIntegerOperand op2(this, node.child2);
+            GPRTemporary result(this, op1, op2);
 
-            speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+            GPRReg gpr1 = op1.gpr();
+            GPRReg gpr2 = op2.gpr();
+            GPRReg gprResult = result.gpr();
+            MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, gpr1, gpr2, gprResult);
 
-            integerResult(result.gpr(), m_compileIndex);
+            if (gpr1 == gprResult)
+                speculationCheck(check, SpeculationRecovery(SpeculativeAdd, gprResult, gpr2));
+            else if (gpr2 == gprResult)
+                speculationCheck(check, SpeculationRecovery(SpeculativeAdd, gprResult, gpr1));
+            else
+                speculationCheck(check);
+
+            integerResult(gprResult, m_compileIndex);
             break;
         }
-            
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this, op1, op2);
 
-        GPRReg gpr1 = op1.gpr();
-        GPRReg gpr2 = op2.gpr();
-        GPRReg gprResult = result.gpr();
-        MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, gpr1, gpr2, gprResult);
+        SpeculateDoubleOperand op1(this, node.child1);
+        SpeculateDoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1, op2);
 
-        if (gpr1 == gprResult)
-            speculationCheck(check, SpeculationRecovery(SpeculativeAdd, gprResult, gpr2));
-        else if (gpr2 == gprResult)
-            speculationCheck(check, SpeculationRecovery(SpeculativeAdd, gprResult, gpr1));
-        else
-            speculationCheck(check);
+        FPRReg reg1 = op1.fpr();
+        FPRReg reg2 = op2.fpr();
+        m_jit.addDouble(reg1, reg2, result.fpr());
 
-        integerResult(gprResult, m_compileIndex);
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
     case ArithSub: {
-        if (isInt32Constant(node.child2)) {
+        if (isInteger(node.child1) || isInteger(node.child2)) {
+            if (isInt32Constant(node.child2)) {
+                SpeculateIntegerOperand op1(this, node.child1);
+                int32_t imm2 = valueOfInt32Constant(node.child2);
+                GPRTemporary result(this);
+
+                speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+
+                integerResult(result.gpr(), m_compileIndex);
+                break;
+            }
+                
             SpeculateIntegerOperand op1(this, node.child1);
-            int32_t imm2 = valueOfInt32Constant(node.child2);
+            SpeculateIntegerOperand op2(this, node.child2);
             GPRTemporary result(this);
 
-            speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+            speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), op2.gpr(), result.gpr()));
 
             integerResult(result.gpr(), m_compileIndex);
             break;
         }
-            
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this);
+        SpeculateDoubleOperand op1(this, node.child1);
+        SpeculateDoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1);
 
-        speculationCheck(m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), op2.gpr(), result.gpr()));
+        FPRReg reg1 = op1.fpr();
+        FPRReg reg2 = op2.fpr();
+        m_jit.subDouble(reg1, reg2, result.fpr());
 
-        integerResult(result.gpr(), m_compileIndex);
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
     case ArithMul: {
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this);
+        if (isInteger(node.child1) && isInteger(node.child2)) {
+            SpeculateIntegerOperand op1(this, node.child1);
+            SpeculateIntegerOperand op2(this, node.child2);
+            GPRTemporary result(this);
 
-        GPRReg reg1 = op1.gpr();
-        GPRReg reg2 = op2.gpr();
-        speculationCheck(m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
+            GPRReg reg1 = op1.gpr();
+            GPRReg reg2 = op2.gpr();
+            speculationCheck(m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
 
-        MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
-        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
-        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
-        resultNonZero.link(&m_jit);
+            MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
+            speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
+            speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
+            resultNonZero.link(&m_jit);
 
-        integerResult(result.gpr(), m_compileIndex);
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+        SpeculateDoubleOperand op1(this, node.child1);
+        SpeculateDoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1, op2);
+
+        FPRReg reg1 = op1.fpr();
+        FPRReg reg2 = op2.fpr();
+        
+        m_jit.mulDouble(reg1, reg2, result.fpr());
+        
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
     case ArithDiv: {
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this, op1, op2);
+        SpeculateDoubleOperand op1(this, node.child1);
+        SpeculateDoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1);
 
-        op1.gpr();
-        op2.gpr();
-        terminateSpeculativeExecution();
+        FPRReg reg1 = op1.fpr();
+        FPRReg reg2 = op2.fpr();
+        m_jit.divDouble(reg1, reg2, result.fpr());
 
-        integerResult(result.gpr(), m_compileIndex);
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
     case ArithMod: {
         SpeculateIntegerOperand op1(this, node.child1);
         SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this, op1, op2);
+        GPRTemporary eax(this, X86Registers::eax);
+        GPRTemporary edx(this, X86Registers::edx);
+        GPRReg op1Gpr = op1.gpr();
+        GPRReg op2Gpr = op2.gpr();
 
-        op1.gpr();
-        op2.gpr();
-        terminateSpeculativeExecution();
+        speculationCheck(m_jit.branchTestPtr(JITCompiler::Zero, op2Gpr));
 
-        integerResult(result.gpr(), m_compileIndex);
+        GPRReg temp2 = InvalidGPRReg;
+        if (op2Gpr == X86Registers::eax || op2Gpr == X86Registers::edx) {
+            temp2 = allocate();
+            m_jit.move(op2Gpr, temp2);
+            op2Gpr = temp2;
+        }
+
+        m_jit.move(op1Gpr, eax.gpr());
+        m_jit.assembler().cdq();
+        m_jit.assembler().idivl_r(op2Gpr);
+
+        if (temp2 != InvalidGPRReg)
+            unlock(temp2);
+
+        integerResult(edx.gpr(), m_compileIndex);
         break;
     }
 

@@ -106,6 +106,7 @@ public:
     Graph& graph() { return m_graph; }
     CodeBlock* codeBlock() { return m_codeBlock; }
     JSGlobalData* globalData() { return m_globalData; }
+    AssemblerType_T& assembler() { return m_assembler; }
 
 #if CPU(X86_64)
     void preserveReturnAddressAfterCall(GPRReg reg)
