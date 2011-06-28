@@ -86,6 +86,7 @@ editing/undo/redo-split-text-node.html
 editing/undo/redo-split-text-with-removal.html
 editing/undo/redo-style.html
 editing/undo/redo-typing-001.html
+editing/undo/undo-after-setting-value.html
 editing/undo/undo-combined-delete-boundary.html
 editing/undo/undo-combined-delete.html
 editing/undo/undo-delete-boundary.html

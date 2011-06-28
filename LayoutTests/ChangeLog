@@ -1,3 +1,12 @@
+2011-06-28  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner needs to implement undo client (Windows).
+        https://bugs.webkit.org/show_bug.cgi?id=58103
+
+        Add another undo test to the win-wk2 skipped list to get the bots green.
+
+        * platform/win-wk2/Skipped:
+
 2011-06-28  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.
