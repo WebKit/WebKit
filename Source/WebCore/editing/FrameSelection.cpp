@@ -1462,45 +1462,23 @@ void FrameSelection::selectAll()
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
 {
-    if (!range)
+    if (!range || !range->startContainer() || !range->endContainer())
         return false;
+    ASSERT(range->startContainer()->document() == range->endContainer()->document());
 
-    ExceptionCode ec = 0;
-    Node* startContainer = range->startContainer(ec);
-    if (ec)
-        return false;
-
-    Node* endContainer = range->endContainer(ec);
-    if (ec)
-        return false;
-    
-    ASSERT(startContainer);
-    ASSERT(endContainer);
-    ASSERT(startContainer->document() == endContainer->document());
-    
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
     // Non-collapsed ranges are not allowed to start at the end of a line that is wrapped,
     // they start at the beginning of the next line instead
+    ExceptionCode ec = 0;
     bool collapsed = range->collapsed(ec);
     if (ec)
         return false;
-    
-    int startOffset = range->startOffset(ec);
-    if (ec)
-        return false;
 
-    int endOffset = range->endOffset(ec);
-    if (ec)
-        return false;
-    
     // FIXME: Can we provide extentAffinity?
-    VisiblePosition visibleStart(Position(startContainer, startOffset, Position::PositionIsOffsetInAnchor), collapsed ? affinity : DOWNSTREAM);
-    VisiblePosition visibleEnd(Position(endContainer, endOffset, Position::PositionIsOffsetInAnchor), SEL_DEFAULT_AFFINITY);
-    SetSelectionOptions options = ClearTypingStyle;
-    if (closeTyping)
-        options |= CloseTyping;
-    setSelection(VisibleSelection(visibleStart, visibleEnd), options);
+    VisiblePosition visibleStart(range->startPosition(), collapsed ? affinity : DOWNSTREAM);
+    VisiblePosition visibleEnd(range->endPosition(), SEL_DEFAULT_AFFINITY);
+    setSelection(VisibleSelection(visibleStart, visibleEnd), ClearTypingStyle | (closeTyping ? CloseTyping : 0));
     return true;
 }
 

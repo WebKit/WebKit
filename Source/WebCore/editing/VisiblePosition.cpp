@@ -552,8 +552,8 @@ UChar32 VisiblePosition::characterAfter() const
     case Position::PositionIsOffsetInAnchor:
         break;
     }
-    Text* textNode = static_cast<Text*>(pos.containerNode());
-    unsigned offset = pos.anchorType() == Position::PositionIsOffsetInAnchor ? pos.offsetInContainerNode() : 0;
+    unsigned offset = static_cast<unsigned>(pos.offsetInContainerNode());
+    Text* textNode = pos.containerText();
     unsigned length = textNode->length();
     if (offset >= length)
         return 0;
@@ -649,14 +649,12 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
 
 VisiblePosition startVisiblePosition(const Range *r, EAffinity affinity)
 {
-    int exception = 0;
-    return VisiblePosition(Position(r->startContainer(exception), r->startOffset(exception), Position::PositionIsOffsetInAnchor), affinity);
+    return VisiblePosition(r->startPosition(), affinity);
 }
 
 VisiblePosition endVisiblePosition(const Range *r, EAffinity affinity)
 {
-    int exception = 0;
-    return VisiblePosition(Position(r->endContainer(exception), r->endOffset(exception), Position::PositionIsOffsetInAnchor), affinity);
+    return VisiblePosition(r->endPosition(), affinity);
 }
 
 bool setStart(Range *r, const VisiblePosition &visiblePosition)

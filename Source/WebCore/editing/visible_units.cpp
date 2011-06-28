@@ -437,12 +437,12 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
     Position pos;
     if (endNode->hasTagName(brTag)) {
         pos = positionBeforeNode(endNode);
-    } else if (endBox->isInlineTextBox()) {
-        InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
+    } else if (endBox->isInlineTextBox() && endNode->isTextNode()) {
+        InlineTextBox* endTextBox = static_cast<InlineTextBox *>(endBox);
         int endOffset = endTextBox->start();
         if (!endTextBox->isLineBreak())
             endOffset += endTextBox->len();
-        pos = Position(endNode, endOffset, Position::PositionIsOffsetInAnchor);
+        pos = Position(static_cast<Text*>(endNode), endOffset);
     } else
         pos = positionAfterNode(endNode);
     
@@ -793,6 +793,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             break;
 
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
+            ASSERT(n->isTextNode());
             type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {
                 const UChar* chars = toRenderText(r)->characters();
@@ -800,9 +801,10 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
                 int o = offset;
                 if (n == startNode && o < i)
                     i = max(0, o);
-                while (--i >= 0)
+                while (--i >= 0) {
                     if (chars[i] == '\n')
-                        return VisiblePosition(Position(n, i + 1, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+                        return VisiblePosition(Position(static_cast<Text*>(n), i + 1), DOWNSTREAM);
+                }
             }
             node = n;
             offset = 0;
@@ -815,9 +817,11 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             n = n->traversePreviousNodePostOrder(startBlock);
     }
 
-    if (type == Position::PositionIsOffsetInAnchor)
+    if (type == Position::PositionIsOffsetInAnchor) {
+        ASSERT(type != Position::PositionIsOffsetInAnchor || !offset);
         return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
-    
+    }
+
     return VisiblePosition(Position(node, type), DOWNSTREAM);
 }
 
@@ -867,14 +871,16 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
+            ASSERT(n->isTextNode());
             int length = toRenderText(r)->textLength();
             type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {
                 const UChar* chars = toRenderText(r)->characters();
                 int o = n == startNode ? offset : 0;
-                for (int i = o; i < length; ++i)
+                for (int i = o; i < length; ++i) {
                     if (chars[i] == '\n')
-                        return VisiblePosition(Position(n, i, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+                        return VisiblePosition(Position(static_cast<Text*>(n), i), DOWNSTREAM);
+                }
             }
             node = n;
             offset = r->caretMaxOffset();

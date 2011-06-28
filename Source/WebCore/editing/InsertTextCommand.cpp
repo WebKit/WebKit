@@ -157,7 +157,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
         ASSERT(startPosition.containerNode()->isTextNode());
         if (placeholder.isNotNull())
             removePlaceholderAt(placeholder);
-        RefPtr<Text> textNode = static_cast<Text*>(startPosition.containerNode());
+        RefPtr<Text> textNode = startPosition.containerText();
         const unsigned offset = startPosition.offsetInContainerNode();
 
         insertTextIntoNode(textNode, offset, text);

@@ -91,7 +91,8 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
 {
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
     ASSERT(anchorType != PositionIsOffsetInAnchor);
-    ASSERT(!((anchorType == PositionIsBeforeChildren || anchorType == PositionIsAfterChildren) && m_anchorNode->isTextNode()));
+    ASSERT(!((anchorType == PositionIsBeforeChildren || anchorType == PositionIsAfterChildren)
+        && (m_anchorNode->isTextNode() || editingIgnoresContent(m_anchorNode.get()))));
 }
 
 Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorType)
@@ -143,6 +144,23 @@ Node* Position::containerNode() const
     case PositionIsBeforeAnchor:
     case PositionIsAfterAnchor:
         return m_anchorNode->nonShadowBoundaryParentNode();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+Text* Position::containerText() const
+{
+    switch (anchorType()) {
+    case PositionIsOffsetInAnchor:
+        return m_anchorNode && m_anchorNode->isTextNode() ? static_cast<Text*>(m_anchorNode.get()) : 0;
+    case PositionIsBeforeAnchor:
+    case PositionIsAfterAnchor:
+        return 0;
+    case PositionIsBeforeChildren:
+    case PositionIsAfterChildren:
+        ASSERT(!m_anchorNode || !m_anchorNode->isTextNode());
+        return 0;
     }
     ASSERT_NOT_REACHED();
     return 0;

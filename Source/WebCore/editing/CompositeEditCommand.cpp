@@ -320,7 +320,7 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
     if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode() || isTabSpanTextNode(start.containerNode()))
         return Position();
 
-    RefPtr<Text> textNode = static_cast<Text*>(start.containerNode());
+    RefPtr<Text> textNode = start.containerText();
     replaceTextInNode(textNode, start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
 
     return Position(textNode.release(), start.offsetInContainerNode() + text.length());

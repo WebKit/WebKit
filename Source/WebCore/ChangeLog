@@ -1,3 +1,60 @@
+2011-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Stop instantiating Position with PositionIsOffsetInAnchor in various files
+        https://bugs.webkit.org/show_bug.cgi?id=63384
+
+        Refactoring.
+
+        Removed many if conditions that compared the anchor type to Position::PositionIsOffsetInAnchor
+        because there were also checking that containerNode is a text node.
+
+        Also added Position::containerText() to avoid manually casting containerNode().
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Added an assertion to ensure BeforeChildren/AfterChildren
+        anchor type won't be used for a node whose contents is ignored by editing.
+        (WebCore::Position::containerText): Added.
+        * dom/Position.h:
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::isNewLineAtPosition): Removed a redundant comparison of anchor type.
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded): Since containerNode
+        is always a text node when renderStyleOfEnclosingTextNode returns a render style, use new Position
+        constructor that takes Text* and offset.
+        (WebCore::ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfNeeded): Removed redundant
+        comparison of anchor type and use new Position constructor that takes Text* and offset.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitTextAtStart): Replaced an assertion that compared anchor type by
+        an assertion that the container node is a text node; use new constructor.
+        (WebCore::ApplyStyleCommand::splitTextAtEnd): Ditto; also added early exits in the case script
+        modified DOM.
+        (WebCore::ApplyStyleCommand::splitTextElementAtStart): Ditto.
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd): Ditto.
+        (WebCore::ApplyStyleCommand::joinChildTextNodes): Use new constructor.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::Editor::replaceSelectedTextInNode): Calls containerText instead of manually casting containerNode.
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDeleteRange): Call Range::startPosition instead of manually instantiating Position
+        by calling startContainer and startOffset.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectedRange): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Calls containerText instead of manually casting containerNode.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Calls containerText instead of manually casting containerNode.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter): Removed a redundant anchor type comparison.
+        (WebCore::startVisiblePosition): Call Range::startPosition instead of startContainer and startOffset.
+        (WebCore::endVisiblePosition): Call Range::endPosition instead of endContainer and endOffset.
+        * editing/htmlediting.cpp:
+        (WebCore::firstInSpecialElement): Call containerNode() to address <rdar://problem/5027702>.
+        (WebCore::lastInSpecialElement): Ditto; use new constructor.
+        * editing/visible_units.cpp:
+        (WebCore::endPositionForLine): Use new constructor.
+        (WebCore::startOfParagraph): Ditto.
+        (WebCore::endOfParagraph): Ditto.
+
 2011-06-28  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.

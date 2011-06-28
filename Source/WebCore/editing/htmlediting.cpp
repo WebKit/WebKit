@@ -402,8 +402,7 @@ bool isSpecialElement(const Node *n)
 
 static Node* firstInSpecialElement(const Position& pos)
 {
-    // FIXME: This begins at pos.deprecatedNode(), which doesn't necessarily contain pos (suppose pos was [img, 0]).  See <rdar://problem/5027702>.
-    Node* rootEditableElement = pos.deprecatedNode()->rootEditableElement();
+    Node* rootEditableElement = pos.containerNode()->rootEditableElement();
     for (Node* n = pos.deprecatedNode(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
         if (isSpecialElement(n)) {
             VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
@@ -418,12 +417,11 @@ static Node* firstInSpecialElement(const Position& pos)
 
 static Node* lastInSpecialElement(const Position& pos)
 {
-    // FIXME: This begins at pos.deprecatedNode(), which doesn't necessarily contain pos (suppose pos was [img, 0]).  See <rdar://problem/5027702>.
-    Node* rootEditableElement = pos.deprecatedNode()->rootEditableElement();
+    Node* rootEditableElement = pos.containerNode()->rootEditableElement();
     for (Node* n = pos.deprecatedNode(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
         if (isSpecialElement(n)) {
             VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
-            VisiblePosition lastInElement = VisiblePosition(Position(n, n->childNodeCount(), Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+            VisiblePosition lastInElement = VisiblePosition(lastPositionInOrAfterNode(n), DOWNSTREAM);
             if (isTableElement(n) && vPos == lastInElement.previous())
                 return n;
             if (vPos == lastInElement)

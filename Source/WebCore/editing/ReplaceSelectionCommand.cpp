@@ -939,7 +939,7 @@ void ReplaceSelectionCommand::doApply()
     // since insertAsListItems already does the right thing.
     if (!m_matchStyle && !enclosingList(insertionPos.containerNode()) && isStyleSpan(fragment.firstChild())) {
         if (insertionPos.containerNode()->isTextNode() && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode()) {
-            splitTextNodeContainingElement(static_cast<Text*>(insertionPos.containerNode()), insertionPos.offsetInContainerNode());
+            splitTextNodeContainingElement(insertionPos.containerText(), insertionPos.offsetInContainerNode());
             insertionPos = firstPositionInNode(insertionPos.containerNode());
         }
 

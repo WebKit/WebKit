@@ -1117,60 +1117,65 @@ bool ApplyStyleCommand::nodeFullyUnselected(Node *node, const Position &start, c
 
 void ApplyStyleCommand::splitTextAtStart(const Position& start, const Position& end)
 {
-    ASSERT(start.anchorType() == Position::PositionIsOffsetInAnchor);
+    ASSERT(start.containerNode()->isTextNode());
 
     Position newEnd;
     if (end.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode())
-        newEnd = Position(end.containerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+        newEnd = Position(end.containerText(), end.offsetInContainerNode() - start.offsetInContainerNode());
     else
         newEnd = end;
 
-    Text* text = static_cast<Text*>(start.deprecatedNode());
+    RefPtr<Text> text = start.containerText();
     splitTextNode(text, start.offsetInContainerNode());
-    updateStartEnd(firstPositionInNode(start.deprecatedNode()), newEnd);
+    updateStartEnd(firstPositionInNode(text.get()), newEnd);
 }
 
 void ApplyStyleCommand::splitTextAtEnd(const Position& start, const Position& end)
 {
-    ASSERT(end.anchorType() == Position::PositionIsOffsetInAnchor);
+    ASSERT(end.containerNode()->isTextNode());
 
     bool shouldUpdateStart = start.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode();
     Text* text = static_cast<Text *>(end.deprecatedNode());
     splitTextNode(text, end.offsetInContainerNode());
 
     Node* prevNode = text->previousSibling();
-    ASSERT(prevNode);
-    Position newStart = shouldUpdateStart ? Position(prevNode, start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor) : start;
+    if (!prevNode || !prevNode->isTextNode())
+        return;
+
+    Position newStart = shouldUpdateStart ? Position(static_cast<Text*>(prevNode), start.offsetInContainerNode()) : start;
     updateStartEnd(newStart, lastPositionInNode(prevNode));
 }
 
 void ApplyStyleCommand::splitTextElementAtStart(const Position& start, const Position& end)
 {
-    ASSERT(start.anchorType() == Position::PositionIsOffsetInAnchor);
+    ASSERT(start.containerNode()->isTextNode());
 
     Position newEnd;
-    if (end.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode())
-        newEnd = Position(end.containerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+    if (start.containerNode() == end.containerNode())
+        newEnd = Position(end.containerText(), end.offsetInContainerNode() - start.offsetInContainerNode());
     else
         newEnd = end;
 
-    Text* text = static_cast<Text*>(start.deprecatedNode());
-    splitTextNodeContainingElement(text, start.deprecatedEditingOffset());
-    updateStartEnd(Position(start.deprecatedNode()->parentNode(), start.deprecatedNode()->nodeIndex(), Position::PositionIsOffsetInAnchor), newEnd);
+    splitTextNodeContainingElement(start.containerText(), start.offsetInContainerNode());
+    updateStartEnd(positionBeforeNode(start.containerNode()), newEnd);
 }
 
 void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Position& end)
 {
-    ASSERT(end.anchorType() == Position::PositionIsOffsetInAnchor);
+    ASSERT(end.containerNode()->isTextNode());
 
-    bool shouldUpdateStart = start.anchorType() == Position::PositionIsOffsetInAnchor && start.containerNode() == end.containerNode();
-    Text* text = static_cast<Text*>(end.deprecatedNode());
-    splitTextNodeContainingElement(text, end.deprecatedEditingOffset());
+    bool shouldUpdateStart = start.containerNode() == end.containerNode();
+    splitTextNodeContainingElement(end.containerText(), end.offsetInContainerNode());
 
-    Node* prevNode = text->parentNode()->previousSibling()->lastChild();
-    ASSERT(prevNode);
-    Position newStart = shouldUpdateStart ? Position(prevNode, start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor) : start;
-    updateStartEnd(newStart, Position(prevNode->parentNode(), prevNode->nodeIndex() + 1, Position::PositionIsOffsetInAnchor));
+    Node* parentElement = end.containerNode()->parentNode();
+    if (!parentElement || !parentElement->previousSibling())
+        return;
+    Node* firstTextNode = parentElement->previousSibling()->lastChild();
+    if (!firstTextNode || !firstTextNode->isTextNode())
+        return;
+
+    Position newStart = shouldUpdateStart ? Position(static_cast<Text*>(firstTextNode), start.offsetInContainerNode()) : start;
+    updateStartEnd(newStart, positionAfterNode(firstTextNode));
 }
 
 bool ApplyStyleCommand::shouldSplitTextElement(Element* element, EditingStyle* style)
@@ -1480,9 +1485,9 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
             Text* childText = static_cast<Text *>(child);
             Text* nextText = static_cast<Text *>(next);
             if (start.anchorType() == Position::PositionIsOffsetInAnchor && next == start.containerNode())
-                newStart = Position(childText, childText->length() + start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+                newStart = Position(childText, childText->length() + start.offsetInContainerNode());
             if (end.anchorType() == Position::PositionIsOffsetInAnchor && next == end.containerNode())
-                newEnd = Position(childText, childText->length() + end.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+                newEnd = Position(childText, childText->length() + end.offsetInContainerNode());
             String textToMove = nextText->data();
             insertTextIntoNode(childText, childText->length(), textToMove);
             removeNode(next);
