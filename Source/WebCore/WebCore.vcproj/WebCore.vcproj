@@ -33618,6 +33618,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\LayoutTypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\PaintInfo.h"
 				>
 			</File>

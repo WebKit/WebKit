@@ -2907,6 +2907,7 @@ webcore_sources += \
 	Source/WebCore/rendering/InlineTextBox.h \
 	Source/WebCore/rendering/LayoutState.cpp \
 	Source/WebCore/rendering/LayoutState.h \
+	Source/WebCore/rendering/LayoutTypes.h \
 	Source/WebCore/rendering/OverlapTestRequestClient.h \
 	Source/WebCore/rendering/PaintInfo.h \
 	Source/WebCore/rendering/PaintPhase.h \

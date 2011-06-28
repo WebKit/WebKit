@@ -966,6 +966,7 @@
             'rendering/InlineFlowBox.h',
             'rendering/InlineTextBox.h',
             'rendering/LayoutState.h',
+            'rendering/LayoutTypes.h',
             'rendering/OverlapTestRequestClient.h',
             'rendering/PaintInfo.h',
             'rendering/PaintPhase.h',

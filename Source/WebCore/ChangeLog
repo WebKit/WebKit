@@ -1,3 +1,31 @@
+2011-06-28  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Create intermediate classes as a path towards getting off of pixel offsets
+        https://bugs.webkit.org/show_bug.cgi?id=61896
+
+        Creating three intermediate typedefs to aid in moving layout and hit testing from integers
+        to floats. We'll transition the render tree over to these intermediate types and add
+        infrastructure to support the new types behind USE(FLOAT_LAYOUT_OFFSETS). This allows the ultimate
+        changeover to be easier.
+
+        Switching LayoutState over to this abstraction to verify it works correctly.
+
+        No new tests since this is creating a new abstraction, not changing current behavior.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::pageLogicalOffset):
+        (WebCore::LayoutState::addForcedColumnBreak):
+        * rendering/LayoutState.h:
+        * rendering/LayoutTypes.h: Added.
+
 2011-06-28  Jeff Miller  <jeffm@apple.com>
 
         Add fullscreen.css and fullscreenQuickTime.css to the WebCore Visual Studio project for convenience.
