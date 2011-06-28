@@ -66,7 +66,7 @@ class QtPort(WebKitPort):
         return True
 
     def _path_to_driver(self):
-        return self._build_path('bin/DumpRenderTree')
+        return self._build_path('bin/%s' % self.driver_name())
 
     def _path_to_image_diff(self):
         return self._build_path('bin/ImageDiff')

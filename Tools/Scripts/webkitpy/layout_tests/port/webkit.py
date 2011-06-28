@@ -329,7 +329,7 @@ class WebKitPort(base.Port):
             self.get_option('configuration')), *comps)
 
     def _path_to_driver(self):
-        return self._build_path('DumpRenderTree')
+        return self._build_path(self.driver_name())
 
     def _path_to_webcore_library(self):
         return None
@@ -360,12 +360,12 @@ class WebKitPort(base.Port):
 
 
 class WebKitDriver(base.Driver):
-    """WebKit implementation of the DumpRenderTree interface."""
+    """WebKit implementation of the DumpRenderTree/WebKitTestRunner interface."""
 
     def __init__(self, port, worker_number):
         self._worker_number = worker_number
         self._port = port
-        self._driver_tempdir = port._filesystem.mkdtemp(prefix='DumpRenderTree-')
+        self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
 
     def __del__(self):
         self._port._filesystem.rmtree(str(self._driver_tempdir))
@@ -389,9 +389,10 @@ class WebKitDriver(base.Driver):
     def start(self):
         environment = self._port.setup_environ_for_server()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
+        # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         self._server_process = server_process.ServerProcess(self._port,
-            "DumpRenderTree", self.cmd_line(), environment)
+            self._port.driver_name(), self.cmd_line(), environment)
 
     def poll(self):
         return self._server_process.poll()

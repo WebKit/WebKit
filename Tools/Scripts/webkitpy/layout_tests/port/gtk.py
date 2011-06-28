@@ -48,7 +48,7 @@ class GtkPort(WebKitPort):
                                      'apache2-debian-httpd.conf')
 
     def _path_to_driver(self):
-        return self._build_path('Programs', 'DumpRenderTree')
+        return self._build_path('Programs', self.driver_name())
 
     def check_build(self, needs_http):
         if not self._check_driver():

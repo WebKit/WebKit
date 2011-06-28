@@ -1,3 +1,18 @@
+2011-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make new-run-webkit-tests -2 actually use WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=63572
+
+        new-run-webkit-tests -2 works with this change.  However a zillion
+        tests fail since it can't find the right skipped lists for wk2.
+        The Skipped-list fixing is covered in bug 63501.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adam Roben.
