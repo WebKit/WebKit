@@ -300,28 +300,28 @@ static const RenderBlock* rendererPlaceholder(const RenderObject* renderer)
     return fullScreen->placeholder();
 }
 
-int RenderVideo::offsetLeft() const
+LayoutUnit RenderVideo::offsetLeft() const
 {
     if (const RenderBlock* block = rendererPlaceholder(this))
         return block->offsetLeft();
     return RenderMedia::offsetLeft();
 }
 
-int RenderVideo::offsetTop() const
+LayoutUnit RenderVideo::offsetTop() const
 {
     if (const RenderBlock* block = rendererPlaceholder(this))
         return block->offsetTop();
     return RenderMedia::offsetTop();
 }
 
-int RenderVideo::offsetWidth() const
+LayoutUnit RenderVideo::offsetWidth() const
 {
     if (const RenderBlock* block = rendererPlaceholder(this))
         return block->offsetWidth();
     return RenderMedia::offsetWidth();
 }
 
-int RenderVideo::offsetHeight() const
+LayoutUnit RenderVideo::offsetHeight() const
 {
     if (const RenderBlock* block = rendererPlaceholder(this))
         return block->offsetHeight();

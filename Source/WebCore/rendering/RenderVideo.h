@@ -75,10 +75,10 @@ private:
     virtual int minimumReplacedHeight() const;
 
 #if ENABLE(FULLSCREEN_API)
-    virtual int offsetLeft() const;
-    virtual int offsetTop() const;
-    virtual int offsetWidth() const;
-    virtual int offsetHeight() const;
+    virtual LayoutUnit offsetLeft() const;
+    virtual LayoutUnit offsetTop() const;
+    virtual LayoutUnit offsetWidth() const;
+    virtual LayoutUnit offsetHeight() const;
 #endif
 
     void updatePlayer();

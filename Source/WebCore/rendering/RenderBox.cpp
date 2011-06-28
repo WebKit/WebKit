@@ -403,12 +403,12 @@ void RenderBox::layout()
 
 // More IE extensions.  clientWidth and clientHeight represent the interior of an object
 // excluding border and scrollbar.
-int RenderBox::clientWidth() const
+LayoutUnit RenderBox::clientWidth() const
 {
     return width() - borderLeft() - borderRight() - verticalScrollbarWidth();
 }
 
-int RenderBox::clientHeight() const
+LayoutUnit RenderBox::clientHeight() const
 {
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
@@ -714,30 +714,30 @@ int RenderBox::overrideHeight() const
     return hasOverrideSize() ? overrideSize() : height();
 }
 
-int RenderBox::computeBorderBoxLogicalWidth(int width) const
+LayoutUnit RenderBox::computeBorderBoxLogicalWidth(LayoutUnit width) const
 {
-    int bordersPlusPadding = borderAndPaddingLogicalWidth();
+    LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
     if (style()->boxSizing() == CONTENT_BOX)
         return width + bordersPlusPadding;
     return max(width, bordersPlusPadding);
 }
 
-int RenderBox::computeBorderBoxLogicalHeight(int height) const
+LayoutUnit RenderBox::computeBorderBoxLogicalHeight(LayoutUnit height) const
 {
-    int bordersPlusPadding = borderAndPaddingLogicalHeight();
+    LayoutUnit bordersPlusPadding = borderAndPaddingLogicalHeight();
     if (style()->boxSizing() == CONTENT_BOX)
         return height + bordersPlusPadding;
     return max(height, bordersPlusPadding);
 }
 
-int RenderBox::computeContentBoxLogicalWidth(int width) const
+LayoutUnit RenderBox::computeContentBoxLogicalWidth(LayoutUnit width) const
 {
     if (style()->boxSizing() == BORDER_BOX)
         width -= borderAndPaddingLogicalWidth();
     return max(0, width);
 }
 
-int RenderBox::computeContentBoxLogicalHeight(int height) const
+LayoutUnit RenderBox::computeContentBoxLogicalHeight(LayoutUnit height) const
 {
     if (style()->boxSizing() == BORDER_BOX)
         height -= borderAndPaddingLogicalHeight();

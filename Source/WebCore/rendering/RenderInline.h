@@ -121,10 +121,10 @@ private:
 
     virtual bool requiresLayer() const { return isRelPositioned() || isTransparent() || hasMask(); }
 
-    virtual int offsetLeft() const;
-    virtual int offsetTop() const;
-    virtual int offsetWidth() const { return linesBoundingBox().width(); }
-    virtual int offsetHeight() const { return linesBoundingBox().height(); }
+    virtual LayoutUnit offsetLeft() const;
+    virtual LayoutUnit offsetTop() const;
+    virtual LayoutUnit offsetWidth() const { return linesBoundingBox().width(); }
+    virtual LayoutUnit offsetHeight() const { return linesBoundingBox().height(); }
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
@@ -135,10 +135,10 @@ private:
 
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
-    virtual IntRect borderBoundingBox() const
+    virtual LayoutRect borderBoundingBox() const
     {
-        IntRect boundingBox = linesBoundingBox();
-        return IntRect(0, 0, boundingBox.width(), boundingBox.height());
+        LayoutRect boundingBox = linesBoundingBox();
+        return LayoutRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
     virtual InlineFlowBox* createInlineFlowBox(); // Subclassed by SVG and Ruby

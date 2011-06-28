@@ -50,17 +50,17 @@ public:
     
     virtual void destroy();
 
-    int relativePositionOffsetX() const;
-    int relativePositionOffsetY() const;
-    IntSize relativePositionOffset() const { return IntSize(relativePositionOffsetX(), relativePositionOffsetY()); }
-    IntSize relativePositionLogicalOffset() const { return style()->isHorizontalWritingMode() ? relativePositionOffset() : relativePositionOffset().transposedSize(); }
+    LayoutUnit relativePositionOffsetX() const;
+    LayoutUnit relativePositionOffsetY() const;
+    LayoutSize relativePositionOffset() const { return LayoutSize(relativePositionOffsetX(), relativePositionOffsetY()); }
+    LayoutSize relativePositionLogicalOffset() const { return style()->isHorizontalWritingMode() ? relativePositionOffset() : relativePositionOffset().transposedSize(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
-    virtual int offsetLeft() const;
-    virtual int offsetTop() const;
-    virtual int offsetWidth() const = 0;
-    virtual int offsetHeight() const = 0;
+    virtual LayoutUnit offsetLeft() const;
+    virtual LayoutUnit offsetTop() const;
+    virtual LayoutUnit offsetWidth() const = 0;
+    virtual LayoutUnit offsetHeight() const = 0;
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -71,7 +71,7 @@ public:
     virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection() || style()->specifiesColumns(); }
 
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
-    virtual IntRect borderBoundingBox() const = 0;
+    virtual LayoutRect borderBoundingBox() const = 0;
 
     // Virtual since table cells override
     virtual int paddingTop(bool includeIntrinsicPadding = true) const;

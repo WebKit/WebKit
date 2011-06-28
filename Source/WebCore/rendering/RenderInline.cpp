@@ -631,17 +631,17 @@ void RenderInline::culledInlineAbsoluteQuads(const RenderInline* container, Vect
     }
 }
 
-int RenderInline::offsetLeft() const
+LayoutUnit RenderInline::offsetLeft() const
 {
-    int x = RenderBoxModelObject::offsetLeft();
+    LayoutUnit x = RenderBoxModelObject::offsetLeft();
     if (InlineBox* firstBox = firstLineBoxIncludingCulling())
         x += firstBox->x();
     return x;
 }
 
-int RenderInline::offsetTop() const
+LayoutUnit RenderInline::offsetTop() const
 {
-    int y = RenderBoxModelObject::offsetTop();
+    LayoutUnit y = RenderBoxModelObject::offsetTop();
     if (InlineBox* firstBox = firstLineBoxIncludingCulling())
         y += firstBox->y();
     return y;

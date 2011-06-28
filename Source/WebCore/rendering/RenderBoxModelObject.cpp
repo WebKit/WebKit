@@ -380,7 +380,7 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
     setHorizontalWritingMode(style()->isHorizontalWritingMode());
 }
 
-int RenderBoxModelObject::relativePositionOffsetX() const
+LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const
 {
     // Objects that shrink to avoid floats normally use available line width when computing containing block width.  However
     // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
@@ -399,7 +399,7 @@ int RenderBoxModelObject::relativePositionOffsetX() const
     return 0;
 }
 
-int RenderBoxModelObject::relativePositionOffsetY() const
+LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
 {
     RenderBlock* containingBlock = this->containingBlock();
 
@@ -424,7 +424,7 @@ int RenderBoxModelObject::relativePositionOffsetY() const
     return 0;
 }
 
-int RenderBoxModelObject::offsetLeft() const
+LayoutUnit RenderBoxModelObject::offsetLeft() const
 {
     // If the element is the HTML body element or does not have an associated box
     // return 0 and stop this algorithm.
@@ -432,7 +432,7 @@ int RenderBoxModelObject::offsetLeft() const
         return 0;
     
     RenderBoxModelObject* offsetPar = offsetParent();
-    int xPos = (isBox() ? toRenderBox(this)->x() : 0);
+    LayoutUnit xPos = (isBox() ? toRenderBox(this)->x() : 0);
     
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the left border edge 
@@ -458,7 +458,7 @@ int RenderBoxModelObject::offsetLeft() const
     return xPos;
 }
 
-int RenderBoxModelObject::offsetTop() const
+LayoutUnit RenderBoxModelObject::offsetTop() const
 {
     // If the element is the HTML body element or does not have an associated box
     // return 0 and stop this algorithm.
@@ -466,7 +466,7 @@ int RenderBoxModelObject::offsetTop() const
         return 0;
     
     RenderBoxModelObject* offsetPar = offsetParent();
-    int yPos = (isBox() ? toRenderBox(this)->y() : 0);
+    LayoutUnit yPos = (isBox() ? toRenderBox(this)->y() : 0);
     
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the top border edge 

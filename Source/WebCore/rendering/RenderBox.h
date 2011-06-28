@@ -44,59 +44,59 @@ public:
     RenderBox* firstChildBox() const;
     RenderBox* lastChildBox() const;
 
-    int x() const { return m_frameRect.x(); }
-    int y() const { return m_frameRect.y(); }
-    int width() const { return m_frameRect.width(); }
-    int height() const { return m_frameRect.height(); }
+    LayoutUnit x() const { return m_frameRect.x(); }
+    LayoutUnit y() const { return m_frameRect.y(); }
+    LayoutUnit width() const { return m_frameRect.width(); }
+    LayoutUnit height() const { return m_frameRect.height(); }
 
-    void setX(int x) { m_frameRect.setX(x); }
-    void setY(int y) { m_frameRect.setY(y); }
-    void setWidth(int width) { m_frameRect.setWidth(width); }
-    void setHeight(int height) { m_frameRect.setHeight(height); }
+    void setX(LayoutUnit x) { m_frameRect.setX(x); }
+    void setY(LayoutUnit y) { m_frameRect.setY(y); }
+    void setWidth(LayoutUnit width) { m_frameRect.setWidth(width); }
+    void setHeight(LayoutUnit height) { m_frameRect.setHeight(height); }
 
-    int logicalLeft() const { return style()->isHorizontalWritingMode() ? x() : y(); }
-    int logicalRight() const { return logicalLeft() + logicalWidth(); }
-    int logicalTop() const { return style()->isHorizontalWritingMode() ? y() : x(); }
-    int logicalBottom() const { return logicalTop() + logicalHeight(); }
-    int logicalWidth() const { return style()->isHorizontalWritingMode() ? width() : height(); }
-    int logicalHeight() const { return style()->isHorizontalWritingMode() ? height() : width(); }
+    LayoutUnit logicalLeft() const { return style()->isHorizontalWritingMode() ? x() : y(); }
+    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
+    LayoutUnit logicalTop() const { return style()->isHorizontalWritingMode() ? y() : x(); }
+    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
+    LayoutUnit logicalWidth() const { return style()->isHorizontalWritingMode() ? width() : height(); }
+    LayoutUnit logicalHeight() const { return style()->isHorizontalWritingMode() ? height() : width(); }
 
-    void setLogicalLeft(int left)
+    void setLogicalLeft(LayoutUnit left)
     {
         if (style()->isHorizontalWritingMode())
             setX(left);
         else
             setY(left);
     }
-    void setLogicalTop(int top)
+    void setLogicalTop(LayoutUnit top)
     {
         if (style()->isHorizontalWritingMode())
             setY(top);
         else
             setX(top);
     }
-    void setLogicalLocation(const IntPoint& location)
+    void setLogicalLocation(const LayoutPoint& location)
     {
         if (style()->isHorizontalWritingMode())
             setLocation(location);
         else
             setLocation(location.transposedPoint());
     }
-    void setLogicalWidth(int size)
+    void setLogicalWidth(LayoutUnit size)
     {
         if (style()->isHorizontalWritingMode())
             setWidth(size);
         else
             setHeight(size);
     }
-    void setLogicalHeight(int size)
+    void setLogicalHeight(LayoutUnit size)
     {
         if (style()->isHorizontalWritingMode())
             setHeight(size);
         else
             setWidth(size);
     }
-    void setLogicalSize(const IntSize& size)
+    void setLogicalSize(const LayoutSize& size)
     {
         if (style()->isHorizontalWritingMode())
             setSize(size);
@@ -104,25 +104,25 @@ public:
             setSize(size.transposedSize());
     }
 
-    IntPoint location() const { return m_frameRect.location(); }
-    IntSize locationOffset() const { return IntSize(x(), y()); }
-    IntSize size() const { return m_frameRect.size(); }
+    LayoutPoint location() const { return m_frameRect.location(); }
+    LayoutSize locationOffset() const { return LayoutSize(x(), y()); }
+    LayoutSize size() const { return m_frameRect.size(); }
 
-    void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }
+    void setLocation(const LayoutPoint& location) { m_frameRect.setLocation(location); }
     
-    void setSize(const IntSize& size) { m_frameRect.setSize(size); }
-    void move(int dx, int dy) { m_frameRect.move(dx, dy); }
+    void setSize(const LayoutSize& size) { m_frameRect.setSize(size); }
+    void move(LayoutUnit dx, LayoutUnit dy) { m_frameRect.move(dx, dy); }
 
-    IntRect frameRect() const { return m_frameRect; }
-    void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
+    LayoutRect frameRect() const { return m_frameRect; }
+    void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
-    IntRect borderBoxRect() const { return IntRect(0, 0, width(), height()); }
-    virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
+    LayoutRect borderBoxRect() const { return LayoutRect(0, 0, width(), height()); }
+    virtual LayoutRect borderBoundingBox() const { return borderBoxRect(); } 
 
     // The content area of the box (excludes padding and border).
-    IntRect contentBoxRect() const { return IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
+    LayoutRect contentBoxRect() const { return LayoutRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
     // The content box in absolute coords. Ignores transforms.
-    IntRect absoluteContentBox() const;
+    LayoutRect absoluteContentBox() const;
     // The content box converted to absolute coords (taking transforms into account).
     FloatQuad absoluteContentQuad() const;
 
@@ -169,26 +169,26 @@ public:
     void blockDirectionOverflow(bool isLineHorizontal, int& logicalTopLayoutOverflow, int& logicalBottomLayoutOverflow,
                                 int& logicalTopVisualOverflow, int& logicalBottomVisualOverflow);
 
-    int contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
-    int contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
-    int contentLogicalWidth() const { return style()->isHorizontalWritingMode() ? contentWidth() : contentHeight(); }
-    int contentLogicalHeight() const { return style()->isHorizontalWritingMode() ? contentHeight() : contentWidth(); }
+    LayoutUnit contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
+    LayoutUnit contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
+    LayoutUnit contentLogicalWidth() const { return style()->isHorizontalWritingMode() ? contentWidth() : contentHeight(); }
+    LayoutUnit contentLogicalHeight() const { return style()->isHorizontalWritingMode() ? contentHeight() : contentWidth(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
-    virtual int offsetWidth() const { return width(); }
-    virtual int offsetHeight() const { return height(); }
+    virtual LayoutUnit offsetWidth() const { return width(); }
+    virtual LayoutUnit offsetHeight() const { return height(); }
 
     // More IE extensions.  clientWidth and clientHeight represent the interior of an object
     // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
-    int clientLeft() const { return borderLeft(); }
-    int clientTop() const { return borderTop(); }
-    int clientWidth() const;
-    int clientHeight() const;
-    int clientLogicalWidth() const { return style()->isHorizontalWritingMode() ? clientWidth() : clientHeight(); }
-    int clientLogicalHeight() const { return style()->isHorizontalWritingMode() ? clientHeight() : clientWidth(); }
-    int clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }
-    IntRect clientBoxRect() const { return IntRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
+    LayoutUnit clientLeft() const { return borderLeft(); }
+    LayoutUnit clientTop() const { return borderTop(); }
+    LayoutUnit clientWidth() const;
+    LayoutUnit clientHeight() const;
+    LayoutUnit clientLogicalWidth() const { return style()->isHorizontalWritingMode() ? clientWidth() : clientHeight(); }
+    LayoutUnit clientLogicalHeight() const { return style()->isHorizontalWritingMode() ? clientHeight() : clientWidth(); }
+    LayoutUnit clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }
+    LayoutRect clientBoxRect() const { return LayoutRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
 
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
     // object has overflow:hidden/scroll/auto specified and also has overflow.
@@ -254,10 +254,10 @@ public:
 
     virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
     
-    int computeBorderBoxLogicalWidth(int width) const;
-    int computeBorderBoxLogicalHeight(int height) const;
-    int computeContentBoxLogicalWidth(int width) const;
-    int computeContentBoxLogicalHeight(int height) const;
+    LayoutUnit computeBorderBoxLogicalWidth(LayoutUnit width) const;
+    LayoutUnit computeBorderBoxLogicalHeight(LayoutUnit height) const;
+    LayoutUnit computeContentBoxLogicalWidth(LayoutUnit width) const;
+    LayoutUnit computeContentBoxLogicalHeight(LayoutUnit height) const;
 
     virtual void borderFitAdjust(IntRect&) const { } // Shrink the box in which the border paints if border-fit is set.
 
@@ -467,7 +467,7 @@ private:
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
-    IntRect m_frameRect;
+    LayoutRect m_frameRect;
 
 protected:
     int m_marginLeft;

@@ -1,3 +1,23 @@
+2011-06-28  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderBox position/size to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63571
+
+        Switch location and size methods for RenderBox over to the new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        * rendering/RenderVideo.cpp:
+        * rendering/RenderVideo.h:
+
 2011-06-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89968.
