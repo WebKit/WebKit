@@ -1,3 +1,9 @@
+2011-06-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium baselines update.
+
+        * platform/chromium-mac-leopard/fast/text/international/unicode-bidi-plaintext-expected.png: Added.
+
 2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
