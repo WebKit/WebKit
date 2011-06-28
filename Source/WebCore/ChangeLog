@@ -1,3 +1,26 @@
+2011-06-28  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Allow spaces between e-mail addresses in 'email' input type.
+        https://bugs.webkit.org/show_bug.cgi?id=55987
+
+        Allowed spaces between e-mail addresses in 'email' input type,
+        e.g. ' a@p.com , b@p.com ' is a valid value. Implemented the
+        value sanitization algorithm for an e-mail value.  Added more unit
+        tests that check the e-mail value parser.
+
+        Test: fast/forms/ValidityState-typeMismatch-email.html
+
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::typeMismatchFor):
+        (WebCore::EmailInputType::sanitizeValue):
+        * html/EmailInputType.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripHTMLLineBreaks):
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::isHTMLLineBreak):
+
 2011-06-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

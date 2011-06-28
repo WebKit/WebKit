@@ -1,3 +1,18 @@
+2011-06-28  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Allow spaces between e-mail addresses in 'email' input type.
+        https://bugs.webkit.org/show_bug.cgi?id=55987
+
+        Allowed spaces between e-mail addresses in 'email' input type,
+        e.g. ' a@p.com , b@p.com ' is a valid value. Implemented the
+        value sanitization algorithm for an e-mail value.  Added more unit
+        tests that check the e-mail value parser.
+
+        * fast/forms/ValidityState-typeMismatch-email-expected.txt:
+        * fast/forms/resources/ValidityState-typeMismatch-email.js:
+
 2011-06-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Qt specific results committed in r89901, but some of them fail on Qt-WK2 and/or Qt-Mac platform

@@ -46,6 +46,7 @@ private:
     virtual bool typeMismatch() const;
     virtual String typeMismatchText() const;
     virtual bool isEmailField() const;
+    virtual String sanitizeValue(const String&);
 };
 
 } // namespace WebCore

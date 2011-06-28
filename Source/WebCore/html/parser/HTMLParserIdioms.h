@@ -32,6 +32,7 @@ namespace WebCore {
 
 // Space characters as defined by the HTML specification.
 bool isHTMLSpace(UChar);
+bool isHTMLLineBreak(UChar);
 bool isNotHTMLSpace(UChar);
 
 // Strip leading and trailing whitespace as defined by the HTML specification. 
@@ -64,6 +65,11 @@ inline bool isHTMLSpace(UChar character)
     // Accordingly, we check for non-spaces first, then space, then newline, then tab, then the other characters.
 
     return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
+}
+
+inline bool isHTMLLineBreak(UChar character)
+{
+    return character <= '\r' && (character == '\n' || character == '\r');
 }
 
 inline bool isNotHTMLSpace(UChar character)

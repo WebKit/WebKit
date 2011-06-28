@@ -25,9 +25,11 @@
 #include "EmailInputType.h"
 
 #include "HTMLInputElement.h"
+#include "HTMLParserIdioms.h"
 #include "LocalizedStrings.h"
 #include "RegularExpression.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -67,9 +69,9 @@ bool EmailInputType::typeMismatchFor(const String& value) const
     if (!element()->multiple())
         return !isValidEmailAddress(value);
     Vector<String> addresses;
-    value.split(',', addresses);
+    value.split(',', true, addresses);
     for (unsigned i = 0; i < addresses.size(); ++i) {
-        if (!isValidEmailAddress(addresses[i]))
+        if (!isValidEmailAddress(stripLeadingAndTrailingHTMLSpaces(addresses[i])))
             return true;
     }
     return false;
@@ -88,6 +90,22 @@ String EmailInputType::typeMismatchText() const
 bool EmailInputType::isEmailField() const
 {
     return true;
+}
+
+String EmailInputType::sanitizeValue(const String& proposedValue)
+{
+    String noLineBreakValue = proposedValue.removeCharacters(isHTMLLineBreak);
+    if (!element()->multiple())
+        return noLineBreakValue;
+    Vector<String> addresses;
+    noLineBreakValue.split(',', true, addresses);
+    StringBuilder strippedValue;
+    for (unsigned i = 0; i < addresses.size(); ++i) {
+        if (i > 0)
+            strippedValue.append(",");
+        strippedValue.append(stripLeadingAndTrailingHTMLSpaces(addresses[i]));
+    }
+    return strippedValue.toString();
 }
 
 } // namespace WebCore
