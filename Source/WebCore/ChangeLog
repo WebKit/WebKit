@@ -1,5 +1,12 @@
 2011-06-28  Jeff Miller  <jeffm@apple.com>
 
+        Add fullscreen.css and fullscreenQuickTime.css to the WebCore Visual Studio project for convenience.
+        Looks like Visual Studio also re-sorted one more file since my last checkin.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2011-06-28  Jeff Miller  <jeffm@apple.com>
+
         Re-sort the WebCore project with Visual Studio after recent changes that I assume were done by manually editing the XML.
 
         * WebCore.vcproj/WebCore.vcproj:

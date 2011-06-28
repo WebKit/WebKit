@@ -32790,6 +32790,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\fullscreen.css"
+				>
+			</File>
+			<File
+				RelativePath="..\css\fullscreenQuickTime.css"
+				>
+			</File>
+			<File
 				RelativePath="..\css\html.css"
 				>
 			</File>
@@ -68113,11 +68121,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
