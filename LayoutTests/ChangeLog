@@ -1,5 +1,13 @@
 2011-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix the test added by the previous commit. Also add it to the WebKit2's skipped list
+        since it uses a eventSender method that hasn't been implemented by TestRunner.
+
+        * fast/events/selectstart-prevent-selection-on-right-click.html:
+        * platform/mac-wk2/Skipped:
+
+2011-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         Add a test for canceling selectstart when a word is selected by right click

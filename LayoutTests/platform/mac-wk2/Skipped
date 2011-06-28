@@ -270,6 +270,7 @@ fast/events/selectionchange-user-initiated.html
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 fast/events/selectstart-during-autoscroll.html
+fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/space-scroll-event.html
 fast/events/special-key-events-in-input-text.html
 fast/events/standalone-image-drag-to-editable.html

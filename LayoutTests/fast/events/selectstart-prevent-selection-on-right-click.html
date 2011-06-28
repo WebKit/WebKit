@@ -13,14 +13,15 @@ if (window.layoutTestController) {
 var handlerWasCalled = false;
 document.body.onselectstart = function () { handlerWasCalled = true; return false; }
 
+var test = document.getElementById('test');
+
 if (window.layoutTestController && !window.eventSender)
-    document.writeln('This test requires eventSender');
+    test.textContent = 'This test requires eventSender';
 else {
     window.getSelection().setPosition(document.body, 0);
     var baseNode = getSelection().baseNode;
     var baseOffset = getSelection().baseOffset;
 
-    var test = document.getElementById('test');
     var target = document.getElementById('target');
     eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
     eventSender.contextClick();
