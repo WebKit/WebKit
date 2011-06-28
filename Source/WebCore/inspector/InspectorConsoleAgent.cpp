@@ -254,12 +254,19 @@ void InspectorConsoleAgent::addInspectedNode(ErrorString*, int nodeId)
     m_injectedScriptManager->injectedScriptHost()->addInspectedNode(node);
 }
 
+static bool isGroupMessage(MessageType type)
+{
+    return type == StartGroupMessageType
+        || type ==  StartGroupCollapsedMessageType
+        || type == EndGroupMessageType;
+}
+
 void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
 {
     ASSERT(m_inspectorAgent->enabled());
     ASSERT_ARG(consoleMessage, consoleMessage);
 
-    if (m_previousMessage && m_previousMessage->type() != EndGroupMessageType && m_previousMessage->isEqual(consoleMessage.get())) {
+    if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
         if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled) && m_frontend)
             m_previousMessage->updateRepeatCountInConsole(m_frontend);
