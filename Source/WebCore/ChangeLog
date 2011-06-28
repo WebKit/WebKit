@@ -1,3 +1,11 @@
+2011-06-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove ENABLE_XBL, because there aren't ENABLE(XBL) macros anymore.
+
+        * features.pri:
+
 2011-06-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix style error related to wrong include order.
