@@ -1,3 +1,26 @@
+2011-06-28  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Migrate SQLite backing store to LevelDB backing store for Indexeddb.
+        https://bugs.webkit.org/show_bug.cgi?id=62780
+
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::computeFileIdentifier):
+        (WebCore::computeUniqueIdentifier):
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::migrateObjectStores):
+        (WebCore::IDBFactoryBackendImpl::migrateFromSQLiteToLevelDB):
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::backingStoreExists):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::populateIndex):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::backingStoreExists):
+        * storage/IDBSQLiteBackingStore.h:
+
 2011-06-28  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.

@@ -375,7 +375,7 @@ private:
 };
 }
 
-static bool populateIndex(IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& indexKeyPath)
+bool IDBObjectStoreBackendImpl::populateIndex(IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& indexKeyPath)
 {
     PopulateIndexCallback callback(backingStore, indexKeyPath, databaseId, objectStoreId, indexId);
     if (!backingStore.forEachObjectStoreRecord(databaseId, objectStoreId, callback))

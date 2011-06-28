@@ -1,3 +1,13 @@
+2011-06-28  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update migration LayoutTest to include indexes and successful migration.
+        https://bugs.webkit.org/show_bug.cgi?id=62780
+
+        * storage/indexeddb/migrate-basics-expected.txt:
+        * storage/indexeddb/migrate-basics.html:
+
 2011-06-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

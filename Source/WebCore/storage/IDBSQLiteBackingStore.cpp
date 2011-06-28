@@ -991,18 +991,19 @@ PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexCursor(int64
     return cursor.release();
 }
 
-bool IDBSQLiteBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, const String& pathBase)
+bool IDBSQLiteBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, const String& name, const String& pathBase)
 {
     String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
-    if (!fileExists(path))
-        return false;
-
     SQLiteDatabase db;
     if (!db.open(path))
         return false;
 
-    db.close();
-    return true;
+    SQLiteStatement databaseQuery(db, "SELECT id, version FROM Databases WHERE name = ?");
+    if (databaseQuery.prepare() != SQLResultOk)
+        return false;
+
+    databaseQuery.bindText(1, name);
+    return (databaseQuery.step() == SQLResultRow);
 }
 
 namespace {

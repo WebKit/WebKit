@@ -45,7 +45,6 @@ function sqliteSetVersionSuccess()
     window.trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
     window.index = evalAndLog("index = store.createIndex('ExampleIndex','id', false)");
 
-
     sqliteTestAddRecords1();
 }
 
@@ -151,6 +150,16 @@ function leveldbCheckStoreWithKeyPathCursorNext()
         return;
     }
 
+    shouldBeTrue("((window.index = window.store.index('ExampleIndex')) != undefined)");
+    openKeyCursor = window.index.openKeyCursor();
+    openKeyCursor.onsuccess = leveldbCheckStoreWithKeyPathCursorNext2;
+    openKeyCursor.onerror = unexpectedErrorCallback;
+}
+
+function leveldbCheckStoreWithKeyPathCursorNext2()
+{
+    window.keyIndexCursor = event.target.result;
+    shouldBeTrue("(window.keyIndexCursor.key == 3)");
     shouldBeTrue("cursor.value.name == 'Thomas'");
     shouldBeTrue("cursor.value.id == '3'");
     cursor.continue();

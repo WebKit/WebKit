@@ -27,9 +27,24 @@ db = event.target.result
 trans = db.transaction([], webkitIDBTransaction.READ_WRITE, 0)
 leveldbCheckPlainOldStore():
 store = trans.objectStore('MigrationPlainOldStore')
-FAIL store = trans.objectStore('MigrationPlainOldStore') threw exception Error: NOT_FOUND_ERR: DOM IDBDatabase Exception 3
 request = store.openCursor(keyRange)
-FAIL request = store.openCursor(keyRange) threw exception TypeError: Cannot call method 'openCursor' of undefined
+leveldbCheckPlainOldStoreCursorNext():
+PASS cursor.value.name == 'George' is true
+leveldbCheckPlainOldStoreCursorNext():
+leveldbCheckStoreWithKeyPath():
+store = trans.objectStore('MigrationStoreWithKeyPath')
+leveldbCheckStoreWithKeyPathCursorNext():
+PASS ((window.index = window.store.index('ExampleIndex')) != undefined) is true
+PASS (window.keyIndexCursor.key == 3) is true
+PASS cursor.value.name == 'Thomas' is true
+PASS cursor.value.id == '3' is true
+leveldbCheckStoreWithKeyPathCursorNext():
+leveldbCheckStoreWithAutoIncrement():
+store = trans.objectStore('MigrationStoreWithAutoIncrement')
+leveldbCheckStoreWithAutoIncrementCursorNext():
+PASS cursor.value.name == 'Lincoln' is true
+PASS cursor.value.number == '7012' is true
+leveldbCheckStoreWithAutoIncrementCursorNext():
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -77,6 +77,8 @@ public:
 
     virtual void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
+    static bool populateIndex(IDBBackingStore&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& indexKeyPath);
+
 private:
     IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t databaseId, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
     IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t databaseId, const String& name, const String& keyPath, bool autoIncrement);

@@ -71,7 +71,7 @@ public:
     virtual PassRefPtr<Transaction> createTransaction();
     virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() const { return IDBFactoryBackendInterface::SQLiteBackingStore; }
 
-    static bool backingStoreExists(SecurityOrigin*, const String& pathBase);
+    static bool backingStoreExists(SecurityOrigin*, const String& name, const String& pathBase);
 
 private:
     IDBSQLiteBackingStore(const String& identifier, IDBFactoryBackendImpl*);

@@ -76,7 +76,7 @@ public:
     virtual PassRefPtr<Transaction> createTransaction();
     virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() const { return IDBFactoryBackendInterface::LevelDBBackingStore; }
 
-    static bool backingStoreExists(SecurityOrigin*, const String& pathBase);
+    static bool backingStoreExists(SecurityOrigin*, const String& name, const String& pathBase);
 
 private:
     IDBLevelDBBackingStore(const String& identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);
