@@ -1611,7 +1611,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         int firstArg = vPC[2].u.operand;
         int argCount = vPC[3].u.operand;
-        ArgList args(codeBlock->constantBufferfirstArg), argCount);
+        ArgList args(codeBlock->constantBuffer(firstArg), argCount);
         callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, args));
         
         vPC += OPCODE_LENGTH(op_new_array);
