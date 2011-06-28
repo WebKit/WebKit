@@ -40,6 +40,7 @@
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -143,11 +144,11 @@ void RenderTextControl::updateFromElement()
         updateUserModifyProperty(node(), innerText->renderer()->style());
 }
 
-void RenderTextControl::setInnerTextValue(const String& innerTextValue)
+void RenderTextControl::setInnerTextValue(const String& value)
 {
-    String value = innerTextValue;
-    if (value != text() || !innerTextElement()->hasChildNodes()) {
-        if (value != text() && document() && AXObjectCache::accessibilityEnabled())
+    bool textIsChanged = value != text();
+    if (textIsChanged || !innerTextElement()->hasChildNodes()) {
+        if (textIsChanged && document() && AXObjectCache::accessibilityEnabled())
             document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, false);
 
         ExceptionCode ec = 0;
@@ -333,33 +334,28 @@ void RenderTextControl::subtreeHasChanged()
     m_lastChangeWasUserEdit = true;
 }
 
-String RenderTextControl::finishText(Vector<UChar>& result) const
+static String finishText(StringBuilder& result)
 {
     // Remove one trailing newline; there's always one that's collapsed out by rendering.
-    size_t size = result.size();
+    size_t size = result.length();
     if (size && result[size - 1] == '\n')
-        result.shrink(--size);
-
-    return String::adopt(result);
+        result.resize(--size);
+    return result.toString();
 }
 
 String RenderTextControl::text()
 {
     HTMLElement* innerText = innerTextElement();
     if (!innerText)
-        return "";
+        return emptyString();
  
-    Vector<UChar> result;
-
-    for (Node* n = innerText; n; n = n->traverseNextNode(innerText)) {
-        if (n->hasTagName(brTag))
-            result.append(&newlineCharacter, 1);
-        else if (n->isTextNode()) {
-            String data = static_cast<Text*>(n)->data();
-            result.append(data.characters(), data.length());
-        }
+    StringBuilder result;
+    for (Node* node = innerText; node; node = node->traverseNextNode(innerText)) {
+        if (node->hasTagName(brTag))
+            result.append(newlineCharacter);
+        else if (node->isTextNode())
+            result.append(static_cast<Text*>(node)->data());
     }
-
     return finishText(result);
 }
 
@@ -384,44 +380,41 @@ String RenderTextControl::textWithHardLineBreaks()
 {
     HTMLElement* innerText = innerTextElement();
     if (!innerText)
-        return "";
+        return emptyString();
 
     RenderBlock* renderer = toRenderBlock(innerText->renderer());
     if (!renderer)
-        return "";
+        return emptyString();
 
     Node* breakNode;
     unsigned breakOffset;
     RootInlineBox* line = renderer->firstRootBox();
     if (!line)
-        return "";
+        return emptyString();
 
     getNextSoftBreak(line, breakNode, breakOffset);
 
-    Vector<UChar> result;
-
-    for (Node* n = innerText->firstChild(); n; n = n->traverseNextNode(innerText)) {
-        if (n->hasTagName(brTag))
-            result.append(&newlineCharacter, 1);
-        else if (n->isTextNode()) {
-            Text* text = static_cast<Text*>(n);
-            String data = text->data();
+    StringBuilder result;
+    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
+        if (node->hasTagName(brTag))
+            result.append(newlineCharacter);
+        else if (node->isTextNode()) {
+            String data = static_cast<Text*>(node)->data();
             unsigned length = data.length();
             unsigned position = 0;
-            while (breakNode == n && breakOffset <= length) {
+            while (breakNode == node && breakOffset <= length) {
                 if (breakOffset > position) {
                     result.append(data.characters() + position, breakOffset - position);
                     position = breakOffset;
-                    result.append(&newlineCharacter, 1);
+                    result.append(newlineCharacter);
                 }
                 getNextSoftBreak(line, breakNode, breakOffset);
             }
             result.append(data.characters() + position, length - position);
         }
-        while (breakNode == n)
+        while (breakNode == node)
             getNextSoftBreak(line, breakNode, breakOffset);
     }
-
     return finishText(result);
 }
 

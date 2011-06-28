@@ -98,8 +98,6 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
-    String finishText(Vector<UChar>&) const;
-
     bool hasVisibleTextArea() const;
     friend void setSelectionRange(Node*, int start, int end);
     static bool isSelectableElement(HTMLElement*, Node*);
