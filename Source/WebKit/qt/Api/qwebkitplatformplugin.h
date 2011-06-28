@@ -26,11 +26,11 @@
  *  and may be changed from version to version or even be completely removed.
 */
 
-#include <QObject>
-#include <QUrl>
 #if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
 #include <QMediaPlayer>
 #endif
+#include <QtCore/QObject>
+#include <QtCore/QUrl>
 #include <QtGui/QColor>
 
 class QWebSelectData {
