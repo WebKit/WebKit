@@ -96,7 +96,7 @@ namespace JSC {
 
     RegExpConstructor* asRegExpConstructor(JSValue);
 
-    JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&);
+    JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, bool callAsConstructor = false);
 
     inline RegExpConstructor* asRegExpConstructor(JSValue value)
     {
