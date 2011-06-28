@@ -288,6 +288,9 @@ class Port(object):
                                     actual_filename)
         return ''.join(diff)
 
+    def is_crash_reporter(self, process_name):
+        return False
+
     def driver_name(self):
         """Returns the name of the actual binary that is performing the test,
         so that it can be referred to in log messages. In most cases this

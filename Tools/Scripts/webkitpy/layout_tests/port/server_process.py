@@ -159,6 +159,13 @@ class ServerProcess:
                              'non-positive size: %d ' % size)
         return self._read(timeout, size)
 
+    def _check_for_crash(self):
+        # poll() is not threadsafe and can throw OSError due to:
+        # http://bugs.python.org/issue1731717
+        if self._proc.poll() != None:
+            self.crashed = True
+            self.handle_interrupt()
+
     def _read(self, timeout, size):
         """Internal routine that actually does the read."""
         index = -1
@@ -167,14 +174,15 @@ class ServerProcess:
         select_fds = (out_fd, err_fd)
         deadline = time.time() + timeout
         while not self.timed_out and not self.crashed:
-            # poll() is not threadsafe and can throw OSError due to:
-            # http://bugs.python.org/issue1731717
-            if self._proc.poll() != None:
-                self.crashed = True
-                self.handle_interrupt()
+            self._check_for_crash()
 
             now = time.time()
             if now > deadline:
+                if self._executive.running_pids(self._port.is_crash_reporter):
+                    _log.warning('Waiting for crash reporter...')
+                    self._executive.wait_newest(self._port.is_crash_reporter)
+                    if not self.crashed:
+                        self._check_for_crash()
                 self.timed_out = True
 
             # Check to see if we have any output we can return.
