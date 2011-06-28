@@ -159,7 +159,8 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
         // Figure out how big the filename space needs to be for a given number of characters
         // (using "0" as the nominal character).
         const UChar ch = '0';
-        float charWidth = font.width(constructTextRun(this, font, String(&ch, 1), style, TextRun::AllowTrailingExpansion));
+        const String str = String(&ch, 1);
+        float charWidth = font.width(constructTextRun(this, font, str, style, TextRun::AllowTrailingExpansion));
         m_maxPreferredLogicalWidth = (int)ceilf(charWidth * defaultWidthNumChars);
     }
 

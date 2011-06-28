@@ -1,3 +1,19 @@
+2011-06-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        Split the string creation into a local (while creating text runs)
+        so that it is not destroyed prematurely.
+        https://bugs.webkit.org/show_bug.cgi?id=63543
+
+        Run fast/forms/text-control-intrinsic-widths.html under valgrind/ASAN.       
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        this one is just done for caution, in case, we don't do the same
+        mistake when adding legacy rounding hacks option.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth):
+
 2011-06-28  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.

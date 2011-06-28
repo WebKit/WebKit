@@ -522,8 +522,9 @@ float RenderTextControl::getAvgCharWidth(AtomicString family)
         return roundf(style()->font().primaryFont()->avgCharWidth());
 
     const UChar ch = '0';
+    const String str = String(&ch, 1);
     const Font& font = style()->font();
-    TextRun textRun = constructTextRun(this, font, String(&ch, 1), style(), TextRun::AllowTrailingExpansion);
+    TextRun textRun = constructTextRun(this, font, str, style(), TextRun::AllowTrailingExpansion);
     textRun.disableRoundingHacks();
     return font.width(textRun);
 }
