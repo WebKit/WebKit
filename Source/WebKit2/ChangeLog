@@ -1,3 +1,21 @@
+2011-06-27  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [WebKit2] Add hixie76WebSocketProtocolEnabled flag to WebPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=63447
+
+        Make a new flag added in WebCore::Settings (useHixie76WebSocketProtocol)
+        switchable from WebPage and WebPreferences.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetHixie76WebSocketProtocolEnabled):
+        (WKPreferencesGetHixie76WebSocketProtocolEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-06-27  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Oliver Hunt.
