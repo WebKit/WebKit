@@ -1009,6 +1009,13 @@ void DumpRenderTreeSupportQt::addURLToRedirect(const QString& origin, const QStr
     FrameLoaderClientQt::URLsToRedirect[origin] = destination;
 }
 
+void DumpRenderTreeSupportQt::setInteractiveFormValidationEnabled(QWebPage* page, bool enable)
+{
+    Page* corePage = QWebPagePrivate::core(page);
+    if (corePage)
+        corePage->settings()->setInteractiveFormValidationEnabled(enable);
+}
+
 static QStringList iterateContextMenu(QMenu* menu)
 {
     if (!menu)

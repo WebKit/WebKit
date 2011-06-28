@@ -466,6 +466,7 @@ DumpRenderTree::DumpRenderTree()
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
 
     DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(true);
+    DumpRenderTreeSupportQt::setInteractiveFormValidationEnabled(webPage(), true);
     QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);
     QApplication::sendEvent(m_mainView, &event);
 }

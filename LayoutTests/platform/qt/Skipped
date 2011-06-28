@@ -2010,12 +2010,6 @@ http/tests/misc/webtiming-slow-load.php
 http/tests/security/401-logout/401-logout.php
 http/tests/xmlhttprequest/remember-bad-password.html
 
-# Need to call Settings::setInteractiveFormValidationEnabled(true).
-fast/forms/interactive-validation-prevented.html
-fast/forms/interactive-validation-attach-assertion.html
-fast/forms/interactive-validation-assertion-by-validate-twice.html
-fast/forms/interactive-validation-select-crash.html
-fast/forms/interactive-validation-crash-by-style-override.html
 # Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
 fast/forms/validation-message-appearance.html
 fast/forms/validation-message-clone.html

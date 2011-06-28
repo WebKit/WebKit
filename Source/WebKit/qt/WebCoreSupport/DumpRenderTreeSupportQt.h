@@ -212,6 +212,8 @@ public:
     static QString layerTreeAsText(QWebFrame*);
 
     static void injectInternalsObject(QWebFrame*);
+
+    static void setInteractiveFormValidationEnabled(QWebPage*, bool);
 };
 
 #endif
