@@ -25,8 +25,13 @@
 
 function LayoutTestHistoryAnalyzer(builder) {
     this._builder = builder;
-    this._history = {};
     this._loader = new LayoutTestResultsLoader(builder);
+
+    this._currentlyFailing = {};
+    this._lastSeenFailing = {};
+    this._lastSeenPassing = {};
+    this._possiblyFlaky = {};
+    this._testRunsSinceLastChange = 0;
 }
 
 LayoutTestHistoryAnalyzer.prototype = {
@@ -62,7 +67,7 @@ LayoutTestHistoryAnalyzer.prototype = {
                     var nextIndex = buildIndex + 1;
                     if (nextIndex >= buildNames.length)
                         callAgain = false;
-                    callback(self._history, callAgain);
+                    callback(self._currentlyFailing, self._lastSeenFailing, self._lastSeenPassing, self._possiblyFlaky, buildNames[buildIndex], callAgain);
                     if (!callAgain)
                         return;
                     setTimeout(function() { inner(nextIndex) }, 0);
@@ -73,26 +78,46 @@ LayoutTestHistoryAnalyzer.prototype = {
     },
 
     _incorporateBuildHistory: function(buildNames, buildIndex, callback) {
-        var previousBuildName = Object.keys(this._history).last();
-        var nextBuildName = buildNames[buildIndex];
-
         var self = this;
-        self._loader.start(nextBuildName, function(tests, tooManyFailures) {
-            self._history[nextBuildName] = {
-                tooManyFailures: tooManyFailures,
-                tests: {},
-            };
+        self._loader.start(buildNames[buildIndex], function(tests, tooManyFailures) {
+            ++self._testRunsSinceLastChange;
 
-            for (var testName in tests) {
-                if (previousBuildName) {
-                    if (!(testName in self._history[previousBuildName].tests))
-                        continue;
-                    delete self._history[previousBuildName].tests[testName];
-                }
-                self._history[nextBuildName].tests[testName] = tests[testName];
+            if (!Object.keys(self._currentlyFailing).length) {
+                for (var testName in tests)
+                    self._currentlyFailing[testName] = tests[testName];
             }
 
-            callback(Object.keys(self._history[nextBuildName].tests).length);
+            for (var testName in tests) {
+                if (testName in self._possiblyFlaky) {
+                    self._possiblyFlaky[testName] = tests[testName];
+                    continue;
+                }
+
+                if (testName in self._lastSeenPassing) {
+                    delete self._lastSeenPassing[testName];
+                    self._possiblyFlaky[testName] = tests[testName];
+                    self._testRunsSinceLastChange = 0;
+                    continue;
+                }
+
+                self._lastSeenFailing[testName] = tests[testName];
+            }
+
+            var anyOriginalTestsWereFailing = Object.keys(self._currentlyFailing).some(function(testName) { return testName in self._lastSeenFailing });
+
+            for (var testName in self._lastSeenFailing) {
+                if (testName in tests)
+                    continue;
+                delete self._lastSeenFailing[testName];
+                self._lastSeenPassing[testName] = tests[testName];
+            }
+
+            var anyOriginalTestsAreFailing = Object.keys(self._currentlyFailing).some(function(testName) { return testName in self._lastSeenFailing });
+
+            if (anyOriginalTestsWereFailing && !anyOriginalTestsAreFailing)
+                self._testRunsSinceLastChange = 0;
+
+            callback(anyOriginalTestsAreFailing || self._testRunsSinceLastChange < 5);
         },
         function(tests) {
             // Some tests failed, but we couldn't fetch results.html (perhaps because the test
