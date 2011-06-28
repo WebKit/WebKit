@@ -1,3 +1,20 @@
+2011-06-28  Shinya Kawanaka  <shinyak@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Add const to show() method in WTFString and AtomicString.
+        https://bugs.webkit.org/show_bug.cgi?id=63515
+
+        The lack of const in show() method is painful when
+        doing something like printf-debug.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::show):
+        * wtf/text/AtomicString.h:
+        * wtf/text/WTFString.cpp:
+        (String::show):
+        * wtf/text/WTFString.h:
+
 2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix attempt after r89885.

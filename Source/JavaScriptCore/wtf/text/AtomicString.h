@@ -114,7 +114,7 @@ public:
     static AtomicString fromUTF8(const char*);
 
 #ifndef NDEBUG
-    void show();
+    void show() const;
 #endif
 private:
     String m_string;

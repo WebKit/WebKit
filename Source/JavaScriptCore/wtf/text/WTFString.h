@@ -348,7 +348,7 @@ public:
     WTF_EXPORT_PRIVATE bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
 #ifndef NDEBUG
-    void show();
+    void show() const;
 #endif
 
 private:

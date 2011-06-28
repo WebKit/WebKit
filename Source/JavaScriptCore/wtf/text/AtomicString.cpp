@@ -366,7 +366,7 @@ AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const c
 }
 
 #ifndef NDEBUG
-void AtomicString::show()
+void AtomicString::show() const
 {
     m_string.show();
 }

@@ -964,7 +964,7 @@ String* string(const char*);
 Vector<char> asciiDebug(StringImpl* impl);
 Vector<char> asciiDebug(String& string);
 
-void String::show()
+void String::show() const
 {
     fprintf(stderr, "%s\n", asciiDebug(impl()).data());
 }
