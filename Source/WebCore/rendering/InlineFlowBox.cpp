@@ -1016,7 +1016,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
     }
 }
 
-void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const IntRect& rect, CompositeOperator op)
+void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
     if (!fillLayer)
         return;
@@ -1024,7 +1024,7 @@ void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, 
     paintFillLayer(paintInfo, c, fillLayer, rect, op);
 }
 
-void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const IntRect& rect, CompositeOperator op)
+void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
     StyleImage* img = fillLayer->image();
     bool hasFillImage = img && img->canRender(renderer()->style()->effectiveZoom());
@@ -1037,8 +1037,8 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         // strip.  Even though that strip has been broken up across multiple lines, you still paint it
         // as though you had one single line.  This means each line has to pick up the background where
         // the previous line left off.
-        int logicalOffsetOnLine = 0;
-        int totalLogicalWidth;
+        LayoutUnit logicalOffsetOnLine = 0;
+        LayoutUnit totalLogicalWidth;
         if (renderer()->style()->direction() == LTR) {
             for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
                 logicalOffsetOnLine += curr->logicalWidth();
@@ -1052,14 +1052,14 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
             for (InlineFlowBox* curr = this; curr; curr = curr->prevLineBox())
                 totalLogicalWidth += curr->logicalWidth();
         }
-        int stripX = rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
-        int stripY = rect.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
-        int stripWidth = isHorizontal() ? totalLogicalWidth : width();
-        int stripHeight = isHorizontal() ? height() : totalLogicalWidth;
+        LayoutUnit stripX = rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
+        LayoutUnit stripY = rect.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
+        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : width();
+        LayoutUnit stripHeight = isHorizontal() ? height() : totalLogicalWidth;
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(IntRect(rect.x(), rect.y(), width(), height()));
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, IntRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
+        paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
     }
 }
 

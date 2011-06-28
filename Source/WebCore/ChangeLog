@@ -1,3 +1,27 @@
+2011-06-28  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintFillLayer* to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63570
+
+        Switching painFillLayer* to layout type abstraction from more integral types.
+
+        No new tests as this is just moving to an abstraction.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayers):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        (WebCore::RenderBox::paintFillLayer):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.h:
+
 2011-06-28  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -589,8 +589,8 @@ static IntRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* context,
     return adjustedRect;
 }
 
-void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const IntRect& rect,
-    BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const IntSize& boxSize, CompositeOperator op, RenderObject* backgroundObject)
+void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const LayoutRect& rect,
+    BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderObject* backgroundObject)
 {
     GraphicsContext* context = paintInfo.context;
     if (context->paintingDisabled() || rect.isEmpty())
@@ -646,19 +646,19 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context->addRoundedRectClip(border);
     }
     
-    int bLeft = includeLeftEdge ? borderLeft() : 0;
-    int bRight = includeRightEdge ? borderRight() : 0;
-    int pLeft = includeLeftEdge ? paddingLeft() : 0;
-    int pRight = includeRightEdge ? paddingRight() : 0;
+    LayoutUnit bLeft = includeLeftEdge ? borderLeft() : 0;
+    LayoutUnit bRight = includeRightEdge ? borderRight() : 0;
+    LayoutUnit pLeft = includeLeftEdge ? paddingLeft() : 0;
+    LayoutUnit pRight = includeRightEdge ? paddingRight() : 0;
 
     GraphicsContextStateSaver clipWithScrollingStateSaver(*context, clippedWithLocalScrolling);
-    IntRect scrolledPaintRect = rect;
+    LayoutRect scrolledPaintRect = rect;
     if (clippedWithLocalScrolling) {
         // Clip to the overflow area.
         context->clip(toRenderBox(this)->overflowClipRect(rect.location()));
         
         // Adjust the paint rect to reflect a scrolled content box with borders at the ends.
-        IntSize offset = layer()->scrolledContentOffset();
+        LayoutSize offset = layer()->scrolledContentOffset();
         scrolledPaintRect.move(-offset);
         scrolledPaintRect.setWidth(bLeft + layer()->scrollWidth() + bRight);
         scrolledPaintRect.setHeight(borderTop() + layer()->scrollHeight() + borderBottom());
@@ -668,7 +668,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (bgLayer->clip() == PaddingFillBox || bgLayer->clip() == ContentFillBox) {
         // Clip to the padding or content boxes as necessary.
         bool includePadding = bgLayer->clip() == ContentFillBox;
-        IntRect clipRect = IntRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : 0),
+        LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : 0),
                                    scrolledPaintRect.y() + borderTop() + (includePadding ? paddingTop() : 0),
                                    scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : 0),
                                    scrolledPaintRect.height() - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : 0));
@@ -678,7 +678,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // We have to draw our text into a mask that can then be used to clip background drawing.
         // First figure out how big the mask has to be.  It should be no bigger than what we need
         // to actually render, so we should intersect the dirty rect with the border box of the background.
-        IntRect maskRect = rect;
+        LayoutRect maskRect = rect;
         maskRect.intersect(paintInfo.rect);
         
         // Now create the mask.
@@ -694,9 +694,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, true, 0, 0);
         if (box) {
             RootInlineBox* root = box->root();
-            box->paint(info, IntPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), root->lineTop(), root->lineBottom());
+            box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), root->lineTop(), root->lineBottom());
         } else {
-            IntSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : IntSize();
+            LayoutSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : LayoutSize();
             paint(info, scrolledPaintRect.location() - localOffset);
         }
         
@@ -738,7 +738,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // Paint the color first underneath all images.
     if (!bgLayer->next()) {
-        IntRect backgroundRect(scrolledPaintRect);
+        LayoutRect backgroundRect(scrolledPaintRect);
         backgroundRect.intersect(paintInfo.rect);
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
         Color baseColor;
@@ -763,12 +763,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // no progressive loading of the background image
     if (shouldPaintBackgroundImage) {
-        IntRect destRect;
-        IntPoint phase;
-        IntSize tileSize;
+        LayoutRect destRect;
+        LayoutPoint phase;
+        LayoutSize tileSize;
 
         calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect, destRect, phase, tileSize);
-        IntPoint destOrigin = destRect.location();
+        LayoutPoint destOrigin = destRect.location();
         destRect.intersect(paintInfo.rect);
         if (!destRect.isEmpty()) {
             phase += destRect.location() - destOrigin;
