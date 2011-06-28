@@ -267,7 +267,7 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
         addBranch(m_jit.jump(), notTaken);
 }
 
-void SpeculativeJIT::compilePeepHoleEq(Node& node, NodeIndex branchNodeIndex)
+void SpeculativeJIT::compilePeepHoleCall(Node& node, NodeIndex branchNodeIndex, Z_DFGOperation_EJJ operation)
 {
     Node& branchNode = m_jit.graph()[branchNodeIndex];
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
@@ -290,7 +290,7 @@ void SpeculativeJIT::compilePeepHoleEq(Node& node, NodeIndex branchNodeIndex)
     flushRegisters();
 
     GPRResult result(this);
-    callOperation(operationCompareEq, result.gpr(), op1GPR, op2GPR);
+    callOperation(operation, result.gpr(), op1GPR, op2GPR);
     addBranch(m_jit.branchTest8(condition, result.gpr()), taken);
 
     // Check for fall through, otherwise we need to jump.
@@ -569,7 +569,10 @@ void SpeculativeJIT::compile(Node& node)
             // so can be no intervening nodes to also reference the compare. 
             ASSERT(node.adjustedRefCount() == 1);
 
-            compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThan);
+            if (compareIsInteger(node.child1, node.child2))
+                compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThan);
+            else
+                compilePeepHoleCall(node, branchNodeIndex, operationCompareLess);
 
             use(node.child1);
             use(node.child2);
@@ -598,7 +601,10 @@ void SpeculativeJIT::compile(Node& node)
             // so can be no intervening nodes to also reference the compare. 
             ASSERT(node.adjustedRefCount() == 1);
 
-            compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThanOrEqual);
+            if (compareIsInteger(node.child1, node.child2))
+                compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThanOrEqual);
+            else
+                compilePeepHoleCall(node, branchNodeIndex, operationCompareLessEq);
 
             use(node.child1);
             use(node.child2);
@@ -627,10 +633,10 @@ void SpeculativeJIT::compile(Node& node)
             // so can be no intervening nodes to also reference the compare. 
             ASSERT(node.adjustedRefCount() == 1);
 
-            if (isInteger(node.child1) || isInteger(node.child2))
+            if (compareIsInteger(node.child1, node.child2))
                 compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::Equal);
             else
-                compilePeepHoleEq(node, branchNodeIndex);
+                compilePeepHoleCall(node, branchNodeIndex, operationCompareEq);
 
             use(node.child1);
             use(node.child2);

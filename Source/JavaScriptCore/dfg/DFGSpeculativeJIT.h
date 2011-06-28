@@ -169,8 +169,22 @@ private:
         return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger;
     }
 
+    bool isDataFormatDouble(NodeIndex nodeIndex)
+    {
+        Node& node = m_jit.graph()[nodeIndex];
+        VirtualRegister virtualRegister = node.virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+
+        return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble;
+    }
+
+    bool compareIsInteger(NodeIndex op1, NodeIndex op2)
+    {
+        return !(isDataFormatDouble(op1) || isDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
+    }
+
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
-    void compilePeepHoleEq(Node&, NodeIndex branchNodeIndex);
+    void compilePeepHoleCall(Node&, NodeIndex branchNodeIndex, Z_DFGOperation_EJJ);
 
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)

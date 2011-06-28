@@ -1,3 +1,20 @@
+2011-06-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63561
+        DFG JIT - don't always assume integer in relational compare
+
+        If neither operand is known integer, or either is in double representation,
+        then at least use a function call (don't bail off the speculative path).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isDataFormatDouble):
+        (JSC::DFG::SpeculativeJIT::compareIsInteger):
+
 2011-06-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
