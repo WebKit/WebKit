@@ -40,23 +40,24 @@ namespace WebCore {
 class TextFieldInputType : public InputType {
 protected:
     TextFieldInputType(HTMLInputElement*);
+    virtual ~TextFieldInputType();
     virtual bool canSetSuggestedValue();
     virtual void handleKeydownEvent(KeyboardEvent*);
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);
 
-    virtual HTMLElement* innerTextElement() const { return m_innerText; }
-    virtual HTMLElement* innerSpinButtonElement() const { return m_innerSpinButton; }
+    virtual HTMLElement* innerTextElement() const;
+    virtual HTMLElement* innerSpinButtonElement() const;
 #if ENABLE(INPUT_SPEECH)
-    virtual HTMLElement* speechButtonElement() const { return m_speechButton; }
+    virtual HTMLElement* speechButtonElement() const;
 #endif
 
 protected:
     virtual void createShadowSubtree();
     virtual void destroyShadowSubtree();
-    void setInnerTextElement(HTMLElement* element) { m_innerText = element; }
+    void setInnerTextElement(PassRefPtr<HTMLElement>);
 #if ENABLE(INPUT_SPEECH)
-    void setSpeechButtonElement(HTMLElement* element) { m_speechButton = element; }
+    void setSpeechButtonElement(PassRefPtr<HTMLElement>);
 #endif
 
 private:
@@ -70,10 +71,10 @@ private:
     virtual String sanitizeValue(const String&);
     virtual bool shouldRespectListAttribute();
 
-    HTMLElement* m_innerText;
-    HTMLElement* m_innerSpinButton;
+    RefPtr<HTMLElement> m_innerText;
+    RefPtr<HTMLElement> m_innerSpinButton;
 #if ENABLE(INPUT_SPEECH)
-    HTMLElement* m_speechButton;
+    RefPtr<HTMLElement> m_speechButton;
 #endif
 };
 

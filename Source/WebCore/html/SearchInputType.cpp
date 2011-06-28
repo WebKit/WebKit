@@ -40,9 +40,6 @@ namespace WebCore {
 
 inline SearchInputType::SearchInputType(HTMLInputElement* element)
     : BaseTextInputType(element)
-    , m_innerBlock(0)
-    , m_resultsButton(0)
-    , m_cancelButton(0)
 {
 }
 
@@ -69,43 +66,52 @@ bool SearchInputType::isSearchField() const
 void SearchInputType::createShadowSubtree()
 {
     ASSERT(!m_innerBlock);
-    ASSERT(!innerTextElement());
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
 
     ExceptionCode ec = 0;
     Document* document = element()->document();
-    RefPtr<HTMLElement> inner = TextControlInnerElement::create(document);
-    m_innerBlock = inner.get();
-    element()->ensureShadowRoot()->appendChild(inner.release(), ec);
+    m_innerBlock = TextControlInnerElement::create(document);
+    element()->ensureShadowRoot()->appendChild(m_innerBlock, ec);
 
 #if ENABLE(INPUT_SPEECH)
     if (element()->isSpeechEnabled()) {
-        RefPtr<HTMLElement> speech = InputFieldSpeechButtonElement::create(document);
-        setSpeechButtonElement(speech.get());
-        element()->ensureShadowRoot()->appendChild(speech.release(), ec);
+        setSpeechButtonElement(InputFieldSpeechButtonElement::create(document));
+        element()->ensureShadowRoot()->appendChild(speechButtonElement(), ec);
     }
 #endif
 
-    RefPtr<HTMLElement> results = SearchFieldResultsButtonElement::create(document);
-    m_resultsButton = results.get();
-    m_innerBlock->appendChild(results.release(), ec);
+    m_resultsButton = SearchFieldResultsButtonElement::create(document);
+    m_innerBlock->appendChild(m_resultsButton, ec);
 
-    RefPtr<HTMLElement> innerText = TextControlInnerTextElement::create(document);
-    setInnerTextElement(innerText.get());
-    m_innerBlock->appendChild(innerText.release(), ec);
+    setInnerTextElement(TextControlInnerTextElement::create(document));
+    m_innerBlock->appendChild(innerTextElement(), ec);
 
-    RefPtr<HTMLElement> cancel = SearchFieldCancelButtonElement::create(element()->document());
-    m_cancelButton = cancel.get();
-    m_innerBlock->appendChild(cancel.release(), ec);
+    m_cancelButton = SearchFieldCancelButtonElement::create(element()->document());
+    m_innerBlock->appendChild(m_cancelButton, ec);
+}
+
+HTMLElement* SearchInputType::innerBlockElement() const
+{
+    return m_innerBlock.get();
+}
+
+HTMLElement* SearchInputType::resultsButtonElement() const
+{
+    return m_resultsButton.get();
+}
+
+HTMLElement* SearchInputType::cancelButtonElement() const
+{
+    return m_cancelButton.get();
 }
 
 void SearchInputType::destroyShadowSubtree()
 {
     TextFieldInputType::destroyShadowSubtree();
-    m_innerBlock = 0;
-    m_resultsButton = 0;
-    m_cancelButton = 0;
+    m_innerBlock.clear();
+    m_resultsButton.clear();
+    m_cancelButton.clear();
 }
 
 
