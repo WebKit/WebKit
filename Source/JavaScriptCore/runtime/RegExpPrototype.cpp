@@ -136,11 +136,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&RegExpObject::s_info)) {
-        if (thisValue.inherits(&RegExpPrototype::s_info))
-            return JSValue::encode(jsNontrivialString(exec, "//"));
+    if (!thisValue.inherits(&RegExpObject::s_info))
         return throwVMTypeError(exec);
-    }
 
     RegExpObject* thisObject = asRegExpObject(thisValue);
 

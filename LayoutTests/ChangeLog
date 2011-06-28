@@ -1,3 +1,26 @@
+2011-06-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler & Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50554
+        RegExp.prototype.toString does not escape slashes
+
+        The problem here is that we don't escape forwards slashes when converting
+        a RegExp to a string. This means that RegExp("/").toString() is "///",
+        which is not a valid RegExp literal. Also, we return an invalid literal
+        for RegExp.prototype.toString() ("//", which is an empty single-line comment).
+
+        From ES5:
+        "NOTE: The returned String has the form of a RegularExpressionLiteral that
+        evaluates to another RegExp object with the same behaviour as this object."
+
+        Added test cases.
+
+        * fast/regex/script-tests/toString.js: Added.
+        (testFwdSlash):
+        * fast/regex/toString-expected.txt: Added.
+        * fast/regex/toString.html: Added.
+
 2011-06-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium baselines update.

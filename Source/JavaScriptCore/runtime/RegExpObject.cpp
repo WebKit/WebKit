@@ -29,6 +29,7 @@
 #include "Lookup.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
+#include "UStringBuilder.h"
 #include "UStringConcatenate.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -111,7 +112,41 @@ JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, const Identifier&)
 
 JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return jsString(exec, asRegExpObject(slotBase)->regExp()->pattern());
+    UString pattern = asRegExpObject(slotBase)->regExp()->pattern();
+
+    size_t forwardSlashPosition = pattern.find('/');
+    if (forwardSlashPosition == notFound)
+        return jsString(exec, pattern);
+
+    // 'completed' tracks the length of original pattern already copied
+    // into the result buffer.
+    size_t completed = 0;
+    UStringBuilder result;
+
+    do {
+        // 'slashesPosition' points to the first (of possibly zero) backslash
+        // prior to the forwards slash.
+        size_t slashesPosition = forwardSlashPosition;
+        while (slashesPosition && pattern[slashesPosition - 1] == '\\')
+            --slashesPosition;
+
+        // Check whether the number of backslashes is odd or even -
+        // if odd, the forwards slash is already escaped, so we mustn't
+        // double escape it.
+        if ((forwardSlashPosition - slashesPosition) & 1)
+            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition + 1));
+        else {
+            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition));
+            result.append("\\/");
+        }
+        completed = forwardSlashPosition + 1;
+
+        forwardSlashPosition = pattern.find('/', completed);
+    } while (forwardSlashPosition != notFound);
+
+    // Copy in the remainder of the pattern to the buffer.
+    result.append(pattern.substringSharingImpl(completed));
+    return jsString(exec, result.toUString());
 }
 
 JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
