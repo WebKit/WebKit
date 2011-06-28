@@ -1496,9 +1496,6 @@ plugins/mouse-events-fixedpos.html
 plugins/netscape-dom-access.html
 plugins/npp-set-window-called-during-destruction.html
 plugins/reloadplugins-and-pages.html
-plugins/destroy-stream-twice.html
-plugins/object-embed-plugin-scripting.html
-plugins/npruntime/npruntime.html
 
 # Unexplained failures
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html

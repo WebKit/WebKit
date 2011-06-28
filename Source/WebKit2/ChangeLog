@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [X11][WK2] X error with plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=63520
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        Never create a pixmap with (0,0) dimensions.
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        (WebKit::NetscapePlugin::platformPaint):
+
+2011-06-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [X11][WK2] plugins/plugin-javascript-access fails
         https://bugs.webkit.org/show_bug.cgi?id=63464
 

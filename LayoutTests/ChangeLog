@@ -1,3 +1,12 @@
+2011-06-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [X11][WK2] X error with plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=63520
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

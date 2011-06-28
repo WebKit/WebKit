@@ -209,6 +209,11 @@ void NetscapePlugin::platformGeometryDidChange()
     if (m_drawable)
         XFreePixmap(display, m_drawable);
 
+    if (m_frameRect.isEmpty()) {
+        m_drawable = 0;
+        return;
+    }
+
     m_drawable = XCreatePixmap(display, rootWindowID(), m_frameRect.width(), m_frameRect.height(), displayDepth());
 
     XSync(display, false); // Make sure that the server knows about the Drawable.
@@ -231,10 +236,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
         return;
     }
 
-    if (context->paintingDisabled())
+    if (context->paintingDisabled() || !m_drawable)
         return;
-
-    ASSERT(m_drawable);
 
 #if PLATFORM(QT)
     QPainter* painter = context->platformContext();
