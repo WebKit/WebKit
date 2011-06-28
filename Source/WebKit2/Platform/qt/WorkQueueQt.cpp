@@ -107,8 +107,8 @@ void WorkQueue::platformInvalidate()
 void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 {
     WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, item.leakPtr());
-    itemQt->startTimer(0);
     itemQt->moveToThread(m_workThread);
+    QMetaObject::invokeMethod(itemQt, "execute", Qt::QueuedConnection);
 }
 
 void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delayInSecond)

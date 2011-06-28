@@ -1,3 +1,20 @@
+2011-06-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Random crashes in fast/frames/ tests
+        https://bugs.webkit.org/show_bug.cgi?id=63459
+
+        Investigation on the crashes has revealed that sometimes, a frame could
+        have been destroyed before it is removed from the hierachy in Qt WebKit2 UI process.
+        The root cause lies in the fact that the order of the two contiguous asynchronous
+        messages may not be respected on the receiving side. And it is Qt's implementation,
+        which uses QTimer::startTimer(0), that causes the reverse order. This patch replaces
+        the timer approach with QMetaObject::invokeMethod approach and no crash happens afterwards.
+
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::scheduleWork):
+
 2011-06-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
