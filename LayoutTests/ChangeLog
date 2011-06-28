@@ -1,3 +1,17 @@
+2011-06-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Verify cloning elements with validation messages works.
+        https://bugs.webkit.org/show_bug.cgi?id=61988
+
+        * fast/forms/validation-message-clone-expected.txt: Added.
+        * fast/forms/validation-message-clone.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-28  Wyatt Carss  <wcarss@chromium.org>
 
         Reviewed by Hajime Morita.

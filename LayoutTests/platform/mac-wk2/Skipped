@@ -1554,6 +1554,7 @@ fast/forms/interactive-validation-select-crash.html
 # WebKitTestRunner needs support for validation message bubble tests
 # http://webkit.org/b/57455
 fast/forms/validation-message-appearance.html
+fast/forms/validation-message-clone.html
 fast/forms/validation-message-on-checkbox.html
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html
