@@ -1,3 +1,14 @@
+2011-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add more machines to Chromium Mac Release and Chromium Mac Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=63500
+
+        Added google-mac-3 and google-mac-4.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-06-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dirk Pranke.
