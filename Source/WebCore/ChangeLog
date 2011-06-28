@@ -1,3 +1,10 @@
+2011-06-28  Kent Tamura  <tkent@chromium.org>
+
+        Fix a build error on Mac by r89907.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::endListChanged):
+
 2011-06-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Kent Tamura.

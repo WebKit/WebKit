@@ -768,7 +768,7 @@ void SVGSMILElement::beginListChanged(SMILTime eventTime)
     reschedule();
 }
 
-void SVGSMILElement::endListChanged(SMILTime eventTime)
+void SVGSMILElement::endListChanged(SMILTime)
 {
     SMILTime elapsed = this->elapsed();
     if (m_isWaitingForFirstInterval)
