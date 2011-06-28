@@ -712,7 +712,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
         function getStyles(nodeIds)
         {
             for (var i = 0; nodeIds && i < nodeIds.length; ++i)
-                WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
+                WebInspector.cssModel.getStylesAsync(nodeIds[i], undefined, imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }
 
         function onDocumentAvailable(root)
