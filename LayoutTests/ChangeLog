@@ -1,3 +1,13 @@
+2011-06-27  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed.
+
+        Renaming incorrectly named linux test expectation.
+
+        * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-actual.png: Removed.
+        * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-expected.png: Copied 
+        from LayoutTests/platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-actual.png.
+
 2011-06-27  Wyatt Carss  <wcarss@chromium.org>
 
         Reviewed by Ryosuke Niwa.
