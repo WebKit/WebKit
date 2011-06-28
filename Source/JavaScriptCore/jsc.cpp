@@ -74,6 +74,7 @@ static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& 
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGC(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
@@ -154,6 +155,9 @@ GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "quit"), functionQuit));
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "gc"), functionGC));
+#ifndef NDEBUG
+    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "releaseExecutableMemory"), functionReleaseExecutableMemory));
+#endif
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "version"), functionVersion));
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "run"), functionRun));
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "load"), functionLoad));
@@ -197,6 +201,15 @@ EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)
     exec->heap()->collectAllGarbage();
     return JSValue::encode(jsUndefined());
 }
+
+#ifndef NDEBUG
+EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState* exec)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    exec->globalData().releaseExecutableMemory();
+    return JSValue::encode(jsUndefined());
+}
+#endif
 
 EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 {

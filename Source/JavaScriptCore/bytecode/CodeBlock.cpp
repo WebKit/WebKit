@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSStaticScopeObject.h"
 #include "JSValue.h"
+#include "RepatchBuffer.h"
 #include "UStringConcatenate.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
@@ -1675,6 +1676,28 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     JSActivation* activation = new (callFrame) JSActivation(callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
     callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
+}
+    
+#if ENABLE(JIT)
+void CodeBlock::unlinkCalls()
+{
+    if (!(m_callLinkInfos.size() || m_methodCallLinkInfos.size()))
+        return;
+    RepatchBuffer repatchBuffer(this);
+    for (size_t i = 0; i < m_callLinkInfos.size(); i++) {
+        if (!m_callLinkInfos[i].isLinked())
+            continue;
+        repatchBuffer.relink(m_callLinkInfos[i].callReturnLocation, m_callLinkInfos[i].isCall ? m_globalData->jitStubs->ctiVirtualCallLink() : m_globalData->jitStubs->ctiVirtualConstructLink());
+        m_callLinkInfos[i].unlink();
+    }
+}
+#endif
+
+void CodeBlock::clearEvalCache()
+{
+    if (!m_rareData)
+        return;
+    m_rareData->m_evalCodeCache.clear();
 }
 
 } // namespace JSC

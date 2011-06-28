@@ -133,6 +133,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     addSlowCase(jumpToSlow);
     ASSERT_JIT_OFFSET(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow), patchOffsetOpCallCompareToJump);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].isCall = opcodeID != op_construct;
 
     // The following is the fast case, only used whan a callee can be linked.
 

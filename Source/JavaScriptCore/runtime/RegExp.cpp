@@ -199,6 +199,9 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, V
 
 void RegExp::invalidateCode()
 {
+    if (!m_representation)
+        return;
+    m_state = NotCompiled;
     m_representation.clear();
 }
 

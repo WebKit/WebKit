@@ -202,6 +202,9 @@ namespace JSC {
         bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
         bool isStrictMode() const { return m_features & StrictModeFeature; }
 
+        virtual void unlinkCalls() = 0;
+        
+        static const ClassInfo s_info;
     protected:
         void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
         {
@@ -259,6 +262,7 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
         virtual void visitChildren(SlotVisitor&);
+        void unlinkCalls();
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
@@ -310,6 +314,7 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
         virtual void visitChildren(SlotVisitor&);
+        void unlinkCalls();
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
@@ -411,6 +416,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;
+        void unlinkCalls();
 
         RefPtr<FunctionParameters> m_parameters;
         OwnPtr<FunctionCodeBlock> m_codeBlockForCall;

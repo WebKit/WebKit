@@ -395,6 +395,23 @@ inline RegisterFile& Heap::registerFile()
     return m_globalData->interpreter->registerFile();
 }
 
+void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
+{
+    ASSERT(isValidThreadState(m_globalData));
+    if (m_operationInProgress != NoOperation)
+        CRASH();
+    m_operationInProgress = Collection;
+    ConservativeRoots registerFileRoots(&m_blocks);
+    registerFile().gatherConservativeRoots(registerFileRoots);
+    size_t registerFileRootCount = registerFileRoots.size();
+    JSCell** registerRoots = registerFileRoots.roots();
+    for (size_t i = 0; i < registerFileRootCount; i++) {
+        setMarked(registerRoots[i]);
+        roots.add(registerRoots[i]);
+    }
+    m_operationInProgress = NoOperation;
+}
+
 void Heap::markRoots()
 {
     ASSERT(isValidThreadState(m_globalData));

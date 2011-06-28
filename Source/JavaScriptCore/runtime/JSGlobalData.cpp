@@ -450,11 +450,48 @@ void JSGlobalData::recompileAllJSFunctions()
     heap.forEachCell<Recompiler>();
 }
 
+struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
+    HashSet<FunctionExecutable*> currentlyExecutingFunctions;
+    void operator()(JSCell* cell)
+    {
+        if (!cell->inherits(&FunctionExecutable::s_info))
+            return;
+        FunctionExecutable* executable = static_cast<FunctionExecutable*>(cell);
+        if (currentlyExecutingFunctions.contains(executable))
+            return;
+        executable->discardCode();
+    }
+};
+
 void JSGlobalData::releaseExecutableMemory()
 {
-    if (!dynamicGlobalObject)
-        recompileAllJSFunctions();
+    if (dynamicGlobalObject) {
+        StackPreservingRecompiler recompiler;
+        HashSet<JSCell*> roots;
+        heap.getConservativeRegisterRoots(roots);
+        HashSet<JSCell*>::iterator end = roots.end();
+        for (HashSet<JSCell*>::iterator ptr = roots.begin(); ptr != end; ++ptr) {
+            ScriptExecutable* executable = 0;
+            JSCell* cell = *ptr;
+            if (cell->inherits(&ScriptExecutable::s_info))
+                executable = static_cast<ScriptExecutable*>(*ptr);
+            else if (cell->inherits(&JSFunction::s_info)) {
+                JSFunction* function = asFunction(*ptr);
+                if (function->isHostFunction())
+                    continue;
+                executable = function->jsExecutable();
+            } else
+                continue;
+            ASSERT(executable->inherits(&ScriptExecutable::s_info));
+            executable->unlinkCalls();
+            if (executable->inherits(&FunctionExecutable::s_info))
+                recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
+                
+        }
+        heap.forEachCell<StackPreservingRecompiler>(recompiler);
+    }
     m_regExpCache->invalidateCode();
+    heap.collectAllGarbage();
 }
     
 void releaseExecutableMemory(JSGlobalData& globalData)

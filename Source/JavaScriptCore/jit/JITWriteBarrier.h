@@ -68,6 +68,8 @@ public:
         return m_location;
     }
     
+    void clear() { clear(0); }
+
 protected:
     JITWriteBarrierBase()
     {
@@ -94,6 +96,14 @@ protected:
     }
 
 private:
+    void clear(void* clearedValue)
+    {
+        if (!m_location)
+            return;
+        if (m_location.executableAddress() != JITWriteBarrierFlag)
+            MacroAssembler::repatchPointer(m_location, clearedValue);
+    }
+
     CodeLocationDataLabelPtr m_location;
 };
 

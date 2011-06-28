@@ -114,6 +114,7 @@ namespace JSC {
         HandleSlot allocateLocalHandle() { return m_handleStack.push(); }
 
         HandleStack* handleStack() { return &m_handleStack; }
+        void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
     private:
         typedef HashSet<MarkedBlock*>::iterator BlockIterator;

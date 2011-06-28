@@ -149,6 +149,7 @@ namespace JSC {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
+        bool isCall;
     };
 
     struct MethodCallCompilationInfo {

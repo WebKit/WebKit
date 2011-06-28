@@ -98,6 +98,7 @@ namespace JSC {
     struct CallLinkInfo {
         CallLinkInfo()
             : hasSeenShouldRepatch(false)
+            , isCall(false)
         {
         }
 
@@ -105,9 +106,15 @@ namespace JSC {
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
         JITWriteBarrier<JSFunction> callee;
-        bool hasSeenShouldRepatch;
+        bool hasSeenShouldRepatch : 1;
+        bool isCall : 1;
 
         bool isLinked() { return callee; }
+        void unlink()
+        {
+            hasSeenShouldRepatch = false;
+            callee.clear();
+        }
 
         bool seenOnce()
         {
@@ -270,7 +277,10 @@ namespace JSC {
                 return 1;
             return binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
         }
+
+        void unlinkCalls();
 #endif
+
 #if ENABLE(INTERPRETER)
         unsigned bytecodeOffset(Instruction* returnAddress)
         {
@@ -339,6 +349,8 @@ namespace JSC {
         unsigned lastJumpTarget() const { return m_jumpTargets.last(); }
 
         void createActivation(CallFrame*);
+
+        void clearEvalCache();
 
 #if ENABLE(INTERPRETER)
         void addPropertyAccessInstruction(unsigned propertyAccessInstruction)

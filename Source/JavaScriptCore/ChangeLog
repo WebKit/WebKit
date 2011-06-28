@@ -1,3 +1,50 @@
+2011-06-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Support throwing away non-running code even while other code is running
+        https://bugs.webkit.org/show_bug.cgi?id=63485
+
+        Add a function to CodeBlock to support unlinking direct linked callsites,
+        and then with that in place add logic to discard code from any function
+        that is not currently on the stack.
+
+        The unlinking completely reverts any optimized call sites, such that they
+        may be relinked again in future.
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::unlinkCalls):
+        (JSC::CodeBlock::clearEvalCache):
+        * bytecode/CodeBlock.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::clear):
+        * heap/Heap.cpp:
+        (JSC::Heap::getConservativeRegisterRoots):
+        * heap/Heap.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITWriteBarrier.h:
+        (JSC::JITWriteBarrierBase::clear):
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        (functionReleaseExecutableMemory):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::unlinkCalls):
+        (JSC::ProgramExecutable::unlinkCalls):
+        (JSC::FunctionExecutable::discardCode):
+        (JSC::FunctionExecutable::unlinkCalls):
+        * runtime/Executable.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::SafeRecompiler::returnValue):
+        (JSC::SafeRecompiler::operator()):
+        (JSC::JSGlobalData::releaseExecutableMemory):
+
 2011-06-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -69,6 +69,11 @@ namespace JSC {
 
         void visitAggregate(SlotVisitor&);
 
+        void clear()
+        {
+            m_cacheMap.clear();
+        }
+
     private:
         static const unsigned maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;

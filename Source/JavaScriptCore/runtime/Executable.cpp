@@ -64,6 +64,8 @@ NativeExecutable::~NativeExecutable()
 {
 }
 
+const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0 };
+
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0 };
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
@@ -169,6 +171,16 @@ void EvalExecutable::visitChildren(SlotVisitor& visitor)
         m_evalCodeBlock->visitAggregate(visitor);
 }
 
+void EvalExecutable::unlinkCalls()
+{
+#if ENABLE(JIT)
+    if (!m_jitCodeForCall)
+        return;
+    ASSERT(m_evalCodeBlock);
+    m_evalCodeBlock->unlinkCalls();
+#endif
+}
+
 JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
 {
     JSObject* exception = 0;
@@ -224,6 +236,16 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
 #endif
 
     return 0;
+}
+
+void ProgramExecutable::unlinkCalls()
+{
+#if ENABLE(JIT)
+    if (!m_jitCodeForCall)
+        return;
+    ASSERT(m_programCodeBlock);
+    m_programCodeBlock->unlinkCalls();
+#endif
 }
 
 #if ENABLE(JIT)
@@ -382,13 +404,41 @@ void FunctionExecutable::visitChildren(SlotVisitor& visitor)
 
 void FunctionExecutable::discardCode()
 {
+#if ENABLE(JIT)
+    // These first two checks are to handle the rare case where
+    // we are trying to evict code for a function during its
+    // codegen.
+    if (!m_jitCodeForCall && m_codeBlockForCall)
+        return;
+    if (!m_jitCodeForConstruct && m_codeBlockForConstruct)
+        return;
+    m_jitCodeForCall = JITCode();
+    m_jitCodeForConstruct = JITCode();
+    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
+    m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
+#endif
+    if (m_codeBlockForCall)
+        m_codeBlockForCall->clearEvalCache();
     m_codeBlockForCall.clear();
+    if (m_codeBlockForConstruct)
+        m_codeBlockForConstruct->clearEvalCache();
     m_codeBlockForConstruct.clear();
     m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
     m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
+
+}
+
+void FunctionExecutable::unlinkCalls()
+{
 #if ENABLE(JIT)
-    m_jitCodeForCall = JITCode();
-    m_jitCodeForConstruct = JITCode();
+    if (!!m_jitCodeForCall) {
+        ASSERT(m_codeBlockForCall);
+        m_codeBlockForCall->unlinkCalls();
+    }
+    if (!!m_jitCodeForConstruct) {
+        ASSERT(m_codeBlockForConstruct);
+        m_codeBlockForConstruct->unlinkCalls();
+    }
 #endif
 }
 
