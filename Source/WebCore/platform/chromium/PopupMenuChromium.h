@@ -141,10 +141,12 @@ public:
     // The popup was hidden.
     void notifyPopupHidden();
 
-    // Compute size of widget and children. Return right offset for RTL.
-    int layoutAndGetRightOffset();
+    // Compute size of widget and children. Return right offset for the popup right alignment.
+    int layoutAndGetRTLOffset();
 
     PopupListBox* listBox() const { return m_listBox.get(); }
+
+    bool isRTL() const;
 
     // Gets the index of the item that the user is currently moused-over or
     // has selected with the keyboard up/down arrows.
@@ -190,6 +192,7 @@ private:
 
     PopupContainerSettings m_settings;
     PopupType m_popupType;
+    IntRect m_originalFrameRect;
     // Whether the popup is currently open.
     bool m_popupOpen;
 };

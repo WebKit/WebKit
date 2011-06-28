@@ -1,3 +1,34 @@
+2011-06-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] SELECT or autofill popup is trimmed by screen edge on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=63438
+
+        If the popup is calculated to be trimmed by a screen edge, an attempt is made
+        to alter its vertical edge alignment (set to the right edge for LTR or to the left edge for RTL)
+        to see if the trimmed portion becomes smaller than that with the original layout.
+        The change involves remembering the original frameRect for the popup and restoring it in refresh().
+        This is due to the fact that the frameRect originally set in showInRect() is overwritten
+        by layoutAndGetRTLOffset(), which breaks the originally requested popup container layout metrics.
+        The max width is reset on every layoutAndCalculateWidgetRect(), as it can be constrained by the screen edge,
+        and thus should be re-checked every time the popup is displayed, in case the browser window has been moved.
+
+        Tests: manual-tests/popup-width-restriction-within-screen.html partly covers the fix (should not regress).
+        Other than that, there is no way to unit-test the platform-specific native code.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::setMaxWidth): Added. Avoid duplicate popup content layouts (in contrast with setMaxWidthAndLayout()).
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect): Attempt a left-right popup alignment inversion
+        to minimize the trimmed content. Also restore a default max popup width.
+        (WebCore::PopupContainer::layoutAndGetRTLOffset): Always return the popup listbox offset for the RTL (right alignment) case.
+        The method rename is due to the return value semantics change.
+        (WebCore::PopupContainer::showInRect): Store the originally requested frameRect for the popup.
+        (WebCore::PopupContainer::refresh): Restore the original popup frameRect to avoid layout artifacts on refresh.
+        (WebCore::PopupContainer::isRTL): This check should be made by the layoutAndGetRTLOffset() clients.
+        * platform/chromium/PopupMenuChromium.h:
+
 2011-06-28  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.
