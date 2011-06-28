@@ -1,3 +1,15 @@
+2011-06-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Avoid attempt to create a zero-size DIB.
+        https://bugs.webkit.org/show_bug.cgi?id=63484.
+
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::update): Check for zero-height (or zero-width)
+        region for DIB, and exit early if attempting to create a zero-size
+        DIB/BITMAP.
+
 2011-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

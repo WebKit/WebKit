@@ -145,10 +145,14 @@ void WebNodeHighlight::update()
     size.cx = webViewRect.right - webViewRect.left;
     size.cy = webViewRect.bottom - webViewRect.top;
 
+    if (!size.cx || !size.cy)
+        return;
+
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(size));
 
     void* pixels = 0;
     OwnPtr<HBITMAP> hbmp = adoptPtr(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    ASSERT_WITH_MESSAGE(hbmp, "::CreateDIBSection failed with error %lu", ::GetLastError());
 
     ::SelectObject(hdc, hbmp.get());
 
