@@ -285,6 +285,20 @@ static long long generateFrameIdentifier()
     return ++next;
 }
 
+static WebPluginContainerImpl* pluginContainerFromNode(const WebNode& node)
+{
+    const Node* coreNode = node.constUnwrap<Node>();
+    if (coreNode->hasTagName(HTMLNames::objectTag) || coreNode->hasTagName(HTMLNames::embedTag)) {
+        RenderObject* object = coreNode->renderer();
+        if (object && object->isWidget()) {
+            Widget* widget = toRenderWidget(object)->widget();
+            if (widget && widget->isPluginContainer())
+                return static_cast<WebPluginContainerImpl*>(widget);
+        }
+    }
+    return 0;
+}
+
 WebPluginContainerImpl* WebFrameImpl::pluginContainerFromFrame(Frame* frame)
 {
     if (!frame)
@@ -296,7 +310,7 @@ WebPluginContainerImpl* WebFrameImpl::pluginContainerFromFrame(Frame* frame)
 }
 
 // Simple class to override some of PrintContext behavior. Some of the methods
-// made virtual so that they can be overriden by ChromePluginPrintContext.
+// made virtual so that they can be overridden by ChromePluginPrintContext.
 class ChromePrintContext : public PrintContext {
     WTF_MAKE_NONCOPYABLE(ChromePrintContext);
 public:
@@ -1100,7 +1114,7 @@ size_t WebFrameImpl::characterIndexForPoint(const WebPoint& webPoint) const
     return location;
 }
 
-bool WebFrameImpl::executeCommand(const WebString& name)
+bool WebFrameImpl::executeCommand(const WebString& name, const WebNode& node)
 {
     ASSERT(frame());
 
@@ -1120,6 +1134,8 @@ bool WebFrameImpl::executeCommand(const WebString& name)
 
     if (command == "Copy") {
         WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(frame());
+        if (!pluginContainer)
+            pluginContainer = pluginContainerFromNode(node);
         if (pluginContainer) {
             pluginContainer->copy();
             return true;
@@ -1307,15 +1323,7 @@ int WebFrameImpl::printBegin(const WebSize& pageSize,
         pluginContainer = pluginContainerFromFrame(frame());
     } else {
         // We only support printing plugin nodes for now.
-        const Node* coreNode = constrainToNode.constUnwrap<Node>();
-        if (coreNode->hasTagName(HTMLNames::objectTag) || coreNode->hasTagName(HTMLNames::embedTag)) {
-            RenderObject* object = coreNode->renderer();
-            if (object && object->isWidget()) {
-                Widget* widget = toRenderWidget(object)->widget();
-                if (widget && widget->isPluginContainer())
-                    pluginContainer =  static_cast<WebPluginContainerImpl*>(widget);
-            }
-        }
+        pluginContainer = pluginContainerFromNode(constrainToNode);
     }
 
     if (pluginContainer && pluginContainer->supportsPaginatedPrint())

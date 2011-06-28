@@ -1,3 +1,17 @@
+2011-06-27  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Pass an optional WebNode that is the node receiving the context menu action.
+        https://bugs.webkit.org/show_bug.cgi?id=63503
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::pluginContainerFromNode):
+        (WebKit::WebFrameImpl::executeCommand):
+        (WebKit::WebFrameImpl::printBegin):
+        * src/WebFrameImpl.h:
+
 2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled DEPS.

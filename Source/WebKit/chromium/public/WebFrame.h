@@ -392,7 +392,7 @@ public:
     // Supports commands like Undo, Redo, Cut, Copy, Paste, SelectAll,
     // Unselect, etc. See EditorCommand.cpp for the full list of supported
     // commands.
-    virtual bool executeCommand(const WebString&) = 0;
+    virtual bool executeCommand(const WebString&, const WebNode& = WebNode()) = 0;
     virtual bool executeCommand(const WebString&, const WebString& value) = 0;
     virtual bool isCommandEnabled(const WebString&) const = 0;
 
