@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IntSize.h"
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 
 #include <ApplicationServices/ApplicationServices.h>
 

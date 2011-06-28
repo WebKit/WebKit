@@ -543,10 +543,14 @@
 #define WTF_USE_CA 1
 #endif
 
-/* USE(SKIA) for Win/Linux, CG for Mac */
+/* USE(SKIA) for Win/Linux, CG for Mac, unless enabled */
 #if PLATFORM(CHROMIUM)
 #if OS(DARWIN)
+#if USE(SKIA_ON_MAC_CHROMIUM)
+#define WTF_USE_SKIA 1
+#else
 #define WTF_USE_CG 1
+#endif
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 1
 #define WTF_USE_ICCJPEG 1
