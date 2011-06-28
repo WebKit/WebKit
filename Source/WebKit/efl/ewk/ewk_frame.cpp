@@ -1975,3 +1975,18 @@ WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const W
 {
     return 0;
 }
+
+/**
+ * @internal
+ * Reports that editor client selection was changed.
+ *
+ * @param o Frame
+ *
+ * Emits signal: "editorclientselection,changed" with no parameters.
+ */
+void ewk_frame_editor_client_selection_changed(Evas_Object* o)
+{
+    evas_object_smart_callback_call(o, "editorclient,selection,changed", 0);
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd);
+    ewk_view_editor_client_selection_changed(sd->view);
+}

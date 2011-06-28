@@ -4498,3 +4498,16 @@ Eina_Bool ewk_view_need_touch_events_get(Evas_Object* o)
     return priv->flags.need_touch_events;
 }
 #endif
+
+/**
+ * @internal
+ * Reports the view that editor client selection has changed.
+ *
+ * @param o View.
+ *
+ * Emits signal: "editorclientselection,changed" with no parameters.
+ */
+void ewk_view_editor_client_selection_changed(Evas_Object* o)
+{
+    evas_object_smart_callback_call(o, "editorclient,selection,changed", 0);
+}

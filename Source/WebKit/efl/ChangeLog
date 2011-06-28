@@ -1,3 +1,23 @@
+2011-06-28  Michal Pakula vel Rutka  <m.pakula@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement EditorClientEfl::respondToChangedSelection
+        https://bugs.webkit.org/show_bug.cgi?id=63525
+
+        This patch:
+        - implements EditorClientEfl::respondToChangedSelection,
+        - adds ewk_frame_editor_client_selection_changed and
+        - ewk_view_editor_client_selection_changed
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::respondToChangedSelection):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_editor_client_selection_changed):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_editor_client_selection_changed):
+
 2011-06-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.
