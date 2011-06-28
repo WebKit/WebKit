@@ -1,3 +1,9 @@
+2011-06-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix style error related to wrong include order.
+
+        * platform/graphics/efl/ImageEfl.cpp:
+
 2011-06-27  Brian Weinstein  <bweinstein@apple.com>
 
         Fix the WebCore vcproj file after r89851.

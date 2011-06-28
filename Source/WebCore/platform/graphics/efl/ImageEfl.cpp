@@ -32,8 +32,8 @@
 #include "BitmapImage.h"
 #include "SharedBuffer.h"
 
-#include <wtf/text/StringConcatenate.h>
 #include <cairo.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
