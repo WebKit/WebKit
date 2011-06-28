@@ -1,3 +1,11 @@
+2011-06-28  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.  Link to correct library for
+        the zlib1.dll.
+
+        * win/tools/vsprops/WinCairo.vsprops: Don't link to the static
+        zlib.lib when building for WinCairo.
+
 2011-06-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r89401 and r89403.
