@@ -46,7 +46,10 @@ WebInspector.NetworkManager.prototype = {
     {
         function callbackWrapper(error, content, contentEncoded)
         {
-            callback(!error ? content : null, contentEncoded);
+            if (error)
+                callback(null, false);
+            else
+                callback(content, content && contentEncoded);
         }
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
