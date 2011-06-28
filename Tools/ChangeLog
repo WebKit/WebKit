@@ -1,5 +1,14 @@
 2011-06-28  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just fixing a typo.
+
+        Fix misspellings of "thead" to "thread".
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-06-28  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Tony Chang.
 
         new-run-webkit-tests needs a --webkit-test-runner option

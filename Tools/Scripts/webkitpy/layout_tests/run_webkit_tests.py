@@ -268,7 +268,7 @@ def parse_args(args=None):
         optparse.make_option("--complex-text", action="store_true", default=False,
             help="Use the complex text code path for all text (Mac OS X and Windows only)"),
         optparse.make_option("--threaded", action="store_true", default=False,
-            help="Run a concurrent JavaScript thead with each test"),
+            help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--webkit-test-runner", "-2", action="store_true",
             help="Use WebKitTestRunner rather than DumpRenderTree."),
     ]
