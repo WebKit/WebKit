@@ -1,3 +1,35 @@
+2011-06-28  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG1.1SE test text-tref-03-b.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=63390
+
+        Support tref on forward referenced content by listening to DOMSubtreeModified events. This also
+        allows updating after modifications in the referenced content subtree.
+
+        Tests: svg/W3C-SVG-1.1-SE/text-tref-03-b.svg
+               svg/custom/text-tref-03-b-change-href-dom.svg
+               svg/custom/text-tref-03-b-change-href.svg
+               svg/custom/text-tref-03-b-dynamic.svg
+               svg/custom/text-tref-03-b-dynamic2.svg
+               svg/custom/text-tref-03-b-referenced-element-removal.svg
+               svg/custom/text-tref-03-b-tref-removal.svg
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SubtreeModificationEventListener::create):
+        (WebCore::SubtreeModificationEventListener::cast):
+        (WebCore::SubtreeModificationEventListener::removeFromTarget):
+        (WebCore::SubtreeModificationEventListener::SubtreeModificationEventListener):
+        (WebCore::SubtreeModificationEventListener::operator==):
+        (WebCore::SubtreeModificationEventListener::handleEvent):
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::parseMappedAttribute):
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        (WebCore::SVGTRefElement::buildPendingResource):
+        (WebCore::SVGTRefElement::removedFromDocument):
+        * svg/SVGTRefElement.h:
+
 2011-06-28  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Anders Carlsson.

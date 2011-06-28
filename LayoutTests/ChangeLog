@@ -1,3 +1,41 @@
+2011-06-28  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG1.1SE test text-tref-03-b.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=63390
+
+        - text-tref-03-b.svg, the w3c SVG1.1 testcase mentioned in the bug.
+        - text-tref-03-b-dynamic.svg, tests dynamically adding the tref.
+        - text-tref-03-b-dynamic2.svg, tests dynamically adding the referenced content.
+        - text-tref-03-b-tref-removal.svg, tests removal of tref.
+        - text-tref-03-b-referenced-element-removal.svg, tests removal of referenced content.
+        - text-tref-03-b-change-href.svg, tests changing href attribute dynamically through setAttribute.
+        - text-tref-03-b-change-href-dom.svg, tests changing href attribute dynamically through href animated property.
+        - foreignObject/text-tref-02-b.svg has improved result, but is still not perfect.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/mac/svg/custom/text-tref-03-b-change-href-dom-expected.png: Added.
+        * platform/mac/svg/custom/text-tref-03-b-change-href-dom-expected.txt: Added.
+        * platform/mac/svg/custom/text-tref-03-b-change-href-expected.png: Added.
+        * platform/mac/svg/custom/text-tref-03-b-change-href-expected.txt: Added.
+        * platform/mac/svg/custom/text-tref-03-b-referenced-element-removal-expected.png: Added.
+        * platform/mac/svg/custom/text-tref-03-b-referenced-element-removal-expected.txt: Added.
+        * platform/mac/svg/custom/text-tref-03-b-tref-removal-expected.png: Added.
+        * platform/mac/svg/custom/text-tref-03-b-tref-removal-expected.txt: Added.
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * svg/W3C-SVG-1.1-SE/text-tref-03-b.svg: Added.
+        * svg/custom/text-tref-03-b-change-href-dom.svg: Added.
+        * svg/custom/text-tref-03-b-change-href.svg: Added.
+        * svg/custom/text-tref-03-b-dynamic-expected.txt: Added.
+        * svg/custom/text-tref-03-b-dynamic.svg: Added.
+        * svg/custom/text-tref-03-b-dynamic2-expected.txt: Added.
+        * svg/custom/text-tref-03-b-dynamic2.svg: Added.
+        * svg/custom/text-tref-03-b-referenced-element-removal.svg: Added.
+        * svg/custom/text-tref-03-b-tref-removal.svg: Added.
+
 2011-06-28  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.

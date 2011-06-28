@@ -27,12 +27,16 @@
 
 namespace WebCore {
 
+class SubtreeModificationEventListener;
+
 class SVGTRefElement : public SVGTextPositioningElement,
                        public SVGURIReference {
 public:
     static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
 
 private:
+    friend class SubtreeModificationEventListener;
+
     SVGTRefElement(const QualifiedName&, Document*);
 
     bool isSupportedAttribute(const QualifiedName&);
@@ -46,12 +50,18 @@ private:
     virtual bool childShouldCreateRenderer(Node*) const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
+    virtual void removedFromDocument();
+
     void updateReferencedText();
+
+    virtual void buildPendingResource();
 
     // Animated property declarations
 
     // SVGURIReference
     DECLARE_ANIMATED_STRING(Href, href)
+
+    RefPtr<SubtreeModificationEventListener> m_eventListener;
 };
 
 } // namespace WebCore

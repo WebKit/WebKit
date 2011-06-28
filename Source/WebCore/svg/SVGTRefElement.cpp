@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +24,9 @@
 #if ENABLE(SVG)
 #include "SVGTRefElement.h"
 
+#include "EventListener.h"
+#include "EventNames.h"
+#include "MutationEvent.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGResource.h"
 #include "SVGDocument.h"
@@ -47,12 +51,61 @@ PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, 
     return adoptRef(new SVGTRefElement(tagName, document));
 }
 
+class SubtreeModificationEventListener : public EventListener {
+public:
+    static PassRefPtr<SubtreeModificationEventListener> create(SVGTRefElement* trefElement, String targetId)
+    {
+        return adoptRef(new SubtreeModificationEventListener(trefElement, targetId));
+    }
+
+    static const SubtreeModificationEventListener* cast(const EventListener* listener)
+    {
+        return listener->type() == CPPEventListenerType ? static_cast<const SubtreeModificationEventListener*>(listener) : 0;
+    }
+
+    virtual bool operator==(const EventListener&);
+
+    void removeFromTarget()
+    {
+        Element* target = m_trefElement->treeScope()->getElementById(m_targetId);
+        if (target && target->parentNode())
+            target->parentNode()->removeEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
+    }
+
+private:
+    SubtreeModificationEventListener(SVGTRefElement* trefElement, String targetId)
+        : EventListener(CPPEventListenerType)
+        , m_trefElement(trefElement)
+        , m_targetId(targetId)
+    {
+    }
+
+    virtual void handleEvent(ScriptExecutionContext*, Event*);
+
+    SVGTRefElement* m_trefElement;
+    String m_targetId;
+};
+
+bool SubtreeModificationEventListener::operator==(const EventListener& listener)
+{
+    if (const SubtreeModificationEventListener* subtreeModificationEventListener = SubtreeModificationEventListener::cast(&listener))
+        return m_trefElement == subtreeModificationEventListener->m_trefElement;
+    return false;
+}
+
+void SubtreeModificationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+{
+    if (event->type() == eventNames().DOMSubtreeModifiedEvent)
+        m_trefElement->updateReferencedText();
+}
+
 void SVGTRefElement::updateReferencedText()
 {
     Element* target = treeScope()->getElementById(SVGURIReference::getTarget(href()));
+    ASSERT(target);
     String textContent;
-    if (target && target->isSVGElement())
-        textContent = static_cast<SVGElement*>(target)->textContent();
+    if (target->parentNode())
+        textContent = target->textContent();
     ExceptionCode ignore = 0;
     setTextContent(textContent, ignore);
 }
@@ -73,7 +126,6 @@ void SVGTRefElement::parseMappedAttribute(Attribute* attr)
     }
 
     if (SVGURIReference::parseMappedAttribute(attr)) {
-        updateReferencedText();
         return;
     }
 
@@ -89,11 +141,23 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
-    if (!renderer())
-        return;
-
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+        if (m_eventListener) {
+            m_eventListener->removeFromTarget();
+            m_eventListener = 0;
+        }
+        String id = SVGURIReference::getTarget(href());
+        Element* target = treeScope()->getElementById(id);
+        if (!target) {
+            document()->accessSVGExtensions()->addPendingResource(id, this);
+            return;
+        }
+        updateReferencedText();
+        m_eventListener = SubtreeModificationEventListener::create(this, id);
+        ASSERT(target->parentNode());
+        target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
+        if (RenderObject* renderer = this->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
 
@@ -161,6 +225,29 @@ bool SVGTRefElement::rendererIsNeeded(const NodeRenderingContext& context)
         return StyledElement::rendererIsNeeded(context);
 
     return false;
+}
+
+void SVGTRefElement::buildPendingResource()
+{
+    updateReferencedText();
+    String id = SVGURIReference::getTarget(href());
+    if (Element* target = treeScope()->getElementById(id)) {
+        ASSERT(!m_eventListener);
+        m_eventListener = SubtreeModificationEventListener::create(this, id);
+        ASSERT(target->parentNode());
+        target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
+    }
+}
+
+void SVGTRefElement::removedFromDocument()
+{
+    SVGStyledElement::removedFromDocument();
+
+    if (!m_eventListener)
+        return;
+
+    m_eventListener->removeFromTarget();
+    m_eventListener = 0;
 }
 
 }
