@@ -4031,3 +4031,6 @@ BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
 
 // Caused by http://trac.webkit.org/changeset/89733.
 BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
+
+BUGCR87732 : fast/regex/toString.html = TEXT
+

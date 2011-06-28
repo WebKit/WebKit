@@ -1,3 +1,9 @@
+2011-06-28  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: added chromium test suppression.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
