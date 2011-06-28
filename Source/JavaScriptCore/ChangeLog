@@ -25,6 +25,26 @@
 
         Reviewed by Oliver Hunt.
 
+        https://bugs.webkit.org/show_bug.cgi?id=63560
+        DFG_JIT allow allocation of specific machine registers
+
+        This allow us to allocate the registers necessary to perform x86
+        idiv instructions for div/mod, and may be useful for shifts, too.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::allocate):
+        (JSC::DFG::GPRResult::GPRResult):
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::allocateSpecific):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isInteger):
+
+2011-06-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         https://bugs.webkit.org/show_bug.cgi?id=55040
         RegExp constructor returns the argument regexp instead of a new object
 

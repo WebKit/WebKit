@@ -139,6 +139,19 @@ public:
         return allocateInternal(currentLowest, spillMe);
     }
 
+    // Allocates the given register, even if this will force a spill.
+    VirtualRegister allocateSpecific(RegID reg)
+    {
+        unsigned index = BankInfo::toIndex(reg);
+
+        ++m_data[index].lockCount;
+        VirtualRegister name = nameAtIndex(index);
+        if (name != InvalidVirtualRegister)
+            releaseAtIndex(index);
+        
+        return name;
+    }
+
     // retain/release - these methods are used to associate/disassociate names
     // with values in registers. retain should only be called on locked registers.
     void retain(RegID reg, VirtualRegister name, SpillHint spillOrder)

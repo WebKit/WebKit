@@ -536,6 +536,13 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit)
     m_gpr = m_jit->allocate();
 }
 
+GPRTemporary::GPRTemporary(JITCodeGenerator* jit, GPRReg specific)
+    : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
+{
+    m_gpr = m_jit->allocate(specific);
+}
+
 GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateIntegerOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)

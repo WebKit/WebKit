@@ -116,6 +116,13 @@ public:
             spill(spillMe);
         return gpr;
     }
+    GPRReg allocate(GPRReg specific)
+    {
+        VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
+        if (spillMe != InvalidVirtualRegister)
+            spill(spillMe);
+        return specific;
+    }
     FPRReg fprAllocate()
     {
         VirtualRegister spillMe;
@@ -999,6 +1006,7 @@ private:
 class GPRTemporary {
 public:
     GPRTemporary(JITCodeGenerator*);
+    GPRTemporary(JITCodeGenerator*, GPRReg specific);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&, SpeculateIntegerOperand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&);
@@ -1015,13 +1023,6 @@ public:
     {
         ASSERT(m_gpr != InvalidGPRReg);
         return m_gpr;
-    }
-
-protected:
-    GPRTemporary(JITCodeGenerator* jit, GPRReg lockedGPR)
-        : m_jit(jit)
-        , m_gpr(lockedGPR)
-    {
     }
 
 private:
@@ -1066,15 +1067,8 @@ private:
 class GPRResult : public GPRTemporary {
 public:
     GPRResult(JITCodeGenerator* jit)
-        : GPRTemporary(jit, lockedResult(jit))
+        : GPRTemporary(jit, GPRInfo::returnValueGPR)
     {
-    }
-
-private:
-    static GPRReg lockedResult(JITCodeGenerator* jit)
-    {
-        jit->lock(GPRInfo::returnValueGPR);
-        return GPRInfo::returnValueGPR;
     }
 };
 

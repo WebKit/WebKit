@@ -160,6 +160,9 @@ private:
         if (node.hasInt32Result())
             return true;
 
+        if (isInt32Constant(nodeIndex))
+            return true;
+
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
