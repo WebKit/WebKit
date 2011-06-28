@@ -168,12 +168,12 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& p
     paintBorder(paintInfo.context, paintRect, style());
 }
 
-void RenderFieldset::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderFieldset::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    IntRect paintRect = IntRect(paintOffset, size());
+    LayoutRect paintRect = LayoutRect(paintOffset, size());
     RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintMask(paintInfo, paintOffset);
@@ -182,11 +182,11 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
-        int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
+        LayoutUnit yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
         paintRect.expand(0, -yOff);
         paintRect.move(0, yOff);
     } else {
-        int xOff = (legend->x() > 0) ? 0 : (legend->width() - borderLeft()) / 2;
+        LayoutUnit xOff = (legend->x() > 0) ? 0 : (legend->width() - borderLeft()) / 2;
         paintRect.expand(-xOff, 0);
         paintRect.move(xOff, 0);
     }

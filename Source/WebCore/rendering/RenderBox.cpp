@@ -878,12 +878,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintO
         paintInfo.context->endTransparencyLayer();
 }
 
-void RenderBox::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
         return;
 
-    IntRect paintRect = IntRect(paintOffset, size());
+    LayoutRect paintRect = LayoutRect(paintOffset, size());
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
@@ -892,7 +892,7 @@ void RenderBox::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
     paintMaskImages(paintInfo, paintRect);
 }
 
-void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const IntRect& paintRect)
+void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& paintRect)
 {
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;

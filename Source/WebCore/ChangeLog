@@ -2,6 +2,34 @@
 
         Reviewed by Eric Seidel.
 
+        Switch PaintMask* to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63576
+
+        Switching paintMask* to layout type abstraction from more integral types.
+
+        No new tests as this is just moving to an abstraction.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintMaskImages):
+        * rendering/RenderBox.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintMask):
+        * rendering/RenderTableCell.h:
+
+2011-06-28  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Switch paintFillLayer* to new layout types
         https://bugs.webkit.org/show_bug.cgi?id=63570
 

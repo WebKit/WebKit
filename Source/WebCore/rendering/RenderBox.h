@@ -354,7 +354,7 @@ public:
 
     virtual void paintObject(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
-    virtual void paintMask(PaintInfo&, const IntPoint&);
+    virtual void paintMask(PaintInfo&, const LayoutPoint&);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     // Called when a positioned object moves but doesn't necessarily change size.  A simplified layout is attempted
@@ -420,7 +420,7 @@ protected:
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, BackgroundBleedAvoidance, CompositeOperator, RenderObject* backgroundObject);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, BackgroundBleedAvoidance = BackgroundBleedNone, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
 
-    void paintMaskImages(const PaintInfo&, const IntRect&);
+    void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
 #if PLATFORM(MAC)
     void paintCustomHighlight(const IntPoint&, const AtomicString& type, bool behindText);

@@ -1163,20 +1163,20 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& pa
     }
 }
 
-void InlineFlowBox::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
     // Pixel snap mask painting.
-    IntRect frameRect = roundedFrameRect();
+    LayoutRect frameRect = roundedFrameRect();
 
     constrainToLineTopAndBottomIfNeeded(frameRect);
     
     // Move x/y to our coordinates.
-    IntRect localRect(frameRect);
+    LayoutRect localRect(frameRect);
     flipForWritingMode(localRect);
-    IntPoint adjustedPaintOffset = paintOffset + localRect.location();
+    LayoutPoint adjustedPaintOffset = paintOffset + localRect.location();
 
     const NinePieceImage& maskNinePieceImage = renderer()->style()->maskBoxImage();
     StyleImage* maskBoxImage = renderer()->style()->maskBoxImage().image();
@@ -1197,7 +1197,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
         }
     }
 
-    IntRect paintRect = IntRect(adjustedPaintOffset, frameRect.size());
+    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, frameRect.size());
     paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), paintRect, compositeOp);
     
     bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(renderer()->style()->effectiveZoom());
@@ -1207,24 +1207,24 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
     // The simple case is where we are the only box for this object.  In those
     // cases only a single call to draw is required.
     if (!prevLineBox() && !nextLineBox()) {
-        boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(adjustedPaintOffset, frameRect.size()), renderer()->style(), maskNinePieceImage, compositeOp);
+        boxModelObject()->paintNinePieceImage(paintInfo.context, LayoutRect(adjustedPaintOffset, frameRect.size()), renderer()->style(), maskNinePieceImage, compositeOp);
     } else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
-        int logicalOffsetOnLine = 0;
+        LayoutUnit logicalOffsetOnLine = 0;
         for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
             logicalOffsetOnLine += curr->logicalWidth();
-        int totalLogicalWidth = logicalOffsetOnLine;
+        LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
         for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
             totalLogicalWidth += curr->logicalWidth();
-        int stripX = adjustedPaintOffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
-        int stripY = adjustedPaintOffset.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
-        int stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-        int stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
+        LayoutUnit stripX = adjustedPaintOffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
+        LayoutUnit stripY = adjustedPaintOffset.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
+        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
+        LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(paintRect);
-        boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(stripX, stripY, stripWidth, stripHeight), renderer()->style(), maskNinePieceImage, compositeOp);
+        boxModelObject()->paintNinePieceImage(paintInfo.context, LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer()->style(), maskNinePieceImage, compositeOp);
     }
     
     if (pushTransparencyLayer)

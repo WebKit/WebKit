@@ -572,12 +572,12 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& pain
         paintBorder(paintInfo.context, rect, style());
 }
 
-void RenderTable::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    IntRect rect(paintOffset, size());
+    LayoutRect rect(paintOffset, size());
     subtractCaptionRect(rect);
 
     paintMaskImages(paintInfo, rect);
