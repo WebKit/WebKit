@@ -31,7 +31,7 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGPoint CGPoint;
 #endif
 
@@ -130,7 +130,7 @@ public:
         return FloatPoint(m_y, m_x);
     }
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
     FloatPoint(const CGPoint&);
     operator CGPoint() const;
 #endif

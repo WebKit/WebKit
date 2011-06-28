@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FloatRect.h"
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
 
 #include <ApplicationServices/ApplicationServices.h>
 

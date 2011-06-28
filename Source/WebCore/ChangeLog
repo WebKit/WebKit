@@ -1,3 +1,40 @@
+2011-06-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89968.
+        http://trac.webkit.org/changeset/89968
+        https://bugs.webkit.org/show_bug.cgi?id=63581
+
+        Broke chromium windows compile (Requested by jamesr on
+        #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * loader/cache/CachedFont.cpp:
+        * platform/chromium/DragImageRef.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        (WebCore::GlyphBuffer::expandLastAdvance):
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cg/FloatPointCG.cpp:
+        * platform/graphics/cg/FloatRectCG.cpp:
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/IntPointCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/cg/IntSizeCG.cpp:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+
 2011-06-28  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

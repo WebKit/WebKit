@@ -260,7 +260,7 @@
           '<@(webcore_svg_bindings_idl_files)',
         ],
       }],
-      ['OS=="mac" and use_skia==0', {
+      ['OS=="mac"', {
         'webcore_include_dirs+': [
           # platform/graphics/cg and cocoa need to come before
           # platform/graphics/chromium so that the Mac build picks up the
@@ -271,8 +271,6 @@
           '../platform/graphics/cocoa',
           '../platform/graphics/cg',
         ],
-      }],
-      ['OS=="mac"', {
         'webcore_include_dirs': [
           # FIXME: Eliminate dependency on platform/mac and related
           # directories.
@@ -284,12 +282,6 @@
           '../platform/graphics/mac',
           '../platform/mac',
           '../platform/text/mac',
-        ],
-      }],
-      ['OS=="mac" and use_skia==1', {
-        'webcore_include_dirs': [
-              '../platform/graphics/cocoa',
-              '../platform/graphics/cg',
         ],
       }],
       ['OS=="win"', {
@@ -1348,15 +1340,7 @@
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
         }],
-        ['OS=="mac" and use_skia==0', {
-          'sources/': [
-            # The Mac build is PLATFORM_CG too.  platform/graphics/cg is the
-            # only place that CG files we want to build are located, and not
-            # all of them even have a CG suffix, so just add them by a
-            # regexp matching their directory.
-            ['include', 'platform/graphics/cg/[^/]*(?<!Win)?\\.(cpp|mm?)$'],
-          ],
-        }],['OS=="mac"', {
+        ['OS=="mac"', {
           # Necessary for Mac .mm stuff.
           'include_dirs': [
             '../../../WebKitLibraries',
@@ -1386,6 +1370,12 @@
             ['include', 'CF\\.cpp$'],
             ['exclude', 'network/cf/'],
 
+            # The Mac build is PLATFORM_CG too.  platform/graphics/cg is the
+            # only place that CG files we want to build are located, and not
+            # all of them even have a CG suffix, so just add them by a
+            # regexp matching their directory.
+            ['include', 'platform/graphics/cg/[^/]*(?<!Win)?\\.(cpp|mm?)$'],
+
             # Use native Mac font code from WebCore.
             ['include', 'platform/(graphics/)?mac/[^/]*Font[^/]*\\.(cpp|mm?)$'],
             ['include', 'platform/graphics/mac/ComplexText[^/]*\\.(cpp|h)$'],
@@ -1402,6 +1392,7 @@
             ['include', 'platform/graphics/mac/FloatRectMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatSizeMac\\.mm$'],
             ['include', 'platform/graphics/mac/GlyphPageTreeNodeMac\\.cpp$'],
+            ['include', 'platform/graphics/mac/GraphicsContextMac\\.mm$'],
             ['include', 'platform/graphics/mac/IntPointMac\\.mm$'],
             ['include', 'platform/graphics/mac/IntRectMac\\.mm$'],
             ['include', 'platform/mac/BlockExceptions\\.mm$'],
@@ -1417,6 +1408,9 @@
 
             ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
 
+            # Chromium Mac does not use skia.
+            ['exclude', 'platform/graphics/skia/[^/]*Skia\\.(cpp|h)$'],
+
             # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
             # implementation.
             ['exclude', 'platform/KillRingNone\\.cpp$'],
@@ -1429,33 +1423,14 @@
             # related to ScrollbarThemeChromium.cpp.
             ['exclude', 'platform/chromium/ScrollbarThemeChromium\\.cpp$'],
 
+            # The Mac currently uses ImageChromiumMac.mm from
+            # platform/graphics/chromium, included by regex above, instead.
+            ['exclude', 'platform/graphics/chromium/ImageChromium\\.cpp$'],
+
             # The Mac does not use ImageSourceCG.cpp from platform/graphics/cg
             # even though it is included by regex above.
             ['exclude', 'platform/graphics/cg/ImageSourceCG\\.cpp$'],
             ['exclude', 'platform/graphics/cg/PDFDocumentImage\\.cpp$'],
-
-            ['include', '/chrome/junk\\.txt$'],
-          ],
-        },{ # OS!="mac"
-          'sources/': [
-            # FIXME: We will eventually compile this too, but for now it's
-            # only used on mac.
-            ['exclude', 'platform/graphics/FontPlatformData\\.cpp$'],
-          ],
-        }],
-        ['OS=="mac" and use_skia==0', {
-          'sources/': [
-            # Cherry-pick some files that can't be included by broader regexps.
-            # Some of these are used instead of Chromium platform files, see
-            # the specific exclusions in the "sources!" list below.
-            ['include', 'platform/graphics/mac/GraphicsContextMac\\.mm$'],
-
-            # Chromium Mac does not use skia.
-            ['exclude', 'platform/graphics/skia/[^/]*Skia\\.(cpp|h)$'],
-
-            # The Mac currently uses ImageChromiumMac.mm from
-            # platform/graphics/chromium, included by regex above, instead.
-            ['exclude', 'platform/graphics/chromium/ImageChromium\\.cpp$'],
 
             # ImageDecoderSkia is not used on mac.  ImageDecoderCG is used instead.
             ['exclude', 'platform/image-decoders/skia/ImageDecoderSkia\\.cpp$'],
@@ -1464,39 +1439,26 @@
             # Again, Skia is not used on Mac.
             ['exclude', 'platform/chromium/DragImageChromiumSkia\\.cpp$'],
           ],
-        }],
-        ['OS=="mac" and use_skia==1', {
+        },{ # OS!="mac"
           'sources/': [
-            ['include', 'platform/graphics/cg/FloatPointCG\\.cpp$'],
-            ['include', 'platform/graphics/cg/FloatRectCG\\.cpp$'],
-            ['include', 'platform/graphics/cg/FloatSizeCG\\.cpp$'],
-            ['include', 'platform/graphics/cg/IntPointCG\\.cpp$'],
-            ['include', 'platform/graphics/cg/IntRectCG\\.cpp$'],
-            ['include', 'platform/graphics/cg/IntSizeCG\\.cpp$'],
-            ['exclude', 'platform/graphics/mac/FontMac\\.mm$'],
-            ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$'],
-            ['exclude', 'platform/chromium/DragImageChromiumMac\\.cpp$'],
+            # FIXME: We will eventually compile this too, but for now it's
+            # only used on mac.
+            ['exclude', 'platform/graphics/FontPlatformData\\.cpp$'],
+
+            # Linux uses FontLinux; Windows uses FontWin. Additionally, FontSkia
+            # is excluded by a rule above if WebKit uses CG instead of Skia.
+            ['exclude', 'platform/graphics/skia/FontSkia\\.cpp$'],
           ],
         }],
         ['toolkit_uses_gtk == 0', {
           'sources/': [
             ['exclude', '(Gtk|Linux)\\.cpp$'],
             ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
-          ],
-        }],
-        ['toolkit_uses_gtk == 0 and use_skia==0', {
-          'sources/': [
             ['exclude', 'VDMX[^/]+\\.(cpp|h)$'],
           ],
         }],
         ['OS!="mac"', {
-          'sources/': [
-            ['exclude', 'Mac\\.(cpp|mm?)$'],
-
-            # Linux uses FontLinux; Windows uses FontWin. Additionally, FontSkia
-            # is excluded by a rule above if WebKit uses CG instead of Skia.
-            ['exclude', 'platform/graphics/skia/FontSkia\\.cpp$'],
-          ],
+          'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
         }],
         ['OS!="win"', {
           'sources/': [
