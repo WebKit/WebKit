@@ -148,9 +148,13 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         return false;
     }
 
-    char* buffer = 0;
-    NPError err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
-    if (err == NPERR_NO_ERROR)
+    char* buffer;
+    NPError error = NPP_GetValue(0, NPPVpluginNameString, &buffer);
+    if (error == NPERR_NO_ERROR)
+        plugin.info.name = buffer;
+
+    error = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
+    if (error == NPERR_NO_ERROR)
         plugin.info.desc = buffer;
 
     const char* mimeDescription = NP_GetMIMEDescription();
