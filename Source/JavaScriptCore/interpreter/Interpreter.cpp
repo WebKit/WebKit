@@ -1606,12 +1606,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
          
          Constructs a new Array instance using the original
          constructor, and puts the result in register dst.
-         The array be initialized with the values from immediateBuffer[index]
+         The array be initialized with the values from constantBuffer[index]
          */
         int dst = vPC[1].u.operand;
         int firstArg = vPC[2].u.operand;
         int argCount = vPC[3].u.operand;
-        ArgList args(codeBlock->immediateBuffer(firstArg), argCount);
+        ArgList args(codeBlock->constantBufferfirstArg), argCount);
         callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, args));
         
         vPC += OPCODE_LENGTH(op_new_array);

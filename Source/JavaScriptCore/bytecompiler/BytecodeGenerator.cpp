@@ -1508,9 +1508,19 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
     return dst;
 }
 
-unsigned BytecodeGenerator::addImmediateBuffer(unsigned length)
+unsigned BytecodeGenerator::addConstantBuffer(unsigned length)
 {
-    return m_codeBlock->addImmediateBuffer(length);
+    return m_codeBlock->addConstantBuffer(length);
+}
+
+JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
+{
+    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).first->second;
+    if (!stringInMap) {
+        stringInMap = jsString(globalData(), identifier.ustring());
+        addConstantValue(stringInMap);
+    }
+    return stringInMap;
 }
 
 RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements, unsigned length)
@@ -1518,11 +1528,11 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
 #if !ASSERT_DISABLED
     unsigned checkLength = 0;
 #endif
-    bool hadNonNumber = false;
+    bool hadVariableExpression = false;
     if (length) {
         for (ElementNode* n = elements; n; n = n->next()) {
-            if (!n->value()->isNumber()) {
-                hadNonNumber = true;
+            if (!n->value()->isNumber() && !n->value()->isString()) {
+                hadVariableExpression = true;
                 break;
             }
             if (n->elision())
@@ -1531,16 +1541,22 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
             checkLength++;
 #endif
         }
-        if (!hadNonNumber) {
+        if (!hadVariableExpression) {
             ASSERT(length == checkLength);
-            unsigned immediateBufferIndex = addImmediateBuffer(length);
-            JSValue* immediateBuffer = m_codeBlock->immediateBuffer(immediateBufferIndex);
+            unsigned constantBufferIndex = addConstantBuffer(length);
+            JSValue* constantBuffer = m_codeBlock->constantBuffer(constantBufferIndex);
             unsigned index = 0;
-            for (ElementNode* n = elements; index < length; n = n->next())
-                immediateBuffer[index++] = jsNumber(static_cast<NumberNode*>(n->value())->value());
+            for (ElementNode* n = elements; index < length; n = n->next()) {
+                if (n->value()->isNumber())
+                    constantBuffer[index++] = jsNumber(static_cast<NumberNode*>(n->value())->value());
+                else {
+                    ASSERT(n->value()->isString());
+                    constantBuffer[index++] = addStringConstant(static_cast<StringNode*>(n->value())->value());
+                }
+            }
             emitOpcode(op_new_array_buffer);
             instructions().append(dst->index());
-            instructions().append(immediateBufferIndex);
+            instructions().append(constantBufferIndex);
             instructions().append(length);
             return dst;
         }

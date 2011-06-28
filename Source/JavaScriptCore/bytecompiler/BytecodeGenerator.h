@@ -469,7 +469,7 @@ namespace JSC {
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);
 
-        unsigned addImmediateBuffer(unsigned length);
+        unsigned addConstantBuffer(unsigned length);
         
         FunctionExecutable* makeFunction(ExecState* exec, FunctionBodyNode* body)
         {
@@ -480,6 +480,8 @@ namespace JSC {
         {
             return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
+
+        JSString* addStringConstant(const Identifier&);
 
         void addLineInfo(unsigned lineNo)
         {

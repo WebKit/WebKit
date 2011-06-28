@@ -2264,7 +2264,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
-    ArgList argList(stackFrame.callFrame->codeBlock()->immediateBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
+    ArgList argList(stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
     return constructArray(stackFrame.callFrame, argList);
 }
 

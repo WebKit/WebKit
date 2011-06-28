@@ -1,3 +1,26 @@
+2011-06-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make constant array optimisation less strict about what constitutes a constant
+        https://bugs.webkit.org/show_bug.cgi?id=63554
+
+        Now allow string constants in array literals to actually be considered constant,
+        and so avoid codegen in array literals with strings in them.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addConstantBuffer):
+        (JSC::CodeBlock::constantBuffer):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addConstantBuffer):
+        (JSC::BytecodeGenerator::addStringConstant):
+        (JSC::BytecodeGenerator::emitNewArray):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2011-06-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
