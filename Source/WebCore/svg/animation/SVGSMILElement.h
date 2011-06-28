@@ -107,8 +107,8 @@ public:
     virtual void applyResultsToTarget() = 0;
 
 protected:
-    void addBeginTime(SMILTime);
-    void addEndTime(SMILTime);
+    void addBeginTime(SMILTime eventTime, SMILTime endTime);
+    void addEndTime(SMILTime eventTime, SMILTime endTime);
 
     void setInactive() { m_activeState = Inactive; }
 
@@ -129,8 +129,8 @@ private:
     SMILTime resolveActiveEnd(SMILTime resolvedBegin, SMILTime resolvedEnd) const;
     SMILTime repeatingDuration() const;
     void checkRestart(SMILTime elapsed);
-    void beginListChanged();
-    void endListChanged();
+    void beginListChanged(SMILTime eventTime);
+    void endListChanged(SMILTime eventTime);
     void reschedule();
 
     // This represents conditions on elements begin or end list that need to be resolved on runtime

@@ -413,9 +413,9 @@ void SVGSMILElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
     if (inDocument()) {
         if (attrName == SVGNames::beginAttr)
-            beginListChanged();
+            beginListChanged(elapsed());
         else if (attrName == SVGNames::endAttr)
-            endListChanged();
+            endListChanged(elapsed());
     }
 }
 
@@ -602,18 +602,18 @@ SMILTime SVGSMILElement::simpleDuration() const
     return min(dur(), SMILTime::indefinite());
 }
     
-void SVGSMILElement::addBeginTime(SMILTime time)
+void SVGSMILElement::addBeginTime(SMILTime eventTime, SMILTime beginTime)
 {
-    m_beginTimes.append(time);
+    m_beginTimes.append(beginTime);
     sortTimeList(m_beginTimes);
-    beginListChanged();
+    beginListChanged(eventTime);
 }
     
-void SVGSMILElement::addEndTime(SMILTime time)
+void SVGSMILElement::addEndTime(SMILTime eventTime, SMILTime endTime)
 {
-    m_endTimes.append(time);
+    m_endTimes.append(endTime);
     sortTimeList(m_endTimes);
-    endListChanged();
+    endListChanged(eventTime);
 }
     
 SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const
@@ -748,28 +748,27 @@ SMILTime SVGSMILElement::nextProgressTime() const
     return m_nextProgressTime;
 }
     
-void SVGSMILElement::beginListChanged()
+void SVGSMILElement::beginListChanged(SMILTime eventTime)
 {
-    SMILTime elapsed = this->elapsed();
     if (m_isWaitingForFirstInterval)
         resolveFirstInterval();
-    else if (elapsed < m_intervalBegin) {
-        SMILTime newBegin = findInstanceTime(Begin, elapsed, false);
-        if (newBegin < m_intervalBegin) {
+    else {
+        SMILTime newBegin = findInstanceTime(Begin, eventTime, true);
+        if (newBegin.isFinite() && (m_intervalEnd <= eventTime || newBegin < m_intervalBegin)) {
             // Begin time changed, re-resolve the interval.
             SMILTime oldBegin = m_intervalBegin;
-            m_intervalBegin = elapsed;
+            m_intervalEnd = eventTime;
             resolveInterval(false, m_intervalBegin, m_intervalEnd);  
             ASSERT(!m_intervalBegin.isUnresolved());
             if (m_intervalBegin != oldBegin)
                 notifyDependentsIntervalChanged(ExistingInterval);
         }
     }
-    m_nextProgressTime = elapsed;
+    m_nextProgressTime = elapsed();
     reschedule();
 }
 
-void SVGSMILElement::endListChanged()
+void SVGSMILElement::endListChanged(SMILTime eventTime)
 {
     SMILTime elapsed = this->elapsed();
     if (m_isWaitingForFirstInterval)
@@ -956,9 +955,9 @@ void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase, N
                 time = syncbase->m_intervalEnd + condition.m_offset;
             ASSERT(time.isFinite());
             if (condition.m_beginOrEnd == Begin)
-                addBeginTime(time);
+                addBeginTime(elapsed(), time);
             else
-                addEndTime(time);
+                addEndTime(elapsed(), time);
         }
     }
 }
@@ -977,15 +976,17 @@ void SVGSMILElement::removeTimeDependent(SVGSMILElement* animation)
     
 void SVGSMILElement::handleConditionEvent(Event*, Condition* condition)
 {
+    SMILTime elapsed = this->elapsed();
     if (condition->m_beginOrEnd == Begin)
-        addBeginTime(elapsed() + condition->m_offset);
+        addBeginTime(elapsed, elapsed + condition->m_offset);
     else
-        addEndTime(elapsed() + condition->m_offset);
+        addEndTime(elapsed, elapsed + condition->m_offset);
 }
 
 void SVGSMILElement::beginByLinkActivation()
 {
-    addBeginTime(elapsed());
+    SMILTime elapsed = this->elapsed();
+    addBeginTime(elapsed, elapsed);
 }
     
 }

@@ -1,3 +1,43 @@
+2011-06-28  Felician Marton  <marton.felician.zoltan@stud.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation flickers when restarting
+        https://bugs.webkit.org/show_bug.cgi?id=18450
+
+        Add new parameter to the following methods. The new parameter is the time of adding a "begin" or "end" time to the SVG animation.
+         - WebCore::SVGSMILElement::addBeginTime
+         - WebCore::SVGSMILElement::beginListChanged
+         - WebCore::SVGSMILElement::addEndTime
+         - WebCore::SVGSMILElement::endListChanged
+        In case of beginTime and beginListChanged it's necessary, because the delay between the event of adding a new begin time
+        (in WebCore::SVGAnimationElement::beginElementAt) and the actual processing (in WebCore::SVGSMILElement::endListChanged)
+        is significant. In lack of event time we can't decide that we should consider the new time or not.
+        If the new begin time is smaller than the event time, we musn't begin the animation, else we shoud do further calculations.
+
+        The following methods just modified for consistency:
+         - WebCore::SVGSMILElement::addEndTime
+         - WebCore::SVGSMILElement::endListChanged
+
+        No new tests, because currently there is no way to test SVG flickering at zero time.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElementAt):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::attributeChanged):
+        (WebCore::SVGSMILElement::addBeginTime):
+        (WebCore::SVGSMILElement::addEndTime):
+        (WebCore::SVGSMILElement::beginListChanged):
+        (WebCore::SVGSMILElement::endListChanged):
+          The body changed:
+           - Use new parameter, the time of adding the new begin time.
+           - Cancel some incorrect optimalization. We should also do further calculations when elapsed >= m_intervalBegin.
+        (WebCore::SVGSMILElement::createInstanceTimesFromSyncbase):
+        (WebCore::SVGSMILElement::handleConditionEvent):
+        (WebCore::SVGSMILElement::beginByLinkActivation):
+        * svg/animation/SVGSMILElement.h:
+
 2011-06-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -241,7 +241,8 @@ void SVGAnimationElement::beginElement()
 
 void SVGAnimationElement::beginElementAt(float offset)
 {
-    addBeginTime(elapsed() + offset);
+    SMILTime elapsed = this->elapsed();
+    addBeginTime(elapsed, elapsed + offset);
 }
 
 void SVGAnimationElement::endElement()
@@ -251,7 +252,8 @@ void SVGAnimationElement::endElement()
 
 void SVGAnimationElement::endElementAt(float offset)
 {
-    addEndTime(elapsed() + offset);
+    SMILTime elapsed = this->elapsed();
+    addEndTime(elapsed, elapsed + offset);
 }
 
 AnimationMode SVGAnimationElement::animationMode() const
