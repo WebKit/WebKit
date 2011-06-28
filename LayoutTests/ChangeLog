@@ -1,3 +1,14 @@
+2011-06-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        WebKitTestRunner needs layoutTestController.setCallCloseOnWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=46714
+
+        Skip these tests via the mac list to make them skipped on every wk2 platform.
+        * platform/mac-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+
 2011-06-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler & Oliver Hunt.

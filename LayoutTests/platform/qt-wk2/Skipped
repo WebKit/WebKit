@@ -1492,11 +1492,9 @@ http/tests/security/cross-frame-access-protocol.html
 # Unexplained plugin failures
 plugins/document-open.html
 plugins/embed-prefers-plugins-for-images.html
-plugins/geturlnotify-during-document-teardown.html
 plugins/mouse-events-fixedpos.html
 plugins/netscape-dom-access.html
 plugins/npp-set-window-called-during-destruction.html
-plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
 plugins/reloadplugins-and-pages.html
 plugins/destroy-stream-twice.html

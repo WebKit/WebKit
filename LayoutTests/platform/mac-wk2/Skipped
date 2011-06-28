@@ -1535,6 +1535,11 @@ compositing/tiling/huge-layer-resize.html
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
 
+# WebKitTestRunner needs layoutTestController.setCallCloseOnWebViews
+# http://webkit.org/b/46714
+plugins/geturlnotify-during-document-teardown.html
+plugins/open-and-close-window-with-plugin.html
+
 # Sometimes fails
 # http://webkit.org/b/56530
 http/tests/inspector/resource-har-conversion.html
