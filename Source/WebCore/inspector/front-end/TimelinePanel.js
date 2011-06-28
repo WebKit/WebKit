@@ -1021,10 +1021,10 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 return this.data.width + "\u2009\u00d7\u2009" + this.data.height;
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
-                return this.stackTrace ? WebInspector.linkifyResourceAsNode(this.stackTrace[0].url, "scripts", this.stackTrace[0].lineNumber, "", "") : this.data.timerId;
+                return this.stackTrace ? WebInspector.linkifyCallFrameAsNode(this.stackTrace[0], "") : this.data.timerId;
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
-                return this.stackTrace ? WebInspector.linkifyResourceAsNode(this.stackTrace[0].url, "scripts", this.stackTrace[0].lineNumber, "", "") : null;
+                return this.stackTrace ? WebInspector.linkifyCallFrameAsNode(this.stackTrace[0], "") : null;
             case WebInspector.TimelineAgent.RecordType.EvaluateScript:
                 return this.url ? WebInspector.linkifyResourceAsNode(this.url, "scripts", this.data.lineNumber, "", "") : null;
             case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
@@ -1124,7 +1124,7 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
             row.appendChild(this._createCell(stackFrame.functionName ? stackFrame.functionName : WebInspector.UIString("(anonymous function)"), "timeline-function-name"));
             row.appendChild(this._createCell(" @ "));
             var linkCell = document.createElement("td");
-            linkCell.appendChild(WebInspector.linkifyResourceAsNode(stackFrame.url, "scripts", stackFrame.lineNumber, "timeline-details"));
+            linkCell.appendChild(WebInspector.linkifyCallFrameAsNode(stackFrame, "timeline-details"));
             row.appendChild(linkCell);
             framesTable.appendChild(row);
         }

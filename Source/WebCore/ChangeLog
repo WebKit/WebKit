@@ -1,3 +1,16 @@
+2011-06-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: use column numbers when linking to script location in timeline and console.
+        https://bugs.webkit.org/show_bug.cgi?id=63126
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._populateStackTraceTreeElement):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendStackTrace):
+
 2011-06-28  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

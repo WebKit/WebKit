@@ -980,7 +980,7 @@ WebInspector.ConsoleMessage.prototype = {
             content.appendChild(messageTextElement);
 
             if (frame.url) {
-                var urlElement = WebInspector.linkifyResourceAsNode(frame.url, "scripts", frame.lineNumber, "console-message-url");
+                var urlElement = WebInspector.linkifyCallFrameAsNode(frame, "console-message-url");
                 content.appendChild(urlElement);
             }
 
