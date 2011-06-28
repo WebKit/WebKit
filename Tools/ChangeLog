@@ -2,6 +2,20 @@
 
         Reviewed by Tony Chang.
 
+        new-run-webkit-tests needs a --webkit-test-runner option
+        https://bugs.webkit.org/show_bug.cgi?id=63439
+
+        This was accidentally fixed in bug 63501 as well.
+        The root problem here was that the webkit unit tests were not using
+        enough mocks.  I've fixed them here to use more mocks
+        which should unbreak windows.
+
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
+2011-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tony Chang.
+
         new-run-webkit-tests should not run mthml tests when MHTML support is disabled
         https://bugs.webkit.org/show_bug.cgi?id=63549
 

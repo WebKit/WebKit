@@ -33,20 +33,22 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.layout_tests.port import port_testcase
 
-from webkitpy.tool.mocktool import MockExecutive
-from webkitpy.tool.mocktool import MockOptions
+from webkitpy.tool.mocktool import MockExecutive, MockOptions, MockUser
 
 
 class TestWebKitPort(WebKitPort):
     def __init__(self, symbol_list=None, feature_list=None,
                  expectations_file=None, skips_file=None,
-                 executive=None, **kwargs):
+                 executive=None, filesystem=None, user=None,
+                 **kwargs):
         self.symbol_list = symbol_list
         self.feature_list = feature_list
         self.expectations_file = expectations_file
         self.skips_file = skips_file
         executive = executive or MockExecutive(should_log=False)
-        WebKitPort.__init__(self, executive=executive, **kwargs)
+        filesystem = filesystem or filesystem_mock.MockFileSystem()
+        user = user or MockUser()
+        WebKitPort.__init__(self, executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
 
     def _runtime_feature_list(self):
         return self.feature_list
