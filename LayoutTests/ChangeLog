@@ -1,3 +1,12 @@
+2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix r89879.
+
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.png: Removed.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.txt: Removed.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-expected.png: Copied from LayoutTests/platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.png.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.txt.
+
 2011-06-27  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed.
