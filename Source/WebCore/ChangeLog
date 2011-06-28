@@ -1,3 +1,16 @@
+2011-06-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r89733): fast/text/zero-font-size.html is failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=63512
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformWidthForGlyph): Initialize the advance local variable, because
+        on Leopard wkGetGlyphTransformedAdvances can return successfully yet not update the variable when
+        the font size is 0. Presumably, r89733 exposed this by changing the values put on the stack just
+        before this function is called.
+
 2011-06-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
