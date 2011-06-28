@@ -1,3 +1,10 @@
+2011-06-28  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium test update for r89946.
+
+        * platform/chromium/fast/regex: Added.
+        * platform/chromium/fast/regex/constructor-expected.txt: Added.
+
 2011-06-28  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
