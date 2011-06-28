@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Windows rebaseline for my commit r89864.
+
+        * platform/win/fast/text/international/unicode-bidi-plaintext-expected.txt: Added.
+
+2011-06-27  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed.
+
         Chromium rebaselines for my commit r89864
 
         * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-actual.png: Added.
