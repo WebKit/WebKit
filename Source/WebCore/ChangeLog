@@ -1,3 +1,9 @@
+2011-06-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix the WebCore vcproj file after r89851.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-06-27  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Simon Fraser.
