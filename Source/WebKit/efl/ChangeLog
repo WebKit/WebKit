@@ -1,3 +1,16 @@
+2011-06-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Change permission of some ewk files.
+        https://bugs.webkit.org/show_bug.cgi?id=63517
+
+        Change some file's permission same with other file's.
+
+        * ewk/ewk_tiled_backing_store.c:
+        * ewk/ewk_tiled_model.c:
+        * ewk/ewk_view_single.c:
+
 2011-06-27  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.
