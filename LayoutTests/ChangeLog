@@ -1,5 +1,26 @@
 2011-06-28  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, chromium test update for r89951.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-tref-03-b-change-href-dom-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-tref-03-b-change-href-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-tref-03-b-referenced-element-removal-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-tref-03-b-tref-removal-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-change-href-dom-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-change-href-dom-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-change-href-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-change-href-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-referenced-element-removal-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-referenced-element-removal-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-tref-removal-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-tref-03-b-tref-removal-expected.txt: Added.
+
+2011-06-28  Nate Chapin  <japhet@chromium.org>
+
         Unreviewed, chromium test update for r89946.
 
         * platform/chromium/fast/regex: Added.
