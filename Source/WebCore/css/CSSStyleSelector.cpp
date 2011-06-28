@@ -4529,14 +4529,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
 
     // CSS3 Properties
-    case CSSPropertyWebkitAppearance: {
-        HANDLE_INHERIT_AND_INITIAL(appearance, Appearance)
-        if (!primitiveValue)
-            return;
-        m_style->setAppearance(*primitiveValue);
+    case CSSPropertyWebkitAppearance:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(appearance, Appearance)
         return;
-    }
-
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage: {
         if (isInherit) {

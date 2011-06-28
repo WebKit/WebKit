@@ -1,3 +1,16 @@
+2011-06-28  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Use appropriate macro for CSSPropertyWebkitAppearance in CSSStyleSelector::applyProperty()
+        https://bugs.webkit.org/show_bug.cgi?id=63197
+
+        No new tests / no functionality changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro and delete duplicate code.
+
 2011-06-28  Cary Clark  <caryclark@google.com>
 
         Reviewed by James Robinson.
