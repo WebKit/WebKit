@@ -98,13 +98,7 @@ svg/batik/text/smallFonts.svg
     def test_versions(self):
         port = self.make_port()
         if port:
-            self.assertTrue(port.name() in ('mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac-future'))
-
-        self.assert_name(None, '10.4.8', 'mac-tiger')
-        self.assert_name('mac', '10.4.8', 'mac-tiger')
-        self.assert_name('mac-tiger', '10.4.8', 'mac-tiger')
-        self.assert_name('mac-tiger', '10.5.3', 'mac-tiger')
-        self.assert_name('mac-tiger', '10.6.3', 'mac-tiger')
+            self.assertTrue(port.name() in ('mac-leopard', 'mac-snowleopard', 'mac-future'))
 
         self.assert_name(None, '10.5.3', 'mac-leopard')
         self.assert_name('mac', '10.5.3', 'mac-leopard')

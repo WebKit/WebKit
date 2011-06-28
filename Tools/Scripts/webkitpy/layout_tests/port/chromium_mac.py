@@ -89,8 +89,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         if not result:
             _log.error('For complete Mac build requirements, please see:')
             _log.error('')
-            _log.error('    http://code.google.com/p/chromium/wiki/'
-                       'MacBuildInstructions')
+            _log.error('    http://code.google.com/p/chromium/wiki/MacBuildInstructions')
 
         return result
 
@@ -122,20 +121,17 @@ class ChromiumMacPort(chromium.ChromiumPort):
             self._executive.run_command([self._path_to_wdiff()], error_handler=Executive.ignore_error)
         except OSError:
             if logging:
-                _log.warning('wdiff not found. Install using MacPorts or some '
-                             'other means')
+                _log.warning('wdiff not found. Install using MacPorts or some other means')
         return True
 
     def _lighttpd_path(self, *comps):
-        return self.path_from_chromium_base('third_party', 'lighttpd',
-                                            'mac', *comps)
+        return self.path_from_chromium_base('third_party', 'lighttpd', 'mac', *comps)
 
     def _path_to_apache(self):
         return '/usr/sbin/httpd'
 
     def _path_to_apache_config_file(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
-                                     'apache2-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'apache2-httpd.conf')
 
     def _path_to_lighttpd(self):
         return self._lighttpd_path('bin', 'lighttpd')
@@ -147,8 +143,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return self._lighttpd_path('bin', 'php-cgi')
 
     def _path_to_driver(self, configuration=None):
-        # FIXME: make |configuration| happy with case-sensitive file
-        # systems.
+        # FIXME: make |configuration| happy with case-sensitive file systems.
         if not configuration:
             configuration = self.get_option('configuration')
         return self._build_path(configuration, self.driver_name() + '.app',

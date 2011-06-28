@@ -562,8 +562,7 @@ class Port(object):
         return AggregateTestOutputSet([self._results_for_platform(platform) for platform in platforms])
 
     def graphics_type(self):
-        """Returns whether the port uses accelerated graphics ('gpu') or not
-        ('cpu')."""
+        """Returns whether the port uses accelerated graphics ('gpu') or not ('cpu')."""
         return self._graphics_type
 
     def architecture(self):
@@ -902,8 +901,7 @@ class Port(object):
         raise NotImplementedError('Port._path_to_lighttpd_php')
 
     def _path_to_wdiff(self):
-        """Returns the full path to the wdiff binary, or None if it is
-        not available.
+        """Returns the full path to the wdiff binary, or None if it is not available.
 
         This is likely used only by wdiff_text()"""
         raise NotImplementedError('Port._path_to_wdiff')
@@ -911,8 +909,7 @@ class Port(object):
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
         given platform."""
-        return self._filesystem.join(self.layout_tests_dir(), 'platform',
-                                     platform)
+        return self._filesystem.join(self.layout_tests_dir(), 'platform', platform)
 
 
 class DriverInput(object):

@@ -105,8 +105,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         if not result:
             _log.error('For complete Linux build requirements, please see:')
             _log.error('')
-            _log.error('    http://code.google.com/p/chromium/wiki/'
-                       'LinuxBuildInstructions')
+            _log.error('    http://code.google.com/p/chromium/wiki/LinuxBuildInstructions')
         return result
 
     #

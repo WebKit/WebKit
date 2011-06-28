@@ -46,7 +46,6 @@ class BuilderToPort(object):
     _builder_name_to_port_name = {
         r"SnowLeopard": "mac-snowleopard",
         r"Leopard": "mac-leopard",
-        r"Tiger": "mac-tiger",
         r"Windows": "win",
         r"GTK": "gtk",
         r"Qt": "qt",

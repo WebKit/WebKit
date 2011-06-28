@@ -46,7 +46,6 @@ def os_version(os_version_string=None, supported_versions=None):
             os_version_string = "10.5.6"
     release_version = int(os_version_string.split('.')[1])
     version_strings = {
-        4: 'tiger',
         5: 'leopard',
         6: 'snowleopard',
     }
@@ -61,10 +60,9 @@ class MacPort(WebKitPort):
     """WebKit Mac implementation of the Port class."""
     # FIXME: 'wk2' probably shouldn't be a version, it should probably be
     # a modifier, like 'chromium-gpu' is to 'chromium'.
-    SUPPORTED_VERSIONS = ('tiger', 'leopard', 'snowleopard', 'future', 'wk2')
+    SUPPORTED_VERSIONS = ('leopard', 'snowleopard', 'future', 'wk2')
 
     FALLBACK_PATHS = {
-        'tiger': ['mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac'],
         'leopard': ['mac-leopard', 'mac-snowleopard', 'mac'],
         'snowleopard': ['mac-snowleopard', 'mac'],
         'future': ['mac'],

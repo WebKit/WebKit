@@ -137,6 +137,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
 
     class TestMacPort(chromium_mac.ChromiumMacPort):
         def __init__(self, options):
+            # FIXME: This should use MockExecutive and MockUser as well.
             chromium_mac.ChromiumMacPort.__init__(self,
                                                   options=options,
                                                   filesystem=filesystem_mock.MockFileSystem())
@@ -147,6 +148,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
 
     class TestLinuxPort(chromium_linux.ChromiumLinuxPort):
         def __init__(self, options):
+            # FIXME: This should use MockExecutive and MockUser as well.
             chromium_linux.ChromiumLinuxPort.__init__(self,
                                                       options=options,
                                                       filesystem=filesystem_mock.MockFileSystem())
@@ -157,6 +159,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
 
     class TestWinPort(chromium_win.ChromiumWinPort):
         def __init__(self, options):
+            # FIXME: This should use MockExecutive and MockUser as well.
             chromium_win.ChromiumWinPort.__init__(self,
                                                   options=options,
                                                   filesystem=filesystem_mock.MockFileSystem())

@@ -65,7 +65,6 @@ CHROMIUM_PORT_TO_BUILDER_NAME = {
 WEBKIT_PORT_TO_BUILDER_NAME = {
     'gtk': 'GTK Linux 32-bit Debug',
 
-    'mac-tiger': None,
     'mac-leopard': 'Leopard Intel Debug (Tests)',
     'mac-snowleopard': 'SnowLeopard Intel Release (Tests)',
     'mac-wk2': 'SnowLeopard Intel Release (WebKit2 Tests)',

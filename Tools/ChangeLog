@@ -1,5 +1,30 @@
 2011-06-28  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Dirk Pranke.
+
+        Remove webkitpy's tiger support now that WebKit no longer supports tiger
+        https://bugs.webkit.org/show_bug.cgi?id=63568
+
+        I don't think our support actually fully worked anyway.  Regardless
+        tiger is dead now (thankfully)!
+
+        I also unwrapped some short lines and added a couple FIXMEs while
+        touring the code.
+
+        No new tests, only removing old ones which tested our Tiger support.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver_unittest.py:
+
+2011-06-28  Eric Seidel  <eric@webkit.org>
+
         Unreviewed, just fixing a typo.
 
         Fix misspellings of "thead" to "thread".

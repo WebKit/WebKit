@@ -292,6 +292,7 @@ def get_test_config(test_files=[], result_files=[]):
 
     class TestMacPort(WebKitPort):
         def __init__(self):
+            # FIXME: This should use MockExecutive and MockUser as well.
             WebKitPort.__init__(self, filesystem=mock_filesystem)
             self._name = 'mac'
 
