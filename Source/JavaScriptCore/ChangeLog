@@ -1,3 +1,10 @@
+2011-06-28  Adam Roben  <aroben@apple.com>
+
+        Windows Debug build fix after r89885
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Exported
+        JSGlobalData::releaseExecutableMemory for jsc.exe's benefit.
+
 2011-06-28  Shinya Kawanaka  <shinyak@google.com>
 
         Reviewed by Kent Tamura.

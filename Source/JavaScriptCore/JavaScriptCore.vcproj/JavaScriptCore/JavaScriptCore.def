@@ -281,6 +281,7 @@ EXPORTS
     ?regExpFlags@JSC@@YA?AW4RegExpFlags@1@ABVUString@1@@Z
     ?reifyString@StringBuilder@WTF@@AAEXXZ
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
+    ?releaseExecutableMemory@JSGlobalData@JSC@@QAEXXZ
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
