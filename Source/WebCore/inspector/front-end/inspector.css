@@ -673,7 +673,8 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 #console-prompt {
     position: relative;
-    padding: 1px 22px 1px 24px;
+    padding: 1px 22px 1px 0px;
+    margin-left: 24px;
     min-height: 16px; 
     white-space: pre-wrap;
     -webkit-user-modify: read-write-plaintext-only;
@@ -690,7 +691,8 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 .console-message, .console-user-command {
     position: relative;
     border-bottom: 1px solid rgb(240, 240, 240);
-    padding: 1px 22px 1px 24px;
+    padding: 1px 22px 1px 0px;
+    margin-left: 24px;
     min-height: 16px;
 }
 
@@ -706,7 +708,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     position: absolute;
     display: block;
     content: "";
-    left: 7px;
+    left: -14px;
     top: 0.8em;
     width: 10px;
     height: 10px;
@@ -758,6 +760,8 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     top: 0.6em;
     width: 11px;
     height: 12px;
+    left: -16px;
+    position: absolute;
 }
 
 .console-group.collapsed .console-group-title::before {
@@ -765,6 +769,25 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 }
 
 .console-group.collapsed > .console-group-messages {
+    display: none;
+}
+
+.console-group {
+    position: relative;
+}
+
+.console-group-bracket {
+    position:absolute;
+    top: 15px;
+    left: 13px;
+    bottom: 5px;
+    width: 3px;
+    border-style: solid;
+    border-color: #A3A3A3;
+    border-width: 0px 0px 1px 1px;
+}
+
+.console-group.collapsed > .console-group-bracket {
     display: none;
 }
 

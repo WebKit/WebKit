@@ -1,3 +1,24 @@
+2011-06-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: console group boundaries should be more distinct in UI
+        https://bugs.webkit.org/show_bug.cgi?id=63455
+
+        Show grey bracket to on the left side of a console group message to highlight
+        the group extent.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleGroup):
+        * inspector/front-end/inspector.css:
+        (#console-prompt):
+        (.console-message, .console-user-command):
+        (.console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title::before):
+        (.console-group-title::before):
+        (.console-group):
+        (.console-group-bracket):
+        (.console-group.collapsed > .console-group-bracket):
+
 2011-06-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

@@ -1212,6 +1212,12 @@ WebInspector.ConsoleGroup = function(parentGroup)
     element.group = this;
     this.element = element;
 
+    if (parentGroup) {
+        var bracketElement = document.createElement("div");
+        bracketElement.className = "console-group-bracket";
+        element.appendChild(bracketElement);
+    }
+
     var messagesElement = document.createElement("div");
     messagesElement.className = "console-group-messages";
     element.appendChild(messagesElement);
