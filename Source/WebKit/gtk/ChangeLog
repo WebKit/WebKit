@@ -1,3 +1,20 @@
+2011-06-28  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Allow to build WebKitGtk+ with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=63404
+
+        WebKitGtk+ needs to implement accelerated compositing for running CSS3 3D transforms 
+        and animation through GPU acceleration. We could implement GraphicsLayer using Clutter.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::attachRootGraphicsLayer): not implemented yet.
+        (WebKit::ChromeClient::setNeedsOneShotDrawingSynchronization): Ditto.
+        (WebKit::ChromeClient::scheduleCompositingLayerSync): Ditto.
+        (WebKit::ChromeClient::allowedCompositingTriggers): Ditto.
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2011-06-27  ChangSeok Oh  <shivamidow@gmail.com>
 
         Reviewed by Martin Robinson.

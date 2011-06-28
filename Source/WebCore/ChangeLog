@@ -1,3 +1,22 @@
+2011-06-28  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Allow to build WebKitGtk+ with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=63404
+
+        WebKitGtk+ needs to implement accelerated compositing for running CSS3 3D transforms 
+        and animation through GPU acceleration. We could implement GraphicsLayer using Clutter.
+
+        * GNUmakefile.list.am:
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp: Added.
+        (WebCore::GraphicsLayer::create): Not implemented yet.
+        (WebCore::GraphicsLayerClutter::GraphicsLayerClutter):
+        (WebCore::GraphicsLayerClutter::~GraphicsLayerClutter):
+        (WebCore::GraphicsLayerClutter::setNeedsDisplay): Ditto.
+        (WebCore::GraphicsLayerClutter::setNeedsDisplayInRect): Ditto.
+        * platform/graphics/clutter/GraphicsLayerClutter.h: Added.
+
 2011-06-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

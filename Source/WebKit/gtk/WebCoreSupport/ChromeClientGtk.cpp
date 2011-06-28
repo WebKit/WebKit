@@ -743,4 +743,26 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
 }
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
+{
+    notImplemented();
+}
+
+void ChromeClient::setNeedsOneShotDrawingSynchronization()
+{
+    notImplemented();
+}
+
+void ChromeClient::scheduleCompositingLayerSync()
+{
+    notImplemented();
+}
+
+ChromeClient::CompositingTriggerFlags ChromeClient::allowedCompositingTriggers() const
+{
+    return 0;
+}
+#endif
+
 }

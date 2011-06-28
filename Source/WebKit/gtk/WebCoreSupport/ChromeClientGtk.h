@@ -157,6 +157,13 @@ namespace WebKit {
         virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
         virtual void numWheelEventHandlersChanged(unsigned) { }
 
+#if USE(ACCELERATED_COMPOSITING) 
+        virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
+        virtual void setNeedsOneShotDrawingSynchronization();
+        virtual void scheduleCompositingLayerSync();
+        virtual CompositingTriggerFlags allowedCompositingTriggers() const;
+#endif 
+
     private:
         WebKitWebView* m_webView;
         GtkAdjustmentWatcher m_adjustmentWatcher;
