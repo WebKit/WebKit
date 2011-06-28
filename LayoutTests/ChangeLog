@@ -1,3 +1,30 @@
+2011-06-28  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        convert editing/deleting/4845371.html to runDumpAsTextEditingTest
+        https://bugs.webkit.org/show_bug.cgi?id=63214
+
+        Renamed editing/deleting/4845371.html to editing/deleting/delete-cell-contents.html 
+        and converted editing/deleting/delete-cell-contents.html to runDumpAsTextEditingTest; left
+        it without a doctype, etc, because they changed functionality of the image test. Also 
+        added the rdar number.
+
+        * editing/deleting/delete-cell-contents-expected.txt: Added.
+        * editing/deleting/delete-cell-contents.html: Added.
+        * editing/deleting/4845371.html: Removed.
+        * platform/chromium-linux/editing/deleting/4845371-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/deleting/4845371-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/4845371-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/4845371-expected.txt: Removed.
+        * platform/gtk/editing/deleting/4845371-expected.png: Removed.
+        * platform/gtk/editing/deleting/4845371-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/4845371-expected.png: Removed.
+        * platform/mac/editing/deleting/4845371-expected.png: Removed.
+        * platform/mac/editing/deleting/4845371-expected.txt: Removed.
+        * platform/qt/editing/deleting/4845371-expected.png: Removed.
+        * platform/qt/editing/deleting/4845371-expected.txt: Removed.
+
 2011-06-28  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.

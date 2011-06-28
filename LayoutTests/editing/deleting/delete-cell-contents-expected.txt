@@ -9,21 +9,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 408x22
-          text run at (0,0) width 408: "This tests for a crasher when deleting contents of a table cell."
-      RenderBlock {DIV} at (0,38) size 784x28
-        RenderTable {TABLE} at (0,0) size 34x28
-          RenderTableSection {TBODY} at (0,0) size 34x28
-            RenderTableRow {TR} at (0,2) size 34x24
-              RenderTableCell {TD} at (2,2) size 2x24 [r=0 c=0 rs=1 cs=1]
-                RenderBR {BR} at (1,1) size 0x22
-              RenderTableCell {TD} at (6,2) size 26x24 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 24x22
-                  text run at (1,1) width 24: "baz"
-caret: position 0 of child 0 {BR} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body
+This tests for a crasher when deleting contents of a table cell. <radr://problem/4845371>
+
+
+baz
+
