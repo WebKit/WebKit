@@ -1,3 +1,15 @@
+2011-06-28  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Rename 3D transforms to 3D rendering
+        https://bugs.webkit.org/show_bug.cgi?id=63508
+
+        WebKitGtk+ provides the 3D transforms feature, but it was
+        renamed to 3D Rendering. This features supports CSS 3D trasnforms.
+
+        * configure.ac: Rename ENABLE_3D_TRANSFORMS to ENABLE_3D_RENDERING.
+
 2011-06-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

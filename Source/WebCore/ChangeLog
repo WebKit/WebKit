@@ -1,3 +1,14 @@
+2011-06-28  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Rename 3D transforms to 3D rendering
+        https://bugs.webkit.org/show_bug.cgi?id=63508
+
+        This patch allows to include ENABLE_3D_RENDERING to build WebKitGtk+.
+
+        * GNUmakefile.am: Add ENABLE_3D_RENDERING
+
 2011-06-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

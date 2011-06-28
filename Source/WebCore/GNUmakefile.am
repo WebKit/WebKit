@@ -580,6 +580,14 @@ webcore_cppflags += -DENABLE_WEBGL=1
 endif  # END ENABLE_WEBGL
 
 # ---
+# 3D rendering (CSS3 3D transforms) support
+# ---
+if ENABLE_3D_RENDERING
+FEATURE_DEFINES += ENABLE_3D_RENDERING=1
+webcore_cppflags += -DENABLE_3D_RENDERING=1
+endif  # END ENABLE_3D_RENDERING
+
+# ---
 # MHTML support
 # ---
 if ENABLE_MHTML

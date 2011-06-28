@@ -362,13 +362,13 @@ AC_ARG_ENABLE(optimizations,
               [if test "$enable_debug" = "yes"; then enable_optimizations="no"; else enable_optimizations="yes"; fi])
 AC_MSG_RESULT([$enable_optimizations])
 
-# check whether to enable 3D transforms support
-AC_MSG_CHECKING([whether to enable support for 3D Transforms])
-AC_ARG_ENABLE(3d_transforms,
-              AC_HELP_STRING([--enable-3d-transforms],
-                             [enable support for 3D transforms [default=no]]),
-              [],[enable_3d_transforms="no"])
-AC_MSG_RESULT([$enable_3d_transforms])
+# check whether to enable 3D rendering support
+AC_MSG_CHECKING([whether to enable support for 3D Rendering])
+AC_ARG_ENABLE(3d_rendering,
+              AC_HELP_STRING([--enable-3d-rendering],
+                             [enable support for 3D Rendering (experimental) [default=no]]),
+              [],[enable_3d_rendering="no"])
+AC_MSG_RESULT([$enable_3d_rendering])
 
 # check whether to enable WebGL support
 AC_MSG_CHECKING([whether to enable WebGL support])
@@ -1132,7 +1132,7 @@ AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
-AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3d_transforms" = "yes"])
+AM_CONDITIONAL([ENABLE_3D_RENDERING],[test "$enable_3d_rendering" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_METER_TAG],[test "$enable_meter_tag" = "yes"])
@@ -1242,7 +1242,7 @@ Build configuration:
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
 Features:
- 3D Transforms                                            : $enable_3d_transforms
+ 3D Rendering                                             : $enable_3d_rendering
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
  Directory upload                                         : $enable_directory_upload
