@@ -25,13 +25,8 @@
 
 function LayoutTestHistoryAnalyzer(builder) {
     this._builder = builder;
+    this._history = {};
     this._loader = new LayoutTestResultsLoader(builder);
-
-    this._currentlyFailing = {};
-    this._lastSeenFailing = {};
-    this._lastSeenPassing = {};
-    this._possiblyFlaky = {};
-    this._testRunsSinceLastChange = 0;
 }
 
 LayoutTestHistoryAnalyzer.prototype = {
@@ -67,7 +62,7 @@ LayoutTestHistoryAnalyzer.prototype = {
                     var nextIndex = buildIndex + 1;
                     if (nextIndex >= buildNames.length)
                         callAgain = false;
-                    callback(self._currentlyFailing, self._lastSeenFailing, self._lastSeenPassing, self._possiblyFlaky, buildNames[buildIndex], callAgain);
+                    callback(self._history, callAgain);
                     if (!callAgain)
                         return;
                     setTimeout(function() { inner(nextIndex) }, 0);
@@ -78,57 +73,26 @@ LayoutTestHistoryAnalyzer.prototype = {
     },
 
     _incorporateBuildHistory: function(buildNames, buildIndex, callback) {
-        var buildName = buildNames[buildIndex];
-        var self = this;
-        self._loader.start(buildName, function(tests, tooManyFailures) {
-            ++self._testRunsSinceLastChange;
+        var previousBuildName = Object.keys(this._history).last();
+        var nextBuildName = buildNames[buildIndex];
 
-            if (!Object.keys(self._currentlyFailing).length) {
-                for (var testName in tests)
-                    self._currentlyFailing[testName] = [{ build: buildName, result: tests[testName] }];
-            }
+        var self = this;
+        self._loader.start(nextBuildName, function(tests, tooManyFailures) {
+            self._history[nextBuildName] = {
+                tooManyFailures: tooManyFailures,
+                tests: {},
+            };
 
             for (var testName in tests) {
-                if (testName in self._possiblyFlaky) {
-                    self._possiblyFlaky[testName].push({ build: buildName, result: tests[testName] });
-                    continue;
+                if (previousBuildName) {
+                    if (!(testName in self._history[previousBuildName].tests))
+                        continue;
+                    delete self._history[previousBuildName].tests[testName];
                 }
-
-                if (testName in self._lastSeenPassing) {
-                    self._possiblyFlaky[testName] = self._lastSeenPassing[testName];
-                    delete self._lastSeenPassing[testName];
-                    self._possiblyFlaky[testName].push({ build: buildName, result: tests[testName] });
-                    self._testRunsSinceLastChange = 0;
-                    continue;
-                }
-
-                if (!(testName in self._lastSeenFailing))
-                    self._lastSeenFailing[testName] = [];
-                self._lastSeenFailing[testName].push({ build: buildName, result: tests[testName] });
+                self._history[nextBuildName].tests[testName] = tests[testName];
             }
 
-            var anyOriginalTestsWereFailing = Object.keys(self._currentlyFailing).some(function(testName) { return testName in self._lastSeenFailing });
-
-            for (var testName in self._lastSeenFailing) {
-                if (testName in tests)
-                    continue;
-                self._lastSeenPassing[testName] = self._lastSeenFailing[testName];
-                delete self._lastSeenFailing[testName];
-                self._lastSeenPassing[testName].push({ build: buildName, result: 'pass' });
-            }
-
-            for (var testName in self._possiblyFlaky) {
-                if (testName in tests)
-                    continue;
-                self._possiblyFlaky[testName].push({ build: buildName, result: 'pass' });
-            }
-
-            var anyOriginalTestsAreFailing = Object.keys(self._currentlyFailing).some(function(testName) { return testName in self._lastSeenFailing });
-
-            if (anyOriginalTestsWereFailing && !anyOriginalTestsAreFailing)
-                self._testRunsSinceLastChange = 0;
-
-            callback(anyOriginalTestsAreFailing || self._testRunsSinceLastChange < 5);
+            callback(Object.keys(self._history[nextBuildName].tests).length);
         },
         function(tests) {
             // Some tests failed, but we couldn't fetch results.html (perhaps because the test

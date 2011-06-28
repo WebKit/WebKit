@@ -48,48 +48,9 @@ ViewController.prototype = {
 
     _displayBuilder: function(builder) {
         var self = this;
-        (new LayoutTestHistoryAnalyzer(builder)).start(function(currentlyFailing, lastSeenFailing, lastSeenPassing, possiblyFlaky, buildName, stillFetchingData) {
-            var list = document.createElement('ul');
+        (new LayoutTestHistoryAnalyzer(builder)).start(function(history, stillFetchingData) {
+            var list = document.createElement('ol');
             list.id = 'failure-history';
-            var item = document.createElement('li');
-            list.appendChild(item);
-            item.appendChild(document.createTextNode(buildName));
-
-            var lists = {
-                'Currently Failing': currentlyFailing,
-                'Last Seen Failing': lastSeenFailing,
-                'Last Seen Passing': lastSeenPassing,
-                'Possibly Flaky': possiblyFlaky,
-            };
-
-            for (var listLabel in lists) {
-                var item = document.createElement('li');
-                list.appendChild(item);
-                item.appendChild(document.createTextNode(listLabel));
-                var testList = document.createElement('ol');
-                item.appendChild(testList);
-
-                var testNames = sorted(Object.keys(lists[listLabel]));
-                testList.appendChildren(testNames.map(function(test) {
-                    var item = document.createElement('li');
-                    item.appendChild(document.createTextNode(test));
-                    var list = document.createElement('ol');
-                    item.appendChild(list);
-                    list.appendChildren(lists[listLabel][test].reduce(function(reduced, currentValue, index) {
-                        if (index && currentValue.result === reduced.last().result)
-                            return reduced;
-                        return reduced.concat(currentValue);
-                    }, []).map(function(result) {
-                        var item = document.createElement('li');
-                        item.appendChild(document.createTextNode(result.build + ': ' + result.result));
-                        return item;
-                    }));
-                    return item;
-                }));
-                if (!stillFetchingData && testNames.length)
-                    item.appendChild(self._domForNewAndExistingBugs(builder, buildName, null, testNames));
-            }
-            /*
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {
                 var failingTestNames = Object.keys(history[buildName].tests);
                 if (!failingTestNames.length)
@@ -124,7 +85,6 @@ ViewController.prototype = {
                 if (passingBuildName || !stillFetchingData)
                     item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
             });
-            */
 
             var header = document.createElement('h1');
             header.appendChild(document.createTextNode(builder.name));
