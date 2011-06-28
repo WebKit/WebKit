@@ -68,13 +68,26 @@ ViewController.prototype = {
                 item.appendChild(document.createTextNode(listLabel));
                 var testList = document.createElement('ol');
                 item.appendChild(testList);
-                testList.appendChildren(sorted(Object.keys(lists[listLabel])).map(function(test) {
+
+                var testNames = sorted(Object.keys(lists[listLabel]));
+                testList.appendChildren(testNames.map(function(test) {
                     var item = document.createElement('li');
                     item.appendChild(document.createTextNode(test));
+                    var list = document.createElement('ol');
+                    item.appendChild(list);
+                    list.appendChildren(lists[listLabel][test].reduce(function(reduced, currentValue, index) {
+                        if (index && currentValue.result === reduced.last().result)
+                            return reduced;
+                        return reduced.concat(currentValue);
+                    }, []).map(function(result) {
+                        var item = document.createElement('li');
+                        item.appendChild(document.createTextNode(result.build + ': ' + result.result));
+                        return item;
+                    }));
                     return item;
                 }));
-                if (!stillFetchingData)
-                    item.appendChild(self._domForNewAndExistingBugs(builder, buildName, null, Object.keys(lists[listLabel])));
+                if (!stillFetchingData && testNames.length)
+                    item.appendChild(self._domForNewAndExistingBugs(builder, buildName, null, testNames));
             }
             /*
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {

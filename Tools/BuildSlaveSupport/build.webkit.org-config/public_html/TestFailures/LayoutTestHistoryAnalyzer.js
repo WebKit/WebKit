@@ -78,29 +78,33 @@ LayoutTestHistoryAnalyzer.prototype = {
     },
 
     _incorporateBuildHistory: function(buildNames, buildIndex, callback) {
+        var buildName = buildNames[buildIndex];
         var self = this;
-        self._loader.start(buildNames[buildIndex], function(tests, tooManyFailures) {
+        self._loader.start(buildName, function(tests, tooManyFailures) {
             ++self._testRunsSinceLastChange;
 
             if (!Object.keys(self._currentlyFailing).length) {
                 for (var testName in tests)
-                    self._currentlyFailing[testName] = tests[testName];
+                    self._currentlyFailing[testName] = [{ build: buildName, result: tests[testName] }];
             }
 
             for (var testName in tests) {
                 if (testName in self._possiblyFlaky) {
-                    self._possiblyFlaky[testName] = tests[testName];
+                    self._possiblyFlaky[testName].push({ build: buildName, result: tests[testName] });
                     continue;
                 }
 
                 if (testName in self._lastSeenPassing) {
+                    self._possiblyFlaky[testName] = self._lastSeenPassing[testName];
                     delete self._lastSeenPassing[testName];
-                    self._possiblyFlaky[testName] = tests[testName];
+                    self._possiblyFlaky[testName].push({ build: buildName, result: tests[testName] });
                     self._testRunsSinceLastChange = 0;
                     continue;
                 }
 
-                self._lastSeenFailing[testName] = tests[testName];
+                if (!(testName in self._lastSeenFailing))
+                    self._lastSeenFailing[testName] = [];
+                self._lastSeenFailing[testName].push({ build: buildName, result: tests[testName] });
             }
 
             var anyOriginalTestsWereFailing = Object.keys(self._currentlyFailing).some(function(testName) { return testName in self._lastSeenFailing });
@@ -108,8 +112,15 @@ LayoutTestHistoryAnalyzer.prototype = {
             for (var testName in self._lastSeenFailing) {
                 if (testName in tests)
                     continue;
+                self._lastSeenPassing[testName] = self._lastSeenFailing[testName];
                 delete self._lastSeenFailing[testName];
-                self._lastSeenPassing[testName] = tests[testName];
+                self._lastSeenPassing[testName].push({ build: buildName, result: 'pass' });
+            }
+
+            for (var testName in self._possiblyFlaky) {
+                if (testName in tests)
+                    continue;
+                self._possiblyFlaky[testName].push({ build: buildName, result: 'pass' });
             }
 
             var anyOriginalTestsAreFailing = Object.keys(self._currentlyFailing).some(function(testName) { return testName in self._lastSeenFailing });
