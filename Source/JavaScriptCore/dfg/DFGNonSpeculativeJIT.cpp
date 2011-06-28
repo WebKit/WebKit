@@ -875,6 +875,13 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
     case Phi:
         ASSERT_NOT_REACHED();
+
+    case Breakpoint:
+#if ENABLE(DEBUG_WITH_BREAKPOINT)
+        m_jit.breakpoint();
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     if (node.hasResult() && node.mustGenerate())

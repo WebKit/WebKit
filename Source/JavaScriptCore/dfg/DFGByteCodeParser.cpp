@@ -690,6 +690,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         // === Misc operations ===
 
+#if ENABLE(DEBUG_WITH_BREAKPOINT)
+        case op_debug:
+            addToGraph(Breakpoint);
+            NEXT_OPCODE(op_debug);
+#endif
         case op_mov: {
             NodeIndex op = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, op);

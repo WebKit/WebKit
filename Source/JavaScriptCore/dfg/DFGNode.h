@@ -137,6 +137,7 @@ typedef uint32_t ExceptionInfo;
     macro(CompareStrictEq, NodeResultJS) \
     \
     /* Nodes for misc operations. */\
+    macro(Breakpoint, NodeMustGenerate) \
     macro(LogicalNot, NodeResultJS) \
     \
     /* Block terminals. */\
