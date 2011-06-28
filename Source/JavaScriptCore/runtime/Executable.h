@@ -169,9 +169,8 @@ namespace JSC {
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
-            relaxAdoptionRequirement();
             if (SamplingTool* sampler = globalData->interpreter->sampler())
-                sampler->notifyOfScope(this);
+                sampler->notifyOfScope(*globalData, this);
 #else
             UNUSED_PARAM(globalData);
 #endif
@@ -183,9 +182,8 @@ namespace JSC {
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
-            relaxAdoptionRequirement();
             if (SamplingTool* sampler = exec->globalData().interpreter->sampler())
-                sampler->notifyOfScope(this);
+                sampler->notifyOfScope(exec->globalData(), this);
 #else
             UNUSED_PARAM(exec);
 #endif

@@ -1,3 +1,21 @@
+2011-06-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix sampling build
+        https://bugs.webkit.org/show_bug.cgi?id=63579
+
+        Gets opcode sampling building again, doesn't seem to work alas
+
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::notifyOfScope):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingTool::SamplingTool):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::enableSampler):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+
 2011-06-28  Cary Clark  <caryclark@google.com>
 
         Reviewed by James Robinson.

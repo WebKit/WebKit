@@ -201,7 +201,7 @@ namespace JSC {
             , m_sampleCount(0)
             , m_opcodeSampleCount(0)
 #if ENABLE(CODEBLOCK_SAMPLING)
-            , m_scopeSampleMap(new ScriptSampleRecordMap())
+            , m_scopeSampleMap(adoptPtr(new ScriptSampleRecordMap()))
 #endif
         {
             memset(m_opcodeSamples, 0, sizeof(m_opcodeSamples));
@@ -218,7 +218,7 @@ namespace JSC {
         void setup();
         void dump(ExecState*);
 
-        void notifyOfScope(ScriptExecutable* scope);
+        void notifyOfScope(JSGlobalData&, ScriptExecutable* scope);
 
         void sample(CodeBlock* codeBlock, Instruction* vPC)
         {

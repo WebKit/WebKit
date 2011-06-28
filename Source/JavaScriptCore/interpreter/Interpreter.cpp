@@ -4960,7 +4960,7 @@ void Interpreter::enableSampler()
 {
 #if ENABLE(OPCODE_SAMPLING)
     if (!m_sampler) {
-        m_sampler.set(new SamplingTool(this));
+        m_sampler = adoptPtr(new SamplingTool(this));
         m_sampler->setup();
     }
 #endif
