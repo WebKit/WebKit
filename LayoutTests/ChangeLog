@@ -1,5 +1,16 @@
 2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Kent Tamura.
+
+        [chromium] editing/style/smoosh-styles-003.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=63509
+
+        Don't let spellcheck kick in this test because it's nothing to do with spellcheck.
+
+        * editing/style/smoosh-styles-003.html:
+
+2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix r89879.
 
         * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-actual.png: Removed.
