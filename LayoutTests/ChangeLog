@@ -1,3 +1,32 @@
+2011-06-27  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        convert editing/deleting/5156801-2.html to dumpAsText and rename
+        https://bugs.webkit.org/show_bug.cgi?id=63359
+
+        converted editing/deleting/5156801-2.html to dump-as-markup test, with
+        new results. Renamed 5156801.html to delete-node-after-DOMNodeRemoved,
+        and 5156801-2.html to delete-table-cell-contents.html; they were only
+        noticeably related by their rdar number, which is now included in each.
+
+        * editing/deleting/5156801.html: Removed.
+        * editing/deleting/5156801-expected.txt: Removed.
+        * editing/deleting/5156801-2.html: Removed.
+        * editing/deleting/delete-node-after-DOMNodeRemoved.html: Added.
+        * editing/deleting/delete-node-after-DOMNodeRemoved-expected.txt: Added.
+        * editing/deleting/delete-table-cell-contents.html: Added.
+        * editing/deleting/delete-table-cell-contents-expected.txt: Added.
+        * platform/chromium-linux/editing/deleting/5156801-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5156801-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5156801-2-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5156801-2-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5156801-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5156801-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5156801-2-expected.txt: Removed.
+        * platform/qt/editing/deleting/5156801-2-expected.png: Removed.
+        * platform/qt/editing/deleting/5156801-2-expected.txt: Removed.
+
 2011-06-27  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed.
