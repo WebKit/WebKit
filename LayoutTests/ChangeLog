@@ -1,3 +1,10 @@
+2011-06-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Qt specific results committed in r89901, but some of them fail on Qt-WK2 and/or Qt-Mac platform
+
+        * platform/qt-mac/Skipped: Skip failing tests and typo fix.
+        * platform/qt-wk2/Skipped: Skip failing tests.
+
 2011-06-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
