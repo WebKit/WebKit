@@ -1,3 +1,16 @@
+2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Fix filesystem_unittest.FileSystemTest test_read_and_write_file()
+        https://bugs.webkit.org/show_bug.cgi?id=63514
+
+        - change write_text_file to write_binary_file
+        - check that text_path and binary_path are actually existant files
+        - change cleanup block from 'except' to 'finally'
+
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+
 2011-06-28  Adam Roben  <aroben@apple.com>
 
         Roll out r89924 and r89925

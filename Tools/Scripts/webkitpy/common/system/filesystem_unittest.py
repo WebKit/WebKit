@@ -156,13 +156,13 @@ class FileSystemTest(unittest.TestCase):
             contents = fs.read_binary_file(text_path)
             self.assertEqual(contents, hex_equivalent)
 
-            fs.write_text_file(binary_path, hex_equivalent)
+            fs.write_binary_file(binary_path, hex_equivalent)
             text_contents = fs.read_text_file(binary_path)
             self.assertEqual(text_contents, unicode_text_string)
-        except:
-            if text_path:
+        finally:
+            if text_path and fs.isfile(text_path):
                 os.remove(text_path)
-            if binary_path:
+            if binary_path and fs.isfile(binary_path):
                 os.remove(binary_path)
 
     def test_read_binary_file__missing(self):
