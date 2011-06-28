@@ -1,3 +1,9 @@
+2011-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rolled DEPS.
+
+        * DEPS:
+
 2011-06-27  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.
