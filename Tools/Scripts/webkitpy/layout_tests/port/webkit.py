@@ -251,6 +251,7 @@ class WebKitPort(base.Port):
             "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl"],
             "parseWCSSInputProperty": ["fast/wcss"],
             "isXHTMLMPDocument": ["fast/xhtmlmp"],
+            "MHTMLArchive": ["mhtml"],
         }
         return directories_for_symbol
 

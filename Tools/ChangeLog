@@ -1,3 +1,19 @@
+2011-06-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests should not run mthml tests when MHTML support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=63549
+
+        This way mhtml tests won't show up as "missing" results on all non-chromium platforms.
+        I happen to go looking for what code was deciding that .mht was a supported
+        extension, found test_files.py and then removed some redundant doc-strings and
+        if branching.
+
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Tony Chang.

@@ -99,21 +99,14 @@ def normalized_find(filesystem, paths):
 
 
 def _has_supported_extension(filesystem, filename):
-    """Return true if filename is one of the file extensions we want to run a
-    test on."""
+    """Return true if filename is one of the file extensions we want to run a test on."""
     extension = filesystem.splitext(filename)[1]
     return extension in _supported_file_extensions
 
 
 def is_reference_html_file(filename):
-    """Return true if the filename points to a reference HTML file."""
-    if (filename.endswith('-expected.html') or
-        filename.endswith('-expected-mismatch.html')):
-        return True
-    return False
+    return filename.endswith('-expected.html') or filename.endswith('-expected-mismatch.html')
 
 
 def _is_test_file(filesystem, dirname, filename):
-    """Return true if the filename points to a test file."""
-    return (_has_supported_extension(filesystem, filename) and
-            not is_reference_html_file(filename))
+    return _has_supported_extension(filesystem, filename) and not is_reference_html_file(filename)
