@@ -1,3 +1,17 @@
+2011-06-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Use QtQuick imports in Api tests rather than old deprecated Qt 4.x imports.
+        https://bugs.webkit.org/show_bug.cgi?id=63533
+
+        We need to use the new QtQuick 1.x imports rather than the old deprecated
+        version.
+
+        * tests/qdeclarativewebview/resources/webviewbackgroundcolor.qml:
+        * tests/qdeclarativewebview/resources/webviewtest.qml:
+        * tests/qdeclarativewebview/resources/webviewtestdefault.qml:
+
 2011-06-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Darin Adler.
