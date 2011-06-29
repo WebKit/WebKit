@@ -96,6 +96,8 @@ void LayerTilerChromium::reset()
     m_tiles.clear();
     m_unusedTiles.clear();
     m_tilingData.setTotalSize(0, 0);
+    m_paintRect = IntRect();
+    m_updateRect = IntRect();
 }
 
 LayerTilerChromium::Tile* LayerTilerChromium::createTile(int i, int j)
@@ -236,6 +238,11 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
     invalidateTiles(contentRect);
     growLayerToContain(contentRect);
 
+    if (!numTiles()) {
+        m_updateRect = IntRect();
+        return;
+    }
+
     // Create tiles as needed, expanding a dirty rect to contain all
     // the dirty regions currently being drawn.
     IntRect dirtyLayerRect;
@@ -269,7 +276,7 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
 void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
-    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY() || m_updateRect.isEmpty())
+    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY() || m_updateRect.isEmpty() || !numTiles())
         return;
 
     GraphicsContext3D* context = layerRendererContext();
