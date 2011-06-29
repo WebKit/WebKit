@@ -1,3 +1,15 @@
+2011-06-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [WebKit2] Crash loading page that adds/removes frame in DOMContentLoaded/loaded
+        https://bugs.webkit.org/show_bug.cgi?id=63483
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createFrame): Added a check for null when creating
+        a frame. Also added a check that was in the WebKit1 code, but not here. Strangely,
+        the comment from the second check was still here, but not the code.
+
 2011-06-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -220,13 +220,15 @@ void FrameLoader::init()
     // This needs to be done early, so that an initial document gets correct sandbox flags in its SecurityOrigin.
     updateSandboxFlags();
 
-    // this somewhat odd set of steps is needed to give the frame an initial empty document
+    // This somewhat odd set of steps gives the frame an initial empty document.
+    // It would be better if this could be done with even fewer steps.
     m_stateMachine.advanceTo(FrameLoaderStateMachine::CreatingInitialEmptyDocument);
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
     m_provisionalDocumentLoader->finishedLoading();
+    ASSERT(!m_frame->document());
     m_documentLoader->writer()->begin(KURL(), false);
     m_documentLoader->writer()->end();
     m_frame->document()->cancelParsing();
@@ -2050,11 +2052,8 @@ bool FrameLoader::isLoadingMainFrame() const
 
 void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 {
-    // FIXME: Platforms shouldn't differ here!
-#if PLATFORM(WIN) || PLATFORM(CHROMIUM)
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
-#endif
 
 #if !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
     m_client->finishedLoading(loader);

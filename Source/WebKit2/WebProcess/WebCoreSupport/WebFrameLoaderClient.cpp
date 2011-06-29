@@ -1207,8 +1207,13 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     RefPtr<WebFrame> subframe = WebFrame::createSubframe(webPage, name, ownerElement);
 
     Frame* coreSubframe = subframe->coreFrame();
+    if (!coreSubframe)
+        return 0;
 
-     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
+    // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
+    if (!coreSubframe->page())
+        return 0;
+
     m_frame->coreFrame()->loader()->loadURLIntoChildFrame(url, referrer, coreSubframe);
 
     // The frame's onload handler may have removed it from the document.
