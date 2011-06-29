@@ -233,9 +233,9 @@ public:
     void clearSamplingFlag(int32_t flag);
 #endif
 
-    void addPropertyAccess(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoadOrStore)
+    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase = 0, int16_t deltaCallToDone = 0, int8_t baseGPR = 0, int8_t valueGPR = 0, int8_t scratchGPR = 0)
     {
-        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckToCall, deltaCallToLoadOrStore));
+        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
     }
 
 private:
@@ -259,16 +259,28 @@ private:
     Vector<CallRecord> m_calls;
 
     struct PropertyAccessRecord {
-        PropertyAccessRecord(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoadOrStore)
+        PropertyAccessRecord(JITCompiler::Call functionCall, int8_t deltaCheckImmToCall, int8_t deltaCallToStructCheck, int8_t deltaCallToLoadOrStore, int8_t deltaCallToSlowCase, int8_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
             : m_functionCall(functionCall)
-            , m_deltaCheckToCall(deltaCheckToCall)
+            , m_deltaCheckImmToCall(deltaCheckImmToCall)
+            , m_deltaCallToStructCheck(deltaCallToStructCheck)
             , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
+            , m_deltaCallToSlowCase(deltaCallToSlowCase)
+            , m_deltaCallToDone(deltaCallToDone)
+            , m_baseGPR(baseGPR)
+            , m_valueGPR(valueGPR)
+            , m_scratchGPR(scratchGPR)
         {
         }
 
         JITCompiler::Call m_functionCall;
-        intptr_t m_deltaCheckToCall;
-        intptr_t m_deltaCallToLoadOrStore;
+        int8_t m_deltaCheckImmToCall;
+        int8_t m_deltaCallToStructCheck;
+        int8_t m_deltaCallToLoadOrStore;
+        int8_t m_deltaCallToSlowCase;
+        int8_t m_deltaCallToDone;
+        int8_t m_baseGPR;
+        int8_t m_valueGPR;
+        int8_t m_scratchGPR;
     };
 
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;

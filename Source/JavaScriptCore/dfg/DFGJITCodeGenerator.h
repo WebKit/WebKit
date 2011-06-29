@@ -124,6 +124,10 @@ public:
             spill(spillMe);
         return specific;
     }
+    GPRReg tryAllocate()
+    {
+        return m_gprs.tryAllocate();
+    }
     FPRReg fprAllocate()
     {
         VirtualRegister spillMe;
@@ -149,6 +153,20 @@ public:
         VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() == DataFormatDouble;
+    }
+
+    static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
+    {
+        if (preserve1 != GPRInfo::regT0 && preserve2 != GPRInfo::regT0 && preserve3 != GPRInfo::regT0)
+            return GPRInfo::regT0;
+
+        if (preserve1 != GPRInfo::regT1 && preserve2 != GPRInfo::regT1 && preserve3 != GPRInfo::regT1)
+            return GPRInfo::regT1;
+
+        if (preserve1 != GPRInfo::regT2 && preserve2 != GPRInfo::regT2 && preserve3 != GPRInfo::regT2)
+            return GPRInfo::regT2;
+
+        return GPRInfo::regT3;
     }
 
 protected:
@@ -244,18 +262,10 @@ protected:
             unboxDouble(canTrample, info.fpr());
         }
     }
-
+    
     void silentSpillAllRegisters(GPRReg exclude, GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
     {
-        GPRReg canTrample = GPRInfo::regT0;
-        if (preserve1 != GPRInfo::regT0 && preserve2 != GPRInfo::regT0 && preserve3 != GPRInfo::regT0)
-            canTrample = GPRInfo::regT0;
-        else if (preserve1 != GPRInfo::regT1 && preserve2 != GPRInfo::regT1 && preserve3 != GPRInfo::regT1)
-            canTrample = GPRInfo::regT1;
-        else if (preserve1 != GPRInfo::regT2 && preserve2 != GPRInfo::regT2 && preserve3 != GPRInfo::regT2)
-            canTrample = GPRInfo::regT2;
-        else
-            canTrample = GPRInfo::regT3;
+        GPRReg canTrample = selectScratchGPR(preserve1, preserve2, preserve3);
         
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)

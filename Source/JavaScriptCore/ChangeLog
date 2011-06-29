@@ -1,3 +1,28 @@
+2011-06-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        DFG JIT lacks array.length caching.
+        https://bugs.webkit.org/show_bug.cgi?id=63505
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::tryAllocate):
+        (JSC::DFG::JITCodeGenerator::selectScratchGPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillAllRegisters):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addPropertyAccess):
+        (JSC::DFG::JITCompiler::PropertyAccessRecord::PropertyAccessRecord):
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::tryAllocate):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+
 2011-06-28  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Reviewed by Eric Seidel.

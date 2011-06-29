@@ -387,8 +387,14 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         info.callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
-        info.u.unset.deltaCheckToCall = m_propertyAccesses[i].m_deltaCheckToCall;
+        info.u.unset.deltaCheckImmToCall = m_propertyAccesses[i].m_deltaCheckImmToCall;
+        info.u.unset.deltaCallToStructCheck = m_propertyAccesses[i].m_deltaCallToStructCheck;
         info.u.unset.deltaCallToLoadOrStore = m_propertyAccesses[i].m_deltaCallToLoadOrStore;
+        info.u.unset.deltaCallToSlowCase = m_propertyAccesses[i].m_deltaCallToSlowCase;
+        info.u.unset.deltaCallToDone = m_propertyAccesses[i].m_deltaCallToDone;
+        info.u.unset.baseGPR = m_propertyAccesses[i].m_baseGPR;
+        info.u.unset.valueGPR = m_propertyAccesses[i].m_valueGPR;
+        info.u.unset.scratchGPR = m_propertyAccesses[i].m_scratchGPR;
     }
 
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.
