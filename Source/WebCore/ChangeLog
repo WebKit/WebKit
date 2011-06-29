@@ -1,3 +1,33 @@
+2011-06-29  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Make a shadow host transfer a focus to the first focusable element in the shadow root when its focus() is called.
+        https://bugs.webkit.org/show_bug.cgi?id=62358.
+
+        This patch doesn't take an effect on the following elements to keep a compatibility.
+        - <input>, <textarea>, <video> and <audio> elements
+        We'll address these elements separately after re-targeting focus events
+        (bug 61421) is implemented.
+
+        A shadow root's <content> is not considered in this patch.
+        That should be addressed in another patch. See bug 63522.
+
+        Test: fast/dom/shadow/shadow-host-transfer-focus.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        * page/FocusController.cpp:
+        (WebCore::shadowRoot):
+        (WebCore::isTreeScopeOwner):
+        (WebCore::FocusController::transferFocusToElementInShadowRoot):
+        (WebCore::hasCustomFocusLogic):
+        (WebCore::FocusController::findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::ownerOfTreeScope):
+        (WebCore::FocusController::findFocusableNodeAcrossTreeScope):
+        * page/FocusController.h:
+
 2011-06-29  Ryan Sleevi  <rsleevi@chromium.org>
 
         Reviewed by Dirk Schulze.

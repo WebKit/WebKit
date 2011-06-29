@@ -1610,6 +1610,8 @@ void Element::focus(bool restorePreviousSelection)
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
         protect = this;
+        if (shadowRoot() && page->focusController()->transferFocusToElementInShadowRoot(this, restorePreviousSelection))
+            return;
         if (!page->focusController()->setFocusedNode(this, doc->frame()))
             return;
     }

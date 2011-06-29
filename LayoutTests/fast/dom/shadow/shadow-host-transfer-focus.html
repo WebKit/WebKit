@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>
+When a shadow host is focused, the shadow host should transfer focus to the first focusable element in the shadow root if there is an such an element.
+</p>
+<div id="console"></div>
+<script>
+if (window.internals) {
+  layoutTestController.dumpAsText();
+
+  function shadowRoot(shadowHost) {
+    return internals.ensureShadowRoot(shadowHost);
+  }
+
+  function appendChildToShadow(shadowHost, child) {
+    return shadowRoot(shadowHost).appendChild(child)
+  }
+
+  function appendShadowHost(doc, parent) {
+    var shadowHost = doc.createElement('p');
+    shadowHost.tabIndex = 1;  // Makes sure that the shadow host is focusable.
+    parent = parent || doc.body;
+    return parent.appendChild(shadowHost);
+  }
+
+  var focusedElemements = [];
+
+  function focused(elem) {
+    focusedElements.push(elem)
+  }
+
+  function doFocus(elem) {
+    focusedElements = []
+    elem.focus()
+  }
+
+  function elementWasFocused(elem) {
+    for (var i = 0; i < focusedElements.length; ++i) {
+      if (focusedElements[i] == elem) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // For readability, I noted the DOM tree under the test here.
+  //
+  // - document
+  //   - shadow0 (tabindex=1)
+  //     - input0 (tabindex=-1)
+  //     - input1
+  //     - input2
+  var shadow0 = appendShadowHost(document);
+  var input0 = appendChildToShadow(shadow0, document.createElement('input'));
+  input0.tabIndex = -1
+  var input1 = appendChildToShadow(shadow0, document.createElement('input'));
+  var input2 = appendChildToShadow(shadow0, document.createElement('input'));
+
+  var elementIds = ['shadow0', 'input0', 'input1', 'input2']
+  for (var i = 0; i < elementIds.length; i++) {
+    var id = elementIds[i];
+    var element = window[id];
+    element.id = id;
+    element.addEventListener('focus', function() {focused(this);}, false);
+  }
+
+  debug('Focusing: shadow0');
+  doFocus(shadow0);
+  // Commented out due to bug 61421.
+  // shouldBeTrue('elementWasFocused(shadow0)');
+  shouldBeFalse('elementWasFocused(input0)');
+  shouldBeTrue('elementWasFocused(input1)');
+  shouldBeFalse('elementWasFocused(input2)');
+  if (window.eventSender) {
+    // Makes sure that we can change 'input1' element's value by pressing a key.
+    shouldBe('input0.value', '""');
+    shouldBe('input1.value', '""');
+    shouldBe('input2.value', '""');
+    debug('Pressing: "a"')
+    eventSender.keyDown('a');
+    shouldBe('input0.value', '""');
+    shouldBe('input1.value', '"a"');
+    shouldBe('input2.value', '""');
+  }
+
+  var successfullyParsed = true;
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

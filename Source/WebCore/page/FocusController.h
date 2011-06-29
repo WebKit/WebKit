@@ -34,6 +34,7 @@
 namespace WebCore {
 
 struct FocusCandidate;
+class Element;
 class Frame;
 class IntRect;
 class KeyboardEvent;
@@ -61,13 +62,14 @@ public:
     void setFocused(bool);
     bool isFocused() const { return m_isFocused; }
 
+    bool transferFocusToElementInShadowRoot(Element* shadowHost, bool restorePreviousSelection);
+
 private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
     Node* findFocusableNodeAcrossTreeScope(FocusDirection, TreeScope* startScope, Node* start, KeyboardEvent*);
-    Node* deepFocusableNode(FocusDirection, Node*, KeyboardEvent*);
-    Node* ownerOfTreeScope(TreeScope*);
+    Node* findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(FocusDirection, Node*, KeyboardEvent*);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
     // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes

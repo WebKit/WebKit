@@ -146,17 +146,32 @@ void FocusController::setFocused(bool focused)
     }
 }
 
-inline static ShadowRoot* shadowRoot(Node* node)
+static inline ShadowRoot* shadowRoot(Node* node)
 {
     return node->isElementNode() ? toElement(node)->shadowRoot() : 0;
 }
 
-inline static bool isTreeScopeOwner(Node* node)
+static inline bool isTreeScopeOwner(Node* node)
 {
     return node && (node->isFrameOwnerElement() || shadowRoot(node));
 }
 
-Node* FocusController::deepFocusableNode(FocusDirection direction, Node* node, KeyboardEvent* event)
+bool FocusController::transferFocusToElementInShadowRoot(Element* shadowHost, bool restorePreviousSelection)
+{
+    ASSERT(shadowRoot(shadowHost));
+    Node* node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(FocusDirectionForward, shadowHost, 0);
+    if (shadowHost == node)
+        return false;
+    toElement(node)->focus(restorePreviousSelection);
+    return true;
+}
+
+static inline bool hasCustomFocusLogic(Node* node)
+{
+    return node->hasTagName(inputTag) || node->hasTagName(textareaTag) || node->hasTagName(videoTag) || node->hasTagName(audioTag);
+}
+
+Node* FocusController::findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(FocusDirection direction, Node* node, KeyboardEvent* event)
 {
     // The node we found might be a HTMLFrameOwnerElement or a shadow host, so descend down the tree until we find either:
     // 1) a focusable node, or
@@ -170,11 +185,11 @@ Node* FocusController::deepFocusableNode(FocusDirection direction, Node* node, K
             Document* document = owner->contentFrame()->document();
             foundNode = findFocusableNode(direction, document, 0, event);
         } else {
-            ASSERT(shadowRoot(node));
-            // FIXME: Some elements (e.g. HTMLInputElement and HTMLTextAreaElement) do extra work in their focus() methods.
-            // Skipping these elements is the safest fix until we find a better way.
-            if (node->hasTagName(inputTag) || node->hasTagName(textareaTag))
+            // FIXME: Until a focus re-targeting (bug 61421) is implemented,
+            // skipping these elements is the safest way to keep a compatibility.
+            if (hasCustomFocusLogic(node))
                 break;
+            ASSERT(shadowRoot(node));
             foundNode = findFocusableNode(direction, shadowRoot(node), 0, event);
         }
         if (!foundNode)
@@ -244,7 +259,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
         // Chrome doesn't want focus, so we should wrap focus.
         node = findFocusableNode(direction, m_page->mainFrame()->document(), 0, event);
-        node = deepFocusableNode(direction, node, event);
+        node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(direction, node, event);
 
         if (!node)
             return false;
@@ -296,6 +311,16 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     return true;
 }
 
+static inline Node* ownerOfTreeScope(TreeScope* scope)
+{
+    ASSERT(scope);
+    if (scope->isShadowRoot())
+        return scope->shadowHost();
+    if (scope->document()->frame())
+        return scope->document()->frame()->ownerElement();
+    return 0;
+}
+
 Node* FocusController::findFocusableNodeAcrossTreeScope(FocusDirection direction, TreeScope* scope, Node* currentNode, KeyboardEvent* event)
 {
     Node* node = findFocusableNode(direction, scope, currentNode, event);
@@ -307,7 +332,7 @@ Node* FocusController::findFocusableNodeAcrossTreeScope(FocusDirection direction
         node = findFocusableNode(direction, owner->treeScope(), owner, event);
         scope = owner->treeScope();
     }
-    node = deepFocusableNode(direction, node, event);
+    node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(direction, node, event);
     return node;
 }
 
@@ -429,16 +454,6 @@ Node* FocusController::previousFocusableNode(TreeScope* scope, Node* start, Keyb
     // 2) comes last in the scope, if there's a tie.
     startingTabIndex = (start && start->tabIndex()) ? start->tabIndex() : std::numeric_limits<short>::max();
     return previousNodeWithLowerTabIndex(last, startingTabIndex, event);
-}
-
-Node* FocusController::ownerOfTreeScope(TreeScope* scope)
-{
-    ASSERT(scope);
-    if (scope->isShadowRoot())
-        return scope->shadowHost();
-    if (scope->document()->frame())
-        return scope->document()->frame()->ownerElement();
-    return 0;
 }
 
 static bool relinquishesEditingFocus(Node *node)
