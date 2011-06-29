@@ -127,18 +127,21 @@ namespace JSC {
             seen = true;
         }
 
-        signed accessType : 31;
-        unsigned seen : 1;
+        int8_t accessType;
+        int8_t seen;
+        
+#if ENABLE(DFG_JIT)
+        int8_t baseGPR;
+        int8_t valueGPR;
+        int8_t deltaCallToDone;
+        int8_t deltaCallToStructCheck;
+        int8_t deltaCallToSlowCase;
+#endif
 
         union {
             struct {
                 int8_t deltaCheckImmToCall;
-                int8_t deltaCallToStructCheck;
                 int8_t deltaCallToLoadOrStore;
-                int8_t deltaCallToSlowCase;
-                int8_t deltaCallToDone;
-                int8_t baseGPR;
-                int8_t valueGPR;
                 int8_t scratchGPR;
             } unset;
             struct {

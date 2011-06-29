@@ -1,3 +1,21 @@
+2011-06-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        DFG JIT does not perform get_by_id self list caching.
+        https://bugs.webkit.org/show_bug.cgi?id=63605
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::dfgBuildGetByIDList):
+        * dfg/DFGRepatch.h:
+
 2011-06-28  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.

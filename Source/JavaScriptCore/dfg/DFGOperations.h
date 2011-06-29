@@ -59,6 +59,7 @@ EncodedJSValue operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encod
 EncodedJSValue operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty);
 EncodedJSValue operationGetById(ExecState*, EncodedJSValue encodedBase, Identifier*);
+EncodedJSValue operationGetByIdBuildList(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
 void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
