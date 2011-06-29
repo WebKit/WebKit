@@ -2,6 +2,18 @@
 
         Speculative WinCE build correction after r90057.
 
+        * CMakeListsWinCE.txt: Roll back r90061, since GetWorldTransform
+          is not available in WinCE.
+        * platform/win/ScrollbarThemeWin.cpp: Conditionally exclude calls
+          to DIBPixelData::setRGBABitmapAlpha for WinCE.
+        (WebCore::ScrollbarThemeWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeWin::paintButton):
+        (WebCore::ScrollbarThemeWin::paintThumb):
+
+2011-06-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Speculative WinCE build correction after r90057.
+
         * CMakeListsWinCE.txt: Add missing DIBPixelData.cpp to
         WinCE build to support setting bitmap image alpha value.
 
