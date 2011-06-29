@@ -1,3 +1,10 @@
+2011-06-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip 2 acid tests on GTK due to bug 54119. They were
+        failing only in 32-Bits Release though.
+
+        * platform/gtk/Skipped:
+
 2011-06-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Qt specific results committed in r90007, but fail on Qt-Mac platform
