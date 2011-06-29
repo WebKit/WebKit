@@ -30,6 +30,7 @@
 
 #include "DFGJITCodeGenerator.h"
 #include "LinkBuffer.h"
+#include "Operations.h"
 #include "RepatchBuffer.h"
 
 namespace JSC { namespace DFG {
@@ -250,6 +251,17 @@ static V_DFGOperation_EJJI appropriatePutByIdFunction(const PutPropertySlot &slo
     return operationPutByIdNonStrict;
 }
 
+static void testPrototype(MacroAssembler &stubJit, GPRReg scratchGPR, JSValue prototype, MacroAssembler::JumpList& failureCases)
+{
+    if (prototype.isNull())
+        return;
+    
+    ASSERT(prototype.isCell());
+    
+    stubJit.move(MacroAssembler::TrustedImmPtr(prototype.asCell()), scratchGPR);
+    failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(scratchGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(prototype.asCell()->structure())));
+}
+
 static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier&, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     CodeBlock* codeBlock = exec->codeBlock();
@@ -259,6 +271,8 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
         return false;
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
+    Structure* oldStructure = structure->previousID();
+    
     if (!slot.isCacheable())
         return false;
     if (structure->isUncacheableDictionary())
@@ -266,8 +280,82 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 
     // Optimize self access.
     if (slot.base() == baseValue) {
-        if (slot.type() == PutPropertySlot::NewProperty)
-            return false;
+        if (slot.type() == PutPropertySlot::NewProperty) {
+            if (structure->isDictionary())
+                return false;
+            
+            // skip optimizing the case where we need a realloc
+            if (oldStructure->propertyStorageCapacity() != structure->propertyStorageCapacity())
+                return false;
+            
+            normalizePrototypeChain(exec, baseCell);
+            
+            StructureChain* prototypeChain = structure->prototypeChain(exec);
+            
+            GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+            GPRReg valueGPR = static_cast<GPRReg>(stubInfo.valueGPR);
+            GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.u.unset.scratchGPR);
+            bool needToRestoreScratch = false;
+            
+            ASSERT(scratchGPR != baseGPR);
+            
+            MacroAssembler stubJit;
+            
+            MacroAssembler::JumpList failureCases;
+            
+            if (scratchGPR == InvalidGPRReg) {
+                scratchGPR = JITCodeGenerator::selectScratchGPR(baseGPR, valueGPR);
+                stubJit.push(scratchGPR);
+                needToRestoreScratch = true;
+            }
+            
+            failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(oldStructure)));
+            
+            testPrototype(stubJit, scratchGPR, oldStructure->storedPrototype(), failureCases);
+            
+            if (putKind == NotDirect) {
+                for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it)
+                    testPrototype(stubJit, scratchGPR, (*it)->storedPrototype(), failureCases);
+            }
+            
+            stubJit.storePtr(MacroAssembler::TrustedImmPtr(structure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
+            if (structure->isUsingInlineStorage())
+                stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue)));
+            else {
+                stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+                stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue)));
+            }
+            
+            MacroAssembler::Jump success;
+            MacroAssembler::Jump failure;
+            
+            if (needToRestoreScratch) {
+                stubJit.pop(scratchGPR);
+                success = stubJit.jump();
+
+                failureCases.link(&stubJit);
+                stubJit.pop(scratchGPR);
+                failure = stubJit.jump();
+            } else
+                success = stubJit.jump();
+            
+            LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock->executablePool());
+            patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
+            if (needToRestoreScratch)
+                patchBuffer.link(failure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+            else
+                patchBuffer.link(failureCases, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
+            
+            CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
+            stubInfo.stubRoutine = entryLabel;
+            
+            CodeLocationLabel hotPathBegin = stubInfo.hotPathBegin;
+            RepatchBuffer repatchBuffer(codeBlock);
+            repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), entryLabel);
+            repatchBuffer.relink(stubInfo.callReturnLocation, appropriatePutByIdFunction(slot, putKind));
+            
+            return true;
+        }
 
         dfgRepatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), appropriatePutByIdFunction(slot, putKind), false);
         stubInfo.initPutByIdReplace(*globalData, codeBlock->ownerExecutable(), structure);

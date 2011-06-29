@@ -1,3 +1,18 @@
+2011-06-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        DFG JIT does not do put_by_id transition caching.
+        https://bugs.webkit.org/show_bug.cgi?id=63662
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addPropertyAccess):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::testPrototype):
+        (JSC::DFG::tryCachePutByID):
+
 2011-06-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

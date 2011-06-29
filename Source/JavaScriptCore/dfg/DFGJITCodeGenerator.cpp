@@ -370,11 +370,25 @@ void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned 
 
 void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
-    JITCompiler::DataLabelPtr structureToCompare;
-    JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::Equal, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    GPRReg slowPathScratch = scratchGPR;
     
+    if (scratchGPR == baseGPR)
+        slowPathScratch = tryAllocate();
+    
+    JITCompiler::DataLabelPtr structureToCompare;
+    JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    
+    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+    JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
+
+    JITCompiler::Jump done = m_jit.jump();
+
+    structureCheck.link(&m_jit);
+
     if (slowPathTarget.isSet())
         slowPathTarget.link(&m_jit);
+
+    JITCompiler::Label slowCase = m_jit.label();
 
     silentSpillAllRegisters(InvalidGPRReg, baseGPR, valueGPR);
     setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(valueGPR, baseGPR);
@@ -395,19 +409,19 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
     JITCompiler::Call functionCall = appendCallWithExceptionCheck(optimizedCall);
     silentFillAllRegisters(InvalidGPRReg);
 
-    JITCompiler::Jump handledByC = m_jit.jump();
-    structureCheck.link(&m_jit);
-
-    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
-    JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
+    done.link(&m_jit);
+    JITCompiler::Label doneLabel = m_jit.label();
 
     int8_t checkImmToCall = static_cast<int8_t>(m_jit.differenceBetween(structureToCompare, functionCall));
     int8_t callToCheck = static_cast<int8_t>(m_jit.differenceBetween(functionCall, structureCheck));
     int8_t callToStore = static_cast<int8_t>(m_jit.differenceBetween(functionCall, storeWithPatch));
+    int8_t callToSlowCase = static_cast<int8_t>(m_jit.differenceBetween(functionCall, slowCase));
+    int8_t callToDone = static_cast<int8_t>(m_jit.differenceBetween(functionCall, doneLabel));
 
-    handledByC.link(&m_jit);
+    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(valueGPR), static_cast<int8_t>(slowPathScratch));
 
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore);
+    if (scratchGPR == baseGPR && slowPathScratch != InvalidGPRReg)
+        unlock(slowPathScratch);
 }
 
 #ifndef NDEBUG
