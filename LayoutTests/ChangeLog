@@ -1,5 +1,13 @@
 2011-06-29  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline of 3 svg/custom/linking tests.
+
+        * platform/gtk/svg/custom/linking-a-03-b-all-expected.txt:
+        * platform/gtk/svg/custom/linking-a-03-b-transform-expected.txt:
+        * platform/gtk/svg/custom/linking-a-03-b-viewBox-transform-expected.txt:
+
+2011-06-29  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline of
         fast/html/details-open-javascript.html
 
