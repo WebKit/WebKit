@@ -1,0 +1,12 @@
+Test to ensure that a media file blocked by the resource load delegate generates an error and does not block the document's 'load' event.
+
+EXPECTED (video.networkState == '0') OK
+
+EVENT(loadstart)
+EVENT(error)
+EXPECTED (video.error != 'null') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '3') OK
+
+END OF TEST
+

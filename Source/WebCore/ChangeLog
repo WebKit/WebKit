@@ -1,3 +1,29 @@
+2011-06-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Media element loads blocked by a resource load delegate do not generate an error event
+        https://bugs.webkit.org/show_bug.cgi?id=63558
+
+        Tests: media/media-blocked-by-beforeload.html
+               media/media-blocked-by-willsendrequest.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource): Call mediaLoadingFailed instead of noneSupported
+            so all failures follow the same code path.
+        (WebCore::HTMLMediaElement::loadResource): Call mediaLoadingFailed when there is no frame, when 
+            the loader delegate rejects the url, or when MediaPlayer doesn't find a media engine that
+            supports the type.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Fix incorrect logging.
+        (WebCore::HTMLMediaElement::mediaLoadingFailed): Change name of parameter from "state" to
+            "error" to make its purpose obvious.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Return a bool indicating whether or not the url was given to
+            a media engine.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Add some logging.
+        * platform/graphics/MediaPlayer.h:
+
 2011-06-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+</head>
+<body>
+    <video controls></video>
+    <p>Test to ensure that a media file blocked by the resource load delegate generates an error
+    and does not block the document's 'load' event.</p>
+
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.setWillSendRequestReturnsNull(true);
+        } else
+            consoleWrite("This test can only be run in DumpRenderTree!<br><br>");
+
+        function loaded() 
+        {
+            testExpected("video.error", null, "!=");
+            testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+            testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+            consoleWrite("");
+            endTest();
+        };
+        
+        window.onload = loaded;
+
+        findMediaElement();
+        waitForEvent("loadstart");
+        waitForEvent("error");
+
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+        consoleWrite("");
+        var mediaFile = findMediaFile("video", "content/test");
+        video.src = mediaFile;
+    </script>
+
+</body>
+</html>

@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayerPrivate.h"
 #include "Settings.h"
@@ -316,7 +317,7 @@ MediaPlayer::~MediaPlayer()
     m_mediaPlayerClient = 0;
 }
 
-void MediaPlayer::load(const String& url, const ContentType& contentType)
+bool MediaPlayer::load(const String& url, const ContentType& contentType)
 {
     String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
@@ -340,6 +341,7 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
     m_contentMIMEType = type;
     m_contentTypeCodecs = typeCodecs;
     loadWithNextMediaEngine(0);
+    return m_currentMediaEngine;
 }
 
 void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
@@ -354,6 +356,7 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
 
     // Don't delete and recreate the player unless it comes from a different engine.
     if (!engine) {
+        LOG(Media, "MediaPlayer::loadWithNextMediaEngine - no media engine found for type \"%s\"", m_contentMIMEType.utf8().data());
         m_currentMediaEngine = engine;
         m_private = nullptr;
     } else if (m_currentMediaEngine != engine) {

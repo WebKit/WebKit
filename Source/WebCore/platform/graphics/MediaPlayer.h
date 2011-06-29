@@ -197,7 +197,7 @@ public:
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
 
-    void load(const String& url, const ContentType&);
+    bool load(const String& url, const ContentType&);
     void cancelLoad();
 
     bool visible() const;

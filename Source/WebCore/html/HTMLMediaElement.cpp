@@ -641,22 +641,26 @@ void HTMLMediaElement::selectMediaResource()
 
     // 6 - If mode is attribute, then run these substeps
     if (mode == attribute) {
+        m_loadState = LoadingFromSrcAttr;
+
         // If the src attribute's value is the empty string ... jump down to the failed step below
         KURL mediaURL = getNonEmptyURLAttribute(srcAttr);
         if (mediaURL.isEmpty()) {
-            noneSupported();
+            mediaLoadingFailed(MediaPlayer::FormatError);
             LOG(Media, "HTMLMediaElement::selectMediaResource, empty 'src'");
             return;
         }
 
-        if (isSafeToLoadURL(mediaURL, Complain) && dispatchBeforeLoadEvent(mediaURL.string())) {
-            ContentType contentType("");
-            m_loadState = LoadingFromSrcAttr;
-            loadResource(mediaURL, contentType);
-        } else 
-            noneSupported();
+        if (!isSafeToLoadURL(mediaURL, Complain) || !dispatchBeforeLoadEvent(mediaURL.string())) {
+            mediaLoadingFailed(MediaPlayer::FormatError);
+            return;
+        }
 
-        LOG(Media, "HTMLMediaElement::selectMediaResource, 'src' not used");
+        // No type information is available when the url comes from the 'src' attribute so MediaPlayer
+        // will have to pick a media engine based on the file extension.
+        ContentType contentType("");
+        loadResource(mediaURL, contentType);
+        LOG(Media, "HTMLMediaElement::selectMediaResource, using 'src' attribute url");
         return;
     }
 
@@ -712,12 +716,16 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     LOG(Media, "HTMLMediaElement::loadResource(%s, %s)", urlForLogging(initialURL).utf8().data(), contentType.raw().utf8().data());
 
     Frame* frame = document()->frame();
-    if (!frame)
+    if (!frame) {
+        mediaLoadingFailed(MediaPlayer::FormatError);
         return;
+    }
 
     KURL url = initialURL;
-    if (!frame->loader()->willLoadMediaElementURL(url))
+    if (!frame->loader()->willLoadMediaElementURL(url)) {
+        mediaLoadingFailed(MediaPlayer::FormatError);
         return;
+    }
 
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
@@ -765,7 +773,8 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     m_player->setPreservesPitch(m_webkitPreservesPitch);
     updateVolume();
 
-    m_player->load(url.string(), contentType);
+    if (!m_player->load(url.string(), contentType))
+        mediaLoadingFailed(MediaPlayer::FormatError);
 
     // If there is no poster to display, allow the media engine to render video frames as soon as
     // they are available.
@@ -926,7 +935,7 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState state)
+void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
 {
     stopPeriodicTimers();
     
@@ -950,11 +959,11 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState state)
         return;
     }
     
-    if (state == MediaPlayer::NetworkError && m_readyState >= HAVE_METADATA)
+    if (error == MediaPlayer::NetworkError && m_readyState >= HAVE_METADATA)
         mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_NETWORK));
-    else if (state == MediaPlayer::DecodeError)
+    else if (error == MediaPlayer::DecodeError)
         mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_DECODE));
-    else if ((state == MediaPlayer::FormatError || state == MediaPlayer::NetworkError) && m_loadState == LoadingFromSrcAttr)
+    else if ((error == MediaPlayer::FormatError || error == MediaPlayer::NetworkError) && m_loadState == LoadingFromSrcAttr)
         noneSupported();
     
     updateDisplayState();
@@ -1162,6 +1171,7 @@ bool HTMLMediaElement::supportsSave() const
 
 void HTMLMediaElement::prepareToPlay()
 {
+    LOG(Media, "HTMLMediaElement::prepareToPlay(%p)", this);
     if (m_havePreparedToPlay)
         return;
     m_havePreparedToPlay = true;
@@ -1773,7 +1783,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
     // Don't log if this was just called to find out if there are any valid <source> elements.
     bool shouldLog = actionIfInvalid != DoNothing;
     if (shouldLog)
-        LOG(Media, "HTMLMediaElement::selectNextSourceChild(contentType : \"%s\")", contentType ? contentType->raw().utf8().data() : "");
+        LOG(Media, "HTMLMediaElement::selectNextSourceChild");
 #endif
 
     if (m_nextChildNodeToConsider == sourceChildEndOfListValue()) {
