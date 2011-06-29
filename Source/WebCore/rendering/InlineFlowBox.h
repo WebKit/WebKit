@@ -103,11 +103,11 @@ public:
 
     IntRect roundedFrameRect() const;
     
-    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
+    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
-    void paintBoxShadow(GraphicsContext*, RenderStyle*, ShadowStyle, const IntRect&);
+    void paintBoxShadow(GraphicsContext*, RenderStyle*, ShadowStyle, const LayoutRect&);
     virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom);
 

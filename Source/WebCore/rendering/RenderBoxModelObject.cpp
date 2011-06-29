@@ -2090,7 +2090,7 @@ static inline IntRect areaCastingShadowInHole(const IntRect& holeRect, int shado
     return unionRect(bounds, offsetBounds);
 }
 
-void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRect& paintRect, const RenderStyle* s, ShadowStyle shadowStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const LayoutRect& paintRect, const RenderStyle* s, ShadowStyle shadowStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
 
@@ -2108,9 +2108,9 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
         if (shadow->style() != shadowStyle)
             continue;
 
-        IntSize shadowOffset(shadow->x(), shadow->y());
-        int shadowBlur = shadow->blur();
-        int shadowSpread = shadow->spread();
+        LayoutSize shadowOffset(shadow->x(), shadow->y());
+        LayoutUnit shadowBlur = shadow->blur();
+        LayoutUnit shadowSpread = shadow->spread();
         
         if (shadowOffset.isZero() && !shadowBlur && !shadowSpread)
             continue;
@@ -2123,7 +2123,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
             if (fillRect.isEmpty())
                 continue;
 
-            IntRect shadowRect(border.rect());
+            LayoutRect shadowRect(border.rect());
             shadowRect.inflate(shadowBlur + shadowSpread);
             shadowRect.move(shadowOffset);
 
@@ -2132,7 +2132,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
 
             // Move the fill just outside the clip, adding 1 pixel separation so that the fill does not
             // bleed in (due to antialiasing) if the context is transformed.
-            IntSize extraOffset(paintRect.width() + max(0, shadowOffset.width()) + shadowBlur + 2 * shadowSpread + 1, 0);
+            LayoutSize extraOffset(paintRect.width() + max(0, shadowOffset.width()) + shadowBlur + 2 * shadowSpread + 1, 0);
             shadowOffset -= extraOffset;
             fillRect.move(extraOffset);
 
@@ -2157,7 +2157,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
                 fillRect.expandRadii(shadowSpread);
                 context->fillRoundedRect(fillRect, Color::black, s->colorSpace());
             } else {
-                IntRect rectToClipOut = border.rect();
+                LayoutRect rectToClipOut = border.rect();
 
                 // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
                 // when painting the shadow. On the other hand, it introduces subpixel gaps along the
@@ -2176,7 +2176,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
             }
         } else {
             // Inset shadow.
-            IntRect holeRect(border.rect());
+            LayoutRect holeRect(border.rect());
             holeRect.inflate(-shadowSpread);
 
             if (holeRect.isEmpty()) {
@@ -2205,7 +2205,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 
-            IntRect outerRect = areaCastingShadowInHole(border.rect(), shadowBlur, shadowSpread, shadowOffset);
+            LayoutRect outerRect = areaCastingShadowInHole(border.rect(), shadowBlur, shadowSpread, shadowOffset);
             RoundedIntRect roundedHole(holeRect, border.radii());
 
             GraphicsContextStateSaver stateSaver(*context);
@@ -2217,7 +2217,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const IntRec
             } else
                 context->clip(border.rect());
 
-            IntSize extraOffset(2 * paintRect.width() + max(0, shadowOffset.width()) + shadowBlur - 2 * shadowSpread + 1, 0);
+            LayoutSize extraOffset(2 * paintRect.width() + max(0, shadowOffset.width()) + shadowBlur - 2 * shadowSpread + 1, 0);
             context->translate(extraOffset.width(), extraOffset.height());
             shadowOffset -= extraOffset;
 

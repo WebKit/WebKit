@@ -549,12 +549,12 @@ void RenderTable::subtractCaptionRect(IntRect& rect) const
     }
 }
 
-void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
-    IntRect rect(paintOffset, size());
+    LayoutRect rect(paintOffset, size());
     subtractCaptionRect(rect);
 
     paintBoxShadow(paintInfo.context, rect, style(), Normal);

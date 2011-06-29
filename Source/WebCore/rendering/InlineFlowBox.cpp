@@ -1063,7 +1063,7 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
     }
 }
 
-void InlineFlowBox::paintBoxShadow(GraphicsContext* context, RenderStyle* s, ShadowStyle shadowStyle, const IntRect& paintRect)
+void InlineFlowBox::paintBoxShadow(GraphicsContext* context, RenderStyle* s, ShadowStyle shadowStyle, const LayoutRect& paintRect)
 {
     if ((!prevLineBox() && !nextLineBox()) || !parent())
         boxModelObject()->paintBoxShadow(context, paintRect, s, shadowStyle);
@@ -1094,20 +1094,20 @@ void InlineFlowBox::constrainToLineTopAndBottomIfNeeded(IntRect& rect) const
     }
 }
 
-void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
     // Pixel snap background/border painting.
-    IntRect frameRect = roundedFrameRect();
+    LayoutRect frameRect = roundedFrameRect();
 
     constrainToLineTopAndBottomIfNeeded(frameRect);
     
     // Move x/y to our coordinates.
-    IntRect localRect(frameRect);
+    LayoutRect localRect(frameRect);
     flipForWritingMode(localRect);
-    IntPoint adjustedPaintoffset = paintOffset + localRect.location();
+    LayoutPoint adjustedPaintoffset = paintOffset + localRect.location();
     
     GraphicsContext* context = paintInfo.context;
     
@@ -1115,7 +1115,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& pa
     // a line may actually have to paint a background.
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if ((!parent() && m_firstLine && styleToUse != renderer()->style()) || (parent() && renderer()->hasBoxDecorations())) {
-        IntRect paintRect = IntRect(adjustedPaintoffset, frameRect.size());
+        LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
         // Shadow comes first and is behind the background and border.
         paintBoxShadow(context, styleToUse, Normal, paintRect);
 
@@ -1144,20 +1144,20 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& pa
                 // the previous line left off.
                 // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
                 // but it isn't even clear how this should work at all.
-                int logicalOffsetOnLine = 0;
+                LayoutUnit logicalOffsetOnLine = 0;
                 for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
                     logicalOffsetOnLine += curr->logicalWidth();
-                int totalLogicalWidth = logicalOffsetOnLine;
+                LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
                 for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
                     totalLogicalWidth += curr->logicalWidth();
-                int stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
-                int stripY = adjustedPaintoffset.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
-                int stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-                int stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
+                LayoutUnit stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
+                LayoutUnit stripY = adjustedPaintoffset.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
+                LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
+                LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
                 GraphicsContextStateSaver stateSaver(*context);
                 context->clip(paintRect);
-                boxModelObject()->paintBorder(context, IntRect(stripX, stripY, stripWidth, stripHeight), renderer()->style());
+                boxModelObject()->paintBorder(context, LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer()->style());
             }
         }
     }
