@@ -35,6 +35,11 @@ v8 {
 prependWebCoreLib(../../WebCore)
 webkit2:prependWebKit2Lib(../../WebKit2)
 
+# This is needed for syncqt when it parses the dependencies on module's main pro file so
+# the generated includes are containing the dependencies.
+# It used to be in WebCore.pro but now that this is the main pro file it has to be here.
+QT += network
+
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 
 contains(QT_CONFIG, embedded):CONFIG += embedded

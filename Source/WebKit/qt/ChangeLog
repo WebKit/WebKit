@@ -1,3 +1,18 @@
+2011-06-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Add Qt dependencies in QtWebKit's main pro file.
+        https://bugs.webkit.org/show_bug.cgi?id=63639
+
+        syncqt, the script which generates the headers inside Qt parses
+        the main pro file of QtWebKit to check the Qt dependencies. It used
+        to be WebCore.pro but after the build reorganization QtWebKit.pro is
+        the new main pro file so we need to add the network dependency just like
+        we did in WebCore.pro.
+
+        * QtWebKit.pro:
+
 2011-06-28  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Adam Barth.
