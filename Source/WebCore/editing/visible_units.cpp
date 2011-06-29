@@ -818,7 +818,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
     }
 
     if (type == Position::PositionIsOffsetInAnchor) {
-        ASSERT(type != Position::PositionIsOffsetInAnchor || !offset);
+        ASSERT(type == Position::PositionIsOffsetInAnchor || !offset);
         return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
     }
 
