@@ -1,3 +1,11 @@
+2011-06-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Speculative WinCE build correction after r90053.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::inTransparencyLayer): Provide
+        stub implementation for 'inTransparencyLayer'.
+
 2011-06-29  Xu Fan  <qifuren1985@gmail.com>
 
         Reviewed by Brent Fulgham.
