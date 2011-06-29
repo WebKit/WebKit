@@ -1,3 +1,79 @@
+2011-06-29  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch computeWidth and computeHeight functions to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63655
+
+        Switch computeWidth and computeHeight functions over to the new layout unit abstraction.
+
+        Making a point to mark rounding that should eventually be removed by linking to a new
+        tracking bug: 63645.
+
+        No new tests, no functionality changes.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
+        * rendering/AutoTableLayout.h:
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::computePreferredLogicalWidths):
+        * rendering/FixedTableLayout.h:
+        * rendering/LayoutTypes.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthUsing):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightUsing):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        * rendering/RenderBox.h:
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::computeLogicalWidth):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeReplacedLogicalWidth):
+        (WebCore::RenderImage::computeReplacedLogicalHeight):
+        * rendering/RenderImage.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computePreferredLogicalWidths):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::computeReplacedLogicalWidth):
+        (WebCore::RenderVideo::computeReplacedLogicalHeight):
+        * rendering/RenderVideo.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeLogicalWidth):
+        (WebCore::RenderSVGForeignObject::computeLogicalHeight):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computePreferredLogicalWidths):
+        (WebCore::RenderSVGRoot::computeIntrinsicWidth):
+        (WebCore::RenderSVGRoot::computeIntrinsicHeight):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/svg/RenderSVGRoot.h:
+
 2011-06-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.

@@ -252,11 +252,13 @@ int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
             if ((heightIsAuto && !hasIntrinsicWidth && hasIntrinsicHeight) || !heightIsAuto) {
                 if (heightIsAuto) {
                     if (contentRenderer) {
-                        int logicalHeight = contentRenderer->computeReplacedLogicalHeightUsing(contentRenderStyle->logicalHeight());
+                        LayoutUnit logicalHeight = contentRenderer->computeReplacedLogicalHeightUsing(contentRenderStyle->logicalHeight());
+                        // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
                         return contentRenderer->computeReplacedLogicalWidthRespectingMinMaxWidth(static_cast<int>(ceilf(logicalHeight * intrinsicRatio.width() / intrinsicRatio.height())));
                     }
                 } else { 
-                    int logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
+                    LayoutUnit logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
+                    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
                     return computeReplacedLogicalWidthRespectingMinMaxWidth(static_cast<int>(ceilf(logicalHeight * intrinsicRatio.width() / intrinsicRatio.height())));
                 }
             }
@@ -281,11 +283,12 @@ int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
                 }
                 
                 // This solves above equation for 'width' (== logicalWidth).
-                int logicalWidth = foundExplicitWidth ? computeIntrinsicLogicalWidth(containingBlock, false) : containingBlock->availableLogicalWidth();
-                int marginStart = style()->marginStart().calcMinValue(logicalWidth);
-                int marginEnd = style()->marginEnd().calcMinValue(logicalWidth);
+                LayoutUnit logicalWidth = foundExplicitWidth ? computeIntrinsicLogicalWidth(containingBlock, false) : containingBlock->availableLogicalWidth();
+                LayoutUnit marginStart = style()->marginStart().calcMinValue(logicalWidth);
+                LayoutUnit marginEnd = style()->marginEnd().calcMinValue(logicalWidth);
                 logicalWidth = max(0, logicalWidth - (marginStart + marginEnd + (width() - clientWidth())));
                 if (isPercentageIntrinsicSize)
+                    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
                     logicalWidth = static_cast<int>(ceilf(logicalWidth * intrinsicRatio.width() / 100));
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth);
             }
@@ -341,6 +344,7 @@ int RenderReplaced::computeReplacedLogicalHeight() const
         // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
         // (used width) / (intrinsic ratio)
         if (!intrinsicRatio.isEmpty() && !isPercentageIntrinsicSize)
+            // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
             return computeReplacedLogicalHeightRespectingMinMaxHeight(static_cast<int>(ceilf(availableLogicalWidth() * intrinsicRatio.height() / intrinsicRatio.width())));
 
         // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
@@ -375,7 +379,7 @@ void RenderReplaced::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    int borderAndPadding = borderAndPaddingWidth();
+    LayoutUnit borderAndPadding = borderAndPaddingWidth();
     m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)

@@ -1620,9 +1620,9 @@ void RenderBox::computeLogicalWidth()
         cb->setMarginEndForChild(this, containerLogicalWidth - logicalWidth() - cb->marginStartForChild(this));
 }
 
-int RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, int availableLogicalWidth)
+LayoutUnit RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, LayoutUnit availableLogicalWidth)
 {
-    int logicalWidthResult = logicalWidth();
+    LayoutUnit logicalWidthResult = logicalWidth();
     Length logicalWidth;
     if (widthType == LogicalWidth)
         logicalWidth = style()->logicalWidth();
@@ -1632,8 +1632,8 @@ int RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, int availabl
         logicalWidth = style()->logicalMaxWidth();
 
     if (logicalWidth.isIntrinsicOrAuto()) {
-        int marginStart = style()->marginStart().calcMinValue(availableLogicalWidth);
-        int marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth);
+        LayoutUnit marginStart = style()->marginStart().calcMinValue(availableLogicalWidth);
+        LayoutUnit marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth);
         if (availableLogicalWidth)
             logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
 
@@ -1781,13 +1781,13 @@ void RenderBox::computeLogicalHeight()
             checkMinMaxHeight = false;
         }
 
-        int heightResult;
+        LayoutUnit heightResult;
         if (checkMinMaxHeight) {
             heightResult = computeLogicalHeightUsing(style()->logicalHeight());
             if (heightResult == -1)
                 heightResult = logicalHeight();
-            int minH = computeLogicalHeightUsing(style()->logicalMinHeight()); // Leave as -1 if unset.
-            int maxH = style()->logicalMaxHeight().isUndefined() ? heightResult : computeLogicalHeightUsing(style()->logicalMaxHeight());
+            LayoutUnit minH = computeLogicalHeightUsing(style()->logicalMinHeight()); // Leave as -1 if unset.
+            LayoutUnit maxH = style()->logicalMaxHeight().isUndefined() ? heightResult : computeLogicalHeightUsing(style()->logicalMaxHeight());
             if (maxH == -1)
                 maxH = heightResult;
             heightResult = min(maxH, heightResult);
@@ -1815,10 +1815,10 @@ void RenderBox::computeLogicalHeight()
     if (stretchesToViewport() || paginatedContentNeedsBaseHeight) {
         // FIXME: Finish accounting for block flow here.
         // https://bugs.webkit.org/show_bug.cgi?id=46603
-        int margins = collapsedMarginBefore() + collapsedMarginAfter();
-        int visHeight;
+        LayoutUnit margins = collapsedMarginBefore() + collapsedMarginAfter();
+        LayoutUnit visHeight;
         if (document()->printing())
-            visHeight = static_cast<int>(view()->pageLogicalHeight());
+            visHeight = static_cast<LayoutUnit>(view()->pageLogicalHeight());
         else  {
             if (isHorizontalWritingMode())
                 visHeight = view()->viewHeight();
@@ -1828,15 +1828,15 @@ void RenderBox::computeLogicalHeight()
         if (isRoot())
             setLogicalHeight(max(logicalHeight(), visHeight - margins));
         else {
-            int marginsBordersPadding = margins + parentBox()->marginBefore() + parentBox()->marginAfter() + parentBox()->borderAndPaddingLogicalHeight();
+            LayoutUnit marginsBordersPadding = margins + parentBox()->marginBefore() + parentBox()->marginAfter() + parentBox()->borderAndPaddingLogicalHeight();
             setLogicalHeight(max(logicalHeight(), visHeight - marginsBordersPadding));
         }
     }
 }
 
-int RenderBox::computeLogicalHeightUsing(const Length& h)
+LayoutUnit RenderBox::computeLogicalHeightUsing(const Length& h)
 {
-    int logicalHeight = -1;
+    LayoutUnit logicalHeight = -1;
     if (!h.isAuto()) {
         if (h.isFixed())
             logicalHeight = h.value();
@@ -1850,9 +1850,9 @@ int RenderBox::computeLogicalHeightUsing(const Length& h)
     return logicalHeight;
 }
 
-int RenderBox::computePercentageLogicalHeight(const Length& height)
+LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
 {
-    int result = -1;
+    LayoutUnit result = -1;
     
     // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
     // block that may have a specified height and then use it. In strict mode, this violates the
@@ -1911,7 +1911,7 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
     } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
-        int oldHeight = cb->logicalHeight();
+        LayoutUnit oldHeight = cb->logicalHeight();
         cb->computeLogicalHeight();
         result = cb->contentLogicalHeight();
         cb->setLogicalHeight(oldHeight);
@@ -1933,19 +1933,19 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
     return result;
 }
 
-int RenderBox::computeReplacedLogicalWidth(bool includeMaxWidth) const
+LayoutUnit RenderBox::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style()->logicalWidth()), includeMaxWidth);
 }
 
-int RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(int logicalWidth, bool includeMaxWidth) const
+LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, bool includeMaxWidth) const
 {
-    int minLogicalWidth = computeReplacedLogicalWidthUsing(style()->logicalMinWidth());
-    int maxLogicalWidth = !includeMaxWidth || style()->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(style()->logicalMaxWidth());
+    LayoutUnit minLogicalWidth = computeReplacedLogicalWidthUsing(style()->logicalMinWidth());
+    LayoutUnit maxLogicalWidth = !includeMaxWidth || style()->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(style()->logicalMaxWidth());
     return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
 }
 
-int RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
+LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
 {
     switch (logicalWidth.type()) {
         case Fixed:
@@ -1954,7 +1954,7 @@ int RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            const int cw = isPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
+            const LayoutUnit cw = isPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
             if (cw > 0)
                 return computeContentBoxLogicalWidth(logicalWidth.calcMinValue(cw));
         }
@@ -1964,19 +1964,19 @@ int RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
      }
 }
 
-int RenderBox::computeReplacedLogicalHeight() const
+LayoutUnit RenderBox::computeReplacedLogicalHeight() const
 {
     return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style()->logicalHeight()));
 }
 
-int RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(int logicalHeight) const
+LayoutUnit RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const
 {
-    int minLogicalHeight = computeReplacedLogicalHeightUsing(style()->logicalMinHeight());
-    int maxLogicalHeight = style()->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
+    LayoutUnit minLogicalHeight = computeReplacedLogicalHeightUsing(style()->logicalMinHeight());
+    LayoutUnit maxLogicalHeight = style()->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
     return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
 }
 
-int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
+LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
 {
     switch (logicalHeight.type()) {
         case Fixed:
@@ -1994,9 +1994,9 @@ int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
             if (cb->isPositioned() && cb->style()->height().isAuto() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto())) {
                 ASSERT(cb->isRenderBlock());
                 RenderBlock* block = toRenderBlock(cb);
-                int oldHeight = block->height();
+                LayoutUnit oldHeight = block->height();
                 block->computeLogicalHeight();
-                int newHeight = block->computeContentBoxLogicalHeight(block->contentHeight());
+                LayoutUnit newHeight = block->computeContentBoxLogicalHeight(block->contentHeight());
                 block->setHeight(oldHeight);
                 return computeContentBoxLogicalHeight(logicalHeight.calcValue(newHeight));
             }
@@ -2004,7 +2004,7 @@ int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
             // FIXME: availableLogicalHeight() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            int availableHeight;
+            LayoutUnit availableHeight;
             if (isPositioned())
                 availableHeight = containingBlockLogicalHeightForPositioned(toRenderBoxModelObject(cb));
             else {

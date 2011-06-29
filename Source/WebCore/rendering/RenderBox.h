@@ -305,17 +305,17 @@ public:
     bool sizesToIntrinsicLogicalWidth(LogicalWidthType) const;
     virtual bool stretchesToMinIntrinsicLogicalWidth() const { return false; }
 
-    int computeLogicalWidthUsing(LogicalWidthType, int availableLogicalWidth);
-    int computeLogicalHeightUsing(const Length& height);
-    int computeReplacedLogicalWidthUsing(Length width) const;
-    int computeReplacedLogicalWidthRespectingMinMaxWidth(int logicalWidth, bool includeMaxWidth = true) const;
-    int computeReplacedLogicalHeightUsing(Length height) const;
-    int computeReplacedLogicalHeightRespectingMinMaxHeight(int logicalHeight) const;
+    LayoutUnit computeLogicalWidthUsing(LogicalWidthType, LayoutUnit availableLogicalWidth);
+    LayoutUnit computeLogicalHeightUsing(const Length& height);
+    LayoutUnit computeReplacedLogicalWidthUsing(Length width) const;
+    LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, bool includeMaxWidth = true) const;
+    LayoutUnit computeReplacedLogicalHeightUsing(Length height) const;
+    LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const;
 
-    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedLogicalHeight() const;
+    virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual LayoutUnit computeReplacedLogicalHeight() const;
 
-    int computePercentageLogicalHeight(const Length& height);
+    LayoutUnit computePercentageLogicalHeight(const Length& height);
 
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
     virtual int availableLogicalWidth() const { return contentLogicalWidth(); }

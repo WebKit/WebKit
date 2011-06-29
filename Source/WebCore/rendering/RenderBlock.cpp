@@ -4639,7 +4639,7 @@ void RenderBlock::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMaxWidth().value()));
     }
 
-    int borderAndPadding = borderAndPaddingLogicalWidth();
+    LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
     m_minPreferredLogicalWidth += borderAndPadding;
     m_maxPreferredLogicalWidth += borderAndPadding;
 
@@ -4755,7 +4755,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     float inlineMax = 0;
     float inlineMin = 0;
 
-    int cw = containingBlock()->contentLogicalWidth();
+    LayoutUnit cw = containingBlock()->contentLogicalWidth();
 
     // If we are at the start of a line, we want to ignore all white-space.
     // Also strip spaces if we previously had text that ended in a trailing space.
@@ -4873,7 +4873,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 }
 
                 // Add in text-indent.  This is added in only once.
-                int ti = 0;
+                LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
                     ti = style()->textIndent().calcMinValue(cw);
@@ -4944,7 +4944,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     trailingSpaceChild = 0;
 
                 // Add in text-indent.  This is added in only once.
-                int ti = 0;
+                LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
                     ti = style()->textIndent().calcMinValue(cw);
@@ -5020,7 +5020,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
     bool nowrap = style()->whiteSpace() == NOWRAP;
 
     RenderObject *child = firstChild();
-    int floatLeftWidth = 0, floatRightWidth = 0;
+    LayoutUnit floatLeftWidth = 0, floatRightWidth = 0;
     while (child) {
         // Positioned children don't affect the min/max width
         if (child->isPositioned()) {
@@ -5029,7 +5029,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         }
 
         if (child->isFloating() || (child->isBox() && toRenderBox(child)->avoidsFloats())) {
-            int floatTotalWidth = floatLeftWidth + floatRightWidth;
+            LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
             if (child->style()->clear() & CLEFT) {
                 m_maxPreferredLogicalWidth = max(floatTotalWidth, m_maxPreferredLogicalWidth);
                 floatLeftWidth = 0;
@@ -5045,16 +5045,16 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         // Fixed margins can be added in as is.
         Length startMarginLength = child->style()->marginStart();
         Length endMarginLength = child->style()->marginEnd();
-        int margin = 0;
-        int marginStart = 0;
-        int marginEnd = 0;
+        LayoutUnit margin = 0;
+        LayoutUnit marginStart = 0;
+        LayoutUnit marginEnd = 0;
         if (startMarginLength.isFixed())
             marginStart += startMarginLength.value();
         if (endMarginLength.isFixed())
             marginEnd += endMarginLength.value();
         margin = marginStart + marginEnd;
 
-        int w = child->minPreferredLogicalWidth() + margin;
+        LayoutUnit w = child->minPreferredLogicalWidth() + margin;
         m_minPreferredLogicalWidth = max(w, m_minPreferredLogicalWidth);
         
         // IE ignores tables for calculation of nowrap. Makes some sense.
@@ -5069,10 +5069,10 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
                 // margins of the object.  For negative margins, we will attempt to overlap the float if the negative margin
                 // is smaller than the float width.
                 bool ltr = containingBlock()->style()->isLeftToRightDirection();
-                int marginLogicalLeft = ltr ? marginStart : marginEnd;
-                int marginLogicalRight = ltr ? marginEnd : marginStart;
-                int maxLeft = marginLogicalLeft > 0 ? max(floatLeftWidth, marginLogicalLeft) : floatLeftWidth + marginLogicalLeft;
-                int maxRight = marginLogicalRight > 0 ? max(floatRightWidth, marginLogicalRight) : floatRightWidth + marginLogicalRight;
+                LayoutUnit marginLogicalLeft = ltr ? marginStart : marginEnd;
+                LayoutUnit marginLogicalRight = ltr ? marginEnd : marginStart;
+                LayoutUnit maxLeft = marginLogicalLeft > 0 ? max(floatLeftWidth, marginLogicalLeft) : floatLeftWidth + marginLogicalLeft;
+                LayoutUnit maxRight = marginLogicalRight > 0 ? max(floatRightWidth, marginLogicalRight) : floatRightWidth + marginLogicalRight;
                 w = child->maxPreferredLogicalWidth() + maxLeft + maxRight;
                 w = max(w, floatLeftWidth + floatRightWidth);
             }

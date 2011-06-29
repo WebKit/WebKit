@@ -1348,16 +1348,16 @@ void RenderListMarker::computePreferredLogicalWidths()
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
-        int bulletWidth = fontMetrics.ascent() / 2;
-        m_image->setImageContainerSize(IntSize(bulletWidth, bulletWidth));
-        IntSize imageSize = m_image->imageSize(this, style()->effectiveZoom());
+        LayoutUnit bulletWidth = fontMetrics.ascent() / 2;
+        m_image->setImageContainerSize(LayoutSize(bulletWidth, bulletWidth));
+        LayoutSize imageSize = m_image->imageSize(this, style()->effectiveZoom());
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style()->isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
         updateMargins();
         return;
     }
 
-    int logicalWidth = 0;
+    LayoutUnit logicalWidth = 0;
     EListStyleType type = style()->listStyleType();
     switch (type) {
         case NoneListStyle:
@@ -1452,9 +1452,9 @@ void RenderListMarker::computePreferredLogicalWidths()
             if (m_text.isEmpty())
                 logicalWidth = 0;
             else {
-                int itemWidth = font.width(m_text);
+                LayoutUnit itemWidth = font.width(m_text);
                 UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
-                int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
+                LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
                 logicalWidth = itemWidth + suffixSpaceWidth;
             }
             break;

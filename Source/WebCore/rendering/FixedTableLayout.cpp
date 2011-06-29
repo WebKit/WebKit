@@ -189,7 +189,7 @@ int FixedTableLayout::calcWidthArray(int)
 // Keep this in synch with BLOCK_MAX_WIDTH in RenderBlock.cpp
 #define TABLE_MAX_WIDTH 15000
 
-void FixedTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth)
+void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
 {
     // FIXME: This entire calculation is incorrect for both minwidth and maxwidth.
     
@@ -200,10 +200,10 @@ void FixedTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidt
     // cols/cells with a fixed width.
     //
     // The maximum width is max(minWidth, tableWidth).
-    int bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
+    LayoutUnit bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
 
-    int tableLogicalWidth = m_table->style()->logicalWidth().isFixed() ? m_table->style()->logicalWidth().value() - bordersPaddingAndSpacing : 0;
-    int mw = calcWidthArray(tableLogicalWidth) + bordersPaddingAndSpacing;
+    LayoutUnit tableLogicalWidth = m_table->style()->logicalWidth().isFixed() ? m_table->style()->logicalWidth().value() - bordersPaddingAndSpacing : 0;
+    LayoutUnit mw = calcWidthArray(tableLogicalWidth) + bordersPaddingAndSpacing;
 
     minWidth = max(mw, tableLogicalWidth);
     maxWidth = minWidth;

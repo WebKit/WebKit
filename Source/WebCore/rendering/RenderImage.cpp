@@ -460,19 +460,19 @@ bool RenderImage::isLogicalHeightSpecified() const
     return false;
 }
 
-int RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
+LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     if (m_imageResource->imageHasRelativeWidth())
         if (RenderObject* cb = isPositioned() ? container() : containingBlock()) {
             if (cb->isBox())
-                m_imageResource->setImageContainerSize(IntSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
+                m_imageResource->setImageContainerSize(LayoutSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
         }
 
-    int logicalWidth;
+    LayoutUnit logicalWidth;
     if (isLogicalWidthSpecified())
         logicalWidth = computeReplacedLogicalWidthUsing(style()->logicalWidth());
     else if (m_imageResource->usesImageContainerSize()) {
-        IntSize size = m_imageResource->imageSize(style()->effectiveZoom());
+        LayoutSize size = m_imageResource->imageSize(style()->effectiveZoom());
         logicalWidth = style()->isHorizontalWritingMode() ? size.width() : size.height();
     } else if (m_imageResource->imageHasRelativeWidth())
         logicalWidth = 0; // If the image is relatively-sized, set the width to 0 until there is a set container size.
@@ -482,13 +482,13 @@ int RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
     return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, includeMaxWidth);
 }
 
-int RenderImage::computeReplacedLogicalHeight() const
+LayoutUnit RenderImage::computeReplacedLogicalHeight() const
 {
-    int logicalHeight;
+    LayoutUnit logicalHeight;
     if (isLogicalHeightSpecified())
         logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
     else if (m_imageResource->usesImageContainerSize()) {
-        IntSize size = m_imageResource->imageSize(style()->effectiveZoom());
+        LayoutSize size = m_imageResource->imageSize(style()->effectiveZoom());
         logicalHeight = style()->isHorizontalWritingMode() ? size.height() : size.width();
     } else if (m_imageResource->imageHasRelativeHeight())
         logicalHeight = 0; // If the image is relatively-sized, set the height to 0 until there is a set container size.

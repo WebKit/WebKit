@@ -86,12 +86,14 @@ const AffineTransform& RenderSVGForeignObject::localToParentTransform() const
 void RenderSVGForeignObject::computeLogicalWidth()
 {
     // FIXME: Investigate in size rounding issues
+    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     setWidth(static_cast<int>(roundf(m_viewport.width())));
 }
 
 void RenderSVGForeignObject::computeLogicalHeight()
 {
     // FIXME: Investigate in size rounding issues
+    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     setHeight(static_cast<int>(roundf(m_viewport.height())));
 }
 

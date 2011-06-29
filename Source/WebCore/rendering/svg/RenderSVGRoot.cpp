@@ -98,8 +98,8 @@ void RenderSVGRoot::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    int borderAndPadding = borderAndPaddingWidth();
-    int width = computeReplacedLogicalWidth(false) + borderAndPadding;
+    LayoutUnit borderAndPadding = borderAndPaddingWidth();
+    LayoutUnit width = computeReplacedLogicalWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
         width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
@@ -113,17 +113,19 @@ void RenderSVGRoot::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-int RenderSVGRoot::computeIntrinsicWidth(int replacedWidth) const
+LayoutUnit RenderSVGRoot::computeIntrinsicWidth(LayoutUnit replacedWidth) const
 {
     if (!style()->width().isPercent())
         return replacedWidth;
+    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     return static_cast<int>(ceilf(replacedWidth * style()->effectiveZoom()));
 }
 
-int RenderSVGRoot::computeIntrinsicHeight(int replacedHeight) const
+LayoutUnit RenderSVGRoot::computeIntrinsicHeight(LayoutUnit replacedHeight) const
 {
     if (!style()->height().isPercent())
         return replacedHeight;
+    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     return static_cast<int>(ceilf(replacedHeight * style()->effectiveZoom()));
 }
 
@@ -148,9 +150,9 @@ void RenderSVGRoot::negotiateSizeWithHostDocumentIfNeeded()
     }
 }
 
-int RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
+LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
-    int replacedWidth = RenderBox::computeReplacedLogicalWidth(includeMaxWidth);
+    LayoutUnit replacedWidth = RenderBox::computeReplacedLogicalWidth(includeMaxWidth);
     Frame* frame = node() && node()->document() ? node()->document()->frame() : 0;
     if (!frame)
         return computeIntrinsicWidth(replacedWidth);
@@ -189,9 +191,9 @@ int RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
     return ownerRenderer->computeReplacedLogicalWidthRespectingMinMaxWidth(ownerRenderer->computeReplacedLogicalWidthUsing(ownerWidth), includeMaxWidth);
 }
 
-int RenderSVGRoot::computeReplacedLogicalHeight() const
+LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
 {
-    int replacedHeight = RenderBox::computeReplacedLogicalHeight();
+    LayoutUnit replacedHeight = RenderBox::computeReplacedLogicalHeight();
 
     Frame* frame = node() && node()->document() ? node()->document()->frame() : 0;
     if (!frame)
@@ -228,7 +230,7 @@ void RenderSVGRoot::layout()
     bool needsLayout = selfNeedsLayout();
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
 
-    IntSize oldSize(width(), height());
+    LayoutSize oldSize(width(), height());
     negotiateSizeWithHostDocumentIfNeeded();
     computeLogicalWidth();
     computeLogicalHeight();

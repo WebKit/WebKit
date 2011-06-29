@@ -21,6 +21,7 @@
 #ifndef FixedTableLayout_h
 #define FixedTableLayout_h
 
+#include "LayoutTypes.h"
 #include "Length.h"
 #include "TableLayout.h"
 #include <wtf/Vector.h>
@@ -33,7 +34,7 @@ class FixedTableLayout : public TableLayout {
 public:
     FixedTableLayout(RenderTable*);
 
-    virtual void computePreferredLogicalWidths(int& minWidth, int& maxWidth);
+    virtual void computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth);
     virtual void layout();
 
 private:

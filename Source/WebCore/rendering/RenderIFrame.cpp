@@ -74,7 +74,7 @@ void RenderIFrame::computeLogicalWidth()
         FrameView* view = static_cast<FrameView*>(widget());
         if (!view)
             return;
-        int border = borderLeft() + borderRight();
+        LayoutUnit border = borderLeft() + borderRight();
         setWidth(max(width(), view->contentsWidth() + border));
     }
 }

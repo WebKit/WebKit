@@ -48,8 +48,8 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsBoundariesOrTransformUpdate = true; }
 
 private:
-    int computeIntrinsicWidth(int replacedWidth) const;
-    int computeIntrinsicHeight(int replacedHeight) const;
+    LayoutUnit computeIntrinsicWidth(LayoutUnit replacedWidth) const;
+    LayoutUnit computeIntrinsicHeight(LayoutUnit replacedHeight) const;
     void negotiateSizeWithHostDocumentIfNeeded();
 
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -59,8 +59,8 @@ private:
     virtual const char* renderName() const { return "RenderSVGRoot"; }
 
     virtual void computePreferredLogicalWidths();
-    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedLogicalHeight() const;
+    virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual LayoutUnit computeReplacedLogicalHeight() const;
     virtual void layout();
     virtual void paint(PaintInfo&, const LayoutPoint&);
 

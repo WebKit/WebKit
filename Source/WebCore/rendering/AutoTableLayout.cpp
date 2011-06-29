@@ -219,11 +219,11 @@ static bool shouldScaleColumns(RenderTable* table)
     return scale;
 }
 
-void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth)
+void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
 {
     fullRecalc();
 
-    int spanMaxLogicalWidth = calcEffectiveLogicalWidth();
+    LayoutUnit spanMaxLogicalWidth = calcEffectiveLogicalWidth();
     minWidth = 0;
     maxWidth = 0;
     float maxPercent = 0;
@@ -251,13 +251,14 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
 
     if (scaleColumns) {
         maxNonPercent = maxNonPercent * 100 / max(remainingPercent, epsilon);
-        maxWidth = max(maxWidth, static_cast<int>(min(maxNonPercent, INT_MAX / 2.0f)));
-        maxWidth = max(maxWidth, static_cast<int>(min(maxPercent, INT_MAX / 2.0f)));
+        // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
+        maxWidth = max(maxWidth, static_cast<int>(min(maxNonPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
+        maxWidth = max(maxWidth, static_cast<int>(min(maxPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
     }
 
     maxWidth = max(maxWidth, spanMaxLogicalWidth);
 
-    int bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
+    LayoutUnit bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
     minWidth += bordersPaddingAndSpacing;
     maxWidth += bordersPaddingAndSpacing;
 

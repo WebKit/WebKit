@@ -215,9 +215,9 @@ void RenderTable::computeLogicalWidth()
 
     RenderBlock* cb = containingBlock();
 
-    int availableLogicalWidth = containingBlockLogicalWidthForContent();
+    LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
     bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
-    int containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
+    LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
     LengthType logicalWidthType = style()->logicalWidth().type();
     if (logicalWidthType > Relative && style()->logicalWidth().isPositive()) {
@@ -226,14 +226,14 @@ void RenderTable::computeLogicalWidth()
         setLogicalWidth(max(minPreferredLogicalWidth(), logicalWidth()));
     } else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        int marginTotal = 0;
+        LayoutUnit marginTotal = 0;
         if (!style()->marginStart().isAuto())
             marginTotal += style()->marginStart().calcValue(availableLogicalWidth);
         if (!style()->marginEnd().isAuto())
             marginTotal += style()->marginEnd().calcValue(availableLogicalWidth);
             
         // Subtract out our margins to get the available content width.
-        int availableContentLogicalWidth = max(0, containerWidthInInlineDirection - marginTotal);
+        LayoutUnit availableContentLogicalWidth = max(0, containerWidthInInlineDirection - marginTotal);
         
         // Ensure we aren't bigger than our max width or smaller than our min width.
         setLogicalWidth(min(availableContentLogicalWidth, maxPreferredLogicalWidth()));

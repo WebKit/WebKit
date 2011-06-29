@@ -199,7 +199,7 @@ void RenderListBox::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = borderAndPaddingWidth();
+    LayoutUnit toAdd = borderAndPaddingWidth();
     m_minPreferredLogicalWidth += toAdd;
     m_maxPreferredLogicalWidth += toAdd;
                                 
