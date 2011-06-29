@@ -72,7 +72,6 @@ WebInspector.NetworkDispatcher = function(manager)
     this._manager = manager;
     this._inflightResourcesById = {};
     this._inflightResourcesByURL = {};
-    this._lastIdentifierForCachedResource = 0;
     InspectorBackend.registerDomainDispatcher("Network", this);
 }
 
@@ -203,7 +202,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     resourceLoadedFromMemoryCache: function(frameId, loaderId, documentURL, time, cachedResource)
     {
-        var resource = this._createResource("cached:" + ++this._lastIdentifierForCachedResource, frameId, loaderId, cachedResource.url, documentURL);
+        var resource = this._createResource(null, frameId, loaderId, cachedResource.url, documentURL);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
