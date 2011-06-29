@@ -603,6 +603,24 @@ void doSomething(ScriptExecutionContext* context);
 </pre>
 </li>
 
+<li>Prefer enums to bools on function parameters if callers are likely to be
+passing constants, since named constants are easier to read at the call
+site.  An exception to this rule is a setter function, where the name of the
+function already makes clear what the boolean is.
+<h4 class="right">Right:</h4>
+<pre class="code">
+doSomething(something, AllowFooBar);
+paintTextWithShadows(context, ..., textStrokeWidth > 0, isHorizontal());
+setResizable(false);
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+doSomething(something, false);
+setResizable(NotResizable);
+</pre>
+</li>
+
 <li>Objective-C method names should follow the Cocoa naming guidelines &mdash;
 they should read like a phrase and each piece of the selector should 
 start with a lowercase letter and use intercaps.</li>
