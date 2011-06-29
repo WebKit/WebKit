@@ -1555,7 +1555,7 @@ void RenderLayer::autoscroll()
     scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
-void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)
+void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOffset)
 {
     // FIXME: This should be possible on generated content but is not right now.
     if (!inResizeMode() || !renderer()->hasOverflowClip() || !renderer()->node())
@@ -1576,17 +1576,17 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
 
     float zoomFactor = renderer->style()->effectiveZoom();
 
-    IntSize newOffset = offsetFromResizeCorner(document->view()->windowToContents(evt.pos()));
+    LayoutSize newOffset = offsetFromResizeCorner(document->view()->windowToContents(evt.pos()));
     newOffset.setWidth(newOffset.width() / zoomFactor);
     newOffset.setHeight(newOffset.height() / zoomFactor);
     
-    IntSize currentSize = IntSize(renderer->width() / zoomFactor, renderer->height() / zoomFactor);
-    IntSize minimumSize = element->minimumSizeForResizing().shrunkTo(currentSize);
+    LayoutSize currentSize = LayoutSize(renderer->width() / zoomFactor, renderer->height() / zoomFactor);
+    LayoutSize minimumSize = element->minimumSizeForResizing().shrunkTo(currentSize);
     element->setMinimumSizeForResizing(minimumSize);
     
-    IntSize adjustedOldOffset = IntSize(oldOffset.width() / zoomFactor, oldOffset.height() / zoomFactor);
+    LayoutSize adjustedOldOffset = LayoutSize(oldOffset.width() / zoomFactor, oldOffset.height() / zoomFactor);
     
-    IntSize difference = (currentSize + newOffset - adjustedOldOffset).expandedTo(minimumSize) - currentSize;
+    LayoutSize difference = (currentSize + newOffset - adjustedOldOffset).expandedTo(minimumSize) - currentSize;
 
     CSSStyleDeclaration* style = element->style();
     bool isBoxSizingBorder = renderer->style()->boxSizing() == BORDER_BOX;
@@ -1599,7 +1599,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
             style->setProperty(CSSPropertyMarginLeft, String::number(renderer->marginLeft() / zoomFactor) + "px", false, ec);
             style->setProperty(CSSPropertyMarginRight, String::number(renderer->marginRight() / zoomFactor) + "px", false, ec);
         }
-        int baseWidth = renderer->width() - (isBoxSizingBorder ? 0 : renderer->borderAndPaddingWidth());
+        LayoutUnit baseWidth = renderer->width() - (isBoxSizingBorder ? 0 : renderer->borderAndPaddingWidth());
         baseWidth = baseWidth / zoomFactor;
         style->setProperty(CSSPropertyWidth, String::number(baseWidth + difference.width()) + "px", false, ec);
     }
@@ -1610,7 +1610,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
             style->setProperty(CSSPropertyMarginTop, String::number(renderer->marginTop() / zoomFactor) + "px", false, ec);
             style->setProperty(CSSPropertyMarginBottom, String::number(renderer->marginBottom() / zoomFactor) + "px", false, ec);
         }
-        int baseHeight = renderer->height() - (isBoxSizingBorder ? 0 : renderer->borderAndPaddingHeight());
+        LayoutUnit baseHeight = renderer->height() - (isBoxSizingBorder ? 0 : renderer->borderAndPaddingHeight());
         baseHeight = baseHeight / zoomFactor;
         style->setProperty(CSSPropertyHeight, String::number(baseHeight + difference.height()) + "px", false, ec);
     }
@@ -1799,12 +1799,12 @@ IntSize RenderLayer::contentsSize() const
     return IntSize(const_cast<RenderLayer*>(this)->scrollWidth(), const_cast<RenderLayer*>(this)->scrollHeight());
 }
 
-int RenderLayer::visibleHeight() const
+LayoutUnit RenderLayer::visibleHeight() const
 {
     return m_layerSize.height();
 }
 
-int RenderLayer::visibleWidth() const
+LayoutUnit RenderLayer::visibleWidth() const
 {
     return m_layerSize.width();
 }
@@ -2003,12 +2003,12 @@ int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevan
     return m_hBar->height();
 }
 
-IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
+LayoutSize RenderLayer::offsetFromResizeCorner(const LayoutPoint& absolutePoint) const
 {
     // Currently the resize corner is always the bottom right corner
     // FIXME: This assumes the location is 0, 0. Is this guaranteed to always be the case?
-    IntPoint bottomRight = toPoint(size());
-    IntPoint localPoint = absoluteToContents(absolutePoint);
+    LayoutPoint bottomRight = toPoint(size());
+    LayoutPoint localPoint = absoluteToContents(absolutePoint);
     return localPoint - bottomRight;
 }
 

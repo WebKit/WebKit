@@ -211,13 +211,13 @@ public:
         return curr;
     }
     
-    const IntPoint& location() const { return m_topLeft; }
-    void setLocation(int x, int y) { m_topLeft = IntPoint(x, y); }
+    const LayoutPoint& location() const { return m_topLeft; }
+    void setLocation(LayoutUnit x, LayoutUnit y) { m_topLeft = LayoutPoint(x, y); }
 
-    const IntSize& size() const { return m_layerSize; }
-    void setSize(const IntSize& size) { m_layerSize = size; }
+    const LayoutSize& size() const { return m_layerSize; }
+    void setSize(const LayoutSize& size) { m_layerSize = size; }
 
-    IntRect rect() const { return IntRect(location(), size()); }
+    LayoutRect rect() const { return LayoutRect(location(), size()); }
 
     int scrollWidth();
     int scrollHeight();
@@ -261,7 +261,7 @@ public:
     bool hasOverflowControls() const;
     bool isPointInResizeControl(const IntPoint& absolutePoint) const;
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
-    IntSize offsetFromResizeCorner(const IntPoint& absolutePoint) const;
+    LayoutSize offsetFromResizeCorner(const LayoutPoint& absolutePoint) const;
 
     void paintOverflowControls(GraphicsContext*, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
     void paintScrollCorner(GraphicsContext*, const IntPoint&, const IntRect& damageRect);
@@ -272,7 +272,7 @@ public:
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void autoscroll();
 
-    void resize(const PlatformMouseEvent&, const IntSize&);
+    void resize(const PlatformMouseEvent&, const LayoutSize&);
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
 
@@ -462,9 +462,9 @@ private:
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
 
-    IntPoint renderBoxLocation() const { return renderer()->isBox() ? toRenderBox(renderer())->location() : IntPoint(); }
-    int renderBoxX() const { return renderBoxLocation().x(); }
-    int renderBoxY() const { return renderBoxLocation().y(); }
+    LayoutPoint renderBoxLocation() const { return renderer()->isBox() ? toRenderBox(renderer())->location() : LayoutPoint(); }
+    LayoutUnit renderBoxX() const { return renderBoxLocation().x(); }
+    LayoutUnit renderBoxY() const { return renderBoxLocation().y(); }
 
     void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
@@ -540,8 +540,8 @@ private:
     virtual IntPoint minimumScrollPosition() const;
     virtual IntPoint maximumScrollPosition() const;
     virtual IntRect visibleContentRect(bool includeScrollbars) const;
-    virtual int visibleHeight() const;
-    virtual int visibleWidth() const;
+    virtual LayoutUnit visibleHeight() const;
+    virtual LayoutUnit visibleWidth() const;
     virtual IntSize contentsSize() const;
     virtual IntSize overhangAmount() const;
     virtual IntPoint currentMousePosition() const;
@@ -635,10 +635,10 @@ protected:
     IntSize m_relativeOffset;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
-    IntPoint m_topLeft;
+    LayoutPoint m_topLeft;
 
     // The layer's width/height
-    IntSize m_layerSize;
+    LayoutSize m_layerSize;
 
     // Our scroll offsets if the view is scrolled.
     IntSize m_scrollOffset;

@@ -1,3 +1,33 @@
+2011-06-28  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderLayer position/size to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63578
+
+        Switch location and size methods for RenderLayer over to the new layout unit abstraction.
+        
+        No new tests, no functionality changes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::visibleHeight):
+        (WebCore::RenderLayer::visibleWidth):
+        (WebCore::RenderLayer::offsetFromResizeCorner):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::location):
+        (WebCore::RenderLayer::setLocation):
+        (WebCore::RenderLayer::size):
+        (WebCore::RenderLayer::setSize):
+        (WebCore::RenderLayer::rect):
+        (WebCore::RenderLayer::renderBoxLocation):
+        (WebCore::RenderLayer::renderBoxX):
+        (WebCore::RenderLayer::renderBoxY):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::visibleHeight):
+        (WebCore::RenderListBox::visibleWidth):
+        * rendering/RenderListBox.h:
+
 2011-06-28  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

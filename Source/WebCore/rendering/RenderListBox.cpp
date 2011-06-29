@@ -777,12 +777,12 @@ IntSize RenderListBox::contentsSize() const
     return IntSize(scrollWidth(), scrollHeight());
 }
 
-int RenderListBox::visibleHeight() const
+LayoutUnit RenderListBox::visibleHeight() const
 {
     return height();
 }
 
-int RenderListBox::visibleWidth() const
+LayoutUnit RenderListBox::visibleWidth() const
 {
     return width();
 }
