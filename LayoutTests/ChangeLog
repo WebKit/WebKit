@@ -1,3 +1,25 @@
+2011-06-29  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        convert editing/deleting/paragraph-in-preserveNewline.html to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=63362
+
+        Converted editing/deleting/paragraph-in-preserveNewline.html to dump-as-markup,
+        added doctype, added new baseline, and removed old baselines.
+
+        * editing/deleting/paragraph-in-preserveNewline.html:
+        * editing/deleting/paragraph-in-preserveNewline-expected.html: Added.
+        * platform/chromium-linux/editing/deleting/paragraph-in-preserveNewline-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/paragraph-in-preserveNewline-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/paragraph-in-preserveNewline-expected.txt: Removed.
+        * platform/gtk/editing/deleting/paragraph-in-preserveNewline-expected.png: Removed.
+        * platform/mac-leopard/editing/deleting/paragraph-in-preserveNewline-expected.png: Removed.
+        * platform/mac/editing/deleting/paragraph-in-preserveNewline-expected.png: Removed.
+        * platform/mac/editing/deleting/paragraph-in-preserveNewline-expected.txt: Removed.
+        * platform/qt/editing/deleting/paragraph-in-preserveNewline-expected.png: Removed.
+        * platform/qt/editing/deleting/paragraph-in-preserveNewline-expected.txt: Removed.
+
 2011-06-29  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, more chromium test updates.
