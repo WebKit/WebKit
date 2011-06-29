@@ -313,7 +313,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     return inputElement
         && inputElement->isTextField()
         && !inputElement->isPasswordField()
-        && inputElement->autoComplete();
+        && inputElement->shouldAutocomplete();
 }
 
 - (BOOL)elementIsPassword:(DOMElement *)element

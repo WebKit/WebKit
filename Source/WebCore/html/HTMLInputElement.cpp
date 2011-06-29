@@ -161,11 +161,11 @@ HTMLElement* HTMLInputElement::speechButtonElement() const
 }
 #endif
 
-bool HTMLInputElement::autoComplete() const
+bool HTMLInputElement::shouldAutocomplete() const
 {
     if (m_autocomplete != Uninitialized)
         return m_autocomplete == On;
-    return HTMLTextFormControlElement::autoComplete();
+    return HTMLTextFormControlElement::shouldAutocomplete();
 }
 
 void HTMLInputElement::updateCheckedRadioButtons()

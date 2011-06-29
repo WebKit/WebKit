@@ -1,3 +1,13 @@
+2011-06-28  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        form.autocomplete="off" does not work
+        https://bugs.webkit.org/show_bug.cgi?id=35823
+
+        * fast/forms/autocomplete-expected.txt: Added.
+        * fast/forms/autocomplete.html: Added.
+
 2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: change URLs in ruby layout tests to lower case in order

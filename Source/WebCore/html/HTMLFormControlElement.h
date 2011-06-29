@@ -175,7 +175,7 @@ public:
 protected:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
 
-    virtual bool autoComplete() const;
+    virtual bool shouldAutocomplete() const;
     virtual void finishParsingChildren();
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();

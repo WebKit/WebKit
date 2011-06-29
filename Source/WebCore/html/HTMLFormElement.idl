@@ -35,6 +35,7 @@ module html {
         attribute [ConvertNullToNullString] DOMString enctype;
         attribute [Reflect] DOMString method;
         attribute [Reflect] DOMString target;
+        attribute [Reflect] DOMString autocomplete;
         
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [ImplementationFunction=submitFromJavaScript] void submit();

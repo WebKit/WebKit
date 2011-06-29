@@ -39,6 +39,7 @@ module html {
         attribute boolean checked;
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
+        attribute [Reflect] DOMString autocomplete;
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLElement     list;
 #endif

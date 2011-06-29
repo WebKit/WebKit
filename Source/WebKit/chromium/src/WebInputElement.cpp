@@ -62,7 +62,7 @@ bool WebInputElement::isImageButton() const
 
 bool WebInputElement::autoComplete() const
 {
-    return constUnwrap<HTMLInputElement>()->autoComplete();
+    return constUnwrap<HTMLInputElement>()->shouldAutocomplete();
 }
 
 int WebInputElement::maxLength() const

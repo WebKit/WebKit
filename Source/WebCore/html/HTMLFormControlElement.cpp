@@ -521,17 +521,17 @@ void HTMLFormControlElementWithState::didMoveToNewOwnerDocument()
     HTMLFormControlElement::didMoveToNewOwnerDocument();
 }
 
-bool HTMLFormControlElementWithState::autoComplete() const
+bool HTMLFormControlElementWithState::shouldAutocomplete() const
 {
     if (!form())
         return true;
-    return form()->autoComplete();
+    return form()->shouldAutocomplete();
 }
 
 bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() const
 {
     // We don't save/restore control state in a form with autocomplete=off.
-    return attached() && autoComplete();
+    return attached() && shouldAutocomplete();
 }
 
 void HTMLFormControlElementWithState::finishParsingChildren()

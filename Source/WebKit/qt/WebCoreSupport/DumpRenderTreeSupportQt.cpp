@@ -642,7 +642,7 @@ bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame*
 
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(coreNode);
 
-    return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->autoComplete();
+    return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
 }
 
 void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& editingBehavior)

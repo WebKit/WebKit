@@ -91,7 +91,7 @@ PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName
 
 HTMLFormElement::~HTMLFormElement()
 {
-    if (!autoComplete())
+    if (!shouldAutocomplete())
         document()->unregisterForDocumentActivationCallbacks(this);
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i)
@@ -376,7 +376,7 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == accept_charsetAttr)
         m_attributes.setAcceptCharset(attr->value());
     else if (attr->name() == autocompleteAttr) {
-        if (!autoComplete())
+        if (!shouldAutocomplete())
             document()->registerForDocumentActivationCallbacks(this);
         else
             document()->unregisterForDocumentActivationCallbacks(this);
@@ -638,7 +638,7 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
 
 void HTMLFormElement::documentDidBecomeActive()
 {
-    ASSERT(!autoComplete());
+    ASSERT(!shouldAutocomplete());
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         if (m_associatedElements[i]->isFormControlElement())
@@ -648,19 +648,19 @@ void HTMLFormElement::documentDidBecomeActive()
 
 void HTMLFormElement::willMoveToNewOwnerDocument()
 {
-    if (!autoComplete())
+    if (!shouldAutocomplete())
         document()->unregisterForDocumentActivationCallbacks(this);
     HTMLElement::willMoveToNewOwnerDocument();
 }
 
 void HTMLFormElement::didMoveToNewOwnerDocument()
 {
-    if (!autoComplete())
+    if (!shouldAutocomplete())
         document()->registerForDocumentActivationCallbacks(this);
     HTMLElement::didMoveToNewOwnerDocument();
 }
 
-bool HTMLFormElement::autoComplete() const
+bool HTMLFormElement::shouldAutocomplete() const
 {
     return !equalIgnoringCase(fastGetAttribute(autocompleteAttr), "off");
 }

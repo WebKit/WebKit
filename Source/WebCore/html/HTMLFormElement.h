@@ -61,8 +61,7 @@ public:
     String encoding() const { return m_attributes.encodingType(); }
     void setEncoding(const String& value) { setEnctype(value); }
 
-    // FIXME: Rename this function to shouldAutocomplete.
-    bool autoComplete() const;
+    bool shouldAutocomplete() const;
 
     // FIXME: Should rename these two functions to say "form control" or "form-associated element" instead of "form element".
     void registerFormElement(FormAssociatedElement*);

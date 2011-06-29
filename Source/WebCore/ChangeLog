@@ -1,3 +1,33 @@
+2011-06-28  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        form.autocomplete="off" does not work
+        Rename the autoComplete() method for HTMLFormElement, HTMLFormControlElementWithState, and HTMLInputElement to shouldAutocomplete()
+        Add the autocomplete attribute to HTMLFormElement.idl and HTMLInputElement.idl
+        https://bugs.webkit.org/show_bug.cgi?id=35823
+
+        Test: fast/forms/autocomplete.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElementWithState::shouldAutocomplete): Renamed from ::autoComplete()
+        (WebCore::HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState): Update callsite.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement): Update callsite.
+        (WebCore::HTMLFormElement::parseMappedAttribute): Update callsite.
+        (WebCore::HTMLFormElement::documentDidBecomeActive): Update callsite.
+        (WebCore::HTMLFormElement::willMoveToNewOwnerDocument): Update callsite.
+        (WebCore::HTMLFormElement::didMoveToNewOwnerDocument): Update callsite.
+        (WebCore::HTMLFormElement::shouldAutocomplete): Renamed from ::autoComplete()
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.idl: Bind the autocomplete attribute to a JavaScript property.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldAutocomplete): Renamed from ::autoComplete()
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl: Bind the autocomplete attribute to a JavaScript property.
+        * WebCore.exp.in: Updated autoComplete() -> shouldAutocomplete()
+
 2011-06-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

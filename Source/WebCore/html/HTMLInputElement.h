@@ -44,7 +44,7 @@ public:
 
     virtual HTMLInputElement* toInputElement() { return this; }
 
-    bool autoComplete() const;
+    virtual bool shouldAutocomplete() const;
 
     // For ValidityState
     bool typeMismatch() const;

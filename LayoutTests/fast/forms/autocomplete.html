@@ -1,0 +1,37 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+    function test() {
+        var form = document.getElementById('form');
+        var field = document.getElementById('field');
+
+        shouldBeTrue("('autocomplete' in form)");
+        shouldBeTrue("('autocomplete' in field)");
+
+        shouldBeNull("form.getAttribute('autocomplete')");
+        shouldBeNull("field.getAttribute('autocomplete')");
+
+        shouldBeEqualToString("form.autocomplete", "");
+        shouldBeEqualToString("field.autocomplete", "");
+
+        form.autocomplete = 'off';
+        field.autocomplete = 'off';
+        shouldBeEqualToString("form.getAttribute('autocomplete')", "off");
+        shouldBeEqualToString("field.getAttribute('autocomplete')", "off");
+
+        form.setAttribute('autocomplete', 'on');
+        field.setAttribute('autocomplete', 'on');
+        shouldBeEqualToString("form.autocomplete", "on");
+        shouldBeEqualToString("field.autocomplete", "on");
+    }
+    </script>
+</head>
+<body onload="test()">
+    This tests that the 'autocomplete' attribute of form and input elements is bound to a JavaScript property.
+    <form id="form">
+        <input type="text" id="field" />
+    </form>
+    <div id="console"></div>
+</body>
+</html>

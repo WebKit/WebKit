@@ -1,3 +1,13 @@
+2011-06-28  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        form.autocomplete="off" does not work
+        https://bugs.webkit.org/show_bug.cgi?id=35823
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId): Update callsite.
+
 2011-06-27  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -48,7 +48,7 @@ namespace WebKit {
 
 bool WebFormElement::autoComplete() const
 {
-    return constUnwrap<HTMLFormElement>()->autoComplete();
+    return constUnwrap<HTMLFormElement>()->shouldAutocomplete();
 }
 
 WebString WebFormElement::action() const

@@ -731,11 +731,9 @@ bool EditorClientImpl::autofill(HTMLInputElement* inputElement,
     m_autofillArgs.clear();
     m_autofillTimer.stop();
 
-    // FIXME: Remove the extraneous isEnabledFormControl call below.
     // Let's try to trigger autofill for that field, if applicable.
     if (!inputElement->isEnabledFormControl() || !inputElement->isTextField()
-        || inputElement->isPasswordField() || !inputElement->autoComplete()
-        || !inputElement->isEnabledFormControl()
+        || inputElement->isPasswordField() || !inputElement->shouldAutocomplete()
         || inputElement->isReadOnlyFormControl())
         return false;
 

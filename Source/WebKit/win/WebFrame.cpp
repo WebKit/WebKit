@@ -1209,7 +1209,7 @@ HRESULT WebFrame::elementDoesAutoComplete(IDOMElement *element, BOOL *result)
     if (!inputElement)
         *result = false;
     else
-        *result = inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->autoComplete();
+        *result = inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
 
     return S_OK;
 }
