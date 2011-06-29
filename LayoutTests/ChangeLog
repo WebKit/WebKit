@@ -1,3 +1,10 @@
+2011-06-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline of 2 more tests.
+
+        * inspector/console/console-trace-in-eval-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+
 2011-06-29  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Hajime Morita.
