@@ -39,7 +39,7 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
     INC_STATS("DOM.DataView.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function", V8Proxy::SyntaxError);
+        return throwError("DOM object constructor cannot be called as a function", V8Proxy::TypeError);
 
     if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0]))
         return V8Proxy::throwTypeError();
@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.getInt8");
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return throwError("Not enough arguments", V8Proxy::TypeError);
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8DataView::getUint8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.getUint8");
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return throwError("Not enough arguments", V8Proxy::TypeError);
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8DataView::setInt8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.setInt8");
     if (args.Length() < 2)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return throwError("Not enough arguments", V8Proxy::TypeError);
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -107,7 +107,7 @@ v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.setUint8");
     if (args.Length() < 2)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return throwError("Not enough arguments", V8Proxy::TypeError);
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;

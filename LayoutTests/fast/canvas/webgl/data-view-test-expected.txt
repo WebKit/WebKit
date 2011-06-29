@@ -299,8 +299,8 @@ PASS view.getFloat64(-5) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS view.getFloat64(-9) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 
 Test for wrong arguments passed to get methods
-PASS view.getInt8() threw exception SyntaxError: Not enough arguments.
-PASS view.getUint8() threw exception SyntaxError: Not enough arguments.
+PASS view.getInt8() threw exception TypeError: Not enough arguments.
+PASS view.getUint8() threw exception TypeError: Not enough arguments.
 PASS view.getInt16() threw exception TypeError: Not enough arguments.
 PASS view.getUint16() threw exception TypeError: Not enough arguments.
 PASS view.getInt32() threw exception TypeError: Not enough arguments.
@@ -789,16 +789,16 @@ PASS view.setFloat64(-5, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception
 PASS view.setFloat64(-9, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 
 Test for wrong arguments passed to set methods
-PASS view.setInt8() threw exception SyntaxError: Not enough arguments.
-PASS view.setUint8() threw exception SyntaxError: Not enough arguments.
+PASS view.setInt8() threw exception TypeError: Not enough arguments.
+PASS view.setUint8() threw exception TypeError: Not enough arguments.
 PASS view.setInt16() threw exception TypeError: Not enough arguments.
 PASS view.setUint16() threw exception TypeError: Not enough arguments.
 PASS view.setInt32() threw exception TypeError: Not enough arguments.
 PASS view.setUint32() threw exception TypeError: Not enough arguments.
 PASS view.setFloat32() threw exception TypeError: Not enough arguments.
 PASS view.setFloat64() threw exception TypeError: Not enough arguments.
-PASS view.setInt8(1) threw exception SyntaxError: Not enough arguments.
-PASS view.setUint8(1) threw exception SyntaxError: Not enough arguments.
+PASS view.setInt8(1) threw exception TypeError: Not enough arguments.
+PASS view.setUint8(1) threw exception TypeError: Not enough arguments.
 PASS view.setInt16(1) threw exception TypeError: Not enough arguments.
 PASS view.setUint16(1) threw exception TypeError: Not enough arguments.
 PASS view.setInt32(1) threw exception TypeError: Not enough arguments.
