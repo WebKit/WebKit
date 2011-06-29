@@ -1525,6 +1525,31 @@ Eina_Bool ewk_frame_feed_key_up(Evas_Object* o, const Evas_Event_Key_Up* ev)
     return sd->frame->eventHandler()->keyEvent(event);
 }
 
+/**
+ * Returns current text selection type.
+ *
+ * @param o a frame object to check selection type
+ * @return Current text selection type on success or no selection otherwise
+ */
+Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd, EWK_TEXT_SELECTION_NONE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EWK_TEXT_SELECTION_NONE);
+
+    WebCore::FrameSelection* controller = sd->frame->selection();
+    if (!controller)
+        return EWK_TEXT_SELECTION_NONE;
+
+    switch (controller->selectionType()) {
+    case WebCore::VisibleSelection::CaretSelection:
+        return EWK_TEXT_SELECTION_CARET;
+    case WebCore::VisibleSelection::RangeSelection:
+        return EWK_TEXT_SELECTION_RANGE;
+    default:
+        return EWK_TEXT_SELECTION_NONE;
+    }
+}
+
 /* internal methods ****************************************************/
 
 /**

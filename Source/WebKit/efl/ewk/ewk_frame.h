@@ -154,6 +154,12 @@ struct _Ewk_Touch_Point {
     Ewk_Touch_Point_Type state; /**< state of the touch event */
 };
 
+typedef enum {
+    EWK_TEXT_SELECTION_NONE,
+    EWK_TEXT_SELECTION_CARET,
+    EWK_TEXT_SELECTION_RANGE
+} Ewk_Text_Selection_Type;
+
 EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
 
 EAPI Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o);
@@ -224,6 +230,8 @@ EAPI Eina_Bool    ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mou
 EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object* o, Ewk_Touch_Event_Type action, Eina_List* points, int metaState);
 EAPI Eina_Bool    ewk_frame_feed_key_down(Evas_Object *o, const Evas_Event_Key_Down *ev);
 EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev);
+
+EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object* o);
 
 
 #ifdef __cplusplus
