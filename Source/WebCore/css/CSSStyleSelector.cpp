@@ -3401,7 +3401,7 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
             if (toFloat)
                 l = Length(primitiveValue->computeLength<double>(style, rootStyle, multiplier), Fixed);
             else
-                l = Length(primitiveValue->computeLengthIntForLength(style, rootStyle, multiplier), Fixed);
+                l = primitiveValue->computeLength<Length>(style, rootStyle, multiplier);
         }
         else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
             l = Length(primitiveValue->getDoubleValue(), Percent);
@@ -3934,7 +3934,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         int type = primitiveValue->primitiveType();
         Length length;
         if (CSSPrimitiveValue::isUnitTypeLength(type))
-            length = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
+            length = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
         else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
             length = Length(primitiveValue->getDoubleValue(), Percent);
 
@@ -4051,7 +4051,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 if (Frame* frame = m_checker.m_document->frame())
                     multiplier *= frame->textZoomFactor();
             }
-            lineHeight = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle,  multiplier), Fixed);
+            lineHeight = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, multiplier);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
             lineHeight = Length((m_style->fontSize() * primitiveValue->getIntValue()) / 100, Fixed);
         else if (type == CSSPrimitiveValue::CSS_NUMBER)
@@ -4617,7 +4617,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 reflection->setOffset(Length(reflectValue->offset()->getDoubleValue(), Percent));
             else
-                reflection->setOffset(Length(reflectValue->offset()->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed));
+                reflection->setOffset(reflectValue->offset()->computeLength<Length>(style(), m_rootElementStyle, zoomFactor));
         }
         NinePieceImage mask;
         mapNinePieceImage(property, reflectValue->mask(), mask);
@@ -5442,8 +5442,8 @@ void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
             // <length>{2}
             if (!CSSPrimitiveValue::isUnitTypeLength(type1))
                 return;
-            width = Length(primitiveValue0->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
-            height = Length(primitiveValue1->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+            width = primitiveValue0->computeLength<Length>(style(), m_rootElementStyle);
+            height = primitiveValue1->computeLength<Length>(style(), m_rootElementStyle);
         } else {
             // <page-size> <orientation>
             // The value order is guaranteed. See CSSParser::parseSizeParameter.
@@ -5461,7 +5461,7 @@ void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
         if (CSSPrimitiveValue::isUnitTypeLength(type)) {
             // <length>
             pageSizeType = PAGE_SIZE_RESOLVED;
-            width = height = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+            width = height = primitiveValue->computeLength<Length>(style(), m_rootElementStyle);
         } else {
             if (type != CSSPrimitiveValue::CSS_IDENT)
                 return;
@@ -5562,12 +5562,12 @@ bool CSSStyleSelector::pageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
 
 Length CSSStyleSelector::mmLength(double mm) const
 {
-    return Length(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+    return CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLength<Length>(style(), m_rootElementStyle);
 }
 
 Length CSSStyleSelector::inchLength(double inch) const
 {
-    return Length(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
+    return CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLength<Length>(style(), m_rootElementStyle);
 }
 
 void CSSStyleSelector::mapFillAttachment(CSSPropertyID, FillLayer* layer, CSSValue* value)
@@ -5734,7 +5734,7 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
     if (firstType == CSSPrimitiveValue::CSS_UNKNOWN)
         firstLength = Length(Auto);
     else if (CSSPrimitiveValue::isUnitTypeLength(firstType))
-        firstLength = Length(first->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
+        firstLength = first->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (firstType == CSSPrimitiveValue::CSS_PERCENTAGE)
         firstLength = Length(first->getDoubleValue(), Percent);
     else
@@ -5743,7 +5743,7 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
     if (secondType == CSSPrimitiveValue::CSS_UNKNOWN)
         secondLength = Length(Auto);
     else if (CSSPrimitiveValue::isUnitTypeLength(secondType))
-        secondLength = Length(second->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
+        secondLength = second->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (secondType == CSSPrimitiveValue::CSS_PERCENTAGE)
         secondLength = Length(second->getDoubleValue(), Percent);
     else
@@ -5770,7 +5770,7 @@ void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValu
     Length l;
     int type = primitiveValue->primitiveType();
     if (CSSPrimitiveValue::isUnitTypeLength(type))
-        l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
+        l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
         l = Length(primitiveValue->getDoubleValue(), Percent);
     else
@@ -5794,7 +5794,7 @@ void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValu
     Length l;
     int type = primitiveValue->primitiveType();
     if (CSSPrimitiveValue::isUnitTypeLength(type))
-        l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
+        l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
         l = Length(primitiveValue->getDoubleValue(), Percent);
     else
