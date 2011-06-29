@@ -1,3 +1,9 @@
+2011-06-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove erroneous test name from GTK Skipped list.
+
+        * platform/gtk/Skipped:
+
 2011-06-29  Mike West  <mkwst@chromium.org>
 
         Reviewed by Pavel Feldman.
