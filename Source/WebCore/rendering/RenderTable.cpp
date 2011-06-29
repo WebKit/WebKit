@@ -472,7 +472,7 @@ void RenderTable::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
         popContentsClip(paintInfo, paintPhase, adjustedPaintOffset);
 }
 
-void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasBoxDecorations() && style()->visibility() == VISIBLE)
@@ -497,7 +497,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
-            IntPoint childPoint = flipForWritingMode(toRenderBox(child), paintOffset, ParentToChildFlippingAdjustment);
+            LayoutPoint childPoint = flipForWritingMode(toRenderBox(child), paintOffset, ParentToChildFlippingAdjustment);
             child->paint(info, childPoint);
         }
     }
@@ -519,7 +519,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
             m_currentBorder = &borderStyles[i];
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 if (child->isTableSection()) {
-                    IntPoint childPoint = flipForWritingMode(toRenderTableSection(child), paintOffset, ParentToChildFlippingAdjustment);
+                    LayoutPoint childPoint = flipForWritingMode(toRenderTableSection(child), paintOffset, ParentToChildFlippingAdjustment);
                     child->paint(info, childPoint);
                 }
         }
@@ -528,7 +528,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 
     // Paint outline.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, IntRect(paintOffset, size()));
+        paintOutline(paintInfo.context, LayoutRect(paintOffset, size()));
 }
 
 void RenderTable::subtractCaptionRect(IntRect& rect) const

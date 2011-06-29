@@ -231,14 +231,14 @@ void RenderImage::notifyFinished(CachedResource* newImage)
 #endif
 }
 
-void RenderImage::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    int cWidth = contentWidth();
-    int cHeight = contentHeight();
-    int leftBorder = borderLeft();
-    int topBorder = borderTop();
-    int leftPad = paddingLeft();
-    int topPad = paddingTop();
+    LayoutUnit cWidth = contentWidth();
+    LayoutUnit cHeight = contentHeight();
+    LayoutUnit leftBorder = borderLeft();
+    LayoutUnit topBorder = borderTop();
+    LayoutUnit leftPad = paddingLeft();
+    LayoutUnit topPad = paddingTop();
 
     GraphicsContext* context = paintInfo.context;
 
@@ -251,26 +251,26 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffse
             context->setStrokeStyle(SolidStroke);
             context->setStrokeColor(Color::lightGray, style()->colorSpace());
             context->setFillColor(Color::transparent, style()->colorSpace());
-            context->drawRect(IntRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight));
+            context->drawRect(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight));
 
             bool errorPictureDrawn = false;
-            IntSize imageOffset;
+            LayoutSize imageOffset;
             // When calculating the usable dimensions, exclude the pixels of
             // the ouline rect so the error image/alt text doesn't draw on it.
-            int usableWidth = cWidth - 2;
-            int usableHeight = cHeight - 2;
+            LayoutUnit usableWidth = cWidth - 2;
+            LayoutUnit usableHeight = cHeight - 2;
 
             RefPtr<Image> image = m_imageResource->image();
 
             if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
                 // Center the error image, accounting for border and padding.
-                int centerX = (usableWidth - image->width()) / 2;
+                LayoutUnit centerX = (usableWidth - image->width()) / 2;
                 if (centerX < 0)
                     centerX = 0;
-                int centerY = (usableHeight - image->height()) / 2;
+                LayoutUnit centerY = (usableHeight - image->height()) / 2;
                 if (centerY < 0)
                     centerY = 0;
-                imageOffset = IntSize(leftBorder + leftPad + centerX + 1, topBorder + topPad + centerY + 1);
+                imageOffset = LayoutSize(leftBorder + leftPad + centerX + 1, topBorder + topPad + centerY + 1);
                 context->drawImage(image.get(), style()->colorSpace(), paintOffset + imageOffset);
                 errorPictureDrawn = true;
             }
@@ -280,14 +280,14 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffse
                 context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
                 const Font& font = style()->font();
                 const FontMetrics& fontMetrics = font.fontMetrics();
-                int ascent = fontMetrics.ascent();
-                IntPoint altTextOffset = paintOffset;
+                LayoutUnit ascent = fontMetrics.ascent();
+                LayoutPoint altTextOffset = paintOffset;
                 altTextOffset.move(leftBorder + leftPad, topBorder + topPad + ascent);
 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
                 TextRun textRun = RenderBlock::constructTextRun(this, font, text, style());
-                int textWidth = font.width(textRun);
+                LayoutUnit textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && fontMetrics.height() <= imageOffset.height())
                         context->drawText(font, textRun, altTextOffset);
@@ -305,10 +305,10 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffse
             paintCustomHighlight(toPoint(paintOffset - location()), style()->highlight(), true);
 #endif
 
-        IntSize contentSize(cWidth, cHeight);
-        IntPoint contentLocation = paintOffset;
+        LayoutSize contentSize(cWidth, cHeight);
+        LayoutPoint contentLocation = paintOffset;
         contentLocation.move(leftBorder + leftPad, topBorder + topPad);
-        paintIntoRect(context, IntRect(contentLocation, contentSize));
+        paintIntoRect(context, LayoutRect(contentLocation, contentSize));
     }
 }
 

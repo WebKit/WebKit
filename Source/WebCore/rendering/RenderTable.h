@@ -215,7 +215,7 @@ private:
     virtual void removeChild(RenderObject* oldChild);
 
     virtual void paint(PaintInfo&, const IntPoint&);
-    virtual void paintObject(PaintInfo&, const IntPoint&);
+    virtual void paintObject(PaintInfo&, const LayoutPoint&);
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
     virtual void layout();

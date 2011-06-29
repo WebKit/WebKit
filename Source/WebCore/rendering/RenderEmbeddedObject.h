@@ -56,7 +56,7 @@ private:
     virtual const char* renderName() const { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const { return true; }
 
-    virtual void paintReplaced(PaintInfo&, const IntPoint&);
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
     virtual void paint(PaintInfo&, const IntPoint&);
 
 #if USE(ACCELERATED_COMPOSITING)

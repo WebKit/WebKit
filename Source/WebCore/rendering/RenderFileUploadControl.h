@@ -46,7 +46,7 @@ private:
 
     virtual void updateFromElement();
     virtual void computePreferredLogicalWidths();
-    virtual void paintObject(PaintInfo&, const IntPoint&);
+    virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 

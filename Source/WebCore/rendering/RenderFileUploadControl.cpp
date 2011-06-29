@@ -76,7 +76,7 @@ int RenderFileUploadControl::maxFilenameWidth() const
         - (input->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 
-void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
@@ -84,7 +84,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
     // Push a clip.
     GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
-        IntRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(),
+        LayoutRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(),
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop() + buttonShadowHeight);
         if (clipRect.isEmpty())
             return;
@@ -99,42 +99,42 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
         textRun.disableRoundingHacks();
 
         // Determine where the filename should be placed
-        int contentLeft = paintOffset.x() + borderLeft() + paddingLeft();
+        LayoutUnit contentLeft = paintOffset.x() + borderLeft() + paddingLeft();
         HTMLInputElement* button = uploadButton();
         if (!button)
             return;
 
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-        int buttonWidth = nodeWidth(button);
-        int buttonAndIconWidth = buttonWidth + afterButtonSpacing
+        LayoutUnit buttonWidth = nodeWidth(button);
+        LayoutUnit buttonAndIconWidth = buttonWidth + afterButtonSpacing
             + (input->icon() ? iconWidth + iconFilenameSpacing : 0);
-        int textX;
+        LayoutUnit textX;
         if (style()->isLeftToRightDirection())
             textX = contentLeft + buttonAndIconWidth;
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
         // We want to match the button's baseline
         RenderButton* buttonRenderer = toRenderButton(button->renderer());
-        int textY = buttonRenderer->absoluteBoundingBoxRect().y()
+        LayoutUnit textY = buttonRenderer->absoluteBoundingBoxRect().y()
             + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop()
             + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
 
         paintInfo.context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
         
         // Draw the filename
-        paintInfo.context->drawBidiText(font, textRun, IntPoint(textX, textY));
+        paintInfo.context->drawBidiText(font, textRun, LayoutPoint(textX, textY));
         
         if (input->icon()) {
             // Determine where the icon should be placed
-            int iconY = paintOffset.y() + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
-            int iconX;
+            LayoutUnit iconY = paintOffset.y() + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
+            LayoutUnit iconX;
             if (style()->isLeftToRightDirection())
                 iconX = contentLeft + buttonWidth + afterButtonSpacing;
             else
                 iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
             // Draw the file icon
-            input->icon()->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
+            input->icon()->paint(paintInfo.context, LayoutRect(iconX, iconY, iconWidth, iconHeight));
         }
     }
 

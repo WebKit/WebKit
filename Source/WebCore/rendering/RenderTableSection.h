@@ -134,7 +134,7 @@ private:
 
     virtual void paint(PaintInfo&, const IntPoint&);
     virtual void paintCell(RenderTableCell*, PaintInfo&, const IntPoint&);
-    virtual void paintObject(PaintInfo&, const IntPoint&);
+    virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 

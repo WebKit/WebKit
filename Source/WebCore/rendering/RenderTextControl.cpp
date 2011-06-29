@@ -632,7 +632,7 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, const IntPoint& p
     }
 }
 
-void RenderTextControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTextControl::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {    
     if (m_placeholderVisible && paintInfo.phase == PaintPhaseForeground)
         paintPlaceholder(paintInfo, paintOffset);

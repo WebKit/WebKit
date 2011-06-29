@@ -352,7 +352,7 @@ public:
     bool pushContentsClip(PaintInfo&, const IntPoint& accumulatedOffset);
     void popContentsClip(PaintInfo&, PaintPhase originalPhase, const IntPoint& accumulatedOffset);
 
-    virtual void paintObject(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
+    virtual void paintObject(PaintInfo&, const LayoutPoint&) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);

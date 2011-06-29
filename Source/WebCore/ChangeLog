@@ -1,3 +1,49 @@
+2011-06-28  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintObject and paintReplaced to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63585
+
+        Switching paintObject and paintReplaced to layout type abstractions from more integral types.
+
+        No new tests as this is just moving to an abstraction.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::paintObject):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderImage.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        * rendering/RenderListBox.h:
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::paintReplaced):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::paintObject):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/RenderVideo.h:
+
 2011-06-28  Adam Langley  <agl@chromium.org>
 
         Reviewed by Adam Barth.

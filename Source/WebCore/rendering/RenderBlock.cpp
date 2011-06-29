@@ -2479,7 +2479,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const IntPoint& paintOffset, 
     }
 }
 
-void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
 
@@ -2501,7 +2501,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
         return;
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
-    IntPoint scrolledOffset = paintOffset;
+    LayoutPoint scrolledOffset = paintOffset;
     if (hasOverflowClip())
         scrolledOffset.move(-layer()->scrolledContentOffset());
 

@@ -947,7 +947,7 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         cell->paint(paintInfo, cellPoint);
 }
 
-void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // Check which rows and cols are visible and only paint these.
     // FIXME: Could use a binary search here.
@@ -956,11 +956,11 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paint
 
     PaintPhase paintPhase = paintInfo.phase;
 
-    int os = 2 * maximalOutlineSize(paintPhase);
+    LayoutUnit os = 2 * maximalOutlineSize(paintPhase);
     unsigned startrow = 0;
     unsigned endrow = totalRows;
 
-    IntRect localRepaintRect = paintInfo.rect;
+    LayoutRect localRepaintRect = paintInfo.rect;
     localRepaintRect.moveBy(-paintOffset);
     if (style()->isFlippedBlocksWritingMode()) {
         if (style()->isHorizontalWritingMode())
@@ -971,7 +971,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paint
 
     // If some cell overflows, just paint all of them.
     if (!m_hasOverflowingCell) {
-        int before = (style()->isHorizontalWritingMode() ? localRepaintRect.y() : localRepaintRect.x()) - os;
+        LayoutUnit before = (style()->isHorizontalWritingMode() ? localRepaintRect.y() : localRepaintRect.x()) - os;
         // binary search to find a row
         startrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), before) - m_rowPos.begin();
 
@@ -981,7 +981,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paint
         if (startrow == m_rowPos.size() || (startrow > 0 && (m_rowPos[startrow] >  before)))
           --startrow;
 
-        int after = (style()->isHorizontalWritingMode() ? localRepaintRect.maxY() : localRepaintRect.maxX()) + os;
+        LayoutUnit after = (style()->isHorizontalWritingMode() ? localRepaintRect.maxY() : localRepaintRect.maxX()) + os;
         endrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), after) - m_rowPos.begin();
         if (endrow == m_rowPos.size())
           --endrow;
@@ -994,13 +994,13 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paint
     unsigned endcol = totalCols;
     // FIXME: Implement RTL.
     if (!m_hasOverflowingCell && style()->isLeftToRightDirection()) {
-        int start = (style()->isHorizontalWritingMode() ? localRepaintRect.x() : localRepaintRect.y()) - os;
+        LayoutUnit start = (style()->isHorizontalWritingMode() ? localRepaintRect.x() : localRepaintRect.y()) - os;
         Vector<int>& columnPos = table()->columnPositions();
         startcol = std::lower_bound(columnPos.begin(), columnPos.end(), start) - columnPos.begin();
         if ((startcol == columnPos.size()) || (startcol > 0 && (columnPos[startcol] > start)))
             --startcol;
 
-        int end = (style()->isHorizontalWritingMode() ? localRepaintRect.maxX() : localRepaintRect.maxY()) + os;
+        LayoutUnit end = (style()->isHorizontalWritingMode() ? localRepaintRect.maxX() : localRepaintRect.maxY()) + os;
         endcol = std::lower_bound(columnPos.begin(), columnPos.end(), end) - columnPos.begin();
         if (endcol == columnPos.size())
             --endcol;

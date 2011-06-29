@@ -65,7 +65,7 @@ private:
     virtual bool canHaveChildren() const { return false; }
 
     virtual bool hasControlClip() const { return true; }
-    virtual void paintObject(PaintInfo&, const IntPoint&);
+    virtual void paintObject(PaintInfo&, const LayoutPoint&);
     virtual IntRect controlClipRect(const IntPoint&) const;
 
     virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);

@@ -43,7 +43,7 @@ public:
     
 private:
     virtual const char* renderName() const { return "RenderHTMLCanvas"; }
-    virtual void paintReplaced(PaintInfo&, const IntPoint&);
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
     virtual void intrinsicSizeChanged() { canvasSizeChanged(); }
 };
 

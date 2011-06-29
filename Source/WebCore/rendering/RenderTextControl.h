@@ -90,7 +90,7 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
-    virtual void paintObject(PaintInfo&, const IntPoint&);
+    virtual void paintObject(PaintInfo&, const LayoutPoint&);
     
     virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
 

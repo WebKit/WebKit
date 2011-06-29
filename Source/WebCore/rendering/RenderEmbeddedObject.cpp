@@ -145,7 +145,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const IntPoint& paintOffs
     RenderPart::paint(paintInfo, paintOffset);
 }
 
-void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!pluginCrashedOrWasMissing())
         return;

@@ -261,7 +261,7 @@ IntRect RenderListBox::itemBoundingBoxRect(const IntPoint& additionalOffset, int
                    contentWidth(), itemHeight());
 }
     
-void RenderListBox::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
