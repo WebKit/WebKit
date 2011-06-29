@@ -1,3 +1,13 @@
+2011-06-29  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium test updates.
+
+        * platform/chromium-mac-leopard/svg/foreignObject: Added.
+        * platform/chromium-mac-leopard/svg/foreignObject/text-tref-02-b-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+        * platform/chromium-mac/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
