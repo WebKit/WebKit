@@ -1,3 +1,34 @@
+2011-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Freetype] Many tests report ERROR: Failed to get glyph page zero.
+        https://bugs.webkit.org/show_bug.cgi?id=63498
+
+        Instead of conditionally instantiating the m_scaledFont member of FontPlatformData,
+        always instantiate it. For times when the size is 0 and the instantiation would lead
+        to a Cairo error, we use size 1 and just make operations which would fail conditional
+        on the m_size > 0.
+
+        No new tests. This change is covered by existing tests. We should
+        observe no errors on the bots after landing.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs): Instead of looking at whether or not there is
+        a scaled font to determine whether to draw, just look at the size.
+        * platform/graphics/freetype/FontPlatformData.h: Remove the m_font member.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp: Always instantiate
+        a scaled font member and remove references to m_font. If we are instantiating
+        a scaled font for a 0 size font, instantiate a size 1 font, so that we can
+        still use Cairo to query font properties.
+        * platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp:
+        (WebCore::GlyphPage::fill): We can assume there is always a scaled font now.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformInit): Ditto.
+        (WebCore::SimpleFontData::createScaledFontData): Ditto.
+        (WebCore::SimpleFontData::containsCharacters): Ditto.
+        (WebCore::SimpleFontData::platformWidthForGlyph): Ditto.
+
 2011-06-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

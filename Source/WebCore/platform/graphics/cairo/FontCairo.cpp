@@ -106,7 +106,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
                       int from, int numGlyphs, const FloatPoint& point) const
 {
-    if (!font->platformData().scaledFont())
+    if (!font->platformData().size())
         return;
 
     GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
