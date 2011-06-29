@@ -106,7 +106,7 @@ class DownloadCommandsTest(CommandsTest):
         expected_stderr = "Updating working directory\n2 reviewed patches found on bug 42.\nProcessing 2 patches from 1 bug.\nProcessing patch 197 from bug 42.\nProcessing patch 128 from bug 42.\n"
         self.assert_execute_outputs(ApplyFromBug(), [42], options=options, expected_stderr=expected_stderr)
 
-    def test_land_diff(self):
+    def test_land(self):
         expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n"
         mock_tool = MockTool()
         mock_tool.scm().create_patch = Mock(return_value="Patch1\nMockPatch\n")

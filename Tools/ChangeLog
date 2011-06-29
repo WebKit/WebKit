@@ -1,5 +1,11 @@
 2011-06-29  Eric Seidel  <eric@webkit.org>
 
+        Adam says cowboys don't review (or unit test).
+
+        * Scripts/webkitpy/tool/commands/download.py:
+
+2011-06-29  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Make port/config.py mockable for easier unit testing

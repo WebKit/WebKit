@@ -123,6 +123,7 @@ class LandCowboy(AbstractSequencedCommand):
         steps.Build,
         steps.RunTests,
         steps.Commit,
+        steps.CloseBugForLandDiff,
     ]
 
 
