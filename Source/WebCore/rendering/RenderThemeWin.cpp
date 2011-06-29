@@ -671,6 +671,9 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
             ::DrawFrameControl(hdc, &widgetRect, themeData.m_part, themeData.m_state);
         }
     }
+
+    if (!alphaBlend && !context->inTransparencyLayer())
+        DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), r, 255);
 }
 
 bool RenderThemeWin::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)

@@ -1,3 +1,15 @@
+2011-06-29  Xu Fan  <qifuren1985@gmail.com>
+
+        Reviewed by Brent Fulgham.
+
+        Fix Scrollbars Transparent in Windows XP if WebKit is using Layered Window
+        https://bugs.webkit.org/show_bug.cgi?id=61136
+
+        * platform/graphics/win/DIBPixelData.h: add a static method setRGBABitmapAlpha
+        * platform/graphics/win/DIBPixelData.cpp: add implementation
+        * platform/win/ScrollbarThemeWin.cpp: fix scroolbar transparent
+        * rendering/RenderThemeWin.cpp: fix textbox and button transparent
+
 2011-06-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

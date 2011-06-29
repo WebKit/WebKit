@@ -269,6 +269,9 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, Scrollbar* scr
             ::DeleteObject(patternBitmap);
         }
     }
+
+    if (!alphaBlend && !context->inTransparencyLayer())
+        DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
 }
 
 void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
@@ -318,6 +321,9 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollb
         DrawThemeBackground(scrollbarTheme, windowsContext.hdc(), SP_BUTTON, xpState, &themeRect, 0);
     else
         ::DrawFrameControl(windowsContext.hdc(), &themeRect, DFC_SCROLL, classicState);
+
+    if (!alphaBlend && !context->inTransparencyLayer())
+        DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
 }
 
 static IntRect gripperRect(int thickness, const IntRect& thumbRect)
@@ -372,6 +378,9 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext* context, Scrollbar* scrollba
         paintGripper(scrollbar, hdc, gripperRect(scrollbarThickness(), rect));
     } else
         ::DrawEdge(hdc, &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
+
+    if (!alphaBlend && !context->inTransparencyLayer())
+        DIBPixelData::setRGBABitmapAlpha(hdc, rect, 255);
     context->releaseWindowsContext(hdc, rect, alphaBlend);
 }
 
