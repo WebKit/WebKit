@@ -1,5 +1,11 @@
 2011-06-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][Mac] Qt specific results committed in r90007, but fail on Qt-Mac platform
+
+        * platform/qt-mac/Skipped: Skip failing tests.
+
+2011-06-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Add platform specific expected results for new passing tests.
 
         * platform/qt/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.

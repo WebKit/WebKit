@@ -4587,3 +4587,10 @@ svg/custom/linking-uri-01-b.svg
 svg/text/text-overflow-ellipsis-svgfont.html
 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
+
+# Qt specific results committed in r90007, but fail on Qt-Mac platform
+svg/W3C-SVG-1.1-SE/text-tref-03-b.svg
+svg/custom/text-tref-03-b-change-href-dom.svg
+svg/custom/text-tref-03-b-change-href.svg
+svg/custom/text-tref-03-b-referenced-element-removal.svg
+svg/custom/text-tref-03-b-tref-removal.svg
