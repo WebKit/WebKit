@@ -1,3 +1,14 @@
+2011-06-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Pass --no-new-test-results to NRWT on build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=63653
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=38063.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-06-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Adam Barth.
