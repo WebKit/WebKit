@@ -1334,5 +1334,8 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 # New flexbox is not yet enabled. http://webkit.org/b/62048
 css3/flexbox
 
+# CSS Regions support not yet enabled. http://webkit.org/b/57312
+fast/regions
+
 # Causes a SyntaxError (http://webkit.org/b/62595).
 fast/workers/worker-crash-with-invalid-location.html

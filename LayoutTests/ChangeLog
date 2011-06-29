@@ -1,3 +1,20 @@
+2011-06-29  Alan Stearns  <stearns@adobe.com>
+
+        Reviewed by Tony Chang.
+
+        Modify Skipped files so that future css regions layout tests are
+        skipped by default.
+
+        [CSS Regions] Add support for skipped tests
+        https://bugs.webkit.org/show_bug.cgi?id=63632
+
+        * fast/regions/flow-content-basic.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.

@@ -3930,6 +3930,9 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 // New flexbox is not yet enabled.
 BUGWK62048 SKIP : css3/flexbox = PASS
 
+// CSS Regions support not yet enabled.
+BUGWK57312 SKIP : fast/regions = PASS
+
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62430 WIN LINUX : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
