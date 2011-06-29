@@ -303,7 +303,9 @@ class Executive(object):
         stdout, _ = ps_process.communicate()
         for line in stdout.splitlines():
             try:
-                pid, process_name = line.split(' ', 1)
+                # In some cases the line can contain one or more
+                # leading white-spaces, so strip it before split.
+                pid, process_name = line.strip().split(' ', 1)
                 if process_name_filter(process_name):
                     running_pids.append(int(pid))
             except ValueError, e:
