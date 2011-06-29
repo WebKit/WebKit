@@ -238,6 +238,7 @@ svg/hixie/intrinsic/003.html
 http/tests/fileapi/create-blob-url-from-data-url.html
 http/tests/history/back-during-onload-triggered-by-back.html
 http/tests/history/back-to-post.php
+http/tests/history/cross-origin-replace-history-object-child.html
 
 # crashing on debug bots because of failing ASSERT in TextIterator.cpp
 # https://bugs.webkit.org/show_bug.cgi?id=63611

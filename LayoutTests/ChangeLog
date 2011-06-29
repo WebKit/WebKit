@@ -1,5 +1,13 @@
 2011-06-29  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip
+        http/tests/history/cross-origin-replace-history-object-child.html
+        on GTK, due to bug 61937.
+
+        * platform/gtk/Skipped:
+
+2011-06-29  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline of 3 svg/custom/linking tests.
 
         * platform/gtk/svg/custom/linking-a-03-b-all-expected.txt:
