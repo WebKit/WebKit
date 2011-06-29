@@ -1,3 +1,20 @@
+2011-06-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add platform specific expected results for new passing tests.
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/qt/svg/custom/text-tref-03-b-change-href-dom-expected.png: Added.
+        * platform/qt/svg/custom/text-tref-03-b-change-href-dom-expected.txt: Added.
+        * platform/qt/svg/custom/text-tref-03-b-change-href-expected.png: Added.
+        * platform/qt/svg/custom/text-tref-03-b-change-href-expected.txt: Added.
+        * platform/qt/svg/custom/text-tref-03-b-referenced-element-removal-expected.png: Added.
+        * platform/qt/svg/custom/text-tref-03-b-referenced-element-removal-expected.txt: Added.
+        * platform/qt/svg/custom/text-tref-03-b-tref-removal-expected.png: Added.
+        * platform/qt/svg/custom/text-tref-03-b-tref-removal-expected.txt: Added.
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt:
+
 2011-06-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of 2 more tests.
