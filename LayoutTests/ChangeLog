@@ -1,5 +1,33 @@
 2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
 
+        Unreviewed: change URLs in ruby layout tests to lower case in order
+        to avoid having to have separate Chromium expectations.
+
+        * fast/ruby/after-block-doesnt-crash-expected.txt:
+        * fast/ruby/after-block-doesnt-crash.html:
+        * fast/ruby/after-table-doesnt-crash-expected.txt:
+        * fast/ruby/after-table-doesnt-crash.html:
+        * fast/ruby/before-block-doesnt-crash-expected.txt:
+        * fast/ruby/before-block-doesnt-crash.html:
+        * fast/ruby/before-table-doesnt-crash-expected.txt:
+        * fast/ruby/before-table-doesnt-crash.html:
+        * fast/ruby/generated-after-counter-doesnt-crash-expected.txt:
+        * fast/ruby/generated-after-counter-doesnt-crash.html:
+        * fast/ruby/generated-before-and-after-counter-doesnt-crash-expected.txt:
+        * fast/ruby/generated-before-and-after-counter-doesnt-crash.html:
+        * fast/ruby/generated-before-counter-doesnt-crash-expected.txt:
+        * fast/ruby/generated-before-counter-doesnt-crash.html:
+        * platform/chromium-mac/fast/ruby/after-block-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/ruby/after-table-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/ruby/before-block-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/ruby/before-table-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/ruby/after-block-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/ruby/after-table-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/ruby/before-block-doesnt-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/ruby/before-table-doesnt-crash-expected.txt: Removed.
+
+2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Bug 55930 - (CVE-2011-1440) Incorrect handling of 'display:' property within nested <ruby> tags
