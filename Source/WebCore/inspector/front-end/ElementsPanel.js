@@ -107,8 +107,8 @@ WebInspector.ElementsPanel = function()
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
     this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
-    this._nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
-    this._nodeSearchButton.addEventListener("click", this.toggleSearchingForNode.bind(this), false);
+    this.nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
+    this.nodeSearchButton.addEventListener("click", this.toggleSearchingForNode.bind(this), false);
 
     this.element.appendChild(this.contentElement);
     this.element.appendChild(this.sidebarElement);
@@ -134,7 +134,7 @@ WebInspector.ElementsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this._nodeSearchButton.element, this.crumbsElement];
+        return [this.crumbsElement];
     },
 
     get defaultFocusedElement()
@@ -1138,15 +1138,15 @@ WebInspector.ElementsPanel.prototype = {
             return;
 
         this.focusedDOMNode = node;
-        if (this._nodeSearchButton.toggled) {
+        if (this.nodeSearchButton.toggled) {
             InspectorFrontendHost.bringToFront();
-            this._nodeSearchButton.toggled = false;
+            this.nodeSearchButton.toggled = false;
         }
     },
 
     _setSearchingForNode: function(enabled)
     {
-        this._nodeSearchButton.toggled = enabled;
+        this.nodeSearchButton.toggled = enabled;
     },
 
     setSearchingForNode: function(enabled)
@@ -1156,7 +1156,7 @@ WebInspector.ElementsPanel.prototype = {
 
     toggleSearchingForNode: function()
     {
-        this.setSearchingForNode(!this._nodeSearchButton.toggled);
+        this.setSearchingForNode(!this.nodeSearchButton.toggled);
     },
 
     elementsToRestoreScrollPositionsFor: function()

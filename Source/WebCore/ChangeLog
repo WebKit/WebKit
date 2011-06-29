@@ -2,6 +2,34 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: create status bar buttons programmatically. Add "Inspect" button to all panels.
+        https://bugs.webkit.org/show_bug.cgi?id=63450
+
+        Buttons should be created in code, not in HTML. Also making Inspect Element
+        action available on all panels (as an experiment).
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.show):
+        (WebInspector.ConsoleView.prototype.hide):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.get statusBarItems):
+        (WebInspector.ElementsPanel.prototype.updateFocusedNode):
+        (WebInspector.ElementsPanel.prototype._setSearchingForNode):
+        (WebInspector.ElementsPanel.prototype.toggleSearchingForNode):
+        * inspector/front-end/inspector.css:
+        (button.dock-status-bar-item.status-bar-item .glyph):
+        (button.dock-status-bar-item.status-bar-item.toggled-on .glyph):
+        (.console-status-bar-item .glyph):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector.set attached):
+
+2011-06-29  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: tab crash after deleting trailing quote when editing attribute
         https://bugs.webkit.org/show_bug.cgi?id=63544
 

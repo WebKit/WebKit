@@ -177,6 +177,24 @@ var WebInspector = {
             this.panels.console = new WebInspector.ConsolePanel();
     },
 
+    _createGlobalStatusBarItems: function()
+    {
+        this._dockToggleButton = new WebInspector.StatusBarButton(this._dockButtonTitle(), "dock-status-bar-item");
+        this._dockToggleButton.addEventListener("click", this.toggleAttach.bind(this), false);
+        this._dockToggleButton.toggled = !this.attached;
+
+        var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
+        anchoredStatusBar.appendChild(this._dockToggleButton.element);
+        anchoredStatusBar.appendChild(this.console.toggleConsoleButton.element);
+        if (this.panels.elements)
+            anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
+    },
+
+    _dockButtonTitle: function()
+    {
+        return this.attached ? WebInspector.UIString("Undock into separate window.") : WebInspector.UIString("Dock to main window.");
+    },
+
     get attached()
     {
         return this._attached;
@@ -189,17 +207,19 @@ var WebInspector = {
 
         this._attached = x;
 
-        var dockToggleButton = document.getElementById("dock-status-bar-item");
         var body = document.body;
 
         if (x) {
             body.removeStyleClass("detached");
             body.addStyleClass("attached");
-            dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
         } else {
             body.removeStyleClass("attached");
             body.addStyleClass("detached");
-            dockToggleButton.title = WebInspector.UIString("Dock to main window.");
+        }
+
+        if (this._dockToggleButton) {
+            this._dockToggleButton.title = this._dockButtonTitle();
+            this._dockToggleButton.toggled = !x;
         }
 
         // This may be called before onLoadedDone, hence the bulk of inspector objects may
@@ -447,6 +467,8 @@ WebInspector.doLoadedDone = function()
 
     this.panels = {};
     this._createPanels();
+    this._createGlobalStatusBarItems();
+
     this._panelHistory = new WebInspector.PanelHistory();
     this.toolbar = new WebInspector.Toolbar();
     this.toolbar.attached = WebInspector.attached;
@@ -472,14 +494,6 @@ WebInspector.doLoadedDone = function()
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
     document.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
-
-    var dockToggleButton = document.getElementById("dock-status-bar-item");
-    dockToggleButton.addEventListener("click", this.toggleAttach.bind(this), false);
-
-    if (this.attached)
-        dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
-    else
-        dockToggleButton.title = WebInspector.UIString("Dock to main window.");
 
     var errorWarningCount = document.getElementById("error-warning-count");
     errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);

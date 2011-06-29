@@ -54,8 +54,7 @@ WebInspector.ConsoleView = function(drawer)
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
     this.currentGroup = this.topGroup;
 
-    this.toggleConsoleButton = document.getElementById("console-status-bar-item");
-    this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
+    this.toggleConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show console."), "console-status-bar-item");
     this.toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
 
     // Will hold the list of filter elements
@@ -245,7 +244,7 @@ WebInspector.ConsoleView.prototype = {
 
     show: function()
     {
-        this.toggleConsoleButton.addStyleClass("toggled-on");
+        this.toggleConsoleButton.toggled = true;
         this.toggleConsoleButton.title = WebInspector.UIString("Hide console.");
         if (!this.prompt.isCaretInsidePrompt())
             this.prompt.moveCaretToEndOfPrompt();
@@ -258,7 +257,7 @@ WebInspector.ConsoleView.prototype = {
 
     hide: function()
     {
-        this.toggleConsoleButton.removeStyleClass("toggled-on");
+        this.toggleConsoleButton.toggled = false;
         this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
     },
 

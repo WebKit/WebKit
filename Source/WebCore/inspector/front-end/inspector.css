@@ -548,19 +548,21 @@ select.status-bar-item:active {
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
 }
 
-#dock-status-bar-item .glyph {
+
+button.dock-status-bar-item.status-bar-item .glyph {
     -webkit-mask-position: 0 -48px;
 }
 
-body.detached #dock-status-bar-item .glyph {
+button.dock-status-bar-item.status-bar-item.toggled-on .glyph {
     -webkit-mask-position: -32px -24px;
+    background-color: rgba(0, 0, 0, 0.75);
 }
 
 body.port-qt #dock-status-bar-item {
     display: none
 }
 
-#console-status-bar-item .glyph {
+.console-status-bar-item .glyph {
     -webkit-mask-position: -64px -24px;
 }
 
