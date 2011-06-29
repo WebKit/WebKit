@@ -67,16 +67,12 @@ class FileSystem(object):
         return os.chdir(path)
 
     def copyfile(self, source, destination):
-        """Copies the contents of the file at the given path to the destination
-        path."""
         shutil.copyfile(source, destination)
 
     def dirname(self, path):
-        """Wraps os.path.dirname()."""
         return os.path.dirname(path)
 
     def exists(self, path):
-        """Return whether the path exists in the filesystem."""
         return os.path.exists(path)
 
     def files_under(self, path, dirs_to_skip=[], file_filter=None):
@@ -114,31 +110,24 @@ class FileSystem(object):
         return files
 
     def getcwd(self):
-        """Wraps os.getcwd()."""
         return os.getcwd()
 
     def glob(self, path):
-        """Wraps glob.glob()."""
         return glob.glob(path)
 
     def isabs(self, path):
-        """Return whether the path is an absolute path."""
         return os.path.isabs(path)
 
     def isfile(self, path):
-        """Return whether the path refers to a file."""
         return os.path.isfile(path)
 
     def isdir(self, path):
-        """Return whether the path refers to a directory."""
         return os.path.isdir(path)
 
     def join(self, *comps):
-        """Return the path formed by joining the components."""
         return os.path.join(*comps)
 
     def listdir(self, path):
-        """Return the contents of the directory pointed to by path."""
         return os.listdir(path)
 
     def mkdtemp(self, **kwargs):
@@ -188,7 +177,6 @@ class FileSystem(object):
         return os.stat(path).st_mtime
 
     def normpath(self, path):
-        """Wraps os.path.normpath()."""
         return os.path.normpath(path)
 
     def open_binary_tempfile(self, suffix):
@@ -198,7 +186,6 @@ class FileSystem(object):
         return f, temp_name
 
     def open_text_file_for_writing(self, path, append=False):
-        """Returns a file handle suitable for writing to."""
         mode = 'w'
         if append:
             mode = 'a'
@@ -249,20 +236,8 @@ class FileSystem(object):
                     raise e
 
     def rmtree(self, path):
-        """Delete the directory rooted at path, empty or no."""
+        """Delete the directory rooted at path, whether empty or not."""
         shutil.rmtree(path, ignore_errors=True)
-
-    def read_binary_file(self, path):
-        """Return the contents of the file at the given path as a byte string."""
-        with file(path, 'rb') as f:
-            return f.read()
-
-    def read_text_file(self, path):
-        """Return the contents of the file at the given path as a Unicode string.
-
-        The file is read assuming it is a UTF-8 encoded file with no BOM."""
-        with codecs.open(path, 'r', 'utf8') as f:
-            return f.read()
 
     def split(self, path):
         """Return (dirname, basename + '.' + ext)"""
@@ -273,7 +248,6 @@ class FileSystem(object):
         return os.path.splitext(path)
 
     def write_binary_file(self, path, contents):
-        """Write the contents to the file at the given location."""
         with file(path, 'wb') as f:
             f.write(contents)
 
