@@ -349,6 +349,11 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     m_inspectorAgent->restore();
 }
 
+void InspectorController::setAgentIdentifierPrefix(const String& prefix)
+{
+    m_pageAgent->setAgentIdentifierPrefix(prefix);
+}
+
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
     m_inspectorAgent->evaluateForTestInFrontend(callId, script);

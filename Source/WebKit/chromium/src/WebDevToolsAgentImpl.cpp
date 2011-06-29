@@ -306,6 +306,11 @@ void WebDevToolsAgentImpl::updateInspectorStateCookie(const String& state)
     m_client->runtimePropertyChanged(kInspectorStateFeatureName, state);
 }
 
+void WebDevToolsAgentImpl::setAgentIdentifierPrefix(const WebString& prefix)
+{
+    inspectorController()->setAgentIdentifierPrefix(prefix);
+}
+
 void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& script)
 {
     InspectorController* ic = inspectorController();

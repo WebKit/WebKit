@@ -59,6 +59,7 @@ public:
 
     virtual void inspectElementAt(const WebPoint&) = 0;
     virtual void setRuntimeProperty(const WebString& name, const WebString& value) = 0;
+    virtual void setAgentIdentifierPrefix(const WebString&) = 0;
 
     // Exposed for LayoutTestController.
     virtual void evaluateInWebInspector(long callId, const WebString& script) = 0;

@@ -69,7 +69,7 @@ namespace WebCore {
 namespace {
 // This should be kept the same as the one in front-end/utilities.js
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
-static unsigned int s_lastFrameIdentifier = 0;
+static unsigned int s_lastUsedIdentifier = 0;
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -280,6 +280,11 @@ void InspectorPageAgent::clearFrontend()
 {
     m_instrumentingAgents->setInspectorPageAgent(0);
     m_frontend = 0;
+}
+
+void InspectorPageAgent::setAgentIdentifierPrefix(const String& prefix)
+{
+    m_agentIdentifierPrefix = prefix.isEmpty() ? String("") : prefix + ".";
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source)
@@ -560,26 +565,27 @@ static String pointerAsId(void* pointer)
     return String::format("%.0llX", address);
 }
 
+String InspectorPageAgent::createIdentifier()
+{
+    return m_agentIdentifierPrefix + String::number(++s_lastUsedIdentifier);
+}
+
 Frame* InspectorPageAgent::frameForId(const String& frameId)
 {
-    bool ok = false;
-    unsigned int identifier = frameId.toUIntStrict(&ok);
-    if (!ok || !identifier)
-        return 0;
-    return m_identifierToFrame.get(identifier);
+    return frameId.isEmpty() ? 0 : m_identifierToFrame.get(frameId);
 }
 
 String InspectorPageAgent::frameId(Frame* frame)
 {
     if (!frame)
         return "";
-    unsigned int identifier = m_frameToIdentifier.get(frame);
-    if (!identifier) {
-        identifier = ++s_lastFrameIdentifier;
+    String identifier = m_frameToIdentifier.get(frame);
+    if (identifier.isNull()) {
+        identifier = createIdentifier();
         m_frameToIdentifier.set(frame, identifier);
         m_identifierToFrame.set(identifier, frame);
     }
-    return String::number(identifier);
+    return identifier;
 }
 
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
@@ -589,7 +595,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 
 void InspectorPageAgent::frameDestroyed(Frame* frame)
 {
-    HashMap<Frame*, unsigned int>::iterator iterator = m_frameToIdentifier.find(frame);
+    HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(frame);
     if (iterator != m_frameToIdentifier.end()) {
         m_identifierToFrame.remove(iterator->second);
         m_frameToIdentifier.remove(iterator);

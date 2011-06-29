@@ -107,6 +107,7 @@ public:
     // Inspector Controller API
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
+    void setAgentIdentifierPrefix(const String&);
 
     // Cross-agents API
     Frame* mainFrame();
@@ -117,6 +118,8 @@ public:
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InjectedScriptManager*);
 
+    String createIdentifier();
+
     PassRefPtr<InspectorObject> buildObjectForFrame(Frame*);
     PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame*);
 
@@ -124,9 +127,10 @@ private:
     Page* m_page;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Page* m_frontend;
+    String m_agentIdentifierPrefix;
     Vector<String> m_scriptsToEvaluateOnLoad;
-    HashMap<Frame*, unsigned int> m_frameToIdentifier;
-    HashMap<unsigned int, Frame*> m_identifierToFrame;
+    HashMap<Frame*, String> m_frameToIdentifier;
+    HashMap<String, Frame*> m_identifierToFrame;
 };
 
 
