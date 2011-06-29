@@ -935,6 +935,7 @@
 		431A2F9D13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A2F9B13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp */; };
 		431A2FD713B7707A007791E4 /* SVGAnimatedLengthList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A2FD613B7707A007791E4 /* SVGAnimatedLengthList.cpp */; };
 		431A302113B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A302013B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp */; };
+		431A308813B8F978007791E4 /* SVGAnimatedBoolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 431A308713B8F978007791E4 /* SVGAnimatedBoolean.cpp */; };
 		4331AC7813B6870000A9E5AE /* SVGAnimatedNumberList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */; };
 		4358E86A1360A21600E4748C /* DOMSVGFEDropShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */; };
 		4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */; };
@@ -7401,6 +7402,7 @@
 		431A2F9B13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedNumberOptionalNumber.cpp; sourceTree = "<group>"; };
 		431A2FD613B7707A007791E4 /* SVGAnimatedLengthList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedLengthList.cpp; sourceTree = "<group>"; };
 		431A302013B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedPreserveAspectRatio.cpp; sourceTree = "<group>"; };
+		431A308713B8F978007791E4 /* SVGAnimatedBoolean.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedBoolean.cpp; sourceTree = "<group>"; };
 		4331AC7713B6870000A9E5AE /* SVGAnimatedNumberList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedNumberList.cpp; sourceTree = "<group>"; };
 		4358E8671360A21600E4748C /* DOMSVGFEDropShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEDropShadowElement.h; sourceTree = "<group>"; };
 		4358E8681360A21600E4748C /* DOMSVGFEDropShadowElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEDropShadowElement.mm; sourceTree = "<group>"; };
@@ -17403,6 +17405,7 @@
 				4362C7B813AC6F1A00344BEB /* SVGAnimatedAngle.cpp */,
 				087B84951272CEC700A14417 /* SVGAnimatedAngle.h */,
 				B22277E60D00BF1F0071B782 /* SVGAnimatedAngle.idl */,
+				431A308713B8F978007791E4 /* SVGAnimatedBoolean.cpp */,
 				085797081278394C00A8EC5F /* SVGAnimatedBoolean.h */,
 				B22277E70D00BF1F0071B782 /* SVGAnimatedBoolean.idl */,
 				43A625F713B3304000AC94B8 /* SVGAnimatedColor.cpp */,
@@ -25855,6 +25858,7 @@
 				431A2F9D13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.cpp in Sources */,
 				431A2FD713B7707A007791E4 /* SVGAnimatedLengthList.cpp in Sources */,
 				431A302113B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp in Sources */,
+				431A308813B8F978007791E4 /* SVGAnimatedBoolean.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

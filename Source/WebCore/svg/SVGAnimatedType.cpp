@@ -48,6 +48,9 @@ SVGAnimatedType::~SVGAnimatedType()
     case AnimatedAngle:
         delete m_data.angle;
         break;
+    case AnimatedBoolean:
+        delete m_data.boolean;
+        break;
     case AnimatedColor:
         delete m_data.color;
         break;
@@ -92,6 +95,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createAngle(SVGAngle* angle)
     ASSERT(angle);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedAngle));
     animatedType->m_data.angle = angle;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createBoolean(bool* boolean)
+{
+    ASSERT(boolean);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedBoolean));
+    animatedType->m_data.boolean = boolean;
     return animatedType.release();
 }
 
@@ -189,6 +200,12 @@ SVGAngle& SVGAnimatedType::angle()
     return *m_data.angle;
 }
 
+bool& SVGAnimatedType::boolean()
+{
+    ASSERT(m_type == AnimatedBoolean);
+    return *m_data.boolean;
+}
+
 Color& SVGAnimatedType::color()
 {
     ASSERT(m_type == AnimatedColor);
@@ -261,6 +278,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedAngle:
         ASSERT(m_data.angle);
         return m_data.angle->valueAsString();
+    case AnimatedBoolean:
+        ASSERT(m_data.boolean);
+        return *m_data.boolean ? "true" : "false";
     case AnimatedColor:
         ASSERT(m_data.color);
         return m_data.color->serialized();
@@ -312,6 +332,10 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedAngle:
         ASSERT(m_data.angle);
         m_data.angle->setValueAsString(value, ec);
+        break;
+    case AnimatedBoolean:
+        ASSERT(m_data.boolean);
+        *m_data.boolean = value == "true" ? true : false;
         break;
     case AnimatedColor:
         ASSERT(m_data.color);

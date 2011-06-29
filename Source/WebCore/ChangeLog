@@ -1,3 +1,51 @@
+2011-06-28  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatedType should support SVGBoolean animation
+        https://bugs.webkit.org/show_bug.cgi?id=63529
+
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGBoolean.
+        
+        The new animator does not affect any behavior, since it was animated with SVGAnimatedString before. The new animator is still needed
+        to support animVal and baseVal later.
+
+        Test: svg/animations/svgboolean-animation-1.html
+
+        * CMakeLists.txt: Add new file to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Make use of AnimatedBoolean.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedBoolean.cpp: Added. New animator for SVGBoolean.
+        (WebCore::SVGAnimatedBooleanAnimator::SVGAnimatedBooleanAnimator):
+        (WebCore::SVGAnimatedBooleanAnimator::constructFromString):
+        (WebCore::SVGAnimatedBooleanAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedBooleanAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedBooleanAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedBooleanAnimator::calculateDistance):
+        * svg/SVGAnimatedBoolean.h:
+        (WebCore::SVGAnimatedBooleanAnimator::~SVGAnimatedBooleanAnimator):
+        * svg/SVGAnimatedType.cpp: Use bool for SVGBoolean.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createBoolean):
+        (WebCore::SVGAnimatedType::boolean):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h: New crate function for SVGAnimatedSVGBooleanAnimator.
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

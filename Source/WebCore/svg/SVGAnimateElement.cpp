@@ -104,11 +104,12 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
     if (type == AnimatedUnknown || (hasTagName(SVGNames::animateColorTag) && type != AnimatedColor))
         return AnimatedUnknown;
 
-    // FIXME: Animator for AnimatedBoolean and AnimatedEnumeration missing.
+    // FIXME: Animator for AnimatedEnumeration missing.
     switch (type) {
     case AnimatedAngle:
         return AnimatedAngle;
     case AnimatedBoolean:
+        return AnimatedBoolean;
     case AnimatedEnumeration:
     case AnimatedString:
         return AnimatedString;
@@ -163,6 +164,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         return;
     switch (m_animatedAttributeType) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedLengthList:
@@ -232,6 +234,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedLengthList:
@@ -262,6 +265,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedLengthList:
@@ -291,6 +295,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedLengthList:
@@ -319,6 +324,7 @@ void SVGAnimateElement::applyResultsToTarget()
     String valueToApply;
     switch (m_animatedAttributeType) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedLengthList:
@@ -347,6 +353,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     switch (m_animatedAttributeType) {
     case AnimatedAngle:
+    case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedLength:
     case AnimatedLengthList:

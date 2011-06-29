@@ -1,3 +1,5 @@
+SVG 1.1 dynamic animation tests
+
 PASS rect.x.baseVal.value is 100
 PASS rect.x.baseVal.value is 200
 PASS rect.x.baseVal.value is 300

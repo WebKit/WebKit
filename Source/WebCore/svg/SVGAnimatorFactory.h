@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedAngle.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedColor.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
@@ -37,7 +38,7 @@
 namespace WebCore {
 
 class SVGAnimationElement;
-    
+
 class SVGAnimatorFactory {
 public:
     static PassOwnPtr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedAttributeType attributeType)
@@ -45,16 +46,18 @@ public:
         ASSERT(animationElement);
         ASSERT(contextElement);
 
-        // FIXME: Add animation support for all SVG units.
         switch (attributeType) {
         case AnimatedAngle:
             return adoptPtr(new SVGAnimatedAngleAnimator(animationElement, contextElement));
+        case AnimatedBoolean:
+            return adoptPtr(new SVGAnimatedBooleanAnimator(animationElement, contextElement));
         case AnimatedColor:
             return adoptPtr(new SVGAnimatedColorAnimator(animationElement, contextElement));
         case AnimatedLength:
             return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
         case AnimatedLengthList:
             return adoptPtr(new SVGAnimatedLengthListAnimator(animationElement, contextElement));
+        case AnimatedInteger: // Integer is animated as Number right now.
         case AnimatedNumber:
             return adoptPtr(new SVGAnimatedNumberAnimator(animationElement, contextElement));
         case AnimatedNumberList:
@@ -71,10 +74,14 @@ public:
             return adoptPtr(new SVGAnimatedRectAnimator(animationElement, contextElement));
         case AnimatedString:
             return adoptPtr(new SVGAnimatedStringAnimator(animationElement, contextElement));
-        default:
-            ASSERT_NOT_REACHED();
-            return nullptr;
+        case AnimatedEnumeration: // FIXME: Implementation needed.
+        case AnimatedTransformList: // FIXME: Implementation needed.
+        case AnimatedUnknown:
+            break;
         }
+
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
 
 private:

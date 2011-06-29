@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedStaticPropertyTearOff.h"
+#include "SVGAnimatedTypeAnimator.h"
 
 namespace WebCore {
 
@@ -33,6 +34,26 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty
 
 #define DEFINE_ANIMATED_BOOLEAN(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedBoolean, bool, UpperProperty, LowerProperty)
+
+    
+#if ENABLE(SVG_ANIMATION)
+class SVGAnimationElement;
+
+class SVGAnimatedBooleanAnimator : public SVGAnimatedTypeAnimator {
+    
+public:
+    SVGAnimatedBooleanAnimator(SVGAnimationElement*, SVGElement*);
+    virtual ~SVGAnimatedBooleanAnimator() { }
+    
+    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    
+    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
+    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
+    virtual float calculateDistance(const String& fromString, const String& toString);
+};
+#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

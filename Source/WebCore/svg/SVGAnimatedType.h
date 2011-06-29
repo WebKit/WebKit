@@ -41,6 +41,7 @@ public:
     virtual ~SVGAnimatedType();
 
     static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
+    static PassOwnPtr<SVGAnimatedType> createBoolean(bool*);
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createLengthList(SVGLengthList*);
@@ -56,6 +57,7 @@ public:
     AnimatedAttributeType type() const { return m_type; }
 
     SVGAngle& angle();
+    bool& boolean();
     Color& color();
     SVGLength& length();
     SVGLengthList& lengthList();
@@ -86,6 +88,7 @@ private:
         }
 
         SVGAngle* angle;
+        bool* boolean;
         Color* color;
         SVGLength* length;
         SVGLengthList* lengthList;
