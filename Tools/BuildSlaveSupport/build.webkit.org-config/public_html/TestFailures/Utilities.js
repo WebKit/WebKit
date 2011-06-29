@@ -103,8 +103,22 @@ function longestCommonPathPrefix(paths) {
     return result.join(separator);
 }
 
+function sorted(array) {
+    var newArray = array.slice();
+    newArray.sort();
+    return newArray;
+}
+
 Array.prototype.findFirst = function(predicate) {
     for (var i = 0; i < this.length; ++i) {
+        if (predicate(this[i]))
+            return this[i];
+    }
+    return null;
+}
+
+Array.prototype.findLast = function(predicate) {
+    for (var i = this.length - 1; i >= 0; --i) {
         if (predicate(this[i]))
             return this[i];
     }

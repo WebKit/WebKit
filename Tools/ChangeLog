@@ -1,3 +1,51 @@
+2011-06-29  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures to detect possibly flaky tests and list them separately
+
+        Fixes <http://webkit.org/b/61061> <rdar://problem/9452796> TestFailures page blames
+        arbitrary revisions for breaking flaky tests
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js: Added.
+        (FlakyLayoutTestDetector): This class identifies flaky tests when given the test results
+        from various builds (in reverse-chronological order).
+        (FlakyLayoutTestDetector.prototype.incorporateTestResults): Detects flaky tests. Tests move
+        monotonically through three states: LastSeenFailing, LastSeenPassing, and PossiblyFlaky.
+        (FlakyLayoutTestDetector.prototype.flakinessExamples): Finds examples of flakiness for the
+        given test. Essentially, finds all the transitions from passing to failing (or vice-versa)
+        and puts them in an array in reverse-chronological order.
+        (FlakyLayoutTestDetector.prototype.get possiblyFlakyTests): Returns all tests we've detected
+        to be possibly flaky.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer): Initialize new members.
+        (LayoutTestHistoryAnalyzer.prototype.start): Now passes the callback an object with two
+        properties: history and possiblyFlaky. history holds the data this function used to pass to
+        the callback, while possiblyFlaky lists all tests that might be flaky and examples of their
+        flakiness. Updated documentation comment to match.
+        (LayoutTestHistoryAnalyzer.prototype._incorporateBuildHistory): Now uses a
+        FlakyLayoutTestDetector to identify possibly flaky tests. Any possibly flaky tests are
+        removed from the failure history, since when they started failing is no longer meaningful.
+        We tell our caller to keep calling until all current failures have been explained and we've
+        gone through 5 builds without any new flaky tests being identified.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (sorted): New helper function to return a sorted copy of an array.
+        (Array.prototype.findLast): New helper function. Like findFirst, but finds the last item
+        that matches the predicate.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Updated for change in the object passed to us by
+        the analyzer. Now puts the list of possibly flaky tests after the failure history.
+        (ViewController.prototype._domForFailedTest): Moved some code from here...
+        (ViewController.prototype._domForFailureDiagnosis): ...to here.
+        (ViewController.prototype._domForPossiblyFlakyTests): New function, builds up a list of
+        possibly flaky tests and examples of their flakiness and returns it.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        FlakyLayoutTestDetector.js.
+
 2011-06-29  Eric Seidel  <eric@webkit.org>
 
         Adam says cowboys don't review (or unit test).

@@ -25,33 +25,45 @@
 
 function LayoutTestHistoryAnalyzer(builder) {
     this._builder = builder;
+    this._flakinessDetector = new FlakyLayoutTestDetector();
     this._history = {};
     this._loader = new LayoutTestResultsLoader(builder);
+    this._testRunsSinceLastInterestingChange = 0;
 }
 
 LayoutTestHistoryAnalyzer.prototype = {
     /*
-     * Preiodically calls callback until all current failures have been explained. Callback is
+     * Periodically calls callback until all current failures have been explained. Callback is
      * passed an object like the following:
      * {
-     *     'r12347 (681)': {
-     *         'tooManyFailures': false,
-     *         'tests': {
-     *             'css1/basic/class_as_selector2.html': 'fail',
+     *     'history': {
+     *         'r12347 (681)': {
+     *             'tooManyFailures': false,
+     *             'tests': {
+     *                 'css1/basic/class_as_selector2.html': 'fail',
+     *             },
+     *         },
+     *         'r12346 (680)': {
+     *             'tooManyFailures': false,
+     *             'tests': {},
+     *         },
+     *         'r12345 (679)': {
+     *             'tooManyFailures': false,
+     *             'tests': {
+     *                 'css1/basic/class_as_selector.html': 'crash',
+     *             },
      *         },
      *     },
-     *     'r12346 (680)': {
-     *         'tooManyFailures': false,
-     *         'tests': {},
+     *     'possiblyFlaky': {
+     *         'fast/workers/worker-test.html': [
+     *             { 'build': 'r12345 (679)', 'result': 'pass' },
+     *             { 'build': 'r12344 (678)', 'result': 'fail' },
+     *             { 'build': 'r12340 (676)', 'result': 'fail' },
+     *             { 'build': 'r12338 (675)', 'result': 'pass' },
+     *         ],
      *     },
-     *     'r12345 (679)': {
-     *         'tooManyFailures': false,
-     *         'tests': {
-     *             'css1/basic/class_as_selector.html': 'crash',
-     *         },
-     *     },
-     * },
-     * Each build contains just the failures that a) are still occuring on the bots, and b) were new
+     * }
+     * Each build contains just the failures that a) are still occurring on the bots, and b) were new
      * in that build.
      */
     start: function(callback) {
@@ -62,7 +74,14 @@ LayoutTestHistoryAnalyzer.prototype = {
                     var nextIndex = buildIndex + 1;
                     if (nextIndex >= buildNames.length)
                         callAgain = false;
-                    callback(self._history, callAgain);
+                    var data = {
+                        history: self._history,
+                        possiblyFlaky: {},
+                    };
+                    self._flakinessDetector.possiblyFlakyTests.forEach(function(testName) {
+                        data.possiblyFlaky[testName] = self._flakinessDetector.flakinessExamples(testName);
+                    });
+                    callback(data, callAgain);
                     if (!callAgain)
                         return;
                     setTimeout(function() { inner(nextIndex) }, 0);
@@ -78,10 +97,23 @@ LayoutTestHistoryAnalyzer.prototype = {
 
         var self = this;
         self._loader.start(nextBuildName, function(tests, tooManyFailures) {
+            ++self._testRunsSinceLastInterestingChange;
+
             self._history[nextBuildName] = {
                 tooManyFailures: tooManyFailures,
                 tests: {},
             };
+
+            var newFlakyTests = self._flakinessDetector.incorporateTestResults(nextBuildName, tests, tooManyFailures);
+            if (newFlakyTests.length) {
+                self._testRunsSinceLastInterestingChange = 0;
+                // Remove all possibly flaky tests from the failure history, since when they failed
+                // is no longer meaningful.
+                newFlakyTests.forEach(function(testName) {
+                    for (var buildName in self._history)
+                        delete self._history[buildName].tests[testName];
+                });
+            }
 
             for (var testName in tests) {
                 if (previousBuildName) {
@@ -92,7 +124,14 @@ LayoutTestHistoryAnalyzer.prototype = {
                 self._history[nextBuildName].tests[testName] = tests[testName];
             }
 
-            callback(Object.keys(self._history[nextBuildName].tests).length);
+            var previousUnexplainedFailuresCount = previousBuildName ? Object.keys(self._history[previousBuildName].tests).length : 0;
+            var unexplainedFailuresCount = Object.keys(self._history[nextBuildName].tests).length;
+
+            if (previousUnexplainedFailuresCount && !unexplainedFailuresCount)
+                self._testRunsSinceLastInterestingChange = 0;
+
+            const minimumRequiredTestRunsWithoutInterestingChanges = 5;
+            callback(unexplainedFailuresCount || self._testRunsSinceLastInterestingChange < minimumRequiredTestRunsWithoutInterestingChanges);
         },
         function(tests) {
             // Some tests failed, but we couldn't fetch results.html (perhaps because the test

@@ -48,11 +48,12 @@ ViewController.prototype = {
 
     _displayBuilder: function(builder) {
         var self = this;
-        (new LayoutTestHistoryAnalyzer(builder)).start(function(history, stillFetchingData) {
+        var lastDisplay = 0;
+        (new LayoutTestHistoryAnalyzer(builder)).start(function(data, stillFetchingData) {
             var list = document.createElement('ol');
             list.id = 'failure-history';
-            Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {
-                var failingTestNames = Object.keys(history[buildName].tests);
+            Object.keys(data.history).forEach(function(buildName, buildIndex, buildNameArray) {
+                var failingTestNames = Object.keys(data.history[buildName].tests);
                 if (!failingTestNames.length)
                     return;
 
@@ -63,13 +64,13 @@ ViewController.prototype = {
                 item.appendChild(testList);
 
                 testList.className = 'test-list';
-                for (var testName in history[buildName].tests) {
+                for (var testName in data.history[buildName].tests) {
                     var testItem = document.createElement('li');
-                    testItem.appendChild(self._domForFailedTest(builder, buildName, testName, history[buildName].tests[testName]));
+                    testItem.appendChild(self._domForFailedTest(builder, buildName, testName, data.history[buildName].tests[testName]));
                     testList.appendChild(testItem);
                 }
 
-                if (history[buildName].tooManyFailures) {
+                if (data.history[buildName].tooManyFailures) {
                     var p = document.createElement('p');
                     p.className = 'info';
                     p.appendChild(document.createTextNode('run-webkit-tests exited early due to too many failures/crashes/timeouts'));
@@ -92,6 +93,7 @@ ViewController.prototype = {
             document.title = builder.name;
             document.body.appendChild(header);
             document.body.appendChild(list);
+            document.body.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky));
 
             if (!stillFetchingData)
                 PersistentCache.prune();
@@ -196,24 +198,27 @@ ViewController.prototype = {
     },
 
     _domForFailedTest: function(builder, buildName, testName, failureType) {
-        var diagnosticInfo = builder.failureDiagnosisTextAndURL(buildName, testName, failureType);
-
         var result = document.createDocumentFragment();
         result.appendChild(document.createTextNode(testName));
         result.appendChild(document.createTextNode(' ('));
+        result.appendChild(this._domForFailureDiagnosis(builder, buildName, testName, failureType));
+        result.appendChild(document.createTextNode(')'));
+        return result;
+    },
+
+    _domForFailureDiagnosis: function(builder, buildName, testName, failureType) {
+        var diagnosticInfo = builder.failureDiagnosisTextAndURL(buildName, testName, failureType);
+        if (!diagnosticInfo)
+            return document.createTextNode(failureType);
 
         var textNode = document.createTextNode(diagnosticInfo.text);
-        if ('url' in diagnosticInfo) {
-            var link = document.createElement('a');
-            link.href = diagnosticInfo.url;
-            link.appendChild(textNode);
-            result.appendChild(link);
-        } else
-            result.appendChild(textNode);
+        if (!('url' in diagnosticInfo))
+            return textNode;
 
-        result.appendChild(document.createTextNode(')'));
-
-        return result;
+        var link = document.createElement('a');
+        link.href = diagnosticInfo.url;
+        link.appendChild(textNode);
+        return link;
     },
 
     _domForNewAndExistingBugs: function(tester, failingBuildName, passingBuildName, failingTests) {
@@ -379,6 +384,38 @@ ViewController.prototype = {
         link.addEventListener('click', function(event) { form.submit(); event.preventDefault(); });
         link.href = '#';
         link.appendChild(document.createTextNode('File bug for ' + (failingTests.length > 1 ? 'these failures' : 'this failure')));
+
+        return result;
+    },
+
+    _domForPossiblyFlakyTests: function(builder, possiblyFlakyTestData) {
+        var result = document.createDocumentFragment();
+        var flakyTests = Object.keys(possiblyFlakyTestData);
+        if (!flakyTests.length)
+            return result;
+
+        var flakyHeader = document.createElement('h2');
+        result.appendChild(flakyHeader);
+        flakyHeader.appendChild(document.createTextNode('Possibly Flaky Tests'));
+
+        var flakyList = document.createElement('ol');
+        result.appendChild(flakyList);
+
+        var self = this;
+        flakyList.appendChildren(sorted(flakyTests).map(function(testName) {
+            var item = document.createElement('li');
+            item.appendChild(document.createTextNode(testName));
+            var historyList = document.createElement('ol');
+            item.appendChild(historyList);
+            historyList.appendChildren(possiblyFlakyTestData[testName].map(function(historyItem) {
+                var item = document.createElement('li');
+                item.appendChild(self._domForBuildName(builder, historyItem.build));
+                item.appendChild(document.createTextNode(': '));
+                item.appendChild(self._domForFailureDiagnosis(builder, historyItem.build, testName, historyItem.result));
+                return item;
+            }));
+            return item;
+        }));
 
         return result;
     },
