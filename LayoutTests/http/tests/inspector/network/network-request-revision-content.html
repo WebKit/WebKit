@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadScript()
+{
+    var js = document.createElement("script");
+    js.src = "resources/script.js";
+    document.head.appendChild(js);
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2, true);
+    InspectorTest.evaluateInPage("loadScript()");
+
+    function step2(msg)
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        resource.addRevision("");
+        resource.history[0].requestContent(step3);
+    }
+
+    function step3()
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        InspectorTest.addResult(resource.url);
+        InspectorTest.addResult(resource.content);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests how resource revision requests content if it was not yet loaded for resource itself.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=63631">Bug 63631</a>
+</body>
+</html>

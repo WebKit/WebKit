@@ -966,7 +966,7 @@ WebInspector.ResourceRevision.prototype = {
             this._content = content;
             callback(content);
         }
-        WebInspector.networkManager.requestContent(this._resource, false, mycallback.bind(this));
+        WebInspector.networkManager.requestContent(this._resource, mycallback.bind(this));
     }
 }
 

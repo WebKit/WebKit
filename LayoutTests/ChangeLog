@@ -1,3 +1,14 @@
+2011-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: REGRESSION Resource revision fails to request content if it was not yet loaded for resource.
+        https://bugs.webkit.org/show_bug.cgi?id=63631
+
+        * http/tests/inspector/network/network-request-revision-content-expected.txt: Added.
+        * http/tests/inspector/network/network-request-revision-content.html: Added.
+        * http/tests/inspector/network/resources/script.js: Added.
+
 2011-06-29  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
