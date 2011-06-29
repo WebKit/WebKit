@@ -4029,3 +4029,5 @@ BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
 BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 BUGCR87732 : fast/regex/toString.html = TEXT
+
+BUGWK63643 : fast/canvas/webgl/context-lost-restored.html = TEXT
