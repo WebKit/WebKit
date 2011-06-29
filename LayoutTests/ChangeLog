@@ -1,3 +1,13 @@
+2011-06-29  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] plugins/document-open.html need new result for wk2
+        https://bugs.webkit.org/show_bug.cgi?id=63633
+
+        * platform/qt-wk2/Skipped:
+        * platform/qt-wk2/plugins/document-open-expected.txt: Added.
+
 2011-06-29  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

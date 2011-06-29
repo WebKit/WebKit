@@ -1490,7 +1490,6 @@ http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
 
 # Unexplained plugin failures
-plugins/document-open.html
 plugins/embed-prefers-plugins-for-images.html
 plugins/mouse-events-fixedpos.html
 plugins/netscape-dom-access.html
