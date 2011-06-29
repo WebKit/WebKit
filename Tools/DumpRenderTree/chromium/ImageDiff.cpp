@@ -38,6 +38,7 @@
 
 #include "webkit/support/webkit_support_gfx.h"
 #include <algorithm>
+#include <iterator>
 #include <stdio.h>
 #include <string.h>
 #include <vector>
