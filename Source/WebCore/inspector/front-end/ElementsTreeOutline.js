@@ -1061,6 +1061,12 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function moveToNextAttributeIfNeeded(error)
         {
+            if (error)
+                this._editingCancelled(element, attributeName);
+
+            if (!moveDirection)
+                return;
+
             WebInspector.panels.elements.updateModifiedNodes();
 
             // Search for the attribute's position, and then decide where to move to.
@@ -1102,7 +1108,7 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        this.representedObject.setAttribute(attributeName, newText, moveDirection ? moveToNextAttributeIfNeeded.bind(this) : undefined);
+        this.representedObject.setAttribute(attributeName, newText, moveToNextAttributeIfNeeded.bind(this));
     },
 
     _tagNameEditingCommitted: function(element, newText, oldText, tagName, moveDirection)

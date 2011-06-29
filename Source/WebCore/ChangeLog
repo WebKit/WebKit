@@ -1,3 +1,16 @@
+2011-06-29  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: tab crash after deleting trailing quote when editing attribute
+        https://bugs.webkit.org/show_bug.cgi?id=63544
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesText):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted.moveToNextAttributeIfNeeded):
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+
 2011-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

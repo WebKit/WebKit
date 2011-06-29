@@ -96,6 +96,19 @@ function test()
             }
             WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
             targetNode.setAttribute("foo3", "");
+        },
+
+        function testSetMalformedAttributeText(next)
+        {
+            function callback(error)
+            {
+                InspectorTest.addResult("Error: " + error.data[0]);
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                InspectorTest.addResult("=== Set malformed attribute as text ===");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            targetNode.setAttribute("foo2", "foo2='missingquote", callback);
         }
     ]);
 }

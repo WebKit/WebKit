@@ -25,3 +25,8 @@ Running: testRemoveAttributeAsText
 === Remove attribute as text ===
   <div id="node" foo2="baz2"></div>
 
+Running: testSetMalformedAttributeText
+Error: Could not parse value as attributes.
+=== Set malformed attribute as text ===
+  <div id="node" foo2="baz2"></div>
+

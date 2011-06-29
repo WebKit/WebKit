@@ -603,7 +603,13 @@ void InspectorDOMAgent::setAttributesText(ErrorString* errorString, int elementI
         return;
     }
 
-    const NamedNodeMap* attrMap = toHTMLElement(parsedElement->firstChild())->attributes(true);
+    Node* child = parsedElement->firstChild();
+    if (!child) {
+        *errorString = "Could not parse value as attributes.";
+        return;
+    }
+
+    const NamedNodeMap* attrMap = toHTMLElement(child)->attributes(true);
     if (!attrMap && name) {
         element->removeAttribute(*name, ec);
         if (ec)
