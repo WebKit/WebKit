@@ -305,7 +305,7 @@ void SVGRadialGradientElement::calculateFocalCenterPointsAndRadius(const RadialG
 
 bool SVGRadialGradientElement::selfHasRelativeLengths() const
 {
-    return cy().isRelative()
+    return cx().isRelative()
         || cy().isRelative()
         || r().isRelative()
         || fx().isRelative()
