@@ -12,7 +12,7 @@
 	<Tool
 		Name="VCLinkerTool"
 		AdditionalOptions="/NXCOMPAT"
-		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib cairo$(LibraryConfigSuffix).lib libjpeg.lib libpng$(LibraryConfigSuffix).lib zlib.lib Msimg32.lib CFLite$(LibraryConfigSuffix).lib"
+		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib cairo$(LibraryConfigSuffix).lib libjpeg.lib libpng$(LibraryConfigSuffix).lib zdll.lib Msimg32.lib CFLite$(LibraryConfigSuffix).lib"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>
