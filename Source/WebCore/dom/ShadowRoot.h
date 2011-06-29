@@ -38,7 +38,6 @@ class ShadowRoot : public TreeScope {
 public:
     static PassRefPtr<ShadowRoot> create(Document*);
 
-    virtual bool isShadowBoundary() const { return true; }
     virtual void recalcStyle(StyleChange = NoChange);
 
     ShadowContentElement* activeContentElement();

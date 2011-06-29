@@ -1,3 +1,14 @@
+2011-06-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove errant isShadowBoundary on ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=63588
+
+        Removing dead code, no tests for that.
+
+        * dom/ShadowRoot.h: Removed a function that's no longer used.
+
 2011-06-28  Zeng Huiqing  <huiqing.zeng@intel.com>
 
         Reviewed by Kenneth Russell.
