@@ -1,3 +1,21 @@
+2011-06-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Consolidate the fast/loader and fast/loading directories
+        https://bugs.webkit.org/show_bug.cgi?id=63587
+
+        * fast/loader/resources/subframe-that-removes-itself.html: Copied from LayoutTests/fast/loading/resources/subframe-that-removes-itself.html.
+        * fast/loader/subframe-removes-itself-expected.txt: Copied from LayoutTests/fast/loading/subframe-removes-itself-expected.txt.
+        * fast/loader/subframe-removes-itself.html: Copied from LayoutTests/fast/loading/subframe-removes-itself.html.
+        * fast/loading/resources/subframe-that-removes-itself.html: Removed.
+        * fast/loading/subframe-removes-itself-expected.txt: Removed.
+        * fast/loading/subframe-removes-itself.html: Removed.
+
+        * platform/gtk/Skipped: Updated for new location of test.
+        * platform/mac-wk2/Skipped: Ditto.
+        * platform/qt-wk2/Skipped: Ditto.
+
 2011-06-28  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

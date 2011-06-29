@@ -481,7 +481,7 @@ fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
-fast/loading/subframe-removes-itself.html
+fast/loader/subframe-removes-itself.html
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 fast/encoding/mailto-always-utf-8.html
 # Missing output when page icon changes. We need some API exposing this event.

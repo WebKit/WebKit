@@ -1481,7 +1481,7 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 
 # WebKitTestRunner needs to print frame load delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42705>
-fast/loading/subframe-removes-itself.html
+fast/loader/subframe-removes-itself.html
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 http/tests/loading/basic.html
