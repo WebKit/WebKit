@@ -93,6 +93,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
+    , m_inSetChildren(false)
 {
     m_layer = ContentLayerChromium::create(this);
 
@@ -129,11 +130,12 @@ void GraphicsLayerChromium::updateNames()
 
 bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 {
+    m_inSetChildren = true;
     bool childrenChanged = GraphicsLayer::setChildren(children);
-    // FIXME: GraphicsLayer::setChildren calls addChild() for each child, which
-    // will end up calling updateChildList() N times.
+
     if (childrenChanged)
         updateChildList();
+    m_inSetChildren = false;
 
     return childrenChanged;
 }
@@ -141,7 +143,8 @@ bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 void GraphicsLayerChromium::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);
-    updateChildList();
+    if (!m_inSetChildren) 
+        updateChildList();
 }
 
 void GraphicsLayerChromium::addChildAtIndex(GraphicsLayer* childLayer, int index)
