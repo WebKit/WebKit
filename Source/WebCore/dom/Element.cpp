@@ -1196,19 +1196,49 @@ ShadowRoot* Element::shadowRoot() const
     return hasRareData() ? rareData()->m_shadowRoot : 0;
 }
 
+static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
+{
+    if (!shadowRoot)
+        return true;
+
+    if (shadowRoot->shadowHost()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+
+    if (shadowRoot->document() != document) {
+        ec = WRONG_DOCUMENT_ERR;
+        return false;
+    }
+
+    return true;
+}
+
+void Element::setShadowRoot(PassRefPtr<ShadowRoot> prpShadowRoot, ExceptionCode& ec)
+{
+    RefPtr<ShadowRoot> shadowRoot = prpShadowRoot;
+    if (!validateShadowRoot(document(), shadowRoot.get(), ec))
+        return;
+
+    removeShadowRoot();
+
+    ensureRareData()->m_shadowRoot = shadowRoot.get();
+    shadowRoot->setShadowHost(this);
+    if (inDocument())
+        shadowRoot->insertedIntoDocument();
+    if (attached())
+        shadowRoot->lazyAttach();
+}
+
 ShadowRoot* Element::ensureShadowRoot()
 {
     if (ShadowRoot* existingRoot = shadowRoot())
         return existingRoot;
 
-    RefPtr<ShadowRoot> newRoot = ShadowRoot::create(document());
-    ensureRareData()->m_shadowRoot = newRoot.get();
-    newRoot->setShadowHost(this);
-    if (inDocument())
-        newRoot->insertedIntoDocument();
-    if (attached())
-        newRoot->lazyAttach();
-    return newRoot.get();
+    ExceptionCode ec = 0;
+    setShadowRoot(ShadowRoot::create(document()), ec);
+    ASSERT(!ec);
+    return shadowRoot();
 }
 
 void Element::removeShadowRoot()

@@ -231,6 +231,7 @@ public:
     virtual void recalcStyle(StyleChange = NoChange);
 
     ShadowRoot* shadowRoot() const;
+    void setShadowRoot(PassRefPtr<ShadowRoot>, ExceptionCode&);
     ShadowRoot* ensureShadowRoot();
     void removeShadowRoot();
 

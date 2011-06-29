@@ -1,3 +1,18 @@
+2011-06-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Extract setShadowRoot function, harden it in preparation to be exposed to script.
+        https://bugs.webkit.org/show_bug.cgi?id=63596
+
+        Refactoring, covered by existing tests.
+
+        * dom/Element.cpp:
+        (WebCore::validateShadowRoot): Added.
+        (WebCore::Element::setShadowRoot): Extracted from ensureShadowRoot.
+        (WebCore::Element::ensureShadowRoot): Changed to use setShadowRoot.
+        * dom/Element.h: Added decl.
+
 2011-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
