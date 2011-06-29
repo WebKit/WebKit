@@ -1280,8 +1280,20 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
     }
 }
 
-void RenderLayer::scrollToOffset(int x, int y)
+void RenderLayer::scrollToOffset(int x, int y, ScrollOffsetClamping clamp)
 {
+    if (clamp == ScrollOffsetClamped) {
+        RenderBox* box = renderBox();
+        if (!box)
+            return;
+
+        int maxX = scrollWidth() - box->clientWidth();
+        int maxY = scrollHeight() - box->clientHeight();
+
+        x = min(max(x, 0), maxX);
+        y = min(max(y, 0), maxY);
+    }
+    
     ScrollableArea::scrollToOffsetWithoutAnimation(IntPoint(x, y));
 }
 
@@ -1292,24 +1304,9 @@ void RenderLayer::scrollTo(int x, int y)
         return;
 
     if (box->style()->overflowX() != OMARQUEE) {
-        if (x < 0)
-            x = 0;
-        if (y < 0)
-            y = 0;
-    
-        // Call the scrollWidth/Height functions so that the dimensions will be computed if they need
-        // to be (for overflow:hidden blocks).
-        int maxX = scrollWidth() - box->clientWidth();
-        if (maxX < 0)
-            maxX = 0;
-        int maxY = scrollHeight() - box->clientHeight();
-        if (maxY < 0)
-            maxY = 0;
-
-        if (x > maxX)
-            x = maxX;
-        if (y > maxY)
-            y = maxY;
+        // Ensure that the dimensions will be computed if they need to be (for overflow:hidden blocks).
+        if (m_scrollDimensionsDirty)
+            computeScrollDimensions();
     }
     
     // FIXME: Eventually, we will want to perform a blit.  For now never

@@ -446,13 +446,13 @@ int RenderBox::scrollTop() const
 void RenderBox::setScrollLeft(int newLeft)
 {
     if (hasOverflowClip())
-        layer()->scrollToXOffset(newLeft);
+        layer()->scrollToXOffset(newLeft, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::setScrollTop(int newTop)
 {
     if (hasOverflowClip())
-        layer()->scrollToYOffset(newTop);
+        layer()->scrollToYOffset(newTop, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumulatedOffset)

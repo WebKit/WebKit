@@ -401,7 +401,7 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
     if (event->type() == eventNames().blurEvent) {
         if (innerTextRenderer) {
             if (RenderLayer* innerLayer = innerTextRenderer->layer())
-                innerLayer->scrollToOffset(!style()->isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0);
+                innerLayer->scrollToOffset(!style()->isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0, RenderLayer::ScrollOffsetClamped);
         }
 
         capsLockStateMayHaveChanged();

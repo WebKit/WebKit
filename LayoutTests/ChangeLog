@@ -1,3 +1,18 @@
+2011-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Lay some groundwork for rubber-banding in overflow:scroll divs
+        https://bugs.webkit.org/show_bug.cgi?id=63654
+
+        Test clamping of scrollTo with negative values.
+
+        * fast/layers/negative-scroll-positions-expected.txt: Added.
+        * fast/layers/negative-scroll-positions.html: Added.
+        * fast/layers/script-tests/TEMPLATE.html: Added.
+        * fast/layers/script-tests/negative-scroll-positions.js: Added.
+        (attemptScroll):
+
 2011-06-29  Jessie Berlin  <jberlin@apple.com>
 
         eventSender.keyDown is unimplemented (WKTR)

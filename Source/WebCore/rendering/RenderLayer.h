@@ -233,9 +233,14 @@ public:
     int scrollYOffset() const { return m_scrollOffset.height() + m_scrollOrigin.y(); }
     IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
 
-    void scrollToOffset(int x, int y);
-    void scrollToXOffset(int x) { scrollToOffset(x, scrollYOffset()); }
-    void scrollToYOffset(int y) { scrollToOffset(scrollXOffset(), y); }
+    enum ScrollOffsetClamping {
+        ScrollOffsetUnclamped,
+        ScrollOffsetClamped
+    };
+    void scrollToOffset(int x, int y, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
+    void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }
+
     void scrollRectToVisible(const IntRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
 
     IntRect getRectToExpose(const IntRect& visibleRect, const IntRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
