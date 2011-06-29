@@ -179,7 +179,7 @@ private:
         return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble;
     }
 
-    bool compareIsInteger(NodeIndex op1, NodeIndex op2)
+    bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
     {
         return !(isDataFormatDouble(op1) || isDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
     }

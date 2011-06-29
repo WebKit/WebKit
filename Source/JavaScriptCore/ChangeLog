@@ -1,3 +1,19 @@
+2011-06-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63669
+        DFG JIT - fix spectral-norm regression
+
+        The problem is a mis-speculation leading to us falling off the speculative path.
+        Make the speculation logic slightly smarter, don't predict int if one of the
+        operands is already loaded as a double (we use this logic already for compares).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateInteger):
+
 2011-06-29  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.

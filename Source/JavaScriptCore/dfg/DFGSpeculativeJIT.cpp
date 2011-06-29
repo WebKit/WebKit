@@ -561,7 +561,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case ValueAdd:
     case ArithAdd: {
-        if (isInteger(node.child1) || isInteger(node.child2)) {
+        if (shouldSpeculateInteger(node.child1, node.child2)) {
             if (isInt32Constant(node.child1)) {
                 int32_t imm1 = valueOfInt32Constant(node.child1);
                 SpeculateIntegerOperand op2(this, node.child2);
@@ -617,7 +617,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithSub: {
-        if (isInteger(node.child1) || isInteger(node.child2)) {
+        if (shouldSpeculateInteger(node.child1, node.child2)) {
             if (isInt32Constant(node.child2)) {
                 SpeculateIntegerOperand op1(this, node.child1);
                 int32_t imm2 = valueOfInt32Constant(node.child2);
@@ -638,6 +638,7 @@ void SpeculativeJIT::compile(Node& node)
             integerResult(result.gpr(), m_compileIndex);
             break;
         }
+
         SpeculateDoubleOperand op1(this, node.child1);
         SpeculateDoubleOperand op2(this, node.child2);
         FPRTemporary result(this, op1);
@@ -651,7 +652,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMul: {
-        if (isInteger(node.child1) && isInteger(node.child2)) {
+        if (shouldSpeculateInteger(node.child1, node.child2)) {
             SpeculateIntegerOperand op1(this, node.child1);
             SpeculateIntegerOperand op2(this, node.child2);
             GPRTemporary result(this);
@@ -668,6 +669,7 @@ void SpeculativeJIT::compile(Node& node)
             integerResult(result.gpr(), m_compileIndex);
             break;
         }
+
         SpeculateDoubleOperand op1(this, node.child1);
         SpeculateDoubleOperand op2(this, node.child2);
         FPRTemporary result(this, op1, op2);
@@ -744,7 +746,7 @@ void SpeculativeJIT::compile(Node& node)
             // so can be no intervening nodes to also reference the compare. 
             ASSERT(node.adjustedRefCount() == 1);
 
-            if (compareIsInteger(node.child1, node.child2))
+            if (shouldSpeculateInteger(node.child1, node.child2))
                 compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThan);
             else
                 compilePeepHoleCall(node, branchNodeIndex, operationCompareLess);
@@ -776,7 +778,7 @@ void SpeculativeJIT::compile(Node& node)
             // so can be no intervening nodes to also reference the compare. 
             ASSERT(node.adjustedRefCount() == 1);
 
-            if (compareIsInteger(node.child1, node.child2))
+            if (shouldSpeculateInteger(node.child1, node.child2))
                 compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThanOrEqual);
             else
                 compilePeepHoleCall(node, branchNodeIndex, operationCompareLessEq);
@@ -808,7 +810,7 @@ void SpeculativeJIT::compile(Node& node)
             // so can be no intervening nodes to also reference the compare. 
             ASSERT(node.adjustedRefCount() == 1);
 
-            if (compareIsInteger(node.child1, node.child2))
+            if (shouldSpeculateInteger(node.child1, node.child2))
                 compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::Equal);
             else
                 compilePeepHoleCall(node, branchNodeIndex, operationCompareEq);
