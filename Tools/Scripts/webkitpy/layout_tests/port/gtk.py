@@ -29,18 +29,42 @@
 """WebKit Gtk implementation of the Port interface."""
 
 import logging
+import os
+import signal
+import subprocess
 
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port import base, builders, server_process, webkit
 
 _log = logging.getLogger("webkitpy.layout_tests.port.gtk")
 
 
-class GtkPort(WebKitPort):
+class GtkDriver(webkit.WebKitDriver):
+    """WebKit Gtk implementation of the Driver class."""
+
+    def start(self):
+        display_id = self._worker_number + 1
+        run_xvfb = ["Xvfb", ":%d" % (display_id)]
+        self._xvfb_process = subprocess.Popen(run_xvfb)
+        environment = self._port.setup_environ_for_server()
+        environment['DISPLAY'] = ":%d" % (display_id)
+        self._server_process = server_process.ServerProcess(self._port,
+            self._port.driver_name(), self.cmd_line(), environment)
+
+    def stop(self):
+        webkit.WebKitDriver.stop(self)
+        os.kill(self._xvfb_process.pid, signal.SIGTERM)
+        self._xvfb_process.wait()
+
+
+class GtkPort(webkit.WebKitPort):
     """WebKit Gtk implementation of the Port class."""
 
     def __init__(self, **kwargs):
         kwargs.setdefault('port_name', 'gtk')
-        WebKitPort.__init__(self, **kwargs)
+        webkit.WebKitPort.__init__(self, **kwargs)
+
+    def create_driver(self, worker_number):
+        return GtkDriver(self, worker_number)
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.
