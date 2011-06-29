@@ -259,6 +259,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
+    emitWriteBarrier(regT0, regT1);
     addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsArrayVPtr)));
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));
     
@@ -393,6 +394,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     emitLoad2(base, regT1, regT0, value, regT3, regT2);
     
     emitJumpSlowCaseIfNotJSCell(base, regT1);
+    
+    emitWriteBarrier(regT0, regT1);
     
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
     
@@ -1028,10 +1031,11 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
     }
     while (skip--)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
-
     loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, object)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
 
+    emitWriteBarrier(regT2, regT3);
+
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_scoped_var), value, regT1, regT0);
 }
@@ -1052,16 +1056,25 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 
 void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
-    JSGlobalObject* globalObject = m_codeBlock->globalObject();
-    ASSERT(globalObject->isGlobalObject());
     int index = currentInstruction[1].u.operand;
     int value = currentInstruction[2].u.operand;
 
-    emitLoad(value, regT1, regT0);
+    JSGlobalObject* globalObject = m_codeBlock->globalObject();
 
-    loadPtr(&globalObject->m_registers, regT2);
+    emitLoad(value, regT1, regT0);
+    move(TrustedImmPtr(globalObject), regT2);
+
+    emitWriteBarrier(regT2, regT3);
+
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
+}
+
+void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
+{
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch);
 }
 
 } // namespace JSC

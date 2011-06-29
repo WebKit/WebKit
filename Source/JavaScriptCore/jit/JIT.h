@@ -299,6 +299,8 @@ namespace JSC {
 
         void testPrototype(JSValue, JumpList& failureCases);
 
+        void emitWriteBarrier(RegisterID owner, RegisterID scratch);
+
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);
 

@@ -1,3 +1,32 @@
+2011-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added a dummy write barrier emitting function in all the right places in the old JIT
+        https://bugs.webkit.org/show_bug.cgi?id=63667
+        
+        SunSpider reports no change.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_put_scoped_var): Do it.
+
+        (JSC::JIT::emit_op_put_global_var): Global object needs to be in a register
+        for the sake of the write barrier.
+
+        (JSC::JIT::emitWriteBarrier): Empty for now. Not for long!
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_put_scoped_var): Do it.
+
+        (JSC::JIT::emit_op_put_global_var): Global object needs to be in a register
+        for the sake of the write barrier.
+
+        (JSC::JIT::emitWriteBarrier): Empty for now. Not for long!
+
 2011-06-29  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.

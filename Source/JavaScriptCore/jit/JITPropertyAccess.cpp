@@ -432,6 +432,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
+    emitWriteBarrier(regT0, regT2);
+
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
     Label hotPathBegin(this);
@@ -972,8 +974,9 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 {
     int skip = currentInstruction[2].u.operand;
 
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
     emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
     bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
     ASSERT(skip || !checkTopLevel);
     if (checkTopLevel && skip--) {
@@ -985,8 +988,10 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
     }
     while (skip--)
         loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
-
     loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
+
+    emitWriteBarrier(regT1, regT2);
+
     loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
 }
@@ -1001,10 +1006,21 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 
 void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
-    JSVariableObject* globalObject = m_codeBlock->globalObject();
-    loadPtr(&globalObject->m_registers, regT0);
-    storePtr(regT1, Address(regT0, currentInstruction[1].u.operand * sizeof(Register)));
+    JSGlobalObject* globalObject = m_codeBlock->globalObject();
+
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
+    move(TrustedImmPtr(globalObject), regT1);
+    
+    emitWriteBarrier(regT1, regT2);
+
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT1);
+    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+}
+
+void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
+{
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch);
 }
 
 #endif // USE(JSVALUE64)
