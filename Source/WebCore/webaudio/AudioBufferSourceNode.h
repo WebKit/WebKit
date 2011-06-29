@@ -29,9 +29,7 @@
 #include "AudioBus.h"
 #include "AudioGain.h"
 #include "AudioPannerNode.h"
-#include "AudioResampler.h"
 #include "AudioSourceNode.h"
-#include "AudioSourceProvider.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -43,7 +41,7 @@ class AudioContext;
 // AudioBufferSourceNode is an AudioNode representing an audio source from an in-memory audio asset represented by an AudioBuffer.
 // It generally will be used for short sounds which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways).
 
-class AudioBufferSourceNode : public AudioSourceNode, public AudioSourceProvider {
+class AudioBufferSourceNode : public AudioSourceNode {
 public:
     static PassRefPtr<AudioBufferSourceNode> create(AudioContext*, double sampleRate);
 
@@ -52,10 +50,6 @@ public:
     // AudioNode
     virtual void process(size_t framesToProcess);
     virtual void reset();
-
-    // AudioSourceProvider
-    // When process() is called, the resampler calls provideInput (in the audio thread) to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
     
     // setBuffer() is called on the main thread.  This is the buffer we use for playback.
     void setBuffer(AudioBuffer*);
@@ -83,6 +77,8 @@ public:
 private:
     AudioBufferSourceNode(AudioContext*, double sampleRate);
 
+    void renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames);
+
     // m_buffer holds the sample data which this node outputs.
     RefPtr<AudioBuffer> m_buffer;
 
@@ -109,26 +105,18 @@ private:
     // has been reached.
     double m_endTime; // in seconds
     
-    // m_schedulingFrameDelay is the sample-accurate scheduling offset.
-    // It's used so that we start rendering audio samples at a very precise point in time.
-    // It will only be a non-zero value the very first render quantum that we render from the buffer.
-    int m_schedulingFrameDelay;
-
-    // m_readIndex is a sample-frame index into our buffer representing the current playback position.
-    unsigned m_readIndex;
+    // m_virtualReadIndex is a sample-frame index into our buffer representing the current playback position.
+    // Since it's floating-point, it has sub-sample accuracy.
+    double m_virtualReadIndex;
 
     // Granular playback
     bool m_isGrain;
     double m_grainOffset; // in seconds
     double m_grainDuration; // in seconds
-    int m_grainFrameCount; // keeps track of which frame in the grain we're currently rendering
 
     // totalPitchRate() returns the instantaneous pitch rate (non-time preserving).
     // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer, and any doppler shift from an associated panner node.
     double totalPitchRate();
-
-    // m_resampler performs the pitch rate changes to the buffer playback.
-    AudioResampler m_resampler;
 
     // m_lastGain provides continuity when we dynamically adjust the gain.
     double m_lastGain;
@@ -138,10 +126,6 @@ private:
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Mutex m_processLock;
-
-    // Reads the next framesToProcess sample-frames from the AudioBuffer into destinationBus.
-    // A grain envelope will be applied if m_isGrain is set to true.
-    void readFromBuffer(AudioBus* destinationBus, size_t framesToProcess);
 
     // Handles the time when we reach the end of sample data (non-looping) or the noteOff() time has been reached.
     void finish();

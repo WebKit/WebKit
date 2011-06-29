@@ -1,3 +1,23 @@
+2011-06-29  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Simplify AudioBufferSourceNode rendering
+        https://bugs.webkit.org/show_bug.cgi?id=63586
+
+        No new tests since this doesn't change API.
+
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        (WebCore::AudioBufferSourceNode::reset):
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        (WebCore::AudioBufferSourceNode::noteOn):
+        (WebCore::AudioBufferSourceNode::noteGrainOn):
+        (WebCore::AudioBufferSourceNode::totalPitchRate):
+        * webaudio/AudioBufferSourceNode.h:
+
 2011-06-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

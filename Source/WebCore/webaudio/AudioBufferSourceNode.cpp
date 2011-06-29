@@ -40,6 +40,11 @@ namespace WebCore {
 const double DefaultGrainDuration = 0.020; // 20ms
 const double UnknownTime = -1;
 
+// Arbitrary upper limit on playback rate.
+// Higher than expected rates can be useful when playing back oversampled buffers
+// to minimize linear interpolation aliasing.
+const double MaxRate = 1024;
+
 PassRefPtr<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, double sampleRate)
 {
     return adoptRef(new AudioBufferSourceNode(context, sampleRate));
@@ -53,19 +58,17 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, double sampl
     , m_hasFinished(false)
     , m_startTime(0.0)
     , m_endTime(UnknownTime)
-    , m_schedulingFrameDelay(0)
-    , m_readIndex(0)
+    , m_virtualReadIndex(0)
     , m_isGrain(false)
     , m_grainOffset(0.0)
     , m_grainDuration(DefaultGrainDuration)
-    , m_grainFrameCount(0)
     , m_lastGain(1.0)
     , m_pannerNode(0)
 {
     setType(NodeTypeAudioBufferSource);
 
     m_gain = AudioGain::create("gain", 1.0, 0.0, 1.0);
-    m_playbackRate = AudioParam::create("playbackRate", 1.0, 0.0, AudioResampler::MaxRate);
+    m_playbackRate = AudioParam::create("playbackRate", 1.0, 0.0, MaxRate);
     
     m_gain->setContext(context);
     m_playbackRate->setContext(context);
@@ -95,14 +98,13 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     if (m_processLock.tryLock()) {
         // Check if it's time to start playing.
         double sampleRate = this->sampleRate();
-        double pitchRate = totalPitchRate();
         double quantumStartTime = context()->currentTime();
         double quantumEndTime = quantumStartTime + framesToProcess / sampleRate;
 
         // If we know the end time and it's already passed, then don't bother doing any more rendering this cycle.
         if (m_endTime != UnknownTime && m_endTime <= quantumStartTime) {
             m_isPlaying = false;
-            m_readIndex = 0;
+            m_virtualReadIndex = 0;
             finish();
         }
         
@@ -113,27 +115,13 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             return;
         }
 
-        // Handle sample-accurate scheduling so that buffer playback will happen at a very precise time.
-        m_schedulingFrameDelay = 0;
-        if (m_startTime >= quantumStartTime) {
-            // m_schedulingFrameDelay is set here only the very first render quantum (because of above check: m_startTime >= quantumEndTime)
-            // So: quantumStartTime <= m_startTime < quantumEndTime
-            ASSERT(m_startTime < quantumEndTime);
-            
-            double startTimeInQuantum = m_startTime - quantumStartTime;
-            double startFrameInQuantum = startTimeInQuantum * sampleRate;
-            
-            // m_schedulingFrameDelay is used in provideInput(), so factor in the current playback pitch rate.
-            m_schedulingFrameDelay = static_cast<int>(pitchRate * startFrameInQuantum);
-        }
+        double quantumTimeOffset = m_startTime > quantumStartTime ? m_startTime - quantumStartTime : 0;
+        size_t quantumFrameOffset = static_cast<unsigned>(quantumTimeOffset * sampleRate);
+        quantumFrameOffset = min(quantumFrameOffset, framesToProcess); // clamp to valid range
+        size_t bufferFramesToProcess = framesToProcess - quantumFrameOffset;
 
-        // FIXME: optimization opportunity:
-        // With a bit of work, it should be possible to avoid going through the resampler completely when the pitchRate == 1,
-        // especially if the pitchRate has never deviated from 1 in the past.
-
-        // Read the samples through the pitch resampler.  Our provideInput() method will be called by the resampler.
-        m_resampler.setRate(pitchRate);
-        m_resampler.process(this, outputBus, framesToProcess);
+        // Render by reading directly from the buffer.
+        renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess);
 
         // Apply the gain (in-place) to the output bus.
         double totalGain = gain()->value() * m_buffer->gain();
@@ -154,7 +142,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             }
 
             m_isPlaying = false;
-            m_readIndex = 0;
+            m_virtualReadIndex = 0;
             finish();
         }
 
@@ -165,8 +153,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 }
 
-// The resampler calls us back here to get the input samples from our buffer.
-void AudioBufferSourceNode::provideInput(AudioBus* bus, size_t numberOfFrames)
+void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames)
 {
     ASSERT(context()->isAudioThread());
     
@@ -191,6 +178,27 @@ void AudioBufferSourceNode::provideInput(AudioBus* bus, size_t numberOfFrames)
     if (!destinationL)
         return;
     float* destinationR = (numberOfChannels < 2) ? 0 : bus->channel(1)->data();
+    
+    bool isStereo = destinationR;
+    
+    // Sanity check destinationFrameOffset, numberOfFrames.
+    size_t destinationLength = bus->length();
+    bool isOffsetGood = destinationFrameOffset <= destinationLength && destinationFrameOffset + numberOfFrames <= destinationLength;
+    ASSERT(isOffsetGood);
+    if (!isOffsetGood)
+        return;
+        
+    // Potentially zero out initial frames leading up to the offset.
+    if (destinationFrameOffset) {
+        memset(destinationL, 0, sizeof(float) * destinationFrameOffset);
+        if (destinationR)
+            memset(destinationR, 0, sizeof(float) * destinationFrameOffset);
+    }
+
+    // Offset the pointers to the correct offset frame.
+    destinationL += destinationFrameOffset;
+    if (destinationR)
+        destinationR += destinationFrameOffset;
 
     size_t bufferLength = buffer()->length();
     double bufferSampleRate = buffer()->sampleRate();
@@ -199,7 +207,13 @@ void AudioBufferSourceNode::provideInput(AudioBus* bus, size_t numberOfFrames)
     // If m_isGrain is true, then we will be playing a portion of the total buffer.
     unsigned startFrame = m_isGrain ? static_cast<unsigned>(m_grainOffset * bufferSampleRate) : 0;
     unsigned endFrame = m_isGrain ? static_cast<unsigned>(startFrame + m_grainDuration * bufferSampleRate) : bufferLength;
-
+    
+    ASSERT(endFrame >= startFrame);
+    if (endFrame < startFrame)
+        return;
+    
+    unsigned deltaFrames = endFrame - startFrame;
+    
     // This is a HACK to allow for HRTF tail-time - avoids glitch at end.
     // FIXME: implement tailTime for each AudioNode for a more general solution to this problem.
     if (m_isGrain)
@@ -210,63 +224,60 @@ void AudioBufferSourceNode::provideInput(AudioBus* bus, size_t numberOfFrames)
         startFrame = !bufferLength ? 0 : bufferLength - 1;
     if (endFrame > bufferLength)
         endFrame = bufferLength;
-    if (m_readIndex >= endFrame)
-        m_readIndex = startFrame; // reset to start
+    if (m_virtualReadIndex >= endFrame)
+        m_virtualReadIndex = startFrame; // reset to start
+
+    // Get pointers to the start of the sample buffer.
+    float* sourceL = m_buffer->getChannelData(0)->data();
+    float* sourceR = m_buffer->numberOfChannels() == 2 ? m_buffer->getChannelData(1)->data() : 0;
     
+    double pitchRate = totalPitchRate();
+
+    // Get local copy.
+    double virtualReadIndex = m_virtualReadIndex;
+
+    // Render loop - reading from the source buffer to the destination using linear interpolation.
+    // FIXME: optimize for the very common case of playing back with pitchRate == 1.
+    // We can avoid the linear interpolation.
     int framesToProcess = numberOfFrames;
-
-    // Handle sample-accurate scheduling so that we play the buffer at a very precise time.
-    // m_schedulingFrameDelay will only be non-zero the very first time that provideInput() is called, which corresponds
-    // with the very start of the buffer playback.
-    if (m_schedulingFrameDelay > 0) {
-        ASSERT(m_schedulingFrameDelay <= framesToProcess);
-        if (m_schedulingFrameDelay <= framesToProcess) {
-            // Generate silence for the initial portion of the destination.
-            memset(destinationL, 0, sizeof(float) * m_schedulingFrameDelay);
-            destinationL += m_schedulingFrameDelay;
-            if (destinationR) {
-                memset(destinationR, 0, sizeof(float) * m_schedulingFrameDelay);
-                destinationR += m_schedulingFrameDelay;
-            }
-
-            // Since we just generated silence for the initial portion, we have fewer frames to provide.
-            framesToProcess -= m_schedulingFrameDelay;
-        }
-    }
-    
-    // We have to generate a certain number of output sample-frames, but we need to handle the case where we wrap around
-    // from the end of the buffer to the start if playing back with looping and also the case where we simply reach the
-    // end of the sample data, but haven't yet rendered numberOfFrames worth of output.
-    while (framesToProcess > 0) {
-        ASSERT(m_readIndex <= endFrame);
-        if (m_readIndex > endFrame)
-            return;
-            
-        // Figure out how many frames we can process this time.
-        int framesAvailable = endFrame - m_readIndex;
-        int framesThisTime = min(framesToProcess, framesAvailable);
+    while (framesToProcess--) {
+        unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
+        double interpolationFactor = virtualReadIndex - readIndex;
         
-        // Create the destination bus for the part of the destination we're processing this time.
-        AudioBus currentDestinationBus(busNumberOfChannels, framesThisTime, false);
-        currentDestinationBus.setChannelMemory(0, destinationL, framesThisTime);
-        if (busNumberOfChannels > 1)
-            currentDestinationBus.setChannelMemory(1, destinationR, framesThisTime);
+        // For linear interpolation we need the next sample-frame too.
+        unsigned readIndex2 = readIndex + 1;
+        if (readIndex2 >= endFrame) {
+            if (looping()) {
+                // Make sure to wrap around at the end of the buffer.
+                readIndex2 -= deltaFrames;
+            } else
+                readIndex2 = readIndex;
+        }
 
-        // Generate output from the buffer.
-        readFromBuffer(&currentDestinationBus, framesThisTime);
+        // Final sanity check on buffer access.
+        // FIXME: as an optimization, try to get rid of this inner-loop check and put assertions and guards before the loop.
+        if (readIndex >= bufferLength || readIndex2 >= bufferLength)
+            break;
 
-        // Update the destination pointers.
-        destinationL += framesThisTime;
-        if (busNumberOfChannels > 1)
-            destinationR += framesThisTime;
+        // Linear interpolation.
+        double sampleL1 = sourceL[readIndex];
+        double sampleL2 = sourceL[readIndex2];
+        double sampleL = (1.0 - interpolationFactor) * sampleL1 + interpolationFactor * sampleL2;
+        *destinationL++ = sampleL;
 
-        framesToProcess -= framesThisTime;
+        if (isStereo) {
+            double sampleR1 = sourceR[readIndex];
+            double sampleR2 = sourceR[readIndex2];
+            double sampleR = (1.0 - interpolationFactor) * sampleR1 + interpolationFactor * sampleR2;
+            *destinationR++ = sampleR;
+        }
 
-        // Handle the case where we reach the end of the part of the sample data we're supposed to play for the buffer.
-        if (m_readIndex >= endFrame) {
-            m_readIndex = startFrame;
-            m_grainFrameCount = 0;
-            
+        virtualReadIndex += pitchRate;
+
+        // Wrap-around, retaining sub-sample position since virtualReadIndex is floating-point.
+        if (virtualReadIndex >= endFrame) {
+            virtualReadIndex -= deltaFrames;
+
             if (!looping()) {
                 // If we're not looping, then stop playing when we get to the end.
                 m_isPlaying = false;
@@ -276,67 +287,22 @@ void AudioBufferSourceNode::provideInput(AudioBus* bus, size_t numberOfFrames)
                     // so generate silence for the remaining.
                     memset(destinationL, 0, sizeof(float) * framesToProcess);
 
-                    if (destinationR)
+                    if (isStereo)
                         memset(destinationR, 0, sizeof(float) * framesToProcess);
                 }
 
                 finish();
-                return;
+                break;
             }
         }
     }
-}
-
-void AudioBufferSourceNode::readFromBuffer(AudioBus* destinationBus, size_t framesToProcess)
-{
-    bool isBusGood = destinationBus && destinationBus->length() == framesToProcess && destinationBus->numberOfChannels() == numberOfChannels();
-    ASSERT(isBusGood);
-    if (!isBusGood)
-        return;
     
-    unsigned numberOfChannels = this->numberOfChannels();
-    // FIXME: we can add support for sources with more than two channels, but this is not a common case.
-    bool channelCountGood = numberOfChannels == 1 || numberOfChannels == 2;
-    ASSERT(channelCountGood);
-    if (!channelCountGood)
-        return;
-            
-    // Get pointers to the start of the sample buffer.
-    float* sourceL = m_buffer->getChannelData(0)->data();
-    float* sourceR = m_buffer->numberOfChannels() == 2 ? m_buffer->getChannelData(1)->data() : 0;
-
-    // Sanity check buffer access.
-    bool isSourceGood = sourceL && (numberOfChannels == 1 || sourceR) && m_readIndex + framesToProcess <= m_buffer->length();
-    ASSERT(isSourceGood);
-    if (!isSourceGood)
-        return;
-
-    // Offset the pointers to the current read position in the sample buffer.
-    sourceL += m_readIndex;
-    sourceR += m_readIndex;
-
-    // Get pointers to the destination.
-    float* destinationL = destinationBus->channel(0)->data();
-    float* destinationR = numberOfChannels == 2 ? destinationBus->channel(1)->data() : 0;
-    bool isDestinationGood = destinationL && (numberOfChannels == 1 || destinationR);
-    ASSERT(isDestinationGood);
-    if (!isDestinationGood)
-        return;
-
-    // Simply copy the data from the source buffer to the destination.
-    memcpy(destinationL, sourceL, sizeof(float) * framesToProcess);
-    if (numberOfChannels == 2)
-        memcpy(destinationR, sourceR, sizeof(float) * framesToProcess);
-
-    // Advance the buffer's read index.
-    m_readIndex += framesToProcess;
+    m_virtualReadIndex = virtualReadIndex;
 }
 
 void AudioBufferSourceNode::reset()
 {
-    m_resampler.reset();
-    m_readIndex = 0;
-    m_grainFrameCount = 0;
+    m_virtualReadIndex = 0;
     m_lastGain = gain()->value();
 }
 
@@ -362,11 +328,10 @@ void AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
-        m_resampler.configureChannels(numberOfChannels);
         output(0)->setNumberOfChannels(numberOfChannels);
     }
 
-    m_readIndex = 0;
+    m_virtualReadIndex = 0;
     m_buffer = buffer;
 }
 
@@ -383,7 +348,7 @@ void AudioBufferSourceNode::noteOn(double when)
 
     m_isGrain = false;
     m_startTime = when;
-    m_readIndex = 0;
+    m_virtualReadIndex = 0;
     m_isPlaying = true;
 }
 
@@ -410,11 +375,16 @@ void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double 
     m_grainOffset = grainOffset;
 
     m_grainDuration = grainDuration;
-    m_grainFrameCount = 0;
     
     m_isGrain = true;
     m_startTime = when;
-    m_readIndex = static_cast<int>(m_grainOffset * buffer()->sampleRate());
+
+    // We call floor() here since at playbackRate == 1 we don't want to go through linear interpolation
+    // at a sub-sample position since it will degrade the quality.
+    // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
+    // Since playbackRate == 1 is very common, it's worth considering quality.
+    m_virtualReadIndex = floor(m_grainOffset * buffer()->sampleRate());
+    
     m_isPlaying = true;
 }
 
@@ -446,7 +416,9 @@ double AudioBufferSourceNode::totalPitchRate()
 
     // Sanity check the total rate.  It's very important that the resampler not get any bad rate values.
     totalRate = max(0.0, totalRate);
-    totalRate = min(AudioResampler::MaxRate, totalRate);
+    if (!totalRate)
+        totalRate = 1; // zero rate is considered illegal
+    totalRate = min(MaxRate, totalRate);
     
     bool isTotalRateValid = !isnan(totalRate) && !isinf(totalRate);
     ASSERT(isTotalRateValid);
