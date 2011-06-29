@@ -1,5 +1,14 @@
 2011-06-29  Roland Steiner  <rolandsteiner@chromium.org>
 
+        Unreviewed: update the (hopefully) last ruby expectation stragglers in WebKit2
+
+        * platform/win-wk2/fast/ruby/after-block-doesnt-crash-expected.txt:
+        * platform/win-wk2/fast/ruby/after-table-doesnt-crash-expected.txt:
+        * platform/win-wk2/fast/ruby/before-block-doesnt-crash-expected.txt:
+        * platform/win-wk2/fast/ruby/before-table-doesnt-crash-expected.txt:
+
+2011-06-29  Roland Steiner  <rolandsteiner@chromium.org>
+
         Unreviewed: more juggling with ruby expectation files, trying to
         find my way out of the expectations dependency jungle...
 
