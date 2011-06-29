@@ -9,6 +9,28 @@
 
         Reviewed by Adam Barth.
 
+        Make port/config.py mockable for easier unit testing
+        https://bugs.webkit.org/show_bug.cgi?id=63661
+
+        Right now config.py leaks real system paths for
+        webkit_base_dir due to using __file__.  This patch
+        adds a filsystem.py wrapper around __file__ so that
+        we don't have to jump through hoops in webkit_unittest.py
+        to avoid leaking local paths to the unit test results.
+
+        There are probably many more places where we should now
+        use filesystem.path_for_module, but starting with just this one.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver_unittest.py:
+
+2011-06-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Remove duplicate methods in filesystem.py
         https://bugs.webkit.org/show_bug.cgi?id=63658
 

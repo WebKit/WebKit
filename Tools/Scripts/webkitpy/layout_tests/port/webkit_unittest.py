@@ -27,7 +27,7 @@
 
 import unittest
 
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
@@ -43,12 +43,10 @@ class TestWebKitPort(WebKitPort):
                  **kwargs):
         self.symbol_list = symbol_list
         self.feature_list = feature_list
-        self.expectations_file = expectations_file
-        self.skips_file = skips_file
         executive = executive or MockExecutive(should_log=False)
-        filesystem = filesystem or filesystem_mock.MockFileSystem()
+        filesystem = filesystem or MockFileSystem()
         user = user or MockUser()
-        WebKitPort.__init__(self, executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
+        WebKitPort.__init__(self, port_name="testwebkitport", executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
 
     def _runtime_feature_list(self):
         return self.feature_list
@@ -61,16 +59,6 @@ class TestWebKitPort(WebKitPort):
 
     def _tests_for_disabled_features(self):
         return ["accessibility", ]
-
-    def path_to_test_expectations_file(self):
-        if self.expectations_file:
-            return self.expectations_file
-        return WebKitPort.path_to_test_expectations_file(self)
-
-    def _skipped_file_paths(self):
-        if self.skips_file:
-            return [self.skips_file]
-        return []
 
 
 class WebKitPortTest(port_testcase.PortTestCase):
@@ -105,12 +93,11 @@ class WebKitPortTest(port_testcase.PortTestCase):
         # Check that we read both the expectations file and anything in a
         # Skipped file, and that we include the feature and platform checks.
         files = {
-            '/tmp/test_expectations.txt': 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n',
-            '/tmp/Skipped': 'fast/html/keygen.html',
+            '/mock/LayoutTests/platform/testwebkitport/test_expectations.txt': 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n',
+            '/mock/LayoutTests/platform/testwebkitport/Skipped': 'fast/html/keygen.html',
         }
-        mock_fs = filesystem_mock.MockFileSystem(files)
-        port = TestWebKitPort(expectations_file='/tmp/test_expectations.txt',
-                              skips_file='/tmp/Skipped', filesystem=mock_fs)
+        mock_fs = MockFileSystem(files)
+        port = TestWebKitPort(filesystem=mock_fs)
         self.assertEqual(port.test_expectations(),
         """BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL
 BUG_SKIPPED SKIP : fast/html/keygen.html = FAIL

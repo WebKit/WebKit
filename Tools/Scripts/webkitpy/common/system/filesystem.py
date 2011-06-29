@@ -36,6 +36,7 @@ import exceptions
 import glob
 import os
 import shutil
+import sys
 import tempfile
 import time
 
@@ -56,6 +57,11 @@ class FileSystem(object):
 
     def abspath(self, path):
         return os.path.abspath(path)
+
+    def path_to_module(self, module_name):
+        """A wrapper for all calls to __file__ to allow easy unit testing."""
+        # FIXME: This is the only use of sys in this file. It's possible this function should move elsewhere.
+        return sys.modules[module_name].__file__  # __file__ is always an absolute path.
 
     def expanduser(self, path):
         return os.path.expanduser(path)

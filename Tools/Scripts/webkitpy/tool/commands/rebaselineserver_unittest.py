@@ -274,13 +274,13 @@ class GetBaselinesTest(unittest.TestCase):
             expected_baselines={'base': {'.txt': True}})
 
     def _assertBaselines(self, test_files, test_name, expected_baselines):
-        actual_baselines = rebaselineserver._get_test_baselines(
-            test_name, get_test_config(test_files))
+        actual_baselines = rebaselineserver._get_test_baselines(test_name, get_test_config(test_files))
         self.assertEqual(expected_baselines, actual_baselines)
 
 
 def get_test_config(test_files=[], result_files=[]):
-    layout_tests_directory = base.Port().layout_tests_dir()
+    # We could grab this from port.layout_tests_dir(), but instantiating a fully mocked port is a pain.
+    layout_tests_directory = "/mock/LayoutTests"
     results_directory = '/WebKitBuild/Debug/layout-test-results'
     mock_filesystem = filesystem_mock.MockFileSystem()
     for file in test_files:

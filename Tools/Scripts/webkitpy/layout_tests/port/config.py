@@ -118,8 +118,8 @@ class Config(object):
         #
         # This code will also work if there is no SCM system at all.
         if not self._webkit_base_dir:
-            abspath = self._filesystem.abspath(__file__)
-            self._webkit_base_dir = abspath[0:abspath.find('Tools') - 1]
+            config_module_path = self._filesystem.path_to_module(self.__module__)
+            self._webkit_base_dir = abspath[0:config_module_path.find('Tools') - 1]
         return self._webkit_base_dir
 
     def script_path(self, script_name):
