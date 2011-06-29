@@ -1,3 +1,25 @@
+2011-06-28  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Skip cache validation on back with HTTPS.
+        https://bugs.webkit.org/show_bug.cgi?id=63537
+
+        For back navigations over HTTP, WebKit sets a flag to use cached data
+        irrespective of whether it has expired. However, this isn't currently
+        done for HTTPS.
+
+        The logic in question was added in
+        https://bugs.webkit.org/show_bug.cgi?id=33993 and appears to have been
+        precautionary. However, both Firefox and IE will use this back
+        navigation trick for HTTPS as well and so we should probably behave
+        likewise.
+
+        Test: http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+
 2011-06-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

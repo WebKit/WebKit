@@ -2467,7 +2467,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
             request.setCachePolicy(UseProtocolCachePolicy);
     } else if (loadType == FrameLoadTypeReload || loadType == FrameLoadTypeReloadFromOrigin || request.isConditional())
         request.setCachePolicy(ReloadIgnoringCacheData);
-    else if (isBackForwardLoadType(loadType) && m_stateMachine.committedFirstRealDocumentLoad() && !request.url().protocolIs("https"))
+    else if (isBackForwardLoadType(loadType) && m_stateMachine.committedFirstRealDocumentLoad())
         request.setCachePolicy(ReturnCacheDataElseLoad);
         
     if (request.cachePolicy() == ReloadIgnoringCacheData) {
