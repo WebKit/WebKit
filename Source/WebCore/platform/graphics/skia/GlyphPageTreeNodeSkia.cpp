@@ -39,11 +39,15 @@
 #include "SkPaint.h"
 #include "SkUtils.h"
 
+extern "C" {
+#include "harfbuzz-shaper.h"
+}
+
 namespace WebCore {
 
 static int substituteWithVerticalGlyphs(const SimpleFontData* fontData, uint16_t* glyphs, unsigned bufferLength)
 {
-    HB_FaceRec_* hbFace = fontData->platformData().harfbuzzFace();
+    HB_FaceRec_* hbFace = fontData->platformData().harfbuzzFace()->face();
     if (!hbFace->gsub) {
         // if there is no GSUB table, treat it as not covered
         return 0Xffff;

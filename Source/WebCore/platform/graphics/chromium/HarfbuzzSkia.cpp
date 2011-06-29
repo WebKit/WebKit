@@ -197,6 +197,16 @@ HB_FontClass harfbuzzSkiaClass = {
     getFontMetric,
 };
 
+HB_Font_* allocHarfbuzzFont()
+{
+    HB_Font_* font = reinterpret_cast<HB_Font_*>(fastMalloc(sizeof(HB_Font_)));
+    memset(font, 0, sizeof(HB_Font_));
+    font->klass = &harfbuzzSkiaClass;
+    font->userData = 0;
+
+    return font;
+}
+
 HB_Error harfbuzzSkiaGetTable(void* voidface, const HB_Tag tag, HB_Byte* buffer, HB_UInt* len)
 {
     FontPlatformData* font = reinterpret_cast<FontPlatformData*>(voidface);
@@ -214,6 +224,16 @@ HB_Error harfbuzzSkiaGetTable(void* voidface, const HB_Tag tag, HB_Byte* buffer,
         return HB_Err_Invalid_Argument;
     SkFontHost::GetTableData(font->uniqueID(), tag, 0, tableSize, buffer);
     return HB_Err_Ok;
+}
+
+HarfbuzzFace::HarfbuzzFace(FontPlatformData* platformData)
+{
+    m_harfbuzzFace = HB_NewFace(platformData, harfbuzzSkiaGetTable);
+}
+
+HarfbuzzFace::~HarfbuzzFace()
+{
+    HB_FreeFace(m_harfbuzzFace);
 }
 
 }  // namespace WebCore

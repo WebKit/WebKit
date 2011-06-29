@@ -31,7 +31,6 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include "HarfbuzzSkia.h"
 #include "NotImplemented.h"
 #include "PlatformBridge.h"
 #include "PlatformString.h"
@@ -61,11 +60,6 @@ void FontPlatformData::setAntiAlias(bool isAntiAlias)
 void FontPlatformData::setSubpixelGlyphs(bool isSubpixelGlyphs)
 {
     isSkiaSubpixelGlyphs = isSubpixelGlyphs;
-}
-
-FontPlatformData::RefCountedHarfbuzzFace::~RefCountedHarfbuzzFace()
-{
-    HB_FreeFace(m_harfbuzzFace);
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& src)
@@ -229,12 +223,12 @@ bool FontPlatformData::isFixedPitch() const
     return false;
 }
 
-HB_FaceRec_* FontPlatformData::harfbuzzFace() const
+HarfbuzzFace* FontPlatformData::harfbuzzFace() const
 {
     if (!m_harfbuzzFace)
-        m_harfbuzzFace = RefCountedHarfbuzzFace::create(HB_NewFace(const_cast<FontPlatformData*>(this), harfbuzzSkiaGetTable));
+        m_harfbuzzFace = HarfbuzzFace::create(const_cast<FontPlatformData*>(this));
 
-    return m_harfbuzzFace->face();
+    return m_harfbuzzFace.get();
 }
 
 void FontPlatformData::querySystemForRenderStyle()

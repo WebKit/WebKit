@@ -36,6 +36,10 @@
 #include "SkScalar.h"
 #include "TextRun.h"
 
+extern "C" {
+#include "harfbuzz-shaper.h"
+}
+
 #include <unicode/uchar.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
@@ -61,7 +65,7 @@ class SimpleFontData;
 // can call |reset| to start over again.
 class ComplexTextController {
 public:
-    ComplexTextController(const TextRun&, unsigned, unsigned, const Font*);
+    ComplexTextController(const TextRun&, unsigned startingX, unsigned startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font*);
     ~ComplexTextController();
 
     bool isWordBreak(unsigned);
@@ -85,8 +89,7 @@ public:
     void setLetterSpacingAdjustment(int letterSpacingAdjustment) { m_letterSpacing = letterSpacingAdjustment; }
     int letterSpacing() const { return m_letterSpacing; }
 
-    // Set the x offset for the next script run. This affects the values in
-    // |xPositions|
+    void setupForRTL();
     bool rtl() const { return m_run.rtl(); }
     const uint16_t* glyphs() const { return m_glyphs16; }
 
@@ -98,19 +101,6 @@ public:
     // run.
     const SkPoint* positions() const { return m_positions; }
 
-    // Get the advances (widths) for each glyph.
-    const HB_Fixed* advances() const { return m_item.advances; }
-
-    // Return the width (in px) of the current script run.
-    const unsigned width() const { return m_pixelWidth; }
-
-    // Return the cluster log for the current script run. For example:
-    //   script run: f i a n c é  (fi gets ligatured)
-    //   log clutrs: 0 0 1 2 3 4
-    // So, for each input code point, the log tells you which output glyph was
-    // generated for it.
-    const unsigned short* logClusters() const { return m_item.log_clusters; }
-
     // return the number of code points in the current script run
     const unsigned numCodePoints() const { return m_item.item.length; }
 
@@ -119,9 +109,14 @@ public:
 
     const FontPlatformData* fontPlatformDataForScriptRun() { return reinterpret_cast<FontPlatformData*>(m_item.font->userData); }
 
+    int offsetForPosition(int);
+    FloatRect selectionRect(const FloatPoint&, int height, int from , int to);
+
 private:
+    // Return the width (in px) of the current script run.
+    unsigned width() const { return m_pixelWidth; }
+
     void setupFontForScriptRun();
-    HB_FontRec* allocHarfbuzzFont();
     void deleteGlyphArrays();
     void createGlyphArrays(int);
     void resetGlyphArrays();
@@ -133,6 +128,8 @@ private:
 
     // This matches the logic in RenderBlock::findNextLineBreak
     static bool isCodepointSpace(HB_UChar16 c) { return c == ' ' || c == '\t'; }
+
+    int glyphIndexForXPositionInScriptRun(int targetX) const;
 
     const Font* const m_font;
     const SimpleFontData* m_currentFontData;

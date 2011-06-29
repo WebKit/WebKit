@@ -1,3 +1,43 @@
+2011-06-28  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Remove dependencies on harfbuzz from FontPlatformDataLinux and FontLinux
+        https://bugs.webkit.org/show_bug.cgi?id=62530
+
+        - Moved codes of FontLinux which depend on harfbuzz APIs to ComplexTextController.  Removed Some methods of ComplexTextController(advances() and logClusters()) since they are no longer needed.
+        - Moved RefCountedHarfbuzzFace from FontPlatformDataLinux to HarfbuzzSkia and renamed it to HarfbuzzFace.
+
+        No new tests because there is no behavior change (The existing tests should cover the changes).
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Added arguments so eliminating setter invocations.
+        (WebCore::ComplexTextController::setupForRTL): Added.
+        (WebCore::ComplexTextController::setupFontForScriptRun): Adopt the change of HarfbuzzFace class.
+        (WebCore::ComplexTextController::setGlyphPositions): Use m_item.log_clusters instead of removed method.
+        (WebCore::ComplexTextController::glyphIndexForXPositionInScriptRun): Added.
+        (WebCore::ComplexTextController::offsetForPosition): Ditto.
+        (WebCore::ComplexTextController::selectionRect): Ditto.
+        * platform/graphics/chromium/ComplexTextControllerLinux.h:
+        (WebCore::ComplexTextController::width):
+        * platform/graphics/chromium/FontLinux.cpp: Removed truncateFixedPointToInteger().
+        (WebCore::Font::drawComplexText): Removed setter invocations of ComplexTextController.
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText): Moved harfbuzz dependent code to ComplexTextController.
+        (WebCore::Font::selectionRectForComplexText): Ditto.
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::harfbuzzFace): Wrapped up HB_FaceRec in HarfbuzzFace class.
+        * platform/graphics/chromium/FontPlatformDataLinux.h: Moved RefCountedHarfbuzzFace class and renamed to HarfbuzzFace.
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::allocHarfbuzzFont): Moved from ComplexTextControllerLinux.cpp.
+        (WebCore::HarfbuzzFace::HarfbuzzFace): Added.
+        (WebCore::HarfbuzzFace::~HarfbuzzFace): Added.
+        * platform/graphics/chromium/HarfbuzzSkia.h:
+        (WebCore::HarfbuzzFace::create): Added.
+        (WebCore::HarfbuzzFace::face): Added.
+        * platform/graphics/skia/GlyphPageTreeNodeSkia.cpp:
+        (WebCore::substituteWithVerticalGlyphs): Adopt  the change of HarfbuzzFace class.
+
 2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.

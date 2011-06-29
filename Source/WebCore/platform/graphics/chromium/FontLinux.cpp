@@ -165,14 +165,6 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     }
 }
 
-// Harfbuzz uses 26.6 fixed point values for pixel offsets. However, we don't
-// handle subpixel positioning so this function is used to truncate Harfbuzz
-// values to a number of pixels.
-static int truncateFixedPointToInteger(HB_Fixed value)
-{
-    return value >> 6;
-}
-
 static void setupForTextPainting(SkPaint* paint, SkColor color)
 {
     paint->setTextEncoding(SkPaint::kGlyphID_TextEncoding);
@@ -205,20 +197,10 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         setupForTextPainting(&strokePaint, gc->strokeColor().rgb());
     }
 
-    ComplexTextController controller(run, point.x(), point.y(), this);
-    controller.setWordSpacingAdjustment(wordSpacing());
-    controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.expansion());
+    ComplexTextController controller(run, point.x(), point.y(), wordSpacing(), letterSpacing(), run.expansion(), this);
 
-    if (run.rtl()) {
-        // FIXME: this causes us to shape the text twice -- once to compute the width and then again
-        // below when actually rendering.  Change ComplexTextController to match platform/mac and
-        // platform/chromium/win by having it store the shaped runs, so we can reuse the results.
-        controller.reset(point.x() + controller.widthOfFullRun());
-        // We need to set the padding again because ComplexTextController layout consumed the value.
-        // Fixing the above problem would help here too.
-        controller.setPadding(run.expansion());
-    }
+    if (run.rtl())
+        controller.setupForRTL();
 
     while (controller.nextScriptRun()) {
         if (fill) {
@@ -242,28 +224,8 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const
 {
-    ComplexTextController controller(run, 0, 0, this);
-    controller.setWordSpacingAdjustment(wordSpacing());
-    controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.expansion());
+    ComplexTextController controller(run, 0, 0, wordSpacing(), letterSpacing(), run.expansion(), this);
     return controller.widthOfFullRun();
-}
-
-static int glyphIndexForXPositionInScriptRun(const ComplexTextController& controller, int targetX)
-{
-    // Iterate through the glyphs in logical order, seeing whether targetX falls between the previous
-    // position and halfway through the current glyph.
-    // FIXME: this code probably belongs in ComplexTextController.
-    int lastX = controller.offsetX() - (controller.rtl() ? -controller.width() : controller.width());
-    for (int glyphIndex = 0; static_cast<unsigned>(glyphIndex) < controller.length(); ++glyphIndex) {
-        int advance = truncateFixedPointToInteger(controller.advances()[glyphIndex]);
-        int nextX = static_cast<int>(controller.positions()[glyphIndex].x()) + advance / 2;
-        if (std::min(nextX, lastX) <= targetX && targetX <= std::max(nextX, lastX))
-            return glyphIndex;
-        lastX = nextX;
-    }
-
-    return controller.length() - 1;
 }
 
 // Return the code point index for the given |x| offset into the text run.
@@ -276,49 +238,10 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
 
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
-    ComplexTextController controller(run, 0, 0, this);
-    controller.setWordSpacingAdjustment(wordSpacing());
-    controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.expansion());
-    if (run.rtl()) {
-        // See FIXME in drawComplexText.
-        controller.reset(controller.widthOfFullRun());
-        controller.setPadding(run.expansion());
-    }
-
-    unsigned basePosition = 0;
-
-    int x = controller.offsetX();
-    while (controller.nextScriptRun()) {
-        int nextX = controller.offsetX();
-
-        if (std::min(x, nextX) <= targetX && targetX <= std::max(x, nextX)) {
-            // The x value in question is within this script run.
-            const int glyphIndex = glyphIndexForXPositionInScriptRun(controller, targetX);
-
-            // Now that we have a glyph index, we have to turn that into a
-            // code-point index. Because of ligatures, several code-points may
-            // have gone into a single glyph. We iterate over the clusters log
-            // and find the first code-point which contributed to the glyph.
-
-            // Some shapers (i.e. Khmer) will produce cluster logs which report
-            // that /no/ code points contributed to certain glyphs. Because of
-            // this, we take any code point which contributed to the glyph in
-            // question, or any subsequent glyph. If we run off the end, then
-            // we take the last code point.
-            const unsigned short* log = controller.logClusters();
-            for (unsigned j = 0; j < controller.numCodePoints(); ++j) {
-                if (log[j] >= glyphIndex)
-                    return basePosition + j;
-            }
-
-            return basePosition + controller.numCodePoints() - 1;
-        }
-
-        basePosition += controller.numCodePoints();
-    }
-
-    return basePosition;
+    ComplexTextController controller(run, 0, 0, wordSpacing(), letterSpacing(), run.expansion(), this);
+    if (run.rtl())
+        controller.setupForRTL();
+    return controller.offsetForPosition(targetX);
 }
 
 // Return the rectangle for selecting the given range of code-points in the TextRun.
@@ -326,51 +249,10 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
                                             const FloatPoint& point, int height,
                                             int from, int to) const
 {
-    int fromX = -1, toX = -1;
-    ComplexTextController controller(run, 0, 0, this);
-    controller.setWordSpacingAdjustment(wordSpacing());
-    controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.expansion());
-    if (run.rtl()) {
-        // See FIXME in drawComplexText.
-        controller.reset(controller.widthOfFullRun());
-        controller.setPadding(run.expansion());
-    }
-
-    // Iterate through the script runs in logical order, searching for the run covering the positions of interest.
-    while (controller.nextScriptRun() && (fromX == -1 || toX == -1)) {
-        if (fromX == -1 && from >= 0 && static_cast<unsigned>(from) < controller.numCodePoints()) {
-            // |from| is within this script run. So we index the clusters log to
-            // find which glyph this code-point contributed to and find its x
-            // position.
-            int glyph = controller.logClusters()[from];
-            fromX = controller.positions()[glyph].x();
-            if (controller.rtl())
-                fromX += truncateFixedPointToInteger(controller.advances()[glyph]);
-        } else
-            from -= controller.numCodePoints();
-
-        if (toX == -1 && to >= 0 && static_cast<unsigned>(to) < controller.numCodePoints()) {
-            int glyph = controller.logClusters()[to];
-            toX = controller.positions()[glyph].x();
-            if (controller.rtl())
-                toX += truncateFixedPointToInteger(controller.advances()[glyph]);
-        } else
-            to -= controller.numCodePoints();
-    }
-
-    // The position in question might be just after the text.
-    if (fromX == -1)
-        fromX = controller.offsetX();
-    if (toX == -1)
-        toX = controller.offsetX();
-
-    ASSERT(fromX != -1 && toX != -1);
-
-    if (fromX < toX)
-        return FloatRect(point.x() + fromX, point.y(), toX - fromX, height);
-
-    return FloatRect(point.x() + toX, point.y(), fromX - toX, height);
+    ComplexTextController controller(run, 0, 0, wordSpacing(), letterSpacing(), run.expansion(), this);
+    if (run.rtl())
+        controller.setupForRTL();
+    return controller.selectionRect(point, height, from, to);
 }
 
 } // namespace WebCore

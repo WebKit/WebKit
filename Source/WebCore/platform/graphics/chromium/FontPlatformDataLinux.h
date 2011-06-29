@@ -33,6 +33,7 @@
 
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
+#include "HarfbuzzSkia.h"
 #include "TextOrientation.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -42,8 +43,6 @@
 
 class SkTypeface;
 typedef uint32_t SkFontID;
-
-struct HB_FaceRec_;
 
 namespace WebCore {
 
@@ -128,7 +127,7 @@ public:
     String description() const;
 #endif
 
-    HB_FaceRec_* harfbuzzFace() const;
+    HarfbuzzFace* harfbuzzFace() const;
 
     // -------------------------------------------------------------------------
     // Global font preferences...
@@ -138,25 +137,6 @@ public:
     static void setSubpixelGlyphs(bool on);
 
 private:
-    class RefCountedHarfbuzzFace : public RefCounted<RefCountedHarfbuzzFace> {
-    public:
-        static PassRefPtr<RefCountedHarfbuzzFace> create(HB_FaceRec_* harfbuzzFace)
-        {
-            return adoptRef(new RefCountedHarfbuzzFace(harfbuzzFace));
-        }
-
-        ~RefCountedHarfbuzzFace();
-
-        HB_FaceRec_* face() const { return m_harfbuzzFace; }
-
-    private:
-        RefCountedHarfbuzzFace(HB_FaceRec_* harfbuzzFace) : m_harfbuzzFace(harfbuzzFace)
-        {
-        }
-
-        HB_FaceRec_* m_harfbuzzFace;
-    };
-
     void querySystemForRenderStyle();
 
     // FIXME: Could SkAutoUnref be used here?
@@ -169,7 +149,7 @@ private:
     FontOrientation m_orientation;
     TextOrientation m_textOrientation;
     FontRenderStyle m_style;
-    mutable RefPtr<RefCountedHarfbuzzFace> m_harfbuzzFace;
+    mutable RefPtr<HarfbuzzFace> m_harfbuzzFace;
 
     SkTypeface* hashTableDeletedFontValue() const { return reinterpret_cast<SkTypeface*>(-1); }
 };

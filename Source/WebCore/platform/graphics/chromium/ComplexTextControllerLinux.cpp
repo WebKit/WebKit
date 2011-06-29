@@ -31,8 +31,13 @@
 #include "config.h"
 #include "ComplexTextControllerLinux.h"
 
+#include "FloatRect.h"
 #include "Font.h"
 #include "TextRun.h"
+
+extern "C" {
+#include "harfbuzz-unicode.h"
+}
 
 #include <unicode/normlzr.h>
 
@@ -46,14 +51,9 @@ static int truncateFixedPointToInteger(HB_Fixed value)
     return value >> 6;
 }
 
-ComplexTextController::ComplexTextController(const TextRun& run, unsigned startingX, unsigned startingY, const Font* font)
+ComplexTextController::ComplexTextController(const TextRun& run, unsigned startingX, unsigned startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font* font)
     : m_font(font)
     , m_run(getNormalizedTextRun(run, m_normalizedRun, m_normalizedBuffer))
-    , m_wordSpacingAdjustment(0)
-    , m_padding(0)
-    , m_padPerWordBreak(0)
-    , m_padError(0)
-    , m_letterSpacing(0)
 {
     // Do not use |run| inside this constructor. Use |m_run| instead.
 
@@ -76,6 +76,10 @@ ComplexTextController::ComplexTextController(const TextRun& run, unsigned starti
 
     reset(startingX);
     m_startingY = startingY;
+
+    setWordSpacingAdjustment(wordSpacing);
+    setLetterSpacingAdjustment(letterSpacing);
+    setPadding(padding);
 }
 
 ComplexTextController::~ComplexTextController()
@@ -118,6 +122,7 @@ int ComplexTextController::determineWordBreakSpacing(unsigned logClustersIndex)
 void ComplexTextController::setPadding(int padding)
 {
     m_padding = padding;
+    m_padError = 0;
     if (!m_padding)
         return;
 
@@ -141,6 +146,18 @@ void ComplexTextController::reset(unsigned offset)
 {
     m_indexOfNextScriptRun = 0;
     m_offsetX = offset;
+}
+
+void ComplexTextController::setupForRTL()
+{
+    int padding = m_padding;
+    // FIXME: this causes us to shape the text twice -- once to compute the width and then again
+    // below when actually rendering. Change ComplexTextController to match platform/mac and
+    // platform/chromium/win by having it store the shaped runs, so we can reuse the results.
+    reset(m_offsetX + widthOfFullRun());
+    // We need to set the padding again because ComplexTextController layout consumed the value.
+    // Fixing the above problem would help here too.
+    setPadding(padding);
 }
 
 // Advance to the next script run, returning false when the end of the
@@ -202,7 +219,7 @@ void ComplexTextController::setupFontForScriptRun()
     }
     const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, fontDataVariant).fontData;
     const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
-    m_item.face = platformData.harfbuzzFace();
+    m_item.face = platformData.harfbuzzFace()->face();
     void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
     m_item.font->userData = opaquePlatformData;
 
@@ -215,16 +232,6 @@ void ComplexTextController::setupFontForScriptRun()
     int scale = devicePixelFraction * size * multiplyFor16Dot16 / platformData.emSizeInFontUnits();
     m_item.font->x_scale = scale;
     m_item.font->y_scale = scale;
-}
-
-HB_FontRec* ComplexTextController::allocHarfbuzzFont()
-{
-    HB_FontRec* font = reinterpret_cast<HB_FontRec*>(fastMalloc(sizeof(HB_FontRec)));
-    memset(font, 0, sizeof(HB_FontRec));
-    font->klass = &harfbuzzSkiaClass;
-    font->userData = 0;
-
-    return font;
 }
 
 void ComplexTextController::deleteGlyphArrays()
@@ -297,7 +304,7 @@ void ComplexTextController::setGlyphPositions(bool isRTL)
     // Iterate through the glyphs in logical order, flipping for RTL where necessary.
     // Glyphs are positioned starting from m_offsetX; in RTL mode they go leftwards from there.
     for (size_t i = 0; i < m_item.num_glyphs; ++i) {
-        while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && logClusters()[logClustersIndex] < i)
+        while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && m_item.log_clusters[logClustersIndex] < i)
             logClustersIndex++;
 
         // If the current glyph is just after a space, add in the word spacing.
@@ -397,6 +404,98 @@ const TextRun& ComplexTextController::getNormalizedTextRun(const TextRun& origin
     normalizedRun = adoptPtr(new TextRun(originalRun));
     normalizedRun->setText(normalizedBuffer.get(), normalizedBufferLength);
     return *normalizedRun;
+}
+
+int ComplexTextController::glyphIndexForXPositionInScriptRun(int targetX) const
+{
+    // Iterate through the glyphs in logical order, seeing whether targetX falls between the previous
+    // position and halfway through the current glyph.
+    // FIXME: this code probably belongs in ComplexTextController.
+    int lastX = offsetX() - (rtl() ? -m_pixelWidth : m_pixelWidth);
+    for (int glyphIndex = 0; static_cast<unsigned>(glyphIndex) < length(); ++glyphIndex) {
+        int advance = truncateFixedPointToInteger(m_item.advances[glyphIndex]);
+        int nextX = static_cast<int>(positions()[glyphIndex].x()) + advance / 2;
+        if (std::min(nextX, lastX) <= targetX && targetX <= std::max(nextX, lastX))
+            return glyphIndex;
+        lastX = nextX;
+    }
+
+    return length() - 1;
+}
+
+int ComplexTextController::offsetForPosition(int targetX)
+{
+    unsigned basePosition = 0;
+
+    int x = offsetX();
+    while (nextScriptRun()) {
+        int nextX = offsetX();
+
+        if (std::min(x, nextX) <= targetX && targetX <= std::max(x, nextX)) {
+            // The x value in question is within this script run.
+            const int glyphIndex = glyphIndexForXPositionInScriptRun(targetX);
+
+            // Now that we have a glyph index, we have to turn that into a
+            // code-point index. Because of ligatures, several code-points may
+            // have gone into a single glyph. We iterate over the clusters log
+            // and find the first code-point which contributed to the glyph.
+
+            // Some shapers (i.e. Khmer) will produce cluster logs which report
+            // that /no/ code points contributed to certain glyphs. Because of
+            // this, we take any code point which contributed to the glyph in
+            // question, or any subsequent glyph. If we run off the end, then
+            // we take the last code point.
+            for (unsigned j = 0; j < numCodePoints(); ++j) {
+                if (m_item.log_clusters[j] >= glyphIndex)
+                    return basePosition + j;
+            }
+
+            return basePosition + numCodePoints() - 1;
+        }
+
+        basePosition += numCodePoints();
+    }
+
+    return basePosition;
+}
+
+FloatRect ComplexTextController::selectionRect(const FloatPoint& point, int height, int from, int to)
+{
+    int fromX = -1, toX = -1;
+    // Iterate through the script runs in logical order, searching for the run covering the positions of interest.
+    while (nextScriptRun() && (fromX == -1 || toX == -1)) {
+        if (fromX == -1 && from >= 0 && static_cast<unsigned>(from) < numCodePoints()) {
+            // |from| is within this script run. So we index the clusters log to
+            // find which glyph this code-point contributed to and find its x
+            // position.
+            int glyph = m_item.log_clusters[from];
+            fromX = positions()[glyph].x();
+            if (rtl())
+                fromX += truncateFixedPointToInteger(m_item.advances[glyph]);
+        } else
+            from -= numCodePoints();
+
+        if (toX == -1 && to >= 0 && static_cast<unsigned>(to) < numCodePoints()) {
+            int glyph = m_item.log_clusters[to];
+            toX = positions()[glyph].x();
+            if (rtl())
+                toX += truncateFixedPointToInteger(m_item.advances[glyph]);
+        } else
+            to -= numCodePoints();
+    }
+
+    // The position in question might be just after the text.
+    if (fromX == -1)
+        fromX = offsetX();
+    if (toX == -1)
+        toX = offsetX();
+
+    ASSERT(fromX != -1 && toX != -1);
+
+    if (fromX < toX)
+        return FloatRect(point.x() + fromX, point.y(), toX - fromX, height);
+
+    return FloatRect(point.x() + toX, point.y(), fromX - toX, height);
 }
 
 } // namespace WebCore

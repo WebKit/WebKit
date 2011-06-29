@@ -31,14 +31,37 @@
 #ifndef HarfbuzzSkia_h
 #define HarfbuzzSkia_h
 
-extern "C" {
-#include "harfbuzz-shaper.h"
-#include "harfbuzz-unicode.h"
-}
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
+struct HB_FaceRec_;
+struct HB_Font_;
 
 namespace WebCore {
-    HB_Error harfbuzzSkiaGetTable(void* voidface, const HB_Tag, HB_Byte* buffer, HB_UInt* len);
-    extern const HB_FontClass harfbuzzSkiaClass;
+
+class FontPlatformData;
+
+class HarfbuzzFace : public RefCounted<HarfbuzzFace> {
+public:
+    static PassRefPtr<HarfbuzzFace> create(FontPlatformData* platformData)
+    {
+        return adoptRef(new HarfbuzzFace(platformData));
+    }
+
+    ~HarfbuzzFace();
+
+    HB_FaceRec_* face() const { return m_harfbuzzFace; }
+
+private:
+    explicit HarfbuzzFace(FontPlatformData*);
+
+    HB_FaceRec_* m_harfbuzzFace;
+};
+
+// FIXME: Remove this asymmetric alloc/free function.
+// We'll remove this once we move to the new Harfbuzz API.
+HB_Font_* allocHarfbuzzFont();
+
 }  // namespace WebCore
 
 #endif
