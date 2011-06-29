@@ -801,17 +801,17 @@ int RenderTableCell::borderHalfAfter(bool outer) const
     return 0;
 }
 
-void RenderTableCell::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTableCell::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
         if (!paintInfo.shouldPaintWithinRoot(this))
             return;
 
-        IntPoint adjustedPaintOffset = paintOffset + location();
-        int os = 2 * maximalOutlineSize(paintInfo.phase);
+        LayoutPoint adjustedPaintOffset = paintOffset + location();
+        LayoutUnit os = 2 * maximalOutlineSize(paintInfo.phase);
         if (adjustedPaintOffset.y() - table()->outerBorderTop() < paintInfo.rect.maxY() + os
             && adjustedPaintOffset.y() + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
-            paintCollapsedBorder(paintInfo.context, IntRect(adjustedPaintOffset, size()));
+            paintCollapsedBorder(paintInfo.context, LayoutRect(adjustedPaintOffset, size()));
         return;
     } 
     

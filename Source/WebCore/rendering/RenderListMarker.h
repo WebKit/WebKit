@@ -50,7 +50,7 @@ private:
 
     virtual bool isListMarker() const { return true; }
 
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     virtual void layout();
 

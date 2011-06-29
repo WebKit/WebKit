@@ -60,7 +60,7 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void layout();
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
 private:
     virtual bool isWidget() const { return true; }

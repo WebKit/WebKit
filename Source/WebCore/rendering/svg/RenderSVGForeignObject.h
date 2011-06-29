@@ -37,7 +37,7 @@ public:
 
     virtual const char* renderName() const { return "RenderSVGForeignObject"; }
 
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);

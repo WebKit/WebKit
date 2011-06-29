@@ -35,7 +35,7 @@ namespace WebCore {
 class RenderMathMLSquareRoot : public RenderMathMLBlock {
 public:
     RenderMathMLSquareRoot(Node* fraction);
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 protected:
     virtual void layout();
 };

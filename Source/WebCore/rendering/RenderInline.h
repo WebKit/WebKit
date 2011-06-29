@@ -115,7 +115,7 @@ private:
 
     virtual void layout() { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
 

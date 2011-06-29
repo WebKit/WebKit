@@ -262,13 +262,13 @@ bool RenderSVGRoot::selfWillPaint()
 #endif
 }
 
-void RenderSVGRoot::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.context->paintingDisabled())
         return;
 
     bool isVisible = style()->visibility() == VISIBLE;
-    IntPoint borderBoxOriginInContainer = paintOffset + parentOriginToBorderBox();
+    LayoutPoint borderBoxOriginInContainer = paintOffset + parentOriginToBorderBox();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) && isVisible)
         paintBoxDecorations(paintInfo, borderBoxOriginInContainer);
@@ -300,7 +300,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
         continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
 
     if (continueRendering)
-        RenderBox::paint(childPaintInfo, IntPoint());
+        RenderBox::paint(childPaintInfo, LayoutPoint());
 
     if (childPaintInfo.phase == PaintPhaseForeground)
         SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
@@ -308,7 +308,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
     childPaintInfo.context->restore();
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && isVisible)
-        paintOutline(paintInfo.context, IntRect(borderBoxOriginInContainer, size()));
+        paintOutline(paintInfo.context, LayoutRect(borderBoxOriginInContainer, size()));
 }
 
 void RenderSVGRoot::destroy()

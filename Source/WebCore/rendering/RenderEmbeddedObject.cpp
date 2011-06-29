@@ -135,7 +135,7 @@ void RenderEmbeddedObject::setMissingPluginIndicatorIsPressed(bool pressed)
     repaint();
 }
 
-void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (pluginCrashedOrWasMissing()) {
         RenderReplaced::paint(paintInfo, paintOffset);

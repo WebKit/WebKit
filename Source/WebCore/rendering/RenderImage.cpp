@@ -312,7 +312,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 }
 
-void RenderImage::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     RenderReplaced::paint(paintInfo, paintOffset);
     

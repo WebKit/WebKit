@@ -1101,7 +1101,7 @@ IntRect RenderListMarker::localSelectionRect()
     return IntRect(newLogicalTop, 0, root->selectionHeight(), height());
 }
 
-void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
         return;
@@ -1109,17 +1109,17 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
     if (style()->visibility() != VISIBLE)
         return;
 
-    IntPoint boxOrigin(paintOffset + location());
-    IntRect overflowRect(visualOverflowRect());
+    LayoutPoint boxOrigin(paintOffset + location());
+    LayoutRect overflowRect(visualOverflowRect());
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
 
     if (!paintInfo.rect.intersects(overflowRect))
         return;
 
-    IntRect box(boxOrigin, IntSize(width(), height()));
+    LayoutRect box(boxOrigin, LayoutSize(width(), height()));
     
-    IntRect marker = getRelativeMarkerRect();
+    LayoutRect marker = getRelativeMarkerRect();
     marker.moveBy(boxOrigin);
 
     GraphicsContext* context = paintInfo.context;
@@ -1131,7 +1131,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 #endif
         context->drawImage(m_image->image(this, marker.size()).get(), style()->colorSpace(), marker);
         if (selectionState() != SelectionNone) {
-            IntRect selRect = localSelectionRect();
+            LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
             context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
         }
@@ -1145,7 +1145,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 #endif
 
     if (selectionState() != SelectionNone) {
-        IntRect selRect = localSelectionRect();
+        LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
         context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
     }
@@ -1266,7 +1266,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
         context->translate(-marker.x(), -marker.maxY());
     }
 
-    IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());
+    LayoutPoint textOrigin = LayoutPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());
 
     if (type == Asterisks || type == Footnotes)
         context->drawText(font, textRun, textOrigin);
@@ -1285,14 +1285,14 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 
         const UChar suffix = listMarkerSuffix(type, m_listItem->value());
         if (style()->isLeftToRightDirection()) {
-            int width = font.width(textRun);
+            LayoutUnit width = font.width(textRun);
             context->drawText(font, textRun, textOrigin);
             UChar suffixSpace[2] = { suffix, ' ' };
             context->drawText(font, RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()), textOrigin + IntSize(width, 0));
         } else {
             UChar spaceSuffix[2] = { ' ', suffix };
             TextRun spaceSuffixRun = RenderBlock::constructTextRun(this, font, spaceSuffix, 2, style());
-            int width = font.width(spaceSuffixRun);
+            LayoutUnit width = font.width(spaceSuffixRun);
             context->drawText(font, spaceSuffixRun, textOrigin);
             context->drawText(font, textRun, textOrigin + IntSize(width, 0));
         }

@@ -344,7 +344,7 @@ void RenderListItem::positionListMarker()
     }
 }
 
-void RenderListItem::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!logicalHeight())
         return;

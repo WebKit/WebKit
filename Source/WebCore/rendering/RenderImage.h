@@ -59,7 +59,7 @@ protected:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void paintIntoRect(GraphicsContext*, const IntRect&);
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     bool isLogicalWidthSpecified() const;
     bool isLogicalHeightSpecified() const;
@@ -76,7 +76,7 @@ private:
     virtual bool isImage() const { return true; }
     virtual bool isRenderImage() const { return true; }
 
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
+    virtual void paintReplaced(PaintInfo&, const IntPoint&);
 
     virtual int minimumReplacedHeight() const;
 

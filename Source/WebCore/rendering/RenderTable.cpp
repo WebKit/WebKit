@@ -451,14 +451,14 @@ void RenderTable::setCellLogicalWidths()
     }
 }
 
-void RenderTable::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     PaintPhase paintPhase = paintInfo.phase;
 
     if (!isRoot()) {
-        IntRect overflowBox = visualOverflowRect();
+        LayoutRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.moveBy(adjustedPaintOffset);

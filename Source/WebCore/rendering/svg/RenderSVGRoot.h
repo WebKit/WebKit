@@ -62,7 +62,7 @@ private:
     virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual int computeReplacedLogicalHeight() const;
     virtual void layout();
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     virtual void destroy();
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

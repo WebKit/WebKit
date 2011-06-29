@@ -57,7 +57,7 @@ private:
     virtual bool isEmbeddedObject() const { return true; }
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;

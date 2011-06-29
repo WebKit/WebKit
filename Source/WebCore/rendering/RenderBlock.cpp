@@ -2262,9 +2262,9 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
     }
 }
  
-void RenderBlock::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
     
     PaintPhase phase = paintInfo.phase;
 
@@ -2272,7 +2272,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
     // paints the root's background.
     if (!isRoot()) {
-        IntRect overflowBox = visualOverflowRect();
+        LayoutRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.moveBy(adjustedPaintOffset);

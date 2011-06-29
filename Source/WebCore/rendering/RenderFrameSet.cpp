@@ -118,7 +118,7 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
     }
 }
 
-void RenderFrameSet::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
         return;
@@ -127,20 +127,20 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
     if (!child)
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     int rows = frameSet()->totalRows();
     int cols = frameSet()->totalCols();
-    int borderThickness = frameSet()->border();
+    LayoutUnit borderThickness = frameSet()->border();
     
-    int yPos = 0;
+    LayoutUnit yPos = 0;
     for (int r = 0; r < rows; r++) {
-        int xPos = 0;
+        LayoutUnit xPos = 0;
         for (int c = 0; c < cols; c++) {
             child->paint(paintInfo, adjustedPaintOffset);
             xPos += m_cols.m_sizes[c];
             if (borderThickness && m_cols.m_allowBorder[c + 1]) {
-                paintColumnBorder(paintInfo, IntRect(adjustedPaintOffset.x() + xPos, adjustedPaintOffset.y() + yPos, borderThickness, height()));
+                paintColumnBorder(paintInfo, LayoutRect(adjustedPaintOffset.x() + xPos, adjustedPaintOffset.y() + yPos, borderThickness, height()));
                 xPos += borderThickness;
             }
             child = child->nextSibling();
@@ -149,7 +149,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
         }
         yPos += m_rows.m_sizes[r];
         if (borderThickness && m_rows.m_allowBorder[r + 1]) {
-            paintRowBorder(paintInfo, IntRect(adjustedPaintOffset.x(), adjustedPaintOffset.y() + yPos, width(), borderThickness));
+            paintRowBorder(paintInfo, LayoutRect(adjustedPaintOffset.x(), adjustedPaintOffset.y() + yPos, width(), borderThickness));
             yPos += borderThickness;
         }
     }

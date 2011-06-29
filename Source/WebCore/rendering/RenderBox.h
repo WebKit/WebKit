@@ -239,7 +239,7 @@ public:
     IntRect reflectedRect(const IntRect&) const;
 
     virtual void layout();
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
 
     virtual void destroy();

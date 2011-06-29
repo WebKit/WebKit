@@ -57,7 +57,7 @@ private:
     virtual void destroy();
 
     virtual bool isEmpty() const;
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     virtual void layout();
     virtual void computePreferredLogicalWidths();

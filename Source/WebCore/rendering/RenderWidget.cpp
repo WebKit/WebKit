@@ -247,12 +247,12 @@ void RenderWidget::notifyWidget(WidgetNotification notification)
         m_widget->notifyWidget(notification);
 }
 
-void RenderWidget::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection))
         paintBoxDecorations(paintInfo, adjustedPaintOffset);
@@ -263,7 +263,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && hasOutline())
-        paintOutline(paintInfo.context, IntRect(adjustedPaintOffset, size()));
+        paintOutline(paintInfo.context, LayoutRect(adjustedPaintOffset, size()));
 
     if (!m_frameView || paintInfo.phase != PaintPhaseForeground)
         return;
@@ -274,7 +274,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 #endif
 
     if (style()->hasBorderRadius()) {
-        IntRect borderRect = IntRect(adjustedPaintOffset, size());
+        LayoutRect borderRect = LayoutRect(adjustedPaintOffset, size());
 
         if (borderRect.isEmpty())
             return;
@@ -290,11 +290,11 @@ void RenderWidget::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
         if (m_substituteImage)
             paintInfo.context->drawImage(m_substituteImage.get(), style()->colorSpace(), m_widget->frameRect());
         else {
-            IntPoint widgetLocation = m_widget->frameRect().location();
-            IntPoint paintLocation(adjustedPaintOffset.x() + borderLeft() + paddingLeft(), adjustedPaintOffset.y() + borderTop() + paddingTop());
-            IntRect paintRect = paintInfo.rect;
+            LayoutPoint widgetLocation = m_widget->frameRect().location();
+            LayoutPoint paintLocation(adjustedPaintOffset.x() + borderLeft() + paddingLeft(), adjustedPaintOffset.y() + borderTop() + paddingTop());
+            LayoutRect paintRect = paintInfo.rect;
 
-            IntSize widgetPaintOffset = paintLocation - widgetLocation;
+            LayoutSize widgetPaintOffset = paintLocation - widgetLocation;
             // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
             // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
             if (!widgetPaintOffset.isZero()) {

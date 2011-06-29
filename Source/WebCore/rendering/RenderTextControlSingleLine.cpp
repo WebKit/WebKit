@@ -235,12 +235,12 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     }
 }
 
-void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     RenderTextControl::paint(paintInfo, paintOffset);
 
     if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator) {
-        IntRect contentsRect = contentBoxRect();
+        LayoutRect contentsRect = contentBoxRect();
 
         // Center vertically like the text.
         contentsRect.setY((height() - contentsRect.height()) / 2);

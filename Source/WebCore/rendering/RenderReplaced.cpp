@@ -94,12 +94,12 @@ void RenderReplaced::intrinsicSizeChanged()
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderReplaced::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
         return;
     
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
     
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, adjustedPaintOffset);
@@ -109,7 +109,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
         return;
     }
 
-    IntRect paintRect = IntRect(adjustedPaintOffset, size());
+    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, paintRect);
     
@@ -128,7 +128,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 
     bool completelyClippedOut = false;
     if (style()->hasBorderRadius()) {
-        IntRect borderRect = IntRect(adjustedPaintOffset, size());
+        LayoutRect borderRect = LayoutRect(adjustedPaintOffset, size());
 
         if (borderRect.isEmpty())
             completelyClippedOut = true;
@@ -149,7 +149,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
     // The selection tint never gets clipped by border-radius rounding, since we want it to run right up to the edges of
     // surrounding content.
     if (drawSelectionTint) {
-        IntRect selectionPaintingRect = localSelectionRect();
+        LayoutRect selectionPaintingRect = localSelectionRect();
         selectionPaintingRect.moveBy(adjustedPaintOffset);
         paintInfo.context->fillRect(selectionPaintingRect, selectionBackgroundColor(), style()->colorSpace());
     }

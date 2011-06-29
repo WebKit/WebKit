@@ -885,7 +885,7 @@ int RenderTableSection::firstLineBoxBaseline() const
     return firstLineBaseline;
 }
 
-void RenderTableSection::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // put this back in when all layout tests can handle it
     // ASSERT(!needsLayout());
@@ -899,7 +899,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const IntPoint& paintOffset
     if (!totalRows || !totalCols)
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     PaintPhase phase = paintInfo.phase;
     bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);

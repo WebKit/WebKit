@@ -48,7 +48,7 @@ public:
     virtual void stretchToHeight(int height);
 
 #if ENABLE(DEBUG_MATH_LAYOUT)
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 #endif
     
 protected:

@@ -460,7 +460,7 @@ void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* 
     }
 }
 
-void RenderInline::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }

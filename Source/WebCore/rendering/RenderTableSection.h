@@ -132,7 +132,7 @@ private:
 
     virtual void removeChild(RenderObject* oldChild);
 
-    virtual void paint(PaintInfo&, const IntPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintCell(RenderTableCell*, PaintInfo&, const IntPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
