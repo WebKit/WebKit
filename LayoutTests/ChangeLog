@@ -1,3 +1,20 @@
+2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 55930 - (CVE-2011-1440) Incorrect handling of 'display:' property within nested <ruby> tags
+        https://bugs.webkit.org/show_bug.cgi?id=55930
+
+        Test that a generated block child + counter within a <ruby> doesn't crash.
+        (Test as provided by original reporter).
+
+        * fast/ruby/generated-after-counter-doesnt-crash-expected.txt: Added.
+        * fast/ruby/generated-after-counter-doesnt-crash.html: Added.
+        * fast/ruby/generated-before-and-after-counter-doesnt-crash-expected.txt: Added.
+        * fast/ruby/generated-before-and-after-counter-doesnt-crash.html: Added.
+        * fast/ruby/generated-before-counter-doesnt-crash-expected.txt: Added.
+        * fast/ruby/generated-before-counter-doesnt-crash.html: Added.
+
 2011-06-28  Adam Langley  <agl@chromium.org>
 
         Reviewed by Adam Barth.

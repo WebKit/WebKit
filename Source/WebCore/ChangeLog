@@ -1,3 +1,27 @@
+2011-06-28  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 55930 - (CVE-2011-1440) Incorrect handling of 'display:' property within nested <ruby> tags
+        https://bugs.webkit.org/show_bug.cgi?id=55930
+
+        Don't set style type BEFORE/AFTER on anonymous wrapper block.
+        Rather, check style type on generated wrapped child.
+
+        Tests: fast/ruby/generated-after-counter-doesnt-crash.html
+               fast/ruby/generated-before-and-after-counter-doesnt-crash.html
+               fast/ruby/generated-before-counter-doesnt-crash.html
+
+        * rendering/RenderRuby.cpp:
+        (WebCore::isAnonymousRubyInlineBlock):
+        (WebCore::isRubyBeforeBlock):
+        (WebCore::isRubyAfterBlock):
+        (WebCore::rubyBeforeBlock):
+        (WebCore::rubyAfterBlock):
+        (WebCore::createAnonymousRubyInlineBlock):
+        (WebCore::RenderRubyAsInline::addChild):
+        (WebCore::RenderRubyAsBlock::addChild):
+
 2011-06-28  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
