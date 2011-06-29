@@ -1,3 +1,17 @@
+2011-06-29  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] GraphicsContext::clipToImageBuffer does not support scale transformation
+        https://bugs.webkit.org/show_bug.cgi?id=63555
+
+        Scale alphaMask if GraphicsContext is scaled
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::pushTransparencyLayerInternal):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::clip):
+
 2011-06-29  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

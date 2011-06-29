@@ -950,7 +950,12 @@ void GraphicsContext::clearPlatformShadow()
 void GraphicsContext::pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask)
 {
     QPainter* p = m_data->p();
-    m_data->layers.push(new TransparencyLayer(p, p->transform().mapRect(rect), 1.0, alphaMask));
+
+    QRect deviceClip = p->transform().mapRect(rect);
+    if (alphaMask.width() != deviceClip.width() || alphaMask.height() != deviceClip.height())
+        alphaMask = alphaMask.scaled(deviceClip.width(), deviceClip.height());
+
+    m_data->layers.push(new TransparencyLayer(p, deviceClip, 1.0, alphaMask));
 }
 
 void GraphicsContext::beginTransparencyLayer(float opacity)
