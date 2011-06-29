@@ -235,6 +235,7 @@ public:
     void removeShadowRoot();
 
     virtual const AtomicString& shadowPseudoId() const;
+    void setShadowPseudoId(const AtomicString&, ExceptionCode&);
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
@@ -542,11 +543,6 @@ inline void Element::setIdAttribute(const AtomicString& value)
     setAttribute(document()->idAttributeName(), value);
 }
 
-inline const AtomicString& Element::shadowPseudoId() const
-{
-    return nullAtom;
-}
-    
 inline Element* firstElementChild(const ContainerNode* container)
 {
     ASSERT_ARG(container, container);

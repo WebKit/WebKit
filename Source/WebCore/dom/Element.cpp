@@ -1234,6 +1234,24 @@ void Element::removeShadowRoot()
     }
 }
 
+const AtomicString& Element::shadowPseudoId() const
+{
+    return hasRareData() ? rareData()->m_shadowPseudoId : nullAtom;
+}
+
+void Element::setShadowPseudoId(const AtomicString& id, ExceptionCode& ec)
+{
+    if (!hasRareData() && id == nullAtom)
+        return;
+
+    if (!CSSSelector::isUnknownPseudoType(id)) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    ensureRareData()->m_shadowPseudoId = id;
+}
+
 bool Element::childTypeAllowed(NodeType type) const
 {
     switch (type) {

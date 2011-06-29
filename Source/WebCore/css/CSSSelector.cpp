@@ -392,6 +392,11 @@ CSSSelector::PseudoType CSSSelector::parsePseudoType(const AtomicString& name)
     return slot == nameToPseudoType->end() ? PseudoUnknown : slot->second;
 }
 
+bool CSSSelector::isUnknownPseudoType(const AtomicString& name)
+{
+    return parsePseudoType(name) == PseudoUnknown;
+}
+
 void CSSSelector::extractPseudoType() const
 {
     if (m_match != PseudoClass && m_match != PseudoElement && m_match != PagePseudoClass)

@@ -1,3 +1,21 @@
+2011-06-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Store shadowPseudoId in ElementRareData.
+        https://bugs.webkit.org/show_bug.cgi?id=63604
+
+        No new tests, because the code isn't yet used.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::isUnknownPseudoType): Added convenience helper.
+        * css/CSSSelector.h: Added decl.
+        * dom/Element.cpp:
+        (WebCore::Element::shadowPseudoId): Changed to use ElementRareData.
+        (WebCore::Element::setShadowPseudoId): Ditto.
+        * dom/Element.h: Added decls.
+        * dom/ElementRareData.h: Added a member to keep shadowPseudoId.
+
 2011-06-28  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Tony Chang.
