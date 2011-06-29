@@ -1,3 +1,37 @@
+2011-06-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Switch hitTestColumns/Contents/Floats to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63589
+
+        Switch location and size methods for RenderBox over to the new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/ColumnInfo.h:
+        (WebCore::ColumnInfo::desiredColumnWidth):
+        (WebCore::ColumnInfo::setDesiredColumnWidth):
+        (WebCore::ColumnInfo::columnHeight):
+        (WebCore::ColumnInfo::setColumnCountAndHeight):
+        (WebCore::ColumnInfo::setColumnHeight):
+        (WebCore::ColumnInfo::updateMinimumColumnHeight):
+        (WebCore::ColumnInfo::minimumColumnHeight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::hitTestContents):
+        (WebCore::RenderBlock::columnRectAt):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::xPositionForFloatIncludingMargin):
+        (WebCore::RenderBlock::yPositionForFloatIncludingMargin):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestContents):
+        * rendering/RenderLayer.h:
+
 2011-06-29  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

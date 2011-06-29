@@ -516,7 +516,7 @@ private:
                             const IntRect& hitTestRect, const IntPoint& hitTestPoint,
                             const HitTestingTransformState* containerTransformState) const;
     
-    bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntRect& layerBounds, const IntPoint& hitTestPoint, HitTestFilter) const;
+    bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter) const;
     
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 

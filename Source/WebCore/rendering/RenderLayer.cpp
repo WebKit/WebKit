@@ -3141,7 +3141,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     return 0;
 }
 
-bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const IntRect& layerBounds, const IntPoint& hitTestPoint, HitTestFilter hitTestFilter) const
+bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter hitTestFilter) const
 {
     if (!renderer()->hitTest(request, result, hitTestPoint,
                             toPoint(layerBounds.location() - renderBoxLocation()),

@@ -1361,7 +1361,7 @@ void RenderBlock::addOverflowFromChildren()
     } else {
         ColumnInfo* colInfo = columnInfo();
         if (columnCount(colInfo)) {
-            IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
+            LayoutRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
             if (isHorizontalWritingMode()) {
                 int overflowLeft = !style()->isLeftToRightDirection() ? min(0, lastRect.x()) : 0;
                 int overflowRight = style()->isLeftToRightDirection() ? max(width(), lastRect.maxX()) : 0;
@@ -1370,7 +1370,7 @@ void RenderBlock::addOverflowFromChildren()
                 if (!hasOverflowClip())
                     addVisualOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
             } else {
-                IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
+                LayoutRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
                 int overflowTop = !style()->isLeftToRightDirection() ? min(0, lastRect.y()) : 0;
                 int overflowBottom = style()->isLeftToRightDirection() ? max(height(), lastRect.maxY()) : 0;
                 int overflowWidth = borderBefore() + paddingBefore() + colInfo->columnHeight();
@@ -2317,7 +2317,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const IntPoint& paintOf
     bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
 
     for (unsigned i = 0; i < colCount; i++) {
-        IntRect colRect = columnRectAt(colInfo, i);
+        LayoutRect colRect = columnRectAt(colInfo, i);
 
         int inlineDirectionSize = isHorizontalWritingMode() ? colRect.width() : colRect.height();
         
@@ -2355,7 +2355,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const IntPoint& pain
     int currLogicalTopOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        IntRect colRect = columnRectAt(colInfo, i);
+        LayoutRect colRect = columnRectAt(colInfo, i);
         flipForWritingMode(colRect);
         int logicalLeftOffset = (isHorizontalWritingMode() ? colRect.x() : colRect.y()) - logicalLeftOffsetForContent();
         IntSize offset = isHorizontalWritingMode() ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
@@ -3991,12 +3991,12 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     return false;
 }
 
-bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
+bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     if (!m_floatingObjects)
         return false;
 
-    IntPoint adjustedLocation = accumulatedOffset;
+    LayoutPoint adjustedLocation = accumulatedOffset;
     if (isRenderView()) {
         adjustedLocation += toSize(toRenderView(this)->frameView()->scrollPosition());
     }
@@ -4007,9 +4007,9 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         --it;
         FloatingObject* floatingObject = *it;
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
-            int xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
-            int yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
-            IntPoint childPoint = flipFloatForWritingMode(floatingObject, adjustedLocation + IntSize(xOffset, yOffset));
+            LayoutUnit xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
+            LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
+            LayoutPoint childPoint = flipFloatForWritingMode(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
             if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint)) {
                 updateHitTestResult(result, pointInContainer - toSize(childPoint));
                 return true;
@@ -4020,30 +4020,30 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
     ColumnInfo* colInfo = columnInfo();
     int colCount = columnCount(colInfo);
     if (!colCount)
         return false;
-    int logicalLeft = logicalLeftOffsetForContent();
-    int currLogicalTopOffset = 0;
+    LayoutUnit logicalLeft = logicalLeftOffsetForContent();
+    LayoutUnit currLogicalTopOffset = 0;
     int i;
     bool isHorizontal = isHorizontalWritingMode();
     for (i = 0; i < colCount; i++) {
-        IntRect colRect = columnRectAt(colInfo, i);
-        int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
+        LayoutRect colRect = columnRectAt(colInfo, i);
+        LayoutUnit blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
         if (style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset += blockDelta;
         else
             currLogicalTopOffset -= blockDelta;
     }
     for (i = colCount - 1; i >= 0; i--) {
-        IntRect colRect = columnRectAt(colInfo, i);
+        LayoutRect colRect = columnRectAt(colInfo, i);
         flipForWritingMode(colRect);
-        int currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
-        int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
+        LayoutUnit currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
+        LayoutUnit blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
         if (style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset -= blockDelta;
         else
@@ -4054,8 +4054,8 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             // The point is inside this column.
             // Adjust accumulatedOffset to change where we hit test.
         
-            IntSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, currLogicalLeftOffset);
-            IntPoint finalLocation = accumulatedOffset + offset;
+            LayoutSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, currLogicalLeftOffset);
+            LayoutPoint finalLocation = accumulatedOffset + offset;
             if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(pointInContainer)))
                 hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction);
             else
@@ -4066,7 +4066,7 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
-bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
@@ -4078,7 +4078,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-            IntPoint childPoint = flipForWritingMode(child, accumulatedOffset, ParentToChildFlippingAdjustment);
+            LayoutPoint childPoint = flipForWritingMode(child, accumulatedOffset, ParentToChildFlippingAdjustment);
             if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, pointInContainer, childPoint, childHitTest))
                 return true;
         }
@@ -4351,22 +4351,22 @@ unsigned RenderBlock::columnCount(ColumnInfo* colInfo) const
     return colInfo->columnCount();
 }
 
-IntRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
+LayoutRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
 {
     ASSERT(hasColumns() && gColumnInfoMap->get(this) == colInfo);
 
     // Compute the appropriate rect based off our information.
-    int colLogicalWidth = colInfo->desiredColumnWidth();
-    int colLogicalHeight = colInfo->columnHeight();
-    int colLogicalTop = borderBefore() + paddingBefore();
+    LayoutUnit colLogicalWidth = colInfo->desiredColumnWidth();
+    LayoutUnit colLogicalHeight = colInfo->columnHeight();
+    LayoutUnit colLogicalTop = borderBefore() + paddingBefore();
     int colGap = columnGap();
-    int colLogicalLeft = style()->isLeftToRightDirection() ? 
-                          logicalLeftOffsetForContent() + (index * (colLogicalWidth + colGap))
-                        : logicalLeftOffsetForContent() + contentLogicalWidth() - colLogicalWidth - (index * (colLogicalWidth + colGap));
-    IntRect rect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
+    LayoutUnit colLogicalLeft = style()->isLeftToRightDirection() ? 
+                                 logicalLeftOffsetForContent() + (index * (colLogicalWidth + colGap))
+                               : logicalLeftOffsetForContent() + contentLogicalWidth() - colLogicalWidth - (index * (colLogicalWidth + colGap));
+
     if (isHorizontalWritingMode())
-        return IntRect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
-    return IntRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
+        return LayoutRect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
+    return LayoutRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
 }
 
 bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogicalHeight, LayoutStateMaintainer& statePusher)

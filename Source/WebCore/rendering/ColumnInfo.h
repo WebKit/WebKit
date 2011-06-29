@@ -26,8 +26,8 @@
 #ifndef ColumnInfo_h
 #define ColumnInfo_h
 
+#include "LayoutTypes.h"
 #include <wtf/Vector.h>
-#include "IntRect.h"
 
 namespace WebCore {
 
@@ -45,26 +45,26 @@ public:
         , m_forcedBreakOffset(0)
         { }
     
-    int desiredColumnWidth() const { return m_desiredColumnWidth; }
-    void setDesiredColumnWidth(int width) { m_desiredColumnWidth = width; }
+    LayoutUnit desiredColumnWidth() const { return m_desiredColumnWidth; }
+    void setDesiredColumnWidth(LayoutUnit width) { m_desiredColumnWidth = width; }
     
     unsigned desiredColumnCount() const { return m_desiredColumnCount; }
     void setDesiredColumnCount(unsigned count) { m_desiredColumnCount = count; }
 
     unsigned columnCount() const { return m_columnCount; }
-    int columnHeight() const { return m_columnHeight; }
+    LayoutUnit columnHeight() const { return m_columnHeight; }
 
     // Set our count and height.  This is enough info for a RenderBlock to compute page rects
     // dynamically.
-    void setColumnCountAndHeight(int count, int height)
+    void setColumnCountAndHeight(int count, LayoutUnit height)
     { 
         m_columnCount = count;
         m_columnHeight = height;
     }
-    void setColumnHeight(int height) { m_columnHeight = height; }
+    void setColumnHeight(LayoutUnit height) { m_columnHeight = height; }
 
-    void updateMinimumColumnHeight(int height) { m_minimumColumnHeight = std::max(height, m_minimumColumnHeight); }
-    int minimumColumnHeight() const { return m_minimumColumnHeight; }
+    void updateMinimumColumnHeight(LayoutUnit height) { m_minimumColumnHeight = std::max(height, m_minimumColumnHeight); }
+    LayoutUnit minimumColumnHeight() const { return m_minimumColumnHeight; }
 
     int forcedBreaks() const { return m_forcedBreaks; }
     int forcedBreakOffset() const { return m_forcedBreakOffset; }
@@ -87,12 +87,12 @@ public:
     }
 
 private:
-    int m_desiredColumnWidth;
+    LayoutUnit m_desiredColumnWidth;
     unsigned m_desiredColumnCount;
     
     unsigned m_columnCount;
-    int m_columnHeight;
-    int m_minimumColumnHeight;
+    LayoutUnit m_columnHeight;
+    LayoutUnit m_minimumColumnHeight;
     int m_forcedBreaks; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
     int m_maximumDistanceBetweenForcedBreaks;
     int m_forcedBreakOffset;

@@ -181,7 +181,7 @@ public:
     
     // These two functions take the ColumnInfo* to avoid repeated lookups of the info in the global HashMap.
     unsigned columnCount(ColumnInfo*) const;
-    IntRect columnRectAt(ColumnInfo*, unsigned) const;
+    LayoutRect columnRectAt(ColumnInfo*, unsigned) const;
 
     int paginationStrut() const { return m_rareData ? m_rareData->m_paginationStrut : 0; }
     void setPaginationStrut(int);
@@ -494,7 +494,7 @@ private:
             child->setHeight(logicalWidth);
     }
 
-    int xPositionForFloatIncludingMargin(const FloatingObject* child) const
+    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
         if (isHorizontalWritingMode())
             return child->x() + child->renderer()->marginLeft();
@@ -502,7 +502,7 @@ private:
             return child->x() + marginBeforeForChild(child->renderer());
     }
         
-    int yPositionForFloatIncludingMargin(const FloatingObject* child) const
+    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
         if (isHorizontalWritingMode())
             return child->y() + marginBeforeForChild(child->renderer());
@@ -589,9 +589,9 @@ private:
     int lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatBoth) const;
     int nextFloatLogicalBottomBelow(int) const;
     
-    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
-    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
-    bool hitTestFloats(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);
+    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    bool hitTestFloats(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
     virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);
 
