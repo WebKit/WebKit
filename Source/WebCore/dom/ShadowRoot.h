@@ -45,6 +45,9 @@ public:
 
     virtual void attach();
 
+    virtual bool applyAuthorSheets() const;
+    void setApplyAuthorSheets(bool);
+
 private:
     ShadowRoot(Document*);
     virtual ~ShadowRoot();
@@ -53,9 +56,10 @@ private:
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
-    virtual bool applyAuthorSheets() const;
 
     bool hasContentElement() const;
+
+    bool m_applyAuthorSheets;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)

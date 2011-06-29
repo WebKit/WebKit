@@ -1,3 +1,18 @@
+2011-06-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make applyAuthorSheets settable on ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=63599
+
+        Refactoring and adding not-yet used function, tests to follow when API lands.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot): Added initializer.
+        (WebCore::ShadowRoot::applyAuthorSheets): Made to use member variable.
+        (WebCore::ShadowRoot::setApplyAuthorSheets): Added.
+        * dom/ShadowRoot.h: Tweaked, added decls.
+
 2011-06-28  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Adam Barth.

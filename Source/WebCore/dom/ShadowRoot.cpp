@@ -36,6 +36,7 @@ namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
     : TreeScope(document)
+    , m_applyAuthorSheets(false)
 {
     ASSERT(document);
     
@@ -122,7 +123,12 @@ bool ShadowRoot::hasContentElement() const
 
 bool ShadowRoot::applyAuthorSheets() const
 {
-    return false;
+    return m_applyAuthorSheets;
+}
+
+void ShadowRoot::setApplyAuthorSheets(bool value)
+{
+    m_applyAuthorSheets = value;
 }
 
 void ShadowRoot::attach()
