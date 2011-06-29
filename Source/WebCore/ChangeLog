@@ -1,3 +1,22 @@
+2011-06-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        In RenderBlock, RenderWidget and RenderReplaced destroy functions,
+        call dirtyLinesFromChangedChild to tell our parent that we are going away.
+        https://bugs.webkit.org/show_bug.cgi?id=60307
+
+        Test: fast/block/child-not-removed-from-parent-lineboxes-crash.html
+              fast/block/block-not-removed-from-parent-lineboxes-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::destroy):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::destroy):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2011-06-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Speculative WinCE build correction.

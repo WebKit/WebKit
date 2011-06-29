@@ -126,6 +126,10 @@ void RenderWidget::destroy()
         document()->axObjectCache()->childrenChanged(this->parent());
         document()->axObjectCache()->remove(this);
     }
+
+    if (!documentBeingDestroyed() && parent()) 
+        parent()->dirtyLinesFromChangedChild(this);
+
     remove();
 
     if (m_hasCounterNodeMap)

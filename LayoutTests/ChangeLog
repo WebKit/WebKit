@@ -1,3 +1,17 @@
+2011-06-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Tests that we do not crash when failing to remove the linebreak
+        object(widget, block, replaced, etc) from parent block lineboxes. The
+        testcase tries to fuzz over the list of html and svg tags.
+        https://bugs.webkit.org/show_bug.cgi?id=60307
+
+        * fast/block/block-not-removed-from-parent-lineboxes-crash-expected.txt: Added.
+        * fast/block/block-not-removed-from-parent-lineboxes-crash.html: Added.
+        * fast/block/child-not-removed-from-parent-lineboxes-crash-expected.txt: Added.
+        * fast/block/child-not-removed-from-parent-lineboxes-crash.html: Added.
+
 2011-06-29  Alan Stearns  <stearns@adobe.com>
 
         Reviewed by Tony Chang.
