@@ -287,6 +287,9 @@ static long long generateFrameIdentifier()
 
 static WebPluginContainerImpl* pluginContainerFromNode(const WebNode& node)
 {
+    if (node.isNull())
+        return 0;
+
     const Node* coreNode = node.constUnwrap<Node>();
     if (coreNode->hasTagName(HTMLNames::objectTag) || coreNode->hasTagName(HTMLNames::embedTag)) {
         RenderObject* object = coreNode->renderer();
