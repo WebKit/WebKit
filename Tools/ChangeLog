@@ -1,3 +1,14 @@
+2011-06-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make port/config.py mockable for easier unit testing
+        https://bugs.webkit.org/show_bug.cgi?id=63661
+
+        Fix an exception from the unit tests.
+
+        * Scripts/webkitpy/layout_tests/port/config.py:
+
 2011-06-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.
