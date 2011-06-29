@@ -116,13 +116,13 @@ public:
     // logicalLeft = left in a horizontal line and top in a vertical line.
     int marginBorderPaddingLogicalLeft() const { return marginLogicalLeft() + borderLogicalLeft() + paddingLogicalLeft(); }
     int marginBorderPaddingLogicalRight() const { return marginLogicalRight() + borderLogicalRight() + paddingLogicalRight(); }
-    int marginLogicalLeft() const
+    LayoutUnit marginLogicalLeft() const
     {
         if (!includeLogicalLeftEdge())
             return 0;
         return isHorizontal() ? boxModelObject()->marginLeft() : boxModelObject()->marginTop();
     }
-    int marginLogicalRight() const
+    LayoutUnit marginLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;

@@ -1,3 +1,24 @@
+2011-06-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderBoxModelObject::margin* and setMargin* to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63652
+
+        Switch margin methods for render tree over to the new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        * rendering/RenderText.h:
+
 2011-06-29  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

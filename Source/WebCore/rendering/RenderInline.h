@@ -39,14 +39,14 @@ public:
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
 
-    virtual int marginLeft() const;
-    virtual int marginRight() const;
-    virtual int marginTop() const;
-    virtual int marginBottom() const;
-    virtual int marginBefore() const;
-    virtual int marginAfter() const;
-    virtual int marginStart() const;
-    virtual int marginEnd() const;
+    virtual LayoutUnit marginLeft() const;
+    virtual LayoutUnit marginRight() const;
+    virtual LayoutUnit marginTop() const;
+    virtual LayoutUnit marginBottom() const;
+    virtual LayoutUnit marginBefore() const;
+    virtual LayoutUnit marginAfter() const;
+    virtual LayoutUnit marginStart() const;
+    virtual LayoutUnit marginEnd() const;
 
     virtual void absoluteRects(Vector<IntRect>&, const IntPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&);

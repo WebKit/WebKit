@@ -202,22 +202,22 @@ public:
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
 
-    virtual int marginTop() const { return m_marginTop; }
-    virtual int marginBottom() const { return m_marginBottom; }
-    virtual int marginLeft() const { return m_marginLeft; }
-    virtual int marginRight() const { return m_marginRight; }
-    void setMarginTop(int margin) { m_marginTop = margin; }
-    void setMarginBottom(int margin) { m_marginBottom = margin; }
-    void setMarginLeft(int margin) { m_marginLeft = margin; }
-    void setMarginRight(int margin) { m_marginRight = margin; }
-    virtual int marginBefore() const;
-    virtual int marginAfter() const;
-    virtual int marginStart() const;
-    virtual int marginEnd() const;
-    void setMarginStart(int);
-    void setMarginEnd(int);
-    void setMarginBefore(int);
-    void setMarginAfter(int);
+    virtual LayoutUnit marginTop() const { return m_marginTop; }
+    virtual LayoutUnit marginBottom() const { return m_marginBottom; }
+    virtual LayoutUnit marginLeft() const { return m_marginLeft; }
+    virtual LayoutUnit marginRight() const { return m_marginRight; }
+    void setMarginTop(LayoutUnit margin) { m_marginTop = margin; }
+    void setMarginBottom(LayoutUnit margin) { m_marginBottom = margin; }
+    void setMarginLeft(LayoutUnit margin) { m_marginLeft = margin; }
+    void setMarginRight(LayoutUnit margin) { m_marginRight = margin; }
+    virtual LayoutUnit marginBefore() const;
+    virtual LayoutUnit marginAfter() const;
+    virtual LayoutUnit marginStart() const;
+    virtual LayoutUnit marginEnd() const;
+    void setMarginStart(LayoutUnit);
+    void setMarginEnd(LayoutUnit);
+    void setMarginBefore(LayoutUnit);
+    void setMarginAfter(LayoutUnit);
 
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
@@ -470,10 +470,10 @@ private:
     LayoutRect m_frameRect;
 
 protected:
-    int m_marginLeft;
-    int m_marginRight;
-    int m_marginTop;
-    int m_marginBottom;
+    LayoutUnit m_marginLeft;
+    LayoutUnit m_marginRight;
+    LayoutUnit m_marginTop;
+    LayoutUnit m_marginBottom;
 
     // The preferred logical width of the element if it were to break its lines at every possible opportunity.
     int m_minPreferredLogicalWidth;

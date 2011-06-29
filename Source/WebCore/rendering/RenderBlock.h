@@ -198,14 +198,14 @@ public:
     int logicalTopForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->y() : child->x(); }
     void setLogicalLeftForChild(RenderBox* child, int logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox* child, int logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
-    int marginBeforeForChild(RenderBoxModelObject* child) const;
-    int marginAfterForChild(RenderBoxModelObject* child) const;
-    int marginStartForChild(RenderBoxModelObject* child) const;
-    int marginEndForChild(RenderBoxModelObject* child) const;
-    void setMarginStartForChild(RenderBox* child, int);
-    void setMarginEndForChild(RenderBox* child, int);
-    void setMarginBeforeForChild(RenderBox* child, int);
-    void setMarginAfterForChild(RenderBox* child, int);
+    LayoutUnit marginBeforeForChild(RenderBoxModelObject* child) const;
+    LayoutUnit marginAfterForChild(RenderBoxModelObject* child) const;
+    LayoutUnit marginStartForChild(RenderBoxModelObject* child) const;
+    LayoutUnit marginEndForChild(RenderBoxModelObject* child) const;
+    void setMarginStartForChild(RenderBox* child, LayoutUnit);
+    void setMarginEndForChild(RenderBox* child, LayoutUnit);
+    void setMarginBeforeForChild(RenderBox* child, LayoutUnit);
+    void setMarginAfterForChild(RenderBox* child, LayoutUnit);
     int collapsedMarginBeforeForChild(RenderBox* child) const;
     int collapsedMarginAfterForChild(RenderBox* child) const;
 

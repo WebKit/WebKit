@@ -81,7 +81,7 @@ RenderBox::~RenderBox()
 {
 }
 
-int RenderBox::marginBefore() const
+LayoutUnit RenderBox::marginBefore() const
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
@@ -97,7 +97,7 @@ int RenderBox::marginBefore() const
     return m_marginTop;
 }
 
-int RenderBox::marginAfter() const
+LayoutUnit RenderBox::marginAfter() const
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
@@ -113,21 +113,21 @@ int RenderBox::marginAfter() const
     return m_marginBottom;
 }
 
-int RenderBox::marginStart() const
+LayoutUnit RenderBox::marginStart() const
 {
     if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? m_marginLeft : m_marginRight;
     return style()->isLeftToRightDirection() ? m_marginTop : m_marginBottom;
 }
 
-int RenderBox::marginEnd() const
+LayoutUnit RenderBox::marginEnd() const
 {
     if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? m_marginRight : m_marginLeft;
     return style()->isLeftToRightDirection() ? m_marginBottom : m_marginTop;
 }
 
-void RenderBox::setMarginStart(int margin)
+void RenderBox::setMarginStart(LayoutUnit margin)
 {
     if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
@@ -142,7 +142,7 @@ void RenderBox::setMarginStart(int margin)
     }
 }
 
-void RenderBox::setMarginEnd(int margin)
+void RenderBox::setMarginEnd(LayoutUnit margin)
 {
     if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
@@ -157,7 +157,7 @@ void RenderBox::setMarginEnd(int margin)
     }
 }
 
-void RenderBox::setMarginBefore(int margin)
+void RenderBox::setMarginBefore(LayoutUnit margin)
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
@@ -175,7 +175,7 @@ void RenderBox::setMarginBefore(int margin)
     }
 }
 
-void RenderBox::setMarginAfter(int margin)
+void RenderBox::setMarginAfter(LayoutUnit margin)
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:

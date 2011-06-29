@@ -102,14 +102,14 @@ public:
     int borderLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() : borderTop(); }
     int borderLogicalRight() const { return style()->isHorizontalWritingMode() ? borderRight() : borderBottom(); }
 
-    virtual int marginTop() const = 0;
-    virtual int marginBottom() const = 0;
-    virtual int marginLeft() const = 0;
-    virtual int marginRight() const = 0;
-    virtual int marginBefore() const = 0;
-    virtual int marginAfter() const = 0;
-    virtual int marginStart() const = 0;
-    virtual int marginEnd() const = 0;
+    virtual LayoutUnit marginTop() const = 0;
+    virtual LayoutUnit marginBottom() const = 0;
+    virtual LayoutUnit marginLeft() const = 0;
+    virtual LayoutUnit marginRight() const = 0;
+    virtual LayoutUnit marginBefore() const = 0;
+    virtual LayoutUnit marginAfter() const = 0;
+    virtual LayoutUnit marginStart() const = 0;
+    virtual LayoutUnit marginEnd() const = 0;
 
     bool hasInlineDirectionBordersPaddingOrMargin() const { return hasInlineDirectionBordersOrPadding() || marginStart()|| marginEnd(); }
     bool hasInlineDirectionBordersOrPadding() const { return borderStart() || borderEnd() || paddingStart()|| paddingEnd(); }

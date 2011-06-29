@@ -647,7 +647,7 @@ LayoutUnit RenderInline::offsetTop() const
     return y;
 }
 
-static int computeMargin(const RenderInline* renderer, const Length& margin)
+static LayoutUnit computeMargin(const RenderInline* renderer, const Length& margin)
 {
     if (margin.isAuto())
         return 0;
@@ -658,42 +658,42 @@ static int computeMargin(const RenderInline* renderer, const Length& margin)
     return 0;
 }
 
-int RenderInline::marginLeft() const
+LayoutUnit RenderInline::marginLeft() const
 {
     return computeMargin(this, style()->marginLeft());
 }
 
-int RenderInline::marginRight() const
+LayoutUnit RenderInline::marginRight() const
 {
     return computeMargin(this, style()->marginRight());
 }
 
-int RenderInline::marginTop() const
+LayoutUnit RenderInline::marginTop() const
 {
     return computeMargin(this, style()->marginTop());
 }
 
-int RenderInline::marginBottom() const
+LayoutUnit RenderInline::marginBottom() const
 {
     return computeMargin(this, style()->marginBottom());
 }
 
-int RenderInline::marginStart() const
+LayoutUnit RenderInline::marginStart() const
 {
     return computeMargin(this, style()->marginStart());
 }
 
-int RenderInline::marginEnd() const
+LayoutUnit RenderInline::marginEnd() const
 {
     return computeMargin(this, style()->marginEnd());
 }
 
-int RenderInline::marginBefore() const
+LayoutUnit RenderInline::marginBefore() const
 {
     return computeMargin(this, style()->marginBefore());
 }
 
-int RenderInline::marginAfter() const
+LayoutUnit RenderInline::marginAfter() const
 {
     return computeMargin(this, style()->marginAfter());
 }

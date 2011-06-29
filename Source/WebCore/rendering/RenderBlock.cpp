@@ -6121,7 +6121,7 @@ int RenderBlock::collapsedMarginAfterForChild(RenderBox* child) const
     return marginAfterForChild(child);
 }
 
-int RenderBlock::marginBeforeForChild(RenderBoxModelObject* child) const
+LayoutUnit RenderBlock::marginBeforeForChild(RenderBoxModelObject* child) const
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
@@ -6137,7 +6137,7 @@ int RenderBlock::marginBeforeForChild(RenderBoxModelObject* child) const
     return child->marginTop();
 }
 
-int RenderBlock::marginAfterForChild(RenderBoxModelObject* child) const
+LayoutUnit RenderBlock::marginAfterForChild(RenderBoxModelObject* child) const
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
@@ -6153,21 +6153,21 @@ int RenderBlock::marginAfterForChild(RenderBoxModelObject* child) const
     return child->marginBottom();
 }
     
-int RenderBlock::marginStartForChild(RenderBoxModelObject* child) const
+LayoutUnit RenderBlock::marginStartForChild(RenderBoxModelObject* child) const
 {
     if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? child->marginLeft() : child->marginRight();
     return style()->isLeftToRightDirection() ? child->marginTop() : child->marginBottom();
 }
 
-int RenderBlock::marginEndForChild(RenderBoxModelObject* child) const
+LayoutUnit RenderBlock::marginEndForChild(RenderBoxModelObject* child) const
 {
     if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? child->marginRight() : child->marginLeft();
     return style()->isLeftToRightDirection() ? child->marginBottom() : child->marginTop();
 }
 
-void RenderBlock::setMarginStartForChild(RenderBox* child, int margin)
+void RenderBlock::setMarginStartForChild(RenderBox* child, LayoutUnit margin)
 {
     if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
@@ -6182,7 +6182,7 @@ void RenderBlock::setMarginStartForChild(RenderBox* child, int margin)
     }
 }
 
-void RenderBlock::setMarginEndForChild(RenderBox* child, int margin)
+void RenderBlock::setMarginEndForChild(RenderBox* child, LayoutUnit margin)
 {
     if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
@@ -6197,7 +6197,7 @@ void RenderBlock::setMarginEndForChild(RenderBox* child, int margin)
     }
 }
 
-void RenderBlock::setMarginBeforeForChild(RenderBox* child, int margin)
+void RenderBlock::setMarginBeforeForChild(RenderBox* child, LayoutUnit margin)
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
@@ -6215,7 +6215,7 @@ void RenderBlock::setMarginBeforeForChild(RenderBox* child, int margin)
     }
 }
 
-void RenderBlock::setMarginAfterForChild(RenderBox* child, int margin)
+void RenderBlock::setMarginAfterForChild(RenderBox* child, LayoutUnit margin)
 {
     switch (style()->writingMode()) {
     case TopToBottomWritingMode:
