@@ -1,3 +1,12 @@
+2011-06-29  Jeff Timanus  <twiz@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] Remove flakiness marker from fast/canvas/canvas-longlived-context.html
+        https://bugs.webkit.org/show_bug.cgi?id=63649
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

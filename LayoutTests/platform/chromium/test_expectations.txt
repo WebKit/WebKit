@@ -1031,9 +1031,6 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // shadow rendering issues
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 
-// Flaky tests
-BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
-
 // Misc. render failures
 BUGWK62138 WIN MAC GPU : compositing/tiling/huge-layer-img.html = TEXT PASS
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
