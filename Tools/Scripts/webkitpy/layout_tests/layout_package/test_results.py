@@ -55,9 +55,9 @@ class TestResult(object):
     def __ne__(self, other):
         return not (self == other)
 
-    def has_failure_matching_types(self, types):
+    def has_failure_matching_types(self, *args, **kargs):
         for failure in self.failures:
-            if type(failure) in types:
+            if type(failure) in args:
                 return True
         return False
 

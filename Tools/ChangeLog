@@ -1,3 +1,30 @@
+2011-06-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dirk Pranke.
+
+        new-run-webkit-tests complains about missing pixel results instead of plopping down new expectations
+        https://bugs.webkit.org/show_bug.cgi?id=38063
+
+        This patch changes new-run-webkit-tests to match old-run-webkit-tests
+        in generating new expected results when the expected results are
+        missing.
+
+        There are still a couple details that are different:
+
+        1) Image baselines aren't generated unless you run with -p.
+        2) Render tree dumps are places in the cross-platform directory instead
+        of the platform-specific directory.
+
+        I'm inclined to deal with both of these issues in follow-up patches.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-06-29  Adam Roben  <aroben@apple.com>
 
         Teach TestFailures to detect possibly flaky tests and list them separately

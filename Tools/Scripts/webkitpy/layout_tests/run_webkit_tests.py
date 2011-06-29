@@ -279,8 +279,6 @@ def parse_args(args=None):
     # FIXME: Need: --sample-on-timeout Run sample on timeout
 
     old_run_webkit_tests_compat = [
-        # NRWT doesn't generate results by default anyway.
-        _compat_shim_option("--no-new-test-results"),
         # NRWT doesn't sample on timeout yet anyway.
         _compat_shim_option("--no-sample-on-timeout"),
         # FIXME: NRWT needs to support remote links eventually.
@@ -307,6 +305,9 @@ def parse_args(args=None):
         optparse.make_option("--reset-results", action="store_true",
             default=False, help="Reset any existing baselines to the "
                  "generated results"),
+        optparse.make_option("--no-new-test-results", action="store_false",
+            dest="new_test_results", default=True,
+            help="Don't create new baselines when no expected results exist"),
         optparse.make_option("--skip-failing-tests", action="store_true",
             default=False, help="Skip tests that are expected to fail. "
                  "Note: When using this option, you might miss new crashes "

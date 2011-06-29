@@ -136,6 +136,8 @@ def unit_test_list():
     tests.add('failures/expected/newlines_with_excess_CR.html',
               expected_text="foo\r\r\r\n", actual_text="foo\n")
     tests.add('failures/expected/text.html', actual_text='text_fail-png')
+    tests.add('failures/unexpected/missing_text.html', expected_text=None)
+    tests.add('failures/unexpected/missing_image.html', expected_image=None)
     tests.add('failures/unexpected/crash.html', crash=True)
     tests.add('failures/unexpected/crash-with-stderr.html', crash=True,
               error="mock-std-error-output")

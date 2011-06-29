@@ -795,7 +795,7 @@ class Manager:
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
-        failures = self._get_failures(result_summary, include_crashes=False)
+        failures = self._get_failures(result_summary, include_crashes=False, include_missing=False)
         retry_summary = result_summary
         while (len(failures) and self._options.retry_failures and
             not self._retrying and not interrupted):
@@ -806,7 +806,7 @@ class Manager:
             retry_summary = ResultSummary(self._expectations, failures.keys())
             # Note that we intentionally ignore the return value here.
             self._run_tests(failures.keys(), retry_summary)
-            failures = self._get_failures(retry_summary, include_crashes=True)
+            failures = self._get_failures(retry_summary, include_crashes=True, include_missing=True)
 
         end_time = time.time()
 
@@ -933,7 +933,7 @@ class Manager:
             if self._fs.isdir(self._fs.join(layout_tests_dir, dirname)):
                 self._fs.rmtree(self._fs.join(self._results_directory, dirname))
 
-    def _get_failures(self, result_summary, include_crashes):
+    def _get_failures(self, result_summary, include_crashes, include_missing):
         """Filters a dict of results and returns only the failures.
 
         Args:
@@ -948,7 +948,8 @@ class Manager:
         failed_results = {}
         for test, result in result_summary.unexpected_results.iteritems():
             if (result.type == test_expectations.PASS or
-                result.type == test_expectations.CRASH and not include_crashes):
+                (result.type == test_expectations.CRASH and not include_crashes) or
+                (result.type == test_expectations.MISSING and not include_missing)):
                 continue
             failed_results[test] = result.type
 
@@ -1297,7 +1298,7 @@ class Manager:
         if self._options.full_results_html:
             test_files = result_summary.failures.keys()
         else:
-            unexpected_failures = self._get_failures(result_summary, include_crashes=True)
+            unexpected_failures = self._get_failures(result_summary, include_crashes=True, include_missing=True)
             test_files = unexpected_failures.keys()
 
         if not len(test_files):

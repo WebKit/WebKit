@@ -161,7 +161,7 @@ class LayoutTestResults(object):
         return self._test_results
 
     def results_matching_failure_types(self, failure_types):
-        return [result for result in self._test_results if result.has_failure_matching_types(failure_types)]
+        return [result for result in self._test_results if result.has_failure_matching_types(*failure_types)]
 
     def tests_matching_failure_types(self, failure_types):
         return [result.filename for result in self.results_matching_failure_types(failure_types)]

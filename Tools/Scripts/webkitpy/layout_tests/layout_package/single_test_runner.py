@@ -128,31 +128,40 @@ class SingleTestRunner:
         driver_output = self._driver.run_test(self._driver_input())
         expected_driver_output = self._expected_driver_output()
         test_result = self._compare_output(driver_output, expected_driver_output)
-        test_result_writer.write_test_result(self._port, self._filename,
-                                             driver_output, expected_driver_output, test_result.failures)
+        if self._options.new_test_results:
+            self._add_missing_baselines(test_result, driver_output)
+        test_result_writer.write_test_result(self._port, self._filename, driver_output, expected_driver_output, test_result.failures)
         return test_result
 
     def _run_rebaseline(self):
         driver_output = self._driver.run_test(self._driver_input())
         failures = self._handle_error(driver_output)
-        test_result_writer.write_test_result(self._port, self._filename,
-                                             driver_output, None, failures)
+        test_result_writer.write_test_result(self._port, self._filename, driver_output, None, failures)
         # FIXME: It the test crashed or timed out, it might be bettter to avoid
         # to write new baselines.
-        self._save_baselines(driver_output)
+        self._overwrite_baselines(driver_output)
         return TestResult(self._filename, failures, driver_output.test_time, driver_output.has_stderr())
 
-    def _save_baselines(self, driver_output):
+    def _add_missing_baselines(self, test_result, driver_output):
+        if test_result.has_failure_matching_types(test_failures.FailureMissingResult):
+            # FIXME: We seem to be putting new text results in non-platform
+            # specific directories even when they're rendertree dumps. Maybe
+            # we should have a different kind of failure for render tree dumps
+            # than for text tests?
+            self._save_baseline_data(driver_output.text, ".txt", generate_new_baseline=False)
+        if test_result.has_failure_matching_types(test_failures.FailureMissingAudio):
+            self._save_baseline_data(driver_output.audio, ".wav", generate_new_baseline=False)
+        if test_result.has_failure_matching_types(test_failures.FailureMissingImage, test_failures.FailureMissingImageHash):
+            self._save_baseline_data(driver_output.image, ".png", generate_new_baseline=False)
+
+    def _overwrite_baselines(self, driver_output):
         # Although all DumpRenderTree output should be utf-8,
         # we do not ever decode it inside run-webkit-tests.  For some tests
         # DumpRenderTree may not output utf-8 text (e.g. webarchives).
-        self._save_baseline_data(driver_output.text, ".txt",
-                                 generate_new_baseline=self._options.new_baseline)
-        self._save_baseline_data(driver_output.audio, '.wav',
-                                 generate_new_baseline=self._options.new_baseline)
+        self._save_baseline_data(driver_output.text, ".txt", generate_new_baseline=self._options.new_baseline)
+        self._save_baseline_data(driver_output.audio, ".wav", generate_new_baseline=self._options.new_baseline)
         if self._options.pixel_tests:
-            self._save_baseline_data(driver_output.image, ".png",
-                                     generate_new_baseline=self._options.new_baseline)
+            self._save_baseline_data(driver_output.image, ".png", generate_new_baseline=self._options.new_baseline)
 
     def _save_baseline_data(self, data, modifier, generate_new_baseline=True):
         """Saves a new baseline file into the port's baseline directory.
@@ -178,10 +187,10 @@ class SingleTestRunner:
                 "-expected" + modifier)
             fs.maybe_make_directory(output_dir)
             output_path = fs.join(output_dir, output_file)
-            _log.debug('writing new baseline result "%s"' % (output_path))
+            _log.debug('Writing new baseline result "%s"' % output_path)
         else:
             output_path = port.expected_filename(self._filename, modifier)
-            _log.debug('resetting baseline result "%s"' % output_path)
+            _log.debug('Resetting baseline result "%s"' % output_path)
 
         port.update_baseline(output_path, data)
 
