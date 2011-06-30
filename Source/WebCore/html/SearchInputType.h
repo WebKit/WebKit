@@ -42,20 +42,17 @@ class SearchInputType : public BaseTextInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
-protected:
-    virtual void createShadowSubtree();
-    virtual void destroyShadowSubtree();
-
 private:
     SearchInputType(HTMLInputElement*);
     virtual const AtomicString& formControlType() const;
     virtual bool shouldRespectSpeechAttribute();
     virtual bool isSearchField() const;
-    virtual HTMLElement* innerBlockElement() const;
+    virtual bool needsContainer() const;
+    virtual void createShadowSubtree();
+    virtual void destroyShadowSubtree();
     virtual HTMLElement* resultsButtonElement() const;
     virtual HTMLElement* cancelButtonElement() const;
 
-    RefPtr<HTMLElement> m_innerBlock;
     RefPtr<HTMLElement> m_resultsButton;
     RefPtr<HTMLElement> m_cancelButton;
 };

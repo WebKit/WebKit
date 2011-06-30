@@ -1,5 +1,96 @@
 2011-06-29  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Avoid custom layout code of RenderTextControlSingleLine
+        https://bugs.webkit.org/show_bug.cgi?id=61415
+
+        If a text field has a search results button, a search cancel
+        button, a speech button, or a spin button, the editable inner text
+        element and the buttons are wrapped by a flexible box container,
+        and the editable inner text element has flexibility. As the result
+        of applying the flexible box, we don't need any horizontal layout
+        code in RenderTextControlSingleLine except the inner spin button.
+
+        Also, we remove custom hit-testing code in nodeAtPoint(). If a
+        user clicks on a position left of the inner editable text but not
+        on the search results button, the search results button doesn't
+        work though it worked.
+
+        * css/html.css:
+        (input::-webkit-textfield-decoration-container):
+          New style definition for the "container" element.
+        (input[type="search"]::-webkit-search-cancel-button):
+          It should be a block element because it's a child of the flexible box.
+          Also, this doesn't have flexibility.
+        (input[type="search"]::-webkit-search-decoration): ditto.
+        (input[type="search"]::-webkit-search-results-decoration): ditto.
+        (input[type="search"]::-webkit-search-results-button): ditto.
+        (input::-webkit-inner-spin-button): ditto.
+        (input::-webkit-input-speech-button): ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::containerElement):
+          Add an accessor of the flexible box container.
+          It just calls InputType::containerElement().
+        * html/HTMLInputElement.h: Declare it.
+        * html/InputType.h:
+        (WebCore::InputType::containerElement): New accessor for a shadow element.
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType):
+          m_innerBlock is moved to TextFieldInputType.
+        (WebCore::SearchInputType::needsContainer):
+          A search field always needs the flexible box container because
+          of the results button and the cancel button.
+        (WebCore::SearchInputType::createShadowSubtree):
+          Use TextFieldInputType::createShadowSubtree(), then modify the tree.
+        (WebCore::SearchInputType::destroyShadowSubtree):
+          m_innerBlock is moved to TextFieldInputType.
+        * html/SearchInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::TextFieldInputType):
+          Initialize the new members.
+        (WebCore::TextFieldInputType::needsContainer):
+          Returns true if x-webkit-speech. We check a spin button separately.
+        (WebCore::TextFieldInputType::createShadowSubtree):
+          Wrap everything with the flexible box container if needsContainer() or we need a spin button.
+        (WebCore::TextFieldInputType::containerElement): Added an accessor.
+        (WebCore::TextFieldInputType::innerBlockElement): ditto.
+        (WebCore::TextFieldInputType::innerTextElement): ditto.
+        (WebCore::TextFieldInputType::innerSpinButtonElement): ditto.
+        (WebCore::TextFieldInputType::speechButtonElement): ditto.
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+          Clear references to new shadow nodes.
+        * html/TextFieldInputType.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::containerElement): Added an accessor.
+        (WebCore::RenderTextControlSingleLine::innerTextElement):
+        (WebCore::RenderTextControlSingleLine::layout):
+         - Correct heights check
+          Comparing with height(), not contentHeigth(), was incorrect.
+         - Adjust the container height like the editable inner text.
+         - Remove width adjustment
+         - Remove the speech button layout code
+          The flexible box layout is enough.
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+          Remove custom code for results/cancel/speech buttons, and
+          Simplify comments.
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+          Remove custom forwarding code for results/cancel buttons.
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+          Clear the style of the container because we update it in layout().
+        (WebCore::RenderTextControlSingleLine::hasControlClip):
+          Decoration buttons should be clipped by the container.
+        (WebCore::RenderTextControlSingleLine::controlClipRect): ditto.
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+          We don't need to use display:inline-block any more.
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+          The text wrapper element should have flexibility.
+        (WebCore::RenderTextControlSingleLine::textBlockInsetTop):
+          Updated for the tree structure change.
+        * rendering/RenderTextControlSingleLine.h:
+
+2011-06-29  Kent Tamura  <tkent@chromium.org>
+
         [Mac] Attempt to fix Leopard build.
 
         * platform/mac/CursorMac.mm:

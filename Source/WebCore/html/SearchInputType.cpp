@@ -63,37 +63,28 @@ bool SearchInputType::isSearchField() const
     return true;
 }
 
+bool SearchInputType::needsContainer() const
+{
+    return true;
+}
+
 void SearchInputType::createShadowSubtree()
 {
-    ASSERT(!m_innerBlock);
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
 
+    TextFieldInputType::createShadowSubtree();
+    HTMLElement* container = containerElement();
+    HTMLElement* textWrapper = innerBlockElement();
+    ASSERT(container);
+    ASSERT(textWrapper);
+
     ExceptionCode ec = 0;
-    Document* document = element()->document();
-    m_innerBlock = TextControlInnerElement::create(document);
-    element()->ensureShadowRoot()->appendChild(m_innerBlock, ec);
-
-#if ENABLE(INPUT_SPEECH)
-    if (element()->isSpeechEnabled()) {
-        setSpeechButtonElement(InputFieldSpeechButtonElement::create(document));
-        element()->ensureShadowRoot()->appendChild(speechButtonElement(), ec);
-    }
-#endif
-
-    m_resultsButton = SearchFieldResultsButtonElement::create(document);
-    m_innerBlock->appendChild(m_resultsButton, ec);
-
-    setInnerTextElement(TextControlInnerTextElement::create(document));
-    m_innerBlock->appendChild(innerTextElement(), ec);
+    m_resultsButton = SearchFieldResultsButtonElement::create(element()->document());
+    container->insertBefore(m_resultsButton, textWrapper, ec);
 
     m_cancelButton = SearchFieldCancelButtonElement::create(element()->document());
-    m_innerBlock->appendChild(m_cancelButton, ec);
-}
-
-HTMLElement* SearchInputType::innerBlockElement() const
-{
-    return m_innerBlock.get();
+    container->insertBefore(m_cancelButton, textWrapper->nextSibling(), ec);
 }
 
 HTMLElement* SearchInputType::resultsButtonElement() const
@@ -109,7 +100,6 @@ HTMLElement* SearchInputType::cancelButtonElement() const
 void SearchInputType::destroyShadowSubtree()
 {
     TextFieldInputType::destroyShadowSubtree();
-    m_innerBlock.clear();
     m_resultsButton.clear();
     m_cancelButton.clear();
 }

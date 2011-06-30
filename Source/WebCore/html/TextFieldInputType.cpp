@@ -129,51 +129,65 @@ RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderTextControlSingleLine(element(), element()->placeholderShouldBeVisible());
 }
 
+bool TextFieldInputType::needsContainer() const
+{
+#if ENABLE(INPUT_SPEECH)
+    return element()->isSpeechEnabled();
+#else
+    return false;
+#endif
+}
+
 void TextFieldInputType::createShadowSubtree()
 {
     ASSERT(!m_innerText);
+    ASSERT(!m_innerBlock);
     ASSERT(!m_innerSpinButton);
 
     Document* document = element()->document();
     RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
     bool shouldHaveSpinButton = theme->shouldHaveSpinButton(element());
-    bool hasDecorations = shouldHaveSpinButton;
-#if ENABLE(INPUT_SPEECH)
-    if (element()->isSpeechEnabled())
-        hasDecorations = true;
-#endif
+    bool createsContainer = shouldHaveSpinButton || needsContainer();
 
     ExceptionCode ec = 0;
     m_innerText = TextControlInnerTextElement::create(document);
-    element()->ensureShadowRoot()->appendChild(m_innerText, ec);
-    if (!hasDecorations)
+    if (!createsContainer) {
+        element()->ensureShadowRoot()->appendChild(m_innerText, ec);
         return;
+    }
+
+    ShadowRoot* shadowRoot = element()->ensureShadowRoot();
+    m_container = HTMLDivElement::create(document);
+    m_container->setShadowPseudoId("-webkit-textfield-decoration-container", ec);
+    shadowRoot->appendChild(m_container, ec);
+
+    m_innerBlock = TextControlInnerElement::create(document);
+    m_innerBlock->appendChild(m_innerText, ec);
+    m_container->appendChild(m_innerBlock, ec);
 
 #if ENABLE(INPUT_SPEECH)
     ASSERT(!m_speechButton);
     if (element()->isSpeechEnabled()) {
         m_speechButton = InputFieldSpeechButtonElement::create(document);
-        element()->ensureShadowRoot()->appendChild(m_speechButton, ec);
+        m_container->appendChild(m_speechButton, ec);
     }
 #endif
 
     if (shouldHaveSpinButton) {
         m_innerSpinButton = SpinButtonElement::create(document);
-        element()->ensureShadowRoot()->appendChild(m_innerSpinButton, ec);
+        m_container->appendChild(m_innerSpinButton, ec);
     }
 }
 
-void TextFieldInputType::setInnerTextElement(PassRefPtr<HTMLElement> element)
+HTMLElement* TextFieldInputType::containerElement() const
 {
-    m_innerText = element;
+    return m_container.get();
 }
 
-#if ENABLE(INPUT_SPEECH)
-void TextFieldInputType::setSpeechButtonElement(PassRefPtr<HTMLElement> element)
+HTMLElement* TextFieldInputType::innerBlockElement() const
 {
-    m_speechButton = element;
+    return m_innerBlock.get();
 }
-#endif
 
 HTMLElement* TextFieldInputType::innerTextElement() const
 {
@@ -197,10 +211,12 @@ void TextFieldInputType::destroyShadowSubtree()
 {
     InputType::destroyShadowSubtree();
     m_innerText.clear();
+    m_innerBlock.clear();
 #if ENABLE(INPUT_SPEECH)
     m_speechButton.clear();
 #endif
     m_innerSpinButton.clear();
+    m_container.clear();
 }
 
 bool TextFieldInputType::shouldUseInputMethod() const

@@ -46,6 +46,8 @@ protected:
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);
 
+    virtual HTMLElement* containerElement() const;
+    virtual HTMLElement* innerBlockElement() const;
     virtual HTMLElement* innerTextElement() const;
     virtual HTMLElement* innerSpinButtonElement() const;
 #if ENABLE(INPUT_SPEECH)
@@ -53,12 +55,9 @@ protected:
 #endif
 
 protected:
+    virtual bool needsContainer() const;
     virtual void createShadowSubtree();
     virtual void destroyShadowSubtree();
-    void setInnerTextElement(PassRefPtr<HTMLElement>);
-#if ENABLE(INPUT_SPEECH)
-    void setSpeechButtonElement(PassRefPtr<HTMLElement>);
-#endif
 
 private:
     virtual bool isTextField() const;
@@ -71,6 +70,8 @@ private:
     virtual String sanitizeValue(const String&);
     virtual bool shouldRespectListAttribute();
 
+    RefPtr<HTMLElement> m_container;
+    RefPtr<HTMLElement> m_innerBlock;
     RefPtr<HTMLElement> m_innerText;
     RefPtr<HTMLElement> m_innerSpinButton;
 #if ENABLE(INPUT_SPEECH)

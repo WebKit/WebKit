@@ -88,7 +88,12 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine()
     }
 }
 
-HTMLElement* RenderTextControlSingleLine::innerTextElement() const
+inline HTMLElement* RenderTextControlSingleLine::containerElement() const
+{
+    return inputElement()->containerElement();
+}
+
+inline HTMLElement* RenderTextControlSingleLine::innerTextElement() const
 {
     return inputElement()->innerTextElement();
 }
@@ -253,6 +258,17 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint&
 
 void RenderTextControlSingleLine::layout()
 {
+    // FIXME: We should remove the height-related hacks in layout() and
+    // styleDidChange(). We need them because
+    // - Center the inner elements vertically if the input height is taller than
+    //   the intrinsic height of the inner elements.
+    // - Shrink the inner elment heights if the input height is samller than the
+    //   intrinsic heights of the inner elements.
+
+    // We don't honor paddings and borders for textfields without decorations
+    // and type=search if the text height is taller than the contentHeight()
+    // because of compability.
+
     int oldHeight = height();
     computeLogicalHeight();
 
@@ -262,135 +278,78 @@ void RenderTextControlSingleLine::layout()
     bool relayoutChildren = oldHeight != height() || oldWidth != width();
 
     RenderBox* innerTextRenderer = innerTextElement()->renderBox();
-    HTMLElement* innerBlock = innerBlockElement();
-    RenderBox* innerBlockRenderer = innerBlock ? innerBlock->renderBox() : 0;
+    ASSERT(innerTextRenderer);
+    RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : 0;
+    HTMLElement* container = containerElement();
+    RenderBox* containerRenderer = container ? container->renderBox() : 0;
 
     // Set the text block height
     int desiredHeight = textBlockHeight();
     int currentHeight = innerTextRenderer->height();
 
-    if (currentHeight > height()) {
+    int heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
+    if (currentHeight > heightLimit) {
         if (desiredHeight != currentHeight)
             relayoutChildren = true;
         innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
-        if (innerBlock)
+        if (innerBlockRenderer)
             innerBlockRenderer->style()->setHeight(Length(desiredHeight, Fixed));
     }
-
-    // Set the text block width
-    int desiredWidth = textBlockWidth();
-    if (desiredWidth != innerTextRenderer->width())
-        relayoutChildren = true;
-    innerTextRenderer->style()->setWidth(Length(desiredWidth, Fixed));
-
-    if (innerBlock) {
-        int innerBlockWidth = width() - borderAndPaddingWidth();
-        if (innerBlockWidth != innerBlockRenderer->width())
+    // The container might be taller because of decoration elements.
+    if (containerRenderer) {
+        containerRenderer->layoutIfNeeded();
+        int containerHeight = containerRenderer->height();
+        if (containerHeight > heightLimit) {
+            containerRenderer->style()->setHeight(Length(heightLimit, Fixed));
             relayoutChildren = true;
-        innerBlockRenderer->style()->setWidth(Length(innerBlockWidth, Fixed));
+        } else if (containerRenderer->height() < contentHeight()) {
+            containerRenderer->style()->setHeight(Length(contentHeight(), Fixed));
+            relayoutChildren = true;
+        }
     }
 
     RenderBlock::layoutBlock(relayoutChildren);
 
     // Center the child block vertically
-    RenderBox* childBlock = innerBlockRenderer ? innerBlockRenderer : innerTextRenderer;
-    currentHeight = childBlock->height();
-    if (currentHeight < height())
-        childBlock->setY((height() - currentHeight) / 2);
+    currentHeight = innerTextRenderer->height();
+    if (!container && currentHeight != contentHeight()) {
+        int heightDiff = currentHeight - contentHeight();
+        innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + heightDiff % 2));
+    } else if (inputElement()->isSearchField() && containerRenderer && containerRenderer->height() > contentHeight()) {
+        // A quirk for find-in-page box on Safari Windows.
+        // http://webkit.org/b/63157
+        int heightDiff = containerRenderer->height() - contentHeight();
+        containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + heightDiff % 2));
+    }
 
     // Ignores the paddings for the inner spin button.
-    HTMLElement* innerSpinButton = innerSpinButtonElement();
-    if (RenderBox* spinBox = innerSpinButton ? innerSpinButton->renderBox() : 0) {
-        spinBox->setLocation(IntPoint(spinBox->x() + paddingRight(), borderTop()));
-        spinBox->setHeight(height() - borderTop() - borderBottom());
+    if (RenderBox* innerSpinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0) {
+        RenderBox* parentBox = innerSpinBox->parentBox();
+        innerSpinBox->setLocation(IntPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
+        innerSpinBox->setHeight(height() - borderTop() - borderBottom());
     }
-
-#if ENABLE(INPUT_SPEECH)
-    if (RenderBox* button = speechButtonElement() ? speechButtonElement()->renderBox() : 0) {
-        if (innerBlock) {
-            // This is mostly the case where this is a search field. The speech button is a sibling
-            // of the inner block and laid out at the far right.
-            int x = width() - borderAndPaddingWidth() - button->width() - button->borderAndPaddingWidth();
-            int y = (height() - button->height()) / 2;
-            button->setLocation(IntPoint(x, y));
-        } else {
-            int x = width() - borderRight() - paddingRight() - button->width();
-            RenderBox* spinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0;
-            if (style()->isLeftToRightDirection())
-                x -= spinBox ? spinBox->width() : 0;
-            else
-                innerTextRenderer->setX(paddingLeft() + borderLeft() + (spinBox ? spinBox->width() : 0));
-            int y = (height() - button->height()) / 2;
-            button->setLocation(IntPoint(x, y));
-        }
-    }
-#endif
 }
 
 bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    // If we're within the text control, we want to act as if we've hit the inner text block element, in case the point
-    // was on the control but not on the inner element (see Radar 4617841).
-
-    // In a search field, we want to act as if we've hit the results block if we're to the left of the inner text block,
-    // and act as if we've hit the close block if we're to the right of the inner text block.
-
     if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
 
-    // If we hit a node inside the inner text element, say that we hit that element,
-    // and if we hit our node (e.g. we're over the border or padding), also say that we hit the
-    // inner text element so that it gains focus.
-    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node())
-        hitInnerTextElement(result, pointInContainer, accumulatedOffset);
-
-    // If we found a spin button, we're done.
-    HTMLElement* innerSpinButton = innerSpinButtonElement();
-    if (innerSpinButton && result.innerNode() == innerSpinButton)
-        return true;
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* speechButton = speechButtonElement();
-    if (speechButton && result.innerNode() == speechButton)
-        return true;
-#endif
-    // If we're not a search field, or we already found the speech, results or cancel buttons, we're done.
-    HTMLElement* innerBlock = innerBlockElement();
-    HTMLElement* resultsButton = resultsButtonElement();
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (!innerBlock || result.innerNode() == resultsButton || result.innerNode() == cancelButton)
-        return true;
-
-    Node* innerNode = 0;
-    RenderBox* innerBlockRenderer = innerBlock->renderBox();
-    RenderBox* innerTextRenderer = innerTextElement()->renderBox();
-
-    IntPoint localPoint = result.localPoint();
-    localPoint.move(-innerBlockRenderer->location());
-
-    int textLeft = accumulatedOffset.x() + x() + innerBlockRenderer->x() + innerTextRenderer->x();
-    if (resultsButton && resultsButton->renderer() && pointInContainer.x() < textLeft)
-        innerNode = resultsButton;
-
-#if ENABLE(INPUT_SPEECH)
-    if (!innerNode && speechButtonElement() && speechButtonElement()->renderer()) {
-        int buttonLeft = accumulatedOffset.x() + x() + innerBlockRenderer->x() + innerBlockRenderer->width() - speechButtonElement()->renderBox()->width();
-        if (pointInContainer.x() >= buttonLeft)
-            innerNode = speechButtonElement();
+    // Say that we hit the inner text element if
+    //  - we hit a node inside the inner text element,
+    //  - we hit the <input> element (e.g. we're over the border or padding), or
+    //  - we hit regions not in any decoration buttons.
+    HTMLElement* container = containerElement();
+    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node() || (container && container == result.innerNode())) {
+        IntPoint pointInParent = pointInContainer;
+        if (container && innerBlockElement()) {
+            if (innerBlockElement()->renderBox())
+                pointInParent -= toSize(innerBlockElement()->renderBox()->location());
+            if (container->renderBox())
+                pointInParent -= toSize(container->renderBox()->location());
+        }
+        hitInnerTextElement(result, pointInParent, accumulatedOffset);
     }
-#endif
-
-    if (!innerNode) {
-        int textRight = textLeft + innerTextRenderer->width();
-        if (cancelButton && cancelButton->renderer() && pointInContainer.x() > textRight)
-            innerNode = cancelButton;
-    }
-
-    if (innerNode) {
-        result.setInnerNode(innerNode);
-        localPoint.move(-innerNode->renderBox()->location());
-    }
-
-    result.setLocalPoint(localPoint);
     return true;
 }
 
@@ -408,46 +367,24 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
     } else if (event->type() == eventNames().focusEvent)
         capsLockStateMayHaveChanged();
 
-    if (!event->isMouseEvent()) {
-        RenderTextControl::forwardEvent(event);
-        return;
-    }
-
-#if ENABLE(INPUT_SPEECH)
-    if (RenderBox* speechBox = speechButtonElement() ? speechButtonElement()->renderBox() : 0) {
-        RenderBox* parent = innerTextRenderer ? innerTextRenderer : this;
-        FloatPoint pointInTextControlCoords = parent->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
-        if (speechBox->frameRect().contains(roundedIntPoint(pointInTextControlCoords))) {
-            speechButtonElement()->defaultEventHandler(event);
-            return;
-        }
-    }
-#endif
-
-    FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
-    int textRight = innerTextRenderer->borderBoxRect().maxX();
-
-    HTMLElement* resultsButton = resultsButtonElement();
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
-        resultsButton->defaultEventHandler(event);
-    else if (cancelButton && localPoint.x() > textRight)
-        cancelButton->defaultEventHandler(event);
-    else
-        RenderTextControl::forwardEvent(event);
+    RenderTextControl::forwardEvent(event);
 }
 
 void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderTextControl::styleDidChange(diff, oldStyle);
 
+    // We may have set the width and the height in the old style in layout().
+    // Reset them now to avoid getting a spurious layout hint.
     HTMLElement* innerBlock = innerBlockElement();
     if (RenderObject* innerBlockRenderer = innerBlock ? innerBlock->renderer() : 0) {
-        // We may have set the width and the height in the old style in layout().
-        // Reset them now to avoid getting a spurious layout hint.
         innerBlockRenderer->style()->setHeight(Length());
         innerBlockRenderer->style()->setWidth(Length());
-        innerBlockRenderer->setStyle(createInnerBlockStyle(style()));
+    }
+    HTMLElement* container = containerElement();
+    if (RenderObject* containerRenderer = container ? container->renderer() : 0) {
+        containerRenderer->style()->setHeight(Length());
+        containerRenderer->style()->setWidth(Length());
     }
     setHasOverflowClip(false);
 }
@@ -478,51 +415,16 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
 
 bool RenderTextControlSingleLine::hasControlClip() const
 {
-    bool clip = cancelButtonElement();
-    return clip;
+    // Apply control clip for text fields with decorations.
+    return !!containerElement();
 }
 
 IntRect RenderTextControlSingleLine::controlClipRect(const IntPoint& additionalOffset) const
 {
-    // This should only get called for search & speech inputs.
     ASSERT(hasControlClip());
-
-    IntRect clipRect = IntRect(innerBlockElement()->renderBox()->frameRect());
+    IntRect clipRect = IntRect(containerElement()->renderBox()->frameRect());
     clipRect.moveBy(additionalOffset);
     return clipRect;
-}
-
-int RenderTextControlSingleLine::textBlockWidth() const
-{
-    int width = RenderTextControl::textBlockWidth();
-
-    HTMLElement* resultsButton = resultsButtonElement();
-    if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
-        resultsRenderer->computeLogicalWidth();
-        width -= resultsRenderer->width() + resultsRenderer->marginLeft() + resultsRenderer->marginRight();
-    }
-
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0) {
-        cancelRenderer->computeLogicalWidth();
-        width -= cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->marginRight();
-    }
-
-    HTMLElement* innerSpinButton = innerSpinButtonElement();
-    if (RenderBox* spinRenderer = innerSpinButton ? innerSpinButton->renderBox() : 0) {
-        spinRenderer->computeLogicalWidth();
-        width -= spinRenderer->width() + spinRenderer->marginLeft() + spinRenderer->marginRight();
-    }
-
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* speechButton = speechButtonElement();
-    if (RenderBox* speechRenderer = speechButton ? speechButton->renderBox() : 0) {
-        speechRenderer->computeLogicalWidth();
-        width -= speechRenderer->width() + speechRenderer->marginLeft() + speechRenderer->marginRight();
-    }
-#endif
-
-    return width;
 }
 
 float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
@@ -647,12 +549,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
     if (textBlockStyle->fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
         textBlockStyle->setLineHeight(Length(-100.0f, Percent));
 
-    WebCore::EDisplay display = (innerBlockElement() || theme()->shouldHaveSpinButton(inputElement()) ? INLINE_BLOCK : BLOCK);
-#if ENABLE(INPUT_SPEECH)
-    if (inputElement()->isSpeechEnabled())
-      display = INLINE_BLOCK;
-#endif
-    textBlockStyle->setDisplay(display);
+    textBlockStyle->setDisplay(BLOCK);
 
     // We're adding one extra pixel of padding to match WinIE.
     textBlockStyle->setPaddingLeft(Length(1, Fixed));
@@ -666,6 +563,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
     RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
     innerBlockStyle->inheritFrom(startStyle);
 
+    innerBlockStyle->setBoxFlex(1);
     innerBlockStyle->setDisplay(BLOCK);
     innerBlockStyle->setDirection(LTR);
 
@@ -976,14 +874,16 @@ int RenderTextControlSingleLine::textBlockInsetRight() const
 
 int RenderTextControlSingleLine::textBlockInsetTop() const
 {
-    RenderBox* innerRenderer = 0;
-
-    if (HTMLElement* innerBlock = innerBlockElement())
-        innerRenderer = innerBlock->renderBox();
-    else if (HTMLElement* innerText = innerTextElement())
-        innerRenderer = innerText->renderBox();
-    
-    return innerRenderer ? innerRenderer->y() : borderTop() + paddingTop();
+    HTMLElement* innerText = innerTextElement();
+    if (!innerText || !innerText->renderBox())
+        return borderTop() + paddingTop();
+    HTMLElement* container = containerElement();
+    if (!container)
+        return innerText->renderBox()->y();
+    ASSERT(innerBlockElement());
+    if (!container->renderBox() || !innerBlockElement()->renderBox())
+        return innerText->renderBox()->y();
+    return container->renderBox()->y() + innerBlockElement()->renderBox()->y();
 }    
 
 }
