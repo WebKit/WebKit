@@ -35,6 +35,7 @@ WebInspector.EventListenersSidebarPane = function()
     this.sections = [];
 
     this.settingsSelectElement = document.createElement("select");
+    this.settingsSelectElement.className = "select-filter";
 
     var option = document.createElement("option");
     option.value = "all";

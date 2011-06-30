@@ -32,6 +32,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Styles"));
 
     this.settingsSelectElement = document.createElement("select");
+    this.settingsSelectElement.className = "select-settings";
 
     var option = document.createElement("option");
     option.value = "original";

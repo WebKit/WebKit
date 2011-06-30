@@ -1,3 +1,20 @@
+2011-06-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce "filter" icons for timeline panel and elements sidebar.
+        https://bugs.webkit.org/show_bug.cgi?id=63731
+
+        * inspector/front-end/EventListenersSidebarPane.js:
+        * inspector/front-end/Images/paneFilterButtons.png: Added.
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/StylesSidebarPane.js:
+        * inspector/front-end/inspector.css:
+        (.pane > .title > select):
+        (.pane > .title > select.select-settings):
+        (.pane > .title > select.select-filter):
+        (.timeline-filter-status-bar-item .glyph):
+
 2011-06-28  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Chang.
