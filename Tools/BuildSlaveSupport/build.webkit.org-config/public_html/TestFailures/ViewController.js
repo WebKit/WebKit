@@ -246,19 +246,19 @@ ViewController.prototype = {
         return result;
     },
 
-    _domForFailedTest: function(builder, buildName, testName, failureType) {
+    _domForFailedTest: function(builder, buildName, testName, testResult) {
         var result = document.createDocumentFragment();
         result.appendChild(document.createTextNode(testName));
         result.appendChild(document.createTextNode(' ('));
-        result.appendChild(this._domForFailureDiagnosis(builder, buildName, testName, failureType));
+        result.appendChild(this._domForFailureDiagnosis(builder, buildName, testName, testResult));
         result.appendChild(document.createTextNode(')'));
         return result;
     },
 
-    _domForFailureDiagnosis: function(builder, buildName, testName, failureType) {
-        var diagnosticInfo = builder.failureDiagnosisTextAndURL(buildName, testName, failureType);
+    _domForFailureDiagnosis: function(builder, buildName, testName, testResult) {
+        var diagnosticInfo = builder.failureDiagnosisTextAndURL(buildName, testName, testResult);
         if (!diagnosticInfo)
-            return document.createTextNode(failureType);
+            return document.createTextNode(testResult.failureType);
 
         var textNode = document.createTextNode(diagnosticInfo.text);
         if (!('url' in diagnosticInfo))

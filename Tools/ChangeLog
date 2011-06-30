@@ -1,5 +1,37 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Use objects instead of strings to represent a test result in TestFailures code
+
+        This will eventually allow us to store more than just the type of failure for each test.
+        (E.g., we can store the name of the crashing symbol for tests which crashed.)
+
+        Prep work for <http://webkit.org/b/63465> Links to crash logs on TestFailures page should
+        include the crashing symbol (like links in results.html do)
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.failureDiagnosisTextAndURL): Changed to expect a testResult object
+        instead of just a failureType string.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js:
+        (FlakyLayoutTestDetector.prototype.incorporateTestResults): Changed to store a
+        testResult-like object for passing tests.
+        (FlakyLayoutTestDetector.prototype.flakinessExamples): Changed to expect testResult-like
+        objects.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Store a version number along with the cached data
+        so we can throw away cached data that's in an old format. Store a testResult object for each
+        test instead of just its failure type.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForFailedTest):
+        (ViewController.prototype._domForFailureDiagnosis):
+        Changed to expect testResult objects instead of failureType strings.
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Show full commit logs when visiting Trac from TestFailures page
 
         Fixes <http://webkit.org/b/63715> Links to Trac on TestFailures page

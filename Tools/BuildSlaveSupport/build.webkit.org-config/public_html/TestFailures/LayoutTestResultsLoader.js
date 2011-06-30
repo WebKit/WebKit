@@ -30,16 +30,16 @@ function LayoutTestResultsLoader(builder) {
 LayoutTestResultsLoader.prototype = {
     start: function(buildName, callback, errorCallback) {
         var cacheKey = 'LayoutTestResultsLoader.' + this._builder.name + '.' + buildName;
+        const currentCachedDataVersion = 1;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
-            // Old versions of this function used to cache only the set of tests.
-            if ('tooManyFailures' in cachedData) {
+            if (cachedData.version === currentCachedDataVersion) {
                 callback(cachedData.tests, cachedData.tooManyFailures);
                 return;
             }
         }
 
-        var result = { tests: {}, tooManyFailures: false };
+        var result = { tests: {}, tooManyFailures: false, version: currentCachedDataVersion };
 
         var parsedBuildName = this._builder.buildbot.parseBuildName(buildName);
 
@@ -70,16 +70,16 @@ LayoutTestResultsLoader.prototype = {
                 }
 
                 testsForResultTable(/did not match expected results/).forEach(function(name) {
-                    result.tests[name] = 'fail';
+                    result.tests[name] = { failureType: 'fail' };
                 });
                 testsForResultTable(/timed out/).forEach(function(name) {
-                    result.tests[name] = 'timeout';
+                    result.tests[name] = { failureType: 'timeout' };
                 });
                 testsForResultTable(/tool to crash/).forEach(function(name) {
-                    result.tests[name] = 'crash';
+                    result.tests[name] = { failureType: 'crash' };
                 });
                 testsForResultTable(/Web process to crash/).forEach(function(name) {
-                    result.tests[name] = 'webprocess crash';
+                    result.tests[name] = { failureType: 'webprocess crash' };
                 });
 
                 PersistentCache.set(cacheKey, result);

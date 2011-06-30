@@ -34,7 +34,7 @@ Builder.prototype = {
         return this.buildbot.buildURL(this.name, buildName);
     },
 
-    failureDiagnosisTextAndURL: function(buildName, testName, failureType) {
+    failureDiagnosisTextAndURL: function(buildName, testName, testResult) {
         var urlStem = this.resultsDirectoryURL(buildName) + testName.replace(/\.[^.]+$/, '');
         var diagnosticInfo = {
             fail: {
@@ -54,7 +54,7 @@ Builder.prototype = {
             },
         };
 
-        return diagnosticInfo[failureType];
+        return diagnosticInfo[testResult.failureType];
     },
 
     getMostRecentCompletedBuildNumber: function(callback) {

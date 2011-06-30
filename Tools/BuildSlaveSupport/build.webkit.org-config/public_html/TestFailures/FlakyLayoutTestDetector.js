@@ -61,7 +61,7 @@ FlakyLayoutTestDetector.prototype = {
                 continue;
 
             var testData = this._tests[testName];
-            testData.history.push({ build: buildName, result: 'pass' });
+            testData.history.push({ build: buildName, result: { failureType: 'pass' } });
 
             if (testData.state === this._states.LastSeenFailing)
                 testData.state = this._states.LastSeenPassing;
@@ -78,8 +78,8 @@ FlakyLayoutTestDetector.prototype = {
 
         var examples = [];
         for (var i = 0; i < history.length - 1; ++i) {
-            var thisIsPassing = history[i].result === 'pass';
-            var nextIsPassing = history[i + 1].result === 'pass';
+            var thisIsPassing = history[i].result.failureType === 'pass';
+            var nextIsPassing = history[i + 1].result.failureType === 'pass';
             if (thisIsPassing === nextIsPassing)
                 continue;
             var last = examples.last();
