@@ -552,7 +552,6 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
-    VisiblePosition positionForCoordinates(int x, int y);
     virtual VisiblePosition positionForPoint(const IntPoint&);
     VisiblePosition createVisiblePosition(int offset, EAffinity);
     VisiblePosition createVisiblePosition(const Position&);

@@ -726,13 +726,12 @@ VisiblePosition RenderInline::positionForPoint(const IntPoint& point)
     }
 
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
-    int parentBlockX = cb->x() + point.x();
-    int parentBlockY = cb->y() + point.y();
+    IntPoint parentBlockPoint = cb->location() + point;  
     RenderBoxModelObject* c = continuation();
     while (c) {
         RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);
         if (c->isInline() || c->firstChild())
-            return c->positionForCoordinates(parentBlockX - contBlock->x(), parentBlockY - contBlock->y());
+            return c->positionForPoint(parentBlockPoint - contBlock->locationOffset());
         c = toRenderBlock(c)->inlineElementContinuation();
     }
     

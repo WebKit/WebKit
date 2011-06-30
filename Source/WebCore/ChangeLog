@@ -1,3 +1,26 @@
+2011-06-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove positionForCoordinates
+        https://bugs.webkit.org/show_bug.cgi?id=63765
+
+        Removing positionForCoordinate. We should always use positionForPoint. Also cleaning up
+        RenderBox's implementation of positionForPoint.
+
+        No new tests, there should be no functionality changes.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue): Removing dead, or at least untested, code and
+        adding an ASSERT_NOT_REACHED.
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint): cleaning up some ugly code.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForPoint):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+
 2011-06-30  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

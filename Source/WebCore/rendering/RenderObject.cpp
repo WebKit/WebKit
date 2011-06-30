@@ -2122,11 +2122,6 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
     arena->free(*(size_t*)base, base);
 }
 
-VisiblePosition RenderObject::positionForCoordinates(int x, int y)
-{
-    return positionForPoint(IntPoint(x, y));
-}
-
 VisiblePosition RenderObject::positionForPoint(const IntPoint&)
 {
     return createVisiblePosition(caretMinOffset(), DOWNSTREAM);

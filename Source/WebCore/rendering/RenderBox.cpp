@@ -3108,8 +3108,8 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
         int right = contentWidth() + borderAndPaddingWidth();
         int bottom = contentHeight() + borderAndPaddingHeight();
         
-        if (xPos < 0 || xPos > right || yPos < 0 || yPos > bottom) {
-            if (xPos <= right / 2)
+        if (point.x() < 0 || point.x() > right || point.y() < 0 || point.y() > bottom) {
+            if (point.x() <= right / 2)
                 return createVisiblePosition(firstPositionInOrBeforeNode(node()));
             return createVisiblePosition(lastPositionInOrAfterNode(node()));
         }
@@ -3118,12 +3118,10 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
     // Pass off to the closest child.
     int minDist = INT_MAX;
     RenderBox* closestRenderer = 0;
-    int newX = xPos;
-    int newY = yPos;
-    if (isTableRow()) {
-        newX += x();
-        newY += y();
-    }
+    IntPoint adjustedPoint = point;
+    if (isTableRow())
+        adjustedPoint.move(location());
+
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
         if ((!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlow() )
             || renderObject->style()->visibility() != VISIBLE)
@@ -3139,10 +3137,10 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
         int left = renderer->borderLeft() + renderer->paddingLeft() + (isTableRow() ? 0 : renderer->x());
         int right = left + renderer->contentWidth();
         
-        if (xPos <= right && xPos >= left && yPos <= top && yPos >= bottom) {
+        if (point.x() <= right && point.x() >= left && point.y() <= top && point.y() >= bottom) {
             if (renderer->isTableRow())
-                return renderer->positionForCoordinates(xPos + newX - renderer->x(), yPos + newY - renderer->y());
-            return renderer->positionForCoordinates(xPos - renderer->x(), yPos - renderer->y());
+                return renderer->positionForPoint(point + adjustedPoint - renderer->locationOffset());
+            return renderer->positionForPoint(point - renderer->locationOffset());
         }
 
         // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
@@ -3168,11 +3166,10 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
             else
                 cmp = IntPoint(xPos, bottom);
         }
-        
-        int x1minusx2 = cmp.x() - xPos;
-        int y1minusy2 = cmp.y() - yPos;
-        
-        int dist = x1minusx2 * x1minusx2 + y1minusy2 * y1minusy2;
+
+        IntSize difference = cmp - point;
+
+        int dist = difference.width() * difference.width() + difference.height() * difference.height();
         if (dist < minDist) {
             closestRenderer = renderer;
             minDist = dist;
@@ -3180,7 +3177,7 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
     }
     
     if (closestRenderer)
-        return closestRenderer->positionForCoordinates(newX - closestRenderer->x(), newY - closestRenderer->y());
+        return closestRenderer->positionForPoint(adjustedPoint - closestRenderer->locationOffset());
     
     return createVisiblePosition(firstPositionInOrBeforeNode(node()));
 }

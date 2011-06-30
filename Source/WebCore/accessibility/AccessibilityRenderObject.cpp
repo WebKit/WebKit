@@ -1157,17 +1157,11 @@ String AccessibilityRenderObject::stringValue() const
         return toRenderButton(m_renderer)->text();
 
     if (isWebArea()) {
+        // FIXME: Why would a renderer exist when the Document isn't attached to a frame?
         if (m_renderer->frame())
             return String();
-        
-        // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here
-        VisiblePosition startVisiblePosition = m_renderer->positionForCoordinates(0, 0);
-        VisiblePosition endVisiblePosition = m_renderer->positionForCoordinates(INT_MAX, INT_MAX);
-        if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
-            return String();
 
-        return plainText(makeRange(startVisiblePosition, endVisiblePosition).get(),
-                         textIteratorBehaviorForTextRange());
+        ASSERT_NOT_REACHED();
     }
     
     if (isTextControl())
@@ -2450,7 +2444,7 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // iterate over the lines
     // FIXME: this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
     // last offset of the last line
-    VisiblePosition visiblePos = m_renderer->document()->renderer()->positionForCoordinates(0, 0);
+    VisiblePosition visiblePos = m_renderer->document()->renderer()->positionForPoint(IntPoint());
     VisiblePosition savedVisiblePos;
     while (--lineCount) {
         savedVisiblePos = visiblePos;
