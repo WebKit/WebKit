@@ -697,10 +697,40 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
     return true;
 }
 
-void IDBLevelDBBackingStore::deleteIndex(int64_t, int64_t, int64_t)
+void IDBLevelDBBackingStore::deleteIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId)
 {
-    ASSERT_NOT_REACHED(); // FIXME: Implement and add layout test.
-    return;
+    ASSERT(m_currentTransaction);
+
+    const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 0);
+    const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 1);
+    const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 2);
+
+    if (!m_currentTransaction->remove(nameKey)) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return;
+    }
+    if (!m_currentTransaction->remove(uniqueKey)) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return;
+    }
+    if (!m_currentTransaction->remove(keyPathKey)) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return;
+    }
+
+    const Vector<char> indexDataStart = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
+    const Vector<char> indexDataEnd = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
+
+    if (!deleteRange(m_currentTransaction.get(), indexDataStart, indexDataEnd)) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return;
+    }
+
+    const Vector<char> freeListKey = IndexFreeListKey::encode(databaseId, objectStoreId, indexId);
+    if (!putInt(m_currentTransaction.get(), freeListKey, 0)) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return;
+    }
 }
 
 bool IDBLevelDBBackingStore::putIndexDataForRecord(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const ObjectStoreRecordIdentifier* recordIdentifier)
