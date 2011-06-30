@@ -1,3 +1,15 @@
+2011-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Add +[WebView _allowsRoundingHacks]
+        https://bugs.webkit.org/show_bug.cgi?id=63734
+
+        * WebCore.exp.in: Export TextRun::allowsRoundingHacks().
+        * platform/graphics/TextRun.cpp:
+        (WebCore::TextRun::allowsRoundingHacks): Added this accessor.
+        * platform/graphics/TextRun.h:
+
 2011-06-30  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

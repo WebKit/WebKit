@@ -146,6 +146,7 @@ public:
     void setRenderingContext(PassRefPtr<RenderingContext> context) { m_renderingContext = context; }
 
     static void setAllowsRoundingHacks(bool);
+    static bool allowsRoundingHacks();
 
 private:
     static bool s_allowsRoundingHacks;

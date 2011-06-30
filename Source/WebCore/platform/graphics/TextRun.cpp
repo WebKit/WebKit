@@ -35,4 +35,9 @@ void TextRun::setAllowsRoundingHacks(bool allowsRoundingHacks)
     s_allowsRoundingHacks = allowsRoundingHacks;
 }
 
+bool TextRun::allowsRoundingHacks()
+{
+    return s_allowsRoundingHacks;
+}
+
 }

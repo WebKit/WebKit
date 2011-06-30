@@ -342,6 +342,7 @@ Could be worth adding to the API.
 + (void)_setAlwaysUseATSU:(BOOL)f;
 
 + (void)_setAllowsRoundingHacks:(BOOL)allowsRoundingHacks;
++ (BOOL)_allowsRoundingHacks;
 
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
 

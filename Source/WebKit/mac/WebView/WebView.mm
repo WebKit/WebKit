@@ -1071,6 +1071,11 @@ static NSMutableSet *knownPluginMIMETypes()
     TextRun::setAllowsRoundingHacks(allowsRoundingHacks);
 }
 
++ (BOOL)_allowsRoundingHacks
+{
+    return TextRun::allowsRoundingHacks();
+}
+
 + (BOOL)canCloseAllWebViews
 {
     return DOMWindow::dispatchAllPendingBeforeUnloadEvents();
