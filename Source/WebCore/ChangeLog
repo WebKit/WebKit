@@ -1,6 +1,16 @@
 2011-06-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Enrica Casucci.
+        
+        I forgot to include these (reviewed) style fix-ups in my previous check-in.
+
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition):
+        (WebCore::visiblePositionForIndex):
+
+2011-06-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Enrica Casucci.
 
         https://bugs.webkit.org/show_bug.cgi?id=62922
         indexForVisiblePosition(const VisiblePosition& visiblePosition) does not consider shadow content

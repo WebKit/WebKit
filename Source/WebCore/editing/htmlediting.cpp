@@ -1030,7 +1030,7 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, Element **sc
     if (shadowRoot) {
         // Use the shadow root for form elements, since TextIterators will not enter shadow content.
         ASSERT(shadowRoot->isElementNode());
-        root = static_cast<Element *>(shadowRoot);
+        root = static_cast<Element*>(shadowRoot);
     } else
         root = document->documentElement();
     
@@ -1039,9 +1039,7 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, Element **sc
         *scope = root;
     }
     
-    RefPtr<Range> range = Range::create(document, 
-                                        firstPositionInNode(root),
-                                        p.parentAnchoredEquivalent());
+    RefPtr<Range> range = Range::create(document, firstPositionInNode(root), p.parentAnchoredEquivalent());
     
     return TextIterator::rangeLength(range.get(), true);
 }
@@ -1049,7 +1047,8 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, Element **sc
 VisiblePosition visiblePositionForIndex(int index, Element *scope)
 {
     RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, index, 0, true);
-    // indexForVisiblePosition can create a
+    // Check for an invalid index. Certain editing operations invalidate indices because 
+    // of problems with TextIteratorEmitsCharactersBetweenAllVisiblePositions.
     if (!range)
         return VisiblePosition();
     return VisiblePosition(range->startPosition());
