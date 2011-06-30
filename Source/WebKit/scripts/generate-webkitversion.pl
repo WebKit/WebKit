@@ -39,7 +39,6 @@ use strict;
 use Config;
 use Getopt::Long;
 use File::Path;
-use Switch;
 
 my $usage = "generate-webkitversion --config WebKit/mac/Configurations/Version.xcconfig --outputDir <outputdir>";
 

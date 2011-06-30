@@ -1,3 +1,15 @@
+2011-06-30  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Simon Hausmann.
+
+        generate-webkitversion.pl should not "use Switch"
+        https://bugs.webkit.org/show_bug.cgi?id=63628
+
+        Switch got deprecated on recent Perl versions and the script wasn't
+        using the switch statement.
+        
+        * scripts/generate-webkitversion.pl: Remove "use Switch;" line.
+
 2011-06-01  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
