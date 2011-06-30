@@ -27,36 +27,6 @@
 
 #define VK_UNKNOWN 0
 
-// Undef macros which are also defined in MinGW/include/winuser.h to aviod gcc redefinition warning
-// https://bugs.webkit.org/show_bug.cgi?id=43360
-#if COMPILER(MINGW)
-#undef VK_BACK
-#undef VK_TAB
-#undef VK_CLEAR
-#undef VK_RETURN
-#undef VK_SHIFT
-#undef VK_CONTROL
-#undef VK_MENU
-#undef VK_PAUSE
-#undef VK_CAPITAL
-#undef VK_SPACE
-#undef VK_PRIOR
-#undef VK_NEXT
-#undef VK_END
-#undef VK_HOME
-#undef VK_LEFT
-#undef VK_UP
-#undef VK_RIGHT
-#undef VK_DOWN
-#undef VK_SELECT
-#undef VK_PRINT
-#undef VK_EXECUTE
-#undef VK_SNAPSHOT
-#undef VK_INSERT
-#undef VK_DELETE
-#undef VK_HELP
-#endif // COMPILER(MINGW)
-
 // Left mouse button
 // Right mouse button
 // Control-break processing
@@ -64,42 +34,114 @@
 // VK_XBUTTON1 (05)
 // VK_XBUTTON2 (06)
 
+#ifndef VK_BACK
 #define VK_BACK 0x08
+#endif
+#ifndef VK_TAB
 #define VK_TAB 0x09
+#endif
+#ifndef VK_CLEAR
 #define VK_CLEAR 0x0C
+#endif
+#ifndef VK_RETURN
 #define VK_RETURN 0x0D
+#endif
+#ifndef VK_SHIFT
 #define VK_SHIFT 0x10
+#endif
+#ifndef VK_CONTROL
 #define VK_CONTROL 0x11 // CTRL key
+#endif
+#ifndef VK_MENU
 #define VK_MENU 0x12 // ALT key
+#endif
+#ifndef VK_PAUSE
 #define VK_PAUSE 0x13 // PAUSE key
+#endif
+#ifndef VK_CAPITAL
 #define VK_CAPITAL 0x14 // CAPS LOCK key
+#endif
+#ifndef VK_KANA
 #define VK_KANA 0x15 // Input Method Editor (IME) Kana mode
+#endif
+#ifndef VK_HANGUL
 #define VK_HANGUL 0x15 // IME Hangul mode
+#endif
+#ifndef VK_JUNJA
 #define VK_JUNJA 0x17 // IME Junja mode
+#endif
+#ifndef VK_FINAL
 #define VK_FINAL 0x18 // IME final mode
-#define VK_HANJA 0x19 // IME Hanja mode 
+#endif
+#ifndef VK_HANJA
+#define VK_HANJA 0x19 // IME Hanja mode
+#endif
+#ifndef VK_KANJI
 #define VK_KANJI 0x19 // IME Kanji mode
+#endif
+#ifndef VK_ESCAPE
 #define VK_ESCAPE 0x1B // ESC key
+#endif
+#ifndef VK_CONVERT
 #define VK_CONVERT 0x1C // IME convert
+#endif
+#ifndef VK_NONCONVERT
 #define VK_NONCONVERT 0x1D // IME nonconvert
+#endif
+#ifndef VK_ACCEPT
 #define VK_ACCEPT 0x1E // IME accept
+#endif
+#ifndef VK_MODECHANGE
 #define VK_MODECHANGE 0x1F // IME mode change request
+#endif
+#ifndef VK_SPACE
 #define VK_SPACE 0x20 // SPACE key
+#endif
+#ifndef VK_PRIOR
 #define VK_PRIOR 0x21 // PAGE UP key
+#endif
+#ifndef VK_NEXT
 #define VK_NEXT 0x22 // PAGE DOWN key
+#endif
+#ifndef VK_END
 #define VK_END 0x23 // END key
+#endif
+#ifndef VK_HOME
 #define VK_HOME 0x24 // HOME key
+#endif
+#ifndef VK_LEFT
 #define VK_LEFT 0x25 // LEFT ARROW key
+#endif
+#ifndef VK_UP
 #define VK_UP 0x26 // UP ARROW key
+#endif
+#ifndef VK_RIGHT
 #define VK_RIGHT 0x27 // RIGHT ARROW key
+#endif
+#ifndef VK_DOWN
 #define VK_DOWN 0x28 // DOWN ARROW key
+#endif
+#ifndef VK_SELECT
 #define VK_SELECT 0x29 // SELECT key
+#endif
+#ifndef VK_PRINT
 #define VK_PRINT 0x2A // PRINT key
+#endif
+#ifndef VK_EXECUTE
 #define VK_EXECUTE 0x2B // EXECUTE key
+#endif
+#ifndef VK_SNAPSHOT
 #define VK_SNAPSHOT 0x2C // PRINT SCREEN key
+#endif
+#ifndef VK_INSERT
 #define VK_INSERT 0x2D // INS key
+#endif
+#ifndef VK_DELETE
 #define VK_DELETE 0x2E // DEL key
+#endif
+#ifndef VK_HELP
 #define VK_HELP 0x2F // HELP key
+#endif
 
 #define VK_0 0x30
 #define VK_1 0x31

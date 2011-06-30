@@ -1,3 +1,15 @@
+2011-06-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WIN] Don't redefine the keyboard codes
+        https://bugs.webkit.org/show_bug.cgi?id=63726
+
+        Only define the codes when undefined.
+        r64957 fixed this problem for COMPILER(MINGW) but not for OS(WINCE).
+
+        * platform/WindowsKeyboardCodes.h:
+
 2011-06-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
