@@ -1513,19 +1513,19 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
-void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
+void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& rect)
 {
-    int newX = x();
-    int newY = y();
-    int newWidth = width();
-    int newHeight = height();
+    LayoutUnit newX = x();
+    LayoutUnit newY = y();
+    LayoutUnit newWidth = width();
+    LayoutUnit newHeight = height();
     if (rect.x() != newX || rect.y() != newY) {
         // The child moved.  Invalidate the object's old and new positions.  We have to do this
         // since the object may not have gotten a layout.
         m_frameRect = rect;
         repaint();
         repaintOverhangingFloats(true);
-        m_frameRect = IntRect(newX, newY, newWidth, newHeight);
+        m_frameRect = LayoutRect(newX, newY, newWidth, newHeight);
         repaint();
         repaintOverhangingFloats(true);
     }

@@ -603,7 +603,7 @@ public:
     void absoluteFocusRingQuads(Vector<FloatQuad>&);
 
     // the rect that will be painted if this object is passed as the paintingRoot
-    IntRect paintingRootRect(IntRect& topLevelRect);
+    LayoutRect paintingRootRect(LayoutRect& topLevelRect);
 
     virtual int minPreferredLogicalWidth() const { return 0; }
     virtual int maxPreferredLogicalWidth() const { return 0; }
@@ -629,20 +629,20 @@ public:
     RenderBoxModelObject* containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is 0, repaint via the view.
-    void repaintUsingContainer(RenderBoxModelObject* repaintContainer, const IntRect& r, bool immediate = false);
+    void repaintUsingContainer(RenderBoxModelObject* repaintContainer, const LayoutRect&, bool immediate = false);
     
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
     void repaint(bool immediate = false);
 
     // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
-    void repaintRectangle(const IntRect&, bool immediate = false);
+    void repaintRectangle(const LayoutRect&, bool immediate = false);
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
-    bool repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintContainer, const IntRect& oldBounds, const IntRect& oldOutlineBox, const IntRect* newBoundsPtr = 0, const IntRect* newOutlineBoxPtr = 0);
+    bool repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = 0, const LayoutRect* newOutlineBoxPtr = 0);
 
     // Repaint only if the object moved.
-    virtual void repaintDuringLayoutIfMoved(const IntRect& rect);
+    virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
 
     // Called to repaint a block's floats.
     virtual void repaintOverhangingFloats(bool paintAllDescendants = false);

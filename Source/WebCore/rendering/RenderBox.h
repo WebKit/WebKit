@@ -283,7 +283,7 @@ public:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
 
-    virtual void repaintDuringLayoutIfMoved(const IntRect&);
+    virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
 
     virtual int containingBlockLogicalWidthForContent() const;
     int perpendicularContainingBlockLogicalHeight() const;

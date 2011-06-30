@@ -1,3 +1,27 @@
+2011-06-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintingRootRect and RenderObject repaint methods to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63746
+
+        Switching paintingRootRect and RenderObject repaint functions over to the
+        new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintDuringLayoutIfMoved):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintingRootRect):
+        (WebCore::RenderObject::paint):
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::repaintDuringLayoutIfMoved):
+        * rendering/RenderObject.h:
+
 2011-06-30  Cary Clark  <caryclark@google.com>
 
         Reviewed by James Robinson.
