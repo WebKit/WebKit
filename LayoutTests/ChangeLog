@@ -2,6 +2,82 @@
 
         Reviewed by Kent Tamura.
 
+        WebSocket: Don't use script-tests for WebSocket tests
+        https://bugs.webkit.org/show_bug.cgi?id=63691
+
+        Move content of script-tests/XXX.js into XXX.html.
+
+        No changes were made to script code. Hence, these tests are not using
+        window.jsTestAsync and finishJSTest() for now. I will fix this later.
+
+        * http/tests/websocket/tests/alert-in-event-handler.html:
+        * http/tests/websocket/tests/bad-handshake-crash.html:
+        * http/tests/websocket/tests/bad-sub-protocol-control-chars.html:
+        * http/tests/websocket/tests/bad-sub-protocol-empty.html:
+        * http/tests/websocket/tests/bad-sub-protocol-non-ascii.html:
+        * http/tests/websocket/tests/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/cross-origin.html:
+        * http/tests/websocket/tests/error-detect.html:
+        * http/tests/websocket/tests/frame-length-longer-than-buffer.html:
+        * http/tests/websocket/tests/frame-length-skip.html:
+        * http/tests/websocket/tests/handshake-challenge-randomness.html:
+        * http/tests/websocket/tests/handshake-error.html:
+        * http/tests/websocket/tests/handshake-fail-by-cross-origin.html:
+        * http/tests/websocket/tests/handshake-fail-by-no-cr.html:
+        * http/tests/websocket/tests/handshake-fail-by-sub-protocol-mismatch.html:
+        * http/tests/websocket/tests/long-invalid-header.html:
+        * http/tests/websocket/tests/null-character.html:
+        * http/tests/websocket/tests/script-tests/TEMPLATE.html: Removed.
+        * http/tests/websocket/tests/script-tests/alert-in-event-handler.js: Removed.
+        * http/tests/websocket/tests/script-tests/bad-handshake-crash.js: Removed.
+        * http/tests/websocket/tests/script-tests/bad-sub-protocol-control-chars.js: Removed.
+        * http/tests/websocket/tests/script-tests/bad-sub-protocol-empty.js: Removed.
+        * http/tests/websocket/tests/script-tests/bad-sub-protocol-non-ascii.js: Removed.
+        * http/tests/websocket/tests/script-tests/bufferedAmount-after-close.js: Removed.
+        * http/tests/websocket/tests/script-tests/cross-origin.js: Removed.
+        * http/tests/websocket/tests/script-tests/error-detect.js: Removed.
+        * http/tests/websocket/tests/script-tests/frame-length-longer-than-buffer.js: Removed.
+        * http/tests/websocket/tests/script-tests/frame-length-skip.js: Removed.
+        * http/tests/websocket/tests/script-tests/handshake-challenge-randomness.js: Removed.
+        * http/tests/websocket/tests/script-tests/handshake-error.js: Removed.
+        * http/tests/websocket/tests/script-tests/handshake-fail-by-cross-origin.js: Removed.
+        * http/tests/websocket/tests/script-tests/handshake-fail-by-no-cr.js: Removed.
+        * http/tests/websocket/tests/script-tests/handshake-fail-by-sub-protocol-mismatch.js: Removed.
+        * http/tests/websocket/tests/script-tests/long-invalid-header.js: Removed.
+        * http/tests/websocket/tests/script-tests/null-character.js: Removed.
+        * http/tests/websocket/tests/script-tests/send-throw.js: Removed.
+        * http/tests/websocket/tests/script-tests/send.js: Removed.
+        * http/tests/websocket/tests/script-tests/simple.js: Removed.
+        * http/tests/websocket/tests/script-tests/sub-protocol-with-space.js: Removed.
+        * http/tests/websocket/tests/script-tests/sub-protocol.js: Removed.
+        * http/tests/websocket/tests/script-tests/unicode.js: Removed.
+        * http/tests/websocket/tests/script-tests/url-no-trailing-slash.js: Removed.
+        * http/tests/websocket/tests/script-tests/url-parsing.js: Removed.
+        * http/tests/websocket/tests/script-tests/url-with-credential.js: Removed.
+        * http/tests/websocket/tests/script-tests/url-with-empty-query.js: Removed.
+        * http/tests/websocket/tests/script-tests/url-with-query-for-no-query.js: Removed.
+        * http/tests/websocket/tests/script-tests/url-with-query.js: Removed.
+        * http/tests/websocket/tests/script-tests/websocket-event-target.js: Removed.
+        * http/tests/websocket/tests/script-tests/websocket-protocol-ignored.js: Removed.
+        * http/tests/websocket/tests/send-throw.html:
+        * http/tests/websocket/tests/send.html:
+        * http/tests/websocket/tests/simple.html:
+        * http/tests/websocket/tests/sub-protocol-with-space.html:
+        * http/tests/websocket/tests/sub-protocol.html:
+        * http/tests/websocket/tests/unicode.html:
+        * http/tests/websocket/tests/url-no-trailing-slash.html:
+        * http/tests/websocket/tests/url-parsing.html:
+        * http/tests/websocket/tests/url-with-credential.html:
+        * http/tests/websocket/tests/url-with-empty-query.html:
+        * http/tests/websocket/tests/url-with-query-for-no-query.html:
+        * http/tests/websocket/tests/url-with-query.html:
+        * http/tests/websocket/tests/websocket-event-target.html:
+        * http/tests/websocket/tests/websocket-protocol-ignored.html:
+
+2011-06-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
         WebSocket: Fix style issues of pywebsocket handlers
         https://bugs.webkit.org/show_bug.cgi?id=63689
 
