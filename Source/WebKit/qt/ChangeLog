@@ -1,3 +1,15 @@
+2011-06-30  Fabrizio Machado  <fabrizio.machado@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+        
+        [Qt] QML Webview causes performance drops
+        https://bugs.webkit.org/show_bug.cgi?id=57554
+
+        Remove tiledBackingStoreEnabled from QML WebView.
+        
+        * declarative/qdeclarativewebview.cpp:
+        (QDeclarativeWebView::setPage):
+
 2011-06-30  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.

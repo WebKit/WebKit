@@ -782,7 +782,9 @@ void QDeclarativeWebView::setPage(QWebPage* page)
 
     connect(page->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(windowObjectCleared()));
 
+#if !defined(Q_OS_SYMBIAN)
     page->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, true);
+#endif
 
 }
 
