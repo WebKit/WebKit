@@ -4050,3 +4050,6 @@ BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
 BUGCR87732 : fast/regex/toString.html = TEXT
 
 BUGWK63643 GPU : fast/canvas/webgl/context-lost-restored.html = TEXT
+
+// Added in http://trac.webkit.org/changeset/90148, null-derefing in TestNetscapgePlugin.
+BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = CRASH
