@@ -48,7 +48,7 @@ LayoutTestResultsLoader.prototype = {
 
         var self = this;
 
-        function fetchAndParseResultsHTMLAndCallCallback(callback, tooManyFailures) {
+        function fetchAndParseResultsHTMLAndCallCallback(callback) {
             getResource(self._builder.resultsPageURL(buildName), function(xhr) {
                 var root = document.createElement('html');
                 root.innerHTML = xhr.responseText;
@@ -115,6 +115,8 @@ LayoutTestResultsLoader.prototype = {
         }
 
         self._builder.getNumberOfFailingTests(parsedBuildName.buildNumber, function(failingTestCount, tooManyFailures) {
+            result.tooManyFailures = tooManyFailures;
+
             if (failingTestCount < 0) {
                 // The number of failing tests couldn't be determined.
                 PersistentCache.set(cacheKey, result);

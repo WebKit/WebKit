@@ -1,5 +1,26 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Make TestFailures never treat a too-many-failures build as a last-passing build for a test
+
+        Fixes <http://webkit.org/b/63758> TestFailures sometimes incorrectly says that a build was
+        the last passing build for a test, when in fact the test wasn't run due to too many failures
+        causing old-run-webkit-tests to exit early
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer.prototype._incorporateBuildHistory): If there were too many
+        failures in this build, assume that all the tests failed in the last build would have failed
+        in this build, too, had they been run. Introduced some new local variables to reduce typing,
+        and used them throughout.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Fix a regression from r89841 where we wouldn't
+        correctly remember whether old-run-webkit-tests exited early due to too many failures for
+        builds older than r89610. Also removed an unused parameter while I was at it.
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Make TestFaiulres only load old-results directories as needed
 
         Fixes <http://webkit.org/b/63752> Tester pages on TestFailures page load very slowly

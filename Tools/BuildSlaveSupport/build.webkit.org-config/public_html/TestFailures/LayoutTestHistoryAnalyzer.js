@@ -117,10 +117,15 @@ LayoutTestHistoryAnalyzer.prototype = {
         self._loader.start(nextBuildName, function(tests, tooManyFailures) {
             ++self._testRunsSinceLastInterestingChange;
 
-            self._history[nextBuildName] = {
+            var historyItem = {
                 tooManyFailures: tooManyFailures,
                 tests: {},
             };
+            self._history[nextBuildName] = historyItem;
+
+            var previousHistoryItem;
+            if (previousBuildName)
+                previousHistoryItem = self._history[previousBuildName];
 
             var newFlakyTests = self._flakinessDetector.incorporateTestResults(nextBuildName, tests, tooManyFailures);
             if (newFlakyTests.length) {
@@ -134,12 +139,22 @@ LayoutTestHistoryAnalyzer.prototype = {
             }
 
             for (var testName in tests) {
-                if (previousBuildName) {
-                    if (!(testName in self._history[previousBuildName].tests))
+                if (previousHistoryItem) {
+                    if (!(testName in previousHistoryItem.tests))
                         continue;
-                    delete self._history[previousBuildName].tests[testName];
+                    delete previousHistoryItem.tests[testName];
                 }
-                self._history[nextBuildName].tests[testName] = tests[testName];
+                historyItem.tests[testName] = tests[testName];
+            }
+
+            if (tooManyFailures && previousHistoryItem) {
+                // Not all tests were run due to too many failures. Just assume that all the tests
+                // that failed in the last build would still have failed in this build had they been
+                // run.
+                for (var testName in previousHistoryItem.tests) {
+                    historyItem.tests[testName] = previousHistoryItem.tests[testName];
+                    delete previousHistoryItem.tests[testName];
+                }
             }
 
             var previousUnexplainedFailuresCount = previousBuildName ? Object.keys(self._history[previousBuildName].tests).length : 0;
