@@ -1,3 +1,30 @@
+2011-06-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add back/forward menu to MiniBrowser toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=63445
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_init): Use a GtkMenuToolButton for navigation
+        widgets.
+        (browserWindowConstructed): Get the page BackForwardList.
+        (browserWindowHistoryItemActivated): Go to activated history item.
+        (browserWindowHistoryItemSelected): Show the url of currently
+        selected history item in the statusbar.
+        (createGtkActionFromBackForwardItem): Create a GtkAction from a
+        WKBackForwardListItemRef.
+        (browserWindowCreateMenuItemFromBackForwardItem): Create a
+        GtkMenuItem from a WKBackForwardListItemRef.
+        (browserWindowCreateBackForwardMenu): Create a GtkMenu with the
+        given history items.
+        (browserWindowUpdateNavigationActions): Update navigation widgets
+        sensitivity and history menus.
+        (didChangeBackForwardList): Call
+        browserWindowUpdateNavigationActions().
+        (browserWindowLoaderClientInit): Add didChangeBackForwardList
+        callback.
+
 2011-06-30  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Roben.

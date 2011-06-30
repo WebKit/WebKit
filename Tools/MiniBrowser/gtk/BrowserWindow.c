@@ -39,9 +39,12 @@ struct _BrowserWindow {
     GtkWidget *mainBox;
     GtkWidget *uriEntry;
     GtkWidget *statusBar;
+    GtkWidget *backItem;
+    GtkWidget *forwardItem;
     WKViewRef webView;
 
     guint statusBarContextId;
+    WKBackForwardListRef history;
 
     gchar *title;
     gdouble loadProgress;
@@ -129,12 +132,16 @@ static void browser_window_init(BrowserWindow* window)
 #endif
     gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
-    GtkToolItem *item = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
+    GtkToolItem *item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
+    window->backItem = GTK_WIDGET(item);
+    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(item), 0);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(goBackCallback), (gpointer)window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
-    item = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+    item = gtk_menu_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+    window->forwardItem = GTK_WIDGET(item);
+    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(item), 0);
     g_signal_connect_swapped(G_OBJECT(item), "clicked", G_CALLBACK(goForwardCallback), (gpointer)window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -171,6 +178,8 @@ static void browserWindowConstructed(GObject* gObject)
     window->statusBarContextId = gtk_statusbar_get_context_id(GTK_STATUSBAR(window->statusBar), "Link Hover");
     gtk_box_pack_start(GTK_BOX(window->mainBox), window->statusBar, FALSE, FALSE, 0);
     gtk_widget_show(window->statusBar);
+
+    window->history = WKPageGetBackForwardList(WKViewGetPage(window->webView));
 
     browserWindowLoaderClientInit(window);
     browserWindowUIClientInit(window);
@@ -247,6 +256,111 @@ static void browserWindowUpdateURL(BrowserWindow* window, WKURLRef url)
     char *urlText = WKURLGetCString(url);
     gtk_entry_set_text(GTK_ENTRY(window->uriEntry), urlText);
     g_free(urlText);
+}
+
+static void browserWindowHistoryItemActivated(BrowserWindow *window, GtkAction *action)
+{
+    WKBackForwardListItemRef item = g_object_get_data(G_OBJECT(action), "back-forward-list-item");
+    if (!item)
+        return;
+
+    WKPageGoToBackForwardListItem(WKViewGetPage(window->webView), item);
+}
+
+static void browserWindowHistoryItemSelected(BrowserWindow *window, GtkMenuItem *item)
+{
+    gtk_statusbar_pop(GTK_STATUSBAR(window->statusBar), window->statusBarContextId);
+
+    GtkAction *action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(item));
+    if (!action)
+        return;
+
+    gtk_statusbar_push(GTK_STATUSBAR(window->statusBar), window->statusBarContextId, gtk_action_get_name(action));
+}
+
+static GtkAction *createGtkActionFromBackForwardItem(WKBackForwardListItemRef item)
+{
+    if (!item)
+        return 0;
+
+    WKURLRef url = WKBackForwardListItemCopyURL(item);
+    char *name = WKURLGetCString(url);
+    WKRelease(url);
+
+    WKStringRef title = WKBackForwardListItemCopyTitle(item);
+    char *label = WKStringGetCString(title);
+    WKRelease(title);
+
+    GtkAction *action = gtk_action_new(name, label, 0, 0);
+    g_free(name);
+    g_free(label);
+
+    return action;
+}
+
+static GtkWidget *browserWindowCreateMenuItemFromBackForwardItem(BrowserWindow *window, WKBackForwardListItemRef item)
+{
+    GtkAction *action = createGtkActionFromBackForwardItem(item);
+    if (!action)
+        return 0;
+
+    g_object_set_data_full(G_OBJECT(action), "back-forward-list-item", (gpointer)WKRetain(item), (GDestroyNotify)WKRelease);
+    g_signal_connect_swapped(action, "activate", G_CALLBACK(browserWindowHistoryItemActivated), window);
+
+    GtkWidget *menuItem = gtk_action_create_menu_item(action);
+    g_signal_connect_swapped(menuItem, "select", G_CALLBACK(browserWindowHistoryItemSelected), window);
+    g_object_unref(action);
+
+    return menuItem;
+}
+
+static GtkWidget *browserWindowCreateBackForwardMenu(BrowserWindow *window, WKArrayRef list)
+{
+    if (!list)
+        return 0;
+
+    guint listCount = WKArrayGetSize(list);
+    if (!listCount)
+        return 0;
+
+    GtkWidget *menu = gtk_menu_new();
+    gboolean hasItems = FALSE;
+    guint i;
+    for (i = 0; i < listCount; i++) {
+        WKBackForwardListItemRef item = WKArrayGetItemAtIndex(list, i);
+        GtkWidget *menuItem = browserWindowCreateMenuItemFromBackForwardItem(window, item);
+        if (!menuItem)
+            continue;
+
+        gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menuItem);
+        gtk_widget_show(menuItem);
+        hasItems = TRUE;
+    }
+
+    if (!hasItems) {
+        gtk_widget_destroy(menu);
+        return 0;
+    }
+
+    return menu;
+}
+
+static void browserWindowUpdateNavigationActions(BrowserWindow* window)
+{
+    gtk_widget_set_sensitive(window->backItem, WKPageCanGoBack(WKViewGetPage(window->webView)));
+    gtk_widget_set_sensitive(window->forwardItem, WKPageCanGoForward(WKViewGetPage(window->webView)));
+
+    WKArrayRef list = WKBackForwardListCopyBackListWithLimit(window->history, 10);
+    GtkWidget *menu = browserWindowCreateBackForwardMenu(window, list);
+    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->backItem), menu);
+    if (list)
+        WKRelease(list);
+
+    list = WKBackForwardListCopyForwardListWithLimit(window->history, 10);
+    menu = browserWindowCreateBackForwardMenu(window, list);
+    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->forwardItem), menu);
+    if (list)
+        WKRelease(list);
 }
 
 // Loader client.
@@ -366,6 +480,11 @@ static void didBecomeResponsive(WKPageRef page, const void* clientInfo)
 {
 }
 
+static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo)
+{
+    browserWindowUpdateNavigationActions(BROWSER_WINDOW(clientInfo));
+}
+
 static void browserWindowLoaderClientInit(BrowserWindow* window)
 {
     WKPageLoaderClient loadClient = {
@@ -393,7 +512,7 @@ static void browserWindowLoaderClientInit(BrowserWindow* window)
         didBecomeUnresponsive,
         didBecomeResponsive,
         0,       /* processDidCrash */
-        0,       /* didChangeBackForwardList */
+        didChangeBackForwardList,
         0,       /* shouldGoToBackForwardListItem */
         0        /* didFailToInitializePlugin */
     };
