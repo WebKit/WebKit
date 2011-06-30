@@ -64,7 +64,7 @@ from webkitpy.thirdparty.mock import Mock
 
 
 def parse_args(extra_args=None, record_results=False, tests_included=False,
-               print_nothing=True):
+               new_results=False, print_nothing=True):
     extra_args = extra_args or []
     if print_nothing:
         args = ['--print', 'nothing']
@@ -74,6 +74,9 @@ def parse_args(extra_args=None, record_results=False, tests_included=False,
         args.extend(['--platform', 'test'])
     if not record_results:
         args.append('--no-record-results')
+    if not new_results:
+        args.append('--no-new-test-results')
+
     if not '--child-processes' in extra_args and not '--worker-model' in extra_args:
         args.extend(['--worker-model', 'inline'])
     args.extend(extra_args)
@@ -93,15 +96,18 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
                             user=mocktool.MockUser(), filesystem=filesystem)
-    res = run_webkit_tests.run(port_obj, options, parsed_args)
-    return res == 0
+    buildbot_output = array_stream.ArrayStream()
+    regular_output = array_stream.ArrayStream()
+    res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output,
+                               regular_output=regular_output)
+    return res == 0 and regular_output.empty() and buildbot_output.empty()
 
 
-def logging_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None):
+def logging_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None, new_results=False):
     options, parsed_args = parse_args(extra_args=extra_args,
                                       record_results=record_results,
                                       tests_included=tests_included,
-                                      print_nothing=False)
+                                      print_nothing=False, new_results=new_results)
     user = mocktool.MockUser()
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
@@ -561,10 +567,11 @@ class MainTest(unittest.TestCase):
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
             test_port = ImageDiffTestPort(options=options, user=mocktool.MockUser())
-            passing_run(args, port_obj=test_port, tests_included=True)
+            res = passing_run(args, port_obj=test_port, tests_included=True)
+            self.assertTrue(res)
             return test_port
 
-        base_args = ['--pixel-tests', 'failures/expected/*']
+        base_args = ['--pixel-tests', '--no-new-test-results', 'failures/expected/*']
 
         # If we pass in an explicit tolerance argument, then that will be used.
         test_port = get_port_for_run(base_args + ['--tolerance', '.1'])
@@ -641,11 +648,13 @@ MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '
 
 
 class RebaselineTest(unittest.TestCase):
-    def assertBaselines(self, file_list, file, extensions):
+    def assertBaselines(self, file_list, file, extensions, err):
         "assert that the file_list contains the baselines."""
         for ext in extensions:
             baseline = file + "-expected" + ext
+            baseline_msg = 'Writing new expected result "%s"\n' % baseline[1:]
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
+            self.assertTrue(baseline_msg in err.get())
 
     # FIXME: Add tests to ensure that we're *not* writing baselines when we're not
     # supposed to be.
@@ -654,48 +663,54 @@ class RebaselineTest(unittest.TestCase):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         fs = port.unit_test_filesystem()
-        passing_run(['--pixel-tests',
+        res, out, err, _ = logging_run(['--pixel-tests',
                         '--reset-results',
                         'passes/image.html',
                         'failures/expected/missing_image.html'],
-                        tests_included=True, filesystem=fs)
+                        tests_included=True, filesystem=fs, new_results=True)
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        self.assertEquals(res, 0)
+        self.assertTrue(out.empty())
         self.assertEqual(len(file_list), 4)
-        self.assertBaselines(file_list, "/passes/image", [".txt", ".png"])
-        self.assertBaselines(file_list, "/failures/expected/missing_image", [".txt", ".png"])
+        self.assertBaselines(file_list, "/passes/image", [".txt", ".png"], err)
+        self.assertBaselines(file_list, "/failures/expected/missing_image", [".txt", ".png"], err)
 
     def test_missing_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         fs = port.unit_test_filesystem()
-        passing_run(['--no-show-results',
+        res, out, err, _ = logging_run(['--no-show-results',
                      'failures/unexpected/missing_text.html',
                      'failures/unexpected/missing_image.html',
                      'failures/unexpected/missing_audio.html'],
-                     tests_included=True, filesystem=fs)
+                     tests_included=True, filesystem=fs, new_results=True)
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        self.assertEquals(res, 2)
+        self.assertFalse(out.empty())
         self.assertEqual(len(file_list), 4)
-        self.assertBaselines(file_list, "/failures/unexpected/missing_text", [".txt"])
-        self.assertBaselines(file_list, "/failures/unexpected/missing_image", [".png"])
+        self.assertBaselines(file_list, "/failures/unexpected/missing_text", [".txt"], err)
+        self.assertBaselines(file_list, "/failures/unexpected/missing_image", [".png"], err)
 
     def test_new_baseline(self):
         # Test that we update the platform expectations. If the expectation
         # is mssing, then create a new expectation in the platform dir.
         fs = port.unit_test_filesystem()
-        passing_run(['--pixel-tests',
+        res, out, err, _ = logging_run(['--pixel-tests',
                         '--new-baseline',
                         'passes/image.html',
                         'failures/expected/missing_image.html'],
-                    tests_included=True, filesystem=fs)
+                    tests_included=True, filesystem=fs, new_results=True)
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        self.assertEquals(res, 0)
+        self.assertTrue(out.empty())
         self.assertEqual(len(file_list), 4)
         self.assertBaselines(file_list,
-            "/platform/test-mac-leopard/passes/image", [".txt", ".png"])
+            "/platform/test-mac-leopard/passes/image", [".txt", ".png"], err)
         self.assertBaselines(file_list,
-            "/platform/test-mac-leopard/failures/expected/missing_image", [".txt", ".png"])
+            "/platform/test-mac-leopard/failures/expected/missing_image", [".txt", ".png"], err)
 
 
 class DryrunTest(unittest.TestCase):

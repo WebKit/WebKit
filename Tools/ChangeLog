@@ -1,3 +1,23 @@
+2011-06-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        test-webkitpy is spamming lots of messages about updating test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=63680
+
+        This patch changes the passing_run() function to capture the
+        output to stdout and stderr and assert that it is empty, and
+        also specifies --no-new-test-results by default to avoid getting
+        "generating baseline" messages for the expected-missing results.
+
+        Also check that we are logging messages when we generate new
+        baselines.
+
+        Also fix a minor bug in the way test_tolerance() was
+        checking for whether the tests were passing or not.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-06-29  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
