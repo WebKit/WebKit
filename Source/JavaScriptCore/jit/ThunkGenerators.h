@@ -37,6 +37,12 @@ namespace JSC {
     MacroAssemblerCodePtr charCodeAtThunkGenerator(JSGlobalData*, ExecutablePool*);
     MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData*, ExecutablePool*);
     MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr absThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr ceilThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr expThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr floorThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr logThunkGenerator(JSGlobalData*, ExecutablePool*);
+    MacroAssemblerCodePtr roundThunkGenerator(JSGlobalData*, ExecutablePool*);
     MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData*, ExecutablePool*);
     MacroAssemblerCodePtr powThunkGenerator(JSGlobalData*, ExecutablePool*);
 }

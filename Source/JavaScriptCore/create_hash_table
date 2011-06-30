@@ -278,14 +278,34 @@ sub output() {
         if ($key eq "charAt") {
             $thunkGenerator = "charAtThunkGenerator";
         }
-        if ($key eq "sqrt") {
-            $thunkGenerator = "sqrtThunkGenerator";
-        }
-        if ($key eq "pow") {
-            $thunkGenerator = "powThunkGenerator";
-        }
         if ($key eq "fromCharCode") {
             $thunkGenerator = "fromCharCodeThunkGenerator";
+        }
+        if ($name eq "mathTable") {
+            if ($key eq "sqrt") {
+                $thunkGenerator = "sqrtThunkGenerator";
+            }
+            if ($key eq "pow") {
+                $thunkGenerator = "powThunkGenerator";
+            }
+            if ($key eq "abs") {
+                $thunkGenerator = "absThunkGenerator";
+            }
+            if ($key eq "floor") {
+                $thunkGenerator = "floorThunkGenerator";
+            }
+            if ($key eq "ceil") {
+                $thunkGenerator = "ceilThunkGenerator";
+            }
+            if ($key eq "round") {
+                $thunkGenerator = "roundThunkGenerator";
+            }
+            if ($key eq "exp") {
+                $thunkGenerator = "expThunkGenerator";
+            }
+            if ($key eq "log") {
+                $thunkGenerator = "logThunkGenerator";
+            }
         }
         print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) },\n";
         $i++;

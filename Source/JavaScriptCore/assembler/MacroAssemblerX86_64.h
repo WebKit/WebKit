@@ -456,6 +456,7 @@ public:
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return true; }
     bool supportsFloatingPointSqrt() const { return true; }
+    bool supportsDoubleBitops() const { return true; }
 
 private:
     friend class LinkBuffer;

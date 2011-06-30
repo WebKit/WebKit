@@ -762,6 +762,7 @@ public:
     bool supportsFloatingPoint() const { return true; }
     bool supportsFloatingPointTruncate() const { return true; }
     bool supportsFloatingPointSqrt() const { return true; }
+    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -1099,6 +1100,11 @@ public:
         if (dest != src)
             m_assembler.dmovRegReg(src, dest);
         m_assembler.dsqrt(dest);
+    }
+    
+    void andnotDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
