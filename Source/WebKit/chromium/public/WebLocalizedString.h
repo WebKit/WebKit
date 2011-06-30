@@ -39,6 +39,7 @@ struct WebLocalizedString {
         InputElementAltText,
         ResetButtonDefaultLabel,
         FileButtonChooseFileLabel,
+        FileButtonChooseMultipleFilesLabel,
         FileButtonNoFileSelectedLabel,
         MultipleFileUploadText,
         SearchableIndexIntroduction,

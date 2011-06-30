@@ -64,6 +64,7 @@ private:
     virtual Icon* icon() const;
     virtual bool isFileUpload() const;
     virtual void createShadowSubtree();
+    virtual void multipleAttributeChanged();
 
     // FileChooserClient implementation.
     virtual void filesChosen(const Vector<String>&);

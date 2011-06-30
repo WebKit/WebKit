@@ -68,6 +68,11 @@ String fileButtonChooseFileLabel()
     return "Choose File";
 }
 
+String fileButtonChooseMultipleFilesLabel()
+{
+    return "Choose Files";
+}
+
 String fileButtonNoFileSelectedLabel()
 {
     return "No file selected";
@@ -499,4 +504,3 @@ String validationMessageStepMismatchText(const String&, const String&)
 }
 
 } // namespace WebCore
-

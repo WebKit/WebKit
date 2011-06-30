@@ -87,6 +87,11 @@ String fileButtonChooseFileLabel()
     return query(WebLocalizedString::FileButtonChooseFileLabel);
 }
 
+String fileButtonChooseMultipleFilesLabel()
+{
+    return query(WebLocalizedString::FileButtonChooseMultipleFilesLabel);
+}
+
 String defaultDetailsSummaryText()
 {
     notImplemented();

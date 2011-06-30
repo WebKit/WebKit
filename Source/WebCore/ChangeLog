@@ -1,3 +1,44 @@
+2011-06-30  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Change the label of an HTML5 file chooser button to "Choose Files"
+        https://bugs.webkit.org/show_bug.cgi?id=49245
+
+        We should notify capability of multiple files to users.
+
+        Test: fast/forms/input-file-label.html
+
+        * English.lproj/Localizable.strings:
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::createForMultiple): Constructs a multiple file chooser button.
+        (WebCore::FileInputType::createShadowSubtree): Constructs a single/multiple file chooser button depending on 'multiple' attribute.
+        (WebCore::FileInputType::multipleAttributeChanged): Updates the label of the file chooser button.
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Updates the shadow tree of the file chooser button when 'multiple' attribute is set or unset.
+        * html/InputType.cpp:
+        (WebCore::InputType::multipleAttributeChanged): Virtual method to be overridden by FileInputType.
+        * html/InputType.h:
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::fileButtonChooseFileLabel): Updated the description for "Choose File".
+        (WebCore::DefaultLocalizationStrategy::fileButtonChooseMultipleFilesLabel): Returns a string "Choose Files".
+        * platform/DefaultLocalizationStrategy.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::fileButtonChooseMultipleFilesLabel): Wrapper method for getting the "Choose Files" label.
+        * platform/LocalizedStrings.h:
+        * platform/brew/LocalizedStringsBrew.cpp:
+        (WebCore::fileButtonChooseMultipleFilesLabel): Returns a "Choose Files" label.
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::fileButtonChooseMultipleFilesLabel): Returns a "Choose Files" label.
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::fileButtonChooseMultipleFilesLabel): Returns a "Choose Files" label.
+        * platform/haiku/LocalizedStringsHaiku.cpp:
+        (WebCore::fileButtonChooseMultipleFilesLabel): Returns a "Choose Files" label.
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::fileButtonChooseMultipleFilesLabel): Returns a "Choose Files" label.
+
 2011-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

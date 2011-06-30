@@ -123,7 +123,12 @@ String DefaultLocalizationStrategy::submitButtonDefaultLabel()
 
 String DefaultLocalizationStrategy::fileButtonChooseFileLabel()
 {
-    return WEB_UI_STRING("Choose File", "title for file button used in HTML forms");
+    return WEB_UI_STRING("Choose File", "title for a single file chooser button used in HTML forms");
+}
+
+String DefaultLocalizationStrategy::fileButtonChooseMultipleFilesLabel()
+{
+    return WEB_UI_STRING("Choose Files", "title for a multiple file chooser button used in HTML forms. This title should be as short as possible.");
 }
 
 String DefaultLocalizationStrategy::fileButtonNoFileSelectedLabel()

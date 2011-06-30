@@ -44,6 +44,7 @@ public:
     virtual String searchableIndexIntroduction();
     virtual String submitButtonDefaultLabel();
     virtual String fileButtonChooseFileLabel();
+    virtual String fileButtonChooseMultipleFilesLabel();
     virtual String fileButtonNoFileSelectedLabel();
     virtual String defaultDetailsSummaryText();
 #if PLATFORM(MAC)

@@ -47,6 +47,7 @@ using namespace HTMLNames;
 class UploadButtonElement : public HTMLInputElement {
 public:
     static PassRefPtr<UploadButtonElement> create(Document*);
+    static PassRefPtr<UploadButtonElement> createForMultiple(Document*);
 
 private:
     UploadButtonElement(Document*);
@@ -62,6 +63,13 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document* document)
     return button.release();
 }
 
+PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document* document)
+{
+    RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
+    button->setType("button");
+    button->setValue(fileButtonChooseMultipleFilesLabel());
+    return button.release();
+}
 
 UploadButtonElement::UploadButtonElement(Document* document)
     : HTMLInputElement(inputTag, document, 0, false)
@@ -248,7 +256,14 @@ bool FileInputType::isFileUpload() const
 void FileInputType::createShadowSubtree()
 {
     ExceptionCode ec = 0;
-    element()->ensureShadowRoot()->appendChild(UploadButtonElement::create(element()->document()), ec);
+    element()->ensureShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
+}
+
+void FileInputType::multipleAttributeChanged()
+{
+    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->ensureShadowRoot()->firstChild());
+    if (button)
+        button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }
 
 void FileInputType::requestIcon(const Vector<String>& paths)

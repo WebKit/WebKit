@@ -64,6 +64,7 @@ private:
     virtual WTF::String searchableIndexIntroduction();
     virtual WTF::String submitButtonDefaultLabel();
     virtual WTF::String fileButtonChooseFileLabel();
+    virtual WTF::String fileButtonChooseMultipleFilesLabel();
     virtual WTF::String fileButtonNoFileSelectedLabel();
     virtual WTF::String defaultDetailsSummaryText();
     virtual WTF::String contextMenuItemTagOpenLinkInNewWindow();

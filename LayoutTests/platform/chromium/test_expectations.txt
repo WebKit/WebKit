@@ -216,6 +216,16 @@ WONTFIX SKIP : animations/animation-api-1.html = FAIL
 // Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
 
+// This test fails because WebLocalizedString::FileButtonChooseMultipleFilesLabel
+// is not described in switch cases in ToMessageID(), in order to avoid compiler warnings
+// in the Chromium patch. See here: http://codereview.chromium.org/7273024/.
+// This failure is going to be removed when a planned Chromium patch is merged.
+BUGWK49245 : fast/forms/input-file-label.html = FAIL
+
+// This test fails because the label of a multiple file chooser button is updated.
+// We need to update expected.txt and expected.png.
+BUGWK49245 : fast/forms/input-file-re-render.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

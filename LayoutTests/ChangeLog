@@ -1,3 +1,23 @@
+2011-06-30  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Change the label of an HTML5 file chooser button to "Choose Files"
+        https://bugs.webkit.org/show_bug.cgi?id=49245
+
+        We should notify capability of multiple files to users.
+        input-file-label.html is a test that checks a label of the file chooser
+        with/without 'multiple' attribute. input-file-label.html will fail in Chromium
+        until a planned Chromium patch is landed. input-file-re-render.html will
+        also fail in Chromium, gtk and MacLeopard until we update the expected images
+        for the test.
+
+        * fast/forms/input-file-label-expected.txt: Added.
+        * fast/forms/input-file-label.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/input-file-re-render-expected.png:
+        * platform/mac/fast/forms/input-file-re-render-expected.txt:
+
 2011-06-30  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

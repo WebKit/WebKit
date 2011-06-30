@@ -1,3 +1,19 @@
+2011-06-30  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Change the label of an HTML5 file chooser button to "Choose Files"
+        https://bugs.webkit.org/show_bug.cgi?id=49245
+
+        We should notify capability of multiple files to users.
+
+        Test: fast/forms/input-file-label.html
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::fileButtonChooseFileLabel): Updated the description for "Choose File".
+        (WebPlatformStrategies::fileButtonChooseMultipleFilesLabel):  Returns a "Choose Files" label.
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2011-06-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

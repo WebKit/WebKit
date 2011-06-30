@@ -38,6 +38,7 @@ namespace WebCore {
     String searchableIndexIntroduction();
     String submitButtonDefaultLabel();
     String fileButtonChooseFileLabel();
+    String fileButtonChooseMultipleFilesLabel();
     String fileButtonNoFileSelectedLabel();
     String defaultDetailsSummaryText();
 

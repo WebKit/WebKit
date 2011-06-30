@@ -81,6 +81,11 @@ String fileButtonChooseFileLabel()
     return String::fromUTF8(_("Choose File"));
 }
 
+String fileButtonChooseMultipleFilesLabel()
+{
+    return String::fromUTF8(_("Choose Files"));
+}
+
 String fileButtonNoFileSelectedLabel()
 {
     return String::fromUTF8(_("(None)"));

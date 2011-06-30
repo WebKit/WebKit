@@ -226,6 +226,7 @@ public:
     virtual bool isSteppable() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
     virtual bool supportsPlaceholder() const;
+    virtual void multipleAttributeChanged();
 
     // Parses the specified string for the type, and return
     // the double value for the parsing result if the parsing

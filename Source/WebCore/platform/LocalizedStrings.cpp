@@ -69,6 +69,11 @@ String fileButtonChooseFileLabel()
     return localizationStrategy()->fileButtonChooseFileLabel();
 }
 
+String fileButtonChooseMultipleFilesLabel()
+{
+    return localizationStrategy()->fileButtonChooseMultipleFilesLabel();
+}
+
 String fileButtonNoFileSelectedLabel()
 {
     return localizationStrategy()->fileButtonNoFileSelectedLabel();

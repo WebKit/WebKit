@@ -733,7 +733,10 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == minAttr || attr->name() == maxAttr) {
         m_inputType->minOrMaxAttributeChanged();
         setNeedsValidityCheck();
-    } else if (attr->name() == multipleAttr || attr->name() == patternAttr || attr->name() == precisionAttr || attr->name() == stepAttr)
+    } else if (attr->name() == multipleAttr) {
+        m_inputType->multipleAttributeChanged();
+        setNeedsValidityCheck();
+    } else if (attr->name() == patternAttr || attr->name() == precisionAttr || attr->name() == stepAttr)
         setNeedsValidityCheck();
 #if ENABLE(DATALIST)
     else if (attr->name() == listAttr)

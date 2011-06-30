@@ -42,6 +42,7 @@ public:
     virtual String searchableIndexIntroduction() = 0;
     virtual String submitButtonDefaultLabel() = 0;
     virtual String fileButtonChooseFileLabel() = 0;
+    virtual String fileButtonChooseMultipleFilesLabel() = 0;
     virtual String fileButtonNoFileSelectedLabel() = 0;
     virtual String defaultDetailsSummaryText() = 0;
 

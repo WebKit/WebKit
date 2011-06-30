@@ -169,7 +169,12 @@ String WebPlatformStrategies::submitButtonDefaultLabel()
 
 String WebPlatformStrategies::fileButtonChooseFileLabel()
 {
-    return QCoreApplication::translate("QWebPage", "Choose File", "title for file button used in HTML forms");
+    return QCoreApplication::translate("QWebPage", "Choose File", "title for a single file chooser button used in HTML forms");
+}
+
+String WebPlatformStrategies::fileButtonChooseMultipleFilesLabel()
+{
+    return QCoreApplication::translate("QWebPage", "Choose Files", "title for a multiple file chooser button used in HTML forms. This title should be as short as possible.");
 }
 
 String WebPlatformStrategies::fileButtonNoFileSelectedLabel()
