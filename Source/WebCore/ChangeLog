@@ -1,3 +1,10 @@
+2011-06-29  Kent Tamura  <tkent@chromium.org>
+
+        [Mac] Attempt to fix Leopard build.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor):
+
 2011-06-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

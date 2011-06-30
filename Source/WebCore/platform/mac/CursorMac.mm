@@ -255,7 +255,11 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = leakNamedCursor("noneCursor", 7, 7);
         break;
     case Cursor::NotAllowed:
+#if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor operationNotAllowedCursor];
+#else
+        m_platformCursor = leakNamedCursor("notAllowedCursor", 11, 11);
+#endif
         break;
     case Cursor::ZoomIn:
         m_platformCursor = leakNamedCursor("zoomInCursor", 7, 7);
