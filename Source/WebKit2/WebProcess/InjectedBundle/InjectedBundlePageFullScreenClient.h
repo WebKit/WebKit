@@ -41,7 +41,7 @@ namespace WebKit {
 
 class WebPage;
 
-class InjectedBundlePageFullScreenClient : public APIClient<WKBundlePageFullScreenClient> {
+class InjectedBundlePageFullScreenClient : public APIClient<WKBundlePageFullScreenClient, kWKBundlePageFullScreenClientCurrentVersion> {
 public:
     bool supportsFullScreen(WebPage*, bool withKeyboard);
     void enterFullScreenForElement(WebPage*, WebCore::Element*);

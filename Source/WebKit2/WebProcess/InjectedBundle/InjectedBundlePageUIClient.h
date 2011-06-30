@@ -43,7 +43,7 @@ class APIObject;
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePageUIClient : public APIClient<WKBundlePageUIClient> {
+class InjectedBundlePageUIClient : public APIClient<WKBundlePageUIClient, kWKBundlePageUIClientCurrentVersion> {
 public:
     void willAddMessageToConsole(WebPage*, const String& message, int32_t lineNumber);
     void willSetStatusbarText(WebPage*, const String&);

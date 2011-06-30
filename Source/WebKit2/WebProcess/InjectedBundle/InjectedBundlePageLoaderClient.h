@@ -45,7 +45,7 @@ class APIObject;
 class WebPage;
 class WebFrame;
 
-class InjectedBundlePageLoaderClient : public APIClient<WKBundlePageLoaderClient> {
+class InjectedBundlePageLoaderClient : public APIClient<WKBundlePageLoaderClient, kWKBundlePageLoaderClientCurrentVersion> {
 public:
     void didStartProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);

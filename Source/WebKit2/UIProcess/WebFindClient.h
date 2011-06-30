@@ -34,7 +34,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebFindClient : public APIClient<WKPageFindClient> {
+class WebFindClient : public APIClient<WKPageFindClient, kWKPageFindClientCurrentVersion> {
 public:
     void didFindString(WebPageProxy*, const String&, uint32_t matchCount);
     void didFailToFindString(WebPageProxy*, const String&);

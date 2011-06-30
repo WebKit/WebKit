@@ -37,7 +37,7 @@ class WebFrameProxy;
 class WebPageProxy;
 struct WebNavigationDataStore;
 
-class WebHistoryClient : public APIClient<WKContextHistoryClient> {
+class WebHistoryClient : public APIClient<WKContextHistoryClient, kWKContextHistoryClientCurrentVersion> {
 public:
     void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
     void didPerformClientRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);

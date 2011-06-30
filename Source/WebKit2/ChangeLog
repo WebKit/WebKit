@@ -2,6 +2,39 @@
 
         Reviewed by Anders Carlsson.
 
+        Make the APIClient template aware of the latest client interface version number.
+
+        This will be used in an upcoming patch.
+
+        * Shared/APIClient.h:
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebCookieManagerProxyClient.h:
+        * UIProcess/WebDatabaseManagerProxyClient.h:
+        * UIProcess/WebDownloadClient.h:
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebGeolocationProvider.h:
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebIconDatabaseClient.h:
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageContextMenuClient.h:
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebResourceLoadClient.h:
+        * UIProcess/WebUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+
+2011-06-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         WebKit2 client interfaces should have constant declaring latest version.
 
         * UIProcess/API/C/WKContext.h:

@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-template<typename T> class APIClient {
+template<typename T, int> class APIClient {
 public:
     APIClient()
     {

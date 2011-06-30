@@ -43,7 +43,7 @@ class InjectedBundleNavigationAction;
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePagePolicyClient : public APIClient<WKBundlePagePolicyClient> {
+class InjectedBundlePagePolicyClient : public APIClient<WKBundlePagePolicyClient, kWKBundlePagePolicyClientCurrentVersion> {
 public:
     WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
     WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<APIObject>& userData);

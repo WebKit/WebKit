@@ -35,7 +35,7 @@ namespace WebKit {
 class WebDatabaseManagerProxy;
 class WebSecurityOrigin;
 
-class WebDatabaseManagerProxyClient : public APIClient<WKDatabaseManagerClient> {
+class WebDatabaseManagerProxyClient : public APIClient<WKDatabaseManagerClient, kWKDatabaseManagerClientCurrentVersion> {
 public:
     void didModifyOrigin(WebDatabaseManagerProxy*, WebSecurityOrigin*);
     void didModifyDatabase(WebDatabaseManagerProxy*, WebSecurityOrigin*, const String& databaseIdentifier);

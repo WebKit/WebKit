@@ -34,7 +34,7 @@ namespace WebKit {
 
 class WebGeolocationManagerProxy;
 
-class WebGeolocationProvider : public APIClient<WKGeolocationProvider> {
+class WebGeolocationProvider : public APIClient<WKGeolocationProvider, kWKGeolocationProviderCurrentVersion> {
 public:
     void startUpdating(WebGeolocationManagerProxy*);
     void stopUpdating(WebGeolocationManagerProxy*);

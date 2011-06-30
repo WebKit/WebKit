@@ -47,7 +47,7 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProtectionSpace;
 
-class WebLoaderClient : public APIClient<WKPageLoaderClient> {
+class WebLoaderClient : public APIClient<WKPageLoaderClient, kWKPageLoaderClientCurrentVersion> {
 public:
     void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);

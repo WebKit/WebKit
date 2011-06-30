@@ -45,7 +45,7 @@ class WebPageProxy;
 class WebFrameProxy;
 class WebFramePolicyListenerProxy;
 
-class WebPolicyClient : public APIClient<WKPagePolicyClient> {
+class WebPolicyClient : public APIClient<WKPagePolicyClient, kWKPagePolicyClientCurrentVersion> {
 public:
     bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
     bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, APIObject* userData);

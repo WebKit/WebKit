@@ -43,7 +43,7 @@ namespace WebKit {
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePageEditorClient : public APIClient<WKBundlePageEditorClient> {
+class InjectedBundlePageEditorClient : public APIClient<WKBundlePageEditorClient, kWKBundlePageEditorClientCurrentVersion> {
 public:
     bool shouldBeginEditing(WebPage*, WebCore::Range*);
     bool shouldEndEditing(WebPage*, WebCore::Range*);

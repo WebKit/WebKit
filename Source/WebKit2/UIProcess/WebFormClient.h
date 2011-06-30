@@ -39,7 +39,7 @@ class WebPageProxy;
 class WebFrameProxy;
 class WebFormSubmissionListenerProxy;
 
-class WebFormClient : public APIClient<WKPageFormClient> {
+class WebFormClient : public APIClient<WKPageFormClient, kWKPageFormClientCurrentVersion> {
 public:
     bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, const Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy*); 
 };

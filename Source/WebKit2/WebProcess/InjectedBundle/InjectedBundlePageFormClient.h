@@ -45,7 +45,7 @@ class ImmutableDictionary;
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePageFormClient : public APIClient<WKBundlePageFormClient> {
+class InjectedBundlePageFormClient : public APIClient<WKBundlePageFormClient, kWKBundlePageFormClientCurrentVersion> {
 public:
     void textFieldDidBeginEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);

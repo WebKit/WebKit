@@ -44,7 +44,7 @@ class APIObject;
 class WebPage;
 class WebFrame;
 
-class InjectedBundlePageResourceLoadClient : public APIClient<WKBundlePageResourceLoadClient> {
+class InjectedBundlePageResourceLoadClient : public APIClient<WKBundlePageResourceLoadClient, kWKBundlePageResourceLoadClientCurrentVersion> {
 public:
     void didInitiateLoadForResource(WebPage*, WebFrame*, uint64_t identifier, const WebCore::ResourceRequest&, bool pageIsProvisionallyLoading);
     void willSendRequestForFrame(WebPage*, WebFrame*, uint64_t identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
