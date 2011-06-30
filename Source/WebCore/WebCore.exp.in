@@ -1484,6 +1484,7 @@ _wkVerticalScrollbarPainterForController
 _wkWillEndLiveResize
 _wkWillStartLiveResize
 _wkAVAssetResolvedURL
+_wkCursor
 #else
 _wkGetNSEventMomentumPhase
 #endif

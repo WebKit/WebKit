@@ -1035,8 +1035,6 @@
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4614A1FD0B23A8D600446E1C /* copyCursor.png */; };
-		464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */; };
-		464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */; };
 		46700ED0127B96CB00F5D5D6 /* FileWriterSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */; };
 		46700ED1127B96CB00F5D5D6 /* FileWriterSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
@@ -7531,8 +7529,6 @@
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
-		464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crossHairCursor.png; sourceTree = "<group>"; };
-		464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notAllowedCursor.png; sourceTree = "<group>"; };
 		46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWriterSync.cpp; path = fileapi/FileWriterSync.cpp; sourceTree = "<group>"; };
 		46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterSync.h; path = fileapi/FileWriterSync.h; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMetadata.h; path = platform/FileMetadata.h; sourceTree = "<group>"; };
@@ -12932,7 +12928,6 @@
 				46D4F2460AF97E810035385A /* cellCursor.png */,
 				46D4F2470AF97E810035385A /* contextMenuCursor.png */,
 				4614A1FD0B23A8D600446E1C /* copyCursor.png */,
-				464EA2710B8A350B00A8E6E3 /* crossHairCursor.png */,
 				1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */,
 				1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */,
 				85136C890AED665800F90A3D /* eastResizeCursor.png */,
@@ -12951,7 +12946,6 @@
 				85136C910AED665900F90A3D /* northSouthResizeCursor.png */,
 				85136C920AED665900F90A3D /* northWestResizeCursor.png */,
 				85136C930AED665900F90A3D /* northWestSouthEastResizeCursor.png */,
-				464EA2720B8A350B00A8E6E3 /* notAllowedCursor.png */,
 				46F9D5DC0B0D60170028EE36 /* progressCursor.png */,
 				85136C940AED665900F90A3D /* southEastResizeCursor.png */,
 				85136C950AED665900F90A3D /* southResizeCursor.png */,
@@ -23195,7 +23189,6 @@
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
-				464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */,
 				1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */,
 				1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */,
 				85136C990AED665900F90A3D /* eastResizeCursor.png in Resources */,
@@ -23215,7 +23208,6 @@
 				85136CA10AED665900F90A3D /* northSouthResizeCursor.png in Resources */,
 				85136CA20AED665900F90A3D /* northWestResizeCursor.png in Resources */,
 				85136CA30AED665900F90A3D /* northWestSouthEastResizeCursor.png in Resources */,
-				464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */,
 				46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */,
 				85136CA40AED665900F90A3D /* southEastResizeCursor.png in Resources */,
 				85136CA50AED665900F90A3D /* southResizeCursor.png in Resources */,

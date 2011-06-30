@@ -72,6 +72,7 @@ typedef struct _NSRect NSRect;
 @class NSArray;
 @class NSButtonCell;
 @class NSControl;
+@class NSCursor;
 @class NSData;
 @class NSDate;
 @class NSEvent;
@@ -95,6 +96,7 @@ class AVAsset;
 class NSArray;
 class NSButtonCell;
 class NSControl;
+class NSCursor;
 class NSData;
 class NSDate;
 class NSEvent;
@@ -230,7 +232,9 @@ extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
 #endif
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
@@ -289,6 +293,9 @@ extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 
 extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
+
+extern NSCursor *(*wkCursor)(const char*);
+
 #endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);

@@ -1,3 +1,13 @@
+2011-06-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        [Mac] Use system cursors instead of custom bitmaps where possible
+        https://bugs.webkit.org/show_bug.cgi?id=63679
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added WKCursor.
+
 2011-06-28  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Adam Barth.

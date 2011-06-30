@@ -1,3 +1,24 @@
+2011-06-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        [Mac] Use system cursors instead of custom bitmaps where possible
+        https://bugs.webkit.org/show_bug.cgi?id=63679
+
+        * Resources/crossHairCursor.png: Removed.
+        * Resources/notAllowedCursor.png: Removed.
+        * WebCore.exp.in: Added wkCursor.
+        * WebCore/WebCore.gyp/WebCore.gyp: Removed the two now-unused PNG files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor): Use NSCursor API for Cross, Hand,
+        VerticalText, ContextMenu, Copy, and NotAllowed. Use wkCursor for Move,
+        Alias, Progress, and the resize and panning cursors.
+
+        * platform/mac/WebCoreSystemInterface.h: Added wkCursor.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2011-06-29  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Adam Barth.

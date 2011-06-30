@@ -166,6 +166,9 @@ bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 
 NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
+
+NSCursor *(*wkCursor)(const char*);
+
 #endif
 
 void (*wkUnregisterUniqueIdForElement)(id element);
