@@ -1,3 +1,14 @@
+2011-06-30  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] build-webkit warning: cannot find file ElementShadowPseudoId.h
+        https://bugs.webkit.org/show_bug.cgi?id=63747
+
+        Removed reference to ElementShadowPseudoId.h that no longer exists.
+
+        * WebCore.pro:
+
 2011-06-30  Anders Carlsson  <andersca@apple.com>
 
         Fix clang build.

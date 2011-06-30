@@ -1765,7 +1765,6 @@ HEADERS += \
     html/parser/XSSAuditor.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
-    html/shadow/ElementWithPseudoId.h \
     inspector/ConsoleMessage.h \
     inspector/DOMNodeHighlighter.h \
     inspector/EventsCollector.h \
