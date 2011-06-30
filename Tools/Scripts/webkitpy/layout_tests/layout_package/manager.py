@@ -687,7 +687,7 @@ class Manager:
                         _log.error('Worker %d did not exit in time.' % worker_state.number)
 
         except KeyboardInterrupt:
-            _log.info("Interrupted, exiting")
+            self._printer.print_update('Interrupted, exiting ...')
             self.cancel_workers()
             keyboard_interrupted = True
         except TestRunInterruptedException, e:
@@ -797,8 +797,7 @@ class Manager:
         # we want to treat even a potentially flaky crash as an error.
         failures = self._get_failures(result_summary, include_crashes=False, include_missing=False)
         retry_summary = result_summary
-        while (len(failures) and self._options.retry_failures and
-            not self._retrying and not interrupted):
+        while (len(failures) and self._options.retry_failures and not self._retrying and not interrupted and not keyboard_interrupted):
             _log.info('')
             _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
             _log.info('')

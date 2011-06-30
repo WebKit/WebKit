@@ -1,3 +1,19 @@
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dirk Pranke.
+
+        new-run-webkit-tests should stop when I ^C it
+        https://bugs.webkit.org/show_bug.cgi?id=63763
+
+        It still doesn't stop fast enough, but at least with this patch it
+        doesn't run more tests.
+
+        Also, I tweaked the UI that happens when there's a keyboard interrupt
+        to not be amazingly ugly.  There's still a garbage "Te" left on the
+        console, but that's a problem for another day.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+
 2011-06-30  Adam Roben  <aroben@apple.com>
 
         Make TestFailures never treat a too-many-failures build as a last-passing build for a test
