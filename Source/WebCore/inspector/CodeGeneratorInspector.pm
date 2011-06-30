@@ -1109,7 +1109,6 @@ sub finish
     unshift(@backendConstantDefinitions, "const char* InspectorBackendDispatcher::commandNames[] = {");
     push(@backendConstantDefinitions, "};");
     push(@backendConstantDefinitions, "");
-    push(@backendConstantDefinitions, "static const char* s_argumentsErrorTemplate = \"Some arguments of method '%s' can't be processed\";");
 
     # Make dispatcher methods private on the backend.
     push(@backendConstantDeclarations, "};");

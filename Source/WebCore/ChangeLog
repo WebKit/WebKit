@@ -1,5 +1,11 @@
 2011-06-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed build fix for chromium.
+
+        * inspector/CodeGeneratorInspector.pm:
+
+2011-06-30  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed build fix for mac.
 
         * inspector/CodeGeneratorInspector.pm:
