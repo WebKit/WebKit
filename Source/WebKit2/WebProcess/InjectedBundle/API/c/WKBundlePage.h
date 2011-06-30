@@ -103,6 +103,8 @@ typedef void (*WKBundlePageDidHandleOnloadEventsForFrameCallback)(WKBundlePageRe
 struct WKBundlePageLoaderClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0.
     WKBundlePageDidStartProvisionalLoadForFrameCallback                 didStartProvisionalLoadForFrame;
     WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback         didFailProvisionalLoadWithErrorForFrame;
@@ -121,11 +123,13 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidCancelClientRedirectForFrameCallback                 didCancelClientRedirectForFrame;
     WKBundlePageWillPerformClientRedirectForFrameCallback               willPerformClientRedirectForFrame;
     WKBundlePageDidHandleOnloadEventsForFrameCallback                   didHandleOnloadEventsForFrame;
+
+    // Version 1.
     WKBundlePageDidLayoutForFrameCallback                               didLayoutForFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 0 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 1 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,

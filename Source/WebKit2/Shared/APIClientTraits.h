@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClient_h
-#define APIClient_h
+#ifndef APIClientTraits_h
+#define APIClientTraits_h
 
-#include "APIClientTraits.h"
+#include "WKBundlePage.h"
 
 namespace WebKit {
 
-template<typename ClientInterface, int currentVersion> class APIClient {
-public:
-    APIClient()
-    {
-        initialize(0);
-    }
-    
-    void initialize(const ClientInterface* client)
-    {
-        COMPILE_ASSERT(sizeof(APIClientTraits<ClientInterface>::interfaceSizesByVersion) / sizeof(size_t) == currentVersion + 1, size_of_some_interfaces_are_unknown);
+template <typename ClientInterface> struct APIClientTraits
+{
+    static const size_t interfaceSizesByVersion[1];
+};
+template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
 
-        if (client && client->version == currentVersion) {
-            m_client = *client;
-            return;
-        }
-
-        memset(&m_client, 0, sizeof(m_client));
-
-        if (client)
-            memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
-    }
-    
-protected:
-    ClientInterface m_client;
+template<> struct APIClientTraits<WKBundlePageLoaderClient>
+{
+    static const size_t interfaceSizesByVersion[2];
 };
 
 } // namespace WebKit
 
-#endif // APIClient_h
+#endif // APIClientTraits_h

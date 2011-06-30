@@ -395,6 +395,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\APIClientTraits.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\APIClientTraits.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\APIObject.h"
 				>
 			</File>

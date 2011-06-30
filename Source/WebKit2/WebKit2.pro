@@ -113,6 +113,7 @@ HEADERS += \
     PluginProcess/PluginControllerProxy.h \
     PluginProcess/PluginProcess.h \
     PluginProcess/WebProcessConnection.h \
+    Shared/APIClientTraits.h \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
@@ -327,6 +328,7 @@ SOURCES += \
     PluginProcess/WebProcessConnection.cpp \
     PluginProcess/qt/PluginControllerProxyQt.cpp \
     PluginProcess/qt/PluginProcessQt.cpp \
+    Shared/APIClientTraits.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClient_h
-#define APIClient_h
-
+#include "config.h"
 #include "APIClientTraits.h"
+
+#include "WKBundlePage.h"
 
 namespace WebKit {
 
-template<typename ClientInterface, int currentVersion> class APIClient {
-public:
-    APIClient()
-    {
-        initialize(0);
-    }
-    
-    void initialize(const ClientInterface* client)
-    {
-        COMPILE_ASSERT(sizeof(APIClientTraits<ClientInterface>::interfaceSizesByVersion) / sizeof(size_t) == currentVersion + 1, size_of_some_interfaces_are_unknown);
-
-        if (client && client->version == currentVersion) {
-            m_client = *client;
-            return;
-        }
-
-        memset(&m_client, 0, sizeof(m_client));
-
-        if (client)
-            memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
-    }
-    
-protected:
-    ClientInterface m_client;
+const size_t APIClientTraits<WKBundlePageLoaderClient>::interfaceSizesByVersion[] = {
+    offsetof(WKBundlePageLoaderClient, didLayoutForFrame),
+    sizeof(WKBundlePageLoaderClient)
 };
 
 } // namespace WebKit
-
-#endif // APIClient_h

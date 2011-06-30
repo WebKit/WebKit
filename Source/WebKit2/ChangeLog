@@ -2,6 +2,28 @@
 
         Reviewed by Anders Carlsson.
 
+        Teach APIClient to correctly handle multiple versions of a client interface.
+
+        If a client struct is not the current version then we can't copy it via assignment
+        since that will read past the end of the smaller, older struct. To deal with this
+        APIClient needs to be aware of the sizes of the older client version structs so that
+        it can copy only the appropriate amount of the struct.
+        
+        * Shared/APIClient.h:
+        (WebKit::APIClient::initialize): Assign through to our client if the new in client is the
+        latest version. If an older client version was passed then we zero out our client and memcpy
+        the appropriate number of bytes in to it. This ensures that any new members in the client
+        are initialized to 0.
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h: Client interfaces are the size of their struct unless otherwise stated.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Bump the version and add comments indicating
+        which components belong to which versions.
+
+2011-06-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Make the APIClient template aware of the latest client interface version number.
 
         This will be used in an upcoming patch.
