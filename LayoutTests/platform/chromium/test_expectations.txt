@@ -224,7 +224,9 @@ BUGWK49245 : fast/forms/input-file-label.html = FAIL
 
 // This test fails because the label of a multiple file chooser button is updated.
 // We need to update expected.txt and expected.png.
-BUGWK49245 : fast/forms/input-file-re-render.html = FAIL
+BUGWK49245 WIN LINUX : fast/forms/input-file-re-render.html = FAIL
+// Timing out on mac as of WebKit r90101.
+BUGWK63733 MAC : fast/forms/input-file-re-render.html = TIMEOUT
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
@@ -2343,8 +2345,11 @@ BUGWK45652 : fast/viewport/viewport-128.html = TEXT TIMEOUT
 BUGWK45652 : fast/viewport/viewport-129.html = TEXT TIMEOUT MISSING
 
 
-BUGWK45667 : fast/files/read-file-async.html = CRASH PASS
+BUGWK45667 WIN LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
+// Timing out on mac as of WebKit r90101.
+BUGWK63733 MAC : fast/files/read-file-async.html = TIMEOUT
+BUGWK63733 MAC : fast/files/read-blob-async.html = TIMEOUT
 
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 

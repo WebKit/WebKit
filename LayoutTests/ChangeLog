@@ -1,3 +1,9 @@
+2011-06-30  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium test expectations update after r90101.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-30  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
