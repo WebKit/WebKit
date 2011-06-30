@@ -190,7 +190,7 @@ ViewController.prototype = {
         var link = document.createElement('a');
         result.appendChild(link);
 
-        link.href = this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision);
+        link.href = this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision, true);
         link.appendChild(document.createTextNode('View regression range in Trac'));
 
         return result;

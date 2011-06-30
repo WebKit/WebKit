@@ -32,7 +32,13 @@ Trac.prototype = {
         return this.baseURL + 'changeset/' + revision;
     },
 
-    logURL: function(path, startRevision, endRevision) {
-        return addQueryParametersToURL(this.baseURL + 'log/' + path, { rev: endRevision, stop_rev: startRevision });
+    logURL: function(path, startRevision, endRevision, showFullCommitLogs) {
+        var queryParameters = {
+            rev: endRevision,
+            stop_rev: startRevision,
+        };
+        if (showFullCommitLogs)
+            queryParameters.verbose = 'on';
+        return addQueryParametersToURL(this.baseURL + 'log/' + path, queryParameters);
     },
 };

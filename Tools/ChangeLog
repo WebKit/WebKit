@@ -1,5 +1,21 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Show full commit logs when visiting Trac from TestFailures page
+
+        Fixes <http://webkit.org/b/63715> Links to Trac on TestFailures page
+        should show full commit logs
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        (Trac.prototype.logURL): Added new 'showFullCommitLogs' parameter. When specified, we add
+        verbose=on to the log URL to tell Trac to show full commit logs.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForRegressionRange): Specify true for showFullCommitLogs.
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Add a link to file a bug about TestFailures to the TestFailures page
 
         Fixes <http://webkit.org/b/63466> TestFailures page should include a link to file a bug
