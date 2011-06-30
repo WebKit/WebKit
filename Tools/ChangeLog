@@ -1,3 +1,18 @@
+2011-06-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        [GTK] Crash observed with nspluginwrapper and flash
+        https://bugs.webkit.org/show_bug.cgi?id=62249
+
+        Added a TestNetscapePlugin test which verifies that WebKit properly
+        handles situations where InvalidateRect is called with a null instance.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp: Added.
+        (CallInvalidateRectWithNullNPPArgument::CallInvalidateRectWithNullNPPArgument):
+        (CallInvalidateRectWithNullNPPArgument::NPP_New):
+        * GNUmakefile.am: Add the new file to sources list.
+
 2011-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

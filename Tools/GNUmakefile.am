@@ -254,6 +254,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/PluginTest.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp \

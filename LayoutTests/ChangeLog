@@ -1,3 +1,16 @@
+2011-06-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        [GTK] Crash observed with nspluginwrapper and flash
+        https://bugs.webkit.org/show_bug.cgi?id=62249
+
+        Added a test which verifies that WebKit does not crash when InvalidateRect
+        is called with a null instance.
+
+        * platform/gtk/plugins/invalidate-rect-with-null-npp-argument-expected.txt: Added.
+        * platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html: Added.
+
 2011-06-30  Tab Atkins  <jackalmage@gmail.com>
 
         Reviewed by Adam Barth.

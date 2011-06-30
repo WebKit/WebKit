@@ -593,6 +593,12 @@ static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
 
 static void NPN_InvalidateRect(NPP npp, NPRect* invalidRect)
 {
+#if PLUGIN_ARCHITECTURE(X11)
+    // NSPluginWrapper, a plugin wrapper binary that allows running 32-bit plugins
+    // on 64-bit architectures typically used in X11, will sometimes give us a null NPP here.
+    if (!npp)
+        return;
+#endif
     RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
     plugin->invalidate(invalidRect);
 }
