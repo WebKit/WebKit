@@ -1,3 +1,23 @@
+2011-06-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Crash when calling DOMSubtreeModified event when extracting range
+        contents.
+        https://bugs.webkit.org/show_bug.cgi?id=63650
+
+        Convert a few nodes to RefPtrs and add commonRoot verification checks
+        for Range::processContents.
+
+        Tests: fast/dom/Range/range-extract-contents-event-fire-crash.html
+               fast/dom/Range/range-extract-contents-event-fire-crash2.html
+
+        * dom/Range.cpp:
+        (WebCore::childOfCommonRootBeforeOffset):
+        (WebCore::Range::processContents):
+        (WebCore::Range::processContentsBetweenOffsets):
+        (WebCore::Range::processAncestorsAndTheirSiblings):
+
 2011-06-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
