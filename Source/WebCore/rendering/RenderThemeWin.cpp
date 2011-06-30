@@ -673,7 +673,7 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
     }
 
 
-#if OS(WINCE)
+#if !OS(WINCE)
     if (!alphaBlend && !context->inTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), r, 255);
 #endif

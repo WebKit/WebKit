@@ -270,7 +270,7 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, Scrollbar* scr
         }
     }
 
-#if OS(WINCE)
+#if !OS(WINCE)
     if (!alphaBlend && !context->inTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
 #endif
@@ -324,7 +324,7 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollb
     else
         ::DrawFrameControl(windowsContext.hdc(), &themeRect, DFC_SCROLL, classicState);
 
-#if OS(WINCE)
+#if !OS(WINCE)
     if (!alphaBlend && !context->inTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(windowsContext.hdc(), rect, 255);
 #endif
@@ -383,7 +383,7 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext* context, Scrollbar* scrollba
     } else
         ::DrawEdge(hdc, &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
 
-#if OS(WINCE)
+#if !OS(WINCE)
     if (!alphaBlend && !context->inTransparencyLayer())
         DIBPixelData::setRGBABitmapAlpha(hdc, rect, 255);
 #endif
