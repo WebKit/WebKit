@@ -48,7 +48,7 @@ dt::after {
     margin-bottom: 0;
 }
 
-.existing-bugs-list {
+.existing-bugs-list, .suspect-revisions-list {
     font-size: smaller;
 }
 

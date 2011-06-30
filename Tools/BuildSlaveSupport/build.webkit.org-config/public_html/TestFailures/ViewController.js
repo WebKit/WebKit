@@ -93,7 +93,7 @@ ViewController.prototype = {
                 if (buildIndex + 1 < buildNameArray.length)
                     passingBuildName = buildNameArray[buildIndex + 1];
 
-                item.appendChild(self._domForRegressionRange(builder, passingBuildName, buildName));
+                item.appendChild(self._domForRegressionRange(builder, buildName, passingBuildName, failingTestNames));
 
                 if (passingBuildName || !stillFetchingData)
                     item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
@@ -168,7 +168,7 @@ ViewController.prototype = {
         });
     },
 
-    _domForRegressionRange: function(builder, passingBuildName, failingBuildName) {
+    _domForRegressionRange: function(builder, failingBuildName, passingBuildName, failingTestNames) {
         var result = document.createDocumentFragment();
 
         var dlItems = [
@@ -187,11 +187,56 @@ ViewController.prototype = {
         if (firstSuspectRevision === lastSuspectRevision)
             return result;
 
+        var suspectsContainer = document.createElement('div');
+        result.appendChild(suspectsContainer);
+
         var link = document.createElement('a');
         result.appendChild(link);
 
         link.href = this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision, true);
         link.appendChild(document.createTextNode('View regression range in Trac'));
+
+        suspectsContainer.appendChild(document.createTextNode('Searching for suspect revisions\u2026'));
+
+        // FIXME: Maybe some of this code should go in LayoutTestHistoryAnalyzer, or some other class?
+        var self = this;
+        self._trac.getCommitDataForRevisionRange('trunk', firstSuspectRevision, lastSuspectRevision, function(commits) {
+            var failingTestNamesWithoutExtensions = failingTestNames.map(removePathExtension);
+            var suspectCommits = commits.filter(function(commit) {
+                return commit.modifiedFiles.some(function(file) {
+                    return failingTestNamesWithoutExtensions.some(function(testName) {
+                        return file.indexOf(testName) >= 0;
+                    });
+                });
+            });
+
+            suspectsContainer.removeAllChildren();
+
+            if (!suspectCommits.length)
+                return;
+
+            var title = 'Suspect revision' + (suspectCommits.length > 1 ? 's' : '') + ':';
+            suspectsContainer.appendChild(document.createTextNode(title));
+
+            var list = document.createElement('ul');
+            suspectsContainer.appendChild(list);
+            list.className = 'suspect-revisions-list';
+
+            function compareCommits(a, b) {
+                return b.revision - a.revision;
+            }
+
+            list.appendChildren(sorted(suspectCommits, compareCommits).map(function(commit) {
+                var item = document.createElement('li');
+                var link = document.createElement('a');
+                item.appendChild(link);
+
+                link.href = self._trac.changesetURL(commit.revision);
+                link.appendChild(document.createTextNode(commit.title))
+
+                return item;
+            }));
+        });
 
         return result;
     },

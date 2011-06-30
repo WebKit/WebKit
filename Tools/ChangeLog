@@ -1,3 +1,36 @@
+2011-06-30  Adam Roben  <aroben@apple.com>
+
+        Identify revisions that modified failing tests on TestFailures page
+
+        Fixes <http://webkit.org/b/63716> TestFailures page should try to infer which commit caused
+        a failure by looking at commit logs
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (.existing-bugs-list, .suspect-revisions-list): Made this rule apply to the suspect
+        revisions list, too.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        (Trac): Initialize our memory cache.
+        (Trac.prototype.getCommitDataForRevisionRange): Added. Fetches the commit log in RSS form,
+        then parses out the revision number, Trac's idea of the commit title, and the files modified
+        by the commit. (To get the modified files, we rely on the commit message including a
+        prepare-ChangeLog-style file list.)
+        (Trac.prototype.logURL): Added a new formatAsRSS parameter.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (removePathExtension): Added. Returns a new string with the last dot and everything after it
+        removed.
+        (sorted): Added sortFunction parameter.
+        (Node.prototype.removeAllChildren): Added. Does what it says.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Updated for change to _domForRegressionRange.
+        (ViewController.prototype._domForRegressionRange): Changed argument order to match
+        _domForNewAndExistingBugs. Now takes the list of failing tests and uses it to figure out
+        which revisions modified the failing tests and displays the suspect revisions in a list.
+
 2011-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -103,9 +103,16 @@ function longestCommonPathPrefix(paths) {
     return result.join(separator);
 }
 
-function sorted(array) {
+function removePathExtension(string) {
+    var dotIndex = string.lastIndexOf('.');
+    if (dotIndex < 0)
+        return string;
+    return string.substring(0, dotIndex);
+}
+
+function sorted(array, sortFunction) {
     var newArray = array.slice();
-    newArray.sort();
+    newArray.sort(sortFunction);
     return newArray;
 }
 
@@ -134,4 +141,9 @@ Array.prototype.last = function() {
 Node.prototype.appendChildren = function(children) {
     for (var i = 0; i < children.length; ++i)
         this.appendChild(children[i]);
+}
+
+Node.prototype.removeAllChildren = function() {
+    while (this.firstChild)
+        this.removeChild(this.firstChild);
 }
