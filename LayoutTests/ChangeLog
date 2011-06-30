@@ -1,3 +1,30 @@
+2011-06-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Update platform specific expected files after r90089.
+
+        * platform/qt/fast/css/pseudo-cache-stale-expected.png: Added.
+        * platform/qt/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/qt/fast/css/text-input-with-webkit-border-radius-expected.png: Added.
+        * platform/qt/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.png:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/qt/fast/forms/placeholder-set-value-expected.png: Added.
+        * platform/qt/fast/forms/placeholder-set-value-expected.txt:
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.png: Added.
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/qt/fast/forms/search-display-none-cancel-button-expected.png: Added.
+        * platform/qt/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/qt/fast/forms/search-placeholder-value-changed-expected.png: Added.
+        * platform/qt/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/qt/fast/forms/search-rtl-expected.png: Added.
+        * platform/qt/fast/forms/search-rtl-expected.txt:
+        * platform/qt/fast/forms/search-styled-expected.png: Added.
+        * platform/qt/fast/forms/search-styled-expected.txt:
+        * platform/qt/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/qt/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/qt/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/qt/fast/replaced/width100percent-searchfield-expected.txt:
+
 2011-06-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
