@@ -407,8 +407,7 @@ class WebKitDriver(base.Driver):
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-        self._server_process = server_process.ServerProcess(self._port,
-            self._port.driver_name(), self.cmd_line(), environment)
+        self._server_process = server_process.ServerProcess(self._port, self._port.driver_name(), self.cmd_line(), environment)
 
     def poll(self):
         return self._server_process.poll()
@@ -418,43 +417,49 @@ class WebKitDriver(base.Driver):
         self._server_process.start()
         return
 
-    # FIXME: This function is huge.
-    def run_test(self, driver_input):
+    def detected_crash(self):
+        # FIXME: We can't just check self._server_process.crashed for two reasons:
+        # 1. WebKitTestRunner will print "#CRASHED - WebProcess" and then exit if the WebProcess crashes.
+        # 2. Adam Roben tells me Windows DumpRenderTree can print "#CRASHED" yet still exit cleanly.
+        return self._server_process.crashed
+
+    def _command_from_driver_input(self, driver_input):
         uri = self._port.filename_to_uri(driver_input.filename)
-        if uri.startswith("file:///"):
-            command = uri[7:]
-        else:
-            command = uri
+        command = uri[7:] if uri.startswith("file:///") else uri
 
         if driver_input.image_hash:
+            # FIXME: Why the leading quote?
             command += "'" + driver_input.image_hash
-        command += "\n"
+        return command + "\n"
 
+    def _read_first_block(self, deadline):
+        """Reads a block from the server_process and returns (text_content, audio_content)."""
+        if self.detected_crash():
+            return (None, None)
+
+        block = self._read_block(deadline)
+        if block.content_type == 'audio/wav':
+            return (None, block.decoded_content)
+        return (block.decoded_content, None)
+
+    def _read_optional_image_block(self, deadline):
+        """Reads a block from the server_process and returns (image, actual_image_hash)."""
+        if self.detected_crash():
+            return (None, None)
+
+        block = self._read_block(deadline)
+        if block.content and block.content_type == 'image/png':
+            return (block.decoded_content, block.content_hash)
+        return (None, block.content_hash)
+
+    def run_test(self, driver_input):
+        command = self._command_from_driver_input(driver_input)
         start_time = time.time()
-        self._server_process.write(command)
-
-        text = None
-        image = None
-        actual_image_hash = None
-        audio = None
         deadline = time.time() + int(driver_input.timeout) / 1000.0
 
-        # First block is either text or audio
-        if not self._server_process.crashed:
-            block = self._read_block(deadline)
-            if block.content_type == 'audio/wav':
-                audio = block.decoded_content
-            else:
-                text = block.decoded_content
-
-        # Now read an optional second block of image data
-        if not self._server_process.crashed:
-            block = self._read_block(deadline)
-            if block.content and block.content_type == 'image/png':
-                image = block.decoded_content
-                actual_image_hash = block.content_hash
-            elif block.content_hash:
-                actual_image_hash = block.content_hash
+        self._server_process.write(command)
+        text, audio = self._read_first_block(deadline)  # First block is either text or audio
+        image, actual_image_hash = self._read_optional_image_block(deadline)  # The second (optional) block is image data.
 
         error_lines = self._server_process.error.splitlines()
         # FIXME: This is a hack.  It is unclear why sometimes
@@ -464,10 +469,10 @@ class WebKitDriver(base.Driver):
             error_lines.pop()  # Remove the expected "#EOF"
         error = "\n".join(error_lines)
 
-        # FIXME: This seems like the wrong section of code to be doing this reset in.
+        # FIXME: This seems like the wrong section of code to be resetting _server_process.error.
         self._server_process.error = ""
         return base.DriverOutput(text, image, actual_image_hash, audio,
-            crash=self._server_process.crashed, test_time=time.time() - start_time,
+            crash=self.detected_crash(), test_time=time.time() - start_time,
             timeout=self._server_process.timed_out, error=error)
 
     def _read_block(self, deadline):
@@ -486,7 +491,7 @@ class WebKitDriver(base.Driver):
         timeout = deadline - time.time()
         line = self._server_process.read_line(timeout)
         eof = False
-        while (not self._server_process.timed_out and not self._server_process.crashed and not eof):
+        while (not self._server_process.timed_out and not self.detected_crash() and not eof):
             chomped_line = line.rstrip()
             if chomped_line.endswith("#EOF"):
                 eof = True
