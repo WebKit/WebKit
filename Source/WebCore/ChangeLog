@@ -1,3 +1,14 @@
+2011-06-30  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] Support annotations for arrays in heap profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=63690
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+
+
 2011-06-30  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for !ENABLE(SVG_ANIMATION) after r88663, r89187, r89220, r89431 and r89661.

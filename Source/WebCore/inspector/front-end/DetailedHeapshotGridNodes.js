@@ -257,7 +257,10 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             valueStyle = "null";
             break;
         case "array":
-            value += "[]";
+            if (!value)
+                value = "[]";
+            else
+                value += " []";
             break;
         };
         data["object"] = { valueStyle: valueStyle, value: value + " @" + this.snapshotNodeId };
