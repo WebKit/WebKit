@@ -29,6 +29,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "Color.h"
 #include "ClassList.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
@@ -317,77 +318,88 @@ void StyledElement::addCSSLength(Attribute* attr, int id, const String &value)
     attr->decl()->setLengthProperty(id, value, false);
 }
 
-/* color parsing that tries to match as close as possible IE 6. */
-void StyledElement::addCSSColor(Attribute* attr, int id, const String& c)
+static String parseColorStringWithCrazyLegacyRules(const String& colorString)
 {
-    // this is the only case no color gets applied in IE.
-    if (!c.length())
+    // Per spec, only look at the first 128 digits of the string.
+    const size_t maxColorLength = 128;
+    // We'll pad the buffer with two extra 0s later, so reserve two more than the max.
+    Vector<char, maxColorLength+2> digitBuffer;
+    
+    size_t i = 0;
+    // Skip a leading #.
+    if (colorString[0] == '#')
+        i = 1;
+    
+    // Grab the first 128 characters, replacing non-hex characters with 0.
+    // Non-BMP characters are replaced with "00" due to them appearing as two "characters" in the String.
+    for (; i < colorString.length() && digitBuffer.size() < maxColorLength; i++) {
+        if (!isASCIIHexDigit(colorString[i]))
+            digitBuffer.append('0');
+        else
+            digitBuffer.append(colorString[i]);
+    }
+
+    if (!digitBuffer.size())
+        return "#000000";
+
+    // Pad the buffer out to at least the next multiple of three in size.
+    digitBuffer.append('0');
+    digitBuffer.append('0');
+
+    if (digitBuffer.size() < 6)
+        return String::format("#0%c0%c0%c", digitBuffer[0], digitBuffer[1], digitBuffer[2]);
+    
+    // Split the digits into three components, then search the last 8 digits of each component.
+    ASSERT(digitBuffer.size() >= 6);
+    size_t componentLength = digitBuffer.size() / 3;
+    size_t componentSearchWindowLength = min<size_t>(componentLength, 8);
+    size_t redIndex = componentLength - componentSearchWindowLength;
+    size_t greenIndex = componentLength * 2 - componentSearchWindowLength;
+    size_t blueIndex = componentLength * 3 - componentSearchWindowLength;
+    // Skip digits until one of them is non-zero, or we've only got two digits left in the component.
+    while (digitBuffer[redIndex] == '0' && digitBuffer[greenIndex] == '0' && digitBuffer[blueIndex] == '0' && (componentLength - redIndex) > 2) {
+        redIndex++;
+        greenIndex++;
+        blueIndex++;
+    }
+    ASSERT(redIndex >= 0);
+    ASSERT(redIndex + 1 < componentLength);
+    ASSERT(greenIndex >= componentLength);
+    ASSERT(greenIndex + 1 < componentLength * 2);
+    ASSERT(blueIndex >= componentLength * 2);
+    ASSERT(blueIndex + 1 < digitBuffer.size());
+    return String::format("#%c%c%c%c%c%c", digitBuffer[redIndex], digitBuffer[redIndex + 1], digitBuffer[greenIndex], digitBuffer[greenIndex + 1], digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);   
+}
+
+// Color parsing that matches HTML's "rules for parsing a legacy color value"
+void StyledElement::addCSSColor(Attribute* attribute, int id, const String& attributeValue)
+{
+    // The empty string doesn't apply a color. (Just whitespace does, which is why this check occurs before trimming.)
+    if (!attributeValue.length())
+        return;
+    
+    String color = attributeValue.stripWhiteSpace();
+
+    // "transparent" doesn't apply a color either.
+    if (equalIgnoringCase(color, "transparent"))
         return;
 
-    if (!attr->decl())
-        createMappedDecl(attr);
-    
-    if (attr->decl()->setProperty(id, c, false))
+    if (!attribute->decl())
+        createMappedDecl(attribute);
+
+    // If the string is a named CSS color, use that color.
+    Color foundColor;
+    foundColor.setNamedColor(color);
+    if (foundColor.isValid()) {
+        attribute->decl()->setProperty(id, color, false);
         return;
-    
-    String color = c;
-    // not something that fits the specs.
-    
-    // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value
-    // out of everything you put in. The algorithm is experimentally determined, but seems to work for all test cases I have.
-    
-    // the length of the color value is rounded up to the next
-    // multiple of 3. each part of the rgb triple then gets one third
-    // of the length.
-    //
-    // Each triplet is parsed byte by byte, mapping
-    // each number to a hex value (0-9a-fA-F to their values
-    // everything else to 0).
-    //
-    // The highest non zero digit in all triplets is remembered, and
-    // used as a normalization point to normalize to values between 0
-    // and 255.
-    
-    if (!equalIgnoringCase(color, "transparent")) {
-        if (color[0] == '#')
-            color.remove(0, 1);
-        int basicLength = (color.length() + 2) / 3;
-        if (basicLength > 1) {
-            // IE ignores colors with three digits or less
-            int colors[3] = { 0, 0, 0 };
-            int component = 0;
-            int pos = 0;
-            int maxDigit = basicLength-1;
-            while (component < 3) {
-                // search forward for digits in the string
-                int numDigits = 0;
-                while (pos < (int)color.length() && numDigits < basicLength) {
-                    colors[component] <<= 4;
-                    if (isASCIIHexDigit(color[pos])) {
-                        colors[component] += toASCIIHexValue(color[pos]);
-                        maxDigit = min(maxDigit, numDigits);
-                    }
-                    numDigits++;
-                    pos++;
-                }
-                while (numDigits++ < basicLength)
-                    colors[component] <<= 4;
-                component++;
-            }
-            maxDigit = basicLength - maxDigit;
-            
-            // normalize to 00-ff. The highest filled digit counts, minimum is 2 digits
-            maxDigit -= 2;
-            colors[0] >>= 4 * maxDigit;
-            colors[1] >>= 4 * maxDigit;
-            colors[2] >>= 4 * maxDigit;
-            
-            color = String::format("#%02x%02x%02x", colors[0], colors[1], colors[2]);
-            if (attr->decl()->setProperty(id, color, false))
-                return;
-        }
     }
-    attr->decl()->setProperty(id, CSSValueBlack, false);
+
+    // If the string is a 3 or 6-digit hex color, use that color.
+    if (color[0] == '#' && (color.length() == 4 || color.length() == 7) && attribute->decl()->setProperty(id, color, false))
+        return;
+
+    attribute->decl()->setProperty(id, parseColorStringWithCrazyLegacyRules(color), false);
 }
 
 void StyledElement::createMappedDecl(Attribute* attr)

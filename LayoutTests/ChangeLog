@@ -1,3 +1,16 @@
+2011-06-30  Tab Atkins  <jackalmage@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Fix legacy color attribute parsing to match HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=63029
+
+        Tests <body bgcolor> parsing.
+
+        * fast/dom/attribute-legacy-colors-expected.txt: Added.
+        * fast/dom/attribute-legacy-colors.html: Added.
+        * fast/dom/script-tests/attribute-legacy-colors.js: Added.
+
 2011-06-30  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, remove passing tests from chromium test expectations.

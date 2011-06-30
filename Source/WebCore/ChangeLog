@@ -1,3 +1,18 @@
+2011-06-30  Tab Atkins  <jackalmage@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Fix legacy color attribute parsing to match HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=63029
+
+        Relevant spec link: http://www.whatwg.org/specs/web-apps/current-work/complete/common-microsyntaxes.html#rules-for-parsing-a-legacy-color-value
+        Fix legacy color attribute parsing (<body bgcolor>, <font color>, etc.) to match the HTML spec and more closely match other browsers.
+
+        Test: fast/dom/attribute-legacy-colors.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+
 2011-06-28  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Chang.
