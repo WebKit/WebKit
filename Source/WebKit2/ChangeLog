@@ -1,3 +1,15 @@
+2011-06-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Reinstate WKSecurityOriginGetHost and WKSecurityOriginGetProtocol as wrappers around the correctly-named functions.
+
+        They're needed for ABI compatibility.
+
+        * Shared/API/c/WKSecurityOrigin.cpp:
+        (WKSecurityOriginGetHost):
+        (WKSecurityOriginGetProtocol):
+
 2011-06-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
