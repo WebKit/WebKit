@@ -31,6 +31,7 @@
 #include "TextStream.h"
 
 #include <wtf/ByteArray.h>
+#include <wtf/ParallelJobs.h>
 #include <wtf/Vector.h>
 
 using std::min;
@@ -100,6 +101,98 @@ bool FEMorphology::setRadiusY(float radiusY)
     return true;
 }
 
+void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, int yEnd)
+{
+    ByteArray* srcPixelArray = paintingData->srcPixelArray;
+    ByteArray* dstPixelArray = paintingData->dstPixelArray;
+    const int width = paintingData->width;
+    const int height = paintingData->height;
+    const int effectWidth  = width * 4;
+    const int radiusX = paintingData->radiusX;
+    const int radiusY = paintingData->radiusY;
+
+    Vector<unsigned char> extrema;
+    for (int y = yStart; y < yEnd; ++y) {
+        int extremaStartY = max(0, y - radiusY);
+        int extremaEndY = min(height - 1, y + radiusY);
+        for (unsigned int clrChannel = 0; clrChannel < 4; ++clrChannel) {
+            extrema.clear();
+            // Compute extremas for each columns
+            for (int x = 0; x <= radiusX; ++x) {
+                unsigned char columnExtrema = srcPixelArray->get(yStart * effectWidth  + 4 * x + clrChannel);
+                for (int eY = extremaStartY + 1; eY < extremaEndY; ++eY) {
+                    unsigned char pixel = srcPixelArray->get(eY * effectWidth  + 4 * x + clrChannel);
+                    if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema)
+                        || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema)) {
+                        columnExtrema = pixel;
+                    }
+                }
+
+                extrema.append(columnExtrema);
+            }
+
+            // Kernel is filled, get extrema of next column
+            for (int x = 0; x < width; ++x) {
+                const int endX = min(x + radiusX, width - 1);
+                unsigned char columnExtrema = srcPixelArray->get(extremaStartY * effectWidth  + endX * 4 + clrChannel);
+                for (int i = extremaStartY + 1; i <= extremaEndY; ++i) {
+                    unsigned char pixel = srcPixelArray->get(i * effectWidth  + endX * 4 + clrChannel);
+                    if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema)
+                        || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema))
+                        columnExtrema = pixel;
+                }
+                if (x - radiusX >= 0)
+                    extrema.remove(0);
+                if (x + radiusX <= width)
+                    extrema.append(columnExtrema);
+
+                unsigned char entireExtrema = extrema[0];
+                for (unsigned kernelIndex = 1; kernelIndex < extrema.size(); ++kernelIndex) {
+                    if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && extrema[kernelIndex] <= entireExtrema)
+                        || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && extrema[kernelIndex] >= entireExtrema))
+                        entireExtrema = extrema[kernelIndex];
+                }
+                dstPixelArray->set(y * effectWidth + 4 * x + clrChannel, entireExtrema);
+            }
+        }
+    }
+}
+
+#if ENABLE(PARALLEL_JOBS)
+void FEMorphology::platformApplyWorker(PlatformApplyParameters* param)
+{
+    param->filter->platformApplyGeneric(param->paintingData, param->startY, param->endY);
+}
+#endif
+
+void FEMorphology::platformApply(PaintingData* paintingData)
+{
+#if ENABLE(PARALLEL_JOBS)
+    int optimalThreadNumber = (paintingData->width * paintingData->height) / s_minimalArea;
+    if (optimalThreadNumber > 1) {
+        ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
+        int numOfThreads = parallelJobs.numberOfJobs();
+        if (numOfThreads > 1) {
+            const int deltaY = 1 + paintingData->height / numOfThreads;
+            int currentY = 0;
+            for (int job = numOfThreads - 1; job >= 0; --job) {
+                PlatformApplyParameters& param = parallelJobs.parameter(job);
+                param.filter = this;
+                param.startY = currentY;
+                currentY += deltaY;
+                param.endY = job ? currentY : paintingData->height;
+                param.paintingData = paintingData;
+            }
+            parallelJobs.execute();
+            return;
+        }
+        // Fallback to single thread model
+    }
+#endif
+    platformApplyGeneric(paintingData, 0, paintingData->height);
+}
+
+
 void FEMorphology::apply()
 {
     if (hasResult())
@@ -124,54 +217,15 @@ void FEMorphology::apply()
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
 
-    int effectWidth = effectDrawingRect.width() * 4;
-    
-    // Limit the radius size to effect dimensions
-    radiusX = min(effectDrawingRect.width() - 1, radiusX);
-    radiusY = min(effectDrawingRect.height() - 1, radiusY);
-    
-    Vector<unsigned char> extrema;
-    for (int y = 0; y < effectDrawingRect.height(); ++y) {
-        int startY = max(0, y - radiusY);
-        int endY = min(effectDrawingRect.height() - 1, y + radiusY);
-        for (unsigned channel = 0; channel < 4; ++channel) {
-            // Fill the kernel
-            extrema.clear();
-            for (int j = 0; j <= radiusX; ++j) {
-                unsigned char columnExtrema = srcPixelArray->get(startY * effectWidth + 4 * j + channel);
-                for (int i = startY; i <= endY; ++i) {
-                    unsigned char pixel = srcPixelArray->get(i * effectWidth + 4 * j + channel);
-                    if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema) ||
-                        (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema))
-                        columnExtrema = pixel;
-                }
-                extrema.append(columnExtrema);
-            }
-            
-            // Kernel is filled, get extrema of next column 
-            for (int x = 0; x < effectDrawingRect.width(); ++x) {
-                unsigned endX = min(x + radiusX, effectDrawingRect.width() - 1);
-                unsigned char columnExtrema = srcPixelArray->get(startY * effectWidth + endX * 4 + channel);
-                for (int i = startY; i <= endY; ++i) {
-                    unsigned char pixel = srcPixelArray->get(i * effectWidth + endX * 4 + channel);
-                    if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema) ||
-                        (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema))
-                        columnExtrema = pixel;
-                }
-                if (x - radiusX >= 0)
-                    extrema.remove(0);
-                if (x + radiusX <= effectDrawingRect.width())
-                    extrema.append(columnExtrema);
-                unsigned char entireExtrema = extrema[0];
-                for (unsigned kernelIndex = 0; kernelIndex < extrema.size(); ++kernelIndex) {
-                    if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && extrema[kernelIndex] <= entireExtrema) ||
-                        (m_type == FEMORPHOLOGY_OPERATOR_DILATE && extrema[kernelIndex] >= entireExtrema))
-                        entireExtrema = extrema[kernelIndex];
-                }
-                dstPixelArray->set(y * effectWidth + 4 * x + channel, entireExtrema);
-            }
-        }
-    }
+    PaintingData paintingData;
+    paintingData.srcPixelArray = srcPixelArray.get();
+    paintingData.dstPixelArray = dstPixelArray;
+    paintingData.width = effectDrawingRect.width();
+    paintingData.height = effectDrawingRect.height();
+    paintingData.radiusX = min(effectDrawingRect.width() - 1, radiusX);
+    paintingData.radiusY = min(effectDrawingRect.height() - 1, radiusY);
+
+    platformApply(&paintingData);
 }
 
 void FEMorphology::dump()
@@ -200,7 +254,7 @@ TextStream& FEMorphology::externalRepresentation(TextStream& ts, int indent) con
     ts << "[feMorphology";
     FilterEffect::externalRepresentation(ts);
     ts << " operator=\"" << morphologyOperator() << "\" "
-       << "radius=\"" << radiusX() << ", " << radiusY() << "\"]\n";    
+       << "radius=\"" << radiusX() << ", " << radiusY() << "\"]\n";
     inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
