@@ -31,6 +31,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
@@ -856,14 +857,15 @@ Node *tabSpanNode(const Node *node)
     return isTabSpanTextNode(node) ? node->parentNode() : 0;
 }
 
-bool isNodeInTextFormControl(Node* node)
+HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
 {
-    if (!node)
-        return false;
-    Node* ancestor = node->shadowAncestorNode();
-    if (ancestor == node)
-        return false;
-    return ancestor->isElementNode() && static_cast<Element*>(ancestor)->isTextFormControl();
+    ASSERT(position.isNull() || position.anchorType() == Position::PositionIsOffsetInAnchor
+           || position.containerNode() || !position.anchorNode()->shadowAncestorNode());
+    Node* container = position.containerNode();
+    if (!container)
+        return 0;
+    Node* ancestor = container->shadowAncestorNode();
+    return ancestor != container ? toTextFormControl(ancestor) : 0;
 }
     
 Position positionOutsideTabSpan(const Position& pos)

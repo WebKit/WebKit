@@ -1484,20 +1484,8 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 
 bool FrameSelection::isInPasswordField() const
 {
-    ASSERT(start().isNull() || start().anchorType() == Position::PositionIsOffsetInAnchor
-           || start().containerNode() || !start().anchorNode()->shadowAncestorNode());
-    Node* startNode = start().containerNode();
-    if (!startNode)
-        return false;
-
-    startNode = startNode->shadowAncestorNode();
-    if (!startNode)
-        return false;
-
-    if (!startNode->hasTagName(inputTag))
-        return false;
-    
-    return static_cast<HTMLInputElement*>(startNode)->isPasswordField();
+    HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
+    return textControl && textControl->hasTagName(inputTag) && static_cast<HTMLInputElement*>(textControl)->isPasswordField();
 }
 
 void FrameSelection::focusedOrActiveStateChanged()

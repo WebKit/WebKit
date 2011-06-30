@@ -37,6 +37,7 @@ namespace WebCore {
 class Document;
 class Element;
 class HTMLElement;
+class HTMLTextFormControlElement;
 class Node;
 class Position;
 class Range;
@@ -106,7 +107,6 @@ bool isListItem(Node*);
 bool isNodeRendered(const Node*);
 bool isNodeVisiblyContainedWithin(Node*, const Range*);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
-bool isNodeInTextFormControl(Node* node);
     
 TextDirection directionOfEnclosingBlock(const Position&);
 
@@ -218,6 +218,7 @@ PassRefPtr<Element> createBlockPlaceholderElement(Document*);
 
 Element* editableRootForPosition(const Position&);
 Element* unsplittableElementForPosition(const Position&);
+HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 
 // Boolean functions on Element
     

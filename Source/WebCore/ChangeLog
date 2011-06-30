@@ -1,3 +1,33 @@
+2011-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Replace isNodeInTextFormControl(Node*) by enclosingTextFormControl(const Position&)
+        https://bugs.webkit.org/show_bug.cgi?id=63672
+
+        Replaced isNodeInTextFormControl(Node*) by enclosingTextFormControl(const Position&).
+        Also added a safe toTextFormControl to HTMLFormControlElement.h.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply): Calls enclosingTextFormControl instead of manually
+        checking the tag name of shadowAncestorNode.
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand): Rewritten using enclosingTextFormControl and toTextFormControl.
+        (WebCore::Editor::cut): Calls enclosingTextFormControl instead of isNodeInTextFormControl.
+        (WebCore::Editor::copy): Ditto.
+        (WebCore::Editor::setBaseWritingDirection): Calls toTextFormControl instead of manually checking tag name.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::isInPasswordField): Calls enclosingTextFormControl.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingTextFormControl): Added.
+        * editing/htmlediting.h:
+        * html/HTMLFormControlElement.h:
+        (WebCore::toTextFormControl): Added.
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Calls enclosingTextFormControl instead of isNodeInTextFormControl.
+
 2011-06-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

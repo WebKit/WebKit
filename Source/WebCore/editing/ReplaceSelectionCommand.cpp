@@ -1105,10 +1105,9 @@ void ReplaceSelectionCommand::doApply()
     
     // Add spaces for smart replace.
     if (m_smartReplace && currentRoot) {
-        // Disable smart replace for password fields.
-        Node* start = currentRoot->shadowAncestorNode();
-        if (start->hasTagName(inputTag) && static_cast<HTMLInputElement*>(start)->isPasswordField())
-            m_smartReplace = false;
+        Element* textControl = enclosingTextFormControl(firstPositionInNode(currentRoot));
+        if (textControl && textControl->hasTagName(inputTag) && static_cast<HTMLInputElement*>(textControl)->isPasswordField())
+            m_smartReplace = false; // Disable smart replace for password fields.
     }
     if (m_smartReplace) {
         bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) &&

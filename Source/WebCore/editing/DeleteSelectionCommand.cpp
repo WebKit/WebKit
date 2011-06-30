@@ -787,12 +787,9 @@ void DeleteSelectionCommand::doApply()
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
-        Node* startNode = m_selectionToDelete.start().deprecatedNode();
-        Node* ancestorNode = startNode ? startNode->shadowAncestorNode() : 0;
-        if (ancestorNode && ancestorNode->hasTagName(inputTag)
-                && static_cast<HTMLInputElement*>(ancestorNode)->isTextField()
-                && ancestorNode->focused())
-            document()->frame()->editor()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
+        Element* textControl = enclosingTextFormControl(m_selectionToDelete.start());
+        if (textControl && textControl->focused())
+            document()->frame()->editor()->textWillBeDeletedInTextField(textControl);
     }
 
     // save this to later make the selection with

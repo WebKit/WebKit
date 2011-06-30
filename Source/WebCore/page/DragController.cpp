@@ -701,7 +701,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
     Image* image = getImage(static_cast<Element*>(node));
     if (state.m_dragType == DragSourceActionSelection) {
         if (!clipboard->hasData()) {
-            if (isNodeInTextFormControl(src->selection()->start().deprecatedNode()))
+            if (enclosingTextFormControl(src->selection()->start()))
                 clipboard->writePlainText(src->editor()->selectedText());
             else {
                 RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();

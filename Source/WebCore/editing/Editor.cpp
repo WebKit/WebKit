@@ -53,8 +53,8 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
@@ -105,16 +105,10 @@ VisibleSelection Editor::selectionForCommand(Event* event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
-    Node* target = event->target()->toNode();
-    Node* selectionStart = selection.start().deprecatedNode();
-    if (target && (!selectionStart || target->shadowAncestorNode() != selectionStart->shadowAncestorNode())) {
-        RefPtr<Range> range;
-        if (target->hasTagName(inputTag) && static_cast<HTMLInputElement*>(target)->isTextField())
-            range = static_cast<HTMLInputElement*>(target)->selection();
-        else if (target->hasTagName(textareaTag))
-            range = static_cast<HTMLTextAreaElement*>(target)->selection();
-
-        if (range)
+    HTMLTextFormControlElement* textFormControlOfSelectionStart = enclosingTextFormControl(selection.start());
+    HTMLTextFormControlElement* textFromControlOfTarget = toTextFormControl(event->target()->toNode());
+    if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
+        if (RefPtr<Range> range = textFromControlOfTarget->selection())
             return VisibleSelection(range.get());
     }
     return selection;
@@ -1157,7 +1151,7 @@ void Editor::cut()
     RefPtr<Range> selection = selectedRange();
     if (shouldDeleteRange(selection.get())) {
         updateMarkersForWordsAffectedByEditing(true);
-        if (isNodeInTextFormControl(m_frame->selection()->start().deprecatedNode()))
+        if (enclosingTextFormControl(m_frame->selection()->start()))
             Pasteboard::generalPasteboard()->writePlainText(selectedText());
         else
             Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
@@ -1175,7 +1169,7 @@ void Editor::copy()
         return;
     }
 
-    if (isNodeInTextFormControl(m_frame->selection()->start().deprecatedNode()))
+    if (enclosingTextFormControl(m_frame->selection()->start()))
         Pasteboard::generalPasteboard()->writePlainText(selectedText());
     else {
         Document* document = m_frame->document();
@@ -1443,7 +1437,7 @@ void Editor::toggleUnderline()
 void Editor::setBaseWritingDirection(WritingDirection direction)
 {
     Node* focusedNode = frame()->document()->focusedNode();
-    if (focusedNode && (focusedNode->hasTagName(textareaTag) || (focusedNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(focusedNode)->isTextField()))) {
+    if (toTextFormControl(focusedNode)) {
         if (direction == NaturalWritingDirection)
             return;
         toHTMLElement(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
