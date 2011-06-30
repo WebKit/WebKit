@@ -879,7 +879,7 @@ public:
 
     void testb_rr(RegisterID src, RegisterID dst)
     {
-        m_formatter.oneByteOp(OP_TEST_EbGb, src, dst);
+        m_formatter.oneByteOp8(OP_TEST_EbGb, src, dst);
     }
 
     void testb_im(int imm, int offset, RegisterID base)
@@ -1866,6 +1866,14 @@ private:
             emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
             m_buffer.putByteUnchecked(opcode);
             registerModRM(groupOp, rm);
+        }
+
+        void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(reg) || byteRegRequiresRex(rm), reg, 0, rm);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
         }
 
         void twoByteOp8(TwoByteOpcodeID opcode, RegisterID reg, RegisterID rm)
