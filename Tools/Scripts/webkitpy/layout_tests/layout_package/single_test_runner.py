@@ -187,10 +187,11 @@ class SingleTestRunner:
                 "-expected" + modifier)
             fs.maybe_make_directory(output_dir)
             output_path = fs.join(output_dir, output_file)
-            _log.debug('Writing new baseline result "%s"' % output_path)
         else:
             output_path = port.expected_filename(self._filename, modifier)
-            _log.debug('Resetting baseline result "%s"' % output_path)
+
+        result_name = fs.relpath(output_path, port.layout_tests_dir())
+        _log.info('Writing new expected result "%s"' % result_name)
 
         port.update_baseline(output_path, data)
 

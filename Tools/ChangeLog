@@ -1,3 +1,16 @@
+2011-06-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests should tell you when it creates new expectations
+        https://bugs.webkit.org/show_bug.cgi?id=63675
+
+        Unforunately, this patch creates a bunch of test-webkitpy spam because
+        we don't understand how Python logging works well enough to stop the
+        spam.  :(
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+
 2011-06-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
