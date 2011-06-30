@@ -1,5 +1,21 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Use a colon to separate test names from failure info on TestFailures
+
+        This matches how the "Possibly Flaky Tests" list works, and is much prettier when the
+        failure info itself includes parentheses.
+
+        Fixes <http://webkit.org/b/63722> Crashing symbols on TestFailures page look ugly due to
+        double parentheses
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForFailedTest): Use a colon instead of surrounding the failure
+        info in parentheses.
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Robustify PersistentCache against cached data that contains the string ': '
 
         Fixes <http://webkit.org/b/63721> Exceptions thrown while loading TestFailures page due to

@@ -248,10 +248,8 @@ ViewController.prototype = {
 
     _domForFailedTest: function(builder, buildName, testName, testResult) {
         var result = document.createDocumentFragment();
-        result.appendChild(document.createTextNode(testName));
-        result.appendChild(document.createTextNode(' ('));
+        result.appendChild(document.createTextNode(testName + ': '));
         result.appendChild(this._domForFailureDiagnosis(builder, buildName, testName, testResult));
-        result.appendChild(document.createTextNode(')'));
         return result;
     },
 
