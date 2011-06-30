@@ -348,11 +348,11 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
     return True
 
 def _get_test_baselines(test_file, test_config):
+    # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
     class AllPlatformsPort(WebKitPort):
         def __init__(self):
             WebKitPort.__init__(self, filesystem=test_config.filesystem)
-            self._platforms_by_directory = dict(
-                [(self._webkit_baseline_path(p), p) for p in test_config.platforms])
+            self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self):
             return self._platforms_by_directory.keys()
@@ -360,28 +360,23 @@ def _get_test_baselines(test_file, test_config):
         def platform_from_directory(self, directory):
             return self._platforms_by_directory[directory]
 
-    test_path = test_config.filesystem.join(
-        test_config.layout_tests_directory, test_file)
+    test_path = test_config.filesystem.join(test_config.layout_tests_directory, test_file)
 
     all_platforms_port = AllPlatformsPort()
 
     all_test_baselines = {}
     for baseline_extension in ('.txt', '.checksum', '.png'):
-        test_baselines = test_config.test_port.expected_baselines(
-            test_path, baseline_extension)
-        baselines = all_platforms_port.expected_baselines(
-            test_path, baseline_extension, all_baselines=True)
+        test_baselines = test_config.test_port.expected_baselines(test_path, baseline_extension)
+        baselines = all_platforms_port.expected_baselines(test_path, baseline_extension, all_baselines=True)
         for platform_directory, expected_filename in baselines:
             if not platform_directory:
                 continue
             if platform_directory == test_config.layout_tests_directory:
                 platform = 'base'
             else:
-                platform = all_platforms_port.platform_from_directory(
-                    platform_directory)
+                platform = all_platforms_port.platform_from_directory(platform_directory)
             platform_baselines = all_test_baselines.setdefault(platform, {})
-            was_used_for_test = (
-                platform_directory, expected_filename) in test_baselines
+            was_used_for_test = (platform_directory, expected_filename) in test_baselines
             platform_baselines[baseline_extension] = was_used_for_test
 
     return all_test_baselines

@@ -1,3 +1,54 @@
+2011-06-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Simplify skipped file finding in preparation for adding wk2 skipped list fallback
+        https://bugs.webkit.org/show_bug.cgi?id=63501
+
+        Re-landing after fixing a bug in WebKitPort.baseline_search_path which broke
+        the rebaselineserver unit tests.  Also fixed nits brought up by Dirk after previous landing.
+
+        The goal was to add support for wk2 skipped lists.
+        However, I found that our skipped list computation was a
+        manual hack (which only worked for the mac port).
+
+        So I fixed a FIXME to move the skipped list finding
+        into WebKitPort instead of MacPort.
+        Doing so required the concept of a "port_name", since previously
+        the only name accessible from a port object was name()
+        which includes many things beyond "mac" or "chromium", etc.
+
+        Eventually I believe we'll want to re-think the way that we pass
+        in a port_name argument to Port subclasses and expect them to parse
+        it.  But for now I just added a cls.port_name variable which contains
+        the static information needed to compute wk2 names as well as
+        compute Skipped list fallback which works for Mac/Win/Qt and Gtk.
+
+        In order to test my new _skipped_file_search_paths method, I
+        fixed another FIXME by making it return relative paths.
+
+        I also fixed the test_expectations_path code in WebKitPort to use port_name.
+        It was using name() which would return PORT-VERSION so MacPort was overriding
+        it to use just PORT.  After fixing test_expectations_path to use port_name
+        (and making it aware of webkit2) I was able to remove the MacPort implementation.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+         - Add port_name() to access "mac", since name() returns "mac-leopard" etc.
+         - Document that real_name() seems to have no purpose.
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+         - Add _parse_port_name(), eventually we might call this from WebKitPort directly.
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+         - Add _parse_port_name.
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+         - Add _parse_port_name.
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+         - Move Skipped-file finding code down to WebKitPort
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-06-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90070.

@@ -32,15 +32,14 @@ import logging
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
-_log = logging.getLogger("webkitpy.layout_tests.port.win")
+_log = logging.getLogger(__file__)
 
 
 class WinPort(WebKitPort):
-    """WebKit Win implementation of the Port class."""
+    port_name = "win"
 
-    def __init__(self, port_name=None, **kwargs):
-        port_name = port_name or 'win'
-        WebKitPort.__init__(self, port_name=port_name, **kwargs)
+    def __init__(self, **kwargs):
+        WebKitPort.__init__(self, **kwargs)
         self._version = 'win7'
         self._operating_system = 'win'
 
@@ -50,5 +49,4 @@ class WinPort(WebKitPort):
         return map(self._webkit_baseline_path, port_names)
 
     def _path_to_apache_config_file(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
-                                     'cygwin-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'cygwin-httpd.conf')

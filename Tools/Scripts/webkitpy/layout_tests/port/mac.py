@@ -48,6 +48,7 @@ def os_version(os_version_string=None, supported_versions=None):
     version_strings = {
         5: 'leopard',
         6: 'snowleopard',
+        # Add 7: 'lion' here?
     }
     assert release_version >= min(version_strings.keys())
     version_string = version_strings.get(release_version, 'future')
@@ -57,7 +58,8 @@ def os_version(os_version_string=None, supported_versions=None):
 
 
 class MacPort(WebKitPort):
-    """WebKit Mac implementation of the Port class."""
+    port_name = "mac"
+
     # FIXME: 'wk2' probably shouldn't be a version, it should probably be
     # a modifier, like 'chromium-gpu' is to 'chromium'.
     SUPPORTED_VERSIONS = ('leopard', 'snowleopard', 'future', 'wk2')
@@ -66,6 +68,7 @@ class MacPort(WebKitPort):
         'leopard': ['mac-leopard', 'mac-snowleopard', 'mac'],
         'snowleopard': ['mac-snowleopard', 'mac'],
         'future': ['mac'],
+        # FIXME: This isn't quite right for wk2, it should include mac-VERSION as well.
         'wk2': ['mac-wk2', 'mac'],
     }
 
@@ -76,8 +79,9 @@ class MacPort(WebKitPort):
             self._version = os_version(os_version_string)
             self._name = port_name + '-' + self._version
         else:
-            self._version = port_name[4:]
-            assert self._version in self.SUPPORTED_VERSIONS
+            assert port_name.startswith('mac')
+            self._version = port_name[len('mac-'):]
+            assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'mac'
         if not hasattr(self._options, 'time-out-ms') or self._options.time_out_ms is None:
             self._options.time_out_ms = 35000
@@ -94,23 +98,8 @@ class MacPort(WebKitPort):
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 
-    def path_to_test_expectations_file(self):
-        return self.path_from_webkit_base('LayoutTests', 'platform',
-           'mac', 'test_expectations.txt')
-
     def is_crash_reporter(self, process_name):
         return re.search(r'ReportCrash', process_name)
-
-    def _skipped_file_paths(self):
-        # FIXME: This method will need to be made work for non-mac
-        # platforms and moved into base.Port.
-        skipped_files = []
-        if self._name in ('mac-leopard', 'mac-snowleopard'):
-            skipped_files.append(self._filesystem.join(
-                self._webkit_baseline_path(self._name), 'Skipped'))
-        skipped_files.append(self._filesystem.join(self._webkit_baseline_path('mac'),
-                                          'Skipped'))
-        return skipped_files
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
@@ -124,8 +113,7 @@ class MacPort(WebKitPort):
         return self._build_java_test_support()
 
     def _path_to_apache_config_file(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
-                                     'apache2-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'apache2-httpd.conf')
 
     def _path_to_webcore_library(self):
         return self._build_path('WebCore.framework/Versions/A/WebCore')
