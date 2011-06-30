@@ -232,26 +232,52 @@ class TestResultWriter(object):
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
         # FIXME: old-run-webkit-tests include a link to the test file.
-        html = """<!DOCTYPE HTML><title>%(title)s</title>
+        html = """<!DOCTYPE HTML>
+<html>
+<head>
+<title>%(title)s</title>
 <style>.label{font-weight:bold}</style>
+</head>
+<body>
 Difference between images: <a href="%(diff_filename)s">diff</a><br>
-<div class=imageText></div><img class=animatedImage data-prefix="%(prefix)s"></img>;
+<div class=imageText></div>
+<div class=imageContainer data-prefix="%(prefix)s">Loading...</div>
 <script>
-    function toggleImages()
-    {
-        var image = document.querySelector('.animatedImage');
-        var text = document.querySelector('.imageText');
+(function() {
+    var preloadedImageCount = 0;
+    function preloadComplete() {
+        ++preloadedImageCount;
+        if (preloadedImageCount < 2)
+            return;
+        toggleImages();
+        setInterval(toggleImages, 2000)
+    }
+
+    function preloadImage(url) {
+        image = new Image();
+        image.addEventListener('load', preloadComplete);
+        image.src = url;
+        return image;
+    }
+
+    function toggleImages() {
         if (text.textContent == 'Expected Image') {
             text.textContent = 'Actual Image';
-            image.src = image.getAttribute('data-prefix') + '-actual.png';
+            container.replaceChild(actualImage, container.firstChild);
         } else {
             text.textContent = 'Expected Image';
-            image.src = image.getAttribute('data-prefix') + '-expected.png';
+            container.replaceChild(expectedImage, container.firstChild);
         }
     }
-    toggleImages();
-    setInterval(toggleImages, 2000)
+
+    var text = document.querySelector('.imageText');
+    var container = document.querySelector('.imageContainer');
+    var actualImage = preloadImage(container.getAttribute('data-prefix') + '-actual.png');
+    var expectedImage = preloadImage(container.getAttribute('data-prefix') + '-expected.png');
+})();
 </script>
+</body>
+</html>
 """ % { 'title': self._testname, 'diff_filename': self._output_testname('-diff.png'), 'prefix': self._output_testname('') }
         self._port._filesystem.write_binary_file(diffs_html_filename, html)
 

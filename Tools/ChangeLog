@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        new-run-webkit-tests: images page switch actual and expected images before they're loaded
+        https://bugs.webkit.org/show_bug.cgi?id=63199
+
+        We now preload the images and keep the DOM nodes in memory instead of
+        going back to the MemoryCache all the time.  (Also, remove some nutty
+        </img> HTML.)
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+
+2011-06-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests should tell you when it creates new expectations
         https://bugs.webkit.org/show_bug.cgi?id=63675
 
