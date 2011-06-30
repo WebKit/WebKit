@@ -1,3 +1,26 @@
+2011-06-30  Adam Roben  <aroben@apple.com>
+
+        Make TestFaiulres only load old-results directories as needed
+
+        Fixes <http://webkit.org/b/63752> Tester pages on TestFailures page load very slowly
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getBuildNames): Moved up into the API section of the class. Now just
+        calls through to _getBuildNamesFromResultsDirectory.
+        (Builder.prototype.getOldBuildNames): Added. Just calls through to
+        _getBuildNamesFromResultsDirectory.
+        (Builder.prototype._getBuildNamesFromResultsDirectory): Renamed from getBuildNames. Now
+        takes the directory URL as an argument and only fetches that single URL.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer.prototype.start): Moved most logic to _analyzeBuilds. First
+        analyzes builds from Builder.getBuildNames, then from Builder.getOldBuildNames if needed.
+        (LayoutTestHistoryAnalyzer.prototype._analyzeBuilds): Moved logic here from start. (Most
+        changes are just indentation.) Now takes a callback to call when we've finished analyzing
+        all builds in buildNames so that we can try to fetch more build names if needed.
+
 2011-06-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.

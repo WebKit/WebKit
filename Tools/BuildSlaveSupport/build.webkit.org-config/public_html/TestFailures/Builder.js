@@ -57,6 +57,10 @@ Builder.prototype = {
         return diagnosticInfo[testResult.failureType];
     },
 
+    getBuildNames: function(callback) {
+        this._getBuildNamesFromResultsDirectory(this.buildbot.baseURL + 'results/' + this.name, callback);
+    },
+
     getMostRecentCompletedBuildNumber: function(callback) {
         var cacheKey = 'getMostRecentCompletedBuildNumber';
         if (cacheKey in this._cache) {
@@ -146,6 +150,10 @@ Builder.prototype = {
         });
     },
 
+    getOldBuildNames: function(callback) {
+        this._getBuildNamesFromResultsDirectory(this.buildbot.baseURL + 'old-results/' + this.name, callback);
+    },
+
     resultsDirectoryURL: function(buildName) {
         return this.buildbot.resultsDirectoryURL(this.name, buildName);
     },
@@ -169,8 +177,8 @@ Builder.prototype = {
         });
     },
 
-    getBuildNames: function(callback) {
-        var cacheKey = '_getBuildNames';
+    _getBuildNamesFromResultsDirectory: function(directoryURL, callback) {
+        var cacheKey = '_getBuildNamesFromResultsDirectory.' + directoryURL;
         if (cacheKey in this._cache) {
             callback(this._cache[cacheKey]);
             return;
@@ -192,13 +200,10 @@ Builder.prototype = {
             return buildNames;
         }
 
-        getResource(self.buildbot.baseURL + 'results/' + self.name, function(xhr) {
-            // FIXME: It would be better for performance if we could avoid loading old-results until needed.
-            getResource(self.buildbot.baseURL + 'old-results/' + self.name, function(oldXHR) {
-                var buildNames = buildNamesFromDirectoryXHR(xhr).concat(buildNamesFromDirectoryXHR(oldXHR));
-                self._cache[cacheKey] = buildNames;
-                callback(buildNames);
-            });
+        getResource(directoryURL, function(xhr) {
+            var buildNames = buildNamesFromDirectoryXHR(xhr);
+            self._cache[cacheKey] = buildNames;
+            callback(buildNames);
         });
     },
 };

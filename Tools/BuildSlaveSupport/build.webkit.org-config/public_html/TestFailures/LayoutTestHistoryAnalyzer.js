@@ -69,26 +69,44 @@ LayoutTestHistoryAnalyzer.prototype = {
     start: function(callback) {
         var self = this;
         self._builder.getBuildNames(function(buildNames) {
-            function inner(buildIndex) {
-                self._incorporateBuildHistory(buildNames, buildIndex, function(callAgain) {
-                    var nextIndex = buildIndex + 1;
-                    if (nextIndex >= buildNames.length)
-                        callAgain = false;
-                    var data = {
-                        history: self._history,
-                        possiblyFlaky: {},
-                    };
-                    self._flakinessDetector.possiblyFlakyTests.forEach(function(testName) {
-                        data.possiblyFlaky[testName] = self._flakinessDetector.flakinessExamples(testName);
-                    });
-                    var callbackRequestedStop = !callback(data, callAgain);
-                    if (callbackRequestedStop || !callAgain)
-                        return;
-                    setTimeout(function() { inner(nextIndex) }, 0);
+            self._analyzeBuilds(buildNames, callback, function() {
+                self._builder.getOldBuildNames(function(oldBuildNames) {
+                    self._analyzeBuilds(oldBuildNames, callback);
                 });
-            }
-            inner(0);
+            });
         });
+    },
+
+    _analyzeBuilds: function(buildNames, callback, analyzedAllBuildsCallback) {
+        var self = this;
+        function inner(buildIndex) {
+            self._incorporateBuildHistory(buildNames, buildIndex, function(callAgain) {
+                var data = {
+                    history: self._history,
+                    possiblyFlaky: {},
+                };
+                self._flakinessDetector.possiblyFlakyTests.forEach(function(testName) {
+                    data.possiblyFlaky[testName] = self._flakinessDetector.flakinessExamples(testName);
+                });
+
+                var nextIndex = buildIndex + 1;
+                var analyzedAllBuilds = nextIndex >= buildNames.length;
+                var haveMoreDataToFetch = !analyzedAllBuilds || analyzedAllBuildsCallback;
+
+                var callbackRequestedStop = !callback(data, haveMoreDataToFetch);
+                if (callbackRequestedStop)
+                    return;
+
+                if (analyzedAllBuilds) {
+                    if (analyzedAllBuildsCallback)
+                        analyzedAllBuildsCallback();
+                    return;
+                }
+
+                setTimeout(function() { inner(nextIndex) }, 0);
+            });
+        }
+        inner(0);
     },
 
     _incorporateBuildHistory: function(buildNames, buildIndex, callback) {
