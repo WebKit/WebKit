@@ -81,8 +81,8 @@ LayoutTestHistoryAnalyzer.prototype = {
                     self._flakinessDetector.possiblyFlakyTests.forEach(function(testName) {
                         data.possiblyFlaky[testName] = self._flakinessDetector.flakinessExamples(testName);
                     });
-                    callback(data, callAgain);
-                    if (!callAgain)
+                    var callbackRequestedStop = !callback(data, callAgain);
+                    if (callbackRequestedStop || !callAgain)
                         return;
                     setTimeout(function() { inner(nextIndex) }, 0);
                 });

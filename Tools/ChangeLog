@@ -1,3 +1,26 @@
+2011-06-30  Adam Roben  <aroben@apple.com>
+
+        Ignore callbacks that correspond to old navigations of the TestFailures page
+
+        Fixes <http://webkit.org/b/63711> TestFailures page sometimes ignores back/forward
+        navigations
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer.prototype.start): Check the return value of the callback. If the
+        callback returns false, stop fetching more data.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController): Initialize new _navigationID member. This member is used to assign each
+        navigation by the user a unique ID.
+        (ViewController.prototype.parseHash): Increment the navigation ID.
+
+        (ViewController.prototype._displayBuilder):
+        (ViewController.prototype._displayTesters):
+        At the start of these functions, record the current navigation ID. Bail out from callbacks
+        if the navigation ID has changed, indicating that the user has navigated elsewhere.
+
 2011-06-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

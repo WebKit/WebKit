@@ -27,6 +27,7 @@ function ViewController(buildbot, bugzilla, trac) {
     this._buildbot = buildbot;
     this._bugzilla = bugzilla;
     this._trac = trac;
+    this._navigationID = 0;
 
     var self = this;
     addEventListener('load', function() { self.loaded() }, false);
@@ -39,6 +40,8 @@ ViewController.prototype = {
     },
 
     parseHash: function(hash) {
+        ++this._navigationID;
+
         var match = /#\/(.*)/.exec(hash);
         if (match)
             this._displayBuilder(this._buildbot.builderNamed(decodeURIComponent(match[1])));
@@ -47,9 +50,14 @@ ViewController.prototype = {
     },
 
     _displayBuilder: function(builder) {
+        var navigationID = this._navigationID;
         var self = this;
-        var lastDisplay = 0;
         (new LayoutTestHistoryAnalyzer(builder)).start(function(data, stillFetchingData) {
+            if (self._navigationID !== navigationID) {
+                // The user has navigated somewhere else. Stop loading data about this tester.
+                return false;
+            }
+
             var list = document.createElement('ol');
             list.id = 'failure-history';
             Object.keys(data.history).forEach(function(buildName, buildIndex, buildNameArray) {
@@ -97,10 +105,14 @@ ViewController.prototype = {
 
             if (!stillFetchingData)
                 PersistentCache.prune();
+
+            return true;
         });
     },
 
     _displayTesters: function() {
+        var navigationID = this._navigationID;
+
         var list = document.createElement('ul');
         var latestBuildInfos = [];
 
@@ -123,12 +135,21 @@ ViewController.prototype = {
             });
         }
 
+        var self = this;
         this._buildbot.getTesters(function(testers) {
+            if (self._navigationID !== navigationID) {
+                // The user has navigated somewhere else.
+                return;
+            }
             testers.forEach(function(tester) {
                 tester.getMostRecentCompletedBuildNumber(function(buildNumber) {
+                    if (self._navigationID !== navigationID)
+                        return;
                     if (buildNumber < 0)
                         return;
                     tester.getNumberOfFailingTests(buildNumber, function(failureCount, tooManyFailures) {
+                        if (self._navigationID !== navigationID)
+                            return;
                         if (failureCount <= 0)
                             return;
                         latestBuildInfos.push({ tester: tester, failureCount: failureCount, tooManyFailures: tooManyFailures });
