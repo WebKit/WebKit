@@ -56,6 +56,7 @@ private:
     void createContainingTable();
     PassRefPtr<Element> addSpanWithClassName(const AtomicString&);
     void addLine(const AtomicString& className);
+    void finishLine();
     void addText(const String& text, const AtomicString& className);
     int addRange(const String& source, int start, int end, const String& className, bool isLink = false, bool isAnchor = false);
     PassRefPtr<Element> addLink(const AtomicString& url, bool isAnchor);

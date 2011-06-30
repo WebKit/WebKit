@@ -1,3 +1,22 @@
+2011-06-29  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove extra space at EOL in view source mode
+        https://bugs.webkit.org/show_bug.cgi?id=63620
+
+        Test: fast/frames/viewsource-linebreak.html
+
+        * css/view-source.css:
+        (tbody:last-child .webkit-line-content:empty:before): If we don't do this
+        the last line will be empty and the height will be shorter than the rest.
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addSource): If source file is empty, add an empty line.
+        (WebCore::HTMLViewSourceDocument::finishLine): Call when you are done with the current line.
+        Adds a BR element if the line is empty and sets current to tbody.
+        (WebCore::HTMLViewSourceDocument::addText):
+        * html/HTMLViewSourceDocument.h:
+
 2011-06-29  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCE] Correct logical state of WINCE test.

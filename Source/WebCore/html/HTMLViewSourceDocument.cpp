@@ -28,6 +28,7 @@
 #include "Attribute.h"
 #include "DOMImplementation.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
@@ -110,6 +111,8 @@ void HTMLViewSourceDocument::addSource(const String& source, HTMLToken& token)
         processDoctypeToken(source, token);
         break;
     case HTMLToken::EndOfFile:
+        if (!m_tbody->hasChildNodes())
+            addLine(String());
         break;
     case HTMLToken::StartTag:
     case HTMLToken::EndTag:
@@ -234,6 +237,16 @@ void HTMLViewSourceDocument::addLine(const AtomicString& className)
     }
 }
 
+void HTMLViewSourceDocument::finishLine()
+{
+    if (!m_current->hasChildNodes()) {
+        RefPtr<HTMLBRElement> br = HTMLBRElement::create(this);
+        m_current->parserAddChild(br);
+        br->attach();
+    }
+    m_current = m_tbody;
+}
+
 void HTMLViewSourceDocument::addText(const String& text, const AtomicString& className)
 {
     if (text.isEmpty())
@@ -245,23 +258,20 @@ void HTMLViewSourceDocument::addText(const String& text, const AtomicString& cla
     unsigned size = lines.size();
     for (unsigned i = 0; i < size; i++) {
         String substring = lines[i];
+        if (m_current == m_tbody)
+            addLine(className);
         if (substring.isEmpty()) {
             if (i == size - 1)
                 break;
-            substring = " ";
+            finishLine();
+            continue;
         }
-        if (m_current == m_tbody)
-            addLine(className);
         RefPtr<Text> t = Text::create(this, substring);
         m_current->parserAddChild(t);
         t->attach();
         if (i < size - 1)
-            m_current = m_tbody;
+            finishLine();
     }
-
-    // Set current to m_tbody if the last character was a newline.
-    if (text[text.length() - 1] == '\n')
-        m_current = m_tbody;
 }
 
 int HTMLViewSourceDocument::addRange(const String& source, int start, int end, const String& className, bool isLink, bool isAnchor)

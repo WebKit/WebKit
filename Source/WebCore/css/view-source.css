@@ -76,6 +76,10 @@ td {
     -webkit-user-select: none
 }
 
+tbody:last-child .webkit-line-content:empty:before {
+    content: " ";
+}
+
 .webkit-line-content {
     padding: 0 5px !important;
 }
