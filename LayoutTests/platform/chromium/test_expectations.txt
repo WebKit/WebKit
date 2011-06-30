@@ -3952,6 +3952,9 @@ BUGWK62048 SKIP : css3/flexbox = PASS
 // CSS Regions support not yet enabled.
 BUGWK57312 SKIP : fast/regions = PASS
 
+// CSS Exclusions support not yet enabled.
+BUGWK57311 SKIP : fast/exclusions = PASS
+
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62430 WIN LINUX : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL

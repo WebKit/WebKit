@@ -1,3 +1,20 @@
+2011-06-30  Alan Stearns  <stearns@adobe.com>
+
+        Reviewed by Tony Chang.
+
+        Modify Skipped files so that future css exclusions LayoutTests are
+        skipped by default.
+
+        [CSSExclusions] Add test and skip entries
+        https://bugs.webkit.org/show_bug.cgi?id=63751
+
+        * fast/exclusions/triangle-exclusion.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -139,6 +139,9 @@ css3/flexbox
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
 
+# CSS Exclusions support not yet enabled. http://webkit.org/b/57311
+fast/exclusions
+
 # USE(V8)
 
 # v8 i18n extension.
