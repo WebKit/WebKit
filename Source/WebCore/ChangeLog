@@ -1,3 +1,12 @@
+2011-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        Remove the complete Widget constructor from the .exp.in file; since Widget is an abstract class,
+        its complete constructor can never be called and clang has stopped emitting it altogether.
+
+        * WebCore.exp.in:
+
 2011-06-30  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
