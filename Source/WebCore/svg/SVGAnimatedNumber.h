@@ -43,23 +43,24 @@ DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVG
 class SVGAnimationElement;
 
 class SVGAnimatedNumberAnimator : public SVGAnimatedTypeAnimator {
-    
+
 public:
     SVGAnimatedNumberAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedNumberAnimator() { }
-    
+
     static void calculateAnimatedNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
-    
+
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    
+
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
     virtual float calculateDistance(const String& fromString, const String& toString);
 };
+#endif // ENABLE(SVG_ANIMATION)
+
 } // namespace WebCore
 
-#endif // ENABLE(SVG_ANIMATION)
 #endif // ENABLE(SVG)
 #endif

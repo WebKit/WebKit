@@ -40,7 +40,7 @@ DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGA
 class SVGAnimationElement;
 
 class SVGAnimatedLengthAnimator : public SVGAnimatedTypeAnimator {
-    
+
 public:
     SVGAnimatedLengthAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedLengthAnimator() { }
@@ -56,8 +56,9 @@ public:
 private:
     SVGLengthMode m_lengthMode;
 };
+#endif // ENABLE(SVG_ANIMATION)
+
 } // namespace WebCore
 
-#endif // ENABLE(SVG_ANIMATION)
 #endif // ENABLE(SVG)
 #endif
