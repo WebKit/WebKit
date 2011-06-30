@@ -110,6 +110,7 @@ void WebPreferences::reset()
     legacyAccelerated2dCanvasEnabled = false;
     acceleratedDrawingEnabled = false;
     forceCompositingMode = false;
+    hixie76WebSocketProtocolEnabled = true;
 }
 
 void WebPreferences::applyTo(WebView* webView)
@@ -162,6 +163,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
     settings->setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2dCanvasEnabled);
     settings->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
+    settings->setHixie76WebSocketProtocolEnabled(hixie76WebSocketProtocolEnabled);
 
     // Fixed values.
     settings->setShouldPaintCustomScrollbars(true);

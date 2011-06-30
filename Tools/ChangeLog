@@ -1,3 +1,30 @@
+2011-06-29  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        DRT: Make Hixie76WebSocketProtocolEnabled preference flag configurable from LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=63532
+
+        LayoutTestController::overridePreference() will be used to change the value of
+        the Hixie76WebSocketProtocolEnabled preference flag from layout tests. In this way,
+        we can avoid writing a lot of boilerplate code in each port's DumpRenderTree, but
+        at least we need to reset preference values in DumpRenderTree every time we start
+        a new test because preference values changed in some test should not be leaked
+        to the next test.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::overridePreference):
+        The name of preference key is defined in WebKit/{mac/WebView,win}/WebPreferenceKeysPrivate.h.
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        Set the default value. This will be called from TestShell::resetTestController().
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues): Set the default value.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Ditto.
+
 2011-06-29  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Adam Barth.

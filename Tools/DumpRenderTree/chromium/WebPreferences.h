@@ -85,6 +85,7 @@ struct WebPreferences {
     bool accelerated2dCanvasEnabled;
     bool legacyAccelerated2dCanvasEnabled;
     bool acceleratedDrawingEnabled;
+    bool hixie76WebSocketProtocolEnabled;
 
     WebPreferences() { reset(); }
     void reset();

@@ -1425,6 +1425,8 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->allowDisplayOfInsecureContent = cppVariantToBool(value);
     else if (key == "WebKitAllowRunningInsecureContent")
         prefs->allowRunningOfInsecureContent = cppVariantToBool(value);
+    else if (key == "WebKitHixie76WebSocketProtocolEnabled")
+        prefs->hixie76WebSocketProtocolEnabled = cppVariantToBool(value);
     else {
         string message("Invalid name for preference: ");
         message.append(key);
