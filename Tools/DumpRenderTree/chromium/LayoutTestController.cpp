@@ -1090,15 +1090,8 @@ void LayoutTestController::setOverrideIndexedDBBackingStore(const CppArgumentLis
         WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::DefaultBackingStore);
     else if (name == "sqlite")
         WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::SQLiteBackingStore);
-    else if (name == "leveldb") {
+    else if (name == "leveldb")
         WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::LevelDBBackingStore);
-
-        m_tempFolder = adoptPtr(webkit_support::CreateScopedTempDirectory());
-        if (m_tempFolder) {
-            if (m_tempFolder->CreateUniqueTempDir())
-                WebIDBFactory::setTemporaryDatabaseFolder(WebString::fromUTF8(m_tempFolder->path().c_str()));
-        }
-    }
 #endif
 }
 
@@ -1483,7 +1476,6 @@ void LayoutTestController::clearAllDatabases(const CppArgumentList& arguments, C
 {
     result->setNull();
     webkit_support::ClearAllDatabases();
-    m_tempFolder.clear();
 }
 
 void LayoutTestController::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)

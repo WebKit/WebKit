@@ -606,9 +606,6 @@ private:
 
     CppVariant m_globalFlag;
 
-    // Used to create and destroy temporary folders.
-    OwnPtr<webkit_support::ScopedTempDirectory> m_tempFolder;
-
     // Bound variable counting the number of top URLs visited.
     CppVariant m_webHistoryItemCount;
 

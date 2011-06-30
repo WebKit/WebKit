@@ -39,6 +39,7 @@
 #include "WebElement.h"
 #include "WebFrame.h"
 #include "WebHistoryItem.h"
+#include "WebIDBFactory.h"
 #include "WebTestingSupport.h"
 #include "WebKit.h"
 #include "WebPermissions.h"
@@ -131,6 +132,12 @@ TestShell::TestShell(bool testShellMode)
     // (new-)run-webkit-tests, (new-)run-webkit-tests misunderstands that a
     // timed-out DRT process was crashed.
     m_timeout = 30 * 1000;
+
+#if ENABLE(INDEXED_DATABASE)
+    m_tempIndexedDBDirectory = adoptPtr(webkit_support::CreateScopedTempDirectory());
+    m_tempIndexedDBDirectory->CreateUniqueTempDir();
+    WebIDBFactory::setTemporaryDatabaseFolder(WebString::fromUTF8(m_tempIndexedDBDirectory->path().c_str()));
+#endif
 
     createMainWindow();
 }

@@ -74,20 +74,23 @@ WebIDBFactoryImpl::~WebIDBFactoryImpl()
 void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType backingStoreType)
 {
     WebString path = dataDir;
+
     if (overriddenBackingStoreType != DefaultBackingStore) {
         // Backing store type overridden by LayoutTestController.
         backingStoreType = overriddenBackingStoreType;
+    }
 
-        // dataDir is empty for layout tests.
-        ASSERT(dataDir.isEmpty());
-
-        if (backingStoreType == LevelDBBackingStore) {
-            // LevelDB doesn't support in-memory databases, so use a temporary folder.
-            path = tempDatabaseFolder;
-        }
-    } else if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore) {
-        // Fall back to SQLite for incognito mode.
+    if (backingStoreType == DefaultBackingStore)
         backingStoreType = SQLiteBackingStore;
+
+    if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore) {
+        if (!tempDatabaseFolder.isEmpty()) {
+            // Layout tests provide a temporary folder.
+            path = tempDatabaseFolder;
+        } else {
+            // For incognito mode, fall back to SQLite.
+            backingStoreType = SQLiteBackingStore;
+        }
     }
 
     m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));

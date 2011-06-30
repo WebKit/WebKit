@@ -83,8 +83,7 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& fileIdentifier)
 
 void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
 {
-    if (backingStoreType == DefaultBackingStore)
-        backingStoreType = SQLiteBackingStore; // FIXME: DefaultBackingStore is confusing; get rid of it.
+    ASSERT(backingStoreType != DefaultBackingStore);
 
     const String fileIdentifier = computeFileIdentifier(securityOrigin.get(), backingStoreType);
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get(), backingStoreType);
@@ -97,28 +96,27 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
 
     // FIXME: Everything from now on should be done on another thread.
 
+#if ENABLE(LEVELDB)
+    if (backingStoreType == LevelDBBackingStore) {
+        bool hasSQLBackingStore = IDBSQLiteBackingStore::backingStoreExists(securityOrigin.get(), name, dataDir);
+
+        // LayoutTests: SQLite backing store may not exist on disk but may exist in cache.
+        String cachedSqliteBackingStoreIdentifier = computeFileIdentifier(securityOrigin.get(), SQLiteBackingStore);
+        if (!hasSQLBackingStore && (m_backingStoreMap.end() != m_backingStoreMap.find(cachedSqliteBackingStoreIdentifier)))
+            hasSQLBackingStore = true;
+
+        if (hasSQLBackingStore) {
+            bool migrationSucceeded = migrateFromSQLiteToLevelDB(name, securityOrigin.get(), dataDir, maximumSize);
+            UNUSED_PARAM(migrationSucceeded); // FIXME: When migration is actually implemented, we need error handling here.
+        }
+    }
+#endif
+
     RefPtr<IDBBackingStore> backingStore;
     IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
     if (it2 != m_backingStoreMap.end() && (backingStoreType == it2->second->backingStoreType()))
         backingStore = it2->second;
     else {
-
-#if ENABLE(LEVELDB)
-        if (backingStoreType == LevelDBBackingStore) {
-            bool hasSQLBackingStore = IDBSQLiteBackingStore::backingStoreExists(securityOrigin.get(), name, dataDir);
-
-            // LayoutTests: SQLite backing store may not exist on disk but may exist in cache.
-            String cachedSqliteBackingStoreIdentifier = computeFileIdentifier(securityOrigin.get(), SQLiteBackingStore);
-            if (!hasSQLBackingStore && (m_backingStoreMap.end() != m_backingStoreMap.find(cachedSqliteBackingStoreIdentifier)))
-                hasSQLBackingStore = true;
-
-            if (hasSQLBackingStore) {
-                bool migrationSucceeded = migrateFromSQLiteToLevelDB(name, securityOrigin.get(), dataDir, maximumSize);
-                (void)migrationSucceeded; // FIXME: When migration is actually implemented, we need error handling here.
-            }
-        }
-#endif
-
         if (backingStoreType == SQLiteBackingStore)
             backingStore = IDBSQLiteBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 #if ENABLE(LEVELDB)
