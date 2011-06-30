@@ -1,3 +1,10 @@
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
+        Remove useless ASSERT that breaks the build.
+
+        * dom/StyledElement.cpp:
+        (WebCore::parseColorStringWithCrazyLegacyRules):
+
 2011-06-30  Tab Atkins  <jackalmage@gmail.com>
 
         Reviewed by Adam Barth.

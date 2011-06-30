@@ -362,7 +362,6 @@ static String parseColorStringWithCrazyLegacyRules(const String& colorString)
         greenIndex++;
         blueIndex++;
     }
-    ASSERT(redIndex >= 0);
     ASSERT(redIndex + 1 < componentLength);
     ASSERT(greenIndex >= componentLength);
     ASSERT(greenIndex + 1 < componentLength * 2);
