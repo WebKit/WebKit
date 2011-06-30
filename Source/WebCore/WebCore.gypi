@@ -3221,8 +3221,6 @@
             'html/parser/TextViewSourceParser.h',
             'html/parser/XSSAuditor.cpp',
             'html/parser/XSSAuditor.h',
-            'html/shadow/ElementWithPseudoId.cpp',
-            'html/shadow/ElementWithPseudoId.h',
             'html/shadow/DetailsMarkerControl.cpp',
             'html/shadow/DetailsMarkerControl.h',
             'html/shadow/MediaControls.cpp',

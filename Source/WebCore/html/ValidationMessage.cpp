@@ -34,9 +34,9 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
-#include "ElementWithPseudoId.h"
 #include "FormAssociatedElement.h"
 #include "HTMLBRElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderObject.h"
@@ -123,19 +123,32 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 {
     HTMLElement* host = toHTMLElement(m_element);
     Document* doc = host->document();
-    m_bubble = ElementWithPseudoId::create(doc, "-webkit-validation-bubble");
+    m_bubble = HTMLDivElement::create(doc);
+    ExceptionCode ec = 0;
+    m_bubble->setShadowPseudoId("-webkit-validation-bubble", ec);
+    ASSERT(!ec);
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueAbsolute);
     adjustBubblePosition(host->getRect(), m_bubble.get());
-    ExceptionCode ec = 0;
     host->ensureShadowRoot()->appendChild(m_bubble.get(), ec);
+    ASSERT(!ec);
 
-    RefPtr<HTMLElement> clipper = ElementWithPseudoId::create(doc, "-webkit-validation-bubble-arrow-clipper");
-    clipper->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-arrow"), ec);
+    RefPtr<HTMLDivElement> clipper = HTMLDivElement::create(doc);
+    clipper->setShadowPseudoId("-webkit-validation-bubble-arrow-clipper", ec);
+    ASSERT(!ec);
+    RefPtr<HTMLDivElement> bubbleArrow = HTMLDivElement::create(doc);
+    bubbleArrow->setShadowPseudoId("-webkit-validation-bubble-arrow", ec);
+    ASSERT(!ec);
+    clipper->appendChild(bubbleArrow.release(), ec);
+    ASSERT(!ec);
     m_bubble->appendChild(clipper.release(), ec);
-    m_bubbleMessage = ElementWithPseudoId::create(doc, "-webkit-validation-bubble-message");
+    ASSERT(!ec);
+    m_bubbleMessage = HTMLDivElement::create(doc);
+    m_bubbleMessage->setShadowPseudoId("-webkit-validation-bubble-message", ec);
+    ASSERT(!ec);
     m_bubble->appendChild(m_bubbleMessage, ec);
+    ASSERT(!ec);
 
     setMessageDOMAndStartTimer();
 

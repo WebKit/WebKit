@@ -847,7 +847,6 @@ SET(WebCore_SOURCES
     html/parser/TextViewSourceParser.cpp
     html/parser/XSSAuditor.cpp
 
-    html/shadow/ElementWithPseudoId.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/MediaControls.cpp
     html/shadow/MediaControlRootElement.cpp

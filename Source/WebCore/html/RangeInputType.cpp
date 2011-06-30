@@ -32,7 +32,7 @@
 #include "config.h"
 #include "RangeInputType.h"
 
-#include "ElementWithPseudoId.h"
+#include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -207,7 +207,9 @@ void RangeInputType::createShadowSubtree()
 {
     ExceptionCode ec = 0;
     Document* document = element()->document();
-    RefPtr<HTMLElement> track = ElementWithPseudoId::create(document, "-webkit-slider-runnable-track");
+    RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);
+    track->setShadowPseudoId("-webkit-slider-runnable-track", ec);
+    ASSERT(!ec);
     track->appendChild(SliderThumbElement::create(document), ec);
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
     container->appendChild(track.release(), ec);

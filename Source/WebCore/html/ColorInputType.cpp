@@ -32,7 +32,7 @@
 #include "ColorInputType.h"
 
 #include "Color.h"
-#include "ElementWithPseudoId.h"
+#include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "ShadowRoot.h"
 #include <wtf/PassOwnPtr.h>
@@ -95,10 +95,17 @@ String ColorInputType::sanitizeValue(const String& proposedValue)
 void ColorInputType::createShadowSubtree()
 {
     Document* document = element()->document();
-    RefPtr<HTMLElement> wrapperElement = ElementWithPseudoId::create(document, "-webkit-color-swatch-wrapper");
+    RefPtr<HTMLDivElement> wrapperElement = HTMLDivElement::create(document);
     ExceptionCode ec = 0;
-    wrapperElement->appendChild(ElementWithPseudoId::create(document, "-webkit-color-swatch"), ec);
+    wrapperElement->setShadowPseudoId("-webkit-color-swatch-wrapper", ec);
+    ASSERT(!ec);
+    RefPtr<HTMLDivElement> colorSwatch = HTMLDivElement::create(document);
+    colorSwatch->setShadowPseudoId("-webkit-color-swatch", ec);
+    ASSERT(!ec);
+    wrapperElement->appendChild(colorSwatch.release(), ec);
+    ASSERT(!ec);
     element()->ensureShadowRoot()->appendChild(wrapperElement.release(), ec);
+    ASSERT(!ec);
     
     updateColorSwatch();
 }

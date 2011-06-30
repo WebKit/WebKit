@@ -1,3 +1,28 @@
+2011-06-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Remove ElementWithPseudoId, since now an Element can store it all by itself.
+        https://bugs.webkit.org/show_bug.cgi?id=63657
+
+        Refactoring, covered by existing tests.
+
+        * CMakeLists.txt: Removed ElementWithPseudoId from build.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.order: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree): Changed to use plain-old HTMLDivElement.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree): Ditto.
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree): Ditto.
+        * html/shadow/ElementWithPseudoId.cpp: Removed.
+        * html/shadow/ElementWithPseudoId.h: Removed.
+
 2011-06-29  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
