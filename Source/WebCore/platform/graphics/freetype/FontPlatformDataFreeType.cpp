@@ -121,8 +121,8 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_fixedWidth(false)
     , m_scaledFont(0)
 {
-    m_font = adoptRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
-    initializeWithFontFace(m_font.get());
+    RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
+    initializeWithFontFace(fontFace.get());
 
     int spacing;
     if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
@@ -153,17 +153,14 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
     , m_fixedWidth(false)
-    , m_font(fontFace)
     , m_scaledFont(0)
 {
     initializeWithFontFace(fontFace);
 
-    if (m_scaledFont) {
-        FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
-        if (fontConfigFace) {
-            m_fixedWidth = fontConfigFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH;
-            cairo_ft_scaled_font_unlock_face(m_scaledFont);
-        }
+    FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
+    if (fontConfigFace) {
+        m_fixedWidth = fontConfigFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH;
+        cairo_ft_scaled_font_unlock_face(m_scaledFont);
     }
 }
 
@@ -188,7 +185,6 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     if (m_scaledFont && m_scaledFont != hashTableDeletedFontValue())
         cairo_scaled_font_destroy(m_scaledFont);
     m_scaledFont = cairo_scaled_font_reference(other.m_scaledFont);
-    m_font = other.m_font;
 
     return *this;
 }
@@ -230,7 +226,6 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
     return m_pattern == other.m_pattern
         && m_scaledFont == other.m_scaledFont
-        && m_font == other.m_font
         && m_size == other.m_size
         && m_syntheticOblique == other.m_syntheticOblique
         && m_syntheticBold == other.m_syntheticBold; 
@@ -245,20 +240,18 @@ String FontPlatformData::description() const
 
 void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
 {
-    // Fonts with zero size lead to failed cairo_scaled_font_t instantiations. Instead
-    // we just do not instantiate the scaled font at all. This will cause all renders
-    // to be no-ops and all metrics to be zero, which is the desired behavior anyway.
-    if (!m_size)
-        return;
-
     cairo_font_options_t* options = getDefaultFontOptions();
 
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);
 
+    // Scaling a font with width zero size leads to a failed cairo_scaled_font_t instantiations.
+    // Instead we scale we scale the font to a very tiny size and just abort rendering later on.
+    float realSize = m_size ? m_size : 1;
+
     cairo_matrix_t fontMatrix;
     if (!m_pattern)
-        cairo_matrix_init_scale(&fontMatrix, m_size, m_size);
+        cairo_matrix_init_scale(&fontMatrix, realSize, realSize);
     else {
         setCairoFontOptionsFromFontConfigPattern(options, m_pattern.get());
 
@@ -273,8 +266,8 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
         cairo_matrix_init(&fontMatrix, fontConfigMatrix.xx, -fontConfigMatrix.yx,
                           -fontConfigMatrix.xy, fontConfigMatrix.yy, 0, 0);
 
-        // The matrix from FontConfig does not include the scale.
-        cairo_matrix_scale(&fontMatrix, m_size, m_size);
+        // The matrix from FontConfig does not include the scale. 
+        cairo_matrix_scale(&fontMatrix, realSize, realSize);
     }
 
     m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
@@ -283,11 +276,7 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
 
 bool FontPlatformData::hasCompatibleCharmap()
 {
-    // If m_scaledFont is null, it means that this is a size zero font, which always
-    // has a compatible charmap since we never really read any font data from the font.
-    if (!m_scaledFont)
-        return true;
-
+    ASSERT(m_scaledFont);
     FT_Face freeTypeFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
     bool hasCompatibleCharmap = !(FT_Select_Charmap(freeTypeFace, ft_encoding_unicode)
                                 && FT_Select_Charmap(freeTypeFace, ft_encoding_symbol)
