@@ -1,3 +1,15 @@
+2011-06-29  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        check-webkit-style fails to detect https://webkit.org/b/XXXXX as a bug number
+        https://webkit.org/b/57360
+
+        Modify the regular expression to match https scheme.
+
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py: Added a test case for https://webkit.org/b/XXXXX.
+        * Scripts/webkitpy/common/config/urls.py: Modified bug_url_short to match https scheme.
+
 2011-06-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

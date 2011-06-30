@@ -47,4 +47,4 @@ bug_server_host = "bugs.webkit.org"
 _bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
 bug_server_url = "https://%s/" % bug_server_host
 bug_url_long = _bug_server_regex + r"show_bug\.cgi\?id=(?P<bug_id>\d+)(&ctype=xml)?"
-bug_url_short = r"http\://webkit\.org/b/(?P<bug_id>\d+)"
+bug_url_short = r"https?\://webkit\.org/b/(?P<bug_id>\d+)"

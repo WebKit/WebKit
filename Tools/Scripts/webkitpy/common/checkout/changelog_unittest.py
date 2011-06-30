@@ -136,6 +136,23 @@ class ChangeLogTest(unittest.TestCase):
 
         self.assertEquals(57569, parse_bug_id_from_changelog(commit_text))
 
+        commit_text = '''
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update WebCore Localizable.strings to contain WebCore, WebKit/mac and WebKit2 strings.
+
+        https://webkit.org/b/57354
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings: Updated.
+        * StringsNotToBeLocalized.txt: Removed. To hard to maintain in WebCore.
+        * platform/network/cf/LoaderRunLoopCF.h: Remove a single quote in an #error so
+        extract-localizable-strings does not complain about unbalanced single quotes.
+        '''
+
+        self.assertEquals(57354, parse_bug_id_from_changelog(commit_text))
+
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)
