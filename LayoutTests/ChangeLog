@@ -1,3 +1,10 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        [Mac-wk2] Update expectation files for r90089.
+        https://bugs.webkit.org/show_bug.cgi?id=61415
+
+        * platform/mac-wk2/fast/forms/textfield-overflow-expected.txt:
+
 2011-06-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
@@ -11,6 +18,7 @@
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
         [GTK][Mac][Win] Update expectation files for r90089.
+        https://bugs.webkit.org/show_bug.cgi?id=61415
 
         * platform/gtk/fast/block/float/032-expected.txt:
         * platform/gtk/fast/css/input-search-padding-expected.txt:
