@@ -1,4 +1,34 @@
 =================
+WebKitGTK+ 1.4.2
+=================
+
+This is a maintenance release which includes several noteworthy fixes:
+
+    - Fix many errors with the gtk-doc generation. Additionally the public documentation
+      on http://webkitgtk.org is now up-to-date.
+    - Fix problems which broke compilation with gold, on MIPS, and with libpng 1.5.x.
+    - Fix a few JavaScriptCore crashers.
+    - Fix an issue that caused crashes in the font cache and fonts to load improperly.
+
+Bug fixes since 1.4.1:
+ Bug 88240 - [GTK] gtkdoc run produces many warnings about missing declarations
+ Bug 88683 - Update the list of ignored GTK+ header files for the documentation generation
+ Bug 88734 - Update gtkdoc files and inline documentation to reduce gtkdoc errors and ensure complete documentation
+ Bug 82599 - [GTK] Link explicitly with XRender on Linux/Unix
+ Bug 82344 - png-1.5 fixes
+ Bug 88240 - [GTK] webkithittestresult. is malformed
+ Bug 86957 - JIT requires VM overcommit (particularly on x86-64), Linux does not by default support this without swap?
+ Bug 85181 - "Fix build with libpng-1.5.1"
+ Bug 89248 - [GTK] ASSERTION FAILED: it != gFontDataCache->end() in FontCache.cpp:318
+ Bug 89817 - Unreviewed build fix. One more filed missing during distcheck, for the MIPS build.
+ Bug 81904 - Ensure that all compilation takes place within a dynamic global object scope
+ Bug 83107 - Stop JSObject::isUsingInlineStorage() from using the structure
+ Bug 84022 - JSLock ASSERT seen often when using the inspector for long periods of time.
+ Bug 89319 - [GTK] Windowless plugins sometimes crash with a BadMatch error
+ Bug 89265 - make-hash-tools.pl: Perl 5.14 compatibility
+ Bug 90041 - [Freetype] Many tests report ERROR: Failed to get glyph page zero
+
+=================
 WebKitGTK+ 1.4.1
 =================
 

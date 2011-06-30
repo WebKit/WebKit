@@ -1,3 +1,11 @@
+2011-06-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Update the library and libtool version in preparation for the 1.4.2 release.
+
+        * configure.ac: Update versions.
+
 2011-06-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

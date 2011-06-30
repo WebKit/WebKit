@@ -1,3 +1,11 @@
+2011-06-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Update the news in preparation for the 1.4.2 release.
+
+        * NEWS: Update news.
+
 2011-06-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
