@@ -290,6 +290,12 @@ bool WebScrollbarImpl::isActive() const
     return true;
 }
 
+ScrollableArea* WebScrollbarImpl::enclosingScrollableArea() const
+{
+    // FIXME: Return a parent scrollable area that can be scrolled.
+    return 0;
+}
+
 bool WebScrollbarImpl::isScrollCornerVisible() const
 {
     return false;

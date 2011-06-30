@@ -1,3 +1,56 @@
+2011-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        More ScrollableArea scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=63678
+
+        Add a way to get the enclosing scrollable area for a given scrollable area.
+        Also, add ScrollableArea::isPinnedInDirectionOfScrollDelta.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::enclosingScrollableArea):
+        Return 0 for now.
+
+        * page/FrameView.h:
+        Add FrameView::enclosingScrollableArea.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::isPinnedInDirectionOfScrollDelta):
+        Return whether the area is pinned in the direction of the scroll delta.
+
+        * platform/ScrollableArea.h:
+        Add new member functions.
+
+        * platform/chromium/FramelessScrollView.cpp:
+        (WebCore::FramelessScrollView::enclosingScrollableArea):
+        * platform/chromium/FramelessScrollView.h:
+        Add stub.
+
+        * platform/win/PopupMenuWin.h:
+        (WebCore::PopupMenuWin::enclosingScrollableArea):
+        Always return 0.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingScrollableLayer):
+        Add helper function.
+
+        (WebCore::RenderLayer::scrollByRecursively):
+        Use the new enclosingScrollableLayer helper function.
+
+        (WebCore::RenderLayer::enclosingScrollableArea):
+        Return the enclosing scrollable area.
+
+        * rendering/RenderLayer.h:
+        Add new member function.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::enclosingScrollableArea):
+        Return 0 for now.
+        
+        * rendering/RenderListBox.h:
+        Add new member function.
+
 2011-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.

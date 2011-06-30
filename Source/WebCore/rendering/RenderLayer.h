@@ -259,6 +259,7 @@ public:
     // ScrollableArea overrides
     virtual Scrollbar* horizontalScrollbar() const { return m_hBar.get(); }
     virtual Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
+    virtual ScrollableArea* enclosingScrollableArea() const;
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
@@ -343,6 +344,9 @@ public:
     // Gets the nearest enclosing positioned ancestor layer (also includes
     // the <html> layer and the root layer).
     RenderLayer* enclosingPositionedAncestor() const;
+
+    // Returns the nearest enclosing layer that is scrollable.
+    RenderLayer* enclosingScrollableLayer() const;
 
     // The layer relative to which clipping rects for this layer are computed.
     RenderLayer* clippingRoot() const;

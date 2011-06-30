@@ -783,6 +783,16 @@ RenderLayer* RenderLayer::enclosingPositionedAncestor() const
     return curr;
 }
 
+RenderLayer* RenderLayer::enclosingScrollableLayer() const
+{
+    for (RenderObject* nextRenderer = renderer()->parent(); nextRenderer; nextRenderer = nextRenderer->parent()) {
+        if (nextRenderer->isBox() && toRenderBox(nextRenderer)->canBeScrolledAndHasScrollableArea())
+            return nextRenderer->enclosingLayer();
+    }
+
+    return 0;
+}
+
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();
@@ -1258,14 +1268,8 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
         int leftToScrollX = newOffsetX - scrollXOffset();
         int leftToScrollY = newOffsetY - scrollYOffset();
         if ((leftToScrollX || leftToScrollY) && renderer()->parent()) {
-            RenderObject* nextRenderer = renderer()->parent();
-            while (nextRenderer) {
-                if (nextRenderer->isBox() && toRenderBox(nextRenderer)->canBeScrolledAndHasScrollableArea()) {
-                    nextRenderer->enclosingLayer()->scrollByRecursively(leftToScrollX, leftToScrollY);
-                    break;
-                }
-                nextRenderer = nextRenderer->parent();
-            }
+            if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
+                scrollableLayer->scrollByRecursively(leftToScrollX, leftToScrollY);
 
             Frame* frame = renderer()->frame();
             if (frame)
@@ -1984,6 +1988,16 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
     if (renderer()->document()->hasDashboardRegions())
         renderer()->document()->setDashboardRegionsDirty(true);
 #endif
+}
+
+ScrollableArea* RenderLayer::enclosingScrollableArea() const
+{
+    if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
+        return scrollableLayer;
+
+    // FIXME: We should return the frame view here (or possibly an ancestor frame view,
+    // if the frame view isn't scrollable.
+    return 0;
 }
 
 int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const

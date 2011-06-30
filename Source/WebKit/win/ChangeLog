@@ -1,3 +1,14 @@
+2011-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        More ScrollableArea scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=63678
+
+        * WebScrollBar.h:
+        (WebScrollBar::enclosingScrollableArea):
+        Always return 0, WebScrollbar has no concept of an enclosing scrollable area.
+
 2011-06-28  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Adam Barth.

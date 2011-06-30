@@ -808,6 +808,12 @@ bool RenderListBox::isOnActivePage() const
     return !document()->inPageCache();
 }
 
+ScrollableArea* RenderListBox::enclosingScrollableArea() const
+{
+    // FIXME: Return a RenderLayer that's scrollable.
+    return 0;
+}
+
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

@@ -205,6 +205,21 @@ bool ScrollableArea::hasOverlayScrollbars() const
         || (horizontalScrollbar() && horizontalScrollbar()->isOverlayScrollbar());
 }
 
+bool ScrollableArea::isPinnedInDirection(const IntSize& scrollDelta) const
+{
+    if (scrollDelta.width() < 0 && isHorizontalScrollerPinnedToMinimumPosition())
+        return true;
+    if (scrollDelta.width() > 0 && isHorizontalScrollerPinnedToMaximumPosition())
+        return true;
+
+    if (scrollDelta.height() < 0 && isVerticalScrollerPinnedToMinimumPosition())
+        return true;
+    if (scrollDelta.height() > 0 && isVerticalScrollerPinnedToMaximumPosition())
+        return true;
+
+    return false;
+}
+
 void ScrollableArea::invalidateScrollbar(Scrollbar* scrollbar, const IntRect& rect)
 {
 #if USE(ACCELERATED_COMPOSITING)

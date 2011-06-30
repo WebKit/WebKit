@@ -2238,6 +2238,12 @@ bool FrameView::isOnActivePage() const
     return !m_frame->document()->inPageCache();
 }
 
+ScrollableArea* FrameView::enclosingScrollableArea() const
+{
+    // FIXME: Walk up the frame tree and look for a scrollable parent frame or RenderLayer.
+    return 0;
+}
+
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;

@@ -144,6 +144,11 @@ public:
     bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) <= minimumScrollPosition().y(); }
     bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) >= maximumScrollPosition().y(); }
 
+    // Note that this only returns scrollable areas that can actually be scrolled.
+    virtual ScrollableArea* enclosingScrollableArea() const = 0;
+
+    bool isPinnedInDirection(const IntSize&) const;
+
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 
     virtual void disconnectFromPage() { }

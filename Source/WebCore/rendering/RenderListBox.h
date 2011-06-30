@@ -119,6 +119,8 @@ private:
     virtual bool shouldSuspendScrollAnimations() const;
     virtual bool isOnActivePage() const;
 
+    virtual ScrollableArea* enclosingScrollableArea() const;
+
     virtual void disconnectFromPage() { m_page = 0; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.

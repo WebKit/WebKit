@@ -97,6 +97,7 @@ private:
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual void invalidateScrollCornerRect(const WebCore::IntRect&) { }
     virtual bool isActive() const { return true; }
+    ScrollableArea* enclosingScrollableArea() const { return 0; }
     virtual bool isScrollCornerVisible() const { return false; }
     virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
     virtual Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
