@@ -1,3 +1,11 @@
+aside {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    color: #888;
+    font-size: 0.9em;
+}
+
 ol {
     list-style-type: none;
 }

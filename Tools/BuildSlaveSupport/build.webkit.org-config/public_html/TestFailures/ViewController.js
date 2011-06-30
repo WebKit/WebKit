@@ -36,6 +36,10 @@ function ViewController(buildbot, bugzilla, trac) {
 
 ViewController.prototype = {
     loaded: function() {
+        this._mainContentElement = document.createElement('div');
+        document.body.appendChild(this._mainContentElement);
+        document.body.appendChild(this._domForAuxiliaryUIElements());
+
         this.parseHash(location.hash);
     },
 
@@ -97,11 +101,11 @@ ViewController.prototype = {
 
             var header = document.createElement('h1');
             header.appendChild(document.createTextNode(builder.name));
-            document.body.innerHTML = '';
+            self._mainContentElement.innerHTML = '';
             document.title = builder.name;
-            document.body.appendChild(header);
-            document.body.appendChild(list);
-            document.body.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky));
+            self._mainContentElement.appendChild(header);
+            self._mainContentElement.appendChild(list);
+            self._mainContentElement.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky));
 
             if (!stillFetchingData)
                 PersistentCache.prune();
@@ -158,9 +162,9 @@ ViewController.prototype = {
                 });
             });
 
-            document.body.innerHTML = '';
+            self._mainContentElement.innerHTML = '';
             document.title = 'Testers';
-            document.body.appendChild(list);
+            self._mainContentElement.appendChild(list);
         });
     },
 
@@ -190,6 +194,30 @@ ViewController.prototype = {
         link.appendChild(document.createTextNode('View regression range in Trac'));
 
         return result;
+    },
+
+    _domForAuxiliaryUIElements: function() {
+        if (!this._bugzilla)
+            return document.createDocumentFragment();
+
+        var aside = document.createElement('aside');
+        aside.appendChild(document.createTextNode('Something not working? Have an idea to improve this page? '));
+        var link = document.createElement('a');
+        aside.appendChild(link);
+
+        link.appendChild(document.createTextNode('File a bug!'));
+        var queryParameters = {
+            product: 'WebKit',
+            component: 'Tools / Tests',
+            version: '528+ (Nightly build)',
+            bug_file_loc: location.href,
+            cc: 'aroben@apple.com',
+            short_desc: 'TestFailures page needs more unicorns!',
+        };
+        link.href = addQueryParametersToURL(this._bugzilla.baseURL + 'enter_bug.cgi', queryParameters);
+        link.target = '_blank';
+
+        return aside;
     },
 
     _domForBuildName: function(builder, buildName) {

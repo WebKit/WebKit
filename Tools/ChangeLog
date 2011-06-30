@@ -1,5 +1,29 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Add a link to file a bug about TestFailures to the TestFailures page
+
+        Fixes <http://webkit.org/b/63466> TestFailures page should include a link to file a bug
+        about TestFailures itself
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (aside): Added some styles for the new link. It is positioned in the upper-right and
+        hopefully not to glaringly obvious.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype.loaded): Set up our main content element and auxiliary UI.
+
+        (ViewController.prototype._displayBuilder):
+        (ViewController.prototype._displayTesters):
+        Modify the main content element instead of the entire body, as there are other things in the
+        body that we want to preserve.
+
+        (ViewController.prototype._domForAuxiliaryUIElements): Create and return an <aside> element
+        that contains a link to file a bug about the TestFailures page.
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Ignore callbacks that correspond to old navigations of the TestFailures page
 
         Fixes <http://webkit.org/b/63711> TestFailures page sometimes ignores back/forward
