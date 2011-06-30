@@ -81,17 +81,24 @@ void ApplyBlockElementCommand::doApply()
     VisiblePosition endOfSelection = selection.visibleEnd();
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
-    int startIndex = indexForVisiblePosition(startOfSelection);
-    int endIndex = indexForVisiblePosition(endOfSelection);
+    Element* startScope = 0;
+    int startIndex = indexForVisiblePosition(startOfSelection, &startScope);
+    Element* endScope = 0;
+    int endIndex = indexForVisiblePosition(endOfSelection, &endScope);
 
     formatSelection(startOfSelection, endOfSelection);
 
     updateLayout();
-
-    RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, 0, true);
-    RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endIndex, 0, true);
-    if (startRange && endRange)
-        setEndingSelection(VisibleSelection(startRange->startPosition(), endRange->startPosition(), DOWNSTREAM));
+    
+    ASSERT(startScope == endScope);
+    ASSERT(startIndex >= 0);
+    ASSERT(startIndex <= endIndex);
+    if (startScope == endScope && startIndex >= 0 && startIndex <= endIndex) {
+        VisiblePosition start(visiblePositionForIndex(startIndex, startScope));
+        VisiblePosition end(visiblePositionForIndex(endIndex, endScope));
+        if (start.isNotNull() && end.isNotNull())
+            setEndingSelection(VisibleSelection(start, end));
+    }
 }
 
 void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection)

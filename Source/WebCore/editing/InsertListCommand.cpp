@@ -152,16 +152,16 @@ void InsertListCommand::doApply()
                 // FIXME: This is an inefficient way to keep selection alive because indexForVisiblePosition walks from
                 // the beginning of the document to the endOfSelection everytime this code is executed.
                 // But not using index is hard because there are so many ways we can lose selection inside doApplyForSingleParagraph.
-                int indexForEndOfSelection = indexForVisiblePosition(endOfSelection);
+                Element* scope = 0;
+                int indexForEndOfSelection = indexForVisiblePosition(endOfSelection, &scope);
                 doApplyForSingleParagraph(forceCreateList, listTag, currentSelection.get());
                 if (endOfSelection.isNull() || endOfSelection.isOrphan() || startOfLastParagraph.isNull() || startOfLastParagraph.isOrphan()) {
-                    RefPtr<Range> lastSelectionRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), indexForEndOfSelection, 0, true);
-                    // If lastSelectionRange is null, then some contents have been deleted from the document.
+                    endOfSelection = visiblePositionForIndex(indexForEndOfSelection, scope);
+                    // If endOfSelection is null, then some contents have been deleted from the document.
                     // This should never happen and if it did, exit early immediately because we've lost the loop invariant.
-                    ASSERT(lastSelectionRange);
-                    if (!lastSelectionRange)
+                    ASSERT(endOfSelection.isNotNull());
+                    if (endOfSelection.isNull())
                         return;
-                    endOfSelection = lastSelectionRange->startPosition();
                     startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
                 }
 

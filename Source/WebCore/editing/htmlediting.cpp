@@ -1010,15 +1010,49 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     return newSelection;
 }
 
-
-int indexForVisiblePosition(const VisiblePosition& visiblePosition)
+// FIXME: indexForVisiblePosition and visiblePositionForIndex use TextIterators to convert between 
+// VisiblePositions and indices. But TextIterator iteration using TextIteratorEmitsCharactersBetweenAllVisiblePositions 
+// does not exactly match VisiblePosition iteration, so using them to preserve a selection during an editing 
+// opertion is unreliable. TextIterator's TextIteratorEmitsCharactersBetweenAllVisiblePositions mode needs to be fixed, 
+// or these functions need to be changed to iterate using actual VisiblePositions.
+// FIXME: Deploy these functions everywhere that TextIterators are used to convert between VisiblePositions and indices.
+int indexForVisiblePosition(const VisiblePosition& visiblePosition, Element **scope)
 {
     if (visiblePosition.isNull())
         return 0;
+        
     Position p(visiblePosition.deepEquivalent());
-    RefPtr<Range> range = Range::create(p.anchorNode()->document(), firstPositionInNode(p.anchorNode()->document()->documentElement()),
+    Document* document = p.anchorNode()->document();
+    
+    Element* root;
+    Node* shadowRoot = p.anchorNode()->shadowTreeRootNode();
+    
+    if (shadowRoot) {
+        // Use the shadow root for form elements, since TextIterators will not enter shadow content.
+        ASSERT(shadowRoot->isElementNode());
+        root = static_cast<Element *>(shadowRoot);
+    } else
+        root = document->documentElement();
+    
+    if (scope) {
+        ASSERT(!*scope);
+        *scope = root;
+    }
+    
+    RefPtr<Range> range = Range::create(document, 
+                                        firstPositionInNode(root),
                                         p.parentAnchoredEquivalent());
+    
     return TextIterator::rangeLength(range.get(), true);
+}
+
+VisiblePosition visiblePositionForIndex(int index, Element *scope)
+{
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, index, 0, true);
+    // indexForVisiblePosition can create a
+    if (!range)
+        return VisiblePosition();
+    return VisiblePosition(range->startPosition());
 }
 
 // Determines whether two positions are visibly next to each other (first then second)

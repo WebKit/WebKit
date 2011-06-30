@@ -173,7 +173,9 @@ VisiblePosition visiblePositionAfterNode(Node*);
 bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
     
 int comparePositions(const VisiblePosition&, const VisiblePosition&);
-int indexForVisiblePosition(const VisiblePosition&);
+
+int indexForVisiblePosition(const VisiblePosition&, Element **scope);
+VisiblePosition visiblePositionForIndex(int index, Element *scope);
 
 // -------------------------------------------------------------------------
 // Range

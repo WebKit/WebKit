@@ -1,3 +1,47 @@
+2011-06-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Enrica Casucci.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62922
+        indexForVisiblePosition(const VisiblePosition& visiblePosition) does not consider shadow content
+        
+        VisiblePositions can be inside web form text regions, which use shadow trees. Made indexForVisiblePosition
+        aware of this, and added a new parameter to obtain the scope for a VisiblePosition, in addition to its index.
+        
+        Added visiblePositionForIndex to go in the opposite direction, taking into account the scope
+        used to compute the index.
+        
+        These two functions use TextIterators to convert between VisiblePositions and indices. But 
+        TextIterator iteration using TextIteratorEmitsCharactersBetweenAllVisiblePositions does not 
+        exactly match VisiblePosition iteration, so using them to preserve a selection during an 
+        editing operation is unreliable. This can be seen in the expected results for:
+        
+        editing/execCommand/indent-pre-list.html
+        editing/execCommand/crash-indenting-list-item.html
+        
+        TextIterator's TextIteratorEmitsCharactersBetweenAllVisiblePositions mode needs to be fixed, or 
+        these functions need to be changed to iterate using actual VisiblePositions. See:
+        
+        https://bugs.webkit.org/show_bug.cgi?id=63590
+        TextIterators in TextIteratorEmitsCharactersBetweenAllVisiblePositions do not exactly match VisiblePositions
+        
+        Also:
+        
+        https://bugs.webkit.org/show_bug.cgi?id=63592
+        Use visiblePositionForIndex and indexForVisiblePosition everywhere that TextIterators are used to convert between VisiblePositions and indices
+        
+        No new tests added because indexForVisiblePosition is currently only used for editing operations
+        that cannot be performed inside web form fields.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition):
+        (WebCore::visiblePositionForIndex):
+        * editing/htmlediting.h:
+
 2011-06-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
