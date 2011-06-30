@@ -123,19 +123,23 @@ template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
     return (x + remainderMask) & ~remainderMask;
 }
 
+enum BinarySearchMode {
+    KeyMustBePresentInArray,
+    KeyMustNotBePresentInArray
+};
+
 // Binary search algorithm, calls extractKey on pre-sorted elements in array,
 // compares result with key (KeyTypes should be comparable with '--', '<', '>').
-// Optimized for cases where the array contains the key, checked by assertions.
 template<typename ArrayType, typename KeyType, KeyType(*extractKey)(ArrayType*)>
-inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key)
+inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray)
 {
-    // The array must contain at least one element (pre-condition, array does conatin key).
-    // If the array only contains one element, no need to do the comparison.
+    // The array must contain at least one element (pre-condition, array does contain key).
+    // If the array contains only one element, no need to do the comparison.
     while (size > 1) {
         // Pick an element to check, half way through the array, and read the value.
         int pos = (size - 1) >> 1;
         KeyType val = extractKey(&array[pos]);
-        
+
         // If the key matches, success!
         if (val == key)
             return &array[pos];
@@ -149,13 +153,18 @@ inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key)
             array += (pos + 1);
         }
 
-        // 'size' should never reach zero.
-        ASSERT(size);
+        // In case of BinarySearchMode = KeyMustBePresentInArray 'size' should never reach zero.
+        if (mode == KeyMustBePresentInArray)
+            ASSERT(size);
     }
-    
-    // If we reach this point we've chopped down to one element, no need to check it matches
-    ASSERT(size == 1);
-    ASSERT(key == extractKey(&array[0]));
+
+    // In case of BinarySearchMode = KeyMustBePresentInArray if we reach this point
+    // we've chopped down to one element, no need to check it matches
+    if (mode == KeyMustBePresentInArray) {
+        ASSERT(size == 1);
+        ASSERT(key == extractKey(&array[0]));
+    }
+
     return &array[0];
 }
 
