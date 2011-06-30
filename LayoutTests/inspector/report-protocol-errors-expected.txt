@@ -3,87 +3,101 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 {
     error : {
         code : -32700
-        message : "Parse error."
-        data : [
-            "Message should be in JSON format."
-        ]
+        message : "Message should be in JSON format"
     }
     id : null
 }
+error.code: -32700
+error.getMessage(): Message should be in JSON format
+error.toString(): Parse error(-32700): Message should be in JSON format.
+-------------------------------------------------------
 {
     error : {
         code : -32600
-        message : "Invalid Request."
-        data : [
-            "Invalid message format. 'id' property was not found in the request."
-        ]
+        message : "'id' property was not found"
     }
     id : null
 }
+error.code: -32600
+error.getMessage(): 'id' property was not found
+error.toString(): Invalid Request(-32600): 'id' property was not found.
+-------------------------------------------------------
 {
     error : {
         code : -32600
-        message : "Invalid Request."
-        data : [
-            "Invalid message format. The type of 'id' property should be number."
-        ]
+        message : "The type of 'id' property should be number"
     }
     id : null
 }
+error.code: -32600
+error.getMessage(): The type of 'id' property should be number
+error.toString(): Invalid Request(-32600): The type of 'id' property should be number.
+-------------------------------------------------------
 {
     error : {
         code : -32600
-        message : "Invalid Request."
-        data : [
-            "Invalid message format. The type of 'method' property should be string."
-        ]
+        message : "The type of 'method' property should be string"
     }
     id : 1
 }
+error.code: -32600
+error.getMessage(): The type of 'method' property should be string
+error.toString(): Invalid Request(-32600): The type of 'method' property should be string.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'resourceContent' wasn't found."
-        ]
+        message : "'resourceContent' wasn't found"
     }
     id : 2
 }
+error.code: -32601
+error.getMessage(): 'resourceContent' wasn't found
+error.toString(): Method not found(-32601): 'resourceContent' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'DOM.test' wasn't found."
-        ]
+        message : "'DOM.test' wasn't found"
     }
     id : 3
 }
+error.code: -32601
+error.getMessage(): 'DOM.test' wasn't found
+error.toString(): Method not found(-32601): 'DOM.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32602
-        message : "Invalid params."
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
         data : [
             "'params' property with type 'object' was not found."
         ]
     }
     id : 4
 }
+error.code: -32602
+error.getMessage(): Some arguments of method 'Page.getResourceContent' can't be processed
+error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. 'params' property with type 'object' was not found.
+-------------------------------------------------------
 {
     error : {
         code : -32602
-        message : "Invalid params."
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
         data : [
             "'params' property with type 'object' was not found."
         ]
     }
     id : 5
 }
+error.code: -32602
+error.getMessage(): Some arguments of method 'Page.getResourceContent' can't be processed
+error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. 'params' property with type 'object' was not found.
+-------------------------------------------------------
 {
     error : {
         code : -32602
-        message : "Invalid params."
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
         data : [
             "Parameter 'frameId' with type 'String' was not found."
             "Parameter 'url' with type 'String' was not found."
@@ -91,104 +105,121 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     }
     id : 6
 }
+error.code: -32602
+error.getMessage(): Some arguments of method 'Page.getResourceContent' can't be processed
+error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. Parameter 'frameId' with type 'String' was not found. Parameter 'url' with type 'String' was not found.
+-------------------------------------------------------
 {
     error : {
         code : -32602
-        message : "Invalid params."
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
         data : [
             "Parameter 'url' with type 'String' was not found."
         ]
     }
     id : 7
 }
+error.code: -32602
+error.getMessage(): Some arguments of method 'Page.getResourceContent' can't be processed
+error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. Parameter 'url' with type 'String' was not found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 8
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 9
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 10
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 11
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 12
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 13
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 14
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 15
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 {
     error : {
         code : -32601
-        message : "Method not found."
-        data : [
-            "Invalid method name was received. 'Page.test' wasn't found."
-        ]
+        message : "'Page.test' wasn't found"
     }
     id : 16
 }
+error.code: -32601
+error.getMessage(): 'Page.test' wasn't found
+error.toString(): Method not found(-32601): 'Page.test' wasn't found.
+-------------------------------------------------------
 

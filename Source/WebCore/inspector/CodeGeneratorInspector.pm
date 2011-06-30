@@ -498,7 +498,7 @@ sub generateBackendFunction
         }
         push(@function, "    }");
     }
-    push(@function, "    sendResponse(callId, result, protocolErrors, error);");
+    push(@function, "    sendResponse(callId, result, String::format(s_argumentsErrorTemplate, \"$fullQualifiedFunctionNameDot\"), protocolErrors, error);");
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);
@@ -508,10 +508,10 @@ sub generateBackendSendResponse
 {
     my $sendResponse = << "EOF";
 
-void ${backendClassName}::sendResponse(long callId, PassRefPtr<InspectorObject> result, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
+void ${backendClassName}::sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
 {
     if (protocolErrors->length()) {
-        reportProtocolError(&callId, InvalidParams, protocolErrors);
+        reportProtocolError(&callId, InvalidParams, errorMessage, protocolErrors);
         return;
     }
     if (invocationError.length()) {
@@ -533,31 +533,31 @@ sub generateBackendReportProtocolError
 {
     my $reportProtocolError = << "EOF";
 
-void ${backendClassName}::reportProtocolError(const long* const callId, CommonErrorCode code, const String& customText) const
+void ${backendClassName}::reportProtocolError(const long* const callId, CommonErrorCode code, const String& errorMessage) const
 {
-    RefPtr<InspectorArray> data = InspectorArray::create();
-    data->pushString(customText);
-    reportProtocolError(callId, code, data.release());
+    reportProtocolError(callId, code, errorMessage, 0);
 }
 
-void ${backendClassName}::reportProtocolError(const long* const callId, CommonErrorCode code, PassRefPtr<InspectorArray> data) const
+void ${backendClassName}::reportProtocolError(const long* const callId, CommonErrorCode code, const String& errorMessage, PassRefPtr<InspectorArray> data) const
 {
-    DEFINE_STATIC_LOCAL(Vector<String>,s_commonErrors,);
+    DEFINE_STATIC_LOCAL(Vector<int>,s_commonErrors,);
     if (!s_commonErrors.size()) {
-        s_commonErrors.insert(ParseError, "{\\\"code\\\":-32700,\\\"message\\\":\\\"Parse error.\\\"}");
-        s_commonErrors.insert(InvalidRequest, "{\\\"code\\\":-32600,\\\"message\\\":\\\"Invalid Request.\\\"}");
-        s_commonErrors.insert(MethodNotFound, "{\\\"code\\\":-32601,\\\"message\\\":\\\"Method not found.\\\"}");
-        s_commonErrors.insert(InvalidParams, "{\\\"code\\\":-32602,\\\"message\\\":\\\"Invalid params.\\\"}");
-        s_commonErrors.insert(InternalError, "{\\\"code\\\":-32603,\\\"message\\\":\\\"Internal error.\\\"}");
-        s_commonErrors.insert(ServerError, "{\\\"code\\\":-32000,\\\"message\\\":\\\"Server error.\\\"}");
+        s_commonErrors.insert(ParseError, -32700);
+        s_commonErrors.insert(InvalidRequest, -32600);
+        s_commonErrors.insert(MethodNotFound, -32601);
+        s_commonErrors.insert(InvalidParams, -32602);
+        s_commonErrors.insert(InternalError, -32603);
+        s_commonErrors.insert(ServerError, -32000);
     }
     ASSERT(code >=0);
     ASSERT((unsigned)code < s_commonErrors.size());
     ASSERT(s_commonErrors[code]);
-    ASSERT(InspectorObject::parseJSON(s_commonErrors[code]));
-    RefPtr<InspectorObject> error = InspectorObject::parseJSON(s_commonErrors[code])->asObject();
+    RefPtr<InspectorObject> error = InspectorObject::create();
+    error->setNumber("code", s_commonErrors[code]);
+    error->setString("message", errorMessage);
     ASSERT(error);
-    error->setArray("data", data);
+    if (data)
+        error->setArray("data", data);
     RefPtr<InspectorObject> message = InspectorObject::create();
     message->setObject("error", error);
     if (callId)
@@ -633,42 +633,42 @@ $mapEntries
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
     if (!parsedMessage) {
-        reportProtocolError(0, ParseError, "Message should be in JSON format.");
+        reportProtocolError(0, ParseError, "Message should be in JSON format");
         return;
     }
 
     RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
     if (!messageObject) {
-        reportProtocolError(0, InvalidRequest, "Invalid message format. The message should be a JSONified object.");
+        reportProtocolError(0, InvalidRequest, "Message should be a JSONified object");
         return;
     }
 
     RefPtr<InspectorValue> callIdValue = messageObject->get("id");
     if (!callIdValue) {
-        reportProtocolError(0, InvalidRequest, "Invalid message format. 'id' property was not found in the request.");
+        reportProtocolError(0, InvalidRequest, "'id' property was not found");
         return;
     }
 
     if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(0, InvalidRequest, "Invalid message format. The type of 'id' property should be number.");
+        reportProtocolError(0, InvalidRequest, "The type of 'id' property should be number");
         return;
     }
 
     RefPtr<InspectorValue> methodValue = messageObject->get("method");
     if (!methodValue) {
-        reportProtocolError(&callId, InvalidRequest, "Invalid message format. 'method' property wasn't found.");
+        reportProtocolError(&callId, InvalidRequest, "'method' property wasn't found");
         return;
     }
 
     String method;
     if (!methodValue->asString(&method)) {
-        reportProtocolError(&callId, InvalidRequest, "Invalid message format. The type of 'method' property should be string.");
+        reportProtocolError(&callId, InvalidRequest, "The type of 'method' property should be string");
         return;
     }
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
     if (it == dispatchMap.end()) {
-        reportProtocolError(&callId, MethodNotFound, "Invalid method name was received. '" + method + "' wasn't found.");
+        reportProtocolError(&callId, MethodNotFound, "'" + method + "' wasn't found");
         return;
     }
 
@@ -840,8 +840,35 @@ InspectorBackendStub.prototype = {
         var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
 
         if ("id" in messageObject) { // just a response for some request
-            if (messageObject.error && messageObject.error.code !== -32000)
-                this.reportProtocolError(messageObject);
+            if (messageObject.error) {
+                messageObject.error.__proto__ = {
+                    getDescription: function()
+                    {
+                        switch(this.code) {
+                            case -32700: return "Parse error";
+                            case -32600: return "Invalid Request";
+                            case -32601: return "Method not found";
+                            case -32602: return "Invalid params";
+                            case -32603: return "Internal error";;
+                            case -32000: return "Server error";
+                        }
+                    },
+
+                    toString: function()
+                    {
+                        var description ="Unknown error code";
+                        return this.getDescription() + "(" + this.code + "): " + this.message + "." + (this.data ? " " + this.data.join(" ") : "");
+                    },
+
+                    getMessage: function()
+                    {
+                        return this.message;
+                    }
+                }
+
+                if (messageObject.error.code !== -32000)
+                    this.reportProtocolError(messageObject);
+            }
 
             var arguments = [];
             if (messageObject.result) {
@@ -1051,8 +1078,8 @@ sub generateBackendAgentFieldsAndConstructor
     push(@backendHead, "        LastEntry,");
     push(@backendHead, "    };");
     push(@backendHead, "");
-    push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorText) const;");
-    push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, PassRefPtr<InspectorArray> data) const;");
+    push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;");
+    push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;");
     push(@backendHead, "    void dispatch(const String& message);");
     push(@backendHead, "    static bool getCommandName(const String& message, String* result);");
     push(@backendHead, "");
@@ -1081,6 +1108,8 @@ sub finish
 
     unshift(@backendConstantDefinitions, "const char* InspectorBackendDispatcher::commandNames[] = {");
     push(@backendConstantDefinitions, "};");
+    push(@backendConstantDefinitions, "");
+    push(@backendConstantDefinitions, "static const char* s_argumentsErrorTemplate = \"Some arguments of method '%s' can't be processed\";");
 
     # Make dispatcher methods private on the backend.
     push(@backendConstantDeclarations, "};");
@@ -1095,7 +1124,7 @@ sub finish
         }
     }
 
-    push(@backendConstantDeclarations, "    void sendResponse(long callId, PassRefPtr<InspectorObject> result, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);");
+    push(@backendConstantDeclarations, "    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);");
 
     generateBackendAgentFieldsAndConstructor();
 

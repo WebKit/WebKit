@@ -1,3 +1,18 @@
+2011-06-30  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Protocol: error object needs some improvement.
+        https://bugs.webkit.org/show_bug.cgi?id=63707
+
+        Current implementation is not useful in the code.
+        We need to have toString implementation with nice formatting
+        I'd like to use error.message property as the main place for the error's text.
+
+        * inspector/elements/set-attribute.html:
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+
 2011-06-30  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip a failing media test on GTK because of

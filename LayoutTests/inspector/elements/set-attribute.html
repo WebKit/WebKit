@@ -102,7 +102,7 @@ function test()
         {
             function callback(error)
             {
-                InspectorTest.addResult("Error: " + error.data[0]);
+                InspectorTest.addResult("Error: " + error.getMessage());
                 WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
                 InspectorTest.addResult("=== Set malformed attribute as text ===");
                 InspectorTest.dumpElementsTree(targetNode);
