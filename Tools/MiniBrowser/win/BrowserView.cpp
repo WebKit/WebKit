@@ -93,7 +93,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
     m_webView = WKViewCreate(webViewRect, context, 0, parentWindow->window());
 
     WKPageUIClient uiClient = {
-        0,              /* version */
+        kWKPageUIClientCurrentVersion,
         parentWindow,   /* clientInfo */
         createNewPage,
         showPage,

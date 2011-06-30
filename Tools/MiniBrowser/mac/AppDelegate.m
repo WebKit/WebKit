@@ -119,7 +119,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             _currentProcessModel = kProcessModelSharedSecondaryProcess;
 
         WKContextHistoryClient historyClient = {
-            0,
+            kWKContextHistoryClientCurrentVersion,
             self,
             didNavigateWithNavigationData,
             didPerformClientRedirect,
@@ -138,7 +138,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         _processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
         
         WKContextInjectedBundleClient bundleClient = {
-            0,      /* version */
+            kWKContextInjectedBundleClientCurrentVersion,
             0,      /* clientInfo */
             didRecieveMessageFromInjectedBundle,
             0

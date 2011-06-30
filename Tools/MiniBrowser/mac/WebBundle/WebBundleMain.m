@@ -93,7 +93,7 @@ void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
     globalBundle = bundle;
 
     WKBundleClient client = {
-        0,
+        kWKBundleClientCurrentVersion,
         0,
         didCreatePage,
         willDestroyPage,

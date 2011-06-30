@@ -36,10 +36,10 @@ static WKContextRef createWKContextWithInjectedBundle()
     WKStringRef bundlePath = WKStringCreateWithUTF8CString("Libraries/.libs/libMiniBrowserWebBundle.so");
     WKContextRef processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
     WKContextInjectedBundleClient bundleClient = {
-            0, /* version */
-            0, /* clientInfo */
-            0, /* didRecieveMessageFromInjectedBundle,*/
-            0
+        kWKContextInjectedBundleClientCurrentVersion,
+        0, /* clientInfo */
+        0, /* didRecieveMessageFromInjectedBundle,*/
+        0
     };
     WKContextSetInjectedBundleClient(processContext, &bundleClient);
     WKRelease(bundlePath);

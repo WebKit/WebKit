@@ -1,3 +1,33 @@
+2011-06-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Update MiniBrowser and WebKitTestRunner to use the client version constants.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowLoaderClientInit):
+        (browserWindowUIClientInit):
+        * MiniBrowser/gtk/WebBundle/WebBundleMain.c:
+        (didCreatePage):
+        (WKBundleInitialize):
+        * MiniBrowser/gtk/main.c:
+        (createWKContextWithInjectedBundle):
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (WKBundleInitialize):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
 2011-06-30  Adam Roben  <aroben@apple.com>
 
         Identify revisions that modified failing tests on TestFailures page

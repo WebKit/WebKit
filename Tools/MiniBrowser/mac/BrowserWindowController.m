@@ -573,7 +573,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     
     WKPageLoaderClient loadClient = {
-        0,      /* version */
+        kWKPageLoaderClientCurrentVersion,
         self,   /* clientInfo */
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
@@ -604,7 +604,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     
     WKPagePolicyClient policyClient = {
-        0,          /* version */
+        kWKPagePolicyClientCurrentVersion,
         self,       /* clientInfo */
         decidePolicyForNavigationAction,
         decidePolicyForNewWindowAction,
@@ -614,7 +614,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
 
     WKPageUIClient uiClient = {
-        0,          /* version */
+        kWKPageUIClientCurrentVersion,
         self,       /* clientInfo */
         createNewPage,
         showPage,

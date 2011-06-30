@@ -488,7 +488,7 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
 static void browserWindowLoaderClientInit(BrowserWindow* window)
 {
     WKPageLoaderClient loadClient = {
-        0,       /* version */
+        kWKPageLoaderClientCurrentVersion,
         window,  /* clientInfo */
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
@@ -609,7 +609,7 @@ static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, 
 static void browserWindowUIClientInit(BrowserWindow *window)
 {
     WKPageUIClient uiClient = {
-        0,      /* version */
+        kWKPageUIClientCurrentVersion,
         window, /* clientInfo */
         createNewPage,
         showPage,

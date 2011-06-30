@@ -168,7 +168,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     , m_world(AdoptWK, WKBundleScriptWorldCreateWorld())
 {
     WKBundlePageLoaderClient loaderClient = {
-        0,
+        kWKBundlePageLoaderClientCurrentVersion,
         this,
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
@@ -193,7 +193,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 
     WKBundlePageResourceLoadClient resourceLoadClient = {
-        0,
+        kWKBundlePageResourceLoadClientCurrentVersion,
         this,
         didInitiateLoadForResource,
         willSendRequestForFrame,
@@ -205,7 +205,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient);
 
     WKBundlePagePolicyClient policyClient = {
-        0,
+        kWKBundlePagePolicyClientCurrentVersion,
         this,
         decidePolicyForNavigationAction,
         decidePolicyForNewWindowAction,
@@ -215,7 +215,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     WKBundlePageSetPolicyClient(m_page, &policyClient);
 
     WKBundlePageUIClient uiClient = {
-        0,
+        kWKBundlePageUIClientCurrentVersion,
         this,
         willAddMessageToConsole,
         willSetStatusbarText,
@@ -235,7 +235,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     WKBundlePageSetUIClient(m_page, &uiClient);
 
     WKBundlePageEditorClient editorClient = {
-        0,
+        kWKBundlePageEditorClientCurrentVersion,
         this,
         shouldBeginEditing,
         shouldEndEditing,
@@ -253,7 +253,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
 
 #if ENABLE(FULLSCREEN_API)
     WKBundlePageFullScreenClient fullScreenClient = {
-        0,
+        kWKBundlePageFullScreenClientCurrentVersion,
         this,
         supportsFullScreen,
         enterFullScreenForElement,

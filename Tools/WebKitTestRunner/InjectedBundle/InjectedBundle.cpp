@@ -79,7 +79,7 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
     m_bundle = bundle;
 
     WKBundleClient client = {
-        0,
+        kWKBundleClientCurrentVersion,
         this,
         didCreatePage,
         willDestroyPage,

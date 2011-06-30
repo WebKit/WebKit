@@ -136,7 +136,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
     view->resizeTo(800, 600);
 
     WKPageUIClient otherPageUIClient = {
-        0,
+        kWKPageUIClientCurrentVersion,
         view,
         createOtherPage,
         0, // showPage
@@ -267,7 +267,7 @@ void TestController::initialize(int argc, const char* argv[])
     platformInitializeContext();
 
     WKContextInjectedBundleClient injectedBundleClient = {
-        0,
+        kWKContextInjectedBundleClientCurrentVersion,
         this,
         didReceiveMessageFromInjectedBundle,
         didReceiveSynchronousMessageFromInjectedBundle
@@ -279,7 +279,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get()));
 
     WKPageUIClient pageUIClient = {
-        0,
+        kWKPageUIClientCurrentVersion,
         this,
         createOtherPage,
         0, // showPage
@@ -324,7 +324,7 @@ void TestController::initialize(int argc, const char* argv[])
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 
     WKPageLoaderClient pageLoaderClient = {
-        0,
+        kWKPageLoaderClientCurrentVersion,
         this,
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame

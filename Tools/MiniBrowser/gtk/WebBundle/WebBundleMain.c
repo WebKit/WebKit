@@ -41,6 +41,7 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
 {
     WKBundlePageUIClient uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
+    uiClient.version = WKBundlePageUIClientCurrentVersion;
     uiClient.mouseDidMoveOverElement = mouseDidMoveOverElement;
 
     WKBundlePageSetUIClient(page, &uiClient);
@@ -51,7 +52,7 @@ void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
     globalBundle = bundle;
 
     WKBundleClient client = {
-        0,
+        kWKBundleClientCurrentVersion,
         0,
         didCreatePage,
         0, /* willDestroyPage */
