@@ -214,6 +214,9 @@ public:
     static void injectInternalsObject(QWebFrame*);
 
     static void setInteractiveFormValidationEnabled(QWebPage*, bool);
+
+    static void setDefersLoading(QWebPage*, bool flag);
+    static void goBack(QWebPage*);
 };
 
 #endif

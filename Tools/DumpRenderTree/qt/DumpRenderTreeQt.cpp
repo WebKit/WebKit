@@ -201,6 +201,7 @@ void WebPage::resetSettings()
     m_drt->layoutTestController()->setFrameFlatteningEnabled(false);
     m_drt->layoutTestController()->setSmartInsertDeleteEnabled(true);
     m_drt->layoutTestController()->setSelectTrailingWhitespaceEnabled(false);
+    m_drt->layoutTestController()->setDefersLoading(false);
 
     // globalSettings must be reset explicitly.
     m_drt->layoutTestController()->setXSSAuditorEnabled(false);

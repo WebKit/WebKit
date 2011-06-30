@@ -146,7 +146,6 @@ public slots:
     void closeWebInspector();
     void evaluateInWebInspector(long callId, const QString& script);
     void removeAllVisitedLinks();
-
     void setMediaType(const QString& type);
     void setFrameFlatteningEnabled(bool enable);
     void setAllowUniversalAccessFromFileURLs(bool enable);
@@ -270,6 +269,8 @@ public slots:
     void syncLocalStorage();
     QString layerTreeAsText();
     void setTextDirection(const QString& directionName);
+    void goBack();
+    void setDefersLoading(bool);
 
 private slots:
     void processWork();

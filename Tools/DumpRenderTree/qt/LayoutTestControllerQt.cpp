@@ -414,6 +414,16 @@ void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
     DumpRenderTreeSupportQt::setFrameFlatteningEnabled(m_drt->webPage(), enabled);
 }
 
+void LayoutTestController::goBack()
+{
+    DumpRenderTreeSupportQt::goBack(m_drt->webPage());
+}
+
+void LayoutTestController::setDefersLoading(bool flag)
+{
+    DumpRenderTreeSupportQt::setDefersLoading(m_drt->webPage(), flag);
+}
+
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, enabled);

@@ -990,6 +990,20 @@ QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document,
     return res;
 }
 
+void DumpRenderTreeSupportQt::setDefersLoading(QWebPage* page, bool flag)
+{
+    Page* corePage = QWebPagePrivate::core(page);
+    if (corePage)
+        corePage->setDefersLoading(flag);
+}
+
+void DumpRenderTreeSupportQt::goBack(QWebPage* page)
+{
+    Page* corePage = QWebPagePrivate::core(page);
+    if (corePage)
+        corePage->goBack();
+}
+
 // API Candidate?
 QString DumpRenderTreeSupportQt::responseMimeType(QWebFrame* frame)
 {

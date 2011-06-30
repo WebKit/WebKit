@@ -2495,9 +2495,6 @@ fast/events/page-visibility-transition-test.html
 http/tests/inspector/network/download.html
 http/tests/inspector/network/x-frame-options-deny.html
 
-# Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
-loader/navigation-while-deferring-loads.html
-
 # [Qt]fast/events/remove-target-in-mouseup* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=60833
 fast/events/remove-target-in-mouseup-deep.html

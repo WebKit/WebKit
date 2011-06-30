@@ -1,3 +1,18 @@
+2011-06-27  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] DRT: Provide LayoutTestController::setDefersLoading and ::goBack support
+        https://bugs.webkit.org/show_bug.cgi?id=63489
+
+        Unskipped:
+            loader/navigation-while-deferring-loads.html
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dirk Pranke.
