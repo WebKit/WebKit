@@ -1,3 +1,18 @@
+2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Suppress modal JavaScript/HTML dialogs during unload events
+        https://bugs.webkit.org/show_bug.cgi?id=56397
+
+        Implementation of the new shouldRunModalDialogDuringPageDismissal() API
+        to block alerts during unload handlers. Logs such events to the console
+        and updates histograms.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::shouldRunModalDialogDuringPageDismissal):
+        * src/ChromeClientImpl.h:
+
 2011-06-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

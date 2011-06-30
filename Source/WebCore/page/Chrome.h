@@ -179,8 +179,6 @@ namespace WebCore {
         void showContextMenu();
 #endif
 
-        void willRunModalHTMLDialog(const Frame*) const;
-
     private:
         Page* m_page;
         ChromeClient* m_client;

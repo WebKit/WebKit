@@ -1,3 +1,40 @@
+2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Suppress modal JavaScript/HTML dialogs during unload events
+        https://bugs.webkit.org/show_bug.cgi?id=56397
+
+        Allows clients to specify whether to show alerts during unload handlers.
+        When checking for whether a page dismissal event is being dispatched,
+        it's important to check all frames on the page (otherwise it becomes a
+        loophole easily exploited).
+
+        Test: fast/loader/page-dismissal-modal-dialogs.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::fireBeforeUnloadEvent):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::pageDismissalEventBeingDispatched):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        * page/Chrome.cpp:
+        (WebCore::canRunModalIfDuringPageDismissal):
+        (WebCore::Chrome::canRunModalNow):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldRunModalDialogDuringPageDismissal):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::showModalDialog):
+
 2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

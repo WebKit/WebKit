@@ -272,7 +272,13 @@ public:
     
     void started();
 
-    bool pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
+    enum PageDismissalType {
+        NoDismissal = 0,
+        BeforeUnloadDismissal = 1,
+        PageHideDismissal = 2,
+        UnloadDismissal = 3
+    };
+    PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     NetworkingContext* networkingContext() const;
 
@@ -395,7 +401,7 @@ private:
 
     bool m_didCallImplicitClose;
     bool m_wasUnloadEventEmitted;
-    bool m_pageDismissalEventBeingDispatched;
+    PageDismissalType m_pageDismissalEventBeingDispatched;
     bool m_isComplete;
     bool m_isLoadingMainResource;
 

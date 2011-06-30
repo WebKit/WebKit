@@ -183,7 +183,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isExecutingJavaScriptFormAction(false)
     , m_didCallImplicitClose(false)
     , m_wasUnloadEventEmitted(false)
-    , m_pageDismissalEventBeingDispatched(false)
+    , m_pageDismissalEventBeingDispatched(NoDismissal)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
     , m_hasReceivedFirstData(false)
@@ -367,16 +367,18 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
-                m_pageDismissalEventBeingDispatched = true;
                 if (m_frame->domWindow()) {
-                    if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide)
+                    if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
+                        m_pageDismissalEventBeingDispatched = PageHideDismissal;
                         m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
+                    }
                     if (!m_frame->document()->inPageCache()) {
                         RefPtr<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
                         // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
                         // while dispatching the event, so protect it to prevent writing the end
                         // time into freed memory.
                         RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
+                        m_pageDismissalEventBeingDispatched = UnloadDismissal;
                         if (documentLoader && !documentLoader->timing()->unloadEventStart && !documentLoader->timing()->unloadEventEnd) {
                             DocumentLoadTiming* timing = documentLoader->timing();
                             ASSERT(timing->navigationStart);
@@ -385,7 +387,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                             m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
                     }
                 }
-                m_pageDismissalEventBeingDispatched = false;
+                m_pageDismissalEventBeingDispatched = NoDismissal;
                 if (m_frame->document())
                     m_frame->document()->updateStyleIfNeeded();
                 m_wasUnloadEventEmitted = true;
@@ -1182,7 +1184,7 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
         return;
     }
 
-    if (m_pageDismissalEventBeingDispatched)
+    if (m_pageDismissalEventBeingDispatched != NoDismissal)
         return;
 
     NavigationAction action(newURL, newLoadType, isFormSubmission, event);
@@ -1317,7 +1319,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     ASSERT(m_frame->view());
 
-    if (m_pageDismissalEventBeingDispatched)
+    if (m_pageDismissalEventBeingDispatched != NoDismissal)
         return;
 
     if (m_frame->document())
@@ -1552,7 +1554,7 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
-    if (m_pageDismissalEventBeingDispatched)
+    if (m_pageDismissalEventBeingDispatched != NoDismissal)
         return;
 
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
@@ -2721,9 +2723,9 @@ bool FrameLoader::fireBeforeUnloadEvent(Chrome* chrome)
         return true;
 
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
-    m_pageDismissalEventBeingDispatched = true;
+    m_pageDismissalEventBeingDispatched = BeforeUnloadDismissal;
     domWindow->dispatchEvent(beforeUnloadEvent.get(), domWindow->document());
-    m_pageDismissalEventBeingDispatched = false;
+    m_pageDismissalEventBeingDispatched = NoDismissal;
 
     if (!beforeUnloadEvent->defaultPrevented())
         document->defaultEventHandler(beforeUnloadEvent.get());

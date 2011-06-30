@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 1: Blocked alert('pagehide true') during pagehide.
+PASSED if didn't crash in two seconds.

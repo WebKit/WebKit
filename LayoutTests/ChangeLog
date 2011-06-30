@@ -1,3 +1,30 @@
+2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Suppress modal JavaScript/HTML dialogs during unload events
+        https://bugs.webkit.org/show_bug.cgi?id=56397
+
+        Adds Chromium-specific test expectations that show alerts in unload
+        handlers being replaced by console messages.
+
+        * fast/loader/page-dismissal-modal-dialogs-expected.txt: Added.
+        * fast/loader/page-dismissal-modal-dialogs.html: Added.
+        * fast/loader/resources/page-dismissal-modal-dialogs-iframe.html: Added.
+        * platform/chromium-mac/fast/history/timed-refresh-in-cached-frame-expected.txt:
+        * platform/chromium-win/fast/history/timed-refresh-in-cached-frame-expected.txt:
+        * platform/chromium/fast/dom/Geolocation/notimer-after-unload-expected.txt: Added.
+        * platform/chromium/fast/events/onbeforeunload-focused-iframe-expected.txt: Added.
+        * platform/chromium/fast/events/onunload-clears-onbeforeunload-expected.txt: Added.
+        * platform/chromium/fast/events/onunload-expected.txt: Added.
+        * platform/chromium/fast/events/onunload-not-on-body-expected.txt: Added.
+        * platform/chromium/fast/events/onunload-window-property-expected.txt: Added.
+        * platform/chromium/fast/events/pageshow-pagehide-on-back-uncached-expected.txt: Added.
+        * platform/chromium/fast/history/timed-refresh-in-cached-frame-expected.txt: Added.
+        * platform/chromium/fast/loader/frames-with-unload-handlers-in-page-cache-expected.txt: Added.
+        * platform/chromium/fast/loader/page-dismissal-modal-dialogs-expected.txt: Added.
+        * platform/chromium/fast/loader/recursive-before-unload-crash-expected.txt: Added.
+
 2011-06-30  Juan C. Montemayor  <jmont@apple.com>
 
         Reviewed by Geoffrey Garen.
