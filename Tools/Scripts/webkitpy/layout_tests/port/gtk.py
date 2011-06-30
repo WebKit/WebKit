@@ -39,6 +39,8 @@ _log = logging.getLogger("webkitpy.layout_tests.port.gtk")
 
 
 class GtkDriver(webkit.WebKitDriver):
+    """WebKit Gtk implementation of the Driver class."""
+
     def start(self):
         display_id = self._worker_number + 1
         run_xvfb = ["Xvfb", ":%d" % (display_id)]
@@ -55,20 +57,27 @@ class GtkDriver(webkit.WebKitDriver):
 
 
 class GtkPort(webkit.WebKitPort):
-    port_name = "gtk"
+    """WebKit Gtk implementation of the Port class."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault('port_name', 'gtk')
+        webkit.WebKitPort.__init__(self, **kwargs)
 
     def create_driver(self, worker_number):
         return GtkDriver(self, worker_number)
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'apache2-debian-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'apache2-debian-httpd.conf')
 
     def _path_to_driver(self):
         return self._build_path('Programs', self.driver_name())
 
     def check_build(self, needs_http):
-        return self._check_driver()
+        if not self._check_driver():
+            return False
+        return True
 
     def _path_to_apache(self):
         if self._is_redhat_based():
@@ -82,7 +91,8 @@ class GtkPort(webkit.WebKitPort):
         else:
             config_name = 'apache2-debian-httpd.conf'
 
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_name)
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                            config_name)
 
     def _path_to_wdiff(self):
         if self._is_redhat_based():
@@ -104,6 +114,8 @@ class GtkPort(webkit.WebKitPort):
             full_library = self._build_path(".libs", library)
             if os.path.isfile(full_library):
                 return full_library
+
+        return None
 
     def _runtime_feature_list(self):
         return None

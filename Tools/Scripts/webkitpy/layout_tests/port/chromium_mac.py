@@ -76,7 +76,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
             self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
             self._name = port_name + '-' + self._version
         else:
-            self._version = port_name[port_name.index('-mac-') + len('-mac-'):]
+            self._version = port_name[port_name.index('-mac-') + 5:]
             assert self._version in self.SUPPORTED_OS_VERSIONS
         self._operating_system = 'mac'
 

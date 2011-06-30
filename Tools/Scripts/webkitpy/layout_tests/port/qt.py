@@ -39,7 +39,11 @@ _log = logging.getLogger("webkitpy.layout_tests.port.qt")
 
 
 class QtPort(WebKitPort):
-    port_name = "qt"
+    """QtWebKit implementation of the Port class."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault('port_name', 'qt')
+        WebKitPort.__init__(self, **kwargs)
 
     def baseline_search_path(self):
         port_names = []
@@ -54,7 +58,8 @@ class QtPort(WebKitPort):
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'apache2-debian-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'apache2-debian-httpd.conf')
 
     def _build_driver(self):
         # The Qt port builds DRT as part of the main build step

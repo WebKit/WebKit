@@ -32,21 +32,23 @@ import logging
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
-_log = logging.getLogger(__file__)
+_log = logging.getLogger("webkitpy.layout_tests.port.win")
 
 
 class WinPort(WebKitPort):
-    port_name = "win"
+    """WebKit Win implementation of the Port class."""
 
-    def __init__(self, **kwargs):
-        WebKitPort.__init__(self, **kwargs)
+    def __init__(self, port_name=None, **kwargs):
+        port_name = port_name or 'win'
+        WebKitPort.__init__(self, port_name=port_name, **kwargs)
         self._version = 'win7'
         self._operating_system = 'win'
 
     def baseline_search_path(self):
         # Based on code from old-run-webkit-tests expectedDirectoryForTest()
-        search_paths = ["win", "mac-snowleopard", "mac"]
-        return map(self._webkit_baseline_path, search_paths)
+        port_names = ["win", "mac-snowleopard", "mac"]
+        return map(self._webkit_baseline_path, port_names)
 
     def _path_to_apache_config_file(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'cygwin-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'cygwin-httpd.conf')

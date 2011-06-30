@@ -53,11 +53,9 @@ from webkitpy.layout_tests.servers import websocket_server
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 
 
+# FIXME: This function doesn't belong in this package.
 class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
-
-    port_name = "chromium"
-
     ALL_BASELINE_VARIANTS = [
         'chromium-mac-snowleopard', 'chromium-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
@@ -348,6 +346,8 @@ class ChromiumPort(base.Port):
 
 
 class ChromiumDriver(base.Driver):
+    """Abstract interface for DRT."""
+
     def __init__(self, port, worker_number):
         self._port = port
         self._worker_number = worker_number

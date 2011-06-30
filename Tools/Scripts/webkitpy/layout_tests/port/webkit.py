@@ -36,20 +36,26 @@ import logging
 import operator
 import os
 import re
+import signal
+import sys
 import time
+import webbrowser
+
 
 from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.system import ospath
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port import base, builders, server_process
 
-
-_log = logging.getLogger(__file__)
+_log = logging.getLogger("webkitpy.layout_tests.port.webkit")
 
 
 class WebKitPort(base.Port):
+    """WebKit implementation of the Port class."""
+
     def __init__(self, **kwargs):
         base.Port.__init__(self, **kwargs)
-        self._cached_apache_path = None  # FIXME: This class should use @memoized instead.
+        self._cached_apache_path = None
 
         # FIXME: disable pixel tests until they are run by default on the build machines.
         self.set_option_default("pixel_tests", False)
@@ -59,21 +65,12 @@ class WebKitPort(base.Port):
             return "WebKitTestRunner"
         return "DumpRenderTree"
 
-    # FIXME: This is not a very useful default implementation, as its wrong for any
-    # port which uses version-specific fallback (e.g. ['mac-leapard', 'mac']).
-    # We should replace this with a smarter implementation shared by all ports.
     def baseline_search_path(self):
-        search_paths = [self.name()]
-        if self.get_option('webkit_test_runner'):
-            search_paths.insert(0, self._wk2_port_name())
-        return search_paths
-
-    def _expectations_search_path(self):
-        # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
-        return self._wk2_port_name() if self.get_option('webkit_test_runner') else self.port_name
+        return [self._webkit_baseline_path(self._name)]
 
     def path_to_test_expectations_file(self):
-        return self._filesystem.join(self._webkit_baseline_path(self._expectations_search_path()), 'test_expectations.txt')
+        return self._filesystem.join(self._webkit_baseline_path(self._name),
+                                     'test_expectations.txt')
 
     def _results_for_platform(self, platform):
         builder_name = builders.builder_name_for_platform(platform)
@@ -287,26 +284,12 @@ class WebKitPort(base.Port):
             tests_to_skip.append(line)
         return tests_to_skip
 
-    def _wk2_port_name(self):
-        # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc.
-        return "%s-wk2" % self.port_name
-
-    def _skipped_file_search_paths(self):
-        # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] not the full casade.
-        # Note order doesn't matter since the Skipped file contents are all combined.
-        search_paths = set([self.port_name, self.name()])
-        if self.get_option('webkit_test_runner'):
-            # Quoting old-run-webkit-tests:
-            # Because nearly all of the skipped tests for WebKit 2 on Mac are due to
-            # cross-platform issues, the Windows and Qt ports use the Mac skipped list
-            # additionally to their own to avoid maintaining separate lists.
-            search_paths.update([self._wk2_port_name(), "mac-wk2"])
-        return search_paths
+    def _skipped_file_paths(self):
+        return [self._filesystem.join(self._webkit_baseline_path(self._name), 'Skipped')]
 
     def _expectations_from_skipped_files(self):
         tests_to_skip = []
-        for search_path in self._skipped_file_search_paths():
-            filename = self._filesystem.join(self._webkit_baseline_path(search_path), "Skipped")
+        for filename in self._skipped_file_paths():
             if not self._filesystem.exists(filename):
                 _log.warn("Failed to open Skipped file: %s" % filename)
                 continue
@@ -315,14 +298,12 @@ class WebKitPort(base.Port):
         return tests_to_skip
 
     def test_expectations(self):
-        # This allows ports to use a combination of test_expectations.txt files and Skipped lists.
-        expectations = self._skipped_list_as_expectations()
+        # The WebKit mac port uses a combination of a test_expectations file
+        # and 'Skipped' files.
         expectations_path = self.path_to_test_expectations_file()
-        if self._filesystem.exists(expectations_path):
-            expectations = self._filesystem.read_text_file(expectations_path) + expectations
-        return expectations
+        return self._filesystem.read_text_file(expectations_path) + self._skips()
 
-    def _skipped_list_as_expectations(self):
+    def _skips(self):
         # Each Skipped file contains a list of files
         # or directories to be skipped during the test run. The total list
         # of tests to skipped is given by the contents of the generic
@@ -332,7 +313,8 @@ class WebKitPort(base.Port):
         # format expected by test_expectations.
 
         tests_to_skip = self.skipped_layout_tests()
-        skip_lines = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" % test_path, tests_to_skip)
+        skip_lines = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" %
+                                test_path, tests_to_skip)
         return "\n".join(skip_lines)
 
     def skipped_layout_tests(self):

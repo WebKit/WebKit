@@ -66,7 +66,10 @@ _log = logutils.get_logger(__file__)
 
 
 class DummyOptions(object):
-    """Fake implementation of optparse.Values. Cloned from webkitpy.tool.mocktool.MockOptions."""
+    """Fake implementation of optparse.Values. Cloned from
+    webkitpy.tool.mocktool.MockOptions.
+
+    """
 
     def __init__(self, **kwargs):
         # The caller can set option values using keyword arguments. We don't
@@ -78,11 +81,9 @@ class DummyOptions(object):
             self.__dict__[key] = value
 
 
-# FIXME: This class should merge with webkitpy.common.config.ports.
+# FIXME: This class should merge with webkitpy.webkit_port at some point.
 class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package."""
-
-    port_name = None  # Subclasses override this
 
     def __init__(self, port_name=None, options=None,
                  executive=None,
@@ -90,9 +91,10 @@ class Port(object):
                  filesystem=None,
                  config=None,
                  **kwargs):
+        self._name = port_name
 
         # These are default values that should be overridden in a subclasses.
-        self._name = port_name or self.port_name  # Subclasses may append a -VERSION (like mac-leopard) or other qualifiers.
+        # FIXME: These should really be passed in.
         self._operating_system = 'mac'
         self._version = ''
         self._architecture = 'x86'
@@ -110,8 +112,9 @@ class Port(object):
 
         self._helper = None
         self._http_server = None
+        self._webkit_base_dir = None
         self._websocket_server = None
-        self._http_lock = None  # FIXME: Why does this live on the port object?
+        self._http_lock = None
 
         # Python's Popen has a bug that causes any pipes opened to a
         # process that can't be executed to be leaked.  Since this
@@ -129,11 +132,12 @@ class Port(object):
         self._wdiff_available = None
 
         # FIXME: prettypatch.py knows this path, why is it copied here?
-        self._pretty_patch_path = self.path_from_webkit_base("Websites", "bugs.webkit.org", "PrettyPatch", "prettify.rb")
+        self._pretty_patch_path = self.path_from_webkit_base("Websites",
+            "bugs.webkit.org", "PrettyPatch", "prettify.rb")
         self._pretty_patch_available = None
 
         self.set_option_default('configuration', self.default_configuration())
-        self._test_configuration = None  # FIXME: This does not belong on the real object.
+        self._test_configuration = None
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
         self.set_option_default('use_apache', self._default_to_apache())
@@ -149,7 +153,8 @@ class Port(object):
         return self._pretty_patch_available
 
     def default_child_processes(self):
-        """Return the number of DumpRenderTree instances to use for this port."""
+        """Return the number of DumpRenderTree instances to use for this
+        port."""
         return self._executive.cpu_count()
 
     def default_worker_model(self):
@@ -158,8 +163,10 @@ class Port(object):
         return 'threads'
 
     def baseline_path(self):
-        """Return the absolute path to the directory to store new baselines in for this port."""
-        baseline_search_paths = self.get_option('additional_platform_directory', []) + self.baseline_search_path()
+        """Return the absolute path to the directory to store new baselines
+        in for this port."""
+        baseline_search_paths = \
+            self.get_option('additional_platform_directory', []) + self.baseline_search_path()
         return baseline_search_paths[0]
 
     def baseline_search_path(self):
@@ -240,11 +247,11 @@ class Port(object):
         return expected_text != actual_text
 
     def compare_audio(self, expected_audio, actual_audio):
-        # FIXME: If we give this method a better name it won't need this docstring (e.g. are_audio_results_equal()).
         """Return whether the two audio files are *not* equal."""
         return expected_audio != actual_audio
 
-    def diff_image(self, expected_contents, actual_contents, diff_filename=None, tolerance=0):
+    def diff_image(self, expected_contents, actual_contents,
+                   diff_filename=None, tolerance=0):
         """Compare two images and produce a delta image file.
 
         Return True if the two images are different, False if they are the same.
@@ -326,7 +333,8 @@ class Port(object):
 
         baselines = []
         for platform_dir in baseline_search_path:
-            if self.path_exists(self._filesystem.join(platform_dir, baseline_filename)):
+            if self.path_exists(self._filesystem.join(platform_dir,
+                                                      baseline_filename)):
                 baselines.append((platform_dir, baseline_filename))
 
             if not all_baselines and baselines:
@@ -363,8 +371,8 @@ class Port(object):
         This routine is generic but is implemented here to live alongside
         the other baseline and filename manipulation routines.
         """
-        # FIXME: The [0] here is very mysterious, as is the destructured return.
-        platform_dir, baseline_filename = self.expected_baselines(filename, suffix)[0]
+        platform_dir, baseline_filename = self.expected_baselines(
+            filename, suffix)[0]
         if platform_dir:
             return self._filesystem.join(platform_dir, baseline_filename)
         return self._filesystem.join(self.layout_tests_dir(), baseline_filename)
@@ -448,7 +456,9 @@ class Port(object):
         return test_files.find(self, paths)
 
     def test_dirs(self):
-        """Returns the list of top-level test directories."""
+        """Returns the list of top-level test directories.
+
+        Used by --clobber-old-results."""
         layout_tests_dir = self.layout_tests_dir()
         return filter(lambda x: self._filesystem.isdir(self._filesystem.join(layout_tests_dir, x)),
                       self._filesystem.listdir(layout_tests_dir))
@@ -529,15 +539,8 @@ class Port(object):
         self._filesystem.maybe_make_directory(*path)
 
     def name(self):
-        """Returns a name that uniquely identifies this particular type of port
-        (e.g., "mac-snowleopard" or "chromium-gpu-linux-x86_x64" and can be passed
-        to factory.get() to instantiate the port."""
+        """Return the name of the port (e.g., 'mac', 'chromium-win-xp')."""
         return self._name
-
-    def real_name(self):
-        # FIXME: Seems this is only used for MockDRT and should be removed.
-        """Returns the name of the port as passed to the --platform command line argument."""
-        return self.name()
 
     def operating_system(self):
         return self._operating_system
@@ -564,6 +567,10 @@ class Port(object):
 
     def architecture(self):
         return self._architecture
+
+    def real_name(self):
+        """Returns the actual name of the port, not the delegate's."""
+        return self.name()
 
     def get_option(self, name, default_value=None):
         # FIXME: Eventually we should not have to do a test for
@@ -634,7 +641,8 @@ class Port(object):
         return self._user.open_url(results_filename)
 
     def create_driver(self, worker_number):
-        """Return a newly created base.Driver subclass for starting/stopping the test driver."""
+        """Return a newly created base.Driver subclass for starting/stopping
+        the test driver."""
         raise NotImplementedError('Port.create_driver')
 
     def start_helper(self):
@@ -868,7 +876,8 @@ class Port(object):
         raise NotImplementedError('Port._path_to_helper')
 
     def _path_to_image_diff(self):
-        """Returns the full path to the image_diff binary, or None if it is not available.
+        """Returns the full path to the image_diff binary, or None if it
+        is not available.
 
         This is likely used only by diff_image()"""
         raise NotImplementedError('Port.path_to_image_diff')

@@ -37,8 +37,6 @@ from webkitpy.tool.mocktool import MockExecutive, MockOptions, MockUser
 
 
 class TestWebKitPort(WebKitPort):
-    port_name = "testwebkitport"
-
     def __init__(self, symbol_list=None, feature_list=None,
                  expectations_file=None, skips_file=None,
                  executive=None, filesystem=None, user=None,
@@ -48,7 +46,7 @@ class TestWebKitPort(WebKitPort):
         executive = executive or MockExecutive(should_log=False)
         filesystem = filesystem or MockFileSystem()
         user = user or MockUser()
-        WebKitPort.__init__(self, executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
+        WebKitPort.__init__(self, port_name="testwebkitport", executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
 
     def _runtime_feature_list(self):
         return self.feature_list
@@ -90,14 +88,6 @@ class WebKitPortTest(port_testcase.PortTestCase):
 
     def test_skipped_layout_tests(self):
         self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(), set(["media"]))
-
-    def test_skipped_file_search_paths(self):
-        port = TestWebKitPort()
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport']))
-        port._name = "testwebkitport-version"
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version']))
-        port._options = MockOptions(webkit_test_runner=True)
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'mac-wk2']))
 
     def test_test_expectations(self):
         # Check that we read both the expectations file and anything in a

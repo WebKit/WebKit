@@ -40,20 +40,24 @@ class MacTest(port_testcase.PortTestCase):
             return None
         return mac.MacPort
 
-    def assert_skipped_file_search_paths(self, port_name, expected_paths):
+    def assert_skipped_files_for_version(self, port_name, expected_paths):
         port = mac.MacPort(port_name=port_name)
-        self.assertEqual(port._skipped_file_search_paths(), expected_paths)
+        skipped_paths = port._skipped_file_paths()
+        # FIXME: _skipped_file_paths should return WebKit-relative paths.
+        # So to make it unit testable, we strip the WebKit directory from the path.
+        relative_paths = [path[len(port.path_from_webkit_base()):] for path in skipped_paths]
+        self.assertEqual(relative_paths, expected_paths)
 
-    def test_skipped_file_search_paths(self):
-        # FIXME: This should no longer be necessary, but I'm not brave enough to remove it.
+    def test_skipped_file_paths(self):
+        # We skip this on win32 because we use '/' as the dir separator and it's
+        # not worth making platform-independent.
         if sys.platform == 'win32':
             return None
 
-        self.assert_skipped_file_search_paths('mac-snowleopard', set(['mac-snowleopard', 'mac']))
-        self.assert_skipped_file_search_paths('mac-leopard', set(['mac-leopard', 'mac']))
-        # We cannot test just "mac" here as the MacPort constructor automatically fills in the version from the running OS.
-        # self.assert_skipped_file_search_paths('mac', ['mac'])
-
+        self.assert_skipped_files_for_version('mac-snowleopard',
+            ['/LayoutTests/platform/mac-snowleopard/Skipped', '/LayoutTests/platform/mac/Skipped'])
+        self.assert_skipped_files_for_version('mac-leopard',
+            ['/LayoutTests/platform/mac-leopard/Skipped', '/LayoutTests/platform/mac/Skipped'])
 
     example_skipped_file = u"""
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events

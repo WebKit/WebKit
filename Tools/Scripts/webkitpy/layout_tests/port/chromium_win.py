@@ -74,8 +74,9 @@ class ChromiumWinPort(chromium.ChromiumPort):
             self._version = os_version(windows_version)
             self._name = port_name + '-' + self._version
         else:
-            self._version = port_name[port_name.index('-win-') + len('-win-'):]
-            assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
+            self._version = port_name[port_name.index('-win-') + 5:]
+            assert self._version in self.SUPPORTED_VERSIONS
+
         self._operating_system = 'win'
 
     def setup_environ_for_server(self):
