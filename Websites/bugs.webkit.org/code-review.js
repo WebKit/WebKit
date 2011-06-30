@@ -773,6 +773,10 @@ var CODE_REVIEW_UNITTEST;
     }
   }
 
+  function removeContextBarBelow(expand_bar) {
+    $('.context', expand_bar.nextElementSibling).detach();
+  }
+
   function expand(expand_bar, file_name, direction, amount) {
     if (file_name in original_file_contents && !patched_file_contents[file_name]) {
       // FIXME: In this case, try fetching the source file at the revision the patch was created at.
@@ -837,12 +841,12 @@ var CODE_REVIEW_UNITTEST;
     if (start_line_num == above_last_line_num && end_line_num == below_first_line_num) {
       $('.ExpandLinkContainer', expand_bar).detach();
       below_expansion.insertBefore(lines, below_expansion.firstChild);
-      // Now that we're filling in all the lines, the context line following this expand bar is no longer needed.
-      $('.context', expand_bar.nextElementSibling).detach();
+      removeContextBarBelow(expand_bar);
     } else if (direction == ABOVE) {
       above_expansion.appendChild(lines);
     } else {
       below_expansion.insertBefore(lines, below_expansion.firstChild);
+      removeContextBarBelow(expand_bar);
     }
   }
 

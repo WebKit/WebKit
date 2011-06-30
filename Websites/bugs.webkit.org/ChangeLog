@@ -1,3 +1,19 @@
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Expanding lines "below" does not remove purple context line
+        https://bugs.webkit.org/show_bug.cgi?id=63695
+
+        Honestly, this is the last bug in the review tool that bothers me.
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Jump straight to version 42, because, well, you know.
+        * code-review.js:
+            - In addition to removing the context bar when we expand all, we
+              now remove it when we expand below (but not when we expand
+              above).
+
 2011-06-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
