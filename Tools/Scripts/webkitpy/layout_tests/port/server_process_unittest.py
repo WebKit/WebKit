@@ -26,9 +26,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from webkitpy.layout_tests.port import server_process
+from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.outputcapture import OutputCapture
+
+
+def _logging_run_command(args):
+    print args
+
+
+class TrivialMockPort(object):
+    def results_directory(self):
+        return "/mock/results"
 
 
 class MockFile(object):
@@ -72,6 +84,11 @@ class TestServerProcess(unittest.TestCase):
         self.assertEquals(server_process._proc, None)
         self.assertEquals(server_process.broken_pipes, [server_process.stdin])
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_sample_process(self):
+        # Currently, sample-on-timeout only works on Darwin.
+        if sys.platform != "darwin":
+            return
+        server_process = FakeServerProcess(port_obj=TrivialMockPort(), name="test", cmd=["test"], executive=MockExecutive2(run_command_fn=_logging_run_command))
+        server_process._proc = MockProc(server_process)
+        expected_stdout = "['/usr/bin/sample', 1, 10, 10, '-file', '/mock/results/test-1.sample.txt']\n"
+        OutputCapture().assert_outputs(self, server_process._sample, expected_stdout=expected_stdout)

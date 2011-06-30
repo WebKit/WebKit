@@ -276,11 +276,8 @@ def parse_args(args=None):
     # Missing Mac-specific old-run-webkit-tests options:
     # FIXME: Need: -g, --guard for guard malloc support on Mac.
     # FIXME: Need: -l --leaks    Enable leaks checking.
-    # FIXME: Need: --sample-on-timeout Run sample on timeout
 
     old_run_webkit_tests_compat = [
-        # NRWT doesn't sample on timeout yet anyway.
-        _compat_shim_option("--no-sample-on-timeout"),
         # FIXME: NRWT needs to support remote links eventually.
         _compat_shim_option("--use-remote-links-to-tests"),
     ]
@@ -292,6 +289,8 @@ def parse_args(args=None):
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
+        optparse.make_option("--no-sample-on-timeout", action="store_false",
+            dest="sample_on_timeout", help="Don't run sample on timeout (Mac OS X only)"),
         optparse.make_option("--tolerance",
             help="Ignore image differences less than this percentage (some "
                 "ports may ignore this option)", type="float"),

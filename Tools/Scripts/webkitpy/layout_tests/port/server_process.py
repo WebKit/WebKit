@@ -41,7 +41,7 @@ if sys.platform != 'win32':
 
 from webkitpy.common.system.executive import Executive
 
-_log = logging.getLogger("webkitpy.layout_tests.port.server_process")
+_log = logging.getLogger(__file__)
 
 
 class ServerProcess:
@@ -166,6 +166,20 @@ class ServerProcess:
             self.crashed = True
             self.handle_interrupt()
 
+    def _sample(self):
+        if sys.platform != "darwin":
+            return
+        _log.warning('Sampling process... (use --no-sample-on-timeout to skip this step)')
+        hang_report = os.path.join(self._port.results_directory(), "%s-%s.sample.txt" % (self._name, self._proc.pid))
+        self._executive.run_command([
+            "/usr/bin/sample",
+            self._proc.pid,
+            10,
+            10,
+            "-file",
+            hang_report,
+        ])
+
     def _read(self, timeout, size):
         """Internal routine that actually does the read."""
         index = -1
@@ -184,6 +198,8 @@ class ServerProcess:
                     if not self.crashed:
                         self._check_for_crash()
                 self.timed_out = True
+                if not self.crashed:
+                    self._sample()
 
             # Check to see if we have any output we can return.
             if size and len(self._output) >= size:
