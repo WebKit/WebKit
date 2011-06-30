@@ -48,7 +48,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def __init__(self, port_name=None, **kwargs):
         port_name = port_name or 'chromium-linux'
         chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
-
         # We re-set the port name once the base object is fully initialized
         # in order to be able to find the DRT binary properly.
         if port_name.endswith('-linux'):
