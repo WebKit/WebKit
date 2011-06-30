@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebTextCheckerClient : public APIClient<WKTextCheckerClient> {
+class WebTextCheckerClient : public APIClient<WKTextCheckerClient, kWKTextCheckerClientCurrentVersion> {
 public:
     bool continuousSpellCheckingAllowed();
     bool continuousSpellCheckingEnabled();

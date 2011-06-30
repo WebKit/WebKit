@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebEditCommandProxy;
 
-class WebUndoClient : public APIClient<WKViewUndoClient> {
+class WebUndoClient : public APIClient<WKViewUndoClient, kWKViewUndoClientCurrentVersion> {
 public:
     void registerEditCommand(WebView*, PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands(WebView*);

@@ -72,6 +72,8 @@ struct WKTextCheckerClient {
 };
 typedef struct WKTextCheckerClient WKTextCheckerClient;
 
+enum { kWKTextCheckerClientCurrentVersion = 0 };
+
 WK_EXPORT void WKTextCheckerSetClient(const WKTextCheckerClient* client);
 
 WK_EXPORT void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool);

@@ -58,6 +58,8 @@ struct WKViewUndoClient {
 };
 typedef struct WKViewUndoClient WKViewUndoClient;
 
+enum { kWKViewUndoClientCurrentVersion = 0 };
+
 WK_EXPORT WKTypeID WKViewGetTypeID();
 
 WK_EXPORT WKViewRef WKViewCreate(RECT rect, WKContextRef context, WKPageGroupRef pageGroup, HWND parentWindow);

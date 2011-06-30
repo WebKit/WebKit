@@ -1,5 +1,14 @@
 2011-06-30  Mark Rowe  <mrowe@apple.com>
 
+        Fix the Windows build.
+
+        * UIProcess/API/C/win/WKTextChecker.h:
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/win/WebTextCheckerClient.h:
+        * UIProcess/win/WebUndoClient.h:
+
+2011-06-30  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Teach APIClient to correctly handle multiple versions of a client interface.
