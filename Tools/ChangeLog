@@ -1,3 +1,13 @@
+2011-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename should_kill_dump_render_tree to driver_needs_restart in preparation for supporting WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=63743
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
 2011-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.

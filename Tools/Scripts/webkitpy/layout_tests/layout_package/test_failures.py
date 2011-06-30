@@ -103,8 +103,8 @@ class TestFailure(object):
         """Returns the string/JSON representation of a TestFailure."""
         return cPickle.dumps(self)
 
-    def should_kill_dump_render_tree(self):
-        """Returns True if we should kill DumpRenderTree before the next test."""
+    def driver_needs_restart(self):
+        """Returns True if we should kill DumpRenderTree/WebKitTestRunner before the next test."""
         return False
 
 
@@ -117,7 +117,7 @@ class FailureTimeout(TestFailure):
     def message():
         return "Test timed out"
 
-    def should_kill_dump_render_tree(self):
+    def driver_needs_restart(self):
         return True
 
 
@@ -131,7 +131,7 @@ class FailureCrash(TestFailure):
         # FIXME: This is wrong for WebKit2 (which uses WebKitTestRunner).
         return "DumpRenderTree crashed"
 
-    def should_kill_dump_render_tree(self):
+    def driver_needs_restart(self):
         return True
 
 

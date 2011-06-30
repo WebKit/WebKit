@@ -179,7 +179,7 @@ class Worker(manager_worker_broker.AbstractWorker):
 
         if result.failures:
             # Check and kill DumpRenderTree if we need to.
-            if any([f.should_kill_dump_render_tree() for f in result.failures]):
+            if any([f.driver_needs_restart() for f in result.failures]):
                 self.kill_driver()
                 # Reset the batch count since the shell just bounced.
                 self._batch_count = 0
