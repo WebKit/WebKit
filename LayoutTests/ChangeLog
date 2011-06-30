@@ -1,3 +1,19 @@
+2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Assertion failure in RenderSVGInlineText::characterStartsNewTextChunk
+        https://bugs.webkit.org/show_bug.cgi?id=63076
+
+        * svg/custom/crash-text-in-textpath-expected.txt: Added.
+        * svg/custom/crash-text-in-textpath.svg: Added.
+        Original crashing test case.
+
+        * svg/custom/text-node-in-text-invalidated-expected.txt: Added.
+        * svg/custom/text-node-in-text-invalidated.svg: Added.
+        This test case was not crashing. However it is good to make sure this change
+        did not regress that.
+
 2011-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.

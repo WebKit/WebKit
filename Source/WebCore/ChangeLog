@@ -1,3 +1,32 @@
+2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Assertion failure in RenderSVGInlineText::characterStartsNewTextChunk
+        https://bugs.webkit.org/show_bug.cgi?id=63076
+
+        Tests: svg/custom/crash-text-in-textpath.svg
+               svg/custom/text-node-in-text-invalidated.svg
+
+        The problem was that we did not call setNeedsPositionUpdate on RenderSVGText. When
+        doing our layout, we would not update the attributes on our SVGRenderInlineText as
+        we would not lay it out.
+
+        This was caused by childrenChanged being overridden on SVGTextPositioningElement but
+        not on SVGTextPathElement.
+
+        As both classes shared the same mother class, it made sense to move the logic here.
+        There should be no other side effects as SVGTextPathElement and SVGTextPositioningElement
+        are the only classes deriving from SVGTextContentElement.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::childrenChanged): Moved this method from SVGTextPositioningElement.
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged): Updated after updatePositioningValuesInRenderer
+        removal, replaced by RenderSVGText::locateRenderSVGTextAncestor.
+        * svg/SVGTextPositioningElement.h:
+
 2011-06-30  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for !ENABLE(DATABASE) after r84789.

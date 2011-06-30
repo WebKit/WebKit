@@ -29,6 +29,7 @@
 #include "FrameSelection.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
+#include "RenderSVGText.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
@@ -331,6 +332,17 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
         return 0;
 
     return static_cast<SVGTextContentElement*>(node);
+}
+
+void SVGTextContentElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+
+    if (changedByParser || !renderer())
+        return;
+
+    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(renderer()))
+        textRenderer->setNeedsPositioningValuesUpdate();
 }
 
 }
