@@ -1,3 +1,15 @@
+2011-06-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Autofill suggestions appear in upper left corner after input change
+        https://bugs.webkit.org/show_bug.cgi?id=63702
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::screenToWindow): Implemented.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::refreshAutoFillPopup): Pass screen (not window) coordinates into setWindowRect().
+
 2011-06-30  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.

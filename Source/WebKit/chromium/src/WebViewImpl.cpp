@@ -2361,7 +2361,7 @@ void WebViewImpl::refreshAutoFillPopup()
         WebPopupMenuImpl* popupMenu =
             static_cast<WebPopupMenuImpl*>(m_autoFillPopup->client());
         if (popupMenu)
-            popupMenu->client()->setWindowRect(newBounds);
+            popupMenu->client()->setWindowRect(m_chromeClientImpl.windowToScreen(newBounds));
     }
 }
 

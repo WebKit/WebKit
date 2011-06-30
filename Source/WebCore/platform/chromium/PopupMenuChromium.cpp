@@ -468,17 +468,16 @@ int PopupContainer::layoutAndGetRTLOffset()
     // Place the listbox within our border.
     m_listBox->move(kBorderSize, kBorderSize);
 
-    // popupWidth is the width of <select> element. Record it before resize frame.
-    int popupWidth = frameRect().width();
     // Size ourselves to contain listbox + border.
     int listBoxWidth = m_listBox->width() + kBorderSize * 2;
     resize(listBoxWidth, m_listBox->height() + kBorderSize * 2);
     invalidate();
 
     // Compute the starting x-axis for a normal RTL or right-aligned LTR dropdown. For those,
-    // the right edge of dropdown box should be aligned with the right edge of <select> element box,
+    // the right edge of dropdown box should be aligned with the right edge of <select>/<input> element box,
     // and the dropdown box should be expanded to the left if more space is needed.
-    return popupWidth - listBoxWidth;
+    // m_originalFrameRect.width() is the width of the target <select>/<input> element.
+    return m_originalFrameRect.width() - listBoxWidth;
 }
 
 bool PopupContainer::handleMouseDownEvent(const PlatformMouseEvent& event)
@@ -596,7 +595,7 @@ void PopupContainer::refresh(const IntRect& targetControlRect)
     location.move(0, targetControlRect.height());
 
     listBox()->setBaseWidth(max(m_originalFrameRect.width() - kBorderSize * 2, 0));
-    setFrameRect(m_originalFrameRect);
+    setBoundsSize(m_originalFrameRect.size());
 
     listBox()->updateFromElement();
     // Store the original size to check if we need to request the location.

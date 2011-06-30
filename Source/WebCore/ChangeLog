@@ -1,3 +1,24 @@
+2011-06-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Autofill suggestions appear in upper left corner after input change
+        https://bugs.webkit.org/show_bug.cgi?id=63702
+
+        This change fixes a few popup layout issues, some of which have existed for quite a while:
+        - the absence of the ChromeClientImpl::screenToWindow() implementation (the method used to always return (0, 0));
+        - the confusion of window and screen coordinates passed into the autofill popup client's setWindowRect() method;
+        - the use of the current frameRect() width as the target element's width (which was wrong when refreshing
+          a popup resized during the initial layout (e.g. made wider than the target element)).
+
+        No new tests, as this is a change to platform-specific widget code. The test case is provided in the bug description.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layoutAndGetRTLOffset): Use original target element width, not frameRect().width(),
+        since the latter gets updated if the popup is not the same width as the target element.
+        (WebCore::PopupContainer::refresh): Restore only the popup bounds rather than its original rectangle,
+        since it sometimes breaks the invalidation region and layout.
+
 2011-06-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90102.

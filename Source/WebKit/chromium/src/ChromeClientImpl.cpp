@@ -565,10 +565,16 @@ void ChromeClientImpl::scroll(
 #endif
 }
 
-IntPoint ChromeClientImpl::screenToWindow(const IntPoint&) const
+IntPoint ChromeClientImpl::screenToWindow(const IntPoint& point) const
 {
-    notImplemented();
-    return IntPoint();
+    IntPoint windowPoint(point);
+
+    if (m_webView->client()) {
+        WebRect windowRect = m_webView->client()->windowRect();
+        windowPoint.move(-windowRect.x, -windowRect.y);
+    }
+
+    return windowPoint;
 }
 
 IntRect ChromeClientImpl::windowToScreen(const IntRect& rect) const
