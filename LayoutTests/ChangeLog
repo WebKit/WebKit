@@ -1,3 +1,14 @@
+2011-06-30  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [WK2] Create a general wk2 specific LayoutTests/platform/wk2 platform
+        Common Skipped list copied from LayoutTests/platform/mac-wk2/Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=61785 
+
+        * platform/mac-wk2/Skipped:
+        * platform/wk2/Skipped: Copied from LayoutTests/platform/mac-wk2/Skipped.
+
 2011-06-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
