@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "PageScriptDebugServer.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include "PageScriptDebugServer.h"
 
 #include "Frame.h"
 #include "FrameView.h"

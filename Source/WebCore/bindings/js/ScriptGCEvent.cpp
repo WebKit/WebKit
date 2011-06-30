@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "ScriptGCEvent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "ScriptGCEvent.h"
 
 #include "JSDOMWindow.h"
 #include <heap/Heap.h>
@@ -52,4 +53,4 @@ void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize, siz
 
 } // namespace WebCore
 
-#endif // !ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)

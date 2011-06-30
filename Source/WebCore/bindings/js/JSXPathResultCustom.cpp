@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSXPathResult.h"
 
 #if ENABLE(XPATH)
+
+#include "JSXPathResult.h"
 
 #include "JSDOMBinding.h"
 #include "XPathResult.h"

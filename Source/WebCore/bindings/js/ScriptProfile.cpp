@@ -25,9 +25,11 @@
  */
 
 #include "config.h"
-#include "ScriptProfile.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include "ScriptProfile.h"
+
 #include "InspectorValues.h"
 #include "JSDOMBinding.h"
 #include <profiler/Profile.h>

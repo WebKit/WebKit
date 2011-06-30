@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
-#include "JSSQLTransactionSync.h"
 
 #if ENABLE(DATABASE)
+
+#include "JSSQLTransactionSync.h"
 
 #include "ExceptionCode.h"
 #include "JSSQLResultSet.h"
@@ -93,6 +94,6 @@ JSValue JSSQLTransactionSync::executeSql(ExecState* exec)
     return result;
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(DATABASE)

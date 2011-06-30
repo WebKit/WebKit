@@ -31,9 +31,10 @@
  */
 
 #include "config.h"
-#include "InjectedScriptManager.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InjectedScriptManager.h"
 
 #include "ExceptionCode.h"
 #include "InjectedScript.h"

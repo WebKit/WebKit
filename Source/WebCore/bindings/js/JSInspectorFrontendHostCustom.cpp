@@ -31,9 +31,10 @@
  */
 
 #include "config.h"
-#include "JSInspectorFrontendHost.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "JSInspectorFrontendHost.h"
 
 #include "ContextMenuItem.h"
 #include "InspectorController.h"

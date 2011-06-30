@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "WorkerScriptDebugServer.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
+
+#include "WorkerScriptDebugServer.h"
 
 #include "WorkerContext.h"
 

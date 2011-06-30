@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSStorageCustom.h"
 
 #if ENABLE(DOM_STORAGE)
+
+#include "JSStorageCustom.h"
 
 #include "PlatformString.h"
 #include <runtime/PropertyNameArray.h>

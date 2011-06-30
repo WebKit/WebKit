@@ -1,3 +1,39 @@
+2011-06-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove dependnecy on IDL generation for disabled features in JSC bindings
+        https://bugs.webkit.org/show_bug.cgi?id=63718
+
+        Move the #if ENABLE() line directly after #include "config.h".
+        This enables us to compile all files even when we don't generate the IDL output.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        * bindings/js/JSConsoleCustom.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/js/JSInjectedScriptManager.cpp:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/js/JSTouchCustom.cpp:
+        * bindings/js/JSTouchListCustom.cpp:
+        * bindings/js/JSXPathResultCustom.cpp:
+        * bindings/js/JavaScriptCallFrame.cpp:
+        * bindings/js/PageScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptGCEvent.cpp:
+        * bindings/js/ScriptProfile.cpp:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+
 2011-06-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Kent Tamura.

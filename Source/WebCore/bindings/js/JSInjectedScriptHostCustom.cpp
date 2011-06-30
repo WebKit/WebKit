@@ -31,9 +31,10 @@
  */
 
 #include "config.h"
-#include "JSInjectedScriptHost.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "JSInjectedScriptHost.h"
 
 #if ENABLE(DATABASE)
 #include "Database.h"

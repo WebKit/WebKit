@@ -25,9 +25,11 @@
  */
 
 #include "config.h"
-#include "JSSVGElementInstance.h"
 
 #if ENABLE(SVG)
+
+#include "JSSVGElementInstance.h"
+
 #include "JSNode.h"
 #include "SVGElementInstance.h"
 

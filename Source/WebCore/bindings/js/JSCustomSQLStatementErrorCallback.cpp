@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
-#include "JSSQLStatementErrorCallback.h"
 
 #if ENABLE(DATABASE)
+
+#include "JSSQLStatementErrorCallback.h"
 
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"

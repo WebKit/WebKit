@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSTouch.h"
 
 #if ENABLE(TOUCH_EVENTS)
+
+#include "JSTouch.h"
 
 #include "Touch.h"
 
@@ -44,4 +45,4 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Touch
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(TOUCH_EVENTS)

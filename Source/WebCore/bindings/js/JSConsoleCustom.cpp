@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 #include "JSConsole.h"
 
 #include "Console.h"
@@ -38,8 +40,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 
@@ -77,6 +77,6 @@ JSValue JSConsole::profileEnd(ExecState* exec)
     return jsUndefined();
 }
 
-#endif
-
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)

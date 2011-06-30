@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSDeviceOrientationEvent.h"
 
 #if ENABLE(DEVICE_ORIENTATION)
+
+#include "JSDeviceOrientationEvent.h"
 
 #include "DeviceOrientation.h"
 #include "DeviceOrientationEvent.h"

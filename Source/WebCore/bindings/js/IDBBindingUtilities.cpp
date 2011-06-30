@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "IDBBindingUtilities.h"
 
 #if ENABLE(INDEXED_DATABASE)
+
+#include "IDBBindingUtilities.h"
 
 #include "IDBKey.h"
 
@@ -46,4 +47,4 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState* exec, JSC::JSValue valu
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)

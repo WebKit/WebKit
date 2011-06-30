@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSCustomXPathNSResolver.h"
 
 #if ENABLE(XPATH)
+
+#include "JSCustomXPathNSResolver.h"
 
 #include "Console.h"
 #include "Document.h"

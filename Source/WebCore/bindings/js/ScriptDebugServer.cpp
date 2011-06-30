@@ -28,9 +28,10 @@
  */
 
 #include "config.h"
-#include "ScriptDebugServer.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include "ScriptDebugServer.h"
 
 #include "EventLoop.h"
 #include "Frame.h"

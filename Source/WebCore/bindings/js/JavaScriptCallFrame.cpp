@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "JavaScriptCallFrame.h"
-
-#include "JSDOMBinding.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
+#include "JavaScriptCallFrame.h"
+
+#include "JSDOMBinding.h"
 #include "PlatformString.h"
 #include <debugger/DebuggerCallFrame.h>
 #include <runtime/Completion.h>

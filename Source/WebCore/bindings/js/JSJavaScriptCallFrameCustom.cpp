@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSJavaScriptCallFrame.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include "JSJavaScriptCallFrame.h"
 
 #include "JavaScriptCallFrame.h"
 #include <runtime/ArrayPrototype.h>
