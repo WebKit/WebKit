@@ -95,6 +95,9 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
 
 void RenderSVGInline::destroy()
 {
+    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
+        textRenderer->setNeedsPositioningValuesUpdate();
+
     SVGResourcesCache::clientDestroyed(this);
     RenderInline::destroy();
 }

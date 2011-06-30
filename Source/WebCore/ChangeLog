@@ -1,3 +1,25 @@
+2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Update SVG position values on SVG DOM updates
+        https://bugs.webkit.org/show_bug.cgi?id=62439
+
+        Test: svg/custom/crash-textPath-attributes.html
+
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::destroy): Notify our containing RenderSVGText that it needs
+        to update its positioning information.
+
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::calculateBoundaries): Check the type of the InlineBox
+        like the rest of the code (fixes an ASSERT_NOT_REACHED in InlineBox::calculateBoudaries).
+
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree): Clear
+        our cached layout attributes every time we invalidate them. This avoids keeping stale
+        attribute that have a backpointer to a RenderObject.
+
 2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Reviewed by Adam Barth.

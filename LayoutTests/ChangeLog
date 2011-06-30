@@ -1,3 +1,14 @@
+2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Update SVG position values on SVG DOM updates
+        https://bugs.webkit.org/show_bug.cgi?id=62439
+
+        * svg/custom/crash-textPath-attributes-expected.txt: Added.
+        * svg/custom/crash-textPath-attributes.html: Added.
+        * svg/custom/resources/crash-textPath-attributes-iframe.svg: Added.
+
 2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Reviewed by Adam Barth.
