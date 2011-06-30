@@ -30,8 +30,10 @@
 
 from mod_pywebsocket import msgutil
 
+
 # we don't use set() here, because python on mac tiger doesn't support it.
 connections = {}
+
 
 def web_socket_do_extra_handshake(request):
     pass  # Always accept.
@@ -52,4 +54,3 @@ def web_socket_transfer_data(request):
         del connections[request]
         for ws in connections.keys():
             msgutil.send_message(ws, socketName)
-

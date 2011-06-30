@@ -21,12 +21,11 @@
 
 import time
 
+
 def web_socket_do_extra_handshake(request):
     # This will cause the handshake to fail because it pushes the length of the
     # status line past 1024 characters
-    msg = ""
-    for i in range(0, 1024):
-        msg += "."
+    msg = '.' * 1024
     msg += 'HTTP/1.1 101 WebSocket Protocol Handshake\r\n'
     msg += 'Upgrade: WebSocket\r\n'
     msg += 'Connection: Upgrade\r\n'
@@ -39,6 +38,7 @@ def web_socket_do_extra_handshake(request):
     while True:
         time.sleep(1)
         request.connection.write('keepalive\n')
+
 
 def web_socket_transfer_data(request):
     pass

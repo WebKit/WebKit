@@ -21,6 +21,7 @@
 
 import time
 
+
 def web_socket_do_extra_handshake(request):
     # This simulates a broken server that sends a WebSocket frame before the
     # handshake, and more frames afterwards.  It is important that if this
@@ -44,6 +45,7 @@ def web_socket_do_extra_handshake(request):
         numFrames = 1024 / len(frame) # write over 1024 bytes including the above handshake
         for i in range(0, numFrames):
             request.connection.write(frame)
+
 
 def web_socket_transfer_data(request):
     pass

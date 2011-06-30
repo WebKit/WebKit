@@ -9,5 +9,6 @@ def web_socket_do_extra_handshake(request):
     request.connection.write(msg)
     print msg
 
+
 def web_socket_transfer_data(request):
     pass
