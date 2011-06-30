@@ -2031,12 +2031,12 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
     }
 }
 
-int RenderBox::availableLogicalHeight() const
+LayoutUnit RenderBox::availableLogicalHeight() const
 {
     return availableLogicalHeightUsing(style()->logicalHeight());
 }
 
-int RenderBox::availableLogicalHeightUsing(const Length& h) const
+LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
 {
     if (h.isFixed())
         return computeContentBoxLogicalHeight(h.value());
@@ -2057,9 +2057,9 @@ int RenderBox::availableLogicalHeightUsing(const Length& h) const
     // https://bugs.webkit.org/show_bug.cgi?id=46500
     if (isRenderBlock() && isPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
         RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));
-        int oldHeight = block->logicalHeight();
+        LayoutUnit oldHeight = block->logicalHeight();
         block->computeLogicalHeight();
-        int newHeight = block->computeContentBoxLogicalHeight(block->contentLogicalHeight());
+        LayoutUnit newHeight = block->computeContentBoxLogicalHeight(block->contentLogicalHeight());
         block->setLogicalHeight(oldHeight);
         return computeContentBoxLogicalHeight(newHeight);
     }

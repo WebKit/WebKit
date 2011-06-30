@@ -115,15 +115,15 @@ public:
     bool containsFloats() { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox*);
 
-    int availableLogicalWidthForLine(int position, bool firstLine) const;
-    int logicalRightOffsetForLine(int position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
-    int logicalLeftOffsetForLine(int position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
-    int startOffsetForLine(int position, bool firstLine) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine) : logicalRightOffsetForLine(position, firstLine); }
+    LayoutUnit availableLogicalWidthForLine(LayoutUnit position, bool firstLine) const;
+    LayoutUnit logicalRightOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
+    LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
+    LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine) : logicalRightOffsetForLine(position, firstLine); }
 
     virtual VisiblePosition positionForPoint(const IntPoint&);
     
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual int availableLogicalWidth() const;
+    virtual LayoutUnit availableLogicalWidth() const;
 
     IntPoint flipForWritingModeIncludingColumns(const IntPoint&) const;
     void flipForWritingModeIncludingColumns(IntRect&) const;

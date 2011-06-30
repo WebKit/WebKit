@@ -1,3 +1,32 @@
+2011-06-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch availableWidth/Height, logicalLeft/RightOffsetForLine to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63671
+
+        Switch availableWidth/Height, logicalLeft/RightOffsetForLine functions over to the
+        new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::availableLogicalWidth):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::startOffsetForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::availableLogicalWidth):
+        (WebCore::RenderBox::availableWidth):
+        (WebCore::RenderBox::availableHeight):
+
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
         Remove useless ASSERT that breaks the build.

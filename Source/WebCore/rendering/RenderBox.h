@@ -318,14 +318,14 @@ public:
     LayoutUnit computePercentageLogicalHeight(const Length& height);
 
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual int availableLogicalWidth() const { return contentLogicalWidth(); }
-    int availableLogicalHeight() const;
-    int availableLogicalHeightUsing(const Length&) const;
+    virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
+    LayoutUnit availableLogicalHeight() const;
+    LayoutUnit availableLogicalHeightUsing(const Length&) const;
     
     // There are a few cases where we need to refer specifically to the available physical width and available physical height.
     // Relative positioning is one of those cases, since left/top offsets are physical.
-    int availableWidth() const { return style()->isHorizontalWritingMode() ? availableLogicalWidth() : availableLogicalHeight(); }
-    int availableHeight() const { return style()->isHorizontalWritingMode() ? availableLogicalHeight() : availableLogicalWidth(); }
+    LayoutUnit availableWidth() const { return style()->isHorizontalWritingMode() ? availableLogicalWidth() : availableLogicalHeight(); }
+    LayoutUnit availableHeight() const { return style()->isHorizontalWritingMode() ? availableLogicalHeight() : availableLogicalWidth(); }
 
     virtual int verticalScrollbarWidth() const;
     int horizontalScrollbarHeight() const;

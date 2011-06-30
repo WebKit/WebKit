@@ -3451,9 +3451,9 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
 // each float individually, we'd just walk backwards through the "lines" and stop when we hit a line that is fully above
 // the vertical offset that we'd like to check.  Computing the "lines" would be rather complicated, but could replace the left
 // objects and right objects count hack that is currently used here.
-int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
+LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
-    int left = fixedOffset;
+    LayoutUnit left = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
@@ -3478,7 +3478,7 @@ int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool 
     }
 
     if (applyTextIndent && style()->isLeftToRightDirection()) {
-        int cw = 0;
+        LayoutUnit cw = 0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->availableLogicalWidth();
         left += style()->textIndent().calcMinValue(cw);
@@ -3487,9 +3487,9 @@ int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool 
     return left;
 }
 
-int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
+LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
-    int right = fixedOffset;
+    LayoutUnit right = fixedOffset;
 
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
@@ -3515,7 +3515,7 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
     }
     
     if (applyTextIndent && !style()->isLeftToRightDirection()) {
-        int cw = 0;
+        LayoutUnit cw = 0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->availableLogicalWidth();
         right -= style()->textIndent().calcMinValue(cw);
@@ -3524,9 +3524,9 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
     return right;
 }
 
-int RenderBlock::availableLogicalWidthForLine(int position, bool firstLine) const
+LayoutUnit RenderBlock::availableLogicalWidthForLine(LayoutUnit position, bool firstLine) const
 {
-    int result = logicalRightOffsetForLine(position, firstLine) - logicalLeftOffsetForLine(position, firstLine);
+    LayoutUnit result = logicalRightOffsetForLine(position, firstLine) - logicalLeftOffsetForLine(position, firstLine);
     return (result < 0) ? 0 : result;
 }
 
@@ -4253,7 +4253,7 @@ void RenderBlock::offsetForContents(IntPoint& offset) const
         adjustPointToColumnContents(offset);
 }
 
-int RenderBlock::availableLogicalWidth() const
+LayoutUnit RenderBlock::availableLogicalWidth() const
 {
     // If we have multiple columns, then the available logical width is reduced to our column width.
     if (hasColumns())
