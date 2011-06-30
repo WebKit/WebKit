@@ -293,6 +293,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
+            WebInspector.currentPanel.resize();
             delete this._animating;
             delete this._currentAnimation;
             this.state = finalState;

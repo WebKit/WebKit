@@ -1,3 +1,14 @@
+2011-06-27  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: source code is not highlighted after drawer height animations.
+        https://bugs.webkit.org/show_bug.cgi?id=62860
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype._animateDrawerHeight.animationFinished):
+        (WebInspector.Drawer.prototype._animateDrawerHeight):
+
 2011-06-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
