@@ -1,3 +1,9 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Resolve a conflict.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-30  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.

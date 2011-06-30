@@ -2952,7 +2952,6 @@ BUGWK54322 SNOWLEOPARD : fast/forms/basic-buttons.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/forms/button-sizes.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/forms/file-input-direction.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/forms/input-appearance-bkcolor.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/forms/input-file-re-render.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/forms/preserveFormDuringResidualStyle.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
 //BUGWK54322 SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
