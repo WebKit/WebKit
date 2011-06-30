@@ -1,5 +1,5 @@
 description(
-"This tests the HTMLImageElement border property."
+"This tests that negative scrollTop and scrollLeft values are clamped to zero."
 );
 
 var scroller = document.createElement('div');

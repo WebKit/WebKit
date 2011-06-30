@@ -1,3 +1,10 @@
+2011-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the test description.
+
+        * fast/layers/negative-scroll-positions-expected.txt:
+        * fast/layers/script-tests/negative-scroll-positions.js:
+
 2011-06-29  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Adam Barth.
