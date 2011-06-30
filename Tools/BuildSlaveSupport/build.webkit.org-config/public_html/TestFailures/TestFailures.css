@@ -6,6 +6,10 @@ aside {
     font-size: 0.9em;
 }
 
+code {
+    font-size: 0.9em;
+}
+
 ol {
     list-style-type: none;
 }

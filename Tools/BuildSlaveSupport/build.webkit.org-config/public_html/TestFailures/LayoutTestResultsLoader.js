@@ -30,7 +30,7 @@ function LayoutTestResultsLoader(builder) {
 LayoutTestResultsLoader.prototype = {
     start: function(buildName, callback, errorCallback) {
         var cacheKey = 'LayoutTestResultsLoader.' + this._builder.name + '.' + buildName;
-        const currentCachedDataVersion = 1;
+        const currentCachedDataVersion = 2;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
             if (cachedData.version === currentCachedDataVersion) {
@@ -56,7 +56,7 @@ LayoutTestResultsLoader.prototype = {
                 if (resultsHTMLSupportsTooManyFailuresInfo)
                     result.tooManyFailures = root.getElementsByClassName('stopped-running-early-message').length > 0;
 
-                function testsForResultTable(regex) {
+                function parseResultTable(regex) {
                     var paragraph = Array.prototype.findFirst.call(root.querySelectorAll('p'), function(paragraph) {
                         return regex.test(paragraph.innerText);
                     });
@@ -64,22 +64,39 @@ LayoutTestResultsLoader.prototype = {
                         return [];
                     var table = paragraph.nextElementSibling;
                     console.assert(table.nodeName === 'TABLE');
-                    return Array.prototype.map.call(table.querySelectorAll('td:first-child > a'), function(elem) {
-                        return elem.innerText;
+                    return Array.prototype.map.call(table.rows, function(row) {
+                        var links = row.getElementsByTagName('a');
+                        var result = {
+                            name: links[0].innerText,
+                        };
+                        for (var i = 1; i < links.length; ++i) {
+                            var match = /^crash log \((.*)\)$/.exec(links[i].innerText);
+                            if (!match)
+                                continue;
+                            result.crashingSymbol = match[1];
+                            break;
+                        }
+                        return result;
                     });
                 }
 
-                testsForResultTable(/did not match expected results/).forEach(function(name) {
-                    result.tests[name] = { failureType: 'fail' };
+                parseResultTable(/did not match expected results/).forEach(function(testData) {
+                    result.tests[testData.name] = { failureType: 'fail' };
                 });
-                testsForResultTable(/timed out/).forEach(function(name) {
-                    result.tests[name] = { failureType: 'timeout' };
+                parseResultTable(/timed out/).forEach(function(testData) {
+                    result.tests[testData.name] = { failureType: 'timeout' };
                 });
-                testsForResultTable(/tool to crash/).forEach(function(name) {
-                    result.tests[name] = { failureType: 'crash' };
+                parseResultTable(/tool to crash/).forEach(function(testData) {
+                    result.tests[testData.name] = {
+                        failureType: 'crash',
+                        crashingSymbol: testData.crashingSymbol,
+                    };
                 });
-                testsForResultTable(/Web process to crash/).forEach(function(name) {
-                    result.tests[name] = { failureType: 'webprocess crash' };
+                parseResultTable(/Web process to crash/).forEach(function(testData) {
+                    result.tests[testData.name] = {
+                        failureType: 'webprocess crash',
+                        crashingSymbol: testData.crashingSymbol,
+                    };
                 });
 
                 PersistentCache.set(cacheKey, result);

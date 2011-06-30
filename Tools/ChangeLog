@@ -1,5 +1,29 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Include the crashing symbol in crash logs links on TestFailures
+
+        Fixes <http://webkit.org/b/63465> Links to crash logs on TestFailures page should include
+        the crashing symbol (like links in results.html do)
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Bumped the cache version because we now store
+        crashing symbols for crashing tests. Renamed testsForResultTable to parseResultTable because
+        it now returns more than just the test names. Specifically, it now looks for crash log links
+        and extracts the crashing symbol name from them. Updated callers of parseResultTable to
+        match its new behavior. Changed to store the crashing symbol along with the failure type in
+        the data we pass to the callback for tests which crashed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (code): Make <code> elements a little smaller because their contents can be quite long.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForFailureDiagnosis): Include the crashing symbol inside a
+        <code> element in the link, if there is a crashing symbol.
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Use objects instead of strings to represent a test result in TestFailures code
 
         This will eventually allow us to store more than just the type of failure for each test.

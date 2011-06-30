@@ -260,13 +260,22 @@ ViewController.prototype = {
         if (!diagnosticInfo)
             return document.createTextNode(testResult.failureType);
 
-        var textNode = document.createTextNode(diagnosticInfo.text);
+        var textAndCrashingSymbol = document.createDocumentFragment();
+        textAndCrashingSymbol.appendChild(document.createTextNode(diagnosticInfo.text));
+        if (testResult.crashingSymbol) {
+            var code = document.createElement('code');
+            code.appendChild(document.createTextNode(testResult.crashingSymbol));
+            textAndCrashingSymbol.appendChild(document.createTextNode(' ('));
+            textAndCrashingSymbol.appendChild(code);
+            textAndCrashingSymbol.appendChild(document.createTextNode(')'));
+        }
+
         if (!('url' in diagnosticInfo))
-            return textNode;
+            return textAndCrashingSymbol;
 
         var link = document.createElement('a');
         link.href = diagnosticInfo.url;
-        link.appendChild(textNode);
+        link.appendChild(textAndCrashingSymbol);
         return link;
     },
 
