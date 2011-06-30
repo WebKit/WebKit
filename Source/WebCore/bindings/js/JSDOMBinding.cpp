@@ -38,7 +38,9 @@
 #include "JSOperationNotAllowedException.h"
 #endif
 #include "JSRangeException.h"
+#if ENABLE(DATABASE)
 #include "JSSQLException.h"
+#endif
 #if ENABLE(SVG)
 #include "JSSVGException.h"
 #endif

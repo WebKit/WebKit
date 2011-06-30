@@ -1,3 +1,9 @@
+2011-06-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(DATABASE) after r84789.
+
+        * bindings/js/JSDOMBinding.cpp:
+
 2011-06-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
