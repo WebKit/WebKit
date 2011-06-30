@@ -51,6 +51,8 @@ struct WKContextInjectedBundleClient {
 };
 typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
 
+enum { kWKContextInjectedBundleClientCurrentVersion = 0 };
+
 // History Client
 typedef void (*WKContextDidNavigateWithNavigationDataCallback)(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKContextDidPerformClientRedirectCallback)(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
@@ -68,6 +70,8 @@ struct WKContextHistoryClient {
     WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
 };
 typedef struct WKContextHistoryClient WKContextHistoryClient;
+
+enum { kWKContextHistoryClientCurrentVersion = 0 };
 
 // Download Client
 typedef void (*WKContextDownloadDidStartCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
@@ -98,6 +102,8 @@ struct WKContextDownloadClient {
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
 };
 typedef struct WKContextDownloadClient WKContextDownloadClient;
+
+enum { kWKContextDownloadClientCurrentVersion = 0 };
 
 WK_EXPORT WKTypeID WKContextGetTypeID();
 

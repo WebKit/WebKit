@@ -44,6 +44,8 @@ struct WKGeolocationProvider {
 };
 typedef struct WKGeolocationProvider WKGeolocationProvider;
 
+enum { kWKGeolocationProviderCurrentVersion = 0 };
+
 WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID();
 
 WK_EXPORT void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManager, const WKGeolocationProvider* provider);

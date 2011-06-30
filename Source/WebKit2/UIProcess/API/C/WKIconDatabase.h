@@ -44,6 +44,8 @@ struct WKIconDatabaseClient {
 };
 typedef struct WKIconDatabaseClient WKIconDatabaseClient;
 
+enum { kWKIconDatabaseClientCurrentVersion = 0 };
+
 WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
 
 WK_EXPORT void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabase, const WKIconDatabaseClient* client);

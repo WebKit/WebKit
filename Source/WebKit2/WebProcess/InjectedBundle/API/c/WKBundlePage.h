@@ -125,6 +125,8 @@ struct WKBundlePageLoaderClient {
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
+enum { kWKBundlePageLoaderClientCurrentVersion = 0 };
+
 enum {
     WKBundlePagePolicyActionPassThrough,
     WKBundlePagePolicyActionUse
@@ -146,6 +148,8 @@ struct WKBundlePagePolicyClient {
     WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
 };
 typedef struct WKBundlePagePolicyClient WKBundlePagePolicyClient;
+
+enum { kWKBundlePagePolicyClientCurrentVersion = 0 };
 
 // Resource Load Client
 typedef void (*WKBundlePageDidInitiateLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKURLRequestRef, bool pageIsProvisionallyLoading, const void* clientInfo);
@@ -169,6 +173,8 @@ struct WKBundlePageResourceLoadClient {
     WKBundlePageDidFailLoadForResourceCallback                          didFailLoadForResource;
 };
 typedef struct WKBundlePageResourceLoadClient WKBundlePageResourceLoadClient;
+
+enum { kWKBundlePageResourceLoadClientCurrentVersion = 0 };
 
 enum {
     WKBundlePageUIElementVisibilityUnknown,
@@ -212,6 +218,8 @@ struct WKBundlePageUIClient {
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
+enum { kWKBundlePageUIClientCurrentVersion = 0 };
+
 // Editor client
 typedef bool (*WKBundlePageShouldBeginEditingCallback)(WKBundlePageRef page, WKBundleRangeHandleRef range, const void* clientInfo);
 typedef bool (*WKBundlePageShouldEndEditingCallback)(WKBundlePageRef page, WKBundleRangeHandleRef range, const void* clientInfo);
@@ -239,6 +247,8 @@ struct WKBundlePageEditorClient {
 };
 typedef struct WKBundlePageEditorClient WKBundlePageEditorClient;
 
+enum { kWKBundlePageEditorClientCurrentVersion = 0 };
+
 // Form client
 typedef void (*WKBundlePageTextFieldDidBeginEditingCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageTextFieldDidEndEditingCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);
@@ -259,6 +269,8 @@ struct WKBundlePageFormClient {
 };
 typedef struct WKBundlePageFormClient WKBundlePageFormClient;
 
+enum { kWKBundlePageFormClientCurrentVersion = 0 };
+
 // ContextMenu client
 typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo);
 
@@ -268,6 +280,8 @@ struct WKBundlePageContextMenuClient {
     WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
 };
 typedef struct WKBundlePageContextMenuClient WKBundlePageContextMenuClient;
+
+enum { kWKBundlePageContextMenuClientCurrentVersion = 0 };
 
 // Full Screen client
 typedef bool (*WKBundlePageSupportsFullScreen)(WKBundlePageRef page, WKFullScreenKeyboardRequestType requestType);
@@ -282,6 +296,8 @@ struct WKBundlePageFullScreenClient {
     WKBundlePageExitFullScreenForElement                                exitFullScreenForElement;
 };
 typedef struct WKBundlePageFullScreenClient WKBundlePageFullScreenClient;
+
+enum { kWKBundlePageFullScreenClientCurrentVersion = 0 };
 
 WK_EXPORT void WKBundlePageWillEnterFullScreen(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageDidEnterFullScreen(WKBundlePageRef page);

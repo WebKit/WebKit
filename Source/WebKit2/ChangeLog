@@ -1,3 +1,19 @@
+2011-06-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 client interfaces should have constant declaring latest version.
+
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/C/WKDatabaseManager.h:
+        * UIProcess/API/C/WKGeolocationManager.h:
+        * UIProcess/API/C/WKIconDatabase.h:
+        * UIProcess/API/C/WKPage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+
 2011-06-30  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

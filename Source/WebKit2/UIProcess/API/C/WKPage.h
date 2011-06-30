@@ -105,6 +105,8 @@ struct WKPageLoaderClient {
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
+enum { kWKPageLoaderClientCurrentVersion = 0 };
+
 // Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
@@ -121,6 +123,8 @@ struct WKPagePolicyClient {
 };
 typedef struct WKPagePolicyClient WKPagePolicyClient;
 
+enum { kWKPagePolicyClientCurrentVersion = 0 };
+
 // Form Client.
 typedef void (*WKPageWillSubmitFormCallback)(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef listener, const void* clientInfo);
 
@@ -130,6 +134,8 @@ struct WKPageFormClient {
     WKPageWillSubmitFormCallback                                        willSubmitForm;
 };
 typedef struct WKPageFormClient WKPageFormClient;
+
+enum { kWKPageFormClientCurrentVersion = 0 };
 
 // Resource Load Client.
 typedef void (*WKPageDidInitiateLoadForResourceCallback)(WKPageRef page, WKFrameRef frame, uint64_t resourceIdentifier, WKURLRequestRef request, bool pageIsProvisionallyLoading, const void* clientInfo);
@@ -150,6 +156,8 @@ struct WKPageResourceLoadClient {
     WKPageDidFailLoadForResourceCallback                                didFailLoadForResource;
 };
 typedef struct WKPageResourceLoadClient WKPageResourceLoadClient;
+
+enum { kWKPageResourceLoadClientCurrentVersion = 0 };
 
 // UI Client
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
@@ -232,6 +240,8 @@ struct WKPageUIClient {
 };
 typedef struct WKPageUIClient WKPageUIClient;
 
+enum { kWKPageUIClientCurrentVersion = 0 };
+
 // Find client.
 typedef void (*WKPageDidFindStringCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);
 typedef void (*WKPageDidFailToFindStringCallback)(WKPageRef page, WKStringRef string, const void* clientInfo);
@@ -245,6 +255,8 @@ struct WKPageFindClient {
     WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
 };
 typedef struct WKPageFindClient WKPageFindClient;
+
+enum { kWKPageFindClientCurrentVersion = 0 };
 
 enum {
     kWKMoreThanMaximumMatchCount = -1
@@ -261,6 +273,8 @@ struct WKPageContextMenuClient {
     WKPageCustomContextMenuItemSelectedCallback                         customContextMenuItemSelected;
 };
 typedef struct WKPageContextMenuClient WKPageContextMenuClient;
+
+enum { kWKPageContextMenuClientCurrentVersion = 0 };
 
 WK_EXPORT WKTypeID WKPageGetTypeID();
 

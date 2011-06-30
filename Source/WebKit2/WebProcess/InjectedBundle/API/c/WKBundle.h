@@ -49,6 +49,8 @@ struct WKBundleClient {
 };
 typedef struct WKBundleClient WKBundleClient;
 
+enum { kWKBundleClientCurrentVersion = 0 };
+
 WK_EXPORT WKTypeID WKBundleGetTypeID();
 
 WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);

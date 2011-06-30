@@ -61,6 +61,8 @@ struct WKBundlePageOverlayClient {
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
 };
 typedef struct WKBundlePageOverlayClient WKBundlePageOverlayClient;
+
+enum { kWKBundlePageOverlayClientCurrentVersion = 0 };
     
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 

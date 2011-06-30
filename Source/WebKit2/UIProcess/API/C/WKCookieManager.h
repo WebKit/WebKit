@@ -49,6 +49,8 @@ struct WKCookieManagerClient {
 };
 typedef struct WKCookieManagerClient WKCookieManagerClient;
 
+enum { kWKCookieManagerClientCurrentVersion = 0 };
+
 WK_EXPORT WKTypeID WKCookieManagerGetTypeID();
 
 WK_EXPORT void WKCookieManagerSetClient(WKCookieManagerRef cookieManager, const WKCookieManagerClient* client);

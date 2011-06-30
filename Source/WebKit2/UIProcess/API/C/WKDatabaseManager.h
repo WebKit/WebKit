@@ -74,6 +74,8 @@ struct WKDatabaseManagerClient {
 };
 typedef struct WKDatabaseManagerClient WKDatabaseManagerClient;
 
+enum { kWKDatabaseManagerClientCurrentVersion = 0 };
+
 
 WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
 
