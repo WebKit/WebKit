@@ -33,7 +33,7 @@ import unittest
 from webkitpy.layout_tests.layout_package.test_failures import *
 
 
-class TestFailuresest(unittest.TestCase):
+class TestFailuresTest(unittest.TestCase):
     def assert_loads(self, cls):
         failure_obj = cls()
         s = failure_obj.dumps()
@@ -44,24 +44,6 @@ class TestFailuresest(unittest.TestCase):
 
         # Also test that != is implemented.
         self.assertFalse(failure_obj != new_failure_obj)
-
-    def test_crash(self):
-        FailureCrash()
-
-    def test_hash_incorrect(self):
-        FailureImageHashIncorrect()
-
-    def test_missing(self):
-        FailureMissingResult()
-
-    def test_missing_image(self):
-        FailureMissingImage()
-
-    def test_missing_image_hash(self):
-        FailureMissingImageHash()
-
-    def test_timeout(self):
-        FailureTimeout()
 
     def test_unknown_failure_type(self):
         class UnknownFailure(TestFailure):

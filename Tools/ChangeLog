@@ -1,3 +1,15 @@
+2011-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove redundant tests in TestFailuresTest
+        https://bugs.webkit.org/show_bug.cgi?id=63742
+
+        These tests are all already covered by TestFailuresTest.test_loads.
+        I also added the missing "T" from TestFailuresest. :)
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py:
+
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
