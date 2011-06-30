@@ -1090,9 +1090,6 @@ BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = FAIL
 // recorded will not be called.
 BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 
-// Another V8 vs JSC difference since r89109.
-BUGCR86442 : fast/js/keywords-and-reserved_words.html = TEXT
-
 // We have the wrong shadow for "This".
 // It appears we're not obeying the "transparent" fill color.
 BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
@@ -1519,10 +1516,6 @@ BUGCR9768 WIN : fast/text/international/wrap-CJK-001.html = FAIL
 // Merge WebKit 42200:42244 regressions
 BUGCR9786 : fast/dom/Window/dom-access-from-closure-iframe.html = FAIL
 BUGCR9786 : fast/dom/Window/dom-access-from-closure-window.html = FAIL
-BUGCR9786 WIN DEBUG : http/tests/security/cross-frame-access-history-prototype.html = FAIL
-BUGCR9786 SLOW WIN RELEASE : http/tests/security/cross-frame-access-history-prototype.html = FAIL
-BUGCR9786 LINUX MAC : http/tests/security/cross-frame-access-history-prototype.html = FAIL
-BUGCR9786 : http/tests/security/cross-frame-access-location-prototype.html = FAIL
 
 BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 
@@ -3570,7 +3563,7 @@ BUGDPRANKE LINUX RELEASE : http/tests/navigation/forward-to-fragment-fires-onloa
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
-BUGWK60127 WIN LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
+BUGWK60127 WIN LINUX GPU : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 BUGDPRANKE LEOPARD : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
@@ -3765,34 +3758,32 @@ BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-
 
 // Needs rebaseline.
 BUGWK61415 : fast/css/input-search-padding.html = FAIL
-BUGWK61415 : fast/css/pseudo-cache-stale.html = FAIL
-BUGWK61415 : fast/css/text-input-with-webkit-border-radius.html = FAIL
+BUGWK61415 WIN LINUX : fast/css/pseudo-cache-stale.html = FAIL
+BUGWK61415 WIN LINUX : fast/css/text-input-with-webkit-border-radius.html = FAIL
 BUGWK61415 : fast/forms/box-shadow-override.html = FAIL
-BUGWK61415 : fast/forms/control-restrict-line-height.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/control-restrict-line-height.html = FAIL
 BUGWK61415 : fast/forms/input-appearance-height.html = FAIL
-BUGWK61415 : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
-BUGWK61415 : fast/forms/input-appearance-spinbutton-layer.html = FAIL
-BUGWK61415 : fast/forms/input-appearance-spinbutton-visibility.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = FAIL
 BUGWK61415 : fast/forms/placeholder-position.html = FAIL
-BUGWK61415 : fast/forms/placeholder-pseudo-style.html = FAIL
-BUGWK61415 : fast/forms/placeholder-set-value.html = FAIL
-BUGWK61415 : fast/forms/search-cancel-button-style-sharing.html = FAIL
-BUGWK61415 : fast/forms/search-display-none-cancel-button.html = FAIL
-BUGWK61415 : fast/forms/search-placeholder-value-changed.html = FAIL
-BUGWK61415 : fast/forms/search-rtl.html = FAIL
-BUGWK61415 : fast/forms/search-styled.html = FAIL
-BUGWK61415 : fast/forms/search-transformed.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/placeholder-pseudo-style.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/placeholder-set-value.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/search-cancel-button-style-sharing.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/search-display-none-cancel-button.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/search-placeholder-value-changed.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/search-rtl.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/search-styled.html = FAIL
 BUGWK61415 : fast/forms/search-vertical-alignment.html = FAIL
-BUGWK61415 : fast/forms/search-zoomed.html = FAIL
-BUGWK61415 : fast/forms/searchfield-heights.html = FAIL
+BUGWK61415 WIN LINUX : fast/forms/searchfield-heights.html = FAIL
 // Do not update an image for search-field-cancel.html.
 BUGWK61415 : fast/repaint/search-field-cancel.html = FAIL
-BUGWK61415 : fast/replaced/width100percent-searchfield.html = FAIL
+BUGWK61415 WIN LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 BUGWK61415 WIN MAC : fast/speech/input-appearance-numberandspeech.html = FAIL
 BUGWK61415 WIN MAC : fast/speech/input-appearance-speechbutton.html = FAIL
-BUGWK61415 : fast/table/colspanMinWidth-vertical.html = FAIL
-BUGWK61415 : platform/mac/fast/forms/input-appearance-spinbutton-up.html = FAIL
-BUGWK61415 : platform/mac/fast/forms/input-appearance-spinbutton.html = FAIL
+BUGWK61415 WIN LINUX : fast/table/colspanMinWidth-vertical.html = FAIL
+BUGWK61415 WIN LINUX : platform/mac/fast/forms/input-appearance-spinbutton-up.html = FAIL
+BUGWK61415 WIN LINUX : platform/mac/fast/forms/input-appearance-spinbutton.html = FAIL
 
 // Flaky since added by r86478
 BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT
@@ -4058,4 +4049,4 @@ BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 BUGCR87732 : fast/regex/toString.html = TEXT
 
-BUGWK63643 : fast/canvas/webgl/context-lost-restored.html = TEXT
+BUGWK63643 GPU : fast/canvas/webgl/context-lost-restored.html = TEXT
