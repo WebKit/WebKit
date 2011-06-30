@@ -82,8 +82,8 @@ PASS gl.getVertexAttribOffset(1, gl.VERTEX_ATTRIB_ARRAY_POINTER) is 12
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is false
 PASS gl.getVertexAttrib(1, gl.CURRENT_VERTEX_ATTRIB) is [5, 6, 7, 8]
 PASS getError was expected value: NO_ERROR : 
-PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
-PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
 PASS gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
 PASS getError was expected value: NO_ERROR : 
 PASS successfullyParsed is true

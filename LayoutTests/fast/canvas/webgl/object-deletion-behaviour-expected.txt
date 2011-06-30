@@ -33,7 +33,8 @@ PASS gl.getParameter(gl.TEXTURE_BINDING_2D) is tex
 PASS gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0) was expected value: NO_ERROR.
 PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is tex
 PASS gl.deleteTexture(tex) was expected value: NO_ERROR.
-PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) was expected value: INVALID_ENUM.
 PASS gl.isTexture(tex) is false
 PASS gl.getParameter(gl.TEXTURE_BINDING_2D) is null
 PASS gl.bindTexture(gl.TEXTURE_2D, tex) was expected value: NO_ERROR.
@@ -52,7 +53,8 @@ PASS gl.getParameter(gl.RENDERBUFFER_BINDING) is rbo
 PASS gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.
 PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo
 PASS gl.deleteRenderbuffer(rbo) was expected value: NO_ERROR.
-PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
+PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) was expected value: INVALID_ENUM.
 PASS gl.isRenderbuffer(rbo) is false
 PASS gl.getParameter(gl.RENDERBUFFER_BINDING) is null
 PASS gl.bindRenderbuffer(gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.

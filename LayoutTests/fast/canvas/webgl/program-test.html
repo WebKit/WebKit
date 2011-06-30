@@ -1,8 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta charset="utf-8">
 <title>WebGL Program Compiling/Linking Conformance Test</title>
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js" type="text/javascript"></script>
@@ -30,6 +29,32 @@ function go() {
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    function doArraysHaveSameContents(a, b) {
+        var flags = [];
+        function hasUnusedValue(a, value) {
+            for (var ii = 0; ii < a.length; ++ii) {
+                if (a[ii] === value && !flags[ii]) {
+                    flags[ii] = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        try {
+            if (a.length !== b.length) {
+                return false;
+            }
+            for (var ii = 0; ii < a.length; ii++) {
+                if (!hasUnusedValue(b, a[ii])) {
+                    return false;
+                }
+            }
+        } catch (ex) {
+            return false;
+        }
+        return true;
+    }
 
 /////// Check compileShader() /////////////////////////////
 
@@ -55,14 +80,14 @@ function go() {
               "bad vertex shader should fail to compile");
 
     var fs = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs, "#ifdef GL_ES\nprecision mediump float;\n#endif\n varying vec4 vColor; void main() { gl_FragColor = vColor; }");
+    gl.shaderSource(fs, "precision mediump float; varying vec4 vColor; void main() { gl_FragColor = vColor; }");
     gl.compileShader(fs);
 
     assertMsg(gl.getShaderParameter(fs, gl.COMPILE_STATUS) == true,
               "good fragment shader should compile");
 
     var fs2 = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs2, "#ifdef GL_ES\nprecision mediump float;\n#endif\n varying vec4 vColor; void main() { gl_FragColor = vColor * 0.5; }");
+    gl.shaderSource(fs2, "precision mediump float; varying vec4 vColor; void main() { gl_FragColor = vColor * 0.5; }");
     gl.compileShader(fs2);
 
     assertMsg(gl.getShaderParameter(fs2, gl.COMPILE_STATUS) == true,
@@ -131,7 +156,7 @@ function go() {
             gl.detachShader(prog, shaders_to_detach[i]);
         if(gl.getError() != gl.NO_ERROR)
             assertMsg(false, "unexpected error in detachShader()");
-        assertMsg(areArraysEqual(gl.getAttachedShaders(prog), expected_shaders), errmsg);
+        assertMsg(doArraysHaveSameContents(gl.getAttachedShaders(prog), expected_shaders), errmsg);
     }
     checkGetAttachedShaders([], [], [], "getAttachedShaders should return an empty list by default");
     checkGetAttachedShaders([fs], [], [fs], "attaching a single shader should give the expected list");
@@ -242,7 +267,7 @@ function go() {
     glErrorShouldBe(gl, gl.NO_ERROR, "The current program shouldn't be deleted");
 
     var fs3 = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs3, "#ifdef GL_ES\nprecision mediump float;\n#endif\n varying vec4 vColor; void main() { gl_FragColor = vColor; }");
+    gl.shaderSource(fs3, "precision mediump float; varying vec4 vColor; void main() { gl_FragColor = vColor; }");
     gl.compileShader(fs3);
 
     assertMsg(gl.getShaderParameter(fs3, gl.COMPILE_STATUS) == true,
@@ -253,7 +278,7 @@ function go() {
     glErrorShouldBe(gl, gl.INVALID_VALUE, "an unattached shader should be deleted immediately");
 
     fs3 = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs3, "#ifdef GL_ES\nprecision mediump float;\n#endif\n varying vec4 vColor; void main() { gl_FragColor = vColor; }");
+    gl.shaderSource(fs3, "precision mediump float; varying vec4 vColor; void main() { gl_FragColor = vColor; }");
     gl.compileShader(fs3);
 
     assertMsg(gl.getShaderParameter(fs3, gl.COMPILE_STATUS) == true,

@@ -1918,23 +1918,15 @@ bool WebGLRenderingContext::getAttachedShaders(WebGLProgram* program, Vector<Web
     shaderObjects.clear();
     if (isContextLost() || !validateWebGLObject(program))
         return false;
-    GC3Dint numShaders = 0;
-    m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::ATTACHED_SHADERS, &numShaders);
-    if (numShaders) {
-        OwnArrayPtr<Platform3DObject> shaders = adoptArrayPtr(new Platform3DObject[numShaders]);
-        GC3Dsizei count = 0;
-        m_context->getAttachedShaders(objectOrZero(program), numShaders, &count, shaders.get());
-        if (count != numShaders)
-            return false;
-        shaderObjects.resize(numShaders);
-        for (GC3Dint ii = 0; ii < numShaders; ++ii) {
-            WebGLShader* shader = findShader(shaders[ii]);
-            if (!shader) {
-                shaderObjects.clear();
-                return false;
-            }
-            shaderObjects[ii] = shader;
-        }
+
+    const GC3Denum shaderType[] = {
+        GraphicsContext3D::VERTEX_SHADER,
+        GraphicsContext3D::FRAGMENT_SHADER
+    };
+    for (unsigned i = 0; i < sizeof(shaderType) / sizeof(GC3Denum); ++i) {
+        WebGLShader* shader = program->getAttachedShader(shaderType[i]);
+        if (shader)
+            shaderObjects.append(shader);
     }
     return true;
 }
@@ -2028,46 +2020,51 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateFramebufferFuncParameters(target, attachment))
         return WebGLGetInfo();
-    switch (pname) {
-    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
-    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-        break;
-    default:
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
-        return WebGLGetInfo();
-    }
 
     if (!m_framebufferBinding || !m_framebufferBinding->object() || m_framebufferBinding->isIncomplete(false)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return WebGLGetInfo();
     }
 
-    if (pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) {
-        WebGLStateRestorer(this, false);
-        GC3Dint value = 0;
-        m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+    WebGLObject* object = m_framebufferBinding->getAttachment(attachment);
+    if (!object) {
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
-            return WebGLGetInfo(static_cast<unsigned int>(value));
-        return WebGLGetInfo(value);
+            return WebGLGetInfo(GraphicsContext3D::NONE);
+        // OpenGL ES 2.0 specifies INVALID_ENUM in this case, while desktop GL
+        // specifies INVALID_OPERATION.
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return WebGLGetInfo();
     }
 
-    WebGLStateRestorer(this, false);
-    GC3Dint type = 0;
-    m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
-    if (!type)
-        return WebGLGetInfo();
-    GC3Dint value = 0;
-    m_context->getFramebufferAttachmentParameteriv(target, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &value);
-    switch (type) {
-    case GraphicsContext3D::RENDERBUFFER:
-        return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(findRenderbuffer(static_cast<Platform3DObject>(value))));
-    case GraphicsContext3D::TEXTURE:
-        return WebGLGetInfo(PassRefPtr<WebGLTexture>(findTexture(static_cast<Platform3DObject>(value))));
-    default:
-        // FIXME: raise exception?
-        return WebGLGetInfo();
+    ASSERT(object->isTexture() || object->isRenderbuffer());
+    if (object->isTexture()) {
+        switch (pname) {
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return WebGLGetInfo(GraphicsContext3D::TEXTURE);
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+            return WebGLGetInfo(PassRefPtr<WebGLTexture>(reinterpret_cast<WebGLTexture*>(object)));
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+            {
+                WebGLStateRestorer(this, false);
+                GC3Dint value = 0;
+                m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+                return WebGLGetInfo(value);
+            }
+        default:
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+            return WebGLGetInfo();
+        }
+    } else {
+        switch (pname) {
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return WebGLGetInfo(GraphicsContext3D::RENDERBUFFER);
+        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(reinterpret_cast<WebGLRenderbuffer*>(object)));
+        default:
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+            return WebGLGetInfo();
+        }
     }
 }
 
@@ -3991,59 +3988,10 @@ void WebGLRenderingContext::addObject(WebGLObject* object)
 
 void WebGLRenderingContext::detachAndRemoveAllObjects()
 {
-    HashSet<RefPtr<WebGLObject> >::iterator pend = m_canvasObjects.end();
-    for (HashSet<RefPtr<WebGLObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it)
+    while (m_canvasObjects.size() > 0) {
+        HashSet<WebGLObject*>::iterator it = m_canvasObjects.begin();
         (*it)->detachContext();
-
-    m_canvasObjects.clear();
-}
-
-WebGLTexture* WebGLRenderingContext::findTexture(Platform3DObject obj)
-{
-    if (!obj)
-        return 0;
-    HashSet<RefPtr<WebGLObject> >::iterator pend = m_canvasObjects.end();
-    for (HashSet<RefPtr<WebGLObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
-        if ((*it)->isTexture() && (*it)->object() == obj)
-            return reinterpret_cast<WebGLTexture*>((*it).get());
     }
-    return 0;
-}
-
-WebGLRenderbuffer* WebGLRenderingContext::findRenderbuffer(Platform3DObject obj)
-{
-    if (!obj)
-        return 0;
-    HashSet<RefPtr<WebGLObject> >::iterator pend = m_canvasObjects.end();
-    for (HashSet<RefPtr<WebGLObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
-        if ((*it)->isRenderbuffer() && (*it)->object() == obj)
-            return reinterpret_cast<WebGLRenderbuffer*>((*it).get());
-    }
-    return 0;
-}
-
-WebGLBuffer* WebGLRenderingContext::findBuffer(Platform3DObject obj)
-{
-    if (!obj)
-        return 0;
-    HashSet<RefPtr<WebGLObject> >::iterator pend = m_canvasObjects.end();
-    for (HashSet<RefPtr<WebGLObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
-        if ((*it)->isBuffer() && (*it)->object() == obj)
-            return reinterpret_cast<WebGLBuffer*>((*it).get());
-    }
-    return 0;
-}
-
-WebGLShader* WebGLRenderingContext::findShader(Platform3DObject obj)
-{
-    if (!obj)
-        return 0;
-    HashSet<RefPtr<WebGLObject> >::iterator pend = m_canvasObjects.end();
-    for (HashSet<RefPtr<WebGLObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it) {
-        if ((*it)->isShader() && (*it)->object() == obj)
-            return reinterpret_cast<WebGLShader*>((*it).get());
-    }
-    return 0;
 }
 
 WebGLGetInfo WebGLRenderingContext::getBooleanParameter(GC3Denum pname)
