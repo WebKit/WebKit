@@ -1,3 +1,18 @@
+2011-06-30  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Web Inspector fails to display source for eval with syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=63583
+
+        Added new LayoutTest to check that the correct line number is added to a
+        syntax error inside an eval statement.
+
+        * fast/js/eval-contained-syntax-error-expected.txt: Added.
+        * fast/js/eval-contained-syntax-error.html: Added.
+        * fast/js/script-tests/eval-contained-syntax-error.js: Added.
+        * platform/chromium/fast/js/eval-contained-syntax-error-expected.txt: Added.
+
 2011-06-30  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, chromium test update after r90148.

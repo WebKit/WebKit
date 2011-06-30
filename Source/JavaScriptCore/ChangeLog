@@ -1,3 +1,18 @@
+2011-06-30  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Web Inspector fails to display source for eval with syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=63583
+
+        Web Inspector now displays a link to an eval statement that contains
+        a syntax error.
+
+        * parser/Parser.h:
+        (JSC::isEvalNode):
+        (JSC::EvalNode):
+        (JSC::Parser::parse):
+
 2011-06-30  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.

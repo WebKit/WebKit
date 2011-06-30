@@ -43,6 +43,8 @@ namespace JSC {
     class ProgramNode;
     class UString;
 
+    template <typename T> inline bool isEvalNode() { return false; }
+    template <> inline bool isEvalNode<EvalNode>() { return true; }
     template <typename T> struct ParserArenaData : ParserArenaDeletable { T data; };
 
     class Parser {
@@ -109,6 +111,8 @@ namespace JSC {
             // likely, and we are currently unable to distinguish between the two cases.
             if (isFunctionBodyNode(static_cast<ParsedNode*>(0)))
                 *exception = createStackOverflowError(lexicalGlobalObject);
+            else if (isEvalNode<ParsedNode>())
+                *exception = createSyntaxError(lexicalGlobalObject, errMsg);
             else
                 *exception = addErrorInfo(&lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
         }
