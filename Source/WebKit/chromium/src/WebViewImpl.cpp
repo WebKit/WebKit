@@ -1167,10 +1167,14 @@ void WebViewImpl::composite(bool finish)
         m_recreatingGraphicsContext = false;
         return;
     }
-    doComposite();
 
-    // Put result onscreen.
-    m_layerRenderer->present();
+    // Do not composite if the compositor context is already lost.
+    if (!m_layerRenderer->isCompositorContextLost()) {
+        doComposite();
+
+        // Put result onscreen.
+        m_layerRenderer->present();
+    }
 
     if (m_layerRenderer->isCompositorContextLost()) {
         // Trying to recover the context right here will not work if GPU process

@@ -1,3 +1,17 @@
+2011-06-30  John Bates  <jbates@google.com>
+
+        Reviewed by James Robinson.
+
+        Chromium bug: Compositing on a lost context causes latch deadlocks.
+        The cause of deadlock was that a setLatch command is added to the lost
+        compositor GL context, and a waitLatch would never complete on a child context.
+        This change checks whether the compositor context is in error state before
+        doing the compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=63681
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
 2011-06-30  Cary Clark  <caryclark@google.com>
 
         Reviewed by James Robinson.
