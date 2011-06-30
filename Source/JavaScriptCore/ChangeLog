@@ -1,5 +1,12 @@
 2011-06-30  Oliver Hunt  <oliver@apple.com>
 
+        Fix ARMv6 build
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::rshift32):
+
+2011-06-30  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Add optimised paths for a few maths functions

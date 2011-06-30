@@ -179,10 +179,15 @@ public:
 
         m_assembler.movs_r(dest, m_assembler.asr_r(dest, ARMRegisters::S0));
     }
-
+    
     void rshift32(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.movs_r(dest, m_assembler.asr(dest, imm.m_value & 0x1f));
+        rshift32(dest, imm, dest);
+    }
+
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.movs_r(dest, m_assembler.asr(src, imm.m_value & 0x1f));
     }
     
     void urshift32(RegisterID shift_amount, RegisterID dest)
