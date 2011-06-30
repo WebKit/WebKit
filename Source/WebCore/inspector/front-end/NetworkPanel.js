@@ -993,9 +993,6 @@ WebInspector.NetworkPanel.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save all as HAR" : "Save All as HAR"), this._exportAll.bind(this));
         }
 
-        contextMenu.appendSeparator();
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Enabled background events collection"), this._toggleBackgroundEventsCollection.bind(this), this._backgroundCollectionEnabled);
-
         contextMenu.show(event);
     },
 
