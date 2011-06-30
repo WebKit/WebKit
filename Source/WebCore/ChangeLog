@@ -1,3 +1,48 @@
+2011-06-30  Cary Clark  <caryclark@google.com>
+
+        Reviewed by James Robinson.
+
+        Use Skia if Skia on Mac Chrome is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=62999
+
+        No new tests. This does not affect existing
+        functionality.
+
+        * WebCore.gyp/WebCore.gyp:
+        Include Skia and related files and exclude CG
+        and related files when building Chromium for Skia
+        on the Mac.
+
+        * loader/cache/CachedFont.cpp:
+        Rename CHROME to CHROMIUM.
+
+        * platform/chromium/DragImageRef.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        (WebCore::GlyphBuffer::expandLastAdvance):
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cg/FloatPointCG.cpp:
+        * platform/graphics/cg/FloatRectCG.cpp:
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/IntPointCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/cg/IntSizeCG.cpp:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        Ditto.
+
 2011-06-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

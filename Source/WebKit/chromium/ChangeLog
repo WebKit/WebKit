@@ -1,3 +1,22 @@
+2011-06-30  Cary Clark  <caryclark@google.com>
+
+        Reviewed by James Robinson.
+
+        Use Skia if Skia on Mac Chrome is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=62999
+
+        * WebKit.gyp:
+        If building for Skia, exclude CG files.
+        If not, exclude Skia files.
+
+        * features.gypi:
+        Enable Skia on Chromium Mac if so instructed by the gyp define.
+        Allow Skia to be hardware accelerated on the Mac.
+
+        * public/WebCommon.h:
+        If Skia is defined on the Mac, define it in the WebXXX
+        interfaces as well.
+
 2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Reviewed by Adam Barth.

@@ -82,7 +82,7 @@ typedef const struct __CTFont* CTFontRef;
 typedef struct HFONT__* HFONT;
 #endif
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 typedef struct CGFont* CGFontRef;
 #if OS(DARWIN)
 typedef const struct __CTFont* CTFontRef;
@@ -176,7 +176,7 @@ public:
 #if OS(DARWIN)
     FontPlatformData(NSFont*, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal,
                      TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth);
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
     FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
                      TextOrientation textOrientation, FontWidthVariant widthVariant)
         : m_syntheticBold(syntheticBold)
@@ -212,7 +212,7 @@ public:
     void setFont(NSFont*);
 #endif
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 #if OS(DARWIN)
     CGFontRef cgFont() const { return m_cgFont.get(); }
     CTFontRef ctFont() const;
@@ -245,7 +245,7 @@ public:
 #if PLATFORM(WIN) && !USE(CAIRO)
         return m_font ? m_font->hash() : 0;
 #elif OS(DARWIN)
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
         ASSERT(m_font || !m_cgFont);
 #endif
         uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, m_textOrientation << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
@@ -321,7 +321,7 @@ private:
     RefPtr<RefCountedGDIHandle<HFONT> > m_font;
 #endif
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 #if PLATFORM(WIN)
     RetainPtr<CGFontRef> m_cgFont;
 #else
