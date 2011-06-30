@@ -1,3 +1,16 @@
+2011-06-30  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fixed several style and typo issues after r90091.
+        https://bugs.webkit.org/show_bug.cgi?id=63692
+
+        Rename yStart to extremaStartY during computing extremas
+
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplyGeneric):
+        * platform/graphics/filters/FEMorphology.h:
+
 2011-06-30  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.

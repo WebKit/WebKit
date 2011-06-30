@@ -75,7 +75,7 @@ public:
     static void platformApplyWorker(PlatformApplyParameters*);
 #endif
 
-    void platformApply(PaintingData*);
+    inline void platformApply(PaintingData*);
     inline void platformApplyGeneric(PaintingData*, const int yStart, const int yEnd);
 private:
     FEMorphology(Filter*, MorphologyOperatorType, float radiusX, float radiusY);

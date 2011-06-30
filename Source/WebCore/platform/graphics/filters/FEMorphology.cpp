@@ -107,7 +107,7 @@ void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, 
     ByteArray* dstPixelArray = paintingData->dstPixelArray;
     const int width = paintingData->width;
     const int height = paintingData->height;
-    const int effectWidth  = width * 4;
+    const int effectWidth = width * 4;
     const int radiusX = paintingData->radiusX;
     const int radiusY = paintingData->radiusY;
 
@@ -119,9 +119,9 @@ void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, 
             extrema.clear();
             // Compute extremas for each columns
             for (int x = 0; x <= radiusX; ++x) {
-                unsigned char columnExtrema = srcPixelArray->get(yStart * effectWidth  + 4 * x + clrChannel);
+                unsigned char columnExtrema = srcPixelArray->get(extremaStartY * effectWidth + 4 * x + clrChannel);
                 for (int eY = extremaStartY + 1; eY < extremaEndY; ++eY) {
-                    unsigned char pixel = srcPixelArray->get(eY * effectWidth  + 4 * x + clrChannel);
+                    unsigned char pixel = srcPixelArray->get(eY * effectWidth + 4 * x + clrChannel);
                     if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema)
                         || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema)) {
                         columnExtrema = pixel;
@@ -134,9 +134,9 @@ void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, 
             // Kernel is filled, get extrema of next column
             for (int x = 0; x < width; ++x) {
                 const int endX = min(x + radiusX, width - 1);
-                unsigned char columnExtrema = srcPixelArray->get(extremaStartY * effectWidth  + endX * 4 + clrChannel);
+                unsigned char columnExtrema = srcPixelArray->get(extremaStartY * effectWidth + endX * 4 + clrChannel);
                 for (int i = extremaStartY + 1; i <= extremaEndY; ++i) {
-                    unsigned char pixel = srcPixelArray->get(i * effectWidth  + endX * 4 + clrChannel);
+                    unsigned char pixel = srcPixelArray->get(i * effectWidth + endX * 4 + clrChannel);
                     if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema)
                         || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema))
                         columnExtrema = pixel;
