@@ -25,6 +25,7 @@
 
 #include "Document.h"
 #include "HTMLNames.h"
+#include "NodeRenderingContext.h"
 #include "RenderStyle.h"
 #include "Text.h"
 
@@ -80,7 +81,7 @@ StringWithDirection HTMLTitleElement::textWithDirection()
     TextDirection direction = LTR;
     if (RenderStyle* style = computedStyle())
         direction = style->direction();
-    else if (RefPtr<RenderStyle> style = styleForRenderer())
+    else if (RefPtr<RenderStyle> style = styleForRenderer(NodeRenderingContext(this, 0)))
         direction = style->direction();
     return StringWithDirection(text(), direction);
 }

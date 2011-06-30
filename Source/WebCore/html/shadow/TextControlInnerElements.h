@@ -42,7 +42,7 @@ public:
 
 protected:
     TextControlInnerElement(Document*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
 
 private:
     virtual bool isMouseFocusable() const { return false; }
@@ -57,7 +57,7 @@ public:
 private:
     TextControlInnerTextElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
     virtual bool isMouseFocusable() const { return false; }
 };
 

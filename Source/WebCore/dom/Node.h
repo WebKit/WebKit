@@ -455,7 +455,7 @@ public:
 
     virtual void willRemove();
     void createRendererIfNeeded();
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

@@ -31,6 +31,7 @@
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
+#include "NodeRenderingContext.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -89,7 +90,7 @@ void HTMLOptGroupElement::recalcSelectOptions()
 void HTMLOptGroupElement::attach()
 {
     if (parentNode()->renderStyle())
-        setRenderStyle(styleForRenderer());
+        setRenderStyle(styleForRenderer(NodeRenderingContext(this, 0)));
     HTMLFormControlElement::attach();
 }
 

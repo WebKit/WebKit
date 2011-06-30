@@ -1,3 +1,13 @@
+2011-06-30  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Crash if ShadowRoot has a text node.
+        https://bugs.webkit.org/show_bug.cgi?id=63607
+
+        * fast/dom/shadow/shadow-root-text-child-expected.txt: Added.
+        * fast/dom/shadow/shadow-root-text-child.html: Added.
+
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
         [GTK][Mac][Win] Update expectation files for r90089.

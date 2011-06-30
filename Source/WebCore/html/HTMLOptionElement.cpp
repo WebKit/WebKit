@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
+#include "NodeRenderingContext.h"
 #include "RenderMenuList.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
@@ -81,7 +82,7 @@ PassRefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document
 void HTMLOptionElement::attach()
 {
     if (parentNode()->renderStyle())
-        setRenderStyle(styleForRenderer());
+        setRenderStyle(styleForRenderer(NodeRenderingContext(this, 0)));
     HTMLFormControlElement::attach();
 }
 

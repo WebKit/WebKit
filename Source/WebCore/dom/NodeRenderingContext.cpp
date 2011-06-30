@@ -232,7 +232,7 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
     if (!m_context.shouldCreateRenderer())
         return 0;
 
-    m_context.setStyle(node->styleForRenderer());
+    m_context.setStyle(node->styleForRenderer(m_context));
     if (!node->rendererIsNeeded(m_context))
         return 0;
 

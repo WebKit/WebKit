@@ -50,6 +50,7 @@
 #include "InspectorInstrumentation.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
+#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -1105,7 +1106,7 @@ void Element::recalcStyle(StyleChange change)
             rareData()->resetComputedStyle();
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
-        RefPtr<RenderStyle> newStyle = styleForRenderer();
+        RefPtr<RenderStyle> newStyle = styleForRenderer(NodeRenderingContext(this, 0));
         StyleChange ch = diff(currentStyle.get(), newStyle.get());
         if (ch == Detach || !currentStyle) {
             // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.

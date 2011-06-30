@@ -1,3 +1,37 @@
+2011-06-30  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Crash if ShadowRoot has a text node.
+        https://bugs.webkit.org/show_bug.cgi?id=63607
+        
+        Node::styleForRenderer() for Text node wasn't shadow-aware.
+        This change allow styleForRenderer() to know its visual parent by
+        passing NodeRenderingContext.
+        
+        Changes other than NodeRenderingContext and Element is just a
+        follow up for change above.
+
+        * dom/Element.cpp: use NodeRenderingContext to resolve parent node.
+        (WebCore::Element::recalcStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::styleForRenderer): Added NodeRenderingContext as a parameter.
+        * dom/Node.h:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRendererFactory::createRendererAndStyle):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::attach):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::attach):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::textWithDirection):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::styleForRenderer):
+        (WebCore::TextControlInnerTextElement::styleForRenderer):
+        * html/shadow/TextControlInnerElements.h:
+
+        Test: fast/dom/shadow/shadow-root-text-child.html
+        
 2011-06-30  Piroska András  <Piroska.Andras@stud.u-szeged.hu>
 
         Reviewed by Dirk Schulze.

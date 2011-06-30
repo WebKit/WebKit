@@ -58,7 +58,7 @@ PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document* do
     return adoptRef(new TextControlInnerElement(document));
 }
 
-PassRefPtr<RenderStyle> TextControlInnerElement::styleForRenderer()
+PassRefPtr<RenderStyle> TextControlInnerElement::styleForRenderer(const NodeRenderingContext&)
 {
     RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
     return parentRenderer->createInnerBlockStyle(parentRenderer->style());
@@ -104,7 +104,7 @@ RenderObject* TextControlInnerTextElement::createRenderer(RenderArena* arena, Re
     return new (arena) RenderTextControlInnerBlock(this, multiLine);
 }
 
-PassRefPtr<RenderStyle> TextControlInnerTextElement::styleForRenderer()
+PassRefPtr<RenderStyle> TextControlInnerTextElement::styleForRenderer(const NodeRenderingContext&)
 {
     RenderTextControl* parentRenderer = toRenderTextControl(shadowAncestorNode()->renderer());
     return parentRenderer->createInnerTextStyle(parentRenderer->style());

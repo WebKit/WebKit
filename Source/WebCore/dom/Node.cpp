@@ -1449,7 +1449,7 @@ void Node::createRendererIfNeeded()
     NodeRendererFactory(this).createRendererIfNeeded();
 }
 
-PassRefPtr<RenderStyle> Node::styleForRenderer()
+PassRefPtr<RenderStyle> Node::styleForRenderer(const NodeRenderingContext& context)
 {
     if (isElementNode()) {
         bool allowSharing = true;
@@ -1459,7 +1459,9 @@ PassRefPtr<RenderStyle> Node::styleForRenderer()
 #endif
         return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, allowSharing);
     }
-    return parentNode() && parentNode()->renderer() ? parentNode()->renderer()->style() : 0;
+    if (RenderObject* renderer = context.parentRenderer())
+        return renderer->style();
+    return 0;
 }
 
 bool Node::rendererIsNeeded(const NodeRenderingContext& context)
