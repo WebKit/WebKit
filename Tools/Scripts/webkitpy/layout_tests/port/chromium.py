@@ -138,8 +138,7 @@ class ChromiumPort(base.Port):
         return self._check_file_exists(image_diff_path, 'image diff exe',
                                        override_step, logging)
 
-    def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None):
+    def diff_image(self, expected_contents, actual_contents):
         # FIXME: need unit tests for this.
         if not actual_contents and not expected_contents:
             return False
@@ -147,39 +146,40 @@ class ChromiumPort(base.Port):
             return True
 
         tempdir = self._filesystem.mkdtemp()
+
         expected_filename = self._filesystem.join(str(tempdir), "expected.png")
         self._filesystem.write_binary_file(expected_filename, expected_contents)
+
         actual_filename = self._filesystem.join(str(tempdir), "actual.png")
         self._filesystem.write_binary_file(actual_filename, actual_contents)
 
-        executable = self._path_to_image_diff()
-        if diff_filename:
-            cmd = [executable, '--diff', expected_filename,
-                   actual_filename, diff_filename]
-        else:
-            cmd = [executable, expected_filename, actual_filename]
+        diff_filename = self._filesystem.join(str(tempdir), "diff.png")
 
-        result = True
+        executable = self._path_to_image_diff()
+        comand = [executable, '--diff', expected_filename, actual_filename, diff_filename]
+
+        result = None
         try:
-            exit_code = self._executive.run_command(cmd, return_exit_code=True)
+            exit_code = self._executive.run_command(comand, return_exit_code=True)
             if exit_code == 0:
                 # The images are the same.
-                result = False
+                result = None
             elif exit_code != 1:
-                _log.error("image diff returned an exit code of "
-                           + str(exit_code))
+                _log.error("image diff returned an exit code of %s" % exit_code)
                 # Returning False here causes the script to think that we
                 # successfully created the diff even though we didn't.  If
                 # we return True, we think that the images match but the hashes
                 # don't match.
                 # FIXME: Figure out why image_diff returns other values.
-                result = False
+                result = None
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:
                 _compare_available = False
             else:
-                raise e
+                raise
         finally:
+            if exit_code == 1:
+                result = self._filesystem.read_binary_file(diff_filename)
             self._filesystem.rmtree(str(tempdir))
         return result
 

@@ -144,6 +144,8 @@ def unit_test_list():
     tests.add('failures/unexpected/text-image-checksum.html',
               actual_text='text-image-checksum_fail-txt',
               actual_checksum='text-image-checksum_fail-checksum')
+    tests.add('failures/unexpected/checksum-with-matching-image.html',
+              actual_checksum='text-image-checksum_fail-checksum')
     tests.add('failures/unexpected/timeout.html', timeout=True)
     tests.add('http/tests/passes/text.html')
     tests.add('http/tests/passes/image.html')
@@ -313,13 +315,11 @@ class TestPort(base.Port):
     def default_configuration(self):
         return 'Release'
 
-    def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None):
+    def diff_image(self, expected_contents, actual_contents):
         diffed = actual_contents != expected_contents
-        if diffed and diff_filename:
-            self._filesystem.write_binary_file(diff_filename,
-                "< %s\n---\n> %s\n" % (expected_contents, actual_contents))
-        return diffed
+        if diffed:
+            return "< %s\n---\n> %s\n" % (expected_contents, actual_contents)
+        return None
 
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR

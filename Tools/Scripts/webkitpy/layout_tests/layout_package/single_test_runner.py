@@ -266,17 +266,21 @@ class SingleTestRunner:
         # the normalized text expectation files.
         return output.replace("\r\r\n", "\r\n").replace("\r\n", "\n")
 
-    def _compare_image(self, driver_output, expected_driver_outputs):
+    # FIXME: This function also creates the image diff. Maybe that work should
+    # be handled elsewhere?
+    def _compare_image(self, driver_output, expected_driver_output):
         failures = []
         # If we didn't produce a hash file, this test must be text-only.
         if driver_output.image_hash is None:
             return failures
-        if not expected_driver_outputs.image:
+        if not expected_driver_output.image:
             failures.append(test_failures.FailureMissingImage())
-        elif not expected_driver_outputs.image_hash:
+        elif not expected_driver_output.image_hash:
             failures.append(test_failures.FailureMissingImageHash())
-        elif driver_output.image_hash != expected_driver_outputs.image_hash:
-            failures.append(test_failures.FailureImageHashMismatch())
+        elif driver_output.image_hash != expected_driver_output.image_hash:
+            driver_output.image_diff = self._port.diff_image(driver_output.image, expected_driver_output.image)
+            if driver_output.image_diff:
+                failures.append(test_failures.FailureImageHashMismatch())
         return failures
 
     def _run_reftest(self):

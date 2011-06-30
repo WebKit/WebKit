@@ -244,16 +244,11 @@ class Port(object):
         """Return whether the two audio files are *not* equal."""
         return expected_audio != actual_audio
 
-    def diff_image(self, expected_contents, actual_contents, diff_filename=None, tolerance=0):
-        """Compare two images and produce a delta image file.
-
-        Return True if the two images are different, False if they are the same.
-        Also produce a delta image of the two images and write that into
-        |diff_filename| if it is not None.
+    def diff_image(self, expected_contents, actual_contents, tolerance=0):
+        """Compare two images and return an image diff.
 
         |tolerance| should be a percentage value (0.0 - 100.0).
         If it is omitted, the port default tolerance value is used.
-
         """
         raise NotImplementedError('Port.diff_image')
 
@@ -939,6 +934,7 @@ class DriverOutput(object):
         self.text = text
         self.image = image
         self.image_hash = image_hash
+        self.image_diff = None  # image_diff gets filled in after construction.
         self.audio = audio
         self.crash = crash
         self.test_time = test_time

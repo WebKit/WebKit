@@ -214,13 +214,19 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(mock_options)
 
+        mock_image_diff = "MOCK Image Diff"
+
+        def mock_run_command(args):
+            port._filesystem.write_binary_file(args[4], mock_image_diff)
+            return 1
+
         # Images are different.
-        port._executive = executive_mock.MockExecutive2(exit_code=0)
-        self.assertEquals(False, port.diff_image("EXPECTED", "ACTUAL"))
+        port._executive = executive_mock.MockExecutive2(run_command_fn=mock_run_command)
+        self.assertEquals(mock_image_diff, port.diff_image("EXPECTED", "ACTUAL"))
 
         # Images are the same.
-        port._executive = executive_mock.MockExecutive2(exit_code=1)
-        self.assertEquals(True, port.diff_image("EXPECTED", "ACTUAL"))
+        port._executive = executive_mock.MockExecutive2(exit_code=0)
+        self.assertEquals(None, port.diff_image("EXPECTED", "ACTUAL"))
 
         # There was some error running image_diff.
         port._executive = executive_mock.MockExecutive2(exit_code=2)

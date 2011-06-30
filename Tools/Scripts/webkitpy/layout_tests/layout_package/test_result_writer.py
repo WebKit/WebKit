@@ -41,8 +41,6 @@ def write_test_result(port, filename, driver_output,
                       expected_driver_output, failures):
     """Write the test result to the result output directory."""
     root_output_dir = port.results_directory()
-    checksums_mismatch_but_images_are_same = False
-    imagehash_mismatch_failure = None
     writer = TestResultWriter(port, root_output_dir, filename)
     if driver_output.error:
         writer.write_stderr(driver_output.error)
@@ -60,11 +58,7 @@ def write_test_result(port, filename, driver_output,
             writer.write_image_files(driver_output.image, expected_driver_output.image)
         elif isinstance(failure, test_failures.FailureImageHashMismatch):
             writer.write_image_files(driver_output.image, expected_driver_output.image)
-            images_are_different = writer.create_image_diff_and_write_result(
-                driver_output.image, expected_driver_output.image)
-            if not images_are_different:
-                checksums_mismatch_but_images_are_same = True
-                imagehash_mismatch_failure = failure
+            writer.write_image_diff_files(driver_output.image_diff)
         elif isinstance(failure, (test_failures.FailureAudioMismatch,
                                   test_failures.FailureMissingAudio)):
             writer.write_audio_files(driver_output.audio, expected_driver_output.audio)
@@ -75,22 +69,16 @@ def write_test_result(port, filename, driver_output,
                 writer.write_crash_report(driver_output.error)
         elif isinstance(failure, test_failures.FailureReftestMismatch):
             writer.write_image_files(driver_output.image, expected_driver_output.image)
-            writer.create_image_diff_and_write_result(driver_output.image, expected_driver_output.image)
+            # FIXME: This work should be done earlier in the pipeline (e.g., when we compare images for non-ref tests).
+            image_diff = port.diff_image(driver_output.image, expected_driver_output.image)
+            if image_diff:
+                writer.write_image_diff_files(image_diff)
             writer.copy_file(port.reftest_expected_filename(filename), '-expected.html')
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)
             writer.copy_file(port.reftest_expected_mismatch_filename(filename), '-expected-mismatch.html')
         else:
             assert isinstance(failure, (test_failures.FailureTimeout,))
-
-    # FIXME: This is an ugly hack to handle FailureImageHashIncorrect case.
-    # Ideally, FailureImageHashIncorrect case should be detected before this
-    # function is called. But it requires calling create_diff_image() to detect
-    # whether two images are same or not. So we need this hack until we have a better approach.
-    if checksums_mismatch_but_images_are_same:
-        # Replace FailureImageHashMismatch with FailureImageHashIncorrect.
-        failures.remove(imagehash_mismatch_failure)
-        failures.append(test_failures.FailureImageHashIncorrect())
 
 
 class TestResultWriter(object):
@@ -215,19 +203,10 @@ class TestResultWriter(object):
     def write_image_files(self, actual_image, expected_image):
         self.write_output_files('.png', actual_image, expected_image)
 
-    def create_image_diff_and_write_result(self, actual_image, expected_image):
-        """Writes the visual diff of the expected/actual PNGs.
-
-        Returns True if the images are different.
-        """
-        # FIXME: This function is actually doing the diff as well as writing a result.
-        # It might be better to extract 'diff' code and make it a separate function.
-        # To do so, we have to change port.diff_image() as well.
+    def write_image_diff_files(self, image_diff):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
-        images_are_different = self._port.diff_image(actual_image, expected_image, diff_filename)
-
-        if not images_are_different:
-            return False
+        fs = self._port._filesystem
+        fs.write_binary_file(diff_filename, image_diff)
 
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
@@ -278,10 +257,13 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
 </script>
 </body>
 </html>
-""" % { 'title': self._testname, 'diff_filename': self._output_testname('-diff.png'), 'prefix': self._output_testname('') }
+""" % {
+            'title': self._testname,
+            'diff_filename': self._output_testname(self.FILENAME_SUFFIX_IMAGE_DIFF),
+            'prefix': self._output_testname(''),
+        }
+        # FIXME: This seems like a text file, not a binary file.
         self._port._filesystem.write_binary_file(diffs_html_filename, html)
-
-        return True
 
     def copy_file(self, src_filepath, dst_extension):
         fs = self._port._filesystem

@@ -132,22 +132,20 @@ class WebKitPort(base.Port):
             return False
         return True
 
-    def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None):
-        """Return True if the two files are different. Also write a delta
-        image of the two images into |diff_filename| if it is not None."""
-
+    def diff_image(self, expected_contents, actual_contents):
         # Handle the case where the test didn't actually generate an image.
         # FIXME: need unit tests for this.
         if not actual_contents and not expected_contents:
-            return False
+            return None
         if not actual_contents or not expected_contents:
+            # FIXME: It's not clear what we should return in this case.
+            # Maybe we should throw an exception?
             return True
 
-        sp = self._diff_image_request(expected_contents, actual_contents)
-        return self._diff_image_reply(sp, diff_filename)
+        process = self._start_image_diff_process(expected_contents, actual_contents)
+        return self._read_image_diff(process)
 
-    def _diff_image_request(self, expected_contents, actual_contents):
+    def _start_image_diff_process(self, expected_contents, actual_contents):
         # FIXME: There needs to be a more sane way of handling default
         # values for options so that you can distinguish between a default
         # value of None and a default value that wasn't set.
@@ -156,15 +154,14 @@ class WebKitPort(base.Port):
         else:
             tolerance = 0.1
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
-        sp = server_process.ServerProcess(self, 'ImageDiff', command)
+        process = server_process.ServerProcess(self, 'ImageDiff', command)
 
-        sp.write('Content-Length: %d\n%sContent-Length: %d\n%s' %
-                 (len(actual_contents), actual_contents,
-                  len(expected_contents), expected_contents))
+        process.write('Content-Length: %d\n%sContent-Length: %d\n%s' % (
+            len(actual_contents), actual_contents,
+            len(expected_contents), expected_contents))
+        return process
 
-        return sp
-
-    def _diff_image_reply(self, sp, diff_filename):
+    def _read_image_diff(self, sp):
         timeout = 2.0
         deadline = time.time() + timeout
         output = sp.read_line(timeout)
@@ -181,19 +178,16 @@ class WebKitPort(base.Port):
                 timeout = deadline - time.time()
                 output = sp.read_line(deadline)
 
-        result = True
+        if sp.timed_out:
+            _log.error("ImageDiff timed out")
+        if sp.crashed:
+            _log.error("ImageDiff crashed")
+        sp.stop()
         if output.startswith('diff'):
             m = re.match('diff: (.+)% (passed|failed)', output)
             if m.group(2) == 'passed':
-                result = False
-        elif output and diff_filename:
-            self._filesystem.write_binary_file(diff_filename, output)
-        elif sp.timed_out:
-            _log.error("ImageDiff timed out")
-        elif sp.crashed:
-            _log.error("ImageDiff crashed")
-        sp.stop()
-        return result
+                return None
+        return output
 
     def default_results_directory(self):
         # Results are store relative to the built products to make it easy

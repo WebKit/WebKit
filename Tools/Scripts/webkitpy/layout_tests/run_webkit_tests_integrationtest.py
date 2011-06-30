@@ -264,9 +264,8 @@ class MainTest(unittest.TestCase):
         # We do a logging run here instead of a passing run in order to
         # suppress the output from the json generator.
         res, buildbot_output, regular_output, user = logging_run(['--clobber-old-results'], record_results=True, filesystem=fs)
-        res, buildbot_output, regular_output, user = logging_run(
-            ['--print-last-failures'], filesystem=fs)
-        self.assertEqual(regular_output.get(), ['\n\n'])
+        res, buildbot_output, regular_output, user = logging_run(['--print-last-failures'], filesystem=fs)
+        self.assertEqual(regular_output.get(), [u'failures/expected/checksum.html\n\n'])
         self.assertEqual(buildbot_output.get(), [])
 
     def test_lint_test_files(self):
@@ -421,6 +420,16 @@ class MainTest(unittest.TestCase):
             filesystem=fs)
         self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
+    def test_no_image_failure_with_image_diff(self):
+        fs = port.unit_test_filesystem()
+        res, buildbot_output, regular_output, user = logging_run([
+                'failures/unexpected/checksum-with-matching-image.html',
+            ],
+            tests_included=True,
+            record_results=True,
+            filesystem=fs)
+        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('"num_regressions":0') != -1)
+
     def test_crash_log(self):
         mock_crash_report = 'mock-crash-report'
         fs = port.unit_test_filesystem()
@@ -559,8 +568,7 @@ class MainTest(unittest.TestCase):
 
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
-            def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None):
+            def diff_image(self, expected_contents, actual_contents):
                 self.tolerance_used_for_diff_image = self._options.tolerance
                 return True
 

@@ -61,10 +61,10 @@ class MockExecutive2(object):
                     decode_output=False):
         if self._exception:
             raise self._exception
-        if return_exit_code:
-            return self._exit_code
         if self._run_command_fn:
             return self._run_command_fn(args)
+        if return_exit_code:
+            return self._exit_code
         if self._exit_code and error_handler:
             script_error = executive.ScriptError(script_args=args,
                                                  exit_code=self._exit_code,
