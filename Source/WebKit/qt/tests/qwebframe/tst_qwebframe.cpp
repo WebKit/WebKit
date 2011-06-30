@@ -2898,7 +2898,10 @@ void tst_QWebFrame::renderGeometry()
     QList<QWebFrame*> frames = page.mainFrame()->childFrames();
     QWebFrame *frame = frames.at(0);
     QString innerHtml("<body style='margin: 0px;'><img src='qrc:/image.png'/></body>");
-    frame->setHtml(innerHtml);
+
+    // By default, only security origins of local files can load local resources.
+    // So we should specify baseUrl to be a local file in order to get a proper origin.
+    frame->setHtml(innerHtml, QUrl("file:///path/to/file"));
     waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
 
     QPicture picture;
@@ -2911,9 +2914,7 @@ void tst_QWebFrame::renderGeometry()
     frame->render(&painter1, QWebFrame::ContentsLayer);
     painter1.end();
 
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63236", Continue);
     QCOMPARE(size.width(), picture.boundingRect().width() + frame->scrollBarGeometry(Qt::Vertical).width());
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63236", Continue);
     QCOMPARE(size.height(), picture.boundingRect().height() + frame->scrollBarGeometry(Qt::Horizontal).height());
 
     // render everything, should be the size of the iframe
@@ -2921,9 +2922,7 @@ void tst_QWebFrame::renderGeometry()
     frame->render(&painter2, QWebFrame::AllLayers);
     painter2.end();
 
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63236", Continue);
     QCOMPARE(size.width(), picture.boundingRect().width());   // width: 100px
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63236", Continue);
     QCOMPARE(size.height(), picture.boundingRect().height()); // height: 100px
 }
 

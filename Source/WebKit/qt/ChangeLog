@@ -1,3 +1,16 @@
+2011-06-30  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Fix tst_QWebFrame::renderGeometry() API test
+        https://bugs.webkit.org/show_bug.cgi?id=63236
+        
+        This test required a security origin with granted permission to request local resources.
+        By default, only local files can load local resources. So modified baseUrl to be a local file.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::renderGeometry):
+
 2011-06-27  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Antonio Gomes.
