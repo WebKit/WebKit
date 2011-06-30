@@ -738,6 +738,8 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
+    DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
+
     JSObject* error = program->compile(callFrame, scopeChain);
     if (error)
         return checkedReturn(throwError(callFrame, error));
@@ -756,8 +758,6 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, CallFrame::noCaller(), codeBlock->m_numParameters, 0);
     newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = JSValue(thisObj);
-
-    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject.get());
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -813,6 +813,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     if (callType == CallTypeJS) {
         ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
 
+        DynamicGlobalObjectScope globalObjectScope(*callDataScopeChain->globalData, callDataScopeChain->globalObject.get());
+
         JSObject* compileError = callData.js.functionExecutable->compileForCall(callFrame, callDataScopeChain);
         if (UNLIKELY(!!compileError)) {
             m_registerFile.shrink(oldEnd);
@@ -827,8 +829,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         }
 
         newCallFrame->init(newCodeBlock, 0, callDataScopeChain, callFrame->addHostCallFrameFlag(), argCount, function);
-
-        DynamicGlobalObjectScope globalObjectScope(newCallFrame, callDataScopeChain->globalObject.get());
 
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
@@ -860,7 +860,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     newCallFrame = CallFrame::create(newCallFrame->registers() + registerOffset);
     newCallFrame->init(0, 0, scopeChain, callFrame->addHostCallFrameFlag(), argCount, function);
 
-    DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject.get());
+    DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -902,6 +902,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     if (constructType == ConstructTypeJS) {
         ScopeChainNode* constructDataScopeChain = constructData.js.scopeChain;
 
+        DynamicGlobalObjectScope globalObjectScope(*constructDataScopeChain->globalData, constructDataScopeChain->globalObject.get());
+
         JSObject* compileError = constructData.js.functionExecutable->compileForConstruct(callFrame, constructDataScopeChain);
         if (UNLIKELY(!!compileError)) {
             m_registerFile.shrink(oldEnd);
@@ -916,8 +918,6 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         }
 
         newCallFrame->init(newCodeBlock, 0, constructDataScopeChain, callFrame->addHostCallFrameFlag(), argCount, constructor);
-
-        DynamicGlobalObjectScope globalObjectScope(newCallFrame, constructDataScopeChain->globalObject.get());
 
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
@@ -952,7 +952,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     newCallFrame = CallFrame::create(newCallFrame->registers() + registerOffset);
     newCallFrame->init(0, 0, scopeChain, callFrame->addHostCallFrameFlag(), argCount, constructor);
 
-    DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject.get());
+    DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -1066,10 +1066,10 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 {
     ASSERT(!scopeChain->globalData->exception);
 
+    DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
+
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
-
-    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject.get());
 
     JSObject* compileError = eval->compile(callFrame, scopeChain);
     if (UNLIKELY(!!compileError))

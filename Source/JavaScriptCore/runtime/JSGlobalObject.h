@@ -434,7 +434,7 @@ namespace JSC {
     class DynamicGlobalObjectScope {
         WTF_MAKE_NONCOPYABLE(DynamicGlobalObjectScope);
     public:
-        DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject);
+        DynamicGlobalObjectScope(JSGlobalData&, JSGlobalObject*);
 
         ~DynamicGlobalObjectScope()
         {

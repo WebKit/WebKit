@@ -216,6 +216,7 @@ namespace JSC {
 
         JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
+            ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_evalCodeBlock)
                 error = compileInternal(exec, scopeChainNode);
@@ -260,6 +261,7 @@ namespace JSC {
 
         JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
+            ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_programCodeBlock)
                 error = compileInternal(exec, scopeChainNode);
@@ -325,6 +327,7 @@ namespace JSC {
 
         JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
+            ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
                 error = compileForCallInternal(exec, scopeChainNode);
@@ -345,6 +348,7 @@ namespace JSC {
 
         JSObject* compileForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
+            ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForConstruct)
                 error = compileForConstructInternal(exec, scopeChainNode);
