@@ -30,12 +30,17 @@ import sys
 import unittest
 
 from webkitpy.layout_tests.port import server_process
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
 
 
 def _logging_run_command(args):
     print args
+
+
+def _throwing_run_command(args):
+    raise ScriptError("MOCK script error")
 
 
 class TrivialMockPort(object):
@@ -92,3 +97,11 @@ class TestServerProcess(unittest.TestCase):
         server_process._proc = MockProc(server_process)
         expected_stdout = "['/usr/bin/sample', 1, 10, 10, '-file', '/mock/results/test-1.sample.txt']\n"
         OutputCapture().assert_outputs(self, server_process._sample, expected_stdout=expected_stdout)
+
+    def test_sample_process_throws_exception(self):
+        # Currently, sample-on-timeout only works on Darwin.
+        if sys.platform != "darwin":
+            return
+        server_process = FakeServerProcess(port_obj=TrivialMockPort(), name="test", cmd=["test"], executive=MockExecutive2(run_command_fn=_throwing_run_command))
+        server_process._proc = MockProc(server_process)
+        OutputCapture().assert_outputs(self, server_process._sample)

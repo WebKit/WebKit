@@ -1,3 +1,19 @@
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Clean up output from new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=63759
+
+        Printing messages from the child process looks super ugly because of
+        the way the pretty-printer works.  Printing a blank line first is a
+        hack, but it makes things at least partially sane.
+
+        Also, handle the case where calling sample throws an exception.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+
 2011-06-27  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Antonio Gomes.
