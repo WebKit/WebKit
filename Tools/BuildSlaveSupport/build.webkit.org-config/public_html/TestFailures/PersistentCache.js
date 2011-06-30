@@ -79,10 +79,10 @@ var PersistentCache = {
     },
 
     _parseDateAndJSONFromString: function(string) {
-        var components = string.split(this._dateAndJSONSeparator);
+        var separatorIndex = string.indexOf(this._dateAndJSONSeparator);
         return {
-            date: new Date(parseInt(components[0], 10)),
-            json: components[1],
+            date: new Date(parseInt(string.substring(0, separatorIndex), 10)),
+            json: string.substring(separatorIndex + this._dateAndJSONSeparator.length),
         };
     },
 };

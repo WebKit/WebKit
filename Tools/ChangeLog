@@ -1,5 +1,19 @@
 2011-06-30  Adam Roben  <aroben@apple.com>
 
+        Robustify PersistentCache against cached data that contains the string ': '
+
+        Fixes <http://webkit.org/b/63721> Exceptions thrown while loading TestFailures page due to
+        passing a bad string to JSON.parse
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/PersistentCache.js:
+        (PersistentCache._parseDateAndJSONFromString): Manually split the string on the separator
+        using indexOf and substring. (String.prototype.split always splits on all instances of the
+        separator.)
+
+2011-06-30  Adam Roben  <aroben@apple.com>
+
         Include the crashing symbol in crash logs links on TestFailures
 
         Fixes <http://webkit.org/b/63465> Links to crash logs on TestFailures page should include
