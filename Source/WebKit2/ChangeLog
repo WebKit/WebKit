@@ -1,3 +1,10 @@
+2011-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        (WebKit::WebPopupMenuProxyWin::enclosingScrollableArea):
+
 2011-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.

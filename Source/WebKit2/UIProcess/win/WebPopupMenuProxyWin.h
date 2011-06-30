@@ -70,6 +70,7 @@ private:
     virtual bool isScrollCornerVisible() const { return false; }
     virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
+    virtual WebCore::ScrollableArea* enclosingScrollableArea() const { return 0; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);
