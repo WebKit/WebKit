@@ -4500,6 +4500,82 @@ Eina_Bool ewk_view_need_touch_events_get(Evas_Object* o)
 #endif
 
 /**
+ * Sets view mode. The view-mode media feature describes the mode in which the
+ * Web application is being shown as a running application.
+ *
+ * @param o view object to change view mode.
+ * @param view_mode page view mode to be set
+ *
+ * @return @c EINA_TRUE if view mode is set as view_mode, @c EINA_FALSE otherwise.
+ */
+Eina_Bool ewk_view_mode_set(Evas_Object* o, Ewk_View_Mode view_mode)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+
+    switch (view_mode) {
+    case EWK_VIEW_MODE_WINDOWED:
+        priv->page->setViewMode(WebCore::Page::ViewModeWindowed);
+        break;
+    case EWK_VIEW_MODE_FLOATING:
+        priv->page->setViewMode(WebCore::Page::ViewModeFloating);
+        break;
+    case EWK_VIEW_MODE_FULLSCREEN:
+        priv->page->setViewMode(WebCore::Page::ViewModeFullscreen);
+        break;
+    case EWK_VIEW_MODE_MAXIMIZED:
+        priv->page->setViewMode(WebCore::Page::ViewModeMaximized);
+        break;
+    case EWK_VIEW_MODE_MINIMIZED:
+        priv->page->setViewMode(WebCore::Page::ViewModeMinimized);
+        break;
+    default:
+        return EINA_FALSE;
+    }
+
+    return EINA_TRUE;
+}
+
+/**
+ * Gets view mode. The view-mode media feature describes the mode in which the
+ * Web application is being shown as a running application.
+ *
+ * @param o view object to query view mode.
+ *
+ * @return enum value of Ewk_View_Mode that indicates current view mode.
+ */
+Ewk_View_Mode ewk_view_mode_get(Evas_Object* o)
+{
+    Ewk_View_Mode mode = EWK_VIEW_MODE_WINDOWED;
+
+    EWK_VIEW_SD_GET(o, sd);
+    if (!sd)
+        return mode;
+    EWK_VIEW_PRIV_GET(sd, priv);
+    if (!priv)
+        return mode;
+
+    switch (priv->page->viewMode()) {
+    case WebCore::Page::ViewModeFloating:
+        mode = EWK_VIEW_MODE_FLOATING;
+        break;
+    case WebCore::Page::ViewModeFullscreen:
+        mode = EWK_VIEW_MODE_FULLSCREEN;
+        break;
+    case WebCore::Page::ViewModeMaximized:
+        mode = EWK_VIEW_MODE_MAXIMIZED;
+        break;
+    case WebCore::Page::ViewModeMinimized:
+        mode = EWK_VIEW_MODE_MINIMIZED;
+        break;
+    default:
+        break;
+    }
+
+    return mode;
+}
+
+/**
  * @internal
  * Reports the view that editor client selection has changed.
  *

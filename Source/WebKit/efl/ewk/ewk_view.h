@@ -296,6 +296,15 @@ struct _Ewk_View_Smart_Data {
     } changed;
 };
 
+enum _Ewk_View_Mode {
+    EWK_VIEW_MODE_WINDOWED,
+    EWK_VIEW_MODE_FLOATING,
+    EWK_VIEW_MODE_FULLSCREEN,
+    EWK_VIEW_MODE_MAXIMIZED,
+    EWK_VIEW_MODE_MINIMIZED
+};
+typedef enum _Ewk_View_Mode Ewk_View_Mode;
+
 /**
  * Cache (pool) that contains unused tiles for ewk_view_tiled.
  *
@@ -538,6 +547,8 @@ EAPI void ewk_view_user_scalable_set(Evas_Object* o, Eina_Bool user_scalable);
 EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object* o);
 EAPI float ewk_view_device_pixel_ratio_get(Evas_Object* o);
 
+EAPI Eina_Bool ewk_view_mode_set(Evas_Object* o, Ewk_View_Mode view_mode);
+EAPI Ewk_View_Mode ewk_view_mode_get(Evas_Object* o);
 #ifdef __cplusplus
 }
 #endif
