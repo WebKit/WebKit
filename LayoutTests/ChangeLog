@@ -1,3 +1,10 @@
+2011-06-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip a failing media test on GTK because of
+        https://bugs.webkit.org/show_bug.cgi?id=63699
+
+        * platform/gtk/Skipped: skip media/media-blocked-by-willsendrequest.html
+
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Resolve a conflict.
