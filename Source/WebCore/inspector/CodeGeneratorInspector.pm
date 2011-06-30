@@ -498,7 +498,7 @@ sub generateBackendFunction
         }
         push(@function, "    }");
     }
-    push(@function, "    sendResponse(callId, result, String::format(s_argumentsErrorTemplate, \"$fullQualifiedFunctionNameDot\"), protocolErrors, error);");
+    push(@function, "    sendResponse(callId, result, String::format(\"Some arguments of method '%s' can't be processed\", \"$fullQualifiedFunctionNameDot\"), protocolErrors, error);");
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);
