@@ -1,3 +1,15 @@
+2011-06-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Don't use old Hixie75 handshake in pywebsocket handlers
+        https://bugs.webkit.org/show_bug.cgi?id=63704
+
+        * http/tests/websocket/tests/bad-handshake-crash_wsh.py:
+        Use handshake format of Hixie's protocol draft 76 which we are currently supporting.
+        * http/tests/websocket/tests/long-invalid-header_wsh.py:
+        Content of web_socket_transfer_data() is completely bogus. It's not necessary.
+
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
