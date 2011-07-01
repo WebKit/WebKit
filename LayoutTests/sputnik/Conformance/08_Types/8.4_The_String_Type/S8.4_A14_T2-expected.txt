@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '";'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected EOF
 S8.4_A14_T2
 
 PASS Expected parsing failure

@@ -9,7 +9,7 @@ PASS 1 is 1
 PASS eval('"﻿"').length is 1
 PASS eval('"﻿"').charCodeAt(0) is 0xFEFF
 PASS +﻿+1 /* BOM between the +'s */ is 1
-PASS var ZWJ_I‍nside; threw exception SyntaxError: Unrecognized token ''.
+PASS var ZWJ_I‍nside; threw exception SyntaxError: Invalid character '\u8205'.
 PASS successfullyParsed is true
 
 TEST COMPLETE

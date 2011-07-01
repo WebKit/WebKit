@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unrecognized token '0'
+CONSOLE MESSAGE: line 77: SyntaxError: At least one digit must occur after a decimal point
 S7.8.3_A6.1_T1
 
 PASS Expected parsing failure

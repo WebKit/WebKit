@@ -16,7 +16,7 @@ PASS function test() { return 0 } lab: 1 is 1
 PASS function test() { while(0) break lab } lab: 1 threw exception SyntaxError: Label 'lab' is not defined.
 PASS function test() { while(0) continue lab } lab: 1 threw exception SyntaxError: Label 'lab' is not defined.
 PASS var éĀʯΈᢨ = 101; éĀʯΈᢨ; is 101
-PASS var f÷; threw exception SyntaxError: Unrecognized token ''.
+PASS var f÷; threw exception SyntaxError: Invalid character '\u0247'.
 PASS var \u0061 = 102; a is 102
 PASS var f\u0030 = 103; f0 is 103
 PASS var \u00E9\u0100\u02AF\u0388\u18A8 = 104; \u00E9\u0100\u02AF\u0388\u18A8; is 104

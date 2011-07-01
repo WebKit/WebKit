@@ -51,11 +51,13 @@ void Parser::parse(JSGlobalData* globalData, FunctionParameters* parameters, JSP
     UString parseError = jsParse(globalData, parameters, strictness, mode, m_source);
     int lineNumber = lexer.lineNumber();
     bool lexError = lexer.sawError();
+    UString lexErrorMessage = lexError ? lexer.getErrorMessage() : UString();
+    ASSERT(lexErrorMessage.isNull() != lexError);
     lexer.clear();
 
     if (!parseError.isNull() || lexError) {
         *errLine = lineNumber;
-        *errMsg = !parseError.isNull() ? parseError : "Parse error";
+        *errMsg = !lexErrorMessage.isNull() ? lexErrorMessage : parseError;
         m_sourceElements = 0;
     }
 }

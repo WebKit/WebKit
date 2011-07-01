@@ -233,6 +233,28 @@ Lexer::~Lexer()
 {
     m_keywordTable.deleteTable();
 }
+    
+UString Lexer::getInvalidCharMessage()
+{
+    switch (m_current) {
+    case 0:
+        return "Invalid character: '\\0'";
+    case 10:
+        return "Invalid character: '\\n'";
+    case 11:
+        return "Invalid character: '\\v'";
+    case 13:
+        return "Invalid character: '\\r'";
+    case 35:
+        return "Invalid character: '#'";
+    case 64:
+        return "Invalid character: '@'";
+    case 96:
+        return "Invalid character: '`'";
+    default:
+        return String::format("Invalid character '\\u%04u'", m_current).impl();
+    }
+}
 
 ALWAYS_INLINE const UChar* Lexer::currentCharacter() const
 {
@@ -261,6 +283,7 @@ void Lexer::setCode(const SourceCode& source, ParserArena& arena)
     m_codeEnd = data + source.endOffset();
     m_error = false;
     m_atLineStart = true;
+    m_lexErrorMessage = UString();
 
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
     m_buffer16.reserveInitialCapacity((m_codeEnd - m_code) / 2);
@@ -527,14 +550,18 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSToken
                 } else if (m_current == stringQuoteCharacter) {
                     if (shouldBuildStrings)
                         record16('u');
-                } else // Only stringQuoteCharacter allowed after \u
+                } else {
+                    m_lexErrorMessage = "\\u can only be followed by a Unicode character sequence";
                     return false;
+                }
             } else if (strictMode && isASCIIDigit(m_current)) {
                 // The only valid numeric escape in strict mode is '\0', and this must not be followed by a decimal digit.
                 int character1 = m_current;
                 shift();
-                if (character1 != '0' || isASCIIDigit(m_current))
+                if (character1 != '0' || isASCIIDigit(m_current)) {
+                    m_lexErrorMessage = "The only valid numeric escape in strict mode is '\\0'";
                     return false;
+                }
                 if (shouldBuildStrings)
                     record16(0);
             } else if (!strictMode && isASCIIOctalDigit(m_current)) {
@@ -561,8 +588,10 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSToken
                 if (shouldBuildStrings)
                     record16(m_current);
                 shift();
-            } else
+            } else {
+                m_lexErrorMessage = "Unterminated string constant";
                 return false;
+            }
 
             stringStart = currentCharacter();
             continue;
@@ -572,8 +601,10 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSToken
         // as possible, and lets through all common ASCII characters.
         if (UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000))) {
             // New-line or end of input is not allowed
-            if (UNLIKELY(isLineTerminator(m_current)) || UNLIKELY(m_current == -1))
+            if (UNLIKELY(isLineTerminator(m_current)) || UNLIKELY(m_current == -1)) {
+                m_lexErrorMessage = "Unexpected EOF";
                 return false;
+            }
             // Anything else is just a normal character
         }
         shift();
@@ -923,6 +954,7 @@ start:
             shift();
             if (parseMultilineComment())
                 goto start;
+            m_lexErrorMessage = "Multiline comment was not closed properly";
             goto returnError;
         }
         if (m_current == '=') {
@@ -1042,8 +1074,10 @@ start:
             record8('0');
             if (isASCIIOctalDigit(m_current)) {
                 if (parseOctal(tokenData->doubleValue)) {
-                    if (strictMode)
+                    if (strictMode) {
+                        m_lexErrorMessage = "Octal escapes are forbidden in strict mode";
                         goto returnError;
+                    }
                     token = NUMBER;
                 }
             }
@@ -1058,8 +1092,10 @@ inNumberAfterDecimalPoint:
                     parseNumberAfterDecimalPoint();
                 }
                 if ((m_current | 0x20) == 'e')
-                    if (!parseNumberAfterExponentIndicator())
+                    if (!parseNumberAfterExponentIndicator()) {
+                        m_lexErrorMessage = "Non-number found after exponent indicator";
                         goto returnError;
+                    }
                 // Null-terminate string for strtod.
                 m_buffer8.append('\0');
                 tokenData->doubleValue = WTF::strtod(m_buffer8.data(), 0);
@@ -1068,8 +1104,10 @@ inNumberAfterDecimalPoint:
         }
 
         // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
-        if (UNLIKELY(isIdentStart(m_current)))
+        if (UNLIKELY(isIdentStart(m_current))) {
+            m_lexErrorMessage = "At least one digit must occur after a decimal point";
             goto returnError;
+        }
         m_buffer8.resize(0);
         m_delimited = false;
         break;
@@ -1101,9 +1139,11 @@ inNumberAfterDecimalPoint:
         m_terminator = true;
         goto start;
     case CharacterInvalid:
+        m_lexErrorMessage = getInvalidCharMessage();
         goto returnError;
     default:
         ASSERT_NOT_REACHED();
+        m_lexErrorMessage = "Internal Error";
         goto returnError;
     }
 

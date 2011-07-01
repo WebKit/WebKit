@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unrecognized token '"\u'
+CONSOLE MESSAGE: line 77: SyntaxError: \u can only be followed by a Unicode character sequence
 S7.8.4_A7.2_T5
 
 PASS Expected parsing failure

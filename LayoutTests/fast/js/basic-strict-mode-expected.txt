@@ -86,12 +86,12 @@ PASS 'use strict'; for(;;)break missingLabel threw exception SyntaxError: Label 
 PASS (function(){'use strict'; for(;;)break missingLabel}) threw exception SyntaxError: Label 'missingLabel' is not defined.
 PASS 'use strict'; for(;;)continue missingLabel threw exception SyntaxError: Label 'missingLabel' is not defined.
 PASS (function(){'use strict'; for(;;)continue missingLabel}) threw exception SyntaxError: Label 'missingLabel' is not defined.
-PASS 'use strict'; 007; threw exception SyntaxError: Unrecognized token '007'.
-PASS (function(){'use strict'; 007;}) threw exception SyntaxError: Unrecognized token '007'.
-PASS 'use strict'; '\007'; threw exception SyntaxError: Unrecognized token ''\0'.
-PASS (function(){'use strict'; '\007';}) threw exception SyntaxError: Unrecognized token ''\0'.
-PASS '\007'; 'use strict'; threw exception SyntaxError: Unrecognized token ''\0'.
-PASS (function(){'\007'; 'use strict';}) threw exception SyntaxError: Unrecognized token ''\0'.
+PASS 'use strict'; 007; threw exception SyntaxError: Octal escapes are forbidden in strict mode.
+PASS (function(){'use strict'; 007;}) threw exception SyntaxError: Octal escapes are forbidden in strict mode.
+PASS 'use strict'; '\007'; threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.
+PASS (function(){'use strict'; '\007';}) threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.
+PASS '\007'; 'use strict'; threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.
+PASS (function(){'\007'; 'use strict';}) threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.
 PASS 'use strict'; delete aDeletableProperty; threw exception SyntaxError: Cannot delete unqualified property 'aDeletableProperty' in strict mode.
 PASS (function(){'use strict'; delete aDeletableProperty;}) threw exception SyntaxError: Cannot delete unqualified property 'aDeletableProperty' in strict mode.
 PASS 'use strict'; (function (){ delete someDeclaredGlobal;}) threw exception SyntaxError: Cannot delete unqualified property 'someDeclaredGlobal' in strict mode.
@@ -175,14 +175,14 @@ PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescri
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'caller'); return descriptor.get === descriptor.set; })() is true
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'arguments'); return descriptor.get === descriptor.set; })() is true
 PASS 'use strict'; (function f() { for(var i in this); })(); true; is true
-PASS 'use strict'̻ threw exception SyntaxError: Unrecognized token ''.
-PASS (function(){'use strict'̻}) threw exception SyntaxError: Unrecognized token ''.
-PASS 'use strict'5.f threw exception SyntaxError: Unrecognized token '5.'.
-PASS (function(){'use strict'5.f}) threw exception SyntaxError: Unrecognized token '5.'.
-PASS 'use strict';̻ threw exception SyntaxError: Unrecognized token ''.
-PASS (function(){'use strict';̻}) threw exception SyntaxError: Unrecognized token ''.
-PASS 'use strict';5.f threw exception SyntaxError: Unrecognized token '5.'.
-PASS (function(){'use strict';5.f}) threw exception SyntaxError: Unrecognized token '5.'.
+PASS 'use strict'̻ threw exception SyntaxError: Invalid character '\u0827'.
+PASS (function(){'use strict'̻}) threw exception SyntaxError: Invalid character '\u0827'.
+PASS 'use strict'5.f threw exception SyntaxError: At least one digit must occur after a decimal point.
+PASS (function(){'use strict'5.f}) threw exception SyntaxError: At least one digit must occur after a decimal point.
+PASS 'use strict';̻ threw exception SyntaxError: Invalid character '\u0827'.
+PASS (function(){'use strict';̻}) threw exception SyntaxError: Invalid character '\u0827'.
+PASS 'use strict';5.f threw exception SyntaxError: At least one digit must occur after a decimal point.
+PASS (function(){'use strict';5.f}) threw exception SyntaxError: At least one digit must occur after a decimal point.
 PASS 'use strict';1-(eval=1); threw exception SyntaxError: 'eval' cannot be modified in strict mode.
 PASS (function(){'use strict';1-(eval=1);}) threw exception SyntaxError: 'eval' cannot be modified in strict mode.
 PASS 'use strict';arguments=1; threw exception SyntaxError: 'arguments' cannot be modified in strict mode.

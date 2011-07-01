@@ -51,7 +51,7 @@ PASS regexp.test('aaba') is true
 PASS regexp.lastIndex is 2
 
 Testing regexp: [invalid * variations]
-PASS /*/ threw exception SyntaxError: Unrecognized token '/*/'.
+PASS /*/ threw exception SyntaxError: Multiline comment was not closed properly.
 PASS /^*/ threw exception SyntaxError: Invalid regular expression: nothing to repeat.
 
 Testing regexp: /a+/gm

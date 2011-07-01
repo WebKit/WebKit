@@ -1,3 +1,53 @@
+2011-07-01  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Lexer error messages are currently appalling
+        https://bugs.webkit.org/show_bug.cgi?id=63340
+
+        Updated expected test results.
+
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/kde/parse-expected.txt:
+        * fast/js/kde/string-1-n-expected.txt:
+        * fast/js/kde/string-2-n-expected.txt:
+        * fast/js/numeric-escapes-in-string-literals-expected.txt:
+        * fast/js/removing-Cf-characters-expected.txt:
+        * fast/regex/non-pattern-characters-expected.txt:
+        * http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt:
+        * loader/reload-subresource-when-type-changes-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A2_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.3_Numeric_Literals/S7.8.3_A6.1_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.3_Numeric_Literals/S7.8.3_A6.1_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.3_Numeric_Literals/S7.8.3_A6.2_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.3_Numeric_Literals/S7.8.3_A6.2_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.1_T4-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.2_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.2_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.2_T3-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.2_T4-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.2_T5-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A7.2_T6-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.2_T1-expected.txt:
+        * sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T1-expected.txt:
+        * sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T2-expected.txt:
+        * sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T1-expected.txt:
+        * sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T2-expected.txt:
+
 2011-07-01  Adam Roben  <aroben@apple.com>
 
         Add Leopard expected failure result for media/media-blocked-by-beforeload.html

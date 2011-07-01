@@ -1,6 +1,6 @@
 S7.3_A2.2_T1
 
-PASS SyntaxError: Unrecognized token '''
+PASS SyntaxError: Unexpected EOF
 
 TEST COMPLETE
 

@@ -1,3 +1,26 @@
+2011-07-01  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Lexer error messages are currently appalling
+        https://bugs.webkit.org/show_bug.cgi?id=63340
+
+        Added error messages for the Lexer. These messages will be displayed
+        instead of the lexer error messages from the parser that are currently
+        shown.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::getInvalidCharMessage):
+        (JSC::Lexer::setCode):
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::lex):
+        (JSC::Lexer::clear):
+        * parser/Lexer.h:
+        (JSC::Lexer::getErrorMessage):
+        (JSC::Lexer::setOffset):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+
 2011-07-01  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

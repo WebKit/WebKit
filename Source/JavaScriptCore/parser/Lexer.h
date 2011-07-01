@@ -69,11 +69,13 @@ namespace JSC {
 
         // Functions for use after parsing.
         bool sawError() const { return m_error; }
+        UString getErrorMessage() const { return m_lexErrorMessage; }
         void clear();
         int currentOffset() { return m_code - m_codeStart; }
         void setOffset(int offset)
         {
             m_error = 0;
+            m_lexErrorMessage = UString();
             m_code = m_codeStart + offset;
             m_buffer8.resize(0);
             m_buffer16.resize(0);
@@ -110,6 +112,7 @@ namespace JSC {
         int getUnicodeCharacter();
         void shiftLineTerminator();
 
+        UString getInvalidCharMessage();
         ALWAYS_INLINE const UChar* currentCharacter() const;
         ALWAYS_INLINE int currentOffset() const;
 
@@ -147,6 +150,7 @@ namespace JSC {
         bool m_isReparsing;
         bool m_atLineStart;
         bool m_error;
+        UString m_lexErrorMessage;
 
         // current and following unicode characters (int to allow for -1 for end-of-file marker)
         int m_current;
