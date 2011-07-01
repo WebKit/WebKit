@@ -965,7 +965,7 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT0);
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT0);
+    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
     loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -992,7 +992,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 
     emitWriteBarrier(regT1, regT2);
 
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT1);
+    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
 }
 
@@ -1013,7 +1013,7 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     
     emitWriteBarrier(regT1, regT2);
 
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT1);
+    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
 }
 
@@ -1021,6 +1021,7 @@ void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
 {
     UNUSED_PARAM(owner);
     UNUSED_PARAM(scratch);
+    ASSERT(owner != scratch);
 }
 
 #endif // USE(JSVALUE64)

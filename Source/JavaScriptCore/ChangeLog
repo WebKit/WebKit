@@ -1,3 +1,59 @@
+2011-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Added empty write barrier stubs in all the right places in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=63764
+        
+        SunSpider thinks this might be a 0.5% speedup. Meh.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::writeBarrier): Le stub.
+
+        (JSC::DFG::JITCodeGenerator::cachedPutById): Don't do anything special
+        for the case where base == scratch, since we now require base and scratch
+        to be not equal, for the sake of the write barrier.
+
+        * dfg/DFGJITCodeGenerator.h: Le stub.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile): Don't reuse the base register
+        as the scratch register, since that's incompatible with the write barrier,
+        which needs a distinct base and scratch.
+        
+        Do put the global object into a register before loading its var storage,
+        since it needs to be in a register for the write barrier to operate on it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier): Second verse, same as the first.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_put_global_var): Deployed offsetOfRegisters() to more
+        places.
+
+        (JSC::JIT::emitWriteBarrier): Added a teeny tiny ASSERT so this function
+        is a little more than meaningless.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_put_global_var): Deployed offsetOfRegisters() to more
+        places.
+
+        (JSC::JIT::emitWriteBarrier): Added a teeny tiny ASSERT so this function
+        is a little more than meaningless.
+
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::offsetOfRegisters): Now used by the JIT, since
+        we put the global object in a register and only then load its var storage
+        by offset.
+
+        (JSC::JIT::emitWriteBarrier):
+
 2011-06-30  Oliver Hunt  <oliver@apple.com>
 
         Fix ARMv6 build

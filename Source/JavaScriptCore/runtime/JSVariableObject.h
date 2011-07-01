@@ -57,6 +57,7 @@ namespace JSC {
         WriteBarrier<Unknown>& registerAt(int index) const { return m_registers[index]; }
 
         WriteBarrier<Unknown>* const * addressOfRegisters() const { return &m_registers; }
+        static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSVariableObject, m_registers); }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {

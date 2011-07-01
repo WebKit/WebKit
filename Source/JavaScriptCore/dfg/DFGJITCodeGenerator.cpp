@@ -368,16 +368,20 @@ void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned 
         unlock(scratchGPR);
 }
 
+void JITCodeGenerator::writeBarrier(GPRReg owner, GPRReg scratch)
+{
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch);
+    ASSERT(owner != scratch);
+}
+
 void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
-    GPRReg slowPathScratch = scratchGPR;
-    
-    if (scratchGPR == baseGPR)
-        slowPathScratch = tryAllocate();
-    
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
+    writeBarrier(baseGPR, scratchGPR);
+
     m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
     JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
 
@@ -418,10 +422,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
     int8_t callToSlowCase = static_cast<int8_t>(m_jit.differenceBetween(functionCall, slowCase));
     int8_t callToDone = static_cast<int8_t>(m_jit.differenceBetween(functionCall, doneLabel));
 
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(valueGPR), static_cast<int8_t>(slowPathScratch));
-
-    if (scratchGPR == baseGPR && slowPathScratch != InvalidGPRReg)
-        unlock(slowPathScratch);
+    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(valueGPR), static_cast<int8_t>(scratchGPR));
 }
 
 #ifndef NDEBUG

@@ -517,6 +517,8 @@ protected:
             ASSERT_NOT_REACHED();
         }
     }
+    
+    void writeBarrier(GPRReg ownerGPR, GPRReg scratchGPR);
 
     void cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());

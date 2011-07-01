@@ -1004,7 +1004,7 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
 
     loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, object)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
 
     emitLoad(index, regT1, regT0, regT2);
     emitStore(dst, regT1, regT0);
@@ -1035,7 +1035,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 
     emitWriteBarrier(regT2, regT3);
 
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_scoped_var), value, regT1, regT0);
 }
@@ -1066,7 +1066,7 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 
     emitWriteBarrier(regT2, regT3);
 
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
@@ -1075,6 +1075,7 @@ void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
 {
     UNUSED_PARAM(owner);
     UNUSED_PARAM(scratch);
+    ASSERT(owner != scratch);
 }
 
 } // namespace JSC

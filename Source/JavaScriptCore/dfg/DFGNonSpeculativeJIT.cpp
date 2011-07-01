@@ -770,7 +770,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case PutById: {
         JSValueOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
-        GPRTemporary scratch(this, base);
+        GPRTemporary scratch(this);
         GPRReg valueGPR = value.gpr();
         GPRReg baseGPR = base.gpr();
         
@@ -785,7 +785,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case PutByIdDirect: {
         JSValueOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
-        GPRTemporary scratch(this, base);
+        GPRTemporary scratch(this);
         GPRReg valueGPR = value.gpr();
         GPRReg baseGPR = base.gpr();
         
@@ -810,11 +810,18 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
     case PutGlobalVar: {
         JSValueOperand value(this, node.child1);
-        GPRTemporary temp(this);
+        GPRTemporary globalObject(this);
+        GPRTemporary scratch(this);
+        
+        GPRReg globalObjectReg = globalObject.gpr();
+        GPRReg scratchReg = scratch.gpr();
 
-        JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
-        m_jit.loadPtr(globalObject->addressOfRegisters(), temp.gpr());
-        m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(temp.gpr(), node.varNumber()));
+        m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectReg);
+
+        writeBarrier(globalObjectReg, scratchReg);
+
+        m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
+        m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(scratchReg, node.varNumber()));
 
         noResult(m_compileIndex);
         break;

@@ -891,13 +891,15 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1);
         SpeculateStrictInt32Operand property(this, node.child2);
         JSValueOperand value(this, node.child3);
-        GPRTemporary storage(this);
+        GPRTemporary scratch(this);
 
-        // Map base, property & value into registers, allocate a register for storage.
+        // Map base, property & value into registers, allocate a scratch register.
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
         GPRReg valueReg = value.gpr();
-        GPRReg storageReg = storage.gpr();
+        GPRReg scratchReg = scratch.gpr();
+
+        writeBarrier(baseReg, scratchReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
@@ -907,16 +909,17 @@ void SpeculativeJIT::compile(Node& node)
         MacroAssembler::Jump withinArrayBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
 
         // Code to handle put beyond array bounds.
-        silentSpillAllRegisters(storageReg, baseReg, propertyReg, valueReg);
+        silentSpillAllRegisters(scratchReg, baseReg, propertyReg, valueReg);
         setupStubArguments(baseReg, propertyReg, valueReg);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationPutByValBeyondArrayBounds);
-        silentFillAllRegisters(storageReg);
+        silentFillAllRegisters(scratchReg);
         JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
 
         withinArrayBounds.link(&m_jit);
 
         // Get the array storage.
+        GPRReg storageReg = scratchReg;
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
         // Check if we're writing to a hole; if so increment m_numValuesInVector.
@@ -945,17 +948,20 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1);
         SpeculateStrictInt32Operand property(this, node.child2);
         JSValueOperand value(this, node.child3);
-        GPRTemporary storage(this, base); // storage may overwrite base.
+        GPRTemporary scratch(this);
+        
+        GPRReg baseReg = base.gpr();
+        GPRReg scratchReg = scratch.gpr();
+
+        writeBarrier(baseReg, scratchReg);
 
         // Get the array storage.
-        GPRReg storageReg = storage.gpr();
-        m_jit.loadPtr(MacroAssembler::Address(base.gpr(), JSArray::storageOffset()), storageReg);
-
-        // Map property & value into registers.
-        GPRReg propertyReg = property.gpr();
-        GPRReg valueReg = value.gpr();
+        GPRReg storageReg = scratchReg;
+        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
         // Store the value to the array.
+        GPRReg propertyReg = property.gpr();
+        GPRReg valueReg = value.gpr();
         m_jit.storePtr(valueReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
 
         noResult(m_compileIndex);
@@ -1048,7 +1054,7 @@ void SpeculativeJIT::compile(Node& node)
     case PutById: {
         SpeculateCellOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
-        GPRTemporary scratch(this, base);
+        GPRTemporary scratch(this);
 
         cachedPutById(base.gpr(), value.gpr(), scratch.gpr(), node.identifierNumber(), NotDirect);
         
@@ -1059,7 +1065,7 @@ void SpeculativeJIT::compile(Node& node)
     case PutByIdDirect: {
         SpeculateCellOperand base(this, node.child1);
         JSValueOperand value(this, node.child2);
-        GPRTemporary scratch(this, base);
+        GPRTemporary scratch(this);
 
         cachedPutById(base.gpr(), value.gpr(), scratch.gpr(), node.identifierNumber(), Direct);
 
@@ -1080,11 +1086,18 @@ void SpeculativeJIT::compile(Node& node)
 
     case PutGlobalVar: {
         JSValueOperand value(this, node.child1);
-        GPRTemporary temp(this);
+        GPRTemporary globalObject(this);
+        GPRTemporary scratch(this);
+        
+        GPRReg globalObjectReg = globalObject.gpr();
+        GPRReg scratchReg = scratch.gpr();
 
-        JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
-        m_jit.loadPtr(globalObject->addressOfRegisters(), temp.gpr());
-        m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(temp.gpr(), node.varNumber()));
+        m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectReg);
+
+        writeBarrier(globalObjectReg, scratchReg);
+
+        m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
+        m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(scratchReg, node.varNumber()));
 
         noResult(m_compileIndex);
         break;
