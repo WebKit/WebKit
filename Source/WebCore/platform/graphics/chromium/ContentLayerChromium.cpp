@@ -92,6 +92,7 @@ PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChrom
 ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_tilingOption(ContentLayerChromium::AutoTile)
+    , m_isMask(false)
 {
 }
 
@@ -165,6 +166,12 @@ IntRect ContentLayerChromium::visibleLayerRect(const IntRect& targetSurfaceRect)
         return targetSurfaceRect;
 
     const IntRect layerBoundRect = layerBounds();
+
+    // Mask layers don't have their own draw transform so we return the entire
+    // layer bounds as the visible rect.
+    if (m_isMask)
+        return layerBoundRect;
+
     const TransformationMatrix transform = tilingTransform();
 
     // Is this layer fully contained within the target surface?
@@ -282,6 +289,7 @@ void ContentLayerChromium::bindContentsTexture()
 void ContentLayerChromium::setIsMask(bool isMask)
 {
     setTilingOption(isMask ? NeverTile : AutoTile);
+    m_isMask = isMask;
 }
 
 static void writeIndent(TextStream& ts, int indent)

@@ -98,6 +98,13 @@ bool RenderSurfaceChromium::prepareContentsTexture()
     return true;
 }
 
+void RenderSurfaceChromium::releaseContentsTexture()
+{
+    if (m_skipsDraw || !m_contentsTexture)
+        return;
+    m_contentsTexture->unreserve();
+}
+
 void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
 {
     GraphicsContext3D* context3D = layerRenderer()->context();

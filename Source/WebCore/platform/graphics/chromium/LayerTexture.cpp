@@ -71,6 +71,14 @@ bool LayerTexture::reserve(const IntSize& size, unsigned format)
     return m_textureId;
 }
 
+void LayerTexture::unreserve()
+{
+    if (!m_token)
+        return;
+
+    m_textureManager->unprotectTexture(m_token);
+}
+
 void LayerTexture::bindTexture()
 {
     ASSERT(m_textureManager->hasTexture(m_token));

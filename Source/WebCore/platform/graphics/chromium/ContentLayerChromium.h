@@ -85,6 +85,7 @@ protected:
     OwnPtr<LayerTextureUpdater> m_textureUpdater;
     OwnPtr<LayerTilerChromium> m_tiler;
     TilingOption m_tilingOption;
+    bool m_isMask;
 };
 
 }

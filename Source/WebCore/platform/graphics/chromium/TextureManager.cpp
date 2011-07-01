@@ -84,6 +84,13 @@ void TextureManager::protectTexture(TextureToken token)
     m_textures.add(token, info);
 }
 
+void TextureManager::unprotectTexture(TextureToken token)
+{
+    TextureMap::iterator it = m_textures.find(token);
+    if (it != m_textures.end())
+        it->second.isProtected = false;
+}
+
 void TextureManager::unprotectAllTextures()
 {
     for (TextureMap::iterator it = m_textures.begin(); it != m_textures.end(); ++it)

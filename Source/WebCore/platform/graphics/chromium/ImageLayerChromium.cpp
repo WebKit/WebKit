@@ -140,7 +140,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::paintContentsIfDirty(const IntRect&)
+void ImageLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect)
 {
     ASSERT(layerRenderer());
 
@@ -154,8 +154,12 @@ void ImageLayerChromium::paintContentsIfDirty(const IntRect&)
             m_tiler->invalidateRect(paintRect);
             m_dirtyRect = IntRect();
         }
-        m_tiler->prepareToUpdate(paintRect, m_textureUpdater.get());
     }
+    IntRect layerRect = visibleLayerRect(targetSurfaceRect);
+    if (layerRect.isEmpty())
+        return;
+
+    m_tiler->prepareToUpdate(layerRect, m_textureUpdater.get());
 }
 
 void ImageLayerChromium::updateCompositorResources()

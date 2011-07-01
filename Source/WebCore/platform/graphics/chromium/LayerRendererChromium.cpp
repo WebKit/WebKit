@@ -401,9 +401,8 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
               continue;
 
             IntRect targetSurfaceRect = ccLayerImpl->targetRenderSurface() ? ccLayerImpl->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
-            IntRect scissorRect = layer->ccLayerImpl()->scissorRect();
-            if (!scissorRect.isEmpty())
-                targetSurfaceRect.intersect(scissorRect);
+            if (layer->ccLayerImpl()->usesLayerScissor())
+                targetSurfaceRect.intersect(layer->ccLayerImpl()->scissorRect());
 
             if (layer->drawsContent())
                 layer->paintContentsIfDirty(targetSurfaceRect);
@@ -949,29 +948,25 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
 {
     if (layer->renderSurface() && layer->renderSurface() != targetSurface) {
         layer->renderSurface()->draw(layer->getDrawRect());
+        layer->renderSurface()->releaseContentsTexture();
         return;
     }
 
     if (!layer->drawsContent())
         return;
 
-    if (layer->bounds().isEmpty()) {
-        layer->unreserveContentsTexture();
+    if (layer->bounds().isEmpty())
         return;
-    }
 
     if (layer->usesLayerScissor())
         setScissorToRect(layer->scissorRect());
     else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-    IntRect targetSurfaceRect = m_currentRenderSurface ? m_currentRenderSurface->contentRect() : m_defaultRenderSurface->contentRect();
-
-    // Check if the layer falls within the visible bounds of the page.
-    IntRect layerRect = layer->getDrawRect();
-    bool isLayerVisible = targetSurfaceRect.intersects(layerRect);
-    if (!isLayerVisible) {
-        layer->unreserveContentsTexture();
-        return;
+    
+    IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
+    if (layer->usesLayerScissor()) {
+        IntRect scissorRect = layer->scissorRect();
+        targetSurfaceRect.intersect(scissorRect);
     }
 
     // FIXME: Need to take into account the commulative render surface transforms all the way from
@@ -986,10 +981,8 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
         FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
         FloatPoint3D zAxis = xAxis.cross(yAxis);
-        if (zAxis.z() < 0) {
-            layer->unreserveContentsTexture();
+        if (zAxis.z() < 0)
             return;
-        }
     }
 
     layer->draw(targetSurfaceRect);

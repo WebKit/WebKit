@@ -1,3 +1,44 @@
+2011-07-01  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Reserve all tile textures at layer update time to guarantee
+        that they will be available at draw time.
+        https://bugs.webkit.org/show_bug.cgi?id=63760
+
+        In addition, this patch unreserves textures used by RenderSurface's
+        right after the RenderSurface has been used to free up memory for
+        subsequent RenderSurfaces.
+        
+        This patch also "fixes" the pages that display a blue background when
+        running out of texture memory as the root layer tiles get reserved first
+        and are guaranteed to get textures.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::visibleLayerRect):
+        (WebCore::ContentLayerChromium::setIsMask):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerTexture.cpp:
+        (WebCore::LayerTexture::unreserve):
+        * platform/graphics/chromium/LayerTexture.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::prepareToUpdate):
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::drawTiles):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::releaseContentsTexture):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::unprotectTexture):
+        * platform/graphics/chromium/TextureManager.h:
+
 2011-07-01  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

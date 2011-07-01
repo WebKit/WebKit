@@ -51,6 +51,7 @@ public:
     ~RenderSurfaceChromium();
 
     bool prepareContentsTexture();
+    void releaseContentsTexture();
     void cleanupResources();
     void draw(const IntRect& targetSurfaceRect);
 

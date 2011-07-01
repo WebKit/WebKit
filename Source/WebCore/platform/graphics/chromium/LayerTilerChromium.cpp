@@ -228,7 +228,9 @@ void LayerTilerChromium::invalidateEntireLayer()
 
 void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextureUpdater* textureUpdater)
 {
-    if (m_skipsDraw || contentRect.isEmpty()) {
+    m_skipsDraw = false;
+
+    if (contentRect.isEmpty()) {
         m_updateRect = IntRect();
         return;
     }
@@ -255,8 +257,13 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
                 tile = createTile(i, j);
             if (!tile->texture()->isValid(m_tileSize, m_textureFormat))
                 tile->m_dirtyLayerRect = tileLayerRect(tile);
-            else
-                tile->texture()->reserve(m_tileSize, m_textureFormat);
+
+            if (!tile->texture()->reserve(m_tileSize, m_textureFormat)) {
+                m_skipsDraw = true;
+                reset();
+                return;
+            }
+
             dirtyLayerRect.unite(tile->m_dirtyLayerRect);
         }
     }
@@ -276,7 +283,7 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
 void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
-    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY() || m_updateRect.isEmpty() || !numTiles())
+    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY() || m_updateRect.isEmpty() || !numTiles() || m_skipsDraw)
         return;
 
     GraphicsContext3D* context = layerRendererContext();
@@ -301,13 +308,7 @@ void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
             if (sourceRect.isEmpty())
                 continue;
 
-            if (!tile->texture()->isReserved()) {
-                if (!tile->texture()->reserve(m_tileSize, m_textureFormat)) {
-                    m_skipsDraw = true;
-                    reset();
-                    return;
-                }
-            }
+            ASSERT(tile->texture()->isReserved());
 
             // Calculate tile-space rectangle to upload into.
             IntRect destRect(IntPoint(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y()), sourceRect.size());
@@ -388,6 +389,8 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             Tile* tile = tileAt(i, j);
             if (!tile)
                 continue;
+
+            ASSERT(tile->texture()->isReserved());
 
             tile->texture()->bindTexture();
 
