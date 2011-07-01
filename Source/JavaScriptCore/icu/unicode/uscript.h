@@ -220,5 +220,3 @@ U_STABLE UScriptCode  U_EXPORT2
 uscript_getScript(UChar32 codepoint, UErrorCode *err);
 
 #endif
-
-

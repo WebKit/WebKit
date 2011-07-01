@@ -31,7 +31,10 @@
 #include "FontRenderingMode.h"
 #include "KURL.h"
 #include "Timer.h"
+#include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringHash.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
@@ -51,28 +54,39 @@ namespace WebCore {
         TextDirectionSubmenuAlwaysIncluded
     };
 
+    // UScriptCode uses -1 and 0 for UScriptInvalidCode and UScriptCommon.
+    // We need to use -2 and -3 for empty value and deleted value.
+    struct UScriptCodeHashTraits : WTF::GenericHashTraits<int> {
+        static const bool emptyValueIsZero = false;
+        static int emptyValue() { return -2; }
+        static void constructDeletedValue(int& slot) { slot = -3; }
+        static bool isDeletedValue(int value) { return value == -3; }
+    };
+
+    typedef HashMap<int, AtomicString, DefaultHash<int>::Hash, UScriptCodeHashTraits> ScriptFontFamilyMap;
+
     class Settings {
         WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
     public:
         Settings(Page*);
 
-        void setStandardFontFamily(const AtomicString&);
-        const AtomicString& standardFontFamily() const { return m_standardFontFamily; }
+        void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-        void setFixedFontFamily(const AtomicString&);
-        const AtomicString& fixedFontFamily() const { return m_fixedFontFamily; }
+        void setFixedFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-        void setSerifFontFamily(const AtomicString&);
-        const AtomicString& serifFontFamily() const { return m_serifFontFamily; }
+        void setSerifFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-        void setSansSerifFontFamily(const AtomicString&);
-        const AtomicString& sansSerifFontFamily() const { return m_sansSerifFontFamily; }
+        void setSansSerifFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-        void setCursiveFontFamily(const AtomicString&);
-        const AtomicString& cursiveFontFamily() const { return m_cursiveFontFamily; }
+        void setCursiveFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-        void setFantasyFontFamily(const AtomicString&);
-        const AtomicString& fantasyFontFamily() const { return m_fantasyFontFamily; }
+        void setFantasyFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
         void setMinimumFontSize(int);
         int minimumFontSize() const { return m_minimumFontSize; }
@@ -425,12 +439,12 @@ namespace WebCore {
         String m_ftpDirectoryTemplatePath;
         String m_localStorageDatabasePath;
         KURL m_userStyleSheetLocation;
-        AtomicString m_standardFontFamily;
-        AtomicString m_fixedFontFamily;
-        AtomicString m_serifFontFamily;
-        AtomicString m_sansSerifFontFamily;
-        AtomicString m_cursiveFontFamily;
-        AtomicString m_fantasyFontFamily;
+        ScriptFontFamilyMap m_standardFontFamilyMap;
+        ScriptFontFamilyMap m_serifFontFamilyMap;
+        ScriptFontFamilyMap m_fixedFontFamilyMap;
+        ScriptFontFamilyMap m_sansSerifFontFamilyMap;
+        ScriptFontFamilyMap m_cursiveFontFamilyMap;
+        ScriptFontFamilyMap m_fantasyFontFamilyMap;
         EditableLinkBehavior m_editableLinkBehavior;
         TextDirectionSubmenuInclusionBehavior m_textDirectionSubmenuInclusionBehavior;
         int m_minimumFontSize;

@@ -1,3 +1,14 @@
+2011-07-01  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add uscript.h to icu/unicode to get JavaScriptGlue get built. The same
+        file was added to JavaScriptCore/icu/unicode.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20797
+
+        * icu/unicode/uscript.h: Added.
+
 2011-06-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89594.

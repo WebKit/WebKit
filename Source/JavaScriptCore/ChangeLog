@@ -1,3 +1,24 @@
+2011-07-01  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add ScriptCodesFromICU.h to wtf/unicode and make necessary changes in
+        build files for ports not using ICU.
+        Add icu/unicode/uscript.h for ports using ICU. It's taken from 
+        ICU 3.6 (the version used on Mac OS 10.5)
+
+        http://bugs.webkit.org/show_bug.cgi?id=20797
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * icu/unicode/uscript.h: Added for UScriptCode enum.
+        * wtf/unicode/ScriptCodesFromICU.h: UScriptCode enum added.
+        * wtf/unicode/icu/UnicodeIcu.h:
+        * wtf/unicode/brew/UnicodeBrew.h:
+        * wtf/unicode/glib/UnicodeGLib.h:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        * wtf/unicode/wince/UnicodeWinCE.h:
+
 2011-07-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
