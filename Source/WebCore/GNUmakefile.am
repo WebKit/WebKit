@@ -603,6 +603,14 @@ FEATURE_DEFINES += ENABLE_REGISTER_PROTOCOL_HANDLER=1
 webcore_cppflags += -DENABLE_REGISTER_PROTOCOL_HANDLER=1
 endif  # END ENABLE_REGISTER_PROTOCOL_HANDLER
 
+# ---
+# DeviceOrientation support
+# ---
+if ENABLE_DEVICE_ORIENTATION
+FEATURE_DEFINES += ENABLE_DEVICE_ORIENTATION=1
+webcore_cppflags += -DENABLE_DEVICE_ORIENTATION=1
+endif  # END ENABLE_DEVICE_ORIENTATION
+
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in

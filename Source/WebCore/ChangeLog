@@ -1,3 +1,14 @@
+2011-07-01  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add DeviceOrientation feature
+        https://bugs.webkit.org/show_bug.cgi?id=63720
+
+        Add DeviceMotionClientGtk.cpp and DeviceOrientationClientGtk.cpp to WebKitGtk+ build.
+
+        * GNUmakefile.am: Add DeviceMotionClientGtk.cpp, DeviceOrientationClientGtk.cpp.
+
 2011-07-01  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.

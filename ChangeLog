@@ -1,3 +1,14 @@
+2011-07-01  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add DeviceOrientation feature
+        https://bugs.webkit.org/show_bug.cgi?id=63720
+
+        Add configure option to enable/disable DeviceOrientation feature.
+
+        * configure.ac:
+
 2011-06-28  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

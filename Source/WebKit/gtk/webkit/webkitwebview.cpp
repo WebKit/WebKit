@@ -108,6 +108,11 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(DEVICE_ORIENTATION)
+#include "DeviceMotionClientGtk.h"
+#include "DeviceOrientationClientGtk.h"
+#endif
+
 /**
  * SECTION:webkitwebview
  * @short_description: The central class of the WebKitGTK+ API
@@ -3375,6 +3380,12 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.editorClient = new WebKit::EditorClient(webView);
     pageClients.dragClient = new WebKit::DragClient(webView);
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
+
+#if ENABLE(DEVICE_ORIENTATION)
+    pageClients.deviceMotionClient = static_cast<WebCore::DeviceMotionClient*>(new DeviceMotionClientGtk);
+    pageClients.deviceOrientationClient = static_cast<WebCore::DeviceOrientationClient*>(new DeviceOrientationClientGtk);
+#endif
+
     priv->corePage = new Page(pageClients);
 
     // Pages within a same session need to be linked together otherwise some functionalities such

@@ -928,6 +928,14 @@ AC_ARG_ENABLE(register_protocol_handler,
               [],[enable_register_protocol_handler="no"])
 AC_MSG_RESULT([$enable_register_protocol_handler])
 
+# check whether to enable DeviceOrientation support
+AC_MSG_CHECKING([whether to enable DeviceOrientation])
+AC_ARG_ENABLE(device_orientation,
+              AC_HELP_STRING([--enable-device-orientation],
+                             [enable support for DeviceOrientation (experimental and incomplete) [default=no]]),
+              [],[enable_device_orientation="no"])
+AC_MSG_RESULT([$enable_device_orientation])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1195,6 +1203,7 @@ AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
 AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
 AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protocol_handler" = "yes"])
+AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1245,6 +1254,7 @@ Features:
  3D Rendering                                             : $enable_3d_rendering
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
+ DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  JIT compilation                                          : $enable_jit

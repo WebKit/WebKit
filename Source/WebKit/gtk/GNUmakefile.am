@@ -182,6 +182,10 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/DeviceMotionClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/DeviceMotionClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/DeviceOrientationClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/DeviceOrientationClientGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
