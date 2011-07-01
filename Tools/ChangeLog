@@ -1,3 +1,13 @@
+2011-07-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by Adam Roben.
+
+        [CSSRegions] Add build slave
+        https://bugs.webkit.org/show_bug.cgi?id=62372
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        Add an entry for a release build of Mac.
+
 2011-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90213.
