@@ -1,3 +1,11 @@
+2011-06-30  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed.
+
+        Temporarily disabling WTF_USE_WEBAUDIO_FFMPEG due to FFmpeg update.
+
+        * features.gypi:
+
 2011-06-30  John Bates  <jbates@google.com>
 
         Reviewed by James Robinson.
