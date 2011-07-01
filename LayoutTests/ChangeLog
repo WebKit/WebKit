@@ -1,3 +1,15 @@
+2011-06-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: DidFinishLoadForFrame is never called on iframes when loads are 
+        cancelled by willSendRequest
+        https://bugs.webkit.org/show_bug.cgi?id=63753
+        
+        Unskip WebKit2 tests that now pass.
+
+        * platform/wk2/Skipped:
+
 2011-07-01  Adam Roben  <aroben@apple.com>
 
         Skip one asserting and one timing-out test on Windows

@@ -1,3 +1,17 @@
+2011-06-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: DidFinishLoadForFrame is never called on iframes when loads are 
+        cancelled by willSendRequest
+        https://bugs.webkit.org/show_bug.cgi?id=63753
+        
+        When deciding a policy for a null request, call the callback that was passed
+        to WebKit2 and say that we used the loader.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2011-07-01  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

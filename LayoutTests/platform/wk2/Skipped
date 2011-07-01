@@ -2048,10 +2048,6 @@ editing/pasteboard/copy-standalone-image.html
 # Mysterious failure after enabling paste tests
 platform/mac/editing/pasteboard/text-precomposed.html
 
-# Unexplained failures after implementing willSendRequestReturnsNull
-fast/loader/onload-willSendRequest-null-for-frame.html
-plugins/plugin-document-willSendRequest-null.html
-
 # An empty layer is missing.
 platform/mac/fast/forms/input-appearance-spinbutton-up.html
 

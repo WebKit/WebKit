@@ -601,8 +601,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction f
     if (!webPage)
         return;
 
-    if (!request.url().string())
+    if (!request.url().string()) {
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
         return;
+    }
 
     RefPtr<APIObject> userData;
 
