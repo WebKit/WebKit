@@ -1,3 +1,27 @@
+2011-07-01  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Simplify MailQuirksUserScript.js
+        https://bugs.webkit.org/show_bug.cgi?id=63800
+        
+        MailQuirksUserScript.js is injected into WebViews in Mail.app on
+        Leopard to resolve an incompatibility between it and the HTML5 parser.
+        It did so by taking all nodes in the document between <html> and <body>
+        and moving them to be children of <body>. This maintains Mail.app's
+        assumption that document.firstChild.firstChild == document.body.
+        
+        While this script fixed a specific issue with the Signature panel in
+        Mail.app, it caused regressions in other WebViews. Since the issue with
+        the Signature panel is with the empty <head> node implicitly created by
+        the parser, we can simplify this script by removing this implicit
+        <head> in the case it has no attributes and no children. This fixes the
+        Signature panel without affecting other WebViews that have non-trivial
+        <head> nodes.
+
+        * Misc/MailQuirksUserScript.js: If <head> exists but has no attributes
+        and no children, remove it.
+
 2011-06-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

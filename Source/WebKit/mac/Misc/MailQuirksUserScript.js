@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,29 +30,11 @@
  */
 
 (function() {
-    function childrenBefore(parent, stopAt)
-    {
-        var children = [];
-        for (var child = parent.firstChild; child != stopAt; child = child.nextSibling)
-            children.push(child);
-        return children;
-    }
-
-    // If html or body is missing, Mail.app's assumption that
-    // document.firstChild.firstChild == document.body is wrong anyway,
-    // so return null to not move anything.
-    if (!document.documentElement || !document.body)
-        return;
-
-    var children = childrenBefore(document, document.documentElement);
-    children = children.concat(childrenBefore(document.documentElement, document.body));
-
-    for (var i = children.length - 1; i >= 0; i--) {
-        var child = children[i];
-        // It's not possible to move doctype nodes into the body, so just remove them.
-        if (child.nodeType == child.DOCUMENT_TYPE_NODE)
-            child.parentNode.removeChild(child);
-        else
-            document.body.insertBefore(child, document.body.firstChild);
-    }
+    // The Mail.app signature panel makes the assumption that
+    // document.firstChild.firstChild == document.body. This is no longer true
+    // now that WebKit implements the HTML5 parser, which creates an implicit
+    // <head> node if not explicitly specified in content. Remove this implicit
+    // <head> so that Mail.app's assumption remains true.
+    if (document.head && !document.head.childNodes.length && !document.head.attributes.length)
+        document.documentElement.removeChild(document.head);
 })();
