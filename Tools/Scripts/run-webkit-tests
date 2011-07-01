@@ -55,28 +55,32 @@ sub runningOnBuildBot()
     return $isBuildBotUser{$ENV{"USER"}};
 }
 
+sub usingWebKit2()
+{
+    # If either -2 or --webkit-test-runner is passed, we're supposed to use WebKit2.
+    # NRWT's WebKit2 support is still a work in progress:
+    # https://bugs.webkit.org/show_bug.cgi?id=56729
+    return grep(/(-2|--webkit-test-runner)/, @ARGV);
+}
+
 sub useNewRunWebKitTests()
 {
     # Change this check to control which platforms use
     # new-run-webkit-tests by default.
     # Example: return runningOnBuildBot() && isLeopard();
     # would enable new-run-webkit-tests on only the leopard buildbots.
-    return 0;
+    return (isSnowLeopard() and !usingWebKit2());
 }
 
 my $harnessName = "old-run-webkit-tests";
 
 if (useNewRunWebKitTests()) {
     $harnessName = "new-run-webkit-tests";
+    push(@ARGV, "--child-processes=1");
+    print "Running new-run-webkit-tests with one child process.\n";
+    print "For more parallelism, run new-run-webkit-tests directly.\n";
     if (runningOnBuildBot()) {
         push(@ARGV, "--verbose");
-        # old-run-webkit-tests treats --results-directory as $CWD relative.
-        # new-run-webkit-tests treats --results-directory as build directory relative.
-        # Override the passed in --results-directory by appending a new one
-        # (later arguments override earlier ones in Python's optparse).
-        push(@ARGV, "--results-directory");
-        # The buildbot always uses $SRCDIR/layout-test-results, hardcode it:
-        push(@ARGV, sourceDir() . "/layout-test-results");
     }
 }
 
