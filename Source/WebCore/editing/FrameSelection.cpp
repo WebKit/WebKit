@@ -100,7 +100,6 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
 {
-    setIsDirectional(false);
 }
 
 void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
@@ -151,15 +150,20 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
         updateCaretRect(document, m_position);
 }
 
-void FrameSelection::setSelection(const VisibleSelection& s, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
+static inline bool shouldAlwaysUseDirectionalSelection(Frame* frame)
 {
-    m_granularity = granularity;
+    return !frame || frame->editor()->behavior().shouldConsiderSelectionAsDirectional();
+}
 
+void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
+{
     bool closeTyping = options & CloseTyping;
     bool shouldClearTypingStyle = options & ClearTypingStyle;
     EUserTriggered userTriggered = selectionOptionsToUserTriggered(options);
 
-    setIsDirectional(directionalityPolicy == MakeDirectionalSelection);
+    VisibleSelection s = newSelection;
+    if (shouldAlwaysUseDirectionalSelection(m_frame))
+        s.setIsDirectional(true);
 
     if (!m_frame) {
         m_selection = s;
@@ -171,10 +175,12 @@ void FrameSelection::setSelection(const VisibleSelection& s, SetSelectionOptions
     if (s.base().anchorNode()) {
         Document* document = s.base().anchorNode()->document();
         if (document && document->frame() && document->frame() != m_frame && document != m_frame->document()) {
-            document->frame()->selection()->setSelection(s, options);
+            document->frame()->selection()->setSelection(s, options, align, granularity);
             return;
         }
     }
+
+    m_granularity = granularity;
 
     if (closeTyping)
         TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
@@ -357,11 +363,6 @@ void FrameSelection::textWillBeReplaced(CharacterData* node, unsigned offset, un
     respondToNodeModification(node, shouldRemoveBase, shouldRemoveExtent, shouldRemoveStart, shouldRemoveEnd);
 }
 
-void FrameSelection::setIsDirectional(bool isDirectional)
-{
-    m_isDirectional = !m_frame || m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional() || isDirectional;
-}
-
 TextDirection FrameSelection::directionOfEnclosingBlock()
 {
     return WebCore::directionOfEnclosingBlock(m_selection.extent());
@@ -377,7 +378,7 @@ void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direct
 
     bool baseIsStart = true;
 
-    if (m_isDirectional) {
+    if (m_selection.isDirectional()) {
         // Make base and extent match start and end so we extend the user-visible selection.
         // This only matters for cases where base and extend point to different positions than
         // start and end (e.g. after a double-click to select a word).
@@ -782,7 +783,6 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     if (userTriggered == UserTriggered) {
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
-        trialFrameSelection.setIsDirectional(m_isDirectional);
         trialFrameSelection.modify(alter, direction, granularity, NotUserTriggered);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
@@ -863,7 +863,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
 
     setCaretRectNeedsUpdate();
 
-    setIsDirectional(alter == AlterationExtend);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_frame) || alter == AlterationExtend);
 
     return true;
 }
@@ -886,7 +886,6 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     if (userTriggered == UserTriggered) {
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
-        trialFrameSelection.setIsDirectional(m_isDirectional);
         trialFrameSelection.modify(alter, verticalDistance, direction, NotUserTriggered);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
@@ -952,7 +951,7 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     if (userTriggered == UserTriggered)
         m_granularity = CharacterGranularity;
 
-    setIsDirectional(alter == AlterationExtend);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_frame) || alter == AlterationExtend);
 
     return true;
 }

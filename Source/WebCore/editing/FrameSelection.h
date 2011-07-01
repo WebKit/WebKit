@@ -46,7 +46,6 @@ class RenderView;
 class Settings;
 class VisiblePosition;
 
-enum DirectionalityPolicy { MakeNonDirectionalSelection, MakeDirectionalSelection };
 enum EUserTriggered { NotUserTriggered = 0, UserTriggered = 1 };
 
 class CaretBase {
@@ -135,8 +134,8 @@ public:
     void moveTo(const Position&, const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
     const VisibleSelection& selection() const { return m_selection; }
-    void setSelection(const VisibleSelection&, SetSelectionOptions = CloseTyping | ClearTypingStyle, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity, DirectionalityPolicy = MakeDirectionalSelection);
-    void setSelection(const VisibleSelection& selection, TextGranularity granularity, DirectionalityPolicy directionality = MakeDirectionalSelection) { setSelection(selection, CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity, directionality); }
+    void setSelection(const VisibleSelection&, SetSelectionOptions = CloseTyping | ClearTypingStyle, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
+    void setSelection(const VisibleSelection& selection, TextGranularity granularity) { setSelection(selection, CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity); }
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
@@ -179,7 +178,6 @@ public:
     IntRect absoluteCaretBounds();
     void setCaretRectNeedsUpdate() { CaretBase::setCaretRectNeedsUpdate(); }
 
-    void setIsDirectional(bool);
     void willBeModified(EAlteration, SelectionDirection);
 
     bool isNone() const { return m_selection.isNone(); }
@@ -286,12 +284,10 @@ private:
     Timer<FrameSelection> m_caretBlinkTimer;
     IntRect m_absCaretBounds; // absolute bounding rect for the caret
     IntRect m_absoluteCaretRepaintBounds;
-    bool m_absCaretBoundsDirty;
-    bool m_caretPaint;
-
-    bool m_isDirectional;
-    bool m_isCaretBlinkingSuspended;
-    bool m_focused;
+    bool m_absCaretBoundsDirty : 1;
+    bool m_caretPaint : 1;
+    bool m_isCaretBlinkingSuspended : 1;
+    bool m_focused : 1;
 };
 
 inline EditingStyle* FrameSelection::typingStyle() const

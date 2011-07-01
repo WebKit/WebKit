@@ -1,3 +1,51 @@
+2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Move m_isDirectional from FrameSelection to VisibleSelection
+        https://bugs.webkit.org/show_bug.cgi?id=63473
+
+        Added a test to ensure WebKit preserves non-directional selection after undo on Mac.
+
+        The directionality of selection is still lost after undoing DeleteSelectionCommand or TypingCommand
+        and this will be fixed in follow up patches.
+
+        * editing/deleting/delete-br-011-expected.txt:
+        * editing/selection/after-line-break-expected.txt:
+        * editing/selection/anchor-focus2-expected.txt:
+        * editing/selection/anchor-focus3-expected.txt:
+        * editing/selection/directionality-after-undo-replace-expected.txt: Added.
+        * editing/selection/directionality-after-undo-replace.html: Added.
+        * platform/mac/editing/deleting/delete-br-002-expected.txt:
+        * platform/mac/editing/deleting/delete-br-004-expected.txt:
+        * platform/mac/editing/deleting/delete-br-005-expected.txt:
+        * platform/mac/editing/deleting/delete-br-006-expected.txt:
+        * platform/mac/editing/deleting/delete-br-009-expected.txt:
+        * platform/mac/editing/deleting/delete-br-010-expected.txt:
+        * platform/mac/editing/deleting/smart-delete-002-expected.txt:
+        * platform/mac/editing/inserting/insert-3800346-fix-expected.txt:
+        * platform/mac/editing/inserting/insert-at-end-01-expected.txt:
+        * platform/mac/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/mac/editing/inserting/insert-div-010-expected.txt:
+        * platform/mac/editing/inserting/insert-div-013-expected.txt:
+        * platform/mac/editing/inserting/insert-div-015-expected.txt:
+        * platform/mac/editing/inserting/insert-div-019-expected.txt:
+        * platform/mac/editing/inserting/insert-paragraph-03-expected.txt:
+        * platform/mac/editing/pasteboard/3976872-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-014-expected.txt:
+        * platform/mac/editing/selection/4932260-1-expected.txt:
+        * platform/mac/editing/selection/expanding-selections-expected.txt:
+        * platform/mac/editing/selection/expanding-selections2-expected.txt:
+        * platform/mac/editing/selection/fake-drag-expected.txt:
+        * platform/mac/editing/selection/move-by-word-001-expected.txt:
+        * platform/mac/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-008-expected.txt:
+        * platform/mac/editing/undo/4063751-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-expected.txt:
+
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
         Add more Chromium flaky expectations.

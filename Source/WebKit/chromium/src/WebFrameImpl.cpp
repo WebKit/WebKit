@@ -1286,8 +1286,7 @@ void WebFrameImpl::selectRange(const WebPoint& start, const WebPoint& end)
                                visiblePositionForWindowPoint(end));
 
     if (frame()->selection()->shouldChangeSelection(selection))
-        frame()->selection()->setSelection(selection, CharacterGranularity,
-                                           MakeNonDirectionalSelection);
+        frame()->selection()->setSelection(selection, CharacterGranularity);
 }
 
 VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& point)

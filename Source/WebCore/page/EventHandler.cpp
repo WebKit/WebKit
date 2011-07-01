@@ -277,8 +277,13 @@ static void setSelectionIfNeeded(FrameSelection* selection, const VisibleSelecti
 static void setNonDirectionalSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& newSelection, TextGranularity granularity)
 {
     ASSERT(selection);
-    if (selection->selection() != newSelection && selection->shouldChangeSelection(newSelection))
-        selection->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
+    if (selection->selection() == newSelection || !selection->shouldChangeSelection(newSelection))
+        return;
+
+    VisibleSelection newNonDirectionalSelection = newSelection;
+    newNonDirectionalSelection.setIsDirectional(false);
+
+    selection->setSelection(newNonDirectionalSelection, granularity);
 }
 
 static inline bool dispatchSelectStart(Node* node)
@@ -409,13 +414,11 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     if (visiblePos.isNull())
         visiblePos = VisiblePosition(firstPositionInOrBeforeNode(innerNode), DOWNSTREAM);
     Position pos = visiblePos.deepEquivalent();
-    
+
     VisibleSelection newSelection = m_frame->selection()->selection();
     TextGranularity granularity = CharacterGranularity;
 
     if (extendSelection && newSelection.isCaretOrRange()) {
-        m_frame->selection()->setIsDirectional(false);
-        
         ASSERT(m_frame->settings());
         if (m_frame->settings()->editingBehaviorType() == EditingMacBehavior) {
             // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection
