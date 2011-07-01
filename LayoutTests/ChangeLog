@@ -1,5 +1,13 @@
 2011-07-01  Adam Roben  <aroben@apple.com>
 
+        Land new expected (failure?) results for an accessibility test on Windows
+
+        The failure is tracked by <http://webkit.org/b/63811>.
+
+        * platform/win/accessibility/aria-labelledby-overrides-aria-label-expected.txt:
+
+2011-07-01  Adam Roben  <aroben@apple.com>
+
         Update expected results after r90159
 
         Fixes <http://webkit.org/b/63810> REGRESSION (r90159): fast/events/window-onerror5.html
