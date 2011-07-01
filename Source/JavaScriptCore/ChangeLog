@@ -1,3 +1,15 @@
+2011-07-01  Adam Roben  <aroben@apple.com>
+
+        Roll out r90194
+        http://trac.webkit.org/changeset/90194
+        https://bugs.webkit.org/show_bug.cgi?id=63778
+
+        Fixes <http://webkit.org/b/63812> REGRESSION (r90194): Multiple tests intermittently failing
+        assertions in WriteBarrierBase<JSC::Structure>::get
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::~JSCell):
+
 2011-06-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
