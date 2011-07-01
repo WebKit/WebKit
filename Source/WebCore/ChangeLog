@@ -1,3 +1,72 @@
+2011-07-01  Levi Weintraub  <leviw@chromium.org>
+
+        Switch overflow and collapsedMargins to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63840
+
+        Reviewed by Eric Seidel.
+
+        Switching overflow and collapsedMargins over to the new layout unit abstraction.
+
+        Also removing an unused function: blockDirectionOverflow
+
+        No new tests, no functionality changes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapsedMarginBeforeForChild):
+        (WebCore::RenderBlock::collapsedMarginAfterForChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::collapsedMarginBefore):
+        (WebCore::RenderBlock::collapsedMarginAfter):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::addVisualOverflow):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::layoutOverflowRect):
+        (WebCore::RenderBox::minYLayoutOverflow):
+        (WebCore::RenderBox::maxYLayoutOverflow):
+        (WebCore::RenderBox::minXLayoutOverflow):
+        (WebCore::RenderBox::maxXLayoutOverflow):
+        (WebCore::RenderBox::maxLayoutOverflow):
+        (WebCore::RenderBox::logicalLeftLayoutOverflow):
+        (WebCore::RenderBox::logicalRightLayoutOverflow):
+        (WebCore::RenderBox::visualOverflowRect):
+        (WebCore::RenderBox::minYVisualOverflow):
+        (WebCore::RenderBox::maxYVisualOverflow):
+        (WebCore::RenderBox::minXVisualOverflow):
+        (WebCore::RenderBox::maxXVisualOverflow):
+        (WebCore::RenderBox::logicalLeftVisualOverflow):
+        (WebCore::RenderBox::logicalRightVisualOverflow):
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::collapsedMarginBefore):
+        (WebCore::RenderBox::collapsedMarginAfter):
+        * rendering/RenderOverflow.h:
+        (WebCore::RenderOverflow::RenderOverflow):
+        (WebCore::RenderOverflow::minYLayoutOverflow):
+        (WebCore::RenderOverflow::maxYLayoutOverflow):
+        (WebCore::RenderOverflow::minXLayoutOverflow):
+        (WebCore::RenderOverflow::maxXLayoutOverflow):
+        (WebCore::RenderOverflow::minYVisualOverflow):
+        (WebCore::RenderOverflow::maxYVisualOverflow):
+        (WebCore::RenderOverflow::minXVisualOverflow):
+        (WebCore::RenderOverflow::maxXVisualOverflow):
+        (WebCore::RenderOverflow::setMinYLayoutOverflow):
+        (WebCore::RenderOverflow::setMaxYLayoutOverflow):
+        (WebCore::RenderOverflow::setMinXLayoutOverflow):
+        (WebCore::RenderOverflow::setMaxXLayoutOverflow):
+        (WebCore::RenderOverflow::setMinYVisualOverflow):
+        (WebCore::RenderOverflow::setMaxYVisualOverflow):
+        (WebCore::RenderOverflow::setMinXVisualOverflow):
+        (WebCore::RenderOverflow::setMaxXVisualOverflow):
+        (WebCore::RenderOverflow::layoutOverflowRect):
+        (WebCore::RenderOverflow::visualOverflowRect):
+        (WebCore::RenderOverflow::move):
+        (WebCore::RenderOverflow::addLayoutOverflow):
+        (WebCore::RenderOverflow::addVisualOverflow):
+        (WebCore::RenderOverflow::setLayoutOverflow):
+        (WebCore::RenderOverflow::setVisualOverflow):
+        (WebCore::RenderOverflow::resetLayoutOverflow):
+
 2011-07-01  Nate Chapin  <japhet@chromium.org>
 
         Ensure WorkerScriptLoader::notifyFinished() doesn't re-enter.

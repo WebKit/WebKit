@@ -6088,7 +6088,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& d
     }  
 }
 
-int RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const
+LayoutUnit RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const
 {
     // If the child has the same directionality as we do, then we can just return its
     // collapsed margin.
@@ -6105,7 +6105,7 @@ int RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const
     return marginBeforeForChild(child);
 }
 
-int RenderBlock::collapsedMarginAfterForChild(RenderBox* child) const
+LayoutUnit RenderBlock::collapsedMarginAfterForChild(RenderBox* child) const
 {
     // If the child has the same directionality as we do, then we can just return its
     // collapsed margin.

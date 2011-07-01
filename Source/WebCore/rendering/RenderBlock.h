@@ -367,8 +367,8 @@ private:
     
     virtual bool isSelfCollapsingBlock() const;
 
-    virtual int collapsedMarginBefore() const { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
-    virtual int collapsedMarginAfter() const { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
+    virtual LayoutUnit collapsedMarginBefore() const { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
+    virtual LayoutUnit collapsedMarginAfter() const { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 

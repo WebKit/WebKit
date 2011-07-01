@@ -3209,12 +3209,12 @@ void RenderBox::addShadowOverflow()
     addVisualOverflow(IntRect(overflowLeft, overflowTop, overflowRight - overflowLeft, overflowBottom - overflowTop));
 }
 
-void RenderBox::addOverflowFromChild(RenderBox* child, const IntSize& delta)
+void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)
 {
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it.  layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.
-    IntRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(style());
+    LayoutRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(style());
     childLayoutOverflowRect.move(delta);
     addLayoutOverflow(childLayoutOverflowRect);
             
@@ -3223,19 +3223,19 @@ void RenderBox::addOverflowFromChild(RenderBox* child, const IntSize& delta)
     // overflow if we are clipping our own overflow.
     if (child->hasSelfPaintingLayer() || hasOverflowClip())
         return;
-    IntRect childVisualOverflowRect = child->visualOverflowRectForPropagation(style());
+    LayoutRect childVisualOverflowRect = child->visualOverflowRectForPropagation(style());
     childVisualOverflowRect.move(delta);
     addVisualOverflow(childVisualOverflowRect);
 }
 
-void RenderBox::addLayoutOverflow(const IntRect& rect)
+void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 {
-    IntRect clientBox = clientBoxRect();
+    LayoutRect clientBox = clientBoxRect();
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
     
     // For overflow clip objects, we don't want to propagate overflow into unreachable areas.
-    IntRect overflowRect(rect);
+    LayoutRect overflowRect(rect);
     if (hasOverflowClip() || isRenderView()) {
         // Overflow is in the block's coordinate space and thus is flipped for horizontal-bt and vertical-rl 
         // writing modes.  At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
@@ -3264,9 +3264,9 @@ void RenderBox::addLayoutOverflow(const IntRect& rect)
     m_overflow->addLayoutOverflow(overflowRect);
 }
 
-void RenderBox::addVisualOverflow(const IntRect& rect)
+void RenderBox::addVisualOverflow(const LayoutRect& rect)
 {
-    IntRect borderBox = borderBoxRect();
+    LayoutRect borderBox = borderBoxRect();
     if (borderBox.contains(rect) || rect.isEmpty())
         return;
         
