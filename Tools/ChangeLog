@@ -1,3 +1,15 @@
+2011-07-01  Adam Roben  <aroben@apple.com>
+
+        Stop setting unsafe headers on POSTs via XHR from TestFailures page
+
+        Fixes <http://webkit.org/b/63833> TestFailures page causes a bunch of spew in the
+        Inspector's console about unsafe headers
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (fetchResource): Removed unnecessary code to set Content-Length and Connection headers.
+
 2011-07-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

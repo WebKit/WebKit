@@ -60,8 +60,6 @@ function fetchResource(url, method, queryParameters, callback, errorCallback) {
 
     var data = urlEncodeQueryParameters(queryParameters);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.setRequestHeader('Content-Length', data.length);
-    xhr.setRequestHeader('Connection', 'close');
     xhr.send(data);
 }
 
