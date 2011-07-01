@@ -1,3 +1,16 @@
+2011-07-01  Darin Adler  <darin@apple.com>
+
+        Consider backing scale factor when setting up graphics layers
+        https://bugs.webkit.org/show_bug.cgi?id=63848
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::initialize): Set contents scale on the
+        non-composited content layer based on the backing scale factor.
+        (WebKit::LayerTreeHostCA::createPageOverlayLayer): Set contents
+        scale on the page overlay layer based on the backing scale factor.
+
 2011-06-30  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

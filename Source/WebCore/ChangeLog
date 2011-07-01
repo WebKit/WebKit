@@ -1,3 +1,24 @@
+2011-07-01  Darin Adler  <darin@apple.com>
+
+        Consider backing scale when setting up graphics layers
+        https://bugs.webkit.org/show_bug.cgi?id=63848
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::clampedContentsScaleForScale):
+        Increased the maximum scale since scale factor can now include
+        both page contents scale and backing scale.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer): Multiply in the
+        backing scale as well as the page contents scale.
+        (WebCore::RenderLayerBacking::updateForegroundLayer): Ditto.
+        (WebCore::RenderLayerBacking::updateMaskLayer): Ditto.
+        (WebCore::RenderLayerBacking::pageContentsScale): Added.
+        (WebCore::RenderLayerBacking::backingScale): Added.
+        * rendering/RenderLayerBacking.h: Added new private functions.
+
 2011-07-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

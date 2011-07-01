@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,13 @@
 
 #include "AnimationController.h"
 #include "CanvasRenderingContext.h"
-#include "CanvasRenderingContext2D.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
+#include "Chrome.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
-#include "HTMLElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -46,14 +45,12 @@
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
 #include "RenderApplet.h"
-#include "RenderBox.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
-#include "Settings.h"
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
 #include "GraphicsContext3D.h"
@@ -106,12 +103,13 @@ void RenderLayerBacking::createGraphicsLayer()
     
 #ifndef NDEBUG
     m_graphicsLayer->setName(nameForLayer());
-#endif  // NDEBUG
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    ASSERT(renderer() && renderer()->document() && renderer()->document()->frame());
-    if (Frame* frame = renderer()->document()->frame())
-        m_graphicsLayer->setContentsScale(frame->pageScaleFactor());
+    ASSERT(renderer());
+    ASSERT(renderer()->document());
+    ASSERT(renderer()->document()->frame());
+    m_graphicsLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
 #endif
 
     updateLayerOpacity(renderer()->style());
@@ -610,7 +608,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
         if (!m_layerForHorizontalScrollbar) {
             m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
 #ifndef NDEBUG
-            m_layerForHorizontalScrollbar ->setName("horizontal scrollbar");
+            m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
 #endif
             layersChanged = true;
         }
@@ -659,8 +657,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
 #endif
             m_foregroundLayer->setDrawsContent(true);
             m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
-            if (Frame* frame = renderer()->document()->frame())
-                m_foregroundLayer->setContentsScale(frame->pageScaleFactor());
+            m_foregroundLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
             layerChanged = true;
         }
     } else if (m_foregroundLayer) {
@@ -686,8 +683,7 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
 #endif
             m_maskLayer->setDrawsContent(true);
             m_maskLayer->setPaintingPhase(GraphicsLayerPaintMask);
-            if (Frame* frame = renderer()->document()->frame())
-                m_maskLayer->setContentsScale(frame->pageScaleFactor());
+            m_maskLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
             layerChanged = true;
         }
     } else if (m_maskLayer) {
@@ -1489,6 +1485,25 @@ void RenderLayerBacking::updateContentsScale(float scale)
 
     if (m_maskLayer)
         m_maskLayer->setContentsScale(scale);
+}
+
+float RenderLayerBacking::pageScaleFactor() const
+{
+    Frame* frame = renderer()->document()->frame();
+    if (!frame)
+        return 1;
+    return frame->pageScaleFactor();
+}
+
+float RenderLayerBacking::backingScaleFactor() const
+{
+    Frame* frame = renderer()->document()->frame();
+    if (!frame)
+        return 1;
+    Page* page = frame->page();
+    if (!page)
+        return 1;
+    return page->chrome()->scaleFactor();
 }
 
 } // namespace WebCore
