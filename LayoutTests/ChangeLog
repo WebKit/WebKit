@@ -1,3 +1,10 @@
+2011-07-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Add failing test expectations for Chromium media tests on Windows 7 and
+        Vista.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-01  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
