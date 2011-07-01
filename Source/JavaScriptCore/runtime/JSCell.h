@@ -186,6 +186,9 @@ namespace JSC {
 
     inline JSCell::~JSCell()
     {
+#if ENABLE(GC_VALIDATION)
+        m_structure.clear();
+#endif
     }
 
     inline Structure* JSCell::structure() const
