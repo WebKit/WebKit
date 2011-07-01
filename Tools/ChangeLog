@@ -1,5 +1,12 @@
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
+        Add a compat shim for --leaks.  Support for --leaks will be added in
+        https://bugs.webkit.org/show_bug.cgi?id=63832.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         ReportCrash destabilizes new-run-webkit-tests

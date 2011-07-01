@@ -278,8 +278,11 @@ def parse_args(args=None):
     # FIXME: Need: -l --leaks    Enable leaks checking.
 
     old_run_webkit_tests_compat = [
-        # FIXME: NRWT needs to support remote links eventually.
+        # FIXME: Remove this option once the bots don't refer to it.
+        # results.html is smart enough to figure this out itself.
         _compat_shim_option("--use-remote-links-to-tests"),
+        # FIXME: Implement leak detection.
+        _compat_shim_option("--leaks"),
     ]
 
     results_options = [
