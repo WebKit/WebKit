@@ -1,3 +1,16 @@
+2011-07-01  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Disallow clicking an [X] button in 'search' input forms when 'disabled' attribute or 'readonly' attribute is set.
+        https://bugs.webkit.org/show_bug.cgi?id=63709
+
+        Added a test that checks whether the content in 'search' input forms with 'disabled' attribute
+        or 'readonly' attribute is cleared or not, when an [X] button is clicked.
+
+        * fast/forms/search-disabled-readonly-expected.txt: Added.
+        * fast/forms/search-disabled-readonly.html: Added.
+
 2011-07-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update text expectation for Vista.

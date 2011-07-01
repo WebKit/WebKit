@@ -192,6 +192,12 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    if (input->disabled() || input->isReadOnlyFormControl()) {
+        if (!event->defaultHandled())
+            HTMLDivElement::defaultEventHandler(event);
+        return;
+    }
+
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
             if (Frame* frame = document()->frame()) {
