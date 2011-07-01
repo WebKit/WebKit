@@ -1,3 +1,15 @@
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
+        We shouldn't wait for ReportCrash while the timeout is running
+        https://bugs.webkit.org/show_bug.cgi?id=63837
+
+        Reviewed by Eric Seidel.
+
+        Instead, we should move this check to worker.py.
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
 2011-07-01  Adam Roben  <aroben@apple.com>
 
         Stop setting unsafe headers on POSTs via XHR from TestFailures page
