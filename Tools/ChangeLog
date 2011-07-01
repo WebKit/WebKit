@@ -1,3 +1,10 @@
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
+        Exit faster when we get a keyboard interrupt.  Previously, we'd open
+        Safari if you ^C NRWT after it found a failure.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+
 2011-07-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

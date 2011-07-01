@@ -820,6 +820,10 @@ class Manager:
             self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True)
         self._printer.print_unexpected_results(unexpected_results)
 
+        # Re-raise a KeyboardInterrupt if necessary so the caller can handle it.
+        if keyboard_interrupted:
+            raise KeyboardInterrupt
+
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
         if (self._options.record_results and not self._options.dry_run and
@@ -836,11 +840,6 @@ class Manager:
             self._copy_results_html_file()
             if self._options.show_results:
                 self._show_results_html_file(result_summary)
-
-        # Now that we've completed all the processing we can, we re-raise
-        # a KeyboardInterrupt if necessary so the caller can handle it.
-        if keyboard_interrupted:
-            raise KeyboardInterrupt
 
         # Ignore flaky failures and unexpected passes so we don't turn the
         # bot red for those.
