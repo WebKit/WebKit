@@ -97,6 +97,9 @@ LayoutTestHistoryAnalyzer.prototype = {
                 if (callbackRequestedStop)
                     return;
 
+                if (!callAgain)
+                    return;
+
                 if (analyzedAllBuilds) {
                     if (analyzedAllBuildsCallback)
                         analyzedAllBuildsCallback();

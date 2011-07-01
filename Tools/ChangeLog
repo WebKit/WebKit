@@ -1,5 +1,20 @@
 2011-07-01  Adam Roben  <aroben@apple.com>
 
+        Make TestFailures stop loading old builds once we've explained all current failures
+
+        We used to do this, but some refactoring in r90165 broke this logic.
+
+        Fixes <http://webkit.org/b/63808> REGRESSION (r90165): TestFailures page always loads all
+        builds back to the beginning of time
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer.prototype.start): Stop fetching old builds once we're told that
+        all current failures have been explained.
+
+2011-07-01  Adam Roben  <aroben@apple.com>
+
         commit-log-editor reorders ChangeLog entries in unexpected ways
         https://bugs.webkit.org/show_bug.cgi?id=63804
 
