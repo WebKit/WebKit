@@ -1,3 +1,15 @@
+2011-06-30  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Add ENABLE(INSPECTOR) guards around v8 custom bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=63442
+
+        No new tests needed.
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+
 2011-06-30  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INSPECTOR)
 #include "V8InjectedScriptHost.h"
 
 #include "Database.h"
@@ -192,3 +193,5 @@ v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallback(const v8::Argument
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

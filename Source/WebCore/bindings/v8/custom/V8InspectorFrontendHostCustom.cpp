@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INSPECTOR)
 #include "V8InspectorFrontendHost.h"
 
 #include "InspectorController.h"
@@ -114,3 +115,5 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8:
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
