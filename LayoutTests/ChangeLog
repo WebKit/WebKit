@@ -1,3 +1,10 @@
+2011-07-01  Darin Adler  <darin@apple.com>
+
+        The commit-bot checked in files without Subversion properties, so adding them now.
+
+        * fast/loader/create-frame-in-DOMContentLoaded-expected.txt: Added property svn:eol-style.
+        * fast/loader/create-frame-in-DOMContentLoaded.html: Added properties svn:mime-type and svn:eol-style.
+
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added by r90275 in WebKit2 because setEditingBehavior hasn't been implemented in TestRunner.
