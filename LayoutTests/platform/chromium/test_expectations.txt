@@ -3750,7 +3750,7 @@ BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-from-javascrip
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
 
 BUGWK61415 : fast/forms/placeholder-position.html = IMAGE
-BUGWK61415 WIN LINUX : fast/forms/search-rtl.html = IMAGE+TEXT
+BUGWK61415 WIN LINUX : fast/forms/search-rtl.html = IMAGE+TEXT IMAGE
 
 // Flaky since added by r86478
 BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT

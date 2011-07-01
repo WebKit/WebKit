@@ -1,5 +1,14 @@
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update test expectations.
+
+        * platform/chromium-mac-leopard/fast/forms/preserveFormDuringResidualStyle-expected.png: Added.
+        * platform/chromium-mac-leopard/platform/chromium/fast/text/text-stroke-with-border-expected.png: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/text/text-stroke-with-border-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update expectation files for r90089.
 
         * platform/chromium-linux/fast/css/input-search-padding-expected.png:
