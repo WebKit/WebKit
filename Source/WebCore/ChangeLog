@@ -1,3 +1,17 @@
+2011-07-01  Adrienne Walker  <enne@google.com>
+
+        [chromium] Upload root layer textures first so that it is less likely to be skipped
+        https://bugs.webkit.org/show_bug.cgi?id=63850
+
+        Reviewed by James Robinson.
+
+        This is a tiny follow-on patch to bug 63760.  If the root layer is not
+        uploaded first, then it may not have enough space to fit into texture
+        memory and might be skipped, leaving a blue background.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

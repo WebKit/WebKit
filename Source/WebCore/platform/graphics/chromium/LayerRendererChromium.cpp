@@ -349,13 +349,13 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 #ifndef NDEBUG
     s_inPaintLayerContents = false;
 #endif
-
-    updateCompositorResources(renderSurfaceLayerList);
     // Update compositor resources for root layer.
     {
         TRACE_EVENT("LayerRendererChromium::updateLayer::updateRoot", this, 0);
         m_rootLayerContentTiler->updateRect(m_rootLayerTextureUpdater.get());
     }
+
+    updateCompositorResources(renderSurfaceLayerList);
 }
 
 void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLayerList)
