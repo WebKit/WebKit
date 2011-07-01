@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
+#include "SVGAnimatedTypeAnimator.h"
 
 namespace WebCore {
 
@@ -37,6 +38,27 @@ DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGA
 
 #define DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedInteger, long, UpperProperty, LowerProperty)
+
+#if ENABLE(SVG_ANIMATION)
+class SVGAnimationElement;
+
+class SVGAnimatedIntegerAnimator : public SVGAnimatedTypeAnimator {
+    
+public:
+    SVGAnimatedIntegerAnimator(SVGAnimationElement*, SVGElement*);
+    virtual ~SVGAnimatedIntegerAnimator() { }
+    
+    static void calculateAnimatedNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
+    
+    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    
+    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
+    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
+    virtual float calculateDistance(const String& fromString, const String& toString);
+};
+#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

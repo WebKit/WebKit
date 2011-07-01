@@ -455,6 +455,7 @@ svg/animations/svgangle-animation-grad-to-rad.html
 svg/animations/svgangle-animation-rad-to-deg.html
 svg/animations/svgangle-animation-rad-to-grad.html
 svg/animations/svgboolean-animation-1.html
+svg/animations/svginteger-animation-1.html
 svg/animations/svglength-animation-LengthModeHeight.html
 svg/animations/svglength-animation-LengthModeOther.html
 svg/animations/svglength-animation-LengthModeWidth.html

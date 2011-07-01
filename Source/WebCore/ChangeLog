@@ -1,3 +1,50 @@
+2011-07-01  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatedType should support SVGAnimatedInteger animation
+        https://bugs.webkit.org/show_bug.cgi?id=63789
+        
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGAnimatedInteger.
+        
+        SVGAnimatedInteger is used for some attributes of SVG filter effects. The animation of those attributes work after this patch.
+
+        Test: svg/animations/svginteger-animation-1.html
+
+        * CMakeLists.txt: Added file to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Make use of AnimatedInteger.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedInteger.cpp: Added. The new animator for SVGAnimatedInteger.
+        (WebCore::SVGAnimatedIntegerAnimator::SVGAnimatedIntegerAnimator):
+        (WebCore::SVGAnimatedIntegerAnimator::constructFromString):
+        (WebCore::SVGAnimatedIntegerAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedIntegerAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedIntegerAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedIntegerAnimator::calculateDistance):
+        * svg/SVGAnimatedInteger.h:
+        (WebCore::SVGAnimatedIntegerAnimator::~SVGAnimatedIntegerAnimator):
+        * svg/SVGAnimatedType.cpp: Added handler for AnimatedInteger.
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createInteger):
+        (WebCore::SVGAnimatedType::integer):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+
 2011-06-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Reviewed by Pavel Feldman.

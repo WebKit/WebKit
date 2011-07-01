@@ -43,6 +43,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
     static PassOwnPtr<SVGAnimatedType> createBoolean(bool*);
     static PassOwnPtr<SVGAnimatedType> createColor(Color*);
+    static PassOwnPtr<SVGAnimatedType> createInteger(int*);
     static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
     static PassOwnPtr<SVGAnimatedType> createLengthList(SVGLengthList*);
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
@@ -59,6 +60,7 @@ public:
     SVGAngle& angle();
     bool& boolean();
     Color& color();
+    int& integer();
     SVGLength& length();
     SVGLengthList& lengthList();
     float& number();
@@ -90,6 +92,7 @@ private:
         SVGAngle* angle;
         bool* boolean;
         Color* color;
+        int* integer;
         SVGLength* length;
         SVGLengthList* lengthList;
         float* number;

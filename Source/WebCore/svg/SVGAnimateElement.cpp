@@ -115,11 +115,12 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedString;
     case AnimatedColor:
         return AnimatedColor;
+    case AnimatedInteger:
+        return AnimatedInteger;
     case AnimatedLength:
         return AnimatedLength;
     case AnimatedLengthList:
         return AnimatedLengthList;
-    case AnimatedInteger:
     case AnimatedNumber:
         return AnimatedNumber;
     case AnimatedNumberList:
@@ -166,6 +167,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
+    case AnimatedInteger:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:
@@ -236,6 +238,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
+    case AnimatedInteger:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:
@@ -267,6 +270,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
+    case AnimatedInteger:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:
@@ -297,6 +301,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
+    case AnimatedInteger:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:
@@ -326,6 +331,7 @@ void SVGAnimateElement::applyResultsToTarget()
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
+    case AnimatedInteger:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:
@@ -355,6 +361,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
+    case AnimatedInteger:
     case AnimatedLength:
     case AnimatedLengthList:
     case AnimatedNumber:

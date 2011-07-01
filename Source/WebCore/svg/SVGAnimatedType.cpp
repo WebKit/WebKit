@@ -54,6 +54,9 @@ SVGAnimatedType::~SVGAnimatedType()
     case AnimatedColor:
         delete m_data.color;
         break;
+    case AnimatedInteger:
+        delete m_data.integer;
+        break;
     case AnimatedLength:
         delete m_data.length;
         break;
@@ -111,6 +114,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createColor(Color* color)
     ASSERT(color);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedColor));
     animatedType->m_data.color = color;
+    return animatedType.release();
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createInteger(int* integer)
+{
+    ASSERT(integer);
+    OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedInteger));
+    animatedType->m_data.integer = integer;
     return animatedType.release();
 }
 
@@ -212,6 +223,12 @@ Color& SVGAnimatedType::color()
     return *m_data.color;
 }
 
+int& SVGAnimatedType::integer()
+{
+    ASSERT(m_type == AnimatedInteger);
+    return *m_data.integer;
+}
+
 SVGLength& SVGAnimatedType::length()
 {
     ASSERT(m_type == AnimatedLength);
@@ -284,6 +301,9 @@ String SVGAnimatedType::valueAsString()
     case AnimatedColor:
         ASSERT(m_data.color);
         return m_data.color->serialized();
+    case AnimatedInteger:
+        ASSERT(m_data.integer);
+        return String::number(*m_data.integer);
     case AnimatedLength:
         ASSERT(m_data.length);
         return m_data.length->valueAsString();
@@ -341,6 +361,14 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
         ASSERT(m_data.color);
         *m_data.color = value.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(value);
         break;
+    case AnimatedInteger: {
+        ASSERT(m_data.integer);
+        bool ok;
+        *m_data.integer = value.toIntStrict(&ok);
+        if (!ok)
+            ec = 1; // Arbitary value > 0, it doesn't matter as we don't report the exception code.
+        break;
+    }
     case AnimatedLength:
         ASSERT(m_data.length);
         m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName), ec);
