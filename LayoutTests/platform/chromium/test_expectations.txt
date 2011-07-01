@@ -1401,7 +1401,7 @@ BUGCR23473 MAC : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR23473 MAC : fast/repaint/reflection-repaint-test.html = IMAGE
 BUGCR23473 MAC : fast/repaint/rel-positioned-inline-with-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/repaint-resized-overflow.html = IMAGE
-//BUGCR23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
+BUGCR23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selected-replaced.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-after-delete.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-clear.html = IMAGE
@@ -2985,7 +2985,6 @@ BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
-
 // Release definitely renders wrong; debug differences from reference may just
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
@@ -3521,8 +3520,6 @@ BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH P
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
-// Needs rebaseline
-
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
@@ -3752,34 +3749,8 @@ BUGWK60931 DEBUG :  http/tests/security/aboutBlank/window-open-self-about-blank.
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
 
-// Needs rebaseline.
-BUGWK61415 : fast/css/input-search-padding.html = FAIL
-BUGWK61415 WIN LINUX : fast/css/pseudo-cache-stale.html = FAIL
-BUGWK61415 WIN LINUX : fast/css/text-input-with-webkit-border-radius.html = FAIL
-BUGWK61415 : fast/forms/box-shadow-override.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/control-restrict-line-height.html = FAIL
-BUGWK61415 : fast/forms/input-appearance-height.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = FAIL
-BUGWK61415 : fast/forms/placeholder-position.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/placeholder-pseudo-style.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/placeholder-set-value.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/search-cancel-button-style-sharing.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/search-display-none-cancel-button.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/search-placeholder-value-changed.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/search-rtl.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/search-styled.html = FAIL
-BUGWK61415 : fast/forms/search-vertical-alignment.html = FAIL
-BUGWK61415 WIN LINUX : fast/forms/searchfield-heights.html = FAIL
-// Do not update an image for search-field-cancel.html.
-BUGWK61415 : fast/repaint/search-field-cancel.html = FAIL
-BUGWK61415 WIN LINUX : fast/replaced/width100percent-searchfield.html = FAIL
-BUGWK61415 WIN MAC : fast/speech/input-appearance-numberandspeech.html = FAIL
-BUGWK61415 WIN MAC : fast/speech/input-appearance-speechbutton.html = FAIL
-BUGWK61415 WIN LINUX : fast/table/colspanMinWidth-vertical.html = FAIL
-BUGWK61415 WIN LINUX : platform/mac/fast/forms/input-appearance-spinbutton-up.html = FAIL
-BUGWK61415 WIN LINUX : platform/mac/fast/forms/input-appearance-spinbutton.html = FAIL
+BUGWK61415 : fast/forms/placeholder-position.html = IMAGE
+BUGWK61415 WIN LINUX : fast/forms/search-rtl.html = IMAGE+TEXT
 
 // Flaky since added by r86478
 BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT

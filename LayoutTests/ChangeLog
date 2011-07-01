@@ -1,5 +1,73 @@
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update expectation files for r90089.
+
+        * platform/chromium-linux/fast/css/input-search-padding-expected.png:
+        * platform/chromium-linux/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-linux/fast/forms/placeholder-set-value-expected.png: Added.
+        * platform/chromium-linux/fast/forms/search-display-none-cancel-button-expected.png:
+        * platform/chromium-linux/fast/forms/search-styled-expected.txt:
+        * platform/chromium-linux/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-linux/fast/forms/searchfield-heights-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/searchfield-heights-expected.txt.
+        * platform/chromium-linux/fast/repaint/search-field-cancel-expected.png:
+        * platform/chromium-linux/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-linux/platform/mac/fast/forms/input-appearance-spinbutton-expected.png: Added.
+        * platform/chromium-linux/platform/mac/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/chromium-linux/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/chromium-mac/fast/css/input-search-padding-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-win-vista/fast/forms/search-styled-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/css/input-search-padding-expected.png:
+        * platform/chromium-win/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-win/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-win/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-set-value-expected.txt:
+        * platform/chromium-win/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/chromium-win/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/chromium-win/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/chromium-win/fast/forms/search-rtl-expected.txt:
+        * platform/chromium-win/fast/forms/search-styled-expected.png:
+        * platform/chromium-win/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.png: Added.
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.txt:
+        * platform/chromium-win/fast/repaint/search-field-cancel-expected.png:
+        * platform/chromium-win/fast/repaint/search-field-cancel-expected.txt:
+        * platform/chromium-win/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium-win/platform/mac/fast/forms/input-appearance-spinbutton-expected.png: Added.
+        * platform/chromium-win/platform/mac/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/chromium-win/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/replaced/width100percent-searchfield-expected.png.
+        * platform/chromium-win/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
         [Chromium-Mac] Update test expectation files.
 
         * platform/chromium-mac-leopard/fast/forms/input-appearance-range-expected.png:
