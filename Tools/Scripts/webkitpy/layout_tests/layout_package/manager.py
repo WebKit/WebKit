@@ -672,19 +672,12 @@ class Manager(object):
 
         try:
             while not self.is_done():
-                # We loop with a timeout in order to be able to detect wedged threads.
+                # FIXME: Do we need to run in a loop anymore?
                 manager_connection.run_message_loop(delay_secs=1.0)
-
-            if any(worker_state.wedged for worker_state in self._worker_states.values()):
-                _log.error('')
-                _log.error('Remaining workers are wedged, bailing out.')
-                _log.error('')
-            else:
-                _log.debug('No wedged threads')
 
             # Make sure all of the workers have shut down (if possible).
             for worker_state in self._worker_states.values():
-                if not worker_state.wedged and worker_state.worker_connection.is_alive():
+                if worker_state.worker_connection.is_alive():
                     _log.debug('Waiting for worker %d to exit' % worker_state.number)
                     worker_state.worker_connection.join(5.0)
                     if worker_state.worker_connection.is_alive():
@@ -1317,20 +1310,9 @@ class Manager(object):
         worker_states = self._worker_states.values()
         return worker_states and all(self._worker_is_done(worker_state) for worker_state in worker_states)
 
+    # FIXME: Inline this function.
     def _worker_is_done(self, worker_state):
-        t = time.time()
-        if worker_state.done or worker_state.wedged:
-            return True
-
-        next_timeout = worker_state.next_timeout
-        WEDGE_PADDING = 40.0
-        if next_timeout and t > next_timeout + WEDGE_PADDING:
-            _log.error('')
-            worker_state.worker_connection.log_wedged_worker(worker_state.current_test_name)
-            _log.error('')
-            worker_state.wedged = True
-            return True
-        return False
+        return worker_state.done
 
     def cancel_workers(self):
         for worker_state in self._worker_states.values():
@@ -1376,10 +1358,6 @@ class Manager(object):
         worker_state.current_test_name = None
         worker_state.stats['total_time'] += elapsed_time
         worker_state.stats['num_tests'] += 1
-
-        if worker_state.wedged:
-            # This shouldn't happen if we have our timeouts tuned properly.
-            _log.error("%s unwedged", source)
 
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
@@ -1445,7 +1423,6 @@ class _WorkerState(object):
         self.done = False
         self.current_test_name = None
         self.next_timeout = None
-        self.wedged = False
         self.stats = {}
         self.stats['name'] = worker_connection.name
         self.stats['num_tests'] = 0

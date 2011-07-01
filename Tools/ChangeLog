@@ -1,5 +1,23 @@
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Remove the concept of "being wedged" from new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=63767
+
+        Worker processes shouldn't ever become wedged.  My understanding is
+        that this code was originally motivated by the old threading-based
+        design but no longer servers any purpose.
+
+        Note: If we actually have a problem with the test harness getting
+        stuck, buildbot will kill us.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
         The win32 implementation of fork is sad about forking test-webkitpy.
         Hopefully this will heal the bot.
 

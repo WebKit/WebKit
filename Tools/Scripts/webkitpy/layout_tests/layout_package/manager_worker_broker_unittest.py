@@ -186,25 +186,6 @@ class _TestsMixin(object):
         self.assertEqual(self._an_int, 2)
         self.assertEqual(self._a_str, 'hi, everybody')
 
-    def test_log_wedged_worker(self):
-        starting_queue = self.queue()
-        stopping_queue = self.queue()
-        self.make_broker(starting_queue, stopping_queue)
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
-        try:
-            worker = self._broker.start_worker(0)
-            starting_queue.get()
-            worker.log_wedged_worker('test_name')
-            stopping_queue.put('')
-            self._broker.post_message('stop')
-            self._broker.run_message_loop()
-            worker.join(0.5)
-            self.assertFalse(worker.is_alive())
-            self.assertTrue(self.is_done())
-        finally:
-            oc.restore_output()
-
     def test_unknown_message(self):
         self.make_broker()
         worker = self._broker.start_worker(0)
@@ -217,17 +198,6 @@ class _TestsMixin(object):
         self.assertEquals(self._exception[0], ValueError)
         self.assertEquals(self._exception[1],
             "TestWorker/0: received message 'unknown' it couldn't handle")
-
-
-class InlineBrokerTests(_TestsMixin, unittest.TestCase):
-    def setUp(self):
-        _TestsMixin.setUp(self)
-        self._worker_model = 'inline'
-
-    def test_log_wedged_worker(self):
-        self.make_broker()
-        worker = self._broker.start_worker(0)
-        self.assertRaises(AssertionError, worker.log_wedged_worker, None)
 
 
 # FIXME: https://bugs.webkit.org/show_bug.cgi?id=54520.
@@ -270,7 +240,6 @@ class InterfaceTest(unittest.TestCase):
         self.assertRaises(NotImplementedError, obj.cancel)
         self.assertRaises(NotImplementedError, obj.is_alive)
         self.assertRaises(NotImplementedError, obj.join, None)
-        self.assertRaises(NotImplementedError, obj.log_wedged_worker, None)
 
 
 if __name__ == '__main__':

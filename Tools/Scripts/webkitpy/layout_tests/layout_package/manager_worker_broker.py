@@ -209,9 +209,6 @@ class _WorkerConnection(message_broker.BrokerConnection):
     def join(self, timeout):
         raise NotImplementedError
 
-    def log_wedged_worker(self, test_name):
-        raise NotImplementedError
-
     def yield_to_broker(self):
         pass
 
@@ -232,9 +229,6 @@ class _InlineWorkerConnection(_WorkerConnection):
     def join(self, timeout):
         assert not self._alive
 
-    def log_wedged_worker(self, test_name):
-        assert False, "_InlineWorkerConnection.log_wedged_worker() called"
-
     def run(self):
         self._alive = True
         self._client.run(self._port)
@@ -253,9 +247,6 @@ if multiprocessing:
             self._platform_name = platform_name
             self._options = options
             self._client = client
-
-        def log_wedged_worker(self, test_name):
-            _log.error("%s (pid %d) is wedged on test %s" % (self.name, self.pid, test_name))
 
         def run(self):
             options = self._options
@@ -288,9 +279,6 @@ class _MultiProcessWorkerConnection(_WorkerConnection):
 
     def join(self, timeout):
         return self._proc.join(timeout)
-
-    def log_wedged_worker(self, test_name):
-        return self._proc.log_wedged_worker(test_name)
 
     def start(self):
         self._proc.start()
