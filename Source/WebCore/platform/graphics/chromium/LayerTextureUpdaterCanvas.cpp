@@ -240,10 +240,8 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     targetDesc.fStencilBits = 8;
     targetDesc.fPlatformRenderTarget = m_fbo;
     SkAutoTUnref<GrRenderTarget> target(static_cast<GrRenderTarget*>(m_skiaContext->createPlatformSurface(targetDesc)));
-    SkAutoTUnref<SkDeviceFactory> factory(new SkGpuDeviceFactory(m_skiaContext, target.get()));
-    SkAutoTUnref<SkDevice> device(factory.get()->newDevice(0, SkBitmap::kARGB_8888_Config, m_bufferSize.width(), m_bufferSize.height(), false, false));        
-    m_canvas = adoptPtr(new SkCanvas(factory.get()));
-    m_canvas->setDevice(device.get());
+    SkAutoTUnref<SkDevice> device(new SkGpuDevice(m_skiaContext, target.get()));
+    m_canvas = adoptPtr(new SkCanvas(device.get()));
 
     context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     return true;

@@ -1,3 +1,17 @@
+2011-07-01  Mike Reed  <reed@google.com>
+
+        Stop using deprecated SkDeviceFactory API
+        https://bugs.webkit.org/show_bug.cgi?id=63488
+
+        Reviewed by James Robinson.
+
+        No new tests. Check-point for removing Factory API from Skia
+
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterSkPicture::createFrameBuffer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+
 2011-07-01  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by Adam Barth.

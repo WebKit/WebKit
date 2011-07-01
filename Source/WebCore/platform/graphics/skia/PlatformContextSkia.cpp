@@ -740,17 +740,8 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
 
             GrPlatformSurfaceDesc drawBufDesc;
             drawingBuffer->getGrPlatformSurfaceDesc(&drawBufDesc);
-            GrTexture* drawBufTex = static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc));
-            // FIXME: This should use a smart pointer.
-            SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, drawBufTex);
-            // FIXME: This should use a smart pointer.
-            drawBufTex->unref();
-
-            // FIXME: This should use a smart pointer.
-            SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
-            // FIXME: This should use a smart pointer.
-            m_canvas->setDevice(device)->unref();
-            m_canvas->setDeviceFactory(factory)->unref();
+            SkAutoTUnref<GrTexture> drawBufTex(static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc)));
+            m_canvas->setDevice(new SkGpuDevice(gr, drawBufTex.get()))->unref();
         } else
             m_accelerationMode = GPU;
     } else {
