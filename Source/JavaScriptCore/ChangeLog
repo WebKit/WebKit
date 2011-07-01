@@ -1,3 +1,27 @@
+2011-07-01  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/63814> Fix clang build error in JITOpcodes32_64.cpp
+
+        Fixes the following build error in clang:
+
+            JavaScriptCore/jit/JITOpcodes32_64.cpp:741:36:{741:9-741:35}: error: operator '?:' has lower precedence than '+'; '+' will be evaluated first [-Werror,-Wparentheses,3]
+                 map(m_bytecodeOffset + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
+            JavaScriptCore/jit/JITOpcodes32_64.cpp:741:36: note: place parentheses around the '+' expression to silence this warning [3]
+                 map(m_bytecodeOffset + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
+                                                ^
+                     (                         )
+            fix-it:"JavaScriptCore/jit/JITOpcodes32_64.cpp":{741:9-741:9}:"("
+            fix-it:"JavaScriptCore/jit/JITOpcodes32_64.cpp":{741:35-741:35}:")"
+            JavaScriptCore/jit/JITOpcodes32_64.cpp:741:36:{741:28-741:94}: note: place parentheses around the '?:' expression to evaluate it first [3]
+                 map(m_bytecodeOffset + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
+                                        ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            1 error generated.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve_global): Add parenthesis to make the
+        tertiary expression evaluate first.
+
 2011-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90177 and r90179.
