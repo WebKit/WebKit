@@ -1,5 +1,21 @@
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix expected results after r90275. I checked in Mac-specific results for these tests.
+        Move them to platform/mac and revert the changes in platform-independent results.
+        Also copy results to platform/win because they fallback to Mac by default.
+
+        * editing/deleting/delete-br-011-expected.txt:
+        * editing/selection/anchor-focus2-expected.txt:
+        * editing/selection/anchor-focus3-expected.txt:
+        * platform/mac/editing/deleting/delete-br-011-expected.txt: Copied from LayoutTests/editing/deleting/delete-br-011-expected.txt.
+        * platform/mac/editing/selection/anchor-focus2-expected.txt: Copied from LayoutTests/editing/selection/anchor-focus2-expected.txt.
+        * platform/mac/editing/selection/anchor-focus3-expected.txt: Copied from LayoutTests/editing/selection/anchor-focus3-expected.txt.
+        * platform/win/editing/deleting/delete-br-011-expected.txt: Copied from LayoutTests/editing/deleting/delete-br-011-expected.txt.
+        * platform/win/editing/selection/anchor-focus2-expected.txt: Copied from LayoutTests/editing/selection/anchor-focus2-expected.txt.
+        * platform/win/editing/selection/anchor-focus3-expected.txt: Copied from LayoutTests/editing/selection/anchor-focus3-expected.txt.
+
+2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Ojan Vafai.
 
         Move m_isDirectional from FrameSelection to VisibleSelection
