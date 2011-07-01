@@ -2914,7 +2914,7 @@ BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 BUGCR74979 GPU MAC SKIP: media/video-canvas-alpha.html = IMAGE
 
 // This test needs completely new baselines.
-BUGWK55718 BUGCR75354 : media/media-document-audio-repaint.html = PASS FAIL
+BUGWK55718 BUGCR75354 XP MAC LINUX : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT CRASH
 BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
@@ -2927,8 +2927,6 @@ BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 // Slight differences.  Need rebaseline?
 BUGCR78999 WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
 BUGCR78999 MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
-
-
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
@@ -3583,8 +3581,6 @@ BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
 BUGWK60125 : fast/files/create-blob-url-crash.html = CRASH PASS
 
-BUGWK60122 DEBUG : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
-
 // flakiness
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 
@@ -4033,10 +4029,8 @@ BUGWK63643 GPU : fast/canvas/webgl/context-lost-restored.html = TEXT
 BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = CRASH
 
 // Caused by an ffmpeg roll
-BUGCR88197 VISTA WIN7 : http/tests/appcache/video.html = TEXT
-BUGCR88197 VISTA WIN7 : http/tests/media/video-referer.html = TEXT
-BUGCR88197 VISTA WIN7 : http/tests/media/video-served-as-text.html = TEXT
 BUGCR88197 VISTA WIN7 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : http/tests/appcache/video.html = TEXT
 BUGCR88197 VISTA WIN7 : http/tests/canvas/webgl/origin-clean-conformance.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : http/tests/media/media-can-load-when-hidden.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : http/tests/media/reload-after-dialog.html = TIMEOUT
@@ -4047,6 +4041,10 @@ BUGCR88197 VISTA WIN7 : http/tests/media/video-error-abort.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : http/tests/media/video-load-twice.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : http/tests/media/video-play-progress.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : http/tests/media/video-play-stall.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : http/tests/media/video-referer.html = TEXT
+BUGCR88197 VISTA WIN7 : http/tests/media/video-served-as-text.html = TEXT
+BUGCR88197 VISTA WIN7 : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TIMEOUT PASS
+BUGCR88197 VISTA WIN7 : http/tests/security/local-video-source-from-remote.html = TEXT
 BUGCR88197 VISTA WIN7 : media/audio-constructor-preload.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : media/audio-constructor-src.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : media/audio-constructor.html = TIMEOUT
@@ -4056,3 +4054,21 @@ BUGCR88197 VISTA WIN7 : media/audio-delete-while-slider-thumb-clicked.html = TIM
 BUGCR88197 VISTA WIN7 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUGCR88197 VISTA WIN7 : media/audio-play-event.html = TIMEOUT PASS
 BUGCR88197 VISTA WIN7 : media/audio-repaint.html = TIMEOUT PASS
+BUGCR88197 VISTA WIN7 : media/controls-after-reload.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/controls-drag-timebar.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/controls-right-click-on-timebar.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/controls-strict.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/controls-styling.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/controls-without-preload.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/event-attributes.html = TEXT
+BUGCR88197 VISTA WIN7 : media/media-blocked-by-beforeload.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/media-document-audio-repaint.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/media-ended.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/media-load-event.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/media-startTime.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/remove-from-document.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/video-append-source.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/video-aspect-ratio.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/video-autoplay.html = TIMEOUT
+BUGCR88197 VISTA WIN7 : media/video-buffered.html = TIMEOUT
+BUGCR88197 VISTA WIN7 CPU : media/video-canvas-alpha.html = TIMEOUT
