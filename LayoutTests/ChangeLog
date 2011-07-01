@@ -1,3 +1,10 @@
+2011-07-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Remove Chromium Windows 7 and Vista media test expectations, since
+        clobbering the bots appears to have fixed the timeouts and failures.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK rebaseline r90275. The failure of directionality-after-undo-replace.html is tracked by the bug 63853.
