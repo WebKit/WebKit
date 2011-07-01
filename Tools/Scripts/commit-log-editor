@@ -152,7 +152,6 @@ for my $changeLog (@changeLogs) {
     open CHANGELOG, $changeLog or die "Can't open $changeLog";
     my $contents = "";
     my $blankLines = "";
-    my $reviewedByLine = "";
     my $lineCount = 0;
     my $date = "";
     my $author = "";
@@ -163,19 +162,13 @@ for my $changeLog (@changeLogs) {
             last if $contents;
         }
         if (/\S/) {
-            my $previousLineWasBlank = 1 unless $blankLines eq "";
-            my $line = $_;
-            my $currentLineBlankLines = $blankLines;
+            $contents .= $blankLines if $contents;
             $blankLines = "";
+
+            my $line = $_;
 
             # Remove indentation spaces
             $line =~ s/^ {8}//;
-
-            # Save the reviewed / rubber stamped by line.
-            if ($line =~ m/^Reviewed by .*/ || $line =~ m/^Rubber[ \-]?stamped by .*/) {
-                $reviewedByLine = $line;
-                next;
-            }
 
             # Grab the author and the date line
             if ($line =~ m/^([0-9]{4}-[0-9]{2}-[0-9]{2})\s+(.*[^\s])\s+<(.*)>/ && $lineCount == 0) {
@@ -186,10 +179,8 @@ for my $changeLog (@changeLogs) {
                 next;
             }
 
-            $contents .= $currentLineBlankLines if $contents;
-
-            # Attempt to insert the "patch by" line, after the first blank line.
-            if ($previousLineWasBlank && $hasAuthorInfoToWrite && $lineCount > 0) {
+            if ($line =~ m/^Reviewed by .*/ || $line =~ m/^Rubber[ \-]?stamped by .*/) {
+                # Insert the "Patch by" line just above the "Reviewed by" line, if needed.
                 my $committerEmail = changeLogEmailAddress();
                 my $authorAndCommitterAreSamePerson = $email eq $committerEmail;
                 if (!$authorAndCommitterAreSamePerson) {
@@ -198,20 +189,12 @@ for my $changeLog (@changeLogs) {
                 }
             }
 
-            # Attempt to insert the "reviewed by" line, after the first blank line.
-            if ($previousLineWasBlank && $reviewedByLine && $lineCount > 0) {
-                $contents .= $reviewedByLine . "\n";
-                $reviewedByLine = "";
-            }
 
             $lineCount++;
             $contents .= $line;
         } else {
             $blankLines .= $_;
         }
-    }
-    if ($reviewedByLine) {
-        $contents .= "\n".$reviewedByLine;
     }
     close CHANGELOG;
 

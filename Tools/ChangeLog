@@ -1,3 +1,26 @@
+2011-07-01  Adam Roben  <aroben@apple.com>
+
+        commit-log-editor reorders ChangeLog entries in unexpected ways
+        https://bugs.webkit.org/show_bug.cgi?id=63804
+
+        Reviewed by Darin Adler.
+
+        commit-log-editor was changed in r46899 to move the bug title and URL to the top of the
+        commit message in order to make git-based tools, which expect the first line of the commit
+        message to be a summary of the change, to work better. But this reordering of the ChangeLog
+        entry was unpredictable and unexpected.
+
+        I changed prepare-ChangeLog to put the bug title and URL at the top of the ChangeLog entry
+        so that commit-log-editor doesn't have to move them. Then I changed commit-log-editor not to
+        try to move them.
+
+        * Scripts/commit-log-editor: Partially reverted r46899. We no longer save the "Reviewed by"
+        line and try to move it down below the bug title and URL. The order of the text in the
+        ChangeLog is now preserved, except that we insert a "Patch by" line just above the "Reviewed
+        by" line in cases where the committer and author are not the same person.
+
+        * Scripts/prepare-ChangeLog: Moved the "Reviewed by" line down below the bug title and URL.
+
 2011-07-01  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Reviewed by Adam Roben.

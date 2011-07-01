@@ -393,13 +393,14 @@ foreach my $prefix (@prefixes) {
     my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
     $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
 
-    print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
     print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
     $bugDescription = "Need a short description and bug URL (OOPS!)" unless $bugDescription;
     print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
     print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
     print CHANGE_LOG normalizeLineEndings("\n", $endl);
+
+    print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
 
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         if ($didChangeRegressionTests) {
