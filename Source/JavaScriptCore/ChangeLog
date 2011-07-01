@@ -1,3 +1,52 @@
+2011-06-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add optimised paths for a few maths functions
+        https://bugs.webkit.org/show_bug.cgi?id=63757
+
+        Relanding as a Mac only patch.
+
+        This adds specialised thunks for Math.abs, Math.round, Math.ceil,
+        Math.floor, Math.log, and Math.exp as they are apparently more
+        important in real web content than we thought, which is somewhat
+        mind-boggling.  On average doubles the performance of the common
+        cases (eg. actually passing numbers in).  They're not as efficient
+        as they could be, but this way gives them the most portability.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsDoubleBitops):
+        (JSC::MacroAssemblerARM::andnotDouble):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsDoubleBitops):
+        (JSC::MacroAssemblerARMv7::andnotDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::andnotDouble):
+        (JSC::MacroAssemblerMIPS::supportsDoubleBitops):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsDoubleBitops):
+        (JSC::MacroAssemblerSH4::andnotDouble):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::supportsDoubleBitops):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::andnotDouble):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::supportsDoubleBitops):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::andnpd_rr):
+        * create_hash_table:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        (JSC::SpecializedThunkJIT::callDoubleToDouble):
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        * jit/ThunkGenerators.h:
+
 2011-07-01  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/63814> Fix clang build error in JITOpcodes32_64.cpp

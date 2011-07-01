@@ -166,6 +166,7 @@ public:
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return m_isSSE2Present; }
     bool supportsFloatingPointSqrt() const { return m_isSSE2Present; }
+    bool supportsDoubleBitops() const { return m_isSSE2Present; }
 
 private:
     const bool m_isSSE2Present;

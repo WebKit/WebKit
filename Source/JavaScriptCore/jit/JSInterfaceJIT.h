@@ -271,7 +271,8 @@ namespace JSC {
         loadDouble(addressFor(virtualRegisterIndex), dst);
         done.link(this);
         return notInt;
-    }    
+    }
+
 #endif
 
 #if USE(JSVALUE64)
@@ -310,7 +311,7 @@ namespace JSC {
         done.link(this);
         return notNumber;
     }
-    
+
     ALWAYS_INLINE void JSInterfaceJIT::emitFastArithImmToInt(RegisterID)
     {
     }

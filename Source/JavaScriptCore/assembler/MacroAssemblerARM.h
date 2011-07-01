@@ -179,10 +179,15 @@ public:
 
         m_assembler.movs_r(dest, m_assembler.asr_r(dest, ARMRegisters::S0));
     }
-
+    
     void rshift32(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.movs_r(dest, m_assembler.asr(dest, imm.m_value & 0x1f));
+        rshift32(dest, imm, dest);
+    }
+
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.movs_r(dest, m_assembler.asr(src, imm.m_value & 0x1f));
     }
     
     void urshift32(RegisterID shift_amount, RegisterID dest)
@@ -789,6 +794,7 @@ public:
     {
         return s_isVFPPresent;
     }
+    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -854,6 +860,11 @@ public:
     void sqrtDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.vsqrt_f64_r(dest, src);
+    }
+    
+    void andnotDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)

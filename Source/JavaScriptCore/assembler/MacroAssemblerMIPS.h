@@ -460,6 +460,11 @@ public:
     {
         m_assembler.sqrtd(dst, src);
     }
+    
+    void andnotDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
+    }
 
     // Memory access operations:
     //
@@ -816,6 +821,7 @@ public:
         return false;
 #endif
     }
+    bool supportsDoubleBitops() const { return false; }
 
     // Stack manipulation operations:
     //

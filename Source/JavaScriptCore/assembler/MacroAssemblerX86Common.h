@@ -423,6 +423,11 @@ public:
         m_assembler.sqrtsd_rr(src, dst);
     }
 
+    void andnotDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.andnpd_rr(src, dst);
+    }
+
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
