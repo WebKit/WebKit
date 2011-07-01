@@ -1,3 +1,9 @@
+2011-07-01  Tony Chang  <tony@chromium.org>
+
+        Add chromium sql directory to git ignore.
+
+        * .gitignore:
+
 2011-07-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Daniel Bates.

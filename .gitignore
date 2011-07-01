@@ -70,6 +70,7 @@ Source/WebKit/chromium/ppapi/
 Source/WebKit/chromium/printing/
 Source/WebKit/chromium/sdch/
 Source/WebKit/chromium/skia/
+Source/WebKit/chromium/sql/
 Source/WebKit/chromium/testing/
 Source/WebKit/chromium/third_party/
 Source/WebKit/chromium/tools/
