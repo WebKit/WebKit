@@ -668,7 +668,9 @@ class Manager:
 
         try:
             while not self.is_done():
-                # FIXME: Do we need to run in a loop anymore?
+                if self._port.executive().running_pids(self._port.is_crash_reporter):
+                    self._printer.print_update("Waiting for crash reporter ...")
+                    self._port.executive().wait_newest(self._port.is_crash_reporter)
                 manager_connection.run_message_loop(delay_secs=1.0)
 
             # Make sure all of the workers have shut down (if possible).
@@ -782,9 +784,7 @@ class Manager:
 
         start_time = time.time()
 
-        interrupted, keyboard_interrupted, thread_timings, test_timings, \
-            individual_test_timings = (
-            self._run_tests(self._test_files_list, result_summary))
+        interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = self._run_tests(self._test_files_list, result_summary)
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.

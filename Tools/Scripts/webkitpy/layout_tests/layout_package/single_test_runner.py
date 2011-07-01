@@ -125,6 +125,11 @@ class SingleTestRunner:
         return self._run_compare_test()
 
     def _run_compare_test(self):
+        # Before running the test, we wait for any crash reporters to finish
+        # running. On Mac, ReportCrash chews up a bunch of resources and
+        # causes the tests to become unstable, so we don't want to run in
+        # parallel with ReportCrash.
+        self._port.executive().wait_newest(self._port.is_crash_reporter)
         driver_output = self._driver.run_test(self._driver_input())
         expected_driver_output = self._expected_driver_output()
         test_result = self._compare_output(driver_output, expected_driver_output)

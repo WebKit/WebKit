@@ -172,7 +172,6 @@ class ServerProcess:
         if sys.platform != "darwin":
             return
         try:
-            self._log('Sampling %s process... (use --no-sample-on-timeout to skip this step)' % self._name)
             hang_report = os.path.join(self._port.results_directory(), "%s-%s.sample.txt" % (self._name, self._proc.pid))
             self._executive.run_command([
                 "/usr/bin/sample",
@@ -197,11 +196,9 @@ class ServerProcess:
 
             now = time.time()
             if now > deadline:
-                if self._executive.running_pids(self._port.is_crash_reporter):
-                    self._log('Waiting for crash reporter...')
-                    self._executive.wait_newest(self._port.is_crash_reporter)
-                    if not self.crashed:
-                        self._check_for_crash()
+                self._executive.wait_newest(self._port.is_crash_reporter)
+                if not self.crashed:
+                    self._check_for_crash()
                 self.timed_out = True
                 if not self.crashed:
                     self._sample()

@@ -1,3 +1,25 @@
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        ReportCrash destabilizes new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=63795
+
+        ReportCrash chews up too many system resources that it destablizes
+        tests run concurrently.  This patch causes us to spin down all the
+        worker processes when ReportCrash is running.
+
+        Also, this patch causes the master process to tell the user we're
+        waiting for the crash reporter rather than having that be the worker's
+        job.  This stops the user from getting spammed with too many "waiting
+        for crash reporter" messages and also cleans up some minor UI issues
+        with the meter.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+
 2011-07-01  Adam Roben  <aroben@apple.com>
 
         Teach webkitpy about the new format of our ChangeLog template

@@ -138,6 +138,9 @@ class Port(object):
         self._results_directory = None
         self.set_option_default('use_apache', self._default_to_apache())
 
+    def executive(self):
+        return self._executive
+
     def wdiff_available(self):
         if self._wdiff_available is None:
             self._wdiff_available = self.check_wdiff(logging=False)
