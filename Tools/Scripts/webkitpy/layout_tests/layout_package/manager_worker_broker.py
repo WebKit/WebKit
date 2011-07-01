@@ -28,16 +28,14 @@
 
 """Module for handling messages and concurrency for run-webkit-tests.
 
-This module implements a message broker that connects the manager
-(TestRunner2) to the workers: it provides a messaging abstraction and
-message loops (building on top of message_broker), and handles starting
-workers by launching threads and/or processes depending on the
-requested configuration.
+This module implements a message broker that connects the manager to the
+workers: it provides a messaging abstraction and message loops (building on
+top of message_broker), and handles starting workers by launching processes.
 
 There are a lot of classes and objects involved in a fully connected system.
 They interact more or less like:
 
-TestRunner2  --> _InlineManager ---> _InlineWorker <-> Worker
+  Manager  -->  _InlineManager ---> _InlineWorker <-> Worker
      ^                    \               /              ^
      |                     v             v               |
      \--------------------  MessageBroker   -------------/
@@ -80,7 +78,7 @@ def runtime_options():
     options = [
         optparse.make_option("--worker-model", action="store",
             help=("controls worker model. Valid values are "
-            "'inline', 'threads', and 'processes'.")),
+            "'inline' and 'processes'.")),
     ]
     return options
 
@@ -103,9 +101,6 @@ def get(port, options, client, worker_class):
     if worker_model == 'inline':
         queue_class = Queue.Queue
         manager_class = _InlineManager
-    elif worker_model == 'threads':
-        queue_class = Queue.Queue
-        manager_class = _ThreadedManager
     elif worker_model == 'processes' and multiprocessing:
         queue_class = multiprocessing.Queue
         manager_class = _MultiProcessManager
@@ -182,18 +177,6 @@ class _InlineManager(_ManagerConnection):
         self._broker.run_all_pending(MANAGER_TOPIC, self._client)
 
 
-class _ThreadedManager(_ManagerConnection):
-    def __init__(self, broker, port, options, client, worker_class):
-        _ManagerConnection.__init__(self, broker, options, client, worker_class)
-        self._port = port
-
-    def start_worker(self, worker_number):
-        worker_connection = _ThreadedWorkerConnection(self._broker, self._port,
-            self._worker_class, worker_number)
-        worker_connection.start()
-        return worker_connection
-
-
 class _MultiProcessManager(_ManagerConnection):
     def __init__(self, broker, port, options, client, worker_class):
         # Note that this class does not keep a handle to the actual port
@@ -259,48 +242,6 @@ class _InlineWorkerConnection(_WorkerConnection):
 
     def yield_to_broker(self):
         self._broker.run_all_pending(MANAGER_TOPIC, self._manager_client)
-
-
-class _Thread(threading.Thread):
-    def __init__(self, worker_connection, port, client):
-        threading.Thread.__init__(self)
-        self._worker_connection = worker_connection
-        self._port = port
-        self._client = client
-
-    def cancel(self):
-        return self._client.cancel()
-
-    def log_wedged_worker(self, test_name):
-        stack_utils.log_thread_state(_log.error, self._client.name(), self.ident, " is wedged on test %s" % test_name)
-
-    def run(self):
-        # FIXME: We can remove this once everyone is on 2.6.
-        if not hasattr(self, 'ident'):
-            self.ident = thread.get_ident()
-        self._client.run(self._port)
-
-
-class _ThreadedWorkerConnection(_WorkerConnection):
-    def __init__(self, broker, port, worker_class, worker_number):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, port._options)
-        self._thread = _Thread(self, port, self._client)
-
-    def cancel(self):
-        return self._thread.cancel()
-
-    def is_alive(self):
-        # FIXME: Change this to is_alive once everyone is on 2.6.
-        return self._thread.isAlive()
-
-    def join(self, timeout):
-        return self._thread.join(timeout)
-
-    def log_wedged_worker(self, test_name):
-        return self._thread.log_wedged_worker(test_name)
-
-    def start(self):
-        self._thread.start()
 
 
 if multiprocessing:

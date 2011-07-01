@@ -246,8 +246,6 @@ class ChromiumPort(base.Port):
             _log.debug("Stopping layout test helper")
             self._helper.stdin.write("x\n")
             self._helper.stdin.close()
-            # wait() is not threadsafe and can throw OSError due to:
-            # http://bugs.python.org/issue1731717
             self._helper.wait()
 
     def all_baseline_variants(self):
@@ -410,8 +408,6 @@ class ChromiumDriver(base.Driver):
                                       close_fds=close_flag)
 
     def poll(self):
-        # poll() is not threadsafe and can throw OSError due to:
-        # http://bugs.python.org/issue1731717
         return self._proc.poll()
 
     def _write_command_and_read_line(self, input=None):

@@ -1,5 +1,28 @@
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Remove threaded mode from new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=63771
+
+        This mode is not used and is buggy.  Rather than carry around a bunch
+        of unused buggy code, we should rip it out and focus on the
+        multiprocess implementation.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Clean up output from new-run-webkit-tests

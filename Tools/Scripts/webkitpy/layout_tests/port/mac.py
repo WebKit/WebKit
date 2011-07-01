@@ -86,15 +86,6 @@ class MacPort(WebKitPort):
         if not hasattr(self._options, 'time-out-ms') or self._options.time_out_ms is None:
             self._options.time_out_ms = 35000
 
-    def default_child_processes(self):
-        # FIXME: new-run-webkit-tests is unstable on Mac running more than
-        # four threads in parallel.
-        # See https://bugs.webkit.org/show_bug.cgi?id=36622
-        child_processes = WebKitPort.default_child_processes(self)
-        if not self._multiprocessing_is_available and child_processes > 4:
-            return 4
-        return child_processes
-
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 

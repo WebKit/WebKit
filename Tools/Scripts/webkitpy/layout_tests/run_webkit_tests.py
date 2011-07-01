@@ -401,7 +401,7 @@ def parse_args(args=None):
         # FIXME: Display default number of child processes that will run.
         optparse.make_option("--worker-model", action="store",
             default=None, help=("controls worker model. Valid values are "
-                                "'inline', 'threads', and 'processes'.")),
+                                "'inline' and 'processes'.")),
         optparse.make_option("-f", "--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),

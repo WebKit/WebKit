@@ -119,9 +119,6 @@ class FunctionTests(unittest.TestCase):
     def test_get__inline(self):
         self.assertTrue(make_broker(self, 'inline') is not None)
 
-    def test_get__threads(self):
-        self.assertTrue(make_broker(self, 'threads') is not None)
-
     def test_get__processes(self):
         # This test sometimes fails on Windows. See <http://webkit.org/b/55087>.
         if sys.platform in ('cygwin', 'win32'):
@@ -243,15 +240,6 @@ if multiprocessing and sys.platform not in ('cygwin', 'win32'):
 
         def queue(self):
             return multiprocessing.Queue()
-
-
-class ThreadedBrokerTests(_TestsMixin, unittest.TestCase):
-    def setUp(self):
-        _TestsMixin.setUp(self)
-        self._worker_model = 'threads'
-
-    def queue(self):
-        return Queue.Queue()
 
 
 class FunctionsTest(unittest.TestCase):

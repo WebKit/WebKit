@@ -249,8 +249,6 @@ class Worker(manager_worker_broker.AbstractWorker):
 
         Returns: a TestResult object.
         """
-        # poll() is not threadsafe and can throw OSError due to:
-        # http://bugs.python.org/issue1731717
         if not self._driver or self._driver.poll() is not None:
             self._driver = self._port.create_driver(self._worker_number)
             self._driver.start()

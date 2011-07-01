@@ -204,17 +204,17 @@ class MainTest(unittest.TestCase):
 
     def test_child_process_1(self):
         _, _, regular_output, _ = logging_run(
-             ['--print', 'config', '--worker-model', 'threads', '--child-processes', '1'])
+             ['--print', 'config', '--worker-model', 'processes', '--child-processes', '1'])
         self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
 
     def test_child_processes_2(self):
         _, _, regular_output, _ = logging_run(
-             ['--print', 'config', '--worker-model', 'threads', '--child-processes', '2'])
+             ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2'])
         self.assertTrue(any(['Running 2 ' in line for line in regular_output.get()]))
 
     def test_child_processes_min(self):
         _, _, regular_output, _ = logging_run(
-             ['--print', 'config', '--worker-model', 'threads', '--child-processes', '2', 'passes'],
+             ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2', 'passes'],
              tests_included=True)
         self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
 
@@ -610,9 +610,6 @@ class MainTest(unittest.TestCase):
     def test_worker_model__processes_and_dry_run(self):
         if multiprocessing and sys.platform not in ('cygwin', 'win32'):
             self.assertTrue(passing_run(['--worker-model', 'processes', '--dry-run']))
-
-    def test_worker_model__threads(self):
-        self.assertTrue(passing_run(['--worker-model', 'threads']))
 
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,

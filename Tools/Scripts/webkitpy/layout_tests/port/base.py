@@ -155,7 +155,7 @@ class Port(object):
     def default_worker_model(self):
         if self._multiprocessing_is_available:
             return 'processes'
-        return 'threads'
+        return 'inline'
 
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines in for this port."""
