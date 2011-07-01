@@ -4,7 +4,7 @@ Note, this test is expected to fail on the Apple Mac and Chromium Mac port since
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Link 1 wasn't clicked.
+FAIL either pan scrolling is disabled or this platform doesn't support pan scrolling.
 
 TEST COMPLETE
 
