@@ -66,6 +66,7 @@ xcopy /y /d "%ProjectDir%..\rendering\style\*.h" "%CONFIGURATIONBUILDDIR%\includ
 xcopy /y /d "%ProjectDir%..\rendering\svg\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\editing\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\dom\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\xml\parser\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\xml\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\svg\animation\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\svg\properties\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"

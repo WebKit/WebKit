@@ -564,7 +564,6 @@ SOURCES += \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
     dom/WindowEventContext.cpp \
-    dom/XMLDocumentParser.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyBlockElementCommand.cpp \
@@ -1195,7 +1194,8 @@ SOURCES += \
     xml/XMLHttpRequest.cpp \
     xml/XMLHttpRequestProgressEventThrottle.cpp \
     xml/XMLHttpRequestUpload.cpp \
-    xml/XMLSerializer.cpp
+    xml/XMLSerializer.cpp \
+    xml/parser/XMLDocumentParser.cpp 
 
 HEADERS += \
     accessibility/AccessibilityARIAGridCell.h \
@@ -1546,7 +1546,6 @@ HEADERS += \
     dom/WebKitAnimationEvent.h \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
-    dom/XMLDocumentParser.h \
     editing/AppendNodeCommand.h \
     editing/ApplyBlockElementCommand.h \
     editing/ApplyStyleCommand.h \
@@ -2489,6 +2488,7 @@ HEADERS += \
     workers/WorkerRunLoop.h \
     workers/WorkerScriptLoader.h \
     workers/WorkerThread.h \
+    xml/parser/XMLDocumentParser.h \
     xml/DOMParser.h \
     xml/NativeXPathNSResolver.h \
     xml/XMLHttpRequest.h \
@@ -2589,7 +2589,7 @@ SOURCES += \
     platform/qt/WidgetQt.cpp
 
 !contains(DEFINES, WTF_USE_LIBXML2=1) {
-    SOURCES += dom/XMLDocumentParserQt.cpp
+    SOURCES += xml/parser/XMLDocumentParserQt.cpp
 }
 
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
@@ -3100,8 +3100,8 @@ contains(DEFINES, ENABLE_XSLT=1) {
             xml/XSLImportRule.cpp \
             xml/XSLTUnicodeSort.cpp \
             xml/XMLTreeViewer.cpp \
-            dom/XMLDocumentParserLibxml2.cpp \
-            dom/XMLDocumentParserScope.cpp
+            xml/parser/XMLDocumentParserLibxml2.cpp \
+            xml/parser/XMLDocumentParserScope.cpp
 
             HEADERS += \
                 xml/XSLImportRule.h \
@@ -3109,7 +3109,7 @@ contains(DEFINES, ENABLE_XSLT=1) {
                 xml/XSLImportRule.h \
                 xml/XSLTUnicodeSort.h \
                 xml/XMLTreeViewer.h \
-                dom/XMLDocumentParserScope.h
+                xml/parser/XMLDocumentParserScope.h
 
     } else {
         SOURCES += \

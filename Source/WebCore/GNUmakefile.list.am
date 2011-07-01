@@ -1324,11 +1324,6 @@ webcore_sources += \
 	Source/WebCore/dom/WheelEvent.h \
 	Source/WebCore/dom/WindowEventContext.cpp \
 	Source/WebCore/dom/WindowEventContext.h \
-	Source/WebCore/dom/XMLDocumentParser.cpp \
-	Source/WebCore/dom/XMLDocumentParser.h \
-	Source/WebCore/dom/XMLDocumentParserLibxml2.cpp \
-	Source/WebCore/dom/XMLDocumentParserScope.cpp \
-	Source/WebCore/dom/XMLDocumentParserScope.h \
 	Source/WebCore/editing/AppendNodeCommand.cpp \
 	Source/WebCore/editing/AppendNodeCommand.h \
 	Source/WebCore/editing/ApplyBlockElementCommand.cpp \
@@ -3791,6 +3786,11 @@ webcore_sources += \
 	Source/WebCore/workers/WorkerScriptLoader.h \
 	Source/WebCore/workers/WorkerThread.cpp \
 	Source/WebCore/workers/WorkerThread.h \
+	Source/WebCore/xml/parser/XMLDocumentParser.cpp \
+	Source/WebCore/xml/parser/XMLDocumentParser.h \
+	Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp \
+	Source/WebCore/xml/parser/XMLDocumentParserScope.cpp \
+	Source/WebCore/xml/parser/XMLDocumentParserScope.h \
 	Source/WebCore/xml/DOMParser.cpp \
 	Source/WebCore/xml/DOMParser.h \
 	Source/WebCore/xml/NativeXPathNSResolver.cpp \

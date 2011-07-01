@@ -118,6 +118,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/websockets \
     $$SOURCE_DIR/WebCore/workers \
     $$SOURCE_DIR/WebCore/xml \
+    $$SOURCE_DIR/WebCore/xml/parser \
     $$WEBCORE_INCLUDEPATH
 
 WEBCORE_INCLUDEPATH = \

@@ -219,6 +219,7 @@
       '../websockets',
       '../workers',
       '../xml',
+      '../xml/parser',
     ],
 
     'bindings_idl_files': [

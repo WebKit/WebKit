@@ -62,6 +62,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
+    "${WEBCORE_DIR}/xml/parser"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
     "${JAVASCRIPTCORE_DIR}/API"
@@ -606,9 +607,6 @@ SET(WebCore_SOURCES
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
     dom/WindowEventContext.cpp
-    dom/XMLDocumentParser.cpp
-    dom/XMLDocumentParserLibxml2.cpp
-    dom/XMLDocumentParserScope.cpp
 
     dom/default/PlatformMessagePortChannel.cpp
 
@@ -1387,6 +1385,10 @@ SET(WebCore_SOURCES
     xml/XSLTProcessor.cpp
     xml/XSLTProcessorLibxslt.cpp
     xml/XSLTUnicodeSort.cpp
+
+    xml/parser/XMLDocumentParser.cpp
+    xml/parser/XMLDocumentParserLibxml2.cpp
+    xml/parser/XMLDocumentParserScope.cpp
 )
 
 SET(WebCore_CSS_PROPERTY_NAMES

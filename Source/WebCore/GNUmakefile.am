@@ -83,6 +83,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/websockets \
 	-I$(srcdir)/Source/WebCore/workers \
 	-I$(srcdir)/Source/WebCore/xml \
+	-I$(srcdir)/Source/WebCore/xml/parser \
 	-I$(top_builddir)/WebCore/bindings/js \
 	-I$(top_builddir)/DerivedSources/WebCore \
 	-I$(top_builddir)/DerivedSources \

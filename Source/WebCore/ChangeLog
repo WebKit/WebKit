@@ -1,3 +1,176 @@
+2011-07-01  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move XMLDocumentParser to new folder xml/parser/
+        https://bugs.webkit.org/show_bug.cgi?id=63666
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::pushCurrentNode):
+        (WebCore::XMLDocumentParser::popCurrentNode):
+        (WebCore::XMLDocumentParser::clearCurrentNodeStack):
+        (WebCore::XMLDocumentParser::insert):
+        (WebCore::XMLDocumentParser::append):
+        (WebCore::XMLDocumentParser::handleError):
+        (WebCore::XMLDocumentParser::enterText):
+        (WebCore::toString):
+        (WebCore::XMLDocumentParser::exitText):
+        (WebCore::XMLDocumentParser::detach):
+        (WebCore::XMLDocumentParser::end):
+        (WebCore::XMLDocumentParser::finish):
+        (WebCore::XMLDocumentParser::finishWasCalled):
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        (WebCore::XMLDocumentParser::notifyFinished):
+        (WebCore::XMLDocumentParser::isWaitingForScripts):
+        (WebCore::XMLDocumentParser::pauseParsing):
+        (WebCore::XMLDocumentParser::parseDocumentFragment):
+        * xml/parser/XMLDocumentParser.h:
+        (WebCore::XMLParserContext::context):
+        (WebCore::XMLParserContext::XMLParserContext):
+        (WebCore::XMLDocumentParser::create):
+        (WebCore::XMLDocumentParser::setIsXHTMLDocument):
+        (WebCore::XMLDocumentParser::isXHTMLDocument):
+        (WebCore::XMLDocumentParser::setIsXHTMLMPDocument):
+        (WebCore::XMLDocumentParser::isXHTMLMPDocument):
+        (WebCore::XMLDocumentParser::wellFormed):
+        (WebCore::XMLDocumentParser::context):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::~PendingCallbacks):
+        (WebCore::PendingCallbacks::create):
+        (WebCore::PendingCallbacks::appendStartElementNSCallback):
+        (WebCore::PendingCallbacks::appendEndElementNSCallback):
+        (WebCore::PendingCallbacks::appendCharactersCallback):
+        (WebCore::PendingCallbacks::appendProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::appendCDATABlockCallback):
+        (WebCore::PendingCallbacks::appendCommentCallback):
+        (WebCore::PendingCallbacks::appendInternalSubsetCallback):
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::PendingCallbacks::callAndRemoveFirstCallback):
+        (WebCore::PendingCallbacks::isEmpty):
+        (WebCore::PendingCallbacks::PendingCallbacks):
+        (WebCore::PendingCallbacks::PendingCallback::~PendingCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::~PendingStartElementNSCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingEndElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::~PendingCharactersCallback):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::call):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::~PendingProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::call):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::~PendingCDATABlockCallback):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::call):
+        (WebCore::PendingCallbacks::PendingCommentCallback::~PendingCommentCallback):
+        (WebCore::PendingCallbacks::PendingCommentCallback::call):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::~PendingInternalSubsetCallback):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::call):
+        (WebCore::matchFunc):
+        (WebCore::OffsetBuffer::OffsetBuffer):
+        (WebCore::OffsetBuffer::readOutBytes):
+        (WebCore::switchToUTF16):
+        (WebCore::shouldAllowExternalLoad):
+        (WebCore::openFunc):
+        (WebCore::readFunc):
+        (WebCore::writeFunc):
+        (WebCore::closeFunc):
+        (WebCore::errorFunc):
+        (WebCore::XMLParserContext::createStringParser):
+        (WebCore::XMLParserContext::createMemoryParser):
+        (WebCore::XMLDocumentParser::supportsXMLVersion):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLParserContext::~XMLParserContext):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::toString):
+        (WebCore::toAtomicString):
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::characters):
+        (WebCore::XMLDocumentParser::error):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        (WebCore::XMLDocumentParser::startDocument):
+        (WebCore::XMLDocumentParser::endDocument):
+        (WebCore::XMLDocumentParser::internalSubset):
+        (WebCore::getParser):
+        (WebCore::hackAroundLibXMLEntityBug):
+        (WebCore::startElementNsHandler):
+        (WebCore::endElementNsHandler):
+        (WebCore::charactersHandler):
+        (WebCore::processingInstructionHandler):
+        (WebCore::cdataBlockHandler):
+        (WebCore::commentHandler):
+        (WebCore::warningHandler):
+        (WebCore::fatalErrorHandler):
+        (WebCore::normalErrorHandler):
+        (WebCore::sharedXHTMLEntity):
+        (WebCore::getXHTMLEntity):
+        (WebCore::getEntityHandler):
+        (WebCore::startDocumentHandler):
+        (WebCore::endDocumentHandler):
+        (WebCore::internalSubsetHandler):
+        (WebCore::externalSubsetHandler):
+        (WebCore::ignorableWhitespaceHandler):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::xmlDocPtrForString):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::textPosition):
+        (WebCore::XMLDocumentParser::textPositionOneBased):
+        (WebCore::XMLDocumentParser::stopParsing):
+        (WebCore::XMLDocumentParser::resumeParsing):
+        (WebCore::XMLDocumentParser::appendFragmentSource):
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::parseAttributes):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::EntityResolver::resolveUndeclaredEntity):
+        (WebCore::XMLDocumentParser::supportsXMLVersion):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::textPosition):
+        (WebCore::XMLDocumentParser::textPositionOneBased):
+        (WebCore::XMLDocumentParser::stopParsing):
+        (WebCore::XMLDocumentParser::resumeParsing):
+        (WebCore::XMLDocumentParser::appendFragmentSource):
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::parseAttributes):
+        (WebCore::prefixFromQName):
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::startDocument):
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseEndElement):
+        (WebCore::XMLDocumentParser::parseCharacters):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+        (WebCore::XMLDocumentParser::endDocument):
+        (WebCore::XMLDocumentParser::hasError):
+        (WebCore::XMLDocumentParser::parseDtd):
+        * xml/parser/XMLDocumentParserScope.cpp:
+        (WebCore::XMLDocumentParserScope::XMLDocumentParserScope):
+        (WebCore::XMLDocumentParserScope::~XMLDocumentParserScope):
+
 2011-07-01  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.
