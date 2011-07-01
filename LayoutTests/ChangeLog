@@ -1,3 +1,12 @@
+2011-07-01  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Clean up skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=61644
+
+        * platform/qt-wk2/Skipped: Remove everything that we skip via the common wk2 list.
+
 2011-06-30  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.
