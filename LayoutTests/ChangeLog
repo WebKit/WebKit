@@ -1,3 +1,9 @@
+2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r90275 in WebKit2 because setEditingBehavior hasn't been implemented in TestRunner.
+
+        * platform/wk2/Skipped:
+
 2011-07-01  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: make LevelDB the default back-end
