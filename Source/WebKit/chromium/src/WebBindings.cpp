@@ -41,7 +41,6 @@
 #include "V8DOMWrapper.h"
 #include "V8Element.h"
 #include "V8NPUtils.h"
-#include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Range.h"
 #elif USE(JSC)
@@ -257,16 +256,6 @@ static NPObject* makeStringArrayImpl(const WebVector<WebString>& data)
     return npCreateV8ScriptObject(0, result, window);
 }
 
-static NPObject* makeNodeImpl(WebNode data)
-{
-    v8::HandleScope handleScope;
-    if (data.isNull())
-        return 0;
-    v8::Handle<v8::Object> result = V8Node::wrap(data.unwrap<Node>());
-    WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow(WebCore::V8Proxy::currentContext());
-    return npCreateV8ScriptObject(0, result, window);
-}
-
 #endif
 
 bool WebBindings::getRange(NPObject* range, WebRange* webRange)
@@ -303,16 +292,6 @@ NPObject* WebBindings::makeStringArray(const WebVector<WebString>& data)
 {
 #if USE(V8)
     return makeStringArrayImpl(data);
-#else
-    // Not supported on other ports (JSC, etc.).
-    return 0;
-#endif
-}
-
-NPObject* WebBindings::makeNode(const WebNode& data)
-{
-#if USE(V8)
-    return makeNodeImpl(data);
 #else
     // Not supported on other ports (JSC, etc.).
     return 0;

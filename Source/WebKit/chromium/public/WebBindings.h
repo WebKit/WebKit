@@ -128,6 +128,8 @@ public:
     // undefined.  If iString is false, the opposite is true.
     WEBKIT_API static void extractIdentifierData(const NPIdentifier&, const NPUTF8*& string, int32_t& number, bool& isString);
 
+    // DumpRenderTree support -------------------------------------------------
+
     // Return true (success) if the given npobj is a range object.
     // If so, return that range as a WebRange object.
     WEBKIT_API static bool getRange(NPObject* range, WebRange*);
@@ -138,7 +140,6 @@ public:
 
     WEBKIT_API static NPObject* makeIntArray(const WebVector<int>&);
     WEBKIT_API static NPObject* makeStringArray(const WebVector<WebString>&);
-    WEBKIT_API static NPObject* makeNode(const WebNode&);
 
     // Exceptions -------------------------------------------------------------
 
