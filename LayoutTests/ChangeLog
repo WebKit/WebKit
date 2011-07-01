@@ -1,3 +1,12 @@
+2011-06-30  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed.
+
+        Rebaselining video-currentTime-set.html for Chromium due to FFmpeg update.
+
+        * platform/chromium-mac/media/video-currentTime-set-expected.txt:
+        * platform/chromium-win/media/video-currentTime-set-expected.txt:
+
 2011-06-30  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
