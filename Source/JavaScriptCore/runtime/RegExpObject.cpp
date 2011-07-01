@@ -134,9 +134,9 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
         // if odd, the forwards slash is already escaped, so we mustn't
         // double escape it.
         if ((forwardSlashPosition - slashesPosition) & 1)
-            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition + 1));
+            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition - completed + 1));
         else {
-            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition));
+            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition - completed));
             result.append("\\/");
         }
         completed = forwardSlashPosition + 1;

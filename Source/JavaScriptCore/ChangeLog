@@ -1,3 +1,16 @@
+2011-07-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63819
+        Escaping of forwardslashes in strings incorrect if multiple exist.
+
+        The bug is in the parameters passed to a substring - should be
+        start & length, but we're passing start & end indices!
+
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectSource):
+
 2011-07-01  Adam Roben  <aroben@apple.com>
 
         Roll out r90194

@@ -29,6 +29,11 @@ shouldBeTrue('testForwardSlash("^\\\\\\/$", "\\/");');
 // These strings match two backslashes (the second with the '/' escaped).
 shouldBeTrue('testForwardSlash("^\\\\\\\\/$", "\\\\/");');
 shouldBeTrue('testForwardSlash("^\\\\\\\\\\/$", "\\\\/");');
+// Test that nothing goes wrongif there are multiple forward slashes!
+shouldBeTrue('testForwardSlash("x/x/x", "x\\/x\\/x");');
+shouldBeTrue('testForwardSlash("x\\/x/x", "x\\/x\\/x");');
+shouldBeTrue('testForwardSlash("x/x\\/x", "x\\/x\\/x");');
+shouldBeTrue('testForwardSlash("x\\/x\\/x", "x\\/x\\/x");');
 
 var successfullyParsed = true;
 

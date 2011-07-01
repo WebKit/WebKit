@@ -16,6 +16,10 @@ PASS testForwardSlash("^\\/$", "\/"); is true
 PASS testForwardSlash("^\\\/$", "\/"); is true
 PASS testForwardSlash("^\\\\/$", "\\/"); is true
 PASS testForwardSlash("^\\\\\/$", "\\/"); is true
+PASS testForwardSlash("x/x/x", "x\/x\/x"); is true
+PASS testForwardSlash("x\/x/x", "x\/x\/x"); is true
+PASS testForwardSlash("x/x\/x", "x\/x\/x"); is true
+PASS testForwardSlash("x\/x\/x", "x\/x\/x"); is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

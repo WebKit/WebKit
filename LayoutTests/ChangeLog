@@ -1,3 +1,15 @@
+2011-07-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63819
+        Escaping of forwardslashes in strings incorrect if multiple exist.
+
+        Add tests with multiple forward slashes.
+
+        * fast/regex/script-tests/toString.js:
+        * fast/regex/toString-expected.txt:
+
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
         Add failing test expectations for Chromium media tests on Windows 7 and
