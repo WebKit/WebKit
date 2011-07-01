@@ -40271,7 +40271,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\style\StyleFlexibleBoxData.cpp"
+					RelativePath="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -40323,7 +40323,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\rendering\style\StyleFlexibleBoxData.h"
+					RelativePath="..\rendering\style\StyleDeprecatedFlexibleBoxData.h"
 					>
 				</File>
 				<File

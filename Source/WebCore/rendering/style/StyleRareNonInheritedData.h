@@ -41,7 +41,7 @@ namespace WebCore {
 class AnimationList;
 class CSSStyleSelector;
 class ShadowData;
-class StyleFlexibleBoxData;
+class StyleDeprecatedFlexibleBoxData;
 class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
@@ -89,7 +89,7 @@ public:
 #endif
     float opacity; // Whether or not we're transparent.
 
-    DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
+    DataRef<StyleDeprecatedFlexibleBoxData> flexibleBox; // Flexible box properties
     DataRef<StyleMarqueeData> marquee; // Marquee properties
     DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
     DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)

@@ -20,13 +20,13 @@
  */
 
 #include "config.h"
-#include "StyleFlexibleBoxData.h"
+#include "StyleDeprecatedFlexibleBoxData.h"
 
 #include "RenderStyle.h"
 
 namespace WebCore {
 
-StyleFlexibleBoxData::StyleFlexibleBoxData()
+StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
     : flex(RenderStyle::initialBoxFlex())
     , flex_group(RenderStyle::initialBoxFlexGroup())
     , ordinal_group(RenderStyle::initialBoxOrdinalGroup())
@@ -37,8 +37,8 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
 {
 }
 
-StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
-    : RefCounted<StyleFlexibleBoxData>()
+StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData& o)
+    : RefCounted<StyleDeprecatedFlexibleBoxData>()
     , flex(o.flex)
     , flex_group(o.flex_group)
     , ordinal_group(o.ordinal_group)
@@ -49,7 +49,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
 {
 }
 
-bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
+bool StyleDeprecatedFlexibleBoxData::operator==(const StyleDeprecatedFlexibleBoxData& o) const
 {
     return flex == o.flex && flex_group == o.flex_group &&
            ordinal_group == o.ordinal_group && align == o.align &&

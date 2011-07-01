@@ -4951,8 +4951,8 @@
 		BC5EB74E0E81E06700B25965 /* StyleMultiColData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB80F0E81F2CE00B25965 /* StyleTransformData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB80D0E81F2CE00B25965 /* StyleTransformData.cpp */; };
 		BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB80E0E81F2CE00B25965 /* StyleTransformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5EB8B80E8201BD00B25965 /* StyleFlexibleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB8B60E8201BD00B25965 /* StyleFlexibleBoxData.cpp */; };
-		BC5EB8B90E8201BD00B25965 /* StyleFlexibleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB8B70E8201BD00B25965 /* StyleFlexibleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB8B80E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */; };
+		BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB8C10E82031B00B25965 /* ShadowData.cpp */; };
 		BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB8C20E82031B00B25965 /* ShadowData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB94E0E82056B00B25965 /* CounterDirectives.cpp */; };
@@ -11557,8 +11557,8 @@
 		BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleMultiColData.h; path = style/StyleMultiColData.h; sourceTree = "<group>"; };
 		BC5EB80D0E81F2CE00B25965 /* StyleTransformData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleTransformData.cpp; path = style/StyleTransformData.cpp; sourceTree = "<group>"; };
 		BC5EB80E0E81F2CE00B25965 /* StyleTransformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleTransformData.h; path = style/StyleTransformData.h; sourceTree = "<group>"; };
-		BC5EB8B60E8201BD00B25965 /* StyleFlexibleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleFlexibleBoxData.cpp; path = style/StyleFlexibleBoxData.cpp; sourceTree = "<group>"; };
-		BC5EB8B70E8201BD00B25965 /* StyleFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFlexibleBoxData.h; path = style/StyleFlexibleBoxData.h; sourceTree = "<group>"; };
+		BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleDeprecatedFlexibleBoxData.cpp; path = style/StyleDeprecatedFlexibleBoxData.cpp; sourceTree = "<group>"; };
+		BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleDeprecatedFlexibleBoxData.h; path = style/StyleDeprecatedFlexibleBoxData.h; sourceTree = "<group>"; };
 		BC5EB8C10E82031B00B25965 /* ShadowData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShadowData.cpp; path = style/ShadowData.cpp; sourceTree = "<group>"; };
 		BC5EB8C20E82031B00B25965 /* ShadowData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShadowData.h; path = style/ShadowData.h; sourceTree = "<group>"; };
 		BC5EB94E0E82056B00B25965 /* CounterDirectives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CounterDirectives.cpp; path = style/CounterDirectives.cpp; sourceTree = "<group>"; };
@@ -18562,8 +18562,8 @@
 				BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */,
 				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
 				BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */,
-				BC5EB8B60E8201BD00B25965 /* StyleFlexibleBoxData.cpp */,
-				BC5EB8B70E8201BD00B25965 /* StyleFlexibleBoxData.h */,
+				BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */,
+				BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */,
 				BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */,
 				BCEF44490E6745E0001C1287 /* StyleGeneratedImage.h */,
 				BCEF43CE0E673DA1001C1287 /* StyleImage.h */,
@@ -22591,7 +22591,7 @@
 				BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */,
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */,
-				BC5EB8B90E8201BD00B25965 /* StyleFlexibleBoxData.h in Headers */,
+				BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */,
 				BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */,
 				BCEF43CF0E673DA1001C1287 /* StyleImage.h in Headers */,
 				BC2273040E82F1E600E7F975 /* StyleInheritedData.h in Headers */,
@@ -25474,7 +25474,7 @@
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
 				A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */,
 				AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */,
-				BC5EB8B80E8201BD00B25965 /* StyleFlexibleBoxData.cpp in Sources */,
+				BC5EB8B80E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp in Sources */,
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 				BC2273030E82F1E600E7F975 /* StyleInheritedData.cpp in Sources */,
 				A80E734D0A199C77007FB8C5 /* StyleList.cpp in Sources */,

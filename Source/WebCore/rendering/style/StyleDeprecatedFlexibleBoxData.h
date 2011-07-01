@@ -22,21 +22,21 @@
  *
  */
 
-#ifndef StyleFlexibleBoxData_h
-#define StyleFlexibleBoxData_h
+#ifndef StyleDeprecatedFlexibleBoxData_h
+#define StyleDeprecatedFlexibleBoxData_h
 
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
+class StyleDeprecatedFlexibleBoxData : public RefCounted<StyleDeprecatedFlexibleBoxData> {
 public:
-    static PassRefPtr<StyleFlexibleBoxData> create() { return adoptRef(new StyleFlexibleBoxData); }
-    PassRefPtr<StyleFlexibleBoxData> copy() const { return adoptRef(new StyleFlexibleBoxData(*this)); }
-    
-    bool operator==(const StyleFlexibleBoxData& o) const;
-    bool operator!=(const StyleFlexibleBoxData& o) const
+    static PassRefPtr<StyleDeprecatedFlexibleBoxData> create() { return adoptRef(new StyleDeprecatedFlexibleBoxData); }
+    PassRefPtr<StyleDeprecatedFlexibleBoxData> copy() const { return adoptRef(new StyleDeprecatedFlexibleBoxData(*this)); }
+
+    bool operator==(const StyleDeprecatedFlexibleBoxData&) const;
+    bool operator!=(const StyleDeprecatedFlexibleBoxData& o) const
     {
         return !(*this == o);
     }
@@ -49,12 +49,12 @@ public:
     unsigned pack: 3; // EBoxAlignment
     unsigned orient: 1; // EBoxOrient
     unsigned lines : 1; // EBoxLines
-    
+
 private:
-    StyleFlexibleBoxData();
-    StyleFlexibleBoxData(const StyleFlexibleBoxData&);
+    StyleDeprecatedFlexibleBoxData();
+    StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData&);
 };
 
 } // namespace WebCore
 
-#endif // StyleFlexibleBoxData_h
+#endif // StyleDeprecatedFlexibleBoxData_h

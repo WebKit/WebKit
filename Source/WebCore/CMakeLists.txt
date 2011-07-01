@@ -1277,7 +1277,7 @@ SET(WebCore_SOURCES
     rendering/style/StyleBackgroundData.cpp
     rendering/style/StyleBoxData.cpp
     rendering/style/StyleCachedImage.cpp
-    rendering/style/StyleFlexibleBoxData.cpp
+    rendering/style/StyleDeprecatedFlexibleBoxData.cpp
     rendering/style/StyleGeneratedImage.cpp
     rendering/style/StyleInheritedData.cpp
     rendering/style/StyleMarqueeData.cpp

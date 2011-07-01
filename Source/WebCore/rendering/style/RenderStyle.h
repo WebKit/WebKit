@@ -48,7 +48,7 @@
 #include "ShadowData.h"
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
-#include "StyleFlexibleBoxData.h"
+#include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleInheritedData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"

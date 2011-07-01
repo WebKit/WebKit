@@ -38,7 +38,7 @@
 #include "StyleBackgroundData.cpp"
 #include "StyleBoxData.cpp"
 #include "StyleCachedImage.cpp"
-#include "StyleFlexibleBoxData.cpp"
+#include "StyleDeprecatedFlexibleBoxData.cpp"
 #include "StyleGeneratedImage.cpp"
 #include "StyleInheritedData.cpp"
 #include "StyleMarqueeData.cpp"

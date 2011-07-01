@@ -1180,7 +1180,7 @@ SOURCES += \
     rendering/style/StyleBackgroundData.cpp \
     rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
-    rendering/style/StyleFlexibleBoxData.cpp \
+    rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
     rendering/style/StyleGeneratedImage.cpp \
     rendering/style/StyleInheritedData.cpp \
     rendering/style/StyleMarqueeData.cpp \
@@ -2227,7 +2227,7 @@ HEADERS += \
     rendering/style/StyleBackgroundData.h \
     rendering/style/StyleBoxData.h \
     rendering/style/StyleCachedImage.h \
-    rendering/style/StyleFlexibleBoxData.h \
+    rendering/style/StyleDeprecatedFlexibleBoxData.h \
     rendering/style/StyleGeneratedImage.h \
     rendering/style/StyleInheritedData.h \
     rendering/style/StyleMarqueeData.h \
