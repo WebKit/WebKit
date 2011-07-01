@@ -1,3 +1,15 @@
+2011-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r90192.
+        http://trac.webkit.org/changeset/90192
+        https://bugs.webkit.org/show_bug.cgi?id=63788
+
+        Appears to have caused NRWT on Chromium WebKit Vista to hang
+        (Requested by abarth on #webkit).
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_unittest.py:
+
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
