@@ -1,3 +1,12 @@
+2011-07-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        [CMake] Add cpu detection for MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=63693
+
+        * Source/CMakeLists.txt:
+
 2011-07-01  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.
