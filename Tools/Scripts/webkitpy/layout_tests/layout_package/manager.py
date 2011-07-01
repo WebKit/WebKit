@@ -235,7 +235,7 @@ class WorkerException(Exception):
     pass
 
 
-class Manager:
+class Manager(object):
     """A class for managing running a series of tests on a series of layout
     test files."""
 
@@ -263,6 +263,8 @@ class Manager:
         self.WEBSOCKET_SUBDIR = self._fs.join('', 'websocket', '')
         self.LAYOUT_TESTS_DIRECTORY = "LayoutTests" + self._fs.sep
         self._has_http_lock = False
+
+        self._remaining_locked_shards = []
 
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
@@ -540,15 +542,12 @@ class Manager:
         concurrency instead of trying to do any sort of real sharding.
 
         Return:
-            A list of lists of TestInput objects.
+            Two lists of lists of TestInput objects. The first list should
+            only be run under the server lock, the second can be run whenever.
         """
-        # FIXME: when we added http locking, we changed how this works such
-        # that we always lump all of the HTTP threads into a single shard.
-        # That will slow down experimental-fully-parallel, but it's unclear
-        # what the best alternative is completely revamping how we track
-        # when to grab the lock.
-
-        test_lists = []
+        # FIXME: We still need to support multiple locked shards.
+        locked_shards = []
+        unlocked_shards = []
         tests_to_http_lock = []
         if not use_real_shards:
             for test_file in test_files:
@@ -556,7 +555,7 @@ class Manager:
                 if self._test_requires_lock(test_file):
                     tests_to_http_lock.append(test_input)
                 else:
-                    test_lists.append((".", [test_input]))
+                    unlocked_shards.append((".", [test_input]))
         else:
             tests_by_dir = {}
             for test_file in test_files:
@@ -570,18 +569,15 @@ class Manager:
             for directory in tests_by_dir:
                 test_list = tests_by_dir[directory]
                 test_list_tuple = (directory, test_list)
-                test_lists.append(test_list_tuple)
+                unlocked_shards.append(test_list_tuple)
 
             # Sort the shards by directory name.
-            test_lists.sort(lambda a, b: cmp(a[0], b[0]))
+            unlocked_shards.sort(lambda a, b: cmp(a[0], b[0]))
 
-        # Put the http tests first. There are only a couple hundred of them,
-        # but each http test takes a very long time to run, so sorting by the
-        # number of tests doesn't accurately capture how long they take to run.
         if tests_to_http_lock:
-            test_lists.insert(0, ("tests_to_http_lock", tests_to_http_lock))
+            locked_shards = [("tests_to_http_lock", tests_to_http_lock)]
 
-        return test_lists
+        return (locked_shards, unlocked_shards)
 
     def _contains_tests(self, subdir):
         for test_file in self._test_files:
@@ -626,15 +622,23 @@ class Manager:
         thread_timings = []
 
         self._printer.print_update('Sharding tests ...')
-        test_lists = self._shard_tests(file_list,
+        locked_shards, unlocked_shards = self._shard_tests(file_list,
             int(self._options.child_processes) > 1 and not self._options.experimental_fully_parallel)
 
-        # FIXME: we need a less hard-coded way of figuring out if we need to
-        # start the servers.
-        if test_lists[0][0] == 'tests_to_http_lock':
+        # FIXME: We don't have a good way to coordinate the workers so that
+        # they don't try to run the shards that need a lock if we don't actually
+        # have the lock. The easiest solution at the moment is to grab the
+        # lock at the beginning of the run, and then run all of the locked
+        # shards first. This minimizes the time spent holding the lock, but
+        # means that we won't be running tests while we're waiting for the lock.
+        # If this becomes a problem in practice we'll need to change this.
+
+        all_shards = locked_shards + unlocked_shards
+        self._remaining_locked_shards = locked_shards
+        if locked_shards:
             self.start_servers_with_lock()
 
-        num_workers = self._num_workers(len(test_lists))
+        num_workers = self._num_workers(len(all_shards))
         manager_connection = manager_worker_broker.get(self._port, self._options,
                                                        self, worker.Worker)
 
@@ -656,8 +660,8 @@ class Manager:
             time.sleep(0.1)
 
         self._printer.print_update("Starting testing ...")
-        for test_list in test_lists:
-            manager_connection.post_message('test_list', test_list[0], test_list[1])
+        for shard in all_shards:
+            manager_connection.post_message('test_list', shard[0], shard[1])
 
         # We post one 'stop' message for each worker. Because the stop message
         # are sent after all of the tests, and because each worker will stop
@@ -1353,6 +1357,18 @@ class Manager:
 
     def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
         self._group_stats[list_name] = (num_tests, elapsed_time)
+
+        def find(name, test_lists):
+            for i in range(len(test_lists)):
+                if test_lists[i][0] == name:
+                    return i
+            return -1
+
+        index = find(list_name, self._remaining_locked_shards)
+        if index >= 0:
+            self._remaining_locked_shards.pop(index)
+            if not self._remaining_locked_shards:
+                self.stop_servers_with_lock()
 
     def handle_finished_test(self, source, result, elapsed_time):
         worker_state = self._worker_states[source]
