@@ -1,3 +1,12 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Implement WebCore::defaultDetailsSummaryText()
+        https://bugs.webkit.org/show_bug.cgi?id=63700
+
+        * platform/chromium/test_expectations.txt: Tests for <details> fail temporarily.
+
 2011-06-30  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

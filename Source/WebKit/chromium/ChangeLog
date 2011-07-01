@@ -1,3 +1,14 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Implement WebCore::defaultDetailsSummaryText()
+        https://bugs.webkit.org/show_bug.cgi?id=63700
+
+        * public/WebLocalizedString.h: Add new key.
+        * src/LocalizedStrings.cpp: Call query() with the new key.
+        (WebCore::defaultDetailsSummaryText):
+
 2011-06-30  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed.

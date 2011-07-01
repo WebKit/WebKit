@@ -94,8 +94,7 @@ String fileButtonChooseMultipleFilesLabel()
 
 String defaultDetailsSummaryText()
 {
-    notImplemented();
-    return String("Details");
+    return query(WebLocalizedString::DetailsLabel);
 }
 
 String fileButtonNoFileSelectedLabel()

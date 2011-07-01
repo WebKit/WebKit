@@ -35,6 +35,7 @@ namespace WebKit {
 
 struct WebLocalizedString {
     enum Name {
+        DetailsLabel,
         SubmitButtonDefaultLabel,
         InputElementAltText,
         ResetButtonDefaultLabel,
