@@ -1,3 +1,16 @@
+2011-06-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update new-run-webkit-tests now that the wk2 shared skipped list has moved
+        https://bugs.webkit.org/show_bug.cgi?id=63780
+
+        The shared list was moved from mac-wk2 to wk2 as part of
+        http://trac.webkit.org/changeset/90125.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-06-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Darin Adler.

@@ -288,11 +288,9 @@ class WebKitPort(base.Port):
         # Note order doesn't matter since the Skipped file contents are all combined.
         search_paths = set([self.port_name, self.name()])
         if self.get_option('webkit_test_runner'):
-            # Quoting old-run-webkit-tests:
-            # Because nearly all of the skipped tests for WebKit 2 on Mac are due to
-            # cross-platform issues, the Windows and Qt ports use the Mac skipped list
-            # additionally to their own to avoid maintaining separate lists.
-            search_paths.update([self._wk2_port_name(), "mac-wk2"])
+            # Because nearly all of the skipped tests for WebKit 2 are due to cross-platform
+            # issues, all wk2 ports share a skipped list under platform/wk2.
+            search_paths.update([self._wk2_port_name(), "wk2"])
         return search_paths
 
     def _expectations_from_skipped_files(self):

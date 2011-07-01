@@ -97,7 +97,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
         port._name = "testwebkitport-version"
         self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version']))
         port._options = MockOptions(webkit_test_runner=True)
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'mac-wk2']))
+        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'wk2']))
 
     def test_test_expectations(self):
         # Check that we read both the expectations file and anything in a
