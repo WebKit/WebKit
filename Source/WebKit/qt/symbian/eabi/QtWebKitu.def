@@ -812,7 +812,7 @@ EXPORTS
 	_ZN8QWebPage25requestPermissionFromUserEP9QWebFrameNS_16PermissionDomainE @ 811 NONAME ABSENT
 	_ZN8QWebPage27cancelRequestsForPermissionEP9QWebFrameNS_16PermissionDomainE @ 812 NONAME ABSENT
 	_ZNK16QGraphicsWebView10deviceSizeEv @ 813 NONAME ABSENT
-	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageRK5QSize @ 814 NONAME
+	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageRK5QSize @ 814 NONAME ABSENT
 	_ZN23DumpRenderTreeSupportQt32simulateDesktopNotificationClickERK7QString @ 815 NONAME
 	_ZN8QWebPage23viewportChangeRequestedEv @ 816 NONAME
 	_ZNK8QWebPage28viewportConfigurationForSizeERK5QSize @ 817 NONAME ABSENT
@@ -839,9 +839,10 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt23setMockGeolocationErrorEP8QWebPageiRK7QString @ 838 NONAME
 	_ZN23DumpRenderTreeSupportQt26setMockGeolocationPositionEP8QWebPageddd @ 839 NONAME
 	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageiRK5QSizeS4_ @ 840 NONAME
-	_ZN23DumpRenderTreeSupportQt13nodesFromRectERK11QWebElementiijjjjb @ 841 NONAME
-	_ZN23DumpRenderTreeSupportQt9plainTextERK8QVariant @ 842 NONAME
-	_ZN23DumpRenderTreeSupportQt26mediaContentUrlByElementIdEP9QWebFrameRK7QString @ 843 NONAME
-	_ZNK8QWebPage12hasSelectionEv @ 844 NONAME
-	_ZNK8QWebPage12selectedHtmlEv @ 845 NONAME
-	_ZN11QWebElement6renderEP8QPainterRK5QRect @ 846 NONAME
+	_ZN23DumpRenderTreeSupportQt26mediaContentUrlByElementIdEP9QWebFrameRK7QString @ 841 NONAME
+	_ZNK8QWebPage12hasSelectionEv @ 842 NONAME
+	_ZNK8QWebPage12selectedHtmlEv @ 843 NONAME
+	_ZN11QWebElement6renderEP8QPainterRK5QRect @ 844 NONAME
+	_ZN16QGraphicsWebView13setRenderHintEN8QPainter10RenderHintEb @ 845 NONAME
+	_ZN16QGraphicsWebView14setRenderHintsE6QFlagsIN8QPainter10RenderHintEE @ 846 NONAME
+	_ZNK16QGraphicsWebView11renderHintsEv @ 847 NONAME
