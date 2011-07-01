@@ -33,8 +33,8 @@ module storage {
         EventTarget
     ] IDBTransaction {
         // Modes
-        const unsigned short READ_WRITE = 0;
-        const unsigned short READ_ONLY = 1;
+        const unsigned short READ_ONLY = 0;
+        const unsigned short READ_WRITE = 1;
         const unsigned short VERSION_CHANGE = 2;
 
         // Properties

@@ -20,8 +20,8 @@ PASS webkitIDBCursor.NEXT is 0
 PASS webkitIDBCursor.NEXT_NO_DUPLICATE is 1
 PASS webkitIDBCursor.PREV is 2
 PASS webkitIDBCursor.PREV_NO_DUPLICATE is 3
-PASS webkitIDBTransaction.READ_WRITE is 0
-PASS webkitIDBTransaction.READ_ONLY is 1
+PASS webkitIDBTransaction.READ_ONLY is 0
+PASS webkitIDBTransaction.READ_WRITE is 1
 PASS webkitIDBTransaction.VERSION_CHANGE is 2
 PASS successfullyParsed is true
 

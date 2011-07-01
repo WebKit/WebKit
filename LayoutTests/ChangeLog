@@ -1,3 +1,16 @@
+2011-07-01  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: Fix constants for webkitIDBTransaction.READ_WRITE/READ_ONLY
+        https://bugs.webkit.org/show_bug.cgi?id=63754
+
+        Update layout tests to use the right values for
+        webkitIDBTransaction.READ_WRITE/READ_ONLY.
+
+        * storage/indexeddb/constants-expected.txt:
+        * storage/indexeddb/constants.html:
+
 2011-07-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

@@ -49,8 +49,8 @@ public:
     virtual ~IDBTransaction();
 
     enum Mode {
-        READ_WRITE = 0,
-        READ_ONLY = 1,
+        READ_ONLY = 0,
+        READ_WRITE = 1,
         VERSION_CHANGE = 2
     };
 
