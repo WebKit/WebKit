@@ -1,5 +1,15 @@
 2011-07-01  Adam Roben  <aroben@apple.com>
 
+        Skip one asserting and one timing-out test on Windows
+
+        Failures are tracked by <http://webkit.org/b/63806> and <http://webkit.org/b/63807>.
+
+        * platform/win/Skipped: Added
+        http/tests/cache/history-only-cached-subresource-loads-max-age-https.html and
+        fast/loader/create-frame-in-DOMContentLoaded.html.
+
+2011-07-01  Adam Roben  <aroben@apple.com>
+
         Land Windows expected failure results for fast/events/panScroll-click-hyperlink.html
 
         The failure is tracked by <http://webkit.org/b/63809>.

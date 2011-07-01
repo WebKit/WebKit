@@ -441,6 +441,12 @@ animations/animation-direction-normal.html
 # Flaky http://webkit.org/b/62569
 animations/play-state-paused.html
 
+# Times out http://webkit.org/b/63806
+http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
+
+# Asserts in FrameLoader::loadWithDocumentLoader http://webkit.org/b/63807
+fast/loader/create-frame-in-DOMContentLoaded.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
