@@ -1,3 +1,12 @@
+2011-07-01  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Re-enable WTF_USE_WEBAUDIO_FFMPEG for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=63783
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-07-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Daniel Bates.

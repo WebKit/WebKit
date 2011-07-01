@@ -140,8 +140,7 @@
       # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
       ['OS!="mac"', {
         'feature_defines': [
-          # TODO(scherkus): temporarily disabled due to FFmpeg update.
-          'WTF_USE_WEBAUDIO_FFMPEG=0',
+          'WTF_USE_WEBAUDIO_FFMPEG=1',
         ],
         'use_skia%': 1,
       }],
