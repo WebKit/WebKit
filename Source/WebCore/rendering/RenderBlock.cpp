@@ -4202,15 +4202,15 @@ static inline bool isChildHitTestCandidate(RenderBox* box)
     return box->height() && box->style()->visibility() == VISIBLE && !box->isFloatingOrPositioned();
 }
 
-VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
+VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
 {
     if (isTable())
         return RenderBox::positionForPoint(point);
 
     if (isReplaced()) {
         // FIXME: This seems wrong when the object's writing-mode doesn't match the line's writing-mode.
-        int pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
-        int pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
+        LayoutUnit pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
+        LayoutUnit pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
 
         if (pointLogicalTop < 0 || (pointLogicalTop < logicalHeight() && pointLogicalLeft < 0))
             return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
@@ -4218,9 +4218,9 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
             return createVisiblePosition(caretMaxOffset(), DOWNSTREAM);
     } 
 
-    IntPoint pointInContents = point;
+    LayoutPoint pointInContents = point;
     offsetForContents(pointInContents);
-    IntPoint pointInLogicalContents(pointInContents);
+    LayoutPoint pointInLogicalContents(pointInContents);
     if (!isHorizontalWritingMode())
         pointInLogicalContents = pointInLogicalContents.transposedPoint();
 

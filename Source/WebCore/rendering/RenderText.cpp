@@ -468,7 +468,7 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, InlineTextBox* b
     return false;
 }
 
-VisiblePosition RenderText::positionForPoint(const IntPoint& point)
+VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)
 {
     if (!firstTextBox() || textLength() == 0)
         return createVisiblePosition(0, DOWNSTREAM);
@@ -476,8 +476,8 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
     // Get the offset for the position, since this will take rtl text into account.
     int offset;
 
-    int pointLineDirection = firstTextBox()->isHorizontal() ? point.x() : point.y();
-    int pointBlockDirection = firstTextBox()->isHorizontal() ? point.y() : point.x();
+    LayoutUnit pointLineDirection = firstTextBox()->isHorizontal() ? point.x() : point.y();
+    LayoutUnit pointBlockDirection = firstTextBox()->isHorizontal() ? point.y() : point.x();
     
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
     if (firstTextBox() && pointBlockDirection <  firstTextBox()->root()->selectionBottom() && pointLineDirection < firstTextBox()->logicalLeft()) {
@@ -497,7 +497,7 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         RootInlineBox* rootBox = box->root();
         if (pointBlockDirection >= rootBox->selectionTop() || pointBlockDirection >= rootBox->lineTop()) {
-            int bottom = rootBox->selectionBottom();
+            LayoutUnit bottom = rootBox->selectionBottom();
             if (rootBox->nextRootBox())
                 bottom = min(bottom, rootBox->nextRootBox()->lineTop());
 

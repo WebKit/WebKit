@@ -133,7 +133,7 @@ private:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState&, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
 
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
     virtual LayoutRect borderBoundingBox() const
     {

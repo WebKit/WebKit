@@ -169,7 +169,7 @@ bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
     return false;
 }
 
-VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
+VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point)
 {
     if (!firstTextBox() || !textLength())
         return createVisiblePosition(0, DOWNSTREAM);
@@ -181,7 +181,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
 
     // Map local point to absolute point, as the character origins stored in the text fragments use absolute coordinates.
     FloatPoint absolutePoint(point);
-    absolutePoint.move(containingBlock->x(), containingBlock->y());
+    absolutePoint.moveBy(containingBlock->location());
 
     float closestDistance = std::numeric_limits<float>::max();
     float closestDistancePosition = 0;

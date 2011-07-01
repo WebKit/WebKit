@@ -184,7 +184,7 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-VisiblePosition RenderFileUploadControl::positionForPoint(const IntPoint&)
+VisiblePosition RenderFileUploadControl::positionForPoint(const LayoutPoint&)
 {
     return VisiblePosition();
 }

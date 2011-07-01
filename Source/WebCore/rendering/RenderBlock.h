@@ -120,7 +120,7 @@ public:
     LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
     LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine) : logicalRightOffsetForLine(position, firstLine); }
 
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
     
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
     virtual LayoutUnit availableLogicalWidth() const;

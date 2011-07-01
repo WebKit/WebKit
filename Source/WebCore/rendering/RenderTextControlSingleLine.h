@@ -166,7 +166,7 @@ public:
 
 private:
     virtual bool hasLineIfEmpty() const { return true; }
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
     bool m_multiLine;
 };

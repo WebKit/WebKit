@@ -715,7 +715,7 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return m_lineBoxes.hitTest(this, request, result, pointInContainer, accumulatedOffset, hitTestAction);
 }
 
-VisiblePosition RenderInline::positionForPoint(const IntPoint& point)
+VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)
 {
     // FIXME: Does not deal with relative positioned inlines (should it?)
     RenderBlock* cb = containingBlock();
@@ -726,7 +726,7 @@ VisiblePosition RenderInline::positionForPoint(const IntPoint& point)
     }
 
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
-    IntPoint parentBlockPoint = cb->location() + point;  
+    LayoutPoint parentBlockPoint = cb->location() + point;  
     RenderBoxModelObject* c = continuation();
     while (c) {
         RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);

@@ -77,7 +77,7 @@ private:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
 
     virtual unsigned caretMaxRenderedOffset() const;
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
     
     virtual bool canBeSelectionLeaf() const { return true; }
 

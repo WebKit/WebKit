@@ -52,7 +52,7 @@ public:
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

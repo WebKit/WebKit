@@ -52,9 +52,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& point)
+VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint& point)
 {
-    IntPoint contentsPoint(point);
+    LayoutPoint contentsPoint(point);
 
     // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
     // into account here.

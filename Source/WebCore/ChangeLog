@@ -1,3 +1,47 @@
+2011-07-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch positionForPoint to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63774
+
+        Switching positionForPoint functions to new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::positionForPoint):
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::positionForPoint):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::positionForPoint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint):
+        * rendering/svg/RenderSVGText.h:
+
 2011-07-01  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Darin Fisher.

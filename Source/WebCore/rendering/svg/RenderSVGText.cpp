@@ -207,7 +207,7 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, const Int
     return false;
 }
 
-VisiblePosition RenderSVGText::positionForPoint(const IntPoint& pointInContents)
+VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInContents)
 {
     RootInlineBox* rootBox = firstRootBox();
     if (!rootBox)
@@ -221,7 +221,7 @@ VisiblePosition RenderSVGText::positionForPoint(const IntPoint& pointInContents)
     if (!closestBox)
         return createVisiblePosition(0, DOWNSTREAM);
 
-    return closestBox->renderer()->positionForPoint(IntPoint(pointInContents.x(), closestBox->y()));
+    return closestBox->renderer()->positionForPoint(LayoutPoint(pointInContents.x(), closestBox->y()));
 }
 
 void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)

@@ -400,7 +400,7 @@ unsigned RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
+VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
@@ -410,11 +410,11 @@ VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
 
     RootInlineBox* root = box->root();
 
-    int top = root->selectionTop();
-    int bottom = root->selectionBottom();
+    LayoutUnit top = root->selectionTop();
+    LayoutUnit bottom = root->selectionBottom();
 
-    int blockDirectionPosition = box->isHorizontal() ? point.y() + y() : point.x() + x();
-    int lineDirectionPosition = box->isHorizontal() ? point.x() + x() : point.y() + y();
+    LayoutUnit blockDirectionPosition = box->isHorizontal() ? point.y() + y() : point.x() + x();
+    LayoutUnit lineDirectionPosition = box->isHorizontal() ? point.x() + x() : point.y() + y();
 
     if (blockDirectionPosition < top)
         return createVisiblePosition(caretMinOffset(), DOWNSTREAM); // coordinates are above

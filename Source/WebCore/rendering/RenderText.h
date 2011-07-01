@@ -65,7 +65,7 @@ public:
     enum ClippingOption { NoClipping, ClipToEllipsis };
     void absoluteQuads(Vector<FloatQuad>&, ClippingOption option = NoClipping);
 
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
     const UChar* characters() const { return m_text.characters(); }
     unsigned textLength() const { return m_text.length(); } // non virtual implementation of length()

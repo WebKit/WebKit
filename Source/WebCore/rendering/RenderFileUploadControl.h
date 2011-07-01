@@ -52,7 +52,7 @@ private:
 
     int maxFilenameWidth() const;
     
-    virtual VisiblePosition positionForPoint(const IntPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
     HTMLInputElement* uploadButton() const;
 };

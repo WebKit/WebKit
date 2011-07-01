@@ -73,7 +73,7 @@ unsigned RenderBR::caretMaxRenderedOffset() const
     return 1;
 }
 
-VisiblePosition RenderBR::positionForPoint(const IntPoint&)
+VisiblePosition RenderBR::positionForPoint(const LayoutPoint&)
 {
     return createVisiblePosition(0, DOWNSTREAM);
 }
