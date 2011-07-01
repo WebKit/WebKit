@@ -89,8 +89,8 @@ public:
 #endif
     float opacity; // Whether or not we're transparent.
 
-    DataRef<StyleDeprecatedFlexibleBoxData> flexibleBox; // Flexible box properties
-    DataRef<StyleMarqueeData> marquee; // Marquee properties
+    DataRef<StyleDeprecatedFlexibleBoxData> m_deprecatedFlexibleBox; // Flexible box properties
+    DataRef<StyleMarqueeData> m_marquee; // Marquee properties
     DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
     DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)
 

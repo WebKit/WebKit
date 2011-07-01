@@ -62,8 +62,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     : RefCounted<StyleRareNonInheritedData>()
     , lineClamp(o.lineClamp)
     , opacity(o.opacity)
-    , flexibleBox(o.flexibleBox)
-    , marquee(o.marquee)
+    , m_deprecatedFlexibleBox(o.m_deprecatedFlexibleBox)
+    , m_marquee(o.m_marquee)
     , m_multiCol(o.m_multiCol)
     , m_transform(o.m_transform)
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
@@ -108,8 +108,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_dashboardRegions == o.m_dashboardRegions
 #endif
         && opacity == o.opacity
-        && flexibleBox == o.flexibleBox
-        && marquee == o.marquee
+        && m_deprecatedFlexibleBox == o.m_deprecatedFlexibleBox
+        && m_marquee == o.m_marquee
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform
         && contentDataEquivalent(o)

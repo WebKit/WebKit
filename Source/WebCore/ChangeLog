@@ -1,3 +1,44 @@
+2011-07-01  Tony Chang  <tony@chromium.org>
+
+        cleanup of flexbox and marquee data naming in StyleRareNonInheritedData
+        https://bugs.webkit.org/show_bug.cgi?id=63827
+
+        Reviewed by Ojan Vafai.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::boxAlign):
+        (WebCore::InheritedFlags::boxFlex):
+        (WebCore::InheritedFlags::boxFlexGroup):
+        (WebCore::InheritedFlags::boxLines):
+        (WebCore::InheritedFlags::boxOrdinalGroup):
+        (WebCore::InheritedFlags::boxOrient):
+        (WebCore::InheritedFlags::boxPack):
+        (WebCore::InheritedFlags::marqueeIncrement):
+        (WebCore::InheritedFlags::marqueeSpeed):
+        (WebCore::InheritedFlags::marqueeLoopCount):
+        (WebCore::InheritedFlags::marqueeBehavior):
+        (WebCore::InheritedFlags::marqueeDirection):
+        (WebCore::InheritedFlags::setBoxAlign):
+        (WebCore::InheritedFlags::setBoxFlex):
+        (WebCore::InheritedFlags::setBoxFlexGroup):
+        (WebCore::InheritedFlags::setBoxLines):
+        (WebCore::InheritedFlags::setBoxOrdinalGroup):
+        (WebCore::InheritedFlags::setBoxOrient):
+        (WebCore::InheritedFlags::setBoxPack):
+        (WebCore::InheritedFlags::setMarqueeIncrement):
+        (WebCore::InheritedFlags::setMarqueeSpeed):
+        (WebCore::InheritedFlags::setMarqueeDirection):
+        (WebCore::InheritedFlags::setMarqueeBehavior):
+        (WebCore::InheritedFlags::setMarqueeLoopCount):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+            flexibleBox -> m_deprecatedFlexibleBox and marquee to m_marquee
+
 2011-07-01  Mike Reed  <reed@google.com>
 
         Stop using deprecated SkDeviceFactory API

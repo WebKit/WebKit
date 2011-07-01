@@ -117,8 +117,8 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     m_background.init();
     surround.init();
     rareNonInheritedData.init();
-    rareNonInheritedData.access()->flexibleBox.init();
-    rareNonInheritedData.access()->marquee.init();
+    rareNonInheritedData.access()->m_deprecatedFlexibleBox.init();
+    rareNonInheritedData.access()->m_marquee.init();
     rareNonInheritedData.access()->m_multiCol.init();
     rareNonInheritedData.access()->m_transform.init();
     rareInheritedData.init();
@@ -344,8 +344,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
             return StyleDifferenceLayout;
 
-        if (rareNonInheritedData->flexibleBox.get() != other->rareNonInheritedData->flexibleBox.get()
-            && *rareNonInheritedData->flexibleBox.get() != *other->rareNonInheritedData->flexibleBox.get())
+        if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()
+            && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other->rareNonInheritedData->m_deprecatedFlexibleBox.get())
             return StyleDifferenceLayout;
 
         // FIXME: We should add an optimized form of layout that just recomputes visual overflow.

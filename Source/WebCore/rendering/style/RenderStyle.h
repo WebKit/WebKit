@@ -661,14 +661,14 @@ public:
     ColorSpace colorSpace() const { return static_cast<ColorSpace>(rareInheritedData->colorSpace); }
     float opacity() const { return rareNonInheritedData->opacity; }
     ControlPart appearance() const { return static_cast<ControlPart>(rareNonInheritedData->m_appearance); }
-    EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->align); }
+    EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(rareNonInheritedData->m_deprecatedFlexibleBox->align); }
     EBoxDirection boxDirection() const { return static_cast<EBoxDirection>(inherited_flags._box_direction); }
-    float boxFlex() { return rareNonInheritedData->flexibleBox->flex; }
-    unsigned int boxFlexGroup() const { return rareNonInheritedData->flexibleBox->flex_group; }
-    EBoxLines boxLines() { return static_cast<EBoxLines>(rareNonInheritedData->flexibleBox->lines); }
-    unsigned int boxOrdinalGroup() const { return rareNonInheritedData->flexibleBox->ordinal_group; }
-    EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->flexibleBox->orient); }
-    EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->pack); }
+    float boxFlex() { return rareNonInheritedData->m_deprecatedFlexibleBox->flex; }
+    unsigned int boxFlexGroup() const { return rareNonInheritedData->m_deprecatedFlexibleBox->flex_group; }
+    EBoxLines boxLines() { return static_cast<EBoxLines>(rareNonInheritedData->m_deprecatedFlexibleBox->lines); }
+    unsigned int boxOrdinalGroup() const { return rareNonInheritedData->m_deprecatedFlexibleBox->ordinal_group; }
+    EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->m_deprecatedFlexibleBox->orient); }
+    EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(rareNonInheritedData->m_deprecatedFlexibleBox->pack); }
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
     void getBoxShadowExtent(int& top, int& right, int& bottom, int& left) const { getShadowExtent(boxShadow(), top, right, bottom, left); }
@@ -679,11 +679,11 @@ public:
 
     StyleReflection* boxReflect() const { return rareNonInheritedData->m_boxReflect.get(); }
     EBoxSizing boxSizing() const { return m_box->boxSizing(); }
-    Length marqueeIncrement() const { return rareNonInheritedData->marquee->increment; }
-    int marqueeSpeed() const { return rareNonInheritedData->marquee->speed; }
-    int marqueeLoopCount() const { return rareNonInheritedData->marquee->loops; }
-    EMarqueeBehavior marqueeBehavior() const { return static_cast<EMarqueeBehavior>(rareNonInheritedData->marquee->behavior); }
-    EMarqueeDirection marqueeDirection() const { return static_cast<EMarqueeDirection>(rareNonInheritedData->marquee->direction); }
+    Length marqueeIncrement() const { return rareNonInheritedData->m_marquee->increment; }
+    int marqueeSpeed() const { return rareNonInheritedData->m_marquee->speed; }
+    int marqueeLoopCount() const { return rareNonInheritedData->m_marquee->loops; }
+    EMarqueeBehavior marqueeBehavior() const { return static_cast<EMarqueeBehavior>(rareNonInheritedData->m_marquee->behavior); }
+    EMarqueeDirection marqueeDirection() const { return static_cast<EMarqueeDirection>(rareNonInheritedData->m_marquee->direction); }
     EUserModify userModify() const { return static_cast<EUserModify>(rareInheritedData->userModify); }
     EUserDrag userDrag() const { return static_cast<EUserDrag>(rareNonInheritedData->userDrag); }
     EUserSelect userSelect() const { return static_cast<EUserSelect>(rareInheritedData->userSelect); }
@@ -1027,22 +1027,22 @@ public:
     void setOpacity(float f) { SET_VAR(rareNonInheritedData, opacity, f); }
     void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
     // For valid values of box-align see http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#alignment
-    void setBoxAlign(EBoxAlignment a) { ASSERT(a == BSTRETCH || a == BSTART || a == BCENTER || a == BEND || a == BBASELINE); SET_VAR(rareNonInheritedData.access()->flexibleBox, align, a); }
+    void setBoxAlign(EBoxAlignment a) { ASSERT(a == BSTRETCH || a == BSTART || a == BCENTER || a == BEND || a == BBASELINE); SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, align, a); }
     void setBoxDirection(EBoxDirection d) { inherited_flags._box_direction = d; }
-    void setBoxFlex(float f) { SET_VAR(rareNonInheritedData.access()->flexibleBox, flex, f); }
-    void setBoxFlexGroup(unsigned int fg) { SET_VAR(rareNonInheritedData.access()->flexibleBox, flex_group, fg); }
-    void setBoxLines(EBoxLines l) { SET_VAR(rareNonInheritedData.access()->flexibleBox, lines, l); }
-    void setBoxOrdinalGroup(unsigned int og) { SET_VAR(rareNonInheritedData.access()->flexibleBox, ordinal_group, og); }
-    void setBoxOrient(EBoxOrient o) { SET_VAR(rareNonInheritedData.access()->flexibleBox, orient, o); }
-    void setBoxPack(EBoxAlignment p) { SET_VAR(rareNonInheritedData.access()->flexibleBox, pack, p); }
+    void setBoxFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, flex, f); }
+    void setBoxFlexGroup(unsigned int fg) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, flex_group, fg); }
+    void setBoxLines(EBoxLines l) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, lines, l); }
+    void setBoxOrdinalGroup(unsigned int og) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, ordinal_group, og); }
+    void setBoxOrient(EBoxOrient o) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, orient, o); }
+    void setBoxPack(EBoxAlignment p) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, pack, p); }
     void setBoxShadow(PassOwnPtr<ShadowData>, bool add = false);
     void setBoxReflect(PassRefPtr<StyleReflection> reflect) { if (rareNonInheritedData->m_boxReflect != reflect) rareNonInheritedData.access()->m_boxReflect = reflect; }
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
-    void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->marquee, increment, f); }
-    void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->marquee, speed, f); }
-    void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(rareNonInheritedData.access()->marquee, direction, d); }
-    void setMarqueeBehavior(EMarqueeBehavior b) { SET_VAR(rareNonInheritedData.access()->marquee, behavior, b); }
-    void setMarqueeLoopCount(int i) { SET_VAR(rareNonInheritedData.access()->marquee, loops, i); }
+    void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
+    void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->m_marquee, speed, f); }
+    void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(rareNonInheritedData.access()->m_marquee, direction, d); }
+    void setMarqueeBehavior(EMarqueeBehavior b) { SET_VAR(rareNonInheritedData.access()->m_marquee, behavior, b); }
+    void setMarqueeLoopCount(int i) { SET_VAR(rareNonInheritedData.access()->m_marquee, loops, i); }
     void setUserModify(EUserModify u) { SET_VAR(rareInheritedData, userModify, u); }
     void setUserDrag(EUserDrag d) { SET_VAR(rareNonInheritedData, userDrag, d); }
     void setUserSelect(EUserSelect s) { SET_VAR(rareInheritedData, userSelect, s); }
