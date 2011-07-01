@@ -1,5 +1,24 @@
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium-Mac] Update test expectation files.
+
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/basic-buttons-expected.png: Added.
+        * platform/chromium-mac/fast/forms/button-sizes-expected.png: Added.
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.png:
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-bkcolor-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.png:
+        * platform/chromium-mac/fast/forms/slider-padding-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Tony Chang.
 
         [Chromium] Input type="range" slider thumb is rendered upside down on Mac OS X.
