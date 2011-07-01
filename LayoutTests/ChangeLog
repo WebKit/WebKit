@@ -1,3 +1,12 @@
+2011-07-01  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [X11][WK2] plugins/mouse-evets-fixedpos.html is failing because of broken event propagation
+        https://bugs.webkit.org/show_bug.cgi?id=63239
+
+        * platform/qt-wk2/Skipped:
+
 2011-07-01  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Adam Roben.

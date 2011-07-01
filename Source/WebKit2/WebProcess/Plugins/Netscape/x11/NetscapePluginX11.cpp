@@ -434,7 +434,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
         return false;
     }
 
-    return NPP_HandleEvent(&xEvent);
+    return !NPP_HandleEvent(&xEvent);
 }
 
 // We undefine these constants in npruntime_internal.h to avoid collision
@@ -453,7 +453,7 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
     initializeXEvent(xEvent);
     setXButtonEventFieldsByWebWheelEvent(xEvent, event, m_frameRect.location());
 
-    return NPP_HandleEvent(&xEvent);
+    return !NPP_HandleEvent(&xEvent);
 }
 
 void NetscapePlugin::platformSetFocus(bool focusIn)
@@ -480,7 +480,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
     initializeXEvent(xEvent);
     setXCrossingEventFields(xEvent, event, m_frameRect.location(), EnterNotify);
 
-    return NPP_HandleEvent(&xEvent);
+    return !NPP_HandleEvent(&xEvent);
 }
 
 bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
@@ -492,7 +492,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
     initializeXEvent(xEvent);
     setXCrossingEventFields(xEvent, event, m_frameRect.location(), LeaveNotify);
 
-    return NPP_HandleEvent(&xEvent);
+    return !NPP_HandleEvent(&xEvent);
 }
 
 static inline void setXKeyEventFields(XEvent& xEvent, const WebKeyboardEvent& webEvent)
@@ -524,7 +524,7 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
     initializeXEvent(xEvent);
     setXKeyEventFields(xEvent, event);
 
-    return NPP_HandleEvent(&xEvent);
+    return !NPP_HandleEvent(&xEvent);
 }
 
 } // namespace WebKit

@@ -1491,7 +1491,6 @@ http/tests/security/cross-frame-access-protocol.html
 
 # Unexplained plugin failures
 plugins/embed-prefers-plugins-for-images.html
-plugins/mouse-events-fixedpos.html
 plugins/netscape-dom-access.html
 plugins/npp-set-window-called-during-destruction.html
 plugins/reloadplugins-and-pages.html
