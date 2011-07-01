@@ -1,3 +1,10 @@
+2011-07-01  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, remove extraneous newlines from
+        expected results for fast/workers/worker-finish-crash.html.
+
+        * fast/workers/worker-finish-crash-expected.txt:
+
 2011-07-01  Darin Adler  <darin@apple.com>
 
         The commit-bot checked in files without Subversion properties, so adding them now.
