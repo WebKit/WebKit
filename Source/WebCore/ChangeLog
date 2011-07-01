@@ -1,3 +1,21 @@
+2011-07-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        location.replace with a hash change does not update the history entry
+        https://bugs.webkit.org/show_bug.cgi?id=63777
+
+        location.replace('#foo') would not update the HistoryItem with the
+        new URL, thus navigating back to the page would use the previous
+        URL, even though it had been replaced. Make
+        HistoryController::updateForSameDocumentNavigation mirror 
+        HistoryController::replaceState.
+
+        Test: fast/history/location-replace-hash.html
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForSameDocumentNavigation):
+
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

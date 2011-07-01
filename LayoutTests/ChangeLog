@@ -1,3 +1,15 @@
+2011-07-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        location.replace with a hash change does not update the history entry
+        https://bugs.webkit.org/show_bug.cgi?id=63777
+
+        * fast/history/location-replace-hash-expected.txt: Added.
+        * fast/history/location-replace-hash.html: Added.
+        * fast/history/resources/location-replace-hash-1.html: Added.
+        * fast/history/resources/location-replace-hash-2.html: Added.
+
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix expected results after r90275. I checked in Mac-specific results for these tests.

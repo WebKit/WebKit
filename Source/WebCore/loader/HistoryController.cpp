@@ -510,6 +510,11 @@ void HistoryController::updateForSameDocumentNavigation()
 
     addVisitedLink(page, m_frame->document()->url());
     page->mainFrame()->loader()->history()->recursiveUpdateForSameDocumentNavigation();
+
+    if (m_currentItem) {
+        m_currentItem->setURL(m_frame->document()->url());
+        m_frame->loader()->client()->updateGlobalHistory();
+    }
 }
 
 void HistoryController::recursiveUpdateForSameDocumentNavigation()
