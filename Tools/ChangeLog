@@ -1,3 +1,14 @@
+2011-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r90213.
+        http://trac.webkit.org/changeset/90213
+        https://bugs.webkit.org/show_bug.cgi?id=63792
+
+        The SL bot has an errant HTTP server holding port 8080
+        (Requested by abarth on #webkit).
+
+        * Scripts/run-webkit-tests:
+
 2011-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build after r90163.
