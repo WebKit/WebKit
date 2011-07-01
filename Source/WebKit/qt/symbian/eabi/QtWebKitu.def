@@ -846,3 +846,35 @@ EXPORTS
 	_ZN16QGraphicsWebView13setRenderHintEN8QPainter10RenderHintEb @ 845 NONAME
 	_ZN16QGraphicsWebView14setRenderHintsE6QFlagsIN8QPainter10RenderHintEE @ 846 NONAME
 	_ZNK16QGraphicsWebView11renderHintsEv @ 847 NONAME
+	_ZN18QWebSecurityOrigin24setApplicationCacheQuotaEx @ 848 NONAME
+	_ZN8QWebPage29applicationCacheQuotaExceededEP18QWebSecurityOriginy @ 849 NONAME
+	_ZNK8QWebView12hasSelectionEv @ 850 NONAME
+	_ZNK8QWebView12selectedHtmlEv @ 851 NONAME
+	_ZN23DumpRenderTreeSupportQt10findStringEP8QWebPageRK7QStringRK11QStringList @ 852 NONAME
+	_ZN23DumpRenderTreeSupportQt10shadowRootERK11QWebElement @ 853 NONAME
+	_ZN23DumpRenderTreeSupportQt11clearOpenerEP9QWebFrame @ 854 NONAME
+	_ZN23DumpRenderTreeSupportQt11contextMenuEP8QWebPage @ 855 NONAME
+	_ZN23DumpRenderTreeSupportQt13setAutofilledERK11QWebElementb @ 856 NONAME
+	_ZN23DumpRenderTreeSupportQt16addURLToRedirectERK7QStringS2_ @ 857 NONAME
+	_ZN23DumpRenderTreeSupportQt16ensureShadowRootERK11QWebElement @ 858 NONAME
+	_ZN23DumpRenderTreeSupportQt16removeShadowRootERK11QWebElement @ 859 NONAME
+	_ZN23DumpRenderTreeSupportQt16responseMimeTypeEP9QWebFrame @ 860 NONAME
+	_ZN23DumpRenderTreeSupportQt16setAlternateHtmlEP9QWebFrameRK7QStringRK4QUrlS7_ @ 861 NONAME
+	_ZN23DumpRenderTreeSupportQt20resetGeolocationMockEP8QWebPage @ 862 NONAME
+	_ZN23DumpRenderTreeSupportQt23setMinimumTimerIntervalEP8QWebPaged @ 863 NONAME
+	_ZN23DumpRenderTreeSupportQt24setMockDeviceOrientationEbdbdbd @ 864 NONAME
+	_ZN23DumpRenderTreeSupportQt25clearAllApplicationCachesEv @ 865 NONAME
+	_ZN23DumpRenderTreeSupportQt27defaultMinimumTimerIntervalEv @ 866 NONAME
+	_ZN23DumpRenderTreeSupportQt27removeMockDeviceOrientationEv @ 867 NONAME
+	_ZN23DumpRenderTreeSupportQt28setMockGeolocationPermissionEP8QWebPageb @ 868 NONAME
+	_ZN23DumpRenderTreeSupportQt33activeMockDeviceOrientationClientEb @ 869 NONAME
+	_ZN23DumpRenderTreeSupportQt44numberOfPendingGeolocationPermissionRequestsEP8QWebPage @ 870 NONAME
+	_ZN8QDRTNodeC1EPN7WebCore4NodeE @ 871 NONAME
+	_ZN8QDRTNodeC1ERKS_ @ 872 NONAME
+	_ZN8QDRTNodeC1Ev @ 873 NONAME
+	_ZN8QDRTNodeC2EPN7WebCore4NodeE @ 874 NONAME
+	_ZN8QDRTNodeC2ERKS_ @ 875 NONAME
+	_ZN8QDRTNodeC2Ev @ 876 NONAME
+	_ZN8QDRTNodeD1Ev @ 877 NONAME
+	_ZN8QDRTNodeD2Ev @ 878 NONAME
+	_ZN8QDRTNodeaSERKS_ @ 879 NONAME

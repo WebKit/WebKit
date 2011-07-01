@@ -1,5 +1,16 @@
 2011-07-01  Jade Han  <jade.han@nokia.com>
 
+        [Qt][Symbian] Update .def file for Symbian to build Tools
+        https://bugs.webkit.org/show_bug.cgi?id=61200
+
+        Reviewed by Laszlo Gombos.
+
+        Add newly introduced symbols to fix building the Tools directory for Symbian.
+
+        * symbian/eabi/QtWebKitu.def:
+
+2011-07-01  Jade Han  <jade.han@nokia.com>
+
         Reviewed by Laszlo Gombos.
 
         [Qt][Symbian] Update .def file for Symbian
