@@ -371,50 +371,36 @@ void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, WKFindOptio
 
 void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeContextMenuClient(wkClient);
 }
 
 void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeFindClient(wkClient);
 }
 
 void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeFormClient(wkClient);
 }
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeLoaderClient(wkClient);
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializePolicyClient(wkClient);
 }
 
 void WKPageSetPageResourceLoadClient(WKPageRef pageRef, const WKPageResourceLoadClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeResourceLoadClient(wkClient);
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeUIClient(wkClient);
 }
 

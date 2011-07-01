@@ -40,8 +40,6 @@ WKTypeID WKBundleGetTypeID()
 
 void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(bundleRef)->initializeClient(wkClient);
 }
 

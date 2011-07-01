@@ -38,8 +38,6 @@ WKTypeID WKCookieManagerGetTypeID()
 
 void WKCookieManagerSetClient(WKCookieManagerRef cookieManagerRef, const WKCookieManagerClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(cookieManagerRef)->initializeClient(wkClient);
 }
 

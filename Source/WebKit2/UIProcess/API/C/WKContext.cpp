@@ -65,22 +65,16 @@ WKContextRef WKContextGetSharedThreadContext()
 
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(contextRef)->initializeInjectedBundleClient(wkClient);
 }
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(contextRef)->initializeHistoryClient(wkClient);
 }
 
 void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(contextRef)->initializeDownloadClient(wkClient);
 }
 

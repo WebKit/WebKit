@@ -38,8 +38,6 @@ WKTypeID WKIconDatabaseGetTypeID()
 
 void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(iconDatabaseRef)->initializeIconDatabaseClient(wkClient);
 }
 

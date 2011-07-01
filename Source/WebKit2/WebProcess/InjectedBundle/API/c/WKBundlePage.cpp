@@ -48,58 +48,42 @@ WKTypeID WKBundlePageGetTypeID()
 
 void WKBundlePageSetContextMenuClient(WKBundlePageRef pageRef, WKBundlePageContextMenuClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleContextMenuClient(wkClient);
 }
 
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleEditorClient(wkClient);
 }
 
 void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleFormClient(wkClient);
 }
 
 void WKBundlePageSetPageLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
 }
 
 void WKBundlePageSetResourceLoadClient(WKBundlePageRef pageRef, WKBundlePageResourceLoadClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleResourceLoadClient(wkClient);
 }
 
 void WKBundlePageSetPolicyClient(WKBundlePageRef pageRef, WKBundlePagePolicyClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundlePolicyClient(wkClient);
 }
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleUIClient(wkClient);
 }
 
 void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullScreenClient* wkClient)
 {
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeInjectedBundleFullScreenClient(wkClient);
 #endif
 }

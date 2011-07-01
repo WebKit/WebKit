@@ -38,8 +38,6 @@ WKTypeID WKGeolocationManagerGetTypeID()
 
 void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProvider* wkProvider)
 {
-    if (wkProvider && wkProvider->version)
-        return;
     toImpl(geolocationManagerRef)->initializeProvider(wkProvider);
 }
 

@@ -1,3 +1,47 @@
+2011-07-01  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed due to fixing of a broken world.
+
+        REGRESSION (r90163): WebKit2 bot is failing 100% of the tests.
+
+        r90163 bumped the version of the WKBundlePageLoaderClient passed in by WebKitTestRunner from 0 to 1.
+        This made it run in to the ad-hoc client version checking implemented directly in WKBundlePageSetPageLoaderClient,
+        resulting in no client being set. After r90162 the ad-hoc checking is not necessary as the APIClient
+        template takes care of the relevant version checks.
+
+        * Shared/APIClient.h:
+        (WebKit::APIClient::initialize): Fix a bug I noticed along the way: don't attempt to copy anything if
+        the client version is newer than what we support. This matches the behavior of the ad-hoc version checking.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInjectedBundleClient): Drop the ad-hoc version checking.
+        (WKContextSetHistoryClient): Ditto.
+        (WKContextSetDownloadClient): Ditto.
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetClient): Ditto.
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        (WKGeolocationManagerSetProvider): Ditto.
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconDatabaseClient): Ditto.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient): Ditto.
+        (WKPageSetPageFindClient): Ditto.
+        (WKPageSetPageFormClient): Ditto.
+        (WKPageSetPageLoaderClient): Ditto.
+        (WKPageSetPagePolicyClient): Ditto.
+        (WKPageSetPageResourceLoadClient): Ditto.
+        (WKPageSetPageUIClient): Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetClient): Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetContextMenuClient): Ditto.
+        (WKBundlePageSetEditorClient): Ditto.
+        (WKBundlePageSetFormClient): Ditto.
+        (WKBundlePageSetPageLoaderClient): Ditto.
+        (WKBundlePageSetResourceLoadClient): Ditto.
+        (WKBundlePageSetPolicyClient): Ditto.
+        (WKBundlePageSetUIClient): Ditto.
+        (WKBundlePageSetFullScreenClient): Ditto.
+
 2011-06-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -48,7 +48,7 @@ public:
 
         memset(&m_client, 0, sizeof(m_client));
 
-        if (client)
+        if (client && client->version < currentVersion)
             memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
     }
     
