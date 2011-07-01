@@ -2990,6 +2990,13 @@ BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
+BUGWK63697 MAC : fast/dom/HTMLInputElement/input-slider-update.html = IMAGE
+BUGWK63697 MAC : fast/forms/input-appearance-range.html = IMAGE
+BUGWK63697 MAC : fast/forms/slider-padding.html = IMAGE
+BUGWK63697 MAC : fast/forms/slider-thumb-shared-style.html = IMAGE
+BUGWK63697 MAC : fast/forms/thumbslider-no-parent-slider.html = IMAGE
+BUGWK63697 MAC : fast/repaint/slider-thumb-drag-release.html = IMAGE
+
 // Release definitely renders wrong; debug differences from reference may just
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE

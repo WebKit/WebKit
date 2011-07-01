@@ -1,3 +1,16 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Input type="range" slider thumb is rendered upside down on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=63697
+
+        http://trac.webkit.org/changeset/86261 added a thumb flipping code
+        for Mac-WebKit2. Chromium also needs it.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb): Always flip vertically on Chromium.
+
 2011-06-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Simon Fraser.

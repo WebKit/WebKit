@@ -1,3 +1,12 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Input type="range" slider thumb is rendered upside down on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=63697
+
+        * platform/chromium/test_expectations.txt: Some tests need new expectation images.
+
 2011-06-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Simon Fraser.
