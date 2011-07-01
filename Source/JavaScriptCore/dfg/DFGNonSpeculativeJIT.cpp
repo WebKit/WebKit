@@ -590,39 +590,120 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     }
 
     case ArithDiv: {
-        JSValueOperand arg1(this, node.child1);
-        JSValueOperand arg2(this, node.child2);
-        GPRReg arg1GPR = arg1.gpr();
-        GPRReg arg2GPR = arg2.gpr();
+        DoubleOperand op1(this, node.child1);
+        DoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1);
+        FPRReg op1FPR = op1.fpr();
+        FPRReg op2FPR = op2.fpr();
+        FPRReg resultFPR = result.fpr();
         
-        flushRegisters();
-
-        GPRResult result(this);
-
-        ASSERT(isFlushed());
-        setupTwoStubArgs<GPRInfo::argumentGPR0, GPRInfo::argumentGPR1>(arg1GPR, arg2GPR);
-        m_jit.appendCall(operationArithDiv);
-        m_jit.move(GPRInfo::returnValueGPR, result.gpr());
-
-        jsValueResult(result.gpr(), m_compileIndex);
+        m_jit.divDouble(op1FPR, op2FPR, resultFPR);
+        
+        doubleResult(resultFPR, m_compileIndex);
         break;
     }
 
     case ArithMod: {
-        JSValueOperand arg1(this, node.child1);
-        JSValueOperand arg2(this, node.child2);
-        GPRReg arg1GPR = arg1.gpr();
-        GPRReg arg2GPR = arg2.gpr();
-        flushRegisters();
+        JSValueOperand op1(this, node.child1);
+        JSValueOperand op2(this, node.child2);
+        GPRTemporary eax(this, X86Registers::eax);
+        GPRTemporary edx(this, X86Registers::edx);
 
-        GPRResult result(this);
+        FPRTemporary op1Double(this);
+        FPRTemporary op2Double(this);
+    
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+    
+        FPRReg op1FPR = op1Double.fpr();
+        FPRReg op2FPR = op2Double.fpr();
+    
+        JITCompiler::Jump firstOpNotInt;
+        JITCompiler::Jump secondOpNotInt;
+        JITCompiler::JumpList done;
+        JITCompiler::Jump modByZero;
+    
+        if (!isKnownInteger(node.child1))
+            firstOpNotInt = m_jit.branchPtr(MacroAssembler::Below, op1GPR, GPRInfo::tagTypeNumberRegister);
+        if (!isKnownInteger(node.child2))
+            secondOpNotInt = m_jit.branchPtr(MacroAssembler::Below, op2GPR, GPRInfo::tagTypeNumberRegister);
+    
+        modByZero = m_jit.branchTest32(MacroAssembler::Zero, op2GPR);
+    
+        GPRReg temp2 = InvalidGPRReg;
+        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+            temp2 = allocate();
+            m_jit.move(op2GPR, temp2);
+            op2GPR = temp2;
+        }
+    
+        m_jit.move(op1GPR, eax.gpr());
+        m_jit.assembler().cdq();
+        m_jit.assembler().idivl_r(op2GPR);
+    
+        if (temp2 != InvalidGPRReg)
+            unlock(temp2);
+    
+        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, X86Registers::edx);
+    
+        done.append(m_jit.jump());
+        
+        JITCompiler::Jump gotDoubleArgs;
+    
+        modByZero.link(&m_jit);
+        
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(std::numeric_limits<double>::quiet_NaN()))), X86Registers::edx);
+        done.append(m_jit.jump());
+    
+        if (!isKnownInteger(node.child1)) {
+            firstOpNotInt.link(&m_jit);
+        
+            JITCompiler::Jump secondOpNotInt2;
+        
+            if (!isKnownInteger(node.child2))
+                secondOpNotInt2 = m_jit.branchPtr(MacroAssembler::Below, op2GPR, GPRInfo::tagTypeNumberRegister);
+            
+            // first op is a double, second op is an int.
+            m_jit.convertInt32ToDouble(op2GPR, op2FPR);
 
-        ASSERT(isFlushed());
-        setupTwoStubArgs<GPRInfo::argumentGPR0, GPRInfo::argumentGPR1>(arg1GPR, arg2GPR);
-        m_jit.appendCall(operationArithMod);
-        m_jit.move(GPRInfo::returnValueGPR, result.gpr());
-
-        jsValueResult(result.gpr(), m_compileIndex);
+            if (!isKnownInteger(node.child2)) {
+                JITCompiler::Jump gotSecondOp = m_jit.jump();
+            
+                secondOpNotInt2.link(&m_jit);
+            
+                // first op is a double, second op is a double.
+                unboxDouble(op2GPR, op2FPR);
+            
+                gotSecondOp.link(&m_jit);
+            }
+        
+            unboxDouble(op1GPR, op1FPR);
+        
+            gotDoubleArgs = m_jit.jump();
+        }
+    
+        if (!isKnownInteger(node.child2)) {
+            secondOpNotInt.link(&m_jit);
+        
+            // we know that the first op is an int, and the second is a double
+            m_jit.convertInt32ToDouble(op1GPR, op1FPR);
+            unboxDouble(op2GPR, op2FPR);
+        }
+    
+        if (!isKnownInteger(node.child1))
+            gotDoubleArgs.link(&m_jit);
+    
+        if (!isKnownInteger(node.child1) || !isKnownInteger(node.child2)) {
+            silentSpillAllRegisters(X86Registers::edx);
+            setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(op1FPR, op2FPR);
+            m_jit.appendCall(fmod);
+            boxDouble(FPRInfo::returnValueFPR, X86Registers::edx);
+            silentFillAllRegisters(X86Registers::edx);
+        }
+        
+        done.link(&m_jit);
+    
+        jsValueResult(X86Registers::edx, m_compileIndex);
         break;
     }
 

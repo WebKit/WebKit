@@ -1,3 +1,13 @@
+2011-07-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        DFG non-speculative JIT always performs slow C calls for div and mod.
+        https://bugs.webkit.org/show_bug.cgi?id=63684
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+
 2011-07-01  Juan C. Montemayor  <jmont@apple.com>
 
         Reviewed by Oliver Hunt.
