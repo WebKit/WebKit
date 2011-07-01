@@ -1,3 +1,10 @@
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
+        The win32 implementation of fork is sad about forking test-webkitpy.
+        Hopefully this will heal the bot.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
