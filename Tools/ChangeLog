@@ -1,3 +1,11 @@
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
+        Temporarily disable waiting for ReportCrash to see how this code
+        affects performance on the bots.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
 2011-07-01  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Roben.

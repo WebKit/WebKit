@@ -668,9 +668,10 @@ class Manager:
 
         try:
             while not self.is_done():
-                if self._port.executive().running_pids(self._port.is_crash_reporter):
-                    self._printer.print_update("Waiting for crash reporter ...")
-                    self._port.executive().wait_newest(self._port.is_crash_reporter)
+                # Temporarily disabled to see how this code effect performance on the buildbots.
+                # if self._port.executive().running_pids(self._port.is_crash_reporter):
+                #     self._printer.print_update("Waiting for crash reporter ...")
+                #     self._port.executive().wait_newest(self._port.is_crash_reporter)
                 manager_connection.run_message_loop(delay_secs=1.0)
 
             # Make sure all of the workers have shut down (if possible).

@@ -130,7 +130,9 @@ class Worker(manager_worker_broker.AbstractWorker):
         # running. On Mac, ReportCrash chews up a bunch of resources and
         # causes the tests to become unstable, so we don't want to run in
         # parallel with ReportCrash.
-        self._port.executive().wait_newest(self._port.is_crash_reporter)
+        #
+        # Temporarily disabled to see how this code effect performance on the buildbots.
+        # self._port.executive().wait_newest(self._port.is_crash_reporter)
 
         test_timeout_sec = self.timeout(test_input)
         start = time.time()
