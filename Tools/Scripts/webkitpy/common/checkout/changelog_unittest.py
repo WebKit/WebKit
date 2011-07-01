@@ -183,11 +183,12 @@ class ChangeLogTest(unittest.TestCase):
         with codecs.open(file_path, "r", encoding) as file:
             return file.read()
 
+    # FIXME: We really should be getting this from prepare-ChangeLog itself.
     _new_entry_boilerplate = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
-        Reviewed by NOBODY (OOPS!).
-
         Need a short description and bug URL (OOPS!)
+
+        Reviewed by NOBODY (OOPS!).
 
         * Scripts/bugzilla-tool:
 '''
