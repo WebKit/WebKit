@@ -1,3 +1,11 @@
+2011-07-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Rebaseline media/media-blocked-by-beforeload.html for Chromium Leopard
+        (r90261 added a Leopard expectation for the Mac port, but Chromium 
+        Leopard can pass with the default baseline).
+
+        * platform/chromium-mac-leopard/media/media-blocked-by-beforeload-expected.txt: Added.
+
 2011-07-01  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=63835.
