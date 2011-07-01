@@ -112,6 +112,16 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt][WK2] netscape-dom-access.html needs new result
+        https://bugs.webkit.org/show_bug.cgi?id=63454
+
+        * platform/qt-wk2/Skipped:
+        * platform/qt-wk2/plugins/netscape-dom-access-expected.txt: Added.
+
+2011-07-01  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         [X11][WK2] plugins/mouse-evets-fixedpos.html is failing because of broken event propagation
         https://bugs.webkit.org/show_bug.cgi?id=63239
 
