@@ -567,7 +567,6 @@ public:
     {
         return false;
     }
-    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -644,11 +643,6 @@ public:
     }
 
     void sqrtDouble(FPRegisterID, FPRegisterID)
-    {
-        ASSERT_NOT_REACHED();
-    }
-    
-    void andnotDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }

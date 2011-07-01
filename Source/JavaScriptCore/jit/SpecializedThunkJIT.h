@@ -127,18 +127,9 @@ namespace JSC {
         {
             LinkBuffer patchBuffer(globalData, this, m_pool.get());
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
-            for (unsigned i = 0; i < m_calls.size(); i++)
-                patchBuffer.link(m_calls[i].first, m_calls[i].second);
             return patchBuffer.finalizeCode().m_code;
         }
-
-        // Assumes that the target function uses fpRegister0 as the first argument
-        // and return value. Like any sensible architecture would.
-        void callDoubleToDouble(FunctionPtr function)
-        {
-            m_calls.append(std::make_pair(call(), function));
-        }
-
+        
     private:
         int argumentToVirtualRegister(unsigned argument)
         {
@@ -165,7 +156,6 @@ namespace JSC {
         JSGlobalData* m_globalData;
         RefPtr<ExecutablePool> m_pool;
         MacroAssembler::JumpList m_failures;
-        Vector<std::pair<Call, FunctionPtr> > m_calls;
     };
 
 }

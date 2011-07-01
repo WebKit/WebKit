@@ -1,3 +1,37 @@
+2011-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r90177 and r90179.
+        http://trac.webkit.org/changeset/90177
+        http://trac.webkit.org/changeset/90179
+        https://bugs.webkit.org/show_bug.cgi?id=63790
+
+        It caused crashes on Qt in debug mode (Requested by Ossy on
+        #webkit).
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARM::sqrtDouble):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARMv7::sqrtDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::sqrtDouble):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointSqrt):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::sqrtDouble):
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/X86Assembler.h:
+        * create_hash_table:
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        * jit/ThunkGenerators.h:
+
 2011-06-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Beth Dakin.
