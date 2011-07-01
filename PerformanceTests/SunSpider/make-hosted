@@ -37,7 +37,7 @@ open RESULTS_TEMPLATE, "<resources/results-TEMPLATE.html";
 my $resultsTemplate = do { local $/; <RESULTS_TEMPLATE> };
 close RESULTS_TEMPLATE;
 
-my @suites = ("sunspider-0.9", "sunspider-0.9.1");
+my @suites = ("sunspider-0.9", "sunspider-0.9.1", "sunspider-1.0");
 
 foreach my $suite (@suites) {
 

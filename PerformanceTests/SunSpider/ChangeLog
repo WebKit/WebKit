@@ -1,3 +1,13 @@
+2011-06-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Create sunspider-1.0 directory in preparation for fixing a bunch of bugs
+        https://bugs.webkit.org/show_bug.cgi?id=63782
+
+        * make-hosted: Learn about the new directory.
+        * tests/sunspider-1.0: Copied from PerformanceTests/SunSpider/tests/sunspider-0.9.1.
+
 2010-11-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.
