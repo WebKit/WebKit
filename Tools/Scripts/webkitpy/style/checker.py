@@ -41,6 +41,7 @@ from checkers.cpp import CppChecker
 from checkers.python import PythonChecker
 from checkers.test_expectations import TestExpectationsChecker
 from checkers.text import TextChecker
+from checkers.xcodeproj import XcodeProjectFileChecker
 from checkers.xml import XMLChecker
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
@@ -254,6 +255,8 @@ _TEXT_FILE_EXTENSIONS = [
     'y',
     ]
 
+_XCODEPROJ_FILE_EXTENSION = 'pbxproj'
+
 _XML_FILE_EXTENSIONS = [
     'vcproj',
     'vsprops',
@@ -444,6 +447,7 @@ class FileType:
     PYTHON = 3
     TEXT = 4
     XML = 5
+    XCODEPROJ = 6
 
 
 class CheckerDispatcher(object):
@@ -504,6 +508,8 @@ class CheckerDispatcher(object):
             return FileType.XML
         elif os.path.basename(file_path).startswith('ChangeLog'):
             return FileType.CHANGELOG
+        elif file_extension == _XCODEPROJ_FILE_EXTENSION:
+            return FileType.XCODEPROJ
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS):
             return FileType.TEXT
@@ -528,6 +534,8 @@ class CheckerDispatcher(object):
             checker = PythonChecker(file_path, handle_style_error)
         elif file_type == FileType.XML:
             checker = XMLChecker(file_path, handle_style_error)
+        elif file_type == FileType.XCODEPROJ:
+            checker = XcodeProjectFileChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
             basename = os.path.basename(file_path)
             if basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':

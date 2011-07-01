@@ -1,3 +1,16 @@
+2011-06-30  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Style Checker should flag removal of "developmentRegion = English;" from project.pbxproj.
+        https://bugs.webkit.org/show_bug.cgi?id=62022
+
+        Adds XcodeProjectFileChecker to check removal of "developmentRegion".
+
+        * Scripts/webkitpy/style/checker.py: Added XcodeProjectFileChecker as a checker for *.pbxproj.
+        * Scripts/webkitpy/style/checkers/xcodeproj.py: Added.
+        * Scripts/webkitpy/style/checkers/xcodeproj_unittest.py: Added.
+
 2011-06-30  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
