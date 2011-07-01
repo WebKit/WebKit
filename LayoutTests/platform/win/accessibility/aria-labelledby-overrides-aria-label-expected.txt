@@ -1,18 +1,12 @@
-Alpha Beta Delta Eta Epsilon Theta
 This tests that if aria-labelledby is used, then aria-label attributes are not used.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-FAIL usingNone.title should be AXTitle: Alpha. Was Alpha.
-FAIL usingNone.description should be AXDescription: . Was .
-FAIL usingLabel.title should be AXTitle: Beta. Was Beta.
-FAIL usingLabel.description should be AXDescription: Gamma. Was Description: Gamma.
-FAIL usingLabelledby.title should be AXTitle: Delta. Was Delta.
-FAIL usingLabelledby.description should be AXDescription: Epsilon. Was Description: Epsilon.
-FAIL usingLabeledby.title should be AXTitle: Eta. Was Eta.
-FAIL usingLabeledby.description should be AXDescription: Theta. Was Description: Theta.
-PASS successfullyParsed is true
-
-TEST COMPLETE
+Alpha Beta Delta Eta Epsilon Theta
+usingNone.title: [Alpha]
+usingNone.description: []
+usingLabel.title: [Beta]
+usingLabel.description: [Description: Gamma]
+usingLabelledby.title: [Epsilon]
+usingLabelledby.description: [Description: Epsilon]
+usingLabeledby.title: [Theta]
+usingLabeledby.description: [Description: Theta]
 

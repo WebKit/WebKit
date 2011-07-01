@@ -1,3 +1,15 @@
+2011-07-01  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        accessibility/aria-labelledby-overrides-aria-label.html failing on Windows since it was added
+        https://bugs.webkit.org/show_bug.cgi?id=63191
+
+        * accessibility/aria-labelledby-overrides-aria-label-expected.txt: Removed.
+        * accessibility/aria-labelledby-overrides-aria-label.html:
+        * platform/mac/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Added.
+        * platform/win/accessibility/aria-labelledby-overrides-aria-label-expected.txt:
+
 2011-07-01  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Kent Tamura.
