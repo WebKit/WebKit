@@ -11,7 +11,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
-    bindings/js/IDBBindingUtilities.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSArrayBufferCustom.cpp
     bindings/js/JSDataViewCustom.cpp
@@ -31,10 +30,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSClipboardCustom.cpp
     bindings/js/JSConsoleCustom.cpp
     bindings/js/JSCoordinatesCustom.cpp
-    bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomVoidCallback.cpp
-    bindings/js/JSCustomXPathNSResolver.cpp
-    bindings/js/JSDOMApplicationCacheCustom.cpp
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
     bindings/js/JSDOMGlobalObject.cpp
@@ -59,7 +55,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSEventSourceCustom.cpp
     bindings/js/JSEventTarget.cpp
     bindings/js/JSExceptionBase.cpp
-    bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSFloat32ArrayCustom.cpp
     bindings/js/JSFloat64ArrayCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
@@ -81,8 +76,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSHTMLSelectElementCustom.cpp
     bindings/js/JSHTMLStyleElementCustom.cpp
     bindings/js/JSHistoryCustom.cpp
-    bindings/js/JSIDBAnyCustom.cpp
-    bindings/js/JSIDBKeyCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInt16ArrayCustom.cpp
@@ -110,12 +103,8 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSOptionConstructor.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
-    bindings/js/JSSQLResultSetRowListCustom.cpp
-    bindings/js/JSSQLTransactionCustom.cpp
-    bindings/js/JSSQLTransactionSyncCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp
     bindings/js/JSSharedWorkerCustom.cpp
-    bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
     bindings/js/JSTextCustom.cpp
@@ -131,14 +120,12 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
-    bindings/js/JSWebSocketCustom.cpp
     bindings/js/JSWorkerContextBase.cpp
     bindings/js/JSWorkerContextCustom.cpp
     bindings/js/JSWorkerCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
-    bindings/js/JSXPathResultCustom.cpp
     bindings/js/JavaScriptCallFrame.cpp
     bindings/js/PageScriptDebugServer.cpp
     bindings/js/ScheduledAction.cpp
@@ -174,6 +161,56 @@ LIST(APPEND WebCore_SOURCES
 
     bridge/jsc/BridgeJSC.cpp
 )
+
+
+IF (ENABLE_BLOB)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSFileReaderCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_DATABASE)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSCustomSQLStatementErrorCallback.cpp
+        bindings/js/JSSQLResultSetRowListCustom.cpp
+        bindings/js/JSSQLTransactionCustom.cpp
+        bindings/js/JSSQLTransactionSyncCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_DOM_STORAGE)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSStorageCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_INDEXED_DATABASE)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/IDBBindingUtilities.cpp
+        bindings/js/JSIDBAnyCustom.cpp
+        bindings/js/JSIDBKeyCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_WEB_SOCKETS)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSWebSocketCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_OFFLINE_WEB_APPLICATIONS)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSDOMApplicationCacheCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_XPATH)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSCustomXPathNSResolver.cpp
+        bindings/js/JSXPathResultCustom.cpp
+    )
+ENDIF ()
+
 
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
