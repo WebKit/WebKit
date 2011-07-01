@@ -1,3 +1,10 @@
+2011-07-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build after r90163.
+
+        * MiniBrowser/gtk/WebBundle/WebBundleMain.c:
+        (didCreatePage):
+
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
         Exit faster when we get a keyboard interrupt.  Previously, we'd open

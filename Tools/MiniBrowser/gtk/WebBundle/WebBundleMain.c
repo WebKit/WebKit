@@ -41,7 +41,7 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
 {
     WKBundlePageUIClient uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
-    uiClient.version = WKBundlePageUIClientCurrentVersion;
+    uiClient.version = kWKBundlePageUIClientCurrentVersion;
     uiClient.mouseDidMoveOverElement = mouseDidMoveOverElement;
 
     WKBundlePageSetUIClient(page, &uiClient);
