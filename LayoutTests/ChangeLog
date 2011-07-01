@@ -1,3 +1,12 @@
+2011-07-01  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=63835.
+
+        Reviewed by Dmitry Titov.
+
+        * fast/workers/worker-finish-crash-expected.txt: Added.
+        * fast/workers/worker-finish-crash.html: Added.
+
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

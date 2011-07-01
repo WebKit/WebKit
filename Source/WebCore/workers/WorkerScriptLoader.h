@@ -92,6 +92,7 @@ namespace WebCore {
         bool m_failed;
         unsigned long m_identifier;
         ResourceRequestBase::TargetType m_targetType;
+        bool m_finishing;
     };
 
 } // namespace WebCore

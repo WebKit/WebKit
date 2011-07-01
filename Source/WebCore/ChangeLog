@@ -1,3 +1,17 @@
+2011-07-01  Nate Chapin  <japhet@chromium.org>
+
+        Ensure WorkerScriptLoader::notifyFinished() doesn't re-enter.
+        https://bugs.webkit.org/show_bug.cgi?id=63835
+
+        Reviewed by Dmitry Titov.
+
+        Test: fast/workers/worker-finish-crash.html
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::WorkerScriptLoader):
+        (WebCore::WorkerScriptLoader::notifyFinished):
+        * workers/WorkerScriptLoader.h:
+
 2011-07-01  Adrienne Walker  <enne@google.com>
 
         [chromium] Upload root layer textures first so that it is less likely to be skipped

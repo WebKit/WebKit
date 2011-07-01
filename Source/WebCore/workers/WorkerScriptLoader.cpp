@@ -52,6 +52,7 @@ WorkerScriptLoader::WorkerScriptLoader(ResourceRequestBase::TargetType targetTyp
     , m_failed(false)
     , m_identifier(0)
     , m_targetType(targetType)
+    , m_finishing(false)
 {
 }
 
@@ -181,8 +182,11 @@ void WorkerScriptLoader::notifyError()
     
 void WorkerScriptLoader::notifyFinished()
 {
-    if (m_client)
-        m_client->notifyFinished();
+    if (!m_client || m_finishing)
+        return;
+
+    m_finishing = true;
+    m_client->notifyFinished();
 }
 
 } // namespace WebCore
