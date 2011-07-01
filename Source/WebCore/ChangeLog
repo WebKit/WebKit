@@ -1,3 +1,15 @@
+2011-07-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore part of fix for https://bugs.webkit.org/show_bug.cgi?id=63851
+        <rdar://problem/8981062> Crash when loading a document in an editable WebView that has a subframe with an unstyled body
+
+        No new tests.  I tried to make a test in DumpRenderTree with an editable WebView, 
+        but was unsuccessful in getting the crash to happen in that instance.
+
+        * editing/Editor.cpp: (WebCore::Editor::applyEditingStyleToElement): Add a nil check that exits early, in addition to the ASSERT.
+
 2011-07-01  Levi Weintraub  <leviw@chromium.org>
 
         Switch overflow and collapsedMargins to new layout types

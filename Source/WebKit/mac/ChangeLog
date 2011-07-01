@@ -1,3 +1,14 @@
+2011-07-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit part of fix for https://bugs.webkit.org/show_bug.cgi?id=63851
+        <rdar://problem/8981062> Crash when loading a document in an editable WebView that has a subframe with an unstyled body
+
+        * WebView/WebHTMLRepresentation.mm: (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+        Only call applyEditingStyleToBodyElement for the main frame.  There's no need to apply break-word, 
+        space, and after-white-space properties to subframes in the editable document.
+
 2011-07-01  Andy Estes  <aestes@apple.com>
 
         Reviewed by Mark Rowe.

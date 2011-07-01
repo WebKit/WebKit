@@ -220,7 +220,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     }
 
     WebView *webView = [webFrame webView];
-    if ([webView isEditable])
+    if ([webView mainFrame] == webFrame && [webView isEditable])
         core(webFrame)->editor()->applyEditingStyleToBodyElement();
 }
 

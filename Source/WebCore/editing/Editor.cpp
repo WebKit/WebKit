@@ -2883,6 +2883,8 @@ void Editor::applyEditingStyleToElement(Element* element) const
 
     CSSStyleDeclaration* style = element->style();
     ASSERT(style);
+    if (!style)
+        return;
 
     ExceptionCode ec = 0;
     style->setProperty(CSSPropertyWordWrap, "break-word", false, ec);
