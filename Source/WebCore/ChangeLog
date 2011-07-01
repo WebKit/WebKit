@@ -2,6 +2,30 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        SVGAnimatedLengthListAnimator does not take additive="sum" into accout
+        https://bugs.webkit.org/show_bug.cgi?id=63705
+
+        Added support for additive animations to SVGAnimatedLengthListAnimator. Don't clear the animatedList if not
+        necessary.
+
+        SVGLength unit gets animated as well now. We used to take the unit of 'from' all the time.
+
+        Tests: svg/animations/svglength-animation-unitType.html
+               svg/animations/svglengthlist-animation-5.html
+
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::SVGAnimatedLengthAnimator::calculateAnimatedValue): Code clean-up and support for unit animation.
+        * svg/SVGAnimatedLengthList.cpp: Add support for additive animations.
+        (WebCore::SVGAnimatedLengthListAnimator::calculateAnimatedValue):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::SVGLength):
+        (WebCore::SVGLength::setValue): New setValue that gets the LengthType and UnitType as argument for supporting animations of units as well.
+        * svg/SVGLength.h:
+
+2011-07-01  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         SVGAnimatedType should support SVGAnimatedInteger animation
         https://bugs.webkit.org/show_bug.cgi?id=63789
         

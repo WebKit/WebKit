@@ -472,11 +472,13 @@ svg/animations/svglength-animation-px-to-pc.html
 svg/animations/svglength-animation-px-to-percentage.html
 svg/animations/svglength-animation-px-to-pt.html
 svg/animations/svglength-animation-px-to-px.html
+svg/animations/svglength-animation-unitType.html
 svg/animations/svglength-animation-values.html
 svg/animations/svglengthlist-animation-1.html
 svg/animations/svglengthlist-animation-2.html
 svg/animations/svglengthlist-animation-3.html
 svg/animations/svglengthlist-animation-4.html
+svg/animations/svglengthlist-animation-5.html
 svg/animations/svgnumber-animation-1.html
 svg/animations/svgnumber-animation-2.html
 svg/animations/svgnumber-animation-3.html

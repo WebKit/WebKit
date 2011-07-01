@@ -111,12 +111,20 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
         return;
     }
     
-    animatedLengthList.clear();
+    bool animatedListSizeEqual = itemsCount == animatedLengthList.size();
+    if (!animatedListSizeEqual)
+        animatedLengthList.clear();
+    ExceptionCode ec = 0;
     for (unsigned i = 0; i < itemsCount; ++i) {
-        float result = 0;
+        float result = animatedListSizeEqual ? animatedLengthList[i].value(m_contextElement) : 0;
         SVGLengthType unitType = percentage < 0.5 ? fromLengthList[i].unitType() : toLengthList[i].unitType();
         SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromLengthList[i].value(m_contextElement), toLengthList[i].value(m_contextElement));
-        animatedLengthList.append(SVGLength(m_contextElement, result, m_lengthMode, unitType));
+        if (!animatedListSizeEqual)
+            animatedLengthList.append(SVGLength(m_contextElement, result, m_lengthMode, unitType));
+        else {
+            animatedLengthList[i].setValue(m_contextElement, result, m_lengthMode, unitType, ec);
+            ASSERT(!ec);
+        }
     }
 }
 

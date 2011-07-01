@@ -81,6 +81,7 @@ public:
     float value(const SVGElement* context) const;
     float value(const SVGElement* context, ExceptionCode&) const;
     void setValue(float, const SVGElement* context, ExceptionCode&);
+    void setValue(const SVGElement* context, float, SVGLengthMode, SVGLengthType, ExceptionCode&);
 
     float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
     void setValueInSpecifiedUnits(float value) { m_valueInSpecifiedUnits = value; }

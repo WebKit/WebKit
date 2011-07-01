@@ -141,17 +141,17 @@ SVGLength::SVGLength(const SVGElement* context, float value, SVGLengthMode mode,
     ASSERT(!ec);
 }
 
+SVGLength::SVGLength(const SVGLength& other)
+    : m_valueInSpecifiedUnits(other.m_valueInSpecifiedUnits)
+    , m_unit(other.m_unit)
+{
+}
+
 void SVGLength::setValueAsString(const String& valueAsString, SVGLengthMode mode, ExceptionCode& ec)
 {
     m_valueInSpecifiedUnits = 0;
     m_unit = storeUnit(mode, LengthTypeNumber);
     setValueAsString(valueAsString, ec);
-}
-
-SVGLength::SVGLength(const SVGLength& other)
-    : m_valueInSpecifiedUnits(other.m_valueInSpecifiedUnits)
-    , m_unit(other.m_unit)
-{
 }
 
 bool SVGLength::operator==(const SVGLength& other) const
@@ -206,6 +206,12 @@ float SVGLength::value(const SVGElement* context, ExceptionCode& ec) const
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+void SVGLength::setValue(const SVGElement* context, float value, SVGLengthMode mode, SVGLengthType unitType, ExceptionCode& ec)
+{
+    m_unit = storeUnit(mode, unitType);
+    setValue(value, context, ec);
 }
 
 void SVGLength::setValue(float value, const SVGElement* context, ExceptionCode& ec)

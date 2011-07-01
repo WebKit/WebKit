@@ -23,6 +23,7 @@
 #include "SVGAnimatedLength.h"
 
 #include "SVGAnimateElement.h"
+#include "SVGAnimatedNumber.h"
 
 namespace WebCore {
 
@@ -79,46 +80,35 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigne
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
+
     SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    
     AnimationMode animationMode = animationElement->animationMode();
+
     // To animation uses contributions from the lower priority animations as the base value.
-    // FIXME: Avoid string parsing.
+    SVGLength& animatedSVGLength = animated->length();
+    SVGLength& fromSVGLength = from->length();
     if (animationMode == ToAnimation)
-        from = constructFromString(animated->length().valueAsString());
+        fromSVGLength = animatedSVGLength;
     
     // Replace 'inherit' by their computed property values.
-    float number;
-    float fromLength = from->length().value(m_contextElement);
-    float toLength = to->length().value(m_contextElement);
-    
+    SVGLength& toSVGLength = to->length();
     if (animationElement->fromPropertyValueType() == InheritValue) {
         String fromLengthString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromLengthString);
-        fromLength = sharedSVGLength(m_lengthMode, fromLengthString).value(m_contextElement);
+        fromSVGLength = sharedSVGLength(m_lengthMode, fromLengthString);
     }
     if (animationElement->toPropertyValueType() == InheritValue) {
         String toLengthString;
         animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toLengthString);
-        toLength = sharedSVGLength(m_lengthMode, toLengthString).value(m_contextElement); 
+        toSVGLength = sharedSVGLength(m_lengthMode, toLengthString); 
     }
     
-    if (animationElement->calcMode() == CalcModeDiscrete)
-        number = percentage < 0.5f ? fromLength : toLength;
-    else
-        number = (toLength - fromLength) * percentage + fromLength;
-    
-    // FIXME: This is not correct for values animation.
-    if (animationElement->isAccumulated() && repeatCount)
-        number += toLength * repeatCount;
+    float result = animatedSVGLength.value(m_contextElement);
+    SVGLengthType unitType = percentage < 0.5 ? fromSVGLength.unitType() : toSVGLength.unitType();
+    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromSVGLength.value(m_contextElement), toSVGLength.value(m_contextElement));
+
     ExceptionCode ec = 0;
-    SVGLength& animatedSVGLength = animated->length();
-    if (animationElement->isAdditive() && animationMode != ToAnimation) {
-        float animatedSVGLengthValue = animatedSVGLength.value(m_contextElement);
-        animatedSVGLengthValue += number;
-        animatedSVGLength.setValue(animatedSVGLengthValue, m_contextElement, ec);
-    } else
-        animatedSVGLength.setValue(number, m_contextElement, ec);
+    animatedSVGLength.setValue(m_contextElement, result, m_lengthMode, unitType, ec);
     ASSERT(!ec);
 }
 
