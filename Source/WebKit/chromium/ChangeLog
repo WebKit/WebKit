@@ -1,3 +1,18 @@
+2011-07-01  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: make LevelDB the default back-end
+        https://bugs.webkit.org/show_bug.cgi?id=63817
+
+        Reviewed by Tony Chang.
+
+        Use LevelDB as the default back-end.
+
+        Covered by existing layout tests for indexeddb, which will now be
+        using the LevelDB back-end.
+
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

@@ -4076,3 +4076,6 @@ BUGCR88197 VISTA WIN7 CPU : media/video-canvas-alpha.html = TIMEOUT
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
 BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRASH PASS
+
+// Quota enforcement not yet implemented for LevelDB back-end.
+BUGCR83652 : storage/indexeddb/database-quota.html = TEXT

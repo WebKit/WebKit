@@ -1,3 +1,15 @@
+2011-07-01  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: make LevelDB the default back-end
+        https://bugs.webkit.org/show_bug.cgi?id=63817
+
+        Reviewed by Tony Chang.
+
+        Disable IndexedDB quota teset since quota enforcement is not yet
+        supported by the LevelDB back-end.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
         Rebaseline media/media-blocked-by-beforeload.html for Chromium Leopard

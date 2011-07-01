@@ -81,7 +81,7 @@ void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, 
     }
 
     if (backingStoreType == DefaultBackingStore)
-        backingStoreType = SQLiteBackingStore;
+        backingStoreType = LevelDBBackingStore;
 
     if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore) {
         if (!tempDatabaseFolder.isEmpty()) {
