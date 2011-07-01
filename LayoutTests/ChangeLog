@@ -1,3 +1,12 @@
+2011-07-01  Adam Roben  <aroben@apple.com>
+
+        Update expected results after r90159
+
+        Fixes <http://webkit.org/b/63810> REGRESSION (r90159): fast/events/window-onerror5.html
+        failing
+
+        * fast/events/window-onerror5-expected.txt: Updated for progression.
+
 2011-07-01  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
