@@ -173,20 +173,18 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
         
     if (!isKnownInteger(regChild))
         notInt = m_jit.branchPtr(MacroAssembler::Below, regArgGPR, GPRInfo::tagTypeNumberRegister);
-        
-    m_jit.zeroExtend32ToPtr(regArgGPR, resultGPR); 
-        
+    
     JITCompiler::Jump overflow;
     
     switch (op) {
     case ValueAdd:
     case ArithAdd: {
-        overflow = m_jit.branchAdd32(MacroAssembler::Overflow, Imm32(imm), resultGPR);
+        overflow = m_jit.branchAdd32(MacroAssembler::Overflow, regArgGPR, Imm32(imm), resultGPR);
         break;
     }
         
     case ArithSub: {
-        overflow = m_jit.branchSub32(MacroAssembler::Overflow, Imm32(imm), resultGPR);
+        overflow = m_jit.branchSub32(MacroAssembler::Overflow, regArgGPR, Imm32(imm), resultGPR);
         break;
     }
         
@@ -273,38 +271,32 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     GPRReg arg1GPR = arg1.gpr();
     GPRReg arg2GPR = arg2.gpr();
     
-    GPRTemporary temp(this, arg2);
     GPRTemporary result(this);
 
-    GPRReg tempGPR = temp.gpr();
     GPRReg resultGPR = result.gpr();
     
     JITCompiler::JumpList slowPath;
-    JITCompiler::JumpList overflowSlowPath;
     
     if (!isKnownInteger(node.child1))
         slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
     if (!isKnownInteger(node.child2))
         slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
     
-    m_jit.zeroExtend32ToPtr(arg1GPR, resultGPR);
-    m_jit.zeroExtend32ToPtr(arg2GPR, tempGPR);
-    
     switch (op) {
     case ValueAdd:
     case ArithAdd: {
-        overflowSlowPath.append(m_jit.branchAdd32(MacroAssembler::Overflow, tempGPR, resultGPR));
+        slowPath.append(m_jit.branchAdd32(MacroAssembler::Overflow, arg1GPR, arg2GPR, resultGPR));
         break;
     }
         
     case ArithSub: {
-        overflowSlowPath.append(m_jit.branchSub32(MacroAssembler::Overflow, tempGPR, resultGPR));
+        slowPath.append(m_jit.branchSub32(MacroAssembler::Overflow, arg1GPR, arg2GPR, resultGPR));
         break;
     }
         
     case ArithMul: {
-        overflowSlowPath.append(m_jit.branchMul32(MacroAssembler::Overflow, tempGPR, resultGPR));
-        overflowSlowPath.append(m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
+        slowPath.append(m_jit.branchMul32(MacroAssembler::Overflow, arg1GPR, arg2GPR, resultGPR));
+        slowPath.append(m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
         break;
     }
         
@@ -315,11 +307,6 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     m_jit.orPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
         
     JITCompiler::Jump done = m_jit.jump();
-    
-    overflowSlowPath.link(&m_jit);
-    
-    if (arg2GPR == tempGPR)
-        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, arg2GPR);
     
     slowPath.link(&m_jit);
     
@@ -364,10 +351,8 @@ void NonSpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition 
     GPRReg arg1GPR = arg1.gpr();
     GPRReg arg2GPR = arg2.gpr();
     
-    GPRTemporary result(this);
-    GPRTemporary temp(this);
+    GPRTemporary result(this, arg2);
     GPRReg resultGPR = result.gpr();
-    GPRReg tempGPR = temp.gpr();
     
     JITCompiler::JumpList slowPath;
     
@@ -376,10 +361,7 @@ void NonSpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition 
     if (!isKnownInteger(node.child2))
         slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
     
-    m_jit.zeroExtend32ToPtr(arg1GPR, tempGPR);
-    m_jit.zeroExtend32ToPtr(arg2GPR, resultGPR);
-    
-    m_jit.compare32(cond, tempGPR, resultGPR, resultGPR);
+    m_jit.compare32(cond, arg1GPR, arg2GPR, resultGPR);
     
     JITCompiler::Jump haveResult = m_jit.jump();
     
