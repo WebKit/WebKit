@@ -1,3 +1,56 @@
+2011-06-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [WebKit2] Consider scale factor when allocating backing store
+        https://bugs.webkit.org/show_bug.cgi?id=63766
+
+        This is the first step in considering scale factor. It considers
+        scale factor for the primary backing store, not graphics layers,
+        and for CG only.
+
+        * Platform/cg/CGUtilities.cpp:
+        (WebKit::paintImage): Added a scale factor argument.
+        (WebKit::paintBitmapContext): Pass 1 for scale factor.
+        * Platform/cg/CGUtilities.h: Updated for above.
+
+        * Shared/ShareableBitmap.h: Added an overload of paint that can handle
+        a scale factor.
+
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode): Encode scale factor.
+        (WebKit::UpdateInfo::decode): Decode scale factor.
+        * Shared/UpdateInfo.h: Added scale factor.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::paint): Added the overload that can handle
+        a scale factor.
+
+        * UIProcess/BackingStore.cpp:
+        (WebKit::BackingStore::create): Take a scale factor.
+        (WebKit::BackingStore::BackingStore): Store the scale factor.
+        (WebKit::BackingStore::incorporateUpdate): Consider the scale factor
+        when asserting the size is correct.
+
+        * UIProcess/BackingStore.h: Add a scale factor.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState): Check the
+        scale factor too when deciding whether to reuse a backing store.
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate): Pass in the scale
+        factor when creating a backing store.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::incorporateUpdate): Take the scale factor into
+        account when painting.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState): Put the
+        scale factor into the UpdateInfo.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): Ditto.
+        (WebKit::DrawingAreaImpl::display): Take the scale factor into account
+        when allocating the bitmap and creating a graphics context for it.
+
 2011-06-30  Mark Rowe  <mrowe@apple.com>
 
         Fix the Windows build.

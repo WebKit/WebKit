@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +103,8 @@ public:
     PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext();
 
     // Paint the backing store into the given context.
-    void paint(WebCore::GraphicsContext&, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect);
+    void paint(WebCore::GraphicsContext&, const WebCore::IntPoint& destination, const WebCore::IntRect& source);
+    void paint(WebCore::GraphicsContext&, float scaleFactor, const WebCore::IntPoint& destination, const WebCore::IntRect& source);
 
     bool isBackedBySharedMemory() const { return m_sharedMemory; }
 
@@ -158,6 +159,7 @@ private:
 
     // If the shareable bitmap is backed by fastMalloced memory, this points to the data.
     void* m_data;
+
 #if PLATFORM(WIN)
     mutable OwnPtr<HDC> m_windowsContext;
     mutable OwnPtr<HBITMAP> m_windowsBitmap;

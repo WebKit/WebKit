@@ -33,6 +33,7 @@ namespace WebKit {
 void UpdateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(viewSize);
+    encoder->encode(scaleFactor);
     encoder->encode(scrollRect);
     encoder->encode(scrollOffset);
     encoder->encode(updateRectBounds);
@@ -43,6 +44,8 @@ void UpdateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 bool UpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, UpdateInfo& result)
 {
     if (!decoder->decode(result.viewSize))
+        return false;
+    if (!decoder->decode(result.scaleFactor))
         return false;
     if (!decoder->decode(result.scrollRect))
         return false;

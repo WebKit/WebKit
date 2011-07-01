@@ -48,6 +48,7 @@ public:
 
     // The size of the web view.
     WebCore::IntSize viewSize;
+    float scaleFactor;
 
     // The rect and delta to be scrolled.
     WebCore::IntRect scrollRect;

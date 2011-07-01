@@ -357,6 +357,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
         updateInfo.viewSize = m_webPage->size();
+        updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
 
         if (m_layerTreeHost) {
             layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -461,9 +462,10 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     }
 
     UpdateInfo updateInfo;
-    if (m_isPaintingSuspended)
+    if (m_isPaintingSuspended) {
         updateInfo.viewSize = m_webPage->size();
-    else
+        updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
+    } else
         display(updateInfo);
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -613,11 +615,14 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         return;
 
     updateInfo.viewSize = m_webPage->size();
+    updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
 
     IntRect bounds = m_dirtyRegion.bounds();
     ASSERT(m_webPage->bounds().contains(bounds));
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size(), ShareableBitmap::SupportsAlpha);
+    IntSize bitmapSize = bounds.size();
+    bitmapSize.scale(m_webPage->userSpaceScaleFactor());
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
     if (!bitmap)
         return;
 
@@ -639,6 +644,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_scrollOffset = IntSize();
 
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
+    graphicsContext->scale(FloatSize(m_webPage->userSpaceScaleFactor(), m_webPage->userSpaceScaleFactor()));
 
     updateInfo.updateRectBounds = bounds;
 
