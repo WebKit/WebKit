@@ -899,7 +899,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg valueReg = value.gpr();
         GPRReg scratchReg = scratch.gpr();
 
-        writeBarrier(baseReg, scratchReg);
+        writeBarrier(m_jit, baseReg, scratchReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
@@ -953,7 +953,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg baseReg = base.gpr();
         GPRReg scratchReg = scratch.gpr();
 
-        writeBarrier(baseReg, scratchReg);
+        writeBarrier(m_jit, baseReg, scratchReg);
 
         // Get the array storage.
         GPRReg storageReg = scratchReg;
@@ -1094,7 +1094,7 @@ void SpeculativeJIT::compile(Node& node)
 
         m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectReg);
 
-        writeBarrier(globalObjectReg, scratchReg);
+        writeBarrier(m_jit, globalObjectReg, scratchReg);
 
         m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
         m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(scratchReg, node.varNumber()));

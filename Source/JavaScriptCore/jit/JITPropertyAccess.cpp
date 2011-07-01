@@ -536,10 +536,10 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 
         restoreReturnAddressBeforeReturn(regT3);
     }
+    
+    emitWriteBarrier(regT0, regT2);
 
-    storePtrWithWriteBarrier(TrustedImmPtr(newStructure), regT0, Address(regT0, JSCell::structureOffset()));
-
-    // write the value
+    storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
     compilePutDirectOffset(regT0, regT1, newStructure, cachedOffset);
 
     ret();

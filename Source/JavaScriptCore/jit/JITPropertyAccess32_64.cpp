@@ -502,8 +502,9 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         restoreReturnAddressBeforeReturn(regT3);
     }
 
-    storePtrWithWriteBarrier(TrustedImmPtr(newStructure), regT0, Address(regT0, JSCell::structureOffset()));
-    
+    emitWriteBarrier(regT0, regT1);
+
+    storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
 #if CPU(MIPS) || CPU(SH4)
     // For MIPS, we don't add sizeof(void*) to the stack offset.
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
@@ -512,8 +513,6 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);
 #endif
-    
-    // Write the value
     compilePutDirectOffset(regT0, regT2, regT3, newStructure, cachedOffset);
     
     ret();

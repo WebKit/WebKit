@@ -155,6 +155,8 @@ public:
         return info.registerFormat() == DataFormatDouble;
     }
 
+    static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR);
+
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
     {
         if (preserve1 != GPRInfo::regT0 && preserve2 != GPRInfo::regT0 && preserve3 != GPRInfo::regT0)
@@ -518,8 +520,6 @@ protected:
         }
     }
     
-    void writeBarrier(GPRReg ownerGPR, GPRReg scratchGPR);
-
     void cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 
