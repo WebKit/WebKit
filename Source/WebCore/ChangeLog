@@ -1,5 +1,13 @@
 2011-07-01  Darin Adler  <darin@apple.com>
 
+        Add change accidentally left out of last commit.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateContentsScale): Multiply in the
+        backing scale.
+
+2011-07-01  Darin Adler  <darin@apple.com>
+
         Consider backing scale when setting up graphics layers
         https://bugs.webkit.org/show_bug.cgi?id=63848
 

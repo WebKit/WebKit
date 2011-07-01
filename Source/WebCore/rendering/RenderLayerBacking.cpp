@@ -1477,14 +1477,16 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
 
 void RenderLayerBacking::updateContentsScale(float scale)
 {
+    float combinedScale = scale * backingScaleFactor();
+
     if (m_graphicsLayer)
-        m_graphicsLayer->setContentsScale(scale);
+        m_graphicsLayer->setContentsScale(combinedScale);
 
     if (m_foregroundLayer)
-        m_foregroundLayer->setContentsScale(scale);
+        m_foregroundLayer->setContentsScale(combinedScale);
 
     if (m_maskLayer)
-        m_maskLayer->setContentsScale(scale);
+        m_maskLayer->setContentsScale(combinedScale);
 }
 
 float RenderLayerBacking::pageScaleFactor() const
