@@ -1,3 +1,9 @@
+2011-07-01  Tony Chang  <tony@chromium.org>
+
+        Fix the chromium build.  sql is a new top level directory.
+
+        * DEPS:
+
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled DEPS.

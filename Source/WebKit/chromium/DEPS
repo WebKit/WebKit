@@ -101,6 +101,8 @@ deps = {
     Var('chromium_svn')+'/printing@'+Var('chromium_rev'),
   'ppapi':
     Var('chromium_svn')+'/ppapi@'+Var('chromium_rev'),
+  'sql':
+    Var('chromium_svn')+'/sql@'+Var('chromium_rev'),
   'third_party/angle':  # needed by the gpu process
     From('chromium_deps', 'src/third_party/angle'),
   'third_party/libvpx': # needed by webkit/media
