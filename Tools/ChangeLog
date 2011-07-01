@@ -1,3 +1,12 @@
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
+        Refactor NRWT parsing logic in master.cfg to understand that run-webkit-tests might run NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=63854
+
+        Reviewed by Dirk Pranke.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-07-01  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests results does not understand that mac uses test_expectations files
