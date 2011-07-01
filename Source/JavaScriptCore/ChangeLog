@@ -1,5 +1,18 @@
 2011-07-01  Oliver Hunt  <oliver@apple.com>
 
+        IE Web Workers demo crashes in JSC::SlotVisitor::visitChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=63732
+
+        Reviewed by Gavin Barraclough.
+
+        Initialise the memory at the head of the new storage so that
+        GC is safe if triggered by reportExtraMemoryCost.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::increaseVectorPrefixLength):
+
+2011-07-01  Oliver Hunt  <oliver@apple.com>
+
         GC sweep can occur before an object is completely initialised
         https://bugs.webkit.org/show_bug.cgi?id=63836
 

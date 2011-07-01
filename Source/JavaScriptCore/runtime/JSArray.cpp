@@ -638,7 +638,10 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
     m_vectorLength = newLength;
     
     fastFree(storage->m_allocBase);
-
+    ASSERT(newLength > vectorLength);
+    unsigned delta = newLength - vectorLength;
+    for (unsigned i = 0; i < delta; i++)
+        m_storage->m_vector[i].clear();
     Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
     
     return true;
