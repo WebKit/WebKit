@@ -1,3 +1,20 @@
+2011-06-30  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        [Chromium] -webkit-text-stroke doesn't affect with non-zero width border property
+        https://bugs.webkit.org/show_bug.cgi?id=63698
+
+        Added a test which ensures text stroke is rendered with non-zero width border.
+
+        * platform/chromium-linux/platform/chromium/fast/text/text-stroke-with-border-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/text/text-stroke-with-border-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/fast/text/text-stroke-with-border-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/text/text-stroke-with-border-expected.txt: Added.
+        * platform/chromium-win/platform/chromium/fast/text/text-stroke-with-border-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/text/text-stroke-with-border-expected.txt: Added.
+        * platform/chromium/fast/text/text-stroke-with-border.html: Added.
+
 2011-06-30  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed.

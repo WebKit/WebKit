@@ -710,9 +710,10 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
         case BHIDDEN:
             return;
         case DOTTED:
-        case DASHED:
+        case DASHED: {
             graphicsContext->setStrokeColor(color, m_style->colorSpace());
             graphicsContext->setStrokeThickness(width);
+            StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
             graphicsContext->setStrokeStyle(style == DASHED ? DashedStroke : DottedStroke);
 
             if (width > 0) {
@@ -730,12 +731,15 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                         break;
                 }
                 graphicsContext->setShouldAntialias(wasAntialiased);
+                graphicsContext->setStrokeStyle(oldStrokeStyle);
             }
             break;
+        }
         case DOUBLE: {
             int third = (width + 1) / 3;
 
             if (adjacentWidth1 == 0 && adjacentWidth2 == 0) {
+                StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
                 graphicsContext->setStrokeStyle(NoStroke);
                 graphicsContext->setFillColor(color, m_style->colorSpace());
                 
@@ -759,6 +763,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                 }
 
                 graphicsContext->setShouldAntialias(wasAntialiased);
+                graphicsContext->setStrokeStyle(oldStrokeStyle);
             } else {
                 int adjacent1BigThird = ((adjacentWidth1 > 0) ? adjacentWidth1 + 1 : adjacentWidth1 - 1) / 3;
                 int adjacent2BigThird = ((adjacentWidth2 > 0) ? adjacentWidth2 + 1 : adjacentWidth2 - 1) / 3;
@@ -856,6 +861,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                 color = color.dark();
             // fall through
         case SOLID: {
+            StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
             graphicsContext->setStrokeStyle(NoStroke);
             graphicsContext->setFillColor(color, m_style->colorSpace());
             ASSERT(x2 >= x1);
@@ -867,6 +873,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                 graphicsContext->setShouldAntialias(antialias);
                 graphicsContext->drawRect(IntRect(x1, y1, x2 - x1, y2 - y1));
                 graphicsContext->setShouldAntialias(wasAntialiased);
+                graphicsContext->setStrokeStyle(oldStrokeStyle);
                 return;
             }
             FloatPoint quad[4];
@@ -898,6 +905,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             }
 
             graphicsContext->drawConvexPolygon(4, quad, antialias);
+            graphicsContext->setStrokeStyle(oldStrokeStyle);
             break;
         }
     }
