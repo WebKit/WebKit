@@ -711,6 +711,11 @@ class Port(object):
         'snowleopard' should precede 'leopard')."""
         raise NotImplementedError
 
+    def uses_test_expectations_file(self):
+        # This is different from checking test_expectations() is None, because
+        # some ports have Skipped files which are returned as part of test_expectations().
+        return self._filesystem.exists(self.path_to_test_expectations_file())
+
     def test_expectations(self):
         """Returns the test expectations for this port.
 

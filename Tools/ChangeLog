@@ -1,3 +1,18 @@
+2011-07-01  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests results does not understand that mac uses test_expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=63838
+
+        Reviewed by Adam Barth.
+
+        We've decided to "enable" test_expectations for the Mac port for now.
+        It makes the results.html results much more confusing to read, but at least they're
+        no longer lying to us.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
         Temporarily disable waiting for ReportCrash to see how this code

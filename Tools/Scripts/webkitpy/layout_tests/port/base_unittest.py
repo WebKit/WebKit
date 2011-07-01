@@ -207,8 +207,7 @@ class PortTest(unittest.TestCase):
             prefix = "file://"
             path = test_file
 
-        self.assertEqual(port.filename_to_uri(test_file),
-                         abspath_to_uri(test_file))
+        self.assertEqual(port.filename_to_uri(test_file), abspath_to_uri(test_file))
 
     def test_get_option__set(self):
         options, args = optparse.OptionParser().parse_args([])
@@ -234,8 +233,7 @@ class PortTest(unittest.TestCase):
 
     def test_additional_platform_directory(self):
         filesystem = MockFileSystem()
-        options, args = optparse.OptionParser().parse_args([])
-        port = base.Port(port_name='foo', filesystem=filesystem, options=options)
+        port = base.Port(port_name='foo', filesystem=filesystem)
         port.baseline_search_path = lambda: ['LayoutTests/platform/foo']
         layout_test_dir = port.layout_tests_dir()
         test_file = filesystem.join(layout_test_dir, 'fast', 'test.html')
@@ -247,7 +245,7 @@ class PortTest(unittest.TestCase):
         self.assertEqual(port.baseline_path(), 'LayoutTests/platform/foo')
 
         # Simple additional platform directory
-        options.additional_platform_directory = ['/tmp/local-baselines']
+        port._options.additional_platform_directory = ['/tmp/local-baselines']
         filesystem.files = {
             '/tmp/local-baselines/fast/test-expected.txt': 'foo',
         }
@@ -257,11 +255,20 @@ class PortTest(unittest.TestCase):
         self.assertEqual(port.baseline_path(), '/tmp/local-baselines')
 
         # Multiple additional platform directories
-        options.additional_platform_directory = ['/foo', '/tmp/local-baselines']
+        port._options.additional_platform_directory = ['/foo', '/tmp/local-baselines']
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/foo')
+
+    def test_uses_test_expectations_file(self):
+        filesystem = MockFileSystem()
+        port = base.Port(port_name='foo', filesystem=filesystem)
+        port.path_to_test_expectations_file = lambda: '/mock/test_expectations.txt'
+        self.assertFalse(port.uses_test_expectations_file())
+        port._filesystem = MockFileSystem({'/mock/test_expectations.txt': ''})
+        self.assertTrue(port.uses_test_expectations_file())
+
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""
