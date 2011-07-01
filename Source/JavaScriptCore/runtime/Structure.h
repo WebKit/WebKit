@@ -302,7 +302,7 @@ namespace JSC {
         ASSERT(cell);
         if (Heap::testAndSetMarked(cell))
             return;
-        if (cell->structure()->typeInfo().type() >= CompoundType)
+        if (cell->structure() && cell->structure()->typeInfo().type() >= CompoundType)
             m_values.append(cell);
     }
 

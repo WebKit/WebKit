@@ -186,6 +186,9 @@ namespace JSC {
 
     inline JSCell::~JSCell()
     {
+#if ENABLE(GC_VALIDATION)
+        m_structure.clear();
+#endif
     }
 
     inline Structure* JSCell::structure() const
@@ -356,12 +359,16 @@ namespace JSC {
 
     inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
     {
-        return globalData->heap.allocate(size);
+        JSCell* result = static_cast<JSCell*>(globalData->heap.allocate(size));
+        result->m_structure.clear();
+        return result;
     }
 
     inline void* JSCell::operator new(size_t size, ExecState* exec)
     {
-        return exec->heap()->allocate(size);
+        JSCell* result = static_cast<JSCell*>(exec->heap()->allocate(size));
+        result->m_structure.clear();
+        return result;
     }
     
     inline void destructor(JSCell* cell)

@@ -1,3 +1,25 @@
+2011-07-01  Oliver Hunt  <oliver@apple.com>
+
+        GC sweep can occur before an object is completely initialised
+        https://bugs.webkit.org/show_bug.cgi?id=63836
+
+        Reviewed by Gavin Barraclough.
+
+        In rare cases it's possible for a GC sweep to occur while a
+        live, but not completely initialised object is on the stack.
+        In such a case we may incorrectly choose to mark it, even
+        though it has no children that need marking.
+
+        We resolve this by always zeroing out the structure of any
+        value returned from JSCell::operator new(), and making the
+        markstack tolerant of a null structure. 
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::~JSCell):
+        (JSC::JSCell::JSCell::operator new):
+        * runtime/Structure.h:
+        (JSC::MarkStack::internalAppend):
+
 2011-07-01  Filip Pizlo  <fpizlo@apple.com>
 
         Reviewed by Gavin Barraclough.
