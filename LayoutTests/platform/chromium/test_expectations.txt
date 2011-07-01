@@ -3749,7 +3749,6 @@ BUGWK60931 DEBUG :  http/tests/security/aboutBlank/window-open-self-about-blank.
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
 
-BUGWK61415 : fast/forms/placeholder-position.html = IMAGE
 BUGWK61415 WIN LINUX : fast/forms/search-rtl.html = IMAGE+TEXT IMAGE
 
 // Flaky since added by r86478

@@ -1,3 +1,16 @@
+2011-06-30  Kent Tamura  <tkent@chromium.org>
+
+        [Mac][Chromium] Update test expectations for r90089
+
+        The placeholder position changes are expected because we respect
+        paddings for text fields.
+
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+
 2011-06-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Reviewed by Pavel Feldman.
