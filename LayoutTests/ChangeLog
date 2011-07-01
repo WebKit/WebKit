@@ -1,3 +1,13 @@
+2011-06-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Performance / memory allocation issue in WebInspector.TextEditorModel.prototype._replaceTabsIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=40447
+
+        * inspector/editor/text-editor-model-replace-tabs-expected.txt: Added.
+        * inspector/editor/text-editor-model-replace-tabs.html: Added.
+
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectations.

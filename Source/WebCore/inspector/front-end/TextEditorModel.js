@@ -146,12 +146,24 @@ WebInspector.TextEditorModel.prototype = {
         var spaces = [ "    ", "   ", "  ", " "];
         for (var i = 0; i < lines.length; ++i) {
             var line = lines[i];
-            var index = line.indexOf("\t");
+            var caretIndex = 0;
+            var index = line.indexOf("\t", caretIndex);
+            var buffer = [];
+            var offset = 0;
             while (index !== -1) {
-                line = line.substring(0, index) + spaces[index % 4] + line.substring(index + 1);
-                index = line.indexOf("\t", index + 1);
+                if (index > caretIndex) {
+                    offset += index - caretIndex;
+                    buffer.push(line.substring(caretIndex, index));
+                }
+                caretIndex = index + 1;
+                var space = spaces[offset % 4];
+                offset += space.length;
+                buffer.push(space);
+                index = line.indexOf("\t", caretIndex);
             }
-            lines[i] = line;
+            if (line.length > caretIndex)
+                buffer.push(line.substring(caretIndex));
+            lines[i] = buffer.join("");
         }
     },
 

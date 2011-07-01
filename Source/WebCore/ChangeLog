@@ -1,3 +1,15 @@
+2011-06-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Performance / memory allocation issue in WebInspector.TextEditorModel.prototype._replaceTabsIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=40447
+
+        Test: inspector/editor/text-editor-model-replace-tabs.html
+
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.prototype._replaceTabsIfNeeded): avoid looped production of tail substrings 
+
 2011-06-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Tony Chang.
