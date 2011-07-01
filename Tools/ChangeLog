@@ -1,3 +1,19 @@
+2011-07-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Switch Snow Leopard over to new-run-webkit-tests (except for wk2)
+        https://bugs.webkit.org/show_bug.cgi?id=63786
+
+        We're down to one bug blocking the "move to NRWT" bug:
+        https://bugs.webkit.org/show_bug.cgi?id=34984
+        so we're trying transitioning Snow Leopard to NRWT as an experiment.
+
+        If we run into any blocking issues we'll of course roll this back out
+        (or anyone reading this should feel encouraged to).
+
+        * Scripts/run-webkit-tests:
+
 2011-07-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90192.
