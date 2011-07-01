@@ -51,6 +51,8 @@ my $timeout = 10;
 my $showHelp = 0;
 my $verbose = 0;
 my $dump = 0;
+my $build = 1;
+my $buildDefault = $build ? "build" : "do not build";
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -58,12 +60,14 @@ Usage: $programName [options]
   --help                Show this help message
   -v|--verbose          Verbose output
   -d|--dump-tests       Dump the names of testcases without running them
+  --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
 EOF
 
 GetOptions(
     'help' => \$showHelp,
     'verbose|v' => \$verbose,
     'dump|d' => \$dump,
+    'build!' => \$build
 );
 
 if ($showHelp) {
@@ -72,7 +76,7 @@ if ($showHelp) {
 }
 
 setConfiguration();
-buildTestTool();
+buildTestTool() if $build;
 setPathForRunningWebKitApp(\%ENV);
 my %testsToRun = populateTests();
 

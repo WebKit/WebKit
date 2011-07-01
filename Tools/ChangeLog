@@ -1,3 +1,15 @@
+2011-07-01  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63818
+        Test bots shouldn't attempt to build TestWebKitAPI on Windows.
+        TestWebKitAPI builds as a part of general webkit build and is a
+        part of build products archive.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * Scripts/run-api-tests:
+
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
         We shouldn't wait for ReportCrash while the timeout is running
