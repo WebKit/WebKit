@@ -1,3 +1,10 @@
+2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK rebaseline r90275. The failure of directionality-after-undo-replace.html is tracked by the bug 63853.
+
+        * platform/gtk/editing/selection/after-line-break-expected.txt: Added.
+        * platform/gtk/editing/selection/directionality-after-undo-replace.html: Added.
+
 2011-07-01  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, remove extraneous newlines from
