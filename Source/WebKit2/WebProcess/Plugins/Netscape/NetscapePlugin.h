@@ -101,6 +101,11 @@ public:
     void pushPopupsEnabledState(bool enabled);
     void popPopupsEnabledState();
 
+    void pluginThreadAsyncCall(void (*function)(void*), void* userData);
+
+    // Called on the plug-in run loop (which is currently the main thread run loop).
+    void handlePluginThreadAsyncCall(void (*function)(void*), void* userData);
+
     String proxiesForURL(const String& urlString);
     String cookiesForURL(const String& urlString);
     void setCookiesForURL(const String& urlString, const String& cookieString);

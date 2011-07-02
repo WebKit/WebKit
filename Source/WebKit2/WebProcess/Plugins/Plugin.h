@@ -52,7 +52,7 @@ class WebWheelEvent;
     
 class PluginController;
 
-class Plugin : public RefCounted<Plugin> {
+class Plugin : public ThreadSafeRefCounted<Plugin> {
 public:
     struct Parameters {
         WebCore::KURL url;

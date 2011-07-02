@@ -31,6 +31,7 @@
 #include "NetscapePluginStream.h"
 #include "PluginController.h"
 #include "ShareableBitmap.h"
+#include "WorkItem.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
@@ -287,6 +288,19 @@ void NetscapePlugin::popPopupsEnabledState()
     ASSERT(!m_popupEnabledStates.isEmpty());
 
     m_popupEnabledStates.removeLast();
+}
+
+void NetscapePlugin::pluginThreadAsyncCall(void (*function)(void*), void* userData)
+{
+    RunLoop::main()->scheduleWork(WorkItem::create(this, &NetscapePlugin::handlePluginThreadAsyncCall, function, userData));
+}
+    
+void NetscapePlugin::handlePluginThreadAsyncCall(void (*function)(void*), void* userData)
+{
+    if (!m_isStarted)
+        return;
+
+    function(userData);
 }
 
 String NetscapePlugin::proxiesForURL(const String& urlString)

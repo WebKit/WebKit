@@ -1,5 +1,30 @@
 2011-07-02  Anders Carlsson  <andersca@apple.com>
 
+        Implement NPN_PluginThreadAsyncCall
+        https://bugs.webkit.org/show_bug.cgi?id=63868
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_PluginThreadAsyncCall):
+        Call NetscapePlugin::pluginThreadAsyncCall.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginThreadAsyncCall):
+        Schedule a work item to call the function on the main run loop.
+
+        (WebKit::NetscapePlugin::handlePluginThreadAsyncCall):
+        If the plug-in is still running, run the function.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add new member function.
+
+        * WebProcess/Plugins/Plugin.h:
+        Make plug-in inherit from ThreadSafeRefCounted since plug-ins can potentially
+        ref the plug-in from other threads.
+
+2011-07-02  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:

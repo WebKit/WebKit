@@ -797,9 +797,11 @@ static bool NPN_Enumerate(NPP npp, NPObject* npObject, NPIdentifier** identifier
     return false;
 }
 
-static void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void*), void* userData)
+static void NPN_PluginThreadAsyncCall(NPP npp, void (*function)(void*), void* userData)
 {
-    notImplemented();
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+    plugin->pluginThreadAsyncCall(function, userData);
 }
 
 static bool NPN_Construct(NPP npp, NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
