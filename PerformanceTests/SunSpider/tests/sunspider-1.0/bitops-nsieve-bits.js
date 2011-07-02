@@ -27,6 +27,7 @@ function sieve() {
         var isPrime = new Array((10000<<i)+31>>5);
         primes(isPrime, i);
     }
+    return isPrime;
 }
 
-sieve();
+var result = sieve();

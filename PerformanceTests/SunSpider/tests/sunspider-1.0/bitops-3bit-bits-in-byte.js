@@ -1,5 +1,7 @@
 // Copyright (c) 2004 by Arthur Langereis (arthur_ext at domain xfinitegames, tld com
 
+var result = 0;
+
 // 1 op = 6 ANDs, 3 SHRs, 3 SHLs, 4 assigns, 2 ADDs
 // O(1)
 function fast3bitlookup(b) {
@@ -25,8 +27,10 @@ addr3,r3,r10
 
 function TimeFunc(func) {
 var x, y, t;
+var sum = 0;
 for(var x=0; x<500; x++)
-for(var y=0; y<256; y++) func(y);
+for(var y=0; y<256; y++) sum += func(y);
+return sum;
 }
 
-TimeFunc(fast3bitlookup);
+sum = TimeFunc(fast3bitlookup);
