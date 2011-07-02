@@ -204,6 +204,7 @@ public:
     static bool isSupportedJavaScriptMIMEType(const String& mimeType);
     static bool isSupportedNonImageMIMEType(const String& mimeType);
     static String mimeTypeForExtension(const String& fileExtension);
+    static String wellKnownMimeTypeForExtension(const String& fileExtension);
     static String mimeTypeFromFile(const String& filePath);
     static String preferredExtensionForMIMEType(const String& mimeType);
 

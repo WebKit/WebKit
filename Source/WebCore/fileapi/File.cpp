@@ -33,19 +33,33 @@
 
 namespace WebCore {
 
-static PassOwnPtr<BlobData> createBlobDataForFile(const String& path, const String& name = String())
+static PassOwnPtr<BlobData> createBlobDataForFileWithType(const String& path, const String& contentType)
 {
-    String type;
-    const String& nameForMIMEType = !name.isEmpty() ? name : path;
-    int index = nameForMIMEType.reverseFind('.');
-    if (index != -1)
-        type = MIMETypeRegistry::getMIMETypeForExtension(nameForMIMEType.substring(index + 1));
-
     OwnPtr<BlobData> blobData = BlobData::create();
-    blobData->setContentType(type);
+    blobData->setContentType(contentType);
     blobData->appendFile(path);
     return blobData.release();
 }
+
+static PassOwnPtr<BlobData> createBlobDataForFile(const String& path)
+{
+    String type;
+    int index = path.reverseFind('.');
+    if (index != -1)
+        type = MIMETypeRegistry::getMIMETypeForExtension(path.substring(index + 1));
+    return createBlobDataForFileWithType(path, type);
+}
+
+#if ENABLE(FILE_SYSTEM)
+static PassOwnPtr<BlobData> createBlobDataForFileSystemFile(const String& path, const String& fileSystemName)
+{
+    String type;
+    int index = fileSystemName.reverseFind('.');
+    if (index != -1)
+        type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(fileSystemName.substring(index + 1));
+    return createBlobDataForFileWithType(path, type);
+}
+#endif
 
 #if ENABLE(DIRECTORY_UPLOAD)
 PassRefPtr<File> File::createWithRelativePath(const String& path, const String& relativePath)
@@ -68,11 +82,14 @@ File::File(const String& path, const KURL& url, const String& type)
     , m_path(path)
 {
     m_name = pathGetFileName(path);
+    // FIXME: File object serialization/deserialization does not include
+    // newer file object data members: m_name and m_relativePath.
+    // See SerializedScriptValue.cpp for js and v8.
 }
 
 #if ENABLE(FILE_SYSTEM)
 File::File(const String& path, const String& name)
-    : Blob(createBlobDataForFile(path, name), -1)
+    : Blob(createBlobDataForFileSystemFile(path, name), -1)
     , m_path(path)
     , m_name(name)
 {

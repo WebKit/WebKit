@@ -1,3 +1,30 @@
+2011-07-01  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] FileSystem API can be used to learn about installed software on the user's computer.
+        Added a new MIMETypeRegistry method to return a type based on a well known set of mappings
+        without consulting the OS/registry.
+        https://bugs.webkit.org/show_bug.cgi?id=63220
+
+        No new tests, existing layout tests that invoke file.type apply.
+
+        * fileapi/File.cpp: Refactored the factory methods.
+        (WebCore::createBlobDataForFileWithType):
+        (WebCore::createBlobDataForFile):
+        (WebCore::createBlobDataForFileSystemFile):
+        (WebCore::File::File):
+        * platform/MIMETypeRegistry.cpp: Added getWellKnownMIMETypeForExtension() method.
+        (WebCore::mediaMIMETypeMap):
+        (WebCore::findMimeType):
+        (WebCore::MIMETypeRegistry::getWellKnownMIMETypeForExtension):
+        * platform/MIMETypeRegistry.h:
+        * platform/chromium/MIMETypeRegistryChromium.cpp: Added getWellKnownMIMETypeForExtension() method.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getWellKnownMIMETypeForExtension):
+        (WebCore::findMimeType):
+        * platform/chromium/PlatformBridge.h:
+
 2011-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Darin Adler.

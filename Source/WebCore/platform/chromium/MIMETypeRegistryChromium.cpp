@@ -36,27 +36,24 @@
 #include "PluginDataChromium.h"
 #include <wtf/text/CString.h>
 
-// NOTE: Unlike other ports, we don't use the shared implementation bits in
-// MIMETypeRegistry.cpp.  Instead, we need to route most functions via the
-// PlatformBridge to the embedder.
+// NOTE: Unlike other ports, we don't use the shared implementation in
+// MIMETypeRegistry.cpp.  Instead, we need to route most functions via
+// the PlatformBridge to the embedder.
 
 namespace WebCore {
-
-#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
-String MIMETypeRegistry::getMIMETypeForExtensionThreadSafe(const String &ext)
-{
-    return PlatformBridge::mimeTypeForExtension(ext);
-}
-#endif
-
-// NOTE: We have to define getMIMETypeForExtension() here though the shared
-// implementation has getMIMETypeForExtension() since we don't use the shared
-// implementation bits in MIMETypeRegistry.cpp.
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     return PlatformBridge::mimeTypeForExtension(ext);
 }
+
+#if ENABLE(FILE_SYSTEM)
+String MIMETypeRegistry::getWellKnownMIMETypeForExtension(const String &ext)
+{
+    // This method must be thread safe and should not consult the OS/registry.
+    return PlatformBridge::wellKnownMimeTypeForExtension(ext);
+}
+#endif
 
 // Returns the file extension if one is found.  Does not include the dot in the
 // filename.  E.g., 'html'.

@@ -580,6 +580,11 @@ String PlatformBridge::mimeTypeForExtension(const String& extension)
     return webKitClient()->mimeRegistry()->mimeTypeForExtension(extension);
 }
 
+String PlatformBridge::wellKnownMimeTypeForExtension(const String& extension)
+{
+    return webKitClient()->mimeRegistry()->wellKnownMimeTypeForExtension(extension);
+}
+
 String PlatformBridge::mimeTypeFromFile(const String& path)
 {
     return webKitClient()->mimeRegistry()->mimeTypeFromFile(path);

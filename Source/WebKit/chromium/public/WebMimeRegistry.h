@@ -49,6 +49,7 @@ public:
     virtual SupportsType supportsNonImageMIMEType(const WebString& mimeType) = 0;
 
     virtual WebString mimeTypeForExtension(const WebString& fileExtension) = 0;
+    virtual WebString wellKnownMimeTypeForExtension(const WebString& fileExtension) = 0;
     virtual WebString mimeTypeFromFile(const WebString& filePath) = 0;
     virtual WebString preferredExtensionForMIMEType(const WebString& mimeType) = 0;
 

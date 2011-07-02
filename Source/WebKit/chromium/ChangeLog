@@ -1,3 +1,15 @@
+2011-07-01  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] FileSystem API can be used to learn about installed software on the user's computer
+        https://bugs.webkit.org/show_bug.cgi?id=63220
+
+        * public/WebMimeRegistry.h:
+        (WebKit::WebMimeRegistry::wellKnownMimeTypeForExtension):
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::wellKnownMimeTypeForExtension):
+
 2011-07-01  Scott Byer  <scottbyer@chromium.org>
 
         Reviewed by Adam Barth.
