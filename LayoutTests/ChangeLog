@@ -1,5 +1,22 @@
 2011-07-02  Mihai Parparita  <mihaip@chromium.org>
 
+        Add Chromium Mac Snow Leopard baselines for editing/selection/vertical*
+        since the regular Mac baselines can't be used due to single-pixel
+        differences in character rendering (presumably caused by 32-bit vs.
+        64-bit binaries).
+
+        * platform/chromium-mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-07-02  Mihai Parparita  <mihaip@chromium.org>
+
         Chromium expectations update:
         - Add failing expectation for fast/css/last-of-type-pseudo-class.html,
           which fails in debug only.

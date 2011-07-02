@@ -3946,14 +3946,14 @@ BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CR
 BUGWK62858 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE
 
 // These tests are rebaselined using images on the bots but are still failing.
-BUGRNIWA MAC : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE PASS
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE PASS
+// BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE PASS
 
 // Broken because Chromium disables compositing for RTL pages
 BUGWK56591 GPU : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
