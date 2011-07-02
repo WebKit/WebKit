@@ -159,7 +159,7 @@ void RenderMathMLUnderOver::layout()
             if (!over->firstChild() || !over->firstChild()->isBoxModelObject())
                 break;
             
-            int overSpacing = static_cast<int>(gOverSpacingAdjustment * (getOffsetHeight(over) - toRenderBoxModelObject(over->firstChild())->baselinePosition(AlphabeticBaseline, true, HorizontalLine)));
+            LayoutUnit overSpacing = static_cast<LayoutUnit>(gOverSpacingAdjustment * (getOffsetHeight(over) - toRenderBoxModelObject(over->firstChild())->baselinePosition(AlphabeticBaseline, true, HorizontalLine)));
             
             // base row wrapper
             base = over->nextSibling();
@@ -181,7 +181,7 @@ void RenderMathMLUnderOver::layout()
         // base row wrapper
         base = firstChild();
         if (base) {
-            int baseHeight = getOffsetHeight(base);
+            LayoutUnit baseHeight = getOffsetHeight(base);
             // actual base
             base = base->firstChild();
             if (!base || !base->isBoxModelObject())
@@ -189,7 +189,7 @@ void RenderMathMLUnderOver::layout()
             
             // FIXME: We need to look at the space between a single maximum height of
             //        the line boxes and the baseline and squeeze them together
-            int underSpacing = baseHeight - toRenderBoxModelObject(base)->baselinePosition(AlphabeticBaseline, true, HorizontalLine);
+            LayoutUnit underSpacing = baseHeight - toRenderBoxModelObject(base)->baselinePosition(AlphabeticBaseline, true, HorizontalLine);
             
             // adjust the base's intrusion into the under
             RenderObject* under = lastChild();
@@ -210,7 +210,7 @@ void RenderMathMLUnderOver::layout()
             // FIXME: bases that ascend higher than the line box intrude into the over
             if (!over->firstChild() || !over->firstChild()->isBoxModelObject())
                 break;
-            int overSpacing = static_cast<int>(gOverSpacingAdjustment * (getOffsetHeight(over) - toRenderBoxModelObject(over->firstChild())->baselinePosition(AlphabeticBaseline, true, HorizontalLine)));
+            LayoutUnit overSpacing = static_cast<LayoutUnit>(gOverSpacingAdjustment * (getOffsetHeight(over) - toRenderBoxModelObject(over->firstChild())->baselinePosition(AlphabeticBaseline, true, HorizontalLine)));
             
             // base row wrapper
             base = over->nextSibling();
@@ -222,7 +222,7 @@ void RenderMathMLUnderOver::layout()
                 // We need to calculate the baseline of the base versus the start of the under block and
                 // adjust the placement of the under block.
                 
-                int baseHeight = getOffsetHeight(base);
+                LayoutUnit baseHeight = getOffsetHeight(base);
                 // actual base
                 base = base->firstChild();
                 if (!base || !base->isBoxModelObject())
@@ -230,7 +230,7 @@ void RenderMathMLUnderOver::layout()
 
                 // FIXME: We need to look at the space between a single maximum height of
                 //        the line boxes and the baseline and squeeze them together
-                int underSpacing = baseHeight - toRenderBoxModelObject(base)->baselinePosition(AlphabeticBaseline, true, HorizontalLine);
+                LayoutUnit underSpacing = baseHeight - toRenderBoxModelObject(base)->baselinePosition(AlphabeticBaseline, true, HorizontalLine);
                 
                 RenderObject* under = lastChild();
                 if (under && under->firstChild() && under->firstChild()->isRenderInline() && underSpacing > 0)

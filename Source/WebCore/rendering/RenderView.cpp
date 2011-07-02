@@ -129,7 +129,7 @@ void RenderView::layout()
     if (needsLayout())
         RenderBlock::layout();
 
-    ASSERT(layoutDelta() == IntSize());
+    ASSERT(layoutDelta() == LayoutSize());
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == &state);
     m_layoutState = 0;

@@ -160,7 +160,7 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const IntPoint& paintOffset)
 
 void RenderMathMLSquareRoot::layout()
 {
-    int maxHeight = 0;
+    LayoutUnit maxHeight = 0;
     
     RenderObject* current = firstChild();
     while (current) {
@@ -179,8 +179,8 @@ void RenderMathMLSquareRoot::layout()
         maxHeight = style()->fontSize();
 
     
-    if (maxHeight > static_cast<int>(gThresholdBaseHeight * style()->fontSize()))
-        style()->setPaddingBottom(Length(static_cast<int>(gRootBottomPadding * style()->fontSize()), Fixed));
+    if (maxHeight > static_cast<LayoutUnit>(gThresholdBaseHeight * style()->fontSize()))
+        style()->setPaddingBottom(Length(static_cast<LayoutUnit>(gRootBottomPadding * style()->fontSize()), Fixed));
 
     
     RenderBlock::layout();

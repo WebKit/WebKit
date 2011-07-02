@@ -57,7 +57,7 @@ HTMLMediaElement* RenderMedia::mediaElement() const
 
 void RenderMedia::layout()
 {
-    IntSize oldSize = contentBoxRect().size();
+    LayoutSize oldSize = contentBoxRect().size();
 
     RenderImage::layout();
 
@@ -65,16 +65,16 @@ void RenderMedia::layout()
     if (!controlsRenderer)
         return;
 
-    IntSize newSize = contentBoxRect().size();
+    LayoutSize newSize = contentBoxRect().size();
     if (newSize == oldSize && !controlsRenderer->needsLayout())
         return;
 
     // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or 
     // instantiate LayoutStateDisabler. Since using a LayoutStateMaintainer is slightly more efficient,
     // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
-    controlsRenderer->setLocation(IntPoint(borderLeft(), borderTop()) + IntSize(paddingLeft(), paddingTop()));
+    controlsRenderer->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
     controlsRenderer->style()->setHeight(Length(newSize.height(), Fixed));
     controlsRenderer->style()->setWidth(Length(newSize.width(), Fixed));
     controlsRenderer->setNeedsLayout(true, false);

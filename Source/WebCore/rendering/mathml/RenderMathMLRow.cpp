@@ -66,12 +66,12 @@ void RenderMathMLRow::layout()
 {
     RenderBlock::layout();
     
-    int maxHeight = 0;
+    LayoutUnit maxHeight = 0;
     int childCount = 0;
     int operatorCount = 0;
 
     // Calculate the non-operator max height of the row.
-    int operatorHeight = 0;
+    LayoutUnit operatorHeight = 0;
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
         childCount++;
         if (current->isRenderMathMLBlock()) {

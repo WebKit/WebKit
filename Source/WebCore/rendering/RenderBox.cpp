@@ -391,7 +391,7 @@ void RenderBox::layout()
         return;
     }
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
     while (child) {
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());

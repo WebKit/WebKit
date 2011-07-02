@@ -269,10 +269,10 @@ void RenderTextControlSingleLine::layout()
     // and type=search if the text height is taller than the contentHeight()
     // because of compability.
 
-    int oldHeight = height();
+    LayoutUnit oldHeight = height();
     computeLogicalHeight();
 
-    int oldWidth = width();
+    LayoutUnit oldWidth = width();
     computeLogicalWidth();
 
     bool relayoutChildren = oldHeight != height() || oldWidth != width();
@@ -284,10 +284,10 @@ void RenderTextControlSingleLine::layout()
     RenderBox* containerRenderer = container ? container->renderBox() : 0;
 
     // Set the text block height
-    int desiredHeight = textBlockHeight();
-    int currentHeight = innerTextRenderer->height();
+    LayoutUnit desiredHeight = textBlockHeight();
+    LayoutUnit currentHeight = innerTextRenderer->height();
 
-    int heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
+    LayoutUnit heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
     if (currentHeight > heightLimit) {
         if (desiredHeight != currentHeight)
             relayoutChildren = true;
@@ -298,7 +298,7 @@ void RenderTextControlSingleLine::layout()
     // The container might be taller because of decoration elements.
     if (containerRenderer) {
         containerRenderer->layoutIfNeeded();
-        int containerHeight = containerRenderer->height();
+        LayoutUnit containerHeight = containerRenderer->height();
         if (containerHeight > heightLimit) {
             containerRenderer->style()->setHeight(Length(heightLimit, Fixed));
             relayoutChildren = true;
@@ -313,19 +313,19 @@ void RenderTextControlSingleLine::layout()
     // Center the child block vertically
     currentHeight = innerTextRenderer->height();
     if (!container && currentHeight != contentHeight()) {
-        int heightDiff = currentHeight - contentHeight();
+        LayoutUnit heightDiff = currentHeight - contentHeight();
         innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + heightDiff % 2));
     } else if (inputElement()->isSearchField() && containerRenderer && containerRenderer->height() > contentHeight()) {
         // A quirk for find-in-page box on Safari Windows.
         // http://webkit.org/b/63157
-        int heightDiff = containerRenderer->height() - contentHeight();
+        LayoutUnit heightDiff = containerRenderer->height() - contentHeight();
         containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + heightDiff % 2));
     }
 
     // Ignores the paddings for the inner spin button.
     if (RenderBox* innerSpinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0) {
         RenderBox* parentBox = innerSpinBox->parentBox();
-        innerSpinBox->setLocation(IntPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
+        innerSpinBox->setLocation(LayoutPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
         innerSpinBox->setHeight(height() - borderTop() - borderBottom());
     }
 }

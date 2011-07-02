@@ -1,3 +1,58 @@
+2011-07-01  Levi Weintraub  <leviw@chromium.org>
+
+        Switch primary virtual layout functions to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63852
+
+        Reviewed by Eric Seidel.
+
+        Switching the primary overloaded layout functions over to the new layout unit abstraction.
+
+        No new tests, no functionality changes.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::layout):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layout):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::layout):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layout):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::layoutDelta):
+        (WebCore::RenderView::addLayoutDelta):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::layout):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layout):
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::layout):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::layout):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layout):
+
 2011-07-01  Sam Weinig  <sam@webkit.org>
 
         Reduce parser nesting cap to 512

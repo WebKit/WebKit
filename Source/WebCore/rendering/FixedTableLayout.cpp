@@ -228,14 +228,14 @@ void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layou
 
 void FixedTableLayout::layout()
 {
-    int tableLogicalWidth = m_table->logicalWidth() - m_table->bordersPaddingAndSpacingInRowDirection();
+    LayoutUnit tableLogicalWidth = m_table->logicalWidth() - m_table->bordersPaddingAndSpacingInRowDirection();
     int nEffCols = m_table->numEffCols();
     Vector<int> calcWidth(nEffCols, 0);
 
     int numAuto = 0;
-    int autoSpan = 0;
-    int totalFixedWidth = 0;
-    int totalPercentWidth = 0;
+    LayoutUnit autoSpan = 0;
+    LayoutUnit totalFixedWidth = 0;
+    LayoutUnit totalPercentWidth = 0;
     float totalPercent = 0;
 
     // Compute requirements and try to satisfy fixed and percent widths.
@@ -256,8 +256,8 @@ void FixedTableLayout::layout()
         }
     }
 
-    int hspacing = m_table->hBorderSpacing();
-    int totalWidth = totalFixedWidth + totalPercentWidth;
+    LayoutUnit hspacing = m_table->hBorderSpacing();
+    LayoutUnit totalWidth = totalFixedWidth + totalPercentWidth;
     if (!numAuto || totalWidth > tableLogicalWidth) {
         // If there are no auto columns, or if the total is too wide, take
         // what we have and scale it to fit as necessary.
@@ -285,12 +285,12 @@ void FixedTableLayout::layout()
         }
     } else {
         // Divide the remaining width among the auto columns.
-        int remainingWidth = tableLogicalWidth - totalFixedWidth - totalPercentWidth - hspacing * (autoSpan - numAuto);
+        LayoutUnit remainingWidth = tableLogicalWidth - totalFixedWidth - totalPercentWidth - hspacing * (autoSpan - numAuto);
         int lastAuto = 0;
         for (int i = 0; i < nEffCols; i++) {
             if (m_width[i].isAuto()) {
-                int span = m_table->spanOfEffCol(i);
-                int w = remainingWidth * span / autoSpan;
+                LayoutUnit span = m_table->spanOfEffCol(i);
+                LayoutUnit w = remainingWidth * span / autoSpan;
                 calcWidth[i] = w + hspacing * (span - 1);
                 remainingWidth -= w;
                 if (!remainingWidth)
@@ -308,10 +308,10 @@ void FixedTableLayout::layout()
 
     if (totalWidth < tableLogicalWidth) {
         // Spread extra space over columns.
-        int remainingWidth = tableLogicalWidth - totalWidth;
+        LayoutUnit remainingWidth = tableLogicalWidth - totalWidth;
         int total = nEffCols;
         while (total) {
-            int w = remainingWidth / total;
+            LayoutUnit w = remainingWidth / total;
             remainingWidth -= w;
             calcWidth[--total] += w;
         }
@@ -319,12 +319,12 @@ void FixedTableLayout::layout()
             calcWidth[nEffCols - 1] += remainingWidth;
     }
     
-    int pos = 0;
+    LayoutUnit pos = 0;
     for (int i = 0; i < nEffCols; i++) {
         m_table->columnPositions()[i] = pos;
         pos += calcWidth[i] + hspacing;
     }
-    int colPositionsSize = m_table->columnPositions().size();
+    LayoutUnit colPositionsSize = m_table->columnPositions().size();
     if (colPositionsSize > 0)
         m_table->columnPositions()[colPositionsSize - 1] = pos;
 }

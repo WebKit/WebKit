@@ -274,14 +274,14 @@ void RenderTable::layout()
     recalcSectionsIfNeeded();
         
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
 
     setLogicalHeight(0);
     m_overflow.clear();
 
     initMaxMarginValues();
     
-    int oldLogicalWidth = logicalWidth();
+    LayoutUnit oldLogicalWidth = logicalWidth();
     computeLogicalWidth();
 
     if (m_caption && logicalWidth() != oldLogicalWidth)
@@ -296,8 +296,8 @@ void RenderTable::layout()
 
     setCellLogicalWidths();
 
-    int totalSectionLogicalHeight = 0;
-    int oldTableLogicalTop = m_caption ? m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter() : 0;
+    LayoutUnit totalSectionLogicalHeight = 0;
+    LayoutUnit oldTableLogicalTop = m_caption ? m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter() : 0;
 
     bool collapsing = collapseBorders();
 
@@ -323,7 +323,7 @@ void RenderTable::layout()
     // section down (it is quite unlikely that any of the following sections
     // did not shift).
     bool sectionMoved = false;
-    int movedSectionLogicalTop = 0;
+    LayoutUnit movedSectionLogicalTop = 0;
 
     // FIXME: Collapse caption margin.
     if (m_caption && m_caption->style()->captionSide() != CAPBOTTOM) {
@@ -334,8 +334,8 @@ void RenderTable::layout()
         }
     }
 
-    int borderAndPaddingBefore = borderBefore() + (collapsing ? 0 : paddingBefore());
-    int borderAndPaddingAfter = borderAfter() + (collapsing ? 0 : paddingAfter());
+    LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? 0 : paddingBefore());
+    LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? 0 : paddingAfter());
 
     setLogicalHeight(logicalHeight() + borderAndPaddingBefore);
 
@@ -343,7 +343,7 @@ void RenderTable::layout()
         computeLogicalHeight();
 
     Length logicalHeightLength = style()->logicalHeight();
-    int computedLogicalHeight = 0;
+    LayoutUnit computedLogicalHeight = 0;
     if (logicalHeightLength.isFixed()) {
         // Tables size as though CSS height includes border/padding.
         computedLogicalHeight = logicalHeightLength.value() - (borderAndPaddingBefore + borderAndPaddingAfter);
@@ -363,7 +363,7 @@ void RenderTable::layout()
         setLogicalHeight(logicalHeight() + computedLogicalHeight);
     }
 
-    int sectionLogicalLeft = style()->isLeftToRightDirection() ? borderStart() : borderEnd();
+    LayoutUnit sectionLogicalLeft = style()->isLeftToRightDirection() ? borderStart() : borderEnd();
     if (!collapsing)
         sectionLogicalLeft += style()->isLeftToRightDirection() ? paddingStart() : paddingEnd();
 
@@ -374,7 +374,7 @@ void RenderTable::layout()
             sectionMoved = true;
             movedSectionLogicalTop = min(logicalHeight(), section->logicalTop()) + (style()->isHorizontalWritingMode() ? section->minYVisualOverflow() : section->minXVisualOverflow());
         }
-        section->setLogicalLocation(IntPoint(sectionLogicalLeft, logicalHeight()));
+        section->setLogicalLocation(LayoutPoint(sectionLogicalLeft, logicalHeight()));
 
         setLogicalHeight(logicalHeight() + section->logicalHeight());
         section = sectionBelow(section);
@@ -405,9 +405,9 @@ void RenderTable::layout()
     // Repaint with our new bounds if they are different from our old bounds.
     if (!didFullRepaint && sectionMoved) {
         if (style()->isHorizontalWritingMode())
-            repaintRectangle(IntRect(minXVisualOverflow(), movedSectionLogicalTop, maxXVisualOverflow() - minXVisualOverflow(), maxYVisualOverflow() - movedSectionLogicalTop));
+            repaintRectangle(LayoutRect(minXVisualOverflow(), movedSectionLogicalTop, maxXVisualOverflow() - minXVisualOverflow(), maxYVisualOverflow() - movedSectionLogicalTop));
         else
-            repaintRectangle(IntRect(movedSectionLogicalTop, minYVisualOverflow(), maxXVisualOverflow() - movedSectionLogicalTop, maxYVisualOverflow() - minYVisualOverflow()));
+            repaintRectangle(LayoutRect(movedSectionLogicalTop, minYVisualOverflow(), maxXVisualOverflow() - movedSectionLogicalTop, maxYVisualOverflow() - minYVisualOverflow()));
     }
 
     setNeedsLayout(false);

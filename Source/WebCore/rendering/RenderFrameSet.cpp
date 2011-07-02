@@ -461,7 +461,7 @@ void RenderFrameSet::layout()
     ASSERT(needsLayout());
 
     bool doFullRepaint = selfNeedsLayout() && checkForRepaintDuringLayout();
-    IntRect oldBounds;
+    LayoutRect oldBounds;
     if (doFullRepaint)
         oldBounds = absoluteClippedOverflowRect();
 
@@ -478,7 +478,7 @@ void RenderFrameSet::layout()
         m_cols.resize(cols);
     }
 
-    int borderThickness = frameSet()->border();
+    LayoutUnit borderThickness = frameSet()->border();
     layOutAxis(m_rows, frameSet()->rowLengths(), height() - (rows - 1) * borderThickness);
     layOutAxis(m_cols, frameSet()->colLengths(), width() - (cols - 1) * borderThickness);
 
@@ -493,7 +493,7 @@ void RenderFrameSet::layout()
 
     if (doFullRepaint) {
         view()->repaintViewRectangle(oldBounds);
-        IntRect newBounds = absoluteClippedOverflowRect();
+        LayoutRect newBounds = absoluteClippedOverflowRect();
         if (newBounds != oldBounds)
             view()->repaintViewRectangle(newBounds);
     }

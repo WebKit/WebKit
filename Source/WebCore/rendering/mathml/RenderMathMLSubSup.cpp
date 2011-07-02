@@ -162,15 +162,15 @@ void RenderMathMLSubSup::layout()
     
     if (m_kind == SubSup) {
         if (RenderObject* base = firstChild()) {
-            int maxHeight = 0;
+            LayoutUnit maxHeight = 0;
             RenderObject* current = base->firstChild();
             while (current) {
-                int height = getBoxModelObjectHeight(current);
+                LayoutUnit height = getBoxModelObjectHeight(current);
                 if (height > maxHeight)
                     maxHeight = height;
                 current = current->nextSibling();
             }
-            int heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : 0;
+            LayoutUnit heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : 0;
             if (heightDiff < 0) 
                 heightDiff = 0;
             base->style()->setPaddingTop(Length(heightDiff, Fixed));

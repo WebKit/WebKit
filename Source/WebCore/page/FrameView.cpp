@@ -968,7 +968,7 @@ void FrameView::layout(bool allowSubtree)
 
                 m_firstLayout = false;
                 m_firstLayoutCallbackPending = true;
-                m_lastLayoutSize = IntSize(width(), height());
+                m_lastLayoutSize = LayoutSize(width(), height());
                 m_lastZoomFactor = root->style()->zoom();
 
                 // Set the initial vMode to AlwaysOn if we're auto.
@@ -984,9 +984,9 @@ void FrameView::layout(bool allowSubtree)
                 setScrollbarModes(hMode, vMode);
         }
 
-        IntSize oldSize = m_size;
+        LayoutSize oldSize = m_size;
 
-        m_size = IntSize(layoutWidth(), layoutHeight());
+        m_size = LayoutSize(layoutWidth(), layoutHeight());
 
         if (oldSize != m_size) {
             m_doFullRepaint = true;
@@ -1032,7 +1032,7 @@ void FrameView::layout(bool allowSubtree)
 
     // Now update the positions of all layers.
     beginDeferredRepaints();
-    IntPoint cachedOffset;
+    LayoutPoint cachedOffset;
     if (m_doFullRepaint)
         root->view()->repaint(); // FIXME: This isn't really right, since the RenderView doesn't fully encompass the visibleContentRect(). It just happens
                                  // to work out most of the time, since first layouts and printing don't have you scrolled anywhere.

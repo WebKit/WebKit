@@ -232,8 +232,8 @@ void RenderRubyRun::layout()
     if (!rt)
         return;
     
-    int lastLineRubyTextBottom = rt->logicalHeight();
-    int firstLineRubyTextTop = 0;
+    LayoutUnit lastLineRubyTextBottom = rt->logicalHeight();
+    LayoutUnit firstLineRubyTextTop = 0;
     RootInlineBox* rootBox = rt->lastRootBox();
     if (rootBox) {
         // In order to align, we have to ignore negative leading.
@@ -242,7 +242,7 @@ void RenderRubyRun::layout()
     }
 
     if (!style()->isFlippedLinesWritingMode()) {
-        int firstLineTop = 0;
+        LayoutUnit firstLineTop = 0;
         if (RenderRubyBase* rb = rubyBase()) {
             RootInlineBox* rootBox = rb->firstRootBox();
             if (rootBox)
@@ -252,7 +252,7 @@ void RenderRubyRun::layout()
         
         rt->setLogicalTop(-lastLineRubyTextBottom + firstLineTop);
     } else {
-        int lastLineBottom = logicalHeight();
+        LayoutUnit lastLineBottom = logicalHeight();
         if (RenderRubyBase* rb = rubyBase()) {
             RootInlineBox* rootBox = rb->lastRootBox();
             if (rootBox)

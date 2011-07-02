@@ -397,7 +397,7 @@ void RenderTableSection::layout()
 {
     ASSERT(needsLayout());
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
     for (RenderObject* child = children()->firstChild(); child; child = child->nextSibling()) {
         if (child->isTableRow()) {
             child->layoutIfNeeded();

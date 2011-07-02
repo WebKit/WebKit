@@ -199,7 +199,7 @@ void RenderMathMLRoot::layout()
     if (!firstChild() || !lastChild())
         return;
 
-    int maxHeight = toRenderBoxModelObject(lastChild())->offsetHeight();
+    LayoutUnit maxHeight = toRenderBoxModelObject(lastChild())->offsetHeight();
     
     RenderObject* current = lastChild()->firstChild();
     if (current)
@@ -209,17 +209,17 @@ void RenderMathMLRoot::layout()
         maxHeight = style()->fontSize();
     
     // Base height above which the shape of the root changes
-    int thresholdHeight = static_cast<int>(gThresholdBaseHeight * style()->fontSize());
-    int topStartShift = 0;
+    LayoutUnit thresholdHeight = static_cast<LayoutUnit>(gThresholdBaseHeight * style()->fontSize());
+    LayoutUnit topStartShift = 0;
     
     if (maxHeight > thresholdHeight && thresholdHeight) {
         float shift = (maxHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
         if (shift > 1.)
             shift = 1.0f;
-        int frontWidth = static_cast<int>(style()->fontSize() * gRadicalWidth);
-        topStartShift = static_cast<int>(gRadicalBottomPointXPos * frontWidth * shift);
+        LayoutUnit frontWidth = static_cast<LayoutUnit>(style()->fontSize() * gRadicalWidth);
+        topStartShift = static_cast<LayoutUnit>(gRadicalBottomPointXPos * frontWidth * shift);
         
-        style()->setPaddingBottom(Length(static_cast<int>(gRootBottomPadding * style()->fontSize()), Fixed));
+        style()->setPaddingBottom(Length(static_cast<LayoutUnit>(gRootBottomPadding * style()->fontSize()), Fixed));
     }
     
     // Positioning of the index
@@ -230,13 +230,13 @@ void RenderMathMLRoot::layout()
     if (!indexBox)
         return;
     
-    int indexShift = indexBox->offsetWidth() + topStartShift;
-    int radicalHeight = static_cast<int>((1 - gRadicalTopLeftPointYPos) * maxHeight);
-    int rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->offsetHeight() - (maxHeight + static_cast<int>(gRootPadding * style()->fontSize()));
+    LayoutUnit indexShift = indexBox->offsetWidth() + topStartShift;
+    LayoutUnit radicalHeight = static_cast<LayoutUnit>((1 - gRadicalTopLeftPointYPos) * maxHeight);
+    LayoutUnit rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->offsetHeight() - (maxHeight + static_cast<LayoutUnit>(gRootPadding * style()->fontSize()));
     
     style()->setPaddingLeft(Length(indexShift, Fixed));
     if (rootMarginTop > 0)
-        style()->setPaddingTop(Length(rootMarginTop + static_cast<int>(gRootPadding * style()->fontSize()), Fixed));
+        style()->setPaddingTop(Length(rootMarginTop + static_cast<LayoutUnit>(gRootPadding * style()->fontSize()), Fixed));
     
     setNeedsLayout(true);
     setPreferredLogicalWidthsDirty(true, false);

@@ -103,11 +103,11 @@ public:
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
-    IntSize layoutDelta() const
+    LayoutSize layoutDelta() const
     {
-        return m_layoutState ? m_layoutState->m_layoutDelta : IntSize();
+        return m_layoutState ? m_layoutState->m_layoutDelta : LayoutSize();
     }
-    void addLayoutDelta(const IntSize& delta) 
+    void addLayoutDelta(const LayoutSize& delta) 
     {
         if (m_layoutState)
             m_layoutState->m_layoutDelta += delta;

@@ -101,7 +101,7 @@ void RenderSlider::layout()
     RenderBox* thumbBox = sliderThumbElementOf(node())->renderBox();
     if (!thumbBox)
         return;
-    int heightDiff = thumbBox->height() - contentHeight();
+    LayoutUnit heightDiff = thumbBox->height() - contentHeight();
     if (heightDiff > 0)
         thumbBox->setY(thumbBox->y() - (heightDiff / 2));
 }

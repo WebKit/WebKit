@@ -48,7 +48,7 @@ RenderScrollbarPart::~RenderScrollbarPart()
 
 void RenderScrollbarPart::layout()
 {
-    setLocation(IntPoint()); // We don't worry about positioning ourselves.  We're just determining our minimum width/height.
+    setLocation(LayoutPoint()); // We don't worry about positioning ourselves. We're just determining our minimum width/height.
     if (m_scrollbar->orientation() == HorizontalScrollbar)
         layoutHorizontalPart();
     else
