@@ -1,3 +1,14 @@
+2011-07-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Use common functions in fast/forms/search-rtl.html
+        https://bugs.webkit.org/show_bug.cgi?id=63787
+
+        * fast/forms/search-rtl.html: Use searchCancelButtonPosition() to make
+          this work on Chromium Windows and Chromium Linux.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-01  Sam Weinig  <sam@webkit.org>
 
         Reduce parser nesting cap to 512
