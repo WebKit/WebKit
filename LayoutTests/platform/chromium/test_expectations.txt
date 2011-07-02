@@ -2552,15 +2552,14 @@ BUGCR64733 : editing/text-iterator/findString.html = TEXT
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
-BUGCR50282 MAC : fast/images/imagemap-case.html = IMAGE
-BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-zoom.html = IMAGE
-BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring.html = IMAGE
-BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
-BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
-BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
-BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
-BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
-BUGCR50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
+BUGWK50282 MAC : fast/images/imagemap-case.html = IMAGE
+BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring.html = IMAGE
+BUGWK50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
+BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
+BUGWK50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
+BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
+BUGWK50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
+BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
@@ -3942,8 +3941,6 @@ WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html
 
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CRASH PASS
-
-BUGWK62858 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE
 
 // Broken because Chromium disables compositing for RTL pages
 BUGWK56591 GPU : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT

@@ -1,5 +1,13 @@
 2011-07-02  Mihai Parparita  <mihaip@chromium.org>
 
+        Remove Chromium Leopard failing expectations for two tests (fast/dom/
+        HTMLMeterElement/meter-writing-mode.html and fast/images/
+        imagemap-focus-ring-zoom.html) sice they pass now. Fix bug links.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-02  Mihai Parparita  <mihaip@chromium.org>
+
         Meant to actually remove expectations in r90322, not just comment them
         out.
 
