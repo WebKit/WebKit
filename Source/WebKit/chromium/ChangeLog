@@ -1,3 +1,10 @@
+2011-07-01  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for fast/forms/input-file-re-render.html
+        https://bugs.webkit.org/show_bug.cgi?id=63733
+
+        * DEPS: Update chromium revision to 91405 to have "Choose Files" string.
+
 2011-07-01  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
