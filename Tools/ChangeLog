@@ -1,5 +1,12 @@
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
+        Add some more debug logging to try to understand why we're getting
+        stuck acquring the HTTP lock.
+
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
         Refactor NRWT parsing logic in master.cfg to understand that run-webkit-tests might run NRWT
         https://bugs.webkit.org/show_bug.cgi?id=63854
 

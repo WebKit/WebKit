@@ -87,6 +87,7 @@ class HttpLock(object):
         it deletes the lock file."""
         lock_list = self._lock_file_list()
         if not lock_list:
+            _log.debug("No lock file list")
             return
         try:
             current_lock_file = open(lock_list[0], 'r')
@@ -96,9 +97,15 @@ class HttpLock(object):
                 _log.debug("Removing stuck lock file: %s" % lock_list[0])
                 FileSystem().remove(lock_list[0])
                 return
-        except (IOError, OSError):
+        except IOError, e:
+            _log.debug("IOError: %s" % e)
             return
-        return int(current_pid)
+        except OSError, e:
+            _log.debug("OSError: %s" % e)
+            return
+        result = int(current_pid)
+        _log.debug("Current lock pid: %s" % result)
+        return result
 
     def _create_lock_file(self):
         """The lock files are used to schedule the running test sessions in first
@@ -121,7 +128,6 @@ class HttpLock(object):
         self._guard_lock.release_lock()
         return True
 
-
     def wait_for_httpd_lock(self):
         """Create a lock file and wait until it's turn comes. If something goes wrong
         it wont do any locking."""
@@ -131,3 +137,5 @@ class HttpLock(object):
 
         while self._curent_lock_pid() != os.getpid():
             time.sleep(1)
+
+        _log.debug("HTTP lock acquired")
