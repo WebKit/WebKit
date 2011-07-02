@@ -84,7 +84,7 @@ static void registerPluginView()
 
 HWND NetscapePlugin::containingWindow() const
 {
-    return m_pluginController->nativeParentWindow();
+    return pluginController()->nativeParentWindow();
 }
 
 bool NetscapePlugin::platformPostInitialize()
@@ -167,11 +167,11 @@ void NetscapePlugin::scheduleWindowedGeometryUpdate()
 
     WindowGeometry geometry;
     geometry.window = m_window;
-    geometry.visible = m_pluginController->isPluginVisible();
+    geometry.visible = pluginController()->isPluginVisible();
     geometry.frame = m_frameRect;
     geometry.clipRect = clipRectInPluginWindowCoordinates;
 
-    m_pluginController->scheduleWindowedPluginGeometryUpdate(geometry);
+    pluginController()->scheduleWindowedPluginGeometryUpdate(geometry);
 }
 
 void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool)
@@ -185,7 +185,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
         return;
     }
 
-    m_pluginController->willSendEventToPlugin();
+    pluginController()->willSendEventToPlugin();
     
     LocalWindowsContext windowsContext(context, dirtyRect, m_isTransparent);
 
@@ -293,7 +293,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    m_pluginController->willSendEventToPlugin();
+    pluginController()->willSendEventToPlugin();
 
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);
@@ -322,7 +322,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    m_pluginController->willSendEventToPlugin();
+    pluginController()->willSendEventToPlugin();
 
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);
@@ -336,7 +336,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    m_pluginController->willSendEventToPlugin();
+    pluginController()->willSendEventToPlugin();
 
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);
