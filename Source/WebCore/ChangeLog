@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        SVG data:image/svg+xml;base64 URLs inside CSS throw mime type warning
+        https://bugs.webkit.org/show_bug.cgi?id=54325
+        
+        Add image/svg+xml to the list of acceptable MIME types for the Image type.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector):
+
+2011-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Darin Adler.
+
         Errors encountered within SVG documents should be reported to the console
         https://bugs.webkit.org/show_bug.cgi?id=62599
 
