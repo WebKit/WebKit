@@ -72,10 +72,21 @@ public:
         static bool decode(CoreIPC::ArgumentDecoder*, Parameters&);
     };
 
+    // Sets the active plug-in controller and initializes the plug-in.
+    bool initialize(PluginController*, const Parameters&);
+
+    // Returns the plug-in controller for this plug-in.
+    PluginController* controller() { return m_pluginController; }
+
     virtual ~Plugin();
-    
+
+private:
+
     // Initializes the plug-in. If the plug-in fails to initialize this should return false.
-    virtual bool initialize(PluginController*, const Parameters&) = 0;
+    // This is only called by the other initialize overload so it can be made private.
+    virtual bool initialize(const Parameters&) = 0;
+
+public:
 
     // Destroys the plug-in.
     virtual void destroy() = 0;
@@ -178,12 +189,11 @@ public:
     // Called when the private browsing state for this plug-in changes.
     virtual void privateBrowsingStateChanged(bool) = 0;
 
-    // Returns the plug-in controller for this plug-in.
-    // FIXME: We could just have the controller be a member variable of Plugin.
-    virtual PluginController* controller() = 0;
-
 protected:
     Plugin();
+
+private:
+    PluginController* m_pluginController;
 };
     
 } // namespace WebKit

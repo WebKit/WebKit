@@ -55,8 +55,7 @@ PassRefPtr<NetscapePlugin> NetscapePlugin::create(PassRefPtr<NetscapePluginModul
 }
     
 NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
-    : m_pluginController(0)
-    , m_nextRequestID(0)
+    : m_nextRequestID(0)
     , m_pluginModule(pluginModule)
     , m_npWindow()
     , m_isStarted(false)
@@ -120,7 +119,7 @@ void NetscapePlugin::invalidate(const NPRect* invalidRect)
     if (platformInvalidate(rect))
         return;
 
-    m_pluginController->invalidate(rect);
+    controller()->invalidate(rect);
 }
 
 const char* NetscapePlugin::userAgent(NPP npp)
@@ -144,7 +143,7 @@ const char* NetscapePlugin::userAgent()
 #endif
 
     if (m_userAgent.isNull()) {
-        m_userAgent = m_pluginController->userAgent().utf8();
+        m_userAgent = controller()->userAgent().utf8();
         ASSERT(!m_userAgent.isNull());
     }
     return m_userAgent.data();
@@ -155,7 +154,7 @@ void NetscapePlugin::loadURL(const String& method, const String& urlString, cons
 {
     uint64_t requestID = ++m_nextRequestID;
     
-    m_pluginController->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups());
+    controller()->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups());
 
     if (target.isNull()) {
         // The browser is going to send the data in a stream, create a plug-in stream.
@@ -209,7 +208,7 @@ void NetscapePlugin::setIsTransparent(bool isTransparent)
 
 void NetscapePlugin::setStatusbarText(const String& statusbarText)
 {
-    m_pluginController->setStatusbarText(statusbarText);
+    controller()->setStatusbarText(statusbarText);
 }
 
 void NetscapePlugin::setException(const String& exceptionString)
@@ -224,38 +223,38 @@ void NetscapePlugin::setException(const String& exceptionString)
 
 bool NetscapePlugin::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
-    return m_pluginController->evaluate(npObject, scriptString, result, allowPopups());
+    return controller()->evaluate(npObject, scriptString, result, allowPopups());
 }
 
 bool NetscapePlugin::isPrivateBrowsingEnabled()
 {
-    return m_pluginController->isPrivateBrowsingEnabled();
+    return controller()->isPrivateBrowsingEnabled();
 }
 
 NPObject* NetscapePlugin::windowScriptNPObject()
 {
-    return m_pluginController->windowScriptNPObject();
+    return controller()->windowScriptNPObject();
 }
 
 NPObject* NetscapePlugin::pluginElementNPObject()
 {
-    return m_pluginController->pluginElementNPObject();
+    return controller()->pluginElementNPObject();
 }
 
 bool NetscapePlugin::tryToShortCircuitInvoke(NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
 {
-    return m_pluginController->tryToShortCircuitInvoke(npObject, methodName, arguments, argumentCount, returnValue, result);
+    return controller()->tryToShortCircuitInvoke(npObject, methodName, arguments, argumentCount, returnValue, result);
 }
 
 void NetscapePlugin::cancelStreamLoad(NetscapePluginStream* pluginStream)
 {
     if (pluginStream == m_manualStream) {
-        m_pluginController->cancelManualStreamLoad();
+        controller()->cancelManualStreamLoad();
         return;
     }
 
     // Ask the plug-in controller to cancel this stream load.
-    m_pluginController->cancelStreamLoad(pluginStream->streamID());
+    controller()->cancelStreamLoad(pluginStream->streamID());
 }
 
 void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
@@ -272,7 +271,7 @@ void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
 bool NetscapePlugin::isAcceleratedCompositingEnabled()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    return m_pluginController->isAcceleratedCompositingEnabled();
+    return controller()->isAcceleratedCompositingEnabled();
 #else
     return false;
 #endif
@@ -292,22 +291,22 @@ void NetscapePlugin::popPopupsEnabledState()
 
 String NetscapePlugin::proxiesForURL(const String& urlString)
 {
-    return m_pluginController->proxiesForURL(urlString);
+    return controller()->proxiesForURL(urlString);
 }
     
 String NetscapePlugin::cookiesForURL(const String& urlString)
 {
-    return m_pluginController->cookiesForURL(urlString);
+    return controller()->cookiesForURL(urlString);
 }
 
 void NetscapePlugin::setCookiesForURL(const String& urlString, const String& cookieString)
 {
-    m_pluginController->setCookiesForURL(urlString, cookieString);
+    controller()->setCookiesForURL(urlString, cookieString);
 }
 
 bool NetscapePlugin::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
 {
-    return m_pluginController->getAuthenticationInfo(protectionSpace, username, password);
+    return controller()->getAuthenticationInfo(protectionSpace, username, password);
 }
 
 NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
@@ -434,13 +433,8 @@ bool NetscapePlugin::allowPopups() const
     return false;
 }
 
-bool NetscapePlugin::initialize(PluginController* pluginController, const Parameters& parameters)
+bool NetscapePlugin::initialize(const Parameters& parameters)
 {
-    ASSERT(!m_pluginController);
-    ASSERT(pluginController);
-
-    m_pluginController = pluginController;
-    
     uint16_t mode = parameters.loadManually ? NP_FULL : NP_EMBED;
     
     m_loadManually = parameters.loadManually;
@@ -521,7 +515,6 @@ void NetscapePlugin::destroy()
     NPP_Destroy(0);
 
     m_isStarted = false;
-    m_pluginController = 0;
 
     platformDestroy();
 }
@@ -766,11 +759,6 @@ bool NetscapePlugin::supportsSnapshotting() const
     return m_pluginModule && m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
 #endif
     return false;
-}
-
-PluginController* NetscapePlugin::controller()
-{
-    return m_pluginController;
 }
 
 } // namespace WebKit

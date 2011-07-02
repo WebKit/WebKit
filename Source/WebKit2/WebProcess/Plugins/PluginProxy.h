@@ -63,7 +63,7 @@ private:
     explicit PluginProxy(const String& pluginPath);
 
     // Plugin
-    virtual bool initialize(PluginController*, const Parameters&);
+    virtual bool initialize(const Parameters&);
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual PassRefPtr<ShareableBitmap> snapshot();
@@ -102,8 +102,6 @@ private:
 
     virtual void privateBrowsingStateChanged(bool);
 
-    virtual PluginController* controller();
-
     bool needsBackingStore() const;
     uint64_t windowNPObjectID();
 
@@ -127,8 +125,6 @@ private:
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;
-
-    PluginController* m_pluginController;
 
     // The plug-in rect in window coordinates.
     WebCore::IntRect m_frameRect;

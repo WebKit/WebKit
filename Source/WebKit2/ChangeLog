@@ -1,3 +1,92 @@
+2011-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Move the plug-in controller member variable up to the shared Plugin base class
+        https://bugs.webkit.org/show_bug.cgi?id=63867
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Remove m_pluginController.
+
+        (WebKit::NetscapePlugin::invalidate):
+        (WebKit::NetscapePlugin::userAgent):
+        (WebKit::NetscapePlugin::loadURL):
+        (WebKit::NetscapePlugin::setStatusbarText):
+        (WebKit::NetscapePlugin::evaluate):
+        (WebKit::NetscapePlugin::isPrivateBrowsingEnabled):
+        (WebKit::NetscapePlugin::windowScriptNPObject):
+        (WebKit::NetscapePlugin::pluginElementNPObject):
+        (WebKit::NetscapePlugin::tryToShortCircuitInvoke):
+        (WebKit::NetscapePlugin::cancelStreamLoad):
+        (WebKit::NetscapePlugin::isAcceleratedCompositingEnabled):
+        (WebKit::NetscapePlugin::proxiesForURL):
+        (WebKit::NetscapePlugin::cookiesForURL):
+        (WebKit::NetscapePlugin::setCookiesForURL):
+        (WebKit::NetscapePlugin::getAuthenticationInfo):
+        Use controller() instead of m_pluginController.
+
+        (WebKit::NetscapePlugin::initialize):
+        This doesn't take a PluginController parameter anymore.
+
+        (WebKit::NetscapePlugin::destroy):
+        No need to null out the plug-in controller.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Remove m_pluginController member variable.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::compositingRenderServerPort):
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        Use controller() instead of m_pluginController.
+        
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Plugin):
+        Initialize m_pluginController.
+
+        (WebKit::Plugin::initialize):
+        New function that initializes the plug-in controller and then calls the real
+        virtual initialize member function.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add m_pluginController member variable and a new initialize virtual member function that doesn't take a
+        PluginController parameter. Make the "old" initialize member function set up the plug-in controller.
+
+        (WebKit::Plugin::controller):
+        This is now a simple getter.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        Remove m_pluginController.
+
+        (WebKit::PluginProxy::pluginProcessCrashed):
+        Use controller(), remove a bogus null check.
+
+        (WebKit::PluginProxy::initialize):
+        This doesn't take a PluginController parameter now.
+
+        (WebKit::PluginProxy::destroy):
+        No need to null out the plug-in controller member variable.
+
+        (WebKit::PluginProxy::loadURL):
+        (WebKit::PluginProxy::proxiesForURL):
+        (WebKit::PluginProxy::cookiesForURL):
+        (WebKit::PluginProxy::setCookiesForURL):
+        (WebKit::PluginProxy::getAuthenticationInfo):
+        (WebKit::PluginProxy::windowNPObjectID):
+        (WebKit::PluginProxy::getPluginElementNPObject):
+        (WebKit::PluginProxy::evaluate):
+        (WebKit::PluginProxy::cancelStreamLoad):
+        (WebKit::PluginProxy::cancelManualStreamLoad):
+        (WebKit::PluginProxy::setStatusbarText):
+        (WebKit::PluginProxy::setComplexTextInputEnabled):
+        (WebKit::PluginProxy::update):
+        Use controller() instead of m_pluginController.
+        
+        * WebProcess/Plugins/PluginProxy.h:
+        Remove m_pluginController.
+
 2011-07-01  Darin Adler  <darin@apple.com>
 
         Consider backing scale factor when setting up graphics layers

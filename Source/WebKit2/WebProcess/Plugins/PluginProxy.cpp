@@ -63,7 +63,6 @@ PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath)
 PluginProxy::PluginProxy(const String& pluginPath)
     : m_pluginPath(pluginPath)
     , m_pluginInstanceID(generatePluginInstanceID())
-    , m_pluginController(0)
     , m_pluginBackingStoreContainsValidData(false)
     , m_isStarted(false)
     , m_waitingForPaintInResponseToUpdate(false)
@@ -77,17 +76,11 @@ PluginProxy::~PluginProxy()
 
 void PluginProxy::pluginProcessCrashed()
 {
-    if (m_pluginController)
-        m_pluginController->pluginProcessCrashed();
+    controller()->pluginProcessCrashed();
 }
 
-bool PluginProxy::initialize(PluginController* pluginController, const Parameters& parameters)
+bool PluginProxy::initialize(const Parameters& parameters)
 {
-    ASSERT(!m_pluginController);
-    ASSERT(pluginController);
-
-    m_pluginController = pluginController;
-
     ASSERT(!m_connection);
     m_connection = WebProcess::shared().pluginProcessConnectionManager().getPluginProcessConnection(m_pluginPath);
     
@@ -103,10 +96,10 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     creationParameters.pluginInstanceID = m_pluginInstanceID;
     creationParameters.windowNPObjectID = windowNPObjectID();
     creationParameters.parameters = parameters;
-    creationParameters.userAgent = pluginController->userAgent();
-    creationParameters.isPrivateBrowsingEnabled = pluginController->isPrivateBrowsingEnabled();
+    creationParameters.userAgent = controller()->userAgent();
+    creationParameters.isPrivateBrowsingEnabled = controller()->isPrivateBrowsingEnabled();
 #if USE(ACCELERATED_COMPOSITING)
-    creationParameters.isAcceleratedCompositingEnabled = pluginController->isAcceleratedCompositingEnabled();
+    creationParameters.isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
 #endif
 
     bool result = false;
@@ -130,7 +123,6 @@ void PluginProxy::destroy()
     m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
 
     m_isStarted = false;
-    m_pluginController = 0;
 
     m_connection->removePluginProxy(this);
 }
@@ -381,39 +373,34 @@ void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
     m_connection->connection()->send(Messages::PluginControllerProxy::PrivateBrowsingStateChanged(isPrivateBrowsingEnabled), m_pluginInstanceID);
 }
 
-PluginController* PluginProxy::controller()
-{
-    return m_pluginController;
-}
-
 void PluginProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
-    m_pluginController->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);
+    controller()->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);
 }
 
 void PluginProxy::proxiesForURL(const String& urlString, String& proxyString)
 {
-    proxyString = m_pluginController->proxiesForURL(urlString);
+    proxyString = controller()->proxiesForURL(urlString);
 }
 
 void PluginProxy::cookiesForURL(const String& urlString, String& cookieString)
 {
-    cookieString = m_pluginController->cookiesForURL(urlString);
+    cookieString = controller()->cookiesForURL(urlString);
 }
 
 void PluginProxy::setCookiesForURL(const String& urlString, const String& cookieString)
 {
-    m_pluginController->setCookiesForURL(urlString, cookieString);
+    controller()->setCookiesForURL(urlString, cookieString);
 }
 
 void PluginProxy::getAuthenticationInfo(const ProtectionSpace& protectionSpace, bool& returnValue, String& username, String& password)
 {
-    returnValue = m_pluginController->getAuthenticationInfo(protectionSpace, username, password);
+    returnValue = controller()->getAuthenticationInfo(protectionSpace, username, password);
 }
 
 uint64_t PluginProxy::windowNPObjectID()
 {
-    NPObject* windowScriptNPObject = m_pluginController->windowScriptNPObject();
+    NPObject* windowScriptNPObject = controller()->windowScriptNPObject();
     if (!windowScriptNPObject)
         return 0;
 
@@ -425,7 +412,7 @@ uint64_t PluginProxy::windowNPObjectID()
 
 void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)
 {
-    NPObject* pluginElementNPObject = m_pluginController->pluginElementNPObject();
+    NPObject* pluginElementNPObject = controller()->pluginElementNPObject();
     if (!pluginElementNPObject) {
         pluginElementNPObjectID = 0;
         return;
@@ -437,7 +424,7 @@ void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)
 
 void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData)
 {
-    PluginController::PluginDestructionProtector protector(m_pluginController);
+    PluginController::PluginDestructionProtector protector(controller());
 
     NPVariant npObjectAsVariant = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(npObjectAsVariantData, this);
     if (!NPVARIANT_IS_OBJECT(npObjectAsVariant) || !(NPVARIANT_TO_OBJECT(npObjectAsVariant))) {
@@ -446,7 +433,7 @@ void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const Str
     }
         
     NPVariant result;
-    returnValue = m_pluginController->evaluate(NPVARIANT_TO_OBJECT(npObjectAsVariant), scriptString, &result, allowPopups);
+    returnValue = controller()->evaluate(NPVARIANT_TO_OBJECT(npObjectAsVariant), scriptString, &result, allowPopups);
     if (!returnValue)
         return;
 
@@ -461,23 +448,23 @@ void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const Str
 
 void PluginProxy::cancelStreamLoad(uint64_t streamID)
 {
-    m_pluginController->cancelStreamLoad(streamID);
+    controller()->cancelStreamLoad(streamID);
 }
 
 void PluginProxy::cancelManualStreamLoad()
 {
-    m_pluginController->cancelManualStreamLoad();
+    controller()->cancelManualStreamLoad();
 }
 
 void PluginProxy::setStatusbarText(const String& statusbarText)
 {
-    m_pluginController->setStatusbarText(statusbarText);
+    controller()->setStatusbarText(statusbarText);
 }
 
 #if PLATFORM(MAC)
 void PluginProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
 {
-    m_pluginController->setComplexTextInputEnabled(complexTextInputEnabled);
+    controller()->setComplexTextInputEnabled(complexTextInputEnabled);
 }
 #endif
     
@@ -499,7 +486,7 @@ void PluginProxy::update(const IntRect& paintedRect)
 
     // Ask the controller to invalidate the rect for us.
     m_waitingForPaintInResponseToUpdate = true;
-    m_pluginController->invalidate(paintedRectPluginCoordinates);
+    controller()->invalidate(paintedRectPluginCoordinates);
 }
 
 } // namespace WebKit

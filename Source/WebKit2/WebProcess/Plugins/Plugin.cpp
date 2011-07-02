@@ -73,11 +73,22 @@ bool Plugin::Parameters::decode(CoreIPC::ArgumentDecoder* decoder, Parameters& p
 }
 
 Plugin::Plugin()
+    : m_pluginController(0)
 {
 }
 
 Plugin::~Plugin()
 {
+}
+
+bool Plugin::initialize(PluginController* pluginController, const Parameters& parameters)
+{
+    ASSERT(!m_pluginController);
+    ASSERT(pluginController);
+
+    m_pluginController = pluginController;
+
+    return initialize(parameters);
 }
 
 } // namespace WebKit

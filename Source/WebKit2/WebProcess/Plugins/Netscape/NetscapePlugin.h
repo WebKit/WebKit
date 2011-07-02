@@ -146,7 +146,7 @@ private:
     void platformSetFocus(bool);
 
     // Plugin
-    virtual bool initialize(PluginController*, const Parameters&);
+    virtual bool initialize(const Parameters&);
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual PassRefPtr<ShareableBitmap> snapshot();
@@ -191,14 +191,11 @@ private:
 
     bool supportsSnapshotting() const;
 
-    virtual PluginController* controller();
-
 #if PLUGIN_ARCHITECTURE(WIN)
     static BOOL WINAPI hookedTrackPopupMenu(HMENU, UINT uFlags, int x, int y, int nReserved, HWND, const RECT*);
     void scheduleWindowedGeometryUpdate();
 #endif
 
-    PluginController* m_pluginController;
     uint64_t m_nextRequestID;
 
     typedef HashMap<uint64_t, std::pair<String, void*> > PendingURLNotifyMap;

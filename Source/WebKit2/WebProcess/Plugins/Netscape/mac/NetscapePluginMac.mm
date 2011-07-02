@@ -176,7 +176,7 @@ NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
 
 mach_port_t NetscapePlugin::compositingRenderServerPort()
 {
-    return m_pluginController->compositingRenderServerPort();
+    return controller()->compositingRenderServerPort();
 }
 
 #ifndef NP_NO_CARBON
@@ -787,7 +787,7 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
 void NetscapePlugin::platformSetFocus(bool hasFocus)
 {
     m_pluginHasFocus = hasFocus;
-    m_pluginController->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
+    controller()->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
 
     switch (m_eventModel) {
         case NPEventModelCocoa: {
@@ -815,7 +815,7 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
 void NetscapePlugin::windowFocusChanged(bool hasFocus)
 {
     m_windowHasFocus = hasFocus;
-    m_pluginController->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
+    controller()->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
 
     switch (m_eventModel) {
         case NPEventModelCocoa: {
