@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (139,3) size 9x9
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,130) size 784x20
-        RenderText {#text} at (0,0) size 34x19
-          text run at (0,0) width 34: "FAIL"
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
 layer at (36,49) size 116x16 scrollX 28 scrollWidth 144
   RenderBlock {DIV} at (0,0) size 116x16
     RenderText {#text} at (-28,0) size 143x16
@@ -59,6 +59,4 @@ layer at (36,75) size 176x16
       text run at (136,0) width 39 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (36,101) size 116x16
   RenderBlock {DIV} at (0,0) size 116x16
-    RenderText {#text} at (7,0) size 108x16
-      text run at (7,0) width 108: "click the (x) button"
-caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body
+caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body
