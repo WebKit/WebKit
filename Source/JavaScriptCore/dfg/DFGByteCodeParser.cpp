@@ -701,6 +701,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_mov);
         }
 
+        case op_check_has_instance:
+            addToGraph(CheckHasInstance, get(currentInstruction[1].u.operand));
+            NEXT_OPCODE(op_check_has_instance);
+
+        case op_instanceof: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            NodeIndex baseValue = get(currentInstruction[3].u.operand);
+            NodeIndex prototype = get(currentInstruction[4].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(InstanceOf, value, baseValue, prototype));
+            NEXT_OPCODE(op_instanceof);
+        }
+
         case op_not: {
             ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);

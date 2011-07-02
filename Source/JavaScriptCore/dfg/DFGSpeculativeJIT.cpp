@@ -1103,6 +1103,55 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case CheckHasInstance: {
+        SpeculateCellOperand base(this, node.child1);
+        GPRTemporary structure(this);
+
+        // Speculate that base 'ImplementsDefaultHasInstance'.
+        m_jit.loadPtr(MacroAssembler::Address(base.gpr(), JSCell::structureOffset()), structure.gpr());
+        speculationCheck(m_jit.branchTest8(MacroAssembler::Zero, MacroAssembler::Address(structure.gpr(), Structure::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance)));
+
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case InstanceOf: {
+        SpeculateCellOperand value(this, node.child1);
+        // Base unused since we speculate default InstanceOf behaviour in CheckHasInstance.
+        SpeculateCellOperand prototype(this, node.child3);
+
+        GPRTemporary scratch(this);
+
+        GPRReg valueReg = value.gpr();
+        GPRReg prototypeReg = prototype.gpr();
+        GPRReg scratchReg = scratch.gpr();
+
+        // Check that prototype is an object.
+        m_jit.loadPtr(MacroAssembler::Address(prototypeReg, JSCell::structureOffset()), scratchReg);
+        speculationCheck(m_jit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(scratchReg, Structure::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(ObjectType)));
+
+        // Initialize scratchReg with the value being checked.
+        m_jit.move(valueReg, scratchReg);
+
+        // Walk up the prototype chain of the value (in scratchReg), comparing to prototypeReg.
+        MacroAssembler::Label loop(&m_jit);
+        m_jit.loadPtr(MacroAssembler::Address(scratchReg, JSCell::structureOffset()), scratchReg);
+        m_jit.loadPtr(MacroAssembler::Address(scratchReg, Structure::prototypeOffset()), scratchReg);
+        MacroAssembler::Jump isInstance = m_jit.branchPtr(MacroAssembler::Equal, scratchReg, prototypeReg);
+        m_jit.branchTestPtr(MacroAssembler::Zero, scratchReg, GPRInfo::tagMaskRegister).linkTo(loop, &m_jit);
+
+        // No match - result is false.
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(false))), scratchReg);
+        MacroAssembler::Jump putResult = m_jit.jump();
+
+        isInstance.link(&m_jit);
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(true))), scratchReg);
+
+        putResult.link(&m_jit);
+        jsValueResult(scratchReg, m_compileIndex);
+        break;
+    }
+
     case Phi:
         ASSERT_NOT_REACHED();
 

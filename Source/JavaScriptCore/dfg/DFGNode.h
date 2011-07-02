@@ -138,6 +138,8 @@ typedef uint32_t ExceptionInfo;
     \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \
+    macro(CheckHasInstance, NodeMustGenerate) \
+    macro(InstanceOf, NodeResultJS) \
     macro(LogicalNot, NodeResultJS) \
     \
     /* Block terminals. */\

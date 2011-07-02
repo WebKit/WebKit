@@ -1,3 +1,30 @@
+2011-07-02  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63866
+        DFG JIT - implement instanceof
+
+        Reviewed by Sam Weinig.
+
+        Add ops CheckHasInstance & InstanceOf to implement bytecodes
+        op_check_has_instance & op_instanceof. This is an initial
+        functional implementation, performance is a wash. We can
+        follow up with changes to fuse the InstanceOf node with
+        a subsequant branch, as we do with other comparisons.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::jitAssertIsCell):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::jitAssertIsCell):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-07-01  Oliver Hunt  <oliver@apple.com>
 
         IE Web Workers demo crashes in JSC::SlotVisitor::visitChildren()

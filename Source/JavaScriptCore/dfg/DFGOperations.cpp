@@ -387,6 +387,45 @@ bool operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, Encode
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
+EncodedJSValue operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, EncodedJSValue encodedPrototype)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue base = JSValue::decode(encodedBase);
+    JSValue prototype = JSValue::decode(encodedPrototype);
+
+    // Otherwise CheckHasInstance should have failed.
+    ASSERT(base.isCell());
+    // At least one of these checks must have failed to get to the slow case.
+    ASSERT(!value.isCell()
+        || !prototype.isCell()
+        || !prototype.isObject() 
+        || (base.asCell()->structure()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
+
+
+    // ECMA-262 15.3.5.3:
+    // Throw an exception either if base is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
+    TypeInfo typeInfo(UnspecifiedType);
+    if (!base.isObject() || !(typeInfo = asObject(base)->structure()->typeInfo()).implementsHasInstance()) {
+        throwError(exec, createInvalidParamError(exec, "instanceof", base));
+        return JSValue::encode(jsUndefined());
+    }
+
+    return JSValue::encode(jsBoolean(asObject(base)->hasInstance(exec, value, prototype)));
+}
+
+void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
+{
+    JSValue base = JSValue::decode(encodedBase);
+
+#ifndef NDEBUG
+    // We should only call this function if base is not an object, or if it does not implement 'HasInstance'.
+    TypeInfo typeInfo(UnspecifiedType);
+    ASSERT(!base.isObject() || !(typeInfo = asObject(base)->structure()->typeInfo()).implementsHasInstance());
+#endif
+
+    throwError(exec, createInvalidParamError(exec, "instanceof", base));
+}
+
 DFGHandler lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
 {
     JSValue exceptionValue = exec->exception();

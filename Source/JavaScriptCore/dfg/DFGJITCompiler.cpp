@@ -439,6 +439,13 @@ void JITCompiler::jitAssertIsJSDouble(GPRReg gpr)
     breakpoint();
     checkJSNumber.link(this);
 }
+
+void JITCompiler::jitAssertIsCell(GPRReg gpr)
+{
+    Jump checkCell = branchTestPtr(MacroAssembler::Zero, gpr, GPRInfo::tagMaskRegister);
+    breakpoint();
+    checkCell.link(this);
+}
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS) && CPU(X86_64) // Or any other 64-bit platform!

@@ -943,6 +943,97 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
     }
 
+    case CheckHasInstance: {
+        JSValueOperand base(this, node.child1);
+        GPRTemporary structure(this);
+
+        GPRReg baseReg = base.gpr();
+        GPRReg structureReg = structure.gpr();
+
+        // Check that base is a cell.
+        MacroAssembler::Jump baseNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseReg, GPRInfo::tagMaskRegister);
+
+        // Check that base 'ImplementsHasInstance'.
+        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSCell::structureOffset()), structureReg);
+        MacroAssembler::Jump implementsHasInstance = m_jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(structureReg, Structure::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsHasInstance));
+
+        // At this point we always throw, so no need to preserve registers.
+        baseNotCell.link(&m_jit);
+        m_jit.move(baseReg, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        // At some point we could optimize this to plant a direct jump, rather then checking
+        // for an exception (operationThrowHasInstanceError always throws). Probably not worth
+        // adding the extra interface to do this now, but we may also want this for op_throw.
+        appendCallWithExceptionCheck(operationThrowHasInstanceError);
+
+        implementsHasInstance.link(&m_jit);
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case InstanceOf: {
+        JSValueOperand value(this, node.child1);
+        JSValueOperand base(this, node.child2);
+        JSValueOperand prototype(this, node.child3);
+        GPRTemporary scratch(this, base);
+
+        GPRReg valueReg = value.gpr();
+        GPRReg baseReg = base.gpr();
+        GPRReg prototypeReg = prototype.gpr();
+        GPRReg scratchReg = scratch.gpr();
+
+        // Check that operands are cells (base is checked by CheckHasInstance, so we can just assert).
+        MacroAssembler::Jump valueNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueReg, GPRInfo::tagMaskRegister);
+        m_jit.jitAssertIsCell(baseReg);
+        MacroAssembler::Jump prototypeNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, prototypeReg, GPRInfo::tagMaskRegister);
+
+        // Check that baseVal 'ImplementsDefaultHasInstance'.
+        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSCell::structureOffset()), scratchReg);
+        MacroAssembler::Jump notDefaultHasInstance = m_jit.branchTest8(MacroAssembler::Zero, MacroAssembler::Address(scratchReg, Structure::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance));
+
+        // Check that prototype is an object
+        m_jit.loadPtr(MacroAssembler::Address(prototypeReg, JSCell::structureOffset()), scratchReg);
+        MacroAssembler::Jump protoNotObject = m_jit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(scratchReg, Structure::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(ObjectType));
+
+        // Initialize scratchReg with the value being checked.
+        m_jit.move(valueReg, scratchReg);
+
+        // Walk up the prototype chain of the value (in scratchReg), comparing to prototypeReg.
+        MacroAssembler::Label loop(&m_jit);
+        m_jit.loadPtr(MacroAssembler::Address(scratchReg, JSCell::structureOffset()), scratchReg);
+        m_jit.loadPtr(MacroAssembler::Address(scratchReg, Structure::prototypeOffset()), scratchReg);
+        MacroAssembler::Jump isInstance = m_jit.branchPtr(MacroAssembler::Equal, scratchReg, prototypeReg);
+        m_jit.branchTestPtr(MacroAssembler::Zero, scratchReg, GPRInfo::tagMaskRegister).linkTo(loop, &m_jit);
+
+        // No match - result is false.
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(false))), scratchReg);
+        MacroAssembler::Jump wasNotInstance = m_jit.jump();
+
+        // Link to here if any checks fail that require us to try calling out to an operation to help,
+        // e.g. for an API overridden HasInstance.
+        valueNotCell.link(&m_jit);
+        prototypeNotCell.link(&m_jit);
+        notDefaultHasInstance.link(&m_jit);
+        protoNotObject.link(&m_jit);
+
+        silentSpillAllRegisters(scratchReg, valueReg, baseReg, prototypeReg);
+        setupStubArguments(valueReg, baseReg, prototypeReg);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationInstanceOf);
+        m_jit.move(GPRInfo::returnValueGPR, scratchReg);
+        silentFillAllRegisters(scratchReg);
+
+        MacroAssembler::Jump wasNotDefaultHasInstance = m_jit.jump();
+
+        isInstance.link(&m_jit);
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(true))), scratchReg);
+
+        wasNotInstance.link(&m_jit);
+        wasNotDefaultHasInstance.link(&m_jit);
+        jsValueResult(scratchReg, m_compileIndex);
+        break;
+    }
+
     case Phi:
         ASSERT_NOT_REACHED();
 

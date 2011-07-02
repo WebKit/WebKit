@@ -216,11 +216,13 @@ public:
     void jitAssertIsJSInt32(GPRReg);
     void jitAssertIsJSNumber(GPRReg);
     void jitAssertIsJSDouble(GPRReg);
+    void jitAssertIsCell(GPRReg);
 #else
     void jitAssertIsInt32(GPRReg) {}
     void jitAssertIsJSInt32(GPRReg) {}
     void jitAssertIsJSNumber(GPRReg) {}
     void jitAssertIsJSDouble(GPRReg) {}
+    void jitAssertIsCell(GPRReg) {}
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS)
