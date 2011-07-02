@@ -1,5 +1,11 @@
 2011-07-02  Mark Rowe  <mrowe@apple.com>
 
+        Update the header file too.
+
+        * WebKitSystemInterface.h:
+
+2011-07-02  Mark Rowe  <mrowe@apple.com>
+
         Update WebKitSystemInterface binaries.
 
         * libWebKitSystemInterfaceLeopard.a:

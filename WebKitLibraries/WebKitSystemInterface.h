@@ -8,9 +8,9 @@
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
 
+@class AVAsset;
 @class QTMovie;
 @class QTMovieView;
-@class AVAsset;
 
 #ifdef __cplusplus
 extern "C" {
@@ -389,6 +389,7 @@ CFStringRef WKCopyCFURLResponseSuggestedFilename(CFURLResponseRef);
 void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+
 typedef enum {
     WKSandboxExtensionTypeReadOnly,
     WKSandboxExtensionTypeWriteOnly,    
@@ -439,6 +440,7 @@ WKScrollbarPainterControllerRef WKMakeScrollbarPainterController(id painterContr
 void WKSetPainterForPainterController(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 WKScrollbarPainterRef WKVerticalScrollbarPainterForController(WKScrollbarPainterControllerRef);
 WKScrollbarPainterRef WKHorizontalScrollbarPainterForController(WKScrollbarPainterControllerRef);
+int WKScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef);
 void WKSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef, int newStyle);
 void WKContentAreaScrolled(WKScrollbarPainterControllerRef);
 void WKContentAreaWillPaint(WKScrollbarPainterControllerRef);
@@ -461,7 +463,12 @@ NSRange WKExtractWordDefinitionTokenRangeFromContextualString(NSString *contextS
 void WKShowWordDefinitionWindow(NSAttributedString *term, NSPoint screenPoint, NSDictionary *options);
 void WKHideWordDefinitionWindow(void);
 
+CFStringRef WKCopyDefaultSearchProviderDisplayName(void);
+
 NSURL* WKAVAssetResolvedURL(AVAsset*);
+
+NSCursor *WKCursor(const char *name);
+
 #endif
 
 #ifdef __cplusplus
