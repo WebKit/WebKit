@@ -1,3 +1,16 @@
+2011-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reduce parser nesting cap to 512
+        https://bugs.webkit.org/show_bug.cgi?id=63856
+
+        Reviewed by Dan Bernstein.
+
+        Given Firefox's cap of 200, our cap of 2048 seemed a little excessive. Lower
+        the nesting cap to 512 to cover more cases where rending recursion was biting us.
+
+        * page/Settings.h:
+        Reduce the nesting cap to 512.
+
 2011-07-01  Darin Adler  <darin@apple.com>
 
         Add change accidentally left out of last commit.

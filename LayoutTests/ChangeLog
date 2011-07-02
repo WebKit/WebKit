@@ -1,3 +1,13 @@
+2011-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reduce parser nesting cap to 512
+        https://bugs.webkit.org/show_bug.cgi?id=63856
+
+        Update test for new cap.
+
+        * fast/parser/block-nesting-cap-expected.txt:
+        * fast/parser/script-tests/block-nesting-cap.js:
+
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
         editing/selection/directionality-after-undo-replace.html fails on Chromium Windows

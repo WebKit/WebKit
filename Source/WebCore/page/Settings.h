@@ -402,7 +402,7 @@ namespace WebCore {
         void setUsePreHTML5ParserQuirks(bool flag) { m_usePreHTML5ParserQuirks = flag; }
         bool usePreHTML5ParserQuirks() const { return m_usePreHTML5ParserQuirks; }
 
-        static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 2048;
+        static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
         void setMaximumHTMLParserDOMTreeDepth(unsigned maximumHTMLParserDOMTreeDepth) { m_maximumHTMLParserDOMTreeDepth = maximumHTMLParserDOMTreeDepth; }
         unsigned maximumHTMLParserDOMTreeDepth() const { return m_maximumHTMLParserDOMTreeDepth; }
 
