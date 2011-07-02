@@ -11,8 +11,8 @@ function doTest()
    // make up email address
    for (var k=0;k<4000;k++)
    {
-      name = makeName(6);
-      (k%2)?email=name+"@mac.com":email=name+"(at)mac.com";
+      username = makeName(6);
+      (k%2)?email=username+"@mac.com":email=username+"(at)mac.com";
 
       // validate the email address
       var pattern = /^[a-zA-Z0-9\-\._]+@[a-zA-Z0-9\-_]+(\.?[a-zA-Z0-9\-_]*)\.[a-zA-Z]{2,3}$/;
