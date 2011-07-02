@@ -1,3 +1,24 @@
+2011-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Errors encountered within SVG documents should be reported to the console
+        https://bugs.webkit.org/show_bug.cgi?id=62599
+
+        Add SVGElement::reportAttributeParsingError, which will
+        write a Web Inspector console message if passed an SVGParsingError
+        and the attribute which was being applied, only in the case where
+        there is actually an error.
+
+        Include the SVG document's URI when writing to the Web Inspector
+        console, so that the UI displays both the filename and the line number.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::reportMessage):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::reportAttributeParsingError):
+        * svg/SVGElement.h:
+
 2011-07-01  Scott Byer  <scottbyer@chromium.org>
 
         Reviewed by Adam Barth.

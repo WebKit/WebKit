@@ -103,6 +103,28 @@ SVGElementRareData* SVGElement::ensureRareSVGData()
     return data;
 }
 
+void SVGElement::reportAttributeParsingError(SVGParsingError error, Attribute* attribute)
+{
+    if (error == NoError)
+        return;
+
+    String errorString = "<" + tagName() + "> attribute " + attribute->name().toString() + "=\"" + attribute->value() + "\"";
+    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
+
+    if (error == NegativeValueForbiddenError) {
+        extensions->reportError("Invalid negative value for " + errorString);
+        return;
+    }
+
+    if (error == ParsingAttributeFailedError) {
+        extensions->reportError("Invalid value for " + errorString);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+
 bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 {
     return DOMImplementation::hasFeature(feature, version);

@@ -49,6 +49,12 @@ enum AnimatedAttributeType {
     AnimatedUnknown
 };
 
+enum SVGParsingError {
+    NoError,
+    ParsingAttributeFailedError,
+    NegativeValueForbiddenError
+};
+
 typedef HashMap<QualifiedName, AnimatedAttributeType> AttributeToPropertyTypeMap;
 
 class CSSCursorImageValue;
@@ -122,6 +128,8 @@ protected:
 
     SVGElementRareData* rareSVGData() const;
     SVGElementRareData* ensureRareSVGData();
+
+    void reportAttributeParsingError(SVGParsingError, Attribute*);
 
 private:
     friend class SVGElementInstance;
