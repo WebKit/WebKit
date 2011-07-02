@@ -1,3 +1,11 @@
+2011-07-02  Kent Tamura  <tkent@chromium.org>
+
+        [GTK] Update expectation of fast/forms/input-file-re-render.html
+        https://bugs.webkit.org/show_bug.cgi?id=49245
+
+        * platform/gtk/fast/forms/input-file-re-render-expected.png: Remove a stale image.
+        * platform/gtk/fast/forms/input-file-re-render-expected.txt:
+
 2011-07-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for fast/forms/input-file-re-render.html
