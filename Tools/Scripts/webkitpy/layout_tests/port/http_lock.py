@@ -104,7 +104,6 @@ class HttpLock(object):
             _log.debug("OSError: %s" % e)
             return
         result = int(current_pid)
-        _log.debug("Current lock pid: %s" % result)
         return result
 
     def _create_lock_file(self):

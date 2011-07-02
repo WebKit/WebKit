@@ -1,5 +1,12 @@
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
+        Turn off new-run-webkit-tests and remove some debug logging.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
         Add some more debug logging to try to understand why we're getting
         stuck acquring the HTTP lock.
 
