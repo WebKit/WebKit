@@ -61,6 +61,7 @@ public:
     MOCK_METHOD2(invalidateScrollbarRect, void(Scrollbar*, const IntRect&));
     MOCK_METHOD1(invalidateScrollCornerRect, void(const IntRect&));
     MOCK_METHOD1(setScrollOffsetFromAnimation, void(const IntPoint&));
+    MOCK_CONST_METHOD0(enclosingScrollableArea, ScrollableArea*());
 
     bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
     bool m_scrollAnimatorEnabled;
@@ -198,6 +199,7 @@ bool ScrollAnimatorNoneTest::updateDataFromParameters(ScrollbarOrientation orien
 {
     double oldVelocity = m_data->m_currentVelocity;
     double oldDesiredVelocity = m_data->m_desiredVelocity;
+    double oldTimeLeft = m_data->m_animationTime - (m_data->m_lastAnimationTime - m_data->m_startTime);
     bool result = m_data->updateDataFromParameters(orientation, step, multiplier, scrollableSize, currentTime, parameters);
     EXPECT_LE(oldVelocity, m_data->m_currentVelocity);
 
@@ -207,9 +209,12 @@ bool ScrollAnimatorNoneTest::updateDataFromParameters(ScrollbarOrientation orien
     double attackTimeLeft = std::max(0., m_data->m_attackTime - deltaTime);
     double sustainTimeLeft = std::max(0., timeLeft - releaseTimeLeft - attackTimeLeft);
 
-    EXPECT_LE(oldDesiredVelocity * 0.99, m_data->m_desiredVelocity);
+    // If we're getting near the finish, the desired velocity can decrease since the time left gets increased.
+    double allowedVelocityDecreaseFactor = 0.99 * oldTimeLeft / timeLeft;
+    allowedVelocityDecreaseFactor *= allowedVelocityDecreaseFactor;
+    EXPECT_LE(oldDesiredVelocity * allowedVelocityDecreaseFactor, m_data->m_desiredVelocity);
 
-    double expectedReleasePosition = m_data->m_attackPosition + sustainTimeLeft * m_data->m_desiredVelocity;
+    double expectedReleasePosition = std::max<double>(m_currentPosition, m_data->m_attackPosition) + sustainTimeLeft * m_data->m_desiredVelocity;
     EXPECT_DOUBLE_EQ(expectedReleasePosition, m_data->m_releasePosition);
 
     return result;
@@ -487,6 +492,60 @@ TEST_F(ScrollAnimatorNoneTest, ScrollLotsQuadratic)
 
     t += kAnimationTime;
     for (; result && t < kEndTime; t += kAnimationTime)
+        result = result && animateScroll(t);
+}
+
+TEST_F(ScrollAnimatorNoneTest, ScrollWheelTrace)
+{
+    ScrollAnimatorNone::Parameters parameters(true, 11 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime);
+
+    // Constructed from an actual scroll wheel trace that exhibited a glitch.
+    bool result = updateDataFromParameters(VerticalScrollbar, 1, 53.33, 1000, 100.5781, &parameters);
+    result = animateScroll(100.5933);
+    result = result && animateScroll(100.6085);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1, 53.33, 1000, 100.6485, &parameters);
+    result = result && animateScroll(100.6515);
+    result = result && animateScroll(100.6853);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1, 53.33, 1000, 100.6863, &parameters);
+    result = result && animateScroll(100.7005);
+    result = result && animateScroll(100.7157);
+    result = result && animateScroll(100.7312);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1, 53.33, 1000, 100.7379, &parameters);
+    result = result && animateScroll(100.7464);
+    result = result && animateScroll(100.7617);
+    result = result && animateScroll(100.7775);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1, 53.33, 1000, 100.7779, &parameters);
+    for (double t = 100.7928; result && t < 200; t += 0.015)
+        result = result && animateScroll(t);
+}
+
+TEST_F(ScrollAnimatorNoneTest, LinuxTrackPadTrace)
+{
+    ScrollAnimatorNone::Parameters parameters(true, 11 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime);
+
+    bool result = updateDataFromParameters(VerticalScrollbar, 1.00, 60.00, 1000, 100.6863, &parameters);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.6897, &parameters);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.7001, &parameters);
+    result = result && animateScroll(100.7015);
+    result = result && animateScroll(100.7169);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 40.00, 1000, 100.7179, &parameters);
+    result = result && animateScroll(100.7322);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.7332, &parameters);
+    result = result && animateScroll(100.7491);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.7519, &parameters);
+    result = result && animateScroll(100.7676);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.7698, &parameters);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.7830, &parameters);
+    result = result && animateScroll(100.7834);
+    result = result && animateScroll(100.7997);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.8019, &parameters);
+    result = result && animateScroll(100.8154);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.8241, &parameters);
+    result = result && animateScroll(100.8335);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.8465, &parameters);
+    result = result && animateScroll(100.8513);
+    result = result && updateDataFromParameters(VerticalScrollbar, 1.00, 20.00, 1000, 100.8623, &parameters);
+    for (double t = 100.8674; result && t < 200; t += 0.015)
         result = result && animateScroll(t);
 }
 

@@ -221,10 +221,10 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientat
     if (attackAreaLeft)
         m_attackPosition = m_startPosition + m_desiredVelocity * attackAreaLeft;
     else
-        m_attackPosition = *m_currentPosition;
+        m_attackPosition = m_releasePosition - (m_animationTime - m_releaseTime - m_attackTime) * m_desiredVelocity;
 
     if (sustainTimeLeft) {
-        double roundOff = m_releasePosition - (m_attackPosition + m_desiredVelocity * sustainTimeLeft);
+        double roundOff = m_releasePosition - ((attackAreaLeft ? m_attackPosition : *m_currentPosition) + m_desiredVelocity * sustainTimeLeft);
         m_desiredVelocity += roundOff / sustainTimeLeft;
     }
 
@@ -289,14 +289,13 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     case ScrollByDocument:
         break;
     case ScrollByLine:
-        parameters = Parameters(true, 7 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
+        parameters = Parameters(true, 10 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
         break;
     case ScrollByPage:
         parameters = Parameters(true, 15 * kTickTime, Quadratic, 5 * kTickTime, Quadratic, 5 * kTickTime);
         break;
     case ScrollByPixel:
-        if (fabs(multiplier) > 20)
-            parameters = Parameters(true, 11 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
+        parameters = Parameters(true, 11 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
         break;
     default:
         break;

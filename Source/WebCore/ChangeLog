@@ -1,3 +1,19 @@
+2011-07-01  Scott Byer  <scottbyer@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Smooth scrolling fixes
+        https://bugs.webkit.org/show_bug.cgi?id=63770
+
+        Tests: Chromium webkit_unit_tests ScrollAnimatorNoneTest.ScrollWheelTrace and .LinuxTrackPadTrace
+
+        Fix issues found in manual testing; distill the traces into unit tests. Fix the issues the tests exposed in the
+        scroll animation code.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::PerAxisData::updateDataFromParameters):
+        (WebCore::ScrollAnimatorNone::scroll):
+
 2011-07-01  Levi Weintraub  <leviw@chromium.org>
 
         Switch primary virtual layout functions to new layout types
