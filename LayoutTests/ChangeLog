@@ -1,5 +1,12 @@
 2011-07-02  Mihai Parparita  <mihaip@chromium.org>
 
+        Meant to actually remove expectations in r90322, not just comment them
+        out.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-02  Mihai Parparita  <mihaip@chromium.org>
+
         Add Chromium Mac Snow Leopard baselines for editing/selection/vertical*
         since the regular Mac baselines can't be used due to single-pixel
         differences in character rendering (presumably caused by 32-bit vs.
