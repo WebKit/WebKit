@@ -1,5 +1,12 @@
 2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove GTK baseline added in r90294 since the test was fixed in r90309.
+        (File name was wrong. It was supposed to be -expected.txt)
+
+        * platform/gtk/editing/selection/directionality-after-undo-replace.html: Removed.
+
+2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         [GTK] editing/selection/directionality-after-undo-replace.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=63853
 
