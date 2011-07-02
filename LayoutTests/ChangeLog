@@ -1,5 +1,17 @@
 2011-07-01  Mihai Parparita  <mihaip@chromium.org>
 
+        editing/selection/directionality-after-undo-replace.html fails on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=63855
+
+        Reviewed by Ryosuke Niwa.
+        
+        Allow a trailing whitespace in the expected result, since Windows
+        has different word iterating behavior.
+
+        * editing/selection/directionality-after-undo-replace.html:
+
+2011-07-01  Mihai Parparita  <mihaip@chromium.org>
+
         Remove Chromium Windows 7 and Vista media test expectations, since
         clobbering the bots appears to have fixed the timeouts and failures.
 

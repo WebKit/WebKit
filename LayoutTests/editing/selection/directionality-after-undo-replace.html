@@ -36,7 +36,8 @@ if (window.layoutTestController) {
         window.getSelection().modify('extend', 'left', 'character');
 
         var actual = window.getSelection().toString();
-        document.writeln(actual == ' world' ? 'PASS' : 'FAIL - expected " world" but got "' + actual + '"');
+        // Windows has a trailing whitespace, other platforms don't.
+        document.writeln((actual == ' world' || actual == ' world ') ? 'PASS' : 'FAIL - expected " world" but got "' + actual + '"');
     }
 }
 
