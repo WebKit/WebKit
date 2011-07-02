@@ -1,5 +1,13 @@
 2011-07-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Not Reviewed. 
+        
+        Fix obviou typo in previous commit.
+
+        * tests/sunspider-1.0/bitops-bitwise-and.js:
+
+2011-07-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders Carlsson.
 
         SunSpider: all four bitops benchmarks can be replaced with NOP
