@@ -1,3 +1,15 @@
+2011-07-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Chromium expectations update:
+        - Add failing expectation for fast/css/last-of-type-pseudo-class.html,
+          which fails in debug only.
+        - Remove Chromium-specific baselines for fast/js/reserved-words.html,
+          the test now passes with the regular baselines.
+
+        * platform/chromium-mac/fast/js/reserved-words-expected.txt: Removed.
+        * platform/chromium-win/fast/js/reserved-words-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-02  Kent Tamura  <tkent@chromium.org>
 
         [GTK] Update expectation of fast/forms/input-file-re-render.html

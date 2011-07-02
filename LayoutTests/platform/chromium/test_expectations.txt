@@ -1279,7 +1279,7 @@ BUGWK48651 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 
 BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
 BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = TIMEOUT PASS
-// Regressions from r67349? 
+// Regressions from r67349?
 BUGCR10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 
 // Text declared as "monospace" with no size is bigger in Chromium
@@ -2279,7 +2279,7 @@ BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGCR53131 LINUX : fast/js/array-iterate-backwards.html = CRASH PASS
 
 // new or failing since WebKit rev. 65740:65800
-// This test causes the DRT to crash. 
+// This test causes the DRT to crash.
 BUGCR53073 DEBUG SKIP : storage/change-version.html = CRASH PASS
 BUGCR53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 
@@ -2807,11 +2807,11 @@ BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 
 // It is failing since r77459.
-// Fix miscalculation of the overhang area used for painting. We were 
-// not correctly accounting for scrollbars resulting in an non-negative 
-// overhang even when we weren't over the edge. 
-// * platform/ScrollView.cpp: 
-//   (WebCore::ScrollView::calculateOverhangAreasForPainting): 
+// Fix miscalculation of the overhang area used for painting. We were
+// not correctly accounting for scrollbars resulting in an non-negative
+// overhang even when we weren't over the edge.
+// * platform/ScrollView.cpp:
+//   (WebCore::ScrollView::calculateOverhangAreasForPainting):
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 //
@@ -3776,7 +3776,7 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 // Started crashing after seemingly unrelated r85786
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = CRASH PASS
 
-// Appears to be a configuration error in the Mac 10.6 deps 
+// Appears to be a configuration error in the Mac 10.6 deps
 // Has been going on for at least a few weeks (as of 20/5/2011)
 BUGCR83426 MAC : fast/borders/svg-as-border-image-2.html = IMAGE PASS
 BUGCR83426 MAC : fast/borders/svg-as-border-image.html = IMAGE PASS
@@ -3981,12 +3981,6 @@ BUGCR87009 : fast/filesystem/async-operations.html = PASS CRASH
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
-// The following two tests started to fail since V8 3.4.5.1 roll.
-// This needs rebaselining because "native" is no longer a reserved word.
-BUGCR87070 : fast/js/reserved-words.html = TEXT
-// Sounds like a real regression.
-BUGCR87070 WIN DEBUG : http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html = CRASH PASS
-
 BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
 
 // We now follow the ES5 spec with regards to the semantics of the receiver
@@ -4017,3 +4011,5 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRA
 
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
+
+BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
