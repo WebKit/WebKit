@@ -1,5 +1,11 @@
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
+        Fix typo in master.cfg, hoping to trigger a master restart.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
+2011-07-01  Adam Barth  <abarth@webkit.org>
+
         Turn off new-run-webkit-tests and remove some debug logging.
 
         * Scripts/run-webkit-tests:
