@@ -23,12 +23,11 @@ if (window.layoutTestController) {
         var test = document.getElementById('target');
         eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
         eventSender.mouseDown();
-        eventSender.leapForward(200);
         eventSender.mouseUp();
 
         eventSender.leapForward(200);
+
         eventSender.mouseDown();
-        eventSender.leapForward(200);
         eventSender.mouseUp();
 
         document.execCommand('InsertText', false, 'a');

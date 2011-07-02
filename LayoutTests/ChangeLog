@@ -1,3 +1,14 @@
+2011-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [GTK] editing/selection/directionality-after-undo-replace.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=63853
+
+        Reviewed by Ojan Vafai.
+
+        Don't do leapForward between mouseDown and mouseUp so that GTK recognizes the double-click.
+
+        * editing/selection/directionality-after-undo-replace.html:
+
 2011-07-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Tony Chang.
