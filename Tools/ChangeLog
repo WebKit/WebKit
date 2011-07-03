@@ -1,3 +1,17 @@
+2011-07-03  Adam Barth  <abarth@webkit.org>
+
+        Move the rebaseline server out of the commands package and into the
+        (new) servers package.  This patch prepares for refactoring this code
+        to share server infrastructure with the (forthcoming) garden-o-matic
+        command.
+
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/__init__.py: Added.
+        * Scripts/webkitpy/tool/servers/data/rebaselineserver/loupe.js:
+        * Scripts/webkitpy/tool/servers/data/rebaselineserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/rebaselineserver/queue.js:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py: Added.
+
 2011-07-01  Adam Barth  <abarth@webkit.org>
 
         Fix typo in master.cfg, hoping to trigger a master restart.
