@@ -161,10 +161,8 @@ void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsign
 
     if (!isAdditive())
         transformList->clear();
-    if (isAccumulated() && repeat) {
-        SVGTransform accumulatedTransform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(repeat).addToSVGTransform(SVGTransform());
-        transformList->append(accumulatedTransform);
-    }
+    if (isAccumulated() && repeat)
+        percentage += repeat;
     SVGTransform transform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentage).addToSVGTransform(m_fromTransform);
     transformList->append(transform);
 }

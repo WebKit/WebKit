@@ -1,3 +1,21 @@
+2011-07-03  Dirk Schulze  <krit@webkit.org>
+
+        SVGAnimateTransform accumulate=sum restarts on every repeat
+        https://bugs.webkit.org/show_bug.cgi?id=63876
+
+        Reviewed by Nikolas Zimmermann.
+        
+        Test accumulate=sum on SVGAnimateTransform. The animation shouldn't start with initial value
+        on every repeat for accumulation.
+
+        * svg/animations/script-tests/svgtransform-animation-1.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/svgtransform-animation-1-expected.txt: Added.
+        * svg/animations/svgtransform-animation-1.html: Added.
+
 2011-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90342.

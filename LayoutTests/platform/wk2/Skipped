@@ -493,6 +493,7 @@ svg/animations/svgpointlist-animation-2.html
 svg/animations/svgPreserveAspectRatio-animation-1.html
 svg/animations/svgrect-animation-1.html
 svg/animations/svgrect-animation-2.html
+svg/animations/svgtransform-animation-1.html
 svg/animations/svgstring-animation-fallback-to-discrete.html
 svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg

@@ -1,3 +1,20 @@
+2011-07-03  Dirk Schulze  <krit@webkit.org>
+
+        SVGAnimateTransform accumulate=sum restarts on every repeat
+        https://bugs.webkit.org/show_bug.cgi?id=63876
+
+        Reviewed by Nikolas Zimmermann.
+        
+        We applied transforms from previous animation repeats to a transform list. The problem is, that we calculated the current
+        transform based on the percentage of the current repeat count. This causes an animation starting from scale level 0
+        on every repeat. Now I add the repeat count to the current percentage, so that the distance calculation starts from 100% on
+        the first repeat, from 200% on the second and so on.
+
+        Test: svg/animations/svgtransform-animation-1.html
+
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::calculateAnimatedValue):
+
 2011-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90342.
