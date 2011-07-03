@@ -1982,7 +1982,7 @@ http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 http/tests/plugins/third-party-cookie-accept-policy.html
-http/tests/cookies/strict-third-party-cookie-blocking.html
+platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 
 # ============================================================================= #
 # new skipped tests yet to be sorted

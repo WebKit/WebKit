@@ -1,5 +1,16 @@
 2011-07-03  Robert Hogan  <robert@webkit.org>
 
+        Skip Qt platform-specific test after r90341
+        https://bugs.webkit.org/show_bug.cgi?id=45455
+
+        Unreviewed, skip test.
+
+        The Skipped list needs the platform-specific path of the test.
+
+        * platform/qt/Skipped:
+
+2011-07-03  Robert Hogan  <robert@webkit.org>
+
         Restore scroll position on page reloads scheduled by <meta http-equiv="refresh" content="XX"/>
         https://bugs.webkit.org/show_bug.cgi?id=62482
 
