@@ -31,6 +31,7 @@
 #include <float.h>
 #include <limits>
 #include <stdlib.h>
+#include <wtf/StdLibExtras.h>
 
 #if OS(SOLARIS)
 #include <ieeefp.h>
@@ -258,5 +259,26 @@ using std::isinf;
 using std::isnan;
 using std::signbit;
 #endif
+
+// decompose 'number' to its sign, exponent, and mantissa components.
+// The result is interpreted as:
+//     (sign ? -1 : 1) * pow(2, exponent) * (mantissa / (1 << 52))
+inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64_t& mantissa)
+{
+    ASSERT(isfinite(number));
+
+    sign = signbit(number);
+
+    uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
+    exponent = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
+    mantissa = bits & 0xFFFFFFFFFFFFFull;
+
+    // Check for zero/denormal values; if so, adjust the exponent,
+    // if not insert the implicit, omitted leading 1 bit.
+    if (exponent == -0x3ff)
+        exponent = mantissa ? -0x3fe : 0;
+    else
+        mantissa |= 0x10000000000000ull;
+}
 
 #endif // #ifndef WTF_MathExtras_h
