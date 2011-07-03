@@ -1,5 +1,13 @@
 2011-07-03  Adam Barth  <abarth@webkit.org>
 
+        Factor ReflectionHandler out of the rebaseline server.  Just code motion.
+
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py: Added.
+
+2011-07-03  Adam Barth  <abarth@webkit.org>
+
         Move the rebaseline server out of the commands package and into the
         (new) servers package.  This patch prepares for refactoring this code
         to share server infrastructure with the (forthcoming) garden-o-matic

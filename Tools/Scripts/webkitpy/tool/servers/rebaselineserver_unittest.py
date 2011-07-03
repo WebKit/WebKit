@@ -31,8 +31,9 @@ import unittest
 from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port.webkit import WebKitPort
-from webkitpy.tool.commands import rebaselineserver
+from webkitpy.tool.commands.rebaselineserver import TestConfig
 from webkitpy.tool.mocktool import MockSCM
+from webkitpy.tool.servers import rebaselineserver
 
 
 class RebaselineTestTest(unittest.TestCase):
@@ -296,7 +297,7 @@ def get_test_config(test_files=[], result_files=[]):
             # FIXME: This should use MockExecutive and MockUser as well.
             WebKitPort.__init__(self, filesystem=mock_filesystem)
 
-    return rebaselineserver.TestConfig(
+    return TestConfig(
         TestMacPort(),
         layout_tests_directory,
         results_directory,
