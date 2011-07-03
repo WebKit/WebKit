@@ -82,7 +82,7 @@ static void registerPluginView()
     ::RegisterClassW(&windowClass);
 }
 
-HWND NetscapePlugin::containingWindow() const
+HWND NetscapePlugin::containingWindow()
 {
     return controller()->nativeParentWindow();
 }
@@ -322,7 +322,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    pluginController()->willSendEventToPlugin();
+    controller()->willSendEventToPlugin();
 
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);
@@ -336,7 +336,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    pluginController()->willSendEventToPlugin();
+    controller()->willSendEventToPlugin();
 
     NPEvent npEvent = toNP(event);
     NPP_HandleEvent(&npEvent);

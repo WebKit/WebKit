@@ -70,7 +70,7 @@ public:
 #endif
 
 #elif PLATFORM(WIN)
-    HWND containingWindow() const;
+    HWND containingWindow();
 #endif
 
     PluginQuirks quirks() const { return m_pluginModule->pluginQuirks(); }
