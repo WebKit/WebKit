@@ -1,3 +1,13 @@
+2011-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Web Inspector: Preflight OPTIONS requests are not shown on network panel for asynchronous XHRs.
+        https://bugs.webkit.org/show_bug.cgi?id=63712
+
+        * http/tests/inspector/network-preflight-options-expected.txt:
+        * http/tests/inspector/network-preflight-options.html:
+
 2011-07-03  Robert Hogan  <robert@webkit.org>
 
         Add platform-specific results after r90338

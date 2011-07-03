@@ -46,6 +46,11 @@
 #include "ThreadableLoaderClient.h"
 #include <wtf/UnusedParam.h>
 
+#if ENABLE(INSPECTOR)
+#include "InspectorInstrumentation.h"
+#include "ProgressTracker.h"
+#endif
+
 namespace WebCore {
 
 void DocumentThreadableLoader::loadResourceSynchronously(Document* document, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
@@ -69,6 +74,9 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     , m_options(options)
     , m_sameOriginRequest(securityOrigin()->canRequest(request.url()))
     , m_async(blockingBehavior == LoadAsynchronously)
+#if ENABLE(INSPECTOR)
+    , m_preflightRequestIdentifier(0)
+#endif
 {
     ASSERT(document);
     ASSERT(client);
@@ -178,6 +186,14 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
 {
     ASSERT(m_client);
 
+#if ENABLE(INSPECTOR)
+    if (m_preflightRequestIdentifier) {
+        DocumentLoader* loader = m_document->frame()->loader()->documentLoader();
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_document->frame(), m_preflightRequestIdentifier, response);
+        InspectorInstrumentation::didReceiveResourceResponse(cookie, m_preflightRequestIdentifier, loader, response);
+    }
+#endif
+
     String accessControlErrorDescription;
     if (m_actualRequest) {
         if (!passesAccessControlCheck(response, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription)) {
@@ -211,6 +227,11 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
 
+#if ENABLE(INSPECTOR)
+    if (m_preflightRequestIdentifier)
+        InspectorInstrumentation::didReceiveContentLength(m_document->frame(), m_preflightRequestIdentifier, 0, dataLength);
+#endif
+
     // Preflight data should be invisible to clients.
     if (m_actualRequest)
         return;
@@ -239,6 +260,11 @@ void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, doubl
 
 void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double finishTime)
 {
+#if ENABLE(INSPECTOR)
+    if (m_preflightRequestIdentifier)
+        InspectorInstrumentation::didFinishLoading(m_document->frame(), m_document->frame()->loader()->documentLoader(), m_preflightRequestIdentifier, finishTime);
+#endif
+
     if (m_actualRequest) {
         ASSERT(!m_sameOriginRequest);
         ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
@@ -252,6 +278,11 @@ void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const Resource
     ASSERT(m_client);
     // m_loader may be null if we arrive here via SubresourceLoader::create in the ctor
     ASSERT_UNUSED(loader, loader == m_loader || !m_loader);
+
+#if ENABLE(INSPECTOR)
+    if (m_preflightRequestIdentifier)
+        InspectorInstrumentation::didFailLoading(m_document->frame(), m_document->frame()->loader()->documentLoader(), m_preflightRequestIdentifier, error);
+#endif
 
     m_client->didFail(error);
 }
@@ -322,6 +353,16 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         bool sniffContent = m_options.sniffContent && !m_actualRequest;
         // Keep buffering the data for the preflight request.
         bool shouldBufferData = m_options.shouldBufferData || m_actualRequest;
+
+#if ENABLE(INSPECTOR)
+        if (m_actualRequest) {
+            ResourceRequest newRequest(request);
+            // Because willSendRequest only gets called during redirects, we initialize the identifier and the first willSendRequest here.
+            m_preflightRequestIdentifier = m_document->frame()->page()->progress()->createUniqueIdentifier();
+            ResourceResponse redirectResponse = ResourceResponse();
+            InspectorInstrumentation::willSendRequest(m_document->frame(), m_preflightRequestIdentifier, m_document->frame()->loader()->documentLoader(), newRequest, redirectResponse);
+        }
+#endif
 
         // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
         m_loader = 0;

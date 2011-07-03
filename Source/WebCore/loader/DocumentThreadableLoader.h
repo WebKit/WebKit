@@ -105,6 +105,10 @@ namespace WebCore {
         bool m_sameOriginRequest;
         bool m_async;
         OwnPtr<ResourceRequest> m_actualRequest;  // non-null during Access Control preflight checks
+
+#if ENABLE(INSPECTOR)
+        unsigned long m_preflightRequestIdentifier;
+#endif
     };
 
 } // namespace WebCore

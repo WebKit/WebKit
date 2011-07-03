@@ -1,3 +1,21 @@
+2011-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Web Inspector: Preflight OPTIONS requests are not shown on network panel for asynchronous XHRs.
+        https://bugs.webkit.org/show_bug.cgi?id=63712
+
+        Added InspectorInstrumentation calls to preflight OPTIONS requests callbacks in DocumentThreadableLoader.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+
 2011-06-23  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

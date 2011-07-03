@@ -3,10 +3,10 @@
 <script src="inspector-test.js"></script>
 <script type="text/javascript">
 
-function sendXHR(url, forcePreflight)
+function sendXHR(url, forcePreflight, async)
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, false);
+    xhr.open("POST", url, async);
     xhr.setRequestHeader("Content-Type", forcePreflight ? "application/xml" : "text/plain");
     try {
         xhr.send("<xml></xml>");  // Denied requests will cause exceptions.
@@ -17,22 +17,30 @@ function sendXHR(url, forcePreflight)
 function doCrossOriginXHR()
 {
     var targetURL = "http://localhost:8000/inspector/resources/cors-target.php";
+
     // Failed POSTs with no preflight check should result in a POST request being logged
-    sendXHR(targetURL + "?deny=yes", false);
+    sendXHR(targetURL + "?deny=yes", false, false);
     // Failed POSTs with preflight check should result in an OPTIONS request being logged
-    sendXHR(targetURL + "?deny=yes", true);
+    sendXHR(targetURL + "?deny=yes", true, false);
     // Successful POSTs with preflight check should result in an OPTIONS request followed by POST request being logged
-    // Generate request name based on timestamp to defeat caching (this is only relevant for repeated invocations of the test in signle instance of DRT)
-    sendXHR(targetURL + "?date=" + Date.now(), true);
+    // Generate request name based on timestamp to defeat OPTIONS request caching (this is only relevant for repeated invocations of the test in signle instance of DRT)
+    sendXHR(targetURL + "?date=" + Date.now(), true, false);
+
+    // And now send the same requests asynchronously
+    // Add redundant async parameter to ensure this request differs from the one above.
+    sendXHR(targetURL + "?deny=yes", false, true);
+    sendXHR(targetURL + "?deny=yes", true, true);
+    sendXHR(targetURL + "?async=yes&date=" + Date.now(), true, true);
 }
 
 var test = function()
 {
+    var postRequestsCount = 0;
     function onResource(event)
     {
         var resource = event.data;
         InspectorTest.addResult(resource.requestMethod + " " +  resource.url.replace(/[&?]date=\d+/, ""));
-        if (resource.requestMethod === "POST" && !/\?deny=yes/.test(resource.url))
+        if (resource.requestMethod === "POST" && ++postRequestsCount == 4)
             InspectorTest.completeTest();
     }
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource);
