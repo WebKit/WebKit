@@ -681,8 +681,9 @@ void PluginView::focusPluginElement()
     ASSERT(frame());
     
     if (Page* page = frame()->page())
-        page->focusController()->setFocusedFrame(frame());
-    frame()->document()->setFocusedNode(m_pluginElement);
+       page->focusController()->setFocusedNode(m_pluginElement.get(), frame());
+    else
+       frame()->document()->setFocusedNode(m_pluginElement);
 }
 
 void PluginView::pendingURLRequestsTimerFired()

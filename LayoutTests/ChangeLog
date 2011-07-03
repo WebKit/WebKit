@@ -1,3 +1,17 @@
+2011-06-23  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Windowless Plugins : <input> cursor blinks even after transferring focus to plugin
+        https://bugs.webkit.org/show_bug.cgi?id=30355
+
+        Unfortunately this has to be a rendertree test, as there is no rendertext way of
+        determining if a selection is still highlighted.
+
+        * platform/chromium/plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+        * platform/qt/plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+        * plugins/mouse-click-plugin-clears-selection.html: Added.
+
 2011-07-02  Mihai Parparita  <mihaip@chromium.org>
 
         Remove failing expectation for fast/events/panScroll-click-hyperlink.html

@@ -1,3 +1,22 @@
+2011-06-23  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Windowless Plugins : <input> cursor blinks even after transferring focus to plugin
+        https://bugs.webkit.org/show_bug.cgi?id=30355
+
+        Test: plugins/mouse-click-plugin-clears-selection.html
+
+        PluginView needs to use page->focusController()->setFocusedNode() when focusing a plugin
+        in order to clear the FrameSelection in the currently focused node. In its platform-specific
+        code Chromium already does this (WebPluginContainerImpl.cpp).
+
+        * WebCore.exp.in: Add symbol for FocusController::setFocusedNode
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::focusPluginElement): Using FocusController::setFocusedNode() makes
+                                                   the call to FocusController:setFocusedFrame() and Document::setFocusedNode()
+                                                   redundant, since it calls both.
+
 2011-07-01  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
