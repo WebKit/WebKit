@@ -1,3 +1,21 @@
+2011-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r90342.
+        http://trac.webkit.org/changeset/90342
+        https://bugs.webkit.org/show_bug.cgi?id=63875
+
+        Newly added tests fail on Mac, GTK, and Win7 (Requested by
+        abarth on #webkit).
+
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-expected.txt: Removed.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2-expected.txt: Removed.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html: Removed.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-expected.txt: Removed.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html: Removed.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh.html: Removed.
+        * http/tests/navigation/scrollstate-after-location-reload-expected.txt: Removed.
+        * http/tests/navigation/scrollstate-after-location-reload.html: Removed.
+
 2011-07-03  Robert Hogan  <robert@webkit.org>
 
         Skip Qt platform-specific test after r90341

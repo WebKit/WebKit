@@ -1217,7 +1217,7 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)
                 m_provisionalDocumentLoader->setIsClientRedirect(true);
-        } else if (sameURL && newLoadType != FrameLoadTypeReload && newLoadType != FrameLoadTypeReloadFromOrigin)
+        } else if (sameURL)
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
             // frame, where the user has clicked on the same link repeatedly.
