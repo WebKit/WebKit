@@ -1,3 +1,33 @@
+2011-04-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Support third-party cookie policy for Qt clients
+        https://bugs.webkit.org/show_bug.cgi?id=45455
+
+        Identifying third-party cookies is facilitated by API new to QUrl from
+        Qt 4.8: QUrl::topLevelDomain(). This API uses the Mozilla public suffix
+        list to determine the top-level registry-controlled domain of the Url.
+
+        See also: http://gitorious.org/qt/qt/merge_requests/1205
+                   (commit 154402f56dcf8303a6ce601a52215226af8d31ba)
+                  http://bugreports.qt.nokia.com/browse/QTBUG-13601
+
+        Test: http/tests/cookies/strict-third-party-cookie-blocking.html
+
+        * WebCore.pro:
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/qt/ThirdPartyCookiesQt.cpp: Added.
+        (WebCore::cookieJar):
+        (WebCore::isFirstPartyCookie):
+        (WebCore::cookieAllowed):
+        (WebCore::allowThirdPartyCookies):
+        * platform/qt/ThirdPartyCookiesQt.h: Added.
+
 2011-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

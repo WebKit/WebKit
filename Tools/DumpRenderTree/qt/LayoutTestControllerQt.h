@@ -271,6 +271,10 @@ public slots:
     void setTextDirection(const QString& directionName);
     void goBack();
     void setDefersLoading(bool);
+#if QT_VERSION >= 0x040800
+    void setAlwaysAcceptCookies(bool);
+    void setAlwaysBlockCookies(bool);
+#endif
 
 private slots:
     void processWork();

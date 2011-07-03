@@ -89,6 +89,9 @@ public slots:
 private slots:
     void initTestCase();
     void cleanupTestCase();
+#if QT_VERSION >= 0x040800
+    void thirdPartyCookiePolicy();
+#endif
     void contextMenuCopy();
     void contextMenuPopulatedOnce();
     void acceptNavigationRequest();
@@ -2933,6 +2936,47 @@ void tst_QWebPage::navigatorCookieEnabled()
     QVERIFY(m_page->networkAccessManager()->cookieJar());
     QVERIFY(m_page->mainFrame()->evaluateJavaScript("navigator.cookieEnabled").toBool());
 }
+
+#if QT_VERSION >= 0x040800
+void tst_QWebPage::thirdPartyCookiePolicy()
+{
+    QWebSettings::globalSettings()->setThirdPartyCookiePolicy(QWebSettings::AlwaysBlockThirdPartyCookies);
+    m_page->networkAccessManager()->setCookieJar(new QNetworkCookieJar());
+    QVERIFY(m_page->networkAccessManager()->cookieJar());
+
+    // These are all first-party cookies, so should pass.
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://www.example.com"), QUrl("http://example.com")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://www.example.com"), QUrl("http://doc.example.com")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://aaa.www.example.com"), QUrl("http://doc.example.com")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://example.com"), QUrl("http://www.example.com")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://www.example.co.uk"), QUrl("http://example.co.uk")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://www.example.co.uk"), QUrl("http://doc.example.co.uk")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://aaa.www.example.co.uk"), QUrl("http://doc.example.co.uk")));
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://example.co.uk"), QUrl("http://www.example.co.uk")));
+
+    // These are all third-party cookies, so should fail.
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://www.example.com"), QUrl("http://slashdot.org")));
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://example.com"), QUrl("http://anotherexample.com")));
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://anotherexample.com"), QUrl("http://example.com")));
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://www.example.co.uk"), QUrl("http://slashdot.co.uk")));
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://example.co.uk"), QUrl("http://anotherexample.co.uk")));
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+            QUrl("http://anotherexample.co.uk"), QUrl("http://example.co.uk")));
+}
+#endif
 
 #ifdef Q_OS_MAC
 void tst_QWebPage::macCopyUnicodeToClipboard()

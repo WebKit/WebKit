@@ -1,3 +1,38 @@
+2011-04-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Support third-party cookie policy for Qt clients
+
+        This adds new API to QWebSettings that allows clients to
+        select one of three third-party cookie blocking policies:
+
+          AlwaysAllowThirdPartyCookies
+          AlwaysBlockThirdPartyCookies
+          AllowThirdPartyWithExistingCookies
+
+        The first two are self-explanatory, the third mimics Safari's
+        default behaviour of permitting third-party cookies when the user
+        already has cookies from the third-party site. This was
+        introduced to allow third-party cookie blocking to play well with
+        facebook sharing etc. AlwaysAllowThirdPartyCookies is the default.
+
+        There is scope for adding an 'exceptions' list API and clients would
+        struggle to implement it themselves given the paucity of information
+        available from setCookiesForUrl().
+
+        See also: http://gitorious.org/qt/qt/merge_requests/1205
+                   (commit 154402f56dcf8303a6ce601a52215226af8d31ba)
+                  http://bugreports.qt.nokia.com/browse/QTBUG-13601
+
+        https://bugs.webkit.org/show_bug.cgi?id=45455
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setThirdPartyCookiePolicy):
+        (QWebSettings::thirdPartyCookiePolicy):
+        * Api/qwebsettings.h:
+
 2011-07-01  Jade Han  <jade.han@nokia.com>
 
         [Qt][Symbian] Update .def file for Symbian to build Tools

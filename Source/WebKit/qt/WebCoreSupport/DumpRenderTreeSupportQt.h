@@ -24,6 +24,7 @@
 #define DumpRenderTreeSupportQt_h
 
 #include "qwebkitglobal.h"
+#include <QNetworkCookieJar>
 #include <QVariant>
 
 namespace WebCore {
@@ -217,6 +218,10 @@ public:
 
     static void setDefersLoading(QWebPage*, bool flag);
     static void goBack(QWebPage*);
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
+    static bool thirdPartyCookiePolicyAllows(QNetworkCookieJar*, const QUrl&, const QUrl& firstPartyUrl);
+#endif
 };
 
 #endif

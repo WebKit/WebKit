@@ -2559,6 +2559,7 @@ SOURCES += \
     platform/qt/EventLoopQt.cpp \
     platform/qt/FileSystemQt.cpp \
     platform/qt/SharedBufferQt.cpp \
+    platform/qt/ThirdPartyCookiesQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
     platform/graphics/qt/FontCustomPlatformDataQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \

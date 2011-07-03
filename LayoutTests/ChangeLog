@@ -1,3 +1,26 @@
+2011-04-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Support third-party cookie policy for Qt clients
+
+        Add a new test and move third-party cookie tests to 'pending
+        unskipping' for when bots move to 4.8.
+
+        See also: http://gitorious.org/qt/qt/merge_requests/1205
+                   (commit 154402f56dcf8303a6ce601a52215226af8d31ba)
+                  http://bugreports.qt.nokia.com/browse/QTBUG-13601
+
+        https://bugs.webkit.org/show_bug.cgi?id=45455
+
+        * platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html: Added.
+        * platform/qt/http/tests/cookies/strict-third-party-cookie-blocking-expected.txt: Added.
+          This test is a stricter version of third-party-cookie-relaxing.html with
+          the expected behaviour that all third-party cookies are blocked.
+        * platform/qt/Skipped: Prepare tests for unskipping on Qt-4.8.
+        * platform/qt/http/tests/cookies/third-party-cookie-relaxing-expected.txt: Added.
+          Qt returns cookie lists in a different order from other ports.
+
 2011-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

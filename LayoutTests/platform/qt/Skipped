@@ -297,9 +297,6 @@ http/tests/misc/favicon-as-image.html
 # [Qt] http/tests/misc/slow-loading-mask.html timed out.
 http/tests/misc/slow-loading-mask.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=45455
-http/tests/cookies/third-party-cookie-relaxing.html
-
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
@@ -368,9 +365,6 @@ http/tests/xmlhttprequest/re-login.html
 # Passes against Qt trunk (4e2d549e8b2e34c5bd4c77a4a6eba99ed0912168) but not 4.7.2
 http/tests/xmlhttprequest/failed-auth.html
 
-# Missing DRT ability to set accept cookie policy
-# https://bugs.webkit.org/show_bug.cgi?id=45455
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 
 # Still fail with Qt 4.7.1
 http/tests/xmlhttprequest/cache-override.html
@@ -426,9 +420,6 @@ http/tests/plugins/plugin-document-has-focus.html
 # [Qt] wrong ref count of npobject
 # https://bugs.webkit.org/show_bug.cgi?id=49749
 plugins/refcount-leaks.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=45455
-http/tests/plugins/third-party-cookie-accept-policy.html
 
 # =========================================================================== #
 # Failing Sputnik tests                                                       #
@@ -666,9 +657,6 @@ loader/go-back-to-different-window-size.html
 
 # Missing layoutTestController.findString() http://webkit.org/b/50236
 editing/text-iterator/findString.html
-
-# Missing layoutTestController.setAlwaysAcceptCookies()
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 
 # Missing layoutTestController.testRepaint()
 fast/repaint/table-writing-modes-h.html
@@ -1982,6 +1970,19 @@ fast/text/international/khmer-selection.html
 # https://bugs.webkit.org/show_bug.cgi?id=46249
 media/video-can-play-type.html
 media/video-delay-load-event.html
+
+# ============================================================================= #
+# Fixed in Qt 4.8
+# ============================================================================= #
+
+# Support for third-party cookie blocking
+# https://bugs.webkit.org/show_bug.cgi?id=45455
+# See also http://bugreports.qt.nokia.com/browse/QTBUG-13601
+http/tests/cookies/third-party-cookie-relaxing.html
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
+http/tests/plugins/third-party-cookie-accept-policy.html
+http/tests/cookies/strict-third-party-cookie-blocking.html
 
 # ============================================================================= #
 # new skipped tests yet to be sorted

@@ -76,6 +76,7 @@
 #include "SVGSMILElement.h"
 #endif
 #include "TextIterator.h"
+#include "ThirdPartyCookiesQt.h"
 #include "WebCoreTestSupport.h"
 #include "WorkerThread.h"
 #include <wtf/CurrentTime.h>
@@ -1070,6 +1071,13 @@ void DumpRenderTreeSupportQt::setMinimumTimerInterval(QWebPage* page, double int
 
     corePage->settings()->setMinDOMTimerInterval(interval);
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
+bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QNetworkCookieJar* jar, const QUrl& url, const QUrl& firstPartyUrl)
+{
+    return thirdPartyCookiePolicyPermits(jar, url, firstPartyUrl);
+}
+#endif
 
 QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrame* frame, const QString& elementId)
 {

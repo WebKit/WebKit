@@ -34,8 +34,10 @@
 #include "KURL.h"
 #include "NetworkingContext.h"
 #include "PlatformString.h"
+#include "ThirdPartyCookiesQt.h"
 #include "qwebframe.h"
 #include "qwebpage.h"
+#include "qwebsettings.h"
 #include <QNetworkAccessManager>
 #include <QNetworkCookie>
 #include <QStringList>
@@ -63,6 +65,11 @@ void setCookies(Document* document, const KURL& url, const String& value)
     if (!jar)
         return;
 
+    QUrl urlForCookies(url);
+    QUrl firstPartyUrl(document->firstPartyForCookies());
+    if (!thirdPartyCookiePolicyPermits(jar, urlForCookies, firstPartyUrl))
+        return;
+
     QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toLatin1());
     QList<QNetworkCookie>::Iterator it = cookies.begin();
     while (it != cookies.end()) {
@@ -71,7 +78,8 @@ void setCookies(Document* document, const KURL& url, const String& value)
         else
             ++it;
     }
-    jar->setCookiesFromUrl(cookies, QUrl(url));
+
+    jar->setCookiesFromUrl(cookies, urlForCookies);
 }
 
 String cookies(const Document* document, const KURL& url)
@@ -80,7 +88,12 @@ String cookies(const Document* document, const KURL& url)
     if (!jar)
         return String();
 
-    QList<QNetworkCookie> cookies = jar->cookiesForUrl(QUrl(url));
+    QUrl urlForCookies(url);
+    QUrl firstPartyUrl(document->firstPartyForCookies());
+    if (!thirdPartyCookiePolicyPermits(jar, urlForCookies, firstPartyUrl))
+        return String();
+
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(urlForCookies);
     if (cookies.isEmpty())
         return String();
 

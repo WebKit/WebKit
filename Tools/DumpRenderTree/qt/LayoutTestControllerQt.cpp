@@ -89,7 +89,10 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::resetGeolocationMock(m_drt->webPage());
     setIconDatabaseEnabled(false);
     clearAllDatabases();
-
+#if QT_VERSION >= 0x040800
+    // The default state for DRT is to block third-party cookies, mimicing the Mac port
+    setAlwaysAcceptCookies(false);
+#endif
     emit hidePage();
 }
 
@@ -958,6 +961,28 @@ void LayoutTestController::setTextDirection(const QString& directionName)
     else if (directionName == "ltr")
         m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionLeftToRight);
 }
+
+#if QT_VERSION >= 0x040800
+void LayoutTestController::setAlwaysAcceptCookies(bool accept)
+{
+    QWebSettings* globalSettings = QWebSettings::globalSettings();
+    if (accept)
+        globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysAllowThirdPartyCookies);
+    else {
+        // This matches the Safari third-party cookie blocking policy tested in third-party-cookie-relaxing.html
+        globalSettings->setThirdPartyCookiePolicy(QWebSettings::AllowThirdPartyWithExistingCookies);
+    }
+}
+
+void LayoutTestController::setAlwaysBlockCookies(bool block)
+{
+    QWebSettings* globalSettings = QWebSettings::globalSettings();
+    if (block)
+        globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysBlockThirdPartyCookies);
+    else
+        globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysAllowThirdPartyCookies);
+}
+#endif
 
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

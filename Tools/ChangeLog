@@ -1,3 +1,16 @@
+2011-04-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Support third-party cookie policy for Qt clients
+        https://bugs.webkit.org/show_bug.cgi?id=45455
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setAlwaysAcceptCookies):
+        (LayoutTestController::setAlwaysBlockCookies):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-07-03  Adam Barth  <abarth@webkit.org>
 
         Factor ReflectionHandler out of the rebaseline server.  Just code motion.

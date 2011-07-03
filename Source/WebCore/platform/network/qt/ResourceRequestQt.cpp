@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "ResourceRequest.h"
+#include "ThirdPartyCookiesQt.h"
 
 #include <qglobal.h>
 
@@ -83,11 +84,13 @@ QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) con
         break;
     }
 
-    if (!allowCookies()) {
-        request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
+    if (!allowCookies() || !thirdPartyCookiePolicyPermitsForFrame(originatingFrame, url(), firstPartyForCookies())) {
         request.setAttribute(QNetworkRequest::CookieSaveControlAttribute, QNetworkRequest::Manual);
-        request.setAttribute(QNetworkRequest::AuthenticationReuseAttribute, QNetworkRequest::Manual);
+        request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
     }
+
+    if (!allowCookies())
+        request.setAttribute(QNetworkRequest::AuthenticationReuseAttribute, QNetworkRequest::Manual);
 
     return request;
 }
