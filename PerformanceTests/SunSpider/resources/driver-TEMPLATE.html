@@ -70,12 +70,12 @@ function reallyNext()
     if (testIndex < tests.length) {
         testFrame.contentDocument.open();
         testFrame.contentDocument.write(testContents[testIndex]);
-        testFrame.contentDocument.close;
+        testFrame.contentDocument.close();
     } else if (++currentRepeat < repeatCount) { 
         testIndex = 0;
         testFrame.contentDocument.open();
         testFrame.contentDocument.write(testContents[testIndex]);
-        testFrame.contentDocument.close;
+        testFrame.contentDocument.close();
     } else {
         finish();
     }
