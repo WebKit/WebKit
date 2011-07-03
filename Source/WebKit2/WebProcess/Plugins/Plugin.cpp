@@ -91,4 +91,11 @@ bool Plugin::initialize(PluginController* pluginController, const Parameters& pa
     return initialize(parameters);
 }
 
+void Plugin::destroyPlugin()
+{
+    destroy();
+
+    m_pluginController = 0;
+}
+
 } // namespace WebKit

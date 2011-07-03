@@ -284,7 +284,7 @@ PluginView::~PluginView()
 
     if (m_plugin && m_isInitialized) {
         m_isBeingDestroyed = true;
-        m_plugin->destroy();
+        m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
     }
 

@@ -137,7 +137,7 @@ void PluginControllerProxy::destroy()
     // used as an identifier so it's OK to just get a weak reference.
     Plugin* plugin = m_plugin.get();
 
-    m_plugin->destroy();
+    m_plugin->destroyPlugin();
     m_plugin = 0;
 
     platformDestroy();

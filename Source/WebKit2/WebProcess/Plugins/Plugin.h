@@ -75,6 +75,9 @@ public:
     // Sets the active plug-in controller and initializes the plug-in.
     bool initialize(PluginController*, const Parameters&);
 
+    // Destroys the plug-in.
+    void destroyPlugin();
+
     // Returns the plug-in controller for this plug-in.
     PluginController* controller() { return m_pluginController; }
 
@@ -86,10 +89,10 @@ private:
     // This is only called by the other initialize overload so it can be made private.
     virtual bool initialize(const Parameters&) = 0;
 
-public:
-
     // Destroys the plug-in.
     virtual void destroy() = 0;
+
+public:
 
     // Tells the plug-in to paint itself into the given graphics context. The passed-in context and
     // dirty rect are in window coordinates. The context is saved/restored by the caller.

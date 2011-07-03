@@ -1,5 +1,27 @@
 2011-07-02  Anders Carlsson  <andersca@apple.com>
 
+        Null out the plug-in controller after destroying the plug-in.
+        https://bugs.webkit.org/show_bug.cgi?id=63869
+
+        Reviewed by Maciej Stachowiak.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::destroy):
+        Call destroyPlugin.
+
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::destroyPlugin):
+        Call destroy and null out the plug-in controller.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add destroyPlugin, make destroy private.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::~PluginView):
+        Call destroyPlugin.
+
+2011-07-02  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build for real.
 
         * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
