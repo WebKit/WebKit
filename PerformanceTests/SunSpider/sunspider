@@ -58,7 +58,7 @@ Usage: $programName --shell=[path] [options]
   --shark           Sample execution time with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
-  --suite           Select a specific benchmark suite. The default is sunspider-0.9.1
+  --suite           Select a specific benchmark suite. The default is sunspider-1.0
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
   --parse-only      Use the parse-only benchmark suite. Same as --suite=parse-only
@@ -82,7 +82,7 @@ GetOptions('runs=i' => \$testRuns,
 $suite = "ubench" if ($ubench);
 $suite = "v8-v4" if ($v8suite);
 $suite = "parse-only" if ($parseOnly);
-$suite = "sunspider-0.9.1" if (!$suite);
+$suite = "sunspider-1.0" if (!$suite);
 
 my $resultDirectory = "${suite}-results";
 
