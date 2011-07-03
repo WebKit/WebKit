@@ -1,3 +1,15 @@
+2011-07-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Remove failing expectation for fast/events/panScroll-click-hyperlink.html
+        (Chromium still doesn't pass the test, since it doesn't have pan
+        scrolling enabled, but r90235 added failing expectations for the Windows
+        port, which Chromium Win and Linux pick up)
+        
+        Also remove flaky expectations for some tests that have not failed as
+        far back as the flakiness dashboard has data for.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-02  Anders Carlsson  <andersca@apple.com>
 
         Update skipped list.

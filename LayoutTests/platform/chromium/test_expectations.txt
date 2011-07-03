@@ -305,6 +305,7 @@ WONTFIX : platform/mac-leopard = FAIL PASS
 WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
+WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
@@ -1467,8 +1468,7 @@ BUGCR10430 WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
-BUGCR10441 WIN : transitions/transition-end-event-transform.html = TEXT PASS
-BUGCR10441 MAC RELEASE : transitions/transition-end-event-transform.html = TEXT PASS
+BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = TEXT PASS
 
 // Merge 41768:41807
 // Perhaps just needs new baseline?
@@ -3527,9 +3527,7 @@ BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMA
 BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 BUGCASEQ LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
-
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
-
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH PASS
 
 // flakiness
@@ -3595,39 +3593,15 @@ BUGWK60118 WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 // broke in r84742 - just needs a new baseline?
 BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
 
-BUGWK62761 WIN : fast/events/panScroll-click-hyperlink.html = PASS TEXT
-BUGWK62761 LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGCR86337 : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
 BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
 BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS TEXT
 
 // flakiness on deps bots (noted ~ r83108)
-BUGDPRANKE WIN CPU DEBUG : editing/selection/select-line.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
-BUGDPRANKE WIN CPU DEBUG : http/tests/local/stylesheet-and-script-load-order-media-print.html = PASS CRASH
-BUGDPRANKE WIN CPU DEBUG : svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg = PASS CRASH
-BUGDPRANKE MAC CPU DEBUG : fast/block/float/overhanging-tall-block.html = PASS CRASH
-BUGDPRANKE MAC CPU DEBUG : fast/css/import_with_baseurl.html = PASS CRASH
 BUGDPRANKE WIN CPU DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
-BUGDPRANKE WIN CPU DEBUG : svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml = PASS CRASH
-
-// flakiness on canaries (noted ~ r85006)
-BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
-BUGDPRANKE CPU : fast/dom/HTMLFormElement/document-deactivation-callback-crash.html = PASS TEXT
-BUGDPRANKE LINUX DEBUG CPU : svg/custom/font-platformDestroy-crash.svg = PASS CRASH
-BUGDPRANKE CPU : fast/dom/HTMLObjectElement/object-as-frame.html = PASS TEXT
-BUGDPRANKE CPU LINUX DEBUG : editing/pasteboard/drop-text-events.html = PASS CRASH
-BUGDPRANKE MAC DEBUG :   transitions/transition-end-event-transform.html = TEXT PASS
-
-// start skipping platform tests
-BUGNONE WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
-
-BUGDPRANKE MAC DEBUG : fast/blockflow/Kusa-Makura-background-canvas.html = CRASH PASS
-BUGDPRANKE MAC DEBUG : storage/domstorage/events/documentURI.html = CRASH PASS
-BUGDPRANKE MAC DEBUG : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = CRASH PASS
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
-BUGDPRANKE MAC DEBUG : fast/css/getComputedStyle/font-family-fallback-reset.html = CRASH PASS
 
 // Flakiness
 BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
