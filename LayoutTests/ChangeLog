@@ -1,3 +1,16 @@
+2011-07-03  Robert Hogan  <robert@webkit.org>
+
+        Add platform-specific results after r90338
+
+        Unreviewed, add platform-specific results for new rendertree test.
+        https://bugs.webkit.org/show_bug.cgi?id=30355
+
+        http://trac.webkit.org/changeset/90338
+
+        * platform/gtk/plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+        * platform/qt-mac/plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+        * plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+
 2011-06-23  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
