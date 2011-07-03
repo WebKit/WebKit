@@ -1,3 +1,22 @@
+2011-07-03  Robert Hogan  <robert@webkit.org>
+
+        Restore scroll position on page reloads scheduled by <meta http-equiv="refresh" content="XX"/>
+        https://bugs.webkit.org/show_bug.cgi?id=62482
+
+        If a <meta http-equiv="refresh"> directive schedules a page reload rather than
+        a redirect restore the scroll position after the reload. Do the same on location.reload().
+
+        Reviewed by Adam Barth.
+
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-expected.txt: Added.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2-expected.txt: Added.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html: Added.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-expected.txt: Added.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html: Added.
+        * http/tests/navigation/scrollstate-after-http-equiv-refresh.html: Added.
+        * http/tests/navigation/scrollstate-after-location-reload-expected.txt: Added.
+        * http/tests/navigation/scrollstate-after-location-reload.html: Added.
+
 2011-04-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Benjamin Poulain.

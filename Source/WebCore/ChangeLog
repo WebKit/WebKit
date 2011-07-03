@@ -1,3 +1,28 @@
+2011-07-03  Robert Hogan  <robert@webkit.org>
+
+        Restore scroll position on page reloads scheduled by <meta http-equiv="refresh" content="XX"/>
+        https://bugs.webkit.org/show_bug.cgi?id=62482
+
+        If a <meta http-equiv="refresh"> directive schedules a page reload rather than
+        a redirect restore the scroll position after the reload. Do the same on location.reload().
+
+        Reviewed by Adam Barth.
+
+        Tests: http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
+               http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
+               http/tests/navigation/scrollstate-after-http-equiv-refresh.html
+               http/tests/navigation/scrollstate-after-location-reload.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        Only make the load FrameLoadTypeSame if it has not already been set as FrameLoadTypeReload*.
+        FrameLoadTypeReload* loads are set through http-equiv refreshes, manual reloads, or location.reload()
+        and honour the user's scroll position in the frame. A FrameLoadTypeSame is for when the frame is loading
+        the same page again, e.g. by clicking a link.
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledRedirect::fire): Tell FrameLoader::changeLocation() if this is a reload.
+
 2011-04-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Benjamin Poulain.
