@@ -31,6 +31,7 @@
 
 #include "CachedResourceHandle.h"
 #include "InspectorPageAgent.h"
+#include "SharedBuffer.h"
 
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -42,14 +43,12 @@
 
 namespace WebCore {
 
-class CachedResource;
 class SharedBuffer;
-class TextResourceDecoder;
+class CachedResource;
 
 class NetworkResourcesData {
 public:
     class ResourceData {
-        friend class NetworkResourcesData;
     public:
         ResourceData(unsigned long identifier, const String& loaderId);
 
@@ -62,47 +61,38 @@ public:
         String url() const { return m_url; }
         void setUrl(const String& url) { m_url = url; }
 
-        bool hasContent() const { return !m_content.isNull(); }
-        String content() const { return m_content; }
-        void setContent(const String&);
+        bool hasContent() const { return m_hasContent; }
+        String content();
+        void appendContent(const String&);
 
         bool isContentPurged() const { return m_isContentPurged; }
+        void setIsContentPurged(bool isContentPurged) { m_isContentPurged = isContentPurged; }
         unsigned purgeContent();
 
         InspectorPageAgent::ResourceType type() const { return m_type; }
         void setType(InspectorPageAgent::ResourceType type) { m_type = type; }
 
-        String textEncodingName() const { return m_textEncodingName; }
-        void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
-
-        TextResourceDecoder* decoder() const { return m_decoder.get(); }
-        void createDecoder(const String& mimeType, const String& textEncodingName);
-
         PassRefPtr<SharedBuffer> buffer() const { return m_buffer; }
         void setBuffer(PassRefPtr<SharedBuffer> buffer) { m_buffer = buffer; }
+
+        String textEncodingName() const { return m_textEncodingName; }
+        void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
 
         CachedResource* cachedResource() const { return m_cachedResource.get(); }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
 
     private:
-        bool hasData() const { return m_dataBuffer; }
-        int dataLength() const;
-        void appendData(const char* data, int dataLength);
-        int decodeDataToContent();
-
         unsigned long m_identifier;
         String m_loaderId;
         String m_frameId;
         String m_url;
-        String m_content;
-        RefPtr<SharedBuffer> m_dataBuffer;
+        bool m_hasContent;
+        StringBuilder m_contentBuilder;
         bool m_isContentPurged;
         InspectorPageAgent::ResourceType m_type;
 
-        String m_textEncodingName;
-        RefPtr<TextResourceDecoder> m_decoder;
-
         RefPtr<SharedBuffer> m_buffer;
+        String m_textEncodingName;
         CachedResourceHandle<CachedResource> m_cachedResource;
     };
 
@@ -111,18 +101,14 @@ public:
     ~NetworkResourcesData();
 
     void resourceCreated(unsigned long identifier, const String& loaderId);
-    void responseReceived(unsigned long identifier, const String& frameId, const ResourceResponse&);
+    void responseReceived(unsigned long identifier, const String& frameId, const String& url);
     void setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(unsigned long identifier);
-    void setResourceContent(unsigned long identifier, const String& content);
-    void maybeAddResourceData(unsigned long identifier, const char* data, int dataLength);
-    void maybeDecodeDataToContent(unsigned long identifier);
+    void addResourceContent(unsigned long identifier, const String& content);
     void addCachedResource(unsigned long identifier, CachedResource*);
     void addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer>, const String& textEncodingName);
-    ResourceData const* data(unsigned long identifier);
+    ResourceData* data(unsigned long identifier);
     void clear(const String& preservedLoaderId = String());
-
-    void setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
 private:
     void ensureNoDataForIdentifier(unsigned long identifier);
@@ -133,8 +119,6 @@ private:
     typedef HashMap<unsigned long, ResourceData*> ResourceDataMap;
     ResourceDataMap m_identifierToResourceDataMap;
     int m_contentSize;
-    int m_maximumResourcesContentSize;
-    int m_maximumSingleResourceContentSize;
 };
 
 } // namespace WebCore

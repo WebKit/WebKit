@@ -1,3 +1,15 @@
+2011-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r90373.
+        http://trac.webkit.org/changeset/90373
+        https://bugs.webkit.org/show_bug.cgi?id=63917
+
+        Breaks Qt Linux Release minimal (Requested by vsevik on
+        #webkit).
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Show content for plugin requests in network panel.

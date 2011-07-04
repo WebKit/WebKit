@@ -29,99 +29,48 @@
 #include "config.h"
 #include "NetworkResourcesData.h"
 
-#include "DOMImplementation.h"
-#include "SharedBuffer.h"
-#include "TextResourceDecoder.h"
-
 #if ENABLE(INSPECTOR)
 
 namespace {
 // 10MB
 static int maximumResourcesContentSize = 10 * 1000 * 1000;
-
-// 1MB
-static int maximumSingleResourceContentSize = 1000 * 1000;
 }
 
 namespace WebCore {
-
 
 // ResourceData
 NetworkResourcesData::ResourceData::ResourceData(unsigned long identifier, const String& loaderId)
     : m_identifier(identifier)
     , m_loaderId(loaderId)
+    , m_hasContent(false)
     , m_isContentPurged(false)
     , m_type(InspectorPageAgent::OtherResource)
 {
 }
 
-void NetworkResourcesData::ResourceData::setContent(const String& content)
+String NetworkResourcesData::ResourceData::content()
 {
-    ASSERT(!hasData());
-    ASSERT(!hasContent());
-    m_content = content;
+    return m_hasContent ? m_contentBuilder.toString() : String();
+}
+
+void NetworkResourcesData::ResourceData::appendContent(const String& content)
+{
+    m_contentBuilder.append(content);
+    m_hasContent = true;
 }
 
 unsigned NetworkResourcesData::ResourceData::purgeContent()
 {
-    unsigned result = 0;
-    if (hasData()) {
-        ASSERT(!hasContent());
-        result = m_dataBuffer->size();
-        m_dataBuffer = nullptr;
-    }
-
-    if (hasContent()) {
-        ASSERT(!hasData());
-        result = 2 * m_content.length();
-        m_content = String();
-    }
+    unsigned length = m_contentBuilder.toStringPreserveCapacity().length();
+    m_contentBuilder.clear();
     m_isContentPurged = true;
-    return result;
-}
-
-void NetworkResourcesData::ResourceData::createDecoder(const String& mimeType, const String& textEncodingName)
-{
-    if (!textEncodingName.isEmpty())
-        m_decoder = TextResourceDecoder::create("text/plain", textEncodingName);
-    else if (mimeType == "text/plain")
-        m_decoder = TextResourceDecoder::create("text/plain", "ISO-8859-1");
-    else if (mimeType == "text/html")
-        m_decoder = TextResourceDecoder::create("text/html", "UTF-8");
-    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
-        m_decoder = TextResourceDecoder::create("application/xml");
-        m_decoder->useLenientXMLDecoding();
-    }
-}
-
-int NetworkResourcesData::ResourceData::dataLength() const
-{
-    return m_dataBuffer ? m_dataBuffer->size() : 0;
-}
-
-void NetworkResourcesData::ResourceData::appendData(const char* data, int dataLength)
-{
-    ASSERT(!hasContent());
-    if (!m_dataBuffer)
-        m_dataBuffer = SharedBuffer::create(data, dataLength);
-    else
-        m_dataBuffer->append(data, dataLength);
-}
-
-int NetworkResourcesData::ResourceData::decodeDataToContent()
-{
-    ASSERT(!hasContent());
-    int dataLength = m_dataBuffer->size();
-    m_content = m_decoder->decode(m_dataBuffer->data(), m_dataBuffer->size());
-    m_dataBuffer = nullptr;
-    return 2 * m_content.length() - dataLength;
+    m_hasContent = false;
+    return length;
 }
 
 // NetworkResourcesData
 NetworkResourcesData::NetworkResourcesData()
     : m_contentSize(0)
-    , m_maximumResourcesContentSize(maximumResourcesContentSize)
-    , m_maximumSingleResourceContentSize(maximumSingleResourceContentSize)
 {
 }
 
@@ -136,14 +85,13 @@ void NetworkResourcesData::resourceCreated(unsigned long identifier, const Strin
     m_identifierToResourceDataMap.set(identifier, new ResourceData(identifier, loaderId));
 }
 
-void NetworkResourcesData::responseReceived(unsigned long identifier, const String& frameId, const ResourceResponse& response)
+void NetworkResourcesData::responseReceived(unsigned long identifier, const String& frameId, const String& url)
 {
     ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
     if (!resourceData)
         return;
     resourceData->setFrameId(frameId);
-    resourceData->setUrl(response.url());
-    resourceData->createDecoder(response.mimeType(), response.textEncodingName());
+    resourceData->setUrl(url);
 }
 
 void NetworkResourcesData::setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType type)
@@ -162,52 +110,19 @@ InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(unsigned lon
     return resourceData->type();
 }
 
-void NetworkResourcesData::setResourceContent(unsigned long identifier, const String& content)
+void NetworkResourcesData::addResourceContent(unsigned long identifier, const String& content)
 {
     ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
     if (!resourceData)
-        return;
-    int dataLength = 2 * content.length();
-    if (dataLength > m_maximumSingleResourceContentSize)
         return;
     if (resourceData->isContentPurged())
         return;
-    if (ensureFreeSpace(dataLength) && !resourceData->isContentPurged()) {
-        m_identifiersDeque.append(identifier);
-        resourceData->setContent(content);
-        m_contentSize += dataLength;
+    if (ensureFreeSpace(content.length()) && !resourceData->isContentPurged()) {
+        if (!resourceData->hasContent())
+            m_identifiersDeque.append(identifier);
+        resourceData->appendContent(content);
+        m_contentSize += content.length();
     }
-}
-
-void NetworkResourcesData::maybeAddResourceData(unsigned long identifier, const char* data, int dataLength)
-{
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
-    if (!resourceData)
-        return;
-    if (!resourceData->decoder())
-        return;
-    if (resourceData->dataLength() + dataLength > m_maximumSingleResourceContentSize)
-        m_contentSize -= resourceData->purgeContent();
-    if (resourceData->isContentPurged())
-        return;
-    if (ensureFreeSpace(dataLength) && !resourceData->isContentPurged()) {
-        m_identifiersDeque.append(identifier);
-        resourceData->appendData(data, dataLength);
-        m_contentSize += dataLength;
-    }
-}
-
-void NetworkResourcesData::maybeDecodeDataToContent(unsigned long identifier)
-{
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
-    if (!resourceData)
-        return;
-    if (!resourceData->hasData())
-        return;
-    m_contentSize += resourceData->decodeDataToContent();
-    int dataLength = 2 * resourceData->content().length();
-    if (dataLength > m_maximumSingleResourceContentSize)
-        m_contentSize -= resourceData->purgeContent();
 }
 
 void NetworkResourcesData::addCachedResource(unsigned long identifier, CachedResource* cachedResource)
@@ -228,7 +143,7 @@ void NetworkResourcesData::addResourceSharedBuffer(unsigned long identifier, Pas
     resourceData->setTextEncodingName(textEncodingName);
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::data(unsigned long identifier)
+NetworkResourcesData::ResourceData* NetworkResourcesData::data(unsigned long identifier)
 {
     return m_identifierToResourceDataMap.get(identifier);
 }
@@ -236,7 +151,6 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::data(unsigned lo
 void NetworkResourcesData::clear(const String& preservedLoaderId)
 {
     m_identifiersDeque.clear();
-    m_contentSize = 0;
 
     ResourceDataMap preservedMap;
 
@@ -252,19 +166,11 @@ void NetworkResourcesData::clear(const String& preservedLoaderId)
     m_identifierToResourceDataMap.swap(preservedMap);
 }
 
-void NetworkResourcesData::setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
-{
-    clear();
-    m_maximumResourcesContentSize = maximumResourcesContentSize;
-    m_maximumSingleResourceContentSize = maximumSingleResourceContentSize;
-}
-
-
 void NetworkResourcesData::ensureNoDataForIdentifier(unsigned long identifier)
 {
     ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
     if (resourceData) {
-        if (resourceData->hasContent() || resourceData->hasData())
+        if (resourceData->hasContent())
             m_contentSize -= resourceData->purgeContent();
         delete resourceData;
         m_identifierToResourceDataMap.remove(identifier);
@@ -273,10 +179,10 @@ void NetworkResourcesData::ensureNoDataForIdentifier(unsigned long identifier)
 
 bool NetworkResourcesData::ensureFreeSpace(int size)
 {
-    if (size > m_maximumResourcesContentSize)
+    if (size > maximumResourcesContentSize)
         return false;
 
-    while (size > m_maximumResourcesContentSize - m_contentSize) {
+    while (size > maximumResourcesContentSize - m_contentSize) {
         unsigned long identifier = m_identifiersDeque.takeFirst();
         ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
         if (resourceData)

@@ -492,10 +492,10 @@ void InspectorInstrumentation::continueWithPolicyIgnoreImpl(Frame* frame, Docume
     didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
 }
 
-void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
+void InspectorInstrumentation::didReceiveContentLengthImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, int dataLength, int encodedDataLength)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
-        resourceAgent->didReceiveData(identifier, data, dataLength, encodedDataLength);
+        resourceAgent->didReceiveContentLength(identifier, dataLength, encodedDataLength);
 }
 
 void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, double finishTime)

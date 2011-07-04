@@ -656,10 +656,6 @@ WONTFIX SKIP : inspector/extensions = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
 
-// There is no enough plugins support in DRT
-WONTFIX SKIP : http/tests/inspector/network/network-embed.html = FAIL
-WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.html = FAIL
-
 // Inspector tests in Debug build are very slow.
 BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS

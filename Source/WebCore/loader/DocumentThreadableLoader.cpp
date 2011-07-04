@@ -229,7 +229,7 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
 
 #if ENABLE(INSPECTOR)
     if (m_preflightRequestIdentifier)
-        InspectorInstrumentation::didReceiveData(m_document->frame(), m_preflightRequestIdentifier, 0, 0, dataLength);
+        InspectorInstrumentation::didReceiveContentLength(m_document->frame(), m_preflightRequestIdentifier, 0, dataLength);
 #endif
 
     // Preflight data should be invisible to clients.

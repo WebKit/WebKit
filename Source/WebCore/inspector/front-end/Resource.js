@@ -782,11 +782,6 @@ WebInspector.Resource.prototype = {
         return this._content;
     },
 
-    get contentEncoded()
-    {
-        return this._contentEncoded;
-    },
-
     get contentTimestamp()
     {
         return this._contentTimestamp;

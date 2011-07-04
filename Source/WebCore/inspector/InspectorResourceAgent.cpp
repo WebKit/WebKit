@@ -251,21 +251,18 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
         else if (m_loadingXHRSynchronously || m_resourcesData->resourceType(identifier) == InspectorPageAgent::XHRResource)
             type = InspectorPageAgent::XHRResource;
 
-        m_resourcesData->responseReceived(identifier, m_pageAgent->frameId(loader->frame()), response);
+        m_resourcesData->responseReceived(identifier, m_pageAgent->frameId(loader->frame()), response.url());
     }
     m_resourcesData->setResourceType(identifier, type);
     m_frontend->responseReceived(static_cast<int>(identifier), currentTime(), InspectorPageAgent::resourceTypeString(type), resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
-    // as there will be no calls to didReceiveData from the network stack.
+    // as there will be no calls to didReceiveContentLength from the network stack.
     if (cachedResourceSize && response.httpStatusCode() == 304)
-        didReceiveData(identifier, 0, cachedResourceSize, 0);
+        didReceiveContentLength(identifier, cachedResourceSize, 0);
 }
 
-void InspectorResourceAgent::didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
+void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int dataLength, int encodedDataLength)
 {
-    if (data && m_resourcesData->resourceType(identifier) == InspectorPageAgent::OtherResource)
-        m_resourcesData->maybeAddResourceData(identifier, data, dataLength);
-
     m_frontend->dataReceived(static_cast<int>(identifier), currentTime(), dataLength, encodedDataLength);
 }
 
@@ -273,8 +270,6 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, Document
 {
     if (m_resourcesData->resourceType(identifier) == InspectorPageAgent::DocumentResource)
         m_resourcesData->addResourceSharedBuffer(identifier, loader->frameLoader()->documentLoader()->mainResourceData(), loader->frame()->document()->inputEncoding());
-
-    m_resourcesData->maybeDecodeDataToContent(identifier);
 
     if (!finishTime)
         finishTime = currentTime();
@@ -302,7 +297,7 @@ void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, c
 
 void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)
 {
-    m_resourcesData->setResourceContent(identifier, sourceString);
+    m_resourcesData->addResourceContent(identifier, sourceString);
 }
 
 void InspectorResourceAgent::didReceiveXHRResponse(unsigned long identifier)
@@ -403,12 +398,6 @@ void InspectorResourceAgent::setBackgroundEventsCollectionEnabled(ErrorString*, 
     return m_state->setBoolean(ResourceAgentState::backgroundEventsCollectionEnabled, enabled);
 }
 
-// called from Internals for layout test purposes.
-void InspectorResourceAgent::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
-{
-    m_resourcesData->setResourcesDataSizeLimits(maximumResourcesContentSize, maximumSingleResourceContentSize);
-}
-
 void InspectorResourceAgent::enable(ErrorString*)
 {
     enable();
@@ -448,7 +437,7 @@ void InspectorResourceAgent::initializeBackgroundCollection()
 
 void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsigned long identifier, String* content, bool* base64Encoded)
 {
-    NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(identifier);
+    NetworkResourcesData::ResourceData* resourceData = m_resourcesData->data(identifier);
     if (!resourceData) {
         *errorString = "No resource with given identifier found";
         return;

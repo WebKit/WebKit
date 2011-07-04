@@ -144,10 +144,8 @@ EXPORTS
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
-        ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?removeShadowRoot@Element@WebCore@@QAEXXZ
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
-        ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z

@@ -26,7 +26,7 @@
     else if ($type == "image")
         header("Content-Type: image/png");
     else
-        header("Content-Type: text/plain");
+        header("Content-Type: text/html");
 
     # Flush headers and sleep bofore sending response
     if ($send) {

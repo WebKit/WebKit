@@ -571,7 +571,7 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
     UNUSED_PARAM(encodedDataLength);
 
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didReceiveData(m_frame, m_currentResourceIdentifier, 0, length, 0);
+    InspectorInstrumentation::didReceiveContentLength(m_frame, m_currentResourceIdentifier, length, 0);
 #endif
 
     if (handle == m_manifestHandle) {

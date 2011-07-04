@@ -30,8 +30,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-#include "InspectorController.h"
-#include "Page.h"
 #include "RenderTreeAsText.h"
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
@@ -124,16 +122,5 @@ String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
 
     return element->shadowPseudoId().string();
 }
-
-#if ENABLE(INSPECTOR)
-void Internals::setInspectorResourcesDataSizeLimits(Document* document, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode& ec)
-{
-    if (!document || !document->page() || !document->page()->inspectorController()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-    document->page()->inspectorController()->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
-}
-#endif
 
 }
