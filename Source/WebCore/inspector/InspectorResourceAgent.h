@@ -90,7 +90,7 @@ public:
     void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, DocumentLoader* laoder, const ResourceResponse&);
-    void didReceiveContentLength(unsigned long identifier, int dataLength, int encodedDataLength);
+    void didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void didFinishLoading(unsigned long identifier, DocumentLoader*, double finishTime);
     void didFailLoading(unsigned long identifier, DocumentLoader*, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
@@ -112,6 +112,9 @@ public:
 
     void isBackgroundEventsCollectionEnabled(ErrorString*, bool* enabled);
     void setBackgroundEventsCollectionEnabled(ErrorString*, bool enabled);
+
+    // called from Internals for layout test purposes.
+    void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
     // Called from frontend
     void enable(ErrorString*);

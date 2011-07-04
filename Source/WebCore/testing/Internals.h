@@ -53,6 +53,10 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
 
+#if ENABLE(INSPECTOR)
+    void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
+#endif
+
 private:
     Internals();
 };
