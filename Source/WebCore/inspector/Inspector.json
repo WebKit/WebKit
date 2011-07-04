@@ -425,6 +425,7 @@
                 "type": "object",
                 "description": "HTTP response data.",
                 "properties": [
+                    { "name": "url", "type": "string", "description": "Response URL." },
                     { "name": "status", "type": "number", "description": "HTTP response status code." },
                     { "name": "statusText", "type": "string", "description": "HTTP response status text." },
                     { "name": "headers", "type": "object", "description": "HTTP response headers." },

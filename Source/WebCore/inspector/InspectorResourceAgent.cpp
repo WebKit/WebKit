@@ -149,6 +149,7 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
         return 0;
 
     RefPtr<InspectorObject> responseObject = InspectorObject::create();
+    responseObject->setString("url", response.url().string());
     responseObject->setNumber("status", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusCode : response.httpStatusCode());
     responseObject->setString("statusText", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusText : response.httpStatusText());
 

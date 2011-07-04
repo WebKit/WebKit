@@ -1,3 +1,16 @@
+2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Update network resource url from response data.
+        https://bugs.webkit.org/show_bug.cgi?id=63736
+
+        * inspector/Inspector.json:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+
 2011-07-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

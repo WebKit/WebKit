@@ -88,6 +88,8 @@ WebInspector.NetworkDispatcher.prototype = {
         if (!response)
             return;
 
+        if (response.url && resource.url !== response.url)
+            resource.url = response.url;
         resource.mimeType = response.mimeType;
         resource.statusCode = response.status;
         resource.statusText = response.statusText;
