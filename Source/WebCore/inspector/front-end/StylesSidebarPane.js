@@ -58,13 +58,6 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     option.label = WebInspector.UIString("HSL Colors");
     this.settingsSelectElement.appendChild(option);
 
-    this.settingsSelectElement.appendChild(document.createElement("hr"));
-
-    option = document.createElement("option");
-    option.action = this._createNewRule.bind(this);
-    option.label = WebInspector.UIString("New Style Rule");
-    this.settingsSelectElement.appendChild(option);
-
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
     var format = WebInspector.settings.colorFormat;
@@ -78,6 +71,13 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
         this.settingsSelectElement[3].selected = true;
 
     this.titleElement.appendChild(this.settingsSelectElement);
+
+    var addButton = document.createElement("button");
+    addButton.className = "pane-title-button add";
+    addButton.title = WebInspector.UIString("New Style Rule");
+    addButton.addEventListener("click", this._createNewRule.bind(this), false);
+    this.titleElement.appendChild(addButton);
+
     this._computedStylePane = computedStylePane;
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
@@ -578,6 +578,10 @@ WebInspector.StylesSidebarPane.prototype = {
 
     _createNewRule: function(event)
     {
+        event.stopPropagation();
+        if (WebInspector.isEditingAnyField())
+            return;
+
         this.expanded = true;
         this.addBlankSection().startEditingSelector();
     },
