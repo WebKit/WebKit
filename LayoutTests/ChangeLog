@@ -1,3 +1,12 @@
+2011-07-04  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] http/tests/inspector/network-preflight-options.html fails frequently
+        https://bugs.webkit.org/show_bug.cgi?id=63910
+
+        Unreviewed.
+
+        * platform/qt/Skipped: Skip http/tests/inspector/network-preflight-options.html.
+
 2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resources loaded to Resources Panel from InspectorPageAgent do not have mime type set.
