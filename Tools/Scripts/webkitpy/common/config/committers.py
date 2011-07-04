@@ -251,6 +251,7 @@ committers_unable_to_review = [
     Committer("Victor Wang", "victorw@chromium.org", "victorw"),
     Committer("Victoria Kirst", "vrk@chromium.org", "vrk"),
     Committer("Vitaly Repeshko", "vitalyr@chromium.org"),
+    Committer("Vsevolod Vlasov", "vsevik@chromium.org"),
     Committer("William Siegrist", "wsiegrist@apple.com", "wms"),
     Committer("W. James MacLean", "wjmaclean@chromium.org", "wjmaclean"),
     Committer("Xiaomei Ji", "xji@chromium.org", "xji"),

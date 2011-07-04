@@ -1,3 +1,9 @@
+2011-06-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed, add myself as committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90347.
