@@ -1,3 +1,13 @@
+2011-07-03  Daniel Bates  <dbates@webkit.org>
+
+        Import Checkout in scm_unittests.py and logging in svn.py to fix
+        Python missing global variable errors
+
+        Rubber-stamped by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Import Checkout.
+        * Scripts/webkitpy/common/checkout/scm/svn.py: Import logging.
+
 2011-07-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
