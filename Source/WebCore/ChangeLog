@@ -1,3 +1,13 @@
+2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        ResourceLoadNotifier::dispatchWillSendRequest should not compare StringImpl directly
+        https://bugs.webkit.org/show_bug.cgi?id=63873
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+
 2011-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90373.
