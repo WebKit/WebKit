@@ -13,9 +13,9 @@ Added audit category, result dump follows:
   Extension audits
 category.onAuditStarted fired, results dump follows:
 {
-    url : <function>
-    snippet : <function>
-    text : <function>
+    createURL : <function>
+    createSnippet : <function>
+    createText : <function>
     addResult : <function>
     createResult : <function>
     done : <function>

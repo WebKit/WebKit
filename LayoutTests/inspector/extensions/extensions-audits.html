@@ -16,10 +16,10 @@ function extension_testAudits(nextTest)
         results.addResult("Failed rule (42)", "this rule always fails", results.Severity.Severe);
 
         var node = results.createResult("Subtree");
-        node.addChild("Some url: ", results.url("http://www.webkit.org", "WebKit"), " more text ", results.url("http://www.google.com"));
+        node.addChild("Some url: ", results.createURL("http://www.webkit.org", "WebKit"), " more text ", results.createURL("http://www.google.com"));
         var nestedNode = node.addChild("... and a snippet");
         nestedNode.expanded = true;
-        nestedNode.addChild(results.snippet("function rand()\n{\n    return 4;\n}"));
+        nestedNode.addChild(results.createSnippet("function rand()\n{\n    return 4;\n}"));
 
         results.addResult("Rule with details subtree (1)", "This rule has a lot of details", results.Severity.Warning, node);
         // Audit normally terminates when number of added rule results is equal to

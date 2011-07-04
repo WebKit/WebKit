@@ -287,13 +287,9 @@ function AuditResultImpl(id)
 {
     this._id = id;
 
-    var formatterTypes = [
-        "url",
-        "snippet",
-        "text"
-    ];
-    for (var i = 0; i < formatterTypes.length; ++i)
-        this[formatterTypes[i]] = bind(this._nodeFactory, null, formatterTypes[i]);
+    this.createURL = bind(this._nodeFactory, null, "url");
+    this.createSnippet = bind(this._nodeFactory, null, "snippet");
+    this.createText = bind(this._nodeFactory, null, "text");
 }
 
 AuditResultImpl.prototype = {
