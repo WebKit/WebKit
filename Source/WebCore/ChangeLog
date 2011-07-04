@@ -1,3 +1,18 @@
+2011-07-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Andreas Kling.
+
+        [GTK] r90148 did not apply to X11 platforms in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=63862
+
+        Correct the guard for an X11 specific piece of code. TARGET(X11) not
+        defined for the GTK+ port.
+
+        No new tests. This is covered by an existing test.
+
+        * plugins/npapi.cpp: Correct the X11 guard.
+        (NPN_InvalidateRect):
+
 2011-07-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: implement settings panel.
