@@ -25,8 +25,9 @@
 
 #include "PluginTest.h"
 
-using namespace std;
+#include <string.h>
 
+using namespace std;
 
 class NPRuntimeRemoveProperty : public PluginTest {
 public:

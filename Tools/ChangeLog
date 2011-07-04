@@ -1,5 +1,11 @@
 2011-07-04  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix Qt build.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp:
+
+2011-07-04  Anders Carlsson  <andersca@apple.com>
+
         NP_RemoveProperty is not called back by Safari when delete npObject.prop is encountered in JavaScript
         https://bugs.webkit.org/show_bug.cgi?id=63915
         <rdar://problem/7124300>
