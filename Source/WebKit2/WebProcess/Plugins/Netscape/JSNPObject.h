@@ -67,6 +67,11 @@ private:
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
     virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
+    virtual bool deleteProperty(JSC::ExecState*, const JSC::Identifier& propertyName);
+    virtual bool deleteProperty(JSC::ExecState*, unsigned propertyName);
+
+    bool deleteProperty(JSC::ExecState*, NPIdentifier propertyName);
+
     virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);
 
     static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

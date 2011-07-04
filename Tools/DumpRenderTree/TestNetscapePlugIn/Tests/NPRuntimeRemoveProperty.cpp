@@ -36,16 +36,74 @@ public:
     }
     
 private:
-    struct TestObject : Object<TestObject> { 
+    struct TestObject : Object<TestObject> {
     public:
+        TestObject()
+            : m_lastRemovedProperty(0)
+        {
+        }
+
+        bool hasProperty(NPIdentifier propertyName)
+        {
+            if (identifierIs(propertyName, "lastRemovedProperty"))
+                return true;
+            
+            return false;
+        }
+
+        bool getProperty(NPIdentifier propertyName, NPVariant* result)
+        {
+            assert(identifierIs(propertyName, "lastRemovedProperty"));
+
+            if (!m_lastRemovedProperty)
+                return false;
+
+            if (pluginTest()->NPN_IdentifierIsString(m_lastRemovedProperty)) {
+                char* lastRemovedPropertyName = pluginTest()->NPN_UTF8FromIdentifier(m_lastRemovedProperty);
+                
+                STRINGZ_TO_NPVARIANT(lastRemovedPropertyName, *result);
+                return true;
+            }
+
+            int intIdentifier = pluginTest()->NPN_IntFromIdentifier(m_lastRemovedProperty);
+            DOUBLE_TO_NPVARIANT(intIdentifier, *result);
+            return true;
+        }
+
+        bool removeProperty(NPIdentifier propertyName)
+        {
+            m_lastRemovedProperty = propertyName;
+            return true;
+        }
+
+    private:
+        NPIdentifier m_lastRemovedProperty;
+    };
+
+    struct PluginObject : Object<PluginObject> {
+    public:
+        PluginObject()
+            : m_testObject(0)
+        {
+        }
+
+        ~PluginObject()
+        {
+            if (m_testObject)
+                pluginTest()->NPN_ReleaseObject(m_testObject);
+        }
+
         bool hasMethod(NPIdentifier methodName)
         {
-            return methodName == pluginTest()->NPN_GetStringIdentifier("testRemoveProperty");
+            if (identifierIs(methodName, "testRemoveProperty"))
+                return true;
+
+            return false;
         }
 
         bool invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
         {
-            assert(methodName == pluginTest()->NPN_GetStringIdentifier("testRemoveProperty"));
+            assert(identifierIs(methodName, "testRemoveProperty"));
 
             if (argumentCount != 2)
                 return false;
@@ -72,6 +130,28 @@ private:
             VOID_TO_NPVARIANT(*result);
             return true;
         }
+
+        bool hasProperty(NPIdentifier propertyName)
+        {
+            if (identifierIs(propertyName, "testObject"))
+                return true;
+
+            return false;
+        }
+
+        bool getProperty(NPIdentifier propertyName, NPVariant* result)
+        {
+            assert(identifierIs(propertyName, "testObject"));
+
+            if (!m_testObject)
+                m_testObject = TestObject::create(pluginTest());
+
+            OBJECT_TO_NPVARIANT(pluginTest()->NPN_RetainObject(m_testObject), *result);
+            return true;
+        }
+
+    private:
+        NPObject* m_testObject;
     };
     
     virtual NPError NPP_GetValue(NPPVariable variable, void *value)
@@ -79,7 +159,7 @@ private:
         if (variable != NPPVpluginScriptableNPObject)
             return NPERR_GENERIC_ERROR;
         
-        *(NPObject**)value = TestObject::create(this);
+        *(NPObject**)value = PluginObject::create(this);
         
         return NPERR_NO_ERROR;
     }

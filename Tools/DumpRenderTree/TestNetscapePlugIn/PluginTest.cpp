@@ -169,10 +169,35 @@ NPIdentifier PluginTest::NPN_GetIntIdentifier(int32_t intid)
     return browser->getintidentifier(intid);
 }
 
+bool PluginTest::NPN_IdentifierIsString(NPIdentifier npIdentifier)
+{
+    return browser->identifierisstring(npIdentifier);
+}
+
+NPUTF8* PluginTest::NPN_UTF8FromIdentifier(NPIdentifier npIdentifier)
+{
+    return browser->utf8fromidentifier(npIdentifier);
+}
+
+int32_t PluginTest::NPN_IntFromIdentifier(NPIdentifier npIdentifier)
+{
+    return browser->intfromidentifier(npIdentifier);
+}
+
 NPObject* PluginTest::NPN_CreateObject(NPClass* npClass)
 {
     return browser->createobject(m_npp, npClass);
 }                                 
+
+NPObject* PluginTest::NPN_RetainObject(NPObject* npObject)
+{
+    return browser->retainobject(npObject);
+}
+
+void PluginTest::NPN_ReleaseObject(NPObject* npObject)
+{
+    browser->releaseobject(npObject);
+}
 
 bool PluginTest::NPN_RemoveProperty(NPObject* npObject, NPIdentifier propertyName)
 {

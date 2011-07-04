@@ -1,3 +1,37 @@
+2011-07-04  Anders Carlsson  <andersca@apple.com>
+
+        NP_RemoveProperty is not called back by Safari when delete npObject.prop is encountered in JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=63915
+        <rdar://problem/7124300>
+
+        Reviewed by Sam Weinig.
+
+        Extend the NPRuntimeRemoveProperty to handle delete object.property from JavaScript.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_IdentifierIsString):
+        (PluginTest::NPN_UTF8FromIdentifier):
+        (PluginTest::NPN_IntFromIdentifier):
+        (PluginTest::NPN_RetainObject):
+        (PluginTest::NPN_ReleaseObject):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        (PluginTest::Object::removeProperty):
+        (PluginTest::Object::identifierIs):
+        (PluginTest::Object::NP_RemoveProperty):
+        (PluginTest::Object::npClass):
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp:
+        (NPRuntimeRemoveProperty::TestObject::TestObject):
+        (NPRuntimeRemoveProperty::TestObject::hasProperty):
+        (NPRuntimeRemoveProperty::TestObject::getProperty):
+        (NPRuntimeRemoveProperty::TestObject::removeProperty):
+        (NPRuntimeRemoveProperty::PluginObject::PluginObject):
+        (NPRuntimeRemoveProperty::PluginObject::~PluginObject):
+        (NPRuntimeRemoveProperty::PluginObject::hasMethod):
+        (NPRuntimeRemoveProperty::PluginObject::invoke):
+        (NPRuntimeRemoveProperty::PluginObject::hasProperty):
+        (NPRuntimeRemoveProperty::PluginObject::getProperty):
+        (NPRuntimeRemoveProperty::NPP_GetValue):
+
 2011-07-04  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kent Tamura.

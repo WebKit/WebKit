@@ -321,6 +321,47 @@ void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue va
     releaseNPVariantValue(&variant);
 }
 
+bool JSNPObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    return deleteProperty(exec, npIdentifierFromIdentifier(propertyName));
+}
+
+bool JSNPObject::deleteProperty(ExecState* exec, unsigned propertyName)
+{
+    return deleteProperty(exec, static_cast<NPIdentifier>(IdentifierRep::get(propertyName)));
+}
+
+bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
+{
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    if (!m_npObject) {
+        throwInvalidAccessError(exec);
+        return false;
+    }
+
+    if (!m_npObject->_class->removeProperty) {
+        // FIXME: Should we throw an exception here?
+        return false;
+    }
+
+    // Calling NPClass::setProperty will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+
+        // FIXME: Should we throw an exception if removeProperty returns false?
+        if (!m_npObject->_class->removeProperty(m_npObject, propertyName))
+            return false;
+
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
+    }
+
+    return true;
+}
+
 void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
 {
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);
