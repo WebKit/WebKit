@@ -133,6 +133,8 @@ typedef uint32_t ExceptionInfo;
     /* Nodes for comparison operations. */\
     macro(CompareLess, NodeResultJS | NodeMustGenerate) \
     macro(CompareLessEq, NodeResultJS | NodeMustGenerate) \
+    macro(CompareGreater, NodeResultJS | NodeMustGenerate) \
+    macro(CompareGreaterEq, NodeResultJS | NodeMustGenerate) \
     macro(CompareEq, NodeResultJS | NodeMustGenerate) \
     macro(CompareStrictEq, NodeResultJS) \
     \

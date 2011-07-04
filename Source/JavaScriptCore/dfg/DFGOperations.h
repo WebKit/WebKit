@@ -76,6 +76,8 @@ void operationPutByIdDirectStrictOptimize(ExecState*, EncodedJSValue encodedValu
 void operationPutByIdDirectNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 bool operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+bool operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+bool operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 

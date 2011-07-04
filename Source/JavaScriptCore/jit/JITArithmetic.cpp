@@ -64,6 +64,24 @@ void JIT::emit_op_jlesseq(Instruction* currentInstruction)
     emit_compareAndJump(op_jlesseq, op1, op2, target, LessThanOrEqual);
 }
 
+void JIT::emit_op_jgreater(Instruction* currentInstruction)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJump(op_jgreater, op1, op2, target, GreaterThan);
+}
+
+void JIT::emit_op_jgreatereq(Instruction* currentInstruction)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJump(op_jgreatereq, op1, op2, target, GreaterThanOrEqual);
+}
+
 void JIT::emit_op_jnless(Instruction* currentInstruction)
 {
     unsigned op1 = currentInstruction[1].u.operand;
@@ -80,6 +98,24 @@ void JIT::emit_op_jnlesseq(Instruction* currentInstruction)
     unsigned target = currentInstruction[3].u.operand;
 
     emit_compareAndJump(op_jnlesseq, op1, op2, target, GreaterThan);
+}
+
+void JIT::emit_op_jngreater(Instruction* currentInstruction)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJump(op_jngreater, op1, op2, target, LessThanOrEqual);
+}
+
+void JIT::emit_op_jngreatereq(Instruction* currentInstruction)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJump(op_jngreatereq, op1, op2, target, LessThan);
 }
 
 void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -100,6 +136,24 @@ void JIT::emitSlow_op_jlesseq(Instruction* currentInstruction, Vector<SlowCaseEn
     emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrEqual, cti_op_jlesseq, false, iter);
 }
 
+void JIT::emitSlow_op_jgreater(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThan, cti_op_jgreater, false, iter);
+}
+
+void JIT::emitSlow_op_jgreatereq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrEqual, cti_op_jgreatereq, false, iter);
+}
+
 void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned op1 = currentInstruction[1].u.operand;
@@ -116,6 +170,24 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
     unsigned target = currentInstruction[3].u.operand;
 
     emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrUnordered, cti_op_jlesseq, true, iter);
+}
+
+void JIT::emitSlow_op_jngreater(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrEqualOrUnordered, cti_op_jgreater, true, iter);
+}
+
+void JIT::emitSlow_op_jngreatereq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned op1 = currentInstruction[1].u.operand;
+    unsigned op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrUnordered, cti_op_jgreatereq, true, iter);
 }
 
 #if USE(JSVALUE64)
@@ -361,6 +433,14 @@ void JIT::emit_compareAndJump(OpcodeID, unsigned op1, unsigned op2, unsigned tar
 
 void JIT::emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, DoubleCondition condition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jlesseq), OPCODE_LENGTH_op_jlesseq_equals_op_jless);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jnless), OPCODE_LENGTH_op_jnless_equals_op_jless);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jnlesseq), OPCODE_LENGTH_op_jnlesseq_equals_op_jless);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jgreater), OPCODE_LENGTH_op_jgreater_equals_op_jless);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jgreatereq), OPCODE_LENGTH_op_jgreatereq_equals_op_jless);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jngreater), OPCODE_LENGTH_op_jngreater_equals_op_jless);
+    COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jngreatereq), OPCODE_LENGTH_op_jngreatereq_equals_op_jless);
+    
     // We generate inline code for the following cases in the slow path:
     // - floating-point number to constant int immediate
     // - constant int immediate to floating-point number
@@ -393,7 +473,7 @@ void JIT::emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, D
 
             emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
 
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jless));
 
             fail1.link(this);
         }
@@ -419,7 +499,7 @@ void JIT::emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, D
 
             emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
 
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jless));
 
             fail1.link(this);
         }
@@ -429,7 +509,6 @@ void JIT::emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, D
         stubCall.addArgument(regT1);
         stubCall.call();
         emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
-
     } else {
         linkSlowCase(iter);
 
@@ -444,7 +523,7 @@ void JIT::emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, D
 
             emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
 
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jnless));
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jless));
 
             fail1.link(this);
             fail2.link(this);

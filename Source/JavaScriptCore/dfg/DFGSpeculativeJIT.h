@@ -184,6 +184,7 @@ private:
         return !(isDataFormatDouble(op1) || isDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
     }
 
+    bool compare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleCall(Node&, NodeIndex branchNodeIndex, Z_DFGOperation_EJJ);
 

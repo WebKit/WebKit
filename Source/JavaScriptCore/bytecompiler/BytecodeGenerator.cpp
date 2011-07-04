@@ -733,6 +733,40 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
             instructions().append(target->bind(begin, instructions().size()));
             return target;
         }
+    } else if (m_lastOpcodeID == op_greater) {
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(target->isForward() ? op_jgreater : op_loop_if_greater);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target->bind(begin, instructions().size()));
+            return target;
+        }
+    } else if (m_lastOpcodeID == op_greatereq) {
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(target->isForward() ? op_jgreatereq : op_loop_if_greatereq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target->bind(begin, instructions().size()));
+            return target;
+        }
     } else if (m_lastOpcodeID == op_eq_null && target->isForward()) {
         int dstIndex;
         int srcIndex;
@@ -804,6 +838,40 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
 
             size_t begin = instructions().size();
             emitOpcode(op_jnlesseq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target->bind(begin, instructions().size()));
+            return target;
+        }
+    } else if (m_lastOpcodeID == op_greater && target->isForward()) {
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jngreater);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target->bind(begin, instructions().size()));
+            return target;
+        }
+    } else if (m_lastOpcodeID == op_greatereq && target->isForward()) {
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jngreatereq);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target->bind(begin, instructions().size()));

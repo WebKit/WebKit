@@ -342,7 +342,7 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     jsValueResult(resultGPR, m_compileIndex);
 }
 
-void NonSpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition cond, const Z_DFGOperation_EJJ& helperFunction)
+void NonSpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
 {
     // FIXME: should do some peephole to fuse compare/branch
         
@@ -738,6 +738,14 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         
     case CompareLessEq:
         compare(node, MacroAssembler::LessThanOrEqual, operationCompareLessEq);
+        break;
+        
+    case CompareGreater:
+        compare(node, MacroAssembler::GreaterThan, operationCompareGreater);
+        break;
+        
+    case CompareGreaterEq:
+        compare(node, MacroAssembler::GreaterThanOrEqual, operationCompareGreaterEq);
         break;
         
     case CompareEq:

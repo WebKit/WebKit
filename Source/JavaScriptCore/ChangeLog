@@ -1,3 +1,69 @@
+2011-07-04  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63881
+        Need separate bytecodes for handling >, >= comparisons.
+
+        Reviewed by Oliver Hunt.
+
+        This clears the way to fix Bug#63880. We currently handle greater-than comparisons
+        as being using the corresponding op_less, etc opcodes.  This is incorrect with
+        respect to evaluation ordering of the implicit conversions performed on operands -
+        we should be calling ToPrimitive on the LHS and RHS operands to the greater than,
+        but instead convert RHS then LHS.
+
+        This patch adds opcodes for greater-than comparisons mirroring existing ones used
+        for less-than.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        * bytecompiler/NodesCodegen.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compare):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JSC::JIT::emit_op_loop_if_greater):
+        (JSC::JIT::emitSlow_op_loop_if_greater):
+        (JSC::JIT::emit_op_loop_if_greatereq):
+        (JSC::JIT::emitSlow_op_loop_if_greatereq):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jgreater):
+        (JSC::JIT::emit_op_jgreatereq):
+        (JSC::JIT::emit_op_jngreater):
+        (JSC::JIT::emit_op_jngreatereq):
+        (JSC::JIT::emitSlow_op_jgreater):
+        (JSC::JIT::emitSlow_op_jgreatereq):
+        (JSC::JIT::emitSlow_op_jngreater):
+        (JSC::JIT::emitSlow_op_jngreatereq):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * parser/NodeConstructors.h:
+        (JSC::GreaterNode::GreaterNode):
+        (JSC::GreaterEqNode::GreaterEqNode):
+        * parser/Nodes.h:
+
 2011-07-03  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=63879

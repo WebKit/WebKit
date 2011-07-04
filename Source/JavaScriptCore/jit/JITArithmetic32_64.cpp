@@ -864,10 +864,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 divDouble(fpRegT0, fpRegT1);
                 emitStoreDouble(dst, fpRegT1);
                 break;
-            case op_jnless:
-                emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT0, fpRegT2), dst);
-                break;
             case op_jless:
                 emitLoadDouble(op1, fpRegT2);
                 addJump(branchDouble(DoubleLessThan, fpRegT2, fpRegT0), dst);
@@ -876,9 +872,29 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 emitLoadDouble(op1, fpRegT2);
                 addJump(branchDouble(DoubleLessThanOrEqual, fpRegT2, fpRegT0), dst);
                 break;
+            case op_jgreater:
+                emitLoadDouble(op1, fpRegT2);
+                addJump(branchDouble(DoubleGreaterThan, fpRegT2, fpRegT0), dst);
+                break;
+            case op_jgreatereq:
+                emitLoadDouble(op1, fpRegT2);
+                addJump(branchDouble(DoubleGreaterThanOrEqual, fpRegT2, fpRegT0), dst);
+                break;
+            case op_jnless:
+                emitLoadDouble(op1, fpRegT2);
+                addJump(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT0, fpRegT2), dst);
+                break;
             case op_jnlesseq:
                 emitLoadDouble(op1, fpRegT2);
                 addJump(branchDouble(DoubleLessThanOrUnordered, fpRegT0, fpRegT2), dst);
+                break;
+            case op_jngreater:
+                emitLoadDouble(op1, fpRegT2);
+                addJump(branchDouble(DoubleGreaterThanOrEqualOrUnordered, fpRegT0, fpRegT2), dst);
+                break;
+            case op_jngreatereq:
+                emitLoadDouble(op1, fpRegT2);
+                addJump(branchDouble(DoubleGreaterThanOrUnordered, fpRegT0, fpRegT2), dst);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -925,21 +941,37 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 divDouble(fpRegT2, fpRegT0);
                 emitStoreDouble(dst, fpRegT0);
                 break;
-            case op_jnless:
-                emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT1, fpRegT0), dst);
-                break;
             case op_jless:
                 emitLoadDouble(op2, fpRegT1);
                 addJump(branchDouble(DoubleLessThan, fpRegT0, fpRegT1), dst);
+                break;
+            case op_jlesseq:
+                emitLoadDouble(op2, fpRegT1);
+                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT0, fpRegT1), dst);
+                break;
+            case op_jgreater:
+                emitLoadDouble(op2, fpRegT1);
+                addJump(branchDouble(DoubleGreaterThan, fpRegT0, fpRegT1), dst);
+                break;
+            case op_jgreatereq:
+                emitLoadDouble(op2, fpRegT1);
+                addJump(branchDouble(DoubleGreaterThanOrEqual, fpRegT0, fpRegT1), dst);
+                break;
+            case op_jnless:
+                emitLoadDouble(op2, fpRegT1);
+                addJump(branchDouble(DoubleLessThanOrEqualOrUnordered, fpRegT1, fpRegT0), dst);
                 break;
             case op_jnlesseq:
                 emitLoadDouble(op2, fpRegT1);
                 addJump(branchDouble(DoubleLessThanOrUnordered, fpRegT1, fpRegT0), dst);
                 break;
-            case op_jlesseq:
+            case op_jngreater:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT0, fpRegT1), dst);
+                addJump(branchDouble(DoubleGreaterThanOrEqualOrUnordered, fpRegT1, fpRegT0), dst);
+                break;
+            case op_jngreatereq:
+                emitLoadDouble(op2, fpRegT1);
+                addJump(branchDouble(DoubleGreaterThanOrUnordered, fpRegT1, fpRegT0), dst);
                 break;
             default:
                 ASSERT_NOT_REACHED();

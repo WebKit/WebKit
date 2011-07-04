@@ -377,6 +377,16 @@ bool operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJ
     return jsLessEq(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
+bool operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return jsLess(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1)); // FIXME: Bug#63880
+}
+
+bool operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return jsLessEq(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1)); // FIXME: Bug#63880
+}
+
 bool operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::equal(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));

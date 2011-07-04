@@ -1796,6 +1796,40 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_lesseq);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_greater) {
+        /* greater dst(r) src1(r) src2(r)
+
+           Checks whether register src1 is greater than register src2, as
+           with the ECMAScript '>' operator, and puts the result as
+           a boolean in register dst.
+        */
+        int dst = vPC[1].u.operand;
+        JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
+        JSValue result = jsBoolean(jsLess(callFrame, src2, src1)); // FIXME: Bug#63880
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
+
+        vPC += OPCODE_LENGTH(op_greater);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_greatereq) {
+        /* greatereq dst(r) src1(r) src2(r)
+
+           Checks whether register src1 is greater than or equal to
+           register src2, as with the ECMAScript '>=' operator, and
+           puts the result as a boolean in register dst.
+        */
+        int dst = vPC[1].u.operand;
+        JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
+        JSValue result = jsBoolean(jsLessEq(callFrame, src2, src1)); // FIXME: Bug#63880
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
+
+        vPC += OPCODE_LENGTH(op_greatereq);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_pre_inc) {
         /* pre_inc srcDst(r)
 
@@ -3693,27 +3727,58 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_loop_if_lesseq);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_jnless) {
-        /* jnless src1(r) src2(r) target(offset)
+    DEFINE_OPCODE(op_loop_if_greater) {
+        /* loop_if_greater src1(r) src2(r) target(offset)
 
-           Checks whether register src1 is less than register src2, as
-           with the ECMAScript '<' operator, and then jumps to offset
+           Checks whether register src1 is greater than register src2, as
+           with the ECMAScript '>' operator, and then jumps to offset
            target from the current instruction, if and only if the 
-           result of the comparison is false.
+           result of the comparison is true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+         */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+        
+        bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
+        CHECK_FOR_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            CHECK_FOR_TIMEOUT();
+            NEXT_INSTRUCTION();
+        }
+        
+        vPC += OPCODE_LENGTH(op_loop_if_greater);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_loop_if_greatereq) {
+        /* loop_if_greatereq src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is greater than or equal to register
+           src2, as with the ECMAScript '>=' operator, and then jumps to
+           offset target from the current instruction, if and only if the 
+           result of the comparison is true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
         */
         JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
-
-        bool result = jsLess(callFrame, src1, src2);
+        
+        bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
         CHECK_FOR_EXCEPTION();
         
-        if (!result) {
+        if (result) {
             vPC += target;
+            CHECK_FOR_TIMEOUT();
             NEXT_INSTRUCTION();
         }
-
-        vPC += OPCODE_LENGTH(op_jnless);
+        
+        vPC += OPCODE_LENGTH(op_loop_if_greatereq);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_jless) {
@@ -3739,6 +3804,98 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_jless);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_jlesseq) {
+        /* jlesseq src1(r) src2(r) target(offset)
+         
+         Checks whether register src1 is less than or equal to
+         register src2, as with the ECMAScript '<=' operator,
+         and then jumps to offset target from the current instruction,
+         if and only if the result of the comparison is true.
+         */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+        
+        bool result = jsLessEq(callFrame, src1, src2);
+        CHECK_FOR_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+        
+        vPC += OPCODE_LENGTH(op_jlesseq);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_jgreater) {
+        /* jgreater src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is greater than register src2, as
+           with the ECMAScript '>' operator, and then jumps to offset
+           target from the current instruction, if and only if the 
+           result of the comparison is true.
+        */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+
+        bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
+        CHECK_FOR_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+
+        vPC += OPCODE_LENGTH(op_jgreater);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_jgreatereq) {
+        /* jgreatereq src1(r) src2(r) target(offset)
+         
+         Checks whether register src1 is greater than or equal to
+         register src2, as with the ECMAScript '>=' operator,
+         and then jumps to offset target from the current instruction,
+         if and only if the result of the comparison is true.
+         */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+        
+        bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
+        CHECK_FOR_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+        
+        vPC += OPCODE_LENGTH(op_jgreatereq);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_jnless) {
+        /* jnless src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is less than register src2, as
+           with the ECMAScript '<' operator, and then jumps to offset
+           target from the current instruction, if and only if the 
+           result of the comparison is false.
+        */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+
+        bool result = jsLess(callFrame, src1, src2);
+        CHECK_FOR_EXCEPTION();
+        
+        if (!result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+
+        vPC += OPCODE_LENGTH(op_jnless);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_jnlesseq) {
         /* jnlesseq src1(r) src2(r) target(offset)
 
@@ -3762,27 +3919,50 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_jnlesseq);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_jlesseq) {
-        /* jlesseq src1(r) src2(r) target(offset)
-         
-         Checks whether register src1 is less than or equal to
-         register src2, as with the ECMAScript '<=' operator,
-         and then jumps to offset target from the current instruction,
-         if and only if the result of the comparison is true.
-         */
+    DEFINE_OPCODE(op_jngreater) {
+        /* jngreater src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is greater than register src2, as
+           with the ECMAScript '>' operator, and then jumps to offset
+           target from the current instruction, if and only if the 
+           result of the comparison is false.
+        */
         JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
-        
-        bool result = jsLessEq(callFrame, src1, src2);
+
+        bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
         CHECK_FOR_EXCEPTION();
         
-        if (result) {
+        if (!result) {
             vPC += target;
             NEXT_INSTRUCTION();
         }
+
+        vPC += OPCODE_LENGTH(op_jngreater);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_jngreatereq) {
+        /* jngreatereq src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is greater than or equal to
+           register src2, as with the ECMAScript '>=' operator,
+           and then jumps to offset target from the current instruction,
+           if and only if theresult of the comparison is false.
+        */
+        JSValue src1 = callFrame->r(vPC[1].u.operand).jsValue();
+        JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
+        int target = vPC[3].u.operand;
+
+        bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
+        CHECK_FOR_EXCEPTION();
         
-        vPC += OPCODE_LENGTH(op_jlesseq);
+        if (!result) {
+            vPC += target;
+            NEXT_INSTRUCTION();
+        }
+
+        vPC += OPCODE_LENGTH(op_jngreatereq);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_switch_imm) {

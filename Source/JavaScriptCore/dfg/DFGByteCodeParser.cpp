@@ -736,6 +736,22 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_lesseq);
         }
 
+        case op_greater: {
+            ARITHMETIC_OP();
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareGreater, op1, op2));
+            NEXT_OPCODE(op_greater);
+        }
+
+        case op_greatereq: {
+            ARITHMETIC_OP();
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareGreaterEq, op1, op2));
+            NEXT_OPCODE(op_greatereq);
+        }
+
         case op_eq: {
             ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
@@ -911,24 +927,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_null);
         }
 
-        case op_jnless: {
-            unsigned relativeOffset = currentInstruction[3].u.operand;
-            NodeIndex op1 = get(currentInstruction[1].u.operand);
-            NodeIndex op2 = get(currentInstruction[2].u.operand);
-            NodeIndex condition = addToGraph(CompareLess, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnless)), OpInfo(m_currentIndex + relativeOffset), condition);
-            LAST_OPCODE(op_jnless);
-        }
-
-        case op_jnlesseq: {
-            unsigned relativeOffset = currentInstruction[3].u.operand;
-            NodeIndex op1 = get(currentInstruction[1].u.operand);
-            NodeIndex op2 = get(currentInstruction[2].u.operand);
-            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnlesseq)), OpInfo(m_currentIndex + relativeOffset), condition);
-            LAST_OPCODE(op_jnlesseq);
-        }
-
         case op_jless: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             NodeIndex op1 = get(currentInstruction[1].u.operand);
@@ -947,6 +945,60 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jlesseq);
         }
 
+        case op_jgreater: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreater, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jgreater)), condition);
+            LAST_OPCODE(op_jgreater);
+        }
+
+        case op_jgreatereq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreaterEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jgreatereq)), condition);
+            LAST_OPCODE(op_jgreatereq);
+        }
+
+        case op_jnless: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLess, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnless)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jnless);
+        }
+
+        case op_jnlesseq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnlesseq)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jnlesseq);
+        }
+
+        case op_jngreater: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreater, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jngreater)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jngreater);
+        }
+
+        case op_jngreatereq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreaterEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jngreatereq)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jngreatereq);
+        }
+
         case op_loop_if_less: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             NodeIndex op1 = get(currentInstruction[1].u.operand);
@@ -963,6 +1015,24 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
             addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_lesseq)), condition);
             LAST_OPCODE(op_loop_if_lesseq);
+        }
+
+        case op_loop_if_greater: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreater, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_greater)), condition);
+            LAST_OPCODE(op_loop_if_greater);
+        }
+
+        case op_loop_if_greatereq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreaterEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_greatereq)), condition);
+            LAST_OPCODE(op_loop_if_greatereq);
         }
 
         case op_ret: {

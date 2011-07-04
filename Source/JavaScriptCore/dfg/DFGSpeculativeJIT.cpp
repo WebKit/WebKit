@@ -413,6 +413,40 @@ void SpeculativeJIT::compilePeepHoleCall(Node& node, NodeIndex branchNodeIndex, 
         addBranch(m_jit.jump(), notTaken);
 }
 
+// Returns true if the compare is fused with a subsequent branch.
+bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, Z_DFGOperation_EJJ operation)
+{
+    // Fused compare & branch.
+    NodeIndex branchNodeIndex = detectPeepHoleBranch();
+    if (branchNodeIndex != NoNode) {
+        // detectPeepHoleBranch currently only permits the branch to be the very next node,
+        // so can be no intervening nodes to also reference the compare. 
+        ASSERT(node.adjustedRefCount() == 1);
+
+        if (shouldSpeculateInteger(node.child1, node.child2))
+            compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
+        else
+            compilePeepHoleCall(node, branchNodeIndex, operation);
+
+        use(node.child1);
+        use(node.child2);
+        m_compileIndex = branchNodeIndex;
+        return true;
+    }
+
+    // Normal case, not fused to branch.
+    SpeculateIntegerOperand op1(this, node.child1);
+    SpeculateIntegerOperand op2(this, node.child2);
+    GPRTemporary result(this, op1, op2);
+
+    m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
+
+    // If we add a DataFormatBool, we should use it here.
+    m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+    jsValueResult(result.gpr(), m_compileIndex);
+    return false;
+}
+
 void SpeculativeJIT::compile(Node& node)
 {
     NodeType op = node.op;
@@ -738,100 +772,30 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case CompareLess: {
-        // Fused compare & branch.
-        NodeIndex branchNodeIndex = detectPeepHoleBranch();
-        if (branchNodeIndex != NoNode) {
-            // detectPeepHoleBranch currently only permits the branch to be the very next node,
-            // so can be no intervening nodes to also reference the compare. 
-            ASSERT(node.adjustedRefCount() == 1);
-
-            if (shouldSpeculateInteger(node.child1, node.child2))
-                compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThan);
-            else
-                compilePeepHoleCall(node, branchNodeIndex, operationCompareLess);
-
-            use(node.child1);
-            use(node.child2);
-            m_compileIndex = branchNodeIndex;
+    case CompareLess:
+        if (compare(node, JITCompiler::LessThan, operationCompareLess))
             return;
-        }
-
-        // Normal case, not fused to branch.
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this, op1, op2);
-
-        m_jit.compare32(JITCompiler::LessThan, op1.gpr(), op2.gpr(), result.gpr());
-
-        // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex);
         break;
-    }
 
-    case CompareLessEq: {
-        // Fused compare & branch.
-        NodeIndex branchNodeIndex = detectPeepHoleBranch();
-        if (branchNodeIndex != NoNode) {
-            // detectPeepHoleBranch currently only permits the branch to be the very next node,
-            // so can be no intervening nodes to also reference the compare. 
-            ASSERT(node.adjustedRefCount() == 1);
-
-            if (shouldSpeculateInteger(node.child1, node.child2))
-                compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::LessThanOrEqual);
-            else
-                compilePeepHoleCall(node, branchNodeIndex, operationCompareLessEq);
-
-            use(node.child1);
-            use(node.child2);
-            m_compileIndex = branchNodeIndex;
+    case CompareLessEq:
+        if (compare(node, JITCompiler::LessThanOrEqual, operationCompareLessEq))
             return;
-        }
-
-        // Normal case, not fused to branch.
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this, op1, op2);
-
-        m_jit.compare32(JITCompiler::LessThanOrEqual, op1.gpr(), op2.gpr(), result.gpr());
-
-        // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex);
         break;
-    }
 
-    case CompareEq: {
-        // Fused compare & branch.
-        NodeIndex branchNodeIndex = detectPeepHoleBranch();
-        if (branchNodeIndex != NoNode) {
-            // detectPeepHoleBranch currently only permits the branch to be the very next node,
-            // so can be no intervening nodes to also reference the compare. 
-            ASSERT(node.adjustedRefCount() == 1);
-
-            if (shouldSpeculateInteger(node.child1, node.child2))
-                compilePeepHoleIntegerBranch(node, branchNodeIndex, JITCompiler::Equal);
-            else
-                compilePeepHoleCall(node, branchNodeIndex, operationCompareEq);
-
-            use(node.child1);
-            use(node.child2);
-            m_compileIndex = branchNodeIndex;
+    case CompareGreater:
+        if (compare(node, JITCompiler::GreaterThan, operationCompareGreater))
             return;
-        }
-
-        SpeculateIntegerOperand op1(this, node.child1);
-        SpeculateIntegerOperand op2(this, node.child2);
-        GPRTemporary result(this, op1, op2);
-
-        m_jit.compare32(JITCompiler::Equal, op1.gpr(), op2.gpr(), result.gpr());
-
-        // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex);
         break;
-    }
+
+    case CompareGreaterEq:
+        if (compare(node, JITCompiler::GreaterThanOrEqual, operationCompareGreaterEq))
+            return;
+        break;
+
+    case CompareEq:
+        if (compare(node, JITCompiler::Equal, operationCompareEq))
+            return;
+        break;
 
     case CompareStrictEq: {
         SpeculateIntegerOperand op1(this, node.child1);

@@ -102,8 +102,8 @@ private:
     // internal helpers for add/sub/mul operations
     void knownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
     void basicArithOp(NodeType op, Node&);
-    void compare(Node&, MacroAssembler::RelationalCondition, const Z_DFGOperation_EJJ&);
-    
+    void compare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ);
+
     EntryLocationVector m_entryLocations;
 };
 

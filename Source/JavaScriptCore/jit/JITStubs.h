@@ -352,6 +352,8 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_is_undefined(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_less(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_lesseq(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_greater(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_greatereq(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_lshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_mod(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_mul(STUB_ARGS_DECLARATION);
@@ -394,6 +396,8 @@ extern "C" {
     int JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_jgreater(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_jgreatereq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);

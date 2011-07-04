@@ -62,6 +62,8 @@ namespace JSC {
         macro(op_nstricteq, 4) \
         macro(op_less, 4) \
         macro(op_lesseq, 4) \
+        macro(op_greater, 4) \
+        macro(op_greatereq, 4) \
         \
         macro(op_pre_inc, 2) \
         macro(op_pre_dec, 2) \
@@ -145,16 +147,22 @@ namespace JSC {
         macro(op_jeq_null, 3) \
         macro(op_jneq_null, 3) \
         macro(op_jneq_ptr, 4) \
-        macro(op_jnless, 4) \
-        macro(op_jnlesseq, 4) \
         macro(op_jless, 4) \
         macro(op_jlesseq, 4) \
+        macro(op_jgreater, 4) \
+        macro(op_jgreatereq, 4) \
+        macro(op_jnless, 4) \
+        macro(op_jnlesseq, 4) \
+        macro(op_jngreater, 4) \
+        macro(op_jngreatereq, 4) \
         macro(op_jmp_scopes, 3) \
         macro(op_loop, 2) \
         macro(op_loop_if_true, 3) \
         macro(op_loop_if_false, 3) \
         macro(op_loop_if_less, 4) \
         macro(op_loop_if_lesseq, 4) \
+        macro(op_loop_if_greater, 4) \
+        macro(op_loop_if_greatereq, 4) \
         macro(op_switch_imm, 4) \
         macro(op_switch_char, 4) \
         macro(op_switch_string, 4) \
