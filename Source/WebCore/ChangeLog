@@ -1,3 +1,13 @@
+2011-07-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: repeated message counter should be aligned with other message icons
+        https://bugs.webkit.org/show_bug.cgi?id=63901
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.css:
+        (.console-message .bubble):
+
 2011-07-04  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
