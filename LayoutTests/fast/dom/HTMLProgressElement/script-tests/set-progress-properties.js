@@ -3,7 +3,7 @@ description('Test setting valid and invalid properties of HTMLProgressElement.')
 var p = document.createElement('progress');
 
 debug("Test values before properties were set");
-shouldBe("p.value", "1");
+shouldBe("p.value", "0");
 shouldBe("p.max", "1");
 shouldBe("p.position", "-1");
 
@@ -20,6 +20,11 @@ p.max = 100.0;
 shouldBe("p.value", "100");
 shouldBe("p.max", "100");
 shouldBe("p.position", "1");
+
+debug("Set value less than zero");
+p.value = -42;
+shouldBe('p.value', '0');
+shouldBe('p.position', '0');
 
 debug("Set invalid value, should throw");
 shouldThrow('p.value = "200A";', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');

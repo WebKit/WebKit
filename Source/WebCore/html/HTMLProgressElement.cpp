@@ -93,11 +93,10 @@ void HTMLProgressElement::attach()
 
 double HTMLProgressElement::value() const
 {
-    const AtomicString& valueString = getAttribute(valueAttr);
     double value;
-    bool ok = parseToDoubleForNumberType(valueString, &value);
+    bool ok = parseToDoubleForNumberType(fastGetAttribute(valueAttr), &value);
     if (!ok || value < 0)
-        return valueString.isNull() ? 1 : 0;
+        return 0;
     return (value > max()) ? max() : value;
 }
 

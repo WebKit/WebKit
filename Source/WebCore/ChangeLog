@@ -1,3 +1,15 @@
+2011-07-03  Dominic Cooney  <dominicc@chromium.org>
+
+        The value property of an indeterminate progress element should be zero
+        https://bugs.webkit.org/show_bug.cgi?id=63861
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/dom/HTMLProgressElement/set-progress-properties.html
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::value):
+
 2011-07-03  Robert Hogan  <robert@webkit.org>
 
         Restore scroll position on page reloads scheduled by <meta http-equiv="refresh" content="XX"/>
