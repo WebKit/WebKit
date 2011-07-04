@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ShortcutsHelp = function()
+WebInspector.ShortcutsScreen = function()
 {
     this._sections = {};
 }
 
-WebInspector.ShortcutsHelp.prototype = {
+WebInspector.ShortcutsScreen.prototype = {
     section: function(name)
     {
         var section = this._sections[name];
@@ -86,7 +86,7 @@ WebInspector.ShortcutsHelp.prototype = {
     }
 };
 
-WebInspector.shortcutsHelp = new WebInspector.ShortcutsHelp();
+WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
 
 WebInspector.ShortcutsSection = function(name)
 {

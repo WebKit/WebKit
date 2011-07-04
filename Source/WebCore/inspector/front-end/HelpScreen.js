@@ -43,38 +43,42 @@ WebInspector.HelpScreen = function(title)
     captionWindow.createChild("h1", "help-window-title").textContent = title;
 
     closeButton.textContent = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
-    closeButton.addEventListener("click", this._hide.bind(this), false);
+    closeButton.addEventListener("click", this.hide.bind(this), false);
     this._closeKeys = [
         WebInspector.KeyboardShortcut.Keys.Enter.code,
         WebInspector.KeyboardShortcut.Keys.Esc.code,
         WebInspector.KeyboardShortcut.Keys.Space.code,
     ];
-    document.body.appendChild(this._element);
 }
 
 WebInspector.HelpScreen.prototype = {
-    show: function()
+    show: function(onHide)
     {
         if (this._isShown)
             return;
 
-        this._element.style.visibility = "visible";
+        document.body.appendChild(this._element);
         this._isShown = true;
+        this._onHide = onHide;
         this._previousFocusElement = WebInspector.currentFocusElement;
         WebInspector.currentFocusElement = this.contentElement;
     },
 
-    _hide: function()
+    hide: function()
     {
         this._isShown = false;
-        this._element.style.visibility = "hidden";
+        document.body.removeChild(this._element);
         WebInspector.currentFocusElement = this._previousFocusElement;
+        if (this._onHide) {
+            this._onHide();
+            delete this._onHide;
+        }
     },
 
     _onKeyDown: function(event)
     {
         if (this._isShown && this._closeKeys.indexOf(event.keyCode) >= 0) {
-            this._hide();
+            this.hide();
             event.stopPropagation();
         }
     },

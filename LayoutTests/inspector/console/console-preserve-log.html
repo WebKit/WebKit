@@ -5,12 +5,11 @@
 <script>
 function test()
 {
-    WebInspector.console.addMessage(
-        WebInspector.ConsoleMessage.createTextMessage("PASS"));
-    WebInspector.settings.preserveConsoleLog = true;
+    WebInspector.console.addMessage(WebInspector.ConsoleMessage.createTextMessage("PASS"));
+    WebInspector.settings.preserveConsoleLog.set(true);
     InspectorTest.reloadPage(function() {
         InspectorTest.dumpConsoleMessages();
-        WebInspector.settings.preserveConsoleLog = false;
+        WebInspector.settings.preserveConsoleLog.set(false);
         InspectorTest.completeTest();
     });
 }

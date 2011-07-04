@@ -131,7 +131,7 @@ WebInspector.ProfilesPanel = function()
 
     InspectorBackend.registerDomainDispatcher("Profiler", new WebInspector.ProfilerDispatcher(this));
 
-    if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
+    if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled.get())
         ProfilerAgent.enable();
     else {
         function onProfilerEnebled(error, value) {
@@ -600,10 +600,10 @@ WebInspector.ProfilesPanel.prototype = {
     _toggleProfiling: function(optionalAlways)
     {
         if (this._profilerEnabled) {
-            WebInspector.settings.profilerEnabled = false;
+            WebInspector.settings.profilerEnabled.set(false);
             ProfilerAgent.disable();
         } else {
-            WebInspector.settings.profilerEnabled = !!optionalAlways;
+            WebInspector.settings.profilerEnabled.set(!!optionalAlways);
             ProfilerAgent.enable();
         }
     },

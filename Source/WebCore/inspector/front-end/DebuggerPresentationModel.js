@@ -505,7 +505,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _restoreBreakpointsFromSettings: function()
     {
-        var breakpoints = WebInspector.settings.breakpoints;
+        var breakpoints = WebInspector.settings.breakpoints.get();
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpointData = breakpoints[i];
             var sourceFileId = breakpointData.sourceFileId;
@@ -559,7 +559,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             serializedBreakpoints[i] = breakpointCopy;
         }
 
-        WebInspector.settings.breakpoints = serializedBreakpoints;
+        WebInspector.settings.breakpoints.set(serializedBreakpoints);
     },
 
     _debuggerPaused: function()

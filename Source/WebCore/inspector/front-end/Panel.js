@@ -365,7 +365,7 @@ WebInspector.Panel.prototype = {
 
     restoreSidebarWidth: function()
     {
-        var sidebarWidth = WebInspector.settings[this._sidebarWidthSettingName()];
+        var sidebarWidth = WebInspector.settings[this._sidebarWidthSettingName()].get();
         this.updateSidebarWidth(sidebarWidth);
     },
 
@@ -373,7 +373,7 @@ WebInspector.Panel.prototype = {
     {
         if (!this.sidebarElement)
             return;
-        WebInspector.settings[this._sidebarWidthSettingName()] = this.sidebarElement.offsetWidth;
+        WebInspector.settings[this._sidebarWidthSettingName()].set(this.sidebarElement.offsetWidth);
     },
 
     updateMainViewWidth: function(width)

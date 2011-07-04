@@ -47,7 +47,7 @@ WebInspector.EventListenersSidebarPane = function()
     option.label = WebInspector.UIString("Selected Node Only");
     this.settingsSelectElement.appendChild(option);
 
-    var filter = WebInspector.settings.eventListenersFilter;
+    var filter = WebInspector.settings.eventListenersFilter.get();
     if (filter === "all")
         this.settingsSelectElement[0].selected = true;
     else if (filter === "selected")
@@ -115,7 +115,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
     _changeSetting: function(event)
     {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        WebInspector.settings.eventListenersFilter = selectedOption.value;
+        WebInspector.settings.eventListenersFilter.set(selectedOption.value);
 
         for (var i = 0; i < this.sections.length; ++i)
             this.sections[i].update();
@@ -145,7 +145,7 @@ WebInspector.EventListenersSection.prototype = {
     {
         // A Filtered Array simplifies when to create connectors
         var filteredEventListeners = this.eventListeners;
-        if (WebInspector.settings.eventListenersFilter === "selected") {
+        if (WebInspector.settings.eventListenersFilter.get() == "selected") {
             filteredEventListeners = [];
             for (var i = 0; i < this.eventListeners.length; ++i) {
                 var eventListener = this.eventListeners[i];

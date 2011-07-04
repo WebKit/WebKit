@@ -1,3 +1,101 @@
+2011-07-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: implement settings panel.
+        https://bugs.webkit.org/show_bug.cgi?id=63907
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._saveBreakpoints):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._saveBreakpoints):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent.monitoringXHRItemAction):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent.get preserveLogItemAction):
+        (WebInspector.ConsoleView.prototype._monitoringXHREnabledSettingChanged):
+        (WebInspector.ConsoleView.prototype._registerShortcuts):
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._saveBreakpoints):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._saveBreakpoints):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._contextMenuEventFired):
+        (WebInspector.ElementsPanel.prototype._domWordWrapSettingChanged):
+        (WebInspector.ElementsPanel.prototype._registerShortcuts):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype):
+        ():
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen):
+        (WebInspector.HelpScreen.prototype.show):
+        (WebInspector.HelpScreen.prototype.hide):
+        (WebInspector.HelpScreen.prototype._onKeyDown):
+        * inspector/front-end/NetworkItemView.js:
+        * inspector/front-end/NetworkPanel.js:
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.saveSidebarWidth):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.BaseStorageTreeElement.prototype.onselect):
+        (WebInspector.StorageCategoryTreeElement.prototype.onexpand):
+        (WebInspector.StorageCategoryTreeElement.prototype.set oncollapse):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._sourceFileAdded.get if):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions.callback):
+        (WebInspector.ScriptsPanel.prototype._createSidebarButtonAndRegisterShortcuts):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.Settings.prototype.installApplicationSetting):
+        (WebInspector.Setting):
+        (WebInspector.Setting.prototype.addChangeListener):
+        (WebInspector.Setting.prototype.removeChangeListener):
+        (WebInspector.Setting.prototype.get var):
+        (WebInspector.Setting.prototype):
+        (WebInspector.Setting.prototype.set if):
+        * inspector/front-end/SettingsScreen.js: Added.
+        (WebInspector.SettingsScreen):
+        (WebInspector.SettingsScreen.prototype._appendSection):
+        (WebInspector.SettingsScreen.prototype._columnElement):
+        (WebInspector.SettingsScreen.prototype._createCheckboxSetting.get listener):
+        (WebInspector.SettingsScreen.prototype._createRadioSetting):
+        * inspector/front-end/ShortcutsScreen.js: Renamed from Source/WebCore/inspector/front-end/ShortcutsHelp.js.
+        (WebInspector.ShortcutsScreen):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/helpScreen.css:
+        (.help-window-main):
+        (body.attached .help-window-main):
+        (.help-window-caption):
+        (body.attached .help-window-caption):
+        (.help-content):
+        (.help-close-button):
+        (body.attached .help-close-button):
+        (body.attached .help-content):
+        (.help-table):
+        (body.platform-mac .help-key):
+        (.help-combine-keys):
+        (.help-content p):
+        (.help-content fieldset):
+        (.help-content fieldset p):
+        (.help-content p.help-section):
+        (.help-section-title):
+        (.help-content input[type=checkbox]):
+        * inspector/front-end/inspector.css:
+        (button.settings-status-bar-item):
+        (.settings-status-bar-item .glyph):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector._toggleAttach):
+        (WebInspector._toggleSettings):
+        (WebInspector._registerShortcuts):
+        (WebInspector.documentKeyDown):
+
 2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resources loaded to Resources Panel from InspectorPageAgent do not have mime type set.

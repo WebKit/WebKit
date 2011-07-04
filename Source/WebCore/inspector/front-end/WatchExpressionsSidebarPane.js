@@ -39,7 +39,7 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
     {
         this.bodyElement.removeChildren();
 
-        this.expanded = WebInspector.settings.watchExpressions.length > 0;
+        this.expanded = WebInspector.settings.watchExpressions.get().length > 0;
         this.section = new WebInspector.WatchExpressionsSection();
         this.bodyElement.appendChild(this.section.element);
 
@@ -86,7 +86,7 @@ WebInspector.WatchExpressionsSection = function()
     this.emptyElement.className = "info";
     this.emptyElement.textContent = WebInspector.UIString("No Watch Expressions");
 
-    this.watchExpressions = WebInspector.settings.watchExpressions;
+    this.watchExpressions = WebInspector.settings.watchExpressions.get();
 
     this.headerElement.className = "hidden";
     this.editable = true;
@@ -205,7 +205,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             if (this.watchExpressions[i])
                 toSave.push(this.watchExpressions[i]);
 
-        WebInspector.settings.watchExpressions = toSave;
+        WebInspector.settings.watchExpressions.set(toSave);
         return toSave.length;
     },
 

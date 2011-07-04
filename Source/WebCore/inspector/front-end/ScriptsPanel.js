@@ -108,7 +108,7 @@ WebInspector.ScriptsPanel = function()
 
     if (Preferences.canInspectWorkers && WebInspector.workerManager)
         this.sidebarElement.addEventListener("contextmenu", this._contextMenu.bind(this), false);
-    if (Preferences.canInspectWorkers && WebInspector.workerManager && WebInspector.settings.workerInspectionEnabled) {
+    if (Preferences.canInspectWorkers && WebInspector.workerManager && WebInspector.settings.workerInspectionEnabled.get()) {
         WorkerAgent.setWorkerInspectionEnabled(true);
         this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
     } else
@@ -122,7 +122,7 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.scopechain.expanded = true;
     this.sidebarPanes.jsBreakpoints.expanded = true;
 
-    var helpSection = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
+    var helpSection = WebInspector.shortcutsScreen.section(WebInspector.UIString("Scripts Panel"));
     this.sidebarPanes.callstack.registerShortcuts(helpSection, this.registerShortcut.bind(this));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
@@ -166,7 +166,7 @@ WebInspector.ScriptsPanel = function()
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
 
-    var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled;
+    var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger || InspectorFrontendHost.loadSessionSetting("debugger-enabled") === "true")
         WebInspector.debuggerModel.enableDebugger();
 }
@@ -239,14 +239,14 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._addOptionToFilesSelect(sourceFile);
 
-        var lastViewedURL = WebInspector.settings.lastViewedScriptFile;
+        var lastViewedURL = WebInspector.settings.lastViewedScriptFile.get();
         if (this._filesSelectElement.length === 1) {
             // Option we just added is the only option in files select.
             // We have to show corresponding source frame immediately.
             this._showSourceFrameAndAddToHistory(sourceFile.id);
             // Restore original value of lastViewedScriptFile because
             // source frame was shown as a result of initial load.
-            WebInspector.settings.lastViewedScriptFile = lastViewedURL;
+            WebInspector.settings.lastViewedScriptFile.set(lastViewedURL);
         } else if (sourceFile.url === lastViewedURL)
             this._showSourceFrameAndAddToHistory(sourceFile.id);
     },
@@ -454,7 +454,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _debuggerWasEnabled: function()
     {
-        this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionStateString);
+        this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionStateString.get());
 
         if (this._debuggerEnabled)
             return;
@@ -593,7 +593,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var sourceFile = this._presentationModel.sourceFile(sourceFileId);
         if (sourceFile.url)
-            WebInspector.settings.lastViewedScriptFile = sourceFile.url;
+            WebInspector.settings.lastViewedScriptFile.set(sourceFile.url);
 
         return sourceFrame;
     },
@@ -748,7 +748,7 @@ WebInspector.ScriptsPanel.prototype = {
                 this._pauseOnExceptionButton.title = WebInspector.UIString("Pause on uncaught exceptions.\nClick to Not pause on exceptions.");
 
             this._pauseOnExceptionButton.state = pauseOnExceptionsState;
-            WebInspector.settings.pauseOnExceptionStateString = pauseOnExceptionsState;
+            WebInspector.settings.pauseOnExceptionStateString.set(pauseOnExceptionsState);
         }
         DebuggerAgent.setPauseOnExceptions(pauseOnExceptionsState, callback.bind(this));
     },
@@ -850,10 +850,10 @@ WebInspector.ScriptsPanel.prototype = {
         this._stepping = false;
 
         if (this._debuggerEnabled) {
-            WebInspector.settings.debuggerEnabled = false;
+            WebInspector.settings.debuggerEnabled.set(false);
             WebInspector.debuggerModel.disableDebugger();
         } else {
-            WebInspector.settings.debuggerEnabled = !!optionalAlways;
+            WebInspector.settings.debuggerEnabled.set(!!optionalAlways);
             WebInspector.debuggerModel.enableDebugger();
         }
     },
@@ -990,7 +990,7 @@ WebInspector.ScriptsPanel.prototype = {
             this.registerShortcut(shortcuts[i].key, handler);
             shortcutNames.push(shortcuts[i].name);
         }
-        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Scripts Panel"));
         section.addAlternateKeys(shortcutNames, shortcutDescription);
 
         return button;
@@ -1077,8 +1077,8 @@ WebInspector.ScriptsPanel.prototype = {
 
         function enableWorkerInspection()
         {
-            var newValue = !WebInspector.settings.workerInspectionEnabled;
-            WebInspector.settings.workerInspectionEnabled = newValue;
+            var newValue = !WebInspector.settings.workerInspectionEnabled.get();
+            WebInspector.settings.workerInspectionEnabled.set(newValue);
             WorkerAgent.setWorkerInspectionEnabled(newValue);
             if (newValue) {
                 var element = this.sidebarPanes.workers.element;
@@ -1092,7 +1092,7 @@ WebInspector.ScriptsPanel.prototype = {
                 element.parentNode.replaceChild(this.sidebarPanes.workers.element, element);
             }
         }
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Enable worker inspection"), enableWorkerInspection.bind(this), WebInspector.settings.workerInspectionEnabled);
+        contextMenu.appendCheckboxItem(WebInspector.UIString("Enable worker inspection"), enableWorkerInspection.bind(this), WebInspector.settings.workerInspectionEnabled.get());
 
         contextMenu.show(event);
     }

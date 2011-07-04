@@ -35,8 +35,9 @@ WebInspector.ElementsPanel = function()
     this.contentElement = document.createElement("div");
     this.contentElement.id = "elements-content";
     this.contentElement.className = "outline-disclosure source-code";
-    if (!WebInspector.settings.domWordWrap)
+    if (!WebInspector.settings.domWordWrap.get())
         this.contentElement.classList.add("nowrap");
+    WebInspector.settings.domWordWrap.addChangeListener(this._domWordWrapSettingChanged.bind(this));
 
     this.contentElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 
@@ -270,29 +271,30 @@ WebInspector.ElementsPanel.prototype = {
 
     _contextMenuEventFired: function(event)
     {
-        function isTextWrapped()
-        {
-            return !this.contentElement.hasStyleClass("nowrap");
-        }
-
         function toggleWordWrap()
         {
-            this.contentElement.classList.toggle("nowrap");
-            WebInspector.settings.domWordWrap = !this.contentElement.classList.contains("nowrap");
-
-            var treeElement = this.treeOutline.findTreeElement(this.focusedDOMNode);
-            if (treeElement)
-                treeElement.updateSelection(); // Recalculate selection highlight dimensions.
+            WebInspector.settings.domWordWrap.set(!WebInspector.settings.domWordWrap.get());
         }
 
         var contextMenu = new WebInspector.ContextMenu();
-
         var populated = this.treeOutline.populateContextMenu(contextMenu, event);
         if (populated)
             contextMenu.appendSeparator();
-        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), isTextWrapped.call(this));
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), WebInspector.settings.domWordWrap.get());
 
         contextMenu.show(event);
+    },
+
+    _domWordWrapSettingChanged: function(event)
+    {
+        if (event.data)
+            this.contentElement.removeStyleClass("nowrap");
+        else
+            this.contentElement.addStyleClass("nowrap");
+
+        var treeElement = this.treeOutline.findTreeElement(this.focusedDOMNode);
+        if (treeElement)
+            treeElement.updateSelection(); // Recalculate selection highlight dimensions.
     },
 
     populateHrefContextMenu: function(contextMenu, event, anchorElement)
@@ -1060,7 +1062,7 @@ WebInspector.ElementsPanel.prototype = {
     _registerShortcuts: function()
     {
         var shortcut = WebInspector.KeyboardShortcut;
-        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Elements Panel"));
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Elements Panel"));
         var keys = [
             shortcut.shortcutToString(shortcut.Keys.Up),
             shortcut.shortcutToString(shortcut.Keys.Down)

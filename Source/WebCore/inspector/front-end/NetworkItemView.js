@@ -67,7 +67,7 @@ WebInspector.NetworkItemView.prototype = {
     _selectTab: function(tabId)
     {
         if (!tabId)
-            tabId = WebInspector.settings.resourceViewTab;
+            tabId = WebInspector.settings.resourceViewTab.get();
 
         if (!this._tabbedPane.selectTab(tabId)) {
             this._isInFallbackSelection = true;
@@ -79,7 +79,7 @@ WebInspector.NetworkItemView.prototype = {
     _tabSelected: function(event)
     {
         if (event.data.isUserGesture)
-            WebInspector.settings.resourceViewTab = event.data.tabId;
+            WebInspector.settings.resourceViewTab.set(event.data.tabId);
         this._installHighlightSupport(event.data.view);
     },
 

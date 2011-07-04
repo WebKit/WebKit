@@ -48,7 +48,7 @@ WebInspector.ConsoleView = function(drawer)
     this.promptElement.className = "source-code";
     this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
-    this.prompt.history = WebInspector.settings.consoleHistory;
+    this.prompt.history = WebInspector.settings.consoleHistory.get();
 
     this.topGroup = new WebInspector.ConsoleGroup(null);
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
@@ -98,6 +98,8 @@ WebInspector.ConsoleView = function(drawer)
     };
 
     this._registerConsoleDomainDispatcher();
+
+    WebInspector.settings.monitoringXHREnabled.addChangeListener(this._monitoringXHREnabledSettingChanged.bind(this));
 }
 
 WebInspector.ConsoleView.Events = {
@@ -147,7 +149,7 @@ WebInspector.ConsoleView.prototype = {
 
             messagesCleared: function()
             {
-                if (!WebInspector.settings.preserveConsoleLog)
+                if (!WebInspector.settings.preserveConsoleLog.get())
                     console.clearMessages();
             },
         }
@@ -452,19 +454,25 @@ WebInspector.ConsoleView.prototype = {
 
         var contextMenu = new WebInspector.ContextMenu();
 
-        var monitoringXHRItemAction = function () {
-            WebInspector.settings.monitoringXHREnabled = !WebInspector.settings.monitoringXHREnabled;
-            ConsoleAgent.setMonitoringXHREnabled(WebInspector.settings.monitoringXHREnabled);
-        }.bind(this);
-        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "XMLHttpRequest logging" : "XMLHttpRequest Logging"), monitoringXHRItemAction, WebInspector.settings.monitoringXHREnabled);
+        function monitoringXHRItemAction()
+        {
+            WebInspector.settings.monitoringXHREnabled.set(!WebInspector.settings.monitoringXHREnabled.get());
+        }
+        contextMenu.appendCheckboxItem(WebInspector.UIString("Log XMLHttpRequests"), monitoringXHRItemAction.bind(this), WebInspector.settings.monitoringXHREnabled.get());
 
-        var preserveLogItemAction = function () {
-            WebInspector.settings.preserveConsoleLog = !WebInspector.settings.preserveConsoleLog;
-        }.bind(this);
-        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Preserve log" : "Preserve Log"), preserveLogItemAction, WebInspector.settings.preserveConsoleLog);
+        function preserveLogItemAction()
+        {
+            WebInspector.settings.preserveConsoleLog.set(!WebInspector.settings.preserveConsoleLog.get());
+        }
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Preserve log upon navigation" : "Preserve Log upon Navigation"), preserveLogItemAction.bind(this), WebInspector.settings.preserveConsoleLog.get());
 
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this.requestClearMessages.bind(this));
         contextMenu.show(event);
+    },
+
+    _monitoringXHREnabledSettingChanged: function(event)
+    {
+        ConsoleAgent.setMonitoringXHREnabled(event.data);
     },
 
     _messagesSelectStart: function(event)
@@ -510,7 +518,7 @@ WebInspector.ConsoleView.prototype = {
         var shortcutL = shortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
         this._shortcuts[shortcutL.key] = clearConsoleHandler;
 
-        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Console"));
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
         var keys = WebInspector.isMac() ? [ shortcutK.name, shortcutL.name ] : [ shortcutL.name ];
         section.addAlternateKeys(keys, WebInspector.UIString("Clear Console"));
 
@@ -596,7 +604,7 @@ WebInspector.ConsoleView.prototype = {
             self.prompt.historyOffset = 0;
             self.prompt.text = "";
 
-            WebInspector.settings.consoleHistory = self.prompt.history.slice(-30);
+            WebInspector.settings.consoleHistory.set(self.prompt.history.slice(-30));
 
             self.addMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }

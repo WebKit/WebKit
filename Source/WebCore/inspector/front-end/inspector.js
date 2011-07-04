@@ -145,7 +145,7 @@ var WebInspector = {
         }
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] === x) {
-                WebInspector.settings.lastActivePanel = panelName;
+                WebInspector.settings.lastActivePanel.set(panelName);
                 this._panelHistory.setPanel(panelName);
             }
         }
@@ -180,19 +180,50 @@ var WebInspector = {
     _createGlobalStatusBarItems: function()
     {
         this._dockToggleButton = new WebInspector.StatusBarButton(this._dockButtonTitle(), "dock-status-bar-item");
-        this._dockToggleButton.addEventListener("click", this.toggleAttach.bind(this), false);
+        this._dockToggleButton.addEventListener("click", this._toggleAttach.bind(this), false);
         this._dockToggleButton.toggled = !this.attached;
+
+        this._settingsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");
+        this._settingsButton.addEventListener("click", this._toggleSettings.bind(this), false);
 
         var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
         anchoredStatusBar.appendChild(this._dockToggleButton.element);
         anchoredStatusBar.appendChild(this.console.toggleConsoleButton.element);
         if (this.panels.elements)
             anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
+
+        // FIXME: uncomment once ready.
+        // anchoredStatusBar.appendChild(this._settingsButton.element);
     },
 
     _dockButtonTitle: function()
     {
         return this.attached ? WebInspector.UIString("Undock into separate window.") : WebInspector.UIString("Dock to main window.");
+    },
+
+    _toggleAttach: function()
+    {
+        if (!this._attached)
+            InspectorFrontendHost.requestAttachWindow();
+        else
+            InspectorFrontendHost.requestDetachWindow();
+    },
+
+    _toggleSettings: function()
+    {
+        function onhide()
+        {
+            this._settingsButton.toggled = false;
+        }
+
+        this._settingsButton.toggled = !this._settingsButton.toggled;
+        if (this._settingsButton.toggled) {
+            this._settingsScreen = new WebInspector.SettingsScreen();
+            this._settingsScreen.show(onhide.bind(this));
+        } else if (this._settingsScreen) {
+            this._settingsScreen.hide();
+            delete this._settingsScreen;
+        }
     },
 
     get attached()
@@ -436,8 +467,8 @@ WebInspector.doLoadedDone = function()
     this._registerShortcuts();
 
     // set order of some sections explicitly
-    WebInspector.shortcutsHelp.section(WebInspector.UIString("Console"));
-    WebInspector.shortcutsHelp.section(WebInspector.UIString("Elements Panel"));
+    WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
+    WebInspector.shortcutsScreen.section(WebInspector.UIString("Elements Panel"));
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
@@ -501,14 +532,14 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    if (WebInspector.settings.monitoringXHREnabled)
+    if (WebInspector.settings.monitoringXHREnabled.get())
         ConsoleAgent.setMonitoringXHREnabled(true);
     ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
 
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 
-    WebInspector.showPanel(WebInspector.settings.lastActivePanel);
+    WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
 
     function propertyNamesCallback(error, names)
     {
@@ -677,7 +708,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
 WebInspector._registerShortcuts = function()
 {
     var shortcut = WebInspector.KeyboardShortcut;
-    var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("All Panels"));
+    var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("All Panels"));
     var keys = [
         shortcut.shortcutToString("]", shortcut.Modifiers.CtrlOrMeta),
         shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta)
@@ -705,7 +736,7 @@ WebInspector.documentKeyDown = function(event)
 
     if (event.keyIdentifier === "F1" ||
         (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode && !isInputElement || event.metaKey))) {
-        WebInspector.shortcutsHelp.show();
+        WebInspector.shortcutsScreen.show();
         event.stopPropagation();
         event.preventDefault();
         return;
@@ -928,14 +959,6 @@ WebInspector.animateStyle = function(animations, duration, callback)
     };
 }
 
-WebInspector.toggleAttach = function()
-{
-    if (!this.attached)
-        InspectorFrontendHost.requestAttachWindow();
-    else
-        InspectorFrontendHost.requestDetachWindow();
-}
-
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor)
 {
     if (this._elementDraggingEventListener || this._elementEndDraggingEventListener)
@@ -1003,7 +1026,7 @@ WebInspector.reset = function()
     this.resources = {};
     this.highlightDOMNode(0);
 
-    if (!WebInspector.settings.preserveConsoleLog)
+    if (!WebInspector.settings.preserveConsoleLog.get())
         this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
     if (this.workerManager)

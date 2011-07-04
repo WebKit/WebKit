@@ -406,12 +406,12 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
         var breakpoints = [];
         for (var url in this._breakpointElements)
             breakpoints.push({ url: url, enabled: this._breakpointElements[url]._checkboxElement.checked });
-        WebInspector.settings.xhrBreakpoints = breakpoints;
+        WebInspector.settings.xhrBreakpoints.set(breakpoints);
     },
 
     _restoreBreakpoints: function()
     {
-        var breakpoints = WebInspector.settings.xhrBreakpoints;
+        var breakpoints = WebInspector.settings.xhrBreakpoints.get();
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpoint = breakpoints[i];
             if (breakpoint && typeof breakpoint.url === "string")
@@ -589,12 +589,12 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
             if (this._breakpointItems[eventName].checkbox.checked)
                 breakpoints.push({ eventName: eventName });
         }
-        WebInspector.settings.eventListenerBreakpoints = breakpoints;
+        WebInspector.settings.eventListenerBreakpoints.set(breakpoints);
     },
 
     _restoreBreakpoints: function()
     {
-        var breakpoints = WebInspector.settings.eventListenerBreakpoints;
+        var breakpoints = WebInspector.settings.eventListenerBreakpoints.get();
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpoint = breakpoints[i];
             if (breakpoint && typeof breakpoint.eventName === "string")

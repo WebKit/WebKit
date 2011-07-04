@@ -57,6 +57,8 @@ var Preferences = {
 
 WebInspector.Settings = function()
 {
+    this._eventSupport = new WebInspector.Object();
+
     this.installApplicationSetting("colorFormat", "hex");
     this.installApplicationSetting("consoleHistory", []);
     this.installApplicationSetting("debuggerEnabled", false);
@@ -91,28 +93,50 @@ WebInspector.Settings.prototype = {
     {
         if (key in this)
             return;
-
-        this.__defineGetter__(key, this._get.bind(this, key, defaultValue));
-        this.__defineSetter__(key, this._set.bind(this, key));
-    },
-
-    _get: function(key, defaultValue)
-    {
-        if (window.localStorage != null && key in window.localStorage) {
-            try {
-                return JSON.parse(window.localStorage[key]);
-            } catch(e) {
-                window.localStorage.removeItem(key);
-            }
-        }
-        return defaultValue;
-    },
-
-    _set: function(key, value)
-    {
-        if (window.localStorage != null)
-            window.localStorage[key] = JSON.stringify(value);
+        this[key] = new WebInspector.Setting(key, defaultValue, this._eventSupport);
     }
 }
 
-WebInspector.Settings.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.Setting = function(name, defaultValue, eventSupport)
+{
+    this._name = name;
+    this._defaultValue = defaultValue;
+    this._eventSupport = eventSupport;
+}
+
+WebInspector.Setting.prototype = {
+    addChangeListener: function(listener, thisObject)
+    {
+        this._eventSupport.addEventListener(this._name, listener, thisObject);
+    },
+
+    removeChangeListener: function(listener, thisObject)
+    {
+        this._eventSupport.removeEventListener(this._name, listener, thisObject);
+    },
+
+    get: function()
+    {
+        var value = this._defaultValue;
+        if (window.localStorage != null && this._name in window.localStorage) {
+            try {
+                value = JSON.parse(window.localStorage[this._name]);
+            } catch(e) {
+                window.localStorage.removeItem(this._name);
+            }
+        }
+        return value;
+    },
+
+    set: function(value)
+    {
+        if (window.localStorage != null) {
+            try {
+                window.localStorage[this._name] = JSON.stringify(value);
+            } catch(e) {
+                console.error("Error saving setting with name:" + this._name);
+            }
+        }
+        this._eventSupport.dispatchEventToListeners(this._name, value);
+    }
+}

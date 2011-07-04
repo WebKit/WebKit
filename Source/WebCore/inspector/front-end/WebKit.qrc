@@ -99,7 +99,8 @@
     <file>SearchController.js</file>
     <file>Section.js</file>
     <file>Settings.js</file>
-    <file>ShortcutsHelp.js</file>
+    <file>SettingsScreen.js</file>
+    <file>ShortcutsScreen.js</file>
     <file>ShowMoreDataGridNode.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>

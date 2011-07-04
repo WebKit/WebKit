@@ -60,7 +60,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-    var format = WebInspector.settings.colorFormat;
+    var format = WebInspector.settings.colorFormat.get();
     if (format === "original")
         this.settingsSelectElement[0].selected = true;
     else if (format === "hex")
@@ -555,7 +555,7 @@ WebInspector.StylesSidebarPane.prototype = {
         // Select the correct color format setting again, since it needs to be selected.
         var selectedIndex = 0;
         for (var i = 0; i < options.length; ++i) {
-            if (options[i].value === WebInspector.settings.colorFormat) {
+            if (options[i].value === WebInspector.settings.colorFormat.get()) {
                 selectedIndex = i;
                 break;
             }
@@ -567,7 +567,7 @@ WebInspector.StylesSidebarPane.prototype = {
     _changeColorFormat: function(event)
     {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        WebInspector.settings.colorFormat = selectedOption.value;
+        WebInspector.settings.colorFormat.set(selectedOption.value);
 
         for (var pseudoId in this.sections) {
             var sections = this.sections[pseudoId];
@@ -614,7 +614,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
     registerShortcuts: function()
     {
-        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Styles Pane"));
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Styles Pane"));
         var shortcut = WebInspector.KeyboardShortcut;
         var keys = [
             shortcut.shortcutToString(shortcut.Keys.Tab),
@@ -657,15 +657,15 @@ WebInspector.ComputedStyleSidebarPane = function()
     var showInheritedCheckbox = new WebInspector.Checkbox(WebInspector.UIString("Show inherited"), "sidebar-pane-subtitle");
     this.titleElement.appendChild(showInheritedCheckbox.element);
 
-    if (WebInspector.settings.showInheritedComputedStyleProperties) {
+    if (WebInspector.settings.showInheritedComputedStyleProperties.get()) {
         this.bodyElement.addStyleClass("show-inherited");
         showInheritedCheckbox.checked = true;
     }
 
     function showInheritedToggleFunction(event)
     {
-        WebInspector.settings.showInheritedComputedStyleProperties = showInheritedCheckbox.checked;
-        if (WebInspector.settings.showInheritedComputedStyleProperties)
+        WebInspector.settings.showInheritedComputedStyleProperties.set(showInheritedCheckbox.checked);
+        if (WebInspector.settings.showInheritedComputedStyleProperties.get())
             this.bodyElement.addStyleClass("show-inherited");
         else
             this.bodyElement.removeStyleClass("show-inherited");
@@ -1384,13 +1384,13 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 swatchElement.addEventListener("dblclick", function(event) { event.stopPropagation() }, false);
 
                 var format;
-                if (WebInspector.settings.colorFormat === "original")
+                if (WebInspector.settings.colorFormat.get() === "original")
                     format = "original";
                 else if (Preferences.showColorNicknames && color.nickname)
                     format = "nickname";
-                else if (WebInspector.settings.colorFormat === "rgb")
+                else if (WebInspector.settings.colorFormat.get() === "rgb")
                     format = (color.simple ? "rgb" : "rgba");
-                else if (WebInspector.settings.colorFormat === "hsl")
+                else if (WebInspector.settings.colorFormat.get() === "hsl")
                     format = (color.simple ? "hsl" : "hsla");
                 else if (color.simple)
                     format = (color.hasShortHex() ? "shorthex" : "hex");

@@ -264,7 +264,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
     _saveBreakpoints: function()
     {
         var breakpoints = [];
-        var storedBreakpoints = WebInspector.settings.domBreakpoints;
+        var storedBreakpoints = WebInspector.settings.domBreakpoints.get();
         for (var i = 0; i < storedBreakpoints.length; ++i) {
             var breakpoint = storedBreakpoints[i];
             if (breakpoint.url !== this._inspectedURL)
@@ -274,7 +274,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
             var element = this._breakpointElements[id];
             breakpoints.push({ url: this._inspectedURL, path: element._node.path(), type: element._type, enabled: element._checkboxElement.checked });
         }
-        WebInspector.settings.domBreakpoints = breakpoints;
+        WebInspector.settings.domBreakpoints.set(breakpoints);
     },
 
     restoreBreakpoints: function()
@@ -292,7 +292,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
                 this._setBreakpoint(node, breakpoints[i].type, breakpoints[i].enabled);
         }
 
-        var breakpoints = WebInspector.settings.domBreakpoints;
+        var breakpoints = WebInspector.settings.domBreakpoints.get();
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpoint = breakpoints[i];
             if (breakpoint.url !== this._inspectedURL)

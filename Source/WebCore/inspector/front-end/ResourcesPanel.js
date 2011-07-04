@@ -115,7 +115,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     _initDefaultSelection: function()
     {
-        var itemURL = WebInspector.settings.resourcesLastSelectedItem;
+        var itemURL = WebInspector.settings.resourcesLastSelectedItem.get();
         if (itemURL) {
             for (var treeElement = this.sidebarTree.children[0]; treeElement; treeElement = treeElement.traverseNextTreeElement(false, this.sidebarTree, true)) {
                 if (treeElement.itemURL === itemURL) {
@@ -955,7 +955,7 @@ WebInspector.BaseStorageTreeElement.prototype = {
     {
         var itemURL = this.itemURL;
         if (itemURL)
-            WebInspector.settings.resourcesLastSelectedItem = itemURL;
+            WebInspector.settings.resourcesLastSelectedItem.set(itemURL);
     },
 
     onreveal: function()
@@ -1012,18 +1012,18 @@ WebInspector.StorageCategoryTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
-        if (WebInspector.settings[this._expandedSettingKey])
+        if (WebInspector.settings[this._expandedSettingKey].get())
             this.expand();
     },
 
     onexpand: function()
     {
-        WebInspector.settings[this._expandedSettingKey] = true;
+        WebInspector.settings[this._expandedSettingKey].set(true);
     },
 
     oncollapse: function()
     {
-        WebInspector.settings[this._expandedSettingKey] = false;
+        WebInspector.settings[this._expandedSettingKey].set(false);
     }
 }
 
