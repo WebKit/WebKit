@@ -328,26 +328,6 @@ void JIT::emit_op_jmp(Instruction* currentInstruction)
     addJump(jump(), target);
 }
 
-void JIT::emit_op_loop_if_lesseq(Instruction* currentInstruction)
-{
-    emitTimeoutCheck();
-
-    unsigned op1 = currentInstruction[1].u.operand;
-    unsigned op2 = currentInstruction[2].u.operand;
-    unsigned target = currentInstruction[3].u.operand;
-    if (isOperandConstantImmediateInt(op2)) {
-        emitGetVirtualRegister(op1, regT0);
-        emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        int32_t op2imm = getConstantOperandImmediateInt(op2);
-        addJump(branch32(LessThanOrEqual, regT0, Imm32(op2imm)), target);
-    } else {
-        emitGetVirtualRegisters(op1, regT0, op2, regT1);
-        emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        emitJumpSlowCaseIfNotImmediateInteger(regT1);
-        addJump(branch32(LessThanOrEqual, regT0, regT1), target);
-    }
-}
-
 void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
     JITStubCall(this, cti_op_new_object).call(currentInstruction[1].u.operand);
@@ -1241,28 +1221,6 @@ void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowC
     JITStubCall stubCall(this, cti_op_to_primitive);
     stubCall.addArgument(regT0);
     stubCall.call(currentInstruction[1].u.operand);
-}
-
-void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned op2 = currentInstruction[2].u.operand;
-    unsigned target = currentInstruction[3].u.operand;
-    if (isOperandConstantImmediateInt(op2)) {
-        linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_loop_if_lesseq);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(currentInstruction[2].u.operand, regT2);
-        stubCall.call();
-        emitJumpSlowToHot(branchTest32(NonZero, regT0), target);
-    } else {
-        linkSlowCase(iter);
-        linkSlowCase(iter);
-        JITStubCall stubCall(this, cti_op_loop_if_lesseq);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(regT1);
-        stubCall.call();
-        emitJumpSlowToHot(branchTest32(NonZero, regT0), target);
-    }
 }
 
 void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

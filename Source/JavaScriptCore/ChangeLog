@@ -1,3 +1,46 @@
+2011-07-03  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63879
+        Reduce code duplication for op_jless, op_jlesseq, op_jnless, op_jnlesseq.
+
+        Reviewed by Sam Weinig.
+        
+        There is a lot of copy & paste code here; we can reduce duplication by making
+        a shared implementation.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::commute):
+            - Make these function platform agnostic.
+        * assembler/MacroAssemblerX86Common.h:
+            - Moved branch32/commute up to MacroAssembler.
+        * jit/JIT.h:
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emitSlow_op_loop_if_lesseq):
+            - Add an implementation matching that for op_loop_if_less, which just calls op_jless.
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emit_op_jlesseq):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+            - Common implmentations of these methods for JSVALUE64 & JSVALUE32_64.
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+            - Internal implmementation of jless etc for JSVALUE64.
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+            - Internal implmementation of jless etc for JSVALUE32_64.
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+            - Remove old implementation of emit_op_loop_if_lesseq.
+
 2011-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90347.

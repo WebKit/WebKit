@@ -720,6 +720,9 @@ namespace JSC {
 #define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst) do { endUninterruptedSequence(); } while (false)
 #endif
 
+        void emit_compareAndJump(OpcodeID, unsigned op1, unsigned op2, unsigned target, RelationalCondition);
+        void emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, DoubleCondition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator&);
+
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
         void emit_op_bitnot(Instruction*);
@@ -762,7 +765,7 @@ namespace JSC {
         void emit_op_jneq_ptr(Instruction*);
         void emit_op_jnless(Instruction*);
         void emit_op_jless(Instruction*);
-        void emit_op_jlesseq(Instruction*, bool invert = false);
+        void emit_op_jlesseq(Instruction*);
         void emit_op_jnlesseq(Instruction*);
         void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
@@ -858,7 +861,7 @@ namespace JSC {
         void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnless(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&, bool invert = false);
+        void emitSlow_op_jlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_load_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -1038,6 +1041,17 @@ namespace JSC {
     inline void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
     {
         emitSlow_op_jless(currentInstruction, iter);
+    }
+
+    inline void JIT::emit_op_loop_if_lesseq(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jlesseq(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jlesseq(currentInstruction, iter);
     }
 
 } // namespace JSC

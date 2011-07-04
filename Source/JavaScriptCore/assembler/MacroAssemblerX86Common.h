@@ -844,15 +844,6 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branch32(RelationalCondition cond, TrustedImm32 left, RegisterID right)
-    {
-        if (((cond == Equal) || (cond == NotEqual)) && !left.m_value)
-            m_assembler.testl_rr(right, right);
-        else
-            m_assembler.cmpl_ir(left.m_value, right);
-        return Jump(m_assembler.jCC(x86Condition(commute(cond))));
-    }
-    
     Jump branch32(RelationalCondition cond, RegisterID left, Address right)
     {
         m_assembler.cmpl_mr(right.offset, right.base, left);
@@ -1201,25 +1192,6 @@ public:
         return static_cast<RelationalCondition>(cond ^ 1);
     }
 
-    // Commute a relational condition, returns a new condition that will produce
-    // the same results given the same inputs but with their positions exchanged.
-    static RelationalCondition commute(RelationalCondition cond)
-    {
-        // Equality is commutative!
-        if (cond == Equal || cond == NotEqual)
-            return cond;
-
-        // Based on the values of x86 condition codes, remap > with < and >= with <=
-        if (cond >= LessThan) {
-            ASSERT(cond == LessThan || cond == LessThanOrEqual || cond == GreaterThan || cond == GreaterThanOrEqual);
-            return static_cast<RelationalCondition>(X86Assembler::ConditionL + X86Assembler::ConditionG - cond);
-        }
-
-        // As above, for unsigned conditions.
-        ASSERT(cond == Below || cond == BelowOrEqual || cond == Above || cond == AboveOrEqual);
-        return static_cast<RelationalCondition>(X86Assembler::ConditionB + X86Assembler::ConditionA - cond);
-    }
-    
     void nop()
     {
         m_assembler.nop();
