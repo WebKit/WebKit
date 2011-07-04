@@ -2347,11 +2347,7 @@ BUGWEBGL MAC LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT
 BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
-
-// Restore the slow pass expectationon index-validatin-with-resized-buffer
-// once WK63638 is resolved.
-// BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
-BUGWK63638 GPU : fast/canvas/webgl/index-validation-with-resized-buffer.html = TEXT
+BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
@@ -3082,8 +3078,7 @@ BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 // Needs leopard baseline.
 BUGCR76616 LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
 
-BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
-BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
+BUGWK56677 GPU LINUX RELEASE : fast/canvas/canvas-drawImage-shadow.html = TEXT
 
 // New CSS3 feature in r81684. Some tests fail outside Mac.
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT
@@ -3960,8 +3955,6 @@ BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
 BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 BUGCR87732 : fast/regex/toString.html = TEXT
-
-BUGWK63643 GPU : fast/canvas/webgl/context-lost-restored.html = TEXT
 
 // Added in http://trac.webkit.org/changeset/90148, null-derefing in TestNetscapgePlugin.
 BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = CRASH

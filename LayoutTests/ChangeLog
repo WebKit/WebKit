@@ -1,3 +1,11 @@
+2011-07-04  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations change.
+
+        Mark four tests as passing on the GPU step.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90373.
