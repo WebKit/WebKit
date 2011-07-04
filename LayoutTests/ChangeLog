@@ -1,3 +1,40 @@
+2011-07-03  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: pywebsocket handlers should raise exception to abort the connection
+        https://bugs.webkit.org/show_bug.cgi?id=63794
+
+        pywebsocket automatically sends handshake response when web_socket_do_extra_handshake()
+        finishes, and starts closing handshake (sends a close frame and waits for client's response)
+        after web_socket_transfer_data() exits. To stop this behavior, a handler must raise an
+        exception.
+
+        Some of our handlers send broken handshake in web_socket_do_extra_handshake(). If this handler
+        function exits without raising an exception, pywebsocket automatically sends another handshake
+        response, which is not really necessary. Normally this extra handshake message is not a problem,
+        because the client does not read any data beyond the end of the first (broken) handshake if
+        the client is working correctly. However, if the client erroneously accepts the first handshake,
+        it will be hard to diagnose the problem because of the extra message. The same can happen for
+        web_socket_transfer_data().
+
+        Generally, pywebsocket handlers should raise an exception if they do not want to send any more
+        data. However, this fact has been overlooked in past changes, and handlers in many tests exit
+        normally where they should raise an exception. This change fix these errors.
+
+        * http/tests/websocket/tests/bad-handshake-crash_wsh.py:
+        * http/tests/websocket/tests/frame-length-overflow_wsh.py:
+        * http/tests/websocket/tests/handshake-fail-by-maxlength_wsh.py:
+        Do not need to cycle until disconnection.
+        * http/tests/websocket/tests/handshake-fail-by-no-connection-header_wsh.py:
+        * http/tests/websocket/tests/handshake-fail-by-no-cr_wsh.py:
+        * http/tests/websocket/tests/handshake-fail-by-no-upgrade-header_wsh.py:
+        * http/tests/websocket/tests/long-invalid-header_wsh.py:
+        Some ports (Chromium) intercept handshake messages and do not pass server's response
+        to WebCore until they find the end of handshake response (i.e. "\r\n\r\n" and 16-byte data).
+        If the handler aborts the connection without sending this end-of-response marker, entire
+        response is ignored, which causes the test to fail.
+
 2011-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90347.

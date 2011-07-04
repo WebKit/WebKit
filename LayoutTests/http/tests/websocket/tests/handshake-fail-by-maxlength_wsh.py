@@ -19,8 +19,6 @@
 # TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import time
-
 
 def web_socket_do_extra_handshake(request):
     # This will cause the handshake to fail because it pushes the length of the
@@ -34,10 +32,7 @@ def web_socket_do_extra_handshake(request):
     msg += '\r\n'
     msg += request.ws_challenge_md5
     request.connection.write(msg)
-    # continue writing data until the client disconnects
-    while True:
-        time.sleep(1)
-        request.connection.write('keepalive\n')
+    raise Exception('abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 
 def web_socket_transfer_data(request):

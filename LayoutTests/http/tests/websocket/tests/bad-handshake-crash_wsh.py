@@ -9,6 +9,7 @@ def web_socket_do_extra_handshake(request):
     msg += request.ws_challenge_md5
     request.connection.write(msg)
     print msg
+    raise Exception("Abort the connection") # Prevents pywebsocket from sending its own handshake message.
 
 
 def web_socket_transfer_data(request):
