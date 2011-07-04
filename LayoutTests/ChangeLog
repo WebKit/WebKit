@@ -1,3 +1,15 @@
+2011-07-04  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Rebaseline following r90338
+        https://bugs.webkit.org/show_bug.cgi?id=63896
+
+        Unreviewed rebaseline.
+
+        * platform/chromium-linux/plugins/mouse-click-plugin-clears-selection-expected.png: Added.
+        * platform/chromium-mac/plugins/mouse-click-plugin-clears-selection-expected.png: Added.
+        * platform/chromium-mac/plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+        * platform/chromium-win-vista/plugins/mouse-click-plugin-clears-selection-expected.png: Added.
+
 2011-07-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
