@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,15 +10,7 @@
 <script type="text/javascript">
 description("Make sure WebSocket transfer null character");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-function finish()
-{
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
+window.jsTestIsAsync = true;
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/echo");
 // \xff in string would be \xc3\xbf on websocket connection (UTF-8)
@@ -43,10 +34,11 @@ ws.onmessage = function(messageEvent)
 ws.onclose = function()
 {
     debug("WebSocket closed");
-    finish();
+    finishJSTest();
 };
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

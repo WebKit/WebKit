@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,8 +10,7 @@
 <script type="text/javascript">
 description('Handshake should fail when the first line does not end with CRLF.');
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone()
+window.jsTestIsAsync = true;
 
 var connected = false;
 var origin;
@@ -21,9 +19,7 @@ function endTest() {
     shouldBeFalse('connected');
     shouldBeUndefined('origin');
     clearTimeout(timeoutID);
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 }
 
 var url = 'ws://localhost:8880/websocket/tests/handshake-fail-by-no-cr';
@@ -57,5 +53,6 @@ var timeoutID = setTimeout(timeoutCallback, 3000);
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

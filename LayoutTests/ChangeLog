@@ -1,3 +1,63 @@
+2011-07-04  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Use jsTestIsAsync and finishJSTest() wherever possible in WebSocket tests
+        https://bugs.webkit.org/show_bug.cgi?id=63892
+
+        Reviewed by Kent Tamura.
+
+        Use jsTestIsAsync and finishJSTest() in WebSocket tests which are run asynchronously.
+        Script tags loading js-test-post-function.js must be removed, and instead js-test-post.js
+        must be loaded after each test.
+
+        * http/tests/websocket/tests/alert-in-event-handler.html:
+        * http/tests/websocket/tests/bad-handshake-crash.html:
+        * http/tests/websocket/tests/bad-sub-protocol-control-chars.html:
+        This test is done synchronously, thus there is no need to use jsTestIsAsync and
+        finishJSTest(). As we are moving away from js-test-post-function.js,
+        isSuccessfullyParsed() should not be used anymore.
+        * http/tests/websocket/tests/bad-sub-protocol-empty.html:
+        * http/tests/websocket/tests/bad-sub-protocol-non-ascii.html:
+        * http/tests/websocket/tests/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/close-before-open.html:
+        * http/tests/websocket/tests/close-on-navigate-new-location.html:
+        * http/tests/websocket/tests/close-on-unload-and-force-gc.html:
+        * http/tests/websocket/tests/close-on-unload-reference-in-parent.html:
+        * http/tests/websocket/tests/close-on-unload.html:
+        * http/tests/websocket/tests/close-unref-websocket.html:
+        * http/tests/websocket/tests/cross-origin.html:
+        * http/tests/websocket/tests/error-detect.html:
+        * http/tests/websocket/tests/frame-length-longer-than-buffer.html:
+        * http/tests/websocket/tests/frame-length-overflow.html:
+        Add close tags for <body> and <html> elements which were not present for some reason.
+        * http/tests/websocket/tests/frame-length-skip.html:
+        * http/tests/websocket/tests/handshake-challenge-randomness.html:
+        * http/tests/websocket/tests/handshake-error.html:
+        * http/tests/websocket/tests/handshake-fail-by-cross-origin.html:
+        * http/tests/websocket/tests/handshake-fail-by-maxlength.html:
+        * http/tests/websocket/tests/handshake-fail-by-no-connection-header.html:
+        * http/tests/websocket/tests/handshake-fail-by-no-cr.html:
+        * http/tests/websocket/tests/handshake-fail-by-no-upgrade-header.html:
+        * http/tests/websocket/tests/handshake-fail-by-prepended-null.html:
+        * http/tests/websocket/tests/handshake-fail-by-sub-protocol-mismatch.html:
+        * http/tests/websocket/tests/long-invalid-header.html:
+        * http/tests/websocket/tests/null-character.html:
+        * http/tests/websocket/tests/reload-crash.html:
+        * http/tests/websocket/tests/send-after-close-on-unload.html:
+        * http/tests/websocket/tests/send-throw.html:
+        * http/tests/websocket/tests/send.html:
+        * http/tests/websocket/tests/simple.html:
+        * http/tests/websocket/tests/sub-protocol-with-space.html:
+        * http/tests/websocket/tests/sub-protocol.html:
+        * http/tests/websocket/tests/unicode.html:
+        * http/tests/websocket/tests/url-no-trailing-slash.html:
+        * http/tests/websocket/tests/url-parsing.html:
+        * http/tests/websocket/tests/url-with-credential.html:
+        * http/tests/websocket/tests/url-with-empty-query.html:
+        * http/tests/websocket/tests/url-with-query-for-no-query.html:
+        * http/tests/websocket/tests/url-with-query.html:
+        * http/tests/websocket/tests/websocket-event-target.html:
+        * http/tests/websocket/tests/websocket-protocol-ignored.html:
+
 2011-07-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Remove passing tests from the qt-wk2 list

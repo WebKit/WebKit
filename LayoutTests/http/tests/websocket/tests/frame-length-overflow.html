@@ -2,21 +2,14 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
 <div id="console"></div>
 <script>
 description("Make sure WebSocket does not crash and report error when it sees length overflow");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
-function finish() {
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
+window.jsTestIsAsync = true;
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/frame-length-overflow");
 ws.onopen = function () {
@@ -30,9 +23,11 @@ ws.onerror = function () {
 };
 ws.onclose = function () {
     debug("WebSocket is closed");
-    finish();
+    finishJSTest();
 };
 
 var successfullyParsed = true;
 </script>
-
+<script src="../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

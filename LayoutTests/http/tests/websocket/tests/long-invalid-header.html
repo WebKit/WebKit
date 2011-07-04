@@ -3,22 +3,18 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
 description("Make sure WebSocket gives errors on long invalid upgrade header.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+
+window.jsTestIsAsync = true;
 
 function finish() {
     clearTimeout(timeoutID);
-
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 }
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/long-invalid-header");
@@ -33,5 +29,6 @@ var timeoutID = setTimeout("finish()", 2000);
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

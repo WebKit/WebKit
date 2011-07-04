@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -22,7 +21,7 @@ shouldThrow('new WebSocket("ws://127.0.0.1:8880/simple", "\uFFFE")');
 shouldThrow('new WebSocket("ws://127.0.0.1:8880/simple", "\uD840\uDC0B")');
 
 var successfullyParsed = true;
-isSuccessfullyParsed();
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

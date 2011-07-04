@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,8 +10,7 @@
 <script type="text/javascript">
 description("Test if Web Socket is closed on unload and not crashed if garbage collected");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+window.jsTestIsAsync = true;
 
 function gc()
 {
@@ -26,14 +24,6 @@ function gc()
 
 var frameDiv;
 var closedSocket;
-
-function endTest()
-{
-    shouldBe("closedSocket", '"socket1"');
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-};
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/close-on-unload");
 ws.onopen = function()
@@ -51,7 +41,8 @@ ws.onmessage = function(evt)
 };
 ws.onclose = function()
 {
-    endTest();
+    shouldBe("closedSocket", '"socket1"');
+    finishJSTest();
 };
 
 document.iframeReady = function()
@@ -63,6 +54,6 @@ document.iframeReady = function()
 
 var successfullyParsed = true;
 </script>
-
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

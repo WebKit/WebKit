@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,19 +10,16 @@
 <script type="text/javascript">
 description("Test if Web Socket fires close event when WebSocket is opened and closed fore open event is received.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+window.jsTestIsAsync = true;
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hanging-handshake");
 ws.onclose = function() {
     debug("closed");
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 };
 var successfullyParsed = true;
 ws.close();
 </script>
-
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

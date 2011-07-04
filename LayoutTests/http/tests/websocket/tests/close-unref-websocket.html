@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,17 +10,14 @@
 <script type="text/javascript">
 description("Test if Web Socket is closed while handshaking and unreferenced, it should fire close event at most once.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+window.jsTestIsAsync = true;
 
 var countCloseEvent = 0;
 
 function endTest()
 {
     shouldBeGreaterThanOrEqual("1", "countCloseEvent");
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 };
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hanging-handshake");
@@ -34,6 +30,6 @@ gc();
 setTimeout("endTest()", 100);
 var successfullyParsed = true;
 </script>
-
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

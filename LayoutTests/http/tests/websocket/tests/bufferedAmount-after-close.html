@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,15 +10,7 @@
 <script type="text/javascript">
 description("Web Socket bufferedAmount after closed");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-function endTest()
-{
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
+window.jsTestIsAsync = true;
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/simple");
 
@@ -39,10 +30,11 @@ ws.onclose = function()
     // increase with each call to the send() method.
     // (the number does not reset to zero once the connection closes).
     shouldBe("ws.bufferedAmount", "23");
-    endTest();
+    finishJSTest();
 };
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

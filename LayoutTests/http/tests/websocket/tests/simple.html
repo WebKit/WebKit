@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,17 +10,12 @@
 <script type="text/javascript">
 description("Simple Web Socket test");
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 function endTest()
 {
-    isSuccessfullyParsed();
     clearTimeout(timeoutID);
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
+    finishJSTest();
 }
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/simple");
@@ -53,5 +47,6 @@ var timeoutID = setTimeout(timeOutCallback, 3000);
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

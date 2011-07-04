@@ -3,24 +3,16 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
 description("Make sure WebSocket correctly fire error event for unknown frame type.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+
+window.jsTestIsAsync = true;
 
 var errorCount = 0;
-
-function finish() {
-    shouldBe("errorCount", "255");
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/unknown-frame-type");
 ws.onopen = function () {
@@ -34,10 +26,12 @@ ws.onerror = function () {
 };
 ws.onclose = function () {
     debug("WebSocket is closed");
-    finish();
+    shouldBe("errorCount", "255");
+    finishJSTest();
 };
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,8 +10,7 @@
 <script type="text/javascript">
 description("Web Socket Cross Origin test");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+window.jsTestIsAsync = true;
 
 var origin;
 
@@ -20,9 +18,7 @@ function endTest()
 {
     shouldBe("origin", '"http://127.0.0.1:8000"');
     clearTimeout(timeoutID);
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 }
 
 var url = "ws://localhost:8880/websocket/tests/origin-test";
@@ -56,5 +52,6 @@ var timeoutID = setTimeout(timeOutCallback, 3000);
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

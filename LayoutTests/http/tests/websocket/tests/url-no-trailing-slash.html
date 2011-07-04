@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,22 +10,11 @@
 <script type="text/javascript">
 description("URL that doesn't have trailing slash should not emit empty Request-URI.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+window.jsTestIsAsync = true;
 
 var url = "ws://127.0.0.1:8880";
 var handshake_success = false;
 var ws_location;
-
-function endTest()
-{
-    shouldBeTrue("handshake_success");
-    shouldBe("ws_location", '"ws://127.0.0.1:8880/"');
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-
 
 var ws = new WebSocket(url);
 ws.onopen = function () {
@@ -40,10 +28,13 @@ ws.onmessage = function (evt) {
 };
 ws.onclose = function () {
     debug("WebSocket is closed");
-    endTest();
+    shouldBeTrue("handshake_success");
+    shouldBe("ws_location", '"ws://127.0.0.1:8880/"');
+    finishJSTest();
 };
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

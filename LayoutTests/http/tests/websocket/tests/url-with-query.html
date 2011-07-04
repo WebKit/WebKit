@@ -3,7 +3,6 @@
 <head>
 <link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
 <script src="../../../js-test-resources/js-test-pre.js"></script>
-<script src="../../../js-test-resources/js-test-post-function.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -11,8 +10,7 @@
 <script type="text/javascript">
 description("Make sure handshake with URL with query components success.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+window.jsTestIsAsync = true;
 
 var url = "ws://127.0.0.1:8880/websocket/tests/echo-location?q=v";
 var handshake_success = false;
@@ -23,9 +21,7 @@ function endTest()
     clearTimeout(timeoutID);
     shouldBeTrue("handshake_success");
     shouldBe("ws_location", "url");
-    isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 }
 
 debug("url=" + url);
@@ -47,5 +43,6 @@ var timeoutID = setTimeout("endTest()", 2000);
 
 var successfullyParsed = true;
 </script>
+<script src="../../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>
