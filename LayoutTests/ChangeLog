@@ -1,3 +1,14 @@
+2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: network-preflight-options.html test is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=63904
+
+        Unreviewed test fix.
+
+        * http/tests/inspector/network-preflight-options-expected.txt:
+        * http/tests/inspector/network-preflight-options.html:
+        * platform/qt/Skipped:
+
 2011-07-04  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] http/tests/inspector/network-preflight-options.html fails frequently

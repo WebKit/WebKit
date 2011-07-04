@@ -2,10 +2,18 @@
 <head>
 <script src="inspector-test.js"></script>
 <script type="text/javascript">
-
-function sendXHR(url, forcePreflight, async)
+function sendXHR(url, forcePreflight, async, callback)
 {
     var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (typeof(callback) === "function")
+                callback();
+        }
+    };
+
     xhr.open("POST", url, async);
     xhr.setRequestHeader("Content-Type", forcePreflight ? "application/xml" : "text/plain");
     try {
@@ -14,10 +22,9 @@ function sendXHR(url, forcePreflight, async)
     }
 }
 
+var targetURL = "http://localhost:8000/inspector/resources/cors-target.php";
 function doCrossOriginXHR()
 {
-    var targetURL = "http://localhost:8000/inspector/resources/cors-target.php";
-
     // Failed POSTs with no preflight check should result in a POST request being logged
     sendXHR(targetURL + "?deny=yes", false, false);
     // Failed POSTs with preflight check should result in an OPTIONS request being logged
@@ -28,8 +35,16 @@ function doCrossOriginXHR()
 
     // And now send the same requests asynchronously
     // Add redundant async parameter to ensure this request differs from the one above.
-    sendXHR(targetURL + "?deny=yes", false, true);
-    sendXHR(targetURL + "?deny=yes", true, true);
+    sendXHR(targetURL + "?deny=yes", false, true, step2);
+}
+
+function step2()
+{
+    sendXHR(targetURL + "?deny=yes", true, true, step3);
+}
+
+function step3()
+{
     sendXHR(targetURL + "?async=yes&date=" + Date.now(), true, true);
 }
 
@@ -39,17 +54,17 @@ var test = function()
     function onResource(event)
     {
         var resource = event.data;
-        InspectorTest.addResult(resource.requestMethod + " " +  resource.url.replace(/[&?]date=\d+/, ""));
-        if (resource.requestMethod === "POST" && ++postRequestsCount == 4)
+        InspectorTest.addResult(resource.requestMethod + " " + resource.url.replace(/[&?]date=\d+/, ""));
+        if (resource.requestMethod === "POST" && ++postRequestsCount === 4)
             InspectorTest.completeTest();
     }
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource);
     InspectorTest.evaluateInPage("doCrossOriginXHR();");
 }
-
 </script>
 </head>
 <body onload="runTest()">
 <p>Tests that preflight OPTIONS requests appear in Network resources</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=63712">Bug 63712</a>
 </body>
 </html>
