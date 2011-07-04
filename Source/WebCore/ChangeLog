@@ -1,3 +1,13 @@
+2011-07-04  Jeff Timanus  <twiz@chromium.org>
+
+        Reviewed by Stephen White.
+
+        Prevent calls to GrapicsContext3D::deleteTexture with id 0 in DrawingBuffer::clear().
+        https://bugs.webkit.org/show_bug.cgi?id=63756
+
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+
 2011-07-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Andreas Kling.

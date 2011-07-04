@@ -58,36 +58,39 @@ void DrawingBuffer::clear()
 {
     if (!m_context)
         return;
-        
+
     m_context->makeContextCurrent();
-    m_context->deleteTexture(m_colorBuffer);
-    m_colorBuffer = 0;
-    
+
+    if (m_colorBuffer) {
+        m_context->deleteTexture(m_colorBuffer);
+        m_colorBuffer = 0;
+    }
+
     if (m_multisampleColorBuffer) {
         m_context->deleteRenderbuffer(m_multisampleColorBuffer);
         m_multisampleColorBuffer = 0;
     }
-    
+
     if (m_depthStencilBuffer) {
         m_context->deleteRenderbuffer(m_depthStencilBuffer);
         m_depthStencilBuffer = 0;
     }
-    
+
     if (m_depthBuffer) {
         m_context->deleteRenderbuffer(m_depthBuffer);
         m_depthBuffer = 0;
     }
-    
+
     if (m_stencilBuffer) {
         m_context->deleteRenderbuffer(m_stencilBuffer);
         m_stencilBuffer = 0;
     }
-    
+
     if (m_multisampleFBO) {
         m_context->deleteFramebuffer(m_multisampleFBO);
         m_multisampleFBO = 0;
     }
-        
+
     m_context->deleteFramebuffer(m_fbo);
     m_fbo = 0;
 }
