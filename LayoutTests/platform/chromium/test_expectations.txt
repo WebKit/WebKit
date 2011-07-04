@@ -3974,3 +3974,5 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRA
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
 BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
+
+BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT

@@ -1,5 +1,14 @@
 2011-07-04  Marcus Bulach  <bulach@chromium.org>
 
+        [chromium] Updates expectations for failures on svg/animations/svgtransform-animation-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=63902
+
+        Unreviewed expectations fix.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-04  Marcus Bulach  <bulach@chromium.org>
+
         [chromium] Rebaseline following r90338
         https://bugs.webkit.org/show_bug.cgi?id=63896
 
