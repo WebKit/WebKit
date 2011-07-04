@@ -3976,3 +3976,7 @@ BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT
+
+// Started failing at WebKit r90259-90261.
+BUGCR88400 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGCR88400 GPU : compositing/overflow/overflow-scroll.html = IMAGE
