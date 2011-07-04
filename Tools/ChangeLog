@@ -1,3 +1,134 @@
+2011-07-04  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Add LayoutTestControllerEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=61974
+
+        Only the core features are implemented. Most functions are actually
+        stubs and will be implemented as soon as its features are needed.
+        Build system changes will be made as soon as DRT is completely
+        upstreamed.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp: Added.
+        (LayoutTestController::~LayoutTestController):
+        (LayoutTestController::addDisallowedURL):
+        (LayoutTestController::clearBackForwardList):
+        (LayoutTestController::copyDecodedHostName):
+        (LayoutTestController::copyEncodedHostName):
+        (LayoutTestController::dispatchPendingLoadRequests):
+        (LayoutTestController::display):
+        (LayoutTestController::counterValueForElementById):
+        (LayoutTestController::keepWebHistory):
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+        (LayoutTestController::nodesFromRect):
+        (LayoutTestController::layerTreeAsText):
+        (LayoutTestController::pageNumberForElementById):
+        (LayoutTestController::numberOfPages):
+        (LayoutTestController::pageProperty):
+        (LayoutTestController::isPageBoxVisible):
+        (LayoutTestController::pageSizeAndMarginsInPixels):
+        (LayoutTestController::webHistoryItemCount):
+        (LayoutTestController::workerThreadCount):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::pathToLocalResource):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::setAcceptsEditing):
+        (LayoutTestController::setAlwaysAcceptCookies):
+        (LayoutTestController::setCustomPolicyDelegate):
+        (LayoutTestController::waitForPolicyDelegate):
+        (LayoutTestController::setScrollbarPolicy):
+        (LayoutTestController::addOriginAccessWhitelistEntry):
+        (LayoutTestController::removeOriginAccessWhitelistEntry):
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+        (LayoutTestController::setUseDashboardCompatibilityMode):
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::setValueForUser):
+        (LayoutTestController::setViewModeMediaFeature):
+        (LayoutTestController::setWindowIsKey):
+        (LayoutTestController::setSmartInsertDeleteEnabled):
+        (waitToDumpWatchdogFired):
+        (LayoutTestController::setWaitToDump):
+        (LayoutTestController::windowCount):
+        (LayoutTestController::setPrivateBrowsingEnabled):
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        (LayoutTestController::setXSSAuditorEnabled):
+        (LayoutTestController::setFrameFlatteningEnabled):
+        (LayoutTestController::setSpatialNavigationEnabled):
+        (LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        (LayoutTestController::setAllowFileAccessFromFileURLs):
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        (LayoutTestController::setAutofilled):
+        (LayoutTestController::disableImageLoading):
+        (LayoutTestController::setMockDeviceOrientation):
+        (LayoutTestController::setMockGeolocationPosition):
+        (LayoutTestController::setMockGeolocationError):
+        (LayoutTestController::setGeolocationPermission):
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+        (LayoutTestController::addMockSpeechInputResult):
+        (LayoutTestController::setIconDatabaseEnabled):
+        (LayoutTestController::setJavaScriptProfilingEnabled):
+        (LayoutTestController::setSelectTrailingWhitespaceEnabled):
+        (LayoutTestController::setPopupBlockingEnabled):
+        (LayoutTestController::setPluginsEnabled):
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+        (LayoutTestController::execCommand):
+        (LayoutTestController::findString):
+        (LayoutTestController::isCommandEnabled):
+        (LayoutTestController::setCacheModel):
+        (LayoutTestController::setPersistentUserStyleSheetLocation):
+        (LayoutTestController::clearPersistentUserStyleSheet):
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setApplicationCacheOriginQuota):
+        (LayoutTestController::clearApplicationCacheForOrigin):
+        (LayoutTestController::localStorageDiskUsageForOrigin):
+        (LayoutTestController::originsWithApplicationCache):
+        (LayoutTestController::applicationCacheDiskUsageForOrigin):
+        (LayoutTestController::clearAllDatabases):
+        (LayoutTestController::setDatabaseQuota):
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+        (LayoutTestController::observeStorageTrackerNotifications):
+        (LayoutTestController::syncLocalStorage):
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+        (LayoutTestController::setAppCacheMaximumSize):
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        (LayoutTestController::numberOfActiveAnimations):
+        (LayoutTestController::suspendAnimations):
+        (LayoutTestController::resumeAnimations):
+        (LayoutTestController::overridePreference):
+        (LayoutTestController::addUserScript):
+        (LayoutTestController::addUserStyleSheet):
+        (LayoutTestController::setDeveloperExtrasEnabled):
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled):
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+        (LayoutTestController::removeAllVisitedLinks):
+        (LayoutTestController::callShouldCloseOnWebView):
+        (LayoutTestController::apiTestNewWindowDataLoadBaseURL):
+        (LayoutTestController::apiTestGoToCurrentBackForwardItem):
+        (LayoutTestController::setWebViewEditable):
+        (LayoutTestController::markerTextForListItem):
+        (LayoutTestController::authenticateSession):
+        (LayoutTestController::setEditingBehavior):
+        (LayoutTestController::abortModal):
+        (LayoutTestController::hasSpellingMarker):
+        (LayoutTestController::hasGrammarMarker):
+        (LayoutTestController::dumpConfigurationForViewport):
+        (LayoutTestController::setSerializeHTTPLoads):
+        (LayoutTestController::setMinimumTimerInterval):
+        (LayoutTestController::setTextDirection):
+        (LayoutTestController::allowRoundingHacks):
+
 2011-06-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, add myself as committer.
