@@ -75,7 +75,8 @@
                     { "name": "parentId", "type": "string", "optional": true, "description": "Parent frame identifier." },
                     { "name": "loaderId", "type": "string", "description": "Identifier of the loader associated with this frame." },
                     { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
-                    { "name": "url", "type": "string", "description": "Frame document's URL." }
+                    { "name": "url", "type": "string", "description": "Frame document's URL." },
+                    { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
                 ]
             },
             {
@@ -90,7 +91,8 @@
                             "type": "object",
                             "properties": [
                                 { "name": "url", "type": "string", "description": "Resource URL." },
-                                { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." }
+                                { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." },
+                                { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." }
                             ]
                         },
                         "description": "Information about frame resources."

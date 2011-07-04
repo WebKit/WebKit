@@ -1,3 +1,22 @@
+2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resources loaded to Resources Panel from InspectorPageAgent do not have mime type set.
+        https://bugs.webkit.org/show_bug.cgi?id=63701
+
+        Pass cachedResource/documentLoader mimeType from InspectorPageAgent to frontend.
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector/resource-tree/resource-tree-mimetype.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        (WebInspector.ResourceTreeModel.prototype._createResource):
+
 2011-07-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: repeated message counter should be aligned with other message icons

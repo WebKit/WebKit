@@ -1,3 +1,16 @@
+2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resources loaded to Resources Panel from InspectorPageAgent do not have mime type set.
+        https://bugs.webkit.org/show_bug.cgi?id=63701
+
+        Added a test that checks mime type when resources are loaded from cache by InspectorPageAgent.
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/resource-tree/resource-tree-mimetype-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-tree-mimetype.html: Added.
+        * http/tests/inspector/resource-tree/resources/empty.png: Added.
+
 2011-07-04  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Updates expectations for failures on svg/animations/svgtransform-animation-1.html

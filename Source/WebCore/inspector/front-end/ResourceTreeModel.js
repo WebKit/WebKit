@@ -339,6 +339,7 @@ WebInspector.ResourceTreeModel.prototype = {
             var subresource = frameTreePayload.resources[i];
             var resource = this._createResource(framePayload, subresource.url);
             resource.type = WebInspector.Resource.Type[subresource.type];
+            resource.mimeType = subresource.mimeType;
             resource.finished = true;
             this._addResourceToFrame(resource);
         }
@@ -349,6 +350,7 @@ WebInspector.ResourceTreeModel.prototype = {
         var resource = new WebInspector.Resource(null, url, frame.loaderId);
         resource.frameId = frame.id;
         resource.documentURL = frame.url;
+        resource.mimeType = frame.mimeType;
         return resource;
     }
 }

@@ -616,6 +616,7 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame
     }
     frameObject->setString("url", frame->document()->url().string());
     frameObject->setString("loaderId", loaderId(frame->loader()->documentLoader()));
+    frameObject->setString("mimeType", frame->loader()->documentLoader()->responseMIMEType());
 
     return frameObject;
 }
@@ -635,6 +636,7 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrameTree(Frame* f
         RefPtr<InspectorObject> resourceObject = InspectorObject::create();
         resourceObject->setString("url", cachedResource->url());
         resourceObject->setString("type", cachedResourceTypeString(*cachedResource));
+        resourceObject->setString("mimeType", cachedResource->response().mimeType());
         subresources->pushValue(resourceObject);
     }
 
