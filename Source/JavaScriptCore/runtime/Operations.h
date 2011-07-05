@@ -334,6 +334,10 @@ namespace JSC {
         return strictEqualSlowCaseInline(exec, v1, v2);
     }
 
+    // See ES5 11.8.1/11.8.2/11.8.5 for definition of leftFirst, this value ensures correct
+    // evaluation ordering for argument conversions for '<' and '>'. For '<' pass the value
+    // true, for leftFirst, for '>' pass the value false (and reverse operand order).
+    template<bool leftFirst>
     ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
         if (v1.isInt32() && v2.isInt32())
@@ -350,16 +354,26 @@ namespace JSC {
 
         JSValue p1;
         JSValue p2;
-        bool wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
-        bool wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        bool wasNotString1;
+        bool wasNotString2;
+        if (leftFirst) {
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        } else {
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        }
 
         if (wasNotString1 | wasNotString2)
             return n1 < n2;
-
         return asString(p1)->value(callFrame) < asString(p2)->value(callFrame);
     }
 
-    inline bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
+    // See ES5 11.8.3/11.8.4/11.8.5 for definition of leftFirst, this value ensures correct
+    // evaluation ordering for argument conversions for '<=' and '=>'. For '<=' pass the
+    // value true, for leftFirst, for '=>' pass the value false (and reverse operand order).
+    template<bool leftFirst>
+    ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() <= v2.asInt32();
@@ -375,12 +389,18 @@ namespace JSC {
 
         JSValue p1;
         JSValue p2;
-        bool wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
-        bool wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        bool wasNotString1;
+        bool wasNotString2;
+        if (leftFirst) {
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        } else {
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        }
 
         if (wasNotString1 | wasNotString2)
             return n1 <= n2;
-
         return !(asString(p2)->value(callFrame) < asString(p1)->value(callFrame));
     }
 

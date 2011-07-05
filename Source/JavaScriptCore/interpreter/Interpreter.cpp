@@ -1772,7 +1772,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
-        JSValue result = jsBoolean(jsLess(callFrame, src1, src2));
+        JSValue result = jsBoolean(jsLess<true>(callFrame, src1, src2));
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = result;
 
@@ -1789,7 +1789,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
-        JSValue result = jsBoolean(jsLessEq(callFrame, src1, src2));
+        JSValue result = jsBoolean(jsLessEq<true>(callFrame, src1, src2));
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = result;
 
@@ -1806,7 +1806,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
-        JSValue result = jsBoolean(jsLess(callFrame, src2, src1)); // FIXME: Bug#63880
+        JSValue result = jsBoolean(jsLess<false>(callFrame, src2, src1));
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = result;
 
@@ -1823,7 +1823,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
-        JSValue result = jsBoolean(jsLessEq(callFrame, src2, src1)); // FIXME: Bug#63880
+        JSValue result = jsBoolean(jsLessEq<false>(callFrame, src2, src1));
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = result;
 
@@ -3688,7 +3688,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
         
-        bool result = jsLess(callFrame, src1, src2);
+        bool result = jsLess<true>(callFrame, src1, src2);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3715,7 +3715,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
         
-        bool result = jsLessEq(callFrame, src1, src2);
+        bool result = jsLessEq<true>(callFrame, src1, src2);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3742,7 +3742,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
         
-        bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
+        bool result = jsLess<false>(callFrame, src2, src1);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3769,7 +3769,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
         
-        bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
+        bool result = jsLessEq<false>(callFrame, src2, src1);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3793,7 +3793,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
 
-        bool result = jsLess(callFrame, src1, src2);
+        bool result = jsLess<true>(callFrame, src1, src2);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3816,7 +3816,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
         
-        bool result = jsLessEq(callFrame, src1, src2);
+        bool result = jsLessEq<true>(callFrame, src1, src2);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3839,7 +3839,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
 
-        bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
+        bool result = jsLess<false>(callFrame, src2, src1);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3862,7 +3862,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
         
-        bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
+        bool result = jsLessEq<false>(callFrame, src2, src1);
         CHECK_FOR_EXCEPTION();
         
         if (result) {
@@ -3885,7 +3885,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
 
-        bool result = jsLess(callFrame, src1, src2);
+        bool result = jsLess<true>(callFrame, src1, src2);
         CHECK_FOR_EXCEPTION();
         
         if (!result) {
@@ -3908,7 +3908,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
 
-        bool result = jsLessEq(callFrame, src1, src2);
+        bool result = jsLessEq<true>(callFrame, src1, src2);
         CHECK_FOR_EXCEPTION();
         
         if (!result) {
@@ -3931,7 +3931,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
 
-        bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
+        bool result = jsLess<false>(callFrame, src2, src1);
         CHECK_FOR_EXCEPTION();
         
         if (!result) {
@@ -3954,7 +3954,7 @@ skip_id_custom_self:
         JSValue src2 = callFrame->r(vPC[2].u.operand).jsValue();
         int target = vPC[3].u.operand;
 
-        bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
+        bool result = jsLessEq<false>(callFrame, src2, src1);
         CHECK_FOR_EXCEPTION();
         
         if (!result) {

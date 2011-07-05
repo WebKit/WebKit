@@ -369,22 +369,22 @@ void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, E
 
 bool operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    return jsLess(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+    return jsLess<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
 bool operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    return jsLessEq(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+    return jsLessEq<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
 bool operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    return jsLess(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1)); // FIXME: Bug#63880
+    return jsLess<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
 bool operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    return jsLessEq(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1)); // FIXME: Bug#63880
+    return jsLessEq<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
 bool operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

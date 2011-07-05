@@ -56,13 +56,13 @@ PASS: Handled "'string' >= toStringThrower" correctly.
 PASS: Handled "'string' >= throwingProperty" correctly.
 PASS: Handled "'string' >= ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
 PASS: Handled "'string' >= getterThrower.value" correctly.
-FAIL: "valueOfThrower >= rhsNonZeroNum" threw exception, but executed right hand half of expression
-FAIL: "toStringThrower >= rhsNonZeroNum" threw exception, but executed right hand half of expression
+PASS: Handled "valueOfThrower >= rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower >= rhsNonZeroNum" correctly.
 PASS: Handled "throwingProperty >= rhsNonZeroNum" correctly.
 PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty >= rhsNonZeroNum" correctly.
 PASS: Handled "getterThrower.value >= rhsNonZeroNum" correctly.
-FAIL: "valueOfThrower >= rhsToStringThrower" threw exception, but executed right hand half of expression
-FAIL: "toStringThrower >= rhsToStringThrower" threw exception, but executed right hand half of expression
+PASS: Handled "valueOfThrower >= rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower >= rhsToStringThrower" correctly.
 PASS: Handled "throwingProperty >= rhsToStringThrower" correctly.
 PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty >= rhsToStringThrower" correctly.
 PASS: Handled "getterThrower.value >= rhsToStringThrower" correctly.
@@ -78,13 +78,13 @@ PASS: Handled "'string' > toStringThrower" correctly.
 PASS: Handled "'string' > throwingProperty" correctly.
 PASS: Handled "'string' > ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
 PASS: Handled "'string' > getterThrower.value" correctly.
-FAIL: "valueOfThrower > rhsNonZeroNum" threw exception, but executed right hand half of expression
-FAIL: "toStringThrower > rhsNonZeroNum" threw exception, but executed right hand half of expression
+PASS: Handled "valueOfThrower > rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower > rhsNonZeroNum" correctly.
 PASS: Handled "throwingProperty > rhsNonZeroNum" correctly.
 PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty > rhsNonZeroNum" correctly.
 PASS: Handled "getterThrower.value > rhsNonZeroNum" correctly.
-FAIL: "valueOfThrower > rhsToStringThrower" threw exception, but executed right hand half of expression
-FAIL: "toStringThrower > rhsToStringThrower" threw exception, but executed right hand half of expression
+PASS: Handled "valueOfThrower > rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower > rhsToStringThrower" correctly.
 PASS: Handled "throwingProperty > rhsToStringThrower" correctly.
 PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty > rhsToStringThrower" correctly.
 PASS: Handled "getterThrower.value > rhsToStringThrower" correctly.
@@ -170,5 +170,5 @@ PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingP
 PASS: Handled "getterThrower.value >> rhsToStringThrower" correctly.
 PASS: Handled "valueOfThrower >> rhsGetterTester.value" correctly.
 PASS: Handled "toStringThrower >> rhsGetterTester.value" correctly.
-Passed 160 of 168 tests.
+Passed 168 of 168 tests.
 

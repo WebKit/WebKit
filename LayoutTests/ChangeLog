@@ -1,3 +1,32 @@
+2011-07-04  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63880
+        Evaluation order of conversions of operands to >, >= incorrect.
+
+        Reviewed by Sam Weinig.
+
+        Updated layout test results. Two of these tests now pass, however for
+        the third we now need to check in failing results, since the test is
+        incorrect!
+
+        The problem if that the test author has made the mistake of thinking
+        that the evaluation order for the operands to '>' is RHS then LHS.
+        This is due to a quirk in the way the spec is written. The greater
+        than opeator is defined to call the abstract relational comparison
+        algorithm with 'leftFirst' set to false, and as such conversion is
+        performed on the second operand ('y') first (see 11.8.5). However
+        the abstract relational comparison algorith is performing a less
+        than comaprison, and the greater than operator calls this algorithm
+        with the operands to the greater than operator reversed (see 11.8.2).
+        As such, the second operand to the abstract comaparison is the LHS
+        of the greater than. This bug also affects the corresponding less
+        than or equals test, where we already we have failing results checked
+        in, and again it is the test that is wrong (for the same reason).
+
+        * fast/js/exception-sequencing-binops2-expected.txt:
+        * sputnik/Conformance/11_Expressions/11.8_Relational_Operators/11.8.2_The_Greater_than_Operator/S11.8.2_A2.3_T1-expected.txt:
+        * sputnik/Conformance/11_Expressions/11.8_Relational_Operators/11.8.4_The_Grater_than_or_equal_Operator/S11.8.4_A2.3_T1-expected.txt:
+
 2011-07-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Marked css2.1/20110323/replaced-intrinsic-ratio-001.htm as flaky on mac.

@@ -2541,7 +2541,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_less)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = jsBoolean(jsLess(callFrame, stackFrame.args[0].jsValue(), stackFrame.args[1].jsValue()));
+    JSValue result = jsBoolean(jsLess<true>(callFrame, stackFrame.args[0].jsValue(), stackFrame.args[1].jsValue()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2551,7 +2551,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_lesseq)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = jsBoolean(jsLessEq(callFrame, stackFrame.args[0].jsValue(), stackFrame.args[1].jsValue()));
+    JSValue result = jsBoolean(jsLessEq<true>(callFrame, stackFrame.args[0].jsValue(), stackFrame.args[1].jsValue()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2561,7 +2561,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_greater)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = jsBoolean(jsLess(callFrame, stackFrame.args[1].jsValue(), stackFrame.args[0].jsValue())); // FIXME: Bug#63880
+    JSValue result = jsBoolean(jsLess<false>(callFrame, stackFrame.args[1].jsValue(), stackFrame.args[0].jsValue()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2571,7 +2571,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_greatereq)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = jsBoolean(jsLessEq(callFrame, stackFrame.args[1].jsValue(), stackFrame.args[0].jsValue())); // FIXME: Bug#63880
+    JSValue result = jsBoolean(jsLessEq<false>(callFrame, stackFrame.args[1].jsValue(), stackFrame.args[0].jsValue()));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2819,7 +2819,7 @@ DEFINE_STUB_FUNCTION(int, op_jless)
     JSValue src2 = stackFrame.args[1].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    bool result = jsLess(callFrame, src1, src2);
+    bool result = jsLess<true>(callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
@@ -2832,7 +2832,7 @@ DEFINE_STUB_FUNCTION(int, op_jlesseq)
     JSValue src2 = stackFrame.args[1].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    bool result = jsLessEq(callFrame, src1, src2);
+    bool result = jsLessEq<true>(callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
@@ -2845,7 +2845,7 @@ DEFINE_STUB_FUNCTION(int, op_jgreater)
     JSValue src2 = stackFrame.args[1].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    bool result = jsLess(callFrame, src2, src1); // FIXME: Bug#63880
+    bool result = jsLess<false>(callFrame, src2, src1);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
@@ -2858,7 +2858,7 @@ DEFINE_STUB_FUNCTION(int, op_jgreatereq)
     JSValue src2 = stackFrame.args[1].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    bool result = jsLessEq(callFrame, src2, src1); // FIXME: Bug#63880
+    bool result = jsLessEq<false>(callFrame, src2, src1);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }

@@ -1,5 +1,25 @@
 2011-07-04  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=63880
+        Evaluation order of conversions of operands to >, >= incorrect.
+
+        Reviewed by Sam Weinig.
+
+        Add 'leftFirst' parameter to jsLess, jsLessEq matching that described in the ES5
+        spec. This allows these methods to be reused to perform >, >= relational compares
+        with correct ordering of type conversions.
+
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Operations.h:
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+
+2011-07-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=16652
