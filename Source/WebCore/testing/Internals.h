@@ -55,6 +55,8 @@ public:
 
 #if ENABLE(INSPECTOR)
     void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
+#else
+    void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&) { }
 #endif
 
 private:

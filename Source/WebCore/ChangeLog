@@ -1,5 +1,13 @@
 2011-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed; Qt Linux Release minimal compile fix.
+
+        * testing/Internals.h:
+        (WebCore::Internals::setInspectorResourcesDataSizeLimits):
+        * testing/Internals.idl:
+
+2011-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Show content for plugin requests in network panel.
         https://bugs.webkit.org/show_bug.cgi?id=30080
 
