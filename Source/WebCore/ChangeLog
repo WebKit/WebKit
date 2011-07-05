@@ -1,3 +1,19 @@
+2011-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Add hasOwnDisabledStateHandlingFor() to RenderThemeEfl
+        https://bugs.webkit.org/show_bug.cgi?id=63884
+
+        As MediaControlRootElement decides whether it will display timeline
+        according to the return value of RenderTheme's hasOwnDisabledStateHandlingFor(),
+        RenderThemeEfl has to implement this function.
+
+        Existing tests cover the visibility of the controls.
+
+        * platform/efl/RenderThemeEfl.h:
+        (WebCore::RenderThemeEfl::hasOwnDisabledStateHandlingFor):
+
 2011-07-04  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r87067): Text overflows from short height text field.
