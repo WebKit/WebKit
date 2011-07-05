@@ -1,3 +1,17 @@
+2011-07-05  Eric Seidel  <eric@webkit.org>
+
+        buildbot needs to understand whether NRWT exited early after having too many failures
+        https://bugs.webkit.org/show_bug.cgi?id=63839
+
+        Reviewed by Adam Barth.
+
+        Teach the new results.html how to display a warning when testing exited early.
+        The warning isn't quite as nice as ORWT since I couldn't figure out how to
+        find the total tests run, or total unexpected crashes.  I figure
+        this is enough to get us going and we can refine it further.
+
+        * fast/harness/results.html:
+
 2011-07-05  Sam Weinig  <sam@webkit.org>
 
         Null deref accessing CustomEvent.detail

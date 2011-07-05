@@ -445,36 +445,27 @@ class  Testprinter(unittest.TestCase):
             """
             paths, rs, exp = self.get_result_summary(tests, expectations)
             if expected:
-                rs.add(self.get_result('passes/text.html', test_expectations.PASS),
-                       expected)
-                rs.add(self.get_result('failures/expected/timeout.html',
-                       test_expectations.TIMEOUT), expected)
-                rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH),
-                   expected)
+                rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected)
+                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected)
+                rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected)
             elif passing:
                 rs.add(self.get_result('passes/text.html'), expected)
                 rs.add(self.get_result('failures/expected/timeout.html'), expected)
                 rs.add(self.get_result('failures/expected/crash.html'), expected)
             else:
-                rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT),
-                       expected)
-                rs.add(self.get_result('failures/expected/timeout.html',
-                       test_expectations.CRASH), expected)
-                rs.add(self.get_result('failures/expected/crash.html',
-                                  test_expectations.TIMEOUT),
-                   expected)
+                rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected)
+                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected)
+                rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected)
             retry = rs
             if flaky:
-                paths, retry, exp = self.get_result_summary(tests,
-                                                expectations)
+                paths, retry, exp = self.get_result_summary(tests, expectations)
                 retry.add(self.get_result('passes/text.html'), True)
                 retry.add(self.get_result('failures/expected/timeout.html'), True)
                 retry.add(self.get_result('failures/expected/crash.html'), True)
-            unexpected_results = manager.summarize_results(self._port, exp, rs, retry, test_timings={}, only_unexpected=True)
+            unexpected_results = manager.summarize_results(self._port, exp, rs, retry, test_timings={}, only_unexpected=True, interrupted=False)
             return unexpected_results
 
-        tests = ['passes/text.html', 'failures/expected/timeout.html',
-                 'failures/expected/crash.html']
+        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html']
         expectations = ''
 
         printer, err, out = self.get_printer(['--print', 'nothing'])
@@ -483,8 +474,7 @@ class  Testprinter(unittest.TestCase):
         self.assertTrue(err.empty())
         self.assertTrue(out.empty())
 
-        printer, err, out = self.get_printer(['--print',
-                                              'unexpected-results'])
+        printer, err, out = self.get_printer(['--print', 'unexpected-results'])
 
         # test everything running as expected
         ur = get_unexpected_results(expected=True, passing=False, flaky=False)

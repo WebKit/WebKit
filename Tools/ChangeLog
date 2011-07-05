@@ -1,5 +1,26 @@
 2011-07-05  Eric Seidel  <eric@webkit.org>
 
+        buildbot needs to understand whether NRWT exited early after having too many failures
+        https://bugs.webkit.org/show_bug.cgi?id=63839
+
+        Reviewed by Adam Barth.
+
+        Fix-up the exited early messages printed by NRWT so that
+        the buildbot can parse them as expected.
+        It looks for lines using "if line.find('Exiting early') >= 0:"
+
+        I also plumbed the "early exit" status through to results.json
+        in the form of an "interrupted" bool.  It was unclear to me
+        if results.json already had enough information to compute this bool
+        itself.  It's possible Ojan could come up with a better fix.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/result_summary.py:
+
+2011-07-05  Eric Seidel  <eric@webkit.org>
+
         new-run-webkit-tests fails to start http server if one is already running
         https://bugs.webkit.org/show_bug.cgi?id=63956
 

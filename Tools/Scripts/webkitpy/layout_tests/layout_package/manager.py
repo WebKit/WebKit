@@ -73,7 +73,11 @@ BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
 TestExpectations = test_expectations.TestExpectations
 
 
-def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected):
+# FIXME: This should be on the Manager class (since that's the only caller)
+# or split off from Manager onto another helper class, but should not be a free function.
+# Most likely this should be made into its own class, and this super-long function
+# split into many helper functions.
+def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected, interrupted):
     """Summarize failing results as a dict.
 
     FIXME: split this data structure into a separate class?
@@ -101,10 +105,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
 
     tbe = result_summary.tests_by_expectation
     tbt = result_summary.tests_by_timeline
-    results['fixable'] = len(tbt[test_expectations.NOW] -
-                                tbe[test_expectations.PASS])
-    results['skipped'] = len(tbt[test_expectations.NOW] &
-                                tbe[test_expectations.SKIP])
+    results['fixable'] = len(tbt[test_expectations.NOW] - tbe[test_expectations.PASS])
+    results['skipped'] = len(tbt[test_expectations.NOW] & tbe[test_expectations.SKIP])
 
     num_passes = 0
     num_flaky = 0
@@ -207,6 +209,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['num_flaky'] = num_flaky
     results['num_regressions'] = num_regressions
     results['uses_expectations_file'] = port_obj.uses_test_expectations_file()
+    results['interrupted'] = interrupted  # Does results.html have enough information to compute this itself? (by checking total number of results vs. total number of tests?)
     results['layout_tests_dir'] = port_obj.layout_tests_dir()
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
@@ -223,6 +226,7 @@ class TestRunInterruptedException(Exception):
     """Raised when a test run should be stopped immediately."""
     def __init__(self, reason):
         self.reason = reason
+        self.msg = reason
 
     def __reduce__(self):
         return self.__class__, (self.reason,)
@@ -815,8 +819,7 @@ class Manager:
                                              result_summary.expected,
                                              result_summary.unexpected)
 
-        unexpected_results = summarize_results(self._port,
-            self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True)
+        unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True, interrupted=interrupted)
         self._printer.print_unexpected_results(unexpected_results)
 
         # Re-raise a KeyboardInterrupt if necessary so the caller can handle it.
@@ -829,10 +832,8 @@ class Manager:
             not keyboard_interrupted):
             # Write the same data to log files and upload generated JSON files
             # to appengine server.
-            summarized_results = summarize_results(self._port,
-                self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False)
-            self._upload_json_files(unexpected_results, summarized_results, result_summary,
-                                    individual_test_timings)
+            summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False, interrupted=interrupted)
+            self._upload_json_files(unexpected_results, summarized_results, result_summary, individual_test_timings)
 
         # Write the summary to disk (results.html) and display it if requested.
         if not self._options.dry_run:
@@ -884,32 +885,37 @@ class Manager:
 
             self._update_summary_with_result(result_summary, result)
 
-    def _update_summary_with_result(self, result_summary, result):
-        if result.type == test_expectations.SKIP:
-            result_summary.add(result, expected=True)
-        else:
-            expected = self._expectations.matches_an_expected_result(
-                result.filename, result.type, self._options.pixel_tests)
-            result_summary.add(result, expected)
-            exp_str = self._expectations.get_expectations_string(
-                result.filename)
-            got_str = self._expectations.expectation_to_string(result.type)
-            self._printer.print_test_result(result, expected, exp_str, got_str)
-        self._printer.print_progress(result_summary, self._retrying,
-                                     self._test_files_list)
-
-        def interrupt_if_at_failure_limit(limit, count, message):
-            if limit and count >= limit:
-                raise TestRunInterruptedException(message % count)
+    def _interrupt_if_at_failure_limits(self, result_summary):
+        # Note: The messages in this method are constructed to match old-run-webkit-tests
+        # so that existing buildbot grep rules work.
+        def interrupt_if_at_failure_limit(limit, failure_count, result_summary, message):
+            if limit and failure_count >= limit:
+                message += " %d tests run." % (result_summary.expected + result_summary.unexpected)
+                raise TestRunInterruptedException(message)
 
         interrupt_if_at_failure_limit(
             self._options.exit_after_n_failures,
             result_summary.unexpected_failures,
-            "Aborting run since %d failures were reached")
+            result_summary,
+            "Exiting early after %d failures." % result_summary.unexpected_failures)
         interrupt_if_at_failure_limit(
             self._options.exit_after_n_crashes_or_timeouts,
-            result_summary.unexpected_crashes_or_timeouts,
-            "Aborting run since %d crashes or timeouts were reached")
+            result_summary.unexpected_crashes + result_summary.unexpected_timeouts,
+            result_summary,
+            # This differs from ORWT because it does not include WebProcess crashes.
+            "Exiting early after %d crashes and %d timeouts." % (result_summary.unexpected_crashes, result_summary.unexpected_timeouts))
+
+    def _update_summary_with_result(self, result_summary, result):
+        if result.type == test_expectations.SKIP:
+            result_summary.add(result, expected=True)
+        else:
+            expected = self._expectations.matches_an_expected_result(result.filename, result.type, self._options.pixel_tests)
+            result_summary.add(result, expected)
+            exp_str = self._expectations.get_expectations_string(result.filename)
+            got_str = self._expectations.expectation_to_string(result.type)
+            self._printer.print_test_result(result, expected, exp_str, got_str)
+        self._printer.print_progress(result_summary, self._retrying, self._test_files_list)
+        self._interrupt_if_at_failure_limits(result_summary)
 
     def _clobber_old_results(self):
         # Just clobber the actual test results directories since the other
@@ -1369,6 +1375,8 @@ def read_test_files(fs, files):
     return tests
 
 
+# FIXME: These two free functions belong either on manager (since it's the only one
+# which uses them) or in a different file (if they need to be re-used).
 def path_key(filesystem, path):
     """Turns a path into a list with two sublists, the natural key of the
     dirname, and the natural key of the basename.

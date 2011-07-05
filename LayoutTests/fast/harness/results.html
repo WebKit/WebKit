@@ -76,6 +76,13 @@ th {
     left: 1px;
 }
 
+.stopped-running-early-message {
+    border: 3px solid #d00;
+    font-weight: bold;
+    display: inline-block;
+    padding: 3px;
+}
+
 .result-container {
     display: inline-block;
     border: 1px solid gray;
@@ -1015,6 +1022,9 @@ function generatePage()
             '<label><input id="unexpected-results" type=checkbox checked onchange="handleUnexpectedResultsChange()">Only unexpected results</label>' +
             '<label><input id="toggle-images" type=checkbox checked onchange="handleToggleImagesChange()">Toggle images</label>' +
         '</div></div>';
+
+    if (globalState().results.interrupted)
+        html += "<p class='stopped-running-early-message'>Testing exited early.</p>"
 
     html += failingTestsTable(globalState().nonFlakyFailingTests,
         'Tests where results did not match expected results', 'results-table');

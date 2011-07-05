@@ -52,7 +52,8 @@ class ResultSummary(object):
         self.expected = 0
         self.unexpected = 0
         self.unexpected_failures = 0
-        self.unexpected_crashes_or_timeouts = 0
+        self.unexpected_crashes = 0
+        self.unexpected_timeouts = 0
         self.tests_by_expectation = {}
         self.tests_by_timeline = {}
         self.results = {}
@@ -62,8 +63,7 @@ class ResultSummary(object):
         for expectation in TestExpectations.EXPECTATIONS.values():
             self.tests_by_expectation[expectation] = set()
         for timeline in TestExpectations.TIMELINES.values():
-            self.tests_by_timeline[timeline] = (
-                expectations.get_tests_with_timeline(timeline))
+            self.tests_by_timeline[timeline] = expectations.get_tests_with_timeline(timeline)
 
     def add(self, result, expected):
         """Add a TestResult into the appropriate bin.
@@ -85,5 +85,7 @@ class ResultSummary(object):
             self.unexpected += 1
             if len(result.failures):
                 self.unexpected_failures += 1
-            if result.type == test_expectations.CRASH or result.type == test_expectations.TIMEOUT:
-                self.unexpected_crashes_or_timeouts += 1
+            if result.type == test_expectations.CRASH:
+                self.unexpected_crashes += 1
+            elif result.type == test_expectations.TIMEOUT:
+                self.unexpected_timeouts += 1

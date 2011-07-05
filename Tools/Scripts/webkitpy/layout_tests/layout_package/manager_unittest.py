@@ -35,10 +35,12 @@ import unittest
 from webkitpy.common.system import filesystem_mock
 from webkitpy.thirdparty.mock import Mock
 
-from webkitpy.layout_tests.layout_package import manager
+from webkitpy.layout_tests.layout_package.manager import Manager, natural_sort_key, path_key, TestRunInterruptedException
+from webkitpy.layout_tests.layout_package.result_summary import ResultSummary
+from webkitpy.tool.mocktool import MockOptions
 
 
-class ManagerWrapper(manager.Manager):
+class ManagerWrapper(Manager):
     def _get_test_input_for_file(self, test_file):
         return test_file
 
@@ -79,10 +81,36 @@ class ManagerTest(unittest.TestCase):
         self.assertEqual("tests_to_http_lock", multi_thread_results[0][0])
         self.assertEqual(expected_tests_to_http_lock, set(multi_thread_results[0][1]))
 
+    def test_interrupt_if_at_failure_limits(self):
+        port = Mock()
+        port._filesystem = filesystem_mock.MockFileSystem()
+        manager = Manager(port=port, options=MockOptions(), printer=Mock())
+
+        manager._options = MockOptions(exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None)
+        result_summary = ResultSummary(expectations=Mock(), test_files=[])
+        result_summary.unexpected_failures = 100
+        result_summary.unexpected_crashes = 50
+        result_summary.unexpected_timeouts = 50
+        # No exception when the exit_after* options are None.
+        manager._interrupt_if_at_failure_limits(result_summary)
+
+        # No exception when we haven't hit the limit yet.
+        manager._options.exit_after_n_failures = 101
+        manager._options.exit_after_n_crashes_or_timeouts = 101
+        manager._interrupt_if_at_failure_limits(result_summary)
+
+        # Interrupt if we've exceeded either limit:
+        manager._options.exit_after_n_crashes_or_timeouts = 10
+        self.assertRaises(TestRunInterruptedException, manager._interrupt_if_at_failure_limits, result_summary)
+
+        manager._options.exit_after_n_crashes_or_timeouts = None
+        manager._options.exit_after_n_failures = 10
+        exception = self.assertRaises(TestRunInterruptedException, manager._interrupt_if_at_failure_limits, result_summary)
+
 
 class NaturalCompareTest(unittest.TestCase):
     def assert_cmp(self, x, y, result):
-        self.assertEquals(cmp(manager.natural_sort_key(x), manager.natural_sort_key(y)), result)
+        self.assertEquals(cmp(natural_sort_key(x), natural_sort_key(y)), result)
 
     def test_natural_compare(self):
         self.assert_cmp('a', 'a', 0)
@@ -107,7 +135,7 @@ class PathCompareTest(unittest.TestCase):
         self.filesystem = filesystem_mock.MockFileSystem()
 
     def path_key(self, k):
-        return manager.path_key(self.filesystem, k)
+        return path_key(self.filesystem, k)
 
     def assert_cmp(self, x, y, result):
         self.assertEquals(cmp(self.path_key(x), self.path_key(y)), result)
