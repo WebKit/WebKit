@@ -1,5 +1,22 @@
 2011-07-05  Adam Barth  <abarth@webkit.org>
 
+        Add basic ajax support to garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=63874
+
+        Reviewed by Eric Seidel.
+
+        This patch adds some basic infrastructure to garden-o-matic.
+        Currently, the infrastructure is just used to make the "quit" command
+        use Ajax, but in the future, this infrastructure will be used to do
+        more sophistocated remote proceedure calls.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js: Added.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+
+2011-07-05  Adam Barth  <abarth@webkit.org>
+
         Add trivial garden-o-matic command (with server)
         https://bugs.webkit.org/show_bug.cgi?id=63872
 

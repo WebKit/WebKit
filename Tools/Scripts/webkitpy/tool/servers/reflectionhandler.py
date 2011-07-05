@@ -79,14 +79,16 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self._serve_file(os.path.join(self.STATIC_FILE_DIRECTORY, static_path))
 
     def quitquitquit(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/plain")
-        self.end_headers()
-        self.wfile.write("Quit.\n")
-
+        self._serve_text("Server quit.\n")
         # Shutdown has to happen on another thread from the server's thread,
         # otherwise there's a deadlock
         threading.Thread(target=lambda: self.server.shutdown()).start()
+
+    def _serve_text(self, html):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(html)
 
     def _serve_json(self, json):
         self.send_response(200)
