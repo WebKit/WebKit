@@ -1,5 +1,48 @@
 2011-07-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16652
+        Firefox and JavaScriptCore differ in Number.toString(integer)
+
+        Our arbitrary radix (2..36) toString conversion is inaccurate.
+        This is partly because it uses doubles to perform math that requires
+        higher accuracy, and partly becasue it does not attempt to correctly
+        detect where to terminate, instead relying on a simple 'epsilon'.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::decomposeDouble):
+            - helper function to extract sign, exponent, mantissa from IEEE doubles.
+        (JSC::Uint16WithFraction::Uint16WithFraction):
+            - helper class, u16int with infinite precision fraction, used to convert
+              the fractional part of the number to a string.
+        (JSC::Uint16WithFraction::operator*=):
+            - Multiply by a uint16.
+        (JSC::Uint16WithFraction::operator<):
+            - Compare two Uint16WithFractions.
+        (JSC::Uint16WithFraction::floorAndSubtract):
+            - Extract the integer portion of the number, and subtract it (clears the integer portion).
+        (JSC::Uint16WithFraction::comparePoint5):
+            - Compare to 0.5.
+        (JSC::Uint16WithFraction::sumGreaterThanOne):
+            - Passed a second Uint16WithFraction, returns true if the result of adding
+              the two values would be greater than one.
+        (JSC::Uint16WithFraction::isNormalized):
+            - Used by ASSERTs to consistency check internal representation.
+        (JSC::BigInteger::BigInteger):
+            - helper class, unbounded integer value, used to convert the integer part
+              of the number to a string.
+        (JSC::BigInteger::divide):
+            - Divide this value through by a uint32.
+        (JSC::BigInteger::operator!):
+            - test for zero.
+        (JSC::toStringWithRadix):
+            - Performs number to string conversion, with the given radix (2..36).
+        (JSC::numberProtoFuncToString):
+            - Changed to use toStringWithRadix.
+
+2011-07-04  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=63881
         Need separate bytecodes for handling >, >= comparisons.
 

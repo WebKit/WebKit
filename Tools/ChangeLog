@@ -1,3 +1,14 @@
+2011-07-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16652
+        Firefox and JavaScriptCore differ in Number.toString(integer)
+
+        Added forwarding header.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/StdLibExtras.h: Added.
+
 2011-07-04  Anders Carlsson  <andersca@apple.com>
 
         Try to fix Qt build.

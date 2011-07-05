@@ -1,3 +1,18 @@
+2011-07-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16652
+        Firefox and JavaScriptCore differ in Number.toString(integer)
+
+        Our arbitrary radix (2..36) toString conversion is inaccurate.
+        This is partly because it uses doubles to perform math that requires
+        higher accuracy, and partly becasue it does not attempt to correctly
+        detect where to terminate, instead relying on a simple 'epsilon'.
+
+        * fast/js/number-toString-expected.txt:
+            - Update expected results from FAIL to PASS.
+
 2011-07-04  Mihai Parparita  <mihaip@chromium.org>
 
         As of r90372 there are WebKit2 Mac-specific tests; don't expect those to
