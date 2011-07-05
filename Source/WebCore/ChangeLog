@@ -1,3 +1,27 @@
+2011-07-04  MORITA Hajime  <morrita@google.com>
+
+        Accessing ShadowRoot.nodeList causes an assertion failure.
+        http://webkit.org/b/63798
+        
+        The TreeScope destructor did clear the reference to TreeScope, 
+        then the Node destructor accessing treeScope(), which results 
+        an inconsistent state during the NodeList cache cleanup.
+
+        This change clears NodeList cache during the TreeScope destructor.
+        The Node destructor no longer does problematic NodeList cache
+        manipulation.
+
+        Test: fast/dom/shadow/shadow-root-node-list.html
+
+        Reviewed by Dimitri Glazkov.
+        
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::clearRareData):
+        * dom/Node.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::~TreeScope):
+
 2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         ResourceLoadNotifier::dispatchWillSendRequest should not compare StringImpl directly

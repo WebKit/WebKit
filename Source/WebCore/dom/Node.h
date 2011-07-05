@@ -650,6 +650,7 @@ protected:
 
     NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
+    void clearRareData();
 
 private:
     // Do not use this method to change the document of a node until after the node has been

@@ -1,3 +1,13 @@
+2011-07-04  MORITA Hajime  <morrita@google.com>
+
+        Accessing ShadowRoot.nodeList causes an assertion failure.
+        http://webkit.org/b/63798
+        
+        Reviewed by Dimitri Glazkov.
+        
+        * fast/dom/shadow/shadow-root-node-list-expected.txt: Added.
+        * fast/dom/shadow/shadow-root-node-list.html: Added.
+
 2011-07-04  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations change.

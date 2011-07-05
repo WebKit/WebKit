@@ -46,7 +46,7 @@ TreeScope::TreeScope(Document* document)
 TreeScope::~TreeScope()
 {
     if (hasRareData())
-        rareData()->setTreeScope(0);
+        clearRareData();
 }
 
 void TreeScope::destroyTreeScopeData()

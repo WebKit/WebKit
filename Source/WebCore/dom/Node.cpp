@@ -388,18 +388,9 @@ Node::~Node()
     liveNodeSet.remove(this);
 #endif
 
-    if (!hasRareData())
-        ASSERT(!NodeRareData::rareDataMap().contains(this));
-    else {
-        if (treeScope() && rareData()->nodeLists())
-            treeScope()->removeNodeListCache();
-        
-        NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
-        NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
-        ASSERT(it != dataMap.end());
-        delete it->second;
-        dataMap.remove(it);
-    }
+    ASSERT(hasRareData() == NodeRareData::rareDataMap().contains(this));
+    if (hasRareData())
+        clearRareData();
 
     if (renderer())
         detach();
@@ -544,6 +535,20 @@ NodeRareData* Node::ensureRareData()
 NodeRareData* Node::createRareData()
 {
     return new NodeRareData;
+}
+
+void Node::clearRareData()
+{
+    ASSERT(hasRareData());
+    if (treeScope() && rareData()->nodeLists())
+        treeScope()->removeNodeListCache();
+
+    NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
+    NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
+    ASSERT(it != dataMap.end());
+    delete it->second;
+    dataMap.remove(it);
+    clearFlag(HasRareDataFlag);
 }
 
 Element* Node::shadowHost() const
