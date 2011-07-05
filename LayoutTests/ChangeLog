@@ -1,5 +1,11 @@
 2011-07-05  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Marked css2.1/20110323/replaced-intrinsic-ratio-001.htm as flaky on mac.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-05  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Removed custom chromium-linux baselines for
         navigator-detached-no-crash.html & register-protocol-handler.html
 

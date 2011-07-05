@@ -3897,6 +3897,9 @@ BUGWK62754 WIN LINUX : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
 BUGWK62754 WIN LINUX : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
 BUGWK62754 WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 
+// Probably related to the above, but just flaky (esp. in debug)
+BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT PASS TEXT
+
 // New test.
 BUGWK61768 : fast/forms/textfield-overflow-by-value-update.html = FAIL
 
