@@ -1,3 +1,17 @@
+2011-07-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: WebInspector frontend reports a protocol error in remote debugging mode.
+        https://bugs.webkit.org/show_bug.cgi?id=63935
+
+        it was error generated for obsolete message "loaded" which was sent from frontend to backend.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded.WebInspector.socket.onopen):
+        (WebInspector.loaded):
+
 2011-07-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] remove network-sidebar style, add network-log-grid

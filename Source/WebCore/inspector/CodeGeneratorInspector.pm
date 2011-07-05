@@ -920,10 +920,7 @@ InspectorBackendStub.prototype = {
 
     reportProtocolError: function(messageObject)
     {
-        var error = messageObject.error;
-        console.error(error.message + "(" + error.code + "): request with id = " + messageObject.id + " failed.");
-        for (var i = 0; i < error.data.length; ++i)
-            console.error("    " + error.data[i]);
+        console.error("Request with id = " + messageObject.id + " failed. " + messageObject.error);
     },
 
     runAfterPendingDispatches: function(script)
