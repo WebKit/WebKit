@@ -2685,7 +2685,7 @@ sub NativeToJSValue
         if ($implClassName eq "Document") {
             $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
         } else {
-            return "$value.jsValue();";
+            return "($value.hasNoValue() ? jsNull() : $value.jsValue())";
         }
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;

@@ -1,3 +1,17 @@
+2011-07-05  Sam Weinig  <sam@webkit.org>
+
+        Null deref accessing CustomEvent.detail
+        <rdar://problem/9724577>
+        https://bugs.webkit.org/show_bug.cgi?id=63885
+
+        Reviewed by Anders Carlsson.
+
+        Add test which exercises an initialized details property on 
+        a CustomEvent instance.
+
+        * fast/events/custom-event-uninitialized-expected.txt: Added.
+        * fast/events/custom-event-uninitialized.html: Added.
+
 2011-07-05  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=63947
