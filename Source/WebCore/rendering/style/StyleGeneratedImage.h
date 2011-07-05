@@ -40,8 +40,6 @@ public:
 
     virtual WrappedImagePtr data() const { return m_generator; }
 
-    virtual bool isGeneratedImage() const { return true; }
-    
     virtual PassRefPtr<CSSValue> cssValue() const;
 
     virtual IntSize imageSize(const RenderObject*, float multiplier) const;
@@ -58,6 +56,7 @@ private:
         : m_generator(val)
         , m_fixedSize(fixedSize)
     {
+         m_isGeneratedImage = true;
     }
     
     CSSImageGeneratorValue* m_generator; // The generator holds a reference to us.

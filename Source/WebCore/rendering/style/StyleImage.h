@@ -62,9 +62,9 @@ public:
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
 
-    virtual bool isCachedImage() const { return false; }
-    virtual bool isPendingImage() const { return false; }
-    virtual bool isGeneratedImage() const { return false; }
+    ALWAYS_INLINE bool isCachedImage() const { return m_isCachedImage; }
+    ALWAYS_INLINE bool isPendingImage() const { return m_isPendingImage; }
+    ALWAYS_INLINE bool isGeneratedImage() const { return m_isGeneratedImage; }
     
     static  bool imagesEquivalent(StyleImage* image1, StyleImage* image2)
     {
@@ -77,7 +77,15 @@ public:
     }
 
 protected:
-    StyleImage() { }
+    StyleImage()
+        : m_isCachedImage(false)
+        , m_isPendingImage(false)
+        , m_isGeneratedImage(false)
+    {
+    }
+    bool m_isCachedImage:1;
+    bool m_isPendingImage:1;
+    bool m_isGeneratedImage:1;
 };
 
 }

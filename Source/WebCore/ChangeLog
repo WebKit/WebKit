@@ -1,3 +1,26 @@
+2011-07-05  Tamas Czene  <Czene.Tamas@stud.u-szeged.hu>
+
+        Reviewed by Simon Fraser.
+
+        Remove virtual functions from StyleImage.
+        https://bugs.webkit.org/show_bug.cgi?id=63909
+
+        We can remove the virtual "isChachedImage, isPendingImage, isGeneratedImage" functions to speed up the StyleImage.
+        Some profile data shows this part is significant, especially in small CSS-based sites.
+        Removing the virtual functions - removing the calls - makes a small performance progression on this part.
+
+        * rendering/style/StyleCachedImage.h:
+        (WebCore::StyleCachedImage::StyleCachedImage):
+        * rendering/style/StyleGeneratedImage.h:
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        * rendering/style/StyleImage.h:
+        (WebCore::StyleImage::isCachedImage):
+        (WebCore::StyleImage::isPendingImage):
+        (WebCore::StyleImage::isGeneratedImage):
+        (WebCore::StyleImage::StyleImage):
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::StylePendingImage):
+
 2011-07-05  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add "element state" setting to the styles section title.

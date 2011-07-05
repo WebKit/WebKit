@@ -36,8 +36,6 @@ public:
     static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
     virtual WrappedImagePtr data() const { return m_image.get(); }
 
-    virtual bool isCachedImage() const { return true; }
-    
     virtual PassRefPtr<CSSValue> cssValue() const;
     
     CachedImage* cachedImage() const { return m_image.get(); }
@@ -58,6 +56,7 @@ private:
     StyleCachedImage(CachedImage* image)
         : m_image(image)
     {
+         m_isCachedImage = true;
     }
     
     CachedResourceHandle<CachedImage> m_image;

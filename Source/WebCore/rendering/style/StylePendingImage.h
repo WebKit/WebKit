@@ -41,8 +41,6 @@ public:
 
     virtual WrappedImagePtr data() const { return m_value; }
 
-    virtual bool isPendingImage() const { return true; }
-    
     virtual PassRefPtr<CSSValue> cssValue() const { return m_value; }
     CSSImageValue* cssImageValue() const { return m_value; }
     
@@ -63,6 +61,7 @@ private:
     StylePendingImage(CSSImageValue* value)
         : m_value(value)
     {
+        m_isPendingImage = true;
     }
 
     CSSImageValue* m_value; // Not retained; it owns us.
