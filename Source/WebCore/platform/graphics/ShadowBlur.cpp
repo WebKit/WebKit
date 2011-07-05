@@ -176,11 +176,34 @@ ShadowBlur::ShadowBlur(const FloatSize& radius, const FloatSize& offset, const C
     , m_layerImage(0)
     , m_shadowsIgnoreTransforms(false)
 {
+    updateShadowBlurValues();
+}
+
+ShadowBlur::ShadowBlur()
+    : m_type(NoShadow)
+    , m_blurRadius(0, 0)
+    , m_shadowsIgnoreTransforms(false)
+{
+}
+
+void ShadowBlur::setShadowValues(const FloatSize& radius, const FloatSize& offset, const Color& color, ColorSpace colorSpace, bool ignoreTransforms)
+{
+    m_blurRadius = radius;
+    m_offset = offset;
+    m_color = color;
+    m_colorSpace = colorSpace;
+    m_shadowsIgnoreTransforms = ignoreTransforms;
+
+    updateShadowBlurValues();
+}
+
+void ShadowBlur::updateShadowBlurValues()
+{
     // Limit blur radius to 128 to avoid lots of very expensive blurring.
     m_blurRadius = m_blurRadius.shrunkTo(FloatSize(128, 128));
 
     // The type of shadow is decided by the blur radius, shadow offset, and shadow color.
-    if (!m_color.isValid() || !color.alpha()) {
+    if (!m_color.isValid() || !m_color.alpha()) {
         // Can't paint the shadow with invalid or invisible color.
         m_type = NoShadow;
     } else if (m_blurRadius.width() > 0 || m_blurRadius.height() > 0) {
@@ -235,6 +258,14 @@ static void calculateLobes(int lobes[][2], float blurRadius, bool shadowsIgnoreT
         lobes[2][leftLobe] = lobeSize;
         lobes[2][rightLobe] = lobeSize;
     }
+}
+
+void ShadowBlur::clear()
+{
+    m_type = NoShadow;
+    m_color = Color();
+    m_blurRadius = FloatSize();
+    m_offset = FloatSize();
 }
 
 void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
@@ -828,9 +859,43 @@ void ShadowBlur::blurAndColorShadowBuffer(const IntSize& templateSize)
 
     // Mask the image with the shadow color.
     GraphicsContext* shadowContext = m_layerImage->context();
+    GraphicsContextStateSaver stateSaver(*shadowContext);
     shadowContext->setCompositeOperation(CompositeSourceIn);
     shadowContext->setFillColor(m_color, m_colorSpace);
     shadowContext->fillRect(FloatRect(0, 0, templateSize.width(), templateSize.height()));
+}
+
+GraphicsContext* ShadowBlur::beginShadowLayer(GraphicsContext *context, const FloatRect& layerArea)
+{
+    adjustBlurRadius(context);
+
+    IntRect layerRect = calculateLayerBoundingRect(context, layerArea, context->clipBounds());
+
+    if (layerRect.isEmpty())
+        return 0;
+
+    m_layerImage = ScratchBuffer::shared().getScratchBuffer(layerRect.size());
+
+    GraphicsContext* shadowContext = m_layerImage->context();
+    shadowContext->save();
+    shadowContext->clearRect(FloatRect(0, 0, m_layerSize.width(), m_layerSize.height()));
+
+    shadowContext->translate(m_layerContextTranslation);
+    return shadowContext;
+}
+
+void ShadowBlur::endShadowLayer(GraphicsContext* context)
+{
+    m_layerImage->context()->restore();
+
+    blurAndColorShadowBuffer(expandedIntSize(m_layerSize));
+    GraphicsContextStateSaver stateSave(*context);
+
+    context->clearShadow();
+    context->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, roundedIntPoint(m_layerOrigin), IntRect(0, 0, m_layerSize.width(), m_layerSize.height()), context->compositeOperation());
+
+    m_layerImage = 0;
+    ScratchBuffer::shared().scheduleScratchBufferPurge();
 }
 
 } // namespace WebCore

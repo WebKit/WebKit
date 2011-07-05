@@ -54,6 +54,7 @@ typedef class WebCore::SurfaceOpenVG PlatformGraphicsContext;
 #include <QPainter>
 namespace WebCore {
 class ContextShadow;
+class ShadowBlur;
 }
 typedef QPainter PlatformGraphicsContext;
 #elif PLATFORM(WX)
@@ -486,8 +487,12 @@ namespace WebCore {
         void takeOwnershipOfPlatformContext();
 #endif
 
-#if PLATFORM(QT) || USE(CAIRO)
+#if USE(CAIRO)
         ContextShadow* contextShadow();
+#endif
+
+#if PLATFORM(QT)
+        ShadowBlur* shadowBlur();
 #endif
 
 #if USE(CAIRO)

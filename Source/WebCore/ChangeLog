@@ -1,3 +1,53 @@
+2011-07-05  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt] Add ShadowBlur support
+        https://bugs.webkit.org/show_bug.cgi?id=62997
+
+        Use ShadowBlur instead of ContextShadow to handle canvas and css shadows. ShadowBlur is
+        a newer and platform independent shadow implementation.
+        Qt QPainter does not have support for shadows so is necessary to create a layer support
+        to draw complex shapes and fonts. The beginShadowLayer creates a temporary shadow buffer
+        where the canvas can draw onto and endShadowLayer applies the blur filter, colors the
+        shadow buffer and draw the final shadow to the graphics context.
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.pro:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::ShadowBlur):
+        (WebCore::ShadowBlur::setShadowValues):
+        (WebCore::ShadowBlur::updateShadowBlurValues):
+        (WebCore::ShadowBlur::clear):
+        (WebCore::ShadowBlur::blurAndColorShadowBuffer):
+        (WebCore::ShadowBlur::beginShadowLayer):
+        (WebCore::ShadowBlur::endShadowLayer):
+        * platform/graphics/ShadowBlur.h:
+        (WebCore::ShadowBlur::type):
+        * platform/graphics/qt/ContextShadowQt.cpp: Removed.
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::mustUseShadowBlur):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::shadowBlur):
+        (WebCore::GraphicsContext::clipBounds):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::draw):
+
 2011-07-05  Sam Weinig  <sam@webkit.org>
 
         Null deref accessing CustomEvent.detail

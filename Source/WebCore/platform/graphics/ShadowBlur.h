@@ -44,17 +44,34 @@ class ImageBuffer;
 class ShadowBlur {
     WTF_MAKE_NONCOPYABLE(ShadowBlur);
 public:
+    enum ShadowType {
+        NoShadow,
+        SolidShadow,
+        BlurShadow
+    };
+
     ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, ColorSpace);
+    ShadowBlur();
+
+    void setShadowValues(const FloatSize&, const FloatSize& , const Color&, ColorSpace, bool ignoreTransforms = false);
 
     void setShadowsIgnoreTransforms(bool ignoreTransforms) { m_shadowsIgnoreTransforms = ignoreTransforms; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
+
+    GraphicsContext* beginShadowLayer(GraphicsContext*, const FloatRect& layerArea);
+    void endShadowLayer(GraphicsContext*);
 
     void drawRectShadow(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&);
     void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii);
 
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
 
+    void clear();
+
+    ShadowType type() const { return m_type; }
 private:
+    void updateShadowBlurValues();
+
     void drawShadowBuffer(GraphicsContext*);
 
     void adjustBlurRadius(GraphicsContext*);
@@ -80,11 +97,6 @@ private:
     
     IntSize blurredEdgeSize() const;
     
-    enum ShadowType {
-        NoShadow,
-        SolidShadow,
-        BlurShadow
-    };
     
     ShadowType m_type;
 

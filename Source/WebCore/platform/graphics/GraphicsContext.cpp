@@ -585,7 +585,7 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& re
     buffer->clip(this, rect);
 }
 
-#if !USE(CG)
+#if !USE(CG) && !PLATFORM(QT)
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();

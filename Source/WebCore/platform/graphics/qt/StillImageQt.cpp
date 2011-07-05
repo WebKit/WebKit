@@ -28,9 +28,9 @@
 #include "config.h"
 #include "StillImageQt.h"
 
-#include "ContextShadow.h"
 #include "GraphicsContext.h"
 #include "IntSize.h"
+#include "ShadowBlur.h"
 
 #include <QPainter>
 
@@ -74,11 +74,11 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     CompositeOperator previousOperator = ctxt->compositeOperation();
     ctxt->setCompositeOperation(op);
 
-    ContextShadow* shadow = ctxt->contextShadow();
-    if (shadow->m_type != ContextShadow::NoShadow) {
-        QPainter* shadowPainter = shadow->beginShadowLayer(ctxt, normalizedDst);
-        if (shadowPainter) {
-            shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
+    if (ctxt->hasShadow()) {
+        ShadowBlur* shadow = ctxt->shadowBlur();
+        GraphicsContext* shadowContext = shadow->beginShadowLayer(ctxt, normalizedDst);
+        if (shadowContext) {
+            QPainter* shadowPainter = shadowContext->platformContext();
             shadowPainter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
             shadow->endShadowLayer(ctxt);
         }
