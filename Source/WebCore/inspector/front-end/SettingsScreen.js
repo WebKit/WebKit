@@ -35,19 +35,19 @@ WebInspector.SettingsScreen = function()
     this._leftColumnElement = document.createElement("td");
     this._rightColumnElement = document.createElement("td");
 
-    var p = this._appendSection("Console");
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), "monitoringXHREnabled"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), "preserveConsoleLog"));
+    var p = this._appendSection(WebInspector.UIString("Elements"));
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
 
-    p = this._appendSection("Elements");
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), "domWordWrap"));
-    p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [WebInspector.UIString("As authored"), "hex", "rgb", "hsl"]));
+    p = this._appendSection(WebInspector.UIString("Styles"));
+    p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [
+        [ WebInspector.StylesSidebarPane.ColorFormat.Original, WebInspector.UIString("As authored") ],
+        [ WebInspector.StylesSidebarPane.ColorFormat.HEX, "HEX: #DAC0DE" ],
+        [ WebInspector.StylesSidebarPane.ColorFormat.RGB, "RGB: rgb(128, 255, 255)" ],
+        [ WebInspector.StylesSidebarPane.ColorFormat.HSL, "HSL: hsl(300, 80%, 90%)" ] ], WebInspector.settings.colorFormat));
 
-    p = this._appendSection("Network", true);
-    p.appendChild(this._createCheckboxSetting(("Enable background events collection")));
-
-    p = this._appendSection("Scripts", true);
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Enable workers debugging")));
+    p = this._appendSection(WebInspector.UIString("Console"));
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), WebInspector.settings.preserveConsoleLog));
 
     var table = document.createElement("table");
     table.className = "help-table";
@@ -76,19 +76,17 @@ WebInspector.SettingsScreen.prototype = {
         return right ? this._rightColumnElement : this._leftColumnElement; 
     },
 
-    _createCheckboxSetting: function(name, settingName)
+    _createCheckboxSetting: function(name, setting)
     {
         var input = document.createElement("input");
         input.type = "checkbox";
         input.name = name;
-        if (settingName) {
-            input.checked = WebInspector.settings[settingName].get();
-            function listener()
-            {
-                WebInspector.settings[settingName].set(input.checked);
-            }
-            input.addEventListener("click", listener, false);
+        input.checked = setting.get();
+        function listener()
+        {
+            setting.set(input.checked);
         }
+        input.addEventListener("click", listener, false);
 
         var p = document.createElement("p");
         var label = document.createElement("label");
@@ -98,7 +96,7 @@ WebInspector.SettingsScreen.prototype = {
         return p;
     },
 
-    _createRadioSetting: function(name, options)
+    _createRadioSetting: function(name, options, setting)
     {
         var pp = document.createElement("p");
         var fieldsetElement = document.createElement("fieldset");
@@ -106,18 +104,29 @@ WebInspector.SettingsScreen.prototype = {
         legendElement.textContent = name;
         fieldsetElement.appendChild(legendElement);
 
+        function clickListener(e)
+        {
+            setting.set(e.target.value);
+        }
+
+        var settingValue = setting.get();
         for (var i = 0; i < options.length; ++i) {
-          var p = document.createElement("p");
-          var label = document.createElement("label");
-          p.appendChild(label);
+            var p = document.createElement("p");
+            var label = document.createElement("label");
+            p.appendChild(label);
 
-          var input = document.createElement("input");
-          input.type = "radio";
-          input.name = name;
-          label.appendChild(input);
-          label.appendChild(document.createTextNode(options[i]));
+            var input = document.createElement("input");
+            input.type = "radio";
+            input.name = setting.name;
+            input.value = options[i][0];
+            input.addEventListener("click", clickListener, false);
+            if (settingValue == input.value)
+                input.checked = true; 
 
-          fieldsetElement.appendChild(p);
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(options[i][1]));
+
+            fieldsetElement.appendChild(p);
         }
 
         pp.appendChild(fieldsetElement);

@@ -66,6 +66,9 @@ WebInspector.HelpScreen.prototype = {
 
     hide: function()
     {
+        if (!this._isShown)
+            return;
+
         this._isShown = false;
         document.body.removeChild(this._element);
         WebInspector.currentFocusElement = this._previousFocusElement;

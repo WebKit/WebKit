@@ -582,7 +582,7 @@ body.port-qt #dock-status-bar-item {
 
 #counters {
     position: absolute;
-    right: 16px;
+    right: 32px;
     top: 0;
     cursor: pointer;
     padding: 6px 2px 6px 0px;

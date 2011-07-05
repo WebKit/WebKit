@@ -192,8 +192,7 @@ var WebInspector = {
         if (this.panels.elements)
             anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
 
-        // FIXME: uncomment once ready.
-        // anchoredStatusBar.appendChild(this._settingsButton.element);
+        anchoredStatusBar.appendChild(this._settingsButton.element);
     },
 
     _dockButtonTitle: function()
@@ -211,17 +210,44 @@ var WebInspector = {
 
     _toggleSettings: function()
     {
+        this._settingsButton.toggled = !this._settingsButton.toggled;
+        if (this._settingsButton.toggled)
+            this._showSettingsScreen();
+        else
+            this._hideSettingsScreen();
+    },
+
+    _showShortcutsScreen: function()
+    {
+        this._hideSettingsScreen();
+        WebInspector.shortcutsScreen.show();
+    },
+
+    _hideShortcutsScreen: function()
+    {
+        WebInspector.shortcutsScreen.hide();
+    },
+
+    _showSettingsScreen: function()
+    {
+        this._hideShortcutsScreen();
         function onhide()
         {
             this._settingsButton.toggled = false;
+            delete this._settingsScreen;
         }
-
-        this._settingsButton.toggled = !this._settingsButton.toggled;
-        if (this._settingsButton.toggled) {
+        
+        if (!this._settingsScreen) {
             this._settingsScreen = new WebInspector.SettingsScreen();
             this._settingsScreen.show(onhide.bind(this));
-        } else if (this._settingsScreen) {
+        }
+    },
+
+    _hideSettingsScreen: function()
+    {
+        if (this._settingsScreen) {
             this._settingsScreen.hide();
+            this._settingsButton.toggled = false;
             delete this._settingsScreen;
         }
     },
@@ -736,7 +762,7 @@ WebInspector.documentKeyDown = function(event)
 
     if (event.keyIdentifier === "F1" ||
         (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode && !isInputElement || event.metaKey))) {
-        WebInspector.shortcutsScreen.show();
+        this._showShortcutsScreen();
         event.stopPropagation();
         event.preventDefault();
         return;

@@ -115,6 +115,11 @@ WebInspector.Setting.prototype = {
         this._eventSupport.removeEventListener(this._name, listener, thisObject);
     },
 
+    get name()
+    {
+        return this._name;
+    },
+
     get: function()
     {
         var value = this._defaultValue;

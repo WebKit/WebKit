@@ -1,3 +1,37 @@
+2011-07-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Enable settings screen with settings for console and elements panels.
+        https://bugs.webkit.org/show_bug.cgi?id=62853
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen.prototype.hide):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        (WebInspector.SettingsScreen.prototype._createRadioSetting.clickListener):
+        (WebInspector.SettingsScreen.prototype._createRadioSetting.get for):
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsScreen.prototype.hide):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._colorFormatSettingChanged):
+        (WebInspector.StylesSidebarPane.prototype._updateColorFormatFilter.get var):
+        (WebInspector.StylesSidebarPane.prototype._updateColorFormatFilter):
+        (WebInspector.StylesSidebarPane.prototype._changeSetting):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.):
+        * inspector/front-end/inspector.css:
+        (#counters):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector._toggleSettings):
+        (WebInspector._showShortcutsScreen):
+        (WebInspector._hideShortcutsScreen):
+        (WebInspector._showSettingsScreen.onhide):
+        (WebInspector._showSettingsScreen):
+        (WebInspector._hideSettingsScreen):
+        (WebInspector.documentKeyDown):
+
 2011-07-05  Shinya Kawanaka  <shinyak@google.com>
 
         Reviewed by Kent Tamura.

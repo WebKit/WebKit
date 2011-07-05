@@ -51,6 +51,12 @@ WebInspector.ShortcutsScreen.prototype = {
         this._helpScreen.show();
     },
 
+    hide: function()
+    {
+        if (this._helpScreen)
+            this._helpScreen.hide();
+    },
+
     _buildTable: function(parent, nColumns)
     {
         var height = 0;

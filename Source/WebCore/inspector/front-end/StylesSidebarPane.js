@@ -35,40 +35,30 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.settingsSelectElement.className = "select-settings";
 
     var option = document.createElement("option");
-    option.value = "original";
-    option.action = this._changeColorFormat.bind(this);
-    option.label = WebInspector.UIString("As Authored");
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.Original;
+    option.label = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "As authored" : "As Authored");
     this.settingsSelectElement.appendChild(option);
 
     var option = document.createElement("option");
-    option.value = "hex";
-    option.action = this._changeColorFormat.bind(this);
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.HEX;
     option.label = WebInspector.UIString("Hex Colors");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
-    option.value = "rgb";
-    option.action = this._changeColorFormat.bind(this);
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.RGB;
     option.label = WebInspector.UIString("RGB Colors");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
-    option.value = "hsl";
-    option.action = this._changeColorFormat.bind(this);
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.HSL;
     option.label = WebInspector.UIString("HSL Colors");
     this.settingsSelectElement.appendChild(option);
 
+    // Prevent section from collapsing.
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
+
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-    var format = WebInspector.settings.colorFormat.get();
-    if (format === "original")
-        this.settingsSelectElement[0].selected = true;
-    else if (format === "hex")
-        this.settingsSelectElement[1].selected = true;
-    else if (format === "rgb")
-        this.settingsSelectElement[2].selected = true;
-    else if (format === "hsl")
-        this.settingsSelectElement[3].selected = true;
+    this._updateColorFormatFilter();
 
     this.titleElement.appendChild(this.settingsSelectElement);
 
@@ -80,6 +70,18 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     this._computedStylePane = computedStylePane;
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+    WebInspector.settings.colorFormat.addChangeListener(this._colorFormatSettingChanged.bind(this));
+}
+
+WebInspector.StylesSidebarPane.ColorFormat = {
+    Original: "original",
+    Nickname: "nickname",
+    HEX: "hex",
+    ShortHEX: "shorthex",
+    RGB: "rgb",
+    RGBA: "rgba",
+    HSL: "hsl",
+    HSLA: "hsla"
 }
 
 WebInspector.StylesSidebarPane.StyleValueDelimiters = " \t\n\"':;,/()";
@@ -546,34 +548,36 @@ WebInspector.StylesSidebarPane.prototype = {
         return false;
     },
 
-    _changeSetting: function(event)
+    _colorFormatSettingChanged: function(event)
     {
-        var options = this.settingsSelectElement.options;
-        var selectedOption = options[this.settingsSelectElement.selectedIndex];
-        selectedOption.action(event);
-
-        // Select the correct color format setting again, since it needs to be selected.
-        var selectedIndex = 0;
-        for (var i = 0; i < options.length; ++i) {
-            if (options[i].value === WebInspector.settings.colorFormat.get()) {
-                selectedIndex = i;
-                break;
-            }
-        }
-
-        this.settingsSelectElement.selectedIndex = selectedIndex;
-    },
-
-    _changeColorFormat: function(event)
-    {
-        var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        WebInspector.settings.colorFormat.set(selectedOption.value);
-
+        this._updateColorFormatFilter();
         for (var pseudoId in this.sections) {
             var sections = this.sections[pseudoId];
             for (var i = 0; i < sections.length; ++i)
                 sections[i].update(true);
         }
+    },
+
+    _updateColorFormatFilter: function()
+    {
+        // Select the correct color format setting again, since it needs to be selected.
+        var selectedIndex = 0;
+        var value = WebInspector.settings.colorFormat.get();
+        var options = this.settingsSelectElement.options;
+        for (var i = 0; i < options.length; ++i) {
+            if (options[i].value === value) {
+                selectedIndex = i;
+                break;
+            }
+        }
+        this.settingsSelectElement.selectedIndex = selectedIndex;
+    },
+
+    _changeSetting: function(event)
+    {
+        var options = this.settingsSelectElement.options;
+        var selectedOption = options[this.settingsSelectElement.selectedIndex];
+        WebInspector.settings.colorFormat.set(selectedOption.value);
     },
 
     _createNewRule: function(event)
@@ -1324,6 +1328,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         valueElement.className = "value";
         this.valueElement = valueElement;
 
+        var cf = WebInspector.StylesSidebarPane.ColorFormat;
+
         if (value) {
             var self = this;
 
@@ -1384,18 +1390,19 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 swatchElement.addEventListener("dblclick", function(event) { event.stopPropagation() }, false);
 
                 var format;
-                if (WebInspector.settings.colorFormat.get() === "original")
-                    format = "original";
+                var formatSetting = WebInspector.settings.colorFormat.get();
+                if (formatSetting === cf.Original)
+                    format = cf.Original;
                 else if (Preferences.showColorNicknames && color.nickname)
-                    format = "nickname";
-                else if (WebInspector.settings.colorFormat.get() === "rgb")
-                    format = (color.simple ? "rgb" : "rgba");
-                else if (WebInspector.settings.colorFormat.get() === "hsl")
-                    format = (color.simple ? "hsl" : "hsla");
+                    format = cf.Nickname;
+                else if (formatSetting === cf.RGB)
+                    format = (color.simple ? cf.RGB : cf.RGBA);
+                else if (formatSetting === cf.HSL)
+                    format = (color.simple ? cf.HSL : cf.HSLA);
                 else if (color.simple)
-                    format = (color.hasShortHex() ? "shorthex" : "hex");
+                    format = (color.hasShortHex() ? cf.ShortHEX : cf.HEX);
                 else
-                    format = "rgba";
+                    format = cf.RGBA;
 
                 var colorValueElement = document.createElement("span");
                 colorValueElement.textContent = color.toString(format);
@@ -1411,33 +1418,33 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     //   - shorthex (if has short hex)
                     //   - hex
                     switch (curFormat) {
-                        case "original":
-                            return color.simple ? "rgb" : "rgba";
+                        case cf.Original:
+                            return color.simple ? cf.RGB : cf.RGBA;
 
-                        case "rgb":
-                        case "rgba":
-                            return color.simple ? "hsl" : "hsla";
+                        case cf.RGB:
+                        case cf.RGBA:
+                            return color.simple ? cf.HSL : cf.HSLA;
 
-                        case "hsl":
-                        case "hsla":
+                        case cf.HSL:
+                        case cf.HSLA:
                             if (color.nickname)
-                                return "nickname";
+                                return cf.Nickname;
                             if (color.simple)
-                                return color.hasShortHex() ? "shorthex" : "hex";
+                                return color.hasShortHex() ? cf.ShortHEX : cf.HEX;
                             else
-                                return "original";
+                                return cf.Original;
 
-                        case "shorthex":
-                            return "hex";
+                        case cf.ShortHEX:
+                            return cf.HEX;
 
-                        case "hex":
-                            return "original";
+                        case cf.HEX:
+                            return cf.Original;
 
-                        case "nickname":
+                        case cf.Nickname:
                             if (color.simple)
-                                return color.hasShortHex() ? "shorthex" : "hex";
+                                return color.hasShortHex() ? cf.ShortHEX : cf.HEX;
                             else
-                                return "original";
+                                return cf.Original;
 
                         default:
                             return null;
@@ -1449,7 +1456,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     do {
                         format = nextFormat(format);
                         var currentValue = color.toString(format || "");
-                    } while (format && currentValue === color.value && format !== "original");
+                    } while (format && currentValue === color.value && format !== cf.Original);
 
                     if (format)
                         colorValueElement.textContent = currentValue;
