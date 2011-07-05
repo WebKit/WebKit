@@ -1,3 +1,19 @@
+2011-07-05  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] Fix tst_QWebFrame::setHtmlWithResource() API test
+        https://bugs.webkit.org/show_bug.cgi?id=63235
+
+        Modified baseUrl to be a local file in order to get a security origin
+        that is allowed to request local resources. Removed QSignalSpy from it
+        as loadFinished always happens, and the original test was split into two.
+
+        Reviewed by Benjamin Poulain.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::setHtmlWithImageResource):
+        (tst_QWebFrame::setHtmlWithStylesheetResource):
+        (tst_QWebFrame::setHtmlWithBaseURL):
+
 2011-04-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Benjamin Poulain.

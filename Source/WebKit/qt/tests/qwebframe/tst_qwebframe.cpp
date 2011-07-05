@@ -619,7 +619,8 @@ private slots:
     void javaScriptWindowObjectCleared();
     void javaScriptWindowObjectClearedOnEvaluate();
     void setHtml();
-    void setHtmlWithResource();
+    void setHtmlWithImageResource();
+    void setHtmlWithStylesheetResource();
     void setHtmlWithBaseURL();
     void setHtmlWithJSAlert();
     void ipv6HostEncoding();
@@ -2488,26 +2489,37 @@ void tst_QWebFrame::setHtml()
     QCOMPARE(spy.count(), 1);
 }
 
-void tst_QWebFrame::setHtmlWithResource()
+void tst_QWebFrame::setHtmlWithImageResource()
 {
-    QString html("<html><body><p>hello world</p><img src='qrc:/image.png'/></body></html>");
+    // By default, only security origins of local files can load local resources.
+    // So we should specify baseUrl to be a local file in order to get a proper origin and load the local image.
 
+    QLatin1String html("<html><body><p>hello world</p><img src='qrc:/image.png'/></body></html>");
     QWebPage page;
     QWebFrame* frame = page.mainFrame();
 
-    // in few seconds, the image should be completey loaded
-    QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
-    frame->setHtml(html);
+    frame->setHtml(html, QUrl(QLatin1String("file:///path/to/file")));
     waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
-    QCOMPARE(spy.count(), 1);
 
     QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63235", Continue);
     QCOMPARE(frame->evaluateJavaScript("document.images[0].width").toInt(), 128);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63235", Continue);
     QCOMPARE(frame->evaluateJavaScript("document.images[0].height").toInt(), 128);
 
-    QString html2 =
+    // Now we test the opposite: without a baseUrl as a local file, we cannot request local resources.
+
+    frame->setHtml(html);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
+    QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
+    QCOMPARE(frame->evaluateJavaScript("document.images[0].width").toInt(), 0);
+    QCOMPARE(frame->evaluateJavaScript("document.images[0].height").toInt(), 0);
+}
+
+void tst_QWebFrame::setHtmlWithStylesheetResource()
+{
+    // By default, only security origins of local files can load local resources.
+    // So we should specify baseUrl to be a local file in order to be able to download the local stylesheet.
+
+    const char* htmlData =
         "<html>"
             "<head>"
                 "<link rel='stylesheet' href='qrc:/style.css' type='text/css' />"
@@ -2516,19 +2528,29 @@ void tst_QWebFrame::setHtmlWithResource()
                 "<p id='idP'>some text</p>"
             "</body>"
         "</html>";
+    QLatin1String html(htmlData);
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    QWebElement webElement;
 
-    // in few seconds, the CSS should be completey loaded
-    frame->setHtml(html2);
+    frame->setHtml(html, QUrl(QLatin1String("qrc:///file")));
     waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
-    QCOMPARE(spy.size(), 2);
+    webElement = frame->documentElement().findFirst("p");
+    QCOMPARE(webElement.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("red"));
 
-    QWebElement p = frame->documentElement().findAll("p").at(0);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63235", Continue);
-    QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("red"));
+    // Now we test the opposite: without a baseUrl as a local file, we cannot request local resources.
+
+    frame->setHtml(html, QUrl(QLatin1String("http://www.example.com/")));
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
+    webElement = frame->documentElement().findFirst("p");
+    QCOMPARE(webElement.styleProperty("color", QWebElement::CascadedStyle), QString());
 }
 
 void tst_QWebFrame::setHtmlWithBaseURL()
 {
+    // This tests if baseUrl is indeed affecting the relative paths from resources.
+    // As we are using a local file as baseUrl, its security origin should be able to load local resources.
+
     if (!QDir(TESTS_SOURCE_DIR).exists())
         QSKIP(QString("This test requires access to resources found in '%1'").arg(TESTS_SOURCE_DIR).toLatin1().constData(), SkipAll);
 
