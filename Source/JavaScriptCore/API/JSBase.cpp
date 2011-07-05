@@ -97,8 +97,10 @@ void JSGarbageCollect(JSContextRef ctx)
     APIEntryShim entryShim(exec, false);
 
     JSGlobalData& globalData = exec->globalData();
-    if (!globalData.heap.isBusy())
-        globalData.heap.collectAllGarbage();
+    if (!globalData.heap.isBusy()) {
+        // releaseExecutableMemory forces a full GC
+        globalData.releaseExecutableMemory();
+    }
 
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when

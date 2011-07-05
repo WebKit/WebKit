@@ -108,6 +108,7 @@ void RegExp::compile(JSGlobalData* globalData)
 {
     ASSERT(m_state == NotCompiled);
     m_representation = adoptPtr(new RegExpRepresentation);
+    m_state = Compiling;
     Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
     if (m_constructionError) {
         ASSERT_NOT_REACHED();
@@ -118,8 +119,6 @@ void RegExp::compile(JSGlobalData* globalData)
     globalData->regExpCache()->addToStrongCache(this);
 
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
-
-    m_state = ByteCode;
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
@@ -139,6 +138,8 @@ void RegExp::compile(JSGlobalData* globalData)
 #endif
 
     m_representation->m_regExpBytecode = Yarr::byteCompile(pattern, &globalData->m_regExpAllocator);
+
+    m_state = ByteCode;
 }
 
 int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, Vector<int, 32>* ovector)
@@ -199,7 +200,7 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, V
 
 void RegExp::invalidateCode()
 {
-    if (!m_representation)
+    if (!m_representation || m_state == Compiling)
         return;
     m_state = NotCompiled;
     m_representation.clear();

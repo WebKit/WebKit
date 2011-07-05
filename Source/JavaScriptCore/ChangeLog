@@ -1,3 +1,33 @@
+2011-07-05  Oliver Hunt  <oliver@apple.com>
+
+        Don't throw out compiled code repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=63960
+
+        Reviewed by Gavin Barraclough.
+
+        Stop throwing away all compiled code every time
+        we're told to do a full GC.  Instead unlink all
+        callsites during such GC passes to maximise the
+        number of collectable functions, but otherwise
+        leave compiled functions alone.
+
+        * API/JSBase.cpp:
+        (JSGarbageCollect):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::shouldUnlinkCalls):
+        (JSC::MarkStack::setShouldUnlinkCalls):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::recompileAllJSFunctions):
+        (JSC::JSGlobalData::releaseExecutableMemory):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::invalidateCode):
+        * runtime/RegExp.h:
+
 2011-07-05  Filip Pizlo  <fpizlo@apple.com>
 
         JSC JIT has code duplication for the handling of call and construct

@@ -489,7 +489,9 @@ void JSGlobalData::releaseExecutableMemory()
                 
         }
         heap.forEachCell<StackPreservingRecompiler>(recompiler);
-    }
+    } else
+        recompileAllJSFunctions();
+
     m_regExpCache->invalidateCode();
     heap.collectAllGarbage();
 }
