@@ -6424,6 +6424,7 @@
             'inspector/front-end/Images/paneAddButtons.png',
             'inspector/front-end/Images/paneBottomGrow.png',
             'inspector/front-end/Images/paneBottomGrowActive.png',
+            'inspector/front-end/Images/paneElementStateButtons.png',
             'inspector/front-end/Images/paneFilterButtons.png',
             'inspector/front-end/Images/paneGrowHandleLine.png',
             'inspector/front-end/Images/paneRefreshButtons.png',

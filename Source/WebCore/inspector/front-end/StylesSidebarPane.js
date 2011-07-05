@@ -55,12 +55,19 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.settingsSelectElement.appendChild(option);
 
     // Prevent section from collapsing.
-    this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
+    var muteEventListener = function(event) { event.stopPropagation(); event.preventDefault(); };
 
+    this.settingsSelectElement.addEventListener("click", muteEventListener, true);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
     this._updateColorFormatFilter();
 
     this.titleElement.appendChild(this.settingsSelectElement);
+
+    this._elementStateButton = document.createElement("button");
+    this._elementStateButton.className = "pane-title-button element-state";
+    this._elementStateButton.title = WebInspector.UIString("Toggle Element State");
+    this._elementStateButton.addEventListener("click", this._toggleElementStatePane.bind(this), false);
+    this.titleElement.appendChild(this._elementStateButton);
 
     var addButton = document.createElement("button");
     addButton.className = "pane-title-button add";
@@ -71,6 +78,11 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this._computedStylePane = computedStylePane;
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
     WebInspector.settings.colorFormat.addChangeListener(this._colorFormatSettingChanged.bind(this));
+
+    this._createElementStatePane();
+    this.bodyElement.appendChild(this._elementStatePane);
+    this._sectionsContainer = document.createElement("div");
+    this.bodyElement.appendChild(this._sectionsContainer);
 }
 
 WebInspector.StylesSidebarPane.ColorFormat = {
@@ -220,7 +232,7 @@ WebInspector.StylesSidebarPane.prototype = {
             node = this.node;
 
         if (!node) {
-            this.bodyElement.removeChildren();
+            this._sectionsContainer.removeChildren();
             this._computedStylePane.bodyElement.removeChildren();
             this.sections = {};
             if (callback)
@@ -247,7 +259,7 @@ WebInspector.StylesSidebarPane.prototype = {
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
         else
-            WebInspector.cssModel.getStylesAsync(node.id, undefined, stylesCallback.bind(this));
+            WebInspector.cssModel.getStylesAsync(node.id, this._forcedPseudoClasses, stylesCallback.bind(this));
     },
 
     _refreshUpdate: function(node, computedStyle, editedSection)
@@ -265,7 +277,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
     _rebuildUpdate: function(node, styles)
     {
-        this.bodyElement.removeChildren();
+        this._sectionsContainer.removeChildren();
         this._computedStylePane.bodyElement.removeChildren();
 
         var styleRules = this._rebuildStyleRules(node, styles);
@@ -506,7 +518,7 @@ WebInspector.StylesSidebarPane.prototype = {
                         separatorElement.textContent = WebInspector.UIString("Pseudo element");
                 } else
                     separatorElement.textContent = styleRule.text;
-                this.bodyElement.insertBefore(separatorElement, anchorElement);
+                this._sectionsContainer.insertBefore(separatorElement, anchorElement);
                 lastWasSeparator = true;
                 continue;
             }
@@ -528,7 +540,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 this._computedStylePane.bodyElement.appendChild(section.element);
                 lastWasSeparator = true;
             } else {
-                this.bodyElement.insertBefore(section.element, anchorElement);
+                this._sectionsContainer.insertBefore(section.element, anchorElement);
                 lastWasSeparator = false;
             }
             sections.push(section);
@@ -596,7 +608,7 @@ WebInspector.StylesSidebarPane.prototype = {
         blankSection.pane = this;
 
         var elementStyleSection = this.sections[0][1];
-        this.bodyElement.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
+        this._sectionsContainer.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
 
         this.sections[0].splice(2, 0, blankSection);
 
@@ -650,6 +662,74 @@ WebInspector.StylesSidebarPane.prototype = {
             shortcut.shortcutToString(shortcut.Keys.PageDown, shortcut.Modifiers.Alt)
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Increment/decrement by %f", 0.1));
+    },
+
+    _toggleElementStatePane: function(event)
+    {
+        event.stopPropagation();
+        if (!this._elementStateButton.hasStyleClass("toggled")) {
+            this.expand();
+            this._elementStateButton.addStyleClass("toggled");
+            this._elementStatePane.addStyleClass("expanded");
+        } else {
+            this._elementStateButton.removeStyleClass("toggled");
+            this._elementStatePane.removeStyleClass("expanded");
+            // Clear flags on hide.
+            if (this._forcedPseudoClasses) {
+                for (var i = 0; i < this._elementStatePane.inputs.length; ++i)
+                    this._elementStatePane.inputs[i].checked = false;
+                delete this._forcedPseudoClasses;
+                this.update(WebInspector.panels.elements.focusedDOMNode, null, true);
+            }
+        }
+    },
+
+    _createElementStatePane: function()
+    {
+        this._elementStatePane = document.createElement("div");
+        this._elementStatePane.className = "styles-element-state-pane source-code";
+        var table = document.createElement("table");
+
+        var inputs = [];
+        this._elementStatePane.inputs = inputs;
+
+        function clickListener(event)
+        {
+            var pseudoClasses = [];
+            for (var i = 0; i < inputs.length; ++i) {
+                if (inputs[i].checked)
+                    pseudoClasses.push(inputs[i].state);
+            }
+            this._forcedPseudoClasses = pseudoClasses.length ? pseudoClasses : undefined;
+            this.update(WebInspector.panels.elements.focusedDOMNode, null, true);
+        }
+
+        function createCheckbox(state)
+        {
+            var td = document.createElement("td");
+            var label = document.createElement("label");
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.state = state;
+            input.addEventListener("click", clickListener.bind(this), false);
+            inputs.push(input);
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(":" + state));
+            td.appendChild(label);
+            return td;
+        }
+
+        var tr = document.createElement("tr");
+        tr.appendChild(createCheckbox.call(this, "active"));
+        tr.appendChild(createCheckbox.call(this, "hover"));
+        table.appendChild(tr);
+
+        tr = document.createElement("tr");
+        tr.appendChild(createCheckbox.call(this, "focus"));
+        tr.appendChild(createCheckbox.call(this, "visited"));
+        table.appendChild(tr);
+
+        this._elementStatePane.appendChild(table);
     }
 }
 
@@ -662,7 +742,7 @@ WebInspector.ComputedStyleSidebarPane = function()
     this.titleElement.appendChild(showInheritedCheckbox.element);
 
     if (WebInspector.settings.showInheritedComputedStyleProperties.get()) {
-        this.bodyElement.addStyleClass("show-inherited");
+        this._sectionsContainer.addStyleClass("show-inherited");
         showInheritedCheckbox.checked = true;
     }
 
@@ -670,9 +750,9 @@ WebInspector.ComputedStyleSidebarPane = function()
     {
         WebInspector.settings.showInheritedComputedStyleProperties.set(showInheritedCheckbox.checked);
         if (WebInspector.settings.showInheritedComputedStyleProperties.get())
-            this.bodyElement.addStyleClass("show-inherited");
+            this._sectionsContainer.addStyleClass("show-inherited");
         else
-            this.bodyElement.removeStyleClass("show-inherited");
+            this._sectionsContainer.removeStyleClass("show-inherited");
     }
 
     showInheritedCheckbox.addEventListener(showInheritedToggleFunction.bind(this));

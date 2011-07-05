@@ -1798,12 +1798,16 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     background-position: -23px 0px;
 }
 
-.pane > .title > .pane-title-button:active {
+.pane > .title > .pane-title-button:active, .pane > .title > .pane-title-button.toggled {
     background-position: -46px 0px;
 }
 
 .pane > .title > .pane-title-button.add {
     background-image: url(Images/paneAddButtons.png);
+}
+
+.pane > .title > .pane-title-button.element-state {
+    background-image: url(Images/paneElementStateButtons.png);
 }
 
 .pane > .title > .pane-title-button.refresh {
@@ -4546,6 +4550,28 @@ a.worker-item {
     opacity: 0.5;
 }
 
+.styles-element-state-pane {
+    background-color: rgb(240, 240, 240);
+    overflow: hidden;
+    margin-top: -38px;
+    -webkit-transition: margin-top 0.1s ease-in-out;
+    padding-left: 2px;
+}
+
+.styles-element-state-pane.expanded {
+    border-bottom: 1px solid rgb(189, 189, 189);
+    margin-top: 0;
+}
+
+.styles-element-state-pane > table {
+    width: 100%;
+    border-spacing: 0;
+}
+
+.styles-element-state-pane input {
+    margin: 2px;
+    vertical-align: -2px;
+}
 
 .body .styles-section .properties .inherited {
     display: none;

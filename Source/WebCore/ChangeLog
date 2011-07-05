@@ -1,3 +1,34 @@
+2011-07-05  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add "element state" setting to the styles section title.
+        https://bugs.webkit.org/show_bug.cgi?id=63932
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * inspector/front-end/Images/paneElementStateButtons.png: Added.
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.muteEventListener):
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection):
+        (WebInspector.StylesSidebarPane.prototype.registerShortcuts):
+        (WebInspector.StylesSidebarPane.prototype._toggleElementStatePane):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane.clickListener):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane.createCheckbox):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.pane > .title > .pane-title-button:active, .pane > .title > .pane-title-button.toggled):
+        (.pane > .title > .pane-title-button.element-state):
+        (.styles-element-state-pane):
+        (.styles-element-state-pane.expanded):
+        (.styles-element-state-pane > table):
+        (.styles-element-state-pane input):
+
 2011-06-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
