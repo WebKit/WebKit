@@ -1,3 +1,25 @@
+2011-07-05  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC JIT has code duplication for the handling of call and construct
+        https://bugs.webkit.org/show_bug.cgi?id=63957
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+        * jit/JIT.h:
+        * jit/JITStubs.cpp:
+        (JSC::jitCompileFor):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::arityCheckFor):
+        (JSC::lazyLinkFor):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::generatedJITCodeFor):
+        (JSC::FunctionExecutable::compileFor):
+        (JSC::FunctionExecutable::isGeneratedFor):
+        (JSC::FunctionExecutable::generatedBytecodeFor):
+        (JSC::FunctionExecutable::generatedJITCodeWithArityCheckFor):
+
 2011-07-05  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix following last patch.

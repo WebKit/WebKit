@@ -43,6 +43,8 @@ namespace JSC {
     class ScopeChainNode;
 
     struct ExceptionInfo;
+    
+    enum CodeSpecializationKind { CodeForCall, CodeForConstruct };
 
     class ExecutableBase : public JSCell {
         friend class JIT;
@@ -90,6 +92,14 @@ namespace JSC {
         {
             ASSERT(m_jitCodeForConstruct);
             return m_jitCodeForConstruct;
+        }
+        
+        JITCode& generatedJITCodeFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedJITCodeForCall();
+            ASSERT(kind == CodeForConstruct);
+            return generatedJITCodeForConstruct();
         }
 
         void clearExecutableCode()
@@ -387,6 +397,30 @@ namespace JSC {
             ASSERT(m_codeBlockForConstruct);
             return *m_codeBlockForConstruct;
         }
+        
+        JSObject* compileFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return compileForCall(exec, scopeChainNode);
+            ASSERT(kind == CodeForConstruct);
+            return compileForConstruct(exec, scopeChainNode);
+        }
+        
+        bool isGeneratedFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return isGeneratedForCall();
+            ASSERT(kind == CodeForConstruct);
+            return isGeneratedForConstruct();
+        }
+        
+        FunctionCodeBlock& generatedBytecodeFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedBytecodeForCall();
+            ASSERT(kind == CodeForConstruct);
+            return generatedBytecodeForConstruct();
+        }
 
         const Identifier& name() { return m_name; }
         size_t parameterCount() const { return m_parameters->size(); }
@@ -436,6 +470,14 @@ namespace JSC {
             ASSERT(m_jitCodeForConstruct);
             ASSERT(m_jitCodeForConstructWithArityCheck);
             return m_jitCodeForConstructWithArityCheck;
+        }
+        
+        MacroAssemblerCodePtr generatedJITCodeWithArityCheckFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedJITCodeForCallWithArityCheck();
+            ASSERT(kind == CodeForConstruct);
+            return generatedJITCodeForConstructWithArityCheck();
         }
 #endif
     };

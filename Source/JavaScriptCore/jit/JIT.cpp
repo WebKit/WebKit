@@ -609,7 +609,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     return patchBuffer.finalizeCode();
 }
 
-void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
+void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData, CodeSpecializationKind kind)
 {
     RepatchBuffer repatchBuffer(callerCodeBlock);
 
@@ -622,22 +622,12 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* ca
     }
 
     // patch the call so we do not continue to try to link.
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualCall());
-}
-
-void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
-{
-    RepatchBuffer repatchBuffer(callerCodeBlock);
-
-    // Currently we only link calls with the exact number of arguments.
-    // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
-    if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
-        ASSERT(!callLinkInfo->isLinked());
-        callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
-        repatchBuffer.relink(callLinkInfo->hotPathOther, code);
+    if (kind == CodeForCall) {
+        repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualCall());
+        return;
     }
 
-    // patch the call so we do not continue to try to link.
+    ASSERT(kind == CodeForConstruct);
     repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualConstruct());
 }
 
