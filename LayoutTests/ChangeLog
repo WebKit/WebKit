@@ -1,3 +1,19 @@
+2011-07-05  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63947
+        ASSERT running Object.preventExtensions(Math.sin)
+
+        Reviewed by Oliver Hunt.
+
+        This is due to calling scope() on a hostFunction as a part of
+        calling createPrototypeProperty to reify the prototype property.
+        But host functions don't have a prototype property anyway!
+
+        Add test case for calling preventExtensions on a host function.
+
+        * fast/js/preventExtensions-expected.txt:
+        * fast/js/script-tests/preventExtensions.js:
+
 2011-07-04  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=63880

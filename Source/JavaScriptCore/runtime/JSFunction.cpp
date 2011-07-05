@@ -179,6 +179,8 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
 
 static inline WriteBarrierBase<Unknown>* createPrototypeProperty(JSGlobalData& globalData, JSGlobalObject* globalObject, JSFunction* function)
 {
+    ASSERT(!isHostFunction());
+
     ExecState* exec = globalObject->globalExec();
     if (WriteBarrierBase<Unknown>* location = function->getDirectLocation(globalData, exec->propertyNames().prototype))
         return location;
@@ -190,7 +192,8 @@ static inline WriteBarrierBase<Unknown>* createPrototypeProperty(JSGlobalData& g
 
 void JSFunction::preventExtensions(JSGlobalData& globalData)
 {
-    createPrototypeProperty(globalData, scope()->globalObject.get(), this);
+    if (!isHostFunction())
+        createPrototypeProperty(globalData, scope()->globalObject.get(), this);
     JSObject::preventExtensions(globalData);
 }
 

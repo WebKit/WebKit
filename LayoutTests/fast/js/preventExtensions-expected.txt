@@ -10,6 +10,7 @@ PASS test(obj()) is "(b:4)(c:3)E"
 PASS test(preventExtensions(obj())) is "(b:4)"
 PASS test(seal(obj())) is "(a:1)(b:4)S"
 PASS test(freeze(obj())) is "(a:1)(b:2)SF"
+PASS Object.preventExtensions(Math.sin) is Math.sin
 PASS successfullyParsed is true
 
 TEST COMPLETE
