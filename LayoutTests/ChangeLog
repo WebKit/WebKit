@@ -1,3 +1,11 @@
+2011-07-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Removed custom chromium-linux baselines for
+        navigator-detached-no-crash.html & register-protocol-handler.html
+
+        * platform/chromium-linux/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/chromium-linux/fast/dom/register-protocol-handler-expected.txt: Removed.
+
 2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Show content for plugin requests in network panel.
