@@ -1,3 +1,87 @@
+2011-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Show content for plugin requests in network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=30080
+
+        Now the data from didReceiveData callback is passed to inspector.
+        It is then saved in NetworkResourcesData structure for plugin requests.
+        Added window.internals.setInspectorResourcesDataSizeLimits() method
+        for testing replacement logic.
+
+        Reviewed by Pavel Feldman.
+
+        Tests: http/tests/inspector/network/network-content-replacement-embed.html
+               http/tests/inspector/network/network-content-replacement-xhr.html
+               http/tests/inspector/network/network-embed.html
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setResourcesDataSizeLimitsFromInternals):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveDataImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveData):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::setInitialXHRContent):
+        (WebCore::InspectorResourceAgent::setResourcesDataSizeLimitsFromInternals):
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::setContent):
+        (WebCore::NetworkResourcesData::ResourceData::purgeContent):
+        (WebCore::NetworkResourcesData::ResourceData::createDecoder):
+        (WebCore::NetworkResourcesData::ResourceData::dataLength):
+        (WebCore::NetworkResourcesData::ResourceData::appendData):
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::NetworkResourcesData):
+        (WebCore::NetworkResourcesData::responseReceived):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::data):
+        (WebCore::NetworkResourcesData::clear):
+        (WebCore::NetworkResourcesData::setResourcesDataSizeLimits):
+        (WebCore::NetworkResourcesData::ensureNoDataForIdentifier):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::hasContent):
+        (WebCore::NetworkResourcesData::ResourceData::content):
+        (WebCore::NetworkResourcesData::ResourceData::decoder):
+        (WebCore::NetworkResourcesData::ResourceData::buffer):
+        (WebCore::NetworkResourcesData::ResourceData::setBuffer):
+        (WebCore::NetworkResourcesData::ResourceData::hasData):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get contentEncoded):
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype.contentLoaded):
+        (WebInspector.ResourcePreviewView.prototype._createEmptyView):
+        (WebInspector.ResourcePreviewView.prototype._createPreviewView):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.hasTextContent):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveData):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveData):
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoadNotifier.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setInspectorResourcesDataSizeLimits):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-07-05  Kent Tamura  <tkent@chromium.org>
 
         Add an assertion that percent height box is unregistered correctly.

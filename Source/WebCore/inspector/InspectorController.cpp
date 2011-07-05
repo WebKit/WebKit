@@ -489,6 +489,11 @@ void InspectorController::resume()
 
 #endif
 
+void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
+{
+    m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

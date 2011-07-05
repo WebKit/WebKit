@@ -1,3 +1,30 @@
+2011-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Show content for plugin requests in network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=30080
+
+        Added tests for plugin content saving and replacing in NetworkResourcesData.
+        Adjusted older tests to use new window.internals method setInspectorResourcesDataSizeLimits
+        to ensure NetworkResourcesData is in the correct state before test.
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/network-content-replacement-embed-expected.txt: Added.
+        * http/tests/inspector/network/network-content-replacement-embed.html: Added.
+        * http/tests/inspector/network/network-content-replacement-xhr-expected.txt: Added.
+        * http/tests/inspector/network/network-content-replacement-xhr.html: Added.
+        * http/tests/inspector/network/network-embed-expected.txt: Added.
+        * http/tests/inspector/network/network-embed.html: Added.
+        * http/tests/inspector/network/network-xhr-async-expected.txt:
+        * http/tests/inspector/network/network-xhr-async.html:
+        * http/tests/inspector/network/network-xhr-sync-expected.txt:
+        * http/tests/inspector/network/network-xhr-sync.html:
+        * http/tests/inspector/network/resources/cp1251.xml: Added.
+        * http/tests/inspector/network/resources/plugin-data.php: Added.
+        * http/tests/inspector/network/resources/resource.php:
+        * http/tests/inspector/network/resources/utf8.xml: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-04  Kinuko Yasuda  <kinuko@chromium.org>
 
         [Chromium] LayoutTests/fast/filesystem/workers/simple-persistent-sync.html is failing on chromium worker tests

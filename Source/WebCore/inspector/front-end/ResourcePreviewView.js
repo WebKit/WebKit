@@ -39,7 +39,7 @@ WebInspector.ResourcePreviewView.prototype = {
     {
         if (!this.resource.content) {
             if (!this._emptyView) {
-                this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no preview available."));
+                this._emptyView = this._createEmptyView();
                 this._emptyView.show(this.element);
             }
         } else {
@@ -47,13 +47,18 @@ WebInspector.ResourcePreviewView.prototype = {
                 this._emptyView.detach();
                 delete this._emptyView;
             }
-            if (!this._view)
-                this._view = this._createInnerView();
-            this._view.show(this.element);
+            if (!this._previewView)
+                this._previewView = this._createPreviewView();
+            this._previewView.show(this.element);
         }
     },
 
-    _createInnerView: function()
+    _createEmptyView: function()
+    {
+        return new WebInspector.EmptyView(WebInspector.UIString("This request has no preview available."));
+    },
+    
+    _createPreviewView: function()
     {
         if (this.resource.hasErrorStatusCode() && this.resource.content)
             return new WebInspector.ResourceHTMLView(this.resource);
@@ -66,6 +71,9 @@ WebInspector.ResourcePreviewView.prototype = {
 
         if (this._responseView.sourceView)
             return this._responseView.sourceView;
+        
+        if (this.resource.category === WebInspector.resourceCategories.other)
+            return this._createEmptyView();
 
         return WebInspector.ResourceView.nonSourceViewForResource(this.resource);
     }

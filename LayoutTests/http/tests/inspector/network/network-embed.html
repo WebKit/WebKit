@@ -1,0 +1,133 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+
+var loadedFirstURL = false;
+function streamLoaded()
+{
+    if (loadedFirstURL)
+        return;
+
+    loadedFirstURL = true;
+    loadURLs();
+}
+
+var snifferInstalled = false;
+function onSnifferInstalled()
+{
+    snifferInstalled = true;
+    loadURLs();
+}
+
+function loadURLs()
+{
+    if (!snifferInstalled || !loadedFirstURL)
+        return;
+
+    if (!window.internals) {
+        console.log("This test can not be run as window.internals is not available.");
+        return;
+    }
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    internals.setInspectorResourcesDataSizeLimits(document, 10 * 1000 * 1000, 1000 * 1000);
+
+    // Binary content should not be available.
+    plg.getURLNotify("resources/resource.php?type=image", null, "loadURL2");
+}
+
+function loadURL2()
+{
+    // This resource content should be correctly decoded.
+    plg.getURLNotify("resources/plugin-data.php?filename=utf8.xml&mimetype=text/html&charset=utf8", null, "loadURL3");
+}
+
+function loadURL3()
+{
+    // This resource content should be correctly decoded.
+    plg.getURLNotify("resources/plugin-data.php?filename=cp1251.xml&mimetype=text/html&charset=cp1251", null, "loadURL4");
+}
+
+function loadURL4()
+{
+    // This resource content should be correctly decoded.
+    plg.getURLNotify("resources/plugin-data.php?filename=utf8.xml&mimetype=application/xml", null, "loadURL5");
+}
+
+function loadURL5()
+{
+    // This resource content should be correctly decoded.
+    plg.getURLNotify("resources/plugin-data.php?filename=cp1251.xml&mimetype=application/xml", null, "allURLsLoaded");
+}
+
+function allURLsLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step1);
+    InspectorTest.evaluateInPage("onSnifferInstalled()");
+
+    function dumpResource(resource, callback)
+    {
+        if (!resource)
+            return callback();
+        InspectorTest.addResult(resource.url);
+        InspectorTest.addResult("resource.type: " + resource.type);
+        InspectorTest.addResult("resource.content before requesting content: " + resource.content);
+
+        function contentLoaded()
+        {
+            InspectorTest.addResult("resource.content after requesting content: " + resource.content);
+            callback();
+        }
+
+        resource.requestContent(contentLoaded);
+    }
+
+    function step1()
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 5];
+        dumpResource(resource, step2);
+    }
+
+    function step2()
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 4];
+        dumpResource(resource, step3);
+    }
+
+    function step3()
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 3];
+        dumpResource(resource, step4);
+    }
+
+    function step4()
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 2];
+        dumpResource(resource, step5);
+    }
+
+    function step5()
+    {
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        dumpResource(resource, step6);
+    }
+
+    function step6()
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that network panel shows content for embed objects.</p>
+    <embed name="plg" type="application/x-webkit-test-netscape" src="resources/resource.php?type=image" onstreamload="streamLoaded()"></embed>
+</body>
+</html>
+

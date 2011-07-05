@@ -51,6 +51,8 @@ WebInspector.ResourceView.hasTextContent = function(resource)
     case WebInspector.resourceCategories.xhr:
     case WebInspector.resourceCategories.stylesheets:
         return true;
+    case WebInspector.resourceCategories.other:
+        return resource.content && !resource.contentEncoded;
     default:
         return false;
     }

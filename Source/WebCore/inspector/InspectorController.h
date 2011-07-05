@@ -120,6 +120,8 @@ public:
     void resume();
 #endif
 
+    void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
+
 private:
     friend class PostWorkerNotificationToFrontendTask;
 
