@@ -48,7 +48,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
           output_dir: the absolute path to the layout test result directory
         """
         http_server_base.HttpServerBase.__init__(self, port_obj)
-        self._name = 'apache'
+        # We use the name "httpd" instead of "apache" to make our paths (e.g. the pid file: /tmp/WebKit/httpd.pid)
+        # match old-run-webkit-tests: https://bugs.webkit.org/show_bug.cgi?id=63956
+        self._name = 'httpd'
         self._mappings = [{'port': 8000},
                           {'port': 8080},
                           {'port': 8081},
