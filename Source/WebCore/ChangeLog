@@ -1,3 +1,22 @@
+2011-07-05  Hans Wennborg  <hans@chromium.org>
+
+        [V8][Chromium] Remove use of OwnHandle from V8LocalContext
+        https://bugs.webkit.org/show_bug.cgi?id=63925
+
+        Reviewed by Adam Barth.
+
+        Replace the OwnHandle<> member in V8LocalContext with
+        v8::Persistent<v8::Context>.
+        The code that used OwnHandle<> would not correctly Dispose
+        of the Context, which would cause the memory to fill up when creating
+        and destructing many V8LocalContext objects, such as in the case
+        of IndexedDB.
+
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::V8LocalContext::V8LocalContext):
+        (WebCore::V8LocalContext::~V8LocalContext):
+        * bindings/v8/V8Utilities.h:
+
 2011-07-05  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [Qt] Add ShadowBlur support

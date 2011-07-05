@@ -71,7 +71,7 @@ namespace WebCore {
         virtual ~V8LocalContext();
     private:
         v8::HandleScope m_handleScope;
-        OwnHandle<v8::Context> m_context;
+        v8::Persistent<v8::Context> m_context;
     };
 
     // 'FunctionOnly' is assumed for the created callback.
