@@ -129,20 +129,19 @@ void HTMLProgressElement::setMax(double max, ExceptionCode& ec)
 
 double HTMLProgressElement::position() const
 {
-    if (!hasAttribute(valueAttr))
+    if (!isDeterminate())
         return HTMLProgressElement::IndeterminatePosition;
     return value() / max();
 }
 
-bool HTMLProgressElement::isDeterminate()
+bool HTMLProgressElement::isDeterminate() const
 {
-    double currentPosition = position();
-    return (HTMLProgressElement::IndeterminatePosition != currentPosition && HTMLProgressElement::InvalidPosition != currentPosition);
+    return fastHasAttribute(valueAttr);
 }
     
 void HTMLProgressElement::didElementStateChange()
 {
-    m_value->setWidthPercentage(position()*100);
+    m_value->setWidthPercentage(position() * 100);
     if (renderer()) {
         RenderProgress* render = toRenderProgress(renderer());
         bool wasDeterminate = render->isDeterminate();

@@ -1,3 +1,19 @@
+2011-07-04  Dominic Cooney   <dominicc@chromium.org>
+
+        Simplify <progress> element's isDeterminate logic.
+        https://bugs.webkit.org/show_bug.cgi?id=63889
+
+        Reviewed by Hajime Morita.
+
+        Covered by existing tests
+        fast/dom/HTMLProgressElement/indeterminate-progress-*.html
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::position): don't duplicate isDeterminate
+        (WebCore::HTMLProgressElement::isDeterminate): remove redundant tests
+        (WebCore::HTMLProgressElement::didElementStateChange): fix formatting
+        * html/HTMLProgressElement.h:
+
 2011-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.
