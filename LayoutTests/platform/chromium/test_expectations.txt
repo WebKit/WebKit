@@ -301,6 +301,7 @@ BUGCR15733 WONTFIX CPU SKIP : animations/3d = FAIL PASS TIMEOUT
 // Run the Mac-specific platform tests, but only to check for crashes.
 WONTFIX : platform/gtk = FAIL PASS
 WONTFIX : platform/mac = FAIL PASS TIMEOUT
+WONTFIX : platform/mac-wk2 = FAIL PASS TIMEOUT
 WONTFIX : platform/mac-leopard = FAIL PASS
 WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL

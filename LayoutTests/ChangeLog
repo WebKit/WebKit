@@ -1,3 +1,10 @@
+2011-07-04  Mihai Parparita  <mihaip@chromium.org>
+
+        As of r90372 there are WebKit2 Mac-specific tests; don't expect those to
+        pass in Chromium, just like other platform-specific tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-04  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r87067): Text overflows from short height text field.
