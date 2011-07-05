@@ -196,11 +196,12 @@ def _get_test_baselines(test_file, test_config):
 
 
 class RebaselineHTTPServer(BaseHTTPServer.HTTPServer):
-    def __init__(self, httpd_port, test_config, results_json, platforms_json):
-        BaseHTTPServer.HTTPServer.__init__(self, ("", httpd_port), RebaselineHTTPRequestHandler)
-        self.test_config = test_config
-        self.results_json = results_json
-        self.platforms_json = platforms_json
+    def __init__(self, httpd_port, config):
+        server_name = ""
+        BaseHTTPServer.HTTPServer.__init__(self, (server_name, httpd_port), RebaselineHTTPRequestHandler)
+        self.test_config = config['test_config']
+        self.results_json = config['results_json']
+        self.platforms_json = config['platforms_json']
 
 
 class RebaselineHTTPRequestHandler(ReflectionHandler):

@@ -32,15 +32,12 @@ images and text) and allows one-click rebaselining of tests."""
 
 import os
 import os.path
-import threading
-
-from optparse import make_option
 
 from webkitpy.common import system
 from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.port import factory
-from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
 from webkitpy.tool.servers.rebaselineserver import RebaselineHTTPServer, STATE_NEEDS_REBASELINE
 
 
@@ -54,33 +51,17 @@ class TestConfig(object):
         self.scm = scm
 
 
-class RebaselineServer(AbstractDeclarativeCommand):
+class RebaselineServer(AbstractLocalServerCommand):
     name = "rebaseline-server"
     help_text = __doc__
     argument_names = "/path/to/results/directory"
 
-    def __init__(self):
-        options = [
-            make_option("--httpd-port", action="store", type="int", default=8127, help="Port to use for the the rebaseline HTTP server"),
-        ]
-        AbstractDeclarativeCommand.__init__(self, options=options)
+    server = RebaselineHTTPServer
 
-    def execute(self, options, args, tool):
+    def _prepare_config(self, options, args, tool):
         results_directory = args[0]
         filesystem = system.filesystem.FileSystem()
         scm = self._tool.scm()
-
-        if options.dry_run:
-
-            def no_op_copyfile(src, dest):
-                pass
-
-            def no_op_add(path, return_exit_code=False):
-                if return_exit_code:
-                    return 0
-
-            filesystem.copyfile = no_op_copyfile
-            scm.add = no_op_add
 
         print 'Parsing unexpected_results.json...'
         results_json_path = filesystem.join(results_directory, 'unexpected_results.json')
@@ -88,15 +69,8 @@ class RebaselineServer(AbstractDeclarativeCommand):
 
         port = factory.get()
         layout_tests_directory = port.layout_tests_dir()
-        platforms = filesystem.listdir(
-            filesystem.join(layout_tests_directory, 'platform'))
-        test_config = TestConfig(
-            port,
-            layout_tests_directory,
-            results_directory,
-            platforms,
-            filesystem,
-            scm)
+        platforms = filesystem.listdir(filesystem.join(layout_tests_directory, 'platform'))
+        test_config = TestConfig(port, layout_tests_directory, results_directory, platforms, filesystem, scm)
 
         print 'Gathering current baselines...'
         # Rebaseline server and it's associated JavaScript expected the tests subtree to
@@ -112,20 +86,11 @@ class RebaselineServer(AbstractDeclarativeCommand):
         resultsjsonparser.for_each_test(results_json['tests'], gather_baselines)
         results_json['tests'] = new_tests_subtree
 
-        server_url = "http://localhost:%d/" % options.httpd_port
-        print "Starting server at %s" % server_url
-        print ("Use the 'Exit' link in the UI, %squitquitquit "
-            "or Ctrl-C to stop") % server_url
-
-        threading.Timer(
-            .1, lambda: self._tool.user.open_url(server_url)).start()
-
-        httpd = RebaselineHTTPServer(
-            httpd_port=options.httpd_port,
-            test_config=test_config,
-            results_json=results_json,
-            platforms_json={
+        return {
+            'test_config': test_config,
+            "results_json": results_json,
+            "platforms_json": {
                 'platforms': platforms,
                 'defaultPlatform': port.name(),
-            })
-        httpd.serve_forever()
+            },
+        }

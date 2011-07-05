@@ -1,3 +1,23 @@
+2011-07-05  Adam Barth  <abarth@webkit.org>
+
+        Add trivial garden-o-matic command (with server)
+        https://bugs.webkit.org/show_bug.cgi?id=63872
+
+        Reviewed by Eric Seidel.
+
+        This patch adds a trivial "Hello, world" garden-o-matic command,
+        complete with an HTTP server.  This command re-uses a bunch of code
+        from the existing rebaseline-server command.  Over time, this command
+        will grow to be a tool useful for gardening the WebKit tree.
+
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/abstractservercommand.py: Added.
+        * Scripts/webkitpy/tool/commands/gardenomatic.py: Added.
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html: Added.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Added.
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+
 2011-07-05  Adam Roben  <aroben@apple.com>
 
         Make prepare-ChangeLog include modified Perl functions in its ChangeLog template
