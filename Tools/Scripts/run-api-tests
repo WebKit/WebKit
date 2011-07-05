@@ -44,6 +44,8 @@ sub populateTests();
 sub runAllTests();
 sub runAllTestsInSuite($);
 sub runTest($$);
+sub prepareEnvironmentForRunningTestTool();
+sub testToolPath();
 
 # Timeout for individual test, in sec
 my $timeout = 10;
@@ -139,67 +141,44 @@ sub runTest($$)
 
     my $result = 0;
     my $timedOut = 0;
-    if (isAppleMacWebKit()) {
-        my $productDir = productDir();
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        my $apiTesterPath = "$productDir/TestWebKitAPI";
 
-        local *DEVNULL;
-        my ($childIn, $childOut, $childErr);
-        if ($verbose) {
-            $childOut = ">&STDOUT";
-            $childErr = ">&STDERR";
-        } else {
-            open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
-            $childOut = ">&DEVNULL";
-            $childErr = ">&DEVNULL";
-        }
+    die "run-api-tests is not supported on this platform.\n" unless isAppleMacWebKit() || isAppleWinWebKit();
 
-        my $pid;
-        if (architecture()) {
-            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, $gtestArg, @ARGV) or die "Failed to run test: $test.";
-        } else {
-            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, $gtestArg, @ARGV) or die "Failed to run test: $test.";
-        }
+    prepareEnvironmentForRunningTestTool();
 
-        close($childIn);
-        close($childOut);
-        close($childErr);
-        close(DEVNULL) unless ($verbose);
-        eval {
-            local $SIG{ALRM} = sub { die "alarm\n" };
-            alarm $timeout;
-            waitpid($pid, 0);
-            alarm 0;
-            $result = $?;
-        };
-        if ($@) {
-            die unless $@ eq "alarm\n";
-            kill SIGTERM, $pid or kill SIGKILL, $pid;
-            $timedOut = 1;
-        };
-
-     } elsif (isAppleWinWebKit()) {
-        my $apiTesterNameSuffix;
-        if (configurationForVisualStudio() ne "Debug_All") {
-            $apiTesterNameSuffix = "";
-        } else {
-            $apiTesterNameSuffix = "_debug";
-        }
-        my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
-        eval {
-            local $SIG{ALRM} = sub { die "alarm\n" };
-            alarm $timeout;
-            $result = system { $apiTesterPath } $apiTesterPath, $gtestArg, @ARGV;
-            alarm 0;
-        };
-        if ($@) {
-            die unless $@ eq "alarm\n";
-            $timedOut = 1;
-        };
+    local *DEVNULL;
+    my ($childIn, $childOut, $childErr);
+    if ($verbose) {
+        $childOut = ">&STDERR";
+        $childErr = ">&STDERR";
     } else {
-        die "run-api-tests is not supported on this platform.\n"
+        open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
+        $childOut = ">&DEVNULL";
+        $childErr = ">&DEVNULL";
+    }
+
+    my $pid;
+    if (isAppleMacWebKit() && architecture()) {
+        $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), testToolPath(), $gtestArg, @ARGV) or die "Failed to run test: $test.";
+    } else {
+        $pid = open3($childIn, $childOut, $childErr, testToolPath(), $gtestArg, @ARGV) or die "Failed to run test: $test.";
+    }
+
+    close($childIn);
+    close($childOut);
+    close($childErr);
+    close(DEVNULL) unless ($verbose);
+    eval {
+        local $SIG{ALRM} = sub { die "alarm\n" };
+        alarm $timeout;
+        waitpid($pid, 0);
+        alarm 0;
+        $result = $?;
+    };
+    if ($@) {
+        die unless $@ eq "alarm\n";
+        kill SIGTERM, $pid or kill SIGKILL, $pid;
+        $timedOut = 1;
     }
 
     if ($timedOut) {
@@ -217,54 +196,38 @@ sub populateTests()
     my @tests;
     my $timedOut;
 
-    if (isAppleMacWebKit()) {
-        my $productDir = productDir();
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        my $apiTesterPath = "$productDir/TestWebKitAPI";
+    die "run-api-tests is not supported on this platform.\n" unless isAppleMacWebKit() || isAppleWinWebKit();
 
-        local *DEVNULL;
-        my ($childIn, $childOut, $childErr);
-        if ($verbose) {
-            $childErr = ">&STDERR";
-        } else {
-            open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
-            $childErr = ">&DEVNULL";
-        }
+    prepareEnvironmentForRunningTestTool();
 
-        my $pid;
-        if (architecture()) {
-            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, "--gtest_list_tests") or die "Failed to build list of tests!";
-        } else {
-            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, "--gtest_list_tests") or die "Failed to build list of tests!";
-        }
-
-        close($childIn);
-        @tests = <$childOut>;
-        close($childOut);
-        close($childErr);
-        close(DEVNULL) unless ($verbose);
-
-        waitpid($pid, 0);
-        my $result = $?;
-
-        if ($result) {
-            print STDERR "Failed to build list of tests!\n";
-            exit exitStatus($result);
-        }
-    } elsif (isAppleWinWebKit()) {
-        my $apiTesterNameSuffix;
-        if (configurationForVisualStudio() ne "Debug_All") {
-            $apiTesterNameSuffix = "";
-        } else {
-            $apiTesterNameSuffix = "_debug";
-        }
-        my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
-        open(TESTS, "-|", $apiTesterPath, "--dump-tests") or die $!;
-        @tests = <TESTS>;
-        close(TESTS) or die $!;
+    local *DEVNULL;
+    my ($childIn, $childOut, $childErr);
+    if ($verbose) {
+        $childErr = ">&STDERR";
     } else {
-        die "run-api-tests is not supported on this platform.\n"
+        open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
+        $childErr = ">&DEVNULL";
+    }
+
+    my $pid;
+    if (isAppleMacWebKit() && architecture()) {
+        $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), testToolPath(), "--gtest_list_tests") or die "Failed to build list of tests!";
+    } else {
+        $pid = open3($childIn, $childOut, $childErr, testToolPath(), "--gtest_list_tests") or die "Failed to build list of tests!";
+    }
+
+    close($childIn);
+    @tests = <$childOut>;
+    close($childOut);
+    close($childErr);
+    close(DEVNULL) unless ($verbose);
+
+    waitpid($pid, 0);
+    my $result = $?;
+
+    if ($result) {
+        print STDERR "Failed to build list of tests!\n";
+        exit exitStatus($result);
     }
 
     my %keyedTests = ();
@@ -322,4 +285,26 @@ sub buildTestTool()
     }
 
     chdir $originalCwd;
+}
+
+sub prepareEnvironmentForRunningTestTool()
+{
+    return unless isAppleMacWebKit();
+
+    $ENV{DYLD_FRAMEWORK_PATH} = productDir();
+    $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+}
+
+sub testToolPath()
+{
+    my $path = File::Spec->catfile(productDir(), "TestWebKitAPI");
+    return $path unless isAppleWinWebKit();
+
+    my $suffix;
+    if (configurationForVisualStudio() eq "Debug_All") {
+        $suffix = "_debug";
+    } else {
+        $suffix = "";
+    }
+    return "$path$suffix.exe";
 }

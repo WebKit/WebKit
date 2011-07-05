@@ -1,3 +1,25 @@
+2011-07-05  Adam Roben  <aroben@apple.com>
+
+        Clean up run-api-tests output on Windows
+
+        We were mixing run-api-tests output with gtest output, and the result was a mess.
+
+        Fixes <http://webkit.org/b/63954> run-api-tests output is very confusing on Windows
+
+        Reviewed by Dan Bates.
+
+        * Scripts/run-api-tests:
+        (runTest):
+        (populateTests):
+        Made Windows use the formerly-Mac-only codepaths which correctly suppress gtest output
+        except in verbose mode. Most changes are due to indentation. Use of the arch utility is now
+        the only Mac-specific thing in these functions. Some other platform-specific code was moved
+        from here...
+
+        (prepareEnvironmentForRunningTestTool):
+        (testToolPath):
+        ...to here.
+
 2011-07-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
