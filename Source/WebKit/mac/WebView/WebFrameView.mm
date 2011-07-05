@@ -288,6 +288,17 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     view->updateCanHaveScrollbars();
 }
 
+- (void)_frameSizeChanged
+{
+    // See WebFrameLoaderClient::provisionalLoadStarted.
+    if ([[[self webFrame] webView] drawsBackground])
+        [[self _scrollView] setDrawsBackground:YES];
+    if (Frame* coreFrame = [self _web_frame]) {
+        if (FrameView* coreFrameView = coreFrame->view())
+            coreFrameView->setNeedsLayout();
+    }
+}
+
 @end
 
 @implementation WebFrameView
@@ -496,15 +507,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)setFrameSize:(NSSize)size
 {
-    if (!NSEqualSizes(size, [self frame].size)) {
-        // See WebFrameLoaderClient::provisionalLoadStarted.
-        if ([[[self webFrame] webView] drawsBackground])
-            [[self _scrollView] setDrawsBackground:YES];
-        if (Frame* coreFrame = [self _web_frame]) {
-            if (FrameView* coreFrameView = coreFrame->view())
-                coreFrameView->setNeedsLayout();
-        }
-    }
+    if (!NSEqualSizes(size, [self frame].size))
+        [self _frameSizeChanged];
+
     [super setFrameSize:size];
 }
 

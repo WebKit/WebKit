@@ -1,3 +1,14 @@
+2011-07-04  Dan Bernstein  <mitz@apple.com>
+
+        Moved handling of frame size changes into its own method.
+
+        Reviewed by Oliver Hunt.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _frameSizeChanged]): Added. Moved code here...
+        (-[WebFrameView setFrameSize:]): ...from here.
+        * WebView/WebFrameViewInternal.h:
+
 2011-07-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
