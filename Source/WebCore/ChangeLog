@@ -1,3 +1,65 @@
+2011-07-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] remove network-sidebar style, add network-log-grid
+        https://bugs.webkit.org/show_bug.cgi?id=63913
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype._createTable):
+        * inspector/front-end/networkPanel.css:
+        (.network-log-grid):
+        (.network-log-grid table.data):
+        (.network-log-grid.small table.data):
+        (.network-log-grid td):
+        (.network-log-grid.small td):
+        (.network-log-grid th):
+        (.network-log-grid.small th):
+        (.network-log-grid th, .network.panel .data-grid th.sort-descending, .network.panel .data-grid th.sort-ascending):
+        (.network-log-grid .data-container):
+        (.network-log-grid.small .data-container):
+        (.network-log-grid select):
+        (.network-log-grid.small tr.offscreen):
+        (.network-log-grid tr.offscreen):
+        (.network-log-grid tr.offscreen td):
+        (.network-log-grid tr.filler):
+        (.network-log-grid tr:not(.filler) td.name-column):
+        (.network.panel:not(.viewing-resource) .network-log-grid td.name-column:hover):
+        (.network-log-grid td.time-column):
+        (.network-log-grid.small .network-graph-side):
+        (.network-log-grid th.sortable:active):
+        (.network-log-grid tr.selected .network-cell-subtitle):
+        (.network-log-grid .icon):
+        (.network-log-grid.small .icon):
+        (.network-log-grid .network-category-scripts .icon):
+        (.network-log-grid.small .network-category-scripts .icon):
+        (.network-log-grid .network-category-documents .icon):
+        (.network-log-grid.small .network-category-documents .icon):
+        (.network-log-grid .network-category-stylesheets .icon):
+        (.network-log-grid.small .network-category-stylesheets .icon):
+        (.network-log-grid .network-category-images .icon):
+        (.network-log-grid.small .network-category-images .icon):
+        (.network-log-grid .image-network-icon-preview):
+        (.network-log-grid.small .image-network-icon-preview):
+        (.network-timeline-grid.small .network-event-divider):
+        (.network-log-grid .resources-dividers):
+        (.network-log-grid .resources-dividers-label-bar):
+        (.network-timeline-grid.small .resources-dividers-label-bar):
+        (.network-timeline-grid .resources-divider-label):
+        (.network-timeline-grid .resources-dividers-label-bar .resources-divider):
+        (.network-timeline-grid.small .resources-dividers-label-bar .resources-divider):
+        (.network-timeline-grid .resources-divider.first .resources-divider-label):
+        (.network-timeline-grid .resources-dividers-label-bar .resources-divider.first):
+        (.network-timeline-grid tr.filler td):
+        (.network-summary-bar td):
+        (.network.panel.viewing-resource .network-log-grid th):
+        (.network-log-grid.full-grid-mode .viewer-column):
+        (.network-log-grid.brief-grid-mode .time-column):
+        (.network-log-grid.viewing-resource-mode .timeline-column):
+        (.network.panel .sidebar):
+        (.network.panel.viewing-resource .network-log-grid .data-grid-resizer):
+
 2011-07-05  Alexandru Chiculita  <achicu@adobe.com>
 
         Reviewed by Simon Hausmann.

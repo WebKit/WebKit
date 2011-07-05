@@ -39,7 +39,6 @@ WebInspector.NetworkPanel = function()
     WebInspector.Panel.call(this, "network");
 
     this.createSidebar();
-    this.sidebarElement.className = "network-sidebar";
 
     this._resources = [];
     this._resourcesById = {};
@@ -187,6 +186,7 @@ WebInspector.NetworkPanel.prototype = {
 
         this._dataGrid = new WebInspector.DataGrid(columns);
         this._dataGrid.resizeMethod = WebInspector.DataGrid.ResizeMethod.Last;
+        this._dataGrid.element.addStyleClass("network-log-grid");
         this._dataGrid.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
         this.containerElement.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
