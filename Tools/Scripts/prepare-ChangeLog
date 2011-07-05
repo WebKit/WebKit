@@ -89,6 +89,7 @@ sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
 sub get_function_line_ranges_for_javascript($$);
+sub get_function_line_ranges_for_perl($$);
 sub get_selector_line_ranges_for_css($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
@@ -207,9 +208,6 @@ if (@changed_files) {
 if (%changed_line_ranges) {
     print STDERR "  Extracting affected function names from source files.\n";
     foreach my $file (keys %changed_line_ranges) {
-        # Only look for function names in certain source files.
-        next unless $file =~ /\.(c|cpp|m|mm|h|java|js)/;
-    
         # Find all the functions in the file.
         open SOURCE, $file or next;
         my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
@@ -494,15 +492,24 @@ sub get_function_line_ranges($$)
 {
     my ($file_handle, $file_name) = @_;
 
-    if ($file_name =~ /\.(c|cpp|m|mm|h)$/) {
-        return get_function_line_ranges_for_c ($file_handle, $file_name);
-    } elsif ($file_name =~ /\.java$/) {
-        return get_function_line_ranges_for_java ($file_handle, $file_name);
-    } elsif ($file_name =~ /\.js$/) {
-        return get_function_line_ranges_for_javascript ($file_handle, $file_name);
-    } elsif ($file_name =~ /\.css$/) {
-        return get_selector_line_ranges_for_css ($file_handle, $file_name);
-    }
+    # Try to determine the source language based on the file extension.
+
+    return get_function_line_ranges_for_c($file_handle, $file_name) if $file_name =~ /\.(c|cpp|m|mm|h)$/;
+    return get_function_line_ranges_for_java($file_handle, $file_name) if $file_name =~ /\.java$/;
+    return get_function_line_ranges_for_javascript($file_handle, $file_name) if $file_name =~ /\.js$/;
+    return get_selector_line_ranges_for_css($file_handle, $file_name) if $file_name =~ /\.css$/;
+    return get_function_line_ranges_for_perl($file_handle, $file_name) if $file_name =~ /\.p[lm]$/;
+
+    # Try to determine the source language based on the script interpreter.
+
+    my $first_line = <$file_handle>;
+    seek($file_handle, 0, 0);
+
+    return () unless $first_line =~ /^#!(\S+)/;
+    my $interpreter = $1;
+
+    return get_function_line_ranges_for_perl($file_handle, $file_name) if $interpreter =~ /perl$/;
+
     return ();
 }
 
@@ -1197,6 +1204,44 @@ sub get_function_line_ranges_for_javascript($$)
 
     warn "mismatched braces in $fileName\n" if $bracesDepth;
     warn "mismatched parentheses in $fileName\n" if $parenthesesDepth;
+
+    return @ranges;
+}
+
+# Read a file and get all the line ranges of the things that look like Perl functions. Functions
+# start on a line that starts with "sub ", and end on the first line starting with "}" thereafter.
+#
+# Result is a list of triples: [ start_line, end_line, function ].
+
+sub get_function_line_ranges_for_perl($$)
+{
+    my ($fileHandle, $fileName) = @_;
+
+    my @ranges;
+
+    my $currentFunction = "";
+    my $start = 0;
+
+    while (<$fileHandle>) {
+        if (/^sub\s+([^(\s]+)/) {
+            # Skip over forward declarations, which don't contain a brace and end with a semicolon.
+            next if !/{/ && /;$/;
+
+            if ($currentFunction) {
+                warn "nested functions found at top-level at $fileName:$.\n";
+                next;
+            }
+            $currentFunction = $1;
+            $start = $.;
+        }
+        if (index($_, "}") == 0) {
+            next unless $start;
+            push(@ranges, [$start, $., $currentFunction]);
+            $currentFunction = "";
+            $start = 0;
+            next;
+        }
+    }
 
     return @ranges;
 }

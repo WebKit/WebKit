@@ -1,5 +1,28 @@
 2011-07-05  Adam Roben  <aroben@apple.com>
 
+        Make prepare-ChangeLog include modified Perl functions in its ChangeLog template
+
+        This is a very simple first cut. Functions must start with a line that starts with "sub "
+        and end with a line that starts with a closing brace. No leading whitespace is allowed.
+        Package names aren't parsed at all.
+
+        Fixes <http://webkit.org/b/21591> prepare-ChangeLog should know how to find functions in
+        Perl files
+
+        Reviewed by David Kilzer.
+
+        * Scripts/prepare-ChangeLog: Removed redundant code that ignored certain files when
+        searching for function line ranges. This is already done inside the get_function_line_ranges
+        function.
+        (get_function_line_ranges): Cleaned up coding style a little bit. Call
+        get_function_line_ranges_for_perl for files with .pl and .pm extensions. For files with an
+        unknown extension or no extension, read the shebang line to try to determine the script
+        interpreter. Call get_function_line_ranges_for_perl if the interpreter seems to be Perl.
+        (get_function_line_ranges_for_perl): Added. Does extremely basic parsing of the file to find
+        lines starting with "sub " or "}".
+
+2011-07-05  Adam Roben  <aroben@apple.com>
+
         Clean up run-api-tests output on Windows
 
         We were mixing run-api-tests output with gtest output, and the result was a mess.
