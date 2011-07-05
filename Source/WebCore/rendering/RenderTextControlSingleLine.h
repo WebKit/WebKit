@@ -143,7 +143,7 @@ private:
 
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
-
+    LayoutUnit m_desiredInnerTextHeight;
     Timer<RenderTextControlSingleLine> m_searchEventTimer;
     RefPtr<SearchPopupMenu> m_searchPopup;
     Vector<String> m_recentSearches;

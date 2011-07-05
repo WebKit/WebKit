@@ -1,3 +1,33 @@
+2011-07-04  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION (r87067): Text overflows from short height text field.
+        https://bugs.webkit.org/show_bug.cgi?id=61768
+
+        Reviewed by Dimitri Glazkov.
+
+        Since r87067, the RenderStyle for the inner text element is reset
+        by the value update, but the renderer for the inner text element
+        keeps to have metrics calculated by the previous style. So
+        RenderTextControlSingleLine::layout() didn't set a desired height
+        to the renderer for the inner text element.
+
+        This patch changes the style creation code so that it has the
+        desired height initially.
+
+        Test: fast/forms/textfield-overflow-by-value-update.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        Initialize m_desiredInnerTextHeight.
+        (WebCore::RenderTextControlSingleLine::layout):
+        Update m_desiredInnerTextHeight.
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        Reset m_desiredInnerTextHeight.
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        Sets the height if m_desiredInnerTextHeight has a concrete value.
+        * rendering/RenderTextControlSingleLine.h:
+        Declare m_desiredInnerTextHeight.
+
 2011-07-04  MORITA Hajime  <morrita@google.com>
 
         Accessing ShadowRoot.nodeList causes an assertion failure.

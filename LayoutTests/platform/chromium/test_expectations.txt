@@ -3892,6 +3892,9 @@ BUGWK62754 WIN LINUX : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
 BUGWK62754 WIN LINUX : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
 BUGWK62754 WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 
+// New test.
+BUGWK61768 : fast/forms/textfield-overflow-by-value-update.html = FAIL
+
 // Has been crashing since WebKit r88279-88297.
 BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 

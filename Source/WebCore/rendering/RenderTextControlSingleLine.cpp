@@ -73,6 +73,7 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node, bool placeh
     : RenderTextControl(node, placeholderVisible)
     , m_searchPopupIsVisible(false)
     , m_shouldDrawCapsLockIndicator(false)
+    , m_desiredInnerTextHeight(-1)
     , m_searchEventTimer(this, &RenderTextControlSingleLine::searchEventTimerFired)
     , m_searchPopup(0)
 {
@@ -292,6 +293,7 @@ void RenderTextControlSingleLine::layout()
         if (desiredHeight != currentHeight)
             relayoutChildren = true;
         innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
+        m_desiredInnerTextHeight = desiredHeight;
         if (innerBlockRenderer)
             innerBlockRenderer->style()->setHeight(Length(desiredHeight, Fixed));
     }
@@ -372,6 +374,7 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
 
 void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    m_desiredInnerTextHeight = -1;
     RenderTextControl::styleDidChange(diff, oldStyle);
 
     // We may have set the width and the height in the old style in layout().
@@ -545,6 +548,8 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
     textBlockStyle->setOverflowX(OHIDDEN);
     textBlockStyle->setOverflowY(OHIDDEN);
 
+    if (m_desiredInnerTextHeight >= 0)
+        textBlockStyle->setHeight(Length(m_desiredInnerTextHeight, Fixed));
     // Do not allow line-height to be smaller than our default.
     if (textBlockStyle->fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
         textBlockStyle->setLineHeight(Length(-100.0f, Percent));
