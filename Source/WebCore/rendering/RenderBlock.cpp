@@ -3446,6 +3446,17 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
     return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
 }
 
+#if !ASSERT_DISABLED
+bool RenderBlock::hasPercentHeightDescendant(RenderBox* descendant)
+{
+    ASSERT(descendant);
+    if (!gPercentHeightContainerMap)
+        return false;
+    HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->take(descendant);
+    return containerSet && containerSet->size();
+}
+#endif
+
 // FIXME: The logicalLeftOffsetForLine/logicalRightOffsetForLine functions are very slow if there are many floats
 // present. We need to add a structure to floating objects to represent "lines" of floats.  Then instead of checking
 // each float individually, we'd just walk backwards through the "lines" and stop when we hit a line that is fully above

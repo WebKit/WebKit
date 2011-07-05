@@ -203,6 +203,10 @@ void RenderBox::destroy()
 
     if (style() && (style()->logicalHeight().isPercent() || style()->logicalMinHeight().isPercent() || style()->logicalMaxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);
+    // If the following assertion fails, logicalHeight()/logicalMinHeight()/
+    // logicalMaxHeight() values are changed from a percent value to a non-percent
+    // value during laying out. It causes a use-after-free bug.
+    ASSERT(!RenderBlock::hasPercentHeightDescendant(this));
 
     RenderBoxModelObject::destroy();
 }

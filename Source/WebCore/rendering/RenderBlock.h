@@ -102,6 +102,9 @@ public:
     void addPercentHeightDescendant(RenderBox*);
     static void removePercentHeightDescendant(RenderBox*);
     HashSet<RenderBox*>* percentHeightDescendants() const;
+#if !ASSERT_DISABLED
+    static bool hasPercentHeightDescendant(RenderBox*);
+#endif
 
     RootInlineBox* createAndAppendRootInlineBox();
 

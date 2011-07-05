@@ -1,3 +1,18 @@
+2011-07-05  Kent Tamura  <tkent@chromium.org>
+
+        Add an assertion that percent height box is unregistered correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=62792
+
+        Reviewed by Hajime Morita.
+
+        No new tests. This won't change behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasPercentHeightDescendant): Added.
+        * rendering/RenderBlock.h: Declare hasPercentHeightDescendant().
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::destroy): Assert !hasPercentHeightDescendant().
+
 2011-07-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Enable settings screen with settings for console and elements panels.
