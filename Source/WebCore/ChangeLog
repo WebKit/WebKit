@@ -1,3 +1,19 @@
+2011-07-05  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Coalesce data array into one NSData before calling didReceiveData
+        https://bugs.webkit.org/show_bug.cgi?id=63916
+        <rdar://problem/9715181>
+
+        Instead of calling didReceiveData multiple times with smaller chunks of data, we merge the
+        data buffers into one and call it once.
+
+        No new tests because the flag isn't enabled yet.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveDataArray:]):
+
 2011-07-05  Tamas Czene  <Czene.Tamas@stud.u-szeged.hu>
 
         Reviewed by Simon Fraser.
