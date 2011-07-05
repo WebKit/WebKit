@@ -1,3 +1,29 @@
+2011-06-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extract duplicated code that deals with source mappings.
+        https://bugs.webkit.org/show_bug.cgi?id=63139
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype.isEqual):
+        (WebInspector.ConsoleMessage.prototype.get stackTrace):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._uiLocationToScriptLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._updateAnchor):
+        (WebInspector.DebuggerPresentationModel.prototype._addConsoleMessage.didGetUILocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addConsoleMessage):
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger.didGetScriptLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded.updateSourceFileBreakpointsAndDispatchEvent):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded.didGetUILocation):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceFileForScript):
+        (WebInspector.PresenationCallFrame):
+        (WebInspector.PresenationCallFrame.prototype.sourceLine):
+
 2011-07-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: WebInspector frontend reports a protocol error in remote debugging mode.

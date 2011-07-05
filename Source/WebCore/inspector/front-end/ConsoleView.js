@@ -1104,6 +1104,11 @@ WebInspector.ConsoleMessage.prototype = {
             && (this.url === msg.url)
             && (this.message === msg.message)
             && (this._requestId === msg._requestId);
+    },
+
+    get stackTrace()
+    {
+        return this._stackTrace;
     }
 }
 
