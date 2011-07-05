@@ -1,3 +1,28 @@
+2011-07-05  Shinya Kawanaka  <shinyak@google.com>
+
+        Reviewed by Kent Tamura.
+
+        The default step is used when attribute step of input[type='number'] is "any".
+        https://bugs.webkit.org/show_bug.cgi?id=57723
+
+        When step is "any", 0 was chosen as step, but this is not intuitive.
+        So changed to use the default step.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::getAllowedValueStep):
+          Calls getAllowedValueStepWithDecimalPlaces with RejectAny.
+        (WebCore::HTMLInputElement::getAllowedValueStepWithDecimalPlaces):
+          Takes a new arugument AnyStepHandling. If it is AnyIsDefaultStep, this method
+          allows "step" attribute to take a value "any" to use the default step as step value.
+          Otherwise, INVALID_STATE_ERR will be returned if "step" is "any".
+        (WebCore::HTMLInputElement::applyStep): ditto.
+        (WebCore::HTMLInputElement::stepUp):
+          Calls applyStep with RejectAny.
+        (WebCore::HTMLInputElement::stepDown): ditto.
+        (WebCore::HTMLInputElement::stepUpFromRenderer):
+          Removes a check that step is "any". It is checked in getAllowedValueStepWithDecimalPlaces.
+        * html/HTMLInputElement.h:
+
 2011-07-04  Dominic Cooney   <dominicc@chromium.org>
 
         Simplify <progress> element's isDeterminate logic.

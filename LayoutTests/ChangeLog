@@ -1,3 +1,16 @@
+2011-07-05  Shinya Kawanaka  <shinyak@google.com>
+
+        Reviewed by Kent Tamura.
+
+        The default step is used when the step attribute of input[type='number'] is "any".
+        https://bugs.webkit.org/show_bug.cgi?id=57723
+
+        Changed Layout tests to use the default step when the step attribute of
+        input[type='number'] is "any".
+
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: Regenerated.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js:
+
 2011-07-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

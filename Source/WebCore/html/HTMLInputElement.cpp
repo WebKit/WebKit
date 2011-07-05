@@ -338,10 +338,10 @@ String HTMLInputElement::valueMissingText() const
 
 bool HTMLInputElement::getAllowedValueStep(double* step) const
 {
-    return getAllowedValueStepWithDecimalPlaces(step, 0);
+    return getAllowedValueStepWithDecimalPlaces(RejectAny, step, 0);
 }
 
-bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(double* step, unsigned* decimalPlaces) const
+bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(AnyStepHandling anyStepHandling, double* step, unsigned* decimalPlaces) const
 {
     ASSERT(step);
     double defaultStep = m_inputType->defaultStep();
@@ -355,8 +355,21 @@ bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(double* step, unsign
             *decimalPlaces = 0;
         return true;
     }
-    if (equalIgnoringCase(stepString, "any"))
-        return false;
+
+    if (equalIgnoringCase(stepString, "any")) {
+        switch (anyStepHandling) {
+        case RejectAny:
+            return false;
+        case AnyIsDefaultStep:
+            *step = defaultStep * stepScaleFactor;
+            if (decimalPlaces)
+                *decimalPlaces = 0;
+            return true;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
     double parsed;
     if (!decimalPlaces) {
         if (!parseToDoubleForNumberType(stepString, &parsed) || parsed <= 0.0) {
@@ -382,14 +395,15 @@ bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(double* step, unsign
     return true;
 }
 
-void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
+void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, ExceptionCode& ec)
 {
     double step;
     unsigned stepDecimalPlaces, currentDecimalPlaces;
-    if (!getAllowedValueStepWithDecimalPlaces(&step, &stepDecimalPlaces)) {
+    if (!getAllowedValueStepWithDecimalPlaces(anyStepHandling, &step, &stepDecimalPlaces)) {
         ec = INVALID_STATE_ERR;
         return;
     }
+
     const double nan = numeric_limits<double>::quiet_NaN();
     double current = m_inputType->parseToDoubleWithDecimalPlaces(value(), nan, &currentDecimalPlaces);
     if (!isfinite(current)) {
@@ -434,12 +448,12 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
 
 void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
 {
-    applyStep(n, ec);
+    applyStep(n, RejectAny, ec);
 }
 
 void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
 {
-    applyStep(-n, ec);
+    applyStep(-n, RejectAny, ec);
 }
 
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -1509,13 +1523,10 @@ void HTMLInputElement::stepUpFromRenderer(int n)
 
     unsigned stepDecimalPlaces, baseDecimalPlaces;
     double step, base;
-    // The value will be the default value after stepping for <input value=(empty/invalid) step="any" />
     // FIXME: Not any changes after stepping, even if it is an invalid value, may be better.
     // (e.g. Stepping-up for <input type="number" value="foo" step="any" /> => "foo")
-    if (equalIgnoringCase(fastGetAttribute(stepAttr), "any"))
-        step = 0;
-    else if (!getAllowedValueStepWithDecimalPlaces(&step, &stepDecimalPlaces))
-        return;
+    if (!getAllowedValueStepWithDecimalPlaces(AnyIsDefaultStep, &step, &stepDecimalPlaces))
+      return;
     base = m_inputType->stepBaseWithDecimalPlaces(&baseDecimalPlaces);
     baseDecimalPlaces = min(baseDecimalPlaces, 16u);
 
@@ -1564,11 +1575,11 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             setValueAsNumber(newValue, ec);
             current = newValue;
             if (n > 1)
-                applyStep(n - 1, ec);
+                applyStep(n - 1, AnyIsDefaultStep, ec);
             else if (n < -1)
-                applyStep(n + 1, ec);
+                applyStep(n + 1, AnyIsDefaultStep, ec);
         } else
-            applyStep(n, ec);
+            applyStep(n, AnyIsDefaultStep, ec);
     }
 
     if (currentStringValue != value()) {

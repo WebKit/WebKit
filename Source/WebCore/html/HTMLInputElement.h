@@ -62,7 +62,7 @@ public:
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
     // Returns false if there is no "allowed value step."
     bool getAllowedValueStep(double*) const;
-    bool getAllowedValueStepWithDecimalPlaces(double*, unsigned*) const;
+
     // For ValidityState.
     bool stepMismatch(const String&) const;
     String minimumString() const;
@@ -240,6 +240,7 @@ protected:
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
+    enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
@@ -316,8 +317,10 @@ private:
 
     void updateType();
 
+    bool getAllowedValueStepWithDecimalPlaces(AnyStepHandling, double*, unsigned*) const;
+
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
-    void applyStep(double count, ExceptionCode&);
+    void applyStep(double count, AnyStepHandling, ExceptionCode&);
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
