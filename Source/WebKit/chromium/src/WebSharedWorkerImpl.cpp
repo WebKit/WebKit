@@ -39,6 +39,8 @@
 #include "ScriptExecutionContext.h"
 #include "SharedWorkerContext.h"
 #include "SharedWorkerThread.h"
+#include "WorkerInspectorController.h"
+#include "WorkerScriptDebugServer.h"
 
 #include "WebMessagePortChannel.h"
 #include "WebString.h"
@@ -107,6 +109,39 @@ void WebSharedWorkerImpl::terminateWorkerContext()
 void WebSharedWorkerImpl::clientDestroyed()
 {
     m_client = 0;
+}
+
+static void connectToWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
+{
+    ASSERT(context->isWorkerContext());
+    static_cast<WorkerContext*>(context)->workerInspectorController()->connectFrontend();
+}
+
+void WebSharedWorkerImpl::attachDevTools()
+{
+    workerThread()->runLoop().postTask(createCallbackTask(connectToWorkerContextInspectorTask, true));
+}
+
+static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
+{
+    ASSERT(context->isWorkerContext());
+    static_cast<WorkerContext*>(context)->workerInspectorController()->disconnectFrontend();
+}
+
+void WebSharedWorkerImpl::detachDevTools()
+{
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerContextInspectorTask, true), WorkerScriptDebugServer::debuggerTaskMode);
+}
+
+static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
+{
+    ASSERT(context->isWorkerContext());
+    static_cast<WorkerContext*>(context)->workerInspectorController()->dispatchMessageFromFrontend(message);
+}
+
+void WebSharedWorkerImpl::dispatchDevToolsMessage(const WebString& message)
+{
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerScriptDebugServer::debuggerTaskMode);
 }
 
 WebWorkerClient* WebSharedWorkerImpl::client()

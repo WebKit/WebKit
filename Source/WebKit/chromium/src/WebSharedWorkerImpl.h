@@ -56,6 +56,10 @@ public:
     virtual void terminateWorkerContext();
     virtual void clientDestroyed();
 
+    virtual void attachDevTools();
+    virtual void detachDevTools();
+    virtual void dispatchDevToolsMessage(const WebString&);
+
     // WebWorkerBase methods:
     WebWorkerClient* client();
     WebCommonWorkerClient* commonClient() { return m_client; }

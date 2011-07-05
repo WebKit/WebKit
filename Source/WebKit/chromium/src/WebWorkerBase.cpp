@@ -429,9 +429,9 @@ void WebWorkerBase::postMessageToPageInspector(const String& message)
 
 void WebWorkerBase::postMessageToPageInspectorTask(ScriptExecutionContext*, WebWorkerBase* thisPtr, const String& message)
 {
-    if (!thisPtr->client())
+    if (!thisPtr->commonClient())
         return;
-    thisPtr->client()->dispatchDevToolsMessage(message);
+    thisPtr->commonClient()->dispatchDevToolsMessage(message);
 }
 
 void WebWorkerBase::confirmMessageFromWorkerObject(bool hasPendingActivity)

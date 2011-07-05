@@ -77,6 +77,10 @@ public:
 
     // Notification when the WebCommonWorkerClient is destroyed.
     virtual void clientDestroyed() = 0;
+
+    virtual void attachDevTools() { }
+    virtual void detachDevTools() { }
+    virtual void dispatchDevToolsMessage(const WebString&) { }
 };
 
 } // namespace WebKit

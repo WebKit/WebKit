@@ -1,3 +1,31 @@
+2011-07-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: extend WebSharedWorker with inspector transport methods
+        https://bugs.webkit.org/show_bug.cgi?id=63942
+
+        Added methods for connecting inspector to shared worker and for passing
+        messages between shared worker inspector and corresponding inspector frontend.
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::dispatchDevToolsMessage):
+        * public/WebSharedWorker.h:
+        (WebKit::WebSharedWorker::attachDevTools):
+        (WebKit::WebSharedWorker::detachDevTools):
+        (WebKit::WebSharedWorker::dispatchDevToolsMessage):
+        * public/WebWorkerClient.h:
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::connectToWorkerContextInspectorTask):
+        (WebKit::WebSharedWorkerImpl::attachDevTools):
+        (WebKit::disconnectFromWorkerContextInspectorTask):
+        (WebKit::WebSharedWorkerImpl::detachDevTools):
+        (WebKit::dispatchOnInspectorBackendTask):
+        (WebKit::WebSharedWorkerImpl::dispatchDevToolsMessage):
+        * src/WebSharedWorkerImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::postMessageToPageInspectorTask):
+
 2011-07-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for fast/forms/input-file-re-render.html

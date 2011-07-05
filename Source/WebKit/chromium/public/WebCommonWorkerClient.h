@@ -98,6 +98,8 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
     }
 
+    virtual void dispatchDevToolsMessage(const WebString&) { }
+
 protected:
     ~WebCommonWorkerClient() { }
 };
