@@ -1,3 +1,14 @@
+2011-07-04  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [Chromium] LayoutTests/fast/filesystem/workers/simple-persistent-sync.html is failing on chromium worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=63906
+
+        The expected text file needs to be updated to reflect the recent API change for adding the prefix vendor (i.e. requestFileSystem -> webkitRequestFileSystem).
+
+        Unreviewed; chromium test expectations change.
+
+        * fast/filesystem/workers/simple-persistent-sync-expected.txt:
+
 2011-07-05  Shinya Kawanaka  <shinyak@google.com>
 
         Reviewed by Kent Tamura.
