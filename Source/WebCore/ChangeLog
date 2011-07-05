@@ -1,3 +1,16 @@
+2011-07-05  Alexandru Chiculita  <achicu@adobe.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] "cat" is not available when building.
+        https://bugs.webkit.org/show_bug.cgi?id=63924
+
+        Changed 'cat' to 'perl -ne \"print $1\"' because 'cat' is not available on Windows with
+        MSVC toolchain. It passed the Qt buildbots, because they run with cygwin.
+
+        Project file change. No tests needed.
+
+        * CodeGenerators.pri:
 2011-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed; Qt Linux Release minimal compile fix.
