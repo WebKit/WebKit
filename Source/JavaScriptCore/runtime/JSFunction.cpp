@@ -179,7 +179,7 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
 
 static inline WriteBarrierBase<Unknown>* createPrototypeProperty(JSGlobalData& globalData, JSGlobalObject* globalObject, JSFunction* function)
 {
-    ASSERT(!isHostFunction());
+    ASSERT(!function->isHostFunction());
 
     ExecState* exec = globalObject->globalExec();
     if (WriteBarrierBase<Unknown>* location = function->getDirectLocation(globalData, exec->propertyNames().prototype))
