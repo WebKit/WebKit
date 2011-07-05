@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import re
 import urllib
 
 from google.appengine.api import users
@@ -45,6 +46,7 @@ PARAM_KEY = "key"
 PARAM_TEST_TYPE = "testtype"
 PARAM_INCREMENTAL = "incremental"
 PARAM_TEST_LIST_JSON = "testlistjson"
+PARAM_CALLBACK = "callback"
 
 
 class DeleteFile(webapp.RequestHandler):
@@ -139,6 +141,7 @@ class GetFile(webapp.RequestHandler):
         name = self.request.get(PARAM_NAME)
         dir = self.request.get(PARAM_DIR)
         test_list_json = self.request.get(PARAM_TEST_LIST_JSON)
+        callback_name = self.request.get(PARAM_CALLBACK)
 
         logging.debug(
             "Getting files, master %s, builder: %s, test_type: %s, name: %s.",
@@ -155,8 +158,11 @@ class GetFile(webapp.RequestHandler):
         else:
             json = self._get_file_content(master, builder, test_type, name)
 
+        if callback_name and re.search(r"^[A-Za-z_]+$", callback_name):
+            json = re.sub(r"^[A-Za-z_]+[(]", callback_name + "(", json)
+
         if json:
-            self.response.headers["Content-Type"] = "text/plain; charset=utf-8"
+            self.response.headers["Content-Type"] = "application/json"
             self.response.out.write(json)
         else:
             self.error(404)
