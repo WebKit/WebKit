@@ -291,6 +291,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setAnchorPoint(m_anchorPoint);
     layer->setAnchorPointZ(m_anchorPointZ);
     layer->setBounds(m_bounds);
+    layer->setContentBounds(contentBounds());
     layer->setDebugBorderColor(m_debugBorderColor);
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDoubleSided(m_doubleSided);
@@ -302,6 +303,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setPreserves3D(preserves3D());
     layer->setSublayerTransform(m_sublayerTransform);
     layer->setTransform(m_transform);
+    layer->setVisibleLayerRect(m_visibleLayerRect);
 
     if (maskLayer())
         maskLayer()->pushPropertiesTo(layer->maskLayer());

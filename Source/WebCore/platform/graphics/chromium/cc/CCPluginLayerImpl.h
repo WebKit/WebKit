@@ -42,7 +42,7 @@ public:
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
-    virtual void draw(const IntRect&);
+    virtual void draw();
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 

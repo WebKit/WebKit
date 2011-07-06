@@ -47,7 +47,7 @@ public:
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
     typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
 
-    virtual void draw(const IntRect&);
+    virtual void draw();
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 

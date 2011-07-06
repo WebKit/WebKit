@@ -52,12 +52,12 @@ public:
 
     virtual ~ContentLayerChromium();
 
-    virtual void paintContentsIfDirty(const IntRect& targetSurfaceRect);
+    virtual void paintContentsIfDirty();
     virtual void updateCompositorResources();
     virtual void setIsMask(bool);
     virtual void bindContentsTexture();
 
-    virtual void draw(const IntRect& targetSurfaceRect);
+    virtual void draw();
     virtual bool drawsContent() const;
 
 protected:
@@ -69,15 +69,11 @@ protected:
     virtual void cleanupResources();
     virtual void setLayerRenderer(LayerRendererChromium*);
 
-    virtual IntRect layerBounds() const;
+    virtual IntSize contentBounds() const;
 
-    virtual TransformationMatrix tilingTransform();
+    TransformationMatrix tilingTransform();
 
-    // For a given render surface rect that this layer will be transformed and
-    // drawn into, return the layer space rect that is visible in that surface.
-    IntRect visibleLayerRect(const IntRect&);
-
-    void updateLayerSize(const IntSize&);
+    void updateLayerSize();
     void createTilerIfNeeded();
     virtual void createTextureUpdaterIfNeeded();
     void setTilingOption(TilingOption);
@@ -85,7 +81,6 @@ protected:
     OwnPtr<LayerTextureUpdater> m_textureUpdater;
     OwnPtr<LayerTilerChromium> m_tiler;
     TilingOption m_tilingOption;
-    bool m_isMask;
 };
 
 }

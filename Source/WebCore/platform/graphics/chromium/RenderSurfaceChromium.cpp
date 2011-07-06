@@ -166,7 +166,7 @@ void RenderSurfaceChromium::draw(const IntRect&)
 
 
     // Reflection draws before the layer.
-    if (m_owningLayer->replicaLayer()) 
+    if (m_owningLayer->replicaLayer())
         drawSurface(replicaMaskLayer, m_replicaDrawTransform);
 
     drawSurface(m_maskLayer, m_drawTransform);

@@ -51,7 +51,7 @@ public:
     static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual ~ImageLayerChromium();
 
-    virtual void paintContentsIfDirty(const IntRect& targetSurfaceRect);
+    virtual void paintContentsIfDirty();
     virtual void updateCompositorResources();
     virtual bool drawsContent() const { return m_contents; }
 
@@ -60,10 +60,7 @@ public:
 protected:
     virtual const char* layerTypeAsString() const { return "ImageLayer"; }
 
-    virtual void setLayerRenderer(LayerRendererChromium*);
-
-    virtual TransformationMatrix tilingTransform();
-    virtual IntRect layerBounds() const;
+    virtual IntSize contentBounds() const;
 
 private:
     ImageLayerChromium(GraphicsLayerChromium* owner);

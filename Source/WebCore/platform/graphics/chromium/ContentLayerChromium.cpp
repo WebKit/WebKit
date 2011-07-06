@@ -92,7 +92,6 @@ PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChrom
 ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_tilingOption(ContentLayerChromium::AutoTile)
-    , m_isMask(false)
 {
 }
 
@@ -101,19 +100,19 @@ ContentLayerChromium::~ContentLayerChromium()
     cleanupResources();
 }
 
-void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect)
+void ContentLayerChromium::paintContentsIfDirty()
 {
     ASSERT(drawsContent());
     ASSERT(layerRenderer());
 
-    updateLayerSize(layerBounds().size());
+    updateLayerSize();
 
-    IntRect layerRect = visibleLayerRect(targetSurfaceRect);
+    const IntRect& layerRect = visibleLayerRect();
     if (layerRect.isEmpty())
         return;
 
     IntRect dirty = enclosingIntRect(m_dirtyRect);
-    dirty.intersect(layerBounds());
+    dirty.intersect(IntRect(IntPoint(), contentBounds()));
     m_tiler->invalidateRect(dirty);
 
     if (!drawsContent())
@@ -152,66 +151,36 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
 TransformationMatrix ContentLayerChromium::tilingTransform()
 {
     TransformationMatrix transform = ccLayerImpl()->drawTransform();
-    // Tiler draws from the upper left corner. The draw transform
-    // specifies the middle of the layer.
-    IntSize size = bounds();
-    transform.translate(-size.width() / 2.0, -size.height() / 2.0);
+
+    if (contentBounds().isEmpty())
+        return transform;
+
+    transform.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
+                              bounds().height() / static_cast<double>(contentBounds().height()));
+
+    // Tiler draws with a different origin from other layers.
+    transform.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
 
     return transform;
 }
 
-IntRect ContentLayerChromium::visibleLayerRect(const IntRect& targetSurfaceRect)
+IntSize ContentLayerChromium::contentBounds() const
 {
-    if (targetSurfaceRect.isEmpty())
-        return targetSurfaceRect;
-
-    const IntRect layerBoundRect = layerBounds();
-
-    // Mask layers don't have their own draw transform so we return the entire
-    // layer bounds as the visible rect.
-    if (m_isMask)
-        return layerBoundRect;
-
-    const TransformationMatrix transform = tilingTransform();
-
-    // Is this layer fully contained within the target surface?
-    IntRect layerInSurfaceSpace = transform.mapRect(layerBoundRect);
-    if (targetSurfaceRect.contains(layerInSurfaceSpace))
-        return layerBoundRect;
-
-    // If the layer doesn't fill up the entire surface, then find the part of
-    // the surface rect where the layer could be visible. This avoids trying to
-    // project surface rect points that are behind the projection point.
-    IntRect minimalSurfaceRect = targetSurfaceRect;
-    minimalSurfaceRect.intersect(layerInSurfaceSpace);
-
-    // Project the corners of the target surface rect into the layer space.
-    // This bounding rectangle may be larger than it needs to be (being
-    // axis-aligned), but is a reasonable filter on the space to consider.
-    // Non-invertible transforms will create an empty rect here.
-    const TransformationMatrix surfaceToLayer = transform.inverse();
-    IntRect layerRect = surfaceToLayer.projectQuad(FloatQuad(FloatRect(minimalSurfaceRect))).enclosingBoundingBox();
-    layerRect.intersect(layerBoundRect);
-    return layerRect;
+    return bounds();
 }
 
-IntRect ContentLayerChromium::layerBounds() const
-{
-    return IntRect(IntPoint(0, 0), bounds());
-}
-
-void ContentLayerChromium::updateLayerSize(const IntSize& layerSize)
+void ContentLayerChromium::updateLayerSize()
 {
     if (!m_tiler)
         return;
 
-    const IntSize tileSize(min(defaultTileSize, layerSize.width()), min(defaultTileSize, layerSize.height()));
+    const IntSize tileSize(min(defaultTileSize, contentBounds().width()), min(defaultTileSize, contentBounds().height()));
 
     // Tile if both dimensions large, or any one dimension large and the other
     // extends into a second tile. This heuristic allows for long skinny layers
     // (e.g. scrollbars) that are Nx1 tiles to minimize wasted texture space.
-    const bool anyDimensionLarge = layerSize.width() > maxUntiledSize || layerSize.height() > maxUntiledSize;
-    const bool anyDimensionOneTile = layerSize.width() <= defaultTileSize || layerSize.height() <= defaultTileSize;
+    const bool anyDimensionLarge = contentBounds().width() > maxUntiledSize || contentBounds().height() > maxUntiledSize;
+    const bool anyDimensionOneTile = contentBounds().width() <= defaultTileSize || contentBounds().height() <= defaultTileSize;
     const bool autoTiled = anyDimensionLarge && !anyDimensionOneTile;
 
     bool isTiled;
@@ -222,18 +191,17 @@ void ContentLayerChromium::updateLayerSize(const IntSize& layerSize)
     else
         isTiled = autoTiled;
 
-    IntSize requestedSize = isTiled ? tileSize : layerSize;
+    IntSize requestedSize = isTiled ? tileSize : contentBounds();
     const int maxSize = layerRenderer()->maxTextureSize();
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     m_tiler->setTileSize(clampedSize);
 }
 
-void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
+void ContentLayerChromium::draw()
 {
-    const TransformationMatrix transform = tilingTransform();
-    IntRect layerRect = visibleLayerRect(targetSurfaceRect);
+    const IntRect& layerRect = visibleLayerRect();
     if (!layerRect.isEmpty())
-        m_tiler->draw(layerRect, transform, ccLayerImpl()->drawOpacity(), m_textureUpdater.get());
+        m_tiler->draw(layerRect, tilingTransform(), ccLayerImpl()->drawOpacity(), m_textureUpdater.get());
 }
 
 bool ContentLayerChromium::drawsContent() const
@@ -271,7 +239,7 @@ void ContentLayerChromium::updateCompositorResources()
 void ContentLayerChromium::setTilingOption(TilingOption option)
 {
     m_tilingOption = option;
-    updateLayerSize(bounds());
+    updateLayerSize();
 }
 
 void ContentLayerChromium::bindContentsTexture()
@@ -289,7 +257,6 @@ void ContentLayerChromium::bindContentsTexture()
 void ContentLayerChromium::setIsMask(bool isMask)
 {
     setTilingOption(isMask ? NeverTile : AutoTile);
-    m_isMask = isMask;
 }
 
 static void writeIndent(TextStream& ts, int indent)

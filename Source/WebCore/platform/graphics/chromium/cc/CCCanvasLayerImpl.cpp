@@ -48,7 +48,7 @@ CCCanvasLayerImpl::~CCCanvasLayerImpl()
 {
 }
 
-void CCCanvasLayerImpl::draw(const IntRect&)
+void CCCanvasLayerImpl::draw()
 {
     ASSERT(layerRenderer());
     const CCCanvasLayerImpl::Program* program = layerRenderer()->canvasLayerProgram();

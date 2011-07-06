@@ -358,6 +358,47 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     updateCompositorResources(renderSurfaceLayerList);
 }
 
+static IntRect calculateVisibleLayerRect(const IntRect& targetSurfaceRect, const IntSize& bounds, const IntSize& contentBounds, const TransformationMatrix& tilingTransform)
+{
+    if (targetSurfaceRect.isEmpty() || contentBounds.isEmpty())
+        return targetSurfaceRect;
+
+    const IntRect layerBoundRect = IntRect(IntPoint(), contentBounds);
+    TransformationMatrix transform = tilingTransform;
+
+    transform.scaleNonUniform(bounds.width() / static_cast<double>(contentBounds.width()),
+                              bounds.height() / static_cast<double>(contentBounds.height()));
+    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
+
+    // Is this layer fully contained within the target surface?
+    IntRect layerInSurfaceSpace = transform.mapRect(layerBoundRect);
+    if (targetSurfaceRect.contains(layerInSurfaceSpace))
+        return layerBoundRect;
+
+    // If the layer doesn't fill up the entire surface, then find the part of
+    // the surface rect where the layer could be visible. This avoids trying to
+    // project surface rect points that are behind the projection point.
+    IntRect minimalSurfaceRect = targetSurfaceRect;
+    minimalSurfaceRect.intersect(layerInSurfaceSpace);
+
+    // Project the corners of the target surface rect into the layer space.
+    // This bounding rectangle may be larger than it needs to be (being
+    // axis-aligned), but is a reasonable filter on the space to consider.
+    // Non-invertible transforms will create an empty rect here.
+    const TransformationMatrix surfaceToLayer = transform.inverse();
+    IntRect layerRect = surfaceToLayer.projectQuad(FloatQuad(FloatRect(minimalSurfaceRect))).enclosingBoundingBox();
+    layerRect.intersect(layerBoundRect);
+    return layerRect;
+}
+
+static void paintContentsIfDirty(LayerChromium* layer, const IntRect& visibleLayerRect)
+{
+    if (layer->drawsContent()) {
+        layer->setVisibleLayerRect(visibleLayerRect);
+        layer->paintContentsIfDirty();
+    }
+}
+
 void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLayerList)
 {
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
@@ -398,20 +439,26 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
             }
 
             if (layer->bounds().isEmpty())
-              continue;
+                continue;
 
             IntRect targetSurfaceRect = ccLayerImpl->targetRenderSurface() ? ccLayerImpl->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
             if (layer->ccLayerImpl()->usesLayerScissor())
                 targetSurfaceRect.intersect(layer->ccLayerImpl()->scissorRect());
+            IntRect visibleLayerRect = calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), ccLayerImpl->drawTransform());
 
-            if (layer->drawsContent())
-                layer->paintContentsIfDirty(targetSurfaceRect);
-            if (layer->maskLayer() && layer->maskLayer()->drawsContent())
-                layer->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
-            if (layer->replicaLayer() && layer->replicaLayer()->drawsContent())
-                layer->replicaLayer()->paintContentsIfDirty(targetSurfaceRect);
-            if (layer->replicaLayer() && layer->replicaLayer()->maskLayer() && layer->replicaLayer()->maskLayer()->drawsContent())
-                layer->replicaLayer()->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
+            paintContentsIfDirty(layer, visibleLayerRect);
+
+            if (LayerChromium* maskLayer = layer->maskLayer()) {
+                paintContentsIfDirty(maskLayer, IntRect(IntPoint(), maskLayer->contentBounds()));
+            }
+
+            if (LayerChromium* replicaLayer = layer->replicaLayer()) {
+                paintContentsIfDirty(replicaLayer, visibleLayerRect);
+
+                if (LayerChromium* replicaMaskLayer = replicaLayer->maskLayer()) {
+                    paintContentsIfDirty(replicaMaskLayer, IntRect(IntPoint(), replicaMaskLayer->contentBounds()));
+                }
+            }
         }
     }
 }
@@ -985,7 +1032,7 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
             return;
     }
 
-    layer->draw(targetSurfaceRect);
+    layer->draw();
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder();

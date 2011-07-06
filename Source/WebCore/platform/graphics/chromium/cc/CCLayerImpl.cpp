@@ -142,9 +142,9 @@ bool CCLayerImpl::drawsContent() const
     return m_owner->drawsContent();
 }
 
-void CCLayerImpl::draw(const IntRect& targetSurfaceRect)
+void CCLayerImpl::draw()
 {
-    return m_owner->draw(targetSurfaceRect);
+    return m_owner->draw();
 }
 
 void CCLayerImpl::updateCompositorResources()

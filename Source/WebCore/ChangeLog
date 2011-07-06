@@ -1,3 +1,62 @@
+2011-07-01  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [chromium] Externalize layer visibility calculation
+        https://bugs.webkit.org/show_bug.cgi?id=63847
+
+        This moves the layer visibility calculation from the layer itself out to LayerRendererChromium, like the other
+        calculated properties.  Previously, we were doing this calculating at paint time and again at draw time and
+        relying on the fact that this produced the same value.  This avoids the redundant calculation.
+
+        Covered by existing compositing/ layout tests.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::tilingTransform):
+        (WebCore::ContentLayerChromium::contentBounds):
+        (WebCore::ContentLayerChromium::updateLayerSize):
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::setTilingOption):
+        (WebCore::ContentLayerChromium::setIsMask):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::contentBounds):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::contentBounds):
+        (WebCore::LayerChromium::visibleLayerRect):
+        (WebCore::LayerChromium::setVisibleLayerRect):
+        (WebCore::LayerChromium::draw):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::calculateVisibleLayerRect):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::draw):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::contentBounds):
+        (WebCore::CCLayerImpl::setContentBounds):
+        (WebCore::CCLayerImpl::visibleLayerRect):
+        (WebCore::CCLayerImpl::setVisibleLayerRect):
+        (WebCore::CCLayerImpl::doubleSided):
+        (WebCore::CCLayerImpl::setDoubleSided):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-07-06  John Sullivan  <sullivan@apple.com>
 
         IconDatabase::synchronousIconForPageURL() has inconsistent API when no custom icon is available

@@ -140,7 +140,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect)
+void ImageLayerChromium::paintContentsIfDirty()
 {
     ASSERT(layerRenderer());
 
@@ -148,30 +148,20 @@ void ImageLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect)
         // FIXME: This downcast is bad. The fix is to make ImageLayerChromium not derive from ContentLayerChromium.
         ImageLayerTextureUpdater* imageTextureUpdater = static_cast<ImageLayerTextureUpdater*>(m_textureUpdater.get());
         imageTextureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
-        updateLayerSize(imageTextureUpdater->imageSize());
-        IntRect paintRect(IntPoint(0, 0), imageTextureUpdater->imageSize());
+        updateLayerSize();
+        IntRect paintRect(IntPoint(), contentBounds());
         if (!m_dirtyRect.isEmpty()) {
             m_tiler->invalidateRect(paintRect);
             m_dirtyRect = IntRect();
         }
     }
-    IntRect layerRect = visibleLayerRect(targetSurfaceRect);
-    if (layerRect.isEmpty())
-        return;
 
-    m_tiler->prepareToUpdate(layerRect, m_textureUpdater.get());
+    m_tiler->prepareToUpdate(visibleLayerRect(), m_textureUpdater.get());
 }
 
 void ImageLayerChromium::updateCompositorResources()
 {
     m_tiler->updateRect(m_textureUpdater.get());
-}
-
-void ImageLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
-{
-    if (newLayerRenderer != layerRenderer())
-        m_textureUpdater.clear();
-    ContentLayerChromium::setLayerRenderer(newLayerRenderer);
 }
 
 void ImageLayerChromium::createTextureUpdaterIfNeeded()
@@ -180,31 +170,9 @@ void ImageLayerChromium::createTextureUpdaterIfNeeded()
         m_textureUpdater = ImageLayerTextureUpdater::create(layerRendererContext(), layerRenderer()->contextSupportsMapSub());
 }
 
-IntRect ImageLayerChromium::layerBounds() const
+IntSize ImageLayerChromium::contentBounds() const
 {
-    if (!m_textureUpdater)
-        return IntRect();
-    ImageLayerTextureUpdater* imageTextureUpdater = static_cast<ImageLayerTextureUpdater*>(m_textureUpdater.get());
-    return IntRect(IntPoint(), imageTextureUpdater->imageSize());
-}
-
-TransformationMatrix ImageLayerChromium::tilingTransform()
-{
-    // Tiler draws from the upper left corner. The draw transform
-    // specifies the middle of the layer.
-    TransformationMatrix transform = ccLayerImpl()->drawTransform();
-    const IntRect sourceRect = layerBounds();
-    const IntSize destSize = bounds();
-
-    transform.translate(-destSize.width() / 2.0, -destSize.height() / 2.0);
-
-    // Tiler also draws at the original content size, so rescale the original
-    // image dimensions to the bounds that it is meant to be drawn at.
-    float scaleX = destSize.width() / static_cast<float>(sourceRect.size().width());
-    float scaleY = destSize.height() / static_cast<float>(sourceRect.size().height());
-    transform.scale3d(scaleX, scaleY, 1.0f);
-
-    return transform;
+    return m_contents->size();
 }
 
 }

@@ -75,7 +75,7 @@ void CCVideoLayerImpl::setTexture(size_t i, VideoLayerChromium::Texture texture)
     m_textures[i] = texture;
 }
 
-void CCVideoLayerImpl::draw(const IntRect&)
+void CCVideoLayerImpl::draw()
 {
     if (m_skipsDraw)
         return;

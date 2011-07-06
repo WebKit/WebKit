@@ -46,7 +46,7 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
 {
 }
 
-void CCPluginLayerImpl::draw(const IntRect&)
+void CCPluginLayerImpl::draw()
 {
     ASSERT(layerRenderer());
     const CCPluginLayerImpl::Program* program = layerRenderer()->pluginLayerProgram();

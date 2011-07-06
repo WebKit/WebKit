@@ -86,6 +86,7 @@ public:
 
     void setBounds(const IntSize&);
     const IntSize& bounds() const { return m_bounds; }
+    virtual IntSize contentBounds() const { return bounds(); }
 
     void setClearsContext(bool clears) { m_clearsContext = clears; setNeedsCommit(); }
     bool clearsContext() const { return m_clearsContext; }
@@ -132,6 +133,9 @@ public:
     void setTransform(const TransformationMatrix& transform) { m_transform = transform; setNeedsCommit(); }
     const TransformationMatrix& transform() const { return m_transform; }
 
+    const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
+    void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
+
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
 
@@ -152,13 +156,12 @@ public:
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
-    virtual void paintContentsIfDirty(const IntRect&) { }
     virtual void paintContentsIfDirty() { }
     virtual void updateCompositorResources() { }
     virtual void setIsMask(bool) {}
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
-    virtual void draw(const IntRect&) { }
+    virtual void draw() { }
 
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);
@@ -249,6 +252,7 @@ private:
 
     // Layer properties.
     IntSize m_bounds;
+    IntRect m_visibleLayerRect;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;

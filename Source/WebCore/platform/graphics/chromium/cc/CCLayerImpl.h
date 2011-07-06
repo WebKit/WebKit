@@ -69,7 +69,7 @@ public:
     int debugID() const { return m_debugID; }
 #endif
 
-    virtual void draw(const IntRect& contentRect);
+    virtual void draw();
     virtual void updateCompositorResources();
     void unreserveContentsTexture();
     void bindContentsTexture();
@@ -127,17 +127,27 @@ public:
 
     RenderSurfaceChromium* renderSurface() const { return m_renderSurface.get(); }
     void clearRenderSurface() { m_renderSurface.clear(); }
+
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
+
     const IntRect& scissorRect() const { return m_scissorRect; }
     void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
+
     RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
 
-    bool doubleSided() const { return m_doubleSided; }
-    void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; }
     const IntSize& bounds() const { return m_bounds; }
     void setBounds(const IntSize& bounds) { m_bounds = bounds; }
+
+    const IntSize& contentBounds() const { return m_contentBounds; }
+    void setContentBounds(const IntSize& contentBounds) { m_contentBounds = contentBounds; }
+
+    const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
+    void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
+
+    bool doubleSided() const { return m_doubleSided; }
+    void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; }
 
     // Returns the rect containtaining this layer in the current view's coordinate system.
     const IntRect getDrawRect() const;
@@ -152,6 +162,7 @@ public:
     // HACK TODO fix this
     LayerChromium* owner() const { return m_owner; }
     void clearOwner() { m_owner = 0; }
+
 protected:
     // For now, CCLayerImpls have a back pointer to their LayerChromium.
     // FIXME: remove this after https://bugs.webkit.org/show_bug.cgi?id=58833 is fixed.
@@ -176,6 +187,8 @@ private:
     FloatPoint m_anchorPoint;
     float m_anchorPointZ;
     IntSize m_bounds;
+    IntSize m_contentBounds;
+    IntRect m_visibleLayerRect;
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;
