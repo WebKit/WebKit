@@ -149,9 +149,6 @@ def _set_up_derived_options(port_obj, options):
     if options.pixel_tests is None:
         options.pixel_tests = True
 
-    if not options.use_apache:
-        options.use_apache = sys.platform.startswith('linux') or sys.platform == 'darwin'
-
     if not options.time_out_ms:
         if options.configuration == "Debug":
             options.time_out_ms = str(2 * manager.Manager.DEFAULT_TEST_TIMEOUT_MS)
@@ -377,8 +374,6 @@ def parse_args(args=None):
         # instead of --force:
         optparse.make_option("--force", action="store_true", default=False,
             help="Run all tests, even those marked SKIP in the test list"),
-        optparse.make_option("--use-apache", action="store_true",
-            default=False, help="Whether to use apache instead of lighttpd."),
         optparse.make_option("--time-out-ms",
             help="Set the timeout for each test"),
         # old-run-webkit-tests calls --randomize-order --random:

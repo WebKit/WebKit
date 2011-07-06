@@ -1,3 +1,27 @@
+2011-06-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        nrwt: remove --use-apache from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=63358
+
+        This change removes the --use-apache command line argument. It
+        was initially put in when we were trying to get the cygwin
+        apache instance to work with Chromium win, but that code has
+        bitrotted and doesn't work at all now.
+
+        Arguably we should remove all of the code to allow for a choice
+        of web servers, but since we may still want to switch off of
+        LigHTTPd at some point on Windows, I'll leave the rest in for
+        now (or at least yank it in a different change.)
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-07-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic should use a favicon to indicate current state.

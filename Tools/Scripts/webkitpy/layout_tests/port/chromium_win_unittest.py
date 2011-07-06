@@ -58,6 +58,13 @@ class ChromiumWinTest(port_testcase.PortTestCase):
     def _mock_path_from_chromium_base(self, *comps):
         return self._port._filesystem.join("/chromium/src", *comps)
 
+    def test_uses_apache(self):
+        port = self.make_port()
+        if not port:
+            return
+
+        self.assertFalse(port._uses_apache())
+
     def test_setup_environ_for_server(self):
         port = self.make_port()
         if not port:
