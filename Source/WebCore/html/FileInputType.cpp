@@ -277,7 +277,20 @@ void FileInputType::requestIcon(const Vector<String>& paths)
 
 void FileInputType::filesChosen(const Vector<String>& paths)
 {
-    HTMLInputElement* input = element();
+    RefPtr<HTMLInputElement> input = element();
+
+    bool pathsChanged = false;
+    if (paths.size() != m_fileList->length())
+        pathsChanged = true;
+    else {
+        for (unsigned i = 0; i < paths.size(); ++i) {
+            if (paths[i] != m_fileList->item(i)->path()) {
+                pathsChanged = true;
+                break;
+            }
+        }
+    }
+
     setFileList(paths);
 
     input->setFormControlValueMatchesRenderer(true);
@@ -288,8 +301,13 @@ void FileInputType::filesChosen(const Vector<String>& paths)
 
     if (input->renderer())
         input->renderer()->repaint();
-    // This call may cause destruction of this instance and thus must always be last in the function.
-    input->dispatchFormControlChangeEvent();
+
+    if (pathsChanged) {
+        // This call may cause destruction of this instance.
+        // input instance is safe since it is ref-counted.
+        input->HTMLElement::dispatchChangeEvent();
+    }
+    input->setChangedSinceLastFormControlChangeEvent(false);
 }
 
 #if ENABLE(DIRECTORY_UPLOAD)
