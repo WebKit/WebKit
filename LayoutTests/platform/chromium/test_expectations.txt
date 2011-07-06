@@ -1514,6 +1514,7 @@ BUGCR9798 WIN DEBUG : http/tests/security/cross-frame-access-protocol.html = FAI
 BUGCR9798 RELEASE : http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html = TIMEOUT PASS
 BUGCR9798 WIN : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html = PASS TIMEOUT
 BUGCR9798 WIN : http/tests/xmlhttprequest/basic-auth.html = TIMEOUT PASS
+BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/basic-auth-default.html = TIMEOUT PASS
 BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = TIMEOUT PASS
 BUGCR9797 BUGCR9798 WIN RELEASE SLOW : http/tests/xmlhttprequest/state-after-network-error.html = PASS
 BUGCR9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
@@ -1780,30 +1781,12 @@ BUGCR29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 // Likely, moving Windows to using Apache2 will fix this as the Linux/Mac builds
 // did not get flaky here and moving to Apache made the appcache tests less
 // flaky on those platforms.
-BUGCR25977 WIN DEBUG : http/tests/appcache/access-via-redirect.php = TIMEOUT PASS
 BUGCR25977 WIN : http/tests/appcache/auth.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/crash-when-navigating-away-then-back.html = TIMEOUT PASS
 BUGCR25977 WIN DEBUG : http/tests/appcache/empty-manifest.html = TIMEOUT PASS
 // This test is slow on windows, but sometimes times out indefinitely.
 // See if this improves when we move to apache.
-BUGCR25977 WIN : http/tests/appcache/fallback.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/local-content.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/main-resource-hash.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/manifest-containing-itself.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/manifest-redirect.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/manifest-with-empty-file.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/wrong-content-type.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/online-whitelist.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/top-frame-1.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/whitelist-wildcard.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/resource-redirect.html = TIMEOUT PASS
-BUGCR25977 WIN : http/tests/appcache/xhr-foreign-resource.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/simple.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/reload.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/wrong-signature-2.html = TIMEOUT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/top-frame-4.html = TIMEOUT TEXT PASS
-BUGCR25977 WIN DEBUG : http/tests/appcache/top-frame-3.html = TIMEOUT TEXT PASS
+BUGCR25977 XP DEBUG : http/tests/appcache/main-resource-hash.html = TIMEOUT PASS
+BUGCR25977 XP DEBUG : http/tests/appcache/online-whitelist.html = TIMEOUT PASS
 
 // WebKit update 52293->52323
 BUGCR31253 : http/tests/security/xss-DENIED-assign-location-href-javascript.html = TEXT
@@ -2064,10 +2047,6 @@ BUGCR62301 MAC : canvas/philip/tests/2d.path.rect.winding.html = TEXT
 BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
 BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUGCR62301 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
-
-
-// Flaky tests
-BUGCR44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
 
 BUGWK39655 : fast/dom/prototype-property.html = FAIL
 
@@ -2370,9 +2349,6 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 // New failures introduced in 68854.
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
-
-// New failure introduced in 68896.
-BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN RELEASE : fast/css/acid2-pixel.html = TIMEOUT PASS
@@ -3507,8 +3483,7 @@ BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = I
 
 BUGWK60127 WIN LINUX GPU : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
-BUGDPRANKE LEOPARD : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
-BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
+BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS TIMEOUT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
 
@@ -3665,7 +3640,7 @@ BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-from-javascrip
 BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
 
 // Flaky since added by r86478
-BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT
+BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 // Temporary failures because of "Details" localization.
 BUGWK63700 : fast/html/details-no-summary1.html = FAIL
@@ -3756,7 +3731,7 @@ BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
 // New test from WK r87026
 BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
 
-BUGWK61326 : fast/storage/storage-detached-iframe.html = CRASH
+BUGWK61326 MAC LINUX XP VISTA : fast/storage/storage-detached-iframe.html = CRASH
 
 // New tests added in r87121
 BUGWK61169 WIN LINUX : css3/images/optimize-contrast-canvas.html = IMAGE
@@ -3808,7 +3783,7 @@ BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-a
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT CRASH
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 
@@ -3969,3 +3944,6 @@ BUGCR88594 WIN7 : http/tests/appcache/online-fallback-layering.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/online-whitelist.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/progress-counter.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/reload.html = TIMEOUT
+BUGCR88594 WIN7 : http/tests/appcache/resource-redirect.html = TIMEOUT
+BUGCR88594 WIN7 : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
+BUGCR88594 WIN7 : http/tests/appcache/fallback.html = TIMEOUT
