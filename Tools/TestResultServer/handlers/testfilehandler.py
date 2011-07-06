@@ -158,8 +158,8 @@ class GetFile(webapp.RequestHandler):
         else:
             json = self._get_file_content(master, builder, test_type, name)
 
-        if callback_name and re.search(r"^[A-Za-z_]+$", callback_name):
-            json = re.sub(r"^[A-Za-z_]+[(]", callback_name + "(", json)
+        if callback_name and re.search(r"^[A-Za-z0-9_]+$", callback_name):
+            json = re.sub(r"^[A-Za-z0-9_]+[(]", callback_name + "(", json)
 
         if json:
             self.response.headers["Content-Type"] = "application/json"
