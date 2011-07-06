@@ -41,6 +41,10 @@ Builder.prototype = {
                 text: 'pretty diff',
                 url: urlStem + '-pretty-diff.html',
             },
+            flaky: {
+                text: 'pretty diff (flaky)',
+                url: urlStem + '-pretty-diff.html',
+            },
             timeout: {
                 text: 'timed out',
             },
@@ -136,11 +140,11 @@ Builder.prototype = {
                 result.tooManyFailures = true;
 
             result.failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
-                var match = /^(\d+) test case/.exec(outputLine);
+                var match = /^(\d+)/.exec(outputLine);
                 if (!match)
                     return sum;
-                // Don't count new tests as failures.
-                if (outputLine.indexOf('were new') >= 0)
+                // Don't count new tests or passes as failures.
+                if (outputLine.contains('were new') || outputLine.contains('new passes'))
                     return sum;
                 return sum + parseInt(match[1], 10);
             }, 0);

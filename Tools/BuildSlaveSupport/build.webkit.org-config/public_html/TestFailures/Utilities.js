@@ -114,6 +114,10 @@ function sorted(array, sortFunction) {
     return newArray;
 }
 
+Array.prototype.contains = function(value) {
+    return this.indexOf(value) >= 0;
+}
+
 Array.prototype.findFirst = function(predicate) {
     for (var i = 0; i < this.length; ++i) {
         if (predicate(this[i]))
@@ -144,4 +148,8 @@ Node.prototype.appendChildren = function(children) {
 Node.prototype.removeAllChildren = function() {
     while (this.firstChild)
         this.removeChild(this.firstChild);
+}
+
+String.prototype.contains = function(substring) {
+    return this.indexOf(substring) >= 0;
 }

@@ -41,32 +41,60 @@ LayoutTestResultsLoader.prototype = {
 
         var result = { tests: {}, tooManyFailures: false, version: currentCachedDataVersion };
 
+        function cacheParseResultsAndCallCallback(parseResult) {
+            result.tests = parseResult.tests;
+            result.tooManyFailures = parseResult.tooManyFailures;
+
+            PersistentCache.set(cacheKey, result);
+            callback(result.tests, result.tooManyFailures);
+        }
+
+        var self = this;
+        self._fetchAndParseNRWTResults(buildName, cacheParseResultsAndCallCallback, function() {
+            self._fetchAndParseORWTResults(buildName, cacheParseResultsAndCallCallback, function() {
+                // We couldn't fetch results for this build.
+                PersistentCache.set(cacheKey, result);
+                errorCallback(result.tests, result.tooManyFailures);
+            });
+        });
+    },
+
+    _fetchAndParseNRWTResults: function(buildName, successCallback, errorCallback) {
+        getResource(this._builder.resultsDirectoryURL(buildName) + 'full_results.json', function(xhr) {
+            successCallback((new NRWTResultsParser()).parse(xhr.responseText));
+        },
+        function(xhr) {
+            errorCallback();
+        });
+    },
+
+    _fetchAndParseORWTResults: function(buildName, successCallback, errorCallback) {
         var parsedBuildName = this._builder.buildbot.parseBuildName(buildName);
 
         // http://webkit.org/b/62380 was fixed in r89610.
         var resultsHTMLSupportsTooManyFailuresInfo = parsedBuildName.revision >= 89610;
 
+        var result = { tests: {}, tooManyFailures: false };
+
         var self = this;
 
-        function fetchAndParseResultsHTMLAndCallCallback(callback) {
+        function fetchAndParseResultsHTMLAndCallCallback() {
             getResource(self._builder.resultsPageURL(buildName), function(xhr) {
                 var parseResult = (new ORWTResultsParser()).parse(xhr.responseText);
                 result.tests = parseResult.tests;
                 if (resultsHTMLSupportsTooManyFailuresInfo)
                     result.tooManyFailures = parseResult.tooManyFailures;
 
-                PersistentCache.set(cacheKey, result);
-                callback(result.tests, result.tooManyFailures);
+                successCallback(result);
             },
             function(xhr) {
                 // We failed to fetch results.html. run-webkit-tests must have aborted early.
-                PersistentCache.set(cacheKey, result);
-                errorCallback(result.tests, result.tooManyFailures);
+                errorCallback();
             });
         }
 
         if (resultsHTMLSupportsTooManyFailuresInfo) {
-            fetchAndParseResultsHTMLAndCallCallback(callback);
+            fetchAndParseResultsHTMLAndCallCallback();
             return;
         }
 
@@ -75,20 +103,18 @@ LayoutTestResultsLoader.prototype = {
 
             if (failingTestCount < 0) {
                 // The number of failing tests couldn't be determined.
-                PersistentCache.set(cacheKey, result);
-                errorCallback(result.tests, result.tooManyFailures);
+                errorCallback();
                 return;
             }
 
             if (!failingTestCount) {
                 // All tests passed.
-                PersistentCache.set(cacheKey, result);
-                errorCallback(result.tests, result.tooManyFailures);
+                successCallback(result);
                 return;
             }
 
             // Find out which tests failed.
-            fetchAndParseResultsHTMLAndCallCallback(callback);
+            fetchAndParseResultsHTMLAndCallCallback();
         });
     },
 };

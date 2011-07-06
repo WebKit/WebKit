@@ -1,5 +1,46 @@
 2011-07-06  Adam Roben  <aroben@apple.com>
 
+        Teach TestFailures how to load, parse, and interpret NRWT test results
+
+        Fixes <http://webkit.org/b/61877> TestFailures page doesn't show testers that use
+        new-run-webkit-tests
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.failureDiagnosisTextAndURL): Added support for the new 'flaky' failure
+        type. For now we don't account for image-only flakes (but TestFailures doesn't deal with
+        pixel tests at all currently).
+        (Builder.prototype.getNumberOfFailingTests): Relaxed the regex used for parsing the number
+        of failing tests from the buildbot output. Make sure not to count "new passes" (a new
+        category introduced by NRWT) as failures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Moved a bunch of code from here to
+        _fetchAndParseORWTResults. This function now attempts to load NRWT results, then falls back
+        to loading ORWT results.
+        (LayoutTestResultsLoader.prototype._fetchAndParseNRWTResults): Added. Tries to load and
+        parse the full_results.json file for the given build.
+        (LayoutTestResultsLoader.prototype._fetchAndParseORWTResults): Added. Code came from start.
+        Fixed a bug along the way where we were sometimes calling the error callback instead of the
+        success callback when all tests passed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NRWTResultsParser.js: Added.
+        (NRWTResultsParser): Do-nothing constructor.
+        (NRWTResultsParser.prototype.parse): Uses eval() (eww!) to get the test results out of the
+        JS string, then iterates over all the tests in the results data and builds up a data
+        structure matching what ORWTResultsParser returns.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (Array.prototype.contains):
+        (String.prototype.contains):
+        Added these simple helper functions.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        NRWTResultsParser.js.
+
+2011-07-06  Adam Roben  <aroben@apple.com>
+
         Extract code to parse ORWT's results.html file into its own class
 
         Prep work for fixing <http://webkit.org/b/61877> TestFailures page doesn't show testers that
