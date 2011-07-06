@@ -1,3 +1,29 @@
+2011-07-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderLayer::hitTest* to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63640
+
+        Switch hit testing and supporting methods for RenderLayer over to the new
+        layout unit abstraction.
+        
+        No new tests, no functionality changes.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::roundedLayoutPoint):
+        Add roundedLayoutPoint abstraction, calls roundedIntPoint now but will be a
+        no-op (and eventually go away) once we switch to float or fixed point.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::hitTestPaginatedChildLayer):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
+
 2011-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         Have RenderLayerCompositor take care of clearing backing store when entering the page cache

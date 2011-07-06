@@ -375,8 +375,8 @@ public:
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
-    void calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
-                        IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect, bool temporaryClipRects = false,
+    void calculateRects(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
+                        LayoutRect& backgroundRect, LayoutRect& foregroundRect, LayoutRect& outlineRect, bool temporaryClipRects = false,
                         OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     // Compute and cache clip rects computed with the given layer as the root
@@ -506,22 +506,22 @@ private:
                                     PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-                              const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform,
+                              const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, bool appliedTransform,
                               const HitTestingTransformState* transformState = 0, double* zOffset = 0);
     RenderLayer* hitTestList(Vector<RenderLayer*>*, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                             const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                             const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
                              const HitTestingTransformState* transformState, double* zOffsetForDescendants, double* zOffset,
                              const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
     RenderLayer* hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                            const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                                            const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
                                             const HitTestingTransformState* transformState, double* zOffset);
     RenderLayer* hitTestChildLayerColumns(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                          const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                                          const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
                                           const HitTestingTransformState* transformState, double* zOffset,
                                           const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
                                     
     PassRefPtr<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
-                            const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                            const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
                             const HitTestingTransformState* containerTransformState) const;
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter) const;

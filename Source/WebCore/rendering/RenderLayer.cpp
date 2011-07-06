@@ -2912,11 +2912,11 @@ static double computeZOffset(const HitTestingTransformState& transformState)
 }
 
 PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
-                                        const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                                        const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
                                         const HitTestingTransformState* containerTransformState) const
 {
     RefPtr<HitTestingTransformState> transformState;
-    IntPoint offset;
+    LayoutPoint offset;
     if (containerTransformState) {
         // If we're already computing transform state, then it's relative to the container (which we know is non-null).
         transformState = HitTestingTransformState::create(*containerTransformState);
@@ -2974,7 +2974,7 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
 // If zOffset is non-null (which indicates that the caller wants z offset information), 
 //  *zOffset on return is the z offset of the hit point relative to the containing flattening layer.
 RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-                                       const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform,
+                                       const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, bool appliedTransform,
                                        const HitTestingTransformState* transformState, double* zOffset)
 {
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
@@ -2985,7 +2985,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 #endif
     useTemporaryClipRects |= renderer()->view()->frameView()->containsScrollableAreaWithOverlayScrollbars();
 
-    IntRect hitTestArea = result.rectForPoint(hitTestPoint);
+    LayoutRect hitTestArea = result.rectForPoint(hitTestPoint);
 
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
@@ -3010,8 +3010,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         //
         // We can't just map hitTestPoint and hitTestRect because they may have been flattened (losing z)
         // by our container.
-        IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
-        IntRect localHitTestRect;
+        LayoutPoint localPoint = roundedLayoutPoint(newTransformState->mappedPoint());
+        LayoutRect localHitTestRect;
 #if USE(ACCELERATED_COMPOSITING)
         if (isComposited()) {
             // It doesn't make sense to project hitTestRect into the plane of this layer, so use the same bounds we use for painting.
@@ -3055,10 +3055,10 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
     
     // Calculate the clip rects we should use.
-    IntRect layerBounds;
-    IntRect bgRect;
-    IntRect fgRect;
-    IntRect outlineRect;
+    LayoutRect layerBounds;
+    LayoutRect bgRect;
+    LayoutRect fgRect;
+    LayoutRect outlineRect;
     calculateRects(rootLayer, hitTestRect, layerBounds, bgRect, fgRect, outlineRect, useTemporaryClipRects, IncludeOverlayScrollbarSize);
     
     // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
@@ -3180,7 +3180,7 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
 
 RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* rootLayer,
                                       const HitTestRequest& request, HitTestResult& result,
-                                      const IntRect& hitTestRect, const IntPoint& hitTestPoint,
+                                      const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
                                       const HitTestingTransformState* transformState, 
                                       double* zOffsetForDescendants, double* zOffset,
                                       const HitTestingTransformState* unflattenedTransformState,
@@ -3217,7 +3217,7 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
 }
 
 RenderLayer* RenderLayer::hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                                     const IntRect& hitTestRect, const IntPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset)
+                                                     const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset)
 {
     Vector<RenderLayer*> columnLayers;
     RenderLayer* ancestorLayer = isNormalFlowOnly() ? parent() : stackingContext();
@@ -3234,7 +3234,7 @@ RenderLayer* RenderLayer::hitTestPaginatedChildLayer(RenderLayer* childLayer, Re
 }
 
 RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                                   const IntRect& hitTestRect, const IntPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset,
+                                                   const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset,
                                                    const Vector<RenderLayer*>& columnLayers, size_t columnIndex)
 {
     RenderBlock* columnBlock = toRenderBlock(columnLayers[columnIndex]->renderer());
@@ -3243,7 +3243,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     if (!columnBlock || !columnBlock->hasColumns())
         return 0;
 
-    IntPoint layerOffset;
+    LayoutPoint layerOffset;
     columnBlock->layer()->convertToLayerCoords(rootLayer, layerOffset);
     
     ColumnInfo* colInfo = columnBlock->columnInfo();
@@ -3251,12 +3251,12 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     
     // We have to go backwards from the last column to the first.
     bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
-    int logicalLeft = columnBlock->logicalLeftOffsetForContent();
-    int currLogicalTopOffset = 0;
+    LayoutUnit logicalLeft = columnBlock->logicalLeftOffsetForContent();
+    LayoutUnit currLogicalTopOffset = 0;
     int i;
     for (i = 0; i < colCount; i++) {
-        IntRect colRect = columnBlock->columnRectAt(colInfo, i);
-        int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
+        LayoutRect colRect = columnBlock->columnRectAt(colInfo, i);
+        LayoutUnit blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
         if (columnBlock->style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset += blockDelta;
         else
@@ -3264,20 +3264,20 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     }
     for (i = colCount - 1; i >= 0; i--) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        IntRect colRect = columnBlock->columnRectAt(colInfo, i);
+        LayoutRect colRect = columnBlock->columnRectAt(colInfo, i);
         columnBlock->flipForWritingMode(colRect);
-        int currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
-        int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
+        LayoutUnit currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
+        LayoutUnit blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
         if (columnBlock->style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset -= blockDelta;
         else
             currLogicalTopOffset += blockDelta;
         colRect.moveBy(layerOffset);
 
-        IntRect localClipRect(hitTestRect);
+        LayoutRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
         
-        IntSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, currLogicalLeftOffset);
+        LayoutSize offset = isHorizontal ? LayoutSize(currLogicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, currLogicalLeftOffset);
 
         if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectForPoint(hitTestPoint))) {
             RenderLayer* hitLayer = 0;
@@ -3302,8 +3302,8 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                 RenderLayer* nextLayer = columnLayers[columnIndex - 1];
                 RefPtr<HitTestingTransformState> newTransformState = nextLayer->createLocalTransformState(rootLayer, nextLayer, localClipRect, hitTestPoint, transformState);
                 newTransformState->translate(offset.width(), offset.height(), HitTestingTransformState::AccumulateTransform);
-                IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
-                IntRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
+                LayoutPoint localPoint = roundedLayoutPoint(newTransformState->mappedPoint());
+                LayoutRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
                 newTransformState->flatten();
 
                 hitLayer = hitTestChildLayerColumns(childLayer, columnLayers[columnIndex - 1], request, result, localHitTestRect, localPoint,
@@ -3433,8 +3433,8 @@ IntRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, bool tempo
     return backgroundRect;
 }
 
-void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
-                                 IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect, bool temporaryClipRects,
+void RenderLayer::calculateRects(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
+                                 LayoutRect& backgroundRect, LayoutRect& foregroundRect, LayoutRect& outlineRect, bool temporaryClipRects,
                                  OverlayScrollbarSizeRelevancy relevancy) const
 {
     if (rootLayer != this && parent()) {
@@ -3446,9 +3446,9 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     foregroundRect = backgroundRect;
     outlineRect = backgroundRect;
     
-    IntPoint offset;
+    LayoutPoint offset;
     convertToLayerCoords(rootLayer, offset);
-    layerBounds = IntRect(offset, size());
+    layerBounds = LayoutRect(offset, size());
     
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
@@ -3457,7 +3457,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
             foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(offset, relevancy));
         if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            IntRect newPosClip = toRenderBox(renderer())->clipRect(offset);
+            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -3468,7 +3468,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         // FIXME: This could be changed to just use generic visual overflow.
         // See https://bugs.webkit.org/show_bug.cgi?id=37467 for more information.
         if (const ShadowData* boxShadow = renderer()->style()->boxShadow()) {
-            IntRect overflow = layerBounds;
+            LayoutRect overflow = layerBounds;
             do {
                 if (boxShadow->style() == Normal) {
                     IntRect shadowRect = layerBounds;

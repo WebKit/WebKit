@@ -36,6 +36,7 @@
 #ifndef LayoutTypes_h
 #define LayoutTypes_h
 
+#include "FloatPoint.h"
 #include "IntRect.h"
 
 namespace WebCore {
@@ -44,6 +45,11 @@ typedef int LayoutUnit;
 typedef IntPoint LayoutPoint;
 typedef IntSize LayoutSize;
 typedef IntRect LayoutRect;
+
+inline LayoutPoint roundedLayoutPoint(FloatPoint point)
+{
+    return roundedIntPoint(point);
+}
 
 } // namespace WebCore
 
