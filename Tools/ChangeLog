@@ -1,3 +1,9 @@
+2011-07-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix after addition of Source/WebCore/xml/parser dir.
+
+        * waf/build/settings.py:
+
 2011-07-05  Eric Seidel  <eric@webkit.org>
 
         Disable NRWT for Leopard until https://bugs.webkit.org/show_bug.cgi?id=63973 can be fixed.

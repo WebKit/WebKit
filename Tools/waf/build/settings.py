@@ -156,6 +156,7 @@ webcore_dirs_common = [
     'Source/WebCore/testing',
     'Source/WebCore/websockets',
     'Source/WebCore/xml',
+    'Source/WebCore/xml/parser',
 ]
 
 config = get_config(wk_root)
