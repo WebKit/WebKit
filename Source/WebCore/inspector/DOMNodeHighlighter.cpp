@@ -231,8 +231,8 @@ void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
     if (!renderer || !containingFrame)
         return;
 
-    IntSize mainFrameOffset = frameToMainFrameOffset(containingFrame);
-    IntRect boundingBox = renderer->absoluteBoundingBoxRect(true);
+    LayoutSize mainFrameOffset = frameToMainFrameOffset(containingFrame);
+    LayoutRect boundingBox = renderer->absoluteBoundingBoxRect(true);
 
     boundingBox.move(mainFrameOffset);
 
@@ -255,15 +255,15 @@ void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
         RenderBox* renderBox = toRenderBox(renderer);
 
         // RenderBox returns the "pure" content area box, exclusive of the scrollbars (if present), which also count towards the content area in CSS.
-        IntRect contentBox = renderBox->contentBoxRect();
+        LayoutRect contentBox = renderBox->contentBoxRect();
         contentBox.setWidth(contentBox.width() + renderBox->verticalScrollbarWidth());
         contentBox.setHeight(contentBox.height() + renderBox->horizontalScrollbarHeight());
 
-        IntRect paddingBox(contentBox.x() - renderBox->paddingLeft(), contentBox.y() - renderBox->paddingTop(),
+        LayoutRect paddingBox(contentBox.x() - renderBox->paddingLeft(), contentBox.y() - renderBox->paddingTop(),
                            contentBox.width() + renderBox->paddingLeft() + renderBox->paddingRight(), contentBox.height() + renderBox->paddingTop() + renderBox->paddingBottom());
-        IntRect borderBox(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
+        LayoutRect borderBox(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
                           paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
-        IntRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
+        LayoutRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
                           borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
 
         FrameView* containingView = containingFrame->view();

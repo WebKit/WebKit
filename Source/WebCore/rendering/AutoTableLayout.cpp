@@ -252,8 +252,8 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
     if (scaleColumns) {
         maxNonPercent = maxNonPercent * 100 / max(remainingPercent, epsilon);
         // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-        maxWidth = max(maxWidth, static_cast<int>(min(maxNonPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
-        maxWidth = max(maxWidth, static_cast<int>(min(maxPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
+        maxWidth = max<LayoutUnit>(maxWidth, static_cast<LayoutUnit>(min(maxNonPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
+        maxWidth = max<LayoutUnit>(maxWidth, static_cast<LayoutUnit>(min(maxPercent, numeric_limits<LayoutUnit>::max() / 2.0f)));
     }
 
     maxWidth = max(maxWidth, spanMaxLogicalWidth);
@@ -264,7 +264,7 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
 
     Length tableLogicalWidth = m_table->style()->logicalWidth();
     if (tableLogicalWidth.isFixed() && tableLogicalWidth.value() > 0) {
-        minWidth = max(minWidth, tableLogicalWidth.value());
+        minWidth = max<LayoutUnit>(minWidth, tableLogicalWidth.value());
         maxWidth = minWidth;
     } else if (!remainingPercent && maxNonPercent) {
         // if there was no remaining percent, maxWidth is invalid.
@@ -551,7 +551,7 @@ void AutoTableLayout::layout()
                     LayoutUnit reduction = min(cellLogicalWidth,  excess);
                     // the lines below might look inconsistent, but that's the way it's handled in mozilla
                     excess -= reduction;
-                    LayoutUnit newLogicalWidth = max(m_layoutStruct[i].effectiveMinLogicalWidth, cellLogicalWidth - reduction);
+                    LayoutUnit newLogicalWidth = max<LayoutUnit>(m_layoutStruct[i].effectiveMinLogicalWidth, cellLogicalWidth - reduction);
                     available += cellLogicalWidth - newLogicalWidth;
                     m_layoutStruct[i].computedLogicalWidth = newLogicalWidth;
                 }
@@ -589,7 +589,7 @@ void AutoTableLayout::layout()
         for (size_t i = 0; i < nEffCols; ++i) {
             Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
             if (logicalWidth.isAuto() && totalAuto && !m_layoutStruct[i].emptyCellsOnly) {
-                LayoutUnit cellLogicalWidth = max(m_layoutStruct[i].computedLogicalWidth, static_cast<LayoutUnit>(available * static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) / totalAuto));
+                LayoutUnit cellLogicalWidth = max<LayoutUnit>(m_layoutStruct[i].computedLogicalWidth, static_cast<LayoutUnit>(available * static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) / totalAuto));
                 available -= cellLogicalWidth;
                 totalAuto -= m_layoutStruct[i].effectiveMaxLogicalWidth;
                 m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;

@@ -96,7 +96,17 @@ public:
         m_x += a.width();
         m_y += a.height();
     }
+    void move(const FloatSize& a)
+    {
+        m_x += a.width();
+        m_y += a.height();
+    }
     void moveBy(const IntPoint& a)
+    {
+        m_x += a.x();
+        m_y += a.y();
+    }
+    void moveBy(const FloatPoint& a)
     {
         m_x += a.x();
         m_y += a.y();

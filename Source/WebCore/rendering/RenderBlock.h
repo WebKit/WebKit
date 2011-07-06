@@ -806,20 +806,20 @@ private:
 
         static int positiveMarginBeforeDefault(const RenderBlock* block)
         { 
-            return std::max(block->marginBefore(), 0);
+            return std::max<LayoutUnit>(block->marginBefore(), 0);
         }
         
         static int negativeMarginBeforeDefault(const RenderBlock* block)
         { 
-            return std::max(-block->marginBefore(), 0);
+            return std::max<LayoutUnit>(-block->marginBefore(), 0);
         }
         static int positiveMarginAfterDefault(const RenderBlock* block)
         {
-            return std::max(block->marginAfter(), 0);
+            return std::max<LayoutUnit>(block->marginAfter(), 0);
         }
         static int negativeMarginAfterDefault(const RenderBlock* block)
         {
-            return std::max(-block->marginAfter(), 0);
+            return std::max<LayoutUnit>(-block->marginAfter(), 0);
         }
         
         MarginValues m_margins;

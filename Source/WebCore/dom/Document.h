@@ -35,6 +35,7 @@
 #include "DocumentTiming.h"
 #include "IconURL.h"
 #include "IntRect.h"
+#include "LayoutTypes.h"
 #include "PageVisibilityState.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
@@ -1378,7 +1379,7 @@ private:
     Timer<Document> m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Element> > m_fullScreenChangeEventTargetQueue;
     bool m_isAnimatingFullScreen;
-    IntRect m_savedPlaceholderFrameRect;
+    LayoutRect m_savedPlaceholderFrameRect;
     RefPtr<RenderStyle> m_savedPlaceholderRenderStyle;
 #endif
 

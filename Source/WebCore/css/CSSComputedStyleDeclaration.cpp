@@ -444,10 +444,10 @@ static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const 
     return list.release();
 }
 
-static IntRect sizingBox(RenderObject* renderer)
+static LayoutRect sizingBox(RenderObject* renderer)
 {
     if (!renderer->isBox())
-        return IntRect();
+        return LayoutRect();
     
     RenderBox* box = toRenderBox(renderer);
     return box->style()->boxSizing() == CONTENT_BOX ? box->contentBoxRect() : box->borderBoxRect();
