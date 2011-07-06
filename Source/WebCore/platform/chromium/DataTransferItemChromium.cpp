@@ -35,6 +35,7 @@
 
 #include "Blob.h"
 #include "Clipboard.h"
+#include "ClipboardChromium.h"
 #include "ClipboardMimeTypes.h"
 #include "PlatformBridge.h"
 #include "SharedBuffer.h"
@@ -78,6 +79,10 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
     if ((owner()->policy() != ClipboardReadable && owner()->policy() != ClipboardWritable)
         || kind() != kindString)
         return;
+
+    if (static_cast<ClipboardChromium*>(owner())->platformClipboardChanged())
+        return;
+
     if (m_source == InternalSource) {
         callback->scheduleCallback(m_context, m_data);
         return;
@@ -102,6 +107,9 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
 PassRefPtr<Blob> DataTransferItemChromium::getAsFile()
 {
     if (m_source == InternalSource)
+        return 0;
+
+    if (static_cast<ClipboardChromium*>(owner())->platformClipboardChanged())
         return 0;
 
     ASSERT(m_source == PasteboardSource);

@@ -180,6 +180,11 @@ PassRefPtr<SharedBuffer> PlatformBridge::clipboardReadImage(
     return webKitClient()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
 }
 
+uint64_t PlatformBridge::clipboardGetSequenceNumber()
+{
+    return webKitClient()->clipboard()->getSequenceNumber();
+}
+
 void PlatformBridge::clipboardWriteSelection(const String& htmlText,
                                              const KURL& sourceURL,
                                              const String& plainText,

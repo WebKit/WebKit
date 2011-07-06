@@ -1,3 +1,25 @@
+2011-06-30  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add versioning to Chromium clipboard and prevent polling from inside events.
+        https://bugs.webkit.org/show_bug.cgi?id=63738
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::getSequenceNumber):
+        * platform/chromium/ChromiumDataObject.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::ClipboardChromium):
+        (WebCore::ClipboardChromium::getData):
+        (WebCore::ClipboardChromium::platformClipboardChanged):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::getAsString):
+        (WebCore::DataTransferItemChromium::getAsFile):
+        * platform/chromium/PlatformBridge.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+
 2011-07-01  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Stephen White.

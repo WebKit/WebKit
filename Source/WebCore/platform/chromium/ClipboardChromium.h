@@ -30,6 +30,7 @@
 #ifndef ClipboardChromium_h
 #define ClipboardChromium_h
 
+#include "ChromiumDataObject.h"
 #include "Clipboard.h"
 
 #include "CachedResourceClient.h"
@@ -59,6 +60,7 @@ namespace WebCore {
         void clearAllData();
         String getData(const String& type, bool& success) const;
         bool setData(const String& type, const String& data);
+        bool platformClipboardChanged() const;
 
         // extensions beyond IE's API
         virtual HashSet<String> types() const;
@@ -91,6 +93,8 @@ namespace WebCore {
         void setDragImage(CachedImage*, Node*, const IntPoint&);
         RefPtr<ChromiumDataObject> m_dataObject;
         Frame* m_frame;
+
+        uint64_t m_originalSequenceNumber;
     };
 
 } // namespace WebCore

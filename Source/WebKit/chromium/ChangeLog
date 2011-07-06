@@ -1,3 +1,15 @@
+2011-06-30  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add versioning to Chromium clipboard and prevent polling from inside events.
+        https://bugs.webkit.org/show_bug.cgi?id=63738
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::getSequenceNumber):
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::clipboardGetSequenceNumber):
+
 2011-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled DEPS.

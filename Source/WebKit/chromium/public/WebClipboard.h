@@ -66,6 +66,10 @@ public:
     virtual WebString readHTML(Buffer, WebURL*) { return WebString(); }
     virtual WebData readImage(Buffer) { return WebData(); }
 
+    // Returns an identifier which can be used to determine whether the data
+    // contained within the clipboard has changed.
+    virtual uint64 getSequenceNumber() { return 0; }
+
     virtual void writePlainText(const WebString&) { }
     virtual void writeHTML(
         const WebString& htmlText, const WebURL&,

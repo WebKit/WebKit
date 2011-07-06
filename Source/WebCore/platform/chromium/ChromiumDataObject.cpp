@@ -226,6 +226,11 @@ bool ChromiumDataObject::setData(const String& type, const String& data)
     return false;
 }
 
+uint64_t ChromiumDataObject::getSequenceNumber()
+{
+    return PlatformBridge::clipboardGetSequenceNumber();
+}
+
 bool ChromiumDataObject::containsFilenames() const
 {
     bool containsFilenames;
