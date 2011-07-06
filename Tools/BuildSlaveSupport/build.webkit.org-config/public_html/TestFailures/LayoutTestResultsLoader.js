@@ -50,54 +50,10 @@ LayoutTestResultsLoader.prototype = {
 
         function fetchAndParseResultsHTMLAndCallCallback(callback) {
             getResource(self._builder.resultsPageURL(buildName), function(xhr) {
-                var root = document.createElement('html');
-                root.innerHTML = xhr.responseText;
-
+                var parseResult = (new ORWTResultsParser()).parse(xhr.responseText);
+                result.tests = parseResult.tests;
                 if (resultsHTMLSupportsTooManyFailuresInfo)
-                    result.tooManyFailures = root.getElementsByClassName('stopped-running-early-message').length > 0;
-
-                function parseResultTable(regex) {
-                    var paragraph = Array.prototype.findFirst.call(root.querySelectorAll('p'), function(paragraph) {
-                        return regex.test(paragraph.innerText);
-                    });
-                    if (!paragraph)
-                        return [];
-                    var table = paragraph.nextElementSibling;
-                    console.assert(table.nodeName === 'TABLE');
-                    return Array.prototype.map.call(table.rows, function(row) {
-                        var links = row.getElementsByTagName('a');
-                        var result = {
-                            name: links[0].innerText,
-                        };
-                        for (var i = 1; i < links.length; ++i) {
-                            var match = /^crash log \((.*)\)$/.exec(links[i].innerText);
-                            if (!match)
-                                continue;
-                            result.crashingSymbol = match[1];
-                            break;
-                        }
-                        return result;
-                    });
-                }
-
-                parseResultTable(/did not match expected results/).forEach(function(testData) {
-                    result.tests[testData.name] = { failureType: 'fail' };
-                });
-                parseResultTable(/timed out/).forEach(function(testData) {
-                    result.tests[testData.name] = { failureType: 'timeout' };
-                });
-                parseResultTable(/tool to crash/).forEach(function(testData) {
-                    result.tests[testData.name] = {
-                        failureType: 'crash',
-                        crashingSymbol: testData.crashingSymbol,
-                    };
-                });
-                parseResultTable(/Web process to crash/).forEach(function(testData) {
-                    result.tests[testData.name] = {
-                        failureType: 'webprocess crash',
-                        crashingSymbol: testData.crashingSymbol,
-                    };
-                });
+                    result.tooManyFailures = parseResult.tooManyFailures;
 
                 PersistentCache.set(cacheKey, result);
                 callback(result.tests, result.tooManyFailures);
@@ -110,7 +66,7 @@ LayoutTestResultsLoader.prototype = {
         }
 
         if (resultsHTMLSupportsTooManyFailuresInfo) {
-            fetchAndParseResultsHTMLAndCallCallback(callback, false);
+            fetchAndParseResultsHTMLAndCallCallback(callback);
             return;
         }
 
@@ -132,7 +88,7 @@ LayoutTestResultsLoader.prototype = {
             }
 
             // Find out which tests failed.
-            fetchAndParseResultsHTMLAndCallCallback(callback, tooManyFailures);
+            fetchAndParseResultsHTMLAndCallCallback(callback);
         });
     },
 };

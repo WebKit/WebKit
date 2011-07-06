@@ -1,3 +1,23 @@
+2011-07-06  Adam Roben  <aroben@apple.com>
+
+        Extract code to parse ORWT's results.html file into its own class
+
+        Prep work for fixing <http://webkit.org/b/61877> TestFailures page doesn't show testers that
+        use new-run-webkit-tests
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Moved a bunch of code from here...
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ORWTResultsParser.js: Added.
+        (ORWTResultsParser):
+        (ORWTResultsParser.prototype.parse):
+        ...to here.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        ORWTResultsParser.js.
+
 2011-07-06  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Fix a unittest from hitting the network. :)
