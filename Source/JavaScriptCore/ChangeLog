@@ -1,3 +1,79 @@
+2011-07-05  Oliver Hunt  <oliver@apple.com>
+
+        Force inlining of simple functions that show up as not being inlined
+        https://bugs.webkit.org/show_bug.cgi?id=63964
+
+        Reviewed by Gavin Barraclough.
+
+        Looking at profile data indicates the gcc is failing to inline a
+        number of trivial functions.  This patch hits the ones that show
+        up in profiles with the ALWAYS_INLINE hammer.
+
+        We also replace the memcpy() call in linking with a manual loop.
+        Apparently memcpy() is almost never faster than an inlined loop.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::add):
+        (JSC::ARMv7Assembler::add_S):
+        (JSC::ARMv7Assembler::ARM_and):
+        (JSC::ARMv7Assembler::asr):
+        (JSC::ARMv7Assembler::b):
+        (JSC::ARMv7Assembler::blx):
+        (JSC::ARMv7Assembler::bx):
+        (JSC::ARMv7Assembler::clz):
+        (JSC::ARMv7Assembler::cmn):
+        (JSC::ARMv7Assembler::cmp):
+        (JSC::ARMv7Assembler::eor):
+        (JSC::ARMv7Assembler::it):
+        (JSC::ARMv7Assembler::ldr):
+        (JSC::ARMv7Assembler::ldrCompact):
+        (JSC::ARMv7Assembler::ldrh):
+        (JSC::ARMv7Assembler::ldrb):
+        (JSC::ARMv7Assembler::lsl):
+        (JSC::ARMv7Assembler::lsr):
+        (JSC::ARMv7Assembler::movT3):
+        (JSC::ARMv7Assembler::mov):
+        (JSC::ARMv7Assembler::movt):
+        (JSC::ARMv7Assembler::mvn):
+        (JSC::ARMv7Assembler::neg):
+        (JSC::ARMv7Assembler::orr):
+        (JSC::ARMv7Assembler::orr_S):
+        (JSC::ARMv7Assembler::ror):
+        (JSC::ARMv7Assembler::smull):
+        (JSC::ARMv7Assembler::str):
+        (JSC::ARMv7Assembler::sub):
+        (JSC::ARMv7Assembler::sub_S):
+        (JSC::ARMv7Assembler::tst):
+        (JSC::ARMv7Assembler::linkRecordSourceComparator):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp5Reg3Imm8):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp5Imm5Reg3Reg3):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp7Reg3Reg3Reg3):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp8Imm8):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp8RegReg143):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp9Imm7):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::oneWordOp10Reg3Reg3):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp12Reg4FourFours):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp16FourFours):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp16Op16):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp5i6Imm4Reg4EncodedImm):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp12Reg4Reg4Imm12):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::vfpOp):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::vfpMemOp):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::linkCode):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::ret):
+        (JSC::MacroAssemblerARMv7::moveWithPatch):
+        (JSC::MacroAssemblerARMv7::branchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::storePtrWithPatch):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall):
+        (JSC::MacroAssemblerARMv7::makeTailRecursiveCall):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+
 2011-07-05  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Make "Add optimised paths for a few maths functions" work on Qt

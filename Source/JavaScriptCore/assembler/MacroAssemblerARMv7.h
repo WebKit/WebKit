@@ -1126,30 +1126,30 @@ public:
         m_assembler.bkpt(0);
     }
 
-    Call nearCall()
+    ALWAYS_INLINE Call nearCall()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
     }
 
-    Call call()
+    ALWAYS_INLINE Call call()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Call(m_assembler.blx(dataTempRegister), Call::Linkable);
     }
 
-    Call call(RegisterID target)
+    ALWAYS_INLINE Call call(RegisterID target)
     {
         return Call(m_assembler.blx(target), Call::None);
     }
 
-    Call call(Address address)
+    ALWAYS_INLINE Call call(Address address)
     {
         load32(address, dataTempRegister);
         return Call(m_assembler.blx(dataTempRegister), Call::None);
     }
 
-    void ret()
+    ALWAYS_INLINE void ret()
     {
         m_assembler.bx(linkRegister);
     }
@@ -1198,48 +1198,48 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
-    DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dst)
+    ALWAYS_INLINE DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dst)
     {
         moveFixedWidthEncoding(imm, dst);
         return DataLabel32(this);
     }
 
-    DataLabelPtr moveWithPatch(TrustedImmPtr imm, RegisterID dst)
+    ALWAYS_INLINE DataLabelPtr moveWithPatch(TrustedImmPtr imm, RegisterID dst)
     {
         moveFixedWidthEncoding(TrustedImm32(imm), dst);
         return DataLabelPtr(this);
     }
 
-    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    ALWAYS_INLINE Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
         return branch32(cond, left, dataTempRegister);
     }
 
-    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    ALWAYS_INLINE Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         load32(left, addressTempRegister);
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
         return branch32(cond, addressTempRegister, dataTempRegister);
     }
 
-    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         DataLabelPtr label = moveWithPatch(initialValue, dataTempRegister);
         store32(dataTempRegister, address);
         return label;
     }
-    DataLabelPtr storePtrWithPatch(ImplicitAddress address) { return storePtrWithPatch(TrustedImmPtr(0), address); }
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(ImplicitAddress address) { return storePtrWithPatch(TrustedImmPtr(0), address); }
 
 
-    Call tailRecursiveCall()
+    ALWAYS_INLINE Call tailRecursiveCall()
     {
         // Like a normal call, but don't link.
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Call(m_assembler.bx(dataTempRegister), Call::Linkable);
     }
 
-    Call makeTailRecursiveCall(Jump oldJump)
+    ALWAYS_INLINE Call makeTailRecursiveCall(Jump oldJump)
     {
         oldJump.link(this);
         return tailRecursiveCall();
@@ -1257,21 +1257,21 @@ protected:
         return m_inUninterruptedSequence;
     }
 
-    Jump jump()
+    ALWAYS_INLINE Jump jump()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Jump(m_assembler.bx(dataTempRegister), inUninterruptedSequence() ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
     }
 
-    Jump makeBranch(ARMv7Assembler::Condition cond)
+    ALWAYS_INLINE Jump makeBranch(ARMv7Assembler::Condition cond)
     {
         m_assembler.it(cond, true, true);
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Jump(m_assembler.bx(dataTempRegister), inUninterruptedSequence() ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
     }
-    Jump makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
-    Jump makeBranch(ResultCondition cond) { return makeBranch(armV7Condition(cond)); }
-    Jump makeBranch(DoubleCondition cond) { return makeBranch(armV7Condition(cond)); }
+    ALWAYS_INLINE Jump makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
+    ALWAYS_INLINE Jump makeBranch(ResultCondition cond) { return makeBranch(armV7Condition(cond)); }
+    ALWAYS_INLINE Jump makeBranch(DoubleCondition cond) { return makeBranch(armV7Condition(cond)); }
 
     ArmAddress setupArmAddress(BaseIndex address)
     {

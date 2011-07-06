@@ -248,7 +248,14 @@ private:
             
             // Copy the instructions from the last jump to the current one.
             size_t regionSize = jumpsToLink[i].from() - readPtr;
-            memcpy(outData + writePtr, inData + readPtr, regionSize);
+            uint16_t* copySource = reinterpret_cast<uint16_t*>(inData + readPtr);
+            uint16_t* copyEnd = reinterpret_cast<uint16_t*>(inData + readPtr + regionSize);
+            uint16_t* copyDst = reinterpret_cast<uint16_t*>(outData + writePtr);
+            ASSERT(!(regionSize % 2));
+            ASSERT(!(readPtr % 2));
+            ASSERT(!(writePtr % 2));
+            while (copySource != copyEnd)
+                *copyDst++ = *copySource++;
             m_assembler->recordLinkOffsets(readPtr, jumpsToLink[i].from(), offset);
             readPtr += regionSize;
             writePtr += regionSize;

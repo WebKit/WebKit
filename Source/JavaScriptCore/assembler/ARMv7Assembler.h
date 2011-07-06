@@ -719,7 +719,7 @@ public:
         }
     }
 
-    void add(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void add(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
         ASSERT(rd != ARMRegisters::pc);
@@ -729,7 +729,7 @@ public:
     }
 
     // NOTE: In an IT block, add doesn't modify the flags register.
-    void add(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void add(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if (rd == rn)
             m_formatter.oneWordOp8RegReg143(OP_ADD_reg_T2, rm, rd);
@@ -742,7 +742,7 @@ public:
     }
 
     // Not allowed in an IT (if then) block.
-    void add_S(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void add_S(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         // Rd can only be SP if Rn is also SP.
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
@@ -764,7 +764,7 @@ public:
     }
 
     // Not allowed in an IT (if then) block?
-    void add_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void add_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
         ASSERT(rd != ARMRegisters::pc);
@@ -774,7 +774,7 @@ public:
     }
 
     // Not allowed in an IT (if then) block.
-    void add_S(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void add_S(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if (!((rd | rn | rm) & 8))
             m_formatter.oneWordOp7Reg3Reg3Reg3(OP_ADD_reg_T1, rm, rn, rd);
@@ -782,7 +782,7 @@ public:
             add_S(rd, rn, rm, ShiftTypeAndAmount());
     }
 
-    void ARM_and(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void ARM_and(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -790,7 +790,7 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_AND_imm_T1, rn, rd, imm);
     }
 
-    void ARM_and(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void ARM_and(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -798,7 +798,7 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_AND_reg_T2, rn, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
-    void ARM_and(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void ARM_and(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if ((rd == rn) && !((rd | rm) & 8))
             m_formatter.oneWordOp10Reg3Reg3(OP_AND_reg_T1, rm, rd);
@@ -808,7 +808,7 @@ public:
             ARM_and(rd, rn, rm, ShiftTypeAndAmount());
     }
 
-    void asr(RegisterID rd, RegisterID rm, int32_t shiftAmount)
+    ALWAYS_INLINE void asr(RegisterID rd, RegisterID rm, int32_t shiftAmount)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rm));
@@ -816,7 +816,7 @@ public:
         m_formatter.twoWordOp16FourFours(OP_ASR_imm_T1, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
-    void asr(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void asr(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -825,14 +825,14 @@ public:
     }
     
     // Only allowed in IT (if then) block if last instruction.
-    AssemblerLabel b()
+    ALWAYS_INLINE AssemblerLabel b()
     {
         m_formatter.twoWordOp16Op16(OP_B_T4a, OP_B_T4b);
         return m_formatter.label();
     }
     
     // Only allowed in IT (if then) block if last instruction.
-    AssemblerLabel blx(RegisterID rm)
+    ALWAYS_INLINE AssemblerLabel blx(RegisterID rm)
     {
         ASSERT(rm != ARMRegisters::pc);
         m_formatter.oneWordOp8RegReg143(OP_BLX, rm, (RegisterID)8);
@@ -840,7 +840,7 @@ public:
     }
 
     // Only allowed in IT (if then) block if last instruction.
-    AssemblerLabel bx(RegisterID rm)
+    ALWAYS_INLINE AssemblerLabel bx(RegisterID rm)
     {
         m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
         return m_formatter.label();
@@ -851,14 +851,14 @@ public:
         m_formatter.oneWordOp8Imm8(OP_BKPT, imm);
     }
 
-    void clz(RegisterID rd, RegisterID rm)
+    ALWAYS_INLINE void clz(RegisterID rd, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rm));
         m_formatter.twoWordOp12Reg4FourFours(OP_CLZ, rm, FourFours(0xf, rd, 8, rm));
     }
 
-    void cmn(RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void cmn(RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(imm.isEncodedImm());
@@ -866,7 +866,7 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_CMN_imm, rn, (RegisterID)0xf, imm);
     }
 
-    void cmp(RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void cmp(RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(imm.isEncodedImm());
@@ -877,14 +877,14 @@ public:
             m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_CMP_imm_T2, rn, (RegisterID)0xf, imm);
     }
 
-    void cmp(RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void cmp(RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(!BadReg(rm));
         m_formatter.twoWordOp12Reg4FourFours(OP_CMP_reg_T2, rn, FourFours(shift.hi4(), 0xf, shift.lo4(), rm));
     }
 
-    void cmp(RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void cmp(RegisterID rn, RegisterID rm)
     {
         if ((rn | rm) & 8)
             cmp(rn, rm, ShiftTypeAndAmount());
@@ -893,7 +893,7 @@ public:
     }
 
     // xor is not spelled with an 'e'. :-(
-    void eor(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void eor(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -902,7 +902,7 @@ public:
     }
 
     // xor is not spelled with an 'e'. :-(
-    void eor(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void eor(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -921,28 +921,28 @@ public:
             eor(rd, rn, rm, ShiftTypeAndAmount());
     }
 
-    void it(Condition cond)
+    ALWAYS_INLINE void it(Condition cond)
     {
         m_formatter.oneWordOp8Imm8(OP_IT, ifThenElse(cond));
     }
 
-    void it(Condition cond, bool inst2if)
+    ALWAYS_INLINE void it(Condition cond, bool inst2if)
     {
         m_formatter.oneWordOp8Imm8(OP_IT, ifThenElse(cond, inst2if));
     }
 
-    void it(Condition cond, bool inst2if, bool inst3if)
+    ALWAYS_INLINE void it(Condition cond, bool inst2if, bool inst3if)
     {
         m_formatter.oneWordOp8Imm8(OP_IT, ifThenElse(cond, inst2if, inst3if));
     }
 
-    void it(Condition cond, bool inst2if, bool inst3if, bool inst4if)
+    ALWAYS_INLINE void it(Condition cond, bool inst2if, bool inst3if, bool inst4if)
     {
         m_formatter.oneWordOp8Imm8(OP_IT, ifThenElse(cond, inst2if, inst3if, inst4if));
     }
 
     // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
-    void ldr(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void ldr(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(imm.isUInt12());
@@ -955,7 +955,7 @@ public:
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDR_imm_T3, rn, rt, imm.getUInt12());
     }
 
-    void ldrCompact(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void ldrCompact(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(imm.isUInt7());
@@ -974,7 +974,7 @@ public:
     // _tmp = _reg + offset
     // MEM[index ? _tmp : _reg] = REG[rt]
     // if (wback) REG[rn] = _tmp
-    void ldr(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
+    ALWAYS_INLINE void ldr(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
     {
         ASSERT(rt != ARMRegisters::pc);
         ASSERT(rn != ARMRegisters::pc);
@@ -997,7 +997,7 @@ public:
     }
 
     // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
-    void ldr(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift=0)
+    ALWAYS_INLINE void ldr(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(!BadReg(rm));
@@ -1010,7 +1010,7 @@ public:
     }
 
     // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
-    void ldrh(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void ldrh(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(imm.isUInt12());
@@ -1032,7 +1032,7 @@ public:
     // _tmp = _reg + offset
     // MEM[index ? _tmp : _reg] = REG[rt]
     // if (wback) REG[rn] = _tmp
-    void ldrh(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
+    ALWAYS_INLINE void ldrh(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
     {
         ASSERT(rt != ARMRegisters::pc);
         ASSERT(rn != ARMRegisters::pc);
@@ -1054,7 +1054,7 @@ public:
         m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDRH_imm_T3, rn, rt, offset);
     }
 
-    void ldrh(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift=0)
+    ALWAYS_INLINE void ldrh(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
     {
         ASSERT(!BadReg(rt));   // Memory hint
         ASSERT(rn != ARMRegisters::pc); // LDRH (literal)
@@ -1101,7 +1101,7 @@ public:
         m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDRB_imm_T3, rn, rt, offset);
     }
 
-    void ldrb(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
+    ALWAYS_INLINE void ldrb(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(!BadReg(rm));
@@ -1121,7 +1121,7 @@ public:
         m_formatter.twoWordOp16FourFours(OP_LSL_imm_T1, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
-    void lsl(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void lsl(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -1129,7 +1129,7 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_LSL_reg_T2, rn, FourFours(0xf, rd, 0, rm));
     }
 
-    void lsr(RegisterID rd, RegisterID rm, int32_t shiftAmount)
+    ALWAYS_INLINE void lsr(RegisterID rd, RegisterID rm, int32_t shiftAmount)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rm));
@@ -1137,7 +1137,7 @@ public:
         m_formatter.twoWordOp16FourFours(OP_LSR_imm_T1, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
-    void lsr(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void lsr(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -1145,7 +1145,7 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_LSR_reg_T2, rn, FourFours(0xf, rd, 0, rm));
     }
 
-    void movT3(RegisterID rd, ARMThumbImmediate imm)
+    ALWAYS_INLINE void movT3(RegisterID rd, ARMThumbImmediate imm)
     {
         ASSERT(imm.isValid());
         ASSERT(!imm.isEncodedImm());
@@ -1154,7 +1154,7 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_MOV_imm_T3, imm.m_value.imm4, rd, imm);
     }
 
-     void mov(RegisterID rd, ARMThumbImmediate imm)
+    ALWAYS_INLINE void mov(RegisterID rd, ARMThumbImmediate imm)
     {
         ASSERT(imm.isValid());
         ASSERT(!BadReg(rd));
@@ -1167,19 +1167,19 @@ public:
             movT3(rd, imm);
     }
 
-   void mov(RegisterID rd, RegisterID rm)
+    ALWAYS_INLINE void mov(RegisterID rd, RegisterID rm)
     {
         m_formatter.oneWordOp8RegReg143(OP_MOV_reg_T1, rm, rd);
     }
 
-    void movt(RegisterID rd, ARMThumbImmediate imm)
+    ALWAYS_INLINE void movt(RegisterID rd, ARMThumbImmediate imm)
     {
         ASSERT(imm.isUInt16());
         ASSERT(!BadReg(rd));
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_MOVT, imm.m_value.imm4, rd, imm);
     }
 
-    void mvn(RegisterID rd, ARMThumbImmediate imm)
+    ALWAYS_INLINE void mvn(RegisterID rd, ARMThumbImmediate imm)
     {
         ASSERT(imm.isEncodedImm());
         ASSERT(!BadReg(rd));
@@ -1187,14 +1187,14 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_MVN_imm, 0xf, rd, imm);
     }
 
-    void mvn(RegisterID rd, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void mvn(RegisterID rd, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rm));
         m_formatter.twoWordOp16FourFours(OP_MVN_reg_T2, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
-    void mvn(RegisterID rd, RegisterID rm)
+    ALWAYS_INLINE void mvn(RegisterID rd, RegisterID rm)
     {
         if (!((rd | rm) & 8))
             m_formatter.oneWordOp10Reg3Reg3(OP_MVN_reg_T1, rm, rd);
@@ -1202,13 +1202,13 @@ public:
             mvn(rd, rm, ShiftTypeAndAmount());
     }
 
-    void neg(RegisterID rd, RegisterID rm)
+    ALWAYS_INLINE void neg(RegisterID rd, RegisterID rm)
     {
         ARMThumbImmediate zero = ARMThumbImmediate::makeUInt12(0);
         sub(rd, zero, rm);
     }
 
-    void orr(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void orr(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -1216,7 +1216,7 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_ORR_imm_T1, rn, rd, imm);
     }
 
-    void orr(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void orr(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -1234,7 +1234,7 @@ public:
             orr(rd, rn, rm, ShiftTypeAndAmount());
     }
 
-    void orr_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void orr_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -1252,7 +1252,7 @@ public:
             orr_S(rd, rn, rm, ShiftTypeAndAmount());
     }
 
-    void ror(RegisterID rd, RegisterID rm, int32_t shiftAmount)
+    ALWAYS_INLINE void ror(RegisterID rd, RegisterID rm, int32_t shiftAmount)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rm));
@@ -1260,7 +1260,7 @@ public:
         m_formatter.twoWordOp16FourFours(OP_ROR_imm_T1, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
-    void ror(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void ror(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rd));
         ASSERT(!BadReg(rn));
@@ -1268,7 +1268,7 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_ROR_reg_T2, rn, FourFours(0xf, rd, 0, rm));
     }
 
-    void smull(RegisterID rdLo, RegisterID rdHi, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void smull(RegisterID rdLo, RegisterID rdHi, RegisterID rn, RegisterID rm)
     {
         ASSERT(!BadReg(rdLo));
         ASSERT(!BadReg(rdHi));
@@ -1279,7 +1279,7 @@ public:
     }
 
     // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
-    void str(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void str(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(rt != ARMRegisters::pc);
         ASSERT(rn != ARMRegisters::pc);
@@ -1304,7 +1304,7 @@ public:
     // _tmp = _reg + offset
     // MEM[index ? _tmp : _reg] = REG[rt]
     // if (wback) REG[rn] = _tmp
-    void str(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
+    ALWAYS_INLINE void str(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
     {
         ASSERT(rt != ARMRegisters::pc);
         ASSERT(rn != ARMRegisters::pc);
@@ -1327,7 +1327,7 @@ public:
     }
 
     // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
-    void str(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift=0)
+    ALWAYS_INLINE void str(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
     {
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(!BadReg(rm));
@@ -1339,7 +1339,7 @@ public:
             m_formatter.twoWordOp12Reg4FourFours(OP_STR_reg_T2, rn, FourFours(rt, 0, shift, rm));
     }
 
-    void sub(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         // Rd can only be SP if Rn is also SP.
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
@@ -1368,7 +1368,7 @@ public:
         }
     }
 
-    void sub(RegisterID rd, ARMThumbImmediate imm, RegisterID rn)
+    ALWAYS_INLINE void sub(RegisterID rd, ARMThumbImmediate imm, RegisterID rn)
     {
         ASSERT(rd != ARMRegisters::pc);
         ASSERT(rn != ARMRegisters::pc);
@@ -1381,7 +1381,7 @@ public:
             m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_RSB_imm_T2, rn, rd, imm);
     }
 
-    void sub(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
         ASSERT(rd != ARMRegisters::pc);
@@ -1391,7 +1391,7 @@ public:
     }
 
     // NOTE: In an IT block, add doesn't modify the flags register.
-    void sub(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if (!((rd | rn | rm) & 8))
             m_formatter.oneWordOp7Reg3Reg3Reg3(OP_SUB_reg_T1, rm, rn, rd);
@@ -1425,7 +1425,7 @@ public:
     }
 
     // Not allowed in an IT (if then) block?
-    void sub_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void sub_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
         ASSERT(rd != ARMRegisters::pc);
@@ -1435,7 +1435,7 @@ public:
     }
 
     // Not allowed in an IT (if then) block.
-    void sub_S(RegisterID rd, RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void sub_S(RegisterID rd, RegisterID rn, RegisterID rm)
     {
         if (!((rd | rn | rm) & 8))
             m_formatter.oneWordOp7Reg3Reg3Reg3(OP_SUB_reg_T1, rm, rn, rd);
@@ -1443,7 +1443,7 @@ public:
             sub_S(rd, rn, rm, ShiftTypeAndAmount());
     }
 
-    void tst(RegisterID rn, ARMThumbImmediate imm)
+    ALWAYS_INLINE void tst(RegisterID rn, ARMThumbImmediate imm)
     {
         ASSERT(!BadReg(rn));
         ASSERT(imm.isEncodedImm());
@@ -1451,14 +1451,14 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_TST_imm, rn, (RegisterID)0xf, imm);
     }
 
-    void tst(RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
+    ALWAYS_INLINE void tst(RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
         ASSERT(!BadReg(rn));
         ASSERT(!BadReg(rm));
         m_formatter.twoWordOp12Reg4FourFours(OP_TST_reg_T2, rn, FourFours(shift.hi4(), 0xf, shift.lo4(), rm));
     }
 
-    void tst(RegisterID rn, RegisterID rm)
+    ALWAYS_INLINE void tst(RegisterID rn, RegisterID rm)
     {
         if ((rn | rm) & 8)
             tst(rn, rm, ShiftTypeAndAmount());
@@ -1576,7 +1576,7 @@ public:
     
     // Assembler admin methods:
 
-    static bool linkRecordSourceComparator(const LinkRecord& a, const LinkRecord& b)
+    static ALWAYS_INLINE bool linkRecordSourceComparator(const LinkRecord& a, const LinkRecord& b)
     {
         return a.from() < b.from();
     }
@@ -1663,7 +1663,7 @@ public:
         return m_jumpsToLink;
     }
 
-    void link(LinkRecord& record, uint8_t* from, uint8_t* to)
+    void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, uint8_t* to)
     {
         switch (record.linkType()) {
         case LinkJumpT1:
@@ -2165,59 +2165,60 @@ private:
 
     class ARMInstructionFormatter {
     public:
-        void oneWordOp5Reg3Imm8(OpcodeID op, RegisterID rd, uint8_t imm)
+        ALWAYS_INLINE void oneWordOp5Reg3Imm8(OpcodeID op, RegisterID rd, uint8_t imm)
         {
             m_buffer.putShort(op | (rd << 8) | imm);
         }
         
-        void oneWordOp5Imm5Reg3Reg3(OpcodeID op, uint8_t imm, RegisterID reg1, RegisterID reg2)
+        ALWAYS_INLINE void oneWordOp5Imm5Reg3Reg3(OpcodeID op, uint8_t imm, RegisterID reg1, RegisterID reg2)
         {
             m_buffer.putShort(op | (imm << 6) | (reg1 << 3) | reg2);
         }
 
-        void oneWordOp7Reg3Reg3Reg3(OpcodeID op, RegisterID reg1, RegisterID reg2, RegisterID reg3)
+        ALWAYS_INLINE void oneWordOp7Reg3Reg3Reg3(OpcodeID op, RegisterID reg1, RegisterID reg2, RegisterID reg3)
         {
             m_buffer.putShort(op | (reg1 << 6) | (reg2 << 3) | reg3);
         }
 
-        void oneWordOp8Imm8(OpcodeID op, uint8_t imm)
+        ALWAYS_INLINE void oneWordOp8Imm8(OpcodeID op, uint8_t imm)
         {
             m_buffer.putShort(op | imm);
         }
 
-        void oneWordOp8RegReg143(OpcodeID op, RegisterID reg1, RegisterID reg2)
+        ALWAYS_INLINE void oneWordOp8RegReg143(OpcodeID op, RegisterID reg1, RegisterID reg2)
         {
             m_buffer.putShort(op | ((reg2 & 8) << 4) | (reg1 << 3) | (reg2 & 7));
         }
-        void oneWordOp9Imm7(OpcodeID op, uint8_t imm)
+
+        ALWAYS_INLINE void oneWordOp9Imm7(OpcodeID op, uint8_t imm)
         {
             m_buffer.putShort(op | imm);
         }
 
-        void oneWordOp10Reg3Reg3(OpcodeID op, RegisterID reg1, RegisterID reg2)
+        ALWAYS_INLINE void oneWordOp10Reg3Reg3(OpcodeID op, RegisterID reg1, RegisterID reg2)
         {
             m_buffer.putShort(op | (reg1 << 3) | reg2);
         }
 
-        void twoWordOp12Reg4FourFours(OpcodeID1 op, RegisterID reg, FourFours ff)
+        ALWAYS_INLINE void twoWordOp12Reg4FourFours(OpcodeID1 op, RegisterID reg, FourFours ff)
         {
             m_buffer.putShort(op | reg);
             m_buffer.putShort(ff.m_u.value);
         }
         
-        void twoWordOp16FourFours(OpcodeID1 op, FourFours ff)
+        ALWAYS_INLINE void twoWordOp16FourFours(OpcodeID1 op, FourFours ff)
         {
             m_buffer.putShort(op);
             m_buffer.putShort(ff.m_u.value);
         }
         
-        void twoWordOp16Op16(OpcodeID1 op1, OpcodeID2 op2)
+        ALWAYS_INLINE void twoWordOp16Op16(OpcodeID1 op1, OpcodeID2 op2)
         {
             m_buffer.putShort(op1);
             m_buffer.putShort(op2);
         }
 
-        void twoWordOp5i6Imm4Reg4EncodedImm(OpcodeID1 op, int imm4, RegisterID rd, ARMThumbImmediate imm)
+        ALWAYS_INLINE void twoWordOp5i6Imm4Reg4EncodedImm(OpcodeID1 op, int imm4, RegisterID rd, ARMThumbImmediate imm)
         {
             ARMThumbImmediate newImm = imm;
             newImm.m_value.imm4 = imm4;
@@ -2226,7 +2227,7 @@ private:
             m_buffer.putShort(ARMv7Assembler::twoWordOp5i6Imm4Reg4EncodedImmSecond(rd, newImm));
         }
 
-        void twoWordOp12Reg4Reg4Imm12(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm)
+        ALWAYS_INLINE void twoWordOp12Reg4Reg4Imm12(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm)
         {
             m_buffer.putShort(op | reg1);
             m_buffer.putShort((reg2 << 12) | imm);
@@ -2236,7 +2237,7 @@ private:
         //    111111111B11aaaa:bbbb222SA2C2cccc
         // Where 1s in the pattern come from op1, 2s in the pattern come from op2, S is the provided size bit.
         // Operands provide 5 bit values of the form Aaaaa, Bbbbb, Ccccc.
-        void vfpOp(OpcodeID1 op1, OpcodeID2 op2, bool size, VFPOperand a, VFPOperand b, VFPOperand c)
+        ALWAYS_INLINE void vfpOp(OpcodeID1 op1, OpcodeID2 op2, bool size, VFPOperand a, VFPOperand b, VFPOperand c)
         {
             ASSERT(!(op1 & 0x004f));
             ASSERT(!(op2 & 0xf1af));
@@ -2246,7 +2247,7 @@ private:
 
         // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
         // (i.e. +/-(0..255) 32-bit words)
-        void vfpMemOp(OpcodeID1 op1, OpcodeID2 op2, bool size, RegisterID rn, VFPOperand rd, int32_t imm)
+        ALWAYS_INLINE void vfpMemOp(OpcodeID1 op1, OpcodeID2 op2, bool size, RegisterID rn, VFPOperand rd, int32_t imm)
         {
             bool up = true;
             if (imm < 0) {
