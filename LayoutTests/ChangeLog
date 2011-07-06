@@ -1,3 +1,9 @@
+2011-07-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed, mark fast/events/click-focus-anchor.html as flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-06  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] Try to make the bot green by marking tests flaky.

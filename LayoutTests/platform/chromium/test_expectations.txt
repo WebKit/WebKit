@@ -3987,3 +3987,5 @@ BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT
 // Started failing at WebKit r90259-90261.
 BUGCR88400 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
 BUGCR88400 GPU : compositing/overflow/overflow-scroll.html = IMAGE
+
+BUGWK64000 MAC SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
