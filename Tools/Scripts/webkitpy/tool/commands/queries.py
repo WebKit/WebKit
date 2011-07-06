@@ -228,7 +228,7 @@ class FailureReason(AbstractDeclarativeCommand):
         layout_test_results = build.layout_test_results()
         if not layout_test_results:
             # FIXME: This could be made more user friendly.
-            print "Failed to load layout test results; can't continue. (start revision = r%s)" % start_revision
+            print "Failed to load layout test results from %s; can't continue. (start revision = r%s)" % (build.results_url(), start_revision)
             return 1
 
         results_to_explain = set(layout_test_results.failing_tests())

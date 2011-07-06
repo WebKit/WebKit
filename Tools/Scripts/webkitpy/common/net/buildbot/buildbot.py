@@ -41,11 +41,13 @@ import urllib2
 
 from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.net.testoutputset import TestOutputSet
 from webkitpy.common.system.logutils import get_logger
 from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+
 
 _log = get_logger(__file__)
 
@@ -239,26 +241,26 @@ class Build(object):
     def results(self):
         return TestOutputSet(self._builder.name(), None, ZipFileSet(self.results_zip_url()), include_expected=False)
 
-    def _fetch_results_html(self):
-        results_html = "%s/results.html" % (self.results_url())
-        # FIXME: This should use NetworkTransaction's 404 handling or at least move
-        # to mechanize's to be more consistent with the rest of our code.
-        try:
-            # It seems this can return None if the url redirects and then returns 404.
-            result = urllib2.urlopen(results_html)
-            if not result:
-                return None
-            # urlopen returns a file-like object which sometimes works fine with str()
-            # but sometimes is a addinfourl object.  In either case calling read() is correct.
-            return result.read()
-        except urllib2.HTTPError, error:
-            if error.code != 404:
-                raise
+    def _fetch_file_from_results(self, file_name):
+        # It seems this can return None if the url redirects and then returns 404.
+        result = urllib2.urlopen("%s/%s" % (self.results_url(), file_name))
+        if not result:
+            return None
+        # urlopen returns a file-like object which sometimes works fine with str()
+        # but sometimes is a addinfourl object.  In either case calling read() is correct.
+        return result.read()
 
     def layout_test_results(self):
-        if not self._layout_test_results:
-            # FIXME: This should cache that the result was a 404 and stop hitting the network.
-            self._layout_test_results = LayoutTestResults.results_from_string(self._fetch_results_html())
+        if self._layout_test_results:
+            return self._layout_test_results
+
+        # FIXME: This should cache that the result was a 404 and stop hitting the network.
+        results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results("full_results.json"))
+        if not results_file:
+            results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results("results.html"))
+
+        # results_from_string accepts either ORWT html or NRWT json.
+        self._layout_test_results = LayoutTestResults.results_from_string(results_file)
         return self._layout_test_results
 
     def builder(self):
