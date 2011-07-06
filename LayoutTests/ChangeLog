@@ -1,3 +1,11 @@
+2011-07-06  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] Fix the syntax of test_expectations.txt
+
+        Unreviewed gardening.
+
+        * platform/qt/test_expectations.txt: Add a bug for the flaky tests.
+
 2011-07-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed, mark fast/events/click-focus-anchor.html as flaky.
