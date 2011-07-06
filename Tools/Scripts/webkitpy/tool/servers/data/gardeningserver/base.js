@@ -1,27 +1,34 @@
 var base = base || {};
 
-(function() {
-  base.joinPath = function(parent, child) {
+(function(){
+
+base.joinPath = function(parent, child)
+{
+    if (parent.length == 0)
+        return child;
     return parent + '/' + child;
-  }
+}
 
-  base.filterTree = function(tree, is_leaf, predicate) {
-    var filtered_tree = {};
+base.filterTree = function(tree, isLeaf, predicate)
+{
+    var filteredTree = {};
 
-    function walkSubtree(subtree, directory) {
-      for (var child_name in subtree) {
-        var child = subtree[child_name];
-        var child_path = base.joinPath(directory, child_name);
-        if (is_leaf(child)) {
-          if (predicate(child))
-            filtered_tree[child_path] = child;
-          continue;
+    function walkSubtree(subtree, directory)
+    {
+        for (var childName in subtree) {
+            var child = subtree[childName];
+            var childPath = base.joinPath(directory, childName);
+            if (isLeaf(child)) {
+                if (predicate(child))
+                    filteredTree[childPath] = child;
+                continue;
+            }
+            walkSubtree(child, childPath);
         }
-        walkSubtree(child, child_path);
-      }
     }
 
     walkSubtree(tree, '');
-    return filtered_tree;
-  }
+    return filteredTree;
+}
+
 })();
