@@ -1,3 +1,20 @@
+2011-07-06  Nate Chapin  <japhet@chromium.org>
+
+        Don't let all subresources keep isLoadingInAPISense() from
+        returning false, only requests that affect
+        CachedResourceRequest::requestCount().
+        https://bugs.webkit.org/show_bug.cgi?id=62066
+
+        Reviewed by Adam Barth.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::dispatchWindowLoadEvent):
+        * dom/Document.h:
+        (WebCore::Document::loadEventFinished):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+
 2011-07-06  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: implement drag'n'drop in the elements panel for reordering nodes.

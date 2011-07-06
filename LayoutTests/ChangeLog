@@ -1,3 +1,13 @@
+2011-07-06  Nate Chapin  <japhet@chromium.org>
+
+        Test updates for https://bugs.webkit.org/show_bug.cgi?id=62066.
+
+        Reviewed by Adam Barth.
+
+        * http/tests/loading/cross-origin-XHR-willLoadRequest-expected.txt:
+        * http/tests/misc/favicon-loads-with-icon-loading-override-expected.txt:
+        * http/tests/misc/link-rel-icon-beforeload-expected.txt:
+
 2011-07-06  Mihai Parparita  <mihaip@chromium.org>
 
         Rebaseline some imagemap focus ring tests for Chromium Mac (mainly for
