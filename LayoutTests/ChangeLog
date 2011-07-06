@@ -1,3 +1,18 @@
+2011-07-06  Mihai Parparita  <mihaip@chromium.org>
+
+        Remove Chromium Mac failing expectation for fast/text/font-size-zero.html
+        (fixed by r89933)
+        
+        Add Chromium Windows and Linux baselines for
+        fast/forms/textfield-overflow-by-value-update.html (needed due to
+        different form control metrics).
+        
+        Remove a bunch of commented out test expectations.
+
+        * platform/chromium-mac/svg/hittest/svg-rect-hit-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/textfield-overflow-by-value-update-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-06  Nate Chapin  <japhet@chromium.org>
 
         Test updates for https://bugs.webkit.org/show_bug.cgi?id=62066.

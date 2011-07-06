@@ -929,15 +929,8 @@ BUGWK62974 WIN LINUX : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
 BUGWK62974 LEOPARD : svg/batik/text/xmlSpace.svg = IMAGE
 BUGWK62974 WIN : svg/custom/glyph-selection-lang-attribute.svg = IMAGE+TEXT
 BUGWK62974 LINUX : svg/custom/glyph-selection-lang-attribute.svg = IMAGE
-//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE+TEXT
-//BUGWK62974 LEOPARD : svg/custom/svg-fonts-fallback.xhtml = IMAGE
-//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-segmented.xhtml = IMAGE+TEXT
-//BUGWK62974 WIN LINUX : svg/custom/svg-fonts-word-spacing.html = IMAGE+TEXT
-//BUGWK62974 MAC : svg/custom/svg-fonts-word-spacing.html = IMAGE
 BUGWK62974 WIN LINUX : svg/text/text-altglyph-01-b.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
-//BUGWK62974 WIN LINUX : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE+TEXT
-//BUGWK62974 LEOPARD : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE
 BUGWK62974 WIN LINUX : svg/text/text-text-04-t.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
 BUGWK62974 WIN LINUX : svg/text/text-text-05-t.svg = IMAGE+TEXT
@@ -2241,10 +2234,6 @@ BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PAS
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
-// Fixed only on Mac
-// This test has not landed yet, though the fix has.
-//BUGWK41968 LINUX WIN : svg/hittest/svg-rect-hit.html = TEXT
-
 // Need to support DeviceMotion.
 BUGCR51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
@@ -2489,14 +2478,6 @@ BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
-
-// Started to ASSERT at some point at or after WK r80582
-// see BUGCR75426 list
-
-// New test, added in http://trac.webkit.org/changeset/70814.
-//
-// We're passing it but possibly by sheer luck. Needs investigation.
-//BUGCR61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
 
 // These tests started failing presumably after r70850
 BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
@@ -2758,10 +2739,8 @@ BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 
-// Failing after r75768
-// BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
-// Times out after r89503
-BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT TIMEOUT
+// Failing after r75768, times out after r89503
+BUGCR69639 BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT TIMEOUT
 
 // Behavior changed in http://trac.webkit.org/changeset/76180,
 // need to investigate
@@ -2902,8 +2881,6 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
 BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
-// BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
-
 // Slight differences.  Need rebaseline?
 BUGCR78999 WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
 BUGCR78999 MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
@@ -2925,7 +2902,6 @@ BUGWK54322 SNOWLEOPARD : fast/canvas/set-colors.html = TEXT
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
-//BUGWK54322 SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
@@ -3500,8 +3476,6 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEX
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
-// Commented because of BUGCR81605
-//BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 
 // Looks like some uninitialized memory at the bottom.
 BUGWK60103 : fast/replaced/border-radius-clip.html = IMAGE TIMEOUT IMAGE+TEXT
@@ -3538,12 +3512,9 @@ BUGDPRANKE LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT 
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
 
-BUGDPRANKE WIN: http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
-BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
-
-BUGDPRANKE WIN : http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html = TIMEOUT PASS
+BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = TIMEOUT PASS
+BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = TIMEOUT PASS
 BUGDPRANKE MAC LINUX DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
-BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
@@ -3560,7 +3531,6 @@ BUGWK60125 : fast/files/create-blob-url-crash.html = CRASH PASS
 
 // flakiness
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
-
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
@@ -3577,7 +3547,6 @@ BUGWK60115 WIN : transitions/svg-text-shadow-transition.html = IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
-BUGWK60119 LINUX SNOWLEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = TIMEOUT PASS
 
 BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = TEXT PASS
@@ -3597,9 +3566,6 @@ BUGDPRANKE WIN CPU DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 BUGDPRANKE WIN CPU DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
-
-// Flakiness
-BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 
 BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
 
@@ -3895,9 +3861,6 @@ BUGWK62754 WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+
 // Probably related to the above, but just flaky (esp. in debug)
 BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT PASS TEXT
 
-// New test.
-BUGWK61768 : fast/forms/textfield-overflow-by-value-update.html = FAIL
-
 // Has been crashing since WebKit r88279-88297.
 BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 
@@ -3951,17 +3914,13 @@ BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = 
 // We now follow the ES5 spec with regards to the semantics of the receiver
 // given through eval to builtins (undefined). Test assumes that the global
 // object is given as receiver.
-// BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
-BUGRICOW : fast/js/eval-var-decl.html = TEXT
+BUGCR85394 : fast/js/eval-var-decl.html = TEXT
 
 BUGRNIWA : editing/selection/extend-inside-transforms-backward.html = FAIL PASS
 BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
 
 // This test ASSERTs in skia since it was added.
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
-
-// Caused by http://trac.webkit.org/changeset/89733.
-BUGJAPHET MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 BUGCR87732 : fast/regex/toString.html = TEXT
 
