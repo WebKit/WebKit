@@ -1,3 +1,9 @@
+2011-07-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, add the correct path to the waf build settings.
+        
+        * wx/packaging/build-win-installer.py:
+
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
         Add missing include.

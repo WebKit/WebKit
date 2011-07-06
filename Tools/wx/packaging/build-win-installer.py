@@ -34,7 +34,7 @@ from subprocess import *
 import wx
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(script_dir, "..", "build")))
+sys.path.append(os.path.abspath(os.path.join(script_dir, "..", "..", "waf", "build")))
 
 from build_utils import *
 
