@@ -30,10 +30,42 @@
 
 #include "utils.h"
 #include <QRegExp>
+#include <QEvent>
+#include <QMouseEvent>
+#include <QTouchEvent>
+
+extern Q_GUI_EXPORT void qt_translateRawTouchEvent(QWidget*, QTouchEvent::DeviceType, const QList<QTouchEvent::TouchPoint>&);
+
+static inline bool isTouchEvent(const QEvent* event)
+{
+    switch (event->type()) {
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchEnd:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static inline bool isMouseEvent(const QEvent* event)
+{
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseMove:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseButtonDblClick:
+        return true;
+    default:
+        return false;
+    }
+}
 
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     : QApplication(argc, argv, QApplication::GuiServer)
     , m_windowOptions()
+    , m_spontaneousTouchEventReceived(false)
+    , m_sendingFakeTouchEvent(false)
     , m_isRobotized(false)
     , m_robotTimeoutSeconds(0)
     , m_robotExtraTimeSeconds(0)
@@ -43,6 +75,53 @@ MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     setApplicationVersion("0.1");
 
     handleUserOptions();
+}
+
+bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
+{
+    // We try to be smart, if we received real touch event, we are probably on a device
+    // with touch screen, and we should not have touch mocking.
+
+    if (!event->spontaneous() || m_sendingFakeTouchEvent || m_spontaneousTouchEventReceived)
+        return QApplication::notify(target, event);
+    if (isTouchEvent(event) && static_cast<QTouchEvent*>(event)->deviceType() == QTouchEvent::TouchScreen) {
+        m_spontaneousTouchEventReceived = true;
+        return QApplication::notify(target, event);
+    }
+    if (isMouseEvent(event)) {
+        const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() != Qt::LeftButton && mouseEvent->buttons() != Qt::LeftButton)
+            return QApplication::notify(target, event);
+
+        QTouchEvent::TouchPoint touchPoint;
+        touchPoint.setScreenPos(mouseEvent->globalPos());
+        touchPoint.setPos(mouseEvent->pos());
+        touchPoint.setId(0);
+
+        switch (mouseEvent->type()) {
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonDblClick:
+            touchPoint.setState(Qt::TouchPointPressed);
+            break;
+        case QEvent::MouseMove:
+            touchPoint.setState(Qt::TouchPointMoved);
+            break;
+        case QEvent::MouseButtonRelease:
+            touchPoint.setState(Qt::TouchPointReleased);
+            break;
+        default:
+            Q_ASSERT(false);
+            break;
+        }
+
+        QList<QTouchEvent::TouchPoint> touchPoints;
+        touchPoints.append(touchPoint);
+        m_sendingFakeTouchEvent = true;
+        qt_translateRawTouchEvent(0, QTouchEvent::TouchScreen, touchPoints);
+        m_sendingFakeTouchEvent = false;
+    }
+
+    return QApplication::notify(target, event);
 }
 
 void MiniBrowserApplication::handleUserOptions()

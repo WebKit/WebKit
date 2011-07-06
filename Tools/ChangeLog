@@ -1,3 +1,23 @@
+2011-07-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt] [WK2] Add touch mocking to Qt's MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=63995
+
+        Reviewed by Andreas Kling.
+
+        The mouse events are intercepted through QCoreApplication::notify(),
+        and fake touch events are generated for mouse events when necessary.
+
+        If touch events are received from the platform, we assume the current
+        hardware has a touch screen and we stop generating fake events.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (isTouchEvent):
+        (isMouseEvent):
+        (MiniBrowserApplication::MiniBrowserApplication):
+        (MiniBrowserApplication::notify):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+
 2011-07-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

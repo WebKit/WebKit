@@ -67,10 +67,14 @@ public:
 
     WindowOptions m_windowOptions;
 
+    virtual bool notify(QObject*, QEvent*);
+
 private:
     void handleUserOptions();
 
 private:
+    bool m_spontaneousTouchEventReceived;
+    bool m_sendingFakeTouchEvent;
     bool m_isRobotized;
     int m_robotTimeoutSeconds;
     int m_robotExtraTimeSeconds;
