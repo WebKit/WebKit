@@ -1,3 +1,12 @@
+2011-07-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Launch Xvfb (mostly) the same way we were launching it in the
+        bots, for maximum compatibility.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+
 2011-07-06  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Split Qt API into two different web views (touch and desktop)

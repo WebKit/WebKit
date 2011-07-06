@@ -41,7 +41,7 @@ _log = logging.getLogger("webkitpy.layout_tests.port.gtk")
 class GtkDriver(webkit.WebKitDriver):
     def start(self):
         display_id = self._worker_number + 1
-        run_xvfb = ["Xvfb", ":%d" % (display_id)]
+        run_xvfb = ["Xvfb", ":%d -screen 0 800x600x24 -nolisten tcp" % (display_id)]
         self._xvfb_process = subprocess.Popen(run_xvfb)
         environment = self._port.setup_environ_for_server()
         environment['DISPLAY'] = ":%d" % (display_id)
