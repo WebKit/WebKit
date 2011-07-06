@@ -147,6 +147,8 @@ public:
     
     void didMoveOnscreen();
     void willMoveOffscreen();
+
+    void clearBackingForAllLayers();
     
     void didStartAcceleratedAnimation(CSSPropertyID);
     
@@ -208,6 +210,8 @@ private:
 
     // Make or destroy the backing for this layer; returns true if backing changed.
     bool updateBacking(RenderLayer*, CompositingChangeRepaint shouldRepaint);
+
+    void clearBackingForLayerIncludingDescendants(RenderLayer*);
 
     // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
     void recursiveRepaintLayerRect(RenderLayer* layer, const IntRect& rect);

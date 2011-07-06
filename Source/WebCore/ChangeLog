@@ -1,3 +1,23 @@
+2011-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Have RenderLayerCompositor take care of clearing backing store when entering the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=64018
+
+        Reviewed by Joseph Pecoraro.
+
+        Move responsibility for tearing down all RenderLayer backing stores from
+        RenderLayer itself to RenderLayerCompositor, since RenderLayerCompositor 
+        manages backing store creation and destruction in general.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clearBackingStores):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::clearBackingForLayerIncludingDescendants):
+        (WebCore::RenderLayerCompositor::clearBackingForAllLayers):
+        * rendering/RenderLayerCompositor.h:
+
 2011-07-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [Performance] Only call sendContentResizeNotification when the scrollbar actually did change

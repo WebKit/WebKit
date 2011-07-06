@@ -1168,6 +1168,23 @@ void RenderLayerCompositor::willMoveOffscreen()
     detachRootPlatformLayer();
 }
 
+void RenderLayerCompositor::clearBackingForLayerIncludingDescendants(RenderLayer* layer)
+{
+    if (!layer)
+        return;
+
+    if (layer->isComposited())
+        layer->clearBacking();
+    
+    for (RenderLayer* currLayer = layer->firstChild(); currLayer; currLayer = currLayer->nextSibling())
+        clearBackingForLayerIncludingDescendants(currLayer);
+}
+
+void RenderLayerCompositor::clearBackingForAllLayers()
+{
+    clearBackingForLayerIncludingDescendants(m_renderView->layer());
+}
+
 void RenderLayerCompositor::updateRootLayerPosition()
 {
     if (m_rootPlatformLayer) {

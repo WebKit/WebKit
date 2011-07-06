@@ -640,7 +640,7 @@ void FrameView::clearBackingStores()
     RenderLayerCompositor* compositor = root->compositor();
     ASSERT(compositor->inCompositingMode());
     compositor->enableCompositingMode(false);
-    root->layer()->clearBackingIncludingDescendants();
+    compositor->clearBackingForAllLayers();
 }
 
 void FrameView::restoreBackingStores()
