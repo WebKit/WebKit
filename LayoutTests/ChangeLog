@@ -1,3 +1,31 @@
+2011-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r90275): 18 editing tests failing on Windows 7 Release (WebKit2 Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=64019
+
+        These tests just need rebaselines. While Windows WebKit port ignores editing delegate dumps, Windows WebKit2 does not.
+        Since rebaselined in r90275 should only affect Mac port, we need to undo rebaselines done in r90275 for Windows port.
+
+        * platform/win/editing/deleting/delete-br-002-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-002-expected.txt.
+        * platform/win/editing/deleting/delete-br-004-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-004-expected.txt.
+        * platform/win/editing/deleting/delete-br-005-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-005-expected.txt.
+        * platform/win/editing/deleting/delete-br-006-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-006-expected.txt.
+        * platform/win/editing/deleting/delete-br-009-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-009-expected.txt.
+        * platform/win/editing/deleting/delete-br-010-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/delete-br-010-expected.txt.
+        * platform/win/editing/inserting/insert-3800346-fix-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-3800346-fix-expected.txt.
+        * platform/win/editing/inserting/insert-at-end-01-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-at-end-01-expected.txt.
+        * platform/win/editing/inserting/insert-at-end-02-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-at-end-02-expected.txt.
+        * platform/win/editing/inserting/insert-div-010-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-div-010-expected.txt.
+        * platform/win/editing/inserting/insert-div-013-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-div-013-expected.txt.
+        * platform/win/editing/inserting/insert-div-015-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-div-015-expected.txt.
+        * platform/win/editing/inserting/insert-div-019-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-div-019-expected.txt.
+        * platform/win/editing/inserting/insert-paragraph-03-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/insert-paragraph-03-expected.txt.
+        * platform/win/editing/selection/4932260-1-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/4932260-1-expected.txt.
+        * platform/win/editing/selection/move-by-word-001-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/move-by-word-001-expected.txt.
+        * platform/win/editing/selection/triple-click-in-pre-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/triple-click-in-pre-expected.txt.
+        * platform/win/editing/style: Added.
+        * platform/win/editing/style/create-block-for-style-008-expected.txt: Copied from LayoutTests/platform/mac/editing/style/create-block-for-style-008-expected.txt.
+
 2011-07-06  Mihai Parparita  <mihaip@chromium.org>
 
         Remove Chromium Mac failing expectation for fast/text/font-size-zero.html
