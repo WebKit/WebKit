@@ -43,3 +43,18 @@ test("BuilderResults.unexpectedFailures", 1, function() {
         }
     });
 });
+
+test("unexpectedFailuresByTest", 1, function() {
+    var builderResults = new results.BuilderResults(kExampleResultsJSON);
+    var unexpectedFailuresByTest = results.unexpectedFailuresByTest({
+        "Mock Builder": builderResults
+    });
+    deepEqual(unexpectedFailuresByTest, {
+        "userscripts/another-test.html": {
+            "Mock Builder": {
+                "expected": "PASS",
+                "actual": "TEXT"
+            }
+        }
+    });
+});

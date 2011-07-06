@@ -45,14 +45,29 @@ function isResultNode(node)
     return !!node.actual;
 }
 
-results.BuilderResults = function(m_resultsJSON)
+results.BuilderResults = function(resultsJSON)
 {
-    this.m_resultsJSON = m_resultsJSON;
-}
+    this.m_resultsJSON = resultsJSON;
+};
 
-results.BuilderResults.prototype.unexpectedFailures = function() {
+results.BuilderResults.prototype.unexpectedFailures = function()
+{
     return base.filterTree(this.m_resultsJSON.tests, isResultNode, isUnexpectedFailure);
-}
+};
+
+results.unexpectedFailuresByTest = function(resultsByBuilder)
+{
+    unexpectedFailures = {};
+
+    $.each(resultsByBuilder, function(buildName, builderResults) {
+        $.each(builderResults.unexpectedFailures(), function(testName, resultNode) {
+            unexpectedFailures[testName] = unexpectedFailures[testName] || {};
+            unexpectedFailures[testName][buildName] = resultNode;
+        });
+    });
+
+    return unexpectedFailures;
+};
 
 function resultsURL(builderName, name)
 {
@@ -72,6 +87,20 @@ results.fetchResultsForBuilder = function(builderName, onsuccess)
             onsuccess(new results.BuilderResults(data));
         }
     });
-}
+};
+
+results.fetchResultsByBuilder = function(builderNameList, onsuccess)
+{
+    var resultsByBuilder = {}
+    var requestsInFlight = builderNameList.length;
+    $.each(builderNameList, function(index, builderName) {
+        results.fetchResultsForBuilder(builderName, function(builderResults) {
+            resultsByBuilder[builderName] = builderResults;
+            --requestsInFlight;
+            if (!requestsInFlight)
+                onsuccess(resultsByBuilder);
+        });
+    });
+};
 
 })();

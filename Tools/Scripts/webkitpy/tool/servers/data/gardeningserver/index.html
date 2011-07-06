@@ -10,7 +10,6 @@ body {
 h1 {
   margin: 0px;
   padding: 3px;
-  background-color: #EFF5FB;
 }
 .butterbar {
   width: 500px;
@@ -25,26 +24,36 @@ h1 {
 .butterbar .hide {
   float: right;
 }
+.toolbar {
+  float: right;
+}
+.failures {
+  padding: 3px;
+}
+.failures .test {
+  margin: 6px 3px;
+}
+.failures .builders {
+  color: #888;
+}
+.failures .builderName, .failures .actual {
+  float: left;
+  width: 200px;
+}
 </style>
 </head>
 <body>
 <div class="butterbar"><span class="status">Loading...</span> <a class="hide" href="#">Dismiss</a></div>
+<div class="toolbar">
+  <button class="quit">Quit</button>
+</div>
 <h1>Garden-O-Matic</h1>
-<ul>
-  <li><button class="quit">Quit</button></li>
-</ul>
+<div class="failures"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+<script src="config.js"></script>
 <script src="base.js"></script>
 <script src="results.js"></script>
+<script src="ui.js"></script>
 <script src="main.js"></script>
-<script>
-function logUnexpectedFailures(builderResults) {
-    unexpectedFailures = builderResults.unexpectedFailures();
-    console.log('== Unexpected Failures ==')
-    console.log(unexpectedFailures);
-}
-
-results.fetchResultsForBuilder('Webkit Linux', logUnexpectedFailures);
-</script>
 </body>
 </html>
