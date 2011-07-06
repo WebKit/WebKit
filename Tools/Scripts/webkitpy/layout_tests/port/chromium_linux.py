@@ -94,6 +94,11 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
+        if needs_http:
+            if self.get_option('use_apache'):
+                result = self._check_apache_install() and result
+            else:
+                result = self._check_lighttpd_install() and result
         result = self.check_wdiff() and result
 
         if not result:

@@ -135,6 +135,7 @@ class Port(object):
         self._test_configuration = None
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
+        self.set_option_default('use_apache', self._default_to_apache())
 
     def executive(self):
         return self._executive
@@ -221,7 +222,7 @@ class Port(object):
         return True
 
     def check_httpd(self):
-        if self._uses_apache():
+        if self.get_option('use_apache'):
             path = self._path_to_apache()
         else:
             path = self._path_to_lighttpd()
@@ -644,7 +645,7 @@ class Port(object):
         Ports can stub this out if they don't need a web server to be running."""
         assert not self._http_server, 'Already running an http server.'
 
-        if self._uses_apache():
+        if self.get_option('use_apache'):
             server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory())
         else:
             server = http_server.Lighttpd(self, self.results_directory())
@@ -833,7 +834,10 @@ class Port(object):
     def _webkit_build_directory(self, args):
         return self._config.build_directory(args[0])
 
-    def _uses_apache(self):
+    def _default_to_apache(self):
+        """Override if the port should use LigHTTPd instead of Apache by default.
+
+        Ports that override start_http_server() ignore this method."""
         return True
 
     def _path_to_apache(self):

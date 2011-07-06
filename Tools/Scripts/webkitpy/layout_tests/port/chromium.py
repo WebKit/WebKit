@@ -118,8 +118,6 @@ class ChromiumPort(Port):
         return result
 
     def check_sys_deps(self, needs_http):
-        result = super(ChromiumPort, self).check_sys_deps(needs_http)
-
         cmd = [self._path_to_driver(), '--check-layout-test-sys-deps']
 
         local_error = executive.ScriptError()
@@ -134,7 +132,7 @@ class ChromiumPort(Port):
             _log.error('')
             _log.error(output)
             return False
-        return result
+        return True
 
     def check_image_diff(self, override_step=None, logging=True):
         image_diff_path = self._path_to_image_diff()
