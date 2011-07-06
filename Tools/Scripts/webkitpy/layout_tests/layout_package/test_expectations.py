@@ -328,7 +328,6 @@ class TestExpectations:
     def is_rebaselining(self, test):
         return self.has_modifier(test, REBASELINE)
 
-
     def _handle_any_read_errors(self):
         if len(self._errors) or len(self._non_fatal_errors):
             _log.error("FAILURES FOR %s" % str(self._test_config))
@@ -347,12 +346,10 @@ class TestExpectations:
         expectations = set([PASS])
         options = []
         modifiers = []
-        num_matches = 0
         if self._full_test_list:
             for test in self._full_test_list:
                 if not test in self._test_list_paths:
-                    self._add_test(test, modifiers, num_matches, expectations,
-                                   options, overrides_allowed=False)
+                    self._add_test(test, modifiers, expectations, options, overrides_allowed=False)
 
     def _dict_of_sets(self, strings_to_constants):
         """Takes a dict of strings->constants and returns a dict mapping
@@ -495,8 +492,7 @@ class TestExpectations:
             tests = self._expand_tests(test_list_path)
 
         modifiers = [o for o in options if o in self.MODIFIERS]
-        self._add_tests(tests, expectations, test_list_path, lineno,
-                        modifiers, num_matches, options, overrides_allowed)
+        self._add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
 
     def _get_options_list(self, listString):
         return [part.strip().lower() for part in listString.strip().split(' ')]
@@ -597,18 +593,14 @@ class TestExpectations:
     def _add_tests(self, tests, expectations, test_list_path, lineno,
                    modifiers, num_matches, options, overrides_allowed):
         for test in tests:
-            if self._already_seen_better_match(test, test_list_path,
-                num_matches, lineno, overrides_allowed):
+            if self._already_seen_better_match(test, test_list_path, num_matches, lineno, overrides_allowed):
                 continue
 
             self._clear_expectations_for_test(test, test_list_path)
-            self._test_list_paths[test] = (self._fs.normpath(test_list_path),
-                num_matches, lineno)
-            self._add_test(test, modifiers, num_matches, expectations, options,
-                           overrides_allowed)
+            self._test_list_paths[test] = (self._fs.normpath(test_list_path), num_matches, lineno)
+            self._add_test(test, modifiers, expectations, options, overrides_allowed)
 
-    def _add_test(self, test, modifiers, num_matches, expectations, options,
-                  overrides_allowed):
+    def _add_test(self, test, modifiers, expectations, options, overrides_allowed):
         """Sets the expected state for a given test.
 
         This routine assumes the test has not been added before. If it has,
@@ -618,7 +610,6 @@ class TestExpectations:
         Args:
           test: test to add
           modifiers: sequence of modifier keywords ('wontfix', 'slow', etc.)
-          num_matches: number of modifiers that matched the configuration
           expectations: sequence of expectations (PASS, IMAGE, etc.)
           options: sequence of keywords and bug identifiers.
           overrides_allowed: whether we're parsing the regular expectations
