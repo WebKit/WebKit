@@ -156,7 +156,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 }
 
 bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
-    const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction action)
+    const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     if (action != HitTestForeground)
         return false;

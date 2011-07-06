@@ -728,7 +728,7 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
     return enclosingIntRect(textRect);
 }
 
-bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int, int)
+bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int, int)
 {
     // FIXME: integrate with InlineTextBox::nodeAtPoint better.
     ASSERT(!isLineBreak());
@@ -740,9 +740,9 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
             || (hitRules.canHitFill && (renderer()->style()->svgStyle()->hasFill() || !hitRules.requireFill))) {
             FloatPoint boxOrigin(x(), y());
             boxOrigin.moveBy(accumulatedOffset);
-            FloatRect rect(boxOrigin, IntSize(width(), height()));
+            FloatRect rect(boxOrigin, size());
             if (rect.intersects(result.rectForPoint(pointInContainer))) {
-                renderer()->updateHitTestResult(result, pointInContainer - toSize(accumulatedOffset));
+                renderer()->updateHitTestResult(result, pointInContainer - toLayoutSize(accumulatedOffset));
                 if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
                     return true;
              }

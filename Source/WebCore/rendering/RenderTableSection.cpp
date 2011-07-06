@@ -1141,7 +1141,7 @@ void RenderTableSection::splitColumn(int pos, int first)
 }
 
 // Hit Testing
-bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction action)
+bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     // If we have no children then we have nothing to do.
     if (!firstChild())
@@ -1149,7 +1149,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     // Table sections cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
-    IntPoint adjustedLocation = accumulatedOffset + location();
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     if (hasOverflowClip() && !overflowClipRect(adjustedLocation).intersects(result.rectForPoint(pointInContainer)))
         return false;
@@ -1161,9 +1161,9 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-                IntPoint childPoint = flipForWritingMode(toRenderBox(child), adjustedLocation, ParentToChildFlippingAdjustment);
+                LayoutPoint childPoint = flipForWritingMode(toRenderBox(child), adjustedLocation, ParentToChildFlippingAdjustment);
                 if (child->nodeAtPoint(request, result, pointInContainer, childPoint, action)) {
-                    updateHitTestResult(result, toPoint(pointInContainer - childPoint));
+                    updateHitTestResult(result, toLayoutPoint(pointInContainer - childPoint));
                     return true;
                 }
             }
@@ -1171,7 +1171,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
         return false;
     }
 
-    IntPoint location = pointInContainer - toSize(adjustedLocation);
+    LayoutPoint location = pointInContainer - toLayoutSize(adjustedLocation);
     if (style()->isFlippedBlocksWritingMode()) {
         if (style()->isHorizontalWritingMode())
             location.setY(height() - location.y());
@@ -1179,7 +1179,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             location.setX(width() - location.x());
     }
 
-    int offsetInColumnDirection = style()->isHorizontalWritingMode() ? location.y() : location.x();
+    LayoutUnit offsetInColumnDirection = style()->isHorizontalWritingMode() ? location.y() : location.x();
     // Find the first row that starts after offsetInColumnDirection.
     unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), offsetInColumnDirection) - m_rowPos.begin();
     if (nextRow == m_rowPos.size())
@@ -1187,7 +1187,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     // Now set hitRow to the index of the hit row, or 0.
     unsigned hitRow = nextRow > 0 ? nextRow - 1 : 0;
 
-    Vector<int>& columnPos = table()->columnPositions();
+    Vector<LayoutUnit>& columnPos = table()->columnPositions();
     int offsetInRowDirection = style()->isHorizontalWritingMode() ? location.x() : location.y();
     if (!style()->isLeftToRightDirection())
         offsetInRowDirection = columnPos[columnPos.size() - 1] - offsetInRowDirection;
@@ -1205,9 +1205,9 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     for (int i = current.cells.size() - 1; i >= 0; --i) {
         RenderTableCell* cell = current.cells[i];
-        IntPoint cellPoint = flipForWritingMode(cell, adjustedLocation, ParentToChildFlippingAdjustment);
+        LayoutPoint cellPoint = flipForWritingMode(cell, adjustedLocation, ParentToChildFlippingAdjustment);
         if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
-            updateHitTestResult(result, toPoint(pointInContainer - cellPoint));
+            updateHitTestResult(result, toLayoutPoint(pointInContainer - cellPoint));
             return true;
         }
     }

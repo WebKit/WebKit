@@ -436,17 +436,17 @@ void RenderSVGRoot::updateCachedBoundaries()
     m_repaintBoundingBox.inflate(borderAndPaddingWidth());
 }
 
-bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    IntPoint pointInParent = pointInContainer - toSize(accumulatedOffset);
-    IntPoint pointInBorderBox = pointInParent - parentOriginToBorderBox();
+    LayoutPoint pointInParent = pointInContainer - toLayoutSize(accumulatedOffset);
+    LayoutPoint pointInBorderBox = pointInParent - parentOriginToBorderBox();
 
     // Note: For now, we're ignoring hits to border and padding for <svg>
-    IntPoint pointInContentBox = pointInBorderBox - borderOriginToContentBox();
+    LayoutPoint pointInContentBox = pointInBorderBox - borderOriginToContentBox();
     if (!contentBoxRect().contains(pointInContentBox))
         return false;
 
-    IntPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
+    LayoutPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {

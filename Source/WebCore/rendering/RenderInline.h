@@ -117,7 +117,7 @@ private:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual bool requiresLayer() const { return isRelPositioned() || isTransparent() || hasMask(); }
 

@@ -138,7 +138,7 @@ private:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     bool ensureRows(int);
     void clearGrid();

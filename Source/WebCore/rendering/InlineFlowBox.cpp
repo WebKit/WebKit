@@ -898,9 +898,9 @@ void InlineFlowBox::setOverflowFromLogicalRects(const IntRect& logicalLayoutOver
     setVisualOverflow(visualOverflow, lineTop, lineBottom);
 }
 
-bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom)
+bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom)
 {
-    IntRect overflowRect(visualOverflowRect(lineTop, lineBottom));
+    LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
     flipForWritingMode(overflowRect);
     overflowRect.moveBy(accumulatedOffset);
     if (!overflowRect.intersects(result.rectForPoint(pointInContainer)))
@@ -909,36 +909,36 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Check children first.
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
         if ((curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) && curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, pointInContainer - toSize(accumulatedOffset));
+            renderer()->updateHitTestResult(result, pointInContainer - toLayoutSize(accumulatedOffset));
             return true;
         }
     }
 
     // Now check ourselves. Pixel snap hit testing.
-    IntRect frameRect = roundedFrameRect();
-    int minX = frameRect.x();
-    int minY = frameRect.y();
-    int width = frameRect.width();
-    int height = frameRect.height();
+    LayoutRect frameRect = roundedFrameRect();
+    LayoutUnit minX = frameRect.x();
+    LayoutUnit minY = frameRect.y();
+    LayoutUnit width = frameRect.width();
+    LayoutUnit height = frameRect.height();
 
     // Constrain our hit testing to the line top and bottom if necessary.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
     if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
         RootInlineBox* rootBox = root();
-        int& top = isHorizontal() ? minY : minX;
-        int& logicalHeight = isHorizontal() ? height : width;
-        int bottom = min(rootBox->lineBottom(), top + logicalHeight);
+        LayoutUnit& top = isHorizontal() ? minY : minX;
+        LayoutUnit& logicalHeight = isHorizontal() ? height : width;
+        LayoutUnit bottom = min(rootBox->lineBottom(), top + logicalHeight);
         top = max(rootBox->lineTop(), top);
         logicalHeight = bottom - top;
     }
     
     // Move x/y to our coordinates.
-    IntRect rect(minX, minY, width, height);
+    LayoutRect rect(minX, minY, width, height);
     flipForWritingMode(rect);
     rect.moveBy(accumulatedOffset);
 
     if (visibleToHitTesting() && rect.intersects(result.rectForPoint(pointInContainer))) {
-        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - toSize(accumulatedOffset))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
+        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - toLayoutSize(accumulatedOffset))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
             return true;
     }

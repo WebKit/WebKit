@@ -345,16 +345,16 @@ bool InlineTextBox::isLineBreak() const
     return renderer()->isBR() || (renderer()->style()->preserveNewline() && len() == 1 && (*textRenderer()->text())[start()] == '\n');
 }
 
-bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int /* lineTop */, int /*lineBottom*/)
+bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int /* lineTop */, int /*lineBottom*/)
 {
     if (isLineBreak())
         return false;
 
     FloatPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.moveBy(accumulatedOffset);
-    FloatRect rect(boxOrigin, IntSize(width(), height()));
+    FloatRect rect(boxOrigin, size());
     if (m_truncation != cFullTruncation && visibleToHitTesting() && rect.intersects(result.rectForPoint(pointInContainer))) {
-        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - toSize(accumulatedOffset)));
+        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - toLayoutSize(accumulatedOffset)));
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
             return true;
     }

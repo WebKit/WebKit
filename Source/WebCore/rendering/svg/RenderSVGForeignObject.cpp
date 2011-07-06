@@ -150,11 +150,10 @@ bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, Hit
     if (SVGRenderSupport::isOverflowHidden(this) && !m_viewport.contains(localPoint))
         return false;
 
-    IntPoint roundedLocalPoint = roundedIntPoint(localPoint);
-    return RenderBlock::nodeAtPoint(request, result, roundedLocalPoint, IntPoint(), hitTestAction);
+    return RenderBlock::nodeAtPoint(request, result, roundedLayoutPoint(localPoint), LayoutPoint(), hitTestAction);
 }
 
-bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, const IntPoint&, HitTestAction)
+bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint&, const LayoutPoint&, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;

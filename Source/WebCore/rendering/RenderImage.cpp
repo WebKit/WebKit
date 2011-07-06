@@ -394,7 +394,7 @@ HTMLMapElement* RenderImage::imageMap() const
     return i ? i->treeScope()->getImageMap(i->fastGetAttribute(usemapAttr)) : 0;
 }
 
-bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     HitTestResult tempResult(result.point(), result.topPadding(), result.rightPadding(), result.bottomPadding(), result.leftPadding());
     bool inside = RenderReplaced::nodeAtPoint(request, tempResult, pointInContainer, accumulatedOffset, hitTestAction);
@@ -403,8 +403,8 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         if (HTMLMapElement* map = imageMap()) {
             IntRect contentBox = contentBoxRect();
             float zoom = style()->effectiveZoom();
-            int mapX = lroundf((pointInContainer.x() - accumulatedOffset.x() - this->x() - contentBox.x()) / zoom);
-            int mapY = lroundf((pointInContainer.y() - accumulatedOffset.y() - this->y() - contentBox.y()) / zoom);
+            LayoutUnit mapX = roundedLayoutUnit((pointInContainer.x() - accumulatedOffset.x() - this->x() - contentBox.x()) / zoom);
+            LayoutUnit mapY = roundedLayoutUnit((pointInContainer.y() - accumulatedOffset.y() - this->y() - contentBox.y()) / zoom);
             if (map->mapMouseEvent(mapX, mapY, contentBox.size(), tempResult))
                 tempResult.setInnerNonSharedNode(node());
         }

@@ -220,7 +220,7 @@ private:
     virtual void paintMask(PaintInfo&, const IntPoint&);
     virtual void layout();
     virtual void computePreferredLogicalWidths();
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     
     virtual int firstLineBoxBaseline() const;
 

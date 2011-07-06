@@ -81,7 +81,7 @@ private:
     virtual int minimumReplacedHeight() const;
 
     virtual void notifyFinished(CachedResource*);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual LayoutUnit computeReplacedLogicalHeight() const;

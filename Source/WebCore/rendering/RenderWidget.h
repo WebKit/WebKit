@@ -67,7 +67,7 @@ private:
 
     virtual void destroy();
     virtual void setSelectionState(SelectionState);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     virtual void setOverlapTestResult(bool);
 
     bool setWidgetGeometry(const IntRect&, const IntSize&);

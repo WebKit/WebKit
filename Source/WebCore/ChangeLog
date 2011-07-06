@@ -1,3 +1,90 @@
+2011-07-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+        
+        Switch nodeAtPoint to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63663
+
+        No new tests, no functionality changes.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/InlineTextBox.h:
+        * rendering/LayoutTypes.h:
+        (WebCore::toLayoutSize):
+        (WebCore::toLayoutPoint):
+        (WebCore::roundedLayoutPoint):
+        (WebCore::roundedLayoutUnit):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::nodeAtPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        (WebCore::RenderText::nodeAtPoint):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+        * rendering/RenderWidget.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/RootInlineBox.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        (WebCore::RenderSVGForeignObject::nodeAtPoint):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::nodeAtPoint):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        * rendering/svg/SVGInlineTextBox.h:
+
 2011-07-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Add compositor texture manager soft limits and lost focus reclaiming

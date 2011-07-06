@@ -111,7 +111,7 @@ public:
 
 protected:
     virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom);
 
 public:
     RenderText* textRenderer() const;

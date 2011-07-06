@@ -201,7 +201,7 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
     return false;
 }
 
-bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, const IntPoint&, HitTestAction)
+bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint&, const LayoutPoint&, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;

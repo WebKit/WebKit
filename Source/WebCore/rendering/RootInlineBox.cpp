@@ -189,11 +189,11 @@ void RootInlineBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
 #endif
 }
 
-bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom)
+bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom)
 {
     if (hasEllipsisBox() && visibleToHitTesting()) {
         if (ellipsisBox()->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, pointInContainer - toSize(accumulatedOffset));
+            renderer()->updateHitTestResult(result, pointInContainer - toLayoutSize(accumulatedOffset));
             return true;
         }
     }

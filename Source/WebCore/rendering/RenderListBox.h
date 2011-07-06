@@ -96,7 +96,7 @@ private:
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     // ScrollableArea interface.
     virtual int scrollSize(ScrollbarOrientation orientation) const;

@@ -749,23 +749,23 @@ LayoutUnit RenderBox::computeContentBoxLogicalHeight(LayoutUnit height) const
 }
 
 // Hit Testing
-bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction action)
+bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
-    IntPoint adjustedLocation = accumulatedOffset + location();
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check kids first.
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         if (!child->hasLayer() && child->nodeAtPoint(request, result, pointInContainer, adjustedLocation, action)) {
-            updateHitTestResult(result, pointInContainer - toSize(adjustedLocation));
+            updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
             return true;
         }
     }
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    IntRect boundsRect = IntRect(adjustedLocation, size());
+    LayoutRect boundsRect(adjustedLocation, size());
     if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
-        updateHitTestResult(result, pointInContainer - toSize(adjustedLocation));
+        updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
             return true;
     }

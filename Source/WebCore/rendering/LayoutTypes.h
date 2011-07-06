@@ -46,9 +46,24 @@ typedef IntPoint LayoutPoint;
 typedef IntSize LayoutSize;
 typedef IntRect LayoutRect;
 
-inline LayoutPoint roundedLayoutPoint(FloatPoint point)
+inline LayoutPoint roundedLayoutPoint(const FloatPoint& p)
 {
-    return roundedIntPoint(point);
+    return roundedIntPoint(p);
+}
+
+inline LayoutUnit roundedLayoutUnit(float value)
+{
+    return lroundf(value);
+}
+
+inline LayoutSize toLayoutSize(const LayoutPoint& p)
+{
+    return LayoutSize(p.x(), p.y());
+}
+
+inline LayoutPoint toLayoutPoint(const LayoutSize& p)
+{
+    return LayoutPoint(p.width(), p.height());
 }
 
 } // namespace WebCore

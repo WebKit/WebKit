@@ -101,24 +101,24 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const IntPoint& paint
     context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + paintOffset.x(), y() + paintOffset.y() + top), h, c, style->colorSpace());
 }
 
-bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom)
+bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom)
 {
-    IntPoint adjustedLocation = accumulatedOffset + roundedIntPoint(topLeft());
+    LayoutPoint adjustedLocation = accumulatedOffset + roundedIntPoint(topLeft());
 
     // Hit test the markup box.
     if (m_markupBox) {
         RenderStyle* style = m_renderer->style(m_firstLine);
-        int mtx = adjustedLocation.x() + m_logicalWidth - m_markupBox->x();
-        int mty = adjustedLocation.y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
+        LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - m_markupBox->x();
+        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
         if (m_markupBox->nodeAtPoint(request, result, pointInContainer, IntPoint(mtx, mty), lineTop, lineBottom)) {
             renderer()->updateHitTestResult(result, pointInContainer - IntSize(mtx, mty));
             return true;
         }
     }
 
-    IntRect boundsRect = IntRect(adjustedLocation, IntSize(m_logicalWidth, m_height));
+    LayoutRect boundsRect(adjustedLocation, LayoutSize(m_logicalWidth, m_height));
     if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
-        renderer()->updateHitTestResult(result, pointInContainer - toSize(adjustedLocation));
+        renderer()->updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, boundsRect))
             return true;
     }

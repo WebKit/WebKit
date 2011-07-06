@@ -2182,7 +2182,7 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& po
     }
 }
 
-bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& /*pointInContainer*/, const IntPoint& /*accumulatedOffset*/, HitTestAction)
+bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& /*pointInContainer*/, const LayoutPoint& /*accumulatedOffset*/, HitTestAction)
 {
     return false;
 }

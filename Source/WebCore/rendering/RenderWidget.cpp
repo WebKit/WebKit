@@ -397,7 +397,7 @@ RenderWidget* RenderWidget::find(const Widget* widget)
     return widgetRendererMap().get(widget);
 }
 
-bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction action)
+bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     bool hadResult = result.innerNode();
     bool inside = RenderReplaced::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, action);
