@@ -3929,7 +3929,7 @@ BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = C
 
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
-BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRASH PASS
+BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRASH PASS MISSING
 
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
@@ -3945,3 +3945,6 @@ BUGCR88400 GPU : compositing/overflow/overflow-scroll.html = IMAGE
 // Started around WebKit r90233:r90242
 BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 BUGWK64003 MAC DEBUG : media/video-delay-load-event.html = PASS TEXT
+
+BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
+BUGWK64028 WIN LINUX : media/adopt-node-crash.html = CRASH PASS

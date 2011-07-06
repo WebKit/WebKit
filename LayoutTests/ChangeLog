@@ -1,3 +1,9 @@
+2011-07-06  Mihai Parparita  <mihaip@chromium.org>
+
+        Add Chromium flaky expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r90275): 18 editing tests failing on Windows 7 Release (WebKit2 Tests)
