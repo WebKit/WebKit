@@ -1,3 +1,12 @@
+2011-07-06  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] DumpRenderTree needs a beginDragWithFiles implementation
+        https://bugs.webkit.org/show_bug.cgi?id=50902
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip failing test added in r90438.
+
 2011-07-06  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed.

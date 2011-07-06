@@ -202,7 +202,10 @@ http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/misc/drag-not-loaded-image.html
-# CONSOLE MESSAGE: line 72: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
+
+# [Qt] DumpRenderTree needs a beginDragWithFiles implementation
+# https://bugs.webkit.org/show_bug.cgi?id=50902
+fast/forms/file-input-change-event.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata
