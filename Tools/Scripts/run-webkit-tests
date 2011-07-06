@@ -82,6 +82,17 @@ if (useNewRunWebKitTests()) {
     if (runningOnBuildBot()) {
         push(@ARGV, "--verbose");
     }
+
+    # FIXME: We need a cleaner way to do --platform handling.
+    # One problem is that webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
+    # But new-run-webkit-tests wouldn't understand --qt/--gtk if we passed it to it anyway:
+    # https://bugs.webkit.org/show_bug.cgi?id=63970
+    if (isQt()) {
+        push(@ARGV, "--platform=qt");
+    }
+    if (isGtk()) {
+        push(@ARGV, "--platform=gtk");
+    }
 }
 
 my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);
