@@ -1,3 +1,14 @@
+2011-07-06  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Add missing environment variables in NWRT
+        https://bugs.webkit.org/show_bug.cgi?id=64004
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add missing environment variables needed by the GTK+ port.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py: ditto.
+
 2011-07-06  Adam Roben  <aroben@apple.com>
 
         Make run-api-tests output intelligible on the bots

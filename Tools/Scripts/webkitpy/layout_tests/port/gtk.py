@@ -45,6 +45,9 @@ class GtkDriver(webkit.WebKitDriver):
         self._xvfb_process = subprocess.Popen(run_xvfb)
         environment = self._port.setup_environ_for_server()
         environment['DISPLAY'] = ":%d" % (display_id)
+        environment['GTK_MODULES'] = 'gail'
+        environment['LIBOVERLAY_SCROLLBAR'] = '0'
+        environment['WEBKIT_INSPECTOR_PATH'] = self._port._build_path('Programs/resources/inspector')
         self._server_process = server_process.ServerProcess(self._port,
             self._port.driver_name(), self.cmd_line(), environment)
 
