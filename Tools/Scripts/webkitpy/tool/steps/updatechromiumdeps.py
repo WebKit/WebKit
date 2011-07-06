@@ -35,13 +35,22 @@ from webkitpy.common.system.deprecated_logging import log, error
 
 
 class UpdateChromiumDEPS(AbstractStep):
+    @classmethod
+    def options(cls):
+        return AbstractStep.options() + [
+            Options.non_interactive,
+        ]
+
     # Notice that this method throws lots of exciting exceptions!
     def _fetch_last_known_good_revision(self):
         return int(urllib2.urlopen(urls.chromium_lkgr_url).read())
 
     def _validate_revisions(self, current_chromium_revision, new_chromium_revision):
         if new_chromium_revision < current_chromium_revision:
-            log("Current Chromium DEPS revision %s is newer than %s." % (current_chromium_revision, new_chromium_revision))
+            message = "Current Chromium DEPS revision %s is newer than %s." % (current_chromium_revision, new_chromium_revision)
+            if self._options.non_interactive:
+                error(message)  # Causes the process to terminate.
+            log(message)
             new_chromium_revision = self._tool.user.prompt("Enter new chromium revision (enter nothing to cancel):\n")
             try:
                 new_chromium_revision = int(new_chromium_revision)

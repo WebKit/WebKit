@@ -1,3 +1,20 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        Add roll-chromium-deps command to sheriff-bot
+        https://bugs.webkit.org/show_bug.cgi?id=64037
+
+        Reviewed by Eric Seidel.
+
+        Lo, and the DEPS were rolled on command.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/roll.py:
+        * Scripts/webkitpy/tool/commands/roll_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps.py:
+
 2011-07-06  Eric Seidel  <eric@webkit.org>
 
         Split Driver, DriverOutput and DriverInput out into a new driver.py file

@@ -37,6 +37,15 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.grammar import join_with_separators
 
+
+def _post_error_and_check_for_bug_url(tool, nicks_string, exception):
+    tool.irc().post("%s" % exception)
+    bug_id = parse_bug_id(exception.output)
+    if bug_id:
+        bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
+        tool.irc().post("%s: Ugg...  Might have created %s" % (nicks_string, bug_url))
+
+
 # FIXME: Merge with Command?
 class IRCCommand(object):
     def execute(self, nick, args, tool, sheriff):
@@ -112,10 +121,35 @@ class Rollout(IRCCommand):
             tool.irc().post("%s: Created rollout: %s" % (nicks_string, bug_url))
         except ScriptError, e:
             tool.irc().post("%s: Failed to create rollout patch:" % nicks_string)
-            tool.irc().post("%s" % e)
-            bug_id = parse_bug_id(e.output)
-            if bug_id:
-                tool.irc().post("%s: Ugg...  Might have created %s" % (nicks_string, tool.bugs.bug_url_for_bug_id(bug_id)))
+            _post_error_and_check_for_bug_url(tool, nicks_string, e)
+
+
+class RollChromiumDEPS(IRCCommand):
+    def _parse_args(self, args):
+        if not args:
+            return
+        revision = args[0].lstrip("r")
+        if not revision.isdigit():
+            return
+        return revision
+
+    def execute(self, nick, args, tool, sheriff):
+        revision = self._parse_args(args)
+
+        roll_target = "r%s" % revision if revision else "last-known good revision"
+        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
+
+        try:
+            bug_id = sheriff.post_chromium_deps_roll(revision)
+            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
+            tool.irc().post("%s: Created DEPS roll: %s" % (nick, bug_url))
+        except ScriptError, e:
+            match = re.search(r"Current Chromium DEPS revision \d+ is newer than \d+\.", e.output)
+            if match:
+                tool.irc().post("%s: %s" % (nick, match.group(0)))
+                return
+            tool.irc().post("%s: Failed to create DEPS roll:" % nick)
+            _post_error_and_check_for_bug_url(tool, nick, e)
 
 
 class Help(IRCCommand):
@@ -186,4 +220,5 @@ commands = {
     "rollout": Rollout,
     "whois": Whois,
     "create-bug": CreateBug,
+    "roll-chromium-deps": RollChromiumDEPS,
 }

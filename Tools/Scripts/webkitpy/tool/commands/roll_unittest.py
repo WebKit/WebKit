@@ -43,7 +43,8 @@ Committed r49824: <http://trac.webkit.org/changeset/49824>
         self.assert_execute_outputs(RollChromiumDEPS(), [6764], expected_stderr=expected_stderr)
 
     def test_update_chromium_deps_older_revision(self):
+        options = MockOptions(non_interactive=False)
         expected_stderr = """Current Chromium DEPS revision 6564 is newer than 5764.
 ERROR: Unable to update Chromium DEPS
 """
-        self.assert_execute_outputs(RollChromiumDEPS(), [5764], expected_stderr=expected_stderr, expected_exception=SystemExit)
+        self.assert_execute_outputs(RollChromiumDEPS(), [5764], options=options, expected_stderr=expected_stderr, expected_exception=SystemExit)

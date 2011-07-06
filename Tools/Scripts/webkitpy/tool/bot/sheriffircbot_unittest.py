@@ -82,7 +82,7 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_stderr=expected_stderr)
 
     def test_help(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: whois, create-bug, hi, last-green-revision, rollout, restart, help\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: hi, help, last-green-revision, rollout, roll-chromium-deps, create-bug, restart, whois\n"
         OutputCapture().assert_outputs(self, run, args=["help"], expected_stderr=expected_stderr)
 
     def test_lgr(self):
@@ -96,6 +96,14 @@ class SheriffIRCBotTest(unittest.TestCase):
     def test_rollout(self):
         expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 This patch broke the world"], expected_stderr=expected_stderr)
+
+    def test_roll_chromium_deps(self):
+        expected_stderr = "MOCK: irc.post: mock_nick: Rolling Chromium DEPS to r21654\nMOCK: irc.post: mock_nick: Created DEPS roll: http://example.com/36936\n"
+        OutputCapture().assert_outputs(self, run, args=["roll-chromium-deps 21654"], expected_stderr=expected_stderr)
+
+    def test_roll_chromium_deps_to_lkgr(self):
+        expected_stderr = "MOCK: irc.post: mock_nick: Rolling Chromium DEPS to last-known good revision\nMOCK: irc.post: mock_nick: Created DEPS roll: http://example.com/36936\n"
+        OutputCapture().assert_outputs(self, run, args=["roll-chromium-deps"], expected_stderr=expected_stderr)
 
     def test_multi_rollout(self):
         expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654, http://trac.webkit.org/changeset/21655, and http://trac.webkit.org/changeset/21656...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"

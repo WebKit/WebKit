@@ -28,6 +28,7 @@
 
 import unittest
 
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.irc_command import *
 from webkitpy.tool.mocktool import MockTool
 
@@ -69,6 +70,11 @@ class IRCCommandTest(unittest.TestCase):
         tool.bugs.create_bug = mock_create_bug
         self.assertEquals("tom: Failed to create bug:\nException from bugzilla!",
                           create_bug.execute("tom", example_args, tool, None))
+
+    def test_roll_chromium_deps(self):
+        roll = RollChromiumDEPS()
+        self.assertEquals(None, roll._parse_args([]))
+        self.assertEquals("1234", roll._parse_args(["1234"]))
 
     def test_rollout(self):
         rollout = Rollout()

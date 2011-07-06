@@ -89,6 +89,18 @@ class Sheriff(object):
         ])
         return parse_bug_id(output)
 
+    def post_chromium_deps_roll(self, revision):
+        args = [
+            "post-chromium-deps-roll",
+            "--force-clean",
+            "--non-interactive",
+            "--parent-command=sheriff-bot",
+        ]
+        if revision:
+            args += [revision]
+        output = self._sheriffbot.run_webkit_patch(args)
+        return parse_bug_id(output)
+
     def post_blame_comment_on_bug(self, commit_info, builders, tests):
         if not commit_info.bug_id():
             return
