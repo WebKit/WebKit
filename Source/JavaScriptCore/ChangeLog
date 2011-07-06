@@ -1,3 +1,15 @@
+2011-07-05  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Make "Add optimised paths for a few maths functions" work on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=63893
+
+        Reviewed by Oliver Hunt.
+
+        Move the generated code to the .text section instead of .data section.
+        Fix alignment for the 32 bit thunk code.
+
+        * jit/ThunkGenerators.cpp:
+
 2011-07-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not implement op_call.

@@ -132,10 +132,11 @@ double jsRound(double d)
 
 }
     
-#if CPU(X86_64) && COMPILER(GCC) && PLATFORM(MAC)
+#if CPU(X86_64) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
 
 #define defineUnaryDoubleOpWrapper(function) \
     asm( \
+        ".text\n" \
         ".globl " SYMBOL_STRING(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
         "call " SYMBOL_STRING_RELOCATION(function) "\n" \
@@ -146,18 +147,19 @@ double jsRound(double d)
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
-#elif CPU(X86) && COMPILER(GCC) && PLATFORM(MAC)
+#elif CPU(X86) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
 #define defineUnaryDoubleOpWrapper(function) \
     asm( \
-         ".globl " SYMBOL_STRING(function##Thunk) "\n" \
-         SYMBOL_STRING(function##Thunk) ":" "\n" \
-         "subl $8, %esp\n" \
-         "movsd %xmm0, (%esp) \n" \
-         "call " SYMBOL_STRING_RELOCATION(function) "\n" \
-         "fstpl (%esp) \n" \
-         "movsd (%esp), %xmm0 \n" \
-         "addl $8, %esp\n" \
-         "ret\n" \
+        ".text\n" \
+        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        SYMBOL_STRING(function##Thunk) ":" "\n" \
+        "subl $8, %esp\n" \
+        "movsd %xmm0, (%esp) \n" \
+        "call " SYMBOL_STRING_RELOCATION(function) "\n" \
+        "fstpl (%esp) \n" \
+        "movsd (%esp), %xmm0 \n" \
+        "addl $8, %esp\n" \
+        "ret\n" \
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
