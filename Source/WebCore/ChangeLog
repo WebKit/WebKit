@@ -1,3 +1,24 @@
+2011-07-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [Performance] Only call sendContentResizeNotification when the scrollbar actually did change
+        https://bugs.webkit.org/show_bug.cgi?id=47320
+
+        Reviewed by Eric Seidel.
+
+        Move avoidScrollbarCreation checking code from setHasHorizontalScrollbar
+        and setHasVerticalScrollbar to their caller in order to keep sendContentResizedNotification
+        false in case scrollbar is not really changed.
+        As a result, it will remove unnecessary relayout in the above case.
+
+        No new tests as this is very hard to write tests for. The bug only
+        occured when scrolling the sites which contain frame in browser with
+        frameFlattening. This should not change functionality in other case.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        (WebCore::ScrollView::updateScrollbars):
+
 2011-07-06  Nate Chapin  <japhet@chromium.org>
 
         Don't let all subresources keep isLoadingInAPISense() from
