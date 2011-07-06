@@ -942,7 +942,7 @@ simple_selector_list:
             $$ = p->createFloatingSelectorVector();
             $$->append(p->sinkFloatingSelector($1));
         } else
-            $$ = 0
+            $$ = 0;
     }
     | simple_selector_list maybe_space ',' maybe_space simple_selector %prec UNIMPORTANT_TOK {
         if ($1 && $5) {

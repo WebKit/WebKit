@@ -1,5 +1,15 @@
 2011-07-06  Andras Becsi  <abecsi@webkit.org>
 
+        Fix "warning: a `;' might be needed at the end of action code"
+
+        Unreviewed gardening.
+
+        No new tests needed.
+
+        * css/CSSGrammar.y: Future versions of Bison will not add the ';' so add it.
+
+2011-07-06  Andras Becsi  <abecsi@webkit.org>
+
         [Qt] Revome unused but set shadowBlur variable after r90406.
 
         Unreviewed build fix.
