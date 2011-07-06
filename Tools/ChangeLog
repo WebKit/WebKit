@@ -1,3 +1,15 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        Use old-run-webkit-tests when --leaks is present
+        https://bugs.webkit.org/show_bug.cgi?id=64012
+
+        Reviewed by Adam Roben.
+
+        We'll remove this branch once support of --leaks is added to
+        new-run-webkit-tests.
+
+        * Scripts/run-webkit-tests:
+
 2011-07-06  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt] [WK2] Add touch mocking to Qt's MiniBrowser
