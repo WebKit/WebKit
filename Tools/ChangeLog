@@ -1,3 +1,19 @@
+2011-07-06  Adam Roben  <aroben@apple.com>
+
+        Clear TestFailures's getNumberOfFailingTests cache
+
+        Now that we support NRWT, we need to clear out old zero values for the NRWT bots that might
+        have been cached by old versions of TestFailures.
+
+        Fixes <http://webkit.org/b/64029> TestFailures page still doesn't show NRWT bots if you've
+        used it recently
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Added a .version property to the cache data
+        that must match the current version. Otherwise we'll ignore the cached data.
+
 2011-06-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

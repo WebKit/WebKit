@@ -100,17 +100,16 @@ Builder.prototype = {
 
     getNumberOfFailingTests: function(buildNumber, callback) {
         var cacheKey = this.name + '_getNumberOfFailingTests_' + buildNumber;
+        const currentCachedDataVersion = 1;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
-            // Old versions of this function used to cache a number instead of an object, so we have
-            // to check to see what type we have.
-            if (typeof cachedData === 'object') {
+            if (cachedData.version === currentCachedDataVersion) {
                 callback(cachedData.failureCount, cachedData.tooManyFailures);
                 return;
             }
         }
 
-        var result = { failureCount: -1, tooManyFailures: false };
+        var result = { failureCount: -1, tooManyFailures: false, version: currentCachedDataVersion };
 
         var self = this;
         self._getBuildJSON(buildNumber, function(data) {
