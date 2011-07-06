@@ -77,7 +77,7 @@ results.BuilderResults.prototype.unexpectedFailures = function()
 
 results.unexpectedFailuresByTest = function(resultsByBuilder)
 {
-    unexpectedFailures = {};
+    var unexpectedFailures = {};
 
     $.each(resultsByBuilder, function(buildName, builderResults) {
         $.each(builderResults.unexpectedFailures(), function(testName, resultNode) {

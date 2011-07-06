@@ -1,5 +1,11 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Fix global variable leak detected by noglobals.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic shouldn't show flaky tests by default
         https://bugs.webkit.org/show_bug.cgi?id=63979
 
