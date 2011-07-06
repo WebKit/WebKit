@@ -1,3 +1,30 @@
+2011-07-06  Adam Roben  <aroben@apple.com>
+
+        Make run-api-tests output intelligible on the bots
+
+        run-api-tests's output on the bots was very hard to read for two reasons:
+          1) It was mixing its own output with gtest's
+          2) It was using ANSI escape sequences to print colored text, but the bots don't support
+             that
+
+        Now, the --verbose flag turns off almost all of run-api-tests's own output so that gtest's
+        output will not be obscured. We still print "Timeout" messages even in verbose mode, since
+        gtest doesn't have any native support for timeouts. Also, when our output is being
+        redirected to a file, we don't print ANSI escape sequences.
+
+        Fixes <http://webkit.org/b/63996> It's very hard to read run-api-tests output on the bots
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-api-tests: Don't use the :constants interface of Term::ANSIColor. We want to
+        use the colored function instead.
+        (runAllTestsInSuite): Don't print out suite names in verbose mode; gtest will give us enough
+        context that they aren't needed.
+        (runTest): Don't print out test names or pass/fail messages in verbose mode; gtest will do
+        that for us. Also, use the new possiblyColored function instead of always coloring output.
+        (possiblyColored): Added. When printing to a tty, returns the string with the appropriate
+        ANSI color escape sequences added. Otherwise just returns the string unmodified.
+
 2011-07-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

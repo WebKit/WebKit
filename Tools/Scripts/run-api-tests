@@ -36,7 +36,7 @@ use Getopt::Long qw(:config pass_through);
 use IPC::Open3;
 use lib $FindBin::Bin;
 use webkitdirs;
-use Term::ANSIColor qw(:constants);
+use Term::ANSIColor qw(colored);
 
 sub buildTestTool();
 sub dumpAllTests();
@@ -44,6 +44,7 @@ sub populateTests();
 sub runAllTests();
 sub runAllTestsInSuite($);
 sub runTest($$);
+sub possiblyColored($$);
 sub prepareEnvironmentForRunningTestTool();
 sub testToolPath();
 
@@ -117,7 +118,7 @@ sub runAllTests()
 sub runAllTestsInSuite($)
 {
     my ($suite) = @_;
-    print "Suite: $suite\n";
+    print "Suite: $suite\n" unless $verbose;
 
     my $anyFailures = 0;
     for my $test (@{$testsToRun{$suite}}) {
@@ -137,7 +138,7 @@ sub runTest($$)
 
     my $gtestArg = "--gtest_filter=" . $test;
 
-    print "    Test: $testName -> ";
+    print "    Test: $testName -> " unless $verbose;
 
     my $result = 0;
     my $timedOut = 0;
@@ -182,12 +183,15 @@ sub runTest($$)
     }
 
     if ($timedOut) {
-        print BOLD YELLOW, "Timeout", RESET, "\n";
-    } elsif (!$result) {
-        print BOLD GREEN, "Passed", RESET, "\n";
-    } else {
-        print BOLD RED, "Failed", RESET, "\n";
+        print possiblyColored("bold yellow", "Timeout"), "\n";
+    } elsif (!$verbose) {
+        if ($result) {
+            print possiblyColored("bold red", "Failed"), "\n";
+        } else {
+            print possiblyColored("bold green", "Passed"), "\n";
+        }
     }
+
     return $timedOut || $result;
 }
 
@@ -285,6 +289,17 @@ sub buildTestTool()
     }
 
     chdir $originalCwd;
+}
+
+sub possiblyColored($$)
+{
+    my ($colors, $string) = @_;
+
+    if (-t STDOUT) {
+        return colored([$colors], $string);
+    } else {
+        return $string;
+    }
 }
 
 sub prepareEnvironmentForRunningTestTool()
