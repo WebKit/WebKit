@@ -3559,7 +3559,7 @@ BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html =
 
 // Flakiness on canaries (noted ~ r85140)
 BUGKBR WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
-BUGKBR WIN LINUX DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
+BUGKBR DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
 
 // Flakiness on canaries (noted ~ r85220)
 BUGKBR WIN : editing/input/option-page-up-down.html = PASS TEXT
@@ -3947,3 +3947,8 @@ BUGCR88594 WIN7 : http/tests/appcache/reload.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/resource-redirect.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
 BUGCR88594 WIN7 : http/tests/appcache/fallback.html = TIMEOUT
+
+// Started failing in skia roll r1788:r1799
+BUGCR88577 WIN LINUX GPU : canvas/philip/tests/2d.pattern.repeat.empty.html = TEXT
+BUGCR88577 WIN LINUX GPU : canvas/philip/tests/2d.pattern.repeat.null.html = TEXT
+BUGCR88577 WIN LINUX GPU : fast/canvas/canvas-pattern-behaviour.html = TEXT

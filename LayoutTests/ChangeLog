@@ -1,3 +1,10 @@
+2011-07-06  Mihai Parparita  <mihaip@chromium.org>
+
+        Update Chromium GPU expectations with downstream changes
+        (http://crrev.com/91625/).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-06  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Fix fast/loader/page-dismissal-modal-dialogs.html.
