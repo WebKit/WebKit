@@ -69,8 +69,8 @@ sub useNewRunWebKitTests()
     # new-run-webkit-tests by default.
     # Example: return runningOnBuildBot() && isLeopard();
     # would enable new-run-webkit-tests on only the leopard buildbots.
-    # Leopard support is blocked by https://bugs.webkit.org/show_bug.cgi?id=63973.
-    return ((isQt() or isGtk() or isSnowLeopard()) and !usingWebKit2());
+    # NRWT Windows support still needs work: https://bugs.webkit.org/show_bug.cgi?id=38756
+    return (!isAnyWindows() and !usingWebKit2());
 }
 
 my $harnessName = "old-run-webkit-tests";

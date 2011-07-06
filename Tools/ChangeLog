@@ -1,5 +1,18 @@
 2011-07-05  Eric Seidel  <eric@webkit.org>
 
+        Re-enable NRWT on Leopard now that bug 63973 is fixed.
+
+        Reviewed by Adam Barth.
+
+        I also made the should-enable expression a black-list instead
+        of a white-list since every bot on build.webkit.org is
+        now using NRWT except windows and WebKit2 bots.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+
+2011-07-05  Eric Seidel  <eric@webkit.org>
+
         Perl string concat failure on Leopard (causes NRWT to fail)
         https://bugs.webkit.org/show_bug.cgi?id=63973
 
