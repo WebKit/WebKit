@@ -6,6 +6,10 @@ var kExampleResultsJSON = {
             "custom-scrollbar-with-incomplete-style.html": {
                 "expected": "IMAGE",
                 "actual": "IMAGE"
+            },
+            "flaky-scrollbarhtml": {
+                "expected": "PASS",
+                "actual": "PASS TEXT"
             }
         },
         "userscripts": {

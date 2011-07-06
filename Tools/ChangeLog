@@ -1,3 +1,19 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic shouldn't show flaky tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=63979
+
+        Reviewed by Ojan Vafai.
+
+        If any of the actual test results are PASS, the test is flaky and we
+        can ignore it (at least for now).  If we get awesome at dealing with
+        failing tests, we might want to tackle flaky tests by refering the user
+        to the flakiness dashboard, which is way more awesome at dealing with
+        flaky tests that this tool ever will be.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+
 2011-07-05  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should list the failing tests

@@ -6,16 +6,34 @@ var kTestResultsServer = 'http://test-results.appspot.com/';
 var kTestType = 'layout-tests';
 var kResultsName = 'full_results.json';
 var kMasterName = 'ChromiumWebkit';
-var kFailingResults = ['TIMEOUT', 'TEXT', 'CRASH', 'IMAGE','IMAGE+TEXT'];
+
+var PASS = 'PASS';
+var TIMEOUT = 'TIMEOUT';
+var TEXT = 'TEXT';
+var CRASH = 'CRASH';
+var IMAGE = 'IMAGE';
+var IMAGE_TEXT = 'IMAGE+TEXT';
+
+var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT];
 
 function isFailure(result)
 {
     return kFailingResults.indexOf(result) != -1;
 }
 
+function isSuccess(result)
+{
+    return result === PASS;
+}
+
 function anyIsFailure(resultsList)
 {
     return $.grep(resultsList, isFailure).length > 0;
+}
+
+function anyIsSuccess(resultsList)
+{
+    return $.grep(resultsList, isSuccess).length > 0;
 }
 
 function addImpliedExpectations(resultsList)
@@ -37,6 +55,8 @@ function unexpectedResults(resultNode)
 
 function isUnexpectedFailure(resultNode)
 {
+    if (anyIsSuccess(resultNode.actual.split(' ')))
+        return false;
     return anyIsFailure(unexpectedResults(resultNode));
 }
 
