@@ -2,6 +2,18 @@
 
         Unreviewed.
 
+        NWRT actually seems to work locally, so it should work in the bots
+        as long as we take care of the TIMEOUT issue (which is being fixed
+        as I write this). Let's give this another shot and fix whatever
+        breaks.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+
+2011-07-06  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed.
+
         Disable NWRT on GTK. At the very least it needs an updated exected
         results file since NWRT is more sensitive to timeouts, not sure
         what the exact problem is.
