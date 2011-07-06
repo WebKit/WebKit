@@ -1549,3 +1549,9 @@ fast/workers/worker-crash-with-invalid-location.html
 # https://bugs.webkit.org/show_bug.cgi?id=63699
 # access to file:// uris should be restricted in some cases.
 media/media-blocked-by-willsendrequest.html
+
+# NWRT. Skip inspector/ and http/tests/inspector while we figure out
+# what happens to them in the bots
+
+http/tests/inspector
+inspector/
