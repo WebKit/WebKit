@@ -34,14 +34,13 @@ import base64
 import time
 
 from webkitpy.common.system import filesystem_mock
+from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.tool import mocktool
-
-import base
 
 
 # This sets basic expectations for a test. Each individual expectation
 # can be overridden by a keyword argument in TestList.add().
-class TestInstance:
+class TestInstance(object):
     def __init__(self, name):
         self.name = name
         self.base = name[(name.rfind("/") + 1):name.rfind(".html")]
@@ -70,9 +69,10 @@ class TestInstance:
         self.actual_audio = None
         self.expected_audio = None
 
+
 # This is an in-memory list of tests, what we want them to produce, and
 # what we want to claim are the expected results.
-class TestList:
+class TestList(object):
     def __init__(self):
         self.tests = {}
 
@@ -246,7 +246,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
     return fs
 
 
-class TestPort(base.Port):
+class TestPort(Port):
     """Test implementation of the Port interface."""
     ALL_BASELINE_VARIANTS = (
         'test-mac-snowleopard', 'test-mac-leopard',
@@ -259,8 +259,7 @@ class TestPort(base.Port):
             port_name = 'test-mac-leopard'
         user = user or mocktool.MockUser()
         filesystem = filesystem or unit_test_filesystem()
-        base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
-                           **kwargs)
+        Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user, **kwargs)
         self._results_directory = None
 
         assert filesystem._tests
@@ -422,11 +421,8 @@ class TestPort(base.Port):
         raise NotImplementedError('unknown url type: %s' % uri)
 
 
-class TestDriver(base.Driver):
+class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""
-
-    def __init__(self, port, worker_number):
-        self._port = port
 
     def cmd_line(self):
         return [self._port._path_to_driver()] + self._port.get_option('additional_drt_flag', [])
@@ -448,7 +444,7 @@ class TestDriver(base.Driver):
         audio = None
         if test.actual_audio:
             audio = base64.b64decode(test.actual_audio)
-        return base.DriverOutput(test.actual_text, test.actual_image,
+        return DriverOutput(test.actual_text, test.actual_image,
             test.actual_checksum, audio, crash=test.crash,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
 

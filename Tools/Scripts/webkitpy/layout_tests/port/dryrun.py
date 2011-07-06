@@ -50,10 +50,10 @@ import os
 import sys
 import time
 
-import base
-import factory
+from webkitpy.layout_tests.port import Driver, DriverOutput, factory
 
 
+# FIXME: Why not inherit from Port?
 class DryRunPort(object):
     """DryRun implementation of the Port interface."""
 
@@ -103,12 +103,8 @@ class DryRunPort(object):
         return DryrunDriver(self, worker_number)
 
 
-class DryrunDriver(base.Driver):
+class DryrunDriver(Driver):
     """Dryrun implementation of the DumpRenderTree / Driver interface."""
-
-    def __init__(self, port, worker_number):
-        self._port = port
-        self._worker_number = worker_number
 
     def cmd_line(self):
         return ['None']
@@ -136,8 +132,7 @@ class DryrunDriver(base.Driver):
             image = self._port.expected_image(driver_input.filename)
             checksum = self._port.expected_checksum(driver_input.filename)
             audio = self._port.expected_audio(driver_input.filename)
-        return base.DriverOutput(text, image, checksum, audio, crash=False,
-            test_time=time.time() - start_time, timeout=False, error='')
+        return DriverOutput(text, image, checksum, audio, crash=False, test_time=time.time() - start_time, timeout=False, error='')
 
     def start(self):
         pass

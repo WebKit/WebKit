@@ -40,15 +40,15 @@ import time
 
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.port import base, builders, server_process
+from webkitpy.layout_tests.port import builders, server_process, Port, Driver, DriverOutput
 
 
 _log = logging.getLogger(__file__)
 
 
-class WebKitPort(base.Port):
+class WebKitPort(Port):
     def __init__(self, **kwargs):
-        base.Port.__init__(self, **kwargs)
+        Port.__init__(self, **kwargs)
         self._cached_apache_path = None  # FIXME: This class should use @memoized instead.
 
         # FIXME: Disable pixel tests until they are run by default on build.webkit.org.
@@ -369,14 +369,15 @@ class WebKitPort(base.Port):
         return self._cached_apache_path
 
 
-class WebKitDriver(base.Driver):
+class WebKitDriver(Driver):
     """WebKit implementation of the DumpRenderTree/WebKitTestRunner interface."""
 
     def __init__(self, port, worker_number):
-        self._worker_number = worker_number
-        self._port = port
+        Driver.__init__(self, port, worker_number)
         self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
 
+    # FIXME: This may be unsafe, as python does not guarentee any ordering of __del__ calls
+    # I believe it's possible that self._port or self._port._filesystem may already be destroyed.
     def __del__(self):
         self._port._filesystem.rmtree(str(self._driver_tempdir))
 
@@ -466,7 +467,7 @@ class WebKitDriver(base.Driver):
 
         # FIXME: This seems like the wrong section of code to be resetting _server_process.error.
         self._server_process.error = ""
-        return base.DriverOutput(text, image, actual_image_hash, audio,
+        return DriverOutput(text, image, actual_image_hash, audio,
             crash=self.detected_crash(), test_time=time.time() - start_time,
             timeout=self._server_process.timed_out, error=error)
 
@@ -480,8 +481,7 @@ class WebKitDriver(base.Driver):
         content_hash = None
         content_length = None
 
-        # Content is treated as binary data even though the text output
-        # is usually UTF-8.
+        # Content is treated as binary data even though the text output is usually UTF-8.
         content = ''
         timeout = deadline - time.time()
         line = self._server_process.read_line(timeout)

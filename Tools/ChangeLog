@@ -1,3 +1,42 @@
+2011-07-06  Eric Seidel  <eric@webkit.org>
+
+        Split Driver, DriverOutput and DriverInput out into a new driver.py file
+        https://bugs.webkit.org/show_bug.cgi?id=64031
+
+        Reviewed by Adam Barth.
+
+        This ended up kinda large and I'm happy to break it up if desired.
+
+        As part of cleaning up the Port module, I split Driver, DriverInput and DriverOutput
+        out into its own driver.py file.
+
+        I also cleaned up how we import Port objects, by making port/__init__.py
+        expose Port, Driver, DriverInput, and DriverOutput.  I removed exposure of
+        some various test objects as they were causing circular dependencies.
+        base.py is now an implementation detail of port.  No longer is "base" referenced
+        anywhere in the code.
+
+        I also made Driver.__init__ non-virtual so that sub-classers could all share
+        the data storage on Driver.  This more closely matches how other subclasses
+        work throughout our python code.
+
+        Standard line-unwrapping and doc-string removal as I went through the code.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/driver.py: Added.
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+
 2011-07-06  Adam Roben  <aroben@apple.com>
 
         Clear TestFailures's getNumberOfFailingTests cache

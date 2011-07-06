@@ -59,7 +59,7 @@ from webkitpy.common.system import filesystem_mock
 from webkitpy.tool import mocktool
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.port.test import TestPort, TestDriver
+from webkitpy.layout_tests.port.test import TestPort, TestDriver, unit_test_filesystem
 from webkitpy.layout_tests.port.test_files import is_reference_html_file
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
@@ -270,7 +270,7 @@ class MainTest(unittest.TestCase):
             tests_included=True)
 
     def test_last_results(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         # We do a logging run here instead of a passing run in order to
         # suppress the output from the json generator.
         res, buildbot_output, regular_output, user = logging_run(['--clobber-old-results'], record_results=True, filesystem=fs)
@@ -368,7 +368,7 @@ class MainTest(unittest.TestCase):
     def test_single_file(self):
         # FIXME: We should consider replacing more of the get_tests_run()-style tests
         # with tests that read the tests_run* files, like this one.
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         tests_run = passing_run(['passes/text.html'], tests_included=True, filesystem=fs)
         self.assertEquals(fs.read_text_file('/tmp/layout-test-results/tests_run0.txt'),
                           'passes/text.html\n')
@@ -382,13 +382,13 @@ class MainTest(unittest.TestCase):
         self.assertEquals([], tests_run)
 
     def test_stderr_is_saved(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         self.assertTrue(passing_run(filesystem=fs))
         self.assertEquals(fs.read_text_file('/tmp/layout-test-results/passes/error-stderr.txt'),
                           'stuff going to stderr')
 
     def test_test_list(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         filename = '/tmp/foo.txt'
         fs.write_text_file(filename, 'passes/text.html')
         tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
@@ -400,7 +400,7 @@ class MainTest(unittest.TestCase):
         self.assertFalse(err.empty())
 
     def test_test_list_with_prefix(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         filename = '/tmp/foo.txt'
         fs.write_text_file(filename, 'LayoutTests/passes/text.html')
         tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
@@ -421,7 +421,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
 
     def test_crash_with_stderr(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/crash-with-stderr.html',
             ],
@@ -431,7 +431,7 @@ class MainTest(unittest.TestCase):
         self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
     def test_no_image_failure_with_image_diff(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/checksum-with-matching-image.html',
             ],
@@ -442,7 +442,7 @@ class MainTest(unittest.TestCase):
 
     def test_crash_log(self):
         mock_crash_report = 'mock-crash-report'
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/crash-with-stderr.html',
@@ -457,7 +457,7 @@ class MainTest(unittest.TestCase):
         self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_exit_after_n_failures_upload(self):
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/text-image-checksum.html',
                 'passes/text.html',
@@ -535,7 +535,7 @@ class MainTest(unittest.TestCase):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
 
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         with fs.mkdtemp() as tmpdir:
             res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)],
                                               tests_included=True, filesystem=fs)
@@ -552,7 +552,7 @@ class MainTest(unittest.TestCase):
     def test_results_directory_relative(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         fs.maybe_make_directory('/tmp/cwd')
         fs.chdir('/tmp/cwd')
         res, out, err, user = logging_run(['--results-directory=foo'],
@@ -620,8 +620,7 @@ class MainTest(unittest.TestCase):
             self.assertTrue(passing_run(['--worker-model', 'processes', '--dry-run']))
 
     def test_worker_model__unknown(self):
-        self.assertRaises(ValueError, logging_run,
-                          ['--worker-model', 'unknown'])
+        self.assertRaises(ValueError, logging_run, ['--worker-model', 'unknown'])
 
     def test_reftest_run(self):
         tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True)
@@ -636,25 +635,20 @@ class MainTest(unittest.TestCase):
         self.assertEquals([], tests_run)
 
     def test_reftest_driver_should_run_expected_html(self):
-        tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True,
-                                  include_reference_html=True)
+        tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True, include_reference_html=True)
         self.assertEquals(['passes/reftest.html', 'passes/reftest-expected.html'], tests_run)
 
     def test_reftest_driver_should_run_expected_mismatch_html(self):
-        tests_run = get_tests_run(['passes/mismatch.html'], tests_included=True, flatten_batches=True,
-                                  include_reference_html=True)
+        tests_run = get_tests_run(['passes/mismatch.html'], tests_included=True, flatten_batches=True, include_reference_html=True)
         self.assertEquals(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
 
     def test_additional_platform_directory(self):
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/../foo']))
-        self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo',
-            '--additional-platform-directory', '/tmp/bar']))
+        self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo', '--additional-platform-directory', '/tmp/bar']))
 
-        res, buildbot_output, regular_output, user = logging_run(
-             ['--additional-platform-directory', 'foo'])
-        self.assertTrue('--additional-platform-directory=foo is ignored since it is not absolute\n'
-                        in regular_output.get())
+        res, buildbot_output, regular_output, user = logging_run(['--additional-platform-directory', 'foo'])
+        self.assertTrue('--additional-platform-directory=foo is ignored since it is not absolute\n' in regular_output.get())
 
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
@@ -675,7 +669,7 @@ class RebaselineTest(unittest.TestCase):
     def test_reset_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         res, out, err, _ = logging_run(['--pixel-tests',
                         '--reset-results',
                         'passes/image.html',
@@ -692,7 +686,7 @@ class RebaselineTest(unittest.TestCase):
     def test_missing_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         res, out, err, _ = logging_run(['--no-show-results',
                      'failures/unexpected/missing_text.html',
                      'failures/unexpected/missing_image.html',
@@ -709,7 +703,7 @@ class RebaselineTest(unittest.TestCase):
     def test_new_baseline(self):
         # Test that we update the platform expectations. If the expectation
         # is mssing, then create a new expectation in the platform dir.
-        fs = port.unit_test_filesystem()
+        fs = unit_test_filesystem()
         res, out, err, _ = logging_run(['--pixel-tests',
                         '--new-baseline',
                         'passes/image.html',

@@ -45,7 +45,8 @@ from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.layout_tests.layout_package import test_expectations
-from webkitpy.layout_tests.port import base
+from webkitpy.layout_tests.port.base import Port
+from webkitpy.layout_tests.port.driver import Driver, DriverOutput
 from webkitpy.layout_tests.port import builders
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -53,7 +54,7 @@ from webkitpy.layout_tests.servers import websocket_server
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 
 
-class ChromiumPort(base.Port):
+class ChromiumPort(Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
     port_name = "chromium"
@@ -66,7 +67,7 @@ class ChromiumPort(base.Port):
     ]
 
     def __init__(self, **kwargs):
-        base.Port.__init__(self, **kwargs)
+        Port.__init__(self, **kwargs)
         self._chromium_base_dir = None
 
     def _check_file_exists(self, path_to_file, file_description,
@@ -347,25 +348,24 @@ class ChromiumPort(base.Port):
         return self._build_path(self.get_option('configuration'), binary_name)
 
 
-class ChromiumDriver(base.Driver):
-    def __init__(self, port, worker_number):
-        self._port = port
-        self._worker_number = worker_number
-        self._image_path = None
-        self.KILL_TIMEOUT = 3.0
-        if self._port.get_option('pixel_tests'):
-            self._image_path = self._port._filesystem.join(self._port.results_directory(),
-                'png_result%s.png' % self._worker_number)
+class ChromiumDriver(Driver):
+    KILL_TIMEOUT = 3.0
 
-    def cmd_line(self):
-        cmd = self._command_wrapper(self._port.get_option('wrapper'))
-        cmd.append(self._port._path_to_driver())
+    def __init__(self, port, worker_number):
+        Driver.__init__(self, port, worker_number)
+        self._image_path = None
+        if self._port.get_option('pixel_tests'):
+            self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
+
+    def _wrapper_options(self):
+        cmd = []
+        # FIXME: We should be able to build this list using only an array of
+        # option names, the options (optparse.Values) object, and the orignal
+        # list of options from the main method by looking up the option
+        # text from the options list if the value is non-None.
         if self._port.get_option('pixel_tests'):
             # See note above in diff_image() for why we need _convert_path().
-            cmd.append("--pixel-tests=" +
-                       self._port._convert_path(self._image_path))
-
-        cmd.append('--test-shell')
+            cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
 
         if self._port.get_option('startup_dialog'):
             cmd.append('--testshell-startup-dialog')
@@ -392,6 +392,13 @@ class ChromiumDriver(base.Driver):
             cmd.append('--enable-hardware-gpu')
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
+        return cmd
+
+    def cmd_line(self):
+        cmd = self._command_wrapper(self._port.get_option('wrapper'))
+        cmd.append(self._port._path_to_driver())
+        cmd.append('--test-shell')  # FIXME: Why does this exist?  TestShell is dead, shouldn't this be removed?
+        cmd.extend(self._wrapper_options())
         return cmd
 
     def start(self):
@@ -444,8 +451,7 @@ class ChromiumDriver(base.Driver):
         png_path = self._image_path
         if png_path and self._port._filesystem.exists(png_path):
             return self._port._filesystem.read_binary_file(png_path)
-        else:
-            return None
+        return None
 
     def _output_image_with_retry(self):
         # Retry a few more times because open() sometimes fails on Windows,
@@ -541,7 +547,7 @@ class ChromiumDriver(base.Driver):
             if not text:
                 text = None
 
-        return base.DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
+        return DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
             crash=crash, test_time=run_time, timeout=timeout, error=''.join(error))
 
     def stop(self):
@@ -559,10 +565,9 @@ class ChromiumDriver(base.Driver):
             while self._proc.poll() is None and time.time() < timeout:
                 time.sleep(0.1)
             if self._proc.poll() is None:
-                _log.warning('stopping test driver timed out, '
-                                'killing it')
+                _log.warning('stopping test driver timed out, killing it')
                 self._port._executive.kill_process(self._proc.pid)
-            # FIXME: This is sometime none. What is wrong? assert self._proc.poll() is not None
+            # FIXME: This is sometime None. What is wrong? assert self._proc.poll() is not None
             if self._proc.poll() is not None:
                 self._proc.wait()
             self._proc = None

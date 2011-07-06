@@ -39,6 +39,7 @@ from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive import Executive, ScriptError
 
 from webkitpy.layout_tests import port
+from webkitpy.layout_tests.port.test import unit_test_filesystem
 from webkitpy.to_be_moved import rebaseline_chromium_webkit_tests
 
 
@@ -71,9 +72,8 @@ def test_options():
 
 
 def test_host_port_and_filesystem(options, expectations):
-    filesystem = port.unit_test_filesystem()
-    host_port_obj = port.get('test', options, filesystem=filesystem,
-                             user=mocktool.MockUser())
+    filesystem = unit_test_filesystem()
+    host_port_obj = port.get('test', options, filesystem=filesystem, user=mocktool.MockUser())
 
     expectations_path = host_port_obj.path_to_test_expectations_file()
     filesystem.write_text_file(expectations_path, expectations)
@@ -368,7 +368,7 @@ class TestRealMain(unittest.TestCase):
 class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, files, tests):
         options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
-        host_port = port.get('test', options, filesystem=port.unit_test_filesystem(files))
+        host_port = port.get('test', options, filesystem=unit_test_filesystem(files))
         generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host_port,
             target_port=None, options=options, platforms=['test-mac-leopard'], rebaselining_tests=tests)
         return generator, host_port

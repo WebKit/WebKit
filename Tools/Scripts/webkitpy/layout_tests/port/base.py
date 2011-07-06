@@ -36,7 +36,6 @@ import cgi
 import difflib
 import errno
 import os
-import shlex
 import sys
 import time
 
@@ -630,7 +629,7 @@ class Port(object):
         return self._user.open_url(results_filename)
 
     def create_driver(self, worker_number):
-        """Return a newly created base.Driver subclass for starting/stopping the test driver."""
+        """Return a newly created Driver subclass for starting/stopping the test driver."""
         raise NotImplementedError('Port.create_driver')
 
     def start_helper(self):
@@ -899,110 +898,6 @@ class Port(object):
         """Return the  full path to the top of the baseline tree for a
         given platform."""
         return self._filesystem.join(self.layout_tests_dir(), 'platform', platform)
-
-
-class DriverInput(object):
-    """Holds the input parameters for a driver."""
-
-    def __init__(self, filename, timeout, image_hash):
-        """Initializes a DriverInput object.
-
-        Args:
-          filename: Full path to the test.
-          timeout: Timeout in msecs the driver should use while running the test
-          image_hash: A image checksum which is used to avoid doing an image dump if
-                     the checksums match.
-        """
-        self.filename = filename
-        self.timeout = timeout
-        self.image_hash = image_hash
-
-
-class DriverOutput(object):
-    """Groups information about a output from driver for easy passing of data."""
-
-    def __init__(self, text, image, image_hash, audio,
-                 crash=False, test_time=0, timeout=False, error=''):
-        """Initializes a TestOutput object.
-
-        Args:
-          text: a text output
-          image: an image output
-          image_hash: a string containing the checksum of the image
-          audio: contents of an audio stream, if any (in WAV format)
-          crash: a boolean indicating whether the driver crashed on the test
-          test_time: the time the test took to execute
-          timeout: a boolean indicating whehter the test timed out
-          error: any unexpected or additional (or error) text output
-        """
-        self.text = text
-        self.image = image
-        self.image_hash = image_hash
-        self.image_diff = None  # image_diff gets filled in after construction.
-        self.audio = audio
-        self.crash = crash
-        self.test_time = test_time
-        self.timeout = timeout
-        self.error = error
-
-    def has_stderr(self):
-        return bool(self.error)
-
-
-class Driver:
-    """Abstract interface for the DumpRenderTree interface."""
-
-    def __init__(self, port, worker_number):
-        """Initialize a Driver to subsequently run tests.
-
-        Typically this routine will spawn DumpRenderTree in a config
-        ready for subsequent input.
-
-        port - reference back to the port object.
-        worker_number - identifier for a particular worker/driver instance
-        """
-        raise NotImplementedError('Driver.__init__')
-
-    def run_test(self, driver_input):
-        """Run a single test and return the results.
-
-        Note that it is okay if a test times out or crashes and leaves
-        the driver in an indeterminate state. The upper layers of the program
-        are responsible for cleaning up and ensuring things are okay.
-
-        Args:
-          driver_input: a DriverInput object
-
-        Returns a DriverOutput object.
-          Note that DriverOutput.image will be '' (empty string) if a test crashes.
-        """
-        raise NotImplementedError('Driver.run_test')
-
-    # FIXME: This is static so we can test it w/o creating a Base instance.
-    @classmethod
-    def _command_wrapper(cls, wrapper_option):
-        # Hook for injecting valgrind or other runtime instrumentation,
-        # used by e.g. tools/valgrind/valgrind_tests.py.
-        wrapper = []
-        browser_wrapper = os.environ.get("BROWSER_WRAPPER", None)
-        if browser_wrapper:
-            # FIXME: There seems to be no reason to use BROWSER_WRAPPER over --wrapper.
-            # Remove this code any time after the date listed below.
-            _log.error("BROWSER_WRAPPER is deprecated, please use --wrapper instead.")
-            _log.error("BROWSER_WRAPPER will be removed any time after June 1st 2010 and your scripts will break.")
-            wrapper += [browser_wrapper]
-
-        if wrapper_option:
-            wrapper += shlex.split(wrapper_option)
-        return wrapper
-
-    def poll(self):
-        """Returns None if the Driver is still running. Returns the returncode
-        if it has exited."""
-        raise NotImplementedError('Driver.poll')
-
-    def stop(self):
-        raise NotImplementedError('Driver.stop')
 
 
 class TestConfiguration(object):

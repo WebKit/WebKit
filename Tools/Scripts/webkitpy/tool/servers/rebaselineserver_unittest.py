@@ -29,7 +29,6 @@
 import unittest
 
 from webkitpy.common.system import filesystem_mock
-from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.tool.commands.rebaselineserver import TestConfig
 from webkitpy.tool.mocktool import MockSCM

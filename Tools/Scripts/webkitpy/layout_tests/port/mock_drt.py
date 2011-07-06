@@ -42,6 +42,8 @@ from webkitpy.common.system import filesystem
 
 from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port import factory
+from webkitpy.tool.mocktool import MockOptions
+
 
 _log = logging.getLogger(__name__)
 
@@ -153,15 +155,12 @@ def parse_options(argv):
                 pixel_path = arg[len('--pixel-tests='):]
     else:
         pixel_tests = '--pixel-tests' in argv
-    options = base.DummyOptions(chromium=chromium,
-                                platform=platform,
-                                pixel_tests=pixel_tests,
-                                pixel_path=pixel_path)
+    options = MockOptions(chromium=chromium, platform=platform, pixel_tests=pixel_tests, pixel_path=pixel_path)
     return (options, [])
 
 
 # FIXME: Should probably change this to use DriverInput after
-# https://bugs.webkit.org/show_bug.cgi?id=53004 lands.
+# https://bugs.webkit.org/show_bug.cgi?id=53004 lands (it's landed as of 2/3/11).
 class _DRTInput(object):
     def __init__(self, line):
         vals = line.strip().split("'")

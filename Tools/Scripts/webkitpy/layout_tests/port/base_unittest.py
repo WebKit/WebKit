@@ -39,20 +39,21 @@ from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool import mocktool
 
-import base
+from webkitpy.layout_tests.port import Port, Driver, DriverOutput
+
 import config
 import config_mock
 
 
 class PortTest(unittest.TestCase):
     def test_format_wdiff_output_as_html(self):
-        output = "OUTPUT %s %s %s" % (base.Port._WDIFF_DEL, base.Port._WDIFF_ADD, base.Port._WDIFF_END)
-        html = base.Port()._format_wdiff_output_as_html(output)
+        output = "OUTPUT %s %s %s" % (Port._WDIFF_DEL, Port._WDIFF_ADD, Port._WDIFF_END)
+        html = Port()._format_wdiff_output_as_html(output)
         expected_html = "<head><style>.del { background: #faa; } .add { background: #afa; }</style></head><pre>OUTPUT <span class=del> <span class=add> </span></pre>"
         self.assertEqual(html, expected_html)
 
     def test_wdiff_command(self):
-        port = base.Port()
+        port = Port()
         port._path_to_wdiff = lambda: "/path/to/wdiff"
         command = port._wdiff_command("/actual/path", "/expected/path")
         expected_command = [
@@ -73,7 +74,7 @@ class PortTest(unittest.TestCase):
         return new_file
 
     def test_pretty_patch_os_error(self):
-        port = base.Port(executive=executive_mock.MockExecutive2(exception=OSError))
+        port = Port(executive=executive_mock.MockExecutive2(exception=OSError))
         oc = outputcapture.OutputCapture()
         oc.capture_output()
         self.assertEqual(port.pretty_patch_text("patch.txt"),
@@ -86,7 +87,7 @@ class PortTest(unittest.TestCase):
 
     def test_pretty_patch_script_error(self):
         # FIXME: This is some ugly white-box test hacking ...
-        port = base.Port(executive=executive_mock.MockExecutive2(exception=ScriptError))
+        port = Port(executive=executive_mock.MockExecutive2(exception=ScriptError))
         port._pretty_patch_available = True
         self.assertEqual(port.pretty_patch_text("patch.txt"),
                          port._pretty_patch_error_html)
@@ -105,7 +106,7 @@ class PortTest(unittest.TestCase):
         except Exception, e:
             wdiff_path = None
 
-        port = base.Port()
+        port = Port()
         port._path_to_wdiff = lambda: wdiff_path
 
         if wdiff_path:
@@ -129,7 +130,6 @@ class PortTest(unittest.TestCase):
             self.assertRaises(ScriptError, port.wdiff_text, "/does/not/exist", "/does/not/exist2")
             # wdiff will still be available after running wdiff_text with invalid paths.
             self.assertTrue(port._wdiff_available)
-            base._wdiff_available = True
 
         # If wdiff does not exist _run_wdiff should throw an OSError.
         port._path_to_wdiff = lambda: "/invalid/path/to/wdiff"
@@ -141,7 +141,7 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port._wdiff_available)
 
     def test_diff_text(self):
-        port = base.Port()
+        port = Port()
         # Make sure that we don't run into decoding exceptions when the
         # filenames are unicode, with regular or malformed input (expected or
         # actual input is always raw bytes, not unicode).
@@ -169,29 +169,29 @@ class PortTest(unittest.TestCase):
 
     def test_default_configuration_notfound(self):
         # Test that we delegate to the config object properly.
-        port = base.Port(config=config_mock.MockConfig(default_configuration='default'))
+        port = Port(config=config_mock.MockConfig(default_configuration='default'))
         self.assertEqual(port.default_configuration(), 'default')
 
     def test_layout_tests_skipping(self):
-        port = base.Port()
+        port = Port()
         port.skipped_layout_tests = lambda: ['foo/bar.html', 'media']
         self.assertTrue(port.skips_layout_test('foo/bar.html'))
         self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
         self.assertFalse(port.skips_layout_test('foo/foo.html'))
 
     def test_setup_test_run(self):
-        port = base.Port()
+        port = Port()
         # This routine is a no-op. We just test it for coverage.
         port.setup_test_run()
 
     def test_test_dirs(self):
-        port = base.Port()
+        port = Port()
         dirs = port.test_dirs()
         self.assertTrue('canvas' in dirs)
         self.assertTrue('css2.1' in dirs)
 
     def test_filename_to_uri(self):
-        port = base.Port()
+        port = Port()
         layout_test_dir = port.layout_tests_dir()
         test_file = port._filesystem.join(layout_test_dir, "foo", "bar.html")
 
@@ -212,28 +212,28 @@ class PortTest(unittest.TestCase):
     def test_get_option__set(self):
         options, args = optparse.OptionParser().parse_args([])
         options.foo = 'bar'
-        port = base.Port(options=options)
+        port = Port(options=options)
         self.assertEqual(port.get_option('foo'), 'bar')
 
     def test_get_option__unset(self):
-        port = base.Port()
+        port = Port()
         self.assertEqual(port.get_option('foo'), None)
 
     def test_get_option__default(self):
-        port = base.Port()
+        port = Port()
         self.assertEqual(port.get_option('foo', 'bar'), 'bar')
 
     def test_name__unset(self):
-        port = base.Port()
+        port = Port()
         self.assertEqual(port.name(), None)
 
     def test_name__set(self):
-        port = base.Port(port_name='foo')
+        port = Port(port_name='foo')
         self.assertEqual(port.name(), 'foo')
 
     def test_additional_platform_directory(self):
         filesystem = MockFileSystem()
-        port = base.Port(port_name='foo', filesystem=filesystem)
+        port = Port(port_name='foo', filesystem=filesystem)
         port.baseline_search_path = lambda: ['LayoutTests/platform/foo']
         layout_test_dir = port.layout_tests_dir()
         test_file = filesystem.join(layout_test_dir, 'fast', 'test.html')
@@ -263,7 +263,7 @@ class PortTest(unittest.TestCase):
 
     def test_uses_test_expectations_file(self):
         filesystem = MockFileSystem()
-        port = base.Port(port_name='foo', filesystem=filesystem)
+        port = Port(port_name='foo', filesystem=filesystem)
         port.path_to_test_expectations_file = lambda: '/mock/test_expectations.txt'
         self.assertFalse(port.uses_test_expectations_file())
         port._filesystem = MockFileSystem({'/mock/test_expectations.txt': ''})
@@ -276,7 +276,7 @@ class VirtualTest(unittest.TestCase):
         self.assertRaises(NotImplementedError, method, *args, **kwargs)
 
     def test_virtual_methods(self):
-        port = base.Port()
+        port = Port()
         self.assertVirtual(port.baseline_path)
         self.assertVirtual(port.baseline_search_path)
         self.assertVirtual(port.check_build, None)
@@ -296,25 +296,18 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port._path_to_lighttpd_php)
         self.assertVirtual(port._path_to_wdiff)
 
-    def test_virtual_driver_method(self):
-        self.assertRaises(NotImplementedError, base.Driver, base.Port(),
-                          0)
-
     def test_virtual_driver_methods(self):
-        class VirtualDriver(base.Driver):
-            def __init__(self):
-                pass
-
-        driver = VirtualDriver()
+        driver = Driver(None, None)
         self.assertVirtual(driver.run_test, None)
         self.assertVirtual(driver.poll)
         self.assertVirtual(driver.stop)
 
 
+# FIXME: This should be moved to driver_unittest.py or just deleted.
 class DriverTest(unittest.TestCase):
 
     def _assert_wrapper(self, wrapper_string, expected_wrapper):
-        wrapper = base.Driver._command_wrapper(wrapper_string)
+        wrapper = Driver(None, None)._command_wrapper(wrapper_string)
         self.assertEqual(wrapper, expected_wrapper)
 
     def test_command_wrapper(self):

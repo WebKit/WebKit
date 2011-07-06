@@ -30,7 +30,7 @@
 import logging
 import time
 
-from webkitpy.layout_tests.port import base
+from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.layout_package import test_result_writer
@@ -90,7 +90,7 @@ class SingleTestRunner:
                                ' Please remove that file.', self._testname, expected_filename)
 
     def _expected_driver_output(self):
-        return base.DriverOutput(self._port.expected_text(self._filename),
+        return DriverOutput(self._port.expected_text(self._filename),
                                  self._port.expected_image(self._filename),
                                  self._port.expected_checksum(self._filename),
                                  self._port.expected_audio(self._filename))
@@ -107,7 +107,7 @@ class SingleTestRunner:
         image_hash = None
         if self._should_fetch_expected_checksum():
             image_hash = self._port.expected_checksum(self._filename)
-        return base.DriverInput(self._filename, self._timeout, image_hash)
+        return DriverInput(self._filename, self._timeout, image_hash)
 
     def run(self):
         if self._options.new_baseline or self._options.reset_results:
@@ -285,12 +285,10 @@ class SingleTestRunner:
 
     def _run_reftest(self):
         driver_output1 = self._driver.run_test(self._driver_input())
-        driver_output2 = self._driver.run_test(
-            base.DriverInput(self._reference_filename, self._timeout, driver_output1.image_hash))
+        driver_output2 = self._driver.run_test(DriverInput(self._reference_filename, self._timeout, driver_output1.image_hash))
         test_result = self._compare_output_with_reference(driver_output1, driver_output2)
 
-        test_result_writer.write_test_result(self._port, self._filename,
-                                             driver_output1, driver_output2, test_result.failures)
+        test_result_writer.write_test_result(self._port, self._filename, driver_output1, driver_output2, test_result.failures)
         return test_result
 
     def _compare_output_with_reference(self, driver_output1, driver_output2):
