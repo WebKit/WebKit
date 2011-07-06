@@ -42,6 +42,8 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         "main.js",
         "results.js",
         "ui.js",
+        "favicon-green.png",
+        "favicon-red.png",
     ])
 
     STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "gardeningserver")

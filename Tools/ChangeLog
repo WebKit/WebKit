@@ -1,3 +1,16 @@
+2011-07-06  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic should use a favicon to indicate current state.
+        https://bugs.webkit.org/show_bug.cgi?id=64027
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/favicon-green.png: Added.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/favicon-red.png: Added.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html: Added blurb about icons.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js: Added setting icon state.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Allowed the use of favicons.
+
 2011-07-06  Daniel Bates  <dbates@rim.com>
 
         Fix webkitpy error after changeset 90483 <http://trac.webkit.org/changeset/90483>; Add missing
