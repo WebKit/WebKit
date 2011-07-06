@@ -1,3 +1,9 @@
+2011-07-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Web Inspector: fixing typo introduced in the r90397.
+
+        * inspector/front-end/StylesSidebarPane.js:
+
 2011-07-06  Mike Reed  <reed@google.com>
 
         [skia] don't include deprecated header

@@ -742,7 +742,7 @@ WebInspector.ComputedStyleSidebarPane = function()
     this.titleElement.appendChild(showInheritedCheckbox.element);
 
     if (WebInspector.settings.showInheritedComputedStyleProperties.get()) {
-        this._sectionsContainer.addStyleClass("show-inherited");
+        this.bodyElement.addStyleClass("show-inherited");
         showInheritedCheckbox.checked = true;
     }
 
@@ -750,9 +750,9 @@ WebInspector.ComputedStyleSidebarPane = function()
     {
         WebInspector.settings.showInheritedComputedStyleProperties.set(showInheritedCheckbox.checked);
         if (WebInspector.settings.showInheritedComputedStyleProperties.get())
-            this._sectionsContainer.addStyleClass("show-inherited");
+            this.bodyElement.addStyleClass("show-inherited");
         else
-            this._sectionsContainer.removeStyleClass("show-inherited");
+            this.bodyElement.removeStyleClass("show-inherited");
     }
 
     showInheritedCheckbox.addEventListener(showInheritedToggleFunction.bind(this));
