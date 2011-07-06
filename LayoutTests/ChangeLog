@@ -1,5 +1,13 @@
 2011-07-06  Andras Becsi  <abecsi@webkit.org>
 
+        [Qt] Try to make the bot green by marking tests flaky.
+
+        Rubber-stamped by Andreas Kling.
+
+        * platform/qt/test_expectations.txt:
+
+2011-07-06  Andras Becsi  <abecsi@webkit.org>
+
         [Qt] DumpRenderTree needs a beginDragWithFiles implementation
         https://bugs.webkit.org/show_bug.cgi?id=50902
 

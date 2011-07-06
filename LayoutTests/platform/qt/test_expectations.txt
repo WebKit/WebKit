@@ -56,3 +56,18 @@
 // -A test can be included twice, but not via the same path.
 // -If a test is included twice, then the more precise path wins.
 // -CRASH tests cannot be WONTFIX
+
+http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
+
+fast/forms/textfield-overflow-by-value-update.html = PASS FAIL
+
+fast/notifications/notifications-click-event.html = TEXT PASS
+
+fast/workers/shared-worker-lifecycle.html = TEXT PASS
+fast/workers/shared-worker-frame-lifecycle.html = TEXT PASS
+fast/workers/worker-close-more.html = TEXT PASS
+fast/workers/storage/interrupt-database.html = TEXT PASS
+fast/workers/dedicated-worker-lifecycle.html = TEXT PASS
+fast/workers/worker-lifecycle.html = TEXT PASS
+
+fast/selectors/unqualified-hover-strict.html = TEXT PASS
