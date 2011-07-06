@@ -1,3 +1,15 @@
+2011-07-06  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Fix fast/loader/page-dismissal-modal-dialogs.html.
+        https://bugs.webkit.org/show_bug.cgi?id=64020
+
+        Fix by removing an unnecessary call to setPopupBlockingEnabled() (which
+        doesn't seem to be implemented in WebKit2's layoutTestController).
+
+        Reviewed by Adam Roben.
+
+        * fast/loader/page-dismissal-modal-dialogs.html:
+
 2011-07-06  Mihai Parparita  <mihaip@chromium.org>
 
         Fix duplicate Chromium expectations from r90500 and add additional flakiness

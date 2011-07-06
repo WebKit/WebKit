@@ -22,7 +22,6 @@ function registerEvents(name, thisFrame, otherFrame) {
 addEventListener("load", function() {
     registerEvents("mainFrame", window, frames[0]);
     if (window.layoutTestController) {
-        layoutTestController.setPopupBlockingEnabled(false);
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }
