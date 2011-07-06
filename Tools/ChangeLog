@@ -1,3 +1,9 @@
+2011-07-06  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Fixing an exception in test-webkitpy, caused by bug 64006.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-07-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         Run an Xvfb instance to run the API tests on, like we do for the

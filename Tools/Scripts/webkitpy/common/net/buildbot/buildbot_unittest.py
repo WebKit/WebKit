@@ -135,7 +135,9 @@ class BuilderTest(unittest.TestCase):
 
 class BuildTest(unittest.TestCase):
     def test_layout_test_results(self):
-        build = Build(None, None, None, None)
+        buildbot = BuildBot()
+        builder = Builder(u"Foo Builder (test)", buildbot)
+        build = Build(builder, None, None, None)
         build._fetch_results_html = lambda: None
         # Test that layout_test_results() returns None if the fetch fails.
         self.assertEqual(build.layout_test_results(), None)
