@@ -1,3 +1,15 @@
+2011-07-06  Dmitriy Vyukov  <dvyukov@google.com>
+
+        Reviewed by David Levin.
+
+        Allow substitution of dynamic annotations and prevent identical code folding by the linker.
+        https://bugs.webkit.org/show_bug.cgi?id=62443
+
+        * wtf/DynamicAnnotations.cpp:
+        (WTFAnnotateBenignRaceSized):
+        (WTFAnnotateHappensBefore):
+        (WTFAnnotateHappensAfter):
+
 2011-07-06  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Calls on 32 bit machines are failed after r90423
