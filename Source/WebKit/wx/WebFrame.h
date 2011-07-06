@@ -180,6 +180,8 @@ private:
     
 };
 
+#ifndef SWIG
 wxWebFrame* kit(WebCore::Frame*);
+#endif
 
 #endif // ifndef WXWEBFRAME_H

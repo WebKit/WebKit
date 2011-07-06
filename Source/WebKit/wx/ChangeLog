@@ -1,3 +1,9 @@
+2011-07-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Don't expose the kit function to the swig wrappers.
+
+        * WebFrame.h:
+
 2011-06-20  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
