@@ -134,6 +134,7 @@ namespace JSC {
         , m_isCheckingForDefaultMarkViolation(false)
         , m_isDraining(false)
 #endif
+        , m_shouldUnlinkCalls(false)
     {
     }
 
