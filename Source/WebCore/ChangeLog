@@ -1,3 +1,18 @@
+2011-07-06  John Sullivan  <sullivan@apple.com>
+
+        IconDatabase::synchronousIconForPageURL() has inconsistent API when no custom icon is available
+        <https://bugs.webkit.org/show_bug.cgi?id=64015>
+        <rdar://problem/9706277>
+
+        For some URLs it would return a particular size of default icon; for other
+        URLs it would return 0.
+
+        Reviewed by Ada Chan.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::synchronousIconForPageURL):
+        Return 0 in all cases where there is no custom icon.
+
 2011-07-06  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

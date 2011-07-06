@@ -224,7 +224,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // We should go our of our way to only copy it if we have to store it
     
     if (!isOpen() || !pageCanHaveIcon(pageURLOriginal))
-        return defaultIcon(size);
+        return 0;
 
     MutexLocker locker(m_urlAndIconLock);
     
