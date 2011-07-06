@@ -234,6 +234,18 @@ HEADERS += \
     UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
+    UIProcess/qt/ClientImpl.h \
+    UIProcess/qt/TouchViewInterface.h \
+    UIProcess/qt/qdesktopwebpageproxy.h \
+    UIProcess/qt/qtouchwebpageproxy.h \
+    UIProcess/qt/QtWebPageProxy.h \
+    UIProcess/qt/qwkcontext.h \
+    UIProcess/qt/qwkcontext_p.h \
+    UIProcess/qt/qwkhistory.h \
+    UIProcess/qt/qwkhistory_p.h \
+    UIProcess/qt/qwkpreferences.h \
+    UIProcess/qt/qwkpreferences_p.h \
+    UIProcess/qt/ViewInterface.h \
     UIProcess/qt/WebUndoCommandQt.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
@@ -451,6 +463,15 @@ SOURCES += \
     UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
+    UIProcess/qt/ClientImpl.cpp \
+    UIProcess/qt/TouchViewInterface.cpp \
+    UIProcess/qt/qdesktopwebpageproxy.cpp \
+    UIProcess/qt/qtouchwebpageproxy.cpp \
+    UIProcess/qt/QtWebPageProxy.cpp \
+    UIProcess/qt/qwkcontext.cpp \
+    UIProcess/qt/qwkhistory.cpp \
+    UIProcess/qt/qwkpreferences.cpp \
+    UIProcess/qt/ViewInterface.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaTileQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \

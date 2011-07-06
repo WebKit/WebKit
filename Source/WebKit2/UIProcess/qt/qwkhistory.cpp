@@ -28,8 +28,8 @@
 #include <QSharedData>
 #include <QString>
 #include <QUrl>
+#include "QtWebPageProxy.h"
 #include "qwkhistory_p.h"
-#include "qwkpage_p.h"
 #include "WebBackForwardList.h"
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -85,13 +85,13 @@ QUrl QWKHistoryItem::url() const
     return WKURLCopyQUrl(url.get());
 }
 
-QWKHistoryPrivate::QWKHistoryPrivate(QWKPage* page, WebKit::WebBackForwardList* list)
+QWKHistoryPrivate::QWKHistoryPrivate(QtWebPageProxy* page, WebKit::WebBackForwardList* list)
     : m_page(page)
     , m_backForwardList(list)
 {
 }
 
-QWKHistory* QWKHistoryPrivate::createHistory(QWKPage* page, WebKit::WebBackForwardList* list)
+QWKHistory* QWKHistoryPrivate::createHistory(QtWebPageProxy* page, WebKit::WebBackForwardList* list)
 {
     QWKHistory* history = new QWKHistory();
     history->d = new QWKHistoryPrivate(page, list);

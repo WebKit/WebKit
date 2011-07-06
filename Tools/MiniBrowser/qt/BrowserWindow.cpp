@@ -29,25 +29,26 @@
 #include "BrowserWindow.h"
 
 #include "UrlLoader.h"
-#include "qwkpreferences.h"
+#include "qdesktopwebview.h"
+#include "qtouchwebview.h"
+#include "qtouchwebpage.h"
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
 #include <QGLWidget>
 #endif
 
+#if 0
+// FIXME
 static QWKPage* newPageFunction(QWKPage* page)
 {
-    BrowserWindow* window = new BrowserWindow(page->context());
+    BrowserWindow* window = new BrowserWindow();
     return window->page();
 }
+#endif
 
-QVector<qreal> BrowserWindow::m_zoomLevels;
-
-BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
-    : m_isZoomTextOnly(false)
-    , m_currentZoom(1)
-    , m_urlLoader(0)
-    , m_context(context)
+BrowserWindow::BrowserWindow(WindowOptions* options)
+    : m_urlLoader(0)
+    , m_browser(0)
 {
     if (options)
         m_windowOptions = *options;
@@ -56,10 +57,7 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
         m_windowOptions = tmpOptions;
     }
 
-    if (m_windowOptions.useTiledBackingStore)
-        m_browser = new BrowserView(QGraphicsWKView::Tiled, context);
-    else
-        m_browser = new BrowserView(QGraphicsWKView::Simple, context);
+    m_browser = new BrowserView(m_windowOptions.useTouchWebView);
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     if (m_windowOptions.useQGLWidgetViewport)
@@ -68,12 +66,15 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
-    connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(setWindowTitle(const QString&)));
-    connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
+    connect(webView(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
+    connect(webView(), SIGNAL(titleChanged(QString)), SLOT(setWindowTitle(QString)));
+    connect(webView(), SIGNAL(urlChanged(QUrl)), SLOT(urlChanged(QUrl)));
 
     if (m_windowOptions.printLoadedUrls)
-        connect(page(), SIGNAL(urlChanged(QUrl)), this, SLOT(printURL(QUrl)));
+        connect(webView(), SIGNAL(urlChanged(QUrl)), this, SLOT(printURL(QUrl)));
+
+    if (QDesktopWebView* const desktopWebView = m_browser->desktopWebView())
+        connect(desktopWebView, SIGNAL(statusBarMessageChanged(QString)), statusBar(), SLOT(showMessage(QString)));
 
     this->setCentralWidget(m_browser);
     m_browser->setFocus(Qt::OtherFocusReason);
@@ -84,6 +85,7 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     fileMenu->addSeparator();
     fileMenu->addAction("Quit", this, SLOT(close()));
 
+#if 0
     QMenu* editMenu = menuBar()->addMenu("&Edit");
     QAction* undo = page()->action(QWKPage::Undo);
     undo->setShortcut(QKeySequence(QKeySequence::Undo));
@@ -97,18 +99,8 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     viewMenu->addAction(page()->action(QWKPage::Stop));
     viewMenu->addAction(page()->action(QWKPage::Reload));
     viewMenu->addSeparator();
-    QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
-    QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
-    QAction* resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
-    QAction* zoomText = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
-    zoomText->setCheckable(true);
-    zoomText->setChecked(false);
-    viewMenu->addSeparator();
     viewMenu->addAction("Take Screen Shot...", this, SLOT(screenshot()));
-
-    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
-    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
-    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+#endif
 
     QMenu* windowMenu = menuBar()->addMenu("&Window");
     QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
@@ -121,9 +113,6 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
-    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
-    toggleFrameFlattening->setCheckable(true);
-    toggleFrameFlattening->setChecked(false);
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     QAction* toggleGLViewport = toolsMenu->addAction("Toggle GL Viewport", this, SLOT(toggleGLViewport(bool)));
     toggleGLViewport->setCheckable(true);
@@ -134,14 +123,6 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     toolsMenu->addSeparator();
     toolsMenu->addAction("Load URLs from file", this, SLOT(loadURLListFromFile()));
 
-    QMenu* settingsMenu = menuBar()->addMenu("&Settings");
-    QAction* toggleAutoLoadImages = settingsMenu->addAction("Disable Auto Load Images", this, SLOT(toggleAutoLoadImages(bool)));
-    toggleAutoLoadImages->setCheckable(true);
-    toggleAutoLoadImages->setChecked(false);
-    QAction* toggleDisableJavaScript = settingsMenu->addAction("Disable JavaScript", this, SLOT(toggleDisableJavaScript(bool)));
-    toggleDisableJavaScript->setCheckable(true);
-    toggleDisableJavaScript->setChecked(false);
-
     m_addressBar = new QLineEdit();
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
@@ -149,10 +130,12 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
 #if defined(Q_OS_SYMBIAN)
     bar->setIconSize(QSize(16, 16));
 #endif
+#if 0
     bar->addAction(page()->action(QWKPage::Back));
     bar->addAction(page()->action(QWKPage::Forward));
     bar->addAction(page()->action(QWKPage::Reload));
     bar->addAction(page()->action(QWKPage::Stop));
+#endif
 #if defined(Q_OS_SYMBIAN)
     addToolBarBreak();
     addToolBar("Location")->addWidget(m_addressBar);
@@ -163,14 +146,10 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     QShortcut* selectAddressBar = new QShortcut(Qt::CTRL | Qt::Key_L, this);
     connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
 
+#if 0
+    // FIXME
     page()->setCreateNewPageFunction(newPageFunction);
-
-    // the zoom values are chosen to be like in Mozilla Firefox 3
-    if (!m_zoomLevels.count()) {
-        m_zoomLevels << 0.3 << 0.5 << 0.67 << 0.8 << 0.9;
-        m_zoomLevels << 1;
-        m_zoomLevels << 1.1 << 1.2 << 1.33 << 1.5 << 1.7 << 2 << 2.4 << 3;
-    }
+#endif
 
     if (m_windowOptions.startMaximized)
         setWindowState(windowState() | Qt::WindowMaximized);
@@ -185,21 +164,14 @@ void BrowserWindow::load(const QString& url)
     m_browser->load(url);
 }
 
-QWKPage* BrowserWindow::page()
+QObject* BrowserWindow::webView() const
 {
-    return m_browser->view()->page();
+    return m_browser->touchWebView() ? static_cast<QObject*>(m_browser->touchWebView()->page()) : static_cast<QObject*>(m_browser->desktopWebView());
 }
 
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
-    BrowserWindow* window;
-    if (m_windowOptions.useSeparateWebProcessPerWindow) {
-        QWKContext* context = new QWKContext();
-        window = new BrowserWindow(context);
-        context->setParent(window);
-    } else
-        window = new BrowserWindow(m_context);
-
+    BrowserWindow* window = new BrowserWindow();
     window->load(url);
     return window;
 }
@@ -289,47 +261,6 @@ void BrowserWindow::screenshot()
 #endif
 }
 
-void BrowserWindow::zoomIn()
-{
-    if (m_isZoomTextOnly)
-        m_currentZoom = page()->textZoomFactor();
-    else
-        m_currentZoom = page()->pageZoomFactor();
-
-    int i = m_zoomLevels.indexOf(m_currentZoom);
-    Q_ASSERT(i >= 0);
-    if (i < m_zoomLevels.count() - 1)
-        m_currentZoom = m_zoomLevels[i + 1];
-
-    applyZoom();
-}
-
-void BrowserWindow::zoomOut()
-{
-    if (m_isZoomTextOnly)
-        m_currentZoom = page()->textZoomFactor();
-    else
-        m_currentZoom = page()->pageZoomFactor();
-
-    int i = m_zoomLevels.indexOf(m_currentZoom);
-    Q_ASSERT(i >= 0);
-    if (i > 0)
-        m_currentZoom = m_zoomLevels[i - 1];
-
-    applyZoom();
-}
-
-void BrowserWindow::resetZoom()
-{
-    m_currentZoom = 1;
-    applyZoom();
-}
-
-void BrowserWindow::toggleZoomTextOnly(bool b)
-{
-    m_isZoomTextOnly = b;
-}
-
 void BrowserWindow::toggleFullScreenMode(bool enable)
 {
     bool alreadyEnabled = windowState() & Qt::WindowFullScreen;
@@ -337,14 +268,10 @@ void BrowserWindow::toggleFullScreenMode(bool enable)
         setWindowState(windowState() ^ Qt::WindowFullScreen);
 }
 
-void BrowserWindow::toggleFrameFlattening(bool toggle)
-{
-    page()->preferences()->setAttribute(QWKPreferences::FrameFlatteningEnabled, toggle);
-}
-
-
 void BrowserWindow::showUserAgentDialog()
 {
+#if 0
+    // FIXME
     updateUserAgentList();
 
     QDialog dialog(this);
@@ -370,6 +297,7 @@ void BrowserWindow::showUserAgentDialog()
 
     if (dialog.exec() && !combo->currentText().isEmpty())
         page()->setCustomUserAgent(combo->currentText());
+#endif
 }
 
 void BrowserWindow::loadURLListFromFile()
@@ -392,18 +320,10 @@ void BrowserWindow::printURL(const QUrl& url)
     output << "Loaded: " << url.toString() << endl;
 }
 
-void BrowserWindow::toggleDisableJavaScript(bool enable)
-{
-    page()->preferences()->setAttribute(QWKPreferences::JavascriptEnabled, !enable);
-}
-
-void BrowserWindow::toggleAutoLoadImages(bool enable)
-{
-    page()->preferences()->setAttribute(QWKPreferences::AutoLoadImages, !enable);
-}
-
 void BrowserWindow::updateUserAgentList()
 {
+#if 0
+    // FIXME
     QFile file(":/useragentlist.txt");
 
     if (file.open(QIODevice::ReadOnly)) {
@@ -419,14 +339,7 @@ void BrowserWindow::updateUserAgentList()
     QWKPage* wkPage = page();
     if (!(wkPage->customUserAgent().isEmpty() || m_userAgentList.contains(wkPage->customUserAgent())))
         m_userAgentList << wkPage->customUserAgent();
-}
-
-void BrowserWindow::applyZoom()
-{
-    if (m_isZoomTextOnly)
-        page()->setTextZoomFactor(m_currentZoom);
-    else
-        page()->setPageZoomFactor(m_currentZoom);
+#endif
 }
 
 BrowserWindow::~BrowserWindow()

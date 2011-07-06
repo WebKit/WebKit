@@ -31,24 +31,24 @@
 #include <PassOwnPtr.h>
 
 class QMenu;
-class QWKPage;
+class QtWebPageProxy;
 class WebContextMenuItemData;
 
 namespace WebKit {
 
 class WebContextMenuProxyQt : public WebContextMenuProxy {
 public:
-    static PassRefPtr<WebContextMenuProxyQt> create(QWKPage*);
+    static PassRefPtr<WebContextMenuProxyQt> create(QtWebPageProxy*);
 
 private:
-    WebContextMenuProxyQt(QWKPage*);
+    WebContextMenuProxyQt(QtWebPageProxy*);
 
     virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
     virtual void hideContextMenu();
 
     PassOwnPtr<QMenu> createContextMenu(const Vector<WebContextMenuItemData>& items) const;
 
-    QWKPage* const m_page;
+    QtWebPageProxy* const m_page;
 };
 
 } // namespace WebKit

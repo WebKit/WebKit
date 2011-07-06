@@ -27,8 +27,7 @@
 #include "config.h"
 
 #include "PlatformWebView.h"
-#include "qgraphicswkview.h"
-#include "qwkcontext.h"
+#include "qdesktopwebview.h"
 #include <QtGui>
 
 namespace WTR {
@@ -37,18 +36,20 @@ class WebView : public QGraphicsView {
 public:
     WebView(WKContextRef, WKPageGroupRef);
 
-    QGraphicsWKView* wkView() const { return m_item; }
+    QDesktopWebView* wkView() const { return m_item; }
+    WKPageRef pageRef() const { return m_item->pageRef(); }
 
     virtual ~WebView() { delete m_item; }
 
 private:
-    QGraphicsWKView* m_item;
+    QDesktopWebView* m_item;
 };
 
 WebView::WebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : QGraphicsView()
-    , m_item(new QGraphicsWKView(new QWKContext(contextRef, this), pageGroupRef))
+    , m_item(new QDesktopWebView(contextRef, pageGroupRef))
 {
+    m_item->setPreferredSize(800, 600);
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
 }
@@ -78,7 +79,7 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
 
 WKPageRef PlatformWebView::page()
 {
-    return m_view->wkView()->page()->pageRef();
+    return m_view->pageRef();
 }
 
 void PlatformWebView::focus()
@@ -88,18 +89,19 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    QRect windowRect = m_window->geometry();
+    // Implement.
+
     WKRect wkFrame;
-    wkFrame.origin.x = windowRect.x();
-    wkFrame.origin.y = windowRect.y();
-    wkFrame.size.width = windowRect.size().width();
-    wkFrame.size.height = windowRect.size().height();
+    wkFrame.origin.x = 0;
+    wkFrame.origin.y = 0;
+    wkFrame.size.width = 0;
+    wkFrame.size.height = 0;
     return wkFrame;
 }
 
-void PlatformWebView::setWindowFrame(WKRect rect)
+void PlatformWebView::setWindowFrame(WKRect)
 {
-    m_window->setGeometry(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    // Implement.
 }
 
 } // namespace WTR

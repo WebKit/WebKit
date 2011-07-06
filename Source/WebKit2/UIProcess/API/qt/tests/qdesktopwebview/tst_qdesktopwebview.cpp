@@ -19,41 +19,37 @@
 
 #include <QScopedPointer>
 #include <QtTest/QtTest>
-#include <qwkcontext.h>
-#include <qwkpage.h>
+#include <qdesktopwebview.h>
+#include "../testwindow.h"
 
-class tst_QWKPage : public QObject {
+class tst_QDesktopWebView : public QObject {
     Q_OBJECT
 
 private slots:
     void init();
     void cleanup();
 
-    void loadEmptyUrl();
-
 private:
-    QScopedPointer<QWKContext> m_context;
-    QScopedPointer<QWKPage> m_page;
+    inline QDesktopWebView* webView() const;
+    QScopedPointer<TestWindow> m_window;
 };
 
-void tst_QWKPage::init()
+void tst_QDesktopWebView::init()
 {
-    m_context.reset(new QWKContext);
-    m_page.reset(new QWKPage(m_context.data()));
+    m_window.reset(new TestWindow(new QDesktopWebView()));
 }
 
-void tst_QWKPage::cleanup()
+void tst_QDesktopWebView::cleanup()
 {
-    m_page.reset();
-    m_context.reset();
+    m_window.reset();
 }
 
-void tst_QWKPage::loadEmptyUrl()
+inline QDesktopWebView* tst_QDesktopWebView::webView() const
 {
-    m_page->load(QUrl());
-    m_page->load(QUrl(QLatin1String("")));
+    return static_cast<QDesktopWebView*>(m_window->webView.data());
 }
 
-QTEST_MAIN(tst_QWKPage)
+QTEST_MAIN(tst_QDesktopWebView)
 
-#include "tst_qwkpage.moc"
+#include "tst_qdesktopwebview.moc"
+

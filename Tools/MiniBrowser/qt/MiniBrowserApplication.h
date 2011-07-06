@@ -34,9 +34,8 @@
 
 struct WindowOptions {
     WindowOptions()
-        : useTiledBackingStore(true)
-        , useSeparateWebProcessPerWindow(false)
-        , printLoadedUrls(false)
+        : printLoadedUrls(false)
+        , useTouchWebView(false)
 #if defined(Q_OS_SYMBIAN)
         , startMaximized(true)
 #else
@@ -48,9 +47,8 @@ struct WindowOptions {
     {
     }
 
-    bool useTiledBackingStore;
-    bool useSeparateWebProcessPerWindow;
     bool printLoadedUrls;
+    bool useTouchWebView;
     bool startMaximized;
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     bool useQGLWidgetViewport;

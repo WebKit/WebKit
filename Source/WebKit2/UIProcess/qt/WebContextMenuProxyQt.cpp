@@ -31,51 +31,51 @@
 #include <OwnPtr.h>
 #include <WebContextMenuItemData.h>
 #include <qmenu.h>
-#include <qwkpage.h>
+#include <QtWebPageProxy.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-static QWKPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAction action)
+static QtWebPageProxy::WebAction webActionForContextMenuAction(WebCore::ContextMenuAction action)
 {
     switch (action) {
     case WebCore::ContextMenuItemTagOpenLink:
-        return QWKPage::OpenLink;
+        return QtWebPageProxy::OpenLink;
     case WebCore::ContextMenuItemTagOpenLinkInNewWindow:
-        return QWKPage::OpenLinkInNewWindow;
+        return QtWebPageProxy::OpenLinkInNewWindow;
     case WebCore::ContextMenuItemTagCopyLinkToClipboard:
-        return QWKPage::CopyLinkToClipboard;
+        return QtWebPageProxy::CopyLinkToClipboard;
     case WebCore::ContextMenuItemTagOpenImageInNewWindow:
-        return QWKPage::OpenImageInNewWindow;
+        return QtWebPageProxy::OpenImageInNewWindow;
     case WebCore::ContextMenuItemTagGoBack:
-        return QWKPage::Back;
+        return QtWebPageProxy::Back;
     case WebCore::ContextMenuItemTagGoForward:
-        return QWKPage::Forward;
+        return QtWebPageProxy::Forward;
     case WebCore::ContextMenuItemTagStop:
-        return QWKPage::Stop;
+        return QtWebPageProxy::Stop;
     case WebCore::ContextMenuItemTagReload:
-        return QWKPage::Reload;
+        return QtWebPageProxy::Reload;
     case WebCore::ContextMenuItemTagCut:
-        return QWKPage::Cut;
+        return QtWebPageProxy::Cut;
     case WebCore::ContextMenuItemTagCopy:
-        return QWKPage::Copy;
+        return QtWebPageProxy::Copy;
     case WebCore::ContextMenuItemTagPaste:
-        return QWKPage::Paste;
+        return QtWebPageProxy::Paste;
     case WebCore::ContextMenuItemTagSelectAll:
-        return QWKPage::SelectAll;
+        return QtWebPageProxy::SelectAll;
     default:
         break;
     }
-    return QWKPage::NoWebAction;
+    return QtWebPageProxy::NoWebAction;
 }
 
-WebContextMenuProxyQt::WebContextMenuProxyQt(QWKPage* page)
+WebContextMenuProxyQt::WebContextMenuProxyQt(QtWebPageProxy* page)
     : m_page(page)
 {
 }
 
-PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QWKPage* page)
+PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QtWebPageProxy* page)
 {
     return adoptRef(new WebContextMenuProxyQt(page));
 }
@@ -87,17 +87,18 @@ void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vect
 
     OwnPtr<QMenu> menu = createContextMenu(items);
 
-    // We send the signal, even with no items, because the client should be able to show custom items
-    // even if WebKit has nothing to show.
+    // We call showContextMenu(), even with no items, because the client should be able to show custom items
+    // if WebKit has nothing to show.
     if (!menu)
         menu = adoptPtr(new QMenu);
 
     menu->move(position);
-    emit m_page->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
+    m_page->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
 }
 
 void WebContextMenuProxyQt::hideContextMenu()
 {
+    m_page->hideContextMenu();
 }
 
 PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items) const
@@ -108,7 +109,7 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
         switch (item.type()) {
         case WebCore::CheckableActionType: /* fall through */
         case WebCore::ActionType: {
-            QWKPage::WebAction action = webActionForContextMenuAction(item.action());
+            QtWebPageProxy::WebAction action = webActionForContextMenuAction(item.action());
             QAction* qtAction = m_page->action(action);
             if (qtAction) {
                 qtAction->setEnabled(item.enabled());

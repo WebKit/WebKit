@@ -41,11 +41,11 @@ class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserWindow(QWKContext*, WindowOptions* = 0);
+    BrowserWindow(WindowOptions* = 0);
     ~BrowserWindow();
     void load(const QString& url);
 
-    QWKPage* page();
+    QObject* webView() const;
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");
@@ -60,36 +60,22 @@ protected slots:
     void urlChanged(const QUrl&);
     void openFile();
 
-    void zoomIn();
-    void zoomOut();
-    void resetZoom();
-    void toggleZoomTextOnly(bool on);
     void screenshot();
 
     void toggleFullScreenMode(bool enable);
 
-    void toggleFrameFlattening(bool);
     void showUserAgentDialog();
 
     void loadURLListFromFile();
 
     void printURL(const QUrl&);
 
-    void toggleAutoLoadImages(bool);
-    void toggleDisableJavaScript(bool);
     void toggleGLViewport(bool);
 
 private:
     void updateUserAgentList();
 
-    void applyZoom();
-
-    static QVector<qreal> m_zoomLevels;
-    bool m_isZoomTextOnly;
-    qreal m_currentZoom;
-
     UrlLoader* m_urlLoader;
-    QWKContext* m_context;
     WindowOptions m_windowOptions;
     BrowserView* m_browser;
     QLineEdit* m_addressBar;

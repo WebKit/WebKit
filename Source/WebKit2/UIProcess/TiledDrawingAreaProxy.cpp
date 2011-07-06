@@ -174,12 +174,6 @@ void TiledDrawingAreaProxy::setKeepAndCoverAreaMultipliers(const FloatSize& keep
     startTileCreationTimer();
 }
 
-void TiledDrawingAreaProxy::takeSnapshot(const IntSize& size, const IntRect& contentsRect)
-{
-    WebPageProxy* page = this->page();
-    page->process()->send(Messages::DrawingArea::TakeSnapshot(size, contentsRect), page->pageID());
-}
-
 void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 {
     IntRect dirtyRect(mapFromContents(contentsDirtyRect));

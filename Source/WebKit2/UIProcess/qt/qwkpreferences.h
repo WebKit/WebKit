@@ -22,7 +22,6 @@
 
 #include "qwebkitglobal.h"
 
-class QWKPage;
 class QWKPreferencesPrivate;
 
 class QWEBKIT_EXPORT QWKPreferences {
@@ -74,7 +73,6 @@ private:
 
     QWKPreferencesPrivate *d;
 
-    friend class QWKPage;
     friend class QWKPreferencesPrivate;
 };
 

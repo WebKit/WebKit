@@ -32,7 +32,6 @@
 #include "UrlLoader.h"
 #include <QLatin1String>
 #include <QRegExp>
-#include <qgraphicswkview.h>
 #include <QtGui>
 
 int main(int argc, char** argv)
@@ -40,8 +39,7 @@ int main(int argc, char** argv)
     MiniBrowserApplication app(argc, argv);
 
     if (app.isRobotized()) {
-        QWKContext* context = new QWKContext;
-        BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
+        BrowserWindow* window = new BrowserWindow(&app.m_windowOptions);
         UrlLoader loader(window, app.urls().at(0), app.robotTimeout(), app.robotExtraTime());
         loader.loadNext();
         window->show();
@@ -58,11 +56,7 @@ int main(int argc, char** argv)
             urls.append("http://www.google.com");
     }
 
-    QWKContext* context = new QWKContext;
-    BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-    if (app.m_windowOptions.useSeparateWebProcessPerWindow)
-        context->setParent(window);
-
+    BrowserWindow* window = new BrowserWindow(&app.m_windowOptions);
     window->load(urls.at(0));
 
     for (int i = 1; i < urls.size(); ++i)

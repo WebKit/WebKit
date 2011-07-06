@@ -30,24 +30,28 @@
 #define BrowserView_h
 
 #include <QGraphicsView>
-#include "qgraphicswkview.h"
-#include "qwkcontext.h"
+
+class QDesktopWebView;
+class QTouchWebView;
 
 class BrowserView : public QGraphicsView {
     Q_OBJECT
 
 public:
-    BrowserView(QGraphicsWKView::BackingStoreType, QWKContext*, QWidget* parent = 0);
-    virtual ~BrowserView() { delete m_item; }
+    BrowserView(bool useTouchWebView, QWidget* parent = 0);
+    virtual ~BrowserView();
 
     void load(const QString&);
-    QGraphicsWKView* view() const;
+    QGraphicsWidget* view() const;
+
+    QTouchWebView* touchWebView() const;
+    QDesktopWebView* desktopWebView() const;
 
 protected:
     virtual void resizeEvent(QResizeEvent*);
 
 private:
-    QGraphicsWKView* m_item;
+    QGraphicsWidget* m_item;
 };
 
 #endif

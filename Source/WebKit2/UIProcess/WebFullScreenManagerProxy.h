@@ -54,7 +54,8 @@ typedef WKView PlatformWebView;
 class WebView;
 typedef WebView PlatformWebView;
 #elif PLATFORM(QT)
-typedef QGraphicsWKView PlatformWebView;
+// FIXME: We need to investigate how to abstract QDesktopWebView/QTouchWebView here.
+typedef QObject PlatformWebView;
 #elif PLATFORM(GTK)
 class WebView;
 typedef WebView PlatformWebView;

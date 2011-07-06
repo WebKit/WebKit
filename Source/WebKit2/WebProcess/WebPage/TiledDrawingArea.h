@@ -64,7 +64,6 @@ private:
     virtual void didUpdate();
     virtual void cancelTileUpdate(int tileID);
     virtual void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale);
-    virtual void takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect);
 
     // Platform overrides
     void paintIntoBitmap(ShareableBitmap*, const WebCore::IntRect& tileRect, float scale);

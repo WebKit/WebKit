@@ -44,7 +44,7 @@
 class WKView;
 #endif
 #elif PLATFORM(QT)
-class QGraphicsWKView;
+class QTouchWebPage;
 #include <QImage>
 #endif
 
@@ -59,7 +59,7 @@ typedef WKView PlatformWebView;
 class WebView;
 typedef WebView PlatformWebView;
 #elif PLATFORM(QT)
-typedef QGraphicsWKView PlatformWebView;
+typedef QTouchWebPage PlatformWebView;
 #endif
 
 class TiledDrawingAreaProxy : public DrawingAreaProxy {
@@ -71,8 +71,6 @@ public:
 
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
-
-    void takeSnapshot(const WebCore::IntSize& size, const WebCore::IntRect& contentsRect);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext(uint32_t /* contextID */) { }
@@ -106,8 +104,6 @@ private:
     WebPageProxy* page();
     WebCore::IntRect webViewVisibleRect();
     void updateWebView(const Vector<WebCore::IntRect>& paintedArea);
-
-    void snapshotTaken(ShareableBitmap*);
 
     // DrawingAreaProxy
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);

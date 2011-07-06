@@ -44,12 +44,9 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKStringQt.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/ClientImpl.cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qgraphicswkview.cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkcontext.cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkhistory.cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkpage.cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkpreferences.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
@@ -122,15 +119,12 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKStringQt.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/ClientImpl.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qgraphicswkview.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkcontext.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkcontext_p.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkhistory.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkhistory_p.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkpage.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkpage_p.h \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwkpreferences.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview_p.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview_p.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \

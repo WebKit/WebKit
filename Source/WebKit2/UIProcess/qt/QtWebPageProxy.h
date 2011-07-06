@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,40 +18,76 @@
  *
  */
 
-#ifndef qwkpage_p_h
-#define qwkpage_p_h
+#ifndef QtWebPageProxy_h
+#define QtWebPageProxy_h
 
-#include "DrawingAreaProxy.h"
+#include "config.h"
+
 #include "LayerTreeContext.h"
 #include "PageClient.h"
 #include "ShareableBitmap.h"
-#include "qwkpage.h"
-#include "qgraphicswkview.h"
 #include "ViewportArguments.h"
+#include "ViewInterface.h"
 #include "WebPageProxy.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <QBasicTimer>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QMenu>
+#include <QSharedPointer>
 
-class QGraphicsWKView;
+QT_BEGIN_NAMESPACE
 class QUndoStack;
+QT_END_NAMESPACE
+
+class QWKContext;
+class QWKHistory;
 class QWKPreferences;
 
 using namespace WebKit;
 
-class QWKPagePrivate : WebKit::PageClient {
+QWKContext *defaultWKContext();
+
+WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions);
+
+// FIXME: needs focus in/out, window activation, support through viewStateDidChange().
+class QtWebPageProxy : public QObject, WebKit::PageClient {
+    Q_OBJECT
+
 public:
-    QWKPagePrivate(QWKPage*, QWKContext*, WKPageGroupRef = 0);
-    ~QWKPagePrivate();
+    // FIXME: Add a nice API for view creation.
+    typedef QtWebPageProxy* (*CreateNewPageFn)(QtWebPageProxy*);
 
-    static QWKPagePrivate* get(QWKPage* page) { return page->d; }
+    enum WebAction {
+        NoWebAction = - 1,
 
-    void init(QGraphicsItem*, QGraphicsWKView::BackingStoreType);
+        OpenLink,
+        OpenLinkInNewWindow,
+        CopyLinkToClipboard,
+        OpenImageInNewWindow,
+
+        Back,
+        Forward,
+        Stop,
+        Reload,
+
+        Cut,
+        Copy,
+        Paste,
+        SelectAll,
+
+        Undo,
+        Redo,
+
+        WebActionCount
+    };
+
+    QtWebPageProxy(WebKit::ViewInterface* viewInterface, QWKContext*, WKPageGroupRef = 0);
+    ~QtWebPageProxy();
+
+    virtual bool handleEvent(QEvent*);
 
     // PageClient
-    virtual PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
@@ -75,7 +111,6 @@ public:
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
     virtual WebCore::IntRect viewportVisibleRect() const;
     virtual void setCursor(const WebCore::Cursor&);
-    virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
@@ -104,65 +139,95 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual float userSpaceScaleFactor() const { return 1; }
 
+    void didChangeUrl(const QUrl&);
+    void didChangeTitle(const QString&);
+    void didChangeStatusText(const QString&);
+    void showContextMenu(QSharedPointer<QMenu>);
+    void hideContextMenu();
+
+    void loadDidBegin();
+    void loadDidSucceed();
+    void didChangeLoadProgress(int);
+
     void paint(QPainter* painter, QRect);
 
-    void keyPressEvent(QKeyEvent*);
-    void keyReleaseEvent(QKeyEvent*);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent*);
-    void mousePressEvent(QGraphicsSceneMouseEvent*);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent*);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
-    void wheelEvent(QGraphicsSceneWheelEvent*);
-
-    void dragEnterEvent(QGraphicsSceneDragDropEvent*);
-    void dragLeaveEvent(QGraphicsSceneDragDropEvent*);
-    void dragMoveEvent(QGraphicsSceneDragDropEvent*);
-    void dropEvent(QGraphicsSceneDragDropEvent*);
-
-    void updateAction(QWKPage::WebAction action);
+    void updateAction(QtWebPageProxy::WebAction action);
     void updateNavigationActions();
     void updateEditorActions();
 
-    QWidget* ownerWidget();
+    WKPageRef pageRef() const;
 
-    void _q_webActionTriggered(bool checked);
+    void load(const QUrl& url);
+    QUrl url() const;
 
-    void touchEvent(QTouchEvent*);
+    CreateNewPageFn createNewPageFunction() const { return m_createNewPageFn; }
 
-    QWKPage* q;
+    void setDrawingAreaSize(const QSize&);
 
-    QGraphicsItem* view;
-    QWKContext* context;
-    QWKHistory* history;
+    QWKPreferences* preferences() const;
 
-    QAction* actions[QWKPage::WebActionCount];
-    QWKPreferences* preferences;
+    QString title() const;
 
-    RefPtr<WebKit::WebPageProxy> page;
+    void setActualVisibleContentsRect(const QRect& rect) const;
 
-    WebCore::ViewportArguments viewportArguments;
+    void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
 
-    QWKPage::CreateNewPageFn createNewPageFn;
+    QAction* action(WebAction action) const;
+    void triggerAction(WebAction action, bool checked = false);
+    void setCreateNewPageFunction(CreateNewPageFn function);
 
-    QPoint tripleClick;
-    QBasicTimer tripleClickTimer;
-    QGraphicsWKView::BackingStoreType backingStoreType;
+    void setCustomUserAgent(const QString&);
+    QString customUserAgent() const;
 
-    bool isConnectedToEngine;
+    qreal textZoomFactor() const;
+    qreal pageZoomFactor() const;
+    void setTextZoomFactor(qreal zoomFactor);
+    void setPageZoomFactor(qreal zoomFactor);
+    void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
+
+    QWKHistory* history() const;
+
+    void findZoomableAreaForPoint(const QPoint&);
+
+    bool isConnectedToEngine() const;
+
+    void setPageIsVisible(bool);
+
+public Q_SLOTS:
+    void webActionTriggered(bool checked);
+
+public:
+    Q_SIGNAL void scrollRequested(int dx, int dy);
+    Q_SIGNAL void windowCloseRequested();
+    Q_SIGNAL void zoomableAreaFound(const QRect&);
+    Q_SIGNAL void focusNextPrevChild(bool);
+
+protected:
+    void init();
+
+    virtual void paintContent(QPainter* painter, const QRect& area) = 0;
+    RefPtr<WebKit::WebPageProxy> m_webPageProxy;
+    WebKit::ViewInterface* const m_viewInterface;
+
+private:
+    bool handleKeyPressEvent(QKeyEvent*);
+    bool handleKeyReleaseEvent(QKeyEvent*);
+    bool handleFocusInEvent(QFocusEvent*);
+    bool handleFocusOutEvent(QFocusEvent*);
+
+    QWKContext* m_context;
+    QWKHistory* m_history;
+
+    mutable QAction* m_actions[QtWebPageProxy::WebActionCount];
+    mutable QWKPreferences* m_preferences;
+
+    CreateNewPageFn m_createNewPageFn;
+
+    bool m_isConnectedToEngine;
 
 #ifndef QT_NO_UNDOSTACK
-    OwnPtr<QUndoStack> undoStack;
+    OwnPtr<QUndoStack> m_undoStack;
 #endif
 };
 
-class QtViewportAttributesPrivate : public QSharedData {
-public:
-    QtViewportAttributesPrivate(QWKPage::ViewportAttributes* qq)
-        : q(qq)
-    { }
-
-    QWKPage::ViewportAttributes* q;
-};
-
-
-#endif /* qkpage_p_h */
+#endif /* QtWebPageProxy_h */

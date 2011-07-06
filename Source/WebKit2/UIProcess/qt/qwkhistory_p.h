@@ -36,7 +36,7 @@ class WebBackForwardList;
 }
 
 class QWKHistory;
-class QWKPage;
+class QtWebPageProxy;
 
 class QWEBKIT_EXPORT QWKHistoryItemPrivate : public QSharedData {
 public:
@@ -51,13 +51,13 @@ private:
 
 class QWEBKIT_EXPORT QWKHistoryPrivate {
 public:
-    static QWKHistory* createHistory(QWKPage*, WebKit::WebBackForwardList*);
+    static QWKHistory* createHistory(QtWebPageProxy*, WebKit::WebBackForwardList*);
 
 private:
-    QWKHistoryPrivate(QWKPage*, WebKit::WebBackForwardList*);
+    QWKHistoryPrivate(QtWebPageProxy*, WebKit::WebBackForwardList*);
     ~QWKHistoryPrivate();
 
-    QWKPage* m_page;
+    QtWebPageProxy* m_page;
     WebKit::WebBackForwardList* m_backForwardList;
 
     friend class QWKHistory;

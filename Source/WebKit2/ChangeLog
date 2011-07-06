@@ -1,3 +1,380 @@
+2011-07-06  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Split Qt API into two different web views (touch and desktop)
+        https://bugs.webkit.org/show_bug.cgi?id=63950
+
+        Co-authored with Benjamin Poulain <benjamin@webkit.org>.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace the QGraphicsWKView/QWKPage mess with QDesktopWebView and QTouchWebView.
+
+        QDesktopWebView is a traditional web view, similar to QGraphicsWebView. It will
+        will have the expected "desktop" behavior for things like subframes and
+        fixed-position elements.
+
+        QTouchWebView is intended for use on touch devices, and will manage the viewport,
+        gestures, tiled rendering, and other things that the user should never have to
+        worry about. It will use "resize to contents" and frame flattening by default.
+
+        API-wise, the biggest difference between the two is that QTouchWebView is really
+        a viewport that contains a QTouchWebPage. These are decoupled for flexibility in
+        UI design. This decoupling is not necessary for the desktop use-case, and so
+        QDesktopWebView is the only class we need.
+
+        Much of the Qt/WebKit2 API has been removed (snapshots, history, preferences..)
+        but will be re-added incrementally in a way that fits the new API vision.
+
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qdesktopwebview.cpp: Added.
+        (QDesktopWebViewPrivate::QDesktopWebViewPrivate):
+        (QDesktopWebViewPrivate::setViewNeedsDisplay):
+        (QDesktopWebViewPrivate::drawingAreaSize):
+        (QDesktopWebViewPrivate::contentSizeChanged):
+        (QDesktopWebViewPrivate::isActive):
+        (QDesktopWebViewPrivate::hasFocus):
+        (QDesktopWebViewPrivate::isVisible):
+        (QDesktopWebViewPrivate::startDrag):
+        (QDesktopWebViewPrivate::didChangeUrl):
+        (QDesktopWebViewPrivate::didChangeTitle):
+        (QDesktopWebViewPrivate::didChangeToolTip):
+        (QDesktopWebViewPrivate::didChangeStatusText):
+        (QDesktopWebViewPrivate::didChangeCursor):
+        (QDesktopWebViewPrivate::loadDidBegin):
+        (QDesktopWebViewPrivate::loadDidSucceed):
+        (QDesktopWebViewPrivate::didChangeLoadProgress):
+        (QDesktopWebViewPrivate::showContextMenu):
+        (QDesktopWebViewPrivate::hideContextMenu):
+        (QDesktopWebView::QDesktopWebView):
+        (QDesktopWebView::init):
+        (QDesktopWebView::~QDesktopWebView):
+        (QDesktopWebView::load):
+        (QDesktopWebView::url):
+        (QDesktopWebView::title):
+        (QDesktopWebView::resizeEvent):
+        (QDesktopWebView::paint):
+        (QDesktopWebView::event):
+        (QDesktopWebView::pageRef):
+        * UIProcess/API/qt/qdesktopwebview.h: Added.
+        * UIProcess/API/qt/qdesktopwebview_p.h: Added.
+        * UIProcess/API/qt/qgraphicswkview.cpp: Removed.
+        * UIProcess/API/qt/qgraphicswkview.h: Removed.
+        * UIProcess/API/qt/qtouchwebpage.cpp: Added.
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPage::~QTouchWebPage):
+        (QTouchWebPage::paint):
+        (QTouchWebPage::load):
+        (QTouchWebPage::url):
+        (QTouchWebPage::title):
+        (QTouchWebPage::focusNextPrevChildCallback):
+        (QTouchWebPage::focusNextPrevChild):
+        (QTouchWebPage::event):
+        (QTouchWebPage::timerEvent):
+        (QTouchWebPage::resizeEvent):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        (QTouchWebPage::visibleRect):
+        (QTouchWebPagePrivate::prepareScaleChange):
+        (QTouchWebPagePrivate::commitScaleChange):
+        (QTouchWebPagePrivate::onScaleChanged):
+        (QTouchWebPagePrivate::setPage):
+        * UIProcess/API/qt/qtouchwebpage.h: Added.
+        * UIProcess/API/qt/qtouchwebpage_p.h: Added.
+        (QTouchWebPagePrivate::getPageViewPrivate):
+        * UIProcess/API/qt/qtouchwebview.cpp: Added.
+        (QTouchWebViewPrivate::QTouchWebViewPrivate):
+        (QTouchWebView::QTouchWebView):
+        (QTouchWebView::~QTouchWebView):
+        (QTouchWebView::page):
+        * UIProcess/API/qt/qtouchwebview.h: Added.
+        * UIProcess/API/qt/qtouchwebview_p.h: Added.
+        * UIProcess/API/qt/qwkpage.cpp: Removed.
+        * UIProcess/API/qt/qwkpage.h: Removed.
+        * UIProcess/API/qt/tests/commonviewtests/commonviewtests.pro: Added.
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp: Added.
+        (tst_CommonViewTests::init):
+        (tst_CommonViewTests::cleanup):
+        (tst_CommonViewTests::baseUrl):
+        (tst_CommonViewTests::loadEmptyUrl):
+        (tst_CommonViewTests::loadEmptyPageViewVisible):
+        (tst_CommonViewTests::loadEmptyPageViewHidden):
+        (tst_CommonViewTests::show):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp: Added.
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::show):
+        (WebViewAbstraction::hide):
+        (WebViewAbstraction::load):
+        (WebViewAbstraction::url):
+        (WebViewAbstraction::touchViewLoadStarted):
+        (WebViewAbstraction::desktopViewLoadStarted):
+        (WebViewAbstraction::touchViewLoadSucceeded):
+        (WebViewAbstraction::desktopViewLoadSucceeded):
+        (WebViewAbstraction::touchWebView):
+        (WebViewAbstraction::desktopWebView):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h: Copied from Source/WebKit2/UIProcess/API/qt/tests/qwkpage/tst_qwkpage.cpp.
+        * UIProcess/API/qt/tests/html/a.htm: Removed.
+        * UIProcess/API/qt/tests/html/b.htm: Removed.
+        * UIProcess/API/qt/tests/html/c.htm: Removed.
+        * UIProcess/API/qt/tests/html/d.htm: Removed.
+        * UIProcess/API/qt/tests/qdesktopwebview/qdesktopwebview.pro: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qgraphicswkview/qgraphicswkview.pro.
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qwkpage/tst_qwkpage.cpp.
+        (tst_QDesktopWebView::init):
+        (tst_QDesktopWebView::cleanup):
+        (tst_QDesktopWebView::webView):
+        * UIProcess/API/qt/tests/qgraphicswkview/tst_qgraphicswkview.cpp: Removed.
+        * UIProcess/API/qt/tests/qtouchwebview/qtouchwebview.pro: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qwkhistory/qwkhistory.pro.
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp: Added.
+        (tst_QTouchWebView::tst_QTouchWebView):
+        (tst_QTouchWebView::init):
+        (tst_QTouchWebView::cleanup):
+        (tst_QTouchWebView::webView):
+        (tst_QTouchWebView::accessPage):
+        * UIProcess/API/qt/tests/qwkhistory/tst_qwkhistory.cpp: Removed.
+        * UIProcess/API/qt/tests/qwkpage/qwkpage.pro: Removed.
+        * UIProcess/API/qt/tests/tests.pro:
+        * UIProcess/API/qt/tests/testwindow.h: Added.
+        (TestWindow::TestWindow):
+        (TestWindow::resizeEvent):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/qt/ClientImpl.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/ClientImpl.cpp.
+        (toQWKContext):
+        (toQtWebPageProxy):
+        (loadFinished):
+        (qt_wk_didStartProvisionalLoadForFrame):
+        (qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame):
+        (qt_wk_didFailProvisionalLoadWithErrorForFrame):
+        (qt_wk_didCommitLoadForFrame):
+        (qt_wk_didFinishDocumentLoadForFrame):
+        (qt_wk_didFinishLoadForFrame):
+        (qt_wk_didFailLoadWithErrorForFrame):
+        (qt_wk_didReceiveTitleForFrame):
+        (qt_wk_didFirstLayoutForFrame):
+        (qt_wk_didRemoveFrameFromHierarchy):
+        (qt_wk_didFirstVisuallyNonEmptyLayoutForFrame):
+        (qt_wk_didStartProgress):
+        (qt_wk_didChangeProgress):
+        (qt_wk_didFinishProgress):
+        (qt_wk_didBecomeUnresponsive):
+        (qt_wk_didBecomeResponsive):
+        (qt_wk_createNewPage):
+        (qt_wk_showPage):
+        (qt_wk_close):
+        (qt_wk_takeFocus):
+        (qt_wk_runJavaScriptAlert):
+        (qt_wk_setStatusText):
+        (qt_wk_didSameDocumentNavigationForFrame):
+        (qt_wk_didChangeIconForPageURL):
+        (qt_wk_didRemoveAllIcons):
+        * UIProcess/qt/ClientImpl.h: Renamed from Source/WebKit2/UIProcess/API/qt/ClientImpl.h.
+        * UIProcess/qt/QtWebPageProxy.cpp: Added.
+        (defaultWKContext):
+        (contextMenuActionForWebAction):
+        (dragOperationToDropActions):
+        (dropActionToDragOperation):
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::init):
+        (QtWebPageProxy::~QtWebPageProxy):
+        (QtWebPageProxy::handleEvent):
+        (QtWebPageProxy::handleKeyPressEvent):
+        (QtWebPageProxy::handleKeyReleaseEvent):
+        (QtWebPageProxy::handleFocusInEvent):
+        (QtWebPageProxy::handleFocusOutEvent):
+        (QtWebPageProxy::setCursor):
+        (QtWebPageProxy::setViewNeedsDisplay):
+        (QtWebPageProxy::displayView):
+        (QtWebPageProxy::scrollView):
+        (QtWebPageProxy::viewSize):
+        (QtWebPageProxy::isViewWindowActive):
+        (QtWebPageProxy::isViewFocused):
+        (QtWebPageProxy::isViewVisible):
+        (QtWebPageProxy::isViewInWindow):
+        (QtWebPageProxy::enterAcceleratedCompositingMode):
+        (QtWebPageProxy::exitAcceleratedCompositingMode):
+        (QtWebPageProxy::pageDidRequestScroll):
+        (QtWebPageProxy::didChangeContentsSize):
+        (QtWebPageProxy::toolTipChanged):
+        (QtWebPageProxy::registerEditCommand):
+        (QtWebPageProxy::clearAllEditCommands):
+        (QtWebPageProxy::canUndoRedo):
+        (QtWebPageProxy::executeUndoRedo):
+        (QtWebPageProxy::convertToDeviceSpace):
+        (QtWebPageProxy::screenToWindow):
+        (QtWebPageProxy::windowToScreen):
+        (QtWebPageProxy::convertToUserSpace):
+        (QtWebPageProxy::selectionChanged):
+        (QtWebPageProxy::doneWithKeyEvent):
+        (QtWebPageProxy::createPopupMenuProxy):
+        (QtWebPageProxy::createContextMenuProxy):
+        (QtWebPageProxy::setFindIndicator):
+        (QtWebPageProxy::didCommitLoadForMainFrame):
+        (QtWebPageProxy::didFinishLoadingDataForCustomRepresentation):
+        (QtWebPageProxy::flashBackingStoreUpdates):
+        (QtWebPageProxy::pageRef):
+        (QtWebPageProxy::didChangeUrl):
+        (QtWebPageProxy::didChangeTitle):
+        (QtWebPageProxy::didChangeStatusText):
+        (QtWebPageProxy::showContextMenu):
+        (QtWebPageProxy::hideContextMenu):
+        (QtWebPageProxy::loadDidBegin):
+        (QtWebPageProxy::loadDidSucceed):
+        (QtWebPageProxy::didChangeLoadProgress):
+        (QtWebPageProxy::paint):
+        (QtWebPageProxy::updateAction):
+        (QtWebPageProxy::updateNavigationActions):
+        (QtWebPageProxy::webActionTriggered):
+        (QtWebPageProxy::didRelaunchProcess):
+        (QtWebPageProxy::processDidCrash):
+        (QtWebPageProxy::setActualVisibleContentsRect):
+        (QtWebPageProxy::preferences):
+        (QtWebPageProxy::setCreateNewPageFunction):
+        (QtWebPageProxy::setCustomUserAgent):
+        (QtWebPageProxy::customUserAgent):
+        (QtWebPageProxy::load):
+        (QtWebPageProxy::url):
+        (QtWebPageProxy::title):
+        (QtWebPageProxy::setDrawingAreaSize):
+        (QtWebPageProxy::textZoomFactor):
+        (QtWebPageProxy::setTextZoomFactor):
+        (QtWebPageProxy::pageZoomFactor):
+        (QtWebPageProxy::setPageZoomFactor):
+        (QtWebPageProxy::setPageAndTextZoomFactors):
+        (QtWebPageProxy::history):
+        (QtWebPageProxy::setResizesToContentsUsingLayoutSize):
+        (QtWebPageProxy::triggerAction):
+        (QtWebPageProxy::action):
+        (QtWebPageProxy::findZoomableAreaForPoint):
+        (QtWebPageProxy::didFindZoomableArea):
+        (QtWebPageProxy::startDrag):
+        (QtWebPageProxy::viewportVisibleRect):
+        (QtWebPageProxy::isConnectedToEngine):
+        (QtWebPageProxy::setPageIsVisible):
+        * UIProcess/qt/QtWebPageProxy.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkpage_p.h.
+        (QtWebPageProxy::pageClosed):
+        (QtWebPageProxy::customRepresentationZoomFactor):
+        (QtWebPageProxy::setCustomRepresentationZoomFactor):
+        (QtWebPageProxy::didChangeScrollbarsForMainFrame):
+        (QtWebPageProxy::findStringInCustomRepresentation):
+        (QtWebPageProxy::countStringMatchesInCustomRepresentation):
+        (QtWebPageProxy::userSpaceScaleFactor):
+        (QtWebPageProxy::createNewPageFunction):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::page):
+        * UIProcess/qt/TouchViewInterface.cpp: Added.
+        (WebKit::TouchViewInterface::TouchViewInterface):
+        (WebKit::TouchViewInterface::setViewNeedsDisplay):
+        (WebKit::TouchViewInterface::drawingAreaSize):
+        (WebKit::TouchViewInterface::contentSizeChanged):
+        (WebKit::TouchViewInterface::isActive):
+        (WebKit::TouchViewInterface::hasFocus):
+        (WebKit::TouchViewInterface::isVisible):
+        (WebKit::TouchViewInterface::startDrag):
+        (WebKit::TouchViewInterface::didChangeUrl):
+        (WebKit::TouchViewInterface::didChangeTitle):
+        (WebKit::TouchViewInterface::didChangeToolTip):
+        (WebKit::TouchViewInterface::didChangeStatusText):
+        (WebKit::TouchViewInterface::didChangeCursor):
+        (WebKit::TouchViewInterface::loadDidBegin):
+        (WebKit::TouchViewInterface::loadDidSucceed):
+        (WebKit::TouchViewInterface::didChangeLoadProgress):
+        (WebKit::TouchViewInterface::showContextMenu):
+        (WebKit::TouchViewInterface::hideContextMenu):
+        * UIProcess/qt/TouchViewInterface.h: Added.
+        (WebKit::TouchViewInterface::pageView):
+        * UIProcess/qt/ViewInterface.cpp: Added.
+        (WebKit::ViewInterface::ownerWidget):
+        * UIProcess/qt/ViewInterface.h: Added.
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::webActionForContextMenuAction):
+        (WebKit::WebContextMenuProxyQt::WebContextMenuProxyQt):
+        (WebKit::WebContextMenuProxyQt::create):
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+        (WebKit::WebContextMenuProxyQt::hideContextMenu):
+        (WebKit::WebContextMenuProxyQt::createContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp: Added.
+        (dragOperationToDropAction):
+        (QDesktopWebPageProxy::QDesktopWebPageProxy):
+        (QDesktopWebPageProxy::createDrawingAreaProxy):
+        (QDesktopWebPageProxy::paintContent):
+        (QDesktopWebPageProxy::setViewportArguments):
+        (QDesktopWebPageProxy::handleEvent):
+        (QDesktopWebPageProxy::handleMouseMoveEvent):
+        (QDesktopWebPageProxy::handleMousePressEvent):
+        (QDesktopWebPageProxy::handleMouseReleaseEvent):
+        (QDesktopWebPageProxy::handleMouseDoubleClickEvent):
+        (QDesktopWebPageProxy::handleWheelEvent):
+        (QDesktopWebPageProxy::handleHoverMoveEvent):
+        (QDesktopWebPageProxy::handleDragEnterEvent):
+        (QDesktopWebPageProxy::handleDragLeaveEvent):
+        (QDesktopWebPageProxy::handleDragMoveEvent):
+        (QDesktopWebPageProxy::handleDropEvent):
+        (QDesktopWebPageProxy::timerEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h: Added.
+        * UIProcess/qt/qtouchwebpageproxy.cpp: Added.
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        (QTouchWebPageProxy::createDrawingAreaProxy):
+        (QTouchWebPageProxy::paintContent):
+        (QTouchWebPageProxy::setViewportArguments):
+        (QTouchWebPageProxy::handleEvent):
+        (QTouchWebPageProxy::touchEvent):
+        * UIProcess/qt/qtouchwebpageproxy.h: Added.
+        (QTouchWebPageProxy::touchViewInterface):
+        (QTouchWebPageProxy::pageView):
+        * UIProcess/qt/qwkcontext.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/qwkcontext.cpp.
+        (initializePlatformStrategiesIfNeeded):
+        (QWKContextPrivate::QWKContextPrivate):
+        (QWKContextPrivate::~QWKContextPrivate):
+        (QWKContext::QWKContext):
+        (QWKContext::~QWKContext):
+        (QWKContext::setIconDatabasePath):
+        (QWKContext::iconForPageURL):
+        * UIProcess/qt/qwkcontext.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkcontext.h.
+        * UIProcess/qt/qwkcontext_p.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkcontext_p.h.
+        * UIProcess/qt/qwkhistory.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/qwkhistory.cpp.
+        (QWKHistoryItemPrivate::QWKHistoryItemPrivate):
+        (QWKHistoryItemPrivate::~QWKHistoryItemPrivate):
+        (QWKHistoryItem::QWKHistoryItem):
+        (QWKHistoryItem::QWKHistoryItem::operator=):
+        (QWKHistoryItem::~QWKHistoryItem):
+        (QWKHistoryItem::title):
+        (QWKHistoryItem::url):
+        (QWKHistoryPrivate::QWKHistoryPrivate):
+        (QWKHistoryPrivate::createHistory):
+        (QWKHistoryPrivate::~QWKHistoryPrivate):
+        (QWKHistory::QWKHistory):
+        (QWKHistory::~QWKHistory):
+        (QWKHistory::backListCount):
+        (QWKHistory::forwardListCount):
+        (QWKHistory::count):
+        (QWKHistory::currentItem):
+        (QWKHistory::backItem):
+        (QWKHistory::forwardItem):
+        (QWKHistory::itemAt):
+        (QWKHistory::goToItemAt):
+        (QWKHistory::backItems):
+        (QWKHistory::forwardItems):
+        * UIProcess/qt/qwkhistory.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkhistory.h.
+        * UIProcess/qt/qwkhistory_p.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkhistory_p.h.
+        * UIProcess/qt/qwkpreferences.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/qwkpreferences.cpp.
+        (QWKPreferencesPrivate::createPreferences):
+        (QWKPreferencesPrivate::createSharedPreferences):
+        (QWKPreferences::sharedPreferences):
+        (QWKPreferences::QWKPreferences):
+        (QWKPreferences::~QWKPreferences):
+        (QWKPreferences::setFontFamily):
+        (QWKPreferences::fontFamily):
+        (QWKPreferences::testAttribute):
+        (QWKPreferences::setAttribute):
+        (QWKPreferences::setFontSize):
+        (QWKPreferences::fontSize):
+        * UIProcess/qt/qwkpreferences.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkpreferences.h.
+        * UIProcess/qt/qwkpreferences_p.h: Renamed from Source/WebKit2/UIProcess/API/qt/qwkpreferences_p.h.
+        * WebKit2.pro:
+        * WebKit2API.pri:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        * WebProcess/WebPage/TiledDrawingArea.h:
+
 2011-07-05  Jeff Miller  <jeffm@apple.com>
 
         Add WKPageCopyStandardUserAgentWithApplicationName

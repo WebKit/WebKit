@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = qgraphicswkview qwkpage qwkhistory
+SUBDIRS = qtouchwebview qdesktopwebview commonviewtests

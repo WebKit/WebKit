@@ -77,6 +77,6 @@ private:
 
     QWKHistoryPrivate* d;
     friend class QWKHistoryPrivate;
-    friend class QWKPagePrivate;
+    friend class QtWebPageProxy;
 };
 #endif /* qwkhistory_h */

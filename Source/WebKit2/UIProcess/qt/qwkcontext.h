@@ -46,7 +46,7 @@ public:
 private:
     QWKContextPrivate* d;
 
-    friend class QWKPagePrivate;
+    friend class QtWebPageProxy;
 };
 
 #endif /* qwkcontext_h */

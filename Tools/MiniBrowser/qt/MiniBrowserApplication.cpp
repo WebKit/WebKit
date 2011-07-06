@@ -55,12 +55,12 @@ void MiniBrowserApplication::handleUserOptions()
 
     if (args.contains("-help")) {
         qDebug() << "Usage:" << programName.toLatin1().data()
+             << "[-touch]"
              << "[-maximize]"
              << "[-r list]"
              << "[-robot-timeout seconds]"
              << "[-robot-extra-time seconds]"
              << "[-chunked-drawing-area]"
-             <<  "[-separate-web-process-per-window]"
              << "[-print-loaded-urls]"
 #if defined(QT_CONFIGURED_WITH_OPENGL)
              << "[-gl-viewport]"
@@ -68,6 +68,9 @@ void MiniBrowserApplication::handleUserOptions()
              << "URLs";
         appQuit(0);
     }
+
+    if (args.contains("-touch"))
+        m_windowOptions.useTouchWebView = true;
 
     if (args.contains("-maximize"))
         m_windowOptions.startMaximized = true;
@@ -94,12 +97,6 @@ void MiniBrowserApplication::handleUserOptions()
     int robotExtraTimeIndex = args.indexOf("-robot-extra-time");
     if (robotExtraTimeIndex != -1)
         m_robotExtraTimeSeconds = takeOptionValue(&args, robotExtraTimeIndex).toInt();
-
-    if (args.contains("-chunked-drawing-area"))
-        m_windowOptions.useTiledBackingStore = false;
-
-    if (args.contains("-separate-web-process-per-window"))
-        m_windowOptions.useSeparateWebProcessPerWindow = true;
 
     if (args.contains("-print-loaded-urls"))
         m_windowOptions.printLoadedUrls = true;

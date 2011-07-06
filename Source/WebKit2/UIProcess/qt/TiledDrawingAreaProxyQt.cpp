@@ -32,7 +32,7 @@
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 
-#include "qgraphicswkview.h"
+#include "qtouchwebpage.h"
 
 using namespace WebCore;
 
@@ -57,12 +57,7 @@ IntRect TiledDrawingAreaProxy::webViewVisibleRect()
 
 WebPageProxy* TiledDrawingAreaProxy::page()
 {
-    return toImpl(m_webView->page()->pageRef());
-}
-
-void TiledDrawingAreaProxy::snapshotTaken(ShareableBitmap* bitmap)
-{
-    emit m_webView->snapshotTaken(bitmap->createQImage());
+    return m_webPageProxy;
 }
 
 } // namespace WebKit

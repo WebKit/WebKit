@@ -204,25 +204,6 @@ void TiledDrawingArea::requestTileUpdate(int tileID, const WebCore::IntRect& dir
     }
 }
 
-void TiledDrawingArea::takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect)
-{
-    m_webPage->layoutIfNeeded();
-
-    WebCore::IntRect rect(contentsRect);
-    rect.intersect(IntRect(IntPoint::zero(), m_webPage->mainFrame()->coreFrame()->view()->contentsSize()));
-
-    float targetScale = float(targetSize.width()) / rect.width();
-    IntRect tileRect(IntPoint(rect.x() * targetScale, rect.y() * targetScale), targetSize);
-
-    UpdateInfo updateInfo;
-    updateInfo.updateRectBounds = tileRect;
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(tileRect.size(), ShareableBitmap::SupportsAlpha);
-    bitmap->createHandle(updateInfo.bitmapHandle);
-
-    paintIntoBitmap(bitmap.get(), tileRect, targetScale);
-    m_webPage->send(Messages::DrawingAreaProxy::SnapshotTaken(updateInfo));
-}
-
 } // namespace WebKit
 
 #endif // TILED_BACKING_STORE

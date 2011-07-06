@@ -1,3 +1,52 @@
+2011-07-06  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Split Qt API into two different web views (touch and desktop)
+        https://bugs.webkit.org/show_bug.cgi?id=63950
+
+        Co-authored with Benjamin Poulain <benjamin@webkit.org>.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Port WTR/Qt to use QDesktopWebView and force a 800x600 viewport.
+
+        The Qt MiniBrowser now defaults to QDesktopWebView but can be started
+        in QTouchWebView mode by passing -touch on the command line.
+
+        A lot of functionality has been removed and/or disabled from
+        MiniBrowser until we reintroduce the necessary API's.
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::BrowserView):
+        (BrowserView::~BrowserView):
+        (BrowserView::load):
+        (BrowserView::view):
+        (BrowserView::touchWebView):
+        (BrowserView::desktopWebView):
+        * MiniBrowser/qt/BrowserView.h:
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (newPageFunction):
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::webView):
+        (BrowserWindow::newWindow):
+        (BrowserWindow::showUserAgentDialog):
+        (BrowserWindow::updateUserAgentList):
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+        * MiniBrowser/qt/UrlLoader.cpp:
+        (UrlLoader::UrlLoader):
+        * MiniBrowser/qt/main.cpp:
+        (main):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WebView::wkView):
+        (WTR::WebView::pageRef):
+        (WTR::WebView::WebView):
+        (WTR::PlatformWebView::page):
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+
 2011-07-06  Eric Seidel  <eric@webkit.org>
 
         Unreviewed..

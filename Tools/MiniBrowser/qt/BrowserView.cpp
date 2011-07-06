@@ -29,18 +29,31 @@
 #include "BrowserView.h"
 
 #include <QGraphicsScene>
+#include <qdesktopwebview.h>
+#include <qtouchwebview.h>
+#include <qtouchwebpage.h>
 
-BrowserView::BrowserView(QGraphicsWKView::BackingStoreType backingStoreType, QWKContext* context, QWidget* parent)
+BrowserView::BrowserView(bool useTouchWebView, QWidget* parent)
     : QGraphicsView(parent)
     , m_item(0)
 {
-    m_item = new QGraphicsWKView(context, backingStoreType, 0);
+    if (useTouchWebView)
+        m_item = new QTouchWebView;
+    else
+        m_item = new QDesktopWebView;
+
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
 
     setFrameShape(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+BrowserView::~BrowserView()
+{
+    delete m_item;
+    m_item = 0;
 }
 
 void BrowserView::resizeEvent(QResizeEvent* event)
@@ -51,12 +64,27 @@ void BrowserView::resizeEvent(QResizeEvent* event)
     scene()->setSceneRect(rect);
 }
 
-void BrowserView::load(const QString& url)
+void BrowserView::load(const QString& urlString)
 {
-    return m_item->load(QUrl::fromUserInput(url));
+    QUrl url(QUrl::fromUserInput(urlString));
+
+    if (desktopWebView())
+        desktopWebView()->load(url);
+    else if (touchWebView())
+        touchWebView()->page()->load(url);
 }
 
-QGraphicsWKView* BrowserView::view() const
+QGraphicsWidget* BrowserView::view() const
 {
     return m_item;
+}
+
+QTouchWebView* BrowserView::touchWebView() const
+{
+    return qobject_cast<QTouchWebView*>(m_item);
+}
+
+QDesktopWebView* BrowserView::desktopWebView() const
+{
+    return qobject_cast<QDesktopWebView*>(m_item);
 }
