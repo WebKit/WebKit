@@ -57,17 +57,17 @@
 // -If a test is included twice, then the more precise path wins.
 // -CRASH tests cannot be WONTFIX
 
-BUG64002 : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
+BUGWK64002 : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
 
-BUG64002 : fast/forms/textfield-overflow-by-value-update.html = PASS FAIL
+BUGWK64002 : fast/forms/textfield-overflow-by-value-update.html = PASS FAIL
 
-BUG64002 : fast/notifications/notifications-click-event.html = TEXT PASS
+BUGWK64002 : fast/notifications/notifications-click-event.html = TEXT PASS
 
-BUG64002 : fast/workers/shared-worker-lifecycle.html = TEXT PASS
-BUG64002 : fast/workers/shared-worker-frame-lifecycle.html = TEXT PASS
-BUG64002 : fast/workers/worker-close-more.html = TEXT PASS
-BUG64002 : fast/workers/storage/interrupt-database.html = TEXT PASS
-BUG64002 : fast/workers/dedicated-worker-lifecycle.html = TEXT PASS
-BUG64002 : fast/workers/worker-lifecycle.html = TEXT PASS
+BUGWK64002 : fast/workers/shared-worker-lifecycle.html = TEXT PASS
+BUGWK64002 : fast/workers/shared-worker-frame-lifecycle.html = TEXT PASS
+BUGWK64002 : fast/workers/worker-close-more.html = TEXT PASS
+BUGWK64002 : fast/workers/storage/interrupt-database.html = TEXT PASS
+BUGWK64002 : fast/workers/dedicated-worker-lifecycle.html = TEXT PASS
+BUGWK64002 : fast/workers/worker-lifecycle.html = TEXT PASS
 
-BUG64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
+BUGWK64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
