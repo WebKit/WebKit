@@ -37,6 +37,7 @@ class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
 class GardeningHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_NAMES = frozenset([
         "index.html",
+        "base.js",
         "main.js",
         "results.js",
     ])
