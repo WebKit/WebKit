@@ -294,6 +294,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         // If compilation through the SpeculativeJIT failed, throw away the code we generated.
         m_calls.clear();
         m_propertyAccesses.clear();
+        m_jsCalls.clear();
         rewindToLabel(speculativePathBegin);
 
         SpeculationCheckVector noChecks;
@@ -369,13 +370,15 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 #endif
 
     // Link all calls out from the JIT code to their respective functions.
-    for (unsigned i = 0; i < m_calls.size(); ++i)
-        linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
+    for (unsigned i = 0; i < m_calls.size(); ++i) {
+        if (m_calls[i].m_function.value())
+            linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
+    }
 
     if (m_codeBlock->needsCallReturnIndices()) {
         m_codeBlock->callReturnIndexVector().reserveCapacity(exceptionCheckCount);
         for (unsigned i = 0; i < m_calls.size(); ++i) {
-            if (m_calls[i].m_exceptionCheck.isSet()) {
+            if (m_calls[i].m_handlesExceptions) {
                 unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_calls[i].m_call);
                 unsigned exceptionInfo = m_calls[i].m_exceptionInfo;
                 m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
@@ -396,13 +399,22 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         info.valueGPR = m_propertyAccesses[i].m_valueGPR;
         info.u.unset.scratchGPR = m_propertyAccesses[i].m_scratchGPR;
     }
-
+    
+    m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
+    for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
+        CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
+        info.isCall = m_jsCalls[i].m_isCall;
+        info.callReturnLocation = CodeLocationLabel(linkBuffer.locationOf(m_jsCalls[i].m_slowCall));
+        info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
+        info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
+    }
+    
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.
     linkBuffer.link(callRegisterFileCheck, cti_register_file_check);
     linkBuffer.link(callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
-    entry = linkBuffer.finalizeCode();
+    entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
 
 #if DFG_JIT_ASSERT

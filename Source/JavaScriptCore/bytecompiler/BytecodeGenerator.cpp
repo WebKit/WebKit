@@ -1752,10 +1752,6 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
     emitExpressionInfo(divot, startOffset, endOffset);
 
-#if ENABLE(JIT)
-    m_codeBlock->addCallLinkInfo();
-#endif
-
     // Emit call.
     emitOpcode(opcodeID);
     instructions().append(func->index()); // func
@@ -1868,10 +1864,6 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, startOffset, endOffset);
-
-#if ENABLE(JIT)
-    m_codeBlock->addCallLinkInfo();
-#endif
 
     emitOpcode(op_construct);
     instructions().append(func->index()); // func

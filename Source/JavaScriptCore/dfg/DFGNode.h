@@ -76,6 +76,7 @@ typedef uint32_t ExceptionInfo;
 #define NodeIsJump        0x40000
 #define NodeIsBranch      0x80000
 #define NodeIsTerminal   0x100000
+#define NodeHasVarArgs   0x200000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
@@ -138,6 +139,9 @@ typedef uint32_t ExceptionInfo;
     macro(CompareEq, NodeResultJS | NodeMustGenerate) \
     macro(CompareStrictEq, NodeResultJS) \
     \
+    /* Calls. */\
+    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \
     macro(CheckHasInstance, NodeMustGenerate) \
@@ -177,43 +181,60 @@ struct OpInfo {
 //
 // Node represents a single operation in the data flow graph.
 struct Node {
+    enum VarArgTag { VarArg };
+
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, ExceptionInfo exceptionInfo, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
         , exceptionInfo(exceptionInfo)
-        , child1(child1)
-        , child2(child2)
-        , child3(child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
     {
+        ASSERT(!(op & NodeHasVarArgs));
+        children.fixed.child1 = child1;
+        children.fixed.child2 = child2;
+        children.fixed.child3 = child3;
     }
 
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
         , exceptionInfo(exceptionInfo)
-        , child1(child1)
-        , child2(child2)
-        , child3(child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
     {
+        ASSERT(!(op & NodeHasVarArgs));
+        children.fixed.child1 = child1;
+        children.fixed.child2 = child2;
+        children.fixed.child3 = child3;
     }
 
     // Construct a node with up to 3 children and two immediate values.
     Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
         , exceptionInfo(exceptionInfo)
-        , child1(child1)
-        , child2(child2)
-        , child3(child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
     {
+        ASSERT(!(op & NodeHasVarArgs));
+        children.fixed.child1 = child1;
+        children.fixed.child2 = child2;
+        children.fixed.child3 = child3;
+    }
+    
+    // Construct a node with a variable number of children and no immediate values.
+    Node(VarArgTag, NodeType op, ExceptionInfo exceptionInfo, unsigned firstChild, unsigned numChildren)
+        : op(op)
+        , exceptionInfo(exceptionInfo)
+        , m_virtualRegister(InvalidVirtualRegister)
+        , m_refCount(0)
+    {
+        ASSERT(op & NodeHasVarArgs);
+        children.variable.firstChild = firstChild;
+        children.variable.numChildren = numChildren;
     }
 
     bool mustGenerate()
@@ -354,13 +375,51 @@ struct Node {
     {
         return mustGenerate() ? m_refCount - 1 : m_refCount;
     }
+    
+    NodeIndex child1()
+    {
+        ASSERT(!(op & NodeHasVarArgs));
+        return children.fixed.child1;
+    }
 
+    NodeIndex child2()
+    {
+        ASSERT(!(op & NodeHasVarArgs));
+        return children.fixed.child2;
+    }
+
+    NodeIndex child3()
+    {
+        ASSERT(!(op & NodeHasVarArgs));
+        return children.fixed.child3;
+    }
+    
+    unsigned firstChild()
+    {
+        ASSERT(op & NodeHasVarArgs);
+        return children.variable.firstChild;
+    }
+    
+    unsigned numChildren()
+    {
+        ASSERT(op & NodeHasVarArgs);
+        return children.variable.numChildren;
+    }
+    
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
     ExceptionInfo exceptionInfo;
     // References to up to 3 children (0 for no child).
-    NodeIndex child1, child2, child3;
+    union {
+        struct {
+            NodeIndex child1, child2, child3;
+        } fixed;
+        struct {
+            unsigned firstChild;
+            unsigned numChildren;
+        } variable;
+    } children;
 
 private:
     // The virtual register number (spill location) associated with this .

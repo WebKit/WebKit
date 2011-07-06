@@ -102,7 +102,7 @@ namespace JSC {
         {
         }
 
-        CodeLocationNearCall callReturnLocation;
+        CodeLocationLabel callReturnLocation; // it's a near call in the old JIT, or a normal call in DFG
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
         JITWriteBarrier<JSFunction> callee;
@@ -378,8 +378,8 @@ namespace JSC {
         GlobalResolveInfo& globalResolveInfo(int index) { return m_globalResolveInfos[index]; }
         bool hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset);
 
+        void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.grow(size); }
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
-        void addCallLinkInfo() { m_callLinkInfos.append(CallLinkInfo()); }
         CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
 
         void addMethodCallLinkInfos(unsigned n) { m_methodCallLinkInfos.grow(n); }

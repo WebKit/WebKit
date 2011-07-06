@@ -375,6 +375,21 @@ void dfgRepatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& pro
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriatePutByIdFunction(slot, putKind));
 }
 
+void dfgLinkCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSFunction* callee, MacroAssemblerCodePtr codePtr)
+{
+    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
+    
+    RepatchBuffer repatchBuffer(callerCodeBlock);
+    
+    if (!calleeCodeBlock || static_cast<int>(exec->argumentCountIncludingThis()) == calleeCodeBlock->m_numParameters) {
+        ASSERT(!callLinkInfo.isLinked());
+        callLinkInfo.callee.set(exec->callerFrame()->globalData(), callLinkInfo.hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
+        repatchBuffer.relink(callLinkInfo.hotPathOther, codePtr);
+    }
+    
+    repatchBuffer.relink(CodeLocationCall(callLinkInfo.callReturnLocation), operationVirtualCall);
+}
+
 } } // namespace JSC::DFG
 
 #endif

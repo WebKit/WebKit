@@ -43,9 +43,17 @@
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 
+#if ENABLE(DFG_JIT)
+#include "DFGOperations.h"
+#endif
+
 #define DUMP_CODE_BLOCK_STATISTICS 0
 
 namespace JSC {
+
+#if ENABLE(DFG_JIT)
+using namespace DFG;
+#endif
 
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
@@ -1739,7 +1747,14 @@ void CodeBlock::unlinkCalls()
     for (size_t i = 0; i < m_callLinkInfos.size(); i++) {
         if (!m_callLinkInfos[i].isLinked())
             continue;
-        repatchBuffer.relink(m_callLinkInfos[i].callReturnLocation, m_callLinkInfos[i].isCall ? m_globalData->jitStubs->ctiVirtualCallLink() : m_globalData->jitStubs->ctiVirtualConstructLink());
+        if (getJITCode().jitType() == JITCode::DFGJIT) {
+#if ENABLE(DFG_JIT)
+            repatchBuffer.relink(CodeLocationCall(m_callLinkInfos[i].callReturnLocation), operationLinkCall);
+#else
+            ASSERT_NOT_REACHED();
+#endif
+        } else
+            repatchBuffer.relink(CodeLocationNearCall(m_callLinkInfos[i].callReturnLocation), m_callLinkInfos[i].isCall ? m_globalData->jitStubs->ctiVirtualCallLink() : m_globalData->jitStubs->ctiVirtualConstructLink());
         m_callLinkInfos[i].unlink();
     }
 }

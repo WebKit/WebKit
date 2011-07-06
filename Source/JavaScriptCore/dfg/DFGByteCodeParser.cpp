@@ -62,6 +62,8 @@ public:
         , m_numArguments(codeBlock->m_numParameters)
         , m_numLocals(codeBlock->m_numCalleeRegisters)
         , m_preservedVars(codeBlock->m_numVars)
+        , m_parameterSlots(0)
+        , m_numPassedVarArgs(0)
     {
     }
 
@@ -124,7 +126,7 @@ private:
             if (node.op == GetLocal)
                 return nodeIndex;
             ASSERT(node.op == SetLocal);
-            return node.child1;
+            return node.child1();
         }
 
         // Check for reads of temporaries from prior blocks,
@@ -155,7 +157,7 @@ private:
             if (node.op == GetLocal)
                 return nodeIndex;
             ASSERT(node.op == SetLocal);
-            return node.child1;
+            return node.child1();
         }
 
         NodeIndex phi = addToGraph(Phi);
@@ -191,7 +193,7 @@ private:
             return index;
 
         if (node.op == UInt32ToNumber)
-            return node.child1;
+            return node.child1();
 
         // Check for numeric constants boxed as JSValues.
         if (node.op == JSConstant) {
@@ -382,6 +384,23 @@ private:
             m_graph.ref(resultIndex);
         return resultIndex;
     }
+    
+    NodeIndex addToGraph(Node::VarArgTag, NodeType op)
+    {
+        NodeIndex resultIndex = (NodeIndex)m_graph.size();
+        m_graph.append(Node(Node::VarArg, op, m_currentIndex, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        
+        m_numPassedVarArgs = 0;
+        
+        if (op & NodeMustGenerate)
+            m_graph.ref(resultIndex);
+        return resultIndex;
+    }
+    void addVarArgChild(NodeIndex child)
+    {
+        m_graph.m_varArgChildren.append(child);
+        m_numPassedVarArgs++;
+    }
 
     void predictArray(NodeIndex nodeIndex)
     {
@@ -396,10 +415,10 @@ private:
         Node* nodePtr = &m_graph[nodeIndex];
 
         if (nodePtr->op == ValueToNumber)
-            nodePtr = &m_graph[nodePtr->child1];
+            nodePtr = &m_graph[nodePtr->child1()];
 
         if (nodePtr->op == ValueToInt32)
-            nodePtr = &m_graph[nodePtr->child1];
+            nodePtr = &m_graph[nodePtr->child1()];
 
         if (nodePtr->op == GetLocal)
             m_graph.predict(nodePtr->local(), PredictInt32);
@@ -453,6 +472,13 @@ private:
     // typically equal to the number vars, but we expand this to cover all
     // temporaries that persist across blocks (dues to ?:, &&, ||, etc).
     unsigned m_preservedVars;
+    // The number of slots (in units of sizeof(Register)) that we need to
+    // preallocate for calls emanating from this frame. This includes the
+    // size of the CallFrame, only if this is not a leaf function.  (I.e.
+    // this is 0 if and only if this function is a leaf.)
+    unsigned m_parameterSlots;
+    // The number of var args passed to the next var arg node.
+    unsigned m_numPassedVarArgs;
 
     struct PhiStackEntry {
         PhiStackEntry(BasicBlock* block, NodeIndex phi, unsigned varNo)
@@ -1039,6 +1065,31 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Return, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_ret);
         }
+            
+        case op_call: {
+            addVarArgChild(get(currentInstruction[1].u.operand));
+            int argCount = currentInstruction[2].u.operand;
+            int registerOffset = currentInstruction[3].u.operand;
+            int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
+            for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
+                addVarArgChild(get(argIdx));
+            NodeIndex call = addToGraph(Node::VarArg, Call);
+            aliases.recordCall(call);
+            Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+            if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
+                set(putInstruction[1].u.operand, call);
+            if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
+                m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+            NEXT_OPCODE(op_call);
+        }
+            
+        case op_call_put_result: {
+#if !ASSERT_DISABLED
+            Instruction* callInstruction = currentInstruction - OPCODE_LENGTH(op_call);
+            ASSERT(interpreter->getOpcodeID(callInstruction->u.opcode) == op_call);
+#endif
+            NEXT_OPCODE(op_call_put_result);
+        }
 
         default:
             // Parse failed!
@@ -1071,22 +1122,22 @@ void ByteCodeParser::processPhiStack()
                 var.value = valueInPredecessor;
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op == GetLocal)
-                valueInPredecessor = m_graph[valueInPredecessor].child1;
+                valueInPredecessor = m_graph[valueInPredecessor].child1();
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
 
             if (phiNode.refCount())
                 m_graph.ref(valueInPredecessor);
 
-            if (phiNode.child1 == NoNode) {
-                phiNode.child1 = valueInPredecessor;
+            if (phiNode.child1() == NoNode) {
+                phiNode.children.fixed.child1 = valueInPredecessor;
                 continue;
             }
-            if (phiNode.child2 == NoNode) {
-                phiNode.child2 = valueInPredecessor;
+            if (phiNode.child2() == NoNode) {
+                phiNode.children.fixed.child2 = valueInPredecessor;
                 continue;
             }
-            if (phiNode.child3 == NoNode) {
-                phiNode.child3 = valueInPredecessor;
+            if (phiNode.child3() == NoNode) {
+                phiNode.children.fixed.child3 = valueInPredecessor;
                 continue;
             }
 
@@ -1095,13 +1146,13 @@ void ByteCodeParser::processPhiStack()
             if (phiNode.refCount())
                 m_graph.ref(newPhi);
 
-            newPhiNode.child1 = phiNode.child1;
-            newPhiNode.child2 = phiNode.child2;
-            newPhiNode.child3 = phiNode.child3;
+            newPhiNode.children.fixed.child1 = phiNode.child1();
+            newPhiNode.children.fixed.child2 = phiNode.child2();
+            newPhiNode.children.fixed.child3 = phiNode.child3();
 
-            phiNode.child1 = newPhi;
-            phiNode.child1 = valueInPredecessor;
-            phiNode.child3 = NoNode;
+            phiNode.children.fixed.child1 = newPhi;
+            phiNode.children.fixed.child1 = valueInPredecessor;
+            phiNode.children.fixed.child3 = NoNode;
         }
     }
 }
@@ -1129,9 +1180,10 @@ void ByteCodeParser::allocateVirtualRegisters()
     unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
     for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
         Node& node = m_graph[i];
+        
         if (!node.shouldGenerate())
             continue;
-
+        
         // GetLocal nodes are effectively phi nodes in the graph, referencing
         // results from prior blocks.
         if (node.op != GetLocal) {
@@ -1139,9 +1191,14 @@ void ByteCodeParser::allocateVirtualRegisters()
             // allocate a VirtualRegister for this node. We do so in this
             // order so that if a child is on its last use, and a
             // VirtualRegister is freed, then it may be reused for node.
-            scoreBoard.use(node.child1);
-            scoreBoard.use(node.child2);
-            scoreBoard.use(node.child3);
+            if (node.op & NodeHasVarArgs) {
+                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                    scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
+            } else {
+                scoreBoard.use(node.child1());
+                scoreBoard.use(node.child2());
+                scoreBoard.use(node.child3());
+            }
         }
 
         if (!node.hasResult())
@@ -1157,7 +1214,7 @@ void ByteCodeParser::allocateVirtualRegisters()
     // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
     // for the function (and checked for on entry). Since we perform a new and
     // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars;
+    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars + m_parameterSlots;
     if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
         m_codeBlock->m_numCalleeRegisters = calleeRegisters;
 }

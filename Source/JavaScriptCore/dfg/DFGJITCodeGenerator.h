@@ -522,6 +522,13 @@ protected:
     
     void cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    
+    MacroAssembler::Address addressOfCallData(int idx)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
+    }
+    
+    void emitCall(Node&, GPRReg targetGPR);
 
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting

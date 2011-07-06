@@ -80,6 +80,8 @@ bool operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSVal
 bool operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+void* operationVirtualCall(ExecState*);
+void* operationLinkCall(ExecState*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

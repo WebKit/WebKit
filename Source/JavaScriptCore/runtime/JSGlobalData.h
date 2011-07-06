@@ -234,6 +234,7 @@ namespace JSC {
         JSValue exception;
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
+        JSValue hostCallReturnValue;
 #endif
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;

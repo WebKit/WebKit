@@ -41,6 +41,11 @@ static const char* dfgOpNames[] = {
 #undef STRINGIZE_DFG_OP_ENUM
 };
 
+const char *Graph::opName(NodeType op)
+{
+    return dfgOpNames[op & NodeIdMask];
+}
+
 void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
 {
     Node& node = at(nodeIndex);
@@ -75,14 +80,25 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         printf("%u", node.virtualRegister());
     else
         printf("-");
-    printf(">\t%s(", dfgOpNames[op & NodeIdMask]);
-    if (node.child1 != NoNode)
-        printf("@%u", node.child1);
-    if (node.child2 != NoNode)
-        printf(", @%u", node.child2);
-    if (node.child3 != NoNode)
-        printf(", @%u", node.child3);
-    bool hasPrinted = node.child1 != NoNode;
+    printf(">\t%s(", opName(op));
+    bool hasPrinted;
+    if (op & NodeHasVarArgs) {
+        for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++) {
+            if (hasPrinted)
+                printf(", ");
+            else
+                hasPrinted = true;
+            printf("@%u", m_varArgChildren[childIdx]);
+        }
+    } else {
+        if (node.child1() != NoNode)
+            printf("@%u", node.child1());
+        if (node.child2() != NoNode)
+            printf(", @%u", node.child2());
+        if (node.child3() != NoNode)
+            printf(", @%u", node.child3());
+        hasPrinted = node.child1() != NoNode;
+    }
 
     if (node.hasVarNumber()) {
         printf("%svar%u", hasPrinted ? ", " : "", node.varNumber());
@@ -138,21 +154,26 @@ void Graph::refChildren(NodeIndex op)
 {
     Node& node = at(op);
 
-    if (node.child1 == NoNode) {
-        ASSERT(node.child2 == NoNode && node.child3 == NoNode);
-        return;
-    }
-    ref(node.child1);
+    if (node.op & NodeHasVarArgs) {
+        for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+            ref(m_varArgChildren[childIdx]);
+    } else {
+        if (node.child1() == NoNode) {
+            ASSERT(node.child2() == NoNode && node.child3() == NoNode);
+            return;
+        }
+        ref(node.child1());
 
-    if (node.child2 == NoNode) {
-        ASSERT(node.child3 == NoNode);
-        return;
-    }
-    ref(node.child2);
+        if (node.child2() == NoNode) {
+            ASSERT(node.child3() == NoNode);
+            return;
+        }
+        ref(node.child2());
 
-    if (node.child3 == NoNode)
-        return;
-    ref(node.child3);
+        if (node.child3() == NoNode)
+            return;
+        ref(node.child3());
+    }
 }
 
 } } // namespace JSC::DFG

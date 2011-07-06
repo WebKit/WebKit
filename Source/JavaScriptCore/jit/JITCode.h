@@ -37,17 +37,20 @@ namespace JSC {
 
     class JSGlobalData;
     class RegisterFile;
-
+    
     class JITCode {
         typedef MacroAssemblerCodeRef CodeRef;
         typedef MacroAssemblerCodePtr CodePtr;
     public:
+        enum JITType { HostCallThunk, BaselineJIT, DFGJIT };
+
         JITCode()
         {
         }
 
-        JITCode(const CodeRef ref)
+        JITCode(const CodeRef ref, JITType jitType)
             : m_ref(ref)
+            , m_jitType(jitType)
         {
         }
 
@@ -93,12 +96,17 @@ namespace JSC {
         {
             return m_ref.m_executablePool.get();
         }
+        
+        JITType jitType()
+        {
+            return m_jitType;
+        }
 
         // Host functions are a bit special; they have a m_code pointer but they
         // do not individully ref the executable pool containing the trampoline.
         static JITCode HostFunction(CodePtr code)
         {
-            return JITCode(code.dataLocation(), 0, 0);
+            return JITCode(code.dataLocation(), 0, 0, HostCallThunk);
         }
 
         void clear()
@@ -108,12 +116,14 @@ namespace JSC {
         }
 
     private:
-        JITCode(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
+        JITCode(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size, JITType jitType)
             : m_ref(code, executablePool, size)
+            , m_jitType(jitType)
         {
         }
 
         CodeRef m_ref;
+        JITType m_jitType;
     };
 
 };

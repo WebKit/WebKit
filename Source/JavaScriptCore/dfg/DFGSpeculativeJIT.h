@@ -152,7 +152,7 @@ private:
 
         // Check if the lastNode is a branch on this node.
         Node& lastNode = m_jit.graph()[lastNodeIndex];
-        return lastNode.op == Branch && lastNode.child1 == m_compileIndex ? lastNodeIndex : NoNode;
+        return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
     }
 
     bool isInteger(NodeIndex nodeIndex)

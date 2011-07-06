@@ -35,11 +35,15 @@ namespace JSC {
     class JSGlobalObject;
     class NativeExecutable;
     class VPtrHackExecutable;
+    namespace DFG {
+    class JITCodeGenerator;
+    }
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
     class JSFunction : public JSObjectWithGlobalObject {
         friend class JIT;
+        friend class DFG::JITCodeGenerator;
         friend class JSGlobalData;
 
         typedef JSObjectWithGlobalObject Base;

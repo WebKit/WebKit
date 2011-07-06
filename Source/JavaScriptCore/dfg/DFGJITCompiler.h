@@ -65,6 +65,7 @@ struct CallRecord {
     CallRecord(MacroAssembler::Call call, FunctionPtr function)
         : m_call(call)
         , m_function(function)
+        , m_handlesExceptions(false)
     {
     }
 
@@ -74,6 +75,17 @@ struct CallRecord {
         , m_function(function)
         , m_exceptionCheck(exceptionCheck)
         , m_exceptionInfo(exceptionInfo)
+        , m_handlesExceptions(true)
+    {
+    }
+
+    // Constructor for a call that may cause exceptions, but which are handled
+    // through some mechanism other than the in-line exception handler.
+    CallRecord(MacroAssembler::Call call, FunctionPtr function, ExceptionInfo exceptionInfo)
+        : m_call(call)
+        , m_function(function)
+        , m_exceptionInfo(exceptionInfo)
+        , m_handlesExceptions(true)
     {
     }
 
@@ -81,6 +93,7 @@ struct CallRecord {
     FunctionPtr m_function;
     MacroAssembler::Jump m_exceptionCheck;
     ExceptionInfo m_exceptionInfo;
+    bool m_handlesExceptions;
 };
 
 // === JITCompiler ===
@@ -158,6 +171,12 @@ public:
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
+    
+    // Notify the JIT of a call that does not require linking.
+    void notifyCall(Call call, unsigned exceptionInfo)
+    {
+        m_calls.append(CallRecord(call, FunctionPtr(), exceptionInfo));
+    }
 
     // Add a call out from JIT code, without an exception check.
     void appendCall(const FunctionPtr& function)
@@ -171,6 +190,15 @@ public:
     {
         Call functionCall = call();
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
+        m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
+        return functionCall;
+    }
+    
+    // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
+    Call appendCallWithFastExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
+    {
+        Call functionCall = call();
+        Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
         m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
         return functionCall;
     }
@@ -239,6 +267,11 @@ public:
     {
         m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
     }
+    
+    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
+    {
+        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, exceptionInfo));
+    }
 
 private:
     // These methods used in linking the speculative & non-speculative paths together.
@@ -261,7 +294,7 @@ private:
     Vector<CallRecord> m_calls;
 
     struct PropertyAccessRecord {
-        PropertyAccessRecord(JITCompiler::Call functionCall, int8_t deltaCheckImmToCall, int8_t deltaCallToStructCheck, int8_t deltaCallToLoadOrStore, int8_t deltaCallToSlowCase, int8_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+        PropertyAccessRecord(Call functionCall, int8_t deltaCheckImmToCall, int8_t deltaCallToStructCheck, int8_t deltaCallToLoadOrStore, int8_t deltaCallToSlowCase, int8_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
             : m_functionCall(functionCall)
             , m_deltaCheckImmToCall(deltaCheckImmToCall)
             , m_deltaCallToStructCheck(deltaCallToStructCheck)
@@ -284,8 +317,26 @@ private:
         int8_t m_valueGPR;
         int8_t m_scratchGPR;
     };
+    
+    struct JSCallRecord {
+        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
+            : m_fastCall(fastCall)
+            , m_slowCall(slowCall)
+            , m_targetToCheck(targetToCheck)
+            , m_isCall(isCall)
+            , m_exceptionInfo(exceptionInfo)
+        {
+        }
+        
+        Call m_fastCall;
+        Call m_slowCall;
+        DataLabelPtr m_targetToCheck;
+        bool m_isCall;
+        unsigned m_exceptionInfo;
+    };
 
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
+    Vector<JSCallRecord, 4> m_jsCalls;
 };
 
 } } // namespace JSC::DFG

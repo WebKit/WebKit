@@ -160,7 +160,12 @@ public:
         return PredictNone;
     }
 
+#ifndef NDEBUG
+    static const char *opName(NodeType);
+#endif
+
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
+    Vector<NodeIndex, 16> m_varArgChildren;
 private:
 
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.

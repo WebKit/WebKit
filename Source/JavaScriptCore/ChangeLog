@@ -1,3 +1,92 @@
+2011-07-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not implement op_call.
+        https://bugs.webkit.org/show_bug.cgi?id=63858
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::unlinkCalls):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setNumberOfCallLinkInfos):
+        (JSC::CodeBlock::numberOfCallLinkInfos):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::lookupGetByVal):
+        (JSC::DFG::AliasTracker::recordCall):
+        (JSC::DFG::AliasTracker::equalIgnoringLaterNumericConversion):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::addVarArgChild):
+        (JSC::DFG::ByteCodeParser::predictInt32):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::allocateVirtualRegisters):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::opName):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::refChildren):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::useChildren):
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::addressOfCallData):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::CallRecord::CallRecord):
+        (JSC::DFG::JITCompiler::notifyCall):
+        (JSC::DFG::JITCompiler::appendCallWithFastExceptionCheck):
+        (JSC::DFG::JITCompiler::addJSCall):
+        (JSC::DFG::JITCompiler::PropertyAccessRecord::PropertyAccessRecord):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::child1):
+        (JSC::DFG::Node::child2):
+        (JSC::DFG::Node::child3):
+        (JSC::DFG::Node::firstChild):
+        (JSC::DFG::Node::numChildren):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+        (JSC::DFG::NonSpeculativeJIT::compare):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkCall):
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::calleeAsValue):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::linkConstruct):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCode.h:
+        (JSC::JITCode::JITCode):
+        (JSC::JITCode::jitType):
+        (JSC::JITCode::HostFunction):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.h:
+
 2011-07-05  Oliver Hunt  <oliver@apple.com>
 
         Initialize new MarkStack member
