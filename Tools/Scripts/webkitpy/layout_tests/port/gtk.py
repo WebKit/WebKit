@@ -44,10 +44,8 @@ class GtkDriver(webkit.WebKitDriver):
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         self._xvfb_process = subprocess.Popen(run_xvfb)
         environment = self._port.setup_environ_for_server()
+        # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % (display_id)
-        environment['GTK_MODULES'] = 'gail'
-        environment['LIBOVERLAY_SCROLLBAR'] = '0'
-        environment['WEBKIT_INSPECTOR_PATH'] = self._port._build_path('Programs/resources/inspector')
         self._server_process = server_process.ServerProcess(self._port,
             self._port.driver_name(), self.cmd_line(), environment)
 
@@ -62,6 +60,14 @@ class GtkPort(webkit.WebKitPort):
 
     def create_driver(self, worker_number):
         return GtkDriver(self, worker_number)
+
+    def setup_environ_for_server(self):
+        environment = webkit.WebKitPort.setup_environ_for_server(self)
+        environment['GTK_MODULES'] = 'gail'
+        environment['LIBOVERLAY_SCROLLBAR'] = '0'
+        environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs/resources/inspector')
+
+        return environment
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.
