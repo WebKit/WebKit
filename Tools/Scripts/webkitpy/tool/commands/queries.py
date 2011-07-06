@@ -34,6 +34,7 @@ from webkitpy.tool import steps
 
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
+import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.crashlogs import CrashLogs
@@ -135,7 +136,7 @@ class LastGreenRevision(AbstractDeclarativeCommand):
 
 class WhatBroke(AbstractDeclarativeCommand):
     name = "what-broke"
-    help_text = "Print failing buildbots (%s) and what revisions broke them" % BuildBot.default_host
+    help_text = "Print failing buildbots (%s) and what revisions broke them" % config_urls.buildbot_url
 
     def _print_builder_line(self, builder_name, max_name_width, status_message):
         print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
@@ -181,7 +182,7 @@ class WhatBroke(AbstractDeclarativeCommand):
 
 class ResultsFor(AbstractDeclarativeCommand):
     name = "results-for"
-    help_text = "Print a list of failures for the passed revision from bots on %s" % BuildBot.default_host
+    help_text = "Print a list of failures for the passed revision from bots on %s" % config_urls.buildbot_url
     argument_names = "REVISION"
 
     def _print_layout_test_results(self, results):
@@ -203,7 +204,7 @@ class ResultsFor(AbstractDeclarativeCommand):
 
 class FailureReason(AbstractDeclarativeCommand):
     name = "failure-reason"
-    help_text = "Lists revisions where individual test failures started at %s" % BuildBot.default_host
+    help_text = "Lists revisions where individual test failures started at %s" % config_urls.buildbot_url
 
     def _blame_line_for_revision(self, revision):
         try:
@@ -289,7 +290,7 @@ class FailureReason(AbstractDeclarativeCommand):
 
 class FindFlakyTests(AbstractDeclarativeCommand):
     name = "find-flaky-tests"
-    help_text = "Lists tests that often fail for a single build at %s" % BuildBot.default_host
+    help_text = "Lists tests that often fail for a single build at %s" % config_urls.buildbot_url
 
     def _find_failures(self, builder, revision):
         build = builder.build_for_revision(revision, allow_failed_lookups=True)
@@ -358,7 +359,7 @@ class FindFlakyTests(AbstractDeclarativeCommand):
 
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"
-    help_text = "Print the status of the %s buildbots" % BuildBot.default_host
+    help_text = "Print the status of the %s buildbots" % config_urls.buildbot_url
     long_help = """Fetches build status from http://build.webkit.org/one_box_per_builder
 and displayes the status of each builder."""
 

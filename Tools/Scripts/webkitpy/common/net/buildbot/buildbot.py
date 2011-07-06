@@ -39,6 +39,7 @@ import re
 import urllib
 import urllib2
 
+import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.networktransaction import NetworkTransaction
@@ -66,13 +67,13 @@ class Builder(object):
         return self._name
 
     def results_url(self):
-        return "http://%s/results/%s" % (self._buildbot.buildbot_host, self.url_encoded_name())
+        return "%s/results/%s" % (self._buildbot.buildbot_url, self.url_encoded_name())
 
     def url_encoded_name(self):
         return urllib.quote(self._name)
 
     def url(self):
-        return "http://%s/builders/%s" % (self._buildbot.buildbot_host, self.url_encoded_name())
+        return "%s/builders/%s" % (self._buildbot.buildbot_url, self.url_encoded_name())
 
     # This provides a single place to mock
     def _fetch_build(self, build_number):
@@ -279,11 +280,8 @@ class Build(object):
 
 
 class BuildBot(object):
-    # FIXME: This should move into common.config.urls.
-    default_host = "build.webkit.org"
-
-    def __init__(self, host=default_host):
-        self.buildbot_host = host
+    def __init__(self, url=config_urls.buildbot_url):
+        self.buildbot_url = url
         self._builder_by_name = {}
 
         # If any core builder is red we should not be landing patches.  Other
@@ -385,7 +383,7 @@ class BuildBot(object):
         # cause keys to be missing which you might otherwise expect.
         # FIXME: The bot sends a *huge* amount of data for each request, we should
         # find a way to reduce the response size further.
-        json_url = "http://%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_host, urllib.quote(builder.name()), build_number)
+        json_url = "%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_url, urllib.quote(builder.name()), build_number)
         try:
             return json.load(urllib2.urlopen(json_url))
         except urllib2.URLError, err:
@@ -398,7 +396,7 @@ class BuildBot(object):
             return None
 
     def _fetch_one_box_per_builder(self):
-        build_status_url = "http://%s/one_box_per_builder" % self.buildbot_host
+        build_status_url = "%s/one_box_per_builder" % self.buildbot_url
         return urllib2.urlopen(build_status_url)
 
     def _file_cell_text(self, file_cell):

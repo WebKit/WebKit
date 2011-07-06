@@ -28,6 +28,7 @@
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
+import webkitpy.common.config.urls as config_urls
 from webkitpy.common.system.deprecated_logging import log, error
 
 
@@ -45,4 +46,4 @@ class EnsureBuildersAreGreen(AbstractStep):
         if not red_builders_names:
             return
         red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
-        log("\nWARNING: Builders [%s] are red, please watch your commit carefully.\nSee http://%s/console?category=core\n" % (", ".join(red_builders_names), self._tool.buildbot.buildbot_host))
+        log("\nWARNING: Builders [%s] are red, please watch your commit carefully.\nSee %s/console?category=core\n" % (", ".join(red_builders_names), config_urls.buildbot_url))

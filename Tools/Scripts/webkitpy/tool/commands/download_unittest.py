@@ -117,7 +117,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
     def test_land_red_builders(self):
-        expected_stderr = '\nWARNING: Builders ["Builder2"] are red, please watch your commit carefully.\nSee http://dummy_buildbot_host/console?category=core\n\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n'
+        expected_stderr = '\nWARNING: Builders ["Builder2"] are red, please watch your commit carefully.\nSee http://build.webkit.org/console?category=core\n\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n'
         mock_tool = MockTool()
         mock_tool.buildbot.light_tree_on_fire()
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)

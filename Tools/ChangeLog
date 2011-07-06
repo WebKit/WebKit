@@ -1,3 +1,20 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        Move buildbot URL in webkitpy to config.urls
+        https://bugs.webkit.org/show_bug.cgi?id=64041
+
+        Reviewed by Eric Seidel.
+
+        This patch prepares for using the buildbot class to talk to the
+        Chromium buildbots.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py:
+
 2011-07-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, add the correct path to the waf build settings.
