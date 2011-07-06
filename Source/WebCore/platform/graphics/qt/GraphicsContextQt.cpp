@@ -523,8 +523,7 @@ void GraphicsContext::fillPath(const Path& path)
                     brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
                     shadowPainter->fillPath(platformPath, brush);
                 } else {
-                    QColor shadowColor = m_state.shadowColor;
-                    shadowPainter->fillPath(platformPath, p->brush().color());
+                    shadowPainter->fillPath(platformPath, p->brush());
                 }
                 shadow->endShadowLayer(this);
             }

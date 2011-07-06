@@ -1,5 +1,16 @@
 2011-07-06  Andras Becsi  <abecsi@webkit.org>
 
+        [Qt] Revome unused but set shadowBlur variable after r90406.
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath): Use the GraphicsContext brush.
+
+2011-07-06  Andras Becsi  <abecsi@webkit.org>
+
         [Qt] Remove duplicate entries of ShadowBlur sources from project file.
 
         Rubber-stamped by Csaba Osztrogonác.
