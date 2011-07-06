@@ -51,8 +51,10 @@ class WebKitPort(base.Port):
         base.Port.__init__(self, **kwargs)
         self._cached_apache_path = None  # FIXME: This class should use @memoized instead.
 
-        # FIXME: disable pixel tests until they are run by default on the build machines.
+        # FIXME: Disable pixel tests until they are run by default on build.webkit.org.
         self.set_option_default("pixel_tests", False)
+        # WebKit ports expect a 35s timeout, or 350s timeout when running with -g/--guard-malloc.
+        self.set_option_default("time_out_ms", 35000)
 
     def driver_name(self):
         if self.get_option('webkit_test_runner'):
@@ -389,6 +391,7 @@ class WebKitDriver(base.Driver):
             cmd.append('--complex-text')
         if self._port.get_option('threaded'):
             cmd.append('--threaded')
+        # FIXME: We need to pass --timeout=SECONDS to WebKitTestRunner for WebKit2.
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         cmd.append('-')

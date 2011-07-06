@@ -83,8 +83,6 @@ class MacPort(WebKitPort):
             self._version = port_name[len('mac-'):]
             assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'mac'
-        if not hasattr(self._options, 'time-out-ms') or self._options.time_out_ms is None:
-            self._options.time_out_ms = 35000
 
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
