@@ -1,3 +1,12 @@
+2011-07-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Run an Xvfb instance to run the API tests on, like we do for the
+        layout tests.
+
+        Reviewed by Xan Lopez.
+
+        * Scripts/run-gtk-tests:
+
 2011-07-06  Daniel Bates  <dbates@webkit.org>
 
         Make SCM unit tests faster

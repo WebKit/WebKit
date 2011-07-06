@@ -33,6 +33,17 @@ if ($#unitTests < 1) {
     die "ERROR: tests not found in $productDir.\n";
 }
 
+my $pid = fork();
+if ($pid == 0) {
+    exec("Xvfb :31 -screen 0 800x600x24 -nolisten tcp > /dev/null 2>&1");
+    exit 1;
+} elsif ($pid == -1) {
+    print "Failed to fork Xvfb.";
+    exit 1;
+}
+
+$ENV{"DISPLAY"} = ':31';
+
 my $exitStatus = 0;
 foreach my $unitTest (@unitTests)
 {
@@ -41,6 +52,8 @@ foreach my $unitTest (@unitTests)
         $exitStatus = $?;
     }
 }
+
+kill 9, $pid unless $pid <= 0;
 
 if ($exitStatus) {
     print "Tests failed\n";
