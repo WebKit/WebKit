@@ -1,3 +1,13 @@
+2011-07-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        re-enabling new-run-webkit-tests on the Snow Leopard WebKit1 bots
+        now that we believe the stray http-server issue to be solved.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+
 2011-07-05  Adam Barth  <abarth@webkit.org>
 
         Turns out we need to support numerals too because that's what jQuery

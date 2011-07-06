@@ -69,7 +69,7 @@ sub useNewRunWebKitTests()
     # new-run-webkit-tests by default.
     # Example: return runningOnBuildBot() && isLeopard();
     # would enable new-run-webkit-tests on only the leopard buildbots.
-    return 0;
+    return (isSnowLeopard() and !usingWebKit2());
 }
 
 my $harnessName = "old-run-webkit-tests";
