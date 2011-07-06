@@ -1,3 +1,25 @@
+2011-07-06  Daniel Bates  <dbates@webkit.org>
+
+        Make SCM unit tests faster
+        https://bugs.webkit.org/show_bug.cgi?id=63883
+
+        Speeds up the SCM unit tests by a factor of 4. Currently, we create a
+        mock SVN repo for each test_ method in SVNTest and GitTest and creating
+        this repo is expensive.
+
+        Instead, it is significantly faster to create the mock SVN repo once
+        and then perform a filesystem copy of it for each test_ method.
+
+        Note, Python 2.7's unittest module implements support for per class and
+        per module setup and tear down methods which could be used to implement
+        similar functionality. At the time of writing, test-webkitpy is designed
+        to support Python 2.5. So, we can't take advantage of these Python 2.7
+        features :(
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
         Remove unused parameter from _add_test in test_expectations.py

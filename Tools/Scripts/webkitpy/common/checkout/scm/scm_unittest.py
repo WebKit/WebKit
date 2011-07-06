@@ -30,6 +30,7 @@
 
 from __future__ import with_statement
 
+import atexit
 import base64
 import codecs
 import getpass
@@ -57,6 +58,23 @@ from .git import Git, AmbiguousCommitError
 from .scm import SCM, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
 from .svn import SVN
 
+# We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.
+# We store it in a global variable so that we can delete this cached repo on exit(3).
+# FIXME: Remove this once we migrate to Python 2.7. Unittest in Python 2.7 supports module-specific setup and teardown functions.
+cached_svn_repo_path = None
+
+
+def remove_dir(path):
+    # Change directory to / to ensure that we aren't in the directory we want to delete.
+    os.chdir('/')
+    shutil.rmtree(path)
+
+
+# FIXME: Remove this once we migrate to Python 2.7. Unittest in Python 2.7 supports module-specific setup and teardown functions.
+@atexit.register
+def delete_cached_mock_repo_at_exit():
+    if cached_svn_repo_path:
+        remove_dir(cached_svn_repo_path)
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
@@ -111,9 +129,13 @@ class SVNTestRepository:
         run_command(["svn", "commit", "--quiet", "--message", message])
 
     @classmethod
-    def _setup_test_commits(cls, test_object):
+    def _setup_test_commits(cls, svn_repo_url):
+
+        svn_checkout_path = tempfile.mkdtemp(suffix="svn_test_checkout")
+        run_command(['svn', 'checkout', '--quiet', svn_repo_url, svn_checkout_path])
+
         # Add some test commits
-        os.chdir(test_object.svn_checkout_path)
+        os.chdir(svn_checkout_path)
 
         write_into_file_at_path("test_file", "test1")
         cls._svn_add("test_file")
@@ -145,39 +167,53 @@ class SVNTestRepository:
 
         # svn does not seem to update after commit as I would expect.
         run_command(['svn', 'update'])
+        remove_dir(svn_checkout_path)
 
+    # This is a hot function since it's invoked by unittest before calling each test_ method in SVNTest and
+    # GitTest. We create a mock SVN repo once and then perform an SVN checkout from a filesystem copy of
+    # it since it's expensive to create the mock repo.
     @classmethod
     def setup(cls, test_object):
+        global cached_svn_repo_path
+        if not cached_svn_repo_path:
+            cached_svn_repo_path = cls._setup_mock_repo()
+
+        test_object.temp_directory = tempfile.mkdtemp(suffix="svn_test")
+        test_object.svn_repo_path = os.path.join(test_object.temp_directory, "repo")
+        test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path
+        test_object.svn_checkout_path = os.path.join(test_object.temp_directory, "checkout")
+        shutil.copytree(cached_svn_repo_path, test_object.svn_repo_path)
+        run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url + "/trunk", test_object.svn_checkout_path])
+
+    @classmethod
+    def _setup_mock_repo(cls):
         # Create an test SVN repository
-        test_object.svn_repo_path = tempfile.mkdtemp(suffix="svn_test_repo")
-        test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path # Not sure this will work on windows
+        svn_repo_path = tempfile.mkdtemp(suffix="svn_test_repo")
+        svn_repo_url = "file://%s" % svn_repo_path  # Not sure this will work on windows
         # git svn complains if we don't pass --pre-1.5-compatible, not sure why:
         # Expected FS format '2'; found format '3' at /usr/local/libexec/git-core//git-svn line 1477
-        run_command(['svnadmin', 'create', '--pre-1.5-compatible', test_object.svn_repo_path])
+        run_command(['svnadmin', 'create', '--pre-1.5-compatible', svn_repo_path])
 
         # Create a test svn checkout
-        test_object.svn_checkout_path = tempfile.mkdtemp(suffix="svn_test_checkout")
-        run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url, test_object.svn_checkout_path])
+        svn_checkout_path = tempfile.mkdtemp(suffix="svn_test_checkout")
+        run_command(['svn', 'checkout', '--quiet', svn_repo_url, svn_checkout_path])
 
         # Create and checkout a trunk dir to match the standard svn configuration to match git-svn's expectations
-        os.chdir(test_object.svn_checkout_path)
+        os.chdir(svn_checkout_path)
         os.mkdir('trunk')
         cls._svn_add('trunk')
         # We can add tags and branches as well if we ever need to test those.
         cls._svn_commit('add trunk')
 
         # Change directory out of the svn checkout so we can delete the checkout directory.
-        # _setup_test_commits will CD back to the svn checkout directory.
-        os.chdir('/')
-        run_command(['rm', '-rf', test_object.svn_checkout_path])
-        run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url + '/trunk', test_object.svn_checkout_path])
+        remove_dir(svn_checkout_path)
 
-        cls._setup_test_commits(test_object)
+        cls._setup_test_commits(svn_repo_url + "/trunk")
+        return svn_repo_path
 
     @classmethod
     def tear_down(cls, test_object):
-        run_command(['rm', '-rf', test_object.svn_repo_path])
-        run_command(['rm', '-rf', test_object.svn_checkout_path])
+        remove_dir(test_object.temp_directory)
 
         # Now that we've deleted the checkout paths, cwddir may be invalid
         # Change back to a valid directory so that later calls to os.getcwd() do not fail.
