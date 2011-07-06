@@ -53,7 +53,6 @@
 
 #include "GrContext.h"
 #include "SkGpuDevice.h"
-#include "SkGpuDeviceFactory.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>

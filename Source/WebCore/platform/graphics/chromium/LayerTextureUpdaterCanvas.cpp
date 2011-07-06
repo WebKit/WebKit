@@ -42,7 +42,6 @@
 #include "PlatformContextSkia.h"
 #include "SkCanvas.h"
 #include "SkGpuDevice.h"
-#include "SkGpuDeviceFactory.h"
 #endif // USE(SKIA)
 
 namespace WebCore {

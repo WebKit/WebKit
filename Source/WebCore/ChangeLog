@@ -1,3 +1,15 @@
+2011-07-06  Mike Reed  <reed@google.com>
+
+        [skia] don't include deprecated header
+        https://bugs.webkit.org/show_bug.cgi?id=64025
+
+        Reviewed by James Robinson.
+
+        No new tests. Just removing #include of an unused header that will be gone soon
+
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+
 2011-06-30  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Fisher.
