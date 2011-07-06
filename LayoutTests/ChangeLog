@@ -1,3 +1,16 @@
+2011-07-06  Mihai Parparita  <mihaip@chromium.org>
+
+        Rebaseline some imagemap focus ring tests for Chromium Mac (mainly for
+        Leopard, due to text anti-aliasing differences).
+
+        * platform/chromium-mac/fast/images/imagemap-case-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/images/imagemap-case-expected.png: Added.
+        * platform/mac-leopard/fast/images/imagemap-focus-ring-expected.png: Added.
+        * platform/mac-leopard/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/mac-leopard/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/mac-leopard/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+
 2011-07-06  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] Seems that I still don't get the syntax right

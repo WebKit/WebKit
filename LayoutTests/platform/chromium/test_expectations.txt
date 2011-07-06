@@ -2553,14 +2553,9 @@ BUGCR64733 : editing/text-iterator/findString.html = TEXT
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
-BUGWK50282 MAC : fast/images/imagemap-case.html = IMAGE
-BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring.html = IMAGE
 BUGWK50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
-BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
 BUGWK50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
-BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
 BUGWK50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
-BUGWK50282 LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
