@@ -978,7 +978,6 @@ SOURCES += \
     platform/graphics/FontFamily.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
-    platform/graphics/ShadowBlur.cpp \
     platform/graphics/FloatPoint3D.cpp \
     platform/graphics/FloatPoint.cpp \
     platform/graphics/FloatQuad.cpp \
@@ -1939,7 +1938,6 @@ HEADERS += \
     platform/mock/SpeechInputClientMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
-    platform/graphics/ShadowBlur.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \

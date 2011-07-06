@@ -1,3 +1,13 @@
+2011-07-06  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] Remove duplicate entries of ShadowBlur sources from project file.
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * WebCore.pro: These files were already added in r84410.
+
 2011-07-05  Kentaro Hara  <haraken@google.com>
 
         Trigger a 'change' event whenever selected files are changed
