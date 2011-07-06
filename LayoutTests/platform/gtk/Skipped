@@ -1554,4 +1554,5 @@ media/media-blocked-by-willsendrequest.html
 # what happens to them in the bots
 
 http/tests/inspector
+http/tests/inspector-enabled
 inspector/

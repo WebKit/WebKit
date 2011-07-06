@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Missed these inspector tests before.
+
+        * platform/gtk/Skipped:
+
+2011-07-06  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed.
+
         Skip inspector tests while we figure why they fail in the
         NWRT/debug bots.
 
