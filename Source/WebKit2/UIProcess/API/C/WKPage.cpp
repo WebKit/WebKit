@@ -502,6 +502,11 @@ WKPageDebugPaintFlags WKPageGetDebugPaintFlags()
     return WebPageProxy::debugPaintFlags();
 }
 
+WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicationName)
+{
+    return toCopiedAPI(WebPageProxy::standardUserAgent(toImpl(applicationName)->string()));
+}
+
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
     toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create(context, callback)); 

@@ -346,6 +346,7 @@ public:
     const String& applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
     void setCustomUserAgent(const String&);
     const String& customUserAgent() const { return m_customUserAgent; }
+    static String standardUserAgent(const String& applicationName = String());
 
     bool supportsTextEncoding() const;
     void setCustomTextEncodingName(const String&);
@@ -742,8 +743,6 @@ private:
 #if PLATFORM(MAC)
     void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
 #endif
-
-    static String standardUserAgent(const String& applicationName = String());
 
     void clearPendingAPIRequestURL() { m_pendingAPIRequestURL = String(); }
     void setPendingAPIRequestURL(const String& pendingAPIRequestURL) { m_pendingAPIRequestURL = pendingAPIRequestURL; }
