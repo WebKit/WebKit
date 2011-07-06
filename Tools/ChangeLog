@@ -1,3 +1,10 @@
+2011-07-06  Daniel Bates  <dbates@rim.com>
+
+        Fix webkitpy error after changeset 90483 <http://trac.webkit.org/changeset/90483>; Add missing
+        parameter to _fetch_file_from_results lamdba function.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-07-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Generate the proper install_name for dylibs on Mac.
