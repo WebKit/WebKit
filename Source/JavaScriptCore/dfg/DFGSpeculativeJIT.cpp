@@ -1133,9 +1133,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
         
     case Call:
-        JSValueOperand callee(this, m_jit.graph().m_varArgChildren[node.firstChild()]);
-        GPRReg calleeGPR = callee.gpr();
-        emitCall(node, calleeGPR);
+        emitCall(node);
         break;
     }
 

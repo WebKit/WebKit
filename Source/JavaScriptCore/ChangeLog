@@ -1,5 +1,25 @@
 2011-07-06  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT op_call implementation will flush registers even when those registers are dead
+        https://bugs.webkit.org/show_bug.cgi?id=64023
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::integerResult):
+        (JSC::DFG::JITCodeGenerator::noResult):
+        (JSC::DFG::JITCodeGenerator::cellResult):
+        (JSC::DFG::JITCodeGenerator::jsValueResult):
+        (JSC::DFG::JITCodeGenerator::doubleResult):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-07-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG speculative JIT may crash when speculating int on a non-int JSConstant.
         https://bugs.webkit.org/show_bug.cgi?id=64017
 

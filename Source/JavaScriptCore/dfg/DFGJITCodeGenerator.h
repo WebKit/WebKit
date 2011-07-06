@@ -64,6 +64,8 @@ protected:
         SpillOrderInteger = 5,  // needs spill and box
         SpillOrderDouble = 6,   // needs spill and convert
     };
+    
+    enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
 
 
 public:
@@ -528,7 +530,7 @@ protected:
         return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
     }
     
-    void emitCall(Node&, GPRReg targetGPR);
+    void emitCall(Node&);
 
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
@@ -538,10 +540,11 @@ protected:
 
     // These method called to initialize the the GenerationInfo
     // to describe the result of an operation.
-    void integerResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatInteger)
+    void integerResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatInteger, UseChildrenMode mode = CallUseChildren)
     {
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -557,38 +560,43 @@ protected:
             info.initJSValue(nodeIndex, node.refCount(), reg, format);
         }
     }
-    void noResult(NodeIndex nodeIndex)
+    void noResult(NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
+        if (mode == UseChildrenCalledExplicitly)
+            return;
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
     }
-    void cellResult(GPRReg reg, NodeIndex nodeIndex)
+    void cellResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderCell);
         GenerationInfo& info = m_generationInfo[virtualRegister];
         info.initCell(nodeIndex, node.refCount(), reg);
     }
-    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS)
+    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
         if (format == DataFormatJSInteger)
             m_jit.jitAssertIsJSInt32(reg);
         
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderJS);
         GenerationInfo& info = m_generationInfo[virtualRegister];
         info.initJSValue(nodeIndex, node.refCount(), reg, format);
     }
-    void doubleResult(FPRReg reg, NodeIndex nodeIndex)
+    void doubleResult(FPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         m_fprs.retain(reg, virtualRegister, SpillOrderDouble);
