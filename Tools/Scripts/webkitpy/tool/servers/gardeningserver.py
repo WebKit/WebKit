@@ -38,6 +38,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_NAMES = frozenset([
         "index.html",
         "main.js",
+        "results.js",
     ])
 
     STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "gardeningserver")
