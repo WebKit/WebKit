@@ -28,14 +28,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit tests for manager.Manager()."""
+"""Unit tests for manager.py."""
 
+import StringIO
 import unittest
 
 from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system import outputcapture
 from webkitpy.thirdparty.mock import Mock
 
+from webkitpy import layout_tests
+from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package.manager import Manager, natural_sort_key, path_key, TestRunInterruptedException
+from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package.result_summary import ResultSummary
 from webkitpy.tool.mocktool import MockOptions
 
@@ -72,14 +77,46 @@ class ManagerTest(unittest.TestCase):
           'LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html',
         ])
 
-        # FIXME: Ideally the HTTP tests don't have to all be in one shard.
-        single_thread_results = manager._shard_tests(test_list, False)
-        multi_thread_results = manager._shard_tests(test_list, True)
+        single_locked, single_unlocked = manager._shard_tests(test_list, False)
+        multi_locked, multi_unlocked = manager._shard_tests(test_list, True)
 
-        self.assertEqual("tests_to_http_lock", single_thread_results[0][0])
-        self.assertEqual(expected_tests_to_http_lock, set(single_thread_results[0][1]))
-        self.assertEqual("tests_to_http_lock", multi_thread_results[0][0])
-        self.assertEqual(expected_tests_to_http_lock, set(multi_thread_results[0][1]))
+        self.assertEqual("tests_to_http_lock", single_locked[0][0])
+        self.assertEqual(expected_tests_to_http_lock, set(single_locked[0][1]))
+        self.assertEqual("tests_to_http_lock", multi_locked[0][0])
+        self.assertEqual(expected_tests_to_http_lock, set(multi_locked[0][1]))
+
+    def test_http_locking(tester):
+        class LockCheckingManager(Manager):
+            def __init__(self, port, options, printer):
+                super(LockCheckingManager, self).__init__(port, options, printer)
+                self._finished_list_called = False
+
+            def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
+                if not self._finished_list_called:
+                    tester.assertEquals(list_name, 'tests_to_http_lock')
+                    tester.assertTrue(self._remaining_locked_shards)
+                    tester.assertTrue(self._has_http_lock)
+
+                super(LockCheckingManager, self).handle_finished_list(source, list_name, num_tests, elapsed_time)
+
+                if not self._finished_list_called:
+                    tester.assertEquals(self._remaining_locked_shards, [])
+                    tester.assertFalse(self._has_http_lock)
+                    self._finished_list_called = True
+
+        options, args = run_webkit_tests.parse_args(['--platform=test', '--print=nothing', 'http/tests/passes', 'passes'])
+        port = layout_tests.port.get(port_name=options.platform, options=options)
+        run_webkit_tests._set_up_derived_options(port, options)
+        printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(),
+                                   configure_logging=True)
+        manager = LockCheckingManager(port, options, printer)
+        manager.collect_tests(args, [])
+        manager.parse_expectations()
+        result_summary = manager.set_up_run()
+        num_unexpected_results = manager.run(result_summary)
+        manager.clean_up_run()
+        printer.cleanup()
+        tester.assertEquals(num_unexpected_results, 0)
 
     def test_interrupt_if_at_failure_limits(self):
         port = Mock()
