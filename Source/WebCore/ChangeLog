@@ -1,3 +1,36 @@
+2011-07-06  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: implement drag'n'drop in the elements panel for reordering nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=63990
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::moveTo):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._removeChild):
+        (WebInspector.DOMNode.prototype.ownerDocumentElement):
+        (WebInspector.DOMNode.prototype.moveTo):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._ondragstart):
+        (WebInspector.ElementsTreeOutline.prototype._ondragover):
+        (WebInspector.ElementsTreeOutline.prototype._ondragleave):
+        (WebInspector.ElementsTreeOutline.prototype._isValidDragSourceOrTarget):
+        (WebInspector.ElementsTreeOutline.prototype._ondragend.callback):
+        (WebInspector.ElementsTreeOutline.prototype._ondragend):
+        (WebInspector.ElementsTreeOutline.prototype._clearDragOverTreeElementMarker):
+        (WebInspector.ElementsTreeOutline.prototype.populateContextMenu.focusElement):
+        (WebInspector.ElementsTreeOutline.prototype.populateContextMenu):
+        (WebInspector.ElementsTreeElement.prototype.onattach):
+        * inspector/front-end/inspector.css:
+        (.outline-disclosure li.elements-drag-over .selection):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.treeElementFromEvent):
+
 2011-07-06  Andras Becsi  <abecsi@webkit.org>
 
         Fix "warning: a `;' might be needed at the end of action code"

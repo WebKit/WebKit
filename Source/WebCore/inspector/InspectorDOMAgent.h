@@ -136,6 +136,8 @@ public:
     void hideNodeHighlight(ErrorString* error) { hideHighlight(error); }
     void highlightFrame(ErrorString*, const String& frameId);
     void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
+    void moveTo(ErrorString*, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId);
+
     Node* highlightedNode() const { return m_highlightedNode.get(); }
 
     // Methods called from the InspectorInstrumentation.

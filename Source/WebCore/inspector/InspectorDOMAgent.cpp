@@ -1032,6 +1032,36 @@ void InspectorDOMAgent::hideHighlight(ErrorString*)
     m_client->hideHighlight();
 }
 
+void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId)
+{
+    Element* element = assertElement(error, nodeId);
+    if (!element)
+        return;
+
+    Element* targetElement = assertElement(error, targetNodeId);
+    if (!targetElement)
+        return;
+
+    Element* anchorElement = 0;
+    if (anchorNodeId && *anchorNodeId) {
+        anchorElement = assertElement(error, *anchorNodeId);
+        if (!anchorElement)
+            return;
+        if (anchorElement->parentNode() != targetElement) {
+            *error = "Anchor node must be child of the target node.";
+            return;
+        }
+    }
+
+    ExceptionCode ec = 0;
+    bool success = targetElement->insertBefore(element, anchorElement, ec);
+    if (ec || !success) {
+        *error = "Could not drop node.";
+        return;
+    }
+    *newNodeId = pushNodePathToFrontend(element);
+}
+
 void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result)
 {
     String objectGroupName = objectGroup ? *objectGroup : "";

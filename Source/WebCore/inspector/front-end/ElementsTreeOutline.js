@@ -33,6 +33,10 @@ WebInspector.ElementsTreeOutline = function() {
     this.element.addEventListener("mousedown", this._onmousedown.bind(this), false);
     this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.element.addEventListener("mouseout", this._onmouseout.bind(this), false);
+    this.element.addEventListener("dragstart", this._ondragstart.bind(this), false);
+    this.element.addEventListener("dragover", this._ondragover.bind(this), false);
+    this.element.addEventListener("dragleave", this._ondragleave.bind(this), false);
+    this.element.addEventListener("dragend", this._ondragend.bind(this), false);
 
     TreeOutline.call(this, this.element);
 
@@ -258,17 +262,143 @@ WebInspector.ElementsTreeOutline.prototype = {
         WebInspector.highlightDOMNode(0);
     },
 
+    _ondragstart: function(event)
+    {
+        var treeElement = this._treeElementFromEvent(event);
+        if (!treeElement)
+            return false;
+
+        if (!this._isValidDragSourceOrTarget(treeElement))
+            return false;
+
+        if (treeElement.representedObject.nodeName() === "BODY" || treeElement.representedObject.nodeName() === "HEAD")
+            return false;
+
+        event.dataTransfer.setData("text/plain", treeElement.listItemElement.textContent);
+        event.dataTransfer.effectAllowed = "copy";
+        this._nodeBeingDragged = treeElement.representedObject;
+
+        WebInspector.highlightDOMNode(0);
+
+        return true;
+    },
+
+    _ondragover: function(event)
+    {
+        this._clearDragOverTreeElementMarker();
+
+        if (!this._nodeBeingDragged)
+            return;
+        
+        var treeElement = this._treeElementFromEvent(event);
+        if (!this._isValidDragSourceOrTarget(treeElement))
+            return;
+
+        var node = treeElement.representedObject;
+        while (node) {
+            if (node === this._nodeBeingDragged)
+                return;
+            node = node.parentNode;
+        }
+
+        treeElement.updateSelection();
+        treeElement.listItemElement.addStyleClass("elements-drag-over");
+        this._dragOverTreeElement = treeElement;
+    },
+
+    _ondragleave: function(event)
+    {
+        this._clearDragOverTreeElementMarker();
+
+        if (!this._nodeBeingDragged)
+            return;
+        
+        var treeElement = this._treeElementFromEvent(event);
+        if (!this._isValidDragSourceOrTarget(treeElement))
+            return false;
+
+        var node = treeElement.representedObject;
+        while (node) {
+            if (node === this._nodeBeingDragged)
+                return;
+            node = node.parentNode;
+        }
+
+        treeElement.updateSelection();
+        treeElement.listItemElement.addStyleClass("elements-drag-over");
+        this._dragOverTreeElement = treeElement;
+    },
+
+    _isValidDragSourceOrTarget: function(treeElement)
+    {
+        if (!treeElement)
+            return false;
+
+        var node = treeElement.representedObject;
+        if (!(node instanceof WebInspector.DOMNode))
+            return false;
+
+        if (node.nodeType() !== Node.ELEMENT_NODE)
+            return false;
+
+        if (!node.parentNode || node.parentNode.nodeType() !== Node.ELEMENT_NODE)
+            return false;
+
+        return true;
+    },
+
+    _ondragend: function(event)
+    {
+        if (this._nodeBeingDragged && this._dragOverTreeElement) {
+            var parentNode;
+            var anchorNode;
+
+            if (this._dragOverTreeElement._elementCloseTag) {
+                // Drop onto closing tag -> insert as last child.
+                parentNode = this._dragOverTreeElement.representedObject;
+            } else {
+                var dragTargetNode = this._dragOverTreeElement.representedObject;
+                parentNode = dragTargetNode.parentNode;
+                anchorNode = dragTargetNode;
+            }
+
+            function callback(error, newNodeId)
+            {
+                if (error)
+                    return;
+
+                WebInspector.panels.elements.updateModifiedNodes();
+                var newNode = WebInspector.domAgent.nodeForId(newNodeId);
+                if (newNode)
+                    this.focusedDOMNode = newNode;
+            }
+            this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
+        }
+        
+        this._clearDragOverTreeElementMarker();
+        delete this._nodeBeingDragged;
+    },
+
+    _clearDragOverTreeElementMarker: function()
+    {
+        if (this._dragOverTreeElement) {
+            this._dragOverTreeElement.updateSelection();
+            this._dragOverTreeElement.listItemElement.removeStyleClass("elements-drag-over");
+            delete this._dragOverTreeElement;
+        }
+    },
+
     populateContextMenu: function(contextMenu, event)
     {
-        var listItem = event.target.enclosingNodeOrSelfWithNodeName("LI");
-        if (!listItem || !listItem.treeElement)
+        var treeElement = this._treeElementFromEvent(event);
+        if (!treeElement)
             return false;
 
         var populated;
         if (this.showInElementsPanelEnabled) {
             function focusElement()
             {
-                WebInspector.panels.elements.switchToAndFocus(listItem.treeElement.representedObject);
+                WebInspector.panels.elements.switchToAndFocus(treeElement.representedObject);
             }
             contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
             populated = true;
@@ -278,15 +408,15 @@ WebInspector.ElementsTreeOutline.prototype = {
             var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
             if (href)
                 populated = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
-            if (tag && listItem.treeElement._populateTagContextMenu) {
+            if (tag && treeElement._populateTagContextMenu) {
                 if (populated)
                     contextMenu.appendSeparator();
-                listItem.treeElement._populateTagContextMenu(contextMenu, event);
+                treeElement._populateTagContextMenu(contextMenu, event);
                 populated = true;
-            } else if (textNode && listItem.treeElement._populateTextContextMenu) {
+            } else if (textNode && treeElement._populateTextContextMenu) {
                 if (populated)
                     contextMenu.appendSeparator();
-                listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
+                treeElement._populateTextContextMenu(contextMenu, textNode);
                 populated = true;
             }
         }
@@ -508,8 +638,8 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         this.updateTitle();
-
         this._preventFollowingLinksOnDoubleClick();
+        this.listItemElement.draggable = true;
     },
 
     _preventFollowingLinksOnDoubleClick: function()

@@ -1221,6 +1221,12 @@ iframe.panel.extension {
     background-color: rgb(212, 212, 212);
 }
 
+.outline-disclosure li.elements-drag-over .selection {
+    display: block;
+    margin-top: -2px;
+    border-top: 2px solid rgb(56, 121, 217);
+}
+
 .outline-disclosure ol:focus li.selected .selection {
     background-color: rgb(56, 121, 217);
 }

@@ -259,7 +259,7 @@ WebInspector.DOMNode.prototype = {
         return node;
     },
 
-    removeChild_: function(node)
+    _removeChild: function(node)
     {
         this.children.splice(this.children.indexOf(node), 1);
         node.parentNode = null;
@@ -315,6 +315,11 @@ WebInspector.DOMNode.prototype = {
         while (node.parentNode && !node.parentNode.documentURL)
             node = node.parentNode;
         return node;
+    },
+
+    moveTo: function(targetNode, anchorNode, callback)
+    {
+        DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, callback); 
     }
 }
 
@@ -535,7 +540,7 @@ WebInspector.DOMAgent.prototype = {
     {
         var parent = this._idToDOMNode[parentId];
         var node = this._idToDOMNode[nodeId];
-        parent.removeChild_(node);
+        parent._removeChild(node);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
         delete this._idToDOMNode[nodeId];
         if (Preferences.nativeInstrumentationEnabled)

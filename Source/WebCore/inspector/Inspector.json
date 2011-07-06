@@ -1015,6 +1015,18 @@
                     { "name": "attributes", "type": "array", "items": { "type": "Attributes" }, "description": "Attribute holders for the requested nodes." }
                 ],
                 "description": "Returns attributes for the specified nodes."
+            },
+            {
+                "name": "moveTo",
+                "parameters": [
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to drop." },
+                    { "name": "targetNodeId", "type": "integer", "description": "Id of the node to drop into." },
+                    { "name": "anchorNodeId", "type": "integer", "optional": true, "description": "Drop node before given one." }
+                ],
+                "returns": [
+                    { "name": "nodeId", "type": "integer", "description": "New id of the moved node." }
+                ],
+                "description": "Moves node into the new container, places it before the given anchor."
             }
         ],
         "events": [
