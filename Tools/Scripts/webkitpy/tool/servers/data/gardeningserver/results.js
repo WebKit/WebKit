@@ -1,62 +1,77 @@
+var results = results || {};
+
 (function() {
-  var TEST_RESULTS_SERVER = 'http://test-results.appspot.com/';
-  var TEST_TYPE = 'layout-tests';
-  var RESULTS_NAME = 'full_results.json';
-  var MASTER_NAME = 'ChromiumWebkit';
-  var FAILING_RESULTS = ['TIMEOUT', 'TEXT', 'CRASH', 'IMAGE','IMAGE+TEXT'];
 
-  function isFailure(result) {
-    return FAILING_RESULTS.indexOf(result) != -1;
-  }
+var kTestResultsServer = 'http://test-results.appspot.com/';
+var kTestType = 'layout-tests';
+var kResultsName = 'full_results.json';
+var kMasterName = 'ChromiumWebkit';
+var kFailingResults = ['TIMEOUT', 'TEXT', 'CRASH', 'IMAGE','IMAGE+TEXT'];
 
-  function anyIsFailure(results_list) {
-    return $.grep(results_list, isFailure).length > 0;
-  }
+function isFailure(result)
+{
+    return kFailingResults.indexOf(result) != -1;
+}
 
-  function addImpliedExpectations(results_list) {
-    if (results_list.indexOf('FAIL') == -1)
-      return results_list;
-    return results_list.concat(FAILING_RESULTS);
-  }
+function anyIsFailure(resultsList)
+{
+    return $.grep(resultsList, isFailure).length > 0;
+}
 
-  function unexpectedResults(result_node) {
-    var actual_results = result_node.actual.split(' ');
-    var expected_results = addImpliedExpectations(result_node.expected.split(' '))
+function addImpliedExpectations(resultsList)
+{
+    if (resultsList.indexOf('FAIL') == -1)
+        return resultsList;
+    return resultsList.concat(kFailingResults);
+}
 
-    return $.grep(actual_results, function(result) {
-      return expected_results.indexOf(result) == -1;
+function unexpectedResults(resultNode)
+{
+    var actualResults = resultNode.actual.split(' ');
+    var expectedResults = addImpliedExpectations(resultNode.expected.split(' '))
+
+    return $.grep(actualResults, function(result) {
+        return expectedResults.indexOf(result) == -1;
     });
-  }
+}
 
-  function isUnexpectedFailure(result_node) {
-    return anyIsFailure(unexpectedResults(result_node));
-  }
+function isUnexpectedFailure(resultNode)
+{
+    return anyIsFailure(unexpectedResults(resultNode));
+}
 
-  function isResultNode(node) {
+function isResultNode(node)
+{
     return !!node.actual;
-  }
+}
 
-  function logUnexpectedFailures(results_json) {
-    unexpected_failures = base.filterTree(results_json.tests, isResultNode, isUnexpectedFailure);
-    console.log('== Unexpected Failures ==')
-    console.log(unexpected_failures);
-  }
+results.BuilderResults = function(m_resultsJSON)
+{
+    this.m_resultsJSON = m_resultsJSON;
+}
 
-  function resultsURL(builder_name, name) {
-    return TEST_RESULTS_SERVER + 'testfile' +
-        '?builder=' + builder_name +
-        '&master=' + MASTER_NAME +
-        '&testtype=' + TEST_TYPE +
-        '&name=' + name;
-  }
+results.BuilderResults.prototype.unexpectedFailures = function() {
+    return base.filterTree(this.m_resultsJSON.tests, isResultNode, isUnexpectedFailure);
+}
 
-  function fetchResults(builder_name, onsuccess) {
+function resultsURL(builderName, name)
+{
+    return kTestResultsServer + 'testfile' +
+          '?builder=' + builderName +
+          '&master=' + kMasterName +
+          '&testtype=' + kTestType +
+          '&name=' + name;
+}
+
+results.fetchResultsForBuilder = function(builderName, onsuccess)
+{
     $.ajax({
-      url: resultsURL(builder_name, RESULTS_NAME),
-      dataType: 'jsonp',
-      success: onsuccess
+        url: resultsURL(builderName, kResultsName),
+        dataType: 'jsonp',
+        success: function(data) {
+            onsuccess(new results.BuilderResults(data));
+        }
     });
-  }
+}
 
-  fetchResults('Webkit Linux', logUnexpectedFailures);
 })();
