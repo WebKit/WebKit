@@ -55,6 +55,8 @@ sub runningOnBuildBot()
     return $isBuildBotUser{$ENV{"USER"}};
 }
 
+# We could use isWebKit2() instead of our own custom usingWebKit2(), but then
+# we'd have to be careful to add -2 or --webkit-test-runner back into @ARGV below.
 sub usingWebKit2()
 {
     # If either -2 or --webkit-test-runner is passed, we're supposed to use WebKit2.
@@ -65,12 +67,16 @@ sub usingWebKit2()
 
 sub useNewRunWebKitTests()
 {
-    # Change this check to control which platforms use
-    # new-run-webkit-tests by default.
+    # Change this check to control which platforms use new-run-webkit-tests by default.
     # Example: return runningOnBuildBot() && isLeopard();
     # would enable new-run-webkit-tests on only the leopard buildbots.
+
+    # Note: We use a whitelist here to avoid calling isPORT() for ports
+    # for which we haven't explicitly added support.  Calling isPORT()
+    # will remove the --PORT argument from @ARGV, causing us to fail to pass it to the test harness.
+
     # NRWT Windows support still needs work: https://bugs.webkit.org/show_bug.cgi?id=38756
-    return (!isAnyWindows() and !usingWebKit2());
+    return ((isLeopard() or isSnowLeopard() or isQt() or isGtk()) and !usingWebKit2());
 }
 
 my $harnessName = "old-run-webkit-tests";
@@ -85,14 +91,21 @@ if (useNewRunWebKitTests()) {
     }
 
     # FIXME: We need a cleaner way to do --platform handling.
-    # One problem is that webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
-    # But new-run-webkit-tests wouldn't understand --qt/--gtk if we passed it to it anyway:
+    # webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
+    # Unfortunately new-run-webkit-tests wouldn't understand --qt/--gtk if we passed it to it anyway,
+    # so we have to convert it to --platform=PORT equivalents.
     # https://bugs.webkit.org/show_bug.cgi?id=63970
     if (isQt()) {
         push(@ARGV, "--platform=qt");
-    }
-    if (isGtk()) {
+    } elsif (isGtk()) {
         push(@ARGV, "--platform=gtk");
+    }
+} else {
+    # We have to add back any --PORT arguments which may have been removed by isPort() checks above.
+    if (isQt()) {
+        push(@ARGV, "--qt");
+    } elsif (isGtk()) {
+        push(@ARGV, "--gtk");
     }
 }
 

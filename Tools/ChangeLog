@@ -1,5 +1,15 @@
 2011-07-06  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed..
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+         - Fix the pass-thru of --gtk and --qt for old-run-webkit-tests,
+           it was previously broken by the existence of isGtk/isQt checks which
+           removed the --gtk/--qt args from @ARGV.
+
+2011-07-06  Eric Seidel  <eric@webkit.org>
+
         new-run-webkit-tests uses a 35s timeout for Mac and 6s for all other ports
         https://bugs.webkit.org/show_bug.cgi?id=63983
 
