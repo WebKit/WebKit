@@ -100,7 +100,7 @@ BUGCR18702 WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PA
 
 BUGCR36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
-BUGCR32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
+BUGCR32018 SLOW : http/tests/websocket/tests/hixie76/frame-lengths.html = PASS
 BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
 BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
@@ -159,7 +159,7 @@ WONTFIX SKIP : http/tests/filesystem/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/websocket/tests/workers/ = PASS TIMEOUT FAIL
+WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/ = PASS TIMEOUT FAIL
 WONTFIX SKIP : inspector/debugger/script-formatter.html = PASS TIMEOUT FAIL
 
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously
@@ -1829,7 +1829,7 @@ BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 BUGCR31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 
 // WebKit roll 52852 -> 52867
-BUGCR32018 DEBUG : http/tests/websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
+BUGCR32018 DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS TEXT TIMEOUT
 
 // V8's implementation of getOwnPropertyNames has different results for built-in
 // functions.
@@ -2976,7 +2976,7 @@ BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMA
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
 BUGCR73091 : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
-BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
+BUGCR73094 LINUX : http/tests/websocket/tests/hixie76/send-after-close-on-unload.html = PASS TIMEOUT
 
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-indirect-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-indirect-strictcode.html = TEXT
@@ -3839,7 +3839,7 @@ BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 
 BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 
-BUGWK61767 WIN DEBUG : http/tests/websocket/tests/client-close.html = PASS TEXT
+BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hixie76/client-close.html = PASS TEXT
 
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html = TIMEOUT

@@ -1,3 +1,211 @@
+2011-07-05  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Move current WebSocket tests to a new directory
+        https://bugs.webkit.org/show_bug.cgi?id=63931
+
+        Reviewed by Kent Tamura.
+
+        In order to put tests for new WebSocket protocol, existing tests for the old protocol
+        need to be moved to a subdirectory (namely "hixie76").
+
+        Minimum changes have been made to tests and test results, such as:
+        - Update links to resource files (e.g. "../../../js-test-pre.js" to "../../../../js-test-pre.js"), and
+        - Update WebSocket URLs in the tests (i.e. adding "hixie76/" to ws:// and wss:// URLs).
+
+        Skipped and test_expectations.txt are also updated accordingly.
+
+        * http/tests/websocket/tests/handler_map.txt:
+        This is the only file left in the current directory. This file defines the handler location
+        to which accesses to the root directory (e.g. "ws://example.com/") are redirected, and
+        cannot be moved.
+        * http/tests/websocket/tests/hixie76/alert-in-event-handler-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/alert-in-event-handler-expected.txt.
+        * http/tests/websocket/tests/hixie76/alert-in-event-handler.html: Renamed from LayoutTests/http/tests/websocket/tests/alert-in-event-handler.html.
+        * http/tests/websocket/tests/hixie76/bad-handshake-crash-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/bad-handshake-crash-expected.txt.
+        * http/tests/websocket/tests/hixie76/bad-handshake-crash.html: Renamed from LayoutTests/http/tests/websocket/tests/bad-handshake-crash.html.
+        * http/tests/websocket/tests/hixie76/bad-handshake-crash_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/bad-handshake-crash_wsh.py.
+        * http/tests/websocket/tests/hixie76/bad-sub-protocol-control-chars-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * http/tests/websocket/tests/hixie76/bad-sub-protocol-control-chars.html: Renamed from LayoutTests/http/tests/websocket/tests/bad-sub-protocol-control-chars.html.
+        * http/tests/websocket/tests/hixie76/bad-sub-protocol-empty-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/bad-sub-protocol-empty-expected.txt.
+        * http/tests/websocket/tests/hixie76/bad-sub-protocol-empty.html: Renamed from LayoutTests/http/tests/websocket/tests/bad-sub-protocol-empty.html.
+        * http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/bad-sub-protocol-non-ascii-expected.txt.
+        * http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html: Renamed from LayoutTests/http/tests/websocket/tests/bad-sub-protocol-non-ascii.html.
+        * http/tests/websocket/tests/hixie76/bufferedAmount-after-close-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/bufferedAmount-after-close-expected.txt.
+        * http/tests/websocket/tests/hixie76/bufferedAmount-after-close.html: Renamed from LayoutTests/http/tests/websocket/tests/bufferedAmount-after-close.html.
+        * http/tests/websocket/tests/hixie76/client-close-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/client-close-expected.txt.
+        * http/tests/websocket/tests/hixie76/client-close.html: Renamed from LayoutTests/http/tests/websocket/tests/client-close.html.
+        * http/tests/websocket/tests/hixie76/client-close_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/client-close_wsh.py.
+        * http/tests/websocket/tests/hixie76/close-before-open-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-before-open-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-before-open.html: Renamed from LayoutTests/http/tests/websocket/tests/close-before-open.html.
+        * http/tests/websocket/tests/hixie76/close-event-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-event-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-event.html: Renamed from LayoutTests/http/tests/websocket/tests/close-event.html.
+        * http/tests/websocket/tests/hixie76/close-on-navigate-new-location-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-on-navigate-new-location-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-on-navigate-new-location.html: Renamed from LayoutTests/http/tests/websocket/tests/close-on-navigate-new-location.html.
+        * http/tests/websocket/tests/hixie76/close-on-unload-and-force-gc-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload-and-force-gc-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-on-unload-and-force-gc.html: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload-and-force-gc.html.
+        * http/tests/websocket/tests/hixie76/close-on-unload-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-on-unload-reference-in-parent-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload-reference-in-parent-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-on-unload-reference-in-parent.html: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload-reference-in-parent.html.
+        * http/tests/websocket/tests/hixie76/close-on-unload.html: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload.html.
+        * http/tests/websocket/tests/hixie76/close-on-unload_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/close-on-unload_wsh.py.
+        * http/tests/websocket/tests/hixie76/close-unref-websocket-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/close-unref-websocket-expected.txt.
+        * http/tests/websocket/tests/hixie76/close-unref-websocket.html: Renamed from LayoutTests/http/tests/websocket/tests/close-unref-websocket.html.
+        * http/tests/websocket/tests/hixie76/cross-origin-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/cross-origin-expected.txt.
+        * http/tests/websocket/tests/hixie76/cross-origin.html: Renamed from LayoutTests/http/tests/websocket/tests/cross-origin.html.
+        * http/tests/websocket/tests/hixie76/echo-challenge_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/echo-challenge_wsh.py.
+        * http/tests/websocket/tests/hixie76/echo-cookie_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/echo-cookie_wsh.py.
+        * http/tests/websocket/tests/hixie76/echo-location_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/echo-location_wsh.py.
+        * http/tests/websocket/tests/hixie76/echo_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/echo_wsh.py.
+        * http/tests/websocket/tests/hixie76/error-detect-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/error-detect-expected.txt.
+        * http/tests/websocket/tests/hixie76/error-detect.html: Renamed from LayoutTests/http/tests/websocket/tests/error-detect.html.
+        * http/tests/websocket/tests/hixie76/fixed-origin_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/fixed-origin_wsh.py.
+        * http/tests/websocket/tests/hixie76/frame-length-longer-than-buffer-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-longer-than-buffer-expected.txt.
+        * http/tests/websocket/tests/hixie76/frame-length-longer-than-buffer.html: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-longer-than-buffer.html.
+        * http/tests/websocket/tests/hixie76/frame-length-longer-than-buffer_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-longer-than-buffer_wsh.py.
+        * http/tests/websocket/tests/hixie76/frame-length-overflow-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-overflow-expected.txt.
+        * http/tests/websocket/tests/hixie76/frame-length-overflow.html: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-overflow.html.
+        * http/tests/websocket/tests/hixie76/frame-length-overflow_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-overflow_wsh.py.
+        * http/tests/websocket/tests/hixie76/frame-length-skip-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-skip-expected.txt.
+        * http/tests/websocket/tests/hixie76/frame-length-skip.html: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-skip.html.
+        * http/tests/websocket/tests/hixie76/frame-length-skip_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/frame-length-skip_wsh.py.
+        * http/tests/websocket/tests/hixie76/frame-lengths-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/frame-lengths-expected.txt.
+        * http/tests/websocket/tests/hixie76/frame-lengths.html: Renamed from LayoutTests/http/tests/websocket/tests/frame-lengths.html.
+        * http/tests/websocket/tests/hixie76/handshake-challenge-randomness-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-challenge-randomness-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-challenge-randomness.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-challenge-randomness.html.
+        * http/tests/websocket/tests/hixie76/handshake-error-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-error-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-error.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-error.html.
+        * http/tests/websocket/tests/hixie76/handshake-error_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/handshake-error_wsh.py.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-cross-origin-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-cross-origin-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-cross-origin.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-cross-origin.html.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-maxlength-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-maxlength-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-maxlength.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-maxlength.html.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-maxlength_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-maxlength_wsh.py.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-connection-header-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-connection-header.html.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-connection-header_wsh.py.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-cr-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-cr-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-cr.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-cr.html.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-cr_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-cr_wsh.py.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-upgrade-header-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-upgrade-header-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-upgrade-header.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-upgrade-header.html.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-upgrade-header_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-no-upgrade-header_wsh.py.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-prepended-null-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-prepended-null-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-prepended-null.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-prepended-null.html.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-prepended-null_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-prepended-null_wsh.py.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-sub-protocol-mismatch-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-sub-protocol-mismatch-expected.txt.
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-sub-protocol-mismatch.html: Renamed from LayoutTests/http/tests/websocket/tests/handshake-fail-by-sub-protocol-mismatch.html.
+        * http/tests/websocket/tests/hixie76/hanging-handshake_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/hanging-handshake_wsh.py.
+        * http/tests/websocket/tests/hixie76/httponly-cookie-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/httponly-cookie-expected.txt.
+        * http/tests/websocket/tests/hixie76/httponly-cookie.pl: Renamed from LayoutTests/http/tests/websocket/tests/httponly-cookie.pl.
+        * http/tests/websocket/tests/hixie76/long-invalid-header-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/long-invalid-header-expected.txt.
+        * http/tests/websocket/tests/hixie76/long-invalid-header.html: Renamed from LayoutTests/http/tests/websocket/tests/long-invalid-header.html.
+        * http/tests/websocket/tests/hixie76/long-invalid-header_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/long-invalid-header_wsh.py.
+        * http/tests/websocket/tests/hixie76/multiple-connections-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/multiple-connections-expected.txt.
+        * http/tests/websocket/tests/hixie76/multiple-connections.html: Renamed from LayoutTests/http/tests/websocket/tests/multiple-connections.html.
+        * http/tests/websocket/tests/hixie76/no-query_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/no-query_wsh.py.
+        * http/tests/websocket/tests/hixie76/null-character-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/null-character-expected.txt.
+        * http/tests/websocket/tests/hixie76/null-character.html: Renamed from LayoutTests/http/tests/websocket/tests/null-character.html.
+        * http/tests/websocket/tests/hixie76/origin-test_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/origin-test_wsh.py.
+        * http/tests/websocket/tests/hixie76/protocol-test_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/protocol-test_wsh.py.
+        * http/tests/websocket/tests/hixie76/reload-crash-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/reload-crash-expected.txt.
+        * http/tests/websocket/tests/hixie76/reload-crash.html: Renamed from LayoutTests/http/tests/websocket/tests/reload-crash.html.
+        * http/tests/websocket/tests/hixie76/resources/close-on-unload-iframe-reference-in-parent.html: Renamed from LayoutTests/http/tests/websocket/tests/resources/close-on-unload-iframe-reference-in-parent.html.
+        * http/tests/websocket/tests/hixie76/resources/close-on-unload-iframe.html: Renamed from LayoutTests/http/tests/websocket/tests/resources/close-on-unload-iframe.html.
+        * http/tests/websocket/tests/hixie76/resources/reload-crash-iframe.html: Added.
+        * http/tests/websocket/tests/hixie76/send-after-close-on-unload-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/send-after-close-on-unload-expected.txt.
+        * http/tests/websocket/tests/hixie76/send-after-close-on-unload.html: Renamed from LayoutTests/http/tests/websocket/tests/send-after-close-on-unload.html.
+        * http/tests/websocket/tests/hixie76/send-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/send-expected.txt.
+        * http/tests/websocket/tests/hixie76/send-throw-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/send-throw-expected.txt.
+        * http/tests/websocket/tests/hixie76/send-throw.html: Renamed from LayoutTests/http/tests/websocket/tests/send-throw.html.
+        * http/tests/websocket/tests/hixie76/send.html: Renamed from LayoutTests/http/tests/websocket/tests/send.html.
+        * http/tests/websocket/tests/hixie76/send2_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/send2_wsh.py.
+        * http/tests/websocket/tests/hixie76/send_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/send_wsh.py.
+        * http/tests/websocket/tests/hixie76/server-close-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/server-close-expected.txt.
+        * http/tests/websocket/tests/hixie76/server-close.html: Renamed from LayoutTests/http/tests/websocket/tests/server-close.html.
+        * http/tests/websocket/tests/hixie76/server-close_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/server-close_wsh.py.
+        * http/tests/websocket/tests/hixie76/simple-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/simple-expected.txt.
+        * http/tests/websocket/tests/hixie76/simple-stress-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/simple-stress-expected.txt.
+        * http/tests/websocket/tests/hixie76/simple-stress.html: Renamed from LayoutTests/http/tests/websocket/tests/simple-stress.html.
+        * http/tests/websocket/tests/hixie76/simple.html: Renamed from LayoutTests/http/tests/websocket/tests/simple.html.
+        * http/tests/websocket/tests/hixie76/simple_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/simple_wsh.py.
+        * http/tests/websocket/tests/hixie76/sub-protocol-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/sub-protocol-expected.txt.
+        * http/tests/websocket/tests/hixie76/sub-protocol-with-space-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/sub-protocol-with-space-expected.txt.
+        * http/tests/websocket/tests/hixie76/sub-protocol-with-space.html: Renamed from LayoutTests/http/tests/websocket/tests/sub-protocol-with-space.html.
+        * http/tests/websocket/tests/hixie76/sub-protocol.html: Renamed from LayoutTests/http/tests/websocket/tests/sub-protocol.html.
+        * http/tests/websocket/tests/hixie76/unicode-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/unicode-expected.txt.
+        * http/tests/websocket/tests/hixie76/unicode.html: Renamed from LayoutTests/http/tests/websocket/tests/unicode.html.
+        * http/tests/websocket/tests/hixie76/unicode_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/unicode_wsh.py.
+        * http/tests/websocket/tests/hixie76/unknown-frame-type_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/unknown-frame-type_wsh.py.
+        * http/tests/websocket/tests/hixie76/url-no-trailing-slash-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/url-no-trailing-slash-expected.txt.
+        * http/tests/websocket/tests/hixie76/url-no-trailing-slash.html: Renamed from LayoutTests/http/tests/websocket/tests/url-no-trailing-slash.html.
+        * http/tests/websocket/tests/hixie76/url-parsing-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/url-parsing-expected.txt.
+        * http/tests/websocket/tests/hixie76/url-parsing.html: Renamed from LayoutTests/http/tests/websocket/tests/url-parsing.html.
+        * http/tests/websocket/tests/hixie76/url-with-credential-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/url-with-credential-expected.txt.
+        * http/tests/websocket/tests/hixie76/url-with-credential.html: Renamed from LayoutTests/http/tests/websocket/tests/url-with-credential.html.
+        * http/tests/websocket/tests/hixie76/url-with-empty-query-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/url-with-empty-query-expected.txt.
+        * http/tests/websocket/tests/hixie76/url-with-empty-query.html: Renamed from LayoutTests/http/tests/websocket/tests/url-with-empty-query.html.
+        * http/tests/websocket/tests/hixie76/url-with-query-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/url-with-query-expected.txt.
+        * http/tests/websocket/tests/hixie76/url-with-query-for-no-query-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/url-with-query-for-no-query-expected.txt.
+        * http/tests/websocket/tests/hixie76/url-with-query-for-no-query.html: Renamed from LayoutTests/http/tests/websocket/tests/url-with-query-for-no-query.html.
+        * http/tests/websocket/tests/hixie76/url-with-query.html: Renamed from LayoutTests/http/tests/websocket/tests/url-with-query.html.
+        * http/tests/websocket/tests/hixie76/websocket-event-target-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/websocket-event-target-expected.txt.
+        * http/tests/websocket/tests/hixie76/websocket-event-target.html: Renamed from LayoutTests/http/tests/websocket/tests/websocket-event-target.html.
+        * http/tests/websocket/tests/hixie76/websocket-pending-activity-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/websocket-pending-activity-expected.txt.
+        * http/tests/websocket/tests/hixie76/websocket-pending-activity.html: Renamed from LayoutTests/http/tests/websocket/tests/websocket-pending-activity.html.
+        * http/tests/websocket/tests/hixie76/websocket-protocol-ignored-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/websocket-protocol-ignored-expected.txt.
+        * http/tests/websocket/tests/hixie76/websocket-protocol-ignored.html: Renamed from LayoutTests/http/tests/websocket/tests/websocket-protocol-ignored.html.
+        * http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/workers/close-in-onmessage-crash-expected.txt.
+        * http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html: Renamed from LayoutTests/http/tests/websocket/tests/workers/close-in-onmessage-crash.html.
+        * http/tests/websocket/tests/hixie76/workers/close-in-shared-worker-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/workers/close-in-shared-worker-expected.txt.
+        * http/tests/websocket/tests/hixie76/workers/close-in-shared-worker.html: Renamed from LayoutTests/http/tests/websocket/tests/workers/close-in-shared-worker.html.
+        * http/tests/websocket/tests/hixie76/workers/close-in-worker-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/workers/close-in-worker-expected.txt.
+        * http/tests/websocket/tests/hixie76/workers/close-in-worker.html: Renamed from LayoutTests/http/tests/websocket/tests/workers/close-in-worker.html.
+        * http/tests/websocket/tests/hixie76/workers/resources/close-in-onmessage-crash.js: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/close-in-onmessage-crash.js.
+        (runTests.try.ws.onopen):
+        (runTests.try.ws.onmessage):
+        (runTests.try.ws.onclose):
+        (runTests):
+        * http/tests/websocket/tests/hixie76/workers/resources/close-in-worker.js: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/close-in-worker.js.
+        (handleConnect.self.postMessage):
+        (handleConnect):
+        (runTests.try.ws.onopen):
+        (runTests.try.ws.onclose):
+        (runTests):
+        * http/tests/websocket/tests/hixie76/workers/resources/echo-challenge_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/echo-challenge_wsh.py.
+        * http/tests/websocket/tests/hixie76/workers/resources/echo_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/echo_wsh.py.
+        * http/tests/websocket/tests/hixie76/workers/resources/simple_wsh.py: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/simple_wsh.py.
+        * http/tests/websocket/tests/hixie76/workers/resources/worker-handshake-challenge-randomness.js: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/worker-handshake-challenge-randomness.js.
+        (endTest):
+        (runTests.try.ws1.onmessage):
+        (runTests.try.ws1.onclose.ws2.onmessage):
+        (runTests.try.ws1.onclose.ws2.onclose):
+        (runTests.try.ws1.onclose):
+        (runTests):
+        * http/tests/websocket/tests/hixie76/workers/resources/worker-simple.js: Renamed from LayoutTests/http/tests/websocket/tests/workers/resources/worker-simple.js.
+        (handleConnect.self.postMessage):
+        (handleConnect):
+        (runTests.try.ws.onopen):
+        (runTests.try.ws.onmessage):
+        (runTests.try.ws.onclose):
+        (runTests):
+        * http/tests/websocket/tests/hixie76/workers/shared-worker-simple-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/workers/shared-worker-simple-expected.txt.
+        * http/tests/websocket/tests/hixie76/workers/shared-worker-simple.html: Renamed from LayoutTests/http/tests/websocket/tests/workers/shared-worker-simple.html.
+        * http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/workers/worker-handshake-challenge-randomness-expected.txt.
+        * http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html: Renamed from LayoutTests/http/tests/websocket/tests/workers/worker-handshake-challenge-randomness.html.
+        * http/tests/websocket/tests/hixie76/workers/worker-simple-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/workers/worker-simple-expected.txt.
+        * http/tests/websocket/tests/hixie76/workers/worker-simple.html: Renamed from LayoutTests/http/tests/websocket/tests/workers/worker-simple.html.
+        * http/tests/websocket/tests/resources/reload-crash-iframe.html: Removed.
+        * platform/chromium-linux/http/tests/websocket/tests/hixie76/bad-sub-protocol-control-chars-expected.txt: Renamed from LayoutTests/platform/chromium-linux/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * platform/chromium-linux/http/tests/websocket/tests/hixie76/url-parsing-expected.txt: Renamed from LayoutTests/platform/chromium-win/http/tests/websocket/tests/url-parsing-expected.txt.
+        * platform/chromium-mac/http/tests/websocket/tests/hixie76/bad-sub-protocol-control-chars-expected.txt: Renamed from LayoutTests/platform/chromium-mac/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * platform/chromium-mac/http/tests/websocket/tests/hixie76/url-parsing-expected.txt: Renamed from LayoutTests/platform/chromium-linux/http/tests/websocket/tests/url-parsing-expected.txt.
+        * platform/chromium-win/http/tests/websocket/tests/hixie76/bad-sub-protocol-control-chars-expected.txt: Renamed from LayoutTests/platform/chromium-win/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * platform/chromium-win/http/tests/websocket/tests/hixie76/url-parsing-expected.txt: Renamed from LayoutTests/platform/chromium-mac/http/tests/websocket/tests/url-parsing-expected.txt.
+        * platform/chromium/test_expectations.txt:
+        * platform/qt-arm/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/websocket/tests/bad-sub-protocol-non-ascii-expected.txt.
+        * platform/win/Skipped:
+
 2011-07-05  Kentaro Hara  <haraken@google.com>
 
         Trigger a 'change' event whenever selected files are changed

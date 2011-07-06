@@ -223,7 +223,7 @@ fast/text/format-control.html
 fast/text/zero-width-characters.html
 fast/url/anchor.html
 fast/url/path.html
-http/tests/websocket/tests/bad-sub-protocol-non-ascii.html
+http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 
 # EventSender.mouseMoveTo is not yet supported
 svg/dynamic-updates
@@ -264,7 +264,7 @@ storage/read-transactions-running-concurrently.html
 http/tests/appcache
 fast/dom/beforeload/video-before-load.html
 media/video-source-moved.html
-http/tests/websocket/tests/frame-lengths.html
+http/tests/websocket/tests/hixie76/frame-lengths.html
 http/tests/misc/object-image-error.html
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 
