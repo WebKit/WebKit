@@ -237,6 +237,21 @@ class WorkerException(Exception):
     pass
 
 
+class TestShard(object):
+    """A test shard is a named list of TestInputs."""
+
+    # FIXME: Make this class visible, used by workers as well.
+    def __init__(self, name, test_inputs):
+        self.name = name
+        self.test_inputs = test_inputs
+
+    def __repr__(self):
+        return "TestShard(name='%s', test_inputs=%s'" % (self.name, self.test_inputs)
+
+    def __eq__(self, other):
+        return self.name == other.name and self.test_inputs == other.test_inputs
+
+
 class Manager(object):
     """A class for managing running a series of tests on a series of layout
     test files."""
@@ -535,51 +550,130 @@ class Manager(object):
         return self._expectations.has_modifier(test_file,
                                                test_expectations.SLOW)
 
-    def _shard_tests(self, test_files, use_real_shards):
+    def _shard_tests(self, test_files, num_workers, fully_parallel):
         """Groups tests into batches.
         This helps ensure that tests that depend on each other (aka bad tests!)
         continue to run together as most cross-tests dependencies tend to
-        occur within the same directory. If use_real_shards is False, we
-        put each (non-HTTP/websocket) test into its own shard for maximum
-        concurrency instead of trying to do any sort of real sharding.
-
+        occur within the same directory.
         Return:
-            Two lists of lists of TestInput objects. The first list should
-            only be run under the server lock, the second can be run whenever.
+            Two list of TestShards. The first contains tests that must only be
+            run under the server lock, the second can be run whenever.
         """
-        # FIXME: We still need to support multiple locked shards.
+
+        # FIXME: Move all of the sharding logic out of manager into its
+        # own class or module. Consider grouping it with the chunking logic
+        # in prepare_lists as well.
+        if num_workers == 1:
+            return self._shard_in_two(test_files)
+        elif fully_parallel:
+            return self._shard_every_file(test_files)
+        return self._shard_by_directory(test_files, num_workers)
+
+    def _shard_in_two(self, test_files):
+        """Returns two lists of shards, one with all the tests requiring a lock and one with the rest.
+
+        This is used when there's only one worker, to minimize the per-shard overhead."""
+        locked_inputs = []
+        unlocked_inputs = []
+        for test_file in test_files:
+            test_input = self._get_test_input_for_file(test_file)
+            if self._test_requires_lock(test_file):
+                locked_inputs.append(test_input)
+            else:
+                unlocked_inputs.append(test_input)
+        return [TestShard('locked_tests', locked_inputs)], [TestShard('unlocked_tests', unlocked_inputs)]
+
+    def _shard_every_file(self, test_files):
+        """Returns two lists of shards, each shard containing a single test file.
+
+        This mode gets maximal parallelism at the cost of much higher flakiness."""
         locked_shards = []
         unlocked_shards = []
-        tests_to_http_lock = []
-        if not use_real_shards:
-            for test_file in test_files:
-                test_input = self._get_test_input_for_file(test_file)
-                if self._test_requires_lock(test_file):
-                    tests_to_http_lock.append(test_input)
-                else:
-                    unlocked_shards.append((".", [test_input]))
-        else:
-            tests_by_dir = {}
-            for test_file in test_files:
-                directory = self._get_dir_for_test_file(test_file)
-                test_input = self._get_test_input_for_file(test_file)
-                if self._test_requires_lock(test_file):
-                    tests_to_http_lock.append(test_input)
-                else:
-                    tests_by_dir.setdefault(directory, [])
-                    tests_by_dir[directory].append(test_input)
-            for directory in tests_by_dir:
-                test_list = tests_by_dir[directory]
-                test_list_tuple = (directory, test_list)
-                unlocked_shards.append(test_list_tuple)
+        for test_file in test_files:
+            test_input = self._get_test_input_for_file(test_file)
 
-            # Sort the shards by directory name.
-            unlocked_shards.sort(lambda a, b: cmp(a[0], b[0]))
+            # Note that we use a '.' for the shard name; the name doesn't really
+            # matter, and the only other meaningful value would be the filename,
+            # which would be really redundant.
+            if self._test_requires_lock(test_file):
+                locked_shards.append(TestShard('.', [test_input]))
+            else:
+                unlocked_shards.append(TestShard('.', [test_input]))
 
-        if tests_to_http_lock:
-            locked_shards = [("tests_to_http_lock", tests_to_http_lock)]
+        return locked_shards, unlocked_shards
 
-        return (locked_shards, unlocked_shards)
+    def _shard_by_directory(self, test_files, num_workers):
+        """Returns two lists of shards, each shard containing all the files in a directory.
+
+        This is the default mode, and gets as much parallelism as we can while
+        minimizing flakiness caused by inter-test dependencies."""
+        locked_shards = []
+        unlocked_shards = []
+        tests_by_dir = {}
+        # FIXME: Given that the tests are already sorted by directory,
+        # we can probably rewrite this to be clearer and faster.
+        for test_file in test_files:
+            directory = self._get_dir_for_test_file(test_file)
+            test_input = self._get_test_input_for_file(test_file)
+            tests_by_dir.setdefault(directory, [])
+            tests_by_dir[directory].append(test_input)
+
+        for directory, test_inputs in tests_by_dir.iteritems():
+            shard = TestShard(directory, test_inputs)
+            if self._test_requires_lock(directory):
+                locked_shards.append(shard)
+            else:
+                unlocked_shards.append(shard)
+
+        # Sort the shards by directory name.
+        locked_shards.sort(key=lambda shard: shard.name)
+        unlocked_shards.sort(key=lambda shard: shard.name)
+
+        return (self._resize_shards(locked_shards, self._max_locked_shards(num_workers),
+                                    'locked_shard'),
+                unlocked_shards)
+
+    def _max_locked_shards(self, num_workers):
+        # Put a ceiling on the number of locked shards, so that we
+        # don't hammer the servers too badly.
+
+        # FIXME: For now, limit to one shard. After testing to make sure we
+        # can handle multiple shards, we should probably do something like
+        # limit this to no more than a quarter of all workers, e.g.:
+        # return max(math.ceil(num_workers / 4.0), 1)
+        return 1
+
+    def _resize_shards(self, old_shards, max_new_shards, shard_name_prefix):
+        """Takes a list of shards and redistributes the tests into no more
+        than |max_new_shards| new shards."""
+
+        # This implementation assumes that each input shard only contains tests from a
+        # single directory, and that tests in each shard must remain together; as a
+        # result, a given input shard is never split between output shards.
+        #
+        # Each output shard contains the tests from one or more input shards and
+        # hence may contain tests from multiple directories.
+
+        def divide_and_round_up(numerator, divisor):
+            return int(math.ceil(float(numerator) / divisor))
+
+        def extract_and_flatten(shards):
+            test_inputs = []
+            for shard in shards:
+                test_inputs.extend(shard.test_inputs)
+            return test_inputs
+
+        def split_at(seq, index):
+            return (seq[:index], seq[index:])
+
+        num_old_per_new = divide_and_round_up(len(old_shards), max_new_shards)
+        new_shards = []
+        remaining_shards = old_shards
+        while remaining_shards:
+            some_shards, remaining_shards = split_at(remaining_shards, num_old_per_new)
+            new_shards.append(TestShard('%s_%d' % (shard_name_prefix, len(new_shards) + 1),
+                                        extract_and_flatten(some_shards)))
+        return new_shards
 
     def _contains_tests(self, subdir):
         for test_file in self._test_files:
@@ -587,16 +681,14 @@ class Manager(object):
                 return True
         return False
 
-    def _num_workers(self, num_shards):
-        num_workers = min(int(self._options.child_processes), num_shards)
+    def _log_num_workers(self, num_workers, num_shards, num_locked_shards):
         driver_name = self._port.driver_name()
         if num_workers == 1:
             self._printer.print_config("Running 1 %s over %s" %
                 (driver_name, grammar.pluralize('shard', num_shards)))
         else:
-            self._printer.print_config("Running %d %ss in parallel over %d shards" %
-                (num_workers, driver_name, num_shards))
-        return num_workers
+            self._printer.print_config("Running %d %ss in parallel over %d shards (%d locked)" %
+                (num_workers, driver_name, num_shards, num_locked_shards))
 
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
@@ -625,7 +717,7 @@ class Manager(object):
 
         self._printer.print_update('Sharding tests ...')
         locked_shards, unlocked_shards = self._shard_tests(file_list,
-            int(self._options.child_processes) > 1 and not self._options.experimental_fully_parallel)
+            int(self._options.child_processes), self._options.experimental_fully_parallel)
 
         # FIXME: We don't have a good way to coordinate the workers so that
         # they don't try to run the shards that need a lock if we don't actually
@@ -640,7 +732,9 @@ class Manager(object):
         if locked_shards:
             self.start_servers_with_lock()
 
-        num_workers = self._num_workers(len(all_shards))
+        num_workers = min(int(self._options.child_processes), len(all_shards))
+        self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
+
         manager_connection = manager_worker_broker.get(self._port, self._options,
                                                        self, worker.Worker)
 
@@ -663,7 +757,8 @@ class Manager(object):
 
         self._printer.print_update("Starting testing ...")
         for shard in all_shards:
-            manager_connection.post_message('test_list', shard[0], shard[1])
+            # FIXME: Change 'test_list' to 'shard', make sharding public.
+            manager_connection.post_message('test_list', shard.name, shard.test_inputs)
 
         # We post one 'stop' message for each worker. Because the stop message
         # are sent after all of the tests, and because each worker will stop
@@ -1346,7 +1441,7 @@ class Manager(object):
 
         def find(name, test_lists):
             for i in range(len(test_lists)):
-                if test_lists[i][0] == name:
+                if test_lists[i].name == name:
                     return i
             return -1
 

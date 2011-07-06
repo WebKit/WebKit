@@ -7,6 +7,20 @@
 
 2011-07-05  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: allow for multiple http shards
+        https://bugs.webkit.org/show_bug.cgi?id=63116
+
+        Reviewed by Tony Chang.
+
+        This modifies the sharding logic to support multiple http
+        shards, but for now we clamp to one shard until we can test
+        perf impact and flakiness impact.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_unittest.py:
+
+2011-07-05  Dirk Pranke  <dpranke@chromium.org>
+
         Re-land nrwt: make sharding tests needing locks less hard-coded
         https://bugs.webkit.org/show_bug.cgi?id=63112
 
