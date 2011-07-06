@@ -1,3 +1,15 @@
+2011-07-06  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Calls on 32 bit machines are failed after r90423
+        https://bugs.webkit.org/show_bug.cgi?id=63980
+
+        Reviewed by Gavin Barraclough.
+
+        Copy the necessary lines from JITCall.cpp.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+
 2011-07-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT virtual call implementation is inefficient.
