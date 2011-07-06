@@ -523,7 +523,6 @@ fast/css/acid2-pixel.html
 
 # These tests call dumpAsText, but still perform normal render tree dumps.
 # https://bugs.webkit.org/show_bug.cgi?id=53955 
-fast/dom/object-embed-plugin-scripting.html
 fast/dynamic/paused-event-dispatch.html
 
 # Scrollbar issues.
