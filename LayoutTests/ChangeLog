@@ -1,3 +1,15 @@
+2011-06-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Mac] REGRESSION (r88415): Range slider doesn't have focus appearance.
+        https://bugs.webkit.org/show_bug.cgi?id=63573
+
+        * fast/forms/input-appearance-range.html:
+          Give a focus on a slider to check focus appearance.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/input-appearance-range-expected.png:
+
 2011-07-05  Eric Seidel  <eric@webkit.org>
 
         buildbot needs to understand whether NRWT exited early after having too many failures

@@ -2,9 +2,10 @@
 <body>
 <!--
   You'll see
-   - three horizontal sliders with various thumb positions.
-   - a vertical slider
-   - a slant slider
+   - three horizontal sliders with various thumb positions
+   - a vertical slider, and
+   - a slant slider.
+  The second slider has focus.
 -->
 
 <div><input type=range style="height: 30px;"></div>
@@ -14,4 +15,8 @@
 <div><input type=range style="-webkit-appearance:slider-vertical; height:140px; margin-left:64px"></div>
 
 <div><input type=range value=75 style="-webkit-transform: rotate(30deg)"></div>
+
+<script>
+document.getElementsByTagName('input')[1].focus();
+</script>
 </body>

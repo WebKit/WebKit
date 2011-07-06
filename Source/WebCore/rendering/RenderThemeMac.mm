@@ -1318,7 +1318,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
     // Update the various states we respond to.
     updateActiveState(sliderThumbCell, o);
     updateEnabledState(sliderThumbCell, o);
-    updateFocusedState(sliderThumbCell, o);
+    updateFocusedState(sliderThumbCell, (o->node() && o->node()->focusDelegate()->renderer()) ? o->node()->focusDelegate()->renderer() : o);
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
