@@ -49,6 +49,10 @@ try:
 except ImportError:
     multiprocessing = None
 
+# FIXME: remove this when we fix test-webkitpy to work properly on cygwin
+# (bug 63846).
+SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin')
+
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import filesystem_mock
@@ -203,29 +207,26 @@ class MainTest(unittest.TestCase):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_process_1(self):
-        # This test seems to fail on win32.
-        if sys.platform == 'win32':
-            return
-        _, _, regular_output, _ = logging_run(
-             ['--print', 'config', '--worker-model', 'processes', '--child-processes', '1'])
-        self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
+        if SHOULD_TEST_PROCESSES:
+            _, _, regular_output, _ = logging_run(
+                ['--print', 'config', '--worker-model', 'processes', '--child-processes', '1'])
+            self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
 
     def test_child_processes_2(self):
         # This test seems to fail on win32.
         if sys.platform == 'win32':
             return
-        _, _, regular_output, _ = logging_run(
-             ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2'])
-        self.assertTrue(any(['Running 2 ' in line for line in regular_output.get()]))
+        if SHOULD_TEST_PROCESSES:
+            _, _, regular_output, _ = logging_run(
+                ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2'])
+            self.assertTrue(any(['Running 2 ' in line for line in regular_output.get()]))
 
     def test_child_processes_min(self):
-        # This test seems to fail on win32.
-        if sys.platform == 'win32':
-            return
-        _, _, regular_output, _ = logging_run(
-             ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2', 'passes'],
-             tests_included=True)
-        self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
+        if SHOULD_TEST_PROCESSES:
+            _, _, regular_output, _ = logging_run(
+                ['--print', 'config', '--worker-model', 'processes', '--child-processes', '2', 'passes'],
+                tests_included=True)
+            self.assertTrue(any(['Running 1 ' in line for line in regular_output.get()]))
 
     def test_dryrun(self):
         batch_tests_run = get_tests_run(['--dry-run'])
@@ -611,13 +612,11 @@ class MainTest(unittest.TestCase):
         self.assertTrue('--worker-model=inline overrides --child-processes\n' in err.get())
 
     def test_worker_model__processes(self):
-        # FIXME: remove this when we fix test-webkitpy to work properly
-        # with the multiprocessing module (bug 54520).
-        if multiprocessing and sys.platform not in ('cygwin', 'win32'):
+        if SHOULD_TEST_PROCESSES:
             self.assertTrue(passing_run(['--worker-model', 'processes']))
 
     def test_worker_model__processes_and_dry_run(self):
-        if multiprocessing and sys.platform not in ('cygwin', 'win32'):
+        if SHOULD_TEST_PROCESSES:
             self.assertTrue(passing_run(['--worker-model', 'processes', '--dry-run']))
 
     def test_worker_model__unknown(self):

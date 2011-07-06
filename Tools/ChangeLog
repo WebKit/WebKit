@@ -1,3 +1,22 @@
+2011-07-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Python tests are failing on leopard
+        https://bugs.webkit.org/show_bug.cgi?id=63842
+
+        Fix the missing flush() call that appears to be needed by the
+        logging package in python 2.5. Also fix the regressions
+        introduced in the run_webkit_test tests when we switched from
+        thread to processes (since processes aren't available on 2.5).
+
+        Also fix a missing "from __future__ import with_statement' in
+        testfilehandler (unreviewed).
+
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * TestResultServer/handlers/testfilehandler.py:
+
 2011-07-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
