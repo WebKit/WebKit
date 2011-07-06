@@ -70,6 +70,10 @@ public:
 
     bool skipsDraw() const { return m_skipsDraw; }
 
+    // Reserves all existing and valid tile textures to protect them from being
+    // recycled by the texture manager.
+    void protectTileTextures(const IntRect& contentRect);
+
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexAlpha> Program;
     // Shader program that swaps red and blue components of texture.
     // Used when texture format does not match native color format.

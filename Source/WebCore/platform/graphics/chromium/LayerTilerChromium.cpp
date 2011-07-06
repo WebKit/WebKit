@@ -226,6 +226,25 @@ void LayerTilerChromium::invalidateEntireLayer()
     m_tilingData.setTotalSize(0, 0);
 }
 
+void LayerTilerChromium::protectTileTextures(const IntRect& contentRect)
+{
+    if (contentRect.isEmpty())
+        return;
+
+    int left, top, right, bottom;
+    contentRectToTileIndices(contentRect, left, top, right, bottom);
+
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            Tile* tile = tileAt(i, j);
+            if (!tile || !tile->texture()->isValid(m_tileSize, GraphicsContext3D::RGBA))
+                continue;
+
+            tile->texture()->reserve(m_tileSize, GraphicsContext3D::RGBA);
+        }
+    }
+}
+
 void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextureUpdater* textureUpdater)
 {
     m_skipsDraw = false;

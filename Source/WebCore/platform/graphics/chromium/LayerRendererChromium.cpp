@@ -65,7 +65,13 @@
 namespace WebCore {
 
 // FIXME: Make this limit adjustable and give it a useful value.
-static size_t textureMemoryLimitBytes = 64 * 1024 * 1024;
+
+// Absolute maximum limit for texture allocations for this instance.
+static size_t textureMemoryHighLimitBytes = 128 * 1024 * 1024;
+// Preferred texture size limit. Can be exceeded if needed.
+static size_t textureMemoryReclaimLimitBytes = 64 * 1024 * 1024;
+// The maximum texture memory usage when asked to release textures.
+static size_t textureMemoryLowLimitBytes = 3 * 1024 * 1024;
 
 #ifndef NDEBUG
 bool LayerRendererChromium::s_inPaintLayerContents = false;
@@ -199,6 +205,15 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
 void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 {
     m_rootLayerContentTiler->invalidateRect(dirtyRect);
+}
+
+void LayerRendererChromium::releaseTextures()
+{
+    // Reduces texture memory usage to textureMemoryLowLimitBytes by deleting non root layer
+    // textures.
+    m_rootLayerContentTiler->protectTileTextures(m_viewportVisibleRect);
+    m_textureManager->reduceMemoryToLimit(textureMemoryLowLimitBytes);
+    m_textureManager->unprotectAllTextures();
 }
 
 void LayerRendererChromium::updateRootLayerContents()
@@ -1114,7 +1129,10 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context.get(), m_context->flush());
 
-    m_textureManager = TextureManager::create(m_context.get(), textureMemoryLimitBytes, m_maxTextureSize);
+    TextureManager::TextureMemoryLimits limits;
+    limits.upperLimit = textureMemoryHighLimitBytes;
+    limits.reclaimLimit = textureMemoryReclaimLimitBytes;
+    m_textureManager = TextureManager::create(m_context.get(), limits, m_maxTextureSize);
     return true;
 }
 

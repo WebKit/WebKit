@@ -2651,14 +2651,19 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 
 void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
                                      bool isInitialState) {
-#if ENABLE(PAGE_VISIBILITY_API)
     if (!page())
         return;
 
+#if ENABLE(PAGE_VISIBILITY_API)
     ASSERT(visibilityState == WebPageVisibilityStateVisible
            || visibilityState == WebPageVisibilityStateHidden
            || visibilityState == WebPageVisibilityStatePrerender);
     m_page->setVisibilityState(static_cast<PageVisibilityState>(static_cast<int>(visibilityState)), isInitialState);
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (isAcceleratedCompositingActive() && visibilityState == WebPageVisibilityStateHidden)
+        m_layerRenderer->releaseTextures();
 #endif
 }
 

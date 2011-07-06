@@ -38,9 +38,9 @@ static size_t memoryUseBytes(IntSize size, unsigned textureFormat)
     return size.width() * size.height() * 4;
 }
 
-TextureManager::TextureManager(GraphicsContext3D* context, size_t memoryLimitBytes, int maxTextureSize)
+TextureManager::TextureManager(GraphicsContext3D* context, const TextureMemoryLimits& memoryLimits, int maxTextureSize)
     : m_context(context)
-    , m_memoryLimitBytes(memoryLimitBytes)
+    , m_memoryLimits(memoryLimits)
     , m_memoryUseBytes(0)
     , m_maxTextureSize(maxTextureSize)
     , m_nextToken(1)
@@ -97,7 +97,7 @@ void TextureManager::unprotectAllTextures()
         it->second.isProtected = false;
 }
 
-bool TextureManager::reduceMemoryToLimit(size_t limit)
+void TextureManager::reduceMemoryToLimit(size_t limit)
 {
     while (m_memoryUseBytes > limit) {
         ASSERT(!m_textureLRUSet.isEmpty());
@@ -112,9 +112,8 @@ bool TextureManager::reduceMemoryToLimit(size_t limit)
             break;
         }
         if (!foundCandidate)
-            return false;
+            return;
     }
-    return true;
 }
 
 void TextureManager::addTexture(TextureToken token, TextureInfo info)
@@ -137,7 +136,7 @@ void TextureManager::removeTexture(TextureToken token, TextureInfo info)
     GLC(m_context.get(), m_context->deleteTexture(info.textureId));
 }
 
-unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsigned format, bool* newTexture)
+unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsigned format)
 {
     if (size.width() > m_maxTextureSize || size.height() > m_maxTextureSize)
         return 0;
@@ -149,7 +148,10 @@ unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsign
     }
 
     size_t memoryRequiredBytes = memoryUseBytes(size, format);
-    if (memoryRequiredBytes > m_memoryLimitBytes || !reduceMemoryToLimit(m_memoryLimitBytes - memoryRequiredBytes))
+
+    // Reclaim existing unreserved textures to try to stay below the reclaim limit.
+    reduceMemoryToLimit(std::max(m_memoryLimits.reclaimLimit - memoryRequiredBytes, static_cast<size_t>(0)));
+    if (m_memoryUseBytes + memoryRequiredBytes > m_memoryLimits.upperLimit)
         return 0;
 
     unsigned textureId;

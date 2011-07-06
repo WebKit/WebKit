@@ -1,3 +1,30 @@
+2011-07-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add compositor texture manager soft limits and lost focus reclaiming
+        https://bugs.webkit.org/show_bug.cgi?id=64009
+
+        Reviewed by James Robinson.
+
+        Add a soft limit for texture memory. Unprotected textures will get
+        reclaimed when above this limit. Increase the hard limit for maximum
+        texture memory as well, now that there is a better heuristic and
+        textures are reclaimed from tabs without focus.
+
+        Landing this for vangelis@chromium.org.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::protectTileTextures):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::TextureManager):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore::TextureManager::create):
+
 2011-07-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: Web Inspector: fixing typo introduced in the r90397.

@@ -156,6 +156,8 @@ public:
     // Return true if the compositor context has an error.
     bool isCompositorContextLost();
 
+    void releaseTextures();
+
 #ifndef NDEBUG
     static bool s_inPaintLayerContents;
 #endif

@@ -1,3 +1,15 @@
+2011-07-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add compositor texture manager soft limits and lost focus reclaiming
+        https://bugs.webkit.org/show_bug.cgi?id=64009
+
+        Reviewed by James Robinson.
+
+        Reclaim textures when the tab loses focus.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setVisibilityState):
+
 2011-06-30  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Fisher.
