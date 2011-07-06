@@ -1,3 +1,9 @@
+2011-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rolled DEPS.
+
+        * DEPS:
+
 2011-07-05  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: extend WebSharedWorker with inspector transport methods
