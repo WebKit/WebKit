@@ -1,3 +1,9 @@
+2011-07-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Generate the proper install_name for dylibs on Mac.
+
+        * wx/packaging/build-mac-installer.py:
+
 2011-07-06  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Only set env. variables in start when strictly needed
