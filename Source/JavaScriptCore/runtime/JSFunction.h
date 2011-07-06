@@ -63,6 +63,15 @@ namespace JSC {
             ASSERT(!isHostFunctionNonInline());
             return m_scopeChain.get();
         }
+        // This method may be called for host functins, in which case it
+        // will return an arbitrary value. This should only be used for
+        // optimized paths in which the return value does not matter for
+        // host functions, and checking whether the function is a host
+        // function is deemed too expensive.
+        ScopeChainNode* scopeUnchecked()
+        {
+            return m_scopeChain.get();
+        }
         void setScope(JSGlobalData& globalData, ScopeChainNode* scopeChain)
         {
             ASSERT(!isHostFunctionNonInline());

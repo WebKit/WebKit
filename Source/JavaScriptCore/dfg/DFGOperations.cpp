@@ -488,22 +488,21 @@ void* operationVirtualCall(ExecState* execCallee)
     JSGlobalData* globalData = &exec->globalData();
     JSValue calleeAsValue = execCallee->calleeAsValue();
     JSCell* calleeAsFunctionCell = getJSFunction(*globalData, calleeAsValue);
-    if (!calleeAsFunctionCell)
+    if (UNLIKELY(!calleeAsFunctionCell))
         return handleHostCall(execCallee, calleeAsValue);
     
     JSFunction* function = asFunction(calleeAsFunctionCell);
     ExecutableBase* executable = function->executable();
-    if (executable->isHostFunction())
-        return executable->generatedJITCodeForCall().addressForCall().executableAddress();
-
-    FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-    JSObject* error = functionExecutable->compileForCall(exec, function->scope());
-    if (error) {
-        exec->globalData().exception = error;
-        return 0;
+    if (UNLIKELY(!executable->hasJITCodeForCall())) {
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        JSObject* error = functionExecutable->compileForCall(exec, function->scope());
+        if (error) {
+            exec->globalData().exception = error;
+            return 0;
+        }
     }
-    execCallee->setScopeChain(function->scope());
-    return functionExecutable->generatedJITCodeForCallWithArityCheck().executableAddress();
+    execCallee->setScopeChain(function->scopeUnchecked());
+    return executable->generatedJITCodeForCallWithArityCheck().executableAddress();
 }
 
 EncodedJSValue operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, EncodedJSValue encodedPrototype)

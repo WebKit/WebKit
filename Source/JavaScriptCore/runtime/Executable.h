@@ -102,6 +102,46 @@ namespace JSC {
             return generatedJITCodeForConstruct();
         }
 
+        MacroAssemblerCodePtr generatedJITCodeForCallWithArityCheck()
+        {
+            ASSERT(m_jitCodeForCall);
+            ASSERT(m_jitCodeForCallWithArityCheck);
+            return m_jitCodeForCallWithArityCheck;
+        }
+
+        MacroAssemblerCodePtr generatedJITCodeForConstructWithArityCheck()
+        {
+            ASSERT(m_jitCodeForConstruct);
+            ASSERT(m_jitCodeForConstructWithArityCheck);
+            return m_jitCodeForConstructWithArityCheck;
+        }
+        
+        MacroAssemblerCodePtr generatedJITCodeWithArityCheckFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedJITCodeForCallWithArityCheck();
+            ASSERT(kind == CodeForConstruct);
+            return generatedJITCodeForConstructWithArityCheck();
+        }
+        
+        bool hasJITCodeForCall() const
+        {
+            return m_numParametersForCall >= 0;
+        }
+        
+        bool hasJITCodeForConstruct() const
+        {
+            return m_numParametersForConstruct >= 0;
+        }
+        
+        bool hasJITCodeFor(CodeSpecializationKind kind) const
+        {
+            if (kind == CodeForCall)
+                return hasJITCodeForCall();
+            ASSERT(kind == CodeForConstruct);
+            return hasJITCodeForConstruct();
+        }
+
         void clearExecutableCode()
         {
             m_jitCodeForCall.clear();
@@ -455,31 +495,6 @@ namespace JSC {
         OwnPtr<FunctionCodeBlock> m_codeBlockForConstruct;
         Identifier m_name;
         SharedSymbolTable* m_symbolTable;
-
-#if ENABLE(JIT)
-    public:
-        MacroAssemblerCodePtr generatedJITCodeForCallWithArityCheck()
-        {
-            ASSERT(m_jitCodeForCall);
-            ASSERT(m_jitCodeForCallWithArityCheck);
-            return m_jitCodeForCallWithArityCheck;
-        }
-
-        MacroAssemblerCodePtr generatedJITCodeForConstructWithArityCheck()
-        {
-            ASSERT(m_jitCodeForConstruct);
-            ASSERT(m_jitCodeForConstructWithArityCheck);
-            return m_jitCodeForConstructWithArityCheck;
-        }
-        
-        MacroAssemblerCodePtr generatedJITCodeWithArityCheckFor(CodeSpecializationKind kind)
-        {
-            if (kind == CodeForCall)
-                return generatedJITCodeForCallWithArityCheck();
-            ASSERT(kind == CodeForConstruct);
-            return generatedJITCodeForConstructWithArityCheck();
-        }
-#endif
     };
 
     inline FunctionExecutable* JSFunction::jsExecutable() const
