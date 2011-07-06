@@ -49,7 +49,9 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
                 returnFormat = DataFormatInteger;
                 return gpr;
             }
-            m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), gpr);
+            terminateSpeculativeExecution();
+            returnFormat = DataFormatInteger;
+            return allocate();
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
@@ -862,6 +864,9 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg propertyReg = property.gpr();
         GPRReg valueReg = value.gpr();
         GPRReg scratchReg = scratch.gpr();
+        
+        if (!m_compileOkay)
+            return;
 
         writeBarrier(m_jit, baseReg, scratchReg);
 
