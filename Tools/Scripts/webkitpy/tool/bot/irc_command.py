@@ -28,8 +28,9 @@
 
 import itertools
 import random
-from webkitpy.common.config import irc as config_irc
+import re
 
+from webkitpy.common.config import irc as config_irc
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.checkout.changelog import parse_bug_id

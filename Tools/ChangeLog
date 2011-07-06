@@ -1,5 +1,11 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Add missing include.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Add roll-chromium-deps command to sheriff-bot
         https://bugs.webkit.org/show_bug.cgi?id=64037
 
