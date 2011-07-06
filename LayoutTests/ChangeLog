@@ -1,5 +1,11 @@
 2011-07-06  Mihai Parparita  <mihaip@chromium.org>
 
+        Add Chromium Windows 7 timeout expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-06  Mihai Parparita  <mihaip@chromium.org>
+
         Add Chromium flaky expectations.
 
         * platform/chromium/test_expectations.txt:
