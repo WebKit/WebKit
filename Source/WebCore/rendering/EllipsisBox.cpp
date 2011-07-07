@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom)
+void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
     RenderStyle* style = m_renderer->style(m_firstLine);
@@ -39,7 +39,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
         context->setFillColor(textColor, style->colorSpace());
     bool setShadow = false;
     if (style->textShadow()) {
-        context->setShadow(IntSize(style->textShadow()->x(), style->textShadow()->y()),
+        context->setShadow(LayoutSize(style->textShadow()->x(), style->textShadow()->y()),
                            style->textShadow()->blur(), style->textShadow()->color(), style->colorSpace());
         setShadow = true;
     }
@@ -55,7 +55,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + paintOffset.x(), y() + paintOffset.y() + style->fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + style->fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -66,7 +66,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
 
     if (m_markupBox) {
         // Paint the markup box
-        IntPoint adjustedPaintOffset = paintOffset;
+        LayoutPoint adjustedPaintOffset = paintOffset;
         adjustedPaintOffset.move(x() + m_logicalWidth - m_markupBox->x(),
             y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent()));
         m_markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
@@ -81,7 +81,7 @@ IntRect EllipsisBox::selectionRect()
     return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + root()->selectionTop()), root()->selectionHeight()));
 }
 
-void EllipsisBox::paintSelection(GraphicsContext* context, const IntPoint& paintOffset, RenderStyle* style, const Font& font)
+void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, RenderStyle* style, const Font& font)
 {
     Color textColor = style->visitedDependentColor(CSSPropertyColor);
     Color c = m_renderer->selectionBackgroundColor();
@@ -94,8 +94,9 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const IntPoint& paint
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
     GraphicsContextStateSaver stateSaver(*context);
-    int top = root()->selectionTop();
-    int h = root()->selectionHeight();
+    LayoutUnit top = root()->selectionTop();
+    LayoutUnit h = root()->selectionHeight();
+    // FIXME: We'll need to apply the correct clip rounding here: https://bugs.webkit.org/show_bug.cgi?id=63656
     context->clip(IntRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h));
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + paintOffset.x(), y() + paintOffset.y() + top), h, c, style->colorSpace());

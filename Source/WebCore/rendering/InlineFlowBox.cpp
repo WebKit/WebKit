@@ -946,9 +946,9 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-void InlineFlowBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom)
+void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    IntRect overflowRect(visualOverflowRect(lineTop, lineBottom));
+    LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
     flipForWritingMode(overflowRect);
     overflowRect.moveBy(paintOffset);

@@ -94,7 +94,7 @@ void RenderMathMLRoot::addChild(RenderObject* child, RenderObject* )
     }
 }
     
-void RenderMathMLRoot::paint(PaintInfo& info, const IntPoint& paintOffset)
+void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
     
@@ -104,17 +104,17 @@ void RenderMathMLRoot::paint(PaintInfo& info, const IntPoint& paintOffset)
     if (!firstChild() || !lastChild())
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
     
     RenderBoxModelObject* indexBox = toRenderBoxModelObject(lastChild());
     
-    int maxHeight = indexBox->offsetHeight();
+    LayoutUnit maxHeight = indexBox->offsetHeight();
     // default to the font size in pixels if we're empty
     if (!maxHeight)
         maxHeight = style()->fontSize();
-    int width = indexBox->offsetWidth();
+    LayoutUnit width = indexBox->offsetWidth();
     
-    int indexWidth = 0;
+    LayoutUnit indexWidth = 0;
     RenderObject* current = firstChild();
     while (current != lastChild()) {
         if (current->isBoxModelObject()) {
@@ -139,7 +139,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const IntPoint& paintOffset)
     width += topStartShift;
     
     int rootPad = static_cast<int>(gRootPadding * style()->fontSize());
-    int start = adjustedPaintOffset.x() + indexWidth + gRadicalLeftMargin + style()->paddingLeft().value() - rootPad;
+    LayoutUnit start = adjustedPaintOffset.x() + indexWidth + gRadicalLeftMargin + style()->paddingLeft().value() - rootPad;
     adjustedPaintOffset.setY(adjustedPaintOffset.y() + style()->paddingTop().value() - rootPad);
     
     FloatPoint topStart(start - topStartShift, paintOffset.y());

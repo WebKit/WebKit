@@ -133,7 +133,7 @@ private:
     virtual void removeChild(RenderObject* oldChild);
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
-    virtual void paintCell(RenderTableCell*, PaintInfo&, const IntPoint&);
+    virtual void paintCell(RenderTableCell*, PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);

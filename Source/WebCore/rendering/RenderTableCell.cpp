@@ -960,7 +960,7 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     }
 }
 
-void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const IntPoint& paintOffset, RenderObject* backgroundObject)
+void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const LayoutPoint& paintOffset, RenderObject* backgroundObject)
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
@@ -975,7 +975,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Int
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset;
+    LayoutPoint adjustedPaintOffset = paintOffset;
     if (backgroundObject != this)
         adjustedPaintOffset.move(location());
 
@@ -988,11 +988,11 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Int
         bool shouldClip = backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders();
         GraphicsContextStateSaver stateSaver(*paintInfo.context, shouldClip);
         if (shouldClip) {
-            IntRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
+            LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
                 width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
             paintInfo.context->clip(clipRect);
         }
-        paintFillLayers(paintInfo, c, bgLayer, IntRect(adjustedPaintOffset, size()), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
+        paintFillLayers(paintInfo, c, bgLayer, LayoutRect(adjustedPaintOffset, size()), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
     }
 }
 

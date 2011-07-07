@@ -330,13 +330,13 @@ void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoi
     }
 }
 
-void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (m_vBar) {
-        IntRect scrollRect(paintOffset.x() + width() - borderRight() - m_vBar->width(),
-                           paintOffset.y() + borderTop(),
-                           m_vBar->width(),
-                           height() - (borderTop() + borderBottom()));
+        LayoutRect scrollRect(paintOffset.x() + width() - borderRight() - m_vBar->width(),
+            paintOffset.y() + borderTop(),
+            m_vBar->width(),
+            height() - (borderTop() + borderBottom()));
         m_vBar->setFrameRect(scrollRect);
         m_vBar->paint(paintInfo.context, paintInfo.rect);
     }
@@ -361,7 +361,7 @@ static IntSize itemOffsetForAlignment(TextRun textRun, RenderStyle* itemStyle, F
     return offset;
 }
 
-void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const IntPoint& paintOffset, int listIndex)
+void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
@@ -399,7 +399,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const IntPoint& pa
     const UChar* string = itemText.characters();
     TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, itemStyle->direction(), itemStyle->unicodeBidi() == Override, TextRun::NoRounding);
     Font itemFont = style()->font();
-    IntRect r = itemBoundingBoxRect(paintOffset, listIndex);
+    LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
     if (isOptionGroupElement(element)) {
@@ -414,7 +414,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const IntPoint& pa
         paintInfo.context->drawBidiText(itemFont, textRun, r.location());
 }
 
-void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const IntPoint& paintOffset, int listIndex)
+void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
@@ -433,7 +433,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const IntPoint& pa
     // Draw the background for this list box item
     if (!element->renderStyle() || element->renderStyle()->visibility() != HIDDEN) {
         ColorSpace colorSpace = element->renderStyle() ? element->renderStyle()->colorSpace() : style()->colorSpace();
-        IntRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
+        LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
         itemRect.intersect(controlClipRect(paintOffset));
         paintInfo.context->fillRect(itemRect, backColor, colorSpace);
     }

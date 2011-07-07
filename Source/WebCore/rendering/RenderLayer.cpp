@@ -2279,7 +2279,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
 }
 
-void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
+void RenderLayer::paintOverflowControls(GraphicsContext* context, const LayoutPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
 {
     // Don't do anything if we have no overflow.
     if (!renderer()->hasOverflowClip())
@@ -2303,7 +2303,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
     if (paintingOverlayControls && !hasOverlayScrollbars())
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset;
+    LayoutPoint adjustedPaintOffset = paintOffset;
     if (paintingOverlayControls)
         adjustedPaintOffset = m_cachedOverlayScrollbarOffset;
 
@@ -2339,12 +2339,12 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
     paintResizer(context, adjustedPaintOffset, damageRect);
 }
 
-void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect)
+void RenderLayer::paintScrollCorner(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)
 {
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect absRect = scrollCornerRect();
+    LayoutRect absRect = scrollCornerRect();
     absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
@@ -2365,7 +2365,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
         context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
-void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect)
+void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)
 {
     if (renderer()->style()->resize() == RESIZE_NONE)
         return;
@@ -2373,7 +2373,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect absRect = resizerCornerRect(this, box->borderBoxRect());
+    LayoutRect absRect = resizerCornerRect(this, box->borderBoxRect());
     absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
@@ -2390,7 +2390,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
 
     // Paint the resizer control.
     DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
-    IntPoint imagePoint(absRect.maxX() - resizeCornerImage->width(), absRect.maxY() - resizeCornerImage->height());
+    LayoutPoint imagePoint(absRect.maxX() - resizeCornerImage->width(), absRect.maxY() - resizeCornerImage->height());
     context->drawImage(resizeCornerImage.get(), box->style()->colorSpace(), imagePoint);
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
@@ -2398,8 +2398,8 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     if (!hasOverlayScrollbars() && (m_vBar || m_hBar)) {
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(absRect);
-        IntRect largerCorner = absRect;
-        largerCorner.setSize(IntSize(largerCorner.width() + 1, largerCorner.height() + 1));
+        LayoutRect largerCorner = absRect;
+        largerCorner.setSize(LayoutSize(largerCorner.width() + 1, largerCorner.height() + 1));
         context->setStrokeColor(Color(makeRGB(217, 217, 217)), ColorSpaceDeviceRGB);
         context->setStrokeThickness(1.0f);
         context->setFillColor(Color::transparent, ColorSpaceDeviceRGB);

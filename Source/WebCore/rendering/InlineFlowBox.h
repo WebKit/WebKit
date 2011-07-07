@@ -108,7 +108,7 @@ public:
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, RenderStyle*, ShadowStyle, const LayoutRect&);
-    virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom);
 
     virtual RenderLineBoxList* rendererLineBoxes() const;

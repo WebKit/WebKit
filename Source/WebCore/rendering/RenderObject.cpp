@@ -1005,9 +1005,9 @@ void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, in
 }
 #endif
     
-void RenderObject::paintFocusRing(GraphicsContext* context, const IntPoint& paintOffset, RenderStyle* style)
+void RenderObject::paintFocusRing(GraphicsContext* context, const LayoutPoint& paintOffset, RenderStyle* style)
 {
-    Vector<IntRect> focusRingRects;
+    Vector<LayoutRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset);
     if (style->outlineStyleIsAuto())
         context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
@@ -1028,18 +1028,18 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
     context->setURLForRect(n->document()->completeURL(href), rect);
 }
 
-void RenderObject::paintOutline(GraphicsContext* graphicsContext, const IntRect& paintRect)
+void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRect& paintRect)
 {
     if (!hasOutline())
         return;
 
     RenderStyle* styleToUse = style();
-    int outlineWidth = styleToUse->outlineWidth();
+    LayoutUnit outlineWidth = styleToUse->outlineWidth();
     EBorderStyle outlineStyle = styleToUse->outlineStyle();
 
     Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
-    int offset = styleToUse->outlineOffset();
+    LayoutUnit offset = styleToUse->outlineOffset();
 
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
@@ -1051,7 +1051,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const IntRect&
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
-    IntRect adjustedPaintRec = paintRect;
+    LayoutRect adjustedPaintRec = paintRect;
     adjustedPaintRec.inflate(offset);
 
     if (adjustedPaintRec.isEmpty())
@@ -1067,14 +1067,14 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const IntRect&
     }
 #endif
 
-    int leftOuter = adjustedPaintRec.x() - outlineWidth;
-    int leftInner = adjustedPaintRec.x();
-    int rightOuter = adjustedPaintRec.maxX() + outlineWidth;
-    int rightInner = adjustedPaintRec.maxX();
-    int topOuter = adjustedPaintRec.y() - outlineWidth;
-    int topInner = adjustedPaintRec.y();
-    int bottomOuter = adjustedPaintRec.maxY() + outlineWidth;
-    int bottomInner = adjustedPaintRec.maxY();
+    LayoutUnit leftOuter = adjustedPaintRec.x() - outlineWidth;
+    LayoutUnit leftInner = adjustedPaintRec.x();
+    LayoutUnit rightOuter = adjustedPaintRec.maxX() + outlineWidth;
+    LayoutUnit rightInner = adjustedPaintRec.maxX();
+    LayoutUnit topOuter = adjustedPaintRec.y() - outlineWidth;
+    LayoutUnit topInner = adjustedPaintRec.y();
+    LayoutUnit bottomOuter = adjustedPaintRec.maxY() + outlineWidth;
+    LayoutUnit bottomInner = adjustedPaintRec.maxY();
     
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, leftInner, bottomOuter, BSLeft, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, rightOuter, topInner, BSTop, outlineColor, outlineStyle, outlineWidth, outlineWidth);

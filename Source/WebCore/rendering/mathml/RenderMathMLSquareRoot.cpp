@@ -66,17 +66,17 @@ RenderMathMLSquareRoot::RenderMathMLSquareRoot(Node *expression)
 {
 }
 
-void RenderMathMLSquareRoot::paint(PaintInfo& info, const IntPoint& paintOffset)
+void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
    
     if (info.context->paintingDisabled())
         return;
     
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
-    int maxHeight = 0;
-    int width = 0;
+    LayoutUnit maxHeight = 0;
+    LayoutUnit width = 0;
     RenderObject* current = firstChild();
     while (current) {
         if (current->isBoxModelObject()) {

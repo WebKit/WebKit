@@ -420,7 +420,7 @@ protected:
     void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
 #if PLATFORM(MAC)
-    void paintCustomHighlight(const IntPoint&, const AtomicString& type, bool behindText);
+    void paintCustomHighlight(const LayoutPoint&, const AtomicString& type, bool behindText);
 #endif
 
     void computePositionedLogicalWidth();

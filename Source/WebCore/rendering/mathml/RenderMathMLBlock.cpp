@@ -75,14 +75,14 @@ void RenderMathMLBlock::stretchToHeight(int height)
 }
 
 #if ENABLE(DEBUG_MATH_LAYOUT)
-void RenderMathMLBlock::paint(PaintInfo& info, const IntPoint& paintOffset)
+void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderBlock::paint(info, paintOffset);
     
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
         return;
 
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     GraphicsContextStateSaver stateSaver(*info.context);
     
@@ -90,22 +90,22 @@ void RenderMathMLBlock::paint(PaintInfo& info, const IntPoint& paintOffset)
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(Color(0, 0, 255), ColorSpaceSRGB);
     
-    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y()));
-    info.context->drawLine(IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y()), IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + offsetHeight()));
-    info.context->drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + offsetHeight()), IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + offsetHeight()));
-    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + offsetHeight()));
+    info.context->drawLine(adjustedPaintOffset, LayoutPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y()));
+    info.context->drawLine(LayoutPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y()), LayoutPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + offsetHeight()));
+    info.context->drawLine(LayoutPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + offsetHeight()), LayoutPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + offsetHeight()));
+    info.context->drawLine(adjustedPaintOffset, LayoutPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + offsetHeight()));
     
     int topStart = paddingTop();
     
     info.context->setStrokeColor(Color(0, 255, 0), ColorSpaceSRGB);
     
-    info.context->drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + topStart), IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + topStart));
+    info.context->drawLine(LayoutPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + topStart), LayoutPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + topStart));
     
     int baseline = baselinePosition(AlphabeticBaseline, true, HorizontalLine);
     
     info.context->setStrokeColor(Color(255, 0, 0), ColorSpaceSRGB);
     
-    info.context->drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + baseline));
+    info.context->drawLine(LayoutPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), LayoutPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y() + baseline));
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
 

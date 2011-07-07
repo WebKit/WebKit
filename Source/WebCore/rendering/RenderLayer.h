@@ -269,9 +269,9 @@ public:
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     LayoutSize offsetFromResizeCorner(const LayoutPoint& absolutePoint) const;
 
-    void paintOverflowControls(GraphicsContext*, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
-    void paintScrollCorner(GraphicsContext*, const IntPoint&, const IntRect& damageRect);
-    void paintResizer(GraphicsContext*, const IntPoint&, const IntRect& damageRect);
+    void paintOverflowControls(GraphicsContext*, const LayoutPoint&, const LayoutRect& damageRect, bool paintingOverlayControls = false);
+    void paintScrollCorner(GraphicsContext*, const LayoutPoint&, const LayoutRect& damageRect);
+    void paintResizer(GraphicsContext*, const LayoutPoint&, const LayoutRect& damageRect);
 
     void updateScrollInfoAfterLayout();
 

@@ -1363,7 +1363,7 @@ void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoin
     }
 }
 
-void RenderInline::paintOutline(GraphicsContext* graphicsContext, const IntPoint& paintOffset)
+void RenderInline::paintOutline(GraphicsContext* graphicsContext, const LayoutPoint& paintOffset)
 {
     if (!hasOutline())
         return;
@@ -1382,16 +1382,16 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, const IntPoint
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
-    Vector<IntRect> rects;
+    Vector<LayoutRect> rects;
 
-    rects.append(IntRect());
+    rects.append(LayoutRect());
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
-        int top = max(root->lineTop(), curr->logicalTop());
-        int bottom = min(root->lineBottom(), curr->logicalBottom());
-        rects.append(IntRect(curr->x(), top, curr->logicalWidth(), bottom - top));
+        LayoutUnit top = max(root->lineTop(), curr->logicalTop());
+        LayoutUnit bottom = min(root->lineBottom(), curr->logicalBottom());
+        rects.append(LayoutRect(curr->x(), top, curr->logicalWidth(), bottom - top));
     }
-    rects.append(IntRect());
+    rects.append(LayoutRect());
 
     Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 // FIXME: Using a transparency layer for rgba outlines exacerbates an existing SKIA bug. The #if
@@ -1415,90 +1415,90 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, const IntPoint
 #endif
 }
 
-void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const IntPoint& paintOffset,
-                                       const IntRect& lastline, const IntRect& thisline, const IntRect& nextline,
+void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const LayoutPoint& paintOffset,
+                                       const LayoutRect& lastline, const LayoutRect& thisline, const LayoutRect& nextline,
                                        const Color outlineColor)
 {
     RenderStyle* styleToUse = style();
-    int ow = styleToUse->outlineWidth();
-    EBorderStyle os = styleToUse->outlineStyle();
+    LayoutUnit outlineWidth = styleToUse->outlineWidth();
+    EBorderStyle outlineStyle = styleToUse->outlineStyle();
 
     const AffineTransform& currentCTM = graphicsContext->getCTM();
     bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
 
-    int offset = style()->outlineOffset();
+    LayoutUnit offset = style()->outlineOffset();
 
-    int t = paintOffset.y() + thisline.y() - offset;
-    int l = paintOffset.x() + thisline.x() - offset;
-    int b = paintOffset.y() + thisline.maxY() + offset;
-    int r = paintOffset.x() + thisline.maxX() + offset;
+    LayoutUnit top = paintOffset.y() + thisline.y() - offset;
+    LayoutUnit left = paintOffset.x() + thisline.x() - offset;
+    LayoutUnit bottom = paintOffset.y() + thisline.maxY() + offset;
+    LayoutUnit right = paintOffset.x() + thisline.maxX() + offset;
     
     // left edge
     drawLineForBoxSide(graphicsContext,
-               l - ow,
-               t - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? ow : 0),
-               l,
-               b + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? ow : 0),
-               BSLeft,
-               outlineColor, os,
-               (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? ow : -ow),
-               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? ow : -ow),
-               antialias);
+        left - outlineWidth,
+        top - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : 0),
+        left,
+        bottom + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? outlineWidth : 0),
+        BSLeft,
+        outlineColor, outlineStyle,
+        (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : -outlineWidth),
+        (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? outlineWidth : -outlineWidth),
+        antialias);
     
     // right edge
     drawLineForBoxSide(graphicsContext,
-               r,
-               t - (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? ow : 0),
-               r + ow,
-               b + (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? ow : 0),
-               BSRight,
-               outlineColor, os,
-               (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? ow : -ow),
-               (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? ow : -ow),
-               antialias);
+        right,
+        top - (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : 0),
+        right + outlineWidth,
+        bottom + (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? outlineWidth : 0),
+        BSRight,
+        outlineColor, outlineStyle,
+        (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : -outlineWidth),
+        (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? outlineWidth : -outlineWidth),
+        antialias);
     // upper edge
     if (thisline.x() < lastline.x())
         drawLineForBoxSide(graphicsContext,
-                   l - ow,
-                   t - ow,
-                   min(r+ow, (lastline.isEmpty() ? 1000000 : paintOffset.x() + lastline.x())),
-                   t,
-                   BSTop, outlineColor, os,
-                   ow,
-                   (!lastline.isEmpty() && paintOffset.x() + lastline.x() + 1 < r + ow) ? -ow : ow,
-                   antialias);
+            left - outlineWidth,
+            top - outlineWidth,
+            min(right + outlineWidth, (lastline.isEmpty() ? 1000000 : paintOffset.x() + lastline.x())),
+            top,
+            BSTop, outlineColor, outlineStyle,
+            outlineWidth,
+            (!lastline.isEmpty() && paintOffset.x() + lastline.x() + 1 < right + outlineWidth) ? -outlineWidth : outlineWidth,
+            antialias);
     
     if (lastline.maxX() < thisline.maxX())
         drawLineForBoxSide(graphicsContext,
-                   max(lastline.isEmpty() ? -1000000 : paintOffset.x() + lastline.maxX(), l - ow),
-                   t - ow,
-                   r + ow,
-                   t,
-                   BSTop, outlineColor, os,
-                   (!lastline.isEmpty() && l - ow < paintOffset.x() + lastline.maxX()) ? -ow : ow,
-                   ow, antialias);
+            max(lastline.isEmpty() ? -1000000 : paintOffset.x() + lastline.maxX(), left - outlineWidth),
+            top - outlineWidth,
+            right + outlineWidth,
+            top,
+            BSTop, outlineColor, outlineStyle,
+            (!lastline.isEmpty() && left - outlineWidth < paintOffset.x() + lastline.maxX()) ? -outlineWidth : outlineWidth,
+            outlineWidth, antialias);
     
     // lower edge
     if (thisline.x() < nextline.x())
         drawLineForBoxSide(graphicsContext,
-                   l - ow,
-                   b,
-                   min(r + ow, !nextline.isEmpty() ? paintOffset.x() + nextline.x() + 1 : 1000000),
-                   b + ow,
-                   BSBottom, outlineColor, os,
-                   ow,
-                   (!nextline.isEmpty() && paintOffset.x() + nextline.x() + 1 < r + ow) ? -ow : ow,
-                   antialias);
+            left - outlineWidth,
+            bottom,
+            min(right + outlineWidth, !nextline.isEmpty() ? paintOffset.x() + nextline.x() + 1 : 1000000),
+            bottom + outlineWidth,
+            BSBottom, outlineColor, outlineStyle,
+            outlineWidth,
+            (!nextline.isEmpty() && paintOffset.x() + nextline.x() + 1 < right + outlineWidth) ? -outlineWidth : outlineWidth,
+            antialias);
     
     if (nextline.maxX() < thisline.maxX())
         drawLineForBoxSide(graphicsContext,
-                   max(!nextline.isEmpty() ? paintOffset.x() + nextline.maxX() : -1000000, l - ow),
-                   b,
-                   r + ow,
-                   b + ow,
-                   BSBottom, outlineColor, os,
-                   (!nextline.isEmpty() && l - ow < paintOffset.x() + nextline.maxX()) ? -ow : ow,
-                   ow, antialias);
+            max(!nextline.isEmpty() ? paintOffset.x() + nextline.maxX() : -1000000, left - outlineWidth),
+            bottom,
+            right + outlineWidth,
+            bottom + outlineWidth,
+            BSBottom, outlineColor, outlineStyle,
+            (!nextline.isEmpty() && left - outlineWidth < paintOffset.x() + nextline.maxX()) ? -outlineWidth : outlineWidth,
+            outlineWidth, antialias);
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

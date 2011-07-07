@@ -135,9 +135,9 @@ private:
     int numVisibleItems() const;
     int numItems() const;
     int listHeight() const;
-    void paintScrollbar(PaintInfo&, const IntPoint&);
-    void paintItemForeground(PaintInfo&, const IntPoint&, int listIndex);
-    void paintItemBackground(PaintInfo&, const IntPoint&, int listIndex);
+    void paintScrollbar(PaintInfo&, const LayoutPoint&);
+    void paintItemForeground(PaintInfo&, const LayoutPoint&, int listIndex);
+    void paintItemBackground(PaintInfo&, const LayoutPoint&, int listIndex);
     void scrollToRevealSelection();
 
     bool m_optionsChanged;

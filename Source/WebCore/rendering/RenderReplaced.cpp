@@ -163,7 +163,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 }
 
-bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const IntPoint& paintOffset)
+bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline 
             && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseMask)
@@ -176,19 +176,19 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const IntPoint& paintOffs
     if (style()->visibility() != VISIBLE)
         return false;
 
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     // Early exit if the element touches the edges.
-    int top = adjustedPaintOffset.y() + minYVisualOverflow();
-    int bottom = adjustedPaintOffset.y() + maxYVisualOverflow();
+    LayoutUnit top = adjustedPaintOffset.y() + minYVisualOverflow();
+    LayoutUnit bottom = adjustedPaintOffset.y() + maxYVisualOverflow();
     if (isSelected() && m_inlineBoxWrapper) {
-        int selTop = paintOffset.y() + m_inlineBoxWrapper->root()->selectionTop();
-        int selBottom = paintOffset.y() + selTop + m_inlineBoxWrapper->root()->selectionHeight();
+        LayoutUnit selTop = paintOffset.y() + m_inlineBoxWrapper->root()->selectionTop();
+        LayoutUnit selBottom = paintOffset.y() + selTop + m_inlineBoxWrapper->root()->selectionHeight();
         top = min(selTop, top);
         bottom = max(selBottom, bottom);
     }
     
-    int os = 2 * maximalOutlineSize(paintInfo.phase);
+    LayoutUnit os = 2 * maximalOutlineSize(paintInfo.phase);
     if (adjustedPaintOffset.x() + minXVisualOverflow() >= paintInfo.rect.maxX() + os || adjustedPaintOffset.x() + maxXVisualOverflow() <= paintInfo.rect.x() - os)
         return false;
     if (top >= paintInfo.rect.maxY() + os || bottom <= paintInfo.rect.y() - os)

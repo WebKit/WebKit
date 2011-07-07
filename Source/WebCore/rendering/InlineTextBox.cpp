@@ -466,7 +466,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
         : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
 }
 
-void InlineTextBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int /*lineTop*/, int /*lineBottom*/)
+void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
         m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
@@ -474,15 +474,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
 
     ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
 
-    int logicalLeftSide = logicalLeftVisualOverflow();
-    int logicalRightSide = logicalRightVisualOverflow();
-    int logicalStart = logicalLeftSide + (isHorizontal() ? paintOffset.x() : paintOffset.y());
-    int logicalExtent = logicalRightSide - logicalLeftSide;
+    LayoutUnit logicalLeftSide = logicalLeftVisualOverflow();
+    LayoutUnit logicalRightSide = logicalRightVisualOverflow();
+    LayoutUnit logicalStart = logicalLeftSide + (isHorizontal() ? paintOffset.x() : paintOffset.y());
+    LayoutUnit logicalExtent = logicalRightSide - logicalLeftSide;
     
-    int paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
-    int paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
+    LayoutUnit paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
+    LayoutUnit paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
     
-    IntPoint adjustedPaintOffset = paintOffset;
+    LayoutPoint adjustedPaintOffset = paintOffset;
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
@@ -505,10 +505,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
             // farther to the right.
             // NOTE: WebKit's behavior differs from that of IE which appears to just overlay the ellipsis on top of the
             // truncated string i.e.  |Hello|CBA| -> |...lo|CBA|
-            int widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
-            int widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
-            // FIXME: The hit testing logic also needs to take this translation int account.
-            IntSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0);
+            LayoutUnit widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
+            LayoutUnit widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
+            // FIXME: The hit testing logic also needs to take this translation into account.
+            LayoutSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0);
             adjustedPaintOffset.move(isHorizontal() ? truncationOffset : truncationOffset.transposedSize());
         }
     }
@@ -521,7 +521,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
 
     FloatPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.move(adjustedPaintOffset.x(), adjustedPaintOffset.y());
-    FloatRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
+    FloatRect boxRect(boxOrigin, LayoutSize(logicalWidth(), logicalHeight()));
 
     RenderCombineText* combinedText = styleToUse->hasTextCombine() && textRenderer()->isCombineText() && toRenderCombineText(textRenderer())->isCombined() ? toRenderCombineText(textRenderer()) : 0;
 
@@ -853,7 +853,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
 
 #if PLATFORM(MAC)
 
-void InlineTextBox::paintCustomHighlight(const IntPoint& paintOffset, const AtomicString& type)
+void InlineTextBox::paintCustomHighlight(const LayoutPoint& paintOffset, const AtomicString& type)
 {
     Frame* frame = renderer()->frame();
     if (!frame)

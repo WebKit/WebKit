@@ -131,7 +131,7 @@ void RenderMathMLFraction::layout()
 
 }
 
-void RenderMathMLFraction::paint(PaintInfo& info, const IntPoint& paintOffset)
+void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
@@ -140,7 +140,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const IntPoint& paintOffset)
     if (!firstChild() ||!m_lineThickness)
         return;
 
-    int verticalOffset = 0;
+    LayoutUnit verticalOffset = 0;
     // The children are always RenderMathMLBlock instances
     if (firstChild()->isRenderMathMLBlock()) {
         int adjustForThickness = m_lineThickness > 1 ? int(m_lineThickness / 2) : 1;
@@ -153,7 +153,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const IntPoint& paintOffset)
             verticalOffset = numerator->offsetHeight();        
     }
     
-    IntPoint adjustedPaintOffset = paintOffset + location();
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
     adjustedPaintOffset.setY(adjustedPaintOffset.y() + verticalOffset);
     
     GraphicsContextStateSaver stateSaver(*info.context);

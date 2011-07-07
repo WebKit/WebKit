@@ -793,8 +793,8 @@ protected:
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
 
-    void paintFocusRing(GraphicsContext*, const IntPoint&, RenderStyle*);
-    void paintOutline(GraphicsContext*, const IntRect&);
+    void paintFocusRing(GraphicsContext*, const LayoutPoint&, RenderStyle*);
+    void paintOutline(GraphicsContext*, const LayoutRect&);
     void addPDFURLRect(GraphicsContext*, const IntRect&);
 
     virtual IntRect viewRect() const;

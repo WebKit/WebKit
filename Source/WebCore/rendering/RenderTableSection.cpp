@@ -913,9 +913,9 @@ static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell*
     return elem1->row() < elem2->row();
 }
 
-void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    IntPoint cellPoint = flipForWritingMode(cell, paintOffset, ParentToChildFlippingAdjustment);
+    LayoutPoint cellPoint = flipForWritingMode(cell, paintOffset, ParentToChildFlippingAdjustment);
     PaintPhase paintPhase = paintInfo.phase;
     RenderTableRow* row = toRenderTableRow(cell->parent());
 

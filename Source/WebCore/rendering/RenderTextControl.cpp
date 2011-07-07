@@ -587,12 +587,12 @@ void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisi
         repaint();
 }
 
-void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, const IntPoint& paintOffset)
+void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
     
-    IntRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
+    LayoutRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
     if (clipRect.isEmpty())
         return;
     
@@ -610,9 +610,9 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, const IntPoint& p
     
     RenderBox* textRenderer = innerTextElement() ? innerTextElement()->renderBox() : 0;
     if (textRenderer) {
-        IntPoint textPoint;
+        LayoutPoint textPoint;
         textPoint.setY(paintOffset.y() + textBlockInsetTop() + placeholderStyle->fontMetrics().ascent());
-        int styleTextIndent = placeholderStyle->textIndent().isFixed() ? placeholderStyle->textIndent().calcMinValue(0) : 0;
+        LayoutUnit styleTextIndent = placeholderStyle->textIndent().isFixed() ? placeholderStyle->textIndent().calcMinValue(0) : 0;
         if (placeholderStyle->isLeftToRightDirection())
             textPoint.setX(paintOffset.x() + styleTextIndent + textBlockInsetLeft());
         else

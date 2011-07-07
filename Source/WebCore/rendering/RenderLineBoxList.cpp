@@ -200,7 +200,7 @@ bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, 
     return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, offset);
 }
 
-void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, const IntPoint& paintOffset) const
+void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
 {
     // Only paint during the foreground/selection phases.
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline 
@@ -218,7 +218,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     // NSViews.  Do not add any more code for this.
     RenderView* v = renderer->view();
     bool usePrintRect = !v->printRect().isEmpty();
-    int outlineSize = renderer->maximalOutlineSize(paintInfo.phase);
+    LayoutUnit outlineSize = renderer->maximalOutlineSize(paintInfo.phase);
     if (!anyLineIntersectsRect(renderer, paintInfo.rect, paintOffset, usePrintRect, outlineSize))
         return;
 
@@ -235,8 +235,8 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             // for embedded views inside AppKit.  AppKit is incapable of paginating vertical
             // text pages, so we don't have to deal with vertical lines at all here.
             RootInlineBox* root = curr->root();
-            int topForPaginationCheck = curr->logicalTopVisualOverflow(root->lineTop());
-            int bottomForPaginationCheck = curr->logicalLeftVisualOverflow();
+            LayoutUnit topForPaginationCheck = curr->logicalTopVisualOverflow(root->lineTop());
+            LayoutUnit bottomForPaginationCheck = curr->logicalLeftVisualOverflow();
             if (!curr->parent()) {
                 // We're a root box.  Use lineTop and lineBottom as well here.
                 topForPaginationCheck = min(topForPaginationCheck, root->lineTop());

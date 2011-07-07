@@ -1,3 +1,91 @@
+2011-07-07  Levi Weintraub  <leviw@chromium.org>
+
+        Switch remaining paint functions to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64116
+
+        Reviewed by Eric Seidel.
+
+        Switching all functions with IntPoint paintOffsets to the new Layout types.
+
+        No new tests, no functionality changes.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/InlineTextBox.h:
+        * rendering/LayoutTypes.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintCaret):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        (WebCore::RenderBlock::paintSelection):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintFocusRing):
+        (WebCore::RenderObject::paintOutline):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintCell):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::paintPlaceholder):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::paint):
+        * rendering/RootInlineBox.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::paint):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::paint):
+
 2011-07-07  Steve VanDeBogart  <vandebo@chromium.org>
 
         Work around Skia PDF's lack of inverted path support.

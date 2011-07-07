@@ -110,8 +110,8 @@ public:
     void selectionStartEnd(int& sPos, int& ePos);
 
 protected:
-    virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
 public:
     RenderText* textRenderer() const;
@@ -169,7 +169,7 @@ protected:
     void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, RenderStyle*, const Font&, bool background);
     void paintCompositionUnderline(GraphicsContext*, const FloatPoint& boxOrigin, const CompositionUnderline&);
 #if PLATFORM(MAC)
-    void paintCustomHighlight(const IntPoint&, const AtomicString& type);
+    void paintCustomHighlight(const LayoutPoint&, const AtomicString& type);
 #endif
 
 private:

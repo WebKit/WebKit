@@ -133,7 +133,7 @@ float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
     return result;
 }
 
-void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom) const
+void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom) const
 {
     if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer()->style()->visibility() == VISIBLE
             && paintInfo.phase == PaintPhaseForeground)
@@ -157,7 +157,7 @@ void RootInlineBox::addHighlightOverflow()
     setOverflowFromLogicalRects(inflatedRect, inflatedRect, lineTop(), lineBottom());
 }
 
-void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const IntPoint& paintOffset, const AtomicString& highlightType)
+void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const AtomicString& highlightType)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
@@ -178,7 +178,7 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const IntPoint& p
 
 #endif
 
-void RootInlineBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom)
+void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
     paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);

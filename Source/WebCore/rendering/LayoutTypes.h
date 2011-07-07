@@ -36,7 +36,6 @@
 #ifndef LayoutTypes_h
 #define LayoutTypes_h
 
-#include "FloatPoint.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 

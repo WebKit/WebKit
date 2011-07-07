@@ -1079,7 +1079,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
 
 #if PLATFORM(MAC)
 
-void RenderBox::paintCustomHighlight(const IntPoint& paintOffset, const AtomicString& type, bool behindText)
+void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const AtomicString& type, bool behindText)
 {
     Frame* frame = this->frame();
     if (!frame)
