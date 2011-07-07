@@ -1,5 +1,12 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Add goofy comments to explain why we have these files.
+
+        * Scripts/webkitpy/layout_tests/controllers/__init__.py:
+        * Scripts/webkitpy/layout_tests/layout_package/__init__.py:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Move a bunch of classes out of layout_tests.layout_package and into layout_tests.controllers
         https://bugs.webkit.org/show_bug.cgi?id=64048
 
