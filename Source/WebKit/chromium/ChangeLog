@@ -1,3 +1,9 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-07-06  Johnny Ding  <jnd@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=63857
