@@ -53,9 +53,9 @@ public:
     int paginationStrut() const { return m_paginationStrut; }
     void setPaginationStrut(int s) { m_paginationStrut = s; }
 
-    int selectionTop() const;
-    int selectionBottom() const;
-    int selectionHeight() const { return max(0, selectionBottom() - selectionTop()); }
+    LayoutUnit selectionTop() const;
+    LayoutUnit selectionBottom() const;
+    LayoutUnit selectionHeight() const { return max<LayoutUnit>(0, selectionBottom() - selectionTop()); }
 
     int blockDirectionPointInLine() const { return max(lineTop(), selectionTop()); }
 

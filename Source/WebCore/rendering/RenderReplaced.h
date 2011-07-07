@@ -81,7 +81,7 @@ private:
     
     virtual bool canBeSelectionLeaf() const { return true; }
 
-    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
+    virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
 
     IntSize m_intrinsicSize;
     bool m_hasIntrinsicSize;

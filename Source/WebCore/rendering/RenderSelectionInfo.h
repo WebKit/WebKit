@@ -62,7 +62,7 @@ class RenderSelectionInfo : public RenderSelectionInfoBase {
 public:
     RenderSelectionInfo(RenderObject* o, bool clipToVisibleContent)
         : RenderSelectionInfoBase(o)
-        , m_rect(o->needsLayout() ? IntRect() : o->selectionRectForRepaint(m_repaintContainer, clipToVisibleContent))
+        , m_rect(o->needsLayout() ? LayoutRect() : o->selectionRectForRepaint(m_repaintContainer, clipToVisibleContent))
     {
     }
     

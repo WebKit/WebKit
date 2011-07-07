@@ -1381,19 +1381,19 @@ IntRect RenderText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintC
     return rendererToRepaint->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
     if (selectionState() == SelectionNone)
-        return IntRect();
+        return LayoutRect();
     RenderBlock* cb = containingBlock();
     if (!cb)
-        return IntRect();
+        return LayoutRect();
 
     // Now calculate startPos and endPos for painting selection.
     // We include a selection while endPos > 0
-    int startPos, endPos;
+    LayoutUnit startPos, endPos;
     if (selectionState() == SelectionInside) {
         // We are fully selected.
         startPos = 0;
@@ -1409,7 +1409,7 @@ IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContain
     if (startPos == endPos)
         return IntRect();
 
-    IntRect rect;
+    LayoutRect rect;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         rect.unite(box->selectionRect(startPos, endPos));
         rect.unite(ellipsisRectForBox(box, startPos, endPos));

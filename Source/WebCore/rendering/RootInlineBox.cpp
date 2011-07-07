@@ -396,9 +396,9 @@ InlineBox* RootInlineBox::lastSelectedBox()
     return 0;
 }
 
-int RootInlineBox::selectionTop() const
+LayoutUnit RootInlineBox::selectionTop() const
 {
-    int selectionTop = m_lineTop;
+    LayoutUnit selectionTop = m_lineTop;
 
     if (m_hasAnnotationsBefore)
         selectionTop -= !renderer()->style()->isFlippedLinesWritingMode() ? computeOverAnnotationAdjustment(m_lineTop) : computeUnderAnnotationAdjustment(m_lineTop);
@@ -406,15 +406,15 @@ int RootInlineBox::selectionTop() const
     if (renderer()->style()->isFlippedLinesWritingMode())
         return selectionTop;
 
-    int prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : block()->borderBefore() + block()->paddingBefore();
+    LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : block()->borderBefore() + block()->paddingBefore();
     if (prevBottom < selectionTop && block()->containsFloats()) {
         // This line has actually been moved further down, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the previous
         // line's bottom if the offsets are greater on both sides.
-        int prevLeft = block()->logicalLeftOffsetForLine(prevBottom, false);
-        int prevRight = block()->logicalRightOffsetForLine(prevBottom, false);
-        int newLeft = block()->logicalLeftOffsetForLine(selectionTop, false);
-        int newRight = block()->logicalRightOffsetForLine(selectionTop, false);
+        LayoutUnit prevLeft = block()->logicalLeftOffsetForLine(prevBottom, false);
+        LayoutUnit prevRight = block()->logicalRightOffsetForLine(prevBottom, false);
+        LayoutUnit newLeft = block()->logicalLeftOffsetForLine(selectionTop, false);
+        LayoutUnit newRight = block()->logicalRightOffsetForLine(selectionTop, false);
         if (prevLeft > newLeft || prevRight < newRight)
             return selectionTop;
     }
@@ -422,9 +422,9 @@ int RootInlineBox::selectionTop() const
     return prevBottom;
 }
 
-int RootInlineBox::selectionBottom() const
+LayoutUnit RootInlineBox::selectionBottom() const
 {
-    int selectionBottom = m_lineBottom;
+    LayoutUnit selectionBottom = m_lineBottom;
 
     if (m_hasAnnotationsAfter)
         selectionBottom += !renderer()->style()->isFlippedLinesWritingMode() ? computeUnderAnnotationAdjustment(m_lineBottom) : computeOverAnnotationAdjustment(m_lineBottom);
@@ -432,15 +432,15 @@ int RootInlineBox::selectionBottom() const
     if (!renderer()->style()->isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
 
-    int nextTop = nextRootBox()->selectionTop();
+    LayoutUnit nextTop = nextRootBox()->selectionTop();
     if (nextTop > selectionBottom && block()->containsFloats()) {
         // The next line has actually been moved further over, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the next
         // line's top if the offsets are greater on both sides.
-        int nextLeft = block()->logicalLeftOffsetForLine(nextTop, false);
-        int nextRight = block()->logicalRightOffsetForLine(nextTop, false);
-        int newLeft = block()->logicalLeftOffsetForLine(selectionBottom, false);
-        int newRight = block()->logicalRightOffsetForLine(selectionBottom, false);
+        LayoutUnit nextLeft = block()->logicalLeftOffsetForLine(nextTop, false);
+        LayoutUnit nextRight = block()->logicalRightOffsetForLine(nextTop, false);
+        LayoutUnit newLeft = block()->logicalLeftOffsetForLine(selectionBottom, false);
+        LayoutUnit newRight = block()->logicalRightOffsetForLine(selectionBottom, false);
         if (nextLeft > newLeft || nextRight < newRight)
             return selectionBottom;
     }

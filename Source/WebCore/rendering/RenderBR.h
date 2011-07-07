@@ -38,7 +38,7 @@ public:
 
     virtual const char* renderName() const { return "RenderBR"; }
  
-    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/) { return IntRect(); }
+    virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/) { return LayoutRect(); }
 
     virtual float width(unsigned /*from*/, unsigned /*len*/, const Font&, float /*xPos*/, HashSet<const SimpleFontData*>* = 0 /*fallbackFonts*/ , GlyphOverflow* = 0) const { return 0; }
     virtual float width(unsigned /*from*/, unsigned /*len*/, float /*xpos*/, bool = false /*firstLine*/, HashSet<const SimpleFontData*>* = 0 /*fallbackFonts*/, GlyphOverflow* = 0) const { return 0; }

@@ -98,25 +98,25 @@ int InlineTextBox::lineHeight() const
     return toRenderBoxModelObject(renderer()->parent())->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
-int InlineTextBox::selectionTop()
+LayoutUnit InlineTextBox::selectionTop()
 {
     return root()->selectionTop();
 }
 
-int InlineTextBox::selectionBottom()
+LayoutUnit InlineTextBox::selectionBottom()
 {
     return root()->selectionBottom();
 }
 
-int InlineTextBox::selectionHeight()
+LayoutUnit InlineTextBox::selectionHeight()
 {
     return root()->selectionHeight();
 }
 
 bool InlineTextBox::isSelected(int startPos, int endPos) const
 {
-    int sPos = max(startPos - m_start, 0);
-    int ePos = min(endPos - m_start, (int)m_len);
+    LayoutUnit sPos = max<LayoutUnit>(startPos - m_start, 0);
+    LayoutUnit ePos = min<LayoutUnit>(endPos - m_start, m_len);
     return (sPos < ePos);
 }
 

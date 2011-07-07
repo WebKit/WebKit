@@ -298,8 +298,8 @@ protected:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
-    int logicalRightOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
-    int logicalLeftOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
+    LayoutUnit logicalRightOffsetForLine(LayoutUnit position, LayoutUnit fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
+    LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, LayoutUnit fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
 
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
@@ -612,27 +612,27 @@ private:
     virtual void updateDragState(bool dragOn);
     virtual void childBecameNonInline(RenderObject* child);
 
-    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool /*clipToVisibleContent*/)
+    virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool /*clipToVisibleContent*/)
     {
         return selectionGapRectsForRepaint(repaintContainer);
     }
     virtual bool shouldPaintSelectionGaps() const;
     bool isSelectionRoot() const;
-    GapRects selectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                           int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo* = 0);
-    GapRects inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                           int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo*);
-    GapRects blockSelectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                           int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo*);
-    IntRect blockSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                              int lastLogicalTop, int lastLogicalLeft, int lastLogicalRight, int logicalBottom, const PaintInfo*);
-    int logicalLeftSelectionOffset(RenderBlock* rootBlock, int position);
-    int logicalRightSelectionOffset(RenderBlock* rootBlock, int position);
+    GapRects selectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                           LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const PaintInfo* = 0);
+    GapRects inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                 LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const PaintInfo*);
+    GapRects blockSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const PaintInfo*);
+    IntRect blockSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                              LayoutUnit lastLogicalTop, LayoutUnit lastLogicalLeft, LayoutUnit lastLogicalRight, LayoutUnit logicalBottom, const PaintInfo*);
+    LayoutUnit logicalLeftSelectionOffset(RenderBlock* rootBlock, LayoutUnit position);
+    LayoutUnit logicalRightSelectionOffset(RenderBlock* rootBlock, LayoutUnit position);
     
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
-    int desiredColumnWidth() const;
+    LayoutUnit desiredColumnWidth() const;
     unsigned desiredColumnCount() const;
     void setDesiredColumnCountAndWidth(int count, int width);
 

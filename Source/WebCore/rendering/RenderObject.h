@@ -703,8 +703,8 @@ public:
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
     // possible bounding box for the selection.
-    IntRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(0, clipToVisibleContent); }
-    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return IntRect(); }
+    LayoutRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(0, clipToVisibleContent); }
+    virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return LayoutRect(); }
 
     // Whether or not an object can be part of the leaf elements of the selection.
     virtual bool canBeSelectionLeaf() const { return false; }

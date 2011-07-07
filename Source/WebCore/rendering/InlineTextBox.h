@@ -95,9 +95,9 @@ public:
     virtual const char* boxName() const;
 #endif
 private:
-    int selectionTop();
-    int selectionBottom();
-    int selectionHeight();
+    LayoutUnit selectionTop();
+    LayoutUnit selectionBottom();
+    LayoutUnit selectionHeight();
 
     TextRun constructTextRun(RenderStyle*, const Font&, BufferForAppendingHyphen* = 0) const;
     TextRun constructTextRun(RenderStyle*, const Font&, const UChar*, int length, BufferForAppendingHyphen* = 0) const;

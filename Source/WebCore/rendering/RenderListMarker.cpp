@@ -1698,15 +1698,15 @@ void RenderListMarker::setSelectionState(SelectionState state)
     containingBlock()->setSelectionState(state);
 }
 
-IntRect RenderListMarker::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderListMarker::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
     if (selectionState() == SelectionNone || !inlineBoxWrapper())
-        return IntRect();
+        return LayoutRect();
 
     RootInlineBox* root = inlineBoxWrapper()->root();
-    IntRect rect(0, root->selectionTop() - y(), width(), root->selectionHeight());
+    LayoutRect rect(0, root->selectionTop() - y(), width(), root->selectionHeight());
             
     if (clipToVisibleContent)
         computeRectForRepaint(repaintContainer, rect);

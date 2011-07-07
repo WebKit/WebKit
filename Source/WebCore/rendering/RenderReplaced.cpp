@@ -431,14 +431,14 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
     return RenderBox::positionForPoint(point);
 }
 
-IntRect RenderReplaced::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderReplaced::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
     if (!isSelected())
-        return IntRect();
+        return LayoutRect();
     
-    IntRect rect = localSelectionRect();
+    LayoutRect rect = localSelectionRect();
     if (clipToVisibleContent)
         computeRectForRepaint(repaintContainer, rect);
     else

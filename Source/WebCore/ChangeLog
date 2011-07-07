@@ -1,3 +1,57 @@
+2011-07-07  Emil A Eklund  <eae@chromium.org>
+
+        Switch rendering tree selection code to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63762
+
+        Reviewed by Eric Seidel.
+
+        Switch selection getters and selection gap calculation methods over to
+        new layout abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionTop):
+        (WebCore::InlineTextBox::selectionBottom):
+        (WebCore::InlineTextBox::selectionHeight):
+        (WebCore::InlineTextBox::isSelected):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBR.h:
+        (WebCore::RenderBR::selectionRectForRepaint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::inlineSelectionGaps):
+        (WebCore::RenderBlock::blockSelectionGaps):
+        (WebCore::RenderBlock::blockSelectionGap):
+        (WebCore::RenderBlock::logicalLeftSelectionGap):
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+        (WebCore::RenderBlock::logicalLeftSelectionOffset):
+        (WebCore::RenderBlock::logicalRightSelectionOffset):
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        (WebCore::RenderBlock::desiredColumnWidth):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::selectionRectForRepaint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::selectionRectForRepaint):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::selectionRect):
+        (WebCore::RenderObject::selectionRectForRepaint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/RenderText.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::selectionBottom):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::selectionHeight):
+
 2011-07-07  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -2754,9 +2754,9 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
     if (hasOverflowClip())
         offsetFromRepaintContainer -= layer()->scrolledContentOffset();
 
-    int lastTop = 0;
-    int lastLeft = logicalLeftSelectionOffset(this, lastTop);
-    int lastRight = logicalRightSelectionOffset(this, lastTop);
+    LayoutUnit lastTop = 0;
+    LayoutUnit lastLeft = logicalLeftSelectionOffset(this, lastTop);
+    LayoutUnit lastRight = logicalRightSelectionOffset(this, lastTop);
     
     return selectionGaps(this, offsetFromRepaintContainer, IntSize(), lastTop, lastLeft, lastRight);
 }
@@ -2819,14 +2819,14 @@ IntRect RenderBlock::logicalRectToPhysicalRect(const IntPoint& rootBlockPhysical
     return result;
 }
 
-GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                                    int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo* paintInfo)
+GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                    LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const PaintInfo* paintInfo)
 {
     // IMPORTANT: Callers of this method that intend for painting to happen need to do a save/restore.
     // Clip out floating and positioned objects when painting selection gaps.
     if (paintInfo) {
         // Note that we don't clip out overflow for positioned objects.  We just stick to the border box.
-        IntRect flippedBlockRect = IntRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), width(), height());
+        LayoutRect flippedBlockRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), width(), height());
         rootBlock->flipForWritingMode(flippedBlockRect);
         flippedBlockRect.moveBy(rootBlockPhysicalPosition);
         clipOutPositionedObjects(paintInfo, flippedBlockRect.location(), m_positionedObjects.get());
@@ -2838,9 +2838,9 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& root
             FloatingObjectSetIterator end = floatingObjectSet.end();
             for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* r = *it;
-                IntRect floatBox = IntRect(offsetFromRootBlock.width() + xPositionForFloatIncludingMargin(r),
-                                           offsetFromRootBlock.height() + yPositionForFloatIncludingMargin(r),
-                                           r->m_renderer->width(), r->m_renderer->height());
+                LayoutRect floatBox(offsetFromRootBlock.width() + xPositionForFloatIncludingMargin(r),
+                                    offsetFromRootBlock.height() + yPositionForFloatIncludingMargin(r),
+                                    r->m_renderer->width(), r->m_renderer->height());
                 rootBlock->flipForWritingMode(floatBox);
                 floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
                 paintInfo->context->clipOut(floatBox);
@@ -2874,8 +2874,8 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& root
     return result;
 }
 
-GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                                          int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo* paintInfo)
+GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                          LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const PaintInfo* paintInfo)
 {
     GapRects result;
 
@@ -2898,16 +2898,16 @@ GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint
 
     // Now paint the gaps for the lines.
     for (; curr && curr->hasSelectedChildren(); curr = curr->nextRootBox()) {
-        int selTop =  curr->selectionTop();
-        int selHeight = curr->selectionHeight();
+        LayoutUnit selTop =  curr->selectionTop();
+        LayoutUnit selHeight = curr->selectionHeight();
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != SelectionStart && selectionState() != SelectionBoth)
             result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, 
                                                  selTop, paintInfo));
         
-        IntRect logicalRect(curr->logicalLeft(), selTop, curr->logicalWidth(), selTop + selHeight);
-        logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
+        LayoutRect logicalRect(curr->logicalLeft(), selTop, curr->logicalWidth(), selTop + selHeight);
+        logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : offsetFromRootBlock.transposedSize());
         IntRect physicalRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
         if (!paintInfo || (isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
             || (!isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.maxX() && physicalRect.maxX() > paintInfo->rect.x()))
@@ -2929,8 +2929,8 @@ GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint
     return result;
 }
 
-GapRects RenderBlock::blockSelectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                                         int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo* paintInfo)
+GapRects RenderBlock::blockSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const PaintInfo* paintInfo)
 {
     GapRects result;
 
@@ -2949,7 +2949,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock* rootBlock, const IntPoint&
         if (curr->isRelPositioned() && curr->hasLayer()) {
             // If the relposition offset is anything other than 0, then treat this just like an absolute positioned element.
             // Just disregard it completely.
-            IntSize relOffset = curr->layer()->relativePositionOffset();
+            LayoutSize relOffset = curr->layer()->relativePositionOffset();
             if (relOffset.width() || relOffset.height())
                 continue;
         }
@@ -2985,60 +2985,60 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock* rootBlock, const IntPoint&
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, curr->logicalBottom());
         } else if (childState != SelectionNone)
             // We must be a block that has some selected object inside it.  Go ahead and recur.
-            result.unite(toRenderBlock(curr)->selectionGaps(rootBlock, rootBlockPhysicalPosition, IntSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()), 
+            result.unite(toRenderBlock(curr)->selectionGaps(rootBlock, rootBlockPhysicalPosition, LayoutSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()), 
                                                             lastLogicalTop, lastLogicalLeft, lastLogicalRight, paintInfo));
     }
     return result;
 }
 
-IntRect RenderBlock::blockSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                                       int lastLogicalTop, int lastLogicalLeft, int lastLogicalRight, int logicalBottom, const PaintInfo* paintInfo)
+LayoutRect RenderBlock::blockSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                          LayoutUnit lastLogicalTop, LayoutUnit lastLogicalLeft, LayoutUnit lastLogicalRight, LayoutUnit logicalBottom, const PaintInfo* paintInfo)
 {
-    int logicalTop = lastLogicalTop;
-    int logicalHeight = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalBottom - logicalTop;
-    if (logicalHeight <= 0)
-        return IntRect();
+    LayoutUnit logicalTop = lastLogicalTop;
+    LayoutUnit logicalHeight = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalBottom - logicalTop;
+    if (logicalHeight <= static_cast<LayoutUnit>(0))
+        return LayoutRect();
 
     // Get the selection offsets for the bottom of the gap
-    int logicalLeft = max(lastLogicalLeft, logicalLeftSelectionOffset(rootBlock, logicalBottom));
-    int logicalRight = min(lastLogicalRight, logicalRightSelectionOffset(rootBlock, logicalBottom));
-    int logicalWidth = logicalRight - logicalLeft;
-    if (logicalWidth <= 0)
-        return IntRect();
+    LayoutUnit logicalLeft = max(lastLogicalLeft, logicalLeftSelectionOffset(rootBlock, logicalBottom));
+    LayoutUnit logicalRight = min(lastLogicalRight, logicalRightSelectionOffset(rootBlock, logicalBottom));
+    LayoutUnit logicalWidth = logicalRight - logicalLeft;
+    if (logicalWidth <= static_cast<LayoutUnit>(0))
+        return LayoutRect();
 
-    IntRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, IntRect(logicalLeft, logicalTop, logicalWidth, logicalHeight));
+    LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(logicalLeft, logicalTop, logicalWidth, logicalHeight));
     if (paintInfo)
         paintInfo->context->fillRect(gapRect, selectionBackgroundColor(), style()->colorSpace());
     return gapRect;
 }
 
-IntRect RenderBlock::logicalLeftSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                                             RenderObject* selObj, int logicalLeft, int logicalTop, int logicalHeight, const PaintInfo* paintInfo)
+LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                                RenderObject* selObj, LayoutUnit logicalLeft, LayoutUnit logicalTop, LayoutUnit logicalHeight, const PaintInfo* paintInfo)
 {
-    int rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
-    int rootBlockLogicalLeft = max(logicalLeftSelectionOffset(rootBlock, logicalTop), logicalLeftSelectionOffset(rootBlock, logicalTop + logicalHeight));
-    int rootBlockLogicalRight = min(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalLeft, min(logicalRightSelectionOffset(rootBlock, logicalTop), logicalRightSelectionOffset(rootBlock, logicalTop + logicalHeight)));
-    int rootBlockLogicalWidth = rootBlockLogicalRight - rootBlockLogicalLeft;
-    if (rootBlockLogicalWidth <= 0)
-        return IntRect();
+    LayoutUnit rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
+    LayoutUnit rootBlockLogicalLeft = max(logicalLeftSelectionOffset(rootBlock, logicalTop), logicalLeftSelectionOffset(rootBlock, logicalTop + logicalHeight));
+    LayoutUnit rootBlockLogicalRight = min(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalLeft, min(logicalRightSelectionOffset(rootBlock, logicalTop), logicalRightSelectionOffset(rootBlock, logicalTop + logicalHeight)));
+    LayoutUnit rootBlockLogicalWidth = rootBlockLogicalRight - rootBlockLogicalLeft;
+    if (rootBlockLogicalWidth <= static_cast<LayoutUnit>(0))
+        return LayoutRect();
 
-    IntRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, IntRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
+    LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
     if (paintInfo)
         paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;
 }
 
-IntRect RenderBlock::logicalRightSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
-                                              RenderObject* selObj, int logicalRight, int logicalTop, int logicalHeight, const PaintInfo* paintInfo)
+LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+                                                 RenderObject* selObj, int logicalRight, int logicalTop, int logicalHeight, const PaintInfo* paintInfo)
 {
-    int rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
-    int rootBlockLogicalLeft = max(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalRight, max(logicalLeftSelectionOffset(rootBlock, logicalTop), logicalLeftSelectionOffset(rootBlock, logicalTop + logicalHeight)));
-    int rootBlockLogicalRight = min(logicalRightSelectionOffset(rootBlock, logicalTop), logicalRightSelectionOffset(rootBlock, logicalTop + logicalHeight));
-    int rootBlockLogicalWidth = rootBlockLogicalRight - rootBlockLogicalLeft;
-    if (rootBlockLogicalWidth <= 0)
-        return IntRect();
+    LayoutUnit rootBlockLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalTop;
+    LayoutUnit rootBlockLogicalLeft = max(inlineDirectionOffset(rootBlock, offsetFromRootBlock) + logicalRight, max(logicalLeftSelectionOffset(rootBlock, logicalTop), logicalLeftSelectionOffset(rootBlock, logicalTop + logicalHeight)));
+    LayoutUnit rootBlockLogicalRight = min(logicalRightSelectionOffset(rootBlock, logicalTop), logicalRightSelectionOffset(rootBlock, logicalTop + logicalHeight));
+    LayoutUnit rootBlockLogicalWidth = rootBlockLogicalRight - rootBlockLogicalLeft;
+    if (rootBlockLogicalWidth <= static_cast<LayoutUnit>(0))
+        return LayoutRect();
 
-    IntRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, IntRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
+    LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
     if (paintInfo)
         paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;
@@ -3055,9 +3055,9 @@ void RenderBlock::getSelectionGapInfo(SelectionState state, bool& leftGap, bool&
                (state == RenderObject::SelectionEnd && !ltr);
 }
 
-int RenderBlock::logicalLeftSelectionOffset(RenderBlock* rootBlock, int position)
+LayoutUnit RenderBlock::logicalLeftSelectionOffset(RenderBlock* rootBlock, LayoutUnit position)
 {
-    int logicalLeft = logicalLeftOffsetForLine(position, false);
+    LayoutUnit logicalLeft = logicalLeftOffsetForLine(position, false);
     if (logicalLeft == logicalLeftOffsetForContent()) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
@@ -3073,9 +3073,9 @@ int RenderBlock::logicalLeftSelectionOffset(RenderBlock* rootBlock, int position
     return logicalLeft;
 }
 
-int RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, int position)
+LayoutUnit RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, LayoutUnit position)
 {
-    int logicalRight = logicalRightOffsetForLine(position, false);
+    LayoutUnit logicalRight = logicalRightOffsetForLine(position, false);
     if (logicalRight == logicalRightOffsetForContent()) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
@@ -4145,7 +4145,7 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
     return ancestor->createVisiblePosition(childNode->nodeIndex() + 1, UPSTREAM);
 }
 
-VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& pointInLogicalContents)
+VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents)
 {
     ASSERT(childrenInline());
 
@@ -4336,7 +4336,7 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, int width)
     }
 }
 
-int RenderBlock::desiredColumnWidth() const
+LayoutUnit RenderBlock::desiredColumnWidth() const
 {
     if (!hasColumns())
         return contentLogicalWidth();
