@@ -343,6 +343,8 @@ WebInspector.Drawer.prototype = {
 
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
+        if (WebInspector.currentPanel)
+            WebInspector.currentPanel.resize();
 
         event.preventDefault();
         event.stopPropagation();

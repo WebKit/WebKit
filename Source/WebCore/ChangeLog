@@ -1,3 +1,13 @@
+2011-07-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: active panel does not receive resize event when drawer is resized
+        https://bugs.webkit.org/show_bug.cgi?id=64094
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype._statusBarDragging):
+
 2011-07-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: prevent default action during drag'n'drop in the Elements panel.
