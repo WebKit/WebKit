@@ -284,4 +284,4 @@ class ChromiumXVFBPort(ChromiumPort):
 
     @classmethod
     def layout_tests_results_path(cls):
-        return os.path.join(cls.results_directory, "unexpected_results.json")
+        return os.path.join(cls.results_directory, "full_results.json")

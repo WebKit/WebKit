@@ -51,6 +51,10 @@ class ResultsJSONParserTest(unittest.TestCase):
                     "expected": "PASS",
                     "actual": "PASS TEXT"
                 },
+                "prototype-chocolate.html": {
+                    "expected": "TEXT",
+                    "actual": "TEXT"
+                },
                 "prototype-strawberry.html": {
                     "expected": "PASS",
                     "actual": "TEXT PASS"

@@ -33,6 +33,7 @@ except ImportError:
     # python 2.5 compatibility
     import webkitpy.thirdparty.simplejson as json
 
+from webkitpy.common.memoized import memoized
 # FIXME: common should never import from new-run-webkit-tests, one of these files needs to move.
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations, test_results, test_failures
@@ -63,15 +64,35 @@ class JSONTestResult(object):
         self._test_name = test_name
         self._result_dict = result_dict
 
-    def did_pass(self):
-        return test_expectations.PASS in self._actual_as_expectations()
+    def did_pass_or_run_as_expected(self):
+        return self.did_pass() or self.did_run_as_expected()
 
-    def _actual_as_expectations(self):
+    def did_pass(self):
+        return test_expectations.PASS in self._actual_as_tokens()
+
+    def did_run_as_expected(self):
+        actual_results = self._actual_as_tokens()
+        expected_results = self._expected_as_tokens()
+        for actual_result in actual_results:
+            if not test_expectations.result_was_expected(actual_result, expected_results, False, False):
+                return False
+        return True
+
+    def _tokenize(self, results_string):
+        tokens = map(test_expectations.TestExpectations.expectation_from_string, results_string.split(' '))
+        if None in tokens:
+            log("Unrecognized result in %s" % results_string)
+        return tokens
+
+    @memoized
+    def _actual_as_tokens(self):
         actual_results = self._result_dict['actual']
-        expectations = map(test_expectations.TestExpectations.expectation_from_string, actual_results.split(' '))
-        if None in expectations:
-            log("Unrecognized actual result in %s" % actual_results)
-        return expectations
+        return self._tokenize(actual_results)
+
+    @memoized
+    def _expected_as_tokens(self):
+        actual_results = self._result_dict['expected']
+        return self._tokenize(actual_results)
 
     def _failure_types_from_actual_result(self, actual):
         # FIXME: There doesn't seem to be a full list of all possible values of
@@ -100,7 +121,7 @@ class JSONTestResult(object):
     def _failures(self):
         if self.did_pass():
             return []
-        return sum(map(self._failure_types_from_actual_result, self._actual_as_expectations()), [])
+        return sum(map(self._failure_types_from_actual_result, self._actual_as_tokens()), [])
 
     def test_result(self):
         # FIXME: Optionally pull in the test runtime from times_ms.json.
@@ -108,9 +129,6 @@ class JSONTestResult(object):
 
 
 class ResultsJSONParser(object):
-    """Parse unexpected_results.json files from new-run-webkit-tests
-    This will not parse the old results.json format."""
-
     @classmethod
     def parse_results_json(cls, json_string):
         if not json_results_generator.has_json_wrapper(json_string):
@@ -124,5 +142,5 @@ class ResultsJSONParser(object):
 
         # FIXME: What's the short sexy python way to filter None?
         # I would use [foo.bar() for foo in foos if foo.bar()] but bar() is expensive.
-        non_passing_results = [result.test_result() for result in json_results if not result.did_pass()]
-        return filter(lambda a: a, non_passing_results)
+        unexpected_failures = [result.test_result() for result in json_results if not result.did_pass_or_run_as_expected()]
+        return filter(lambda a: a, unexpected_failures)

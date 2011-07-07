@@ -51,8 +51,7 @@ _log = logging.getLogger(__name__)
 (NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM, ADD_PLATFORMS_EXCEPT_THIS) = range(4)
 
 
-def result_was_expected(result, expected_results, test_needs_rebaselining,
-                        test_is_skipped):
+def result_was_expected(result, expected_results, test_needs_rebaselining, test_is_skipped):
     """Returns whether we got a result we were expecting.
     Args:
         result: actual result of a test execution
@@ -195,8 +194,7 @@ class TestExpectations:
                                 MISSING: ('no expected result found',
                                           'no expected results found')}
 
-    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT,
-       TEXT, IMAGE, AUDIO, FAIL, SKIP)
+    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT, TEXT, IMAGE, AUDIO, FAIL, SKIP)
 
     BUILD_TYPES = ('debug', 'release')
 
