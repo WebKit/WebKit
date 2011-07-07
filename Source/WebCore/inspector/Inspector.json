@@ -499,6 +499,14 @@
                     { "name": "content", "type": "string", "description": "Resource content." },
                     { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
                 ]
+            },
+            {
+                "name": "clearBrowserCache",
+                "description": "Clears browser cache."
+            },
+            {
+                "name": "clearBrowserCookies",
+                "description": "Clears browser cookies."
             }
         ],
         "events": [

@@ -53,6 +53,7 @@ var Preferences = {
     saveAsAvailable: false,
     useLowerCaseMenuTitlesOnWindows: false,
     canInspectWorkers: false,
+    canClearCacheAndCookies: false
 }
 
 WebInspector.Settings = function()

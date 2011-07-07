@@ -993,6 +993,12 @@ WebInspector.NetworkPanel.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save all as HAR" : "Save All as HAR"), this._exportAll.bind(this));
         }
 
+        if (Preferences.canClearCacheAndCookies) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear browser cache" : "Clear Browser Cache"), this._clearBrowserCache.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear browser cookies" : "Clear Browser Cookies"), this._clearBrowserCookies.bind(this));
+        }
+
         contextMenu.show(event);
     },
 
@@ -1037,6 +1043,18 @@ WebInspector.NetworkPanel.prototype = {
     {
         var har = (new WebInspector.HAREntry(resource)).build();
         InspectorFrontendHost.saveAs(resource.displayName + ".har", JSON.stringify(har));
+    },
+
+    _clearBrowserCache: function(event)
+    {
+        if (confirm(WebInspector.UIString("Are you sure you want to clear browser cache?")))
+            NetworkAgent.clearBrowserCache();
+    },
+
+    _clearBrowserCookies: function(event)
+    {
+        if (confirm(WebInspector.UIString("Are you sure you want to clear browser cookies?")))
+            NetworkAgent.clearBrowserCookies();
     },
 
     _toggleBackgroundEventsCollection: function(resource)

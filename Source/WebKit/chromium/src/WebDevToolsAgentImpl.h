@@ -91,6 +91,9 @@ public:
     virtual void updateInspectorStateCookie(const WTF::String&);
     virtual bool sendMessageToFrontend(const WTF::String&);
 
+    virtual void clearBrowserCache();
+    virtual void clearBrowserCookies();
+
     int hostId() { return m_hostId; }
 
     // PageOverlayClient

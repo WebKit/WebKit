@@ -52,6 +52,9 @@ public:
     // or recording timeline). Following callbacks allow embedders to track these states.
     virtual void updateInspectorStateCookie(const String&) { };
 
+    virtual void clearBrowserCache() { }
+    virtual void clearBrowserCookies() { }
+
     bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 

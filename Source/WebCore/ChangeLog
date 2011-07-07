@@ -1,3 +1,29 @@
+2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for clearing cache and cookies from network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=63999
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::clearBrowserCache):
+        (WebCore::InspectorClient::clearBrowserCookies):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::clearBrowserCache):
+        (WebCore::InspectorResourceAgent::clearBrowserCookies):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore::InspectorResourceAgent::create):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._contextMenu):
+        (WebInspector.NetworkPanel.prototype._clearBrowserCache):
+        (WebInspector.NetworkPanel.prototype._clearBrowserCookies):
+        * inspector/front-end/Settings.js:
+
 2011-07-07  Shinya Kawanaka  <shinyak@google.com>
 
         Added more key bindings for input[type=range].

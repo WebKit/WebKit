@@ -94,6 +94,18 @@ void InspectorClientImpl::updateInspectorStateCookie(const WTF::String& inspecto
         agent->updateInspectorStateCookie(inspectorState);
 }
 
+void InspectorClientImpl::clearBrowserCache()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->clearBrowserCache();
+}
+
+void InspectorClientImpl::clearBrowserCookies()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->clearBrowserCookies();
+}
+
 WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()
 {
     return static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());

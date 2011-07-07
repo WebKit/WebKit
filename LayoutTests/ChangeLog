@@ -1,3 +1,20 @@
+2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for clearing cache and cookies from network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=63999
+
+        Added clear cache and cookies tests. Since no port currently supports
+        this functionality, the tests are disabled.
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/network-clear-cache-expected.txt: Added.
+        * http/tests/inspector/network/network-clear-cache.html-disabled: Added.
+        * http/tests/inspector/network/network-clear-cookies-expected.txt: Added.
+        * http/tests/inspector/network/network-clear-cookies.html-disabled: Added.
+        * http/tests/inspector/network/resources/random-cached.php: Added.
+        * http/tests/inspector/network/resources/set-cookie.php: Added.
+
 2011-07-07  Shinya Kawanaka  <shinyak@google.com>
 
         Added more key bindings for input[type=range].

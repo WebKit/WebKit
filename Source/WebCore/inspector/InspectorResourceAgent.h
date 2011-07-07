@@ -51,6 +51,7 @@ class DocumentLoader;
 class EventsCollector;
 class Frame;
 class InspectorArray;
+class InspectorClient;
 class InspectorFrontend;
 class InspectorFrontendProxy;
 class InspectorObject;
@@ -74,9 +75,9 @@ typedef String ErrorString;
 
 class InspectorResourceAgent : public RefCounted<InspectorResourceAgent> {
 public:
-    static PassRefPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
+    static PassRefPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* state)
     {
-        return adoptRef(new InspectorResourceAgent(instrumentingAgents, pageAgent, state));
+        return adoptRef(new InspectorResourceAgent(instrumentingAgents, pageAgent, client, state));
     }
 
     void setFrontend(InspectorFrontend*);
@@ -124,8 +125,11 @@ public:
     void getResourceContent(ErrorString*, unsigned long identifier, String* content, bool* base64Encoded);
     void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
 
+    void clearBrowserCache(ErrorString*);
+    void clearBrowserCookies(ErrorString*);
+
 private:
-    InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
+    InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*);
 
     bool isBackgroundEventsCollectionEnabled();
     void enable();
@@ -133,6 +137,7 @@ private:
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorPageAgent* m_pageAgent;
+    InspectorClient* m_client;
     InspectorState* m_state;
     InspectorFrontend::Network* m_frontend;
     OwnPtr<EventsCollector> m_eventsCollector;

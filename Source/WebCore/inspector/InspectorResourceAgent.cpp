@@ -41,6 +41,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
+#include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendChannel.h"
 #include "InspectorFrontendProxy.h"
@@ -474,14 +475,25 @@ void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsign
     *errorString = "No data found for resource with given identifier";
 }
 
+void InspectorResourceAgent::clearBrowserCache(ErrorString*)
+{
+    m_client->clearBrowserCache();
+}
+
+void InspectorResourceAgent::clearBrowserCookies(ErrorString*)
+{
+    m_client->clearBrowserCookies();
+}
+
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
 {
     m_resourcesData->clear(m_pageAgent->loaderId(loader));
 }
 
-InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
+InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* state)
     : m_instrumentingAgents(instrumentingAgents)
     , m_pageAgent(pageAgent)
+    , m_client(client)
     , m_state(state)
     , m_resourcesData(adoptPtr(new NetworkResourcesData()))
     , m_loadingXHRSynchronously(false)

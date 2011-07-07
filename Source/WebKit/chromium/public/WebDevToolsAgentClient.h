@@ -59,6 +59,9 @@ public:
 
     virtual bool exposeV8DebuggerProtocol() { return false; }
 
+    virtual void clearBrowserCache() { }
+    virtual void clearBrowserCookies() { }
+
 protected:
     ~WebDevToolsAgentClient() { }
 };

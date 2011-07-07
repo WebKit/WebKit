@@ -56,6 +56,9 @@ public:
     virtual bool sendMessageToFrontend(const WTF::String&);
 
     virtual void updateInspectorStateCookie(const WTF::String&);
+
+    virtual void clearBrowserCache();
+    virtual void clearBrowserCookies();
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 
