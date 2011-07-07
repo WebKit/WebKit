@@ -118,6 +118,20 @@ LayoutTestHistoryAnalyzer.prototype = {
 
         var self = this;
         self._loader.start(nextBuildName, function(tests, tooManyFailures) {
+            if (tooManyFailures) {
+                var firstBuildName = Object.keys(self._history)[0];
+                // If the first (i.e., current or most recent) build exited early due to too many
+                // failures, we want to process other too-many-failures builds normally to try to
+                // figure out when the too-many-failures started occurring. If the first/current
+                // build did not exit due to too many failures, then too-many-failures builds will
+                // only confuse our analysis (since they run a semi-arbitrary subset of tests), so
+                // we should just skip them entirely.
+                if (firstBuildName && !self._history[firstBuildName].tooManyFailures) {
+                    callback(true);
+                    return;
+                }
+            }
+
             ++self._testRunsSinceLastInterestingChange;
 
             var historyItem = {
@@ -148,16 +162,6 @@ LayoutTestHistoryAnalyzer.prototype = {
                     delete previousHistoryItem.tests[testName];
                 }
                 historyItem.tests[testName] = tests[testName];
-            }
-
-            if (tooManyFailures && previousHistoryItem) {
-                // Not all tests were run due to too many failures. Just assume that all the tests
-                // that failed in the last build would still have failed in this build had they been
-                // run.
-                for (var testName in previousHistoryItem.tests) {
-                    historyItem.tests[testName] = previousHistoryItem.tests[testName];
-                    delete previousHistoryItem.tests[testName];
-                }
             }
 
             var previousUnexplainedFailuresCount = previousBuildName ? Object.keys(self._history[previousBuildName].tests).length : 0;

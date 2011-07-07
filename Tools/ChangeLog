@@ -1,5 +1,25 @@
 2011-07-07  Adam Roben  <aroben@apple.com>
 
+        Completely ignore too-many-failures builds in TestFailures in most circumstances
+
+        Because a semi-arbitrary subset of tests are run in a too-many-failures build, we can't
+        really use them to perform regression analysis. The only time we want to pay attention to
+        too-many-failures builds is when we're trying to explain when the current bout of
+        too-many-failures started.
+
+        Fixes <http://webkit.org/b/64106> TestFailures page sometimes claims a test started failing
+        in a build that didn't even run it (because it exited early due to too many failues)
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer.prototype._incorporateBuildHistory): Removed old, broken
+        too-many-failures handling that would cause us to blame builds that didn't even run a given
+        test for breaking it. Instead, skip over all too-many-failures builds unless the most recent
+        build was itself a too-many-failures build.
+
+2011-07-07  Adam Roben  <aroben@apple.com>
+
         Teach webkitpy's Checkout class to use commit-log-editor to create commit messages
 
         Fixes <http://webkit.org/b/26755> webkit-patch's commit messages are less readable than
