@@ -166,40 +166,59 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
     if (element()->disabled() || element()->readOnly())
         return;
     const String& key = event->keyIdentifier();
-    if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
-        return;
 
-    ExceptionCode ec;
+    double current = parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+    ASSERT(isfinite(current));
+
+    double step, bigStep;
     if (equalIgnoringCase(element()->fastGetAttribute(stepAttr), "any")) {
-        double min = minimum();
-        double max = maximum();
         // FIXME: We can't use stepUp() for the step value "any". So, we increase
         // or decrease the value by 1/100 of the value range. Is it reasonable?
-        double step = (max - min) / 100;
-        double current = parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
-        ASSERT(isfinite(current));
-        // Stepping-up and -down for step="any" are special cases for type="range" from renderer for convenient.
-        // No stepping normally for step="any". They cannot be handled by stepUp()/stepDown()/stepUpFromRenderer().
-        // So calculating values stepped-up or -down here.
-        double newValue;
-        if (key == "Up" || key == "Right") {
-            newValue = current + step;
-            if (newValue > max)
-                newValue = max;
-        } else {
-            newValue = current - step;
-            if (newValue < min)
-                newValue = min;
-        }
-        if (newValue != current) {
-            setValueAsNumber(newValue, ec);
-            element()->dispatchFormControlChangeEvent();
-        }
+        step = (maximum() - minimum()) / 100;
+        bigStep = step * 10;
     } else {
-        int stepMagnification = (key == "Up" || key == "Right") ? 1 : -1;
-        // Reasonable stepping-up/-down by stepUpFromRenderer() unless step="any"
-        element()->stepUpFromRenderer(stepMagnification);
+        if (!element()->getAllowedValueStep(&step))
+            ASSERT_NOT_REACHED();
+
+        bigStep = (maximum() - minimum()) / 10;
+        if (bigStep < step)
+            bigStep = step;
     }
+
+    bool isVertical = false;
+    if (element()->renderer()) {
+        ControlPart part = element()->renderer()->style()->appearance();
+        isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
+    }
+
+    double newValue;
+    if (key == "Up")
+        newValue = current + step;
+    else if (key == "Down")
+        newValue = current - step;
+    else if (key == "Left")
+        newValue = isVertical ? current + step : current - step;
+    else if (key == "Right")
+        newValue = isVertical ? current - step : current + step;
+    else if (key == "PageUp")
+        newValue = current + bigStep;
+    else if (key == "PageDown")
+        newValue = current - bigStep;
+    else if (key == "Home")
+        newValue = isVertical ? maximum() : minimum();
+    else if (key == "End")
+        newValue = isVertical ? minimum() : maximum();
+    else
+        return; // Did not match any key binding.
+
+    newValue = StepRange(element()).clampValue(newValue);
+
+    if (newValue != current) {
+        ExceptionCode ec;
+        setValueAsNumber(newValue, ec);
+        element()->dispatchFormControlChangeEvent();
+    }
+
     event->setDefaultHandled();
 }
 

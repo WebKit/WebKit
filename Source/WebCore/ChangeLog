@@ -1,3 +1,18 @@
+2011-07-07  Shinya Kawanaka  <shinyak@google.com>
+
+        Added more key bindings for input[type=range].
+        https://bugs.webkit.org/show_bug.cgi?id=52262
+
+        Added PageUp/PageDown/Home/End key bindings for input[type=range].
+        PageUp/PageDown change value by about 10%.
+        Home/End change value to minimum/maximum.
+
+        Reviewed by Kent Tamura.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+          Added key bindings.
+
 2011-07-07  Oleg Romashin  <romaxa@gmail.com>
 
         Fix InspectorInstrumentation compilation.
