@@ -1,3 +1,26 @@
+2011-07-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Searching on the Network panel doesn't do anything?
+        https://bugs.webkit.org/show_bug.cgi?id=55489
+
+        This is initial implementation of search in Network panel.
+        It is pretty simple search only for names and paths.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype.refresh):
+        (WebInspector.NetworkPanel.prototype._reset):
+        (WebInspector.NetworkPanel.prototype._updateOffscreenRows):
+        (WebInspector.NetworkPanel.prototype._matchResource):
+        (WebInspector.NetworkPanel.prototype._clearSearchMatchedList):
+        (WebInspector.NetworkPanel.prototype._highlightNthMatchedResource):
+        (WebInspector.NetworkPanel.prototype.performSearch):
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        * inspector/front-end/utilities.js:
+        (String.prototype.escapeHTML):
+        ():
+
 2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resources panel shows only one resource when multiple resources have the same url.

@@ -49,6 +49,9 @@ WebInspector.NetworkPanel = function()
     this._mainResourceLoadTime = -1;
     this._mainResourceDOMContentTime = -1;
     this._hiddenCategories = {};
+    this._matchedResources = [];
+    this._matchedResourcesMap = {};
+    this._currentMatchedResourceIndex = -1;
 
     this._categories = WebInspector.resourceCategories;
 
@@ -291,6 +294,8 @@ WebInspector.NetworkPanel.prototype = {
         this._dataGrid.sortNodes(sortingFunction, this._dataGrid.sortOrder === "descending");
         this._timelineSortSelector.selectedIndex = 0;
         this._updateOffscreenRows();
+
+        this.performSearch(null, true);
     },
 
     _sortByTimeline: function()
@@ -416,6 +421,7 @@ WebInspector.NetworkPanel.prototype = {
             selectMultiple = true;
 
         this._filter(e.target, selectMultiple);
+        this.performSearch(null, true);
     },
 
     _filter: function(target, selectMultiple)
@@ -667,6 +673,9 @@ WebInspector.NetworkPanel.prototype = {
 
             if (this.calculator.updateBoundaries(resource))
                 boundariesChanged = true;
+
+            if (!node.isFilteredOut())
+                this._updateHighlightIfMatched(resource);
         }
 
         if (boundariesChanged) {
@@ -697,6 +706,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         this._popoverHelper.hidePopup();
         this._closeVisibleResource();
+        this._clearSearchMatchedList();
 
         this._toggleGridMode();
 
@@ -1100,6 +1110,124 @@ WebInspector.NetworkPanel.prototype = {
             }
             unfilteredRowIndex++;
         }
+    },
+
+    _matchResource: function(resource)
+    {
+        if (!this._searchRegExp)
+            return -1;
+
+        if ((!resource.displayName || !resource.displayName.match(this._searchRegExp)) && (!resource.path || !resource.path.match(this._searchRegExp)))
+            return -1;
+
+        if (resource.identifier in this._matchedResourcesMap)
+            return this._matchedResourcesMap[resource.identifier];
+
+        var matchedResourceIndex = this._matchedResources.length;
+        this._matchedResourcesMap[resource.identifier] = matchedResourceIndex;
+        this._matchedResources.push(resource.identifier);
+
+        return matchedResourceIndex;
+    },
+
+    _clearSearchMatchedList: function()
+    {
+        this._matchedResources = [];
+        this._matchedResourcesMap = {};
+        this._highlightNthMatchedResource(-1, false);
+    },
+
+    _updateHighlightIfMatched: function(resource)
+    {
+        var matchedResourceIndex = this._matchResource(resource);
+        if (matchedResourceIndex === -1)
+            return;
+
+        WebInspector.searchController.updateSearchMatchesCount(this._matchedResources.length, this);
+
+        if (this._currentMatchedResourceIndex !== -1 && this._currentMatchedResourceIndex !== matchedResourceIndex)
+            return;
+
+        this._highlightNthMatchedResource(matchedResourceIndex, false);
+    },
+
+    _highlightNthMatchedResource: function(matchedResourceIndex, reveal)
+    {
+        if (this._highlightedSubstringChanges) {
+            revertDomChanges(this._highlightedSubstringChanges);
+            this._highlightedSubstringChanges = null;
+        }
+
+        if (matchedResourceIndex === -1) {
+            this._currentMatchedResourceIndex = matchedResourceIndex;
+            return;
+        }
+
+        var resource = this._resourcesById[this._matchedResources[matchedResourceIndex]];
+        if (!resource)
+            return;
+
+        var nameMatched = resource.displayName && resource.displayName.match(this._searchRegExp);
+        var pathMatched = resource.path && resource.path.match(this._searchRegExp);
+        if (!nameMatched && pathMatched && !this._largerResourcesButton.toggled)
+            this._toggleLargerResources();
+
+        var node = this._resourceGridNode(resource);
+        if (node) {
+            this._highlightedSubstringChanges = node._highlightMatchedSubstring(this._searchRegExp);
+            if (reveal)
+                node.reveal();
+            this._currentMatchedResourceIndex = matchedResourceIndex;
+        }
+    },
+
+    performSearch: function(searchQuery, sortOrFilterApplied)
+    {
+        var newMatchedResourceIndex = 0;
+        var currentMatchedResourceId;
+        if (this._currentMatchedResourceIndex !== -1)
+            currentMatchedResourceId = this._matchedResources[this._currentMatchedResourceIndex];
+
+        if (!sortOrFilterApplied)
+            this._searchRegExp = createSearchRegex(searchQuery);
+
+        this._clearSearchMatchedList();
+
+        var childNodes = this._dataGrid.dataTableBody.childNodes;
+        var resourceNodes = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1); // drop the filler row.
+
+        for (var i = 0; i < resourceNodes.length; ++i) {
+            var dataGridNode = this._dataGrid.dataGridNodeFromNode(resourceNodes[i]);
+            if (dataGridNode.isFilteredOut())
+                continue;
+
+            if (this._matchResource(dataGridNode._resource) !== -1 && dataGridNode._resource.identifier === currentMatchedResourceId)
+                newMatchedResourceIndex = this._matchedResources.length - 1;
+        }
+
+        this._highlightNthMatchedResource(newMatchedResourceIndex, !sortOrFilterApplied);
+
+        WebInspector.searchController.updateSearchMatchesCount(this._matchedResources.length, this);
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this._matchedResources.length)
+            return;
+        this._highlightNthMatchedResource((this._currentMatchedResourceIndex + this._matchedResources.length - 1) % this._matchedResources.length, true);
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this._matchedResources.length)
+            return;
+        this._highlightNthMatchedResource((this._currentMatchedResourceIndex + 1) % this._matchedResources.length, true);
+    },
+
+    searchCanceled: function()
+    {
+        this._clearSearchMatchedList();
+        WebInspector.searchController.updateSearchMatchesCount(0, this);
     }
 }
 
@@ -1419,6 +1547,14 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._panel._showResource(this._resource);
         WebInspector.DataGridNode.prototype.select.apply(this, arguments);
+    },
+
+    _highlightMatchedSubstring: function(regexp)
+    {
+        var domChanges = [];
+        var matchInfo = this._nameCell.textContent.match(regexp);
+        highlightSearchResult(this._nameCell, matchInfo.index, matchInfo[0].length, domChanges);
+        return domChanges;
     },
 
     _openInNewTab: function()

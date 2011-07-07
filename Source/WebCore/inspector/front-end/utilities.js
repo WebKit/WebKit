@@ -443,7 +443,7 @@ String.prototype.escapeForRegExp = function()
 
 String.prototype.escapeHTML = function()
 {
-    return this.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    return this.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); //" doublequotes just for editor
 }
 
 String.prototype.collapseWhitespace = function()
@@ -956,9 +956,9 @@ function isEnterKey(event) {
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
 
-function highlightSearchResult(element, offset, length)
+function highlightSearchResult(element, offset, length, domChanges)
 {
-    var result = highlightSearchResults(element, [{offset: offset, length: length }]);
+    var result = highlightSearchResults(element, [{offset: offset, length: length }], domChanges);
     return result.length ? result[0] : null;
 }
 
@@ -1047,6 +1047,37 @@ function highlightSearchResults(element, resultRanges, changes)
     }
 
     return highlightNodes;
+}
+
+function applyDomChanges(domChanges)
+{
+    for (var i = 0, size = domChanges.length; i < size; ++i) {
+        var entry = domChanges[i];
+        switch (entry.type) {
+        case "added":
+            entry.parent.insertBefore(entry.node, entry.nextSibling);
+            break;
+        case "changed":
+            entry.node.textContent = entry.newText;
+            break;
+        }
+    }
+}
+
+function revertDomChanges(domChanges)
+{
+    for (var i = 0, size = domChanges.length; i < size; ++i) {
+        var entry = domChanges[i];
+        switch (entry.type) {
+        case "added":
+            if (entry.node.parentElement)
+                entry.node.parentElement.removeChild(entry.node);
+            break;
+        case "changed":
+            entry.node.textContent = entry.oldText;
+            break;
+        }
+    }
 }
 
 function createSearchRegex(query, extraFlags)
