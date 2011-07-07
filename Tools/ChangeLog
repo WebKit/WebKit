@@ -1,3 +1,20 @@
+2011-07-07  Adam Roben  <aroben@apple.com>
+
+        Extract commit-log-editor's commit-message-generation code into a separate function
+
+        As a bonus, we now skip a bunch of work in the case where we are generating a commit message
+        for staged git changes.
+
+        Prep work for fixing <http://webkit.org/b/26755> webkit-patch's commit messages are less
+        readable than commit-log-editor's
+
+        Reviewed by David Kilzer.
+
+        * Scripts/commit-log-editor: Moved the default definition of $endl up toward the top of the
+        file so that it will be defined even if we aren't operating on an existing log message.
+        Moved a bunch of top-level code to generate the commit message from here...
+        (createCommitMessage): ...to here.
+
 2011-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Open links in a new window when clicking with the middle button in MiniBrowser
