@@ -332,6 +332,9 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
 TreeOutline.prototype.treeElementFromPoint = function(x, y)
 {
     var node = this._childrenListNode.ownerDocument.elementFromPoint(x, y);
+    if (!node)
+        return null;
+
     var listNode = node.enclosingNodeOrSelfWithNodeNameInArray(["ol", "li"]);
     if (listNode)
         return listNode.parentTreeElement || listNode.treeElement;

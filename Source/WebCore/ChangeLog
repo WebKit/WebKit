@@ -1,3 +1,18 @@
+2011-07-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: prevent default action during drag'n'drop in the Elements panel.
+        https://bugs.webkit.org/show_bug.cgi?id=64081
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._ondragstart):
+        (WebInspector.ElementsTreeOutline.prototype._ondragover):
+        (WebInspector.ElementsTreeOutline.prototype._ondragend):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.treeElementFromPoint):
+
 2011-07-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Move remaining enums out of SVG*Element classes

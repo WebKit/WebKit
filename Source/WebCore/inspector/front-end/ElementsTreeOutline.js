@@ -36,6 +36,7 @@ WebInspector.ElementsTreeOutline = function() {
     this.element.addEventListener("dragstart", this._ondragstart.bind(this), false);
     this.element.addEventListener("dragover", this._ondragover.bind(this), false);
     this.element.addEventListener("dragleave", this._ondragleave.bind(this), false);
+    this.element.addEventListener("drop", this._ondrop.bind(this), false);
     this.element.addEventListener("dragend", this._ondragend.bind(this), false);
 
     TreeOutline.call(this, this.element);
@@ -275,7 +276,7 @@ WebInspector.ElementsTreeOutline.prototype = {
             return false;
 
         event.dataTransfer.setData("text/plain", treeElement.listItemElement.textContent);
-        event.dataTransfer.effectAllowed = "copy";
+        event.dataTransfer.effectAllowed = "copyMove";
         this._nodeBeingDragged = treeElement.representedObject;
 
         WebInspector.highlightDOMNode(0);
@@ -285,33 +286,8 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _ondragover: function(event)
     {
-        this._clearDragOverTreeElementMarker();
-
         if (!this._nodeBeingDragged)
-            return;
-        
-        var treeElement = this._treeElementFromEvent(event);
-        if (!this._isValidDragSourceOrTarget(treeElement))
-            return;
-
-        var node = treeElement.representedObject;
-        while (node) {
-            if (node === this._nodeBeingDragged)
-                return;
-            node = node.parentNode;
-        }
-
-        treeElement.updateSelection();
-        treeElement.listItemElement.addStyleClass("elements-drag-over");
-        this._dragOverTreeElement = treeElement;
-    },
-
-    _ondragleave: function(event)
-    {
-        this._clearDragOverTreeElementMarker();
-
-        if (!this._nodeBeingDragged)
-            return;
+            return false;
         
         var treeElement = this._treeElementFromEvent(event);
         if (!this._isValidDragSourceOrTarget(treeElement))
@@ -320,13 +296,23 @@ WebInspector.ElementsTreeOutline.prototype = {
         var node = treeElement.representedObject;
         while (node) {
             if (node === this._nodeBeingDragged)
-                return;
+                return false;
             node = node.parentNode;
         }
 
         treeElement.updateSelection();
         treeElement.listItemElement.addStyleClass("elements-drag-over");
         this._dragOverTreeElement = treeElement;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        return false;
+    },
+
+    _ondragleave: function(event)
+    {
+        this._clearDragOverTreeElementMarker();
+        event.preventDefault();
+        return false;
     },
 
     _isValidDragSourceOrTarget: function(treeElement)
@@ -347,17 +333,19 @@ WebInspector.ElementsTreeOutline.prototype = {
         return true;
     },
 
-    _ondragend: function(event)
+    _ondrop: function(event)
     {
-        if (this._nodeBeingDragged && this._dragOverTreeElement) {
+        event.preventDefault();
+        var treeElement = this._treeElementFromEvent(event);
+        if (this._nodeBeingDragged && treeElement) {
             var parentNode;
             var anchorNode;
 
-            if (this._dragOverTreeElement._elementCloseTag) {
+            if (treeElement._elementCloseTag) {
                 // Drop onto closing tag -> insert as last child.
-                parentNode = this._dragOverTreeElement.representedObject;
+                parentNode = treeElement.representedObject;
             } else {
-                var dragTargetNode = this._dragOverTreeElement.representedObject;
+                var dragTargetNode = treeElement.representedObject;
                 parentNode = dragTargetNode.parentNode;
                 anchorNode = dragTargetNode;
             }
@@ -374,7 +362,13 @@ WebInspector.ElementsTreeOutline.prototype = {
             }
             this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
         }
-        
+
+        delete this._nodeBeingDragged;
+    },
+
+    _ondragend: function(event)
+    {
+        event.preventDefault();
         this._clearDragOverTreeElementMarker();
         delete this._nodeBeingDragged;
     },
