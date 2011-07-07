@@ -1,5 +1,26 @@
 2011-07-07  Adam Roben  <aroben@apple.com>
 
+        Make Checkout use SCM's Executive instead of conjuring up its own
+
+        This will improve integration with the rest of webkitpy, particularly when invoked via
+        webkit-patch.
+
+        Fixes <http://webkit.org/b/64115> REGRESSION (r90564): webkitpy's Checkout class uses
+        Executive inappropriately
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.commit_message_for_this_commit): Use SCM.run instead of creating an Executive for
+        our own use. SCM might have some super-special Executive that it uses under the covers, and
+        we want to use it, too!
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CommitMessageForThisCommitTest.test_commit_message_for_this_commit): Mock the SCM.run
+        method to call through to Executive.run_command.
+
+2011-07-07  Adam Roben  <aroben@apple.com>
+
         Make Term/ReadKey.pm an optional dependency of commit-log-editor
 
         When Term/ReadKey.pm isn't present, the --regenerate-log switch will be non-functional.

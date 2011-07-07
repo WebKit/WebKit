@@ -35,7 +35,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.checkout.deps import DEPS
 from webkitpy.common.memoized import memoized
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -120,7 +120,7 @@ class Checkout(object):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                               "All changes require a ChangeLog.  See:\n %s" % urls.contribution_guidelines)
 
-        message_text = Executive().run_command([self._scm.script_path('commit-log-editor'), '--print-log'] + changelog_paths, return_stderr=False)
+        message_text = self._scm.run([self._scm.script_path('commit-log-editor'), '--print-log'] + changelog_paths, return_stderr=False)
         return CommitMessage(message_text.splitlines())
 
     def recent_commit_infos_for_files(self, paths):

@@ -37,7 +37,7 @@ import unittest
 from .checkout import Checkout
 from .changelog import ChangeLogEntry
 from .scm import detect_scm_system, CommitMessage
-from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.thirdparty.mock import Mock
 
 
@@ -121,9 +121,15 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
     def test_commit_message_for_this_commit(self):
         scm = Mock()
 
+        def mock_run(*args, **kwargs):
+            # Note that we use a real Executive here, not a MockExecutive, so we can test that we're
+            # invoking commit-log-editor correctly.
+            return Executive().run_command(*args, **kwargs)
+
         def mock_script_path(script):
             return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', script))
 
+        scm.run = mock_run
         scm.script_path = mock_script_path
 
         checkout = Checkout(scm)
