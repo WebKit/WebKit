@@ -1,3 +1,26 @@
+2011-07-06  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: remove --use-apache from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=63358
+
+        Reviewed by Adam Barth.
+
+        Re-land the fix in bug 63358 - the prior fix was flawed in that
+        we were trying to start the http server during check_sys_deps()
+        but not actually setting up the environment properly. This
+        broken prior to this change, but exposed by it, since the patch
+        changes the chromium port to call the base class's checks.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
         Move view-related code out of layout_package and into views

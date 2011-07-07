@@ -55,6 +55,7 @@ def os_version(windows_version=None):
 
 class ChromiumWinPort(chromium.ChromiumPort):
     """Chromium Win implementation of the Port class."""
+
     # FIXME: Figure out how to unify this with base.TestConfiguration.all_systems()?
     SUPPORTED_VERSIONS = ('xp', 'vista', 'win7')
 
@@ -129,7 +130,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
             return p
         return self._filesystem.join(self.path_from_webkit_base(), 'Source', 'WebKit', 'chromium', *comps)
 
-    def _default_to_apache(self):
+    def _uses_apache(self):
         return False
 
     def _lighttpd_path(self, *comps):

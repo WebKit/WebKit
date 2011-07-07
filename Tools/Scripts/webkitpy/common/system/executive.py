@@ -399,6 +399,7 @@ class Executive(object):
     def run_command(self,
                     args,
                     cwd=None,
+                    env=None,
                     input=None,
                     error_handler=None,
                     return_exit_code=False,
@@ -418,6 +419,7 @@ class Executive(object):
                              stdout=self.PIPE,
                              stderr=stderr,
                              cwd=cwd,
+                             env=env,
                              close_fds=self._should_close_fds())
         output = process.communicate(string_to_communicate)[0]
 
