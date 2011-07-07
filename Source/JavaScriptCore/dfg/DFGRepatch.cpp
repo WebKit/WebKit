@@ -56,6 +56,44 @@ static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& st
         repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.u.unset.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
 }
 
+static void emitRestoreScratch(MacroAssembler& stubJit, bool needToRestoreScratch, GPRReg scratchGPR, MacroAssembler::Jump& success, MacroAssembler::Jump& fail, MacroAssembler::Jump failureCase1, MacroAssembler::Jump failureCase2)
+{
+    if (needToRestoreScratch) {
+        stubJit.pop(scratchGPR);
+        
+        success = stubJit.jump();
+        
+        // link failure cases here, so we can pop scratchGPR, and then jump back.
+        failureCase1.link(&stubJit);
+        failureCase2.link(&stubJit);
+        
+        stubJit.pop(scratchGPR);
+        
+        fail = stubJit.jump();
+        return;
+    }
+    
+    success = stubJit.jump();
+}
+
+static void linkRestoreScratch(LinkBuffer& patchBuffer, bool needToRestoreScratch, StructureStubInfo& stubInfo, MacroAssembler::Jump& success, MacroAssembler::Jump& fail, MacroAssembler::Jump failureCase1, MacroAssembler::Jump failureCase2)
+{
+    CodeLocationLabel slowCaseBegin = stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase);
+    
+    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
+        
+    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
+    
+    if (needToRestoreScratch) {
+        patchBuffer.link(fail, slowCaseBegin);
+        return;
+    }
+    
+    // link failure cases directly back to normal path
+    patchBuffer.link(failureCase1, slowCaseBegin);
+    patchBuffer.link(failureCase2, slowCaseBegin);
+}
+            
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     // FIXME: Write a test that proves we need to check for recursion here just
@@ -88,34 +126,11 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
         MacroAssembler::Jump success, fail;
         
-        if (needToRestoreScratch) {
-            stubJit.pop(scratchGPR);
-            
-            success = stubJit.jump();
-            
-            // link failure cases here, so we can pop scratchGPR, and then jump back.
-            failureCase1.link(&stubJit);
-            failureCase2.link(&stubJit);
-            
-            stubJit.pop(scratchGPR);
-            
-            fail = stubJit.jump();
-        } else
-            success = stubJit.jump();
+        emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCase1, failureCase2);
         
         LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock->executablePool());
         
-        CodeLocationLabel slowCaseBegin = stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase);
-        
-        patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
-        
-        if (needToRestoreScratch)
-            patchBuffer.link(fail, slowCaseBegin);
-        else {
-            // link failure cases directly back to normal path
-            patchBuffer.link(failureCase1, slowCaseBegin);
-            patchBuffer.link(failureCase2, slowCaseBegin);
-        }
+        linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCase1, failureCase2);
         
         CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
         stubInfo.stubRoutine = entryLabel;
@@ -150,7 +165,73 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         return true;
     }
     
-    // FIXME: should support prototype & chain accesses!
+    if (structure->isDictionary())
+        return false;
+    
+    // Optimize accesses on the direct prototype
+    if (slot.slotBase() == structure->prototypeForLookup(exec)) {
+        if (slot.cachedPropertyType() != PropertySlot::Value)
+            return false;
+        
+        ASSERT(slot.slotBase().isObject());
+        
+        JSObject* slotBaseObject = asObject(slot.slotBase());
+        size_t offset = slot.cachedOffset();
+        
+        if (slotBaseObject->structure()->isDictionary()) {
+            slotBaseObject->flattenDictionaryObject(*globalData);
+            offset = slotBaseObject->structure()->get(*globalData, propertyName);
+        }
+        
+        ASSERT(!structure->isDictionary());
+        ASSERT(!slotBaseObject->structure()->isDictionary());
+        
+        ASSERT(asObject(structure->prototypeForLookup(exec)) == slotBaseObject);
+        
+        GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+        GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
+        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.u.unset.scratchGPR);
+        bool needToRestoreScratch = false;
+        
+        MacroAssembler stubJit;
+        
+        if (scratchGPR == InvalidGPRReg) {
+            scratchGPR = JITCodeGenerator::selectScratchGPR(baseGPR, resultGPR);
+            stubJit.push(scratchGPR);
+            needToRestoreScratch = true;
+        }
+        
+        MacroAssembler::Jump failureCase1 = stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(structure));
+        
+        stubJit.move(MacroAssembler::TrustedImmPtr(slotBaseObject), scratchGPR);
+        MacroAssembler::Jump failureCase2 = stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(scratchGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(slotBaseObject->structure()));
+        
+        if (slotBaseObject->structure()->isUsingInlineStorage())
+            stubJit.loadPtr(MacroAssembler::Address(scratchGPR, JSObject::offsetOfInlineStorage() + offset * sizeof(JSValue)), resultGPR);
+        else
+            stubJit.loadPtr(slotBaseObject->addressOfPropertyAtOffset(offset), resultGPR);
+        
+        MacroAssembler::Jump success, fail;
+        
+        emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCase1, failureCase2);
+        
+        LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock->executablePool());
+        
+        linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCase1, failureCase2);
+        
+        CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
+        stubInfo.stubRoutine = entryLabel;
+        
+        CodeLocationLabel hotPathBegin = stubInfo.hotPathBegin;
+        RepatchBuffer repatchBuffer(codeBlock);
+        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), entryLabel);
+        repatchBuffer.relink(stubInfo.callReturnLocation, operationGetById);
+        
+        stubInfo.initGetByIdProto(*globalData, codeBlock->ownerExecutable(), structure, slotBaseObject->structure());
+        return true;
+    }
+    
+    // FIXME: should support chain accesses!
     return false;
 }
 

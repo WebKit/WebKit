@@ -1,5 +1,19 @@
 2011-07-07  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT does not implement get_by_id prototype caching.
+        https://bugs.webkit.org/show_bug.cgi?id=64077
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::emitRestoreScratch):
+        (JSC::DFG::linkRestoreScratch):
+        (JSC::DFG::tryCacheGetByID):
+        * runtime/JSObject.h:
+        (JSC::JSObject::addressOfPropertyAtOffset):
+
+2011-07-07  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT method_check implementation does not link to optimized get_by_id
         slow path.
         https://bugs.webkit.org/show_bug.cgi?id=64073
