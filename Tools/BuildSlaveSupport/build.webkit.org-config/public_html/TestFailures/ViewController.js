@@ -36,6 +36,8 @@ function ViewController(buildbot, bugzilla, trac) {
 
 ViewController.prototype = {
     loaded: function() {
+        this._header = document.createElement('h1');
+        document.body.appendChild(this._header);
         this._mainContentElement = document.createElement('div');
         document.body.appendChild(this._mainContentElement);
         document.body.appendChild(this._domForAuxiliaryUIElements());
@@ -54,7 +56,11 @@ ViewController.prototype = {
     },
 
     _displayBuilder: function(builder) {
+        this._setTitle(builder.name);
+        this._mainContentElement.removeAllChildren();
+
         var navigationID = this._navigationID;
+
         var self = this;
         (new LayoutTestHistoryAnalyzer(builder)).start(function(data, stillFetchingData) {
             if (self._navigationID !== navigationID) {
@@ -99,11 +105,7 @@ ViewController.prototype = {
                     item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
             });
 
-            var header = document.createElement('h1');
-            header.appendChild(document.createTextNode(builder.name));
-            self._mainContentElement.innerHTML = '';
-            document.title = builder.name;
-            self._mainContentElement.appendChild(header);
+            self._mainContentElement.removeAllChildren();
             self._mainContentElement.appendChild(list);
             self._mainContentElement.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky));
 
@@ -115,15 +117,18 @@ ViewController.prototype = {
     },
 
     _displayTesters: function() {
-        var navigationID = this._navigationID;
+        this._setTitle('Testers');
+        this._mainContentElement.removeAllChildren();
 
         var list = document.createElement('ul');
+        this._mainContentElement.appendChild(list);
+
         var latestBuildInfos = [];
+        var navigationID = this._navigationID;
 
         function updateList() {
             latestBuildInfos.sort(function(a, b) { return a.tester.name.localeCompare(b.tester.name) });
-            while (list.firstChild)
-                list.removeChild(list.firstChild);
+            list.removeAllChildren();
             latestBuildInfos.forEach(function(buildInfo) {
                 var link = document.createElement('a');
                 link.href = '#/' + buildInfo.tester.name;
@@ -161,10 +166,6 @@ ViewController.prototype = {
                     });
                 });
             });
-
-            self._mainContentElement.innerHTML = '';
-            document.title = 'Testers';
-            self._mainContentElement.appendChild(list);
         });
     },
 
@@ -519,5 +520,10 @@ ViewController.prototype = {
         }));
 
         return result;
+    },
+
+    _setTitle: function(title) {
+        document.title = title;
+        this._header.textContent = title;
     },
 };

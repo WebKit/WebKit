@@ -1,5 +1,25 @@
 2011-07-07  Adam Roben  <aroben@apple.com>
 
+        Update TestFailures's title and header immediately upon navigation
+
+        Fixes <http://webkit.org/b/64125> TestFailures page seems slow to react on link clicks
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype.loaded): Create and store an h1 element for displaying the page's
+        title.
+        (ViewController.prototype._displayBuilder): Set the page's title and clear out any old
+        content immediately instead of waiting for the first set of results for the history
+        analyzer. As we receive new results from the analyzer we'll just clear out the main content
+        area and replace it with the new info.
+        (ViewController.prototype._displayTesters): Set the page's title and clear out any old
+        content immediately instead of waiting for the list of testers from the buildbot. Sprinkled
+        in a little use of our removeAllChildren helper, too.
+        (ViewController.prototype._setTitle): Added. Set's the page's title and the header text.
+
+2011-07-07  Adam Roben  <aroben@apple.com>
+
         Make Checkout use SCM's Executive instead of conjuring up its own
 
         This will improve integration with the rest of webkitpy, particularly when invoked via
