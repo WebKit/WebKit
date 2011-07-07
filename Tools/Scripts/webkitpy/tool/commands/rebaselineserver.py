@@ -34,11 +34,11 @@ import os
 import os.path
 
 from webkitpy.common import system
-from webkitpy.common.net import resultsjsonparser
+from webkitpy.common.net.resultsjsonparser import for_each_test, JSONTestResult
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.port import factory
 from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
-from webkitpy.tool.servers.rebaselineserver import RebaselineHTTPServer, STATE_NEEDS_REBASELINE
+from webkitpy.tool.servers.rebaselineserver import get_test_baselines, RebaselineHTTPServer, STATE_NEEDS_REBASELINE
 
 
 class TestConfig(object):
@@ -58,36 +58,42 @@ class RebaselineServer(AbstractLocalServerCommand):
 
     server = RebaselineHTTPServer
 
+    def _gather_baselines(self, results_json):
+        # Rebaseline server and it's associated JavaScript expected the tests subtree to
+        # be key-value pairs instead of hierarchical.
+        # FIXME: make the rebaseline server use the hierarchical tree.
+        new_tests_subtree = {}
+
+        def gather_baselines_for_test(test_name, result_dict):
+            result = JSONTestResult(test_name, result_dict)
+            if result.did_pass_or_run_as_expected():
+                return
+            result_dict['state'] = STATE_NEEDS_REBASELINE
+            result_dict['baselines'] = get_test_baselines(test_name, self._test_config)
+            new_tests_subtree[test_name] = result_dict
+
+        for_each_test(results_json['tests'], gather_baselines_for_test)
+        results_json['tests'] = new_tests_subtree
+
     def _prepare_config(self, options, args, tool):
         results_directory = args[0]
         filesystem = system.filesystem.FileSystem()
         scm = self._tool.scm()
 
         print 'Parsing unexpected_results.json...'
-        results_json_path = filesystem.join(results_directory, 'unexpected_results.json')
+        results_json_path = filesystem.join(results_directory, 'full_results.json')
         results_json = json_results_generator.load_json(filesystem, results_json_path)
 
         port = factory.get()
         layout_tests_directory = port.layout_tests_dir()
         platforms = filesystem.listdir(filesystem.join(layout_tests_directory, 'platform'))
-        test_config = TestConfig(port, layout_tests_directory, results_directory, platforms, filesystem, scm)
+        self._test_config = TestConfig(port, layout_tests_directory, results_directory, platforms, filesystem, scm)
 
         print 'Gathering current baselines...'
-        # Rebaseline server and it's associated JavaScript expected the tests subtree to
-        # be key-value pairs instead of hierarchical.
-        # FIXME: make the rebaseline server use the hierarchical tree.
-        new_tests_subtree = {}
-
-        def gather_baselines(test, result):
-            result['state'] = STATE_NEEDS_REBASELINE
-            result['baselines'] = _get_test_baselines(test, test_config)
-            new_tests_subtree[test] = result
-
-        resultsjsonparser.for_each_test(results_json['tests'], gather_baselines)
-        results_json['tests'] = new_tests_subtree
+        self._gather_baselines(results_json)
 
         return {
-            'test_config': test_config,
+            'test_config': self._test_config,
             "results_json": results_json,
             "platforms_json": {
                 'platforms': platforms,

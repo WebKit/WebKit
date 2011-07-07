@@ -72,7 +72,7 @@ def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, 
         test_config.results_directory, test_directory)
 
     # If requested, move current baselines out
-    current_baselines = _get_test_baselines(test_file, test_config)
+    current_baselines = get_test_baselines(test_file, test_config)
     if baseline_target in current_baselines and baseline_move_to != 'none':
         log('  Moving current %s baselines to %s' %
             (baseline_target, baseline_move_to))
@@ -160,7 +160,7 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
     return True
 
 
-def _get_test_baselines(test_file, test_config):
+def get_test_baselines(test_file, test_config):
     # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
     class AllPlatformsPort(WebKitPort):
         def __init__(self):

@@ -28,9 +28,12 @@
 
 import unittest
 
+from webkitpy.common.net import resultsjsonparser_unittest
 from webkitpy.common.system import filesystem_mock
+from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
 from webkitpy.layout_tests.port.webkit import WebKitPort
-from webkitpy.tool.commands.rebaselineserver import TestConfig
+import webkitpy.thirdparty.simplejson as simplejson
+from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
 from webkitpy.tool.mocktool import MockSCM
 from webkitpy.tool.servers import rebaselineserver
 
@@ -202,6 +205,15 @@ class RebaselineTestTest(unittest.TestCase):
                 '    Updated image-expected.png',
             ])
 
+    def test_gather_baselines(self):
+        example_json = resultsjsonparser_unittest.ResultsJSONParserTest._example_unexpected_results_json
+        results_json = simplejson.loads(strip_json_wrapper(example_json))
+        server = RebaselineServer()
+        server._test_config = get_test_config()
+        server._gather_baselines(results_json)
+        self.assertEqual(results_json['tests']['svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html']['state'], 'needs_rebaseline')
+        self.assertFalse('prototype-chocolate.html' in results_json['tests'])
+
     def _assertRebaseline(self, test_files, results_files, test_name, baseline_target, baseline_move_to, expected_success, expected_log):
         log = []
         test_config = get_test_config(test_files, results_files)
@@ -274,7 +286,7 @@ class GetBaselinesTest(unittest.TestCase):
             expected_baselines={'base': {'.txt': True}})
 
     def _assertBaselines(self, test_files, test_name, expected_baselines):
-        actual_baselines = rebaselineserver._get_test_baselines(test_name, get_test_config(test_files))
+        actual_baselines = rebaselineserver.get_test_baselines(test_name, get_test_config(test_files))
         self.assertEqual(expected_baselines, actual_baselines)
 
 

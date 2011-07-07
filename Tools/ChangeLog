@@ -1,5 +1,20 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Wean rebaseline-server off unexpected_results.json
+        https://bugs.webkit.org/show_bug.cgi?id=64063
+
+        Reviewed by Eric Seidel.
+
+        In the process of changing this code to use full_results.json, I
+        noticed that the code was broken (because it wasn't tested).  This
+        patch also adds test coverage for the broken code.
+
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Wean resultsjsonparser off unexpected_results.json
         https://bugs.webkit.org/show_bug.cgi?id=64061
 
