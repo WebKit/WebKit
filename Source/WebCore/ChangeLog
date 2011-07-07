@@ -1,3 +1,14 @@
+2011-07-07  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9737435> Re-enable -webkit-column-break-inside: avoid
+        https://bugs.webkit.org/show_bug.cgi?id=64102
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForUnsplittableChild): Treat the child as unsplittable if
+        '-webkit-column-break-inside: avoid' was specified.
+
 2011-07-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: visual regressions in network panel
