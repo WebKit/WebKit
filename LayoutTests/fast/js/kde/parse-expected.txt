@@ -20,9 +20,9 @@ PASS var f÷; threw exception SyntaxError: Invalid character '\u0247'.
 PASS var \u0061 = 102; a is 102
 PASS var f\u0030 = 103; f0 is 103
 PASS var \u00E9\u0100\u02AF\u0388\u18A8 = 104; \u00E9\u0100\u02AF\u0388\u18A8; is 104
-PASS var f\u00F7; threw exception SyntaxError: Expected an identifier but found 'f\u00F7' instead.
-PASS var \u0030; threw exception SyntaxError: Expected an identifier but found '\u0030' instead.
-PASS var test = { }; test.i= 0; test.i\u002b= 1; test.i; threw exception SyntaxError: Expected an identifier but found 'i\u002b' instead.
+PASS var f\u00F7; threw exception SyntaxError: Unrecognized token 'f\u00F7'.
+PASS var \u0030; threw exception SyntaxError: Unrecognized token '\u0030'.
+PASS var test = { }; test.i= 0; test.i\u002b= 1; test.i; threw exception SyntaxError: Unrecognized token 'i\u002b'.
 PASS var test = { }; test.i= 0; test.i+= 1; test.i; is 1
 PASS successfullyParsed is true
 

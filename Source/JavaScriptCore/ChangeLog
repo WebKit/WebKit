@@ -1,3 +1,18 @@
+2011-07-06  Juan C. Montemayor  <jmont@apple.com>
+
+        ASSERT_NOT_REACHED running test 262
+        https://bugs.webkit.org/show_bug.cgi?id=63951
+        
+        Added a case to the switch statement where the code was failing. Fixed
+        some logic as well that gave faulty error messages.
+
+        Reviewed by Gavin Barraclough.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::getTokenName):
+        (JSC::JSParser::updateErrorMessageSpecialCase):
+        (JSC::JSParser::updateErrorMessage):
+
 2011-07-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT implementation of op_call results in regressions on sunspider

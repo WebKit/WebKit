@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Expected an identifier but found '"22"' instead
+CONSOLE MESSAGE: line 80: SyntaxError: Unexpected string "22"
 S12.14_A16_T13
 
 PASS Expected parsing failure

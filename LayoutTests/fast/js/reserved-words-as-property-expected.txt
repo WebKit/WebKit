@@ -155,12 +155,12 @@ PASS try{}catch(new){} threw exception SyntaxError: Expected an identifier but f
 PASS (function(){try{}catch(new){}}) threw exception SyntaxError: Expected an identifier but found 'new' instead.
 PASS function new(){} threw exception SyntaxError: Unexpected token 'new'.
 PASS (function(){function new(){}}) threw exception SyntaxError: Unexpected token 'new'.
-PASS var return threw exception SyntaxError: Expected an identifier but found 'return' instead.
-PASS (function(){var return}) threw exception SyntaxError: Expected an identifier but found 'return' instead.
-PASS function g(return){} threw exception SyntaxError: Expected an identifier but found 'return' instead.
-PASS (function(){function g(return){}}) threw exception SyntaxError: Expected an identifier but found 'return' instead.
-PASS try{}catch(return){} threw exception SyntaxError: Expected an identifier but found 'return' instead.
-PASS (function(){try{}catch(return){}}) threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS var return threw exception SyntaxError: Return statements are only valid inside functions.
+PASS (function(){var return}) threw exception SyntaxError: Return statements are only valid inside functions.
+PASS function g(return){} threw exception SyntaxError: Return statements are only valid inside functions.
+PASS (function(){function g(return){}}) threw exception SyntaxError: Return statements are only valid inside functions.
+PASS try{}catch(return){} threw exception SyntaxError: Return statements are only valid inside functions.
+PASS (function(){try{}catch(return){}}) threw exception SyntaxError: Return statements are only valid inside functions.
 PASS function return(){} threw exception SyntaxError: Return statements are only valid inside functions.
 PASS (function(){function return(){}}) threw exception SyntaxError: Return statements are only valid inside functions.
 PASS var switch threw exception SyntaxError: Expected an identifier but found 'switch' instead.
@@ -235,12 +235,12 @@ PASS try{}catch(with){} threw exception SyntaxError: Expected an identifier but 
 PASS (function(){try{}catch(with){}}) threw exception SyntaxError: Expected an identifier but found 'with' instead.
 PASS function with(){} threw exception SyntaxError: Unexpected token 'with'.
 PASS (function(){function with(){}}) threw exception SyntaxError: Unexpected token 'with'.
-PASS var class threw exception SyntaxError: Expected an identifier but found 'class' instead.
-PASS (function(){var class}) threw exception SyntaxError: Expected an identifier but found 'class' instead.
-PASS function g(class){} threw exception SyntaxError: Expected an identifier but found 'class' instead.
-PASS (function(){function g(class){}}) threw exception SyntaxError: Expected an identifier but found 'class' instead.
-PASS try{}catch(class){} threw exception SyntaxError: Expected an identifier but found 'class' instead.
-PASS (function(){try{}catch(class){}}) threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS var class threw exception SyntaxError: Use of reserved word 'class'.
+PASS (function(){var class}) threw exception SyntaxError: Use of reserved word 'class'.
+PASS function g(class){} threw exception SyntaxError: Use of reserved word 'class'.
+PASS (function(){function g(class){}}) threw exception SyntaxError: Use of reserved word 'class'.
+PASS try{}catch(class){} threw exception SyntaxError: Use of reserved word 'class'.
+PASS (function(){try{}catch(class){}}) threw exception SyntaxError: Use of reserved word 'class'.
 PASS function class(){} threw exception SyntaxError: Use of reserved word 'class'.
 PASS (function(){function class(){}}) threw exception SyntaxError: Use of reserved word 'class'.
 PASS var const threw exception SyntaxError: Expected an identifier but found 'const' instead.
@@ -251,44 +251,44 @@ PASS try{}catch(const){} threw exception SyntaxError: Expected an identifier but
 PASS (function(){try{}catch(const){}}) threw exception SyntaxError: Expected an identifier but found 'const' instead.
 PASS function const(){} threw exception SyntaxError: Unexpected token 'const'.
 PASS (function(){function const(){}}) threw exception SyntaxError: Unexpected token 'const'.
-PASS var enum threw exception SyntaxError: Expected an identifier but found 'enum' instead.
-PASS (function(){var enum}) threw exception SyntaxError: Expected an identifier but found 'enum' instead.
-PASS function g(enum){} threw exception SyntaxError: Expected an identifier but found 'enum' instead.
-PASS (function(){function g(enum){}}) threw exception SyntaxError: Expected an identifier but found 'enum' instead.
-PASS try{}catch(enum){} threw exception SyntaxError: Expected an identifier but found 'enum' instead.
-PASS (function(){try{}catch(enum){}}) threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS var enum threw exception SyntaxError: Use of reserved word 'enum'.
+PASS (function(){var enum}) threw exception SyntaxError: Use of reserved word 'enum'.
+PASS function g(enum){} threw exception SyntaxError: Use of reserved word 'enum'.
+PASS (function(){function g(enum){}}) threw exception SyntaxError: Use of reserved word 'enum'.
+PASS try{}catch(enum){} threw exception SyntaxError: Use of reserved word 'enum'.
+PASS (function(){try{}catch(enum){}}) threw exception SyntaxError: Use of reserved word 'enum'.
 PASS function enum(){} threw exception SyntaxError: Use of reserved word 'enum'.
 PASS (function(){function enum(){}}) threw exception SyntaxError: Use of reserved word 'enum'.
-PASS var export threw exception SyntaxError: Expected an identifier but found 'export' instead.
-PASS (function(){var export}) threw exception SyntaxError: Expected an identifier but found 'export' instead.
-PASS function g(export){} threw exception SyntaxError: Expected an identifier but found 'export' instead.
-PASS (function(){function g(export){}}) threw exception SyntaxError: Expected an identifier but found 'export' instead.
-PASS try{}catch(export){} threw exception SyntaxError: Expected an identifier but found 'export' instead.
-PASS (function(){try{}catch(export){}}) threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS var export threw exception SyntaxError: Use of reserved word 'export'.
+PASS (function(){var export}) threw exception SyntaxError: Use of reserved word 'export'.
+PASS function g(export){} threw exception SyntaxError: Use of reserved word 'export'.
+PASS (function(){function g(export){}}) threw exception SyntaxError: Use of reserved word 'export'.
+PASS try{}catch(export){} threw exception SyntaxError: Use of reserved word 'export'.
+PASS (function(){try{}catch(export){}}) threw exception SyntaxError: Use of reserved word 'export'.
 PASS function export(){} threw exception SyntaxError: Use of reserved word 'export'.
 PASS (function(){function export(){}}) threw exception SyntaxError: Use of reserved word 'export'.
-PASS var extends threw exception SyntaxError: Expected an identifier but found 'extends' instead.
-PASS (function(){var extends}) threw exception SyntaxError: Expected an identifier but found 'extends' instead.
-PASS function g(extends){} threw exception SyntaxError: Expected an identifier but found 'extends' instead.
-PASS (function(){function g(extends){}}) threw exception SyntaxError: Expected an identifier but found 'extends' instead.
-PASS try{}catch(extends){} threw exception SyntaxError: Expected an identifier but found 'extends' instead.
-PASS (function(){try{}catch(extends){}}) threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS var extends threw exception SyntaxError: Use of reserved word 'extends'.
+PASS (function(){var extends}) threw exception SyntaxError: Use of reserved word 'extends'.
+PASS function g(extends){} threw exception SyntaxError: Use of reserved word 'extends'.
+PASS (function(){function g(extends){}}) threw exception SyntaxError: Use of reserved word 'extends'.
+PASS try{}catch(extends){} threw exception SyntaxError: Use of reserved word 'extends'.
+PASS (function(){try{}catch(extends){}}) threw exception SyntaxError: Use of reserved word 'extends'.
 PASS function extends(){} threw exception SyntaxError: Use of reserved word 'extends'.
 PASS (function(){function extends(){}}) threw exception SyntaxError: Use of reserved word 'extends'.
-PASS var import threw exception SyntaxError: Expected an identifier but found 'import' instead.
-PASS (function(){var import}) threw exception SyntaxError: Expected an identifier but found 'import' instead.
-PASS function g(import){} threw exception SyntaxError: Expected an identifier but found 'import' instead.
-PASS (function(){function g(import){}}) threw exception SyntaxError: Expected an identifier but found 'import' instead.
-PASS try{}catch(import){} threw exception SyntaxError: Expected an identifier but found 'import' instead.
-PASS (function(){try{}catch(import){}}) threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS var import threw exception SyntaxError: Use of reserved word 'import'.
+PASS (function(){var import}) threw exception SyntaxError: Use of reserved word 'import'.
+PASS function g(import){} threw exception SyntaxError: Use of reserved word 'import'.
+PASS (function(){function g(import){}}) threw exception SyntaxError: Use of reserved word 'import'.
+PASS try{}catch(import){} threw exception SyntaxError: Use of reserved word 'import'.
+PASS (function(){try{}catch(import){}}) threw exception SyntaxError: Use of reserved word 'import'.
 PASS function import(){} threw exception SyntaxError: Use of reserved word 'import'.
 PASS (function(){function import(){}}) threw exception SyntaxError: Use of reserved word 'import'.
-PASS var super threw exception SyntaxError: Expected an identifier but found 'super' instead.
-PASS (function(){var super}) threw exception SyntaxError: Expected an identifier but found 'super' instead.
-PASS function g(super){} threw exception SyntaxError: Expected an identifier but found 'super' instead.
-PASS (function(){function g(super){}}) threw exception SyntaxError: Expected an identifier but found 'super' instead.
-PASS try{}catch(super){} threw exception SyntaxError: Expected an identifier but found 'super' instead.
-PASS (function(){try{}catch(super){}}) threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS var super threw exception SyntaxError: Use of reserved word 'super'.
+PASS (function(){var super}) threw exception SyntaxError: Use of reserved word 'super'.
+PASS function g(super){} threw exception SyntaxError: Use of reserved word 'super'.
+PASS (function(){function g(super){}}) threw exception SyntaxError: Use of reserved word 'super'.
+PASS try{}catch(super){} threw exception SyntaxError: Use of reserved word 'super'.
+PASS (function(){try{}catch(super){}}) threw exception SyntaxError: Use of reserved word 'super'.
 PASS function super(){} threw exception SyntaxError: Use of reserved word 'super'.
 PASS (function(){function super(){}}) threw exception SyntaxError: Use of reserved word 'super'.
 PASS (obj=({true: true,false: true,null: true,break: true,case: true,catch: true,continue: true,debugger: true,default: true,delete: true,do: true,else: true,finally: true,for: true,function: true,if: true,in: true,instanceof: true,new: true,return: true,switch: true,this: true,throw: true,try: true,typeof: true,var: true,void: true,while: true,with: true,class: true,const: true,enum: true,export: true,extends: true,import: true,super: true, parsed: true })).parsed is true

@@ -1,3 +1,31 @@
+2011-07-06  Juan C. Montemayor  <jmont@apple.com>
+
+        ASSERT_NOT_REACHED running test 262
+        https://bugs.webkit.org/show_bug.cgi?id=63951
+        
+        Added a test to check compliance with reserved words in strict mode. 
+        Updated test results.
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/kde/parse-expected.txt:
+        * fast/js/reserved-words-as-property-expected.txt:
+        * fast/js/reserved-words-strict-expected.txt: Added.
+        * fast/js/reserved-words-strict.html: Added.
+        * fast/js/script-tests/reserved-words-strict.js: Added.
+        (isReserved):
+        * platform/chromium/fast/js/reserved-words-strict-expected.txt: Added.
+        * sputnik/Conformance/07_Lexical_Conventions/7.2_White_Space/S7.2_A5_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.2_White_Space/S7.2_A5_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.2_White_Space/S7.2_A5_T3-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.2_White_Space/S7.2_A5_T4-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.2_White_Space/S7.2_A5_T5-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A6_T1-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A6_T2-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A6_T3-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A6_T4-expected.txt:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T13-expected.txt:
+
 2011-07-06  Johnny Ding  <jnd@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=63857

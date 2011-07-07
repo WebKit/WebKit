@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u2029' instead
+CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u2029'
 S7.3_A6_T4
 
 PASS Expected parsing failure

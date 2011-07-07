@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u000C' instead
+CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u000C'
 S7.2_A5_T3
 
 PASS Expected parsing failure

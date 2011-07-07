@@ -191,8 +191,6 @@ private:
             return "continue";
         case FUNCTION: 
             return "function";
-        case RETURN: 
-            return 0;
         case IF: 
             return "if";
         case THISTOKEN: 
@@ -205,9 +203,6 @@ private:
             return "switch";
         case WITH: 
             return "with";
-        case RESERVED_IF_STRICT:
-        case RESERVED: 
-            return 0;
         case THROW: 
             return "throw";
         case TRY: 
@@ -236,22 +231,12 @@ private:
             return ",";
         case QUESTION: 
             return "?";
-        case NUMBER: 
-            return 0;
-        case IDENT: 
-            return 0;
-        case STRING: 
-            return 0;
         case SEMICOLON: 
             return ";";
         case COLON: 
             return ":";
         case DOT: 
             return ".";
-        case ERRORTOK: 
-            return 0;
-        case EOFTOK: 
-            return 0;
         case EQUAL: 
             return "=";
         case PLUSEQUAL: 
@@ -338,6 +323,15 @@ private:
             return "/";
         case MOD: 
             return "%";
+        case RETURN: 
+        case RESERVED_IF_STRICT:
+        case RESERVED: 
+        case NUMBER:
+        case IDENT: 
+        case STRING: 
+        case ERRORTOK:
+        case EOFTOK: 
+            return 0;
         case LastUntaggedToken: 
             break;
         }
@@ -349,6 +343,12 @@ private:
     {
         String errorMessage;
         switch (expectedToken) {
+        case RESERVED_IF_STRICT:
+            errorMessage = "Use of reserved word '";
+            errorMessage += getToken().impl();
+            errorMessage += "' in strict mode";
+            m_errorMessage = errorMessage.impl();
+            return;
         case RESERVED:
             errorMessage = "Use of reserved word '";
             errorMessage += getToken().impl();
@@ -405,10 +405,14 @@ private:
     {
         m_error = true;
         const char* name = getTokenName(expectedToken);
-        if (!name) 
-            updateErrorMessageSpecialCase(expectedToken);
-        else
+        if (name)
             m_errorMessage = UString(String::format("Expected token '%s'", name).impl());
+        else {
+            if (!getTokenName(m_token.m_type))
+                updateErrorMessageSpecialCase(m_token.m_type);
+            else
+                updateErrorMessageSpecialCase(expectedToken);
+        } 
     }
     
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, UString name, const char* afterMsg) 

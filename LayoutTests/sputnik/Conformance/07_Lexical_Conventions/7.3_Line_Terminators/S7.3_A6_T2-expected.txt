@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u000D' instead
+CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u000D'
 S7.3_A6_T2
 
 PASS Expected parsing failure
