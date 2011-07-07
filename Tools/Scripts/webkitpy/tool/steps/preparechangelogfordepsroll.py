@@ -37,4 +37,4 @@ class PrepareChangeLogForDEPSRoll(AbstractStep):
         self._tool.executive.run_and_throw_if_fail(self._tool.port().prepare_changelog_command())
         changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None)
         for changelog_path in changelog_paths:
-            ChangeLog(changelog_path).update_with_unreviewed_message("Rolled DEPS.\n\n")
+            ChangeLog(changelog_path).update_with_unreviewed_message("Unreviewed.  Rolled DEPS.\n\n")

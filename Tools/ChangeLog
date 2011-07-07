@@ -1,5 +1,12 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Tweak the ChangeLog for DEPS rolls to say "Unreviewed" so that the
+        patches can be landed by the commit-queue.
+
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Normalize callers of logging.getLogger to use __name__
         https://bugs.webkit.org/show_bug.cgi?id=64054
 
