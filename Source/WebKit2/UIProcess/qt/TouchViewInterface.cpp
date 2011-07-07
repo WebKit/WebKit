@@ -88,12 +88,10 @@ void TouchViewInterface::didChangeStatusText(const QString&)
     // There is not yet any UI defined for status text so we ignore the call.
 }
 
-#ifndef QT_NO_CURSOR
 void TouchViewInterface::didChangeCursor(const QCursor&)
 {
     // The cursor is not visible on mobile, just ignore this message.
 }
-#endif
 
 void TouchViewInterface::loadDidBegin()
 {

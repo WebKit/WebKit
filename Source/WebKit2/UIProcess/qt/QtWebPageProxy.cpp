@@ -124,9 +124,7 @@ QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, QWKContext* c, WKPa
     , m_context(c)
     , m_preferences(0)
     , m_createNewPageFn(0)
-#ifndef QT_NO_UNDOSTACK
     , m_undoStack(adoptPtr(new QUndoStack(this)))
-#endif
 {
     ASSERT(viewInterface);
     memset(m_actions, 0, sizeof(m_actions));
@@ -263,9 +261,7 @@ bool QtWebPageProxy::handleFocusOutEvent(QFocusEvent*)
 
 void QtWebPageProxy::setCursor(const WebCore::Cursor& cursor)
 {
-#ifndef QT_NO_CURSOR
     m_viewInterface->didChangeCursor(*cursor.platformCursor());
-#endif
 }
 
 void QtWebPageProxy::setViewNeedsDisplay(const WebCore::IntRect& rect)
@@ -336,42 +332,32 @@ void QtWebPageProxy::toolTipChanged(const String&, const String& newTooltip)
 
 void QtWebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-#ifndef QT_NO_UNDOSTACK
     if (undoOrRedo == WebPageProxy::Undo) {
         const WebUndoCommandQt* webUndoCommand = static_cast<const WebUndoCommandQt*>(m_undoStack->command(m_undoStack->index()));
         if (webUndoCommand && webUndoCommand->inUndoRedo())
             return;
         m_undoStack->push(new WebUndoCommandQt(command));
     }
-#endif
 }
 
 void QtWebPageProxy::clearAllEditCommands()
 {
-#ifndef QT_NO_UNDOSTACK
     m_undoStack->clear();
-#endif
 }
 
 bool QtWebPageProxy::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-#ifdef QT_NO_UNDOSTACK
-    return false;
-#else
     if (undoOrRedo == WebPageProxy::Undo)
         return m_undoStack->canUndo();
     return m_undoStack->canRedo();
-#endif
 }
 
 void QtWebPageProxy::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-#ifndef QT_NO_UNDOSTACK
     if (undoOrRedo == WebPageProxy::Undo)
         m_undoStack->undo();
     else
         m_undoStack->redo();
-#endif
 }
 
 FloatRect QtWebPageProxy::convertToDeviceSpace(const FloatRect& rect)
@@ -485,9 +471,6 @@ void QtWebPageProxy::paint(QPainter* painter, QRect area)
 
 void QtWebPageProxy::updateAction(QtWebPageProxy::WebAction action)
 {
-#ifdef QT_NO_ACTION
-    Q_UNUSED(action)
-#else
     QAction* a = m_actions[action];
     if (!a)
         return;
@@ -520,7 +503,6 @@ void QtWebPageProxy::updateAction(QtWebPageProxy::WebAction action)
 
     if (a->isCheckable())
         a->setChecked(checked);
-#endif // QT_NO_ACTION
 }
 
 void QtWebPageProxy::updateNavigationActions()
@@ -531,7 +513,6 @@ void QtWebPageProxy::updateNavigationActions()
     updateAction(QtWebPageProxy::Reload);
 }
 
-#ifndef QT_NO_ACTION
 void QtWebPageProxy::webActionTriggered(bool checked)
 {
     QAction* a = qobject_cast<QAction*>(sender());
@@ -540,7 +521,6 @@ void QtWebPageProxy::webActionTriggered(bool checked)
     QtWebPageProxy::WebAction action = static_cast<QtWebPageProxy::WebAction>(a->data().toInt());
     triggerAction(action, checked);
 }
-#endif // QT_NO_ACTION
 
 void QtWebPageProxy::didRelaunchProcess()
 {
@@ -646,7 +626,6 @@ void QtWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayo
 #endif
 }
 
-#ifndef QT_NO_ACTION
 void QtWebPageProxy::triggerAction(WebAction webAction, bool)
 {
     switch (webAction) {
@@ -670,9 +649,7 @@ void QtWebPageProxy::triggerAction(WebAction webAction, bool)
     WebKit::WebContextMenuItemData menuItemData(ActionType, contextMenuActionForWebAction(webAction), qtAction->text(), qtAction->isEnabled(), qtAction->isChecked());
     m_webPageProxy->contextMenuItemSelected(menuItemData);
 }
-#endif // QT_NO_ACTION
 
-#ifndef QT_NO_ACTION
 QAction* QtWebPageProxy::action(WebAction action) const
 {
     if (action == QtWebPageProxy::NoWebAction || action >= WebActionCount)
@@ -728,7 +705,6 @@ QAction* QtWebPageProxy::action(WebAction action) const
     case SelectAll:
         text = contextMenuItemTagSelectAll();
         break;
-#ifndef QT_NO_UNDOSTACK
     case Undo: {
         QAction* undoAction = m_undoStack->createUndoAction(mutableSelf);
         m_actions[action] = undoAction;
@@ -739,7 +715,6 @@ QAction* QtWebPageProxy::action(WebAction action) const
         m_actions[action] = redoAction;
         return redoAction;
     }
-#endif
     default:
         return 0;
         break;
@@ -760,7 +735,6 @@ QAction* QtWebPageProxy::action(WebAction action) const
     mutableSelf->updateAction(action);
     return a;
 }
-#endif // QT_NO_ACTION
 
 void QtWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
 {

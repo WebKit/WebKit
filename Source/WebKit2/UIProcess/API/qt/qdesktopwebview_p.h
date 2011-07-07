@@ -55,9 +55,7 @@ private:
     virtual void didChangeTitle(const QString&);
     virtual void didChangeToolTip(const QString&);
     virtual void didChangeStatusText(const QString&);
-#ifndef QT_NO_CURSOR
     virtual void didChangeCursor(const QCursor&);
-#endif
     virtual void loadDidBegin();
     virtual void loadDidSucceed();
     virtual void didChangeLoadProgress(int);

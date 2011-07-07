@@ -1,5 +1,37 @@
 2011-07-07  Andreas Kling  <kling@webkit.org>
 
+        [Qt][WK2] Don't support ridiculous matrix of QT_NO_FEATURE combinations.
+        https://bugs.webkit.org/show_bug.cgi?id=64099
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::setCursor):
+        (QtWebPageProxy::registerEditCommand):
+        (QtWebPageProxy::clearAllEditCommands):
+        (QtWebPageProxy::canUndoRedo):
+        (QtWebPageProxy::executeUndoRedo):
+        (QtWebPageProxy::updateAction):
+        (QtWebPageProxy::webActionTriggered):
+        (QtWebPageProxy::triggerAction):
+        (QtWebPageProxy::action):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::didChangeCursor):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+        * UIProcess/qt/WebUndoCommandQt.cpp:
+        (WebUndoCommandQt::WebUndoCommandQt):
+        * UIProcess/qt/WebUndoCommandQt.h:
+        * WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp:
+        (WebKit::WebDragClient::startDrag):
+
+2011-07-07  Andreas Kling  <kling@webkit.org>
+
         [Qt][WK2] Views should know about WebProcess crash/relaunch.
         https://bugs.webkit.org/show_bug.cgi?id=64093
 

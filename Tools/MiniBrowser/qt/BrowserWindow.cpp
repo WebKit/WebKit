@@ -216,7 +216,6 @@ void BrowserWindow::urlChanged(const QUrl& url)
 
 void BrowserWindow::openFile()
 {
-#ifndef QT_NO_FILEDIALOG
     static const QString filter("HTML Files (*.htm *.html *.xhtml);;Text Files (*.txt);;Image Files (*.gif *.jpg *.png);;SVG Files (*.svg);;All Files (*)");
 
     QFileDialog fileDialog(this, tr("Open"), QString(), filter);
@@ -229,7 +228,6 @@ void BrowserWindow::openFile()
         if (!selectedFile.isEmpty())
             load(selectedFile);
     }
-#endif
 }
 
 void BrowserWindow::screenshot()
@@ -244,7 +242,6 @@ void BrowserWindow::screenshot()
     label->show();
 #endif
 
-#ifndef QT_NO_FILEDIALOG
     QString fileName = QFileDialog::getSaveFileName(label, "Screenshot", QString(), QString("PNG File (.png)"));
     if (!fileName.isEmpty()) {
         QRegExp rx("*.png");
@@ -258,7 +255,6 @@ void BrowserWindow::screenshot()
         if (label)
             label->setWindowTitle(QString("Screenshot - Saved at %1").arg(fileName));
     }
-#endif
 }
 
 void BrowserWindow::toggleFullScreenMode(bool enable)
@@ -303,10 +299,8 @@ void BrowserWindow::showUserAgentDialog()
 void BrowserWindow::loadURLListFromFile()
 {
     QString selectedFile;
-#ifndef QT_NO_FILEDIALOG
     selectedFile = QFileDialog::getOpenFileName(this, tr("Load URL list from file")
                                                        , QString(), tr("Text Files (*.txt);;All Files (*)"));
-#endif
     if (selectedFile.isEmpty())
        return;
 

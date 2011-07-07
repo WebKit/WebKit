@@ -221,9 +221,7 @@ private:
 
     CreateNewPageFn m_createNewPageFn;
 
-#ifndef QT_NO_UNDOSTACK
     OwnPtr<QUndoStack> m_undoStack;
-#endif
 };
 
 #endif /* QtWebPageProxy_h */

@@ -26,17 +26,9 @@
 #include <qglobal.h>
 #include <wtf/RefPtr.h>
 
-class WebUndoCommandQt
-#ifndef QT_NO_UNDOCOMMAND
-    : public QUndoCommand
-#endif
-{
+class WebUndoCommandQt : public QUndoCommand {
 public:
-#ifndef QT_NO_UNDOCOMMAND
     WebUndoCommandQt(PassRefPtr<WebKit::WebEditCommandProxy>, QUndoCommand* parent = 0);
-#else
-    WebUndoCommandQt(PassRefPtr<WebKit::WebEditCommandProxy>);
-#endif
     ~WebUndoCommandQt();
 
     void redo();

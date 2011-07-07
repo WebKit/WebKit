@@ -1,3 +1,15 @@
+2011-07-07  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Don't support ridiculous matrix of QT_NO_FEATURE combinations.
+        https://bugs.webkit.org/show_bug.cgi?id=64099
+
+        Reviewed by Benjamin Poulain.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::openFile):
+        (BrowserWindow::screenshot):
+        (BrowserWindow::loadURLListFromFile):
+
 2011-07-07  Adam Roben  <aroben@apple.com>
 
         Completely ignore too-many-failures builds in TestFailures in most circumstances

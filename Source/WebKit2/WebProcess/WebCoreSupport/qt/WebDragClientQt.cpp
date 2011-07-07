@@ -54,7 +54,6 @@ static PassRefPtr<ShareableBitmap> convertQPixmapToShareableBitmap(QPixmap* pixm
 
 void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosition, const IntPoint& globalPosition, Clipboard* clipboard, Frame*, bool)
 {
-#ifndef QT_NO_DRAGANDDROP
     QMimeData* clipboardData = static_cast<ClipboardQt*>(clipboard)->clipboardData();
     DragOperation dragOperationMask = clipboard->sourceOperation();
     static_cast<ClipboardQt*>(clipboard)->invalidateWritableData();
@@ -66,12 +65,6 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
         return;
 
     m_page->send(Messages::WebPageProxy::StartDrag(dragData, handle));
-#else
-    Q_UNUSED(dragImage)
-    Q_UNUSED(clientPosition)
-    Q_UNUSED(globalPosition)
-    Q_UNUSED(clipboard)
-#endif
 }
 
 }

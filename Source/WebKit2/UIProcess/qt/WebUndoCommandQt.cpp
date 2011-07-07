@@ -23,7 +23,6 @@
 
 using namespace WebKit;
 
-#ifndef QT_NO_UNDOCOMMAND
 WebUndoCommandQt::WebUndoCommandQt(PassRefPtr<WebEditCommandProxy> command, QUndoCommand* parent)
     : QUndoCommand(parent)
     , m_command(command)
@@ -31,14 +30,6 @@ WebUndoCommandQt::WebUndoCommandQt(PassRefPtr<WebEditCommandProxy> command, QUnd
     , m_inUndoRedo(false)
 {
 }
-#else
-WebUndoCommandQt::WebUndoCommandQt(PassRefPtr<WebEditCommandProxy> command)
-    : m_command(command)
-    , m_first(true)
-    , m_inUndoRedo(false)
-{
-}
-#endif
 
 WebUndoCommandQt::~WebUndoCommandQt()
 {
