@@ -1658,11 +1658,8 @@ void FrameSelection::notifyRendererOfSelectionChange(EUserTriggered userTriggere
     if (!rootEditableElement())
         return;
 
-    RenderObject* renderer = rootEditableElement()->shadowAncestorNode()->renderer();
-    if (!renderer || !renderer->isTextControl())
-        return;
-
-    toRenderTextControl(renderer)->selectionChanged(userTriggered == UserTriggered);
+    if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(start()))
+        textControl->selectionChanged(userTriggered == UserTriggered);
 }
 
 // Helper function that tells whether a particular node is an element that has an entire

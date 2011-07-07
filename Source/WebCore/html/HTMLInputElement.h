@@ -228,7 +228,6 @@ public:
 #endif
 
     bool lastChangeWasUserEdit() const;
-    void cacheSelection(int start, int end);
     void notifyFormStateChanged();
 
     static const int maximumLength;
@@ -308,8 +307,6 @@ private:
     virtual void handleFocusEvent();
     virtual void willBlur();
     virtual void handleBlurEvent();
-    virtual int cachedSelectionStart() const { return m_cachedSelectionStart; }
-    virtual int cachedSelectionEnd() const { return m_cachedSelectionEnd; }
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;
@@ -337,8 +334,6 @@ private:
     String m_suggestedValue;
     int m_size;
     int m_maxLength;
-    int m_cachedSelectionStart;
-    int m_cachedSelectionEnd;
 #if ENABLE(WCSS)
     String m_inputFormatMask;
     unsigned m_maxInputCharsAllowed;

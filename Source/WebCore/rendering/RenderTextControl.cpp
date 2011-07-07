@@ -219,7 +219,7 @@ void setSelectionRange(Node* node, int start, int end)
     RenderTextControl* control = toRenderTextControl(node->renderer());
 
     if (control->hasVisibleTextArea()) {
-        control->cacheSelection(start, end);
+        static_cast<HTMLTextFormControlElement*>(node)->cacheSelection(start, end);
         return;
     }
     VisiblePosition startPosition = control->visiblePositionForIndex(start);
@@ -571,16 +571,6 @@ void RenderTextControl::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth += toAdd;
 
     setPreferredLogicalWidthsDirty(false);
-}
-
-void RenderTextControl::selectionChanged(bool userTriggered)
-{
-    cacheSelection(selectionStart(), selectionEnd());
-
-    if (Frame* frame = this->frame()) {
-        if (frame->selection()->isRange() && userTriggered)
-            node()->dispatchEvent(Event::create(eventNames().selectEvent, true, false));
-    }
 }
 
 void RenderTextControl::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)

@@ -213,6 +213,14 @@ public:
     virtual int maxLength() const = 0;
     virtual String value() const = 0;
 
+    void cacheSelection(int start, int end)
+    {
+        m_cachedSelectionStart = start;
+        m_cachedSelectionEnd = end;
+    }
+
+    void selectionChanged(bool userTriggered);
+
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -222,14 +230,15 @@ protected:
 
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
 
+    void restoreCachedSelection();
+    bool hasCachedSelectionStart() const { return m_cachedSelectionStart >= 0; }
+    bool hasCachedSelectionEnd() const { return m_cachedSelectionEnd >= 0; }
+
 private:
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
 
     bool isPlaceholderEmpty() const;
-
-    virtual int cachedSelectionStart() const = 0;
-    virtual int cachedSelectionEnd() const = 0;
 
     // Returns true if user-editable value is empty. Used to check placeholder visibility.
     virtual bool isEmptyValue() const = 0;
@@ -243,6 +252,9 @@ private:
     RenderTextControl* textRendererAfterUpdateLayout();
 
     String m_textAsOfLastFormControlChangeEvent;
+    
+    int m_cachedSelectionStart;
+    int m_cachedSelectionEnd;
 };
 
 // This function returns 0 when node is an input element and not a text field.

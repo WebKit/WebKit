@@ -114,11 +114,6 @@ void RenderTextControlMultiLine::updateFromElement()
     setInnerTextValue(static_cast<HTMLTextAreaElement*>(node())->value());
 }
 
-void RenderTextControlMultiLine::cacheSelection(int start, int end)
-{
-    static_cast<HTMLTextAreaElement*>(node())->cacheSelection(start, end);
-}
-
 PassRefPtr<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
     RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();

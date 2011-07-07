@@ -58,8 +58,6 @@ public:
 
     bool lastChangeWasUserEdit() const;
 
-    void cacheSelection(int s, int e) { m_cachedSelectionStart = s; m_cachedSelectionEnd = e; };
-
 private:
     HTMLTextAreaElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -75,8 +73,6 @@ private:
 
     virtual bool supportsPlaceholder() const { return true; }
     virtual bool isEmptyValue() const { return value().isEmpty(); }
-    virtual int cachedSelectionStart() const { return m_cachedSelectionStart; }
-    virtual int cachedSelectionEnd() const { return m_cachedSelectionEnd; }
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const { return required(); }
@@ -109,8 +105,6 @@ private:
     int m_cols;
     WrapMethod m_wrap;
     mutable String m_value;
-    int m_cachedSelectionStart;
-    int m_cachedSelectionEnd;
     mutable bool m_isDirty;
     bool m_wasModifiedByUser;
 };

@@ -84,7 +84,6 @@ private:
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight);
 
     virtual void updateFromElement();
-    virtual void cacheSelection(int start, int end);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual RenderStyle* textBaseStyle() const;

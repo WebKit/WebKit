@@ -564,6 +564,8 @@ void HTMLFormControlElementWithState::defaultEventHandler(Event* event)
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, doc, form)
+    , m_cachedSelectionStart(-1)
+    , m_cachedSelectionEnd(-1)
 {
 }
 
@@ -678,8 +680,8 @@ int HTMLTextFormControlElement::selectionStart() const
 {
     if (!isTextFormControl())
         return 0;
-    if (document()->focusedNode() != this && cachedSelectionStart() >= 0)
-        return cachedSelectionStart();
+    if (document()->focusedNode() != this && hasCachedSelectionStart())
+        return m_cachedSelectionStart;
     if (!renderer())
         return 0;
     return toRenderTextControl(renderer())->selectionStart();
@@ -689,8 +691,8 @@ int HTMLTextFormControlElement::selectionEnd() const
 {
     if (!isTextFormControl())
         return 0;
-    if (document()->focusedNode() != this && cachedSelectionEnd() >= 0)
-        return cachedSelectionEnd();
+    if (document()->focusedNode() != this && hasCachedSelectionEnd())
+        return m_cachedSelectionEnd;
     if (!renderer())
         return 0;
     return toRenderTextControl(renderer())->selectionEnd();
@@ -698,9 +700,28 @@ int HTMLTextFormControlElement::selectionEnd() const
 
 PassRefPtr<Range> HTMLTextFormControlElement::selection() const
 {
-    if (!renderer() || !isTextFormControl() || cachedSelectionStart() < 0 || cachedSelectionEnd() < 0)
+    if (!renderer() || !isTextFormControl() || !hasCachedSelectionStart() || !hasCachedSelectionEnd())
         return 0;
-    return toRenderTextControl(renderer())->selection(cachedSelectionStart(), cachedSelectionEnd());
+    return toRenderTextControl(renderer())->selection(m_cachedSelectionStart, m_cachedSelectionEnd);
+}
+
+void HTMLTextFormControlElement::restoreCachedSelection()
+{
+    WebCore::setSelectionRange(this, m_cachedSelectionStart, m_cachedSelectionEnd);
+}
+
+void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
+{
+    if (!renderer() || !isTextFormControl())
+        return;
+
+    RenderTextControl* renderTextControl = toRenderTextControl(renderer());
+    cacheSelection(renderTextControl->selectionStart(), renderTextControl->selectionEnd());
+
+    if (Frame* frame = document()->frame()) {
+        if (frame->selection()->isRange() && userTriggered)
+            dispatchEvent(Event::create(eventNames().selectEvent, true, false));
+    }
 }
 
 void HTMLTextFormControlElement::parseMappedAttribute(Attribute* attr)

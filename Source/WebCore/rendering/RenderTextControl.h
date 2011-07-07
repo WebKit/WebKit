@@ -47,7 +47,6 @@ public:
     virtual void subtreeHasChanged();
     String text();
     String textWithHardLineBreaks();
-    void selectionChanged(bool userTriggered);
 
     VisiblePosition visiblePositionForIndex(int index) const;
     static int indexForVisiblePosition(HTMLElement*, const VisiblePosition&);
@@ -75,7 +74,6 @@ protected:
     virtual float getAvgCharWidth(AtomicString family);
     virtual int preferredContentWidth(float charWidth) const = 0;
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight) = 0;
-    virtual void cacheSelection(int start, int end) = 0;
     virtual RenderStyle* textBaseStyle() const = 0;
 
     virtual void updateFromElement();

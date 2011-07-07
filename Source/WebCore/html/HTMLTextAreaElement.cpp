@@ -70,8 +70,6 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
     , m_rows(defaultRows)
     , m_cols(defaultCols)
     , m_wrap(SoftWrap)
-    , m_cachedSelectionStart(-1)
-    , m_cachedSelectionEnd(-1)
     , m_isDirty(false)
     , m_wasModifiedByUser(false)
 {
@@ -215,7 +213,7 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
     ASSERT(renderer());
     ASSERT(!document()->childNeedsAndNotInStyleRecalc());
 
-    if (!restorePreviousSelection || m_cachedSelectionStart < 0) {
+    if (!restorePreviousSelection || !hasCachedSelectionStart()) {
 #if ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL)
         // Devices with trackballs or d-pads may focus on a textarea in route
         // to another focusable node. By selecting all text, the next movement
@@ -227,10 +225,8 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
         // http://bugs.webkit.org/show_bug.cgi?id=11746#c15
         setSelectionRange(0, 0);
 #endif
-    } else {
-        // Restore the cached selection.  This matches other browsers' behavior.
-        setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd);
-    }
+    } else
+        restoreCachedSelection();
 
     if (document()->frame())
         document()->frame()->selection()->revealSelection();

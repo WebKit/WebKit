@@ -78,8 +78,6 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     : HTMLTextFormControlElement(tagName, document, form)
     , m_size(defaultSize)
     , m_maxLength(maximumLength)
-    , m_cachedSelectionStart(-1)
-    , m_cachedSelectionEnd(-1)
 #if ENABLE(WCSS)
     , m_inputFormatMask("*m")
     , m_maxInputCharsAllowed(maximumLength)
@@ -473,12 +471,10 @@ bool HTMLInputElement::isMouseFocusable() const
 void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     if (isTextField()) {
-        if (!restorePreviousSelection || m_cachedSelectionStart == -1)
+        if (!restorePreviousSelection || !hasCachedSelectionStart())
             select();
-        else {
-            // Restore the cached selection.
-            WebCore::setSelectionRange(this, m_cachedSelectionStart, m_cachedSelectionEnd);
-        }
+        else
+            restoreCachedSelection();
         if (document()->frame())
             document()->frame()->selection()->revealSelection();
     } else
@@ -1361,12 +1357,6 @@ void HTMLInputElement::unregisterForActivationCallbackIfNeeded()
 bool HTMLInputElement::isRequiredFormControl() const
 {
     return m_inputType->supportsRequired() && required();
-}
-
-void HTMLInputElement::cacheSelection(int start, int end)
-{
-    m_cachedSelectionStart = start;
-    m_cachedSelectionEnd = end;
 }
 
 void HTMLInputElement::addSearchResult()

@@ -532,11 +532,6 @@ void RenderTextControlSingleLine::updateFromElement()
         m_searchPopup->popupMenu()->updateFromElement();
 }
 
-void RenderTextControlSingleLine::cacheSelection(int start, int end)
-{
-    inputElement()->cacheSelection(start, end);
-}
-
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
     RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();   
