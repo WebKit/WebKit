@@ -40,8 +40,8 @@ DEFINE_ANIMATED_STRING(SVGTextPathElement, XLinkNames::hrefAttr, Href, href)
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)
     , m_startOffset(LengthModeOther)
-    , m_method(SVG_TEXTPATH_METHODTYPE_ALIGN)
-    , m_spacing(SVG_TEXTPATH_SPACINGTYPE_EXACT)
+    , m_method(SVGTextPathMethodAlign)
+    , m_spacing(SVGTextPathSpacingExact)
 {
     ASSERT(hasTagName(SVGNames::textPathTag));
 }

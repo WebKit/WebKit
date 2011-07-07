@@ -35,7 +35,7 @@ namespace WebCore {
 
 RenderSVGTextPath::RenderSVGTextPath(Node* n)
     : RenderSVGInline(n)
-    , m_startOffset(0.0f)
+    , m_startOffset(0)
     , m_exactAlignment(true)
     , m_stretchMethod(false)
 {
@@ -69,12 +69,12 @@ float RenderSVGTextPath::startOffset() const
 
 bool RenderSVGTextPath::exactAlignment() const
 {
-    return static_cast<SVGTextPathElement*>(node())->spacing() == SVG_TEXTPATH_SPACINGTYPE_EXACT;
+    return static_cast<SVGTextPathElement*>(node())->spacing() == SVGTextPathSpacingExact;
 }
 
 bool RenderSVGTextPath::stretchMethod() const
 {
-    return static_cast<SVGTextPathElement*>(node())->method() == SVG_TEXTPATH_METHODTYPE_STRETCH;
+    return static_cast<SVGTextPathElement*>(node())->method() == SVGTextPathMethodStretch;
 }
 
 }

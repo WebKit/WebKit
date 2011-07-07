@@ -29,31 +29,6 @@
 
 namespace WebCore {
 
-class SVGComponentTransferFunctionElement : public SVGElement {
-public:
-    ComponentTransferFunction transferFunction() const;
-
-protected:
-    SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
-
-    // FIXME: svgAttributeChanged missing.
-    bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    
-private:
-    // Animated property declarations
-    DECLARE_ANIMATED_ENUMERATION(Type, type, ComponentTransferType)
-    DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
-    DECLARE_ANIMATED_NUMBER(Slope, slope)
-    DECLARE_ANIMATED_NUMBER(Intercept, intercept)
-    DECLARE_ANIMATED_NUMBER(Amplitude, amplitude)
-    DECLARE_ANIMATED_NUMBER(Exponent, exponent)
-    DECLARE_ANIMATED_NUMBER(Offset, offset)
-};
-
 template<>
 struct SVGPropertyTraits<ComponentTransferType> {
     static ComponentTransferType highestEnumValue() { return FECOMPONENTTRANSFER_TYPE_GAMMA; }
@@ -93,6 +68,31 @@ struct SVGPropertyTraits<ComponentTransferType> {
             return FECOMPONENTTRANSFER_TYPE_GAMMA;
         return FECOMPONENTTRANSFER_TYPE_UNKNOWN;
     }
+};
+
+class SVGComponentTransferFunctionElement : public SVGElement {
+public:
+    ComponentTransferFunction transferFunction() const;
+
+protected:
+    SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
+
+    // FIXME: svgAttributeChanged missing.
+    bool isSupportedAttribute(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+    
+private:
+    // Animated property declarations
+    DECLARE_ANIMATED_ENUMERATION(Type, type, ComponentTransferType)
+    DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
+    DECLARE_ANIMATED_NUMBER(Slope, slope)
+    DECLARE_ANIMATED_NUMBER(Intercept, intercept)
+    DECLARE_ANIMATED_NUMBER(Amplitude, amplitude)
+    DECLARE_ANIMATED_NUMBER(Exponent, exponent)
+    DECLARE_ANIMATED_NUMBER(Offset, offset)
 };
 
 } // namespace WebCore

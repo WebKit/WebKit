@@ -33,15 +33,56 @@
 
 namespace WebCore {
 
+enum SVGSpreadMethodType {
+    SVGSpreadMethodUnknown = 0,
+    SVGSpreadMethodPad,
+    SVGSpreadMethodReflect,
+    SVGSpreadMethodRepeat
+};
+
+template<>
+struct SVGPropertyTraits<SVGSpreadMethodType> {
+    static SVGSpreadMethodType highestEnumValue() { return SVGSpreadMethodRepeat; }
+
+    static String toString(SVGSpreadMethodType type)
+    {
+        switch (type) {
+        case SVGSpreadMethodUnknown:
+            return emptyString();
+        case SVGSpreadMethodPad:
+            return "pad";
+        case SVGSpreadMethodReflect:
+            return "reflect";
+        case SVGSpreadMethodRepeat:
+            return "repeat";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGSpreadMethodType fromString(const String& value)
+    {
+        if (value == "pad")
+            return SVGSpreadMethodPad;
+        if (value == "reflect")
+            return SVGSpreadMethodReflect;
+        if (value == "repeat")
+            return SVGSpreadMethodRepeat;
+        return SVGSpreadMethodUnknown;
+    }
+};
+
+
 class SVGGradientElement : public SVGStyledElement,
                            public SVGURIReference,
                            public SVGExternalResourcesRequired {
 public:
-    enum SVGSpreadMethodType {
-        SVG_SPREADMETHOD_UNKNOWN = 0,
-        SVG_SPREADMETHOD_PAD     = 1,
-        SVG_SPREADMETHOD_REFLECT = 2,
-        SVG_SPREADMETHOD_REPEAT  = 3
+    enum {
+        SVG_SPREADMETHOD_UNKNOWN = SVGSpreadMethodUnknown,
+        SVG_SPREADMETHOD_PAD = SVGSpreadMethodReflect,
+        SVG_SPREADMETHOD_REFLECT = SVGSpreadMethodRepeat,
+        SVG_SPREADMETHOD_REPEAT = SVGSpreadMethodUnknown
     };
 
     Vector<Gradient::ColorStop> buildStops();
@@ -70,39 +111,6 @@ private:
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
-};
-
-template<>
-struct SVGPropertyTraits<SVGGradientElement::SVGSpreadMethodType> {
-    static SVGGradientElement::SVGSpreadMethodType highestEnumValue() { return SVGGradientElement::SVG_SPREADMETHOD_REPEAT; }
-
-    static String toString(SVGGradientElement::SVGSpreadMethodType type)
-    {
-        switch (type) {
-        case SVGGradientElement::SVG_SPREADMETHOD_UNKNOWN:
-            return emptyString();
-        case SVGGradientElement::SVG_SPREADMETHOD_PAD:
-            return "pad";
-        case SVGGradientElement::SVG_SPREADMETHOD_REFLECT:
-            return "reflect";
-        case SVGGradientElement::SVG_SPREADMETHOD_REPEAT:
-            return "repeat";
-        }
-
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-
-    static SVGGradientElement::SVGSpreadMethodType fromString(const String& value)
-    {
-        if (value == "pad")
-            return SVGGradientElement::SVG_SPREADMETHOD_PAD;
-        if (value == "reflect")
-            return SVGGradientElement::SVG_SPREADMETHOD_REFLECT;
-        if (value == "repeat")
-            return SVGGradientElement::SVG_SPREADMETHOD_REPEAT;
-        return SVGGradientElement::SVG_SPREADMETHOD_UNKNOWN;
-    }
 };
 
 } // namespace WebCore

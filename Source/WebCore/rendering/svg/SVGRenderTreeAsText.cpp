@@ -192,9 +192,9 @@ static TextStream& operator<<(TextStream& ts, const SVGUnitTypes::SVGUnitType& u
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const SVGMarkerElement::SVGMarkerUnitsType& markerUnit)
+static TextStream& operator<<(TextStream& ts, const SVGMarkerUnitsType& markerUnit)
 {
-    ts << SVGPropertyTraits<SVGMarkerElement::SVGMarkerUnitsType>::toString(markerUnit);
+    ts << SVGPropertyTraits<SVGMarkerUnitsType>::toString(markerUnit);
     return ts;
 }
 
@@ -251,9 +251,9 @@ static TextStream& operator<<(TextStream& ts, LineJoin style)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const SVGGradientElement::SVGSpreadMethodType& type)
+static TextStream& operator<<(TextStream& ts, const SVGSpreadMethodType& type)
 {
-    ts << SVGPropertyTraits<SVGGradientElement::SVGSpreadMethodType>::toString(type).upper();
+    ts << SVGPropertyTraits<SVGSpreadMethodType>::toString(type).upper();
     return ts;
 }
 
@@ -500,11 +500,11 @@ static inline String boundingBoxModeString(bool boundingBoxMode)
     return boundingBoxMode ? "objectBoundingBox" : "userSpaceOnUse";
 }
 
-static inline void writeCommonGradientProperties(TextStream& ts, SVGGradientElement::SVGSpreadMethodType spreadMethod, const AffineTransform& gradientTransform, bool boundingBoxMode)
+static inline void writeCommonGradientProperties(TextStream& ts, SVGSpreadMethodType spreadMethod, const AffineTransform& gradientTransform, bool boundingBoxMode)
 {
     writeNameValuePair(ts, "gradientUnits", boundingBoxModeString(boundingBoxMode));
 
-    if (spreadMethod != SVGGradientElement::SVG_SPREADMETHOD_PAD)
+    if (spreadMethod != SVGSpreadMethodPad)
         ts << " [spreadMethod=" << spreadMethod << "]";
 
     if (!gradientTransform.isIdentity())

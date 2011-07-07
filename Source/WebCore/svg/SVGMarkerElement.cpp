@@ -38,7 +38,7 @@ DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::refXAttr, RefX, refX)
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::refYAttr, RefY, refY)
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::markerWidthAttr, MarkerWidth, markerWidth)
 DEFINE_ANIMATED_LENGTH(SVGMarkerElement, SVGNames::markerHeightAttr, MarkerHeight, markerHeight)
-DEFINE_ANIMATED_ENUMERATION(SVGMarkerElement, SVGNames::markerUnitsAttr, MarkerUnits, markerUnits, SVGMarkerElement::SVGMarkerUnitsType)
+DEFINE_ANIMATED_ENUMERATION(SVGMarkerElement, SVGNames::markerUnitsAttr, MarkerUnits, markerUnits, SVGMarkerUnitsType)
 DEFINE_ANIMATED_ANGLE_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, orientAngleIdentifier(), OrientAngle, orientAngle)
 DEFINE_ANIMATED_BOOLEAN(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 DEFINE_ANIMATED_RECT(SVGMarkerElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
@@ -50,8 +50,8 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     , m_refY(LengthModeHeight)
     , m_markerWidth(LengthModeWidth, "3")
     , m_markerHeight(LengthModeHeight, "3") 
-    , m_markerUnits(SVG_MARKERUNITS_STROKEWIDTH)
-    , m_orientType(SVG_MARKER_ORIENT_ANGLE)
+    , m_markerUnits(SVGMarkerUnitsStrokeWidth)
+    , m_orientType(SVGMarkerOrientAngle)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
     ASSERT(hasTagName(SVGNames::markerTag));
@@ -136,7 +136,7 @@ void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
         SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(value, angle);
         if (orientType > 0)
             setOrientTypeBaseValue(orientType);
-        if (orientType == SVG_MARKER_ORIENT_ANGLE)
+        if (orientType == SVGMarkerOrientAngle)
             setOrientAngleBaseValue(angle);
         return;
     }
@@ -268,7 +268,7 @@ void SVGMarkerElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 void SVGMarkerElement::setOrientToAuto()
 {
-    setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
+    setOrientTypeBaseValue(SVGMarkerOrientAuto);
     setOrientAngleBaseValue(SVGAngle());
 
     if (RenderObject* object = renderer())
@@ -277,7 +277,7 @@ void SVGMarkerElement::setOrientToAuto()
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 {
-    setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
+    setOrientTypeBaseValue(SVGMarkerOrientAngle);
     setOrientAngleBaseValue(angle);
 
     if (RenderObject* object = renderer())
@@ -303,15 +303,15 @@ void SVGMarkerElement::synchronizeOrientType()
         return;
     
     AtomicString value;
-    if (m_orientType.value == SVG_MARKER_ORIENT_AUTO)
+    if (m_orientType.value == SVGMarkerOrientAuto)
         value = "auto";
-    else if (m_orientType.value == SVG_MARKER_ORIENT_ANGLE)
+    else if (m_orientType.value == SVGMarkerOrientAngle)
         value = orientAngle().valueAsString();
 
     SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::orientAttr, value);
 }
 
-PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerElement::SVGMarkerOrientType> > SVGMarkerElement::orientTypeAnimated()
+PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType> > SVGMarkerElement::orientTypeAnimated()
 {
     m_orientType.shouldSynchronize = true;
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>, SVGMarkerOrientType>(this, SVGNames::orientAttr, orientTypeIdentifier(), m_orientType.value);

@@ -29,32 +29,6 @@
 
 namespace WebCore {
 
-class SVGFECompositeElement : public SVGFilterPrimitiveStandardAttributes {
-public:
-    static PassRefPtr<SVGFECompositeElement> create(const QualifiedName&, Document*);
-
-private:
-    SVGFECompositeElement(const QualifiedName&, Document*);
-
-    bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
-
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_STRING(In2, in2)
-    DECLARE_ANIMATED_ENUMERATION(_operator, _operator, CompositeOperationType)
-    DECLARE_ANIMATED_NUMBER(K1, k1)
-    DECLARE_ANIMATED_NUMBER(K2, k2)
-    DECLARE_ANIMATED_NUMBER(K3, k3)
-    DECLARE_ANIMATED_NUMBER(K4, k4)
-};
-
 template<>
 struct SVGPropertyTraits<CompositeOperationType> {
     static CompositeOperationType highestEnumValue() { return FECOMPOSITE_OPERATOR_ARITHMETIC; }
@@ -98,6 +72,32 @@ struct SVGPropertyTraits<CompositeOperationType> {
             return FECOMPOSITE_OPERATOR_ARITHMETIC;
         return FECOMPOSITE_OPERATOR_UNKNOWN;
     }
+};
+
+class SVGFECompositeElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    static PassRefPtr<SVGFECompositeElement> create(const QualifiedName&, Document*);
+
+private:
+    SVGFECompositeElement(const QualifiedName&, Document*);
+
+    bool isSupportedAttribute(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_STRING(In2, in2)
+    DECLARE_ANIMATED_ENUMERATION(_operator, _operator, CompositeOperationType)
+    DECLARE_ANIMATED_NUMBER(K1, k1)
+    DECLARE_ANIMATED_NUMBER(K2, k2)
+    DECLARE_ANIMATED_NUMBER(K3, k3)
+    DECLARE_ANIMATED_NUMBER(K4, k4)
 };
 
 } // namespace WebCore

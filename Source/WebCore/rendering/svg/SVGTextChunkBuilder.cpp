@@ -130,12 +130,12 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
         desiredTextLength = textContentElement->specifiedTextLength().value(textContentElement);
 
         switch (textContentElement->lengthAdjust()) {
-        case SVGTextContentElement::LENGTHADJUST_UNKNOWN:
+        case SVGLengthAdjustUnknown:
             break;
-        case SVGTextContentElement::LENGTHADJUST_SPACING:
+        case SVGLengthAdjustSpacing:
             chunkStyle |= SVGTextChunk::LengthAdjustSpacing;
             break;
-        case SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS:
+        case SVGLengthAdjustSpacingAndGlyphs:
             chunkStyle |= SVGTextChunk::LengthAdjustSpacingAndGlyphs;
             break;
         };

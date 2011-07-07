@@ -278,15 +278,15 @@ void RenderSVGResourceGradient::addStops(GradientData* gradientData, const Vecto
         gradientData->gradient->addColorStop(*it);
 }
 
-GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGGradientElement::SVGSpreadMethodType method) const
+GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method) const
 {
     switch (method) {
-    case SVGGradientElement::SVG_SPREADMETHOD_UNKNOWN:
-    case SVGGradientElement::SVG_SPREADMETHOD_PAD:
+    case SVGSpreadMethodUnknown:
+    case SVGSpreadMethodPad:
         return SpreadMethodPad;
-    case SVGGradientElement::SVG_SPREADMETHOD_REFLECT:
+    case SVGSpreadMethodReflect:
         return SpreadMethodReflect;
-    case SVGGradientElement::SVG_SPREADMETHOD_REPEAT:
+    case SVGSpreadMethodRepeat:
         return SpreadMethodRepeat;
     }
 

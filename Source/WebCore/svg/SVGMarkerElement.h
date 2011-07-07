@@ -35,21 +35,82 @@
 
 namespace WebCore {
 
+enum SVGMarkerUnitsType {
+    SVGMarkerUnitsUnknown = 0,
+    SVGMarkerUnitsUserSpaceOnUse,
+    SVGMarkerUnitsStrokeWidth
+};
+
+enum SVGMarkerOrientType {
+    SVGMarkerOrientUnknown = 0,
+    SVGMarkerOrientAuto,
+    SVGMarkerOrientAngle
+};
+
+template<>
+struct SVGPropertyTraits<SVGMarkerUnitsType> {
+    static SVGMarkerUnitsType highestEnumValue() { return SVGMarkerUnitsStrokeWidth; }
+
+    static String toString(SVGMarkerUnitsType type)
+    {
+        switch (type) {
+        case SVGMarkerUnitsUnknown:
+            return emptyString();
+        case SVGMarkerUnitsUserSpaceOnUse:
+            return "userSpaceOnUse";
+        case SVGMarkerUnitsStrokeWidth:
+            return "strokeWidth";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGMarkerUnitsType fromString(const String& value)
+    {
+        if (value == "userSpaceOnUse")
+            return SVGMarkerUnitsUserSpaceOnUse;
+        if (value == "strokeWidth")
+            return SVGMarkerUnitsStrokeWidth;
+        return SVGMarkerUnitsUnknown;
+    }
+};
+
+template<>
+struct SVGPropertyTraits<SVGMarkerOrientType> {
+    static SVGMarkerOrientType highestEnumValue() { return SVGMarkerOrientAngle; }
+
+    // toString is not needed, synchronizeOrientType() handles this on its own.
+
+    static SVGMarkerOrientType fromString(const String& value, SVGAngle& angle)
+    {
+        if (value == "auto")
+            return SVGMarkerOrientAuto;
+
+        ExceptionCode ec = 0;
+        angle.setValueAsString(value, ec);
+        if (!ec)
+            return SVGMarkerOrientAngle;
+        return SVGMarkerOrientUnknown;
+    }
+};
+
 class SVGMarkerElement : public SVGStyledElement,
                          public SVGLangSpace,
                          public SVGExternalResourcesRequired,
                          public SVGFitToViewBox {
 public:
-    enum SVGMarkerUnitsType {
-        SVG_MARKERUNITS_UNKNOWN           = 0,
-        SVG_MARKERUNITS_USERSPACEONUSE    = 1,
-        SVG_MARKERUNITS_STROKEWIDTH       = 2
+    // Forward declare enumerations in the W3C naming scheme, for IDL generation.
+    enum {
+        SVG_MARKERUNITS_UNKNOWN = SVGMarkerUnitsUnknown,
+        SVG_MARKERUNITS_USERSPACEONUSE = SVGMarkerUnitsUserSpaceOnUse,
+        SVG_MARKERUNITS_STROKEWIDTH = SVGMarkerUnitsStrokeWidth
     };
 
-    enum SVGMarkerOrientType {
-        SVG_MARKER_ORIENT_UNKNOWN    = 0,
-        SVG_MARKER_ORIENT_AUTO       = 1,
-        SVG_MARKER_ORIENT_ANGLE      = 2
+    enum {
+        SVG_MARKER_ORIENT_UNKNOWN = SVGMarkerOrientUnknown,
+        SVG_MARKER_ORIENT_AUTO = SVGMarkerOrientAuto,
+        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle
     };
 
     static PassRefPtr<SVGMarkerElement> create(const QualifiedName&, Document*);
@@ -105,54 +166,6 @@ public:
 private:
     void synchronizeOrientType();
     mutable SVGSynchronizableAnimatedProperty<SVGMarkerOrientType> m_orientType;
-};
-
-template<>
-struct SVGPropertyTraits<SVGMarkerElement::SVGMarkerUnitsType> {
-    static SVGMarkerElement::SVGMarkerUnitsType highestEnumValue() { return SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH; }
-
-    static String toString(SVGMarkerElement::SVGMarkerUnitsType type)
-    {
-        switch (type) {
-        case SVGMarkerElement::SVG_MARKERUNITS_UNKNOWN:
-            return emptyString();
-        case SVGMarkerElement::SVG_MARKERUNITS_USERSPACEONUSE:
-            return "userSpaceOnUse";
-        case SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH:
-            return "strokeWidth";
-        }
-
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-
-    static SVGMarkerElement::SVGMarkerUnitsType fromString(const String& value)
-    {
-        if (value == "userSpaceOnUse")
-            return SVGMarkerElement::SVG_MARKERUNITS_USERSPACEONUSE;
-        if (value == "strokeWidth")
-            return SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH;
-        return SVGMarkerElement::SVG_MARKERUNITS_UNKNOWN;
-    }
-};
-
-template<>
-struct SVGPropertyTraits<SVGMarkerElement::SVGMarkerOrientType> {
-    static SVGMarkerElement::SVGMarkerOrientType highestEnumValue() { return SVGMarkerElement::SVG_MARKER_ORIENT_ANGLE; }
-
-    // toString is not needed, synchronizeOrientType() handles this on its own.
-
-    static SVGMarkerElement::SVGMarkerOrientType fromString(const String& value, SVGAngle& angle)
-    {
-        if (value == "auto")
-            return SVGMarkerElement::SVG_MARKER_ORIENT_AUTO;
-
-        ExceptionCode ec = 0;
-        angle.setValueAsString(value, ec);
-        if (!ec)
-            return SVGMarkerElement::SVG_MARKER_ORIENT_ANGLE;
-        return SVGMarkerElement::SVG_MARKER_ORIENT_UNKNOWN;
-    }
 };
 
 }

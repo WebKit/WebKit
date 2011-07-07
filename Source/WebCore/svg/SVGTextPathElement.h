@@ -28,28 +28,28 @@
 namespace WebCore {
 
 enum SVGTextPathMethodType {
-    SVG_TEXTPATH_METHODTYPE_UNKNOWN = 0,
-    SVG_TEXTPATH_METHODTYPE_ALIGN = 1,
-    SVG_TEXTPATH_METHODTYPE_STRETCH = 2
+    SVGTextPathMethodUnknown = 0,
+    SVGTextPathMethodAlign,
+    SVGTextPathMethodStretch
 };
 
 enum SVGTextPathSpacingType {
-    SVG_TEXTPATH_SPACINGTYPE_UNKNOWN = 0,
-    SVG_TEXTPATH_SPACINGTYPE_AUTO = 1,
-    SVG_TEXTPATH_SPACINGTYPE_EXACT = 2
+    SVGTextPathSpacingUnknown = 0,
+    SVGTextPathSpacingAuto,
+    SVGTextPathSpacingExact
 };
 
 class SVGTextPathElement : public SVGTextContentElement,
                            public SVGURIReference {
 public:
-    // Forward declare these enums in the w3c naming scheme, for IDL generation
+    // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {
-        TEXTPATH_METHODTYPE_UNKNOWN = SVG_TEXTPATH_METHODTYPE_UNKNOWN,
-        TEXTPATH_METHODTYPE_ALIGN = SVG_TEXTPATH_METHODTYPE_ALIGN,
-        TEXTPATH_METHODTYPE_STRETCH = SVG_TEXTPATH_METHODTYPE_STRETCH,
-        TEXTPATH_SPACINGTYPE_UNKNOWN = SVG_TEXTPATH_SPACINGTYPE_UNKNOWN,
-        TEXTPATH_SPACINGTYPE_AUTO = SVG_TEXTPATH_SPACINGTYPE_AUTO,
-        TEXTPATH_SPACINGTYPE_EXACT = SVG_TEXTPATH_SPACINGTYPE_EXACT
+        TEXTPATH_METHODTYPE_UNKNOWN = SVGTextPathMethodUnknown,
+        TEXTPATH_METHODTYPE_ALIGN = SVGTextPathMethodAlign,
+        TEXTPATH_METHODTYPE_STRETCH = SVGTextPathMethodStretch,
+        TEXTPATH_SPACINGTYPE_UNKNOWN = SVGTextPathSpacingUnknown,
+        TEXTPATH_SPACINGTYPE_AUTO = SVGTextPathSpacingAuto,
+        TEXTPATH_SPACINGTYPE_EXACT = SVGTextPathSpacingExact
     };
 
     static PassRefPtr<SVGTextPathElement> create(const QualifiedName&, Document*);
@@ -83,16 +83,16 @@ private:
 
 template<>
 struct SVGPropertyTraits<SVGTextPathMethodType> {
-    static SVGTextPathMethodType highestEnumValue() { return SVG_TEXTPATH_METHODTYPE_STRETCH; }
+    static SVGTextPathMethodType highestEnumValue() { return SVGTextPathMethodStretch; }
 
     static String toString(SVGTextPathMethodType type)
     {
         switch (type) {
-        case SVG_TEXTPATH_METHODTYPE_UNKNOWN:
+        case SVGTextPathMethodUnknown:
             return emptyString();
-        case SVG_TEXTPATH_METHODTYPE_ALIGN:
+        case SVGTextPathMethodAlign:
             return "align";
-        case SVG_TEXTPATH_METHODTYPE_STRETCH:
+        case SVGTextPathMethodStretch:
             return "stretch";
         }
     
@@ -103,25 +103,25 @@ struct SVGPropertyTraits<SVGTextPathMethodType> {
     static SVGTextPathMethodType fromString(const String& value)
     {
         if (value == "align")
-            return SVG_TEXTPATH_METHODTYPE_ALIGN;
+            return SVGTextPathMethodAlign;
         if (value == "stretch")
-            return SVG_TEXTPATH_METHODTYPE_STRETCH;
-        return SVG_TEXTPATH_METHODTYPE_UNKNOWN;
+            return SVGTextPathMethodStretch;
+        return SVGTextPathMethodUnknown;
     }
 };
 
 template<>
 struct SVGPropertyTraits<SVGTextPathSpacingType> {
-    static SVGTextPathSpacingType highestEnumValue() { return SVG_TEXTPATH_SPACINGTYPE_EXACT; }
+    static SVGTextPathSpacingType highestEnumValue() { return SVGTextPathSpacingExact; }
 
     static String toString(SVGTextPathSpacingType type)
     {
         switch (type) {
-        case SVG_TEXTPATH_SPACINGTYPE_UNKNOWN:
+        case SVGTextPathSpacingUnknown:
             return emptyString();
-        case SVG_TEXTPATH_SPACINGTYPE_AUTO:
+        case SVGTextPathSpacingAuto:
             return "auto";
-        case SVG_TEXTPATH_SPACINGTYPE_EXACT:
+        case SVGTextPathSpacingExact:
             return "exact";
         }
 
@@ -132,10 +132,10 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
     static SVGTextPathSpacingType fromString(const String& value)
     {
         if (value == "auto")
-            return SVG_TEXTPATH_SPACINGTYPE_AUTO;
+            return SVGTextPathSpacingAuto;
         if (value == "exact")
-            return SVG_TEXTPATH_SPACINGTYPE_EXACT;
-        return SVG_TEXTPATH_SPACINGTYPE_UNKNOWN;
+            return SVGTextPathSpacingExact;
+        return SVGTextPathSpacingUnknown;
     }
 };
 

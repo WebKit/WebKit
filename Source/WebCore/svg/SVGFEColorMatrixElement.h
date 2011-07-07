@@ -29,28 +29,6 @@
 
 namespace WebCore {
 
-class SVGFEColorMatrixElement : public SVGFilterPrimitiveStandardAttributes {
-public:
-    static PassRefPtr<SVGFEColorMatrixElement> create(const QualifiedName&, Document*);
-
-private:
-    SVGFEColorMatrixElement(const QualifiedName&, Document*);
-
-    bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
-
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_ENUMERATION(Type, type, ColorMatrixType)
-    DECLARE_ANIMATED_NUMBER_LIST(Values, values)
-};
-
 template<>
 struct SVGPropertyTraits<ColorMatrixType> {
     static ColorMatrixType highestEnumValue() { return FECOLORMATRIX_TYPE_LUMINANCETOALPHA; }
@@ -86,6 +64,28 @@ struct SVGPropertyTraits<ColorMatrixType> {
             return FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
         return FECOLORMATRIX_TYPE_UNKNOWN;
     }
+};
+
+class SVGFEColorMatrixElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    static PassRefPtr<SVGFEColorMatrixElement> create(const QualifiedName&, Document*);
+
+private:
+    SVGFEColorMatrixElement(const QualifiedName&, Document*);
+
+    bool isSupportedAttribute(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_ENUMERATION(Type, type, ColorMatrixType)
+    DECLARE_ANIMATED_NUMBER_LIST(Values, values)
 };
 
 } // namespace WebCore

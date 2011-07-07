@@ -27,33 +27,7 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
-    
-class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
-public:
-    static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document*);
-
-    static ChannelSelectorType stringToChannel(const String&);
-    
-private:
-    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
-    
-    bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
-
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_STRING(In2, in2)
-    DECLARE_ANIMATED_ENUMERATION(XChannelSelector, xChannelSelector, ChannelSelectorType)
-    DECLARE_ANIMATED_ENUMERATION(YChannelSelector, yChannelSelector, ChannelSelectorType)
-    DECLARE_ANIMATED_NUMBER(Scale, scale)
-};
-
+ 
 template<>
 struct SVGPropertyTraits<ChannelSelectorType> {
     static ChannelSelectorType highestEnumValue() { return CHANNEL_A; }
@@ -89,6 +63,32 @@ struct SVGPropertyTraits<ChannelSelectorType> {
             return CHANNEL_A;
         return CHANNEL_UNKNOWN;
     }
+};
+
+class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document*);
+
+    static ChannelSelectorType stringToChannel(const String&);
+    
+private:
+    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
+    
+    bool isSupportedAttribute(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_STRING(In2, in2)
+    DECLARE_ANIMATED_ENUMERATION(XChannelSelector, xChannelSelector, ChannelSelectorType)
+    DECLARE_ANIMATED_ENUMERATION(YChannelSelector, yChannelSelector, ChannelSelectorType)
+    DECLARE_ANIMATED_NUMBER(Scale, scale)
 };
 
 } // namespace WebCore

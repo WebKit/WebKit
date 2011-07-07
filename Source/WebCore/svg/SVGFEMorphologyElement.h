@@ -28,34 +28,6 @@
 
 namespace WebCore {
 
-class SVGFEMorphologyElement : public SVGFilterPrimitiveStandardAttributes {
-public:
-    static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
-
-    void setRadius(float radiusX, float radiusY);
-
-private:
-    SVGFEMorphologyElement(const QualifiedName&, Document*);
-
-    bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseMappedAttribute(Attribute*);
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
-
-    static const AtomicString& radiusXIdentifier();
-    static const AtomicString& radiusYIdentifier();
-
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_ENUMERATION(_operator, _operator, MorphologyOperatorType)
-    DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
-    DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
-};
-
 template<>
 struct SVGPropertyTraits<MorphologyOperatorType> {
     static MorphologyOperatorType highestEnumValue() { return FEMORPHOLOGY_OPERATOR_DILATE; }
@@ -83,6 +55,34 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
             return FEMORPHOLOGY_OPERATOR_DILATE;
         return FEMORPHOLOGY_OPERATOR_UNKNOWN;
     }
+};
+
+class SVGFEMorphologyElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
+
+    void setRadius(float radiusX, float radiusY);
+
+private:
+    SVGFEMorphologyElement(const QualifiedName&, Document*);
+
+    bool isSupportedAttribute(const QualifiedName&);
+    virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+
+    static const AtomicString& radiusXIdentifier();
+    static const AtomicString& radiusYIdentifier();
+
+    // Animated property declarations
+    DECLARE_ANIMATED_STRING(In1, in1)
+    DECLARE_ANIMATED_ENUMERATION(_operator, _operator, MorphologyOperatorType)
+    DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
+    DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
 };
 
 } // namespace WebCore

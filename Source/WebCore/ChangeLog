@@ -1,3 +1,67 @@
+2011-07-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Move remaining enums out of SVG*Element classes
+        https://bugs.webkit.org/show_bug.cgi?id=64075
+
+        Reviewed by Dirk Schulze.
+
+        Move remaining enums out of SVG*Element classes. This is a preparation patch for bug 63797.
+        Also move the SVGPropertyTraits template specializations for enum types before the class
+        definition in the header, otherwhise we can't use SVGPropertyTraits<FooType>::fromString/toString
+        in the DECLARE_ANIMATED* macros, which is needed soon.
+
+        No new tests, just refactoring.
+
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::angle):
+        (WebCore::RenderSVGResourceMarker::markerTransformation):
+        * rendering/svg/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::markerUnits):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::RenderSVGTextPath):
+        (WebCore::RenderSVGTextPath::exactAlignment):
+        (WebCore::RenderSVGTextPath::stretchMethod):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeCommonGradientProperties):
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        (WebCore::SVGTextChunkBuilder::addTextChunk):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::parentDefinesTextLength):
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout):
+        * svg/GradientAttributes.h:
+        (WebCore::GradientAttributes::GradientAttributes):
+        (WebCore::GradientAttributes::spreadMethod):
+        (WebCore::GradientAttributes::setSpreadMethod):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * svg/SVGGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::synchronizeOrientType):
+        (WebCore::SVGMarkerElement::orientTypeAnimated):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        * svg/SVGTextPathElement.h:
+
 2011-07-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Protocol: pointers to optional "in" parameters passing to the

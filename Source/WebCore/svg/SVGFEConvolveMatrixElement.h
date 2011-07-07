@@ -31,6 +31,39 @@
 
 namespace WebCore {
 
+template<>
+struct SVGPropertyTraits<EdgeModeType> {
+    static EdgeModeType highestEnumValue() { return EDGEMODE_NONE; }
+
+    static String toString(EdgeModeType type)
+    {
+        switch (type) {
+        case EDGEMODE_UNKNOWN:
+            return emptyString();
+        case EDGEMODE_DUPLICATE:
+            return "duplicate";
+        case EDGEMODE_WRAP:
+            return "wrap";
+        case EDGEMODE_NONE:
+            return "none";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static EdgeModeType fromString(const String& value)
+    {
+        if (value == "duplicate")
+            return EDGEMODE_DUPLICATE;
+        if (value == "wrap")
+            return EDGEMODE_WRAP;
+        if (value == "none")
+            return EDGEMODE_NONE;
+        return EDGEMODE_UNKNOWN;
+    }
+};
+
 class SVGFEConvolveMatrixElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document*);
@@ -68,39 +101,6 @@ private:
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
     DECLARE_ANIMATED_BOOLEAN(PreserveAlpha, preserveAlpha)
-};
-
-template<>
-struct SVGPropertyTraits<EdgeModeType> {
-    static EdgeModeType highestEnumValue() { return EDGEMODE_NONE; }
-
-    static String toString(EdgeModeType type)
-    {
-        switch (type) {
-        case EDGEMODE_UNKNOWN:
-            return emptyString();
-        case EDGEMODE_DUPLICATE:
-            return "duplicate";
-        case EDGEMODE_WRAP:
-            return "wrap";
-        case EDGEMODE_NONE:
-            return "none";
-        }
-
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-
-    static EdgeModeType fromString(const String& value)
-    {
-        if (value == "duplicate")
-            return EDGEMODE_DUPLICATE;
-        if (value == "wrap")
-            return EDGEMODE_WRAP;
-        if (value == "none")
-            return EDGEMODE_NONE;
-        return EDGEMODE_UNKNOWN;
-    }
 };
 
 } // namespace WebCore

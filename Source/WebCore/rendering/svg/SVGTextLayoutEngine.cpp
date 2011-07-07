@@ -154,10 +154,8 @@ bool SVGTextLayoutEngine::parentDefinesTextLength(RenderObject* parent) const
 {
     RenderObject* currentParent = parent;
     while (currentParent) {
-        SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(currentParent);
-        if (textContentElement) {
-            SVGTextContentElement::SVGLengthAdjustType lengthAdjust = textContentElement->lengthAdjust();
-            if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACING && textContentElement->specifiedTextLength().value(textContentElement) > 0)
+        if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(currentParent)) {
+            if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing && textContentElement->specifiedTextLength().value(textContentElement) > 0)
                 return true;
         }
 
@@ -208,7 +206,7 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     m_textPathCurrentOffset = m_textPathStartOffset;
 
     // Eventually handle textLength adjustments.
-    SVGTextContentElement::SVGLengthAdjustType lengthAdjust = SVGTextContentElement::LENGTHADJUST_UNKNOWN;
+    SVGLengthAdjustType lengthAdjust = SVGLengthAdjustUnknown;
     float desiredTextLength = 0;
 
     if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textPath)) {
@@ -219,7 +217,7 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     if (!desiredTextLength)
         return;
 
-    if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACING)
+    if (lengthAdjust == SVGLengthAdjustSpacing)
         m_textPathSpacing = (desiredTextLength - totalLength) / totalCharacters;
     else
         m_textPathScaling = desiredTextLength / totalLength;

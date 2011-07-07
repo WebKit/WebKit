@@ -39,14 +39,14 @@
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGTextContentElement, SVGNames::lengthAdjustAttr, LengthAdjust, lengthAdjust, SVGTextContentElement::SVGLengthAdjustType)
+DEFINE_ANIMATED_ENUMERATION(SVGTextContentElement, SVGNames::lengthAdjustAttr, LengthAdjust, lengthAdjust, SVGLengthAdjustType)
 DEFINE_ANIMATED_BOOLEAN(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_specifiedTextLength(LengthModeOther)
     , m_textLength(LengthModeOther)
-    , m_lengthAdjust(LENGTHADJUST_SPACING)
+    , m_lengthAdjust(SVGLengthAdjustSpacing)
 {
 }
 

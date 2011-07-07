@@ -32,15 +32,51 @@
 
 namespace WebCore {
 
+enum SVGLengthAdjustType {
+    SVGLengthAdjustUnknown,
+    SVGLengthAdjustSpacing,
+    SVGLengthAdjustSpacingAndGlyphs
+};
+
+template<>
+struct SVGPropertyTraits<SVGLengthAdjustType> {
+    static SVGLengthAdjustType highestEnumValue() { return SVGLengthAdjustSpacingAndGlyphs; }
+
+    static String toString(SVGLengthAdjustType type)
+    {
+        switch (type) {
+        case SVGLengthAdjustUnknown:
+            return emptyString();
+        case SVGLengthAdjustSpacing:
+            return "spacing";
+        case SVGLengthAdjustSpacingAndGlyphs:
+            return "spacingAndGlyphs";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGLengthAdjustType fromString(const String& value)
+    {
+        if (value == "spacingAndGlyphs")
+            return SVGLengthAdjustSpacingAndGlyphs;
+        if (value == "spacing")
+            return SVGLengthAdjustSpacing;
+        return SVGLengthAdjustUnknown;
+    }
+};
+
 class SVGTextContentElement : public SVGStyledElement,
                               public SVGTests,
                               public SVGLangSpace,
                               public SVGExternalResourcesRequired {
 public:
-    enum SVGLengthAdjustType {
-        LENGTHADJUST_UNKNOWN            = 0,
-        LENGTHADJUST_SPACING            = 1,
-        LENGTHADJUST_SPACINGANDGLYPHS   = 2
+    // Forward declare enumerations in the W3C naming scheme, for IDL generation.
+    enum {
+        LENGTHADJUST_UNKNOWN = SVGLengthAdjustUnknown,
+        LENGTHADJUST_SPACING = SVGLengthAdjustSpacing,
+        LENGTHADJUST_SPACINGANDGLYPHS = SVGLengthAdjustSpacingAndGlyphs
     };
 
     unsigned getNumberOfChars() const;
@@ -85,35 +121,6 @@ private:
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired) 
-};
-
-template<>
-struct SVGPropertyTraits<SVGTextContentElement::SVGLengthAdjustType> {
-    static SVGTextContentElement::SVGLengthAdjustType highestEnumValue() { return SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS; }
-
-    static String toString(SVGTextContentElement::SVGLengthAdjustType type)
-    {
-        switch (type) {
-        case SVGTextContentElement::LENGTHADJUST_UNKNOWN:
-            return emptyString();
-        case SVGTextContentElement::LENGTHADJUST_SPACING:
-            return "spacing";
-        case SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS:
-            return "spacingAndGlyphs";
-        }
-
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-
-    static SVGTextContentElement::SVGLengthAdjustType fromString(const String& value)
-    {
-        if (value == "spacingAndGlyphs")
-            return SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS;
-        if (value == "spacing")
-            return SVGTextContentElement::LENGTHADJUST_SPACING;
-        return SVGTextContentElement::LENGTHADJUST_UNKNOWN;
-    }
 };
 
 } // namespace WebCore
