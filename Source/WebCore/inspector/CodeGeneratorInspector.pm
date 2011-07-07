@@ -464,17 +464,22 @@ sub generateBackendFunction
             my $name = $parameter->name;
             my $type = $parameter->type;
             my $typeString = camelCase($parameter->type);
-            my $optional = $parameter->extendedAttributes->{"optional"} ? "true" : "false";
-            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(paramsContainerPtr, \"$name\", $optional, protocolErrorsPtr);");
+            my $optionalFlagArgument = "0";
+            if ($parameter->extendedAttributes->{"optional"}) {
+                push(@function, "        bool ${name}_valueFound = false;");
+                $optionalFlagArgument = "&${name}_valueFound";
+            }
+            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(paramsContainerPtr, \"$name\", $optionalFlagArgument, protocolErrorsPtr);");
         }
         push(@function, "");
         $indent = "    ";
     }
 
-
     my $args = join(", ",
                     ("&error",
-                     map(($_->extendedAttributes->{"optional"} ? "&" : "") . "in_" . $_->name, @inArgs),
+                     map(($_->extendedAttributes->{"optional"} ?
+                          $_->name . "_valueFound ? &in_" . $_->name . " : 0" :
+                          "in_" . $_->name), @inArgs),
                      map("&out_" . $_->name, @outArgs)));
 
     push(@function, "$indent    if (!protocolErrors->length())");
@@ -580,26 +585,32 @@ sub generateArgumentGetters
     my $return  = typeTraits($type, "return") ? typeTraits($type, "return") : typeTraits($type, "param");
 
     my $typeString = camelCase($type);
-    push(@backendConstantDeclarations, "    static $return get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors);");
+    push(@backendConstantDeclarations, "    static $return get$typeString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);");
     my $getterBody = << "EOF";
 
-$return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors)
+$return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     ASSERT(object);
     ASSERT(protocolErrors);
+
+    if (valueFound)
+        *valueFound = false;
 
     $variable value = $defaultValue;
     InspectorObject::const_iterator end = object->end();
     InspectorObject::const_iterator valueIterator = object->find(name);
 
     if (valueIterator == end) {
-        if (!optional)
+        if (!valueFound)
             protocolErrors->pushString(String::format("Parameter '\%s' with type '$json' was not found.", name.utf8().data()));
         return value;
     }
 
     if (!valueIterator->second->as$json(&value))
         protocolErrors->pushString(String::format("Parameter '\%s' has wrong type. It should be '$json'.", name.utf8().data()));
+    else
+        if (valueFound)
+            *valueFound = true;
     return value;
 }
 EOF

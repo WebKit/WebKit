@@ -227,7 +227,7 @@ void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, c
     RefPtr<InspectorStyle> computedInspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
     resultObject->setObject("computedStyle", computedInspectorStyle->buildObjectForStyle());
 
-    unsigned forcePseudoClassMask = computePseudoClassMask(forcedPseudoClasses->get());
+    unsigned forcePseudoClassMask = computePseudoClassMask(forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
     RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules, forcePseudoClassMask);
     resultObject->setArray("matchedCSSRules", buildArrayForRuleList(matchedRules.get()));
