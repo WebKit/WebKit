@@ -46,23 +46,6 @@ linux-* {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 }
 
-symbian {
-    TARGET.UID3 = 0xA000E545
-    MMP_RULES += pageddata
-    
-    TARGET.CAPABILITY *= ReadUserData 
-    TARGET.CAPABILITY *= WriteUserData
-    TARGET.CAPABILITY *= NetworkServices  # QtNetwork and Bearer
-    TARGET.CAPABILITY *= PowerMgmt        # killing web process from UI process
-    
-    # See QtMobility docs on Symbian capabilities: 
-    # http://doc.qt.nokia.com/qtmobility/quickstart.html
-    TARGET.CAPABILITY *= Location         # geolocation
-    TARGET.CAPABILITY *= ReadDeviceData   # geolocation, sensors
-    TARGET.CAPABILITY *= WriteDeviceData  # geolocation
-    TARGET.CAPABILITY *= LocalServices    # geolocation, sysinfo
-}
-
 contains(QT_CONFIG, opengl) {
     QT += opengl
     DEFINES += QT_CONFIGURED_WITH_OPENGL

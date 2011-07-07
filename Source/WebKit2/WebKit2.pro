@@ -333,7 +333,6 @@ SOURCES += \
     Platform/qt/ModuleQt.cpp \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
-    Platform/qt/SharedMemorySymbian.cpp \
     Platform/unix/SharedMemoryUnix.cpp \
     PluginProcess/PluginControllerProxy.cpp \
     PluginProcess/PluginProcess.cpp \

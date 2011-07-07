@@ -1,5 +1,24 @@
 2011-07-07  Andreas Kling  <kling@webkit.org>
 
+        [Qt][WK2] Remove Symbian code.
+        https://bugs.webkit.org/show_bug.cgi?id=64101
+
+        Reviewed by Benjamin Poulain.
+
+        * DerivedSources.pro:
+        * Platform/CoreIPC/Attachment.h:
+        * Platform/CoreIPC/Connection.h:
+        * Platform/SharedMemory.h:
+        * Platform/qt/SharedMemorySymbian.cpp: Removed.
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        * WebKit2.pri:
+        * WebKit2.pro:
+        * WebProcess.pro:
+        * config.h:
+
+2011-07-07  Andreas Kling  <kling@webkit.org>
+
         [Qt][WK2] Don't support ridiculous matrix of QT_NO_FEATURE combinations.
         https://bugs.webkit.org/show_bug.cgi?id=64099
 

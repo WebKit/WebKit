@@ -23,7 +23,7 @@ WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
 QUOTE = ""
 DOUBLE_ESCAPED_QUOTE = ""
 ESCAPE = ""
-win32-msvc*|symbian {
+win32-msvc* {
     ESCAPE = "^"
 } else:win32-g++*:isEmpty(QMAKE_SH) {
     # MinGW's make will run makefile commands using sh, even if make

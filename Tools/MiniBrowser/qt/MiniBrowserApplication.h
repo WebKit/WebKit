@@ -36,11 +36,7 @@ struct WindowOptions {
     WindowOptions()
         : printLoadedUrls(false)
         , useTouchWebView(false)
-#if defined(Q_OS_SYMBIAN)
-        , startMaximized(true)
-#else
         , startMaximized(false)
-#endif
 #if defined(QT_CONFIGURED_WITH_OPENGL)
         , useQGLWidgetViewport(false)
 #endif

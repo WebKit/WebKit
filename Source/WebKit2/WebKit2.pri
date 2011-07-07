@@ -61,14 +61,7 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess/qt \
     $$SOURCE_DIR/WebKit2/PluginProcess
 
-# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
-# are included before platform headers.
-
-symbian {
-    PREPEND_INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
-}
+INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
 
 defineTest(prependWebKit2Lib) {
     pathToWebKit2Output = $$ARGS/$$WEBKIT2_DESTDIR
@@ -76,10 +69,6 @@ defineTest(prependWebKit2Lib) {
     win32-msvc*|wince* {
         LIBS = -l$$WEBKIT2_TARGET $$LIBS
         LIBS = -L$$pathToWebKit2Output $$LIBS
-        POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}$${WEBKIT2_TARGET}.lib
-    } else:symbian {
-        LIBS = -l$${WEBKIT2_TARGET}.lib $$LIBS
-        QMAKE_LIBDIR += $$pathToWebKit2Output
         POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}$${WEBKIT2_TARGET}.lib
     } else {
         QMAKE_LIBDIR = $$pathToWebKit2Output $$QMAKE_LIBDIR

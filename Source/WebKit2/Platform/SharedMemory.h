@@ -60,7 +60,7 @@ public:
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
+#if USE(UNIX_DOMAIN_SOCKETS)
         CoreIPC::Attachment releaseToAttachment() const;
         void adoptFromAttachment(int fileDescriptor, size_t);
 #endif
@@ -72,8 +72,6 @@ public:
         mutable HANDLE m_handle;
 #elif USE(UNIX_DOMAIN_SOCKETS)
         mutable int m_fileDescriptor;
-#elif OS(SYMBIAN)
-        mutable uint32_t m_chunkID;
 #endif
         size_t m_size;
     };
@@ -113,8 +111,6 @@ private:
     HANDLE m_handle;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor;
-#elif OS(SYMBIAN)
-    int m_handle;
 #endif
 };
 

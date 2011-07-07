@@ -1,5 +1,19 @@
 2011-07-07  Andreas Kling  <kling@webkit.org>
 
+        [Qt][WK2] Remove Symbian code.
+        https://bugs.webkit.org/show_bug.cgi?id=64101
+
+        Reviewed by Benjamin Poulain.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::screenshot):
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+
+2011-07-07  Andreas Kling  <kling@webkit.org>
+
         [Qt][WK2] Don't support ridiculous matrix of QT_NO_FEATURE combinations.
         https://bugs.webkit.org/show_bug.cgi?id=64099
 
