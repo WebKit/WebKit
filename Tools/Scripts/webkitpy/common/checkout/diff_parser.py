@@ -31,7 +31,7 @@
 import logging
 import re
 
-_log = logging.getLogger("webkitpy.common.checkout.diff_parser")
+_log = logging.getLogger(__name__)
 
 
 # FIXME: This is broken. We should compile our regexps up-front

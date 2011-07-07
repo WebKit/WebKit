@@ -40,7 +40,7 @@ import webkitpy.thirdparty.simplejson as simplejson
 # A JSON results generator for generic tests.
 # FIXME: move this code out of the layout_package directory.
 
-_log = logging.getLogger("webkitpy.layout_tests.layout_package.json_results_generator")
+_log = logging.getLogger(__name__)
 
 _JSON_PREFIX = "ADD_RESULTS("
 _JSON_SUFFIX = ");"

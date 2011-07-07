@@ -34,7 +34,8 @@ import re
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
-_log = logging.getLogger("webkitpy.layout_tests.port.mac")
+
+_log = logging.getLogger(__name__)
 
 
 def os_version(os_version_string=None, supported_versions=None):

@@ -32,7 +32,7 @@ import sys
 import time
 
 
-_log = logging.getLogger("webkitpy.common.system.file_lock")
+_log = logging.getLogger(__name__)
 
 
 class FileLock(object):

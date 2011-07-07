@@ -33,7 +33,8 @@ import logging
 
 import chromium
 
-_log = logging.getLogger("webkitpy.layout_tests.port.chromium_linux")
+
+_log = logging.getLogger(__name__)
 
 
 class ChromiumLinuxPort(chromium.ChromiumPort):

@@ -33,8 +33,8 @@ import re
 import sys
 from webkitpy.common.checkout import scm
 
-_log = logging.getLogger("webkitpy.layout_tests."
-                         "update-webgl-conformance-tests")
+
+_log = logging.getLogger(__name__)
 
 
 def remove_first_line_comment(text):

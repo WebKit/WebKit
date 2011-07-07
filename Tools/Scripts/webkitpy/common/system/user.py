@@ -36,7 +36,7 @@ import sys
 import webbrowser
 
 
-_log = logging.getLogger("webkitpy.common.system.user")
+_log = logging.getLogger(__name__)
 
 
 try:

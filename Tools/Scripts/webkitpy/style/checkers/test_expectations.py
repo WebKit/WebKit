@@ -37,7 +37,8 @@ from common import TabChecker
 from webkitpy.style_references import port
 from webkitpy.style_references import test_expectations
 
-_log = logging.getLogger("webkitpy.style.checkers.test_expectations")
+
+_log = logging.getLogger(__name__)
 
 
 class ChromiumOptions(object):

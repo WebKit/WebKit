@@ -34,7 +34,8 @@ import sys
 
 import chromium
 
-_log = logging.getLogger("webkitpy.layout_tests.port.chromium_win")
+
+_log = logging.getLogger(__name__)
 
 
 def os_version(windows_version=None):

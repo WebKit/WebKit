@@ -49,7 +49,9 @@ from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
 from webkitpy.style_references import configure_logging as _configure_logging
 
-_log = logging.getLogger("webkitpy.style.checker")
+
+_log = logging.getLogger(__name__)
+
 
 # These are default option values for the command-line option parser.
 _DEFAULT_MIN_CONFIDENCE = 1

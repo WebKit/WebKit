@@ -1,5 +1,46 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Normalize callers of logging.getLogger to use __name__
+        https://bugs.webkit.org/show_bug.cgi?id=64054
+
+        Reviewed by Eric Seidel.
+
+        Most callers were already using __name__.  This patch makes everyone
+        consistent.
+
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/file_lock.py:
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        * Scripts/webkitpy/python24/versioning.py:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        * Scripts/webkitpy/style/patchreader.py:
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Move model classes out of layout_package and into models
         https://bugs.webkit.org/show_bug.cgi?id=64053
 

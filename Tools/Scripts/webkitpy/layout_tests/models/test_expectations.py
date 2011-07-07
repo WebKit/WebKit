@@ -37,8 +37,9 @@ import re
 
 import webkitpy.thirdparty.simplejson as simplejson
 
-_log = logging.getLogger("webkitpy.layout_tests.layout_package."
-                         "test_expectations")
+
+_log = logging.getLogger(__name__)
+
 
 # Test expectation and modifier constants.
 # FIXME: range() starts with 0 which makes if expectation checks harder

@@ -32,7 +32,8 @@ import logging
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
-_log = logging.getLogger(__file__)
+
+_log = logging.getLogger(__name__)
 
 
 class WinPort(WebKitPort):

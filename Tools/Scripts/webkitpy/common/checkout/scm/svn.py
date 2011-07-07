@@ -41,6 +41,9 @@ from webkitpy.common.system import ospath
 from .scm import AuthenticationError, SCM, commit_error_handler
 
 
+_log = logging.getLogger(__name__)
+
+
 # A mixin class that represents common functionality for SVN and Git-SVN.
 class SVNRepository:
     def has_authorization_for_realm(self, realm, home_directory=os.getenv("HOME")):
@@ -310,7 +313,6 @@ class SVN(SCM, SVNRepository):
             svn_commit_args.extend(changed_files)
 
         if self.dryrun:
-            _log = logging.getLogger("webkitpy.common.system")
             _log.debug('Would run SVN command: "' + " ".join(svn_commit_args) + '"')
 
             # Return a string which looks like a commit so that things which parse this output will succeed.

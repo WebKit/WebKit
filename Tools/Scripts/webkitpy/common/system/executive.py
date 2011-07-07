@@ -49,7 +49,7 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.python24 import versioning
 
 
-_log = logging.getLogger("webkitpy.common.system")
+_log = logging.getLogger(__name__)
 
 
 class ScriptError(Exception):

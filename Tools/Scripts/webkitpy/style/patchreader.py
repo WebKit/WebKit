@@ -33,7 +33,7 @@ import logging
 from webkitpy.common.checkout.diff_parser import DiffParser
 
 
-_log = logging.getLogger("webkitpy.style.patchreader")
+_log = logging.getLogger(__name__)
 
 
 class PatchReader(object):

@@ -35,7 +35,8 @@ import subprocess
 
 from webkitpy.layout_tests.port import base, builders, server_process, webkit
 
-_log = logging.getLogger("webkitpy.layout_tests.port.gtk")
+
+_log = logging.getLogger(__name__)
 
 
 class GtkDriver(webkit.WebKitDriver):

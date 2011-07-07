@@ -35,7 +35,8 @@ import webkit
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
-_log = logging.getLogger("webkitpy.layout_tests.port.qt")
+
+_log = logging.getLogger(__name__)
 
 
 class QtPort(WebKitPort):

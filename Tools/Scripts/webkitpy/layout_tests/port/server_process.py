@@ -41,7 +41,8 @@ if sys.platform != 'win32':
 
 from webkitpy.common.system.executive import Executive, ScriptError
 
-_log = logging.getLogger(__file__)
+
+_log = logging.getLogger(__name__)
 
 
 class ServerProcess:

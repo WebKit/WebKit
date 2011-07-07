@@ -51,7 +51,8 @@ from webkitpy.layout_tests.port import builders
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
 
-_log = logging.getLogger("webkitpy.layout_tests.port.chromium")
+
+_log = logging.getLogger(__name__)
 
 
 class ChromiumPort(Port):

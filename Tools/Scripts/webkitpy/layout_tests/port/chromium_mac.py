@@ -38,7 +38,8 @@ from webkitpy.layout_tests.port import chromium
 
 from webkitpy.common.system.executive import Executive
 
-_log = logging.getLogger("webkitpy.layout_tests.port.chromium_mac")
+
+_log = logging.getLogger(__name__)
 
 
 class ChromiumMacPort(chromium.ChromiumPort):

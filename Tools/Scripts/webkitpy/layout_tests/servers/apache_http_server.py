@@ -37,7 +37,8 @@ import sys
 
 from webkitpy.layout_tests.servers import http_server_base
 
-_log = logging.getLogger("webkitpy.layout_tests.servers.apache_http_server")
+
+_log = logging.getLogger(__name__)
 
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):

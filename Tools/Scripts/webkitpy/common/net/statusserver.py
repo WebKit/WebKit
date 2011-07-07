@@ -36,7 +36,7 @@ import logging
 import urllib2
 
 
-_log = logging.getLogger("webkitpy.common.net.statusserver")
+_log = logging.getLogger(__name__)
 
 
 class StatusServer:

@@ -43,7 +43,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port import builders, server_process, Port, Driver, DriverOutput
 
 
-_log = logging.getLogger(__file__)
+_log = logging.getLogger(__name__)
 
 
 class WebKitPort(Port):

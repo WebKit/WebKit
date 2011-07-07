@@ -36,7 +36,7 @@ from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 
 
-_log = logging.getLogger(__file__)
+_log = logging.getLogger(__name__)
 
 
 class ResultSummary(object):

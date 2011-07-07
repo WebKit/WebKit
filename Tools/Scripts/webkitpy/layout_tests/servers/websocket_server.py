@@ -37,10 +37,12 @@ import time
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import http_server_base
 
-_log = logging.getLogger("webkitpy.layout_tests.servers.websocket_server")
+_log = logging.getLogger(__name__)
+
 
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
 _WSS_LOG_PREFIX = 'pywebsocket.wss.log-'
+
 
 _DEFAULT_WS_PORT = 8880
 _DEFAULT_WSS_PORT = 9323

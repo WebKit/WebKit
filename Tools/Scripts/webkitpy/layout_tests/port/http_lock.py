@@ -40,7 +40,7 @@ from webkitpy.common.system.file_lock import FileLock
 from webkitpy.common.system.filesystem import FileSystem
 
 
-_log = logging.getLogger("webkitpy.layout_tests.port.http_lock")
+_log = logging.getLogger(__name__)
 
 
 class HttpLock(object):

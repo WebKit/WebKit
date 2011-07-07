@@ -37,8 +37,9 @@ from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.layout_tests.models import test_expectations
 
-# FIXME: Change this to __file__ when we can fix test-webkitpy's logging configuration.
-_log = logging.getLogger("webkitpy.layout_tests.printer")
+
+_log = logging.getLogger(__name__)
+
 
 TestExpectations = test_expectations.TestExpectations
 
