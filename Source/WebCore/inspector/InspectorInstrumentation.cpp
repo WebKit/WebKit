@@ -162,8 +162,10 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents* i
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
         domAgent->didInvalidateStyleAttr(node);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents->inspectorDOMDebuggerAgent())
         domDebuggerAgent->didInvalidateStyleAttr(node);
+#endif
 }
 
 void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents* instrumentingAgents, DOMWindow* window)
