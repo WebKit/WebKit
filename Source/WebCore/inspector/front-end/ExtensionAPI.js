@@ -167,15 +167,15 @@ function Panels()
 }
 
 Panels.prototype = {
-    create: function(title, iconURL, pageURL, callback)
+    create: function(title, icon, page, callback)
     {
         var id = "extension-panel-" + extensionServer.nextObjectId();
         var request = {
             command: "createPanel",
             id: id,
             title: title,
-            icon: expandURL(iconURL),
-            url: expandURL(pageURL)
+            icon: icon,
+            page: page
         };
         extensionServer.sendRequest(request, callback && bind(callback, this, new ExtensionPanel(id)));
     }
@@ -248,9 +248,9 @@ ExtensionSidebarPaneImpl.prototype = {
         extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: jsonObject, rootTitle: rootTitle });
     },
 
-    setPage: function(url)
+    setPage: function(page)
     {
-        extensionServer.sendRequest({ command: "setSidebarPage", id: this._id, url: expandURL(url) });
+        extensionServer.sendRequest({ command: "setSidebarPage", id: this._id, page: page });
     }
 }
 
@@ -438,18 +438,6 @@ ExtensionServerClient.prototype = {
         if (handler)
             handler.call(this, request);
     }
-}
-
-function expandURL(url)
-{
-    if (!url)
-        return url;
-    if (/^[^/]+:/.exec(url)) // See if url has schema.
-        return url;
-    var baseURL = location.protocol + "//" + location.hostname + location.port;
-    if (/^\//.exec(url))
-        return baseURL + url;
-    return baseURL + location.pathname.replace(/\/[^/]*$/,"/") + url;
 }
 
 function bind(func, thisObject)
