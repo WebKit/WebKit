@@ -1,5 +1,23 @@
 2011-07-07  Dirk Schulze  <krit@webkit.org>
 
+        SVGAnimateTransform does not support calcMode=discrete
+        https://bugs.webkit.org/show_bug.cgi?id=63914
+
+        Reviewed by Rob Buis.
+
+        CalcMode discrete specifies that the animation function will jump from one value to the next without any interpolation.
+        Implemented calcMode discrete by checking current progress of animation. If we are in the first half of the animation,
+        we use the start value of the aniamtion, end value for the second half of the animation. The key time at 50% is used on
+        all other animations as well as on other SVG viewers.
+
+        Added a manual test. DRT crashes on an automated test with the SVG animation API. Opened a new bug report: 64104.
+
+        * manual-tests/svg-animateTransform-calcMode-discrete.svg: Added.
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::calculateAnimatedValue):
+
+2011-07-07  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Rob Buis.
 
         SVGAnimatedPath needs fallback for 'by' animation

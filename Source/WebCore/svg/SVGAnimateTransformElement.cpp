@@ -158,6 +158,9 @@ void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsign
         return;
     SVGTransformList* transformList = transformListFor(targetElement);
     ASSERT(transformList);
+    
+    if (calcMode() == CalcModeDiscrete)
+        percentage = percentage < 0.5 ? 0 : 1;
 
     if (!isAdditive())
         transformList->clear();
