@@ -1,3 +1,29 @@
+2011-07-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Reduce compositor texture memory by skipping layers and clipping surfaces
+        https://bugs.webkit.org/show_bug.cgi?id=64052
+
+        Reviewed by James Robinson.
+
+        Layers and surfaces that are entirely transparent are now skipped.
+        Parent scissor rects are now applied to the content rect of surfaces
+        so that offscreen surfaces can be skipped.
+
+        Landing this for vangelis@chromium.org.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::calculateVisibleRect):
+        (WebCore::calculateVisibleLayerRect):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateCompositorResources):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::RenderSurfaceChromium):
+
 2011-07-07  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r90581.

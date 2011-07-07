@@ -373,18 +373,8 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     updateCompositorResources(renderSurfaceLayerList);
 }
 
-static IntRect calculateVisibleLayerRect(const IntRect& targetSurfaceRect, const IntSize& bounds, const IntSize& contentBounds, const TransformationMatrix& tilingTransform)
+static IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
 {
-    if (targetSurfaceRect.isEmpty() || contentBounds.isEmpty())
-        return targetSurfaceRect;
-
-    const IntRect layerBoundRect = IntRect(IntPoint(), contentBounds);
-    TransformationMatrix transform = tilingTransform;
-
-    transform.scaleNonUniform(bounds.width() / static_cast<double>(contentBounds.width()),
-                              bounds.height() / static_cast<double>(contentBounds.height()));
-    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
-
     // Is this layer fully contained within the target surface?
     IntRect layerInSurfaceSpace = transform.mapRect(layerBoundRect);
     if (targetSurfaceRect.contains(layerInSurfaceSpace))
@@ -404,6 +394,21 @@ static IntRect calculateVisibleLayerRect(const IntRect& targetSurfaceRect, const
     IntRect layerRect = surfaceToLayer.projectQuad(FloatQuad(FloatRect(minimalSurfaceRect))).enclosingBoundingBox();
     layerRect.intersect(layerBoundRect);
     return layerRect;
+}
+
+static IntRect calculateVisibleLayerRect(const IntRect& targetSurfaceRect, const IntSize& bounds, const IntSize& contentBounds, const TransformationMatrix& tilingTransform)
+{
+    if (targetSurfaceRect.isEmpty() || contentBounds.isEmpty())
+        return targetSurfaceRect;
+
+    const IntRect layerBoundRect = IntRect(IntPoint(), contentBounds);
+    TransformationMatrix transform = tilingTransform;
+
+    transform.scaleNonUniform(bounds.width() / static_cast<double>(contentBounds.width()),
+                              bounds.height() / static_cast<double>(contentBounds.height()));
+    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
+
+    return calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
 }
 
 static void paintContentsIfDirty(LayerChromium* layer, const IntRect& visibleLayerRect)
@@ -431,6 +436,9 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
         if (!renderSurface->m_layerList.size())
             continue;
 
+        if (!renderSurface->m_drawOpacity)
+            continue;
+
         LayerList& layerList = renderSurface->m_layerList;
         ASSERT(layerList.size());
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
@@ -444,6 +452,9 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
             LayerChromium* layer = ccLayerImpl->owner();
 
             layer->setLayerRenderer(this);
+
+            if (!layer->opacity())
+                continue;
 
             if (layer->maskLayer())
                 layer->maskLayer()->setLayerRenderer(this);
@@ -524,14 +535,23 @@ void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
     // correct order.
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
-        ASSERT(renderSurfaceLayer->renderSurface());
+        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        renderSurface->m_skipsDraw = true;
 
         // Render surfaces whose drawable area has zero width or height
         // will have no layers associated with them and should be skipped.
-        if (!renderSurfaceLayer->renderSurface()->m_layerList.size())
+        if (!renderSurface->m_layerList.size())
             continue;
 
-        if (useRenderSurface(renderSurfaceLayer->renderSurface())) {
+        // Skip completely transparent render surfaces.
+        if (!renderSurface->m_drawOpacity)
+            continue;
+
+        if (useRenderSurface(renderSurface)) {
+            renderSurface->m_skipsDraw = false;
+
             if (renderSurfaceLayer != rootDrawLayer) {
                 GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
                 GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
@@ -539,10 +559,9 @@ void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
                 GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
             }
 
-            LayerList& layerList = renderSurfaceLayer->renderSurface()->m_layerList;
-            ASSERT(layerList.size());
+            LayerList& layerList = renderSurface->m_layerList;
             for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
-                drawLayer(layerList[layerIndex].get(), renderSurfaceLayer->renderSurface());
+                drawLayer(layerList[layerIndex].get(), renderSurface);
         }
     }
 
@@ -798,9 +817,12 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
 
     // drawableContentRect() is always stored in the coordinate system of the
     // RenderSurface the layer draws into.
-    if (layer->drawsContent())
-        layer->setDrawableContentRect(transformedLayerRect);
-    else
+    if (layer->drawsContent()) {
+        IntRect drawableContentRect = transformedLayerRect;
+        if (layer->usesLayerScissor())
+            drawableContentRect.intersect(layer->scissorRect());
+        layer->setDrawableContentRect(drawableContentRect);
+    } else
         layer->setDrawableContentRect(IntRect());
 
     TransformationMatrix sublayerMatrix = layer->drawTransform();
@@ -863,8 +885,10 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
         // Don't clip if the layer is reflected as the reflection shouldn't be
         // clipped.
         if (!layer->replicaLayer()) {
-            if (!layer->scissorRect().isEmpty())
-                renderSurface->m_contentRect.intersect(layer->scissorRect());
+            if (!renderSurface->m_scissorRect.isEmpty() && !renderSurface->m_contentRect.isEmpty()) {
+                IntRect surfaceScissorRect = calculateVisibleRect(renderSurface->m_scissorRect, renderSurface->m_contentRect, renderSurface->m_originTransform);
+                renderSurface->m_contentRect.intersect(surfaceScissorRect);
+            }
             FloatPoint clippedSurfaceCenter = renderSurface->contentRectCenter();
             centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
         }
@@ -909,7 +933,7 @@ void LayerRendererChromium::updateCompositorResources(const LayerList& renderSur
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
-        if (!renderSurface->m_layerList.size())
+        if (!renderSurface->m_layerList.size() || !renderSurface->m_drawOpacity)
             continue;
 
         LayerList& layerList = renderSurface->m_layerList;
@@ -929,6 +953,9 @@ void LayerRendererChromium::updateCompositorResources(CCLayerImpl* ccLayerImpl)
     LayerChromium* layer = ccLayerImpl->owner();
 
     if (layer->bounds().isEmpty())
+        return;
+
+    if (!layer->opacity())
         return;
 
     if (layer->maskLayer())
@@ -1017,19 +1044,22 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
     if (!layer->drawsContent())
         return;
 
+    if (!layer->opacity())
+        return;
+
     if (layer->bounds().isEmpty())
         return;
 
-    if (layer->usesLayerScissor())
-        setScissorToRect(layer->scissorRect());
-    else
-        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-    
     IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
     if (layer->usesLayerScissor()) {
         IntRect scissorRect = layer->scissorRect();
         targetSurfaceRect.intersect(scissorRect);
-    }
+        if (targetSurfaceRect.isEmpty())
+            return;
+        setScissorToRect(scissorRect);
+    } else
+        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+
 
     // FIXME: Need to take into account the commulative render surface transforms all the way from
     //        the default render surface in order to determine visibility.

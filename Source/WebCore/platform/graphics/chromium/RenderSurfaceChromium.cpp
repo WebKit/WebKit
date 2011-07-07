@@ -43,6 +43,7 @@ RenderSurfaceChromium::RenderSurfaceChromium(CCLayerImpl* owningLayer)
     : m_owningLayer(owningLayer)
     , m_maskLayer(0)
     , m_skipsDraw(false)
+    , m_drawOpacity(1)
 {
 }
 
