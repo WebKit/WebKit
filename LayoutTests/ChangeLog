@@ -1,3 +1,12 @@
+2011-07-07  Jeff Timanus  <twiz@chromium.org>
+
+        Reviewed by Stephen White.
+
+        Mark layout tests as failing in Chromium after skia roll r1799:r1814
+        https://bugs.webkit.org/show_bug.cgi?id=64121
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-07  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Rob Buis.
