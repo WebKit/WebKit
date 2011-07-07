@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventFactory_h
-#define WebEventFactory_h
+#ifndef NativeWebTouchEvent_h
+#define NativeWebTouchEvent_h
 
 #include "WebEvent.h"
 
-#if ENABLE(TOUCH_EVENTS)
-class QTouchEvent;
+#if PLATFORM(QT)
+#include <QTouchEvent>
 #endif
-
-class QGraphicsSceneMouseEvent;
-class QGraphicsSceneWheelEvent;
-class QKeyEvent;
 
 namespace WebKit {
 
-class WebEventFactory {
+class NativeWebTouchEvent : public WebTouchEvent {
 public:
-    static WebMouseEvent createWebMouseEvent(QGraphicsSceneMouseEvent* event, int eventClickCount);
-    static WebWheelEvent createWebWheelEvent(QGraphicsSceneWheelEvent* event);
-    static WebKeyboardEvent createWebKeyboardEvent(QKeyEvent* event);
-#if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(const QTouchEvent*);
+#if PLATFORM(QT)
+    explicit NativeWebTouchEvent(const QTouchEvent*);
+#endif
+
+#if PLATFORM(QT)
+    const QTouchEvent* nativeEvent() const { return &m_nativeEvent; }
+#endif
+
+private:
+#if PLATFORM(QT)
+    const QTouchEvent m_nativeEvent;
 #endif
 };
 
 } // namespace WebKit
 
-#endif // WebEventFactory_h
+#endif // NativeWebTouchEvent_h

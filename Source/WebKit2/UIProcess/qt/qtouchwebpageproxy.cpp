@@ -49,6 +49,13 @@ void QTouchWebPageProxy::setViewportArguments(const WebCore::ViewportArguments& 
     // FIXME: we must tell our Views to react to the new viewport parameters.
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void QTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
+{
+    // FIXME: Add gesture and synthetic click.
+}
+#endif
+
 bool QTouchWebPageProxy::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {
@@ -61,11 +68,11 @@ bool QTouchWebPageProxy::handleEvent(QEvent* ev)
     return QtWebPageProxy::handleEvent(ev);
 }
 
-void QTouchWebPageProxy::touchEvent(QTouchEvent* ev)
+void QTouchWebPageProxy::touchEvent(QTouchEvent* event)
 {
 #if ENABLE(TOUCH_EVENTS)
-    WebTouchEvent touchEvent = WebEventFactory::createWebTouchEvent(ev);
-    m_webPageProxy->handleTouchEvent(touchEvent);
+    m_webPageProxy->handleTouchEvent(NativeWebTouchEvent(event));
+    event->accept();
 #else
     ASSERT_NOT_REACHED();
     ev->ignore();

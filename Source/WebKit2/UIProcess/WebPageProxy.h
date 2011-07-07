@@ -33,6 +33,9 @@
 #include "DrawingAreaProxy.h"
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
+#if ENABLE(TOUCH_EVENTS)
+#include "NativeWebTouchEvent.h"
+#endif
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -332,7 +335,7 @@ public:
     void handleGestureEvent(const WebGestureEvent&);
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    void handleTouchEvent(const WebTouchEvent&);
+    void handleTouchEvent(const NativeWebTouchEvent&);
 #endif
 
     void scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
@@ -866,7 +869,9 @@ private:
     uint64_t m_syncNavigationActionPolicyDownloadID;
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
-
+#if ENABLE(TOUCH_EVENTS)
+    Deque<NativeWebTouchEvent> m_touchEventQueue;
+#endif
     Deque<NativeWebWheelEvent> m_wheelEventQueue;
     Vector<NativeWebWheelEvent> m_currentlyProcessedWheelEvents;
 

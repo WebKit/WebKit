@@ -51,7 +51,9 @@ namespace WebKit {
 class DrawingAreaProxy;
 class FindIndicator;
 class NativeWebKeyboardEvent;
-class NativeWebKeyboardEvent;
+#if ENABLE(TOUCH_EVENTS)
+class NativeWebTouchEvent;
+#endif
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;
@@ -137,6 +139,9 @@ public:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) = 0;
     
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;
+#if ENABLE(TOUCH_EVENTS)
+    virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) = 0;
+#endif
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) = 0;
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;

@@ -50,7 +50,7 @@ static WebMouseEvent::Button mouseButtonForEvent(QGraphicsSceneMouseEvent *event
     return WebMouseEvent::NoButton;
 }
 
-static WebEvent::Type webEventTypeForEvent(QEvent* event)
+static WebEvent::Type webEventTypeForEvent(const QEvent* event)
 {
     switch (event->type()) {
         case QEvent::GraphicsSceneMouseDoubleClick:
@@ -163,8 +163,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-
-WebTouchEvent WebEventFactory::createWebTouchEvent(QTouchEvent* event)
+WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event)
 {
     WebEvent::Type type  = webEventTypeForEvent(event);
     WebPlatformTouchPoint::TouchPointState state = static_cast<WebPlatformTouchPoint::TouchPointState>(0);

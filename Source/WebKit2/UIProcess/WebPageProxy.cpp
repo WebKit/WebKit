@@ -972,10 +972,13 @@ void WebPageProxy::handleGestureEvent(const WebGestureEvent& event)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-void WebPageProxy::handleTouchEvent(const WebTouchEvent& event)
+void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!isValid())
         return;
+
+    m_touchEventQueue.append(event);
+    process()->responsivenessTimer()->start();
     process()->send(Messages::WebPage::TouchEvent(event), m_pageID); 
 }
 #endif
@@ -2712,6 +2715,12 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
 #endif
+#if ENABLE(TOUCH_EVENTS)
+    case WebEvent::TouchStart:
+    case WebEvent::TouchMove:
+    case WebEvent::TouchEnd:
+    case WebEvent::TouchCancel:
+#endif
         process()->responsivenessTimer()->stop();
         break;
     }
@@ -2779,6 +2788,19 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 #endif
         break;
     }
+#if ENABLE(TOUCH_EVENTS)
+    case WebEvent::TouchStart:
+    case WebEvent::TouchMove:
+    case WebEvent::TouchEnd:
+    case WebEvent::TouchCancel: {
+        NativeWebTouchEvent event = m_touchEventQueue.first();
+        MESSAGE_CHECK(type == event.type());
+        m_touchEventQueue.removeFirst();
+
+        m_pageClient->doneWithTouchEvent(event, handled);
+        break;
+    }
+#endif
     }
 }
 

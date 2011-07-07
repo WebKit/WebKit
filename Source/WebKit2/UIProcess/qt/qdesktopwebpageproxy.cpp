@@ -70,6 +70,14 @@ void QDesktopWebPageProxy::setViewportArguments(const WebCore::ViewportArguments
     // We ignore the viewport definition on the Desktop.
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void QDesktopWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
+{
+    // We do not handle touch on Desktop for now, the events are not supposed to be forwarded to the WebProcess.
+    ASSERT_NOT_REACHED();
+}
+#endif
+
 bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {

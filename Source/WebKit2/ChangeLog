@@ -1,3 +1,40 @@
+2011-07-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt] [WK2] Improve the handling of touch events to use them as main input
+        https://bugs.webkit.org/show_bug.cgi?id=63991
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Promote touch event for use as primary input.
+
+        The touch events now use the responsiveness timer like the other input events.
+
+        The touch events also have a callback to the UI signaling if the event was used
+        or not: PageClient::doneWithTouchEvent().
+        This is similar to what is done with key events (PageClient::doneWithKeyEvent()).
+
+        * Shared/NativeWebTouchEvent.h: Copied from Source/WebKit2/Shared/qt/WebEventFactoryQt.h.
+        (WebKit::NativeWebTouchEvent::nativeEvent):
+        * Shared/qt/NativeWebTouchEventQt.cpp: Copied from Source/WebKit2/Shared/qt/WebEventFactoryQt.h.
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::webEventTypeForEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/qt/WebEventFactoryQt.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::doneWithTouchEvent):
+        (QTouchWebPageProxy::touchEvent):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebKit2.pro:
+
 2011-07-06  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Split Qt API into two different web views (touch and desktop)

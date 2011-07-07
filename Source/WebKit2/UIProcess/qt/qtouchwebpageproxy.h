@@ -42,6 +42,9 @@ protected:
 private:
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
+#if ENABLE(TOUCH_EVENTS)
+    virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
+#endif
 
     TouchViewInterface* touchViewInterface() const { return static_cast<TouchViewInterface*>(m_viewInterface); }
     QTouchWebPage* pageView() const { return static_cast<QTouchWebPage*>(touchViewInterface()->pageView()); }

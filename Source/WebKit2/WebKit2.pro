@@ -570,3 +570,9 @@ SOURCES += \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES
 
+contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
+    HEADERS += \
+        Shared/NativeWebTouchEvent.h
+    SOURCES += \
+        Shared/qt/NativeWebTouchEventQt.cpp
+}
