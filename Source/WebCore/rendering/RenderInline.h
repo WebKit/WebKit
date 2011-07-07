@@ -75,7 +75,7 @@ public:
     
     LayoutSize relativePositionedInlineOffset(const RenderBox* child) const;
 
-    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
     void paintOutline(GraphicsContext*, const IntPoint&);
 
     using RenderBoxModelObject::continuation;

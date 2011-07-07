@@ -304,7 +304,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 }
 
-void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
+void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)
 {
     if (!isSpatialNavigationEnabled(frame()))
         return RenderBlock::addFocusRingRects(rects, additionalOffset);

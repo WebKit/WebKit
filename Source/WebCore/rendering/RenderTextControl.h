@@ -92,7 +92,7 @@ private:
     virtual bool avoidsFloats() const { return true; }
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
     
-    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
 
     virtual bool canBeProgramaticallyScrolled() const { return true; }
 

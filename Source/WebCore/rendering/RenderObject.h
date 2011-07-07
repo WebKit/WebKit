@@ -777,7 +777,7 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const IntSize& offsetInContainer, TransformationMatrix&) const;
     
-    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&) { };
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&) { };
 
     IntRect absoluteOutlineBounds() const
     {

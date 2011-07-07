@@ -51,7 +51,7 @@ protected:
 
     virtual void layout();
 
-    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
 
     virtual FloatRect objectBoundingBox() const { return m_objectBoundingBox; }
     virtual FloatRect strokeBoundingBox() const { return m_strokeBoundingBox; }

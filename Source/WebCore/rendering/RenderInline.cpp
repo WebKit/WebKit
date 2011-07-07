@@ -1334,13 +1334,13 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
+void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)
 {
     if (!alwaysCreateLineBoxes())
-        culledInlineAbsoluteRects(this, rects, toSize(additionalOffset));
+        culledInlineAbsoluteRects(this, rects, toLayoutSize(additionalOffset));
     else {
         for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            rects.append(enclosingIntRect(FloatRect(additionalOffset.x() + curr->x(), additionalOffset.y() + curr->y(), curr->width(), curr->height())));
+            rects.append(enclosingLayoutRect(FloatRect(additionalOffset.x() + curr->x(), additionalOffset.y() + curr->y(), curr->width(), curr->height())));
     }
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -1357,9 +1357,9 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& add
 
     if (continuation()) {
         if (continuation()->isInline())
-            continuation()->addFocusRingRects(rects, flooredIntPoint(additionalOffset + continuation()->containingBlock()->location() - containingBlock()->location()));
+            continuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + continuation()->containingBlock()->location() - containingBlock()->location()));
         else
-            continuation()->addFocusRingRects(rects, flooredIntPoint(additionalOffset + toRenderBox(continuation())->location() - containingBlock()->location()));
+            continuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + toRenderBox(continuation())->location() - containingBlock()->location()));
     }
 }
 

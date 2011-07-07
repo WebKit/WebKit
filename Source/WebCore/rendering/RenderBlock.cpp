@@ -5884,7 +5884,7 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
     return IntRect(x, y, caretWidth, height);
 }
 
-void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
+void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
@@ -5896,19 +5896,19 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& addi
         // FIXME: This is wrong for block-flows that are horizontal.
         // https://bugs.webkit.org/show_bug.cgi?id=46781
         bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox(); 
-        int topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : 0;
-        int bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : 0;
-        IntRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, width(), height() + topMargin + bottomMargin);
+        float topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : static_cast<LayoutUnit>(0);
+        float bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : static_cast<LayoutUnit>(0);
+        LayoutRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, width(), height() + topMargin + bottomMargin);
         if (!rect.isEmpty())
             rects.append(rect);
     } else if (width() && height())
-        rects.append(IntRect(additionalOffset, size()));
+        rects.append(LayoutRect(additionalOffset, size()));
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-            int top = max(curr->lineTop(), curr->logicalTop());
-            int bottom = min(curr->lineBottom(), curr->logicalTop() + curr->logicalHeight());
-            IntRect rect(additionalOffset.x() + curr->x(), additionalOffset.y() + top, curr->logicalWidth(), bottom - top);
+            LayoutUnit top = max(curr->lineTop(), curr->logicalTop());
+            LayoutUnit bottom = min(curr->lineBottom(), curr->logicalTop() + curr->logicalHeight());
+            LayoutRect rect(additionalOffset.x() + curr->x(), additionalOffset.y() + top, curr->logicalWidth(), bottom - top);
             if (!rect.isEmpty())
                 rects.append(rect);
         }
@@ -5928,7 +5928,7 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& addi
     }
 
     if (inlineElementContinuation())
-        inlineElementContinuation()->addFocusRingRects(rects, flooredIntPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location()));
+        inlineElementContinuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location()));
 }
 
 RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const

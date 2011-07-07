@@ -236,9 +236,9 @@ void RenderSVGPath::paint(PaintInfo& paintInfo, const IntPoint&)
 
 // This method is called from inside paintOutline() since we call paintOutline()
 // while transformed to our coord system, return local coords
-void RenderSVGPath::addFocusRingRects(Vector<IntRect>& rects, const IntPoint&) 
+void RenderSVGPath::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&) 
 {
-    IntRect rect = enclosingIntRect(repaintRectInLocalCoordinates());
+    LayoutRect rect = enclosingLayoutRect(repaintRectInLocalCoordinates());
     if (!rect.isEmpty())
         rects.append(rect);
 }
