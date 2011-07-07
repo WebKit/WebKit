@@ -224,11 +224,11 @@ void RenderTableCell::setOverrideSizeFromRowHeight(int rowHeight)
     RenderBlock::setOverrideSize(max(0, rowHeight - borderBefore() - paddingBefore() - borderAfter() - paddingAfter()));
 }
 
-IntSize RenderTableCell::offsetFromContainer(RenderObject* o, const IntPoint& point) const
+LayoutSize RenderTableCell::offsetFromContainer(RenderObject* o, const LayoutPoint& point) const
 {
     ASSERT(o == container());
 
-    IntSize offset = RenderBlock::offsetFromContainer(o, point);
+    LayoutSize offset = RenderBlock::offsetFromContainer(o, point);
     if (parent())
         offset.expand(-parentBox()->x(), -parentBox()->y());
 

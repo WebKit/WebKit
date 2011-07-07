@@ -738,14 +738,14 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)
     return RenderBoxModelObject::positionForPoint(point);
 }
 
-IntRect RenderInline::linesBoundingBox() const
+LayoutRect RenderInline::linesBoundingBox() const
 {
     if (!alwaysCreateLineBoxes()) {
         ASSERT(!firstLineBox());
-        return enclosingIntRect(culledInlineBoundingBox(this));
+        return enclosingLayoutRect(culledInlineBoundingBox(this));
     }
 
-    IntRect result;
+    LayoutRect result;
     
     // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
     // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
@@ -768,7 +768,7 @@ IntRect RenderInline::linesBoundingBox() const
         float y = isHorizontal ? firstLineBox()->y() : logicalLeftSide;
         float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->logicalBottom() - x;
         float height = isHorizontal ? lastLineBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = enclosingIntRect(FloatRect(x, y, width, height));
+        result = enclosingLayoutRect(FloatRect(x, y, width, height));
     }
 
     return result;
@@ -1093,11 +1093,11 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
-IntSize RenderInline::offsetFromContainer(RenderObject* container, const IntPoint& point) const
+LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const LayoutPoint& point) const
 {
     ASSERT(container == this->container());
     
-    IntSize offset;    
+    LayoutSize offset;    
     if (isRelPositioned())
         offset += relativePositionOffset();
 
@@ -1134,7 +1134,7 @@ void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     if (o->isBox() && o->style()->isFlippedBlocksWritingMode())
         transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedIntPoint(transformState.mappedPoint())) - centerPoint);
 
-    IntSize containerOffset = offsetFromContainer(o, roundedIntPoint(transformState.mappedPoint()));
+    LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
 
     bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (useTransforms && shouldUseTransformFromContainer(o)) {
@@ -1166,7 +1166,7 @@ void RenderInline::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Trans
 
     o->mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
 
-    IntSize containerOffset = offsetFromContainer(o, IntPoint());
+    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
 
     bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (useTransforms && shouldUseTransformFromContainer(o)) {
@@ -1285,23 +1285,23 @@ int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, Li
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
-IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) const
+LayoutSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) const
 {
     // FIXME: This function isn't right with mixed writing modes.
 
     ASSERT(isRelPositioned());
     if (!isRelPositioned())
-        return IntSize();
+        return LayoutSize();
 
     // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
     // box from the rest of the content, but only in the cases where we know we're positioned
     // relative to the inline itself.
 
-    IntSize logicalOffset;
-    int inlinePosition;
-    int blockPosition;
+    LayoutSize logicalOffset;
+    LayoutUnit inlinePosition;
+    LayoutUnit blockPosition;
     if (firstLineBox()) {
-        inlinePosition = lroundf(firstLineBox()->logicalLeft());
+        inlinePosition = roundedLayoutUnit(firstLineBox()->logicalLeft());
         blockPosition = firstLineBox()->logicalTop();
     } else {
         inlinePosition = layer()->staticInlinePosition();

@@ -249,7 +249,7 @@ public:
     int overrideHeight() const;
     virtual void setOverrideSize(int);
 
-    virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
+    virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     
     LayoutUnit computeBorderBoxLogicalWidth(LayoutUnit width) const;
     LayoutUnit computeBorderBoxLogicalHeight(LayoutUnit height) const;

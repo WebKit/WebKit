@@ -1238,7 +1238,7 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
     if (wasFixed)
         *wasFixed = fixed;
     
-    IntSize containerOffset = offsetFromContainer(o, roundedIntPoint(transformState.mappedPoint()));
+    LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
     
     bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (useTransforms && shouldUseTransformFromContainer(o)) {
@@ -1251,7 +1251,7 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
     if (containerSkipped) {
         // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
         // to just subtract the delta between the repaintContainer and o.
-        IntSize containerOffset = repaintContainer->offsetFromAncestorContainer(o);
+        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(o);
         transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
         return;
     }
@@ -1279,7 +1279,7 @@ void RenderBox::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Transfor
 
     o->mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
 
-    IntSize containerOffset = offsetFromContainer(o, IntPoint());
+    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
 
     bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (useTransforms && shouldUseTransformFromContainer(o)) {
@@ -1290,20 +1290,20 @@ void RenderBox::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Transfor
         transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 }
 
-IntSize RenderBox::offsetFromContainer(RenderObject* o, const IntPoint& point) const
+LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& point) const
 {
     ASSERT(o == container());
 
-    IntSize offset;    
+    LayoutSize offset;    
     if (isRelPositioned())
         offset += relativePositionOffset();
 
     if (!isInline() || isReplaced()) {
         if (style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
             if (o->hasColumns()) {
-                IntRect columnRect(frameRect());
+                LayoutRect columnRect(frameRect());
                 toRenderBlock(o)->flipForWritingModeIncludingColumns(columnRect);
-                offset += IntSize(columnRect.location().x(), columnRect.location().y());
+                offset += LayoutSize(columnRect.location().x(), columnRect.location().y());
                 columnRect.moveBy(point);
                 o->adjustForColumns(offset, columnRect.location());
             } else

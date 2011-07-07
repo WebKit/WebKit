@@ -51,9 +51,9 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, const IntPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
-    virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
+    virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
 
-    IntRect linesBoundingBox() const;
+    LayoutRect linesBoundingBox() const;
     IntRect linesVisualOverflowBoundingBox() const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();
@@ -73,7 +73,7 @@ public:
 
     virtual void updateDragState(bool dragOn);
     
-    IntSize relativePositionedInlineOffset(const RenderBox* child) const;
+    LayoutSize relativePositionedInlineOffset(const RenderBox* child) const;
 
     virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
     void paintOutline(GraphicsContext*, const IntPoint&);

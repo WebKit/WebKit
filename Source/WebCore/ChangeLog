@@ -1,3 +1,45 @@
+2011-07-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch offsetFromContainer and related to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=63659
+
+        Switch offsetFromContainer and related mapping methods to new layout unit
+        abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::enclosingLayoutRect):
+        (WebCore::roundedLayoutPoint):
+        (WebCore::roundedLayoutUnit):
+        Add LayoutUnit versions of enclosingIntRect, roundedIntPoint and lroundf.
+        For now these map to their int counterpart but once we switch to float or
+        fixed point they'll be no-ops and eventually will be removed. 
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesBoundingBox):
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::mapLocalToContainer):
+        (WebCore::RenderInline::mapAbsoluteToLocalPoint):
+        (WebCore::RenderInline::relativePositionedInlineOffset):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetFromContainer):
+        (WebCore::RenderObject::offsetFromAncestorContainer):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::offsetFromContainer):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::convertToPaintingRect):
+
 2011-07-06  Levi Weintraub  <leviw@chromium.org>
 
         Switch FrameSelection to new Layout Types

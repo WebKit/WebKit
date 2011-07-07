@@ -588,9 +588,9 @@ public:
 
     // Return the offset from the container() renderer (excluding transforms). In multi-column layout,
     // different offsets apply at different points, so return the offset that applies to the given point.
-    virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
+    virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
-    IntSize offsetFromAncestorContainer(RenderObject*) const;
+    LayoutSize offsetFromAncestorContainer(RenderObject*) const;
     
     virtual void absoluteRects(Vector<IntRect>&, const IntPoint&) { }
     // FIXME: useTransforms should go away eventually
