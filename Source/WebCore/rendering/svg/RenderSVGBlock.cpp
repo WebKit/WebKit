@@ -68,7 +68,7 @@ void RenderSVGBlock::updateBoxModelInfoFromStyle()
     setHasOverflowClip(false);
 }
 
-void RenderSVGBlock::absoluteRects(Vector<IntRect>&, const IntPoint&)
+void RenderSVGBlock::absoluteRects(Vector<LayoutRect>&, const LayoutPoint&)
 {
     // This code path should never be taken for SVG, as we're assuming useTransforms=true everywhere, absoluteQuads should be used.
     ASSERT_NOT_REACHED();

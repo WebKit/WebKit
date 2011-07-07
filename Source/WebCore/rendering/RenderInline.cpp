@@ -465,22 +465,22 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
-void RenderInline::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumulatedOffset)
+void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
 {
     if (!alwaysCreateLineBoxes())
-        culledInlineAbsoluteRects(this, rects, toSize(accumulatedOffset));
+        culledInlineAbsoluteRects(this, rects, toLayoutSize(accumulatedOffset));
     else if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
-            rects.append(enclosingIntRect(FloatRect(accumulatedOffset + curr->topLeft(), curr->size())));
+            rects.append(enclosingLayoutRect(FloatRect(accumulatedOffset + curr->topLeft(), curr->size())));
     } else
-        rects.append(IntRect(accumulatedOffset, IntSize()));
+        rects.append(LayoutRect(accumulatedOffset, LayoutSize()));
 
     if (continuation()) {
         if (continuation()->isBox()) {
             RenderBox* box = toRenderBox(continuation());
-            continuation()->absoluteRects(rects, toPoint(accumulatedOffset - containingBlock()->location() + box->size()));
+            continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box->size()));
         } else
-            continuation()->absoluteRects(rects, toPoint(accumulatedOffset - containingBlock()->location()));
+            continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
     }
 }
 
