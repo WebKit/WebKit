@@ -1548,3 +1548,11 @@ media/media-blocked-by-willsendrequest.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=64085
 http/tests/misc/iframe-reparenting-id-collision.html
+
+# NWRT. Skip inspector/ and http/tests/inspector while we figure out
+# what happens to them in the bots; the debug bots are failing only a
+# few tests, but the release bot is getting timeouts in pretty much
+# all of them.
+http/tests/inspector
+http/tests/inspector-enabled
+inspector/

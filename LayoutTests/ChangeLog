@@ -1,3 +1,12 @@
+2011-07-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed.
+
+        Re-skip the inspector tests, they are still timing out on the
+        release bot for some reason.
+
+        * platform/gtk/Skipped:
+
 2011-07-07  Adam Roben  <aroben@apple.com>
 
         Skip another test that uses beginDragWithFiles on Windows
