@@ -445,11 +445,25 @@ public:
         ConditionInvalid
     } Condition;
 
-    enum JumpType { JumpFixed, JumpNoCondition, JumpCondition, JumpNoConditionFixedSize, JumpConditionFixedSize, JumpTypeCount };
-    enum JumpLinkType { LinkInvalid, LinkJumpT1, LinkJumpT2, LinkJumpT3,
-        LinkJumpT4, LinkConditionalJumpT4, LinkBX, LinkConditionalBX, JumpLinkTypeCount };
-    static const int JumpSizes[JumpLinkTypeCount];
-    static const int JumpPaddingSizes[JumpTypeCount];
+#define JUMP_ENUM_WITH_SIZE(index, value) (((value) << 3) | (index))
+#define JUMP_ENUM_SIZE(jump) ((jump) >> 3) 
+    enum JumpType { JumpFixed = JUMP_ENUM_WITH_SIZE(0, 0), 
+                    JumpNoCondition = JUMP_ENUM_WITH_SIZE(1, 5 * sizeof(uint16_t)),
+                    JumpCondition = JUMP_ENUM_WITH_SIZE(2, 6 * sizeof(uint16_t)),
+                    JumpNoConditionFixedSize = JUMP_ENUM_WITH_SIZE(3, 5 * sizeof(uint16_t)),
+                    JumpConditionFixedSize = JUMP_ENUM_WITH_SIZE(4, 6 * sizeof(uint16_t))
+    };
+    enum JumpLinkType { 
+        LinkInvalid = JUMP_ENUM_WITH_SIZE(0, 0),
+        LinkJumpT1 = JUMP_ENUM_WITH_SIZE(1, sizeof(uint16_t)),
+        LinkJumpT2 = JUMP_ENUM_WITH_SIZE(2, sizeof(uint16_t)),
+        LinkJumpT3 = JUMP_ENUM_WITH_SIZE(3, 2 * sizeof(uint16_t)),
+        LinkJumpT4 = JUMP_ENUM_WITH_SIZE(4, 2 * sizeof(uint16_t)),
+        LinkConditionalJumpT4 = JUMP_ENUM_WITH_SIZE(5, 3 * sizeof(uint16_t)),
+        LinkBX = JUMP_ENUM_WITH_SIZE(6, 5 * sizeof(uint16_t)),
+        LinkConditionalBX = JUMP_ENUM_WITH_SIZE(7, 6 * sizeof(uint16_t))
+    };
+
     class LinkRecord {
     public:
         LinkRecord(intptr_t from, intptr_t to, JumpType type, Condition condition)
@@ -470,8 +484,8 @@ public:
     private:
         intptr_t m_from : 31;
         intptr_t m_to : 31;
-        JumpType m_type : 3;
-        JumpLinkType m_linkType : 4;
+        JumpType m_type : 8;
+        JumpLinkType m_linkType : 8;
         Condition m_condition : 16;
     };
 
@@ -1572,7 +1586,7 @@ public:
         return static_cast<int32_t*>(m_formatter.data())[location / sizeof(int32_t) - 1];
     }
     
-    int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JumpPaddingSizes[jumpType] - JumpSizes[jumpLinkType]; }
+    int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JUMP_ENUM_SIZE(jumpType) - JUMP_ENUM_SIZE(jumpLinkType); }
     
     // Assembler admin methods:
 
@@ -1601,34 +1615,34 @@ public:
         if (jumpType == JumpConditionFixedSize)
             return LinkConditionalBX;
         
-        const int paddingSize = JumpPaddingSizes[jumpType];
+        const int paddingSize = JUMP_ENUM_SIZE(jumpType);
         bool mayTriggerErrata = false;
         
         if (jumpType == JumpCondition) {
             // 2-byte conditional T1
-            const uint16_t* jumpT1Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JumpSizes[LinkJumpT1]));
+            const uint16_t* jumpT1Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT1)));
             if (canBeJumpT1(jumpT1Location, to))
                 return LinkJumpT1;
             // 4-byte conditional T3
-            const uint16_t* jumpT3Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JumpSizes[LinkJumpT3]));
+            const uint16_t* jumpT3Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT3)));
             if (canBeJumpT3(jumpT3Location, to, mayTriggerErrata)) {
                 if (!mayTriggerErrata)
                     return LinkJumpT3;
             }
             // 4-byte conditional T4 with IT
             const uint16_t* conditionalJumpT4Location = 
-            reinterpret_cast<const uint16_t*>(from - (paddingSize - JumpSizes[LinkConditionalJumpT4]));
+            reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkConditionalJumpT4)));
             if (canBeJumpT4(conditionalJumpT4Location, to, mayTriggerErrata)) {
                 if (!mayTriggerErrata)
                     return LinkConditionalJumpT4;
             }
         } else {
             // 2-byte unconditional T2
-            const uint16_t* jumpT2Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JumpSizes[LinkJumpT2]));
+            const uint16_t* jumpT2Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT2)));
             if (canBeJumpT2(jumpT2Location, to))
                 return LinkJumpT2;
             // 4-byte unconditional T4
-            const uint16_t* jumpT4Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JumpSizes[LinkJumpT4]));
+            const uint16_t* jumpT4Location = reinterpret_cast<const uint16_t*>(from - (paddingSize - JUMP_ENUM_SIZE(LinkJumpT4)));
             if (canBeJumpT4(jumpT4Location, to, mayTriggerErrata)) {
                 if (!mayTriggerErrata)
                     return LinkJumpT4;

@@ -1,3 +1,18 @@
+2011-07-07  Oliver Hunt  <oliver@apple.com>
+
+        Encode jump and link sizes into the appropriate enums
+        https://bugs.webkit.org/show_bug.cgi?id=64123
+
+        Reviewed by Sam Weinig.
+
+        Finally kill off the out of line jump and link size arrays, 
+        so we can avoid icky loads and constant fold the linking arithmetic.
+
+        * assembler/ARMv7Assembler.cpp:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::jumpSizeDelta):
+        (JSC::ARMv7Assembler::computeJumpType):
+
 2011-07-06  Juan C. Montemayor  <jmont@apple.com>
 
         ASSERT_NOT_REACHED running test 262
