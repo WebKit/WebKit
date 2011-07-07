@@ -155,7 +155,7 @@ class RollChromiumDEPS(IRCCommand):
 
 class Help(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
-        return "%s: Available commands: %s" % (nick, ", ".join(commands.keys()))
+        return "%s: Available commands: %s" % (nick, ", ".join(sorted(commands.keys())))
 
 
 class Hi(IRCCommand):
