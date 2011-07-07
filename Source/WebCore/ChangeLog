@@ -1,3 +1,24 @@
+2011-07-07  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Work around Skia PDF's lack of inverted path support.
+        https://bugs.webkit.org/show_bug.cgi?id=64032
+
+        Reviewed by James Robinson.
+
+        The trick used in http://neugierig.org/software/chromium/notes/2010/07/clipping.html
+        to support antialiased clips doesn't work when printing to Skia's PDF backend because
+        the backend does not support inverted paths. This manifests as rounded buttons not being
+        drawn when printing, tracked as Chrome bug 79519.
+        
+        However, when the output is a vector device, like PDF, we don't need antialiased clips.
+        It's up to the PDF rendering engine to do that.  So we can simply disable the antialiased
+        clip code if the output is a vector device.
+        
+        I think the fix isn't testable because it requires examining the printed output.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::clipPathAntiAliased):
+
 2011-07-07  Emil A Eklund  <eae@chromium.org>
 
         Switch rendering tree selection code to to new layout types

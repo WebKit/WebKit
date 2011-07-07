@@ -296,6 +296,14 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
 
 void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
 {
+    if (m_canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability) {
+        // When the output is a vector device, like PDF, we don't need antialiased clips.
+        // It's up to the PDF rendering engine to do that. We can simply disable the
+        // antialiased clip code if the output is a vector device.
+        canvas()->clipPath(clipPath);
+        return;
+    }
+
     // If we are currently tracking any anti-alias clip paths, then we already
     // have a layer in place and don't need to add another.
     bool haveLayerOutstanding = m_state->m_antiAliasClipPaths.size();
