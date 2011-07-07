@@ -1,3 +1,5 @@
+RUN(video.load())
+EVENT(loadstart)
 EXPECTED (video.clientWidth == '76') OK
 EXPECTED (video.clientHeight == '103') OK
 END OF TEST

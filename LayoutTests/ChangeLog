@@ -1,3 +1,17 @@
+2011-07-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        GTK: media/video-src-invalid-poster.html Failed
+        https://bugs.webkit.org/show_bug.cgi?id=61160
+
+        Wait for loadstart event to check the poster dimensions and avoid a
+        potential timeout of the test.
+
+        * media/video-src-invalid-poster-expected.txt:
+        * media/video-src-invalid-poster.html:
+        * platform/gtk/Skipped:
+
 2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for clearing cache and cookies from network panel.
