@@ -302,6 +302,7 @@ class WebKitPort(Port):
             if not self._filesystem.exists(filename):
                 _log.warn("Failed to open Skipped file: %s" % filename)
                 continue
+            _log.debug("Using Skipped file: %s" % filename)
             skipped_file_contents = self._filesystem.read_text_file(filename)
             tests_to_skip.extend(self._tests_from_skipped_file_contents(skipped_file_contents))
         return tests_to_skip
@@ -311,6 +312,7 @@ class WebKitPort(Port):
         expectations = self._skipped_list_as_expectations()
         expectations_path = self.path_to_test_expectations_file()
         if self._filesystem.exists(expectations_path):
+            _log.debug("Using test_expectations.txt: %s" % expectations_path)
             expectations = self._filesystem.read_text_file(expectations_path) + expectations
         return expectations
 

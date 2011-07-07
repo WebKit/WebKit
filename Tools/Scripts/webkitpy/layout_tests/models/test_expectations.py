@@ -531,16 +531,14 @@ class TestExpectations:
                         'or a non-numeric bug identifier.', test_list_path)
 
         if not has_bug and not has_wontfix:
-            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.',
-                                      test_list_path)
+            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.', test_list_path)
 
         if self._is_lint_mode and 'rebaseline' in options:
             self._add_error(lineno,
                 'REBASELINE should only be used for running rebaseline.py. '
                 'Cannot be checked in.', test_list_path)
 
-    def _check_options_against_expectations(self, options, expectations,
-                                            lineno, test_list_path):
+    def _check_options_against_expectations(self, options, expectations, lineno, test_list_path):
         if 'slow' in options and TIMEOUT in expectations:
             self._add_error(lineno,
                 'A test can not be both SLOW and TIMEOUT. If it times out '
@@ -548,15 +546,14 @@ class TestExpectations:
 
     def _check_path_does_not_exist(self, lineno, test_list_path):
         # WebKit's way of skipping tests is to add a -disabled suffix.
-            # So we should consider the path existing if the path or the
+        # So we should consider the path existing if the path or the
         # -disabled version exists.
         if (not self._port.test_exists(test_list_path)
             and not self._port.test_exists(test_list_path + '-disabled')):
             # Log a non fatal error here since you hit this case any
             # time you update test_expectations.txt without syncing
             # the LayoutTests directory
-            self._log_non_fatal_error(lineno, 'Path does not exist.',
-                                      test_list_path)
+            self._log_non_fatal_error(lineno, 'Path does not exist.', test_list_path)
             return True
         return False
 

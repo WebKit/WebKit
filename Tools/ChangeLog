@@ -1,3 +1,10 @@
+2011-07-07  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Add more debug logging about which test expectations we're using.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
         Remove unexpected_results.json
