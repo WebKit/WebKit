@@ -1,3 +1,32 @@
+2011-07-07  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        SVGAnimatedPath needs fallback for 'by' animation
+        https://bugs.webkit.org/show_bug.cgi?id=63865
+        
+        Added fallback to 'to' animation for 'by' animated SVGAnimatedPathAnimator.
+        
+        Clenup of SVGAnimateElement. Removed all switches since we support all AnimatedTypes
+        with the exception of AnimatedEnumeration. AnimatedEnumeration gets animated as AnimatedString at the moment. 
+
+        Test: svg/animations/svgpath-animation-1.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::getPropertyValue):
+        (WebCore::inheritsFromProperty):
+        (WebCore::attributeValueIsCurrentColor):
+        (WebCore::SVGAnimateElement::adjustForCurrentColor):
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::calculateFromAndByValues):
+
 2011-07-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: secure access to extensions API

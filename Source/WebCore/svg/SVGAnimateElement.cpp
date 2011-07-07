@@ -56,20 +56,36 @@ SVGAnimateElement::~SVGAnimateElement()
 {
 }
 
-void SVGAnimateElement::adjustForCurrentColor(SVGElement* targetElement, Color& color)
-{
-    ASSERT(targetElement);
-    
-    if (RenderObject* targetRenderer = targetElement->renderer())
-        color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
-    else
-        color = Color();
-}
-
 static inline void getPropertyValue(SVGElement* svgParent, const QualifiedName& attributeName, String& value)
 {
     ASSERT(svgParent->isStyled());
     value = computedStyle(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
+}
+
+static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
+{
+    ASSERT(targetElement);
+    DEFINE_STATIC_LOCAL(const AtomicString, inherit, ("inherit"));
+    
+    if (value.isEmpty() || value != inherit || !targetElement->isStyled())
+        return false;
+    return SVGStyledElement::isAnimatableCSSProperty(attributeName);
+}
+
+static bool attributeValueIsCurrentColor(const String& value)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor"));
+    return value == currentColor;
+}
+
+void SVGAnimateElement::adjustForCurrentColor(SVGElement* targetElement, Color& color)
+{
+    ASSERT(targetElement);
+
+    if (RenderObject* targetRenderer = targetElement->renderer())
+        color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
+    else
+        color = Color();
 }
 
 void SVGAnimateElement::adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
@@ -101,110 +117,19 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
     ASSERT(targetElement);
 
     AnimatedAttributeType type = targetElement->animatedPropertyTypeForAttribute(attributeName());
-    if (type == AnimatedUnknown || (hasTagName(SVGNames::animateColorTag) && type != AnimatedColor))
+    if (hasTagName(SVGNames::animateColorTag) && type != AnimatedColor)
         return AnimatedUnknown;
 
-    // FIXME: Animator for AnimatedEnumeration missing.
-    switch (type) {
-    case AnimatedAngle:
-        return AnimatedAngle;
-    case AnimatedBoolean:
-        return AnimatedBoolean;
-    case AnimatedEnumeration:
-    case AnimatedString:
+    // FIXME: Animator for AnimatedEnumeration missing. Falling back to String animation.
+    if (type == AnimatedEnumeration)
         return AnimatedString;
-    case AnimatedColor:
-        return AnimatedColor;
-    case AnimatedInteger:
-        return AnimatedInteger;
-    case AnimatedLength:
-        return AnimatedLength;
-    case AnimatedLengthList:
-        return AnimatedLengthList;
-    case AnimatedNumber:
-        return AnimatedNumber;
-    case AnimatedNumberList:
-        return AnimatedNumberList;
-    case AnimatedNumberOptionalNumber:
-        return AnimatedNumberOptionalNumber;
-    case AnimatedPath:
-        return AnimatedPath;
-    case AnimatedPoints:
-        return AnimatedPoints;
-    case AnimatedPreserveAspectRatio:
-        return AnimatedPreserveAspectRatio;
-    case AnimatedRect:
-        return AnimatedRect;
-    case AnimatedTransformList:
-    case AnimatedUnknown:
-        // Animations of transform lists are not allowed for <animate> or <set>
-        // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
+
+    // Animations of transform lists are not allowed for <animate> or <set>
+    // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
+    if (type == AnimatedTransformList)
         return AnimatedUnknown;
-    }
 
-    ASSERT_NOT_REACHED();
-    return AnimatedUnknown;
-}
-
-void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
-{
-    ASSERT(percentage >= 0 && percentage <= 1);
-    ASSERT(resultElement);
-    SVGElement* targetElement = this->targetElement();
-    if (!targetElement)
-        return;
-    
-    if (hasTagName(SVGNames::setTag))
-        percentage = 1;
-    if (!resultElement->hasTagName(SVGNames::animateTag) && !resultElement->hasTagName(SVGNames::animateColorTag) 
-        && !resultElement->hasTagName(SVGNames::setTag))
-        return;
-    SVGAnimateElement* results = static_cast<SVGAnimateElement*>(resultElement);
-    // Can't accumulate over a string property.
-    if (results->m_animatedAttributeType == AnimatedString && m_animatedAttributeType != AnimatedString)
-        return;
-    switch (m_animatedAttributeType) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPath:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString: {
-        ASSERT(m_animator);
-        ASSERT(results->m_animatedType);
-        // Target element might have changed.
-        m_animator->setContextElement(targetElement);
-        m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, results->m_animatedType);
-        return;
-    }
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
-{
-    ASSERT(targetElement);
-    DEFINE_STATIC_LOCAL(const AtomicString, inherit, ("inherit"));
-
-    if (value.isEmpty() || value != inherit || !targetElement->isStyled())
-        return false;
-    return SVGStyledElement::isAnimatableCSSProperty(attributeName);
-}
-
-static bool attributeValueIsCurrentColor(const String& value)
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor"));
-    return value == currentColor;
+    return type;
 }
 
 void SVGAnimateElement::determinePropertyValueTypes(const String& from, const String& to)
@@ -226,36 +151,46 @@ void SVGAnimateElement::determinePropertyValueTypes(const String& from, const St
         m_toPropertyValueType = CurrentColorValue;
 }
 
+void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
+{
+    ASSERT(resultElement);
+    ASSERT(percentage >= 0 && percentage <= 1);
+    ASSERT(m_animatedAttributeType != AnimatedEnumeration);
+    ASSERT(m_animatedAttributeType != AnimatedTransformList);
+    ASSERT(m_animatedAttributeType != AnimatedUnknown);
+    ASSERT(m_animator);
+    ASSERT(m_fromType);
+    ASSERT(m_toType);
+
+    SVGAnimateElement* resultAnimationElement = static_cast<SVGAnimateElement*>(resultElement);
+    ASSERT(resultAnimationElement->m_animatedType);
+    ASSERT(resultAnimationElement->m_animatedAttributeType == m_animatedAttributeType);
+    ASSERT(resultAnimationElement->hasTagName(SVGNames::animateTag)
+        || resultAnimationElement->hasTagName(SVGNames::animateColorTag) 
+        || resultAnimationElement->hasTagName(SVGNames::setTag));
+
+    if (hasTagName(SVGNames::setTag))
+        percentage = 1;
+
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return;
+
+    // Target element might have changed.
+    m_animator->setContextElement(targetElement);
+    m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, resultAnimationElement->m_animatedType);
+}
+
 bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return false;
 
-    // FIXME: Needs more solid way determine target attribute type.
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    switch (m_animatedAttributeType) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPath:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString:
-        ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
-        return true;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+
+    ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
+    return true;
 }
 
 bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const String& byString)
@@ -266,30 +201,9 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 
     ASSERT(!hasTagName(SVGNames::setTag));
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    switch (m_animatedAttributeType) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString:
-        ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
-        return true;
-    case AnimatedPath:
-        ASSERT_NOT_REACHED(); // This state is not reachable for now.
-        break;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+
+    ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
+    return true;
 }
 
 void SVGAnimateElement::resetToBaseValue(const String& baseString)
@@ -297,57 +211,21 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     SVGElement* targetElement = this->targetElement();
     ASSERT(targetElement);
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    switch (m_animatedAttributeType) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPath:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString: {
-        if (!m_animatedType)
-            m_animatedType = ensureAnimator()->constructFromString(baseString);
-        else
-            m_animatedType->setValueAsString(attributeName(), baseString);
-        return;
-    }
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
+
+    if (!m_animatedType)
+        m_animatedType = ensureAnimator()->constructFromString(baseString);
+    else
+        m_animatedType->setValueAsString(attributeName(), baseString);
 }
     
 void SVGAnimateElement::applyResultsToTarget()
 {
-    String valueToApply;
-    switch (m_animatedAttributeType) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPath:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString:
-        valueToApply = m_animatedType->valueAsString();
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    setTargetAttributeAnimatedValue(valueToApply);
+    ASSERT(m_animatedAttributeType != AnimatedEnumeration);
+    ASSERT(m_animatedAttributeType != AnimatedTransformList);
+    ASSERT(m_animatedAttributeType != AnimatedUnknown);
+    ASSERT(m_animatedType);
+
+    setTargetAttributeAnimatedValue(m_animatedType->valueAsString());
 }
     
 float SVGAnimateElement::calculateDistance(const String& fromString, const String& toString)
@@ -357,27 +235,8 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     if (!targetElement)
         return -1;
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    switch (m_animatedAttributeType) {
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedInteger:
-    case AnimatedLength:
-    case AnimatedLengthList:
-    case AnimatedNumber:
-    case AnimatedNumberList:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPath:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString:
-        return ensureAnimator()->calculateDistance(fromString, toString);
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return -1;
+    
+    return ensureAnimator()->calculateDistance(fromString, toString);
 }
 
 SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()

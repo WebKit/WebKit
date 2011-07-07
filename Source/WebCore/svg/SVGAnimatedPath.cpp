@@ -69,9 +69,10 @@ void SVGAnimatedPathAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& 
     from = SVGAnimatedType::createPath(SVGPathByteStream::create());
 }
 
-void SVGAnimatedPathAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>&, OwnPtr<SVGAnimatedType>&, const String&, const String&)
+void SVGAnimatedPathAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& by, const String& fromString, const String& byString)
 {
-    ASSERT_NOT_REACHED();
+    // Fallback to from-to animation, since from-by animation does not make sense.
+    calculateFromAndToValues(from, by, fromString, byString);
 }
 
 void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
