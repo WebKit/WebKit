@@ -48,7 +48,7 @@ import os
 import os.path
 import sys
 
-from webkitpy.style_references import detect_checkout
+from webkitpy.common.checkout.scm import detect_scm_system
 import webkitpy.style.checker as checker
 from webkitpy.style.patchreader import PatchReader
 from webkitpy.style.checker import StyleProcessor
@@ -89,9 +89,10 @@ def main():
     parser = checker.check_webkit_style_parser()
     (paths, options) = parser.parse(args)
 
-    checkout = detect_checkout()
+    cwd = os.path.abspath(os.curdir)
+    scm = detect_scm_system(cwd)
 
-    if checkout is None:
+    if scm is None:
         if not paths:
             _log.error("WebKit checkout not found: You must run this script "
                        "from within a WebKit checkout if you are not passing "
@@ -101,7 +102,7 @@ def main():
         checkout_root = None
         _log.debug("WebKit checkout not found for current directory.")
     else:
-        checkout_root = checkout.root_path()
+        checkout_root = scm.checkout_root
         _log.debug("WebKit checkout found with root: %s" % checkout_root)
 
     configuration = checker.check_webkit_style_configuration(options)
@@ -116,7 +117,7 @@ def main():
         file_reader.process_paths(paths)
     else:
         changed_files = paths if options.diff_files else None
-        patch = checkout.create_patch(options.git_commit, changed_files=changed_files)
+        patch = scm.create_patch(options.git_commit, changed_files=changed_files)
         patch_checker = PatchReader(file_reader)
         patch_checker.check(patch)
 

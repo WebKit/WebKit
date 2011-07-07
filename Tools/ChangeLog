@@ -1,3 +1,22 @@
+2011-07-07  Adam Barth  <abarth@webkit.org>
+
+        Remove style_references.py
+        https://bugs.webkit.org/show_bug.cgi?id=64070
+
+        Reviewed by Eric Seidel.
+
+        We never really adopted the _references design, and this file is a bit
+        of an orphan at this point.
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/style/checkers/python.py:
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        * Scripts/webkitpy/style/main_unittest.py:
+        * Scripts/webkitpy/style_references.py: Removed.
+
 2011-07-07  Eric Seidel  <eric@webkit.org>
 
         Fix WebKit2 expected results search paths for Mac and Qt under new-run-webkit-tests

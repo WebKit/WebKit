@@ -22,7 +22,7 @@
 
 """Supports checking WebKit style in Python files."""
 
-from ...style_references import pep8
+from webkitpy.thirdparty.autoinstalled import pep8
 
 
 class PythonChecker(object):

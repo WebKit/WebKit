@@ -31,16 +31,8 @@ import os
 import sys
 import unittest
 
-# We need following workaround hack to run this unit tests in stand-alone.
-try:
-    d = os.path.dirname(__file__)
-except NameError:
-    d = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.abspath(os.path.join(d, '../../../')))
-
 from test_expectations import TestExpectationsChecker
-from webkitpy.style_references import port
-from webkitpy.style_references import test_expectations as test_expectations_style
+from webkitpy.layout_tests import port
 
 
 class ErrorCollector(object):
@@ -163,6 +155,3 @@ class TestExpectationsTestCase(unittest.TestCase):
         self.assert_lines_lint(
             ["\tBUGWK1 : passes/text.html = PASS"],
             "Line contains tab character.  [whitespace/tab] [5]")
-
-if __name__ == '__main__':
-    unittest.main()

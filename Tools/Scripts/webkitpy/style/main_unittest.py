@@ -26,7 +26,7 @@ import os
 import unittest
 
 from main import change_directory
-from webkitpy.style_references import LogTesting
+from webkitpy.common.system.logtesting import LogTesting
 
 
 class ChangeDirectoryTest(unittest.TestCase):

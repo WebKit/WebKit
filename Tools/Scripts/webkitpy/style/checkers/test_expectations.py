@@ -34,8 +34,8 @@ import re
 import sys
 
 from common import TabChecker
-from webkitpy.style_references import port
-from webkitpy.style_references import test_expectations
+from webkitpy.layout_tests import port
+from webkitpy.layout_tests.models import test_expectations
 
 
 _log = logging.getLogger(__name__)

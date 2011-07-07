@@ -47,7 +47,7 @@ from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
-from webkitpy.style_references import configure_logging as _configure_logging
+from webkitpy.common.system.logutils import configure_logging as _configure_logging
 
 
 _log = logging.getLogger(__name__)
