@@ -85,8 +85,7 @@ def normalized_find(filesystem, paths):
         else:
             paths_to_walk.add(path)
 
-    # FIXME: I'm not sure there's much point in this being a set. A list would
-    # probably be faster.
+    # FIXME: I'm not sure there's much point in this being a set. A list would probably be faster.
     test_files = set()
     for path in paths_to_walk:
         files = filesystem.files_under(path, _skipped_directories, _is_test_file)

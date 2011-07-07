@@ -30,18 +30,20 @@ import StringIO
 import sys
 import unittest
 
-from webkitpy.layout_tests.port import mac
+from webkitpy.layout_tests.port.mac import MacPort
 from webkitpy.layout_tests.port import port_testcase
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
 
 
 class MacTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
         if platform != 'darwin':
             return None
-        return mac.MacPort
+        return MacPort
 
     def assert_skipped_file_search_paths(self, port_name, expected_paths):
-        port = mac.MacPort(port_name=port_name)
+        port = MacPort(port_name=port_name, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
         self.assertEqual(port._skipped_file_search_paths(), expected_paths)
 
     def test_skipped_file_search_paths(self):
@@ -72,23 +74,27 @@ svg/batik/text/smallFonts.svg
     ]
 
     def test_tests_from_skipped_file_contents(self):
-        port = mac.MacPort()
+        port = MacPort(filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
         self.assertEqual(port._tests_from_skipped_file_contents(self.example_skipped_file), self.example_skipped_tests)
 
     def assert_name(self, port_name, os_version_string, expected):
-        port = mac.MacPort(port_name=port_name,
-                           os_version_string=os_version_string)
+        port = MacPort(port_name=port_name, os_version_string=os_version_string, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
         self.assertEquals(expected, port.name())
 
     def test_tests_for_other_platforms(self):
-        port = mac.MacPort(port_name='mac-snowleopard')
+        platforms = ['mac', 'chromium-linux', 'mac-snowleopard']
+        port = MacPort(port_name='mac-snowleopard', filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        platform_dir_paths = map(port._webkit_baseline_path, platforms)
+        # Replace our empty mock file system with one which has our expected platform directories.
+        port._filesystem = MockFileSystem(dirs=platform_dir_paths)
+
         dirs_to_skip = port._tests_for_other_platforms()
         self.assertTrue('platform/chromium-linux' in dirs_to_skip)
         self.assertFalse('platform/mac' in dirs_to_skip)
         self.assertFalse('platform/mac-snowleopard' in dirs_to_skip)
 
     def test_version(self):
-        port = mac.MacPort()
+        port = MacPort(filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
         self.assertTrue(port.version())
 
     def test_versions(self):
@@ -118,6 +124,22 @@ svg/batik/text/smallFonts.svg
         self.assert_name('mac-future', '10.7.3', 'mac-future')
 
         self.assertRaises(AssertionError, self.assert_name, None, '10.3.1', 'should-raise-assertion-so-this-value-does-not-matter')
+
+    def _assert_search_path(self, search_paths, version, use_webkit2=False):
+        # FIXME: Port constructors should not "parse" the port name, but
+        # rather be passed components (directly or via setters).  Once
+        # we fix that, this method will need a re-write.
+        port = MacPort('mac-%s' % version, options=MockOptions(webkit_test_runner=use_webkit2), filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        absolute_search_paths = map(port._webkit_baseline_path, search_paths)
+        self.assertEquals(port.baseline_search_path(), absolute_search_paths)
+
+    def test_baseline_search_path(self):
+        # FIXME: Is this really right?  Should mac-leopard fallback to mac-snowleopard?
+        self._assert_search_path(['mac-leopard', 'mac-snowleopard', 'mac'], 'leopard')
+        self._assert_search_path(['mac-snowleopard', 'mac'], 'snowleopard')
+
+        self._assert_search_path(['mac-wk2', 'mac-leopard', 'mac-snowleopard', 'mac'], 'leopard', use_webkit2=True)
+        self._assert_search_path(['mac-wk2', 'mac-snowleopard', 'mac'], 'snowleopard', use_webkit2=True)
 
 
 if __name__ == '__main__':

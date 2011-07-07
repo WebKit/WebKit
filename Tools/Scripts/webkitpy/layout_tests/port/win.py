@@ -46,6 +46,7 @@ class WinPort(WebKitPort):
 
     def baseline_search_path(self):
         # Based on code from old-run-webkit-tests expectedDirectoryForTest()
+        # FIXME: This does not work for WebKit2.
         port_names = ["win", "mac-snowleopard", "mac"]
         return map(self._webkit_baseline_path, port_names)
 

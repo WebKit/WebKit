@@ -1,3 +1,40 @@
+2011-07-06  Eric Seidel  <eric@webkit.org>
+
+        Fix WebKit2 expected results search paths for Mac and Qt under new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=64056
+
+        Reviewed by Adam Barth.
+
+        This fixes the MacPort's version of baseline_search_path to include
+        wk2 fallback like WebKitPort's does.  This also re-works the QtPort
+        to set self._name (as other ports do) so that WebKitPort's default
+        implementations will understand Qt operating system flavors correctly
+        (including when running wk2 tests).
+
+        In trying to test this, I realized that nearly all of our port-tests
+        use the default FileSystem(), User() and Executive() objects, which
+        is really bad, because they expose details of your system in the unittest results!
+
+        Once I fixed many of the Port() calls to pass MockFileSystem(), then
+        MacPort.test_tests_for_other_platforms started failing, and I had to
+        teach MockFileSystem.glob how to handle directories to make it work again.
+
+        I removed the useless PortTestCase.test_baseline_search_path and replaced
+        it with more useful test_baseline_search_path tests in MacPortTest and QtPortTest.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/to_be_moved/deduplicate_tests.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
         Wean rebaseline-server off unexpected_results.json

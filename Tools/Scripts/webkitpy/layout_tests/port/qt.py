@@ -42,16 +42,26 @@ _log = logging.getLogger(__name__)
 class QtPort(WebKitPort):
     port_name = "qt"
 
-    def baseline_search_path(self):
-        port_names = []
-        if sys.platform.startswith('linux'):
-            port_names.append("qt-linux")
-        elif sys.platform in ('win32', 'cygwin'):
-            port_names.append("qt-win")
-        elif sys.platform == 'darwin':
-            port_names.append("qt-mac")
-        port_names.append("qt")
-        return map(self._webkit_baseline_path, port_names)
+    def _operating_system_for_platform(self, platform):
+        if platform.startswith('linux'):
+            return "linux"
+        elif platform in ('win32', 'cygwin'):
+            return "win"
+        elif platform == 'darwin':
+            return "mac"
+        return None
+
+    # sys_platform exists only for unit testing.
+    def __init__(self, sys_platform=None, **kwargs):
+        WebKitPort.__init__(self, **kwargs)
+        self._operating_system = self._operating_system_for_platform(sys_platform or sys.platform)
+
+        # FIXME: This will allow WebKitPort.baseline_search_path and WebKitPort._skipped_file_search_paths
+        # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
+        name_components = [self.port_name]
+        if self._operating_system:
+            name_components.append(self._operating_system)
+        self._name = "-".join(name_components)
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.

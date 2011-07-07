@@ -59,8 +59,7 @@ def port_fallbacks():
         try:
             platforms = port_factory.get(port_name).baseline_search_path()
         except NotImplementedError:
-            _log.error("'%s' lacks baseline_search_path(), please fix."
-                       % port_name)
+            _log.error("'%s' lacks baseline_search_path(), please fix." % port_name)
             fallbacks[port_name] = [_BASE_PLATFORM]
             continue
         fallbacks[port_name] = [os.path.basename(p) for p in platforms][1:]
@@ -241,4 +240,5 @@ def deduplicate(glob_pattern):
     """
     fallbacks = port_fallbacks()
     hashes = cluster_file_hashes(glob_pattern)
+    # FIXME: This should use a FileSystem object and not call os.getcwd() directly.
     return list(find_dups(hashes, fallbacks, os.getcwd()))

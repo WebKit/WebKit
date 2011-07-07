@@ -123,10 +123,6 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         # Override this test since ChromiumPort doesn't implement driver_cmd_line().
         pass
 
-    def test_baseline_search_path(self):
-        # Override this test since ChromiumPort doesn't implement baseline_search_path().
-        pass
-
     def test_check_build(self):
         # Override this test since ChromiumPort doesn't implement _path_to_driver().
         pass

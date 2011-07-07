@@ -665,7 +665,7 @@ class MockStatusServer(object):
 # FIXME: This should not inherit from Mock
 # FIXME: Unify with common.system.executive_mock.MockExecutive.
 class MockExecutive(Mock):
-    def __init__(self, should_log, should_throw=False):
+    def __init__(self, should_log=False, should_throw=False):
         self._should_log = should_log
         self._should_throw = should_throw
 

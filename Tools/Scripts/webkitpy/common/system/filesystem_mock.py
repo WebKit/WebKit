@@ -35,7 +35,7 @@ from webkitpy.common.system import ospath
 
 
 class MockFileSystem(object):
-    def __init__(self, files=None, cwd='/'):
+    def __init__(self, files=None, dirs=None, cwd='/'):
         """Initializes a "mock" filesystem that can be used to completely
         stub out a filesystem.
 
@@ -49,7 +49,7 @@ class MockFileSystem(object):
         self._sep = '/'
         self.current_tmpno = 0
         self.cwd = cwd
-        self.dirs = {}
+        self.dirs = dirs or set()
 
     def _get_sep(self):
         return self._sep
@@ -140,13 +140,16 @@ class MockFileSystem(object):
     def getcwd(self):
         return self.cwd
 
-    def glob(self, path):
+    def glob(self, glob_string):
         # FIXME: This only handles a wildcard '*' at the end of the path.
         # Maybe it should handle more?
-        if path[-1] == '*':
-            return [f for f in self.files if f.startswith(path[:-1])]
+        if glob_string[-1] == '*':
+            path_filter = lambda path: path.startswith(glob_string[:-1])
         else:
-            return [f for f in self.files if f == path]
+            path_filter = lambda path: glob_string == path
+
+        existing_files = [path for path, contents in self.files.items() if contents is not None]
+        return filter(path_filter, existing_files) + filter(path_filter, self.dirs)
 
     def isabs(self, path):
         return path.startswith(self.sep)
@@ -159,7 +162,7 @@ class MockFileSystem(object):
             return False
         path = self.normpath(path)
         if path in self.dirs:
-            return self.dirs[path] is not None
+            return True
 
         # We need to use a copy of the keys here in order to avoid switching
         # to a different thread and potentially modifying the dict in
@@ -167,7 +170,7 @@ class MockFileSystem(object):
         files = self.files.keys()[:]
         result = any(f.startswith(path) for f in files)
         if result:
-            self.dirs[path] = True
+            self.dirs.add(path)
         return result
 
     def join(self, *comps):
@@ -233,7 +236,7 @@ class MockFileSystem(object):
     def maybe_make_directory(self, *path):
         norm_path = self.normpath(self.join(*path))
         if not self.isdir(norm_path):
-            self.dirs[norm_path] = True
+            self.dirs.add(norm_path)
 
     def move(self, source, destination):
         if self.files[source] is None:
@@ -285,9 +288,7 @@ class MockFileSystem(object):
             if f.startswith(path):
                 self.files[f] = None
 
-        for d in self.dirs:
-            if d.startswith(path):
-                self.dirs[d] = None
+        self.dirs = set(filter(lambda d: not d.startswith(path), self.dirs))
 
     def split(self, path):
         idx = path.rfind(self.sep)

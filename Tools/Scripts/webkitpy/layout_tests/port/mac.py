@@ -69,8 +69,7 @@ class MacPort(WebKitPort):
         'leopard': ['mac-leopard', 'mac-snowleopard', 'mac'],
         'snowleopard': ['mac-snowleopard', 'mac'],
         'future': ['mac'],
-        # FIXME: This isn't quite right for wk2, it should include mac-VERSION as well.
-        'wk2': ['mac-wk2', 'mac'],
+        'wk2': [],  # wk2 does not make sense as a version, this is only here to make the rebaseline unit tests not crash.
     }
 
     def __init__(self, port_name=None, os_version_string=None, **kwargs):
@@ -86,7 +85,10 @@ class MacPort(WebKitPort):
         self._operating_system = 'mac'
 
     def baseline_search_path(self):
-        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
+        search_paths = self.FALLBACK_PATHS[self._version]
+        if self.get_option('webkit_test_runner'):
+            search_paths.insert(0, self._wk2_port_name())
+        return map(self._webkit_baseline_path, search_paths)
 
     def is_crash_reporter(self, process_name):
         return re.search(r'ReportCrash', process_name)

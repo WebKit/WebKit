@@ -36,7 +36,6 @@ from webkitpy.common.system.executive import Executive
 
 
 class WebKitPort(object):
-
     # We might need to pass scm into this function for scm.checkout_root
     @classmethod
     def script_path(cls, script_name):

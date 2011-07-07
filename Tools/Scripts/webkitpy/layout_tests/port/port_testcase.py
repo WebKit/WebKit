@@ -43,8 +43,9 @@ except ImportError:
 
 from webkitpy.layout_tests.servers import http_server_base
 
-from webkitpy.tool import mocktool
-mock_options = mocktool.MockOptions(configuration='Release')
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+mock_options = MockOptions(configuration='Release')
 
 
 class PortTestCase(unittest.TestCase):
@@ -65,7 +66,7 @@ class PortTestCase(unittest.TestCase):
         if not maker:
             return None
 
-        return maker(options=options)
+        return maker(options=options, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
 
     def test_default_worker_model(self):
         port = self.make_port()
@@ -83,7 +84,7 @@ class PortTestCase(unittest.TestCase):
             return
         self.assertTrue(len(port.driver_cmd_line()))
 
-        options = mocktool.MockOptions(additional_drt_flag=['--foo=bar', '--foo=baz'])
+        options = MockOptions(additional_drt_flag=['--foo=bar', '--foo=baz'])
         port = self.make_port(options=options)
         cmd_line = port.driver_cmd_line()
         self.assertTrue('--foo=bar' in cmd_line)
@@ -342,12 +343,6 @@ class PortTestCase(unittest.TestCase):
         if not port:
             return
         self.assertTrue(len(port.all_test_configurations()) > 0)
-
-    def test_baseline_search_path(self):
-        port = self.make_port()
-        if not port:
-            return
-        self.assertTrue(port.baseline_path() in port.baseline_search_path())
 
     def integration_test_http_server__loop(self):
         port = self.make_port()

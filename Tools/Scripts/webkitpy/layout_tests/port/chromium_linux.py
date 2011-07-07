@@ -38,7 +38,6 @@ _log = logging.getLogger(__name__)
 
 
 class ChromiumLinuxPort(chromium.ChromiumPort):
-    """Chromium Linux implementation of the Port class."""
     SUPPORTED_ARCHITECTURES = ('x86', 'x86_64')
 
     FALLBACK_PATHS = {
@@ -53,7 +52,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         # in order to be able to find the DRT binary properly.
         if port_name.endswith('-linux'):
             self._architecture = self._determine_architecture()
-            # FIXME: this is an ugly hack to avoid renaming the GPU port.
+            # FIXME: This is an ugly hack to avoid renaming the GPU port.
             if port_name == 'chromium-linux':
                 port_name = port_name + '-' + self._architecture
         else:
@@ -73,8 +72,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         file_output = ''
         if self._filesystem.exists(driver_path):
             # The --dereference flag tells file to follow symlinks
-            file_output = self._executive.run_command(['file', '--dereference', driver_path],
-                                                      return_stderr=True)
+            file_output = self._executive.run_command(['file', '--dereference', driver_path], return_stderr=True)
 
         if 'ELF 32-bit LSB executable' in file_output:
             return 'x86'
@@ -109,8 +107,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def _build_path(self, *comps):
         if self.get_option('build_directory'):
-            return self._filesystem.join(self.get_option('build_directory'),
-                                         *comps)
+            return self._filesystem.join(self.get_option('build_directory'), *comps)
 
         base = self.path_from_chromium_base()
         if self._filesystem.exists(self._filesystem.join(base, 'sconsbuild')):
@@ -123,34 +120,27 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return self._filesystem.join(base, 'out', *comps)
 
     def _check_apache_install(self):
-        result = self._check_file_exists(self._path_to_apache(),
-            "apache2")
-        result = self._check_file_exists(self._path_to_apache_config_file(),
-            "apache2 config file") and result
+        result = self._check_file_exists(self._path_to_apache(), "apache2")
+        result = self._check_file_exists(self._path_to_apache_config_file(), "apache2 config file") and result
         if not result:
-            _log.error('    Please install using: "sudo apt-get install '
-                       'apache2 libapache2-mod-php5"')
+            _log.error('    Please install using: "sudo apt-get install apache2 libapache2-mod-php5"')
             _log.error('')
         return result
 
     def _check_lighttpd_install(self):
         result = self._check_file_exists(
             self._path_to_lighttpd(), "LigHTTPd executable")
-        result = self._check_file_exists(self._path_to_lighttpd_php(),
-            "PHP CGI executable") and result
-        result = self._check_file_exists(self._path_to_lighttpd_modules(),
-            "LigHTTPd modules") and result
+        result = self._check_file_exists(self._path_to_lighttpd_php(), "PHP CGI executable") and result
+        result = self._check_file_exists(self._path_to_lighttpd_modules(), "LigHTTPd modules") and result
         if not result:
-            _log.error('    Please install using: "sudo apt-get install '
-                       'lighttpd php5-cgi"')
+            _log.error('    Please install using: "sudo apt-get install lighttpd php5-cgi"')
             _log.error('')
         return result
 
     def check_wdiff(self, logging=True):
         result = self._check_file_exists(self._path_to_wdiff(), 'wdiff')
         if not result and logging:
-            _log.error('    Please install using: "sudo apt-get install '
-                       'wdiff"')
+            _log.error('    Please install using: "sudo apt-get install wdiff"')
             _log.error('')
         # FIXME: The ChromiumMac port always returns True.
         return result
@@ -167,8 +157,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         else:
             config_name = 'apache2-debian-httpd.conf'
 
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
-                            config_name)
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_name)
 
     def _path_to_lighttpd(self):
         return "/usr/sbin/lighttpd"
