@@ -496,7 +496,7 @@
 
 /* Summary */
 
-.network-timeline-grid tr.filler td {
+.data-grid.network-log-grid tr.filler td {
     padding-bottom: 20px !important;
 }
 
@@ -626,6 +626,7 @@
     right: 0;
     width: auto;
     border: none;
+    background: inherit;
 }
 
 .network.panel:not(.viewing-resource) .sidebar-resizer-vertical {

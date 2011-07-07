@@ -1,3 +1,14 @@
+2011-07-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: visual regressions in network panel
+        https://bugs.webkit.org/show_bug.cgi?id=64089
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/networkPanel.css:
+        (.data-grid.network-log-grid tr.filler td):
+        (.network.panel .sidebar):
+
 2011-07-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by David Hyatt.
