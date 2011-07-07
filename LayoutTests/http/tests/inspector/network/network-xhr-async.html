@@ -5,14 +5,6 @@
 <script>
 function loadData()
 {
-    if (!window.internals) {
-        console.log("This test can not be run as window.internals is not available.");
-        return;
-    }
-    // Since this test could be run together with other inspector backend cache
-    // tests, we need to reset size limits to default ones.
-    internals.setInspectorResourcesDataSizeLimits(document, 10 * 1000 * 1000, 1000 * 1000);
-
     doXHR("GET", "resources/resource.php", true, resourceLoaded);
 }
 
@@ -23,8 +15,15 @@ function resourceLoaded()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
-    InspectorTest.evaluateInPage("loadData()");
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function step1()
+    {
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.evaluateInPage("loadData()");
+    }
 
     function step2()
     {

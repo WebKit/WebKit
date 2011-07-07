@@ -1,5 +1,27 @@
 2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Move resetting NetworkResourcesData out of tests unrelated to replacement testing.
+        https://bugs.webkit.org/show_bug.cgi?id=64078
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network-test.js:
+        (initialize_NetworkTest.InspectorTest.resetInspectorResourcesData.nextStep):
+        (initialize_NetworkTest.InspectorTest.resetInspectorResourcesData):
+        (resetInspectorResourcesData):
+        * http/tests/inspector/network/network-clear-cache-expected.txt:
+        * http/tests/inspector/network/network-clear-cache.html-disabled:
+        * http/tests/inspector/network/network-clear-cookies-expected.txt:
+        * http/tests/inspector/network/network-clear-cookies.html-disabled:
+        * http/tests/inspector/network/network-embed-expected.txt:
+        * http/tests/inspector/network/network-embed.html:
+        * http/tests/inspector/network/network-xhr-async-expected.txt:
+        * http/tests/inspector/network/network-xhr-async.html:
+        * http/tests/inspector/network/network-xhr-sync-expected.txt:
+        * http/tests/inspector/network/network-xhr-sync.html:
+
+2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Resources panel shows only one resource when multiple resources have the same url.
         https://bugs.webkit.org/show_bug.cgi?id=63936
 

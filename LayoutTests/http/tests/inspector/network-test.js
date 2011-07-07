@@ -23,6 +23,20 @@ InspectorTest.dumpNetworkResources = function()
         InspectorTest.addResult(resources[i].url);
 }
 
+InspectorTest.resetInspectorResourcesData = function(callback)
+{
+    InspectorTest.evaluateInPage("resetInspectorResourcesData()", nextStep);
+
+    function nextStep(result)
+    {
+        if (!result) {
+            InspectorTest.addResult("This test can not be run as window.internals is not available.");
+            Inspector.completeTest();
+        } else
+            callback();
+    }
+}
+
 };
 
 function doXHR(method, url, async, callback)
@@ -37,5 +51,14 @@ function doXHR(method, url, async, callback)
     };
     xhr.open(method, url, async);
     xhr.send(null);
+}
+
+function resetInspectorResourcesData()
+{
+    if (!window.internals)
+        return false;
+
+    internals.setInspectorResourcesDataSizeLimits(document, 10 * 1000 * 1000, 1000 * 1000);
+    return true;
 }
 

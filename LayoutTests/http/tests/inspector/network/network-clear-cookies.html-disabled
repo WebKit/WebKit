@@ -5,14 +5,6 @@
 <script>
 function loadData()
 {
-    if (!window.internals) {
-        console.log("This test can not be run as window.internals is not available.");
-        return;
-    }
-    // Since this test could be run together with other inspector backend cache
-    // tests, we need to reset size limits to default ones.
-    internals.setInspectorResourcesDataSizeLimits(document, 10 * 1000 * 1000, 1000 * 1000);
-
     doXHR("GET", "resources/set-cookie.php", true, xhrLoaded1);
 }
 
@@ -38,24 +30,31 @@ function allXHRsLoaded()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step1);
-    InspectorTest.evaluateInPage("loadData()");
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
 
-    function step1(msg)
+    function step1()
     {
-        if (typeof(NetworkAgent.clearBrowserCookies) === 'function')
-            NetworkAgent.clearBrowserCookies(step2);
-        else
-            step2();
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.evaluateInPage("loadData()");
     }
 
     function step2(msg)
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step3);
-        InspectorTest.evaluateInPage("cookiesCleared()");
+        if (typeof(NetworkAgent.clearBrowserCookies) === 'function')
+            NetworkAgent.clearBrowserCookies(step3);
+        else
+            step3();
     }
 
     function step3(msg)
+    {
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step4);
+        InspectorTest.evaluateInPage("cookiesCleared()");
+    }
+
+    function step4(msg)
     {
         // inspector-test.js appears in network panel occasionally in Safari on
         // Mac, so checking two last resources.
