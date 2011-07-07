@@ -1,5 +1,30 @@
 2011-07-07  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT does not implement op_construct.
+        https://bugs.webkit.org/show_bug.cgi?id=64066
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::recordConstruct):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkFor):
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-07-07  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT does not implement get_by_id prototype caching.
         https://bugs.webkit.org/show_bug.cgi?id=64077
 

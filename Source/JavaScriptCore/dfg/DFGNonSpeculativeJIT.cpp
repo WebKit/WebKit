@@ -1068,6 +1068,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
         
     case Call:
+    case Construct:
         emitCall(node);
         break;
     }

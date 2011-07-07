@@ -48,6 +48,7 @@ typedef void (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, 
 typedef void (*V_DFGOperation_EJJP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef void (*V_DFGOperation_EJJI)(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*);
 typedef double (*D_DFGOperation_DD)(double, double);
+typedef void *(*P_DFGOperation_E)(ExecState*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 EncodedJSValue operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
@@ -83,6 +84,8 @@ bool operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue en
 bool operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 void* operationVirtualCall(ExecState*);
 void* operationLinkCall(ExecState*);
+void* operationVirtualConstruct(ExecState*);
+void* operationLinkConstruct(ExecState*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

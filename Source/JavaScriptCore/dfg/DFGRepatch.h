@@ -37,7 +37,7 @@ void dfgRepatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlo
 void dfgRepatchGetMethod(ExecState*, JSValue, const Identifier&, const PropertySlot&, MethodCallLinkInfo&);
 void dfgBuildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void dfgRepatchPutByID(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
-void dfgLinkCall(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr);
+void dfgLinkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr, CodeSpecializationKind);
 
 } } // namespace JSC::DFG
 

@@ -411,6 +411,23 @@ private:
         m_graph.m_varArgChildren.append(child);
         m_numPassedVarArgs++;
     }
+    
+    NodeIndex addCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op)
+    {
+        addVarArgChild(get(currentInstruction[1].u.operand));
+        int argCount = currentInstruction[2].u.operand;
+        int registerOffset = currentInstruction[3].u.operand;
+        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
+        for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
+            addVarArgChild(get(argIdx));
+        NodeIndex call = addToGraph(Node::VarArg, op);
+        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
+            set(putInstruction[1].u.operand, call);
+        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
+            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+        return call;
+    }
 
     void predictArray(NodeIndex nodeIndex)
     {
@@ -1101,27 +1118,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_call: {
-            addVarArgChild(get(currentInstruction[1].u.operand));
-            int argCount = currentInstruction[2].u.operand;
-            int registerOffset = currentInstruction[3].u.operand;
-            int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-            for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
-                addVarArgChild(get(argIdx));
-            NodeIndex call = addToGraph(Node::VarArg, Call);
+            NodeIndex call = addCall(interpreter, currentInstruction, Call);
             aliases.recordCall(call);
-            Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-            if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
-                set(putInstruction[1].u.operand, call);
-            if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
-                m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
             NEXT_OPCODE(op_call);
         }
             
+        case op_construct: {
+            NodeIndex construct = addCall(interpreter, currentInstruction, Construct);
+            aliases.recordConstruct(construct);
+            NEXT_OPCODE(op_construct);
+        }
+            
         case op_call_put_result: {
-#if !ASSERT_DISABLED
-            Instruction* callInstruction = currentInstruction - OPCODE_LENGTH(op_call);
-            ASSERT(interpreter->getOpcodeID(callInstruction->u.opcode) == op_call);
-#endif
             NEXT_OPCODE(op_call_put_result);
         }
 
