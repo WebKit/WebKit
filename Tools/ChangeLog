@@ -1,5 +1,17 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Cleanup result_summary.py
+        https://bugs.webkit.org/show_bug.cgi?id=64057
+
+        Reviewed by Eric Seidel.
+
+        This class had a bunch of out-of-date docstrings that no longer make
+        any sense.
+
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Tweak the ChangeLog for DEPS rolls to say "Unreviewed" so that the
         patches can be landed by the commit-queue.
 

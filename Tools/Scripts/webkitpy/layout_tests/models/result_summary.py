@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 #
@@ -28,23 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Run layout tests."""
-
-import logging
-
-from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models.test_expectations import TestExpectations
-
-
-_log = logging.getLogger(__name__)
+from webkitpy.layout_tests.models.test_expectations import TestExpectations, SKIP, CRASH, TIMEOUT
 
 
 class ResultSummary(object):
-    """A class for partitioning the test results we get into buckets.
-
-    This class is basically a glorified struct and it's private to this file
-    so we don't bother with any information hiding."""
-
     def __init__(self, expectations, test_files):
         self.total = len(test_files)
         self.remaining = self.total
@@ -59,33 +45,26 @@ class ResultSummary(object):
         self.results = {}
         self.unexpected_results = {}
         self.failures = {}
-        self.tests_by_expectation[test_expectations.SKIP] = set()
+        self.tests_by_expectation[SKIP] = set()
         for expectation in TestExpectations.EXPECTATIONS.values():
             self.tests_by_expectation[expectation] = set()
         for timeline in TestExpectations.TIMELINES.values():
             self.tests_by_timeline[timeline] = expectations.get_tests_with_timeline(timeline)
 
-    def add(self, result, expected):
-        """Add a TestResult into the appropriate bin.
-
-        Args:
-          result: TestResult
-          expected: whether the result was what we expected it to be.
-        """
-
-        self.tests_by_expectation[result.type].add(result.test_name)
-        self.results[result.test_name] = result
+    def add(self, test_result, expected):
+        self.tests_by_expectation[test_result.type].add(test_result.test_name)
+        self.results[test_result.test_name] = test_result
         self.remaining -= 1
-        if len(result.failures):
-            self.failures[result.test_name] = result.failures
+        if len(test_result.failures):
+            self.failures[test_result.test_name] = test_result.failures
         if expected:
             self.expected += 1
         else:
-            self.unexpected_results[result.test_name] = result
+            self.unexpected_results[test_result.test_name] = test_result
             self.unexpected += 1
-            if len(result.failures):
+            if len(test_result.failures):
                 self.unexpected_failures += 1
-            if result.type == test_expectations.CRASH:
+            if test_result.type == CRASH:
                 self.unexpected_crashes += 1
-            elif result.type == test_expectations.TIMEOUT:
+            elif test_result.type == TIMEOUT:
                 self.unexpected_timeouts += 1
