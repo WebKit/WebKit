@@ -31,6 +31,7 @@
 """Unit tests for manager.py."""
 
 import StringIO
+import sys
 import unittest
 
 from webkitpy.common.system import filesystem_mock
@@ -38,6 +39,7 @@ from webkitpy.common.system import outputcapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy import layout_tests
 from webkitpy.layout_tests import port
+from webkitpy.layout_tests.port import port_testcase
 
 from webkitpy import layout_tests
 from webkitpy.layout_tests import run_webkit_tests
@@ -186,6 +188,41 @@ class ManagerTest(unittest.TestCase):
         manager._options.exit_after_n_failures = 10
         exception = self.assertRaises(TestRunInterruptedException, manager._interrupt_if_at_failure_limits, result_summary)
 
+    def test_needs_servers(self):
+        def get_manager_with_tests(test_names):
+            port = Mock()
+            port.TEST_PATH_SEPARATOR = '/'
+            manager = Manager(port, options=MockOptions(), printer=Mock())
+            manager._test_files = set(test_names)
+            manager._test_files_list = test_names
+            return manager
+
+        manager = get_manager_with_tests(['fast/html'])
+        self.assertFalse(manager.needs_servers())
+
+        manager = get_manager_with_tests(['http/tests/misc'])
+        self.assertTrue(manager.needs_servers())
+
+    def integration_test_needs_servers(self):
+        def get_manager_with_tests(test_names):
+            port = layout_tests.port.get()
+            manager = Manager(port, options=MockOptions(test_list=None), printer=Mock())
+            manager.collect_tests(test_names, last_unexpected_results=[])
+            return manager
+
+        manager = get_manager_with_tests(['fast/html'])
+        self.assertFalse(manager.needs_servers())
+
+        manager = get_manager_with_tests(['http/tests/mime'])
+        self.assertTrue(manager.needs_servers())
+
+        if sys.platform == 'win32':
+            manager = get_manager_with_tests(['fast\\html'])
+            self.assertFalse(manager.needs_servers())
+
+            manager = get_manager_with_tests(['http\\tests\\mime'])
+            self.assertTrue(manager.needs_servers())
+
 
 class NaturalCompareTest(unittest.TestCase):
     def assert_cmp(self, x, y, result):
@@ -228,4 +265,4 @@ class KeyCompareTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    port_testcase.main()

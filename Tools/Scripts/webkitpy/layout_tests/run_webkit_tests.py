@@ -109,7 +109,7 @@ def run(port, options, args, regular_output=sys.stderr,
         manager.parse_expectations()
 
         printer.print_update("Checking build ...")
-        if not port.check_build(manager.needs_http()):
+        if not port.check_build(manager.needs_servers()):
             _log.error("Build check failed")
             return -1
 

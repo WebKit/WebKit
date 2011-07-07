@@ -286,6 +286,8 @@ class Manager(object):
         #        options.results_directory, use_tls=True, port=9323)
 
         # a set of test files, and the same tests as a list
+
+        # FIXME: Rename to test_names.
         self._test_files = set()
         self._test_files_list = None
         self._result_queue = Queue.Queue()
@@ -663,12 +665,6 @@ class Manager(object):
                                         extract_and_flatten(some_shards)))
         return new_shards
 
-    def _contains_tests(self, subdir):
-        for test_file in self._test_files:
-            if test_file.find(subdir) >= 0:
-                return True
-        return False
-
     def _log_num_workers(self, num_workers, num_shards, num_locked_shards):
         driver_name = self._port.driver_name()
         if num_workers == 1:
@@ -813,13 +809,8 @@ class Manager(object):
 
         return (thread_timings, test_timings, individual_test_timings)
 
-    def needs_http(self):
-        """Returns whether the test runner needs an HTTP server."""
-        return self._contains_tests(self.HTTP_SUBDIR)
-
-    def needs_websocket(self):
-        """Returns whether the test runner needs a WEBSOCKET server."""
-        return self._contains_tests(self.WEBSOCKET_SUBDIR)
+    def needs_servers(self):
+        return any(self._test_requires_lock(test_name) for test_name in self._test_files)
 
     def set_up_run(self):
         """Configures the system to be ready to run tests.
@@ -836,7 +827,7 @@ class Manager(object):
         # Check that the system dependencies (themes, fonts, ...) are correct.
         if not self._options.nocheck_sys_deps:
             self._printer.print_update("Checking system dependencies ...")
-            if not self._port.check_sys_deps(self.needs_http()):
+            if not self._port.check_sys_deps(self.needs_servers()):
                 self._port.stop_helper()
                 return None
 
