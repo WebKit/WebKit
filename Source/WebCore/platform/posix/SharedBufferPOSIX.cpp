@@ -57,17 +57,16 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
         return 0;
     }
 
-    RefPtr<SharedBuffer> result = create();
-    result->m_buffer.grow(bytesToRead);
+    Vector<char> buffer(bytesToRead);
 
     size_t totalBytesRead = 0;
     ssize_t bytesRead;
-    while ((bytesRead = read(fd, result->m_buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
+    while ((bytesRead = read(fd, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
         totalBytesRead += bytesRead;
 
     close(fd);
 
-    return totalBytesRead == bytesToRead ? result.release() : 0;
+    return totalBytesRead == bytesToRead ? SharedBuffer::adoptVector(buffer) : 0;
 }
 
 } // namespace WebCore
