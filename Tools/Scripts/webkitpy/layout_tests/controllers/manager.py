@@ -53,14 +53,13 @@ from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import worker
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
-from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_results_uploader
-
 from webkitpy.layout_tests.layout_package.result_summary import ResultSummary
 from webkitpy.layout_tests.layout_package.test_input import TestInput
+from webkitpy.layout_tests.views import printing
 
 from webkitpy.thirdparty import simplejson
 from webkitpy.tool import grammar

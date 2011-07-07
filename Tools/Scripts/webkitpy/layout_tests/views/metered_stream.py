@@ -37,6 +37,7 @@ This package should only be called by the printing module in the layout_tests
 package.
 """
 
+
 class MeteredStream:
     """This class is a wrapper around a stream that allows you to implement
     meters (progress bars, etc.).

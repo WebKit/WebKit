@@ -42,8 +42,8 @@ from webkitpy.layout_tests import port
 from webkitpy import layout_tests
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.manager import Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
-from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package.result_summary import ResultSummary
+from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
 
 

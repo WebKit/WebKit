@@ -34,7 +34,7 @@ import optparse
 import time
 
 from webkitpy.common.net import resultsjsonparser
-from webkitpy.layout_tests.layout_package import metered_stream
+from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.layout_tests.layout_package import test_expectations
 
 # FIXME: Change this to __file__ when we can fix test-webkitpy's logging configuration.
@@ -220,7 +220,7 @@ class Printer(object):
         self._logging_handler = None
         if self._stream.isatty() and not options.verbose:
             self._update_interval_seconds = FAST_UPDATES_SECONDS
-            self._meter = metered_stream.MeteredStream(self._stream)
+            self._meter = MeteredStream(self._stream)
             if configure_logging:
                 self._logging_handler = _configure_logging(self._meter, options.verbose)
         else:

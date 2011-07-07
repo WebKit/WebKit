@@ -27,18 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit tests for metered_stream.py."""
-
 import unittest
 
 from webkitpy.common.array_stream import ArrayStream
-from webkitpy.layout_tests.layout_package import metered_stream
+from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 
 class TestMeteredStream(unittest.TestCase):
     def test_regular(self):
         a = ArrayStream()
-        m = metered_stream.MeteredStream(stream=a)
+        m = MeteredStream(stream=a)
         self.assertTrue(a.empty())
 
         # basic test

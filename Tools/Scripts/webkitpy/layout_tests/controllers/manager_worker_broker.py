@@ -58,7 +58,7 @@ except ImportError:
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import message_broker
-from webkitpy.layout_tests.layout_package import printing
+from webkitpy.layout_tests.views import printing
 
 
 _log = logging.getLogger(__name__)

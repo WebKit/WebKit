@@ -42,7 +42,7 @@ from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests import layout_package
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
 from webkitpy.layout_tests.layout_package import json_results_generator
-from webkitpy.layout_tests.layout_package import printing
+from webkitpy.layout_tests.views import printing
 
 from webkitpy.common.system import user
 from webkitpy.thirdparty import simplejson

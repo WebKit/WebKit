@@ -42,7 +42,7 @@ from webkitpy.common.system import outputcapture
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import message_broker
-from webkitpy.layout_tests.layout_package import printing
+from webkitpy.layout_tests.views import printing
 
 # In order to reliably control when child workers are starting and stopping,
 # we use a pair of global variables to hold queues used for messaging. Ideally

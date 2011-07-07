@@ -1,5 +1,28 @@
 2011-07-06  Adam Barth  <abarth@webkit.org>
 
+        Move view-related code out of layout_package and into views
+        https://bugs.webkit.org/show_bug.cgi?id=64051
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/views: Added.
+        * Scripts/webkitpy/layout_tests/views/__init__.py: Added.
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/metered_stream.py.
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/metered_stream_unittest.py.
+        * Scripts/webkitpy/layout_tests/views/printing.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/printing.py.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py.
+
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
         Add goofy comments to explain why we have these files.
 
         * Scripts/webkitpy/layout_tests/controllers/__init__.py:
