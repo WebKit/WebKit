@@ -1,3 +1,15 @@
+2011-07-07  Adam Roben  <aroben@apple.com>
+
+        Keep testing that commit messages containing Unicode are handled properly by webkitpy
+
+        Fixes <http://webkit.org/b/64109> REGRESSION (r90571): test-webkitpy no longer tests that we
+        correctly handle Unicode in commit messages
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py: Put some Unicode characters in
+        places in the ChangeLog that will end up being included in the commit message.
+
 2011-07-07  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Remove Symbian code.

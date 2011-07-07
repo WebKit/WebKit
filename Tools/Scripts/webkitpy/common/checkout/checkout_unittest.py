@@ -70,7 +70,7 @@ _changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
-        Second part of this complicated change.
+        Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
         * Path/To/Complicated/File: Added.
 
@@ -93,7 +93,7 @@ https://bugs.webkit.org/show_bug.cgi?id=36629
 
 LayoutTests: 
 
-Second part of this complicated change.
+Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
 * Path/To/Complicated/File: Added.
 """
