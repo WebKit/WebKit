@@ -15,6 +15,9 @@
 
         Reviewed by Simon Fraser.
 
+        -webkit-column-break-inside: avoid was disabled in r62632 along with page-break-inside: avoid.
+        The latter remains disabled.
+
         * rendering/RenderBlock.cpp:
         (WebCore::RenderBlock::adjustForUnsplittableChild): Treat the child as unsplittable if
         '-webkit-column-break-inside: avoid' was specified.
