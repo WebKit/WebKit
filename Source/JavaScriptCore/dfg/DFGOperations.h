@@ -61,6 +61,7 @@ EncodedJSValue operationGetByVal(ExecState*, EncodedJSValue encodedBase, Encoded
 EncodedJSValue operationGetById(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationGetByIdBuildList(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
+EncodedJSValue operationGetMethodOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationInstanceOf(ExecState*, EncodedJSValue value, EncodedJSValue base, EncodedJSValue prototype);
 void operationThrowHasInstanceError(ExecState*, EncodedJSValue base);
 void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);

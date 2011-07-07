@@ -1565,7 +1565,9 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 
     for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
         if (m_methodCallLinkInfos[i].cachedStructure) {
-            // Both members must be filled at the same time
+            // These members must be filled at the same time, and only after
+            // the MethodCallLinkInfo is set as seen.
+            ASSERT(m_methodCallLinkInfos[i].seenOnce());
             visitor.append(&m_methodCallLinkInfos[i].cachedStructure);
             ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
             visitor.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);

@@ -128,6 +128,7 @@ typedef uint32_t ExceptionInfo;
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(PutById, NodeMustGenerate) \
     macro(PutByIdDirect, NodeMustGenerate) \
+    macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate) \
     \
@@ -266,7 +267,7 @@ struct Node {
 
     bool hasIdentifier()
     {
-        return op == GetById || op == PutById || op == PutByIdDirect;
+        return op == GetById || op == PutById || op == PutByIdDirect || op == GetMethod;
     }
 
     unsigned identifierNumber()

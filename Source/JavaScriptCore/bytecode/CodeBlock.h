@@ -129,25 +129,18 @@ namespace JSC {
 
     struct MethodCallLinkInfo {
         MethodCallLinkInfo()
+            : seen(false)
         {
         }
 
         bool seenOnce()
         {
-            ASSERT(!cachedStructure);
-            return cachedPrototypeStructure.isFlagged();
+            return seen;
         }
 
         void setSeen()
         {
-            ASSERT(!cachedStructure && !cachedPrototypeStructure);
-            // We use the values of cachedStructure & cachedPrototypeStructure to indicate the
-            // current state.
-            //     - In the initial state, both are null.
-            //     - Once this transition has been taken once, cachedStructure is
-            //       null and cachedPrototypeStructure is set to a nun-null value.
-            //     - Once the call is linked both structures are set to non-null values.
-            cachedPrototypeStructure.setFlagOnBarrier();
+            seen = true;
         }
 
         CodeLocationCall callReturnLocation;
@@ -155,6 +148,7 @@ namespace JSC {
         JITWriteBarrier<Structure> cachedPrototypeStructure;
         JITWriteBarrier<JSFunction> cachedFunction;
         JITWriteBarrier<JSObject> cachedPrototype;
+        bool seen;
     };
 
     struct GlobalResolveInfo {

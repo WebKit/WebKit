@@ -121,6 +121,10 @@ public:
         validateCell(value);
         JITWriteBarrierBase::set(globalData, location, owner, value);
     }
+    void set(JSGlobalData& globalData, JSCell* owner, T* value)
+    {
+        set(globalData, location(), owner, value);
+    }
     T* get() const
     {
         T* result = static_cast<T*>(JITWriteBarrierBase::get());

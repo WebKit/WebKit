@@ -228,19 +228,19 @@ EncodedJSValue operationGetById(ExecState* exec, EncodedJSValue encodedBase, Ide
     return JSValue::encode(baseValue.get(exec, *propertyName, slot));
 }
 
-EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
-FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
-EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetMethodOptimize);
+EncodedJSValue operationGetMethodOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(exec, *propertyName, slot);
 
-    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
-    if (stubInfo.seen)
-        dfgRepatchGetByID(exec, baseValue, *propertyName, slot, stubInfo);
+    MethodCallLinkInfo& methodInfo = exec->codeBlock()->getMethodCallLinkInfo(returnAddress);
+    if (methodInfo.seenOnce())
+        dfgRepatchGetMethod(exec, baseValue, *propertyName, slot, methodInfo);
     else
-        stubInfo.seen = true;
+        methodInfo.setSeen();
 
     return JSValue::encode(result);
 }
@@ -255,6 +255,23 @@ EncodedJSValue operationGetByIdBuildListWithReturnAddress(ExecState* exec, Encod
 
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     dfgBuildGetByIDList(exec, baseValue, *propertyName, slot, stubInfo);
+
+    return JSValue::encode(result);
+}
+
+EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
+EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSValue baseValue = JSValue::decode(encodedBase);
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(exec, *propertyName, slot);
+
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    if (stubInfo.seen)
+        dfgRepatchGetByID(exec, baseValue, *propertyName, slot, stubInfo);
+    else
+        stubInfo.seen = true;
 
     return JSValue::encode(result);
 }

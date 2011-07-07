@@ -1,5 +1,49 @@
 2011-07-06  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT does not support method_check
+        https://bugs.webkit.org/show_bug.cgi?id=63972
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationPossiblyNearCall::CodeLocationPossiblyNearCall):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::MethodCallLinkInfo::MethodCallLinkInfo):
+        (JSC::MethodCallLinkInfo::seenOnce):
+        (JSC::MethodCallLinkInfo::setSeen):
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::recordGetMethod):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::cachedGetMethod):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addMethodGet):
+        (JSC::DFG::JITCompiler::MethodGetRecord::MethodGetRecord):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchGetMethodFast):
+        (JSC::DFG::tryCacheGetMethod):
+        (JSC::DFG::dfgRepatchGetMethod):
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITWriteBarrier.h:
+        (JSC::JITWriteBarrier::set):
+
+2011-07-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT op_call implementation will flush registers even when those registers are dead
         https://bugs.webkit.org/show_bug.cgi?id=64023
 

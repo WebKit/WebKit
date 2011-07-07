@@ -1019,6 +1019,18 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }
+        
+    case GetMethod: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this, base);
+
+        GPRReg resultGPR = result.gpr();
+
+        cachedGetMethod(base.gpr(), resultGPR, node.identifierNumber());
+
+        jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
 
     case PutById: {
         SpeculateCellOperand base(this, node.child1());

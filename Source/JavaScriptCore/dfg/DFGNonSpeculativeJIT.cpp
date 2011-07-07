@@ -838,6 +838,20 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
     }
 
+    case GetMethod: {
+        JSValueOperand base(this, node.child1());
+        GPRReg baseGPR = base.gpr();
+        GPRTemporary result(this, base);
+        GPRReg resultGPR = result.gpr();
+
+        JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
+
+        cachedGetMethod(baseGPR, resultGPR, node.identifierNumber(), notCell);
+
+        jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+
     case PutById: {
         JSValueOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());

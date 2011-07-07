@@ -268,6 +268,11 @@ public:
         m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
     }
     
+    void addMethodGet(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
+    {
+        m_methodGets.append(MethodGetRecord(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction));
+    }
+    
     void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
     {
         m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, exceptionInfo));
@@ -318,6 +323,23 @@ private:
         int8_t m_scratchGPR;
     };
     
+    struct MethodGetRecord {
+        MethodGetRecord(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
+            : m_slowCall(slowCall)
+            , m_structToCompare(structToCompare)
+            , m_protoObj(protoObj)
+            , m_protoStructToCompare(protoStructToCompare)
+            , m_putFunction(putFunction)
+        {
+        }
+        
+        Call m_slowCall;
+        DataLabelPtr m_structToCompare;
+        DataLabelPtr m_protoObj;
+        DataLabelPtr m_protoStructToCompare;
+        DataLabelPtr m_putFunction;
+    };
+    
     struct JSCallRecord {
         JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
             : m_fastCall(fastCall)
@@ -336,6 +358,7 @@ private:
     };
 
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
+    Vector<MethodGetRecord, 4> m_methodGets;
     Vector<JSCallRecord, 4> m_jsCalls;
 };
 

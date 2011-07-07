@@ -852,12 +852,28 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NEXT_OPCODE(op_put_by_val);
         }
+            
+        case op_method_check: {
+            Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
+            
+            ASSERT(interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id);
+            
+            NodeIndex base = get(getInstruction[2].u.operand);
+            unsigned identifier = getInstruction[3].u.operand;
+            
+            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), base);
+            set(getInstruction[1].u.operand, getMethod);
+            aliases.recordGetMethod(getMethod);
+            
+            m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
+            continue;
+        }
 
         case op_get_by_id: {
             PROPERTY_ACCESS_OP();
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
-
+            
             NodeIndex getById = addToGraph(GetById, OpInfo(identifier), base);
             set(currentInstruction[1].u.operand, getById);
             aliases.recordGetById(getById);

@@ -295,6 +295,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         m_calls.clear();
         m_propertyAccesses.clear();
         m_jsCalls.clear();
+        m_methodGets.clear();
         rewindToLabel(speculativePathBegin);
 
         SpeculationCheckVector noChecks;
@@ -407,6 +408,16 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         info.callReturnLocation = CodeLocationLabel(linkBuffer.locationOf(m_jsCalls[i].m_slowCall));
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
         info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
+    }
+    
+    m_codeBlock->addMethodCallLinkInfos(m_methodGets.size());
+    for (unsigned i = 0; i < m_methodGets.size(); ++i) {
+        MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
+        info.cachedStructure.setLocation(linkBuffer.locationOf(m_methodGets[i].m_structToCompare));
+        info.cachedPrototypeStructure.setLocation(linkBuffer.locationOf(m_methodGets[i].m_protoStructToCompare));
+        info.cachedFunction.setLocation(linkBuffer.locationOf(m_methodGets[i].m_putFunction));
+        info.cachedPrototype.setLocation(linkBuffer.locationOf(m_methodGets[i].m_protoObj));
+        info.callReturnLocation = linkBuffer.locationOf(m_methodGets[i].m_slowCall);
     }
     
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.

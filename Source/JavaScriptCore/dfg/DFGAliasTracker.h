@@ -82,6 +82,12 @@ public:
         ASSERT_UNUSED(getById, m_graph[getById].op == GetById);
         m_candidateAliasGetByVal = NoNode;
     }
+    
+    void recordGetMethod(NodeIndex getMethod)
+    {
+        ASSERT_UNUSED(getMethod, m_graph[getMethod].op == GetMethod);
+        m_candidateAliasGetByVal = NoNode;
+    }
 
     void recordPutById(NodeIndex putById)
     {

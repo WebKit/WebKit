@@ -325,7 +325,7 @@ void JITCodeGenerator::useChildren(Node& node)
     }
 }
 
-void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
+JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
 {
     GPRReg scratchGPR;
     
@@ -353,7 +353,20 @@ void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned 
     m_jit.move(baseGPR, GPRInfo::argumentGPR1);
     m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR2);
     m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationGetByIdOptimize);
+    JITCompiler::Call functionCall;
+    switch (nodeType) {
+    case GetById:
+        functionCall = appendCallWithExceptionCheck(operationGetByIdOptimize);
+        break;
+        
+    case GetMethod:
+        functionCall = appendCallWithExceptionCheck(operationGetMethodOptimize);
+        break;
+        
+    default:
+        ASSERT_NOT_REACHED();
+        return JITCompiler::Call();
+    }
     m_jit.move(GPRInfo::returnValueGPR, resultGPR);
     silentFillAllRegisters(resultGPR);
     
@@ -371,6 +384,8 @@ void JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned 
     
     if (scratchGPR != resultGPR && scratchGPR != InvalidGPRReg)
         unlock(scratchGPR);
+    
+    return functionCall;
 }
 
 void JITCodeGenerator::writeBarrier(MacroAssembler&, GPRReg owner, GPRReg scratch)
@@ -428,6 +443,29 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
     int8_t callToDone = static_cast<int8_t>(m_jit.differenceBetween(functionCall, doneLabel));
 
     m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(valueGPR), static_cast<int8_t>(scratchGPR));
+}
+
+void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
+{
+    JITCompiler::Call slowCall;
+    JITCompiler::DataLabelPtr structToCompare, protoObj, protoStructToCompare, putFunction;
+    
+    JITCompiler::Jump wrongStructure = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    protoObj = m_jit.moveWithPatch(JITCompiler::TrustedImmPtr(0), resultGPR);
+    JITCompiler::Jump wrongProtoStructure = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(resultGPR, JSCell::structureOffset()), protoStructToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    
+    putFunction = m_jit.moveWithPatch(JITCompiler::TrustedImmPtr(0), resultGPR);
+    
+    JITCompiler::Jump done = m_jit.jump();
+    
+    wrongStructure.link(&m_jit);
+    wrongProtoStructure.link(&m_jit);
+    
+    slowCall = cachedGetById(baseGPR, resultGPR, identifierNumber, slowPathTarget, GetMethod);
+    
+    done.link(&m_jit);
+    
+    m_jit.addMethodGet(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction);
 }
 
 void JITCodeGenerator::emitCall(Node& node)
