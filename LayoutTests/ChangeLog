@@ -1,3 +1,12 @@
+2011-07-07  Andras Becsi  <abecsi@webkit.org>
+
+        REGRESSION(90557) http/tests/inspector/network/network-embed.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=64103
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip test.
+
 2011-07-07  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed.
