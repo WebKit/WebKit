@@ -1,3 +1,9 @@
+2011-07-07  Adam Roben  <aroben@apple.com>
+
+        Skip another test that uses beginDragWithFiles on Windows
+
+        * platform/win/Skipped: Added fast/forms/file-input-change-event.html.
+
 2011-07-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9737435> Re-enable -webkit-column-break-inside: avoid
