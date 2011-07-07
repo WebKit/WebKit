@@ -189,8 +189,6 @@ public:
 
     void findZoomableAreaForPoint(const QPoint&);
 
-    bool isConnectedToEngine() const;
-
     void setPageIsVisible(bool);
 
 public Q_SLOTS:
@@ -222,8 +220,6 @@ private:
     mutable QWKPreferences* m_preferences;
 
     CreateNewPageFn m_createNewPageFn;
-
-    bool m_isConnectedToEngine;
 
 #ifndef QT_NO_UNDOSTACK
     OwnPtr<QUndoStack> m_undoStack;

@@ -124,7 +124,6 @@ QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, QWKContext* c, WKPa
     , m_context(c)
     , m_preferences(0)
     , m_createNewPageFn(0)
-    , m_isConnectedToEngine(true)
 #ifndef QT_NO_UNDOSTACK
     , m_undoStack(adoptPtr(new QUndoStack(this)))
 #endif
@@ -545,14 +544,13 @@ void QtWebPageProxy::webActionTriggered(bool checked)
 
 void QtWebPageProxy::didRelaunchProcess()
 {
+    m_viewInterface->didRelaunchProcess();
     setDrawingAreaSize(m_viewInterface->drawingAreaSize());
-
-    m_isConnectedToEngine = true;
 }
 
 void QtWebPageProxy::processDidCrash()
 {
-    m_isConnectedToEngine = false;
+    m_viewInterface->processDidCrash();
 }
 
 void QtWebPageProxy::setActualVisibleContentsRect(const QRect& rect) const
@@ -801,11 +799,6 @@ WebCore::IntRect QtWebPageProxy::viewportVisibleRect() const
 {
     // FIXME: TODO
     return IntRect();
-}
-
-bool QtWebPageProxy::isConnectedToEngine() const
-{
-    return m_isConnectedToEngine;
 }
 
 void QtWebPageProxy::setPageIsVisible(bool isVisible)

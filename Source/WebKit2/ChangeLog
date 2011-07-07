@@ -1,3 +1,35 @@
+2011-07-07  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Views should know about WebProcess crash/relaunch.
+        https://bugs.webkit.org/show_bug.cgi?id=64093
+
+        Reviewed by Benjamin Poulain.
+
+        Add processDidCrash() and didRelaunchProcess() to ViewInterface.
+
+        QDesktopWebView now displays a simple sad smiley ":(" when the
+        web process crashes.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::QDesktopWebViewPrivate):
+        (paintCrashedPage):
+        (QDesktopWebView::paint):
+        (QDesktopWebViewPrivate::processDidCrash):
+        (QDesktopWebViewPrivate::didRelaunchProcess):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::didRelaunchProcess):
+        (QtWebPageProxy::processDidCrash):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::showContextMenu):
+        (WebKit::TouchViewInterface::hideContextMenu):
+        (WebKit::TouchViewInterface::processDidCrash):
+        (WebKit::TouchViewInterface::didRelaunchProcess):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+
 2011-07-07  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt] [WK2] Improve the handling of touch events to use them as main input

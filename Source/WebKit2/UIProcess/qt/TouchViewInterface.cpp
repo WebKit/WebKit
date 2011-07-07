@@ -112,12 +112,22 @@ void TouchViewInterface::didChangeLoadProgress(int percentageLoaded)
 
 void TouchViewInterface::showContextMenu(QSharedPointer<QMenu>)
 {
-    // TODO
+    // FIXME
 }
 
 void TouchViewInterface::hideContextMenu()
 {
-    // TODO
+    // FIXME
+}
+
+void TouchViewInterface::processDidCrash()
+{
+    // FIXME
+}
+
+void TouchViewInterface::didRelaunchProcess()
+{
+    // FIXME
 }
 
 }

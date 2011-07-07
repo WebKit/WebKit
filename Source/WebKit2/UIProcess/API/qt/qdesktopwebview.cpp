@@ -30,6 +30,7 @@
 QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : q(q)
     , page(this, contextRef ? new QWKContext(contextRef) : defaultWKContext(), pageGroupRef)
+    , isCrashed(false)
 {
 }
 
@@ -189,8 +190,19 @@ void QDesktopWebView::resizeEvent(QGraphicsSceneResizeEvent* ev)
     QGraphicsWidget::resizeEvent(ev);
 }
 
+static void paintCrashedPage(QPainter* painter, const QStyleOptionGraphicsItem* option)
+{
+    painter->fillRect(option->rect, Qt::gray);
+    painter->drawText(option->rect, Qt::AlignCenter, QLatin1String(":("));
+}
+
 void QDesktopWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
+    if (d->isCrashed) {
+        paintCrashedPage(painter, option);
+        return;
+    }
+
     d->page.paint(painter, option->exposedRect.toAlignedRect());
 }
 
@@ -204,4 +216,16 @@ bool QDesktopWebView::event(QEvent* ev)
 WKPageRef QDesktopWebView::pageRef() const
 {
     return d->page.pageRef();
+}
+
+void QDesktopWebViewPrivate::processDidCrash()
+{
+    isCrashed = true;
+    q->update();
+}
+
+void QDesktopWebViewPrivate::didRelaunchProcess()
+{
+    isCrashed = false;
+    q->update();
 }

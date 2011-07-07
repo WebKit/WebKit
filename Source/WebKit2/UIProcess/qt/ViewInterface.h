@@ -66,6 +66,9 @@ public:
     virtual void showContextMenu(QSharedPointer<QMenu>) = 0;
     virtual void hideContextMenu() = 0;
 
+    virtual void processDidCrash() = 0;
+    virtual void didRelaunchProcess() = 0;
+
 protected:
     /* Utility functions for the implementations. */
     static QWidget* ownerWidget(const QGraphicsWidget*);

@@ -36,6 +36,8 @@ public:
     QDesktopWebView* q;
     QDesktopWebPageProxy page;
 
+    bool isCrashed;
+
 private:
     /* Implementation of ViewInterface */
     virtual void setViewNeedsDisplay(const QRect&);
@@ -62,6 +64,9 @@ private:
 
     virtual void showContextMenu(QSharedPointer<QMenu>);
     virtual void hideContextMenu();
+
+    virtual void processDidCrash();
+    virtual void didRelaunchProcess();
 
     QSharedPointer<QMenu> activeMenu;
 };

@@ -60,6 +60,10 @@ private:
 
     virtual void showContextMenu(QSharedPointer<QMenu>);
     virtual void hideContextMenu();
+
+    virtual void processDidCrash();
+    virtual void didRelaunchProcess();
+
 private:
     QTouchWebView* const m_viewportView;
     QTouchWebPage* const m_pageView;
