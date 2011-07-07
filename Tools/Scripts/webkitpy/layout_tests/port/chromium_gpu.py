@@ -82,7 +82,7 @@ def _tests(port, paths):
         # invalidate_rect.html tests a bug in the compositor.
         # See https://bugs.webkit.org/show_bug.cgi?id=53117
         paths += ['plugins/invalidate_rect.html']
-    return test_files.find(port, paths)
+    return set([port.relative_test_filename(f) for f in test_files.find(port, paths)])
 
 
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):

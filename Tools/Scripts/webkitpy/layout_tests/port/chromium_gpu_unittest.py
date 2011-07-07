@@ -79,22 +79,21 @@ class ChromiumGpuTest(unittest.TestCase):
         else:
             self.assertEqual(port._webkit_baseline_path('chromium-gpu'), paths[1])
 
-
         # Test that we're limiting to the correct directories.
         # These two tests are picked mostly at random, but we make sure they
         # exist separately from being filtered out by the port.
         files = port.tests(None)
 
-        path = port.abspath_for_test('compositing/checkerboard.html')
-        self.assertTrue(port._filesystem.exists(path))
+        path = 'compositing/checkerboard.html'
+        self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
         self.assertTrue(path in files)
 
-        path = port.abspath_for_test('fast/html/keygen.html')
-        self.assertTrue(port._filesystem.exists(path))
+        path = 'fast/html/keygen.html'
+        self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
         self.assertFalse(path in files)
         if port_name.startswith('chromium-gpu-mac'):
-            path = port.abspath_for_test('fast/canvas/set-colors.html')
-            self.assertTrue(port._filesystem.exists(path))
+            path = 'fast/canvas/set-colors.html'
+            self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
             self.assertFalse(path in files)
 
     def test_chromium_gpu__vista(self):
