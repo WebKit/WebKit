@@ -131,6 +131,10 @@ public:
     LengthSize m_pageSize;
     PageSizeType m_pageSizeType;
 
+#if ENABLE(CSS_REGIONS)
+    AtomicString m_flowThread;
+#endif
+
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

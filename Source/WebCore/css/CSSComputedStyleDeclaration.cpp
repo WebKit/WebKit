@@ -246,7 +246,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
     CSSPropertyWebkitWritingMode
-
+#if ENABLE(CSS_REGIONS)
+    , CSSPropertyWebkitFlow
+#endif
 #if ENABLE(SVG)
     ,
     CSSPropertyClipPath,
@@ -1656,7 +1658,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
-        
+#if ENABLE(CSS_REGIONS)
+        case CSSPropertyWebkitFlow:
+            if (style->flowThread().isNull())
+                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+            return primitiveValueCache->createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
+#endif
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
         case CSSPropertyBorder:

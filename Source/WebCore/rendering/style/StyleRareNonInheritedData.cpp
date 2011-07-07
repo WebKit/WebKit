@@ -55,6 +55,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , m_pageSize()
     , m_pageSizeType(PAGE_SIZE_AUTO)
+#if ENABLE(CSS_REGIONS)
+    , m_flowThread(RenderStyle::initialFlowThread())
+#endif
 {
 }
 
@@ -94,6 +97,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_perspectiveOriginY(o.m_perspectiveOriginY)
     , m_pageSize(o.m_pageSize)
     , m_pageSizeType(o.m_pageSizeType)
+#if ENABLE(CSS_REGIONS)
+    , m_flowThread(o.m_flowThread)
+#endif
 {
 }
 
@@ -140,6 +146,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && (m_perspectiveOriginY == o.m_perspectiveOriginY)
         && (m_pageSize == o.m_pageSize)
         && (m_pageSizeType == o.m_pageSizeType)
+#if ENABLE(CSS_REGIONS)
+        && (m_flowThread == o.m_flowThread)
+#endif
         ;
 }
 

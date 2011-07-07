@@ -1587,6 +1587,10 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = validUnit(value, FTime | FInteger | FNonNeg, m_strict);
         break;
 #endif
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitFlow:
+        return parseFlowThread(propId, important);
+#endif
     case CSSPropertyWebkitUserDrag: // auto | none | element
         if (id == CSSValueAuto || id == CSSValueNone || id == CSSValueElement)
             validPrimitive = true;
@@ -5831,6 +5835,37 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
 
     return list.release();
 }
+
+#if ENABLE(CSS_REGIONS)
+// auto | <flow_name>
+bool CSSParser::parseFlowThread(int propId, bool important)
+{
+    ASSERT(propId == CSSPropertyWebkitFlow);
+
+    if (m_valueList->size() != 1)
+        return false;
+
+    CSSParserValue* value = m_valueList->current();
+    if (!value)
+        return false;
+
+    if (value->id == CSSValueAuto) {
+        addProperty(propId, primitiveValueCache()->createIdentifierValue(value->id), important);
+        return true;
+    }
+
+    if (!value->id && value->unit == CSSPrimitiveValue::CSS_STRING) {
+        String inputProperty = String(value->string);
+        if (!inputProperty.isEmpty())
+            addProperty(propId, primitiveValueCache()->createValue(inputProperty, CSSPrimitiveValue::CSS_STRING), important);
+        else
+            addProperty(propId, primitiveValueCache()->createIdentifierValue(CSSValueAuto), important);
+        return true;
+    }
+
+    return false;
+}
+#endif
 
 bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int& propId3, RefPtr<CSSValue>& value, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
 {

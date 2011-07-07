@@ -326,3 +326,6 @@ z-index
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select
+#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
+-webkit-flow
+#endif

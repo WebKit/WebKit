@@ -156,6 +156,9 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseWCSSInputProperty();
 #endif
 
+#if ENABLE(CSS_REGIONS)
+        bool parseFlowThread(int propId, bool important);
+#endif
         // CSS3 Parsing Routines (for properties specific to CSS3)
         bool parseShadow(int propId, bool important);
         bool parseBorderImage(int propId, bool important, RefPtr<CSSValue>&);

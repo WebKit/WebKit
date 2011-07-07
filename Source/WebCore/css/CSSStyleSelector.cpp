@@ -4869,6 +4869,20 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
 #endif
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitFlow:
+        if (isInitial)
+            HANDLE_INITIAL_COND(CSSPropertyWebkitFlow, FlowThread);
+        if (isInherit) {
+            m_style->setFlowThread(nullAtom);
+            return;
+        }
+        if (primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setFlowThread(nullAtom);
+        else
+            m_style->setFlowThread(primitiveValue->getStringValue());
+        return;
+#endif
     case CSSPropertyWebkitMarqueeDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
         return;

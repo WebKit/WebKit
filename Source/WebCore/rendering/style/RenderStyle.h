@@ -743,6 +743,10 @@ public:
     bool hasTextCombine() const { return textCombine() != TextCombineNone; }
     // End CSS3 Getters
 
+#if ENABLE(CSS_REGIONS)
+    const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
+#endif
+
     // Apple-specific property getter methods
     EPointerEvents pointerEvents() const { return static_cast<EPointerEvents>(inherited_flags._pointerEvents); }
     const AnimationList* animations() const { return rareNonInheritedData->m_animations.get(); }
@@ -1091,6 +1095,10 @@ public:
     void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(rareInheritedData, textEmphasisPosition, position); }
     // End CSS3 Setters
 
+#if ENABLE(CSS_REGIONS)
+    void setFlowThread(const AtomicString& flowThread) { SET_VAR(rareNonInheritedData, m_flowThread, flowThread); }
+#endif
+
     // Apple-specific property setters
     void setPointerEvents(EPointerEvents p) { inherited_flags._pointerEvents = p; }
 
@@ -1319,6 +1327,10 @@ public:
     static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
+
+#if ENABLE(CSS_REGIONS)
+    static const AtomicString& initialFlowThread() { return nullAtom; }
+#endif
 
     // Keep these at the end.
     static LineClampValue initialLineClamp() { return LineClampValue(); }

@@ -1,3 +1,32 @@
+2011-07-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by David Hyatt.
+
+        [CSSRegions] Parse flow property
+        https://bugs.webkit.org/show_bug.cgi?id=61730
+
+        Test: fast/regions/webkit-flow-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFlowThread):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::flowThread):
+        (WebCore::InheritedFlags::setFlowThread):
+        (WebCore::InheritedFlags::initialFlowThread):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-07-06  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] Redundant RenderText objects are created on the content boundaries.
