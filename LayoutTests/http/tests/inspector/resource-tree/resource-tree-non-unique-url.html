@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="resource-tree-test.js"></script>
+<script>
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    iframe.src = "resources/resource-tree-non-unique-url-iframe.html";
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ResourcesPanel.prototype, "_resourceAdded", onResource, true);
+    WebInspector.panels.resources.show();
+
+    var cssRequestsCount = 0;
+    function onResource(event)
+    {
+        var resource = event.data;
+        if (resource.url.match(/\.css$/) && ++cssRequestsCount === 2) {
+            InspectorTest.addResult("Resources Tree:");
+            InspectorTest.dumpResourcesTree();
+            InspectorTest.completeTest();
+        }
+    }
+
+    InspectorTest.evaluateInPage("loadIframe();");
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests resources panel shows several resources with the same url if they were loaded with inspector already opened.</p>
+</body>
+</html>
+

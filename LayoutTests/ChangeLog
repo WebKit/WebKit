@@ -1,3 +1,18 @@
+2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resources panel shows only one resource when multiple resources have the same url.
+        https://bugs.webkit.org/show_bug.cgi?id=63936
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-tree/resource-tree-non-unique-url-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-tree-non-unique-url.html: Added.
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesTree):
+        * http/tests/inspector/resource-tree/resources/resource-tree-non-unique-url-iframe.html: Added.
+        * http/tests/inspector/resource-tree/resources/styles-non-unique-url.css: Added.
+        (body):
+
 2011-07-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

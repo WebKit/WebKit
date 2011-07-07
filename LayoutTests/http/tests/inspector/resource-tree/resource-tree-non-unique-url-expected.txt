@@ -1,0 +1,18 @@
+Tests resources panel shows several resources with the same url if they were loaded with inspector already opened.
+
+
+Resources Tree:
+Frames
+    (resource-tree-non-unique-url.html)
+        (resource-tree-non-unique-url-iframe.html)
+            Images
+                styles-non-unique-url.css
+            Stylesheets
+                styles-non-unique-url.css
+            resource-tree-non-unique-url-iframe.html
+        Scripts
+            inspector-test.js
+            resource-tree-test.js
+            resources-test.js
+        resource-tree-non-unique-url.html
+

@@ -51,6 +51,10 @@ InspectorTest.dumpResourcesTree = function()
 {
     function dump(treeItem, prefix)
     {
+        // We don't need to print the bubbles content here.
+        if (typeof(treeItem._resetBubble) === "function")
+            treeItem._resetBubble();
+
         InspectorTest.addResult(prefix + treeItem.listItemElement.textContent);
 
         treeItem.expand();

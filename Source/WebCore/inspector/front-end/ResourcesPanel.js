@@ -1114,9 +1114,6 @@ WebInspector.FrameTreeElement.prototype = {
 
     appendResource: function(resource)
     {
-        if (this._treeElementForResource[resource.url])
-            return;
-
         var categoryName = resource.category.name;
         var categoryElement = resource.category === WebInspector.resourceCategories.documents ? this : this._categoryElements[categoryName];
         if (!categoryElement) {
