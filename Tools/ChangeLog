@@ -1,3 +1,15 @@
+2011-07-06  Johnny Ding  <jnd@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63857
+        Implement createPopupMenu for Chromium DRT.
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createPopupMenu):
+        (WebViewHost::~WebViewHost):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-07-06  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, rolling out r90503.

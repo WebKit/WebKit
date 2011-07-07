@@ -1,3 +1,13 @@
+2011-07-06  Johnny Ding  <jnd@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63857
+        Check WebWidgetClient before calling it to close widget.  
+
+        Reviewed by Tony Chang.
+
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::popupClosed):
+
 2011-07-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Add compositor texture manager soft limits and lost focus reclaiming

@@ -375,7 +375,8 @@ void WebPopupMenuImpl::popupClosed(FramelessScrollView* widget)
         m_widget->setClient(0);
         m_widget = 0;
     }
-    m_client->closeWidgetSoon();
+    if (m_client)
+        m_client->closeWidgetSoon();
 }
 
 } // namespace WebKit

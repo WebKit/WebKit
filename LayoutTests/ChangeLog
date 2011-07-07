@@ -1,3 +1,12 @@
+2011-07-06  Johnny Ding  <jnd@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63857
+        Remove some crash expectation after implementing "createPopupMenu"
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-06  Mihai Parparita  <mihaip@chromium.org>
 
         Update Chromium GPU expectations with downstream changes

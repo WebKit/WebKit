@@ -46,6 +46,8 @@
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
 #include "WebNode.h"
+#include "WebPopupMenu.h"
+#include "WebPopupType.h"
 #include "WebRange.h"
 #include "WebRect.h"
 #include "WebScreenInfo.h"
@@ -236,13 +238,23 @@ WebView* WebViewHost::createView(WebFrame*, const WebURLRequest&, const WebWindo
     return m_shell->createNewWindow(WebURL())->webView();
 }
 
-WebWidget* WebViewHost::createPopupMenu(WebPopupType)
+WebWidget* WebViewHost::createPopupMenu(WebPopupType type)
 {
+    switch (type) {
+    case WebKit::WebPopupTypeNone:
+        break;
+    case WebKit::WebPopupTypeSelect:
+    case WebKit::WebPopupTypeSuggestion:
+        m_popupmenus.append(WebPopupMenu::create(0));
+        return m_popupmenus.last();
+    }
     return 0;
 }
 
 WebWidget* WebViewHost::createPopupMenu(const WebPopupMenuInfo&)
 {
+    // Do not use this method. It's been replaced by createExternalPopupMenu.
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -1154,8 +1166,11 @@ WebViewHost::~WebViewHost()
         loadURLForFrame(GURL("about:blank"), WebString());
     }
 
-    webWidget()->close();
+    for (Vector<WebKit::WebWidget*>::iterator it = m_popupmenus.begin();
+         it < m_popupmenus.end(); ++it)
+        (*it)->close();
 
+    webWidget()->close();
     if (m_inModalLoop)
         webkit_support::QuitMessageLoop();
 }

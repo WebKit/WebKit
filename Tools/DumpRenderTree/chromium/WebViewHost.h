@@ -350,6 +350,7 @@ private:
     WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;
 
     TaskList m_taskList;
+    Vector<WebKit::WebWidget*> m_popupmenus;
 };
 
 #endif // WebViewHost_h
