@@ -37,7 +37,6 @@ import unittest
 from .checkout import Checkout
 from .changelog import ChangeLogEntry
 from .scm import detect_scm_system, CommitMessage
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock
 
@@ -83,29 +82,35 @@ _changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
 """
 
 class CommitMessageForThisCommitTest(unittest.TestCase):
-    expected_commit_message = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+    expected_commit_message = u"""Unreviewed build fix to un-break webkit-patch land.
 
-        Unreviewed build fix to un-break webkit-patch land.
+Tools: 
 
-        Move commit_message_for_this_commit from scm to checkout
-        https://bugs.webkit.org/show_bug.cgi?id=36629
+Move commit_message_for_this_commit from scm to checkout
+https://bugs.webkit.org/show_bug.cgi?id=36629
 
-        * Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
-2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+* Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
 
-        Unreviewed build fix to un-break webkit-patch land.
+LayoutTests: 
 
-        Second part of this complicated change.
+Second part of this complicated change.
 
-        * Path/To/Complicated/File: Added.
+* Path/To/Complicated/File: Added.
 """
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(suffix="changelogs")
         self.old_cwd = os.getcwd()
         os.chdir(self.temp_dir)
-        write_into_file_at_path("ChangeLog1", _changelog1)
-        write_into_file_at_path("ChangeLog2", _changelog2)
+
+        # Trick commit-log-editor into thinking we're in a Subversion working copy so it won't
+        # complain about not being able to figure out what SCM is in use.
+        os.mkdir(".svn")
+
+        self.changelogs = map(os.path.abspath, (os.path.join("Tools", "ChangeLog"), os.path.join("LayoutTests", "ChangeLog")))
+        for path, contents in zip(self.changelogs, (_changelog1, _changelog2)):
+            os.makedirs(os.path.dirname(path))
+            write_into_file_at_path(path, contents)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir, ignore_errors=True)
@@ -114,12 +119,16 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
     # FIXME: This should not need to touch the file system, however
     # ChangeLog is difficult to mock at current.
     def test_commit_message_for_this_commit(self):
-        checkout = Checkout(None)
-        checkout.modified_changelogs = lambda git_commit, changed_files=None: ["ChangeLog1", "ChangeLog2"]
-        output = OutputCapture()
-        expected_stderr = "Parsing ChangeLog: ChangeLog1\nParsing ChangeLog: ChangeLog2\n"
-        commit_message = output.assert_outputs(self, checkout.commit_message_for_this_commit,
-            kwargs={"git_commit": None}, expected_stderr=expected_stderr)
+        scm = Mock()
+
+        def mock_script_path(script):
+            return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', script))
+
+        scm.script_path = mock_script_path
+
+        checkout = Checkout(scm)
+        checkout.modified_changelogs = lambda git_commit, changed_files=None: self.changelogs
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None)
         self.assertEqual(commit_message.message(), self.expected_commit_message)
 
 

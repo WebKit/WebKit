@@ -120,16 +120,8 @@ class Checkout(object):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                               "All changes require a ChangeLog.  See:\n %s" % urls.contribution_guidelines)
 
-        changelog_messages = []
-        for changelog_path in changelog_paths:
-            log("Parsing ChangeLog: %s" % changelog_path)
-            changelog_entry = ChangeLog(changelog_path).latest_entry()
-            if not changelog_entry:
-                raise ScriptError(message="Failed to parse ChangeLog: %s" % os.path.abspath(changelog_path))
-            changelog_messages.append(changelog_entry.contents())
-
-        # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
-        return CommitMessage("".join(changelog_messages).splitlines())
+        message_text = Executive().run_command([self._scm.script_path('commit-log-editor'), '--print-log'] + changelog_paths, return_stderr=False)
+        return CommitMessage(message_text.splitlines())
 
     def recent_commit_infos_for_files(self, paths):
         revisions = set(sum(map(self._scm.revisions_changing_file, paths), []))

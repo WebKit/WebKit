@@ -1,5 +1,27 @@
 2011-07-07  Adam Roben  <aroben@apple.com>
 
+        Teach webkitpy's Checkout class to use commit-log-editor to create commit messages
+
+        Fixes <http://webkit.org/b/26755> webkit-patch's commit messages are less readable than
+        commit-log-editor's
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.commit_message_for_this_commit): Run commit-log-editor, passing it the paths of
+        the modified ChangeLogs, to generate the commit message, rather than trying to generate one
+        ourselves.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py: Updated the expected commit message
+        to match commit-log-editor's format.
+        (CommitMessageForThisCommitTest.setUp): Write the ChangeLogs into Tools and LayoutTests
+        directories so we can see how the various entries get labeled in the commit message.
+        (CommitMessageForThisCommitTest.test_commit_message_for_this_commit): Create a mock SCM
+        instance that knows how to find commit-log-editor and pass it to our Checkout instance.
+        Don't bother capturing output, since there shouldn't be any.
+
+2011-07-07  Adam Roben  <aroben@apple.com>
+
         Add a --print-log option to commit-log-editor
 
         When specified, commit-log-editor takes a set of ChangeLog paths on the command line,
