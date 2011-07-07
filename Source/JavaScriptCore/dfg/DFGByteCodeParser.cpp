@@ -254,6 +254,16 @@ private:
     {
         return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
     }
+    bool isSmallInt32Constant(NodeIndex nodeIndex)
+    {
+        if (!isJSConstant(nodeIndex))
+            return false;
+        JSValue value = valueOfJSConstant(nodeIndex);
+        if (!value.isInt32())
+            return false;
+        int32_t intValue = value.asInt32();
+        return intValue >= -5 && intValue <= 5;
+    }
     bool isDoubleConstant(NodeIndex nodeIndex)
     {
         return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isNumber();
@@ -675,9 +685,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
             // Otherwise, we must assume this may be performing a concatenation to a string.
-            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult())
+            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult()) {
+                if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
+                    predictInt32(op1);
+                    predictInt32(op2);
+                }
                 set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
-            else
+            } else
                 set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
             NEXT_OPCODE(op_add);
         }
@@ -686,6 +700,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
+            if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
+                predictInt32(op1);
+                predictInt32(op2);
+            }
             set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
             NEXT_OPCODE(op_sub);
         }

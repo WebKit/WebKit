@@ -166,8 +166,9 @@ private:
 
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger;
+        
+        return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger
+            || (info.spillFormat() | DataFormatJS) == DataFormatJSInteger;
     }
 
     bool isDataFormatDouble(NodeIndex nodeIndex)
