@@ -3887,8 +3887,6 @@ BUGWK63573 : fast/forms/input-appearance-range.html = IMAGE
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
-BUGCR87217 WIN LINUX GPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
-
 // We now follow the ES5 spec with regards to the semantics of the receiver
 // given through eval to builtins (undefined). Test assumes that the global
 // object is given as receiver.

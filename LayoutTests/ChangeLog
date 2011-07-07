@@ -1,3 +1,10 @@
+2011-07-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add text baseline for spanOverlapsCanvas
+
+        * platform/chromium-gpu-win/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-07  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
