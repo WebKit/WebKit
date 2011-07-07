@@ -1,5 +1,22 @@
 2011-07-07  Adam Roben  <aroben@apple.com>
 
+        Add a --print-log option to commit-log-editor
+
+        When specified, commit-log-editor takes a set of ChangeLog paths on the command line,
+        generates a commit message from those ChangeLogs, prints it to stdout, and exits.
+
+        Prep work for fixing <http://webkit.org/b/26755> webkit-patch's commit messages are less
+        readable than commit-log-editor's
+
+        Reviewed by David Kilzer.
+
+        * Scripts/commit-log-editor: Changed to use Getopt::Long to parse options. Added --print-log
+        option, which calls through to createCommitMessage, prints the result, and exits.
+        (printUsageAndExit): Renamed from "usage" for clarity. Beefed up the usage statement to
+        explain commit-log-editor's 2.5 (normal, --print-log, and --help) modes of operation.
+
+2011-07-07  Adam Roben  <aroben@apple.com>
+
         Extract commit-log-editor's commit-message-generation code into a separate function
 
         As a bonus, we now skip a bunch of work in the case where we are generating a commit message

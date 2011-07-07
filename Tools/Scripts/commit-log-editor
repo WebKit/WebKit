@@ -30,6 +30,7 @@
 # Script to put change log comments in as default check-in comment.
 
 use strict;
+use Getopt::Long;
 use File::Basename;
 use File::Spec;
 use FindBin;
@@ -46,21 +47,42 @@ sub isCommitLogEditor($);
 
 my $endl = "\n";
 
-sub usage
+sub printUsageAndExit
 {
-    print "Usage: [--help] [--regenerate-log] <log file>\n";
+    my $programName = basename($0);
+    print STDERR <<EOF;
+Usage: $programName [--regenerate-log] <log file>
+       $programName --print-log <ChangeLog file> [<ChangeLog file>...]
+       $programName --help
+EOF
     exit 1;
 }
 
-my $help = checkForArgumentAndRemoveFromARGV("--help");
-if ($help) {
-    usage();
+my $help = 0;
+my $printLog = 0;
+my $regenerateLog = 0;
+
+my $getOptionsResult = GetOptions(
+    'help' => \$help,
+    'print-log' => \$printLog,
+    'regenerate-log' => \$regenerateLog,
+);
+
+if (!$getOptionsResult || $help) {
+    printUsageAndExit();
 }
 
-my $regenerateLog = checkForArgumentAndRemoveFromARGV("--regenerate-log");
+die "Can't specify both --print-log and --regenerate-log\n" if $printLog && $regenerateLog;
+
+if ($printLog) {
+    printUsageAndExit() unless @ARGV;
+    print createCommitMessage(@ARGV);
+    exit 0;
+}
+
 my $log = $ARGV[0];
 if (!$log) {
-    usage();
+    printUsageAndExit();
 }
 
 fixEnvironment();
