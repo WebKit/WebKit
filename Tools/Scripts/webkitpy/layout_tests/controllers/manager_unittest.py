@@ -153,7 +153,7 @@ class ManagerTest(unittest.TestCase):
         printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(),
                                    configure_logging=True)
         manager = LockCheckingManager(port, options, printer)
-        manager.collect_tests(args, [])
+        manager.collect_tests(args)
         manager.parse_expectations()
         result_summary = manager.set_up_run()
         num_unexpected_results = manager.run(result_summary)
@@ -207,7 +207,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager_with_tests(test_names):
             port = layout_tests.port.get()
             manager = Manager(port, options=MockOptions(test_list=None), printer=Mock())
-            manager.collect_tests(test_names, last_unexpected_results=[])
+            manager.collect_tests(test_names)
             return manager
 
         manager = get_manager_with_tests(['fast/html'])

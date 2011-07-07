@@ -81,12 +81,6 @@ def run(port, options, args, regular_output=sys.stderr,
         printer.cleanup()
         return 0
 
-    last_unexpected_results = _gather_unexpected_results(port)
-    if options.print_last_failures:
-        printer.write("\n".join(last_unexpected_results) + "\n")
-        printer.cleanup()
-        return 0
-
     # We wrap any parts of the run that are slow or likely to raise exceptions
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
@@ -96,7 +90,7 @@ def run(port, options, args, regular_output=sys.stderr,
 
         printer.print_update("Collecting tests ...")
         try:
-            manager.collect_tests(args, last_unexpected_results)
+            manager.collect_tests(args)
         except IOError, e:
             if e.errno == errno.ENOENT:
                 return -1
@@ -165,20 +159,6 @@ def _set_up_derived_options(port_obj, options):
         options.additional_platform_directory = normalized_platform_directories
 
     return warnings
-
-
-def _gather_unexpected_results(port):
-    """Returns the unexpected results from the previous run, if any."""
-    filesystem = port._filesystem
-    results_directory = port.results_directory()
-    options = port._options
-    last_unexpected_results = []
-    if options.print_last_failures or options.retest_last_failures:
-        unexpected_results_filename = filesystem.join(results_directory, "unexpected_results.json")
-        if filesystem.exists(unexpected_results_filename):
-            results = json_results_generator.load_json(filesystem, unexpected_results_filename)
-            resultsjsonparser.for_each_test(results['tests'], lambda test, result: last_unexpected_results.append(test))
-    return last_unexpected_results
 
 
 def _compat_shim_callback(option, opt_str, value, parser):
@@ -409,12 +389,6 @@ def parse_args(args=None):
             "running all tests"),
         # FIXME: consider: --iterations n
         #      Number of times to run the set of tests (e.g. ABCABCABC)
-        optparse.make_option("--print-last-failures", action="store_true",
-            default=False, help="Print the tests in the last run that "
-            "had unexpected failures (or passes) and then exit."),
-        optparse.make_option("--retest-last-failures", action="store_true",
-            default=False, help="re-test the tests in the last run that "
-            "had unexpected failures (or passes)."),
         optparse.make_option("--retry-failures", action="store_true",
             default=True,
             help="Re-try any tests that produce unexpected results (default)"),

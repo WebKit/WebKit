@@ -1,3 +1,23 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        Remove unexpected_results.json
+        https://bugs.webkit.org/show_bug.cgi?id=64065
+
+        Reviewed by Eric Seidel.
+
+        No one should be using this file any more.  This patch removes it from
+        the face of the earth.  This patch also removes two NRWT-specific
+        command line options that were implemented using
+        unexpected_results.json.
+
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+
 2011-07-07  Adam Barth  <abarth@webkit.org>
 
         REGRESSION(90520): chromium GPU tests produce output in the LayoutTests directory

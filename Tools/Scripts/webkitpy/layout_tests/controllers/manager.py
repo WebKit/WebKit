@@ -301,16 +301,14 @@ class Manager(object):
         # This maps worker names to the state we are tracking for each of them.
         self._worker_states = {}
 
-    def collect_tests(self, args, last_unexpected_results):
+    def collect_tests(self, args):
         """Find all the files to test.
 
         Args:
           args: list of test arguments from the command line
-          last_unexpected_results: list of unexpected results to retest, if any
 
         """
         paths = self._strip_test_dir_prefixes(args)
-        paths += last_unexpected_results
         if self._options.test_list:
             paths += self._strip_test_dir_prefixes(read_test_files(self._fs, self._options.test_list, self._port.TEST_PATH_SEPARATOR))
         self._test_files = self._port.tests(paths)
@@ -911,7 +909,7 @@ class Manager(object):
             # Write the same data to log files and upload generated JSON files
             # to appengine server.
             summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False, interrupted=interrupted)
-            self._upload_json_files(unexpected_results, summarized_results, result_summary, individual_test_timings)
+            self._upload_json_files(summarized_results, result_summary, individual_test_timings)
 
         # Write the summary to disk (results.html) and display it if requested.
         if not self._options.dry_run:
@@ -1037,14 +1035,11 @@ class Manager(object):
             result_enum_value = TestExpectations.MODIFIERS[result]
         return json_layout_results_generator.JSONLayoutResultsGenerator.FAILURE_TO_CHAR[result_enum_value]
 
-    def _upload_json_files(self, unexpected_results, summarized_results, result_summary,
-                           individual_test_timings):
+    def _upload_json_files(self, summarized_results, result_summary, individual_test_timings):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
-        There are three different files written into the results dir:
-          unexpected_results.json: A short list of any unexpected results.
-            This is used by the buildbots to display results.
+        There are two different files written into the results dir:
           expectations.json: This is used by the flakiness dashboard.
           results.json: A full list of the results - used by the flakiness
             dashboard and the aggregate results dashboard.
@@ -1061,9 +1056,6 @@ class Manager(object):
         times_trie = json_results_generator.test_timings_trie(self._port, individual_test_timings)
         times_json_path = self._fs.join(self._results_directory, "times_ms.json")
         json_results_generator.write_json(self._fs, times_trie, times_json_path)
-
-        unexpected_json_path = self._fs.join(self._results_directory, "unexpected_results.json")
-        json_results_generator.write_json(self._fs, unexpected_results, unexpected_json_path)
 
         full_results_path = self._fs.join(self._results_directory, "full_results.json")
         json_results_generator.write_json(self._fs, summarized_results, full_results_path)

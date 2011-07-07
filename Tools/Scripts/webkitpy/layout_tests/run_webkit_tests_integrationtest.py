@@ -269,15 +269,6 @@ class MainTest(unittest.TestCase):
             ['failures/expected/keyboard.html', '--worker-model', 'inline'],
             tests_included=True)
 
-    def test_last_results(self):
-        fs = unit_test_filesystem()
-        # We do a logging run here instead of a passing run in order to
-        # suppress the output from the json generator.
-        res, buildbot_output, regular_output, user = logging_run(['--clobber-old-results'], record_results=True, filesystem=fs)
-        res, buildbot_output, regular_output, user = logging_run(['--print-last-failures'], filesystem=fs)
-        self.assertEqual(regular_output.get(), [u'failures/expected/checksum.html\n\n'])
-        self.assertEqual(buildbot_output.get(), [])
-
     def test_lint_test_files(self):
         res, out, err, user = logging_run(['--lint-test-files'])
         self.assertEqual(res, 0)
@@ -428,7 +419,7 @@ class MainTest(unittest.TestCase):
             tests_included=True,
             record_results=True,
             filesystem=fs)
-        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
+        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/full_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
     def test_no_image_failure_with_image_diff(self):
         fs = unit_test_filesystem()
@@ -438,7 +429,7 @@ class MainTest(unittest.TestCase):
             tests_included=True,
             record_results=True,
             filesystem=fs)
-        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/unexpected_results.json').find('"num_regressions":0') != -1)
+        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/full_results.json').find('"num_regressions":0') != -1)
 
     def test_crash_log(self):
         mock_crash_report = 'mock-crash-report'
