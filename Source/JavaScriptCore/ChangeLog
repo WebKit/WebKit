@@ -1,3 +1,14 @@
+2011-07-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT method_check implementation does not link to optimized get_by_id
+        slow path.
+        https://bugs.webkit.org/show_bug.cgi?id=64073
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchGetMethodFast):
+
 2011-07-07  Oliver Hunt  <oliver@apple.com>
 
         Encode jump and link sizes into the appropriate enums

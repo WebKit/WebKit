@@ -168,7 +168,7 @@ static void dfgRepatchGetMethodFast(JSGlobalData* globalData, CodeBlock* codeBlo
     RepatchBuffer repatchBuffer(codeBlock);
 
     // Only optimize once!
-    repatchBuffer.relink(methodInfo.callReturnLocation, operationGetById);
+    repatchBuffer.relink(methodInfo.callReturnLocation, operationGetByIdOptimize);
 
     methodInfo.cachedStructure.set(*globalData, owner, structure);
     methodInfo.cachedPrototypeStructure.set(*globalData, owner, slotBaseObject->structure());
