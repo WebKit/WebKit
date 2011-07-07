@@ -1,5 +1,22 @@
 2011-07-07  Adam Roben  <aroben@apple.com>
 
+        Make Term/ReadKey.pm an optional dependency of commit-log-editor
+
+        When Term/ReadKey.pm isn't present, the --regenerate-log switch will be non-functional.
+
+        Fixes <http://webkit.org/b/64113> REGRESSION (r90564):
+        webkitpy.common.checkout.checkout_unittest failing on GTK bots due to missing
+        Term/ReadKey.pm module
+
+        Reviewed by Xan Lopez.
+
+        * Scripts/commit-log-editor: Use Module::Load::Conditional::can_load to only load
+        Term/ReadKey.pm if it's present. If it isn't present, ignore the --regenerate-log switch so
+        that existing commit messages will be preserved. (Users can manually remove existing commit
+        messages using git-reset.)
+
+2011-07-07  Adam Roben  <aroben@apple.com>
+
         Keep testing that commit messages containing Unicode are handled properly by webkitpy
 
         Fixes <http://webkit.org/b/64109> REGRESSION (r90571): test-webkitpy no longer tests that we
