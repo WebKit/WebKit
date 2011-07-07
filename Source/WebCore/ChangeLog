@@ -1,5 +1,39 @@
 2011-07-06  Levi Weintraub  <leviw@chromium.org>
 
+        Switch FrameSelection to new Layout Types
+        https://bugs.webkit.org/show_bug.cgi?id=64043
+
+        Reviewed by Eric Seidel.
+
+        Switching the selection classes to the new layout types. Changing
+        NoXPosForVerticalArrowNavigation to a static inline since as it stood it violated
+        our global initializer rule when converted to numeric_limits from INT_MIN.
+
+        No new tests, no functionality changes.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modify):
+        (WebCore::absoluteCaretY):
+        (WebCore::FrameSelection::lineDirectionPointForBlockDirectionNavigation):
+        (WebCore::CaretBase::clearCaretRect):
+        (WebCore::CaretBase::updateCaretRect):
+        (WebCore::FrameSelection::localCaretRect):
+        (WebCore::CaretBase::absoluteBoundsForLocalRect):
+        (WebCore::FrameSelection::absoluteCaretBounds):
+        (WebCore::repaintRectForCaret):
+        (WebCore::CaretBase::caretRepaintRect):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::paintCaret):
+        (WebCore::CaretBase::paintCaret):
+        (WebCore::FrameSelection::contains):
+        (WebCore::DragCaretController::paintDragCaret):
+        (WebCore::FrameSelection::bounds):
+        (WebCore::FrameSelection::revealSelection):
+        * editing/FrameSelection.h:
+        (WebCore::CaretBase::localCaretRectWithoutUpdate):
+
+2011-07-06  Levi Weintraub  <leviw@chromium.org>
+
         Switch Overflow and FrameRect methods in InlineBox to Layout Units
         https://bugs.webkit.org/show_bug.cgi?id=64034
 

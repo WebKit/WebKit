@@ -63,6 +63,7 @@
 #include "TypingCommand.h"
 #include "htmlediting.h"
 #include "visible_units.h"
+#include <limits.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
 
@@ -72,7 +73,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const int NoXPosForVerticalArrowNavigation = INT_MIN;
+static inline LayoutUnit NoXPosForVerticalArrowNavigation()
+{
+    return std::numeric_limits<LayoutUnit>::min();
+}
 
 CaretBase::CaretBase(CaretVisibility visibility)
     : m_caretRectNeedsUpdate(true)
@@ -92,7 +96,7 @@ bool DragCaretController::isContentRichlyEditable() const
 
 FrameSelection::FrameSelection(Frame* frame)
     : m_frame(frame)
-    , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation)
+    , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation())
     , m_granularity(CharacterGranularity)
     , m_caretBlinkTimer(this, &FrameSelection::caretBlinkTimerFired)
     , m_absCaretBoundsDirty(true)
@@ -206,7 +210,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
-    m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
+    m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation();
     selectFrameElementInParentIfFullySelected();
     notifyRendererOfSelectionChange(userTriggered);
     m_frame->editor()->respondToChangedSelection(oldSelection, options);
@@ -833,7 +837,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     // Setting a selection will clear it, so save it to possibly restore later.
     // Note: the START position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
-    int x = lineDirectionPointForBlockDirectionNavigation(START);
+    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(START);
 
     switch (alter) {
     case AlterationMove:
@@ -869,9 +873,9 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
 }
 
 // FIXME: Maybe baseline would be better?
-static bool absoluteCaretY(const VisiblePosition &c, int &y)
+static bool absoluteCaretY(const VisiblePosition &c, LayoutUnit &y)
 {
-    IntRect rect = c.absoluteCaretBounds();
+    LayoutRect rect = c.absoluteCaretBounds();
     if (rect.isEmpty())
         return false;
     y = rect.y() + rect.height() / 2;
@@ -896,7 +900,7 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     willBeModified(alter, direction == DirectionUp ? DirectionBackward : DirectionForward);
 
     VisiblePosition pos;
-    int xPos = 0;
+    LayoutUnit xPos = 0;
     switch (alter) {
     case AlterationMove:
         pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
@@ -910,12 +914,12 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
         break;
     }
 
-    int startY;
+    LayoutUnit startY;
     if (!absoluteCaretY(pos, startY))
         return false;
     if (direction == DirectionUp)
         startY = -startY;
-    int lastY = startY;
+    LayoutUnit lastY = startY;
 
     VisiblePosition result;
     VisiblePosition next;
@@ -923,12 +927,12 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
         next = (direction == DirectionUp ? previousLinePosition : nextLinePosition)(p, xPos);
         if (next.isNull() || next == p)
             break;
-        int nextY;
+        LayoutUnit nextY;
         if (!absoluteCaretY(next, nextY))
             break;
         if (direction == DirectionUp)
             nextY = -nextY;
-        if (nextY - startY > static_cast<int>(verticalDistance))
+        if (nextY - startY > static_cast<LayoutUnit>(verticalDistance))
             break;
         if (nextY >= lastY) {
             lastY = nextY;
@@ -956,9 +960,9 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     return true;
 }
 
-int FrameSelection::lineDirectionPointForBlockDirectionNavigation(EPositionType type)
+LayoutUnit FrameSelection::lineDirectionPointForBlockDirectionNavigation(EPositionType type)
 {
-    int x = 0;
+    LayoutUnit x = 0;
 
     if (isNone())
         return x;
@@ -983,7 +987,7 @@ int FrameSelection::lineDirectionPointForBlockDirectionNavigation(EPositionType 
     if (!frame)
         return x;
         
-    if (m_xPosForVerticalArrowNavigation == NoXPosForVerticalArrowNavigation) {
+    if (m_xPosForVerticalArrowNavigation == NoXPosForVerticalArrowNavigation()) {
         VisiblePosition visiblePosition(pos, m_selection.affinity());
         // VisiblePosition creation can fail here if a node containing the selection becomes visibility:hidden
         // after the selection is created and before this function is called.
@@ -1039,13 +1043,13 @@ void FrameSelection::setExtent(const Position &pos, EAffinity affinity, EUserTri
 
 void CaretBase::clearCaretRect()
 {
-    m_caretLocalRect = IntRect();
+    m_caretLocalRect = LayoutRect();
 }
 
 bool CaretBase::updateCaretRect(Document* document, const VisiblePosition& caretPosition)
 {
     document->updateStyleIfNeeded();
-    m_caretLocalRect = IntRect();
+    m_caretLocalRect = LayoutRect();
 
     m_caretRectNeedsUpdate = false;
 
@@ -1056,7 +1060,7 @@ bool CaretBase::updateCaretRect(Document* document, const VisiblePosition& caret
 
     // First compute a rect local to the renderer at the selection start.
     RenderObject* renderer;
-    IntRect localRect = caretPosition.localCaretRect(renderer);
+    LayoutRect localRect = caretPosition.localCaretRect(renderer);
 
     // Get the renderer that will be responsible for painting the caret
     // (which is either the renderer we just found, or one of its containers).
@@ -1109,7 +1113,7 @@ RenderObject* DragCaretController::caretRenderer() const
     return CaretBase::caretRenderer(m_position.deepEquivalent().deprecatedNode());
 }
 
-IntRect FrameSelection::localCaretRect()
+LayoutRect FrameSelection::localCaretRect()
 {
     if (shouldUpdateCaretRect()) {
         if (!isCaret() || m_selection.start().isOrphan() || m_selection.end().isOrphan())
@@ -1121,35 +1125,35 @@ IntRect FrameSelection::localCaretRect()
     return localCaretRectWithoutUpdate();
 }
 
-IntRect CaretBase::absoluteBoundsForLocalRect(Node* node, const IntRect& rect) const
+LayoutRect CaretBase::absoluteBoundsForLocalRect(Node* node, const LayoutRect& rect) const
 {
     RenderObject* caretPainter = caretRenderer(node);
     if (!caretPainter)
-        return IntRect();
+        return LayoutRect();
     
-    IntRect localRect(rect);
+    LayoutRect localRect(rect);
     if (caretPainter->isBox())
         toRenderBox(caretPainter)->flipForWritingMode(localRect);
     return caretPainter->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
-IntRect FrameSelection::absoluteCaretBounds()
+LayoutRect FrameSelection::absoluteCaretBounds()
 {
     recomputeCaretRect();
     return m_absCaretBounds;
 }
 
-static IntRect repaintRectForCaret(IntRect caret)
+static LayoutRect repaintRectForCaret(LayoutRect caret)
 {
     if (caret.isEmpty())
-        return IntRect();
+        return LayoutRect();
     // Ensure that the dirty rect intersects the block that paints the caret even in the case where
     // the caret itself is just outside the block. See <https://bugs.webkit.org/show_bug.cgi?id=19086>.
     caret.inflateX(1);
     return caret;
 }
 
-IntRect CaretBase::caretRepaintRect(Node* node) const
+LayoutRect CaretBase::caretRepaintRect(Node* node) const
 {
     return absoluteBoundsForLocalRect(node, repaintRectForCaret(localCaretRectWithoutUpdate()));
 }
@@ -1166,12 +1170,12 @@ bool FrameSelection::recomputeCaretRect()
     if (!v)
         return false;
 
-    IntRect oldRect = localCaretRectWithoutUpdate();
-    IntRect newRect = localCaretRect();
+    LayoutRect oldRect = localCaretRectWithoutUpdate();
+    LayoutRect newRect = localCaretRect();
     if (oldRect == newRect && !m_absCaretBoundsDirty)
         return false;
 
-    IntRect oldAbsCaretBounds = m_absCaretBounds;
+    LayoutRect oldAbsCaretBounds = m_absCaretBounds;
     // FIXME: Rename m_caretRect to m_localCaretRect.
     m_absCaretBounds = absoluteBoundsForLocalRect(m_selection.start().deprecatedNode(), localCaretRectWithoutUpdate());
     m_absCaretBoundsDirty = false;
@@ -1179,7 +1183,7 @@ bool FrameSelection::recomputeCaretRect()
     if (oldAbsCaretBounds == m_absCaretBounds)
         return false;
         
-    IntRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
+    LayoutRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
     // We believe that we need to inflate the local rect before transforming it to obtain the repaint bounds.
     m_absoluteCaretRepaintBounds = caretRepaintRect(m_selection.start().deprecatedNode());
 
@@ -1232,24 +1236,24 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
     }
 }
 
-void FrameSelection::paintCaret(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& clipRect)
+void FrameSelection::paintCaret(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
 {
     if (m_selection.isCaret() && m_caretPaint)
         CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
 }
 
-void CaretBase::paintCaret(Node* node, GraphicsContext* context, const IntPoint& paintOffset, const IntRect& clipRect) const
+void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_caretVisibility == Hidden)
         return;
 
-    IntRect drawingRect = localCaretRectWithoutUpdate();
+    LayoutRect drawingRect = localCaretRectWithoutUpdate();
     RenderObject* renderer = caretRenderer(node);
     if (renderer && renderer->isBox())
         toRenderBox(renderer)->flipForWritingMode(drawingRect);
     drawingRect.moveBy(paintOffset);
-    IntRect caret = intersection(drawingRect, clipRect);
+    LayoutRect caret = intersection(drawingRect, clipRect);
     if (caret.isEmpty())
         return;
 
@@ -1335,7 +1339,7 @@ void FrameSelection::debugRenderer(RenderObject *r, bool selected) const
     }
 }
 
-bool FrameSelection::contains(const IntPoint& point)
+bool FrameSelection::contains(const LayoutPoint& point)
 {
     Document* document = m_frame->document();
     
@@ -1706,7 +1710,7 @@ void FrameSelection::setFocusedNodeIfNeeded()
         m_frame->page()->focusController()->setFocusedNode(0, m_frame);
 }
 
-void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const IntPoint& paintOffset, const IntRect& clipRect) const
+void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode()->document()->frame() == frame)
@@ -1736,9 +1740,9 @@ FloatRect FrameSelection::bounds(bool clipToVisibleContent) const
     RenderView* root = m_frame->contentRenderer();
     FrameView* view = m_frame->view();
     if (!root || !view)
-        return IntRect();
+        return LayoutRect();
 
-    IntRect selectionRect = root->selectionBounds(clipToVisibleContent);
+    LayoutRect selectionRect = root->selectionBounds(clipToVisibleContent);
     return clipToVisibleContent ? intersection(selectionRect, view->visibleContentRect()) : selectionRect;
 }
 
@@ -1801,7 +1805,7 @@ HTMLFormElement* FrameSelection::currentForm() const
 
 void FrameSelection::revealSelection(const ScrollAlignment& alignment, bool revealExtent)
 {
-    IntRect rect;
+    LayoutRect rect;
 
     switch (selectionType()) {
     case VisibleSelection::NoSelection:

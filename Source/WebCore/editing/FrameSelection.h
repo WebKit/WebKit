@@ -28,6 +28,7 @@
 
 #include "EditingStyle.h"
 #include "IntRect.h"
+#include "LayoutTypes.h"
 #include "Range.h"
 #include "ScrollBehavior.h"
 #include "Timer.h"
@@ -58,13 +59,13 @@ protected:
     void invalidateCaretRect(Node*, bool caretRectChanged = false);
     void clearCaretRect();
     bool updateCaretRect(Document*, const VisiblePosition& caretPosition);
-    IntRect absoluteBoundsForLocalRect(Node*, const IntRect&) const;
-    IntRect caretRepaintRect(Node*) const;
+    LayoutRect absoluteBoundsForLocalRect(Node*, const LayoutRect&) const;
+    LayoutRect caretRepaintRect(Node*) const;
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(Node*, GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
+    void paintCaret(Node*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
     RenderObject* caretRenderer(Node*) const;
 
-    const IntRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
+    const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 
     bool shouldUpdateCaretRect() const { return m_caretRectNeedsUpdate; }
     void setCaretRectNeedsUpdate() { m_caretRectNeedsUpdate = true; }
@@ -74,7 +75,7 @@ protected:
     CaretVisibility caretVisibility() const { return m_caretVisibility; }
 
 private:
-    IntRect m_caretLocalRect; // caret rect in coords local to the renderer responsible for painting the caret
+    LayoutRect m_caretLocalRect; // caret rect in coords local to the renderer responsible for painting the caret
     bool m_caretRectNeedsUpdate; // true if m_caretRect (and m_absCaretBounds in FrameSelection) need to be calculated
     CaretVisibility m_caretVisibility;
 };
@@ -86,7 +87,7 @@ public:
     DragCaretController();
 
     RenderObject* caretRenderer() const;
-    void paintDragCaret(Frame*, GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
+    void paintDragCaret(Frame*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
     bool isContentRichlyEditable() const;
@@ -143,7 +144,7 @@ public:
     // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
     void selectFrameElementInParentIfFullySelected();
 
-    bool contains(const IntPoint&);
+    bool contains(const LayoutPoint&);
 
     VisibleSelection::SelectionType selectionType() const { return m_selection.selectionType(); }
 
@@ -172,10 +173,10 @@ public:
     RenderObject* caretRenderer() const;
 
     // Caret rect local to the caret's renderer
-    IntRect localCaretRect();
+    LayoutRect localCaretRect();
 
     // Bounds of (possibly transformed) caret in absolute coords
-    IntRect absoluteCaretBounds();
+    LayoutRect absoluteCaretBounds();
     void setCaretRectNeedsUpdate() { CaretBase::setCaretRectNeedsUpdate(); }
 
     void willBeModified(EAlteration, SelectionDirection);
@@ -198,7 +199,7 @@ public:
     void clearCaretRectIfNeeded();
     bool recomputeCaretRect();
     void invalidateCaretRect();
-    void paintCaret(GraphicsContext*, const IntPoint&, const IntRect& clipRect);
+    void paintCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
     void setCaretBlinkingSuspended(bool suspended) { m_isCaretBlinkingSuspended = suspended; }
@@ -225,7 +226,7 @@ public:
     void setFocusedNodeIfNeeded();
     void notifyRendererOfSelectionChange(EUserTriggered);
 
-    void paintDragCaret(GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
+    void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     EditingStyle* typingStyle() const;
     PassRefPtr<CSSMutableStyleDeclaration> copyTypingStyle() const;
@@ -260,7 +261,7 @@ private:
     VisiblePosition modifyMovingLeft(TextGranularity);
     VisiblePosition modifyMovingBackward(TextGranularity);
 
-    int lineDirectionPointForBlockDirectionNavigation(EPositionType);
+    LayoutUnit lineDirectionPointForBlockDirectionNavigation(EPositionType);
     
     void notifyAccessibilityForSelectionChange();
 
@@ -274,7 +275,7 @@ private:
 
     Frame* m_frame;
 
-    int m_xPosForVerticalArrowNavigation;
+    LayoutUnit m_xPosForVerticalArrowNavigation;
 
     VisibleSelection m_selection;
     TextGranularity m_granularity;
@@ -282,8 +283,8 @@ private:
     RefPtr<EditingStyle> m_typingStyle;
 
     Timer<FrameSelection> m_caretBlinkTimer;
-    IntRect m_absCaretBounds; // absolute bounding rect for the caret
-    IntRect m_absoluteCaretRepaintBounds;
+    LayoutRect m_absCaretBounds; // absolute bounding rect for the caret
+    LayoutRect m_absoluteCaretRepaintBounds;
     bool m_absCaretBoundsDirty : 1;
     bool m_caretPaint : 1;
     bool m_isCaretBlinkingSuspended : 1;
