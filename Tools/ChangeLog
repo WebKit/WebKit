@@ -1,3 +1,16 @@
+2011-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Open links in a new window when clicking with the middle button in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=63988
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowConstructed):
+        (decidePolicyForNavigationAction): Ignore the action if a link is
+        clicked with the middle buttonm and open the link in a new window.
+        (browserWindowPolicyClientInit):
+
 2011-07-07  Adam Barth  <abarth@webkit.org>
 
         Remove style_references.py

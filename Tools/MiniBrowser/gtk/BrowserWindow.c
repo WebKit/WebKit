@@ -56,6 +56,7 @@ struct _BrowserWindowClass {
 
 static void browserWindowLoaderClientInit(BrowserWindow*);
 static void browserWindowUIClientInit(BrowserWindow*);
+static void browserWindowPolicyClientInit(BrowserWindow*);
 
 static gint windowCount = 0;
 
@@ -183,6 +184,7 @@ static void browserWindowConstructed(GObject* gObject)
 
     browserWindowLoaderClientInit(window);
     browserWindowUIClientInit(window);
+    browserWindowPolicyClientInit(window);
 }
 
 static void browser_window_class_init(BrowserWindowClass* klass)
@@ -652,6 +654,37 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         0       /* shouldInterruptJavaScript */
     };
     WKPageSetPageUIClient(WKViewGetPage(window->webView), &uiClient);
+}
+
+static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    if (navigationType != kWKFrameNavigationTypeLinkClicked || mouseButton != kWKEventMouseButtonMiddleButton) {
+        WKFramePolicyListenerUse(listener);
+        return;
+    }
+
+    WKViewRef webView = WKViewCreate(WKPageGetContext(page), 0);
+    GtkWidget *window = browser_window_new(webView);
+    WKURLRef url = WKURLRequestCopyURL(request);
+    WKPageLoadURL(WKViewGetPage(webView), url);
+    WKRelease(url);
+    gtk_widget_grab_focus(GTK_WIDGET(webView));
+    gtk_widget_show(window);
+
+    WKFramePolicyListenerIgnore(listener);
+}
+
+static void browserWindowPolicyClientInit(BrowserWindow* window)
+{
+    WKPagePolicyClient policyClient = {
+        kWKPagePolicyClientCurrentVersion,
+        window, /* clientInfo */
+        decidePolicyForNavigationAction,
+        0,      /* decidePolicyForNewWindowAction */
+        0,      /* decidePolicyForResponse */
+        0       /* unableToImplementPolicy */
+    };
+    WKPageSetPagePolicyClient(WKViewGetPage(window->webView), &policyClient);
 }
 
 // Public API.
