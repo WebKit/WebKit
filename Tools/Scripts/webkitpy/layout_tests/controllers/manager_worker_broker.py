@@ -43,13 +43,11 @@ They interact more or less like:
 
 import logging
 import optparse
-import printing
 import Queue
 import sys
 import thread
 import threading
 import time
-
 
 # Handle Python < 2.6 where multiprocessing isn't available.
 try:
@@ -57,10 +55,10 @@ try:
 except ImportError:
     multiprocessing = None
 
-
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests import port
-from webkitpy.layout_tests.layout_package import message_broker
+from webkitpy.layout_tests.controllers import message_broker
+from webkitpy.layout_tests.layout_package import printing
 
 
 _log = logging.getLogger(__name__)

@@ -28,7 +28,7 @@
 
 import unittest
 
-from webkitpy.layout_tests.layout_package import message_broker
+from webkitpy.layout_tests.controllers import message_broker
 
 # This file exists to test routines that aren't necessarily covered elsewhere;
 # most of the testing of message_broker will be covered under the tests in

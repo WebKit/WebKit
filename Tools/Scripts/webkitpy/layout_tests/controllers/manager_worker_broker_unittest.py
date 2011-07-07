@@ -40,8 +40,8 @@ except ImportError:
 from webkitpy.common.system import outputcapture
 
 from webkitpy.layout_tests import port
-from webkitpy.layout_tests.layout_package import manager_worker_broker
-from webkitpy.layout_tests.layout_package import message_broker
+from webkitpy.layout_tests.controllers import manager_worker_broker
+from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.layout_package import printing
 
 # In order to reliably control when child workers are starting and stopping,

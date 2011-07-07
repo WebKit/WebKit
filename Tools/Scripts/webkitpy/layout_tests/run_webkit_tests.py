@@ -40,9 +40,9 @@ import sys
 
 from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests import layout_package
+from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.layout_package import printing
-from webkitpy.layout_tests.layout_package import manager
 
 from webkitpy.common.system import user
 from webkitpy.thirdparty import simplejson
@@ -51,8 +51,6 @@ import port
 
 _log = logging.getLogger(__name__)
 
-
-WorkerException = manager.WorkerException
 
 def run(port, options, args, regular_output=sys.stderr,
         buildbot_output=sys.stdout):
@@ -93,7 +91,7 @@ def run(port, options, args, regular_output=sys.stderr,
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
     try:
-        manager = layout_package.manager.Manager(port, options, printer)
+        manager = Manager(port, options, printer)
         manager._print_config()
 
         printer.print_update("Collecting tests ...")
@@ -154,9 +152,9 @@ def _set_up_derived_options(port_obj, options):
 
     if not options.time_out_ms:
         if options.configuration == "Debug":
-            options.time_out_ms = str(2 * manager.Manager.DEFAULT_TEST_TIMEOUT_MS)
+            options.time_out_ms = str(2 * Manager.DEFAULT_TEST_TIMEOUT_MS)
         else:
-            options.time_out_ms = str(manager.Manager.DEFAULT_TEST_TIMEOUT_MS)
+            options.time_out_ms = str(Manager.DEFAULT_TEST_TIMEOUT_MS)
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 
