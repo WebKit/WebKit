@@ -28,25 +28,36 @@ function test()
     const dataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAABCAgMAAACeOuh7AAAABGdBTUEAAK/INwWK6QAAAAlQTFRF////AAAA////fu+PTwAAAAF0Uk5TAEDm2GYAAACHSURBVDjLxdLbDYAgDAVQGELn0R3oEHYf2KGdUqtE46OFRCP3oyTng1xCnWsaD5JRRtCkQ2YmkBkHRXqWJBn0j0TICbrsWVoWhRShCdcGyZCtHxMaUnVPRZ9KSbmBJdsX2vJVnwqRD0Rb4rpzgIbE/AI5NTnWAMvy5l0dXrfuLh5OCe5BmmYGXhTUxlQ5xJ8AAAAASUVORK5CYII=";
     completeURL("https://example.com/foo", dataURL);
 
-    function dumpHref()
+    function dumpHref(dumpLinkClass)
     {
-        var href;
+        var hrefNode;
         var valueChildNodes = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2].propertiesTreeOutline.children[0].valueElement.childNodes;
         for (var i = 0; i < valueChildNodes.length; ++i) {
             if (valueChildNodes[i].href) {
-                href = valueChildNodes[i].href;
+                hrefNode = valueChildNodes[i];
                 break;
             }
         }
-        if (!href) {
+        if (!hrefNode) {
             InspectorTest.addResult("href property not found");
             return;
         }
+
+        var styleClass = "";
+        if (dumpLinkClass) {
+            if (hrefNode.hasStyleClass("webkit-html-resource-link"))
+                styleClass += "webkit-html-resource-link ";
+            if (hrefNode.hasStyleClass("webkit-html-external-link"))
+                styleClass += "webkit-html-external-link ";
+        }
+
+        var href = hrefNode.href;
         var segments = href.split("/");
         var output = [];
         for (var i = segments.length - 1, minSegment = i - 3; i >= 0 && i >= minSegment; --i)
             output.unshift(segments[i]);
-        InspectorTest.addResult(output.join("/"));
+
+        InspectorTest.addResult(styleClass + output.join("/"));
     }
 
     InspectorTest.selectNodeAndWaitForStyles("local", step1);
@@ -54,7 +65,7 @@ function test()
     function step1()
     {
         InspectorTest.addResult("Link for a URI from CSS document:");
-        dumpHref();
+        dumpHref(true);
         InspectorTest.selectNodeAndWaitForStyles("iframed", step2);
     }
 

@@ -1,3 +1,13 @@
+2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: URL links in styles open new tab instead of showing resources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=64090
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.linkifyURL):
+
 2011-07-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: active panel does not receive resize event when drawer is resized

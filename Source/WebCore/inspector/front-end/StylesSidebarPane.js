@@ -1448,7 +1448,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     hrefUrl = WebInspector.resourceURLForRelatedNode(WebInspector.panels.elements.focusedDOMNode, hrefUrl);
                 var hasResource = !!WebInspector.resourceForURL(hrefUrl);
                 // FIXME: WebInspector.linkifyURLAsNode() should really use baseURI.
-                container.appendChild(WebInspector.linkifyURLAsNode(hrefUrl, url, null, hasResource));
+                container.appendChild(WebInspector.linkifyURLAsNode(hrefUrl, url, null, !hasResource));
                 container.appendChild(document.createTextNode(")"));
                 return container;
             }
