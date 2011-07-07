@@ -1,3 +1,21 @@
+2011-07-06  MORITA Hajime  <morrita@google.com>
+
+        [ShadowContentElement] Redundant RenderText objects are created on the content boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=63977
+
+        Reviewed by Dimitri Glazkov.
+
+        This test have two set of fixture DOM tree: 
+        One is for shadow tree which has one content element,
+        another is for light DOM tree, whose root is to have a shadow DOM.
+        
+        Then the test makes 2 complete DOM trees (DOM tree with shadow and
+        flattened dom) for each combination of the fixture items. And
+        compare their layout result.
+        
+        * fast/dom/shadow/content-element-renderers-expected.txt: Added.
+        * fast/dom/shadow/content-element-renderers.html: Added.
+
 2011-07-06  Juan C. Montemayor  <jmont@apple.com>
 
         ASSERT_NOT_REACHED running test 262

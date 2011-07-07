@@ -130,14 +130,41 @@ static RenderObject* previousRendererOf(ShadowContentElement* parent, Node* curr
     return lastRenderer;
 }
 
+static RenderObject* firstRendererOf(ShadowContentElement* parent)
+{
+    size_t inclusionCount = parent->inclusionCount();
+    for (size_t i = 0; i < inclusionCount; ++i) {
+        Node* candidate = parent->inclusionAt(i);
+        if (RenderObject* renderer = candidate->renderer())
+            return renderer;
+    }
+
+    return 0;
+}
+
+static RenderObject* lastRendererOf(ShadowContentElement* parent)
+{
+    size_t inclusionCount = parent->inclusionCount();
+    for (size_t i = 0; i < inclusionCount; ++i) {
+        Node* candidate = parent->inclusionAt(inclusionCount - i - 1);
+        if (RenderObject* renderer = candidate->renderer())
+            return renderer;
+    }
+
+    return 0;
+}
+
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
     ASSERT(m_node->renderer() || m_location != LocationUndetermined);
     if (RenderObject* renderer = m_node->renderer())
         return renderer->nextSibling();
 
-    if (m_phase == AttachContentForwarded)
-        return nextRendererOf(m_contentElement, m_node);
+    if (m_phase == AttachContentForwarded) {
+        if (RenderObject* found = nextRendererOf(m_contentElement, m_node))
+            return found;
+        return NodeRenderingContext(m_contentElement).nextRenderer();
+    }
 
     // Avoid an O(n^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
@@ -147,6 +174,10 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
         if (node->renderer())
             return node->renderer();
+        if (node->isContentElement()) {
+            if (RenderObject* first = firstRendererOf(toShadowContentElement(node)))
+                return first;
+        }
     }
 
     return 0;
@@ -158,14 +189,21 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
 
-    if (m_phase == AttachContentForwarded)
-        return previousRendererOf(m_contentElement, m_node);
+    if (m_phase == AttachContentForwarded) {
+        if (RenderObject* found = previousRendererOf(m_contentElement, m_node))
+            return found;
+        return NodeRenderingContext(m_contentElement).previousRenderer();
+    }
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.
     for (Node* node = m_node->previousSibling(); node; node = node->previousSibling()) {
         if (node->renderer())
             return node->renderer();
+        if (node->isContentElement()) {
+            if (RenderObject* last = lastRendererOf(toShadowContentElement(node)))
+                return last;
+        }
     }
 
     return 0;

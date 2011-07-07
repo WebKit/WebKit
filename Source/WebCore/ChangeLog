@@ -1,3 +1,26 @@
+2011-07-06  MORITA Hajime  <morrita@google.com>
+
+        [ShadowContentElement] Redundant RenderText objects are created on the content boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=63977
+
+        Reviewed by Dimitri Glazkov.
+
+        NodeRenderingContext::nextRenderer() and previousRenderer() didn't work well
+        when it crosses content elements:
+        - It doesn't step into forwarded children of ShadowContentElement.
+        - It doesn't step out from traversing forwarded children to
+          neighbors of the content element of that forwarded chidren.
+        
+        This change makes it to step into and out from content element.
+        
+        Test: fast/dom/shadow/content-element-renderers.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::firstRendererOf): Added
+        (WebCore::lastRendererOf): Added
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+
 2011-07-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Add Fullscreen API feature
