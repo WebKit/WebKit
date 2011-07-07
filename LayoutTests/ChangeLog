@@ -1,3 +1,27 @@
+2011-07-07  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        fast/dom/HTMLLinkElement/link-and-subresource-test.html is flaky on chromium debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=60097
+
+        The culprit was that CachedResource:stopLoading() was using *this
+        after a call to checkNotify(), which isn't kosher.  This patch
+        uses a CachedResourceHandle to keep the CachedResource alive.
+
+        The test is a very close copy of the eponymous
+        link-and-subresource-test.html, only substituting invalid
+        resources for the valid ones in that test.  The reproduction is
+        timing related, and happens much more consistantly with an invalid
+        resource for whatever reason.
+
+        * fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-07-07  Jeff Timanus  <twiz@chromium.org>
 
         Reviewed by Stephen White.

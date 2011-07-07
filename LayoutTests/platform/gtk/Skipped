@@ -1018,6 +1018,7 @@ fast/forms/slider-zoomed.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
+fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
 fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-beforeload.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html

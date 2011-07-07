@@ -115,6 +115,7 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 
 # ENABLE(LINK_PREFETCH) is disabled.
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
+fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
 fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-beforeload.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html
