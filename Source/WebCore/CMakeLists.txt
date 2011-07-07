@@ -1212,6 +1212,7 @@ SET(WebCore_SOURCES
     rendering/RenderFrame.cpp
     rendering/RenderFrameBase.cpp
     rendering/RenderFrameSet.cpp
+    rendering/RenderFullScreen.cpp
     rendering/RenderHTMLCanvas.cpp
     rendering/RenderIFrame.cpp
     rendering/RenderImage.cpp
@@ -1401,6 +1402,7 @@ SET(WebCore_CSS_VALUE_KEYWORDS
 
 SET(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/html.css
+    ${WEBCORE_DIR}/css/fullscreen.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/mediaControls.css
     ${WEBCORE_DIR}/css/quirks.css

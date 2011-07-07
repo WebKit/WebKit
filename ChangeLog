@@ -1,3 +1,16 @@
+2011-07-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add Fullscreen API feature
+        https://bugs.webkit.org/show_bug.cgi?id=63975
+
+        This is just to add disabled ENABLE_FULLSCREEN_API to OptionEFl.cmake.
+        ENABLE_FULLSCREEN_API will be enabled after finishing missing implementations.
+
+        Reviewed by Adam Barth.
+
+        * Source/cmake/OptionsEfl.cmake: Add disabled ENABLE_FULLSCREEN_API feature.
+        * Source/cmakeconfig.h.cmake: ditto.
+
 2011-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Show content for plugin requests in network panel.

@@ -1,3 +1,14 @@
+2011-07-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add Fullscreen API feature
+        https://bugs.webkit.org/show_bug.cgi?id=63975
+
+        Add needed files for enabling ENABLE_FULLSCREEN_API feature.
+
+        Reviewed by Adam Barth.
+
+        * CMakeLists.txt: Add RenderFullScreen.cpp, fullscreen.css
+
 2011-07-06  Emil A Eklund  <eae@chromium.org>
 
         Switch absoluteRects to to new layout types
