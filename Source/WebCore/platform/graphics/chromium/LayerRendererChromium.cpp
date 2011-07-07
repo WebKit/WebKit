@@ -480,7 +480,7 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
 
 void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
 {
-    if (m_viewportVisibleRect.isEmpty())
+    if (m_viewportVisibleRect.isEmpty() || !m_rootLayer)
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);

@@ -1,3 +1,16 @@
+2011-07-07  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix crash when compositing gets disabled mid-paint
+        https://bugs.webkit.org/show_bug.cgi?id=64119
+
+        Reviewed by James Robinson.
+
+        WebKit paint can disable compositing and call setRootLayer(0). Adding
+        a check for this in drawLayers prevents a null pointer deref.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+
 2011-07-07  Dirk Schulze  <krit@webkit.org>
 
         SVGAnimateTransform does not support calcMode=discrete
