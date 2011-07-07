@@ -184,13 +184,13 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
-        fake_test = port._filesystem.join(port.layout_tests_dir(), "fast/js/not-good.js")
+        fake_test = 'fast/js/not-good.js'
 
         port.test_expectations = lambda: """BUG_TEST SKIP : fast/js/not-good.js = TEXT
 LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         port.test_expectations_overrides = lambda: ''
         port.tests = lambda paths: set()
-        port.path_exists = lambda test: True
+        port.test_exists = lambda test: True
 
         skipped_tests = port.skipped_layout_tests(extra_test_files=[fake_test, ])
         self.assertTrue("fast/js/not-good.js" in skipped_tests)

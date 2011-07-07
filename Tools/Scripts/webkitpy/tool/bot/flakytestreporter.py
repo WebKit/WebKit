@@ -125,7 +125,7 @@ If you would like to track this test fix with another bug, please close this bug
 
     def _latest_flake_message(self, flaky_result, patch):
         failure_messages = [failure.message() for failure in flaky_result.failures]
-        flake_message = "The %s just saw %s flake (%s) while processing attachment %s on bug %s." % (self._bot_name, flaky_result.filename, ", ".join(failure_messages), patch.id(), patch.bug_id())
+        flake_message = "The %s just saw %s flake (%s) while processing attachment %s on bug %s." % (self._bot_name, flaky_result.test_name, ", ".join(failure_messages), patch.id(), patch.bug_id())
         return "%s\n%s" % (flake_message, self._bot_info.summary_text())
 
     def _results_diff_path_for_test(self, test_path):
@@ -179,7 +179,7 @@ If you would like to track this test fix with another bug, please close this bug
     def report_flaky_tests(self, patch, flaky_test_results, results_archive):
         message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
         for flaky_result in flaky_test_results:
-            flaky_test = flaky_result.filename
+            flaky_test = flaky_result.test_name
             bug = self._lookup_bug_for_flaky_test(flaky_test)
             latest_flake_message = self._latest_flake_message(flaky_result, patch)
             author_emails = self._author_emails_for_test(flaky_test)

@@ -446,8 +446,6 @@ class TestExpectations:
         return (test, options, expectations)
 
     def _add_to_all_expectations(self, test, options, expectations):
-        # Make all paths unix-style so the dashboard doesn't need to.
-        test = test.replace('\\', '/')
         if not test in self._all_expectations:
             self._all_expectations[test] = []
         self._all_expectations[test].append(
@@ -550,14 +548,11 @@ class TestExpectations:
                 'indefinitely, then it should be just TIMEOUT.', test_list_path)
 
     def _check_path_does_not_exist(self, lineno, test_list_path):
-        full_path = self._fs.join(self._port.layout_tests_dir(),
-                                  test_list_path)
-        full_path = self._fs.normpath(full_path)
         # WebKit's way of skipping tests is to add a -disabled suffix.
             # So we should consider the path existing if the path or the
         # -disabled version exists.
-        if (not self._port.path_exists(full_path)
-            and not self._port.path_exists(full_path + '-disabled')):
+        if (not self._port.test_exists(test_list_path)
+            and not self._port.test_exists(test_list_path + '-disabled')):
             # Log a non fatal error here since you hit this case any
             # time you update test_expectations.txt without syncing
             # the LayoutTests directory
@@ -575,19 +570,17 @@ class TestExpectations:
         # lists to represent the tree of tests, leaves being test
         # files and nodes being categories.
 
-        path = self._fs.join(self._port.layout_tests_dir(), test_list_path)
-        path = self._fs.normpath(path)
-        if self._fs.isdir(path):
+        if self._port.test_isdir(test_list_path):
             # this is a test category, return all the tests of the category.
-            path = self._fs.join(path, '')
+            test_list_path = self._port.normalize_test_name(test_list_path)
 
-            return [test for test in self._full_test_list if test.startswith(path)]
+            return [test for test in self._full_test_list if test.startswith(test_list_path)]
 
         # this is a test file, do a quick check if it's in the
         # full test suite.
         result = []
-        if path in self._full_test_list:
-            result = [path, ]
+        if test_list_path in self._full_test_list:
+            result = [test_list_path, ]
         return result
 
     def _add_tests(self, tests, expectations, test_list_path, lineno,
@@ -597,7 +590,7 @@ class TestExpectations:
                 continue
 
             self._clear_expectations_for_test(test, test_list_path)
-            self._test_list_paths[test] = (self._fs.normpath(test_list_path), num_matches, lineno)
+            self._test_list_paths[test] = (self._port.normalize_test_name(test_list_path), num_matches, lineno)
             self._add_test(test, modifiers, expectations, options, overrides_allowed)
 
     def _add_test(self, test, modifiers, expectations, options, overrides_allowed):
@@ -654,7 +647,7 @@ class TestExpectations:
             self._remove_from_sets(test, self._timeline_to_tests)
             self._remove_from_sets(test, self._result_type_to_tests)
 
-        self._test_list_paths[test] = self._fs.normpath(test_list_path)
+        self._test_list_paths[test] = self._port.normalize_test_name(test_list_path)
 
     def _remove_from_sets(self, test, dict):
         """Removes the given test from the sets in the dictionary.
@@ -674,13 +667,12 @@ class TestExpectations:
             than this path does
         """
         # FIXME: See comment below about matching test configs and num_matches.
-
         if not test in self._test_list_paths:
             # We've never seen this test before.
             return False
 
         prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
-        base_path = self._fs.normpath(test_list_path)
+        base_path = self._port.normalize_test_name(test_list_path)
 
         if len(prev_base_path) > len(base_path):
             # The previous path matched more of the test.

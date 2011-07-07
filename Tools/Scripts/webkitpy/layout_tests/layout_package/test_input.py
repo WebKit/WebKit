@@ -32,15 +32,14 @@
 class TestInput:
     """Groups information about a test for easy passing of data."""
 
-    def __init__(self, filename, timeout):
+    def __init__(self, test_name, timeout):
         """Holds the input parameters for a test.
         Args:
-          filename: Full path to the test.
+          test: name of test (not an absolute path!)
           timeout: Timeout in msecs the driver should use while running the test
           """
-        # FIXME: filename should really be test_name as a relative path.
-        self.filename = filename
+        self.test_name = test_name
         self.timeout = timeout
 
     def __repr__(self):
-        return "TestInput('%s', %d)" % (self.filename, self.timeout)
+        return "TestInput('%s', %d)" % (self.test_name, self.timeout)

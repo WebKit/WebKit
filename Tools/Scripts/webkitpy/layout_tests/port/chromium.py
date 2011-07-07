@@ -288,9 +288,7 @@ class ChromiumPort(Port):
         expectations = test_expectations.TestExpectations(
             self, all_test_files, expectations_str, self.test_configuration(),
             is_lint_mode=False, overrides=overrides_str)
-        tests_dir = self.layout_tests_dir()
-        return [self.relative_test_filename(test)
-                for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]
+        return expectations.get_tests_with_result_type(test_expectations.SKIP)
 
     def test_repository_paths(self):
         # Note: for JSON file's backward-compatibility we use 'chrome' rather
@@ -483,7 +481,7 @@ class ChromiumDriver(Driver):
         has_audio = False
         has_base64 = False
 
-        uri = self._port.filename_to_uri(driver_input.filename)
+        uri = self._port.test_to_uri(driver_input.test_name)
         cmd = self._test_shell_command(uri, driver_input.timeout,
                                        driver_input.image_hash)
         (line, crash) = self._write_command_and_read_line(input=cmd)

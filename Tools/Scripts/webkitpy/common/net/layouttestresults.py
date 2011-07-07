@@ -172,4 +172,4 @@ class LayoutTestResults(object):
         return self.results_matching_failure_types(failure_types)
 
     def failing_tests(self):
-        return [result.filename for result in self.failing_test_results()]
+        return [result.test_name for result in self.failing_test_results()]

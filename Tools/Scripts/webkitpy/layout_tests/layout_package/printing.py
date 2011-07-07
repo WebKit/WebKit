@@ -321,8 +321,8 @@ class Printer(object):
            - actual result
            - timing info
         """
-        filename = result.filename
-        test_name = self._port.relative_test_filename(filename)
+        filename = self._port.abspath_for_test(result.test_name)
+        test_name = result.test_name
         self._write('trace: %s' % test_name)
         for extension in ('.txt', '.png', '.wav', '.webarchive'):
             self._print_baseline(filename, extension)
@@ -333,7 +333,7 @@ class Printer(object):
 
     def _print_baseline(self, filename, extension):
         baseline = self._port.expected_filename(filename, extension)
-        if self._port.path_exists(baseline):
+        if self._port._filesystem.exists(baseline):
             relpath = self._port.relative_test_filename(baseline)
         else:
             relpath = '<none>'
@@ -343,8 +343,7 @@ class Printer(object):
         """Prints one unexpected test result line."""
         desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type][0]
         self.write("  %s -> unexpected %s" %
-                   (self._port.relative_test_filename(result.filename),
-                    desc), "unexpected")
+                   (result.test_name, desc), "unexpected")
 
     def print_progress(self, result_summary, retrying, test_list):
         """Print progress through the tests as determined by --print."""

@@ -201,15 +201,14 @@ class MockDRT(object):
         port = self._port
         if test_input.uri.startswith('http'):
             test_name = port.uri_to_test_name(test_input.uri)
-            test_path = self._filesystem.join(port.layout_tests_dir(), test_name)
         else:
-            test_path = test_input.uri
+            test_name = port.relative_test_filename(test_input.uri)
 
-        actual_text = port.expected_text(test_path)
-        actual_audio = port.expected_audio(test_path)
+        actual_text = port.expected_text(test_name)
+        actual_audio = port.expected_audio(test_name)
         if self._options.pixel_tests and test_input.checksum:
-            actual_checksum = port.expected_checksum(test_path)
-            actual_image = port.expected_image(test_path)
+            actual_checksum = port.expected_checksum(test_name)
+            actual_image = port.expected_image(test_name)
 
         if actual_audio:
             self._stdout.write('Content-Type: audio/wav\n')
@@ -257,15 +256,14 @@ class MockChromiumDRT(MockDRT):
     def run_one_test(self, test_input):
         port = self._port
         test_name = self._port.uri_to_test_name(test_input.uri)
-        test_path = self._filesystem.join(port.layout_tests_dir(), test_name)
 
-        actual_text = port.expected_text(test_path)
+        actual_text = port.expected_text(test_name)
         actual_image = ''
         actual_checksum = ''
         if self._options.pixel_tests and test_input.checksum:
-            actual_checksum = port.expected_checksum(test_path)
+            actual_checksum = port.expected_checksum(test_name)
             if actual_checksum != test_input.checksum:
-                actual_image = port.expected_image(test_path)
+                actual_image = port.expected_image(test_name)
 
         self._stdout.write("#URL:%s\n" % test_input.uri)
         if self._options.pixel_tests and test_input.checksum:

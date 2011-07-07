@@ -37,11 +37,11 @@ from webkitpy.layout_tests.layout_package import test_failures
 _log = logging.getLogger(__name__)
 
 
-def write_test_result(port, filename, driver_output,
+def write_test_result(port, test_name, driver_output,
                       expected_driver_output, failures):
     """Write the test result to the result output directory."""
     root_output_dir = port.results_directory()
-    writer = TestResultWriter(port, root_output_dir, filename)
+    writer = TestResultWriter(port, root_output_dir, test_name)
     if driver_output.error:
         writer.write_stderr(driver_output.error)
 
@@ -73,10 +73,10 @@ def write_test_result(port, filename, driver_output,
             image_diff = port.diff_image(driver_output.image, expected_driver_output.image)
             if image_diff:
                 writer.write_image_diff_files(image_diff)
-            writer.copy_file(port.reftest_expected_filename(filename), '-expected.html')
+            writer.copy_file(port.reftest_expected_filename(test_name), '-expected.html')
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)
-            writer.copy_file(port.reftest_expected_mismatch_filename(filename), '-expected-mismatch.html')
+            writer.copy_file(port.reftest_expected_mismatch_filename(test_name), '-expected-mismatch.html')
         else:
             assert isinstance(failure, (test_failures.FailureTimeout,))
 
@@ -95,16 +95,15 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
     FILENAME_SUFFIX_IMAGE_DIFFS_HTML = "-diffs.html"
 
-    def __init__(self, port, root_output_dir, filename):
+    def __init__(self, port, root_output_dir, test_name):
         self._port = port
         self._root_output_dir = root_output_dir
-        self._filename = filename
-        self._testname = port.relative_test_filename(filename)
+        self._test_name = test_name
 
     def _make_output_directory(self):
         """Creates the output directory (if needed) for a given test filename."""
         fs = self._port._filesystem
-        output_filename = fs.join(self._root_output_dir, self._testname)
+        output_filename = fs.join(self._root_output_dir, self._test_name)
         self._port.maybe_make_directory(fs.dirname(output_filename))
 
     def output_filename(self, modifier):
@@ -120,12 +119,12 @@ class TestResultWriter(object):
           The absolute path to the output filename
         """
         fs = self._port._filesystem
-        output_filename = fs.join(self._root_output_dir, self._testname)
+        output_filename = fs.join(self._root_output_dir, self._test_name)
         return fs.splitext(output_filename)[0] + modifier
 
     def _output_testname(self, modifier):
         fs = self._port._filesystem
-        return fs.splitext(fs.basename(self._testname))[0] + modifier
+        return fs.splitext(fs.basename(self._test_name))[0] + modifier
 
     def write_output_files(self, file_type, output, expected):
         """Writes the test output, the expected output in the results directory.
@@ -258,7 +257,7 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
 </body>
 </html>
 """ % {
-            'title': self._testname,
+            'title': self._test_name,
             'diff_filename': self._output_testname(self.FILENAME_SUFFIX_IMAGE_DIFF),
             'prefix': self._output_testname(''),
         }

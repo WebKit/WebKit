@@ -311,16 +311,14 @@ class TestRebaseliner(unittest.TestCase):
     def test_diff_baselines_txt(self):
         rebaseliner, filesystem = self.make_rebaseliner("")
         port = rebaseliner._port
-        output = port.expected_text(
-            port._filesystem.join(port.layout_tests_dir(), 'passes/text.html'))
+        output = port.expected_text('passes/text.html')
         self.assertFalse(rebaseliner._diff_baselines(output, output,
                                                      is_image=False))
 
     def test_diff_baselines_png(self):
         rebaseliner, filesystem = self.make_rebaseliner('')
         port = rebaseliner._port
-        image = port.expected_image(
-            port._filesystem.join(port.layout_tests_dir(), 'passes/image.html'))
+        image = port.expected_image('passes/image.html')
         self.assertFalse(rebaseliner._diff_baselines(image, image,
                                                      is_image=True))
 

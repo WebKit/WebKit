@@ -85,7 +85,6 @@ class JSONGeneratorTest(unittest.TestCase):
                 elapsed_time=test_timings[test])
 
         port = Mock()
-        port.relative_test_filename = lambda filename: filename
         port._filesystem = filesystem_mock.MockFileSystem()
         generator = json_results_generator.JSONResultsGeneratorBase(port,
             self.builder_name, self.build_name, self.build_number,
@@ -200,10 +199,10 @@ class JSONGeneratorTest(unittest.TestCase):
     def test_test_timings_trie(self):
         test_port = test.TestPort()
         individual_test_timings = []
-        individual_test_timings.append(json_results_generator.TestResult('/test.checkout/LayoutTests/foo/bar/baz.html', elapsed_time=1.2))
-        individual_test_timings.append(json_results_generator.TestResult('/test.checkout/LayoutTests/bar.html', elapsed_time=0.0001))
+        individual_test_timings.append(json_results_generator.TestResult('foo/bar/baz.html', elapsed_time=1.2))
+        individual_test_timings.append(json_results_generator.TestResult('bar.html', elapsed_time=0.0001))
         trie = json_results_generator.test_timings_trie(test_port, individual_test_timings)
-        
+
         expected_trie = {
           'bar.html': 0,
           'foo': {
@@ -212,10 +211,10 @@ class JSONGeneratorTest(unittest.TestCase):
               }
           }
         }
-        
+
         self.assertEqual(simplejson.dumps(trie), simplejson.dumps(expected_trie))
-        
-        
+
+
 
 if __name__ == '__main__':
     unittest.main()

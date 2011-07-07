@@ -83,6 +83,9 @@ class Port(object):
 
     port_name = None  # Subclasses override this
 
+    # Test names resemble unix relative paths, and use '/' as a directory separator.
+    TEST_PATH_SEPARATOR = '/'
+
     def __init__(self, port_name=None, options=None,
                  executive=None,
                  user=None,
@@ -199,7 +202,7 @@ class Port(object):
                     _log.error('')
                 return False
 
-        if not self.path_exists(self._pretty_patch_path):
+        if not self._filesystem.exists(self._pretty_patch_path):
             if logging:
                 _log.error("Unable to find %s; can't generate pretty patches." % self._pretty_patch_path)
                 _log.error('')
@@ -288,11 +291,11 @@ class Port(object):
         name, it can be overridden here."""
         return "DumpRenderTree"
 
-    def expected_baselines(self, filename, suffix, all_baselines=False):
+    def expected_baselines(self, test_name, suffix, all_baselines=False):
         """Given a test name, finds where the baseline results are located.
 
         Args:
-        filename: absolute filename to test file
+        test_name: name of test file (usually a relative path under LayoutTests/)
         suffix: file suffix of the expected results, including dot; e.g.
             '.txt' or '.png'.  This should not be None, but may be an empty
             string.
@@ -315,15 +318,12 @@ class Port(object):
         conjunction with the other baseline and filename routines that are
         platform specific.
         """
-        testname = self._filesystem.splitext(self.relative_test_filename(filename))[0]
-
-        baseline_filename = testname + '-expected' + suffix
-
+        baseline_filename = self._filesystem.splitext(test_name)[0] + '-expected' + suffix
         baseline_search_path = self.get_option('additional_platform_directory', []) + self.baseline_search_path()
 
         baselines = []
         for platform_dir in baseline_search_path:
-            if self.path_exists(self._filesystem.join(platform_dir, baseline_filename)):
+            if self._filesystem.exists(self._filesystem.join(platform_dir, baseline_filename)):
                 baselines.append((platform_dir, baseline_filename))
 
             if not all_baselines and baselines:
@@ -332,7 +332,7 @@ class Port(object):
         # If it wasn't found in a platform directory, return the expected
         # result in the test directory, even if no such file actually exists.
         platform_dir = self.layout_tests_dir()
-        if self.path_exists(self._filesystem.join(platform_dir, baseline_filename)):
+        if self._filesystem.exists(self._filesystem.join(platform_dir, baseline_filename)):
             baselines.append((platform_dir, baseline_filename))
 
         if baselines:
@@ -340,7 +340,7 @@ class Port(object):
 
         return [(None, baseline_filename)]
 
-    def expected_filename(self, filename, suffix):
+    def expected_filename(self, test_name, suffix):
         """Given a test name, returns an absolute path to its expected results.
 
         If no expected results are found in any of the searched directories,
@@ -349,7 +349,7 @@ class Port(object):
         (e.g., "\\" for path separators on windows).
 
         Args:
-        filename: absolute filename to test file
+        test_name: name of test file (usually a relative path under LayoutTests/)
         suffix: file suffix of the expected results, including dot; e.g. '.txt'
             or '.png'.  This should not be None, but may be an empty string.
         platform: the most-specific directory name to use to build the
@@ -360,66 +360,66 @@ class Port(object):
         the other baseline and filename manipulation routines.
         """
         # FIXME: The [0] here is very mysterious, as is the destructured return.
-        platform_dir, baseline_filename = self.expected_baselines(filename, suffix)[0]
+        platform_dir, baseline_filename = self.expected_baselines(test_name, suffix)[0]
         if platform_dir:
             return self._filesystem.join(platform_dir, baseline_filename)
         return self._filesystem.join(self.layout_tests_dir(), baseline_filename)
 
-    def expected_checksum(self, test):
+    def expected_checksum(self, test_name):
         """Returns the checksum of the image we expect the test to produce, or None if it is a text-only test."""
-        png_path = self.expected_filename(test, '.png')
+        png_path = self.expected_filename(test_name, '.png')
 
-        if self.path_exists(png_path):
+        if self._filesystem.exists(png_path):
             with self._filesystem.open_binary_file_for_reading(png_path) as filehandle:
                 return read_checksum_from_png.read_checksum(filehandle)
 
         return None
 
-    def expected_image(self, test):
+    def expected_image(self, test_name):
         """Returns the image we expect the test to produce."""
-        path = self.expected_filename(test, '.png')
-        if not self.path_exists(path):
+        path = self.expected_filename(test_name, '.png')
+        if not self._filesystem.exists(path):
             return None
         return self._filesystem.read_binary_file(path)
 
-    def expected_audio(self, test):
-        path = self.expected_filename(test, '.wav')
-        if not self.path_exists(path):
+    def expected_audio(self, test_name):
+        path = self.expected_filename(test_name, '.wav')
+        if not self._filesystem.exists(path):
             return None
         return self._filesystem.read_binary_file(path)
 
-    def expected_text(self, test):
+    def expected_text(self, test_name):
         """Returns the text output we expect the test to produce, or None
         if we don't expect there to be any text output.
         End-of-line characters are normalized to '\n'."""
         # FIXME: DRT output is actually utf-8, but since we don't decode the
         # output from DRT (instead treating it as a binary string), we read the
         # baselines as a binary string, too.
-        path = self.expected_filename(test, '.txt')
-        if not self.path_exists(path):
-            path = self.expected_filename(test, '.webarchive')
-            if not self.path_exists(path):
+        path = self.expected_filename(test_name, '.txt')
+        if not self._filesystem.exists(path):
+            path = self.expected_filename(test_name, '.webarchive')
+            if not self._filesystem.exists(path):
                 return None
         text = self._filesystem.read_binary_file(path)
         return text.replace("\r\n", "\n")
 
-    def reftest_expected_filename(self, filename):
+    def reftest_expected_filename(self, test_name):
         """Return the filename of reference we expect the test matches."""
-        return self.expected_filename(filename, '.html')
+        return self.expected_filename(test_name, '.html')
 
-    def reftest_expected_mismatch_filename(self, filename):
+    def reftest_expected_mismatch_filename(self, test_name):
         """Return the filename of reference we don't expect the test matches."""
-        return self.expected_filename(filename, '-mismatch.html')
+        return self.expected_filename(test_name, '-mismatch.html')
 
-    def filename_to_uri(self, filename):
-        """Convert a test file (which is an absolute path) to a URI."""
+    def test_to_uri(self, test_name):
+        """Convert a test name to a URI."""
         LAYOUTTEST_HTTP_DIR = "http/tests/"
         LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
 
-        relative_path = self.relative_test_filename(filename)
         port = None
         use_ssl = False
 
+        relative_path = test_name
         if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
             or relative_path.startswith(LAYOUTTEST_HTTP_DIR)):
             relative_path = relative_path[len(LAYOUTTEST_HTTP_DIR):]
@@ -437,11 +437,12 @@ class Port(object):
                 protocol = "http"
             return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
 
-        return path.abspath_to_uri(self._filesystem.abspath(filename))
+        return path.abspath_to_uri(self.abspath_for_test(test_name))
 
     def tests(self, paths):
-        """Return the list of tests found (relative to layout_tests_dir()."""
-        return test_files.find(self, paths)
+        """Return the list of tests found."""
+        # FIXME: Should test_files.find() return normalized, relative test names?
+        return set([self.relative_test_filename(f) for f in test_files.find(self, paths)])
 
     def test_dirs(self):
         """Returns the list of top-level test directories."""
@@ -449,16 +450,31 @@ class Port(object):
         return filter(lambda x: self._filesystem.isdir(self._filesystem.join(layout_tests_dir, x)),
                       self._filesystem.listdir(layout_tests_dir))
 
-    def path_isdir(self, path):
-        """Return True if the path refers to a directory of tests."""
+    def test_isdir(self, test_name):
+        """Return True if the test name refers to a directory of tests."""
         # Used by test_expectations.py to apply rules to whole directories.
+        path = self.abspath_for_test(test_name)
         return self._filesystem.isdir(path)
 
-    def path_exists(self, path):
-        """Return True if the path refers to an existing test or baseline."""
+    def test_exists(self, test_name):
+        """Return True if the test name refers to an existing test or baseline."""
         # Used by test_expectations.py to determine if an entry refers to a
         # valid test and by printing.py to determine if baselines exist.
+        path = self.abspath_for_test(test_name)
         return self._filesystem.exists(path)
+
+    def split_test(self, test_name):
+        """Splits a test name into the 'directory' part and the 'basename' part."""
+        index = test_name.rfind(self.TEST_PATH_SEPARATOR)
+        if index < 1:
+            return ('', test_name)
+        return (test_name[0:index], test_name[index:])
+
+    def normalize_test_name(self, test_name):
+        """Returns a normalized version of the test name or test directory."""
+        if self.test_isdir(test_name) and not test_name.endswith('/'):
+            return test_name + '/'
+        return test_name
 
     def driver_cmd_line(self):
         """Prints the DRT command line that will be used."""

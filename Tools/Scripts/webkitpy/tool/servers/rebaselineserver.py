@@ -179,8 +179,8 @@ def _get_test_baselines(test_file, test_config):
 
     all_test_baselines = {}
     for baseline_extension in ('.txt', '.checksum', '.png'):
-        test_baselines = test_config.test_port.expected_baselines(test_path, baseline_extension)
-        baselines = all_platforms_port.expected_baselines(test_path, baseline_extension, all_baselines=True)
+        test_baselines = test_config.test_port.expected_baselines(test_file, baseline_extension)
+        baselines = all_platforms_port.expected_baselines(test_file, baseline_extension, all_baselines=True)
         for platform_directory, expected_filename in baselines:
             if not platform_directory:
                 continue

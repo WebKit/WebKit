@@ -34,12 +34,12 @@ from test_results import TestResult
 class TestResultsTest(unittest.TestCase):
     def test_defaults(self):
         result = TestResult("foo")
-        self.assertEqual(result.filename, 'foo')
+        self.assertEqual(result.test_name, 'foo')
         self.assertEqual(result.failures, [])
         self.assertEqual(result.test_run_time, 0)
 
     def test_loads(self):
-        result = TestResult(filename='foo',
+        result = TestResult(test_name='foo',
                             failures=[],
                             test_run_time=1.1)
         s = result.dumps()

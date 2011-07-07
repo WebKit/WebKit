@@ -30,9 +30,8 @@ import shlex
 
 
 class DriverInput(object):
-    def __init__(self, filename, timeout, image_hash):
-        # FIXME: The args should just be renamed to reflect their use.
-        self.filename = filename  # Full path to the test.
+    def __init__(self, test_name, timeout, image_hash):
+        self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
 

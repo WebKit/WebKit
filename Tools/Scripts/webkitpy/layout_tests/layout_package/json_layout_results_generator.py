@@ -71,16 +71,11 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
         self._expectations = expectations
 
-        # We want relative paths to LayoutTest root for JSON output.
-        path_to_name = self._get_path_relative_to_layout_test_root
         self._result_summary = result_summary
-        self._failures = dict(
-            (path_to_name(test), test_failures.determine_result_type(failures))
-            for (test, failures) in result_summary.failures.iteritems())
-        self._all_tests = [path_to_name(test) for test in all_tests]
-        self._test_timings = dict(
-            (path_to_name(test_tuple.filename), test_tuple.test_run_time)
-            for test_tuple in test_timings)
+        self._failures = dict((test_name, test_failures.determine_result_type(failures))
+            for (test_name, failures) in result_summary.failures.iteritems())
+        self._all_tests = all_tests
+        self._test_timings = dict((test_tuple.test_name, test_tuple.test_run_time) for test_tuple in test_timings)
 
         self.generate_json_output()
 

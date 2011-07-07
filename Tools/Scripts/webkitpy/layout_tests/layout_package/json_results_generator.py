@@ -68,7 +68,7 @@ def write_json(filesystem, json_object, file_path):
     filesystem.write_text_file(file_path, json_string)
 
 def test_timings_trie(port, individual_test_timings):
-    """Breaks a filename into chunks by directory and puts the test time as a value in the lowest part, e.g.
+    """Breaks a test name into chunks by directory and puts the test time as a value in the lowest part, e.g.
     foo/bar/baz.html: 1ms
     foo/bar/baz1.html: 3ms
 
@@ -82,11 +82,7 @@ def test_timings_trie(port, individual_test_timings):
     """
     trie = {}
     for test_result in individual_test_timings:
-        try:
-            test = port.relative_test_filename(test_result.filename)
-        except AssertionError:
-            # FIXME: Handle this better. Non-layout tests shouldn't be relativized.
-            test = test_result.filename
+        test = test_result.test_name
 
         parts = test.split('/')
         current_map = trie
@@ -107,17 +103,16 @@ class TestResult(object):
     # Test modifier constants.
     (NONE, FAILS, FLAKY, DISABLED) = range(4)
 
-    def __init__(self, name, failed=False, elapsed_time=0):
-        # FIXME: s/filename/name to be consistent with the rest of layout_package.
-        self.filename = name
+    def __init__(self, test, failed=False, elapsed_time=0):
+        self.test_name = test
         self.failed = failed
         self.test_run_time = elapsed_time
 
-        test_name = name
+        test_name = test
         try:
-            test_name = name.split('.')[1]
+            test_name = test.split('.')[1]
         except IndexError:
-            _log.warn("Invalid test name: %s.", name)
+            _log.warn("Invalid test name: %s.", test)
             pass
 
         if test_name.startswith('FAILS_'):
@@ -320,7 +315,7 @@ class JSONResultsGeneratorBase(object):
 
     def _get_failed_test_names(self):
         """Returns a set of failed test names."""
-        return set([r.filename for r in self._test_results if r.failed])
+        return set([r.test_name for r in self._test_results if r.failed])
 
     def _get_modifier_char(self, test_name):
         """Returns a single char (e.g. SKIP_RESULT, FAIL_RESULT,

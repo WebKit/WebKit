@@ -121,12 +121,11 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     tests = {}
     original_results = result_summary.unexpected_results if only_unexpected else result_summary.results
 
-    for filename, result in original_results.iteritems():
+    for test_name, result in original_results.iteritems():
         # Note that if a test crashed in the original run, we ignore
         # whether or not it crashed when we retried it (if we retried it),
         # and always consider the result not flaky.
-        test = port_obj.relative_test_filename(filename)
-        expected = expectations.get_expectations_string(filename)
+        expected = expectations.get_expectations_string(test_name)
         result_type = result.type
         actual = [keywords[result_type]]
 
@@ -144,12 +143,12 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
                 continue
         elif result_type == test_expectations.CRASH:
             num_regressions += 1
-        elif filename in result_summary.unexpected_results:
-            if filename not in retry_summary.unexpected_results:
-                actual.extend(expectations.get_expectations_string(filename).split(" "))
+        elif test_name in result_summary.unexpected_results:
+            if test_name not in retry_summary.unexpected_results:
+                actual.extend(expectations.get_expectations_string(test_name).split(" "))
                 num_flaky += 1
             else:
-                retry_result_type = retry_summary.unexpected_results[filename].type
+                retry_result_type = retry_summary.unexpected_results[test_name].type
                 if result_type != retry_result_type:
                     actual.append(keywords[retry_result_type])
                     num_flaky += 1
@@ -194,7 +193,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         #         baz1.html: test_dict
         #     }
         # }
-        parts = test.split('/')
+        parts = test_name.split('/')
         current_map = tests
         for i, part in enumerate(parts):
             if i == (len(parts) - 1):
@@ -276,9 +275,9 @@ class Manager(object):
         self._printer = printer
         self._message_broker = None
 
-        self.HTTP_SUBDIR = self._fs.join('', 'http', '')
-        self.WEBSOCKET_SUBDIR = self._fs.join('', 'websocket', '')
-        self.LAYOUT_TESTS_DIRECTORY = "LayoutTests" + self._fs.sep
+        self.HTTP_SUBDIR = port.TEST_PATH_SEPARATOR + 'http' + port.TEST_PATH_SEPARATOR
+        self.WEBSOCKET_SUBDIR = port.TEST_PATH_SEPARATOR + 'websocket' + port.TEST_PATH_SEPARATOR
+        self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._has_http_lock = False
 
         self._remaining_locked_shards = []
@@ -312,15 +311,19 @@ class Manager(object):
         paths = self._strip_test_dir_prefixes(args)
         paths += last_unexpected_results
         if self._options.test_list:
-            paths += self._strip_test_dir_prefixes(read_test_files(self._fs, self._options.test_list))
+            paths += self._strip_test_dir_prefixes(read_test_files(self._fs, self._options.test_list, self._port.TEST_PATH_SEPARATOR))
         self._test_files = self._port.tests(paths)
 
     def _strip_test_dir_prefixes(self, paths):
         return [self._strip_test_dir_prefix(path) for path in paths if path]
 
     def _strip_test_dir_prefix(self, path):
-        if path.startswith(self.LAYOUT_TESTS_DIRECTORY):
-            return path[len(self.LAYOUT_TESTS_DIRECTORY):]
+        # Handle both "LayoutTests/foo/bar.html" and "LayoutTests\foo\bar.html" if
+        # the filesystem uses '\\' as a directory separator.
+        if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):
+            return path[len(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):]
+        if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._fs.sep):
+            return path[len(self.LAYOUT_TEST_DIRECTORY + self._fs.sep):]
         return path
 
     def lint(self):
@@ -393,7 +396,7 @@ class Manager(object):
         if self._options.randomize_order:
             random.shuffle(self._test_files_list)
         else:
-            self._test_files_list.sort(key=lambda path: path_key(self._fs, path))
+            self._test_files_list.sort(key=lambda test: test_key(self._port, test))
 
         # If the user specifies they just want to run a subset of the tests,
         # just grab a subset of the non-skipped tests.
@@ -511,26 +514,13 @@ class Manager(object):
     def _get_dir_for_test_file(self, test_file):
         """Returns the highest-level directory by which to shard the given
         test file."""
-        index = test_file.rfind(self._fs.sep + self.LAYOUT_TESTS_DIRECTORY)
-
-        test_file = test_file[index + len(self.LAYOUT_TESTS_DIRECTORY):]
-        test_file_parts = test_file.split(self._fs.sep, 1)
-        directory = test_file_parts[0]
-        test_file = test_file_parts[1]
+        directory, test_file = self._port.split_test(test_file)
 
         # The http tests are very stable on mac/linux.
         # TODO(ojan): Make the http server on Windows be apache so we can
         # turn shard the http tests there as well. Switching to apache is
         # what made them stable on linux/mac.
-        return_value = directory
-        while ((directory != 'http' or sys.platform == 'darwin' or sys.platform.startswith('linux'))
-                and test_file.find(self._fs.sep) >= 0):
-            test_file_parts = test_file.split(self._fs.sep, 1)
-            directory = test_file_parts[0]
-            return_value = self._fs.join(return_value, directory)
-            test_file = test_file_parts[1]
-
-        return return_value
+        return directory
 
     def _get_test_input_for_file(self, test_file):
         """Returns the appropriate TestInput object for the file. Mostly this
@@ -543,12 +533,11 @@ class Manager(object):
     def _test_requires_lock(self, test_file):
         """Return True if the test needs to be locked when
         running multiple copies of NRWTs."""
-        split_path = test_file.split(self._port._filesystem.sep)
+        split_path = test_file.split(self._port.TEST_PATH_SEPARATOR)
         return 'http' in split_path or 'websocket' in split_path
 
     def _test_is_slow(self, test_file):
-        return self._expectations.has_modifier(test_file,
-                                               test_expectations.SLOW)
+        return self._expectations.has_modifier(test_file, test_expectations.SLOW)
 
     def _shard_tests(self, test_files, num_workers, fully_parallel):
         """Groups tests into batches.
@@ -1008,9 +997,9 @@ class Manager(object):
         if result.type == test_expectations.SKIP:
             result_summary.add(result, expected=True)
         else:
-            expected = self._expectations.matches_an_expected_result(result.filename, result.type, self._options.pixel_tests)
+            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests)
             result_summary.add(result, expected)
-            exp_str = self._expectations.get_expectations_string(result.filename)
+            exp_str = self._expectations.get_expectations_string(result.test_name)
             got_str = self._expectations.expectation_to_string(result.type)
             self._printer.print_test_result(result, expected, exp_str, got_str)
         self._printer.print_progress(result_summary, self._retrying, self._test_files_list)
@@ -1219,14 +1208,14 @@ class Manager(object):
         timeout_or_crash_tests = []
         unexpected_slow_tests = []
         for test_tuple in individual_test_timings:
-            filename = test_tuple.filename
+            test_name = test_tuple.test_name
             is_timeout_crash_or_slow = False
-            if self._test_is_slow(filename):
+            if self._test_is_slow(test_name):
                 is_timeout_crash_or_slow = True
                 slow_tests.append(test_tuple)
 
-            if filename in result_summary.failures:
-                result = result_summary.results[filename].type
+            if test_name in result_summary.failures:
+                result = result_summary.results[test_name].type
                 if (result == test_expectations.TIMEOUT or
                     result == test_expectations.CRASH):
                     is_timeout_crash_or_slow = True
@@ -1260,12 +1249,8 @@ class Manager(object):
 
         self._printer.print_timing(title)
         for test_tuple in test_list:
-            filename = test_tuple.filename[len(
-                self._port.layout_tests_dir()) + 1:]
-            filename = filename.replace('\\', '/')
             test_run_time = round(test_tuple.test_run_time, 1)
-            self._printer.print_timing("  %s took %s seconds" %
-                                       (filename, test_run_time))
+            self._printer.print_timing("  %s took %s seconds" % (test_tuple.test_name, test_run_time))
 
     def _print_directory_timings(self, directory_test_timings):
         """Print timing info by directory for any directories that
@@ -1419,7 +1404,7 @@ class Manager(object):
 
     def handle_started_test(self, source, test_info, hang_timeout):
         worker_state = self._worker_states[source]
-        worker_state.current_test_name = self._port.relative_test_filename(test_info.filename)
+        worker_state.current_test_name = test_info.test_name
         worker_state.next_timeout = time.time() + hang_timeout
 
     def handle_done(self, source):
@@ -1469,10 +1454,13 @@ class Manager(object):
             _log.error('  %s:%u (in %s)' % (filename, line_number, function_name))
             _log.error('    %s' % text)
 
-def read_test_files(fs, files):
+
+def read_test_files(fs, files, test_path_separator):
     tests = []
     for file in files:
         try:
+            if test_path_separator != fs.sep:
+                file = file.replace(test_path_separator, fs.sep)
             file_contents = fs.read_text_file(file).split('\n')
             for line in file_contents:
                 line = test_expectations.strip_comments(line)
@@ -1488,15 +1476,15 @@ def read_test_files(fs, files):
 
 # FIXME: These two free functions belong either on manager (since it's the only one
 # which uses them) or in a different file (if they need to be re-used).
-def path_key(filesystem, path):
-    """Turns a path into a list with two sublists, the natural key of the
+def test_key(port, test_name):
+    """Turns a test name into a list with two sublists, the natural key of the
     dirname, and the natural key of the basename.
 
     This can be used when sorting paths so that files in a directory.
     directory are kept together rather than being mixed in with files in
     subdirectories."""
-    dirname, basename = filesystem.split(path)
-    return (natural_sort_key(dirname + filesystem.sep), natural_sort_key(basename))
+    dirname, basename = port.split_test(test_name)
+    return (natural_sort_key(dirname + port.TEST_PATH_SEPARATOR), natural_sort_key(basename))
 
 
 def natural_sort_key(string_to_split):

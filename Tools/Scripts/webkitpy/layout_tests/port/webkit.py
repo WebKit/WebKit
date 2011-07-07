@@ -420,7 +420,7 @@ class WebKitDriver(Driver):
         return self._server_process.crashed
 
     def _command_from_driver_input(self, driver_input):
-        uri = self._port.filename_to_uri(driver_input.filename)
+        uri = self._port.test_to_uri(driver_input.test_name)
         command = uri[7:] if uri.startswith("file:///") else uri
 
         if driver_input.image_hash:

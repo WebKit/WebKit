@@ -115,23 +115,23 @@ class DryrunDriver(Driver):
     def run_test(self, driver_input):
         start_time = time.time()
         fs = self._port._filesystem
-        if (fs.exists(self._port.reftest_expected_filename(driver_input.filename)) or
-            fs.exists(self._port.reftest_expected_mismatch_filename(driver_input.filename)) or
-            driver_input.filename.endswith('-expected.html')):
+        if (fs.exists(self._port.reftest_expected_filename(driver_input.test_name)) or
+            fs.exists(self._port.reftest_expected_mismatch_filename(driver_input.test_name)) or
+            driver_input.test_name.endswith('-expected.html')):
             text = 'test-text'
             image = 'test-image'
             checksum = 'test-checksum'
             audio = None
-        elif driver_input.filename.endswith('-expected-mismatch.html'):
+        elif driver_input.test_name.endswith('-expected-mismatch.html'):
             text = 'test-text-mismatch'
             image = 'test-image-mismatch'
             checksum = 'test-checksum-mismatch'
             audio = None
         else:
-            text = self._port.expected_text(driver_input.filename)
-            image = self._port.expected_image(driver_input.filename)
-            checksum = self._port.expected_checksum(driver_input.filename)
-            audio = self._port.expected_audio(driver_input.filename)
+            text = self._port.expected_text(driver_input.test_name)
+            image = self._port.expected_image(driver_input.test_name)
+            checksum = self._port.expected_checksum(driver_input.test_name)
+            audio = self._port.expected_audio(driver_input.test_name)
         return DriverOutput(text, image, checksum, audio, crash=False, test_time=time.time() - start_time, timeout=False, error='')
 
     def start(self):

@@ -84,11 +84,8 @@ class MockDRTPortTest(port_testcase.PortTestCase):
 
 
 class MockDRTTest(unittest.TestCase):
-    def to_path(self, port, test_name):
-        return port._filesystem.join(port.layout_tests_dir(), test_name)
-
     def input_line(self, port, test_name, checksum=None):
-        url = port.filename_to_uri(self.to_path(port, test_name))
+        url = port.test_to_uri(test_name)
         # FIXME: we shouldn't have to work around platform-specific issues
         # here.
         if url.startswith('file:////'):
@@ -110,13 +107,12 @@ class MockDRTTest(unittest.TestCase):
 
     def make_input_output(self, port, test_name, pixel_tests,
                           expected_checksum, drt_output, drt_input=None):
-        path = self.to_path(port, test_name)
         if pixel_tests:
             if not expected_checksum:
-                expected_checksum = port.expected_checksum(path)
+                expected_checksum = port.expected_checksum(test_name)
         if not drt_input:
             drt_input = self.input_line(port, test_name, expected_checksum)
-        text_output = port.expected_text(path)
+        text_output = port.expected_text(test_name)
 
         if not drt_output:
             drt_output = self.expected_output(port, test_name, pixel_tests,
@@ -216,13 +212,13 @@ class MockChromiumDRTTest(MockDRTTest):
         return mock_drt.MockChromiumDRT(options, args, filesystem, stdin, stdout, stderr)
 
     def input_line(self, port, test_name, checksum=None):
-        url = port.filename_to_uri(self.to_path(port, test_name))
+        url = port.test_to_uri(test_name)
         if checksum:
             return url + ' 6000 ' + checksum + '\n'
         return url + ' 6000\n'
 
     def expected_output(self, port, test_name, pixel_tests, text_output, expected_checksum):
-        url = port.filename_to_uri(self.to_path(port, test_name))
+        url = port.test_to_uri(test_name)
         if pixel_tests and expected_checksum:
             return ['#URL:%s\n' % url,
                     '#MD5:%s\n' % expected_checksum,

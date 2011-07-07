@@ -123,25 +123,22 @@ class  Testprinter(unittest.TestCase):
                                    buildbot_output, configure_logging=True)
         return printer, regular_output, buildbot_output
 
-    def get_result(self, test, result_type=test_expectations.PASS, run_time=0):
+    def get_result(self, test_name, result_type=test_expectations.PASS, run_time=0):
         failures = []
         if result_type == test_expectations.TIMEOUT:
             failures = [test_failures.FailureTimeout()]
         elif result_type == test_expectations.CRASH:
             failures = [test_failures.FailureCrash()]
-        path = self._port._filesystem.join(self._port.layout_tests_dir(), test)
-        return test_results.TestResult(path, failures=failures, test_run_time=run_time)
+        return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
-    def get_result_summary(self, tests, expectations_str):
-        test_paths = [self._port._filesystem.join(self._port.layout_tests_dir(), test) for
-                      test in tests]
+    def get_result_summary(self, test_names, expectations_str):
         expectations = test_expectations.TestExpectations(
-            self._port, test_paths, expectations_str,
+            self._port, test_names, expectations_str,
             self._port.test_configuration(),
             is_lint_mode=False)
 
-        rs = result_summary.ResultSummary(expectations, test_paths)
-        return test_paths, rs, expectations
+        rs = result_summary.ResultSummary(expectations, test_names)
+        return test_names, rs, expectations
 
     def test_help_printer(self):
         # Here and below we'll call the "regular" printer err and the

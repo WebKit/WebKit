@@ -1,3 +1,61 @@
+2011-07-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
+        nrwt: make the code be consistent about using test names instead of filenames or paths
+
+        https://bugs.webkit.org/show_bug.cgi?id=63597
+
+        It can be hard to figure out where in the code we're assuming
+        test names are listed as unix-style relative filenames and where
+        they are either absolute paths or relative paths following the
+        host filesystem convention.
+
+        This patch changes things so that everything outside of the
+        Port object uses (and must assume) unix-style relative
+        filenames (with one exception, which is specifying host-local
+        filenames as a list of test arguments on the command line).
+
+        This should make things clearer and more consistent, and also
+        removes a lot of path conversion calls.
+
+        The changes in this patch outside of port/base.py are largely
+        cosmetic changes of "filename" to "test". We add a few routines
+        to the base Port implementation to manipulate test names to
+        split them, figure out if we're referring to a directory of
+        tests, etc.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/result_summary.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_input.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+
 2011-07-06  Chris Guillory  <ctguil@chromium.org>
 
         No review necessary.

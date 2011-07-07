@@ -104,8 +104,7 @@ class Rebaseline(AbstractDeclarativeCommand):
         for test in self._tests_to_update(build):
             results_url = self._results_url_for_test(build, test)
             # Port operates with absolute paths.
-            absolute_path = os.path.join(port.layout_tests_dir(), test)
-            expected_file = port.expected_filename(absolute_path, ".txt")
+            expected_file = port.expected_filename(test, '.txt')
             print test
             self._replace_expectation_with_remote_result(expected_file, results_url)
 

@@ -73,15 +73,15 @@ class ResultSummary(object):
           expected: whether the result was what we expected it to be.
         """
 
-        self.tests_by_expectation[result.type].add(result.filename)
-        self.results[result.filename] = result
+        self.tests_by_expectation[result.type].add(result.test_name)
+        self.results[result.test_name] = result
         self.remaining -= 1
         if len(result.failures):
-            self.failures[result.filename] = result.failures
+            self.failures[result.test_name] = result.failures
         if expected:
             self.expected += 1
         else:
-            self.unexpected_results[result.filename] = result
+            self.unexpected_results[result.test_name] = result
             self.unexpected += 1
             if len(result.failures):
                 self.unexpected_failures += 1

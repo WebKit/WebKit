@@ -365,15 +365,15 @@ class TestPort(Port):
     # FIXME: These next two routines are copied from base.py with
     # the calls to path.abspath_to_uri() removed. We shouldn't have
     # to do this.
-    def filename_to_uri(self, filename):
+    def test_to_uri(self, test_name):
         """Convert a test file (which is an absolute path) to a URI."""
         LAYOUTTEST_HTTP_DIR = "http/tests/"
         LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
 
-        relative_path = self.relative_test_filename(filename)
         port = None
         use_ssl = False
 
+        relative_path = test_name
         if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
             or relative_path.startswith(LAYOUTTEST_HTTP_DIR)):
             relative_path = relative_path[len(LAYOUTTEST_HTTP_DIR):]
@@ -392,7 +392,10 @@ class TestPort(Port):
                 protocol = "http"
             return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
 
-        return "file://" + self._filesystem.abspath(filename)
+        return "file://" + self.abspath_for_test(test_name)
+
+    def abspath_for_test(self, test_name):
+        return self.layout_tests_dir() + self.TEST_PATH_SEPARATOR + test_name
 
     def uri_to_test_name(self, uri):
         """Return the base layout test name for a given URI.
@@ -432,7 +435,7 @@ class TestDriver(Driver):
 
     def run_test(self, test_input):
         start_time = time.time()
-        test_name = self._port.relative_test_filename(test_input.filename)
+        test_name = test_input.test_name
         test = self._port._tests[test_name]
         if test.keyboard:
             raise KeyboardInterrupt

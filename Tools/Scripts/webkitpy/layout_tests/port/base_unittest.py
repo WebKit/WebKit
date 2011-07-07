@@ -190,24 +190,15 @@ class PortTest(unittest.TestCase):
         self.assertTrue('canvas' in dirs)
         self.assertTrue('css2.1' in dirs)
 
-    def test_filename_to_uri(self):
+    def test_test_to_uri(self):
         port = Port()
         layout_test_dir = port.layout_tests_dir()
-        test_file = port._filesystem.join(layout_test_dir, "foo", "bar.html")
-
-        # On Windows, absolute paths are of the form "c:\foo.txt". However,
-        # all current browsers (except for Opera) normalize file URLs by
-        # prepending an additional "/" as if the absolute path was
-        # "/c:/foo.txt". This means that all file URLs end up with "file:///"
-        # at the beginning.
+        test = 'foo/bar.html'
+        path = port._filesystem.join(layout_test_dir, test)
         if sys.platform == 'win32':
-            prefix = "file:///"
-            path = test_file.replace("\\", "/")
-        else:
-            prefix = "file://"
-            path = test_file
+            path = path.replace("\\", "/")
 
-        self.assertEqual(port.filename_to_uri(test_file), abspath_to_uri(test_file))
+        self.assertEqual(port.test_to_uri(test), abspath_to_uri(path))
 
     def test_get_option__set(self):
         options, args = optparse.OptionParser().parse_args([])
@@ -236,7 +227,7 @@ class PortTest(unittest.TestCase):
         port = Port(port_name='foo', filesystem=filesystem)
         port.baseline_search_path = lambda: ['LayoutTests/platform/foo']
         layout_test_dir = port.layout_tests_dir()
-        test_file = filesystem.join(layout_test_dir, 'fast', 'test.html')
+        test_file = 'fast/test.html'
 
         # No additional platform directory
         self.assertEqual(

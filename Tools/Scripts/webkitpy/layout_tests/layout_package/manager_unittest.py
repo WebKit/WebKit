@@ -36,10 +36,12 @@ import unittest
 from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system import outputcapture
 from webkitpy.thirdparty.mock import Mock
+from webkitpy import layout_tests
+from webkitpy.layout_tests import port
 
 from webkitpy import layout_tests
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.layout_package.manager import Manager, natural_sort_key, path_key, TestRunInterruptedException, TestShard
+from webkitpy.layout_tests.layout_package.manager import Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
 from webkitpy.layout_tests.layout_package import printing
 from webkitpy.layout_tests.layout_package.result_summary import ResultSummary
 from webkitpy.tool.mocktool import MockOptions
@@ -51,22 +53,20 @@ class ManagerWrapper(Manager):
 
 
 class ShardingTests(unittest.TestCase):
-    # FIXME: Remove "LayoutTests" from this if we can ever convert the generic
-    # code from filenames to test names.
     test_list = [
-        "LayoutTests/http/tests/websocket/tests/unicode.htm",
-        "LayoutTests/animations/keyframes.html",
-        "LayoutTests/http/tests/security/view-source-no-refresh.html",
-        "LayoutTests/http/tests/websocket/tests/websocket-protocol-ignored.html",
-        "LayoutTests/fast/css/display-none-inline-style-change-crash.html",
-        "LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html",
-        "LayoutTests/dom/html/level2/html/HTMLAnchorElement03.html",
-        "LayoutTests/ietestcenter/Javascript/11.1.5_4-4-c-1.html",
-        "LayoutTests/dom/html/level2/html/HTMLAnchorElement06.html",
+        "http/tests/websocket/tests/unicode.htm",
+        "animations/keyframes.html",
+        "http/tests/security/view-source-no-refresh.html",
+        "http/tests/websocket/tests/websocket-protocol-ignored.html",
+        "fast/css/display-none-inline-style-change-crash.html",
+        "http/tests/xmlhttprequest/supported-xml-content-types.html",
+        "dom/html/level2/html/HTMLAnchorElement03.html",
+        "ietestcenter/Javascript/11.1.5_4-4-c-1.html",
+        "dom/html/level2/html/HTMLAnchorElement06.html",
     ]
 
     def get_shards(self, num_workers, fully_parallel):
-        port = Mock()
+        port = layout_tests.port.get(port_name='test')
         port._filesystem = filesystem_mock.MockFileSystem()
         self.manager = ManagerWrapper(port=port, options=Mock(), printer=Mock())
         return self.manager._shard_tests(self.test_list, num_workers, fully_parallel)
@@ -79,51 +79,53 @@ class ShardingTests(unittest.TestCase):
         # workers hitting the server at once.
         self.assertEquals(locked,
             [TestShard('locked_shard_1',
-              ['LayoutTests/http/tests/security/view-source-no-refresh.html',
-               'LayoutTests/http/tests/websocket/tests/unicode.htm',
-               'LayoutTests/http/tests/websocket/tests/websocket-protocol-ignored.html',
-               'LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html'])])
+              ['http/tests/security/view-source-no-refresh.html',
+               'http/tests/websocket/tests/unicode.htm',
+               'http/tests/websocket/tests/websocket-protocol-ignored.html',
+               'http/tests/xmlhttprequest/supported-xml-content-types.html'])])
         self.assertEquals(unlocked,
             [TestShard('animations',
-                       ['LayoutTests/animations/keyframes.html']),
+                       ['animations/keyframes.html']),
              TestShard('dom/html/level2/html',
-                       ['LayoutTests/dom/html/level2/html/HTMLAnchorElement03.html',
-                        'LayoutTests/dom/html/level2/html/HTMLAnchorElement06.html']),
+                       ['dom/html/level2/html/HTMLAnchorElement03.html',
+                        'dom/html/level2/html/HTMLAnchorElement06.html']),
              TestShard('fast/css',
-                       ['LayoutTests/fast/css/display-none-inline-style-change-crash.html']),
+                       ['fast/css/display-none-inline-style-change-crash.html']),
              TestShard('ietestcenter/Javascript',
-                       ['LayoutTests/ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+                       ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
 
     def test_shard_every_file(self):
         locked, unlocked = self.get_shards(num_workers=2, fully_parallel=True)
         self.assertEquals(locked,
-            [TestShard('.', ['LayoutTests/http/tests/websocket/tests/unicode.htm']),
-             TestShard('.', ['LayoutTests/http/tests/security/view-source-no-refresh.html']),
-             TestShard('.', ['LayoutTests/http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             TestShard('.', ['LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html'])])
+            [TestShard('.', ['http/tests/websocket/tests/unicode.htm']),
+             TestShard('.', ['http/tests/security/view-source-no-refresh.html']),
+             TestShard('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
+             TestShard('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html'])])
         self.assertEquals(unlocked,
-            [TestShard('.', ['LayoutTests/animations/keyframes.html']),
-             TestShard('.', ['LayoutTests/fast/css/display-none-inline-style-change-crash.html']),
-             TestShard('.', ['LayoutTests/dom/html/level2/html/HTMLAnchorElement03.html']),
-             TestShard('.', ['LayoutTests/ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
-             TestShard('.', ['LayoutTests/dom/html/level2/html/HTMLAnchorElement06.html'])])
+            [TestShard('.', ['animations/keyframes.html']),
+             TestShard('.', ['fast/css/display-none-inline-style-change-crash.html']),
+             TestShard('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
+             TestShard('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
+             TestShard('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
 
     def test_shard_in_two(self):
         locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False)
         self.assertEquals(locked,
             [TestShard('locked_tests',
-                       ['LayoutTests/http/tests/websocket/tests/unicode.htm',
-                        'LayoutTests/http/tests/security/view-source-no-refresh.html',
-                        'LayoutTests/http/tests/websocket/tests/websocket-protocol-ignored.html',
-                        'LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html'])])
+                       ['http/tests/websocket/tests/unicode.htm',
+                        'http/tests/security/view-source-no-refresh.html',
+                        'http/tests/websocket/tests/websocket-protocol-ignored.html',
+                        'http/tests/xmlhttprequest/supported-xml-content-types.html'])])
         self.assertEquals(unlocked,
             [TestShard('unlocked_tests',
-                       ['LayoutTests/animations/keyframes.html',
-                        'LayoutTests/fast/css/display-none-inline-style-change-crash.html',
-                        'LayoutTests/dom/html/level2/html/HTMLAnchorElement03.html',
-                        'LayoutTests/ietestcenter/Javascript/11.1.5_4-4-c-1.html',
-                        'LayoutTests/dom/html/level2/html/HTMLAnchorElement06.html'])])
+                       ['animations/keyframes.html',
+                        'fast/css/display-none-inline-style-change-crash.html',
+                        'dom/html/level2/html/HTMLAnchorElement03.html',
+                        'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
+                        'dom/html/level2/html/HTMLAnchorElement06.html'])])
 
+
+class ManagerTest(unittest.TestCase):
     def test_http_locking(tester):
         class LockCheckingManager(Manager):
             def __init__(self, port, options, printer):
@@ -159,6 +161,7 @@ class ShardingTests(unittest.TestCase):
 
     def test_interrupt_if_at_failure_limits(self):
         port = Mock()
+        port.TEST_PATH_SEPARATOR = '/'
         port._filesystem = filesystem_mock.MockFileSystem()
         manager = Manager(port=port, options=MockOptions(), printer=Mock())
 
@@ -206,17 +209,14 @@ class NaturalCompareTest(unittest.TestCase):
         self.assert_cmp('foo_23.html', 'foo_100.html', -1)
 
 
-class PathCompareTest(unittest.TestCase):
+class KeyCompareTest(unittest.TestCase):
     def setUp(self):
-        self.filesystem = filesystem_mock.MockFileSystem()
-
-    def path_key(self, k):
-        return path_key(self.filesystem, k)
+        self.port = layout_tests.port.get('test')
 
     def assert_cmp(self, x, y, result):
-        self.assertEquals(cmp(self.path_key(x), self.path_key(y)), result)
+        self.assertEquals(cmp(test_key(self.port, x), test_key(self.port, y)), result)
 
-    def test_path_compare(self):
+    def test_test_key(self):
         self.assert_cmp('/a', '/a', 0)
         self.assert_cmp('/a', '/b', -1)
         self.assert_cmp('/a2', '/a10', -1)

@@ -89,7 +89,8 @@ class Base(unittest.TestCase):
         unittest.TestCase.__init__(self, testFunc)
 
     def get_test(self, test_name):
-        return self._fs.join(self._port.layout_tests_dir(), test_name)
+        # FIXME: Remove this routine and just reference test names directly.
+        return test_name
 
     def get_basic_tests(self):
         return [self.get_test('failures/expected/text.html'),

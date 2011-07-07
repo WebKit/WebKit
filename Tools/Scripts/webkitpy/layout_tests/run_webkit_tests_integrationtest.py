@@ -166,11 +166,11 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
             if self._current_test_batch is None:
                 self._current_test_batch = []
                 test_batches.append(self._current_test_batch)
-            test_name = self._port.relative_test_filename(test_input.filename)
+            test_name = test_input.test_name
             # In case of reftest, one test calls the driver's run_test() twice.
             # We should not add a reference html used by reftests to tests unless include_reference_html parameter
             # is explicitly given.
-            if include_reference_html or not is_reference_html_file(test_input.filename):
+            if include_reference_html or not is_reference_html_file(test_input.test_name):
                 self._current_test_batch.append(test_name)
             return TestDriver.run_test(self, test_input)
 

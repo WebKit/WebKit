@@ -455,9 +455,7 @@ class Rebaseliner(object):
             return checksum_in_text_file == checksum_in_png
 
     def _first_fallback_png_for_test(self, test):
-        test_filepath = self._filesystem.join(self._target_port.layout_tests_dir(), test)
-        all_baselines = self._rebaseline_port.expected_baselines(
-            test_filepath, '.png', True)
+        all_baselines = self._rebaseline_port.expected_baselines(test, '.png', True)
         return self._filesystem.join(all_baselines[0][0], all_baselines[0][1])
 
     def _is_dup_baseline(self, new_baseline, baseline_path, test, suffix, platform):
@@ -478,10 +476,7 @@ class Rebaseliner(object):
           True if the baseline is unnecessary.
           False otherwise.
         """
-        test_filepath = self._filesystem.join(self._target_port.layout_tests_dir(), test)
-        all_baselines = self._rebaseline_port.expected_baselines(
-            test_filepath, suffix, True)
-        test_relpath = self._filesystem.relpath(test_filepath, self._target_port.layout_tests_dir())
+        all_baselines = self._rebaseline_port.expected_baselines(test, suffix, True)
 
         for fallback_dir, fallback_file in all_baselines:
             if not fallback_dir or not fallback_file:
@@ -499,7 +494,7 @@ class Rebaseliner(object):
             fallback_output = self._filesystem.read_binary_file(fallback_fullpath)
             is_image = baseline_path.lower().endswith('.png')
             if not self._diff_baselines(new_output, fallback_output, is_image):
-                _log.info('  Skipping %s (matches %s)', test_relpath, fallback_dir_relpath)
+                _log.info('  Skipping %s (matches %s)', test, fallback_dir_relpath)
                 return True
             return False
 

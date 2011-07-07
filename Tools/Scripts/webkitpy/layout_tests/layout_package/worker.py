@@ -182,7 +182,7 @@ class Worker(manager_worker_broker.AbstractWorker):
 
     def clean_up_after_test(self, test_input, result):
         self._batch_count += 1
-        test_name = self._port.relative_test_filename(test_input.filename)
+        test_name = test_input.test_name
         self._tests_run_file.write(test_name + "\n")
 
         if result.failures:
@@ -246,7 +246,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         driver.stop()
 
         if not result:
-            result = test_results.TestResult(test_input.filename, failures=[], test_run_time=0)
+            result = test_results.TestResult(test_input.test_name, failures=[], test_run_time=0)
         return result
 
     def _run_test_in_this_thread(self, test_input):
