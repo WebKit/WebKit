@@ -1,5 +1,22 @@
 2011-07-07  Eric Seidel  <eric@webkit.org>
 
+        Fix WebKit2 expected results search paths for Mac and Qt under new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=64056
+
+        Unreviewed.
+
+        I had written this unittest prior to landing my change, but
+        had named it qt_unitest.py, so it wasn't running (nor was
+        it added to my git repo).
+
+        Once I fixe the name of the unittest file, it was very easy
+        to fix the error in webkit.py (which already had a FIXME).
+
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2011-07-07  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Add more debug logging about which test expectations we're using.
 
         * Scripts/webkitpy/layout_tests/models/test_expectations.py:

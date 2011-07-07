@@ -61,13 +61,15 @@ class WebKitPort(Port):
             return "WebKitTestRunner"
         return "DumpRenderTree"
 
-    # FIXME: This is not a very useful default implementation, as its wrong for any
-    # port which uses version-specific fallback (e.g. ['mac-leapard', 'mac']).
-    # We should replace this with a smarter implementation shared by all ports.
+    # FIXME: Eventually we should standarize port naming, and make this method smart enough
+    # to use for all port configurations (including architectures, graphics types, etc).
     def baseline_search_path(self):
-        search_paths = [self.name()]
+        search_paths = []
         if self.get_option('webkit_test_runner'):
-            search_paths.insert(0, self._wk2_port_name())
+            search_paths.append(self._wk2_port_name())
+        search_paths.append(self.name())
+        if self.name() != self.port_name:
+            search_paths.append(self.port_name)
         return map(self._webkit_baseline_path, search_paths)
 
     def path_to_test_expectations_file(self):
