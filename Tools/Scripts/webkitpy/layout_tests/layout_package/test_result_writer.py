@@ -31,7 +31,7 @@ import logging
 import os
 
 from webkitpy.common.system.crashlogs import CrashLogs
-from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.models import test_failures
 
 
 _log = logging.getLogger(__name__)

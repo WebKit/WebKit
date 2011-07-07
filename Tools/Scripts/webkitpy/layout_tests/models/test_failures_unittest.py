@@ -26,11 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-""""Tests code paths not covered by the regular unit tests."""
-
 import unittest
 
-from webkitpy.layout_tests.layout_package.test_failures import *
+from webkitpy.layout_tests.models.test_failures import *
 
 
 class TestFailuresTest(unittest.TestCase):

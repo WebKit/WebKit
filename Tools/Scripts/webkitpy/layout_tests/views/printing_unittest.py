@@ -38,10 +38,10 @@ from webkitpy.common import array_stream
 from webkitpy.common.system import logtesting
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import manager
-from webkitpy.layout_tests.layout_package import result_summary
-from webkitpy.layout_tests.layout_package import test_expectations
-from webkitpy.layout_tests.layout_package import test_failures
-from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.models import result_summary
+from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.views import printing
 
 

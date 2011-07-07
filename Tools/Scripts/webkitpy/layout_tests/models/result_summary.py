@@ -32,11 +32,11 @@
 
 import logging
 
-import test_expectations
+from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models.test_expectations import TestExpectations
 
-_log = logging.getLogger("webkitpy.layout_tests.run_webkit_tests")
 
-TestExpectations = test_expectations.TestExpectations
+_log = logging.getLogger(__file__)
 
 
 class ResultSummary(object):

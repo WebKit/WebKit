@@ -44,7 +44,7 @@ from webkitpy.common.net.testoutputset import TestOutputSet
 from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.common.system.zipfileset import ZipFileSet
-from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.port.driver import Driver, DriverOutput
 from webkitpy.layout_tests.port import builders

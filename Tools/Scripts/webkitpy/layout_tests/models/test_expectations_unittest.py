@@ -27,13 +27,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit tests for test_expectations.py."""
-
 import unittest
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.port import base
-from webkitpy.layout_tests.layout_package.test_expectations import *
+from webkitpy.layout_tests.models.test_expectations import *
 
 class FunctionsTest(unittest.TestCase):
     def test_result_was_expected(self):

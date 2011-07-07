@@ -58,7 +58,7 @@ from webkitpy.common.system.executive import ScriptError
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import read_checksum_from_png
-from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.layout_tests.models import test_expectations
 
 _log = logging.getLogger(__name__)
 

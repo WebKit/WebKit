@@ -32,8 +32,8 @@ import StringIO
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.layout_package import test_results
-from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *

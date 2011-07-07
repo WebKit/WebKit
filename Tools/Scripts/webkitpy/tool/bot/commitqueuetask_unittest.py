@@ -34,8 +34,8 @@ from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.layout_package import test_results
-from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.commitqueuetask import *
 from webkitpy.tool.bot.expectedfailures import ExpectedFailures

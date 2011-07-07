@@ -30,8 +30,8 @@ import unittest
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults, ORWTResultsHTMLParser
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.layout_package import test_results
-from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 

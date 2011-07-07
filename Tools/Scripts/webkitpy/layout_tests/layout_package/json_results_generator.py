@@ -35,7 +35,6 @@ import urllib2
 import xml.dom.minidom
 
 from webkitpy.layout_tests.layout_package import test_results_uploader
-
 import webkitpy.thirdparty.simplejson as simplejson
 
 # A JSON results generator for generic tests.

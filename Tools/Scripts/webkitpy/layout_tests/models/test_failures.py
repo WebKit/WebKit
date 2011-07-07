@@ -27,11 +27,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Classes for failures that occur during tests."""
-
-import test_expectations
-
 import cPickle
+
+from webkitpy.layout_tests.models import test_expectations
 
 
 # FIXME: This is backwards.  Each TestFailure subclass should know what

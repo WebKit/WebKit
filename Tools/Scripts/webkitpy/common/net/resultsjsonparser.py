@@ -34,7 +34,8 @@ except ImportError:
     import webkitpy.thirdparty.simplejson as json
 
 # FIXME: common should never import from new-run-webkit-tests, one of these files needs to move.
-from webkitpy.layout_tests.layout_package import json_results_generator, test_expectations, test_results, test_failures
+from webkitpy.layout_tests.layout_package import json_results_generator
+from webkitpy.layout_tests.models import test_expectations, test_results, test_failures
 
 
 # These are helper functions for navigating the results json structure.

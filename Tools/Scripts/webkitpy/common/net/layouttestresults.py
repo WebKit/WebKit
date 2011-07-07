@@ -32,8 +32,8 @@
 from webkitpy.common.net.resultsjsonparser import ResultsJSONParser
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
-from webkitpy.layout_tests.layout_package import test_results
-from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models import test_failures
 
 
 # FIXME: This should be unified with all the layout test results code in the layout_tests package

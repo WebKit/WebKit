@@ -26,39 +26,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import cPickle
+import unittest
 
-import test_failures
+from webkitpy.layout_tests.models.test_results import TestResult
 
 
-class TestResult(object):
-    """Data object containing the results of a single test."""
+class TestResultsTest(unittest.TestCase):
+    def test_defaults(self):
+        result = TestResult("foo")
+        self.assertEqual(result.test_name, 'foo')
+        self.assertEqual(result.failures, [])
+        self.assertEqual(result.test_run_time, 0)
 
-    @staticmethod
-    def loads(str):
-        return cPickle.loads(str)
+    def test_loads(self):
+        result = TestResult(test_name='foo',
+                            failures=[],
+                            test_run_time=1.1)
+        s = result.dumps()
+        new_result = TestResult.loads(s)
+        self.assertTrue(isinstance(new_result, TestResult))
 
-    def __init__(self, test_name, failures=None, test_run_time=None, has_stderr=False):
-        self.test_name = test_name
-        self.failures = failures or []
-        self.test_run_time = test_run_time or 0
-        self.has_stderr = has_stderr
-        # FIXME: Setting this in the constructor makes this class hard to mutate.
-        self.type = test_failures.determine_result_type(failures)
+        self.assertEqual(new_result, result)
 
-    def __eq__(self, other):
-        return (self.test_name == other.test_name and
-                self.failures == other.failures and
-                self.test_run_time == other.test_run_time)
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def has_failure_matching_types(self, *args, **kargs):
-        for failure in self.failures:
-            if type(failure) in args:
-                return True
-        return False
-
-    def dumps(self):
-        return cPickle.dumps(self)
+        # Also check that != is implemented.
+        self.assertFalse(new_result != result)

@@ -1,3 +1,52 @@
+2011-07-06  Adam Barth  <abarth@webkit.org>
+
+        Move model classes out of layout_package and into models
+        https://bugs.webkit.org/show_bug.cgi?id=64053
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/result_summary.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_input.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/models: Added.
+        * Scripts/webkitpy/layout_tests/models/__init__.py: Added.
+        * Scripts/webkitpy/layout_tests/models/result_summary.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/result_summary.py.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_expectations.py.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py.
+        * Scripts/webkitpy/layout_tests/models/test_failures.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_failures.py.
+        * Scripts/webkitpy/layout_tests/models/test_failures_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py.
+        * Scripts/webkitpy/layout_tests/models/test_input.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_input.py.
+        * Scripts/webkitpy/layout_tests/models/test_results.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_results.py.
+        * Scripts/webkitpy/layout_tests/models/test_results_unittest.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_results_unittest.py.
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        * Scripts/webkitpy/style_references.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
 2011-07-06  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: fix typo preventing http startup on windows

@@ -37,8 +37,9 @@ import traceback
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import single_test_runner
-from webkitpy.layout_tests.layout_package import test_expectations
-from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_results
+
 
 _log = logging.getLogger(__name__)
 
