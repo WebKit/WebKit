@@ -125,6 +125,7 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview_p.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebkittypes.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \

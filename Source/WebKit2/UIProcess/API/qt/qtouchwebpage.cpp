@@ -141,6 +141,11 @@ void QTouchWebPage::resizeEvent(QGraphicsSceneResizeEvent* ev)
     QGraphicsWidget::resizeEvent(ev);
 }
 
+QAction* QTouchWebPage::navigationAction(QtWebKit::NavigationAction which)
+{
+    return d->page->navigationAction(which);
+}
+
 QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
     , page(0)

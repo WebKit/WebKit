@@ -648,6 +648,22 @@ void QtWebPageProxy::triggerAction(WebAction webAction, bool)
     m_webPageProxy->contextMenuItemSelected(menuItemData);
 }
 
+QAction* QtWebPageProxy::navigationAction(QtWebKit::NavigationAction which) const
+{
+    switch (which) {
+    case QtWebKit::Back:
+        return action(QtWebPageProxy::Back);
+    case QtWebKit::Forward:
+        return action(QtWebPageProxy::Forward);
+    case QtWebKit::Reload:
+        return action(QtWebPageProxy::Reload);
+    case QtWebKit::Stop:
+        return action(QtWebPageProxy::Stop);
+    }
+
+    return 0;
+}
+
 QAction* QtWebPageProxy::action(WebAction action) const
 {
     if (action == QtWebPageProxy::NoWebAction || action >= WebActionCount)

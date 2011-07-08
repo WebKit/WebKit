@@ -33,6 +33,9 @@ private slots:
     void loadEmptyUrl();
     void loadEmptyPageViewVisible();
     void loadEmptyPageViewHidden();
+    void backAndForward();
+    void reload();
+    void stop();
 
     void show();
 private:
@@ -77,6 +80,63 @@ void tst_CommonViewTests::loadEmptyPageViewHidden()
     QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
 
     QCOMPARE(loadStartedSpy.size(), 1);
+}
+
+void tst_CommonViewTests::backAndForward()
+{
+    viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QUrl url;
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
+
+    viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html")));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html"));
+
+    viewAbstraction->triggerNavigationAction(QtWebKit::Back);
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
+
+    viewAbstraction->triggerNavigationAction(QtWebKit::Forward);
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html"));
+}
+
+void tst_CommonViewTests::reload()
+{
+    viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QUrl url;
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
+
+    viewAbstraction->triggerNavigationAction(QtWebKit::Reload);
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
+}
+
+void tst_CommonViewTests::stop()
+{
+    viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QUrl url;
+    QVERIFY(viewAbstraction->url(url));
+    QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
+
+    // FIXME: This test should be fleshed out. Right now it's just here to make sure we don't crash.
+    viewAbstraction->triggerNavigationAction(QtWebKit::Stop);
 }
 
 void tst_CommonViewTests::show()

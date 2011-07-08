@@ -184,6 +184,11 @@ QString QDesktopWebView::title() const
     return d->page.title();
 }
 
+QAction* QDesktopWebView::navigationAction(QtWebKit::NavigationAction which) const
+{
+    return d->page.navigationAction(which);
+}
+
 void QDesktopWebView::resizeEvent(QGraphicsSceneResizeEvent* ev)
 {
     d->page.setDrawingAreaSize(ev->newSize().toSize());

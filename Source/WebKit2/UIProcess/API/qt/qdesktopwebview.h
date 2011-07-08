@@ -22,6 +22,7 @@
 #define qdesktopwebview_h
 
 #include "qwebkitglobal.h"
+#include "qwebkittypes.h"
 #include <WebKit2/WKBase.h>
 
 #include <QGraphicsWidget>
@@ -44,6 +45,8 @@ public:
 
     QUrl url() const;
     QString title() const;
+
+    QAction* navigationAction(QtWebKit::NavigationAction which) const;
 
 public Q_SLOTS:
      void load(const QUrl&);

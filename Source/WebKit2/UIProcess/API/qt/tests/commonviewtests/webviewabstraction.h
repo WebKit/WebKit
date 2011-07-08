@@ -40,6 +40,8 @@ public:
     void load(const QUrl&);
     bool url(QUrl&) const;
 
+    void triggerNavigationAction(QtWebKit::NavigationAction);
+
 Q_SIGNALS:
     void loadStarted();
     void loadSucceeded();

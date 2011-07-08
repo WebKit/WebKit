@@ -25,6 +25,7 @@
 
 #include "LayerTreeContext.h"
 #include "PageClient.h"
+#include "qwebkittypes.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "ViewInterface.h"
@@ -171,6 +172,8 @@ public:
     void setActualVisibleContentsRect(const QRect& rect) const;
 
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
+
+    QAction* navigationAction(QtWebKit::NavigationAction) const;
 
     QAction* action(WebAction action) const;
     void triggerAction(WebAction action, bool checked = false);

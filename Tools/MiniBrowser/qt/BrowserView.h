@@ -30,6 +30,7 @@
 #define BrowserView_h
 
 #include <QGraphicsView>
+#include <qwebkittypes.h>
 
 class QDesktopWebView;
 class QTouchWebView;
@@ -43,6 +44,8 @@ public:
 
     void load(const QString&);
     QGraphicsWidget* view() const;
+
+    QAction* navigationAction(QtWebKit::NavigationAction which) const;
 
     QTouchWebView* touchWebView() const;
     QDesktopWebView* desktopWebView() const;

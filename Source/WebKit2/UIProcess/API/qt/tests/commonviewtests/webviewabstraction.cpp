@@ -17,6 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include <QAction>
 #include <QApplication>
 #include <QDesktopWidget>
 #include "webviewabstraction.h"
@@ -74,6 +75,14 @@ bool WebViewAbstraction::url(QUrl& url) const
 
     url = touchViewUrl;
     return true;
+}
+
+void WebViewAbstraction::triggerNavigationAction(QtWebKit::NavigationAction which)
+{
+    QAction* touchAction = touchWebView()->page()->navigationAction(which);
+    touchAction->trigger();
+    QAction* desktopAction = desktopWebView()->navigationAction(which);
+    desktopAction->trigger();
 }
 
 void WebViewAbstraction::touchViewLoadStarted()

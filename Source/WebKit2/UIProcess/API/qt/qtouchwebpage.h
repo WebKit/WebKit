@@ -22,6 +22,7 @@
 #define qtouchwebpage_h
 
 #include "qwebkitglobal.h"
+#include "qwebkittypes.h"
 
 #include <QGraphicsWidget>
 #include <QSharedPointer>
@@ -47,6 +48,8 @@ public:
     Q_INVOKABLE QUrl url() const;
 
     Q_INVOKABLE QString title() const;
+
+    QAction* navigationAction(QtWebKit::NavigationAction which);
 
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     virtual bool event(QEvent*);

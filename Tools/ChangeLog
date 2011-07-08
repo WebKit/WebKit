@@ -1,3 +1,18 @@
+2011-07-08  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Views should expose QActions for basic navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=64174
+
+        Reviewed by Benjamin Poulain.
+
+        Bring the toolbar in Qt's MiniBrowser back to life.
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::navigationAction):
+        * MiniBrowser/qt/BrowserView.h:
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+
 2011-07-08  Adam Roben  <aroben@apple.com>
 
         Teach TestFailures how to find test names in commit-log-editor-style commit messages
