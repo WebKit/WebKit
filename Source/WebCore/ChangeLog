@@ -1,3 +1,16 @@
+2011-07-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add support for drag'n'drop of non-elements (comments, text, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=64163
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::moveTo):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._isValidDragSourceOrTarget):
+
 2011-07-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: secure access to extensions API

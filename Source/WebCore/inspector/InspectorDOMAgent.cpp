@@ -1032,34 +1032,34 @@ void InspectorDOMAgent::hideHighlight(ErrorString*)
     m_client->hideHighlight();
 }
 
-void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId)
+void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
 {
-    Element* element = assertElement(error, nodeId);
-    if (!element)
+    Node* node = assertNode(error, nodeId);
+    if (!node)
         return;
 
-    Element* targetElement = assertElement(error, targetNodeId);
+    Element* targetElement = assertElement(error, targetElementId);
     if (!targetElement)
         return;
 
-    Element* anchorElement = 0;
+    Node* anchorNode = 0;
     if (anchorNodeId && *anchorNodeId) {
-        anchorElement = assertElement(error, *anchorNodeId);
-        if (!anchorElement)
+        anchorNode = assertNode(error, *anchorNodeId);
+        if (!anchorNode)
             return;
-        if (anchorElement->parentNode() != targetElement) {
-            *error = "Anchor node must be child of the target node.";
+        if (anchorNode->parentNode() != targetElement) {
+            *error = "Anchor node must be child of the target element.";
             return;
         }
     }
 
     ExceptionCode ec = 0;
-    bool success = targetElement->insertBefore(element, anchorElement, ec);
+    bool success = targetElement->insertBefore(node, anchorNode, ec);
     if (ec || !success) {
         *error = "Could not drop node.";
         return;
     }
-    *newNodeId = pushNodePathToFrontend(element);
+    *newNodeId = pushNodePathToFrontend(node);
 }
 
 void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result)

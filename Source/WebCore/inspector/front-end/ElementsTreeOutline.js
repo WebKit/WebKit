@@ -324,9 +324,6 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (!(node instanceof WebInspector.DOMNode))
             return false;
 
-        if (node.nodeType() !== Node.ELEMENT_NODE)
-            return false;
-
         if (!node.parentNode || node.parentNode.nodeType() !== Node.ELEMENT_NODE)
             return false;
 

@@ -1028,7 +1028,7 @@
                 "name": "moveTo",
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to drop." },
-                    { "name": "targetNodeId", "type": "integer", "description": "Id of the node to drop into." },
+                    { "name": "targetElementId", "type": "integer", "description": "Id of the element to drop into." },
                     { "name": "anchorNodeId", "type": "integer", "optional": true, "description": "Drop node before given one." }
                 ],
                 "returns": [
