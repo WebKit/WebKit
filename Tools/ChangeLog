@@ -1,3 +1,16 @@
+2011-07-07  Leandro Pereira  <leandro@profusion.mobi>
+
+        [ImageDiff] Calculate/print difference right after reading baseline image.
+        https://bugs.webkit.org/show_bug.cgi?id=64117
+
+        Reviewed by Kent Tamura.
+
+        Otherwise, ImageDiff will block on fgets() until the universe ends or you ^C
+        it.  Whichever happens first.
+
+        * DumpRenderTree/efl/ImageDiff.cpp:
+        (main):
+
 2011-07-07  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Leak cairo_t to make the pixel tests stop crashing

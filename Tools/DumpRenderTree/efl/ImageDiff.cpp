@@ -330,9 +330,9 @@ int main(int argc, char* argv[])
 
             if (!actualImage)
                 actualImage = readImageFromStdin(evas, imageSize);
-            else if (!baselineImage)
+            else if (!baselineImage) {
                 baselineImage = readImageFromStdin(evas, imageSize);
-            else {
+
                 printImageDifferences(baselineImage.get(), actualImage.get());
 
                 actualImage.clear();
