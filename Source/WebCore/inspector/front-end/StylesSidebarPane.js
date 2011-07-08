@@ -452,8 +452,9 @@ WebInspector.StylesSidebarPane.prototype = {
             // Walk the properties again and account for !important.
             var foundPriorityProperties = [];
 
-            // Walk in reverse to match the order !important overrides.
-            for (var i = (styleRules.length - 1); i >= 0; --i) {
+            // Walk in direct order to detect the active/most specific rule providing a priority
+            // (in this case all subsequent !important values get canceled.)
+            for (var i = 0; i < styleRules.length; ++i) {
                 if (styleRules[i].computedStyle || styleRules[i].isStyleSeparator)
                     continue;
 

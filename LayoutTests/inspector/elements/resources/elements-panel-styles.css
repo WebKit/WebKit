@@ -7,10 +7,15 @@ body {
     font-size: 14px;
 }
 
+#container .foo {
+    font-style: italic !important;
+}
+
 .foo {
     color: black;
     margin: 10px 0 2px;
     border-radius: 5px;
+    font-style: normal !important;
 }
 
 .foo, .foo::before {
