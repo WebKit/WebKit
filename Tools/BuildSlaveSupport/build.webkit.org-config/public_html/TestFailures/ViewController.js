@@ -204,10 +204,8 @@ ViewController.prototype = {
         self._trac.getCommitDataForRevisionRange('trunk', firstSuspectRevision, lastSuspectRevision, function(commits) {
             var failingTestNamesWithoutExtensions = failingTestNames.map(removePathExtension);
             var suspectCommits = commits.filter(function(commit) {
-                return commit.modifiedFiles.some(function(file) {
-                    return failingTestNamesWithoutExtensions.some(function(testName) {
-                        return file.indexOf(testName) >= 0;
-                    });
+                return failingTestNamesWithoutExtensions.some(function(testName) {
+                    return commit.message.contains(testName);
                 });
             });
 

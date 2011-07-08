@@ -1,3 +1,29 @@
+2011-07-08  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures how to find test names in commit-log-editor-style commit messages
+
+        TestFailures was relying on Trac turning the list of modified files in our commit messages
+        into an HTML list. But Trac only does this when the list of modified files is indented.
+        commit-log-editor doesn't indent the file list, so the list wasn't being turned into an HTML
+        list, which was confusing TestFailures.
+
+        TestFailures now does much simpler parsing of the commit message (i.e., just a substring
+        search) without relying at all on its structure.
+
+        Fixes <http://webkit.org/b/64173> TestFailures page fails to blame r90608 for breaking
+        fast/dom/HTMLProgressElement/progress-element-markup.html on Windows
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        (Trac.prototype.getCommitDataForRevisionRange): Instead of trying to parse the commit
+        message, just return its text.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForRegressionRange): Instead of searching for test names in
+        each commit's list of modified files, just search for test names anywhere in the commit's
+        message.
+
 2011-07-08  Adam Barth  <abarth@webkit.org>
 
         sheriffbot is too spammy in IRC

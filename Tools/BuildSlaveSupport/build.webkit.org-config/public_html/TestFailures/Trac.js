@@ -70,19 +70,13 @@ Trac.prototype = {
 
                 var container = document.createElement('div');
                 container.innerHTML = item.getElementsByTagName('description')[0].textContent;
-                var listItems = container.querySelectorAll('li');
-                var files = [];
-                for (var i = 0; i < listItems.length; ++i) {
-                    var match = /^([^:]+)/.exec(listItems[i].textContent);
-                    if (!match)
-                        continue;
-                    files.push(match[1]);
-                }
 
                 return {
                     revision: revision,
                     title: title,
-                    modifiedFiles: files,
+                    // FIXME: This isn't a very high-fidelity reproduction of the commit message,
+                    // but it's good enough for our purposes.
+                    message: container.innerText,
                 };
             });
 
