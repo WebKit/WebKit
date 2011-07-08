@@ -34,13 +34,13 @@ use Getopt::Long;
 use File::Basename;
 use File::Spec;
 use FindBin;
-use Module::Load::Conditional qw(can_load);
 use lib $FindBin::Bin;
 use VCSUtils;
 use webkitdirs;
 
 sub createCommitMessage(@);
 sub fixEnvironment();
+sub loadTermReadKey();
 sub normalizeLineEndings($$);
 sub patchAuthorshipString($$$);
 sub removeLongestCommonPrefixEndingInDoubleNewline(\%);
@@ -158,7 +158,7 @@ close LOG;
 $endl = $1 if $logContents =~ /(\r?\n)/;
 
 my $keepExistingLog = 1;
-if ($regenerateLog && $existingLog && scalar(@changeLogs) > 0 && can_load(modules=>{ 'Term::ReadKey'=>undef })) {
+if ($regenerateLog && $existingLog && scalar(@changeLogs) > 0 && loadTermReadKey()) {
     print "Existing log message detected, Use 'r' to regenerate log message from ChangeLogs, or any other key to keep the existing message.\n";
     Term::ReadKey::ReadMode('cbreak');
     my $key = Term::ReadKey::ReadKey(0);
@@ -330,6 +330,12 @@ sub fixEnvironment()
     foreach my $key (keys %ENV) {
         $ENV{$key} =~ s#^([[:alpha:]]):/#/$1/#;
     }
+}
+
+sub loadTermReadKey()
+{
+    eval { require Term::ReadKey; };
+    return !$@;
 }
 
 sub normalizeLineEndings($$)

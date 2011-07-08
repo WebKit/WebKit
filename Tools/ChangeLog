@@ -1,5 +1,20 @@
 2011-07-08  Adam Roben  <aroben@apple.com>
 
+        Remove commit-log-editor's dependency on Module::Load::Conditional
+
+        This module isn't available in Perl 5.8.8 (the version used on Leopard).
+
+        Fixes <http://webkit.org/b/64198> REGRESSION (r90583):
+        webkitpy.common.checkout.checkout_unittest failing on Leopard
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/commit-log-editor: Use the new loadTermReadKey() function instead of
+        Module::Load::Conditional::can_load.
+        (loadTermReadKey): Added. Tries to load Term::ReadKey and returns true if it's successful.
+
+2011-07-08  Adam Roben  <aroben@apple.com>
+
         Make checkout_unittest more robust against files moving around
 
         Fixes <http://webkit.org/b/64197> checkout_unittest contains ugly, fragile code to find the
