@@ -1,5 +1,16 @@
 2011-07-07  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix, remove old files from the tree and update paths to new ones.
+
+        * wx/build: Removed.
+        * wx/build/build_utils.py: Removed.
+        * wx/build/settings.py: Removed.
+        * wx/build/waf_extensions.py: Removed.
+        * wx/build/wxpresets.py: Removed.
+        * wx/packaging/build-mac-installer.py:
+
+2011-07-07  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix, more fixes for install name issues.
 
         * wx/packaging/build-mac-installer.py:

@@ -37,14 +37,14 @@ import sys
 import tempfile
 
 script_dir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.abspath(os.path.join(script_dir, "..", "build")))
+sys.path.append(os.path.abspath(os.path.join(script_dir, "..", "..", "waf", "build")))
 
 from build_utils import *
 
 import wx
 
 wxwk_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
-wxwebkit_dir = os.path.abspath(os.path.join(wxwk_root, "WebKitBuild", get_config(wxwk_root) + git_branch_name()))
+wxwebkit_dir = os.path.abspath(os.path.join(wxwk_root, "WebKitBuild", get_config(wxwk_root)))
 
 wx_version = wx.__version__[:5]
 py_version = sys.version[:3]
