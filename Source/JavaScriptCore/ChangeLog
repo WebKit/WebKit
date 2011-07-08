@@ -1,3 +1,15 @@
+2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2] Do not forward touch events to the web process when it does not need them
+        https://bugs.webkit.org/show_bug.cgi?id=64164
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a convenience function to obtain a reference to the last element of a Deque.
+
+        * wtf/Deque.h:
+        (WTF::Deque::last):
+
 2011-07-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not implement op_construct.

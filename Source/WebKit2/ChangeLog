@@ -1,5 +1,37 @@
 2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
 
+        [WK2] Do not forward touch events to the web process when it does not need them
+        https://bugs.webkit.org/show_bug.cgi?id=64164
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The call to ChromeClient::needTouchEvent() is now forwarded to the WebPageProxy
+        to change the way events are delivered.
+
+        When the WebPage does not need touch events, and there is no queued touch events,
+        the incoming events just bounce back through PageClient::doneWithTouchEvent().
+
+        In the case when new events come to WebPageProxy and there are still touch events
+        incoming from the WebProcess, the new events are deferred with the corresponding
+        pending touch events.
+        Deferring the new events iafter the corresponding forwarded event ensure
+        the delivery is always done in order when PageClient::doneWithTouchEvent()
+        is called.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::needTouchEvents):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::QueuedTouchEvents:::forwardedEvent):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::needTouchEvents):
+
+2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
+
         [Qt][WK2] Add basic support for panning gestures to the QTouchWebView
         https://bugs.webkit.org/show_bug.cgi?id=64105
 

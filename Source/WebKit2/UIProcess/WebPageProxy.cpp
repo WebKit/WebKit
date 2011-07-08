@@ -170,6 +170,9 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_syncNavigationActionPolicyAction(PolicyUse)
     , m_syncNavigationActionPolicyDownloadID(0)
     , m_processingMouseMoveEvent(false)
+#if ENABLE(TOUCH_EVENTS)
+    , m_needTouchEvents(false)
+#endif
     , m_pageID(pageID)
 #if PLATFORM(MAC)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
@@ -977,9 +980,21 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (!isValid())
         return;
 
-    m_touchEventQueue.append(event);
-    process()->responsivenessTimer()->start();
-    process()->send(Messages::WebPage::TouchEvent(event), m_pageID); 
+    if (m_needTouchEvents) {
+        m_touchEventQueue.append(event);
+        process()->responsivenessTimer()->start();
+        process()->send(Messages::WebPage::TouchEvent(event), m_pageID);
+    } else {
+        if (m_touchEventQueue.isEmpty()) {
+            bool isEventHandled = false;
+            m_pageClient->doneWithTouchEvent(event, isEventHandled);
+        } else {
+            // We attach the incoming events to the newest queued event so that all
+            // the events are delivered in the correct order when the event is dequed.
+            QueuedTouchEvents& lastEvent = m_touchEventQueue.last();
+            lastEvent.deferredTouchEvents.append(event);
+        }
+    }
 }
 #endif
 
@@ -2190,6 +2205,13 @@ void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)
 }
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+void WebPageProxy::needTouchEvents(bool needTouchEvents)
+{
+    m_needTouchEvents = needTouchEvents;
+}
+#endif
+
 void WebPageProxy::didDraw()
 {
     m_uiClient.didDraw(this);
@@ -2793,11 +2815,15 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::TouchMove:
     case WebEvent::TouchEnd:
     case WebEvent::TouchCancel: {
-        NativeWebTouchEvent event = m_touchEventQueue.first();
-        MESSAGE_CHECK(type == event.type());
+        QueuedTouchEvents queuedEvents = m_touchEventQueue.first();
+        MESSAGE_CHECK(type == queuedEvents.forwardedEvent.type());
         m_touchEventQueue.removeFirst();
 
-        m_pageClient->doneWithTouchEvent(event, handled);
+        m_pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
+        for (size_t i = 0; i < queuedEvents.deferredTouchEvents.size(); ++i) {
+            bool isEventHandled = false;
+            m_pageClient->doneWithTouchEvent(queuedEvents.deferredTouchEvents.at(i), isEventHandled);
+        }
         break;
     }
 #endif
@@ -3002,6 +3028,11 @@ void WebPageProxy::processDidCrash()
     m_currentlyProcessedMouseDownEvent = nullptr;
 
     m_processingMouseMoveEvent = false;
+
+#if ENABLE(TOUCH_EVENTS)
+    m_needTouchEvents = false;
+    m_touchEventQueue.clear();
+#endif
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);

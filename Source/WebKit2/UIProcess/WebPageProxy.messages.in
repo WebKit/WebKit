@@ -73,6 +73,9 @@ messages -> WebPageProxy {
     DidChangeContentsSize(WebCore::IntSize newSize)
     DidFindZoomableArea(WebCore::IntRect area)
 #endif
+#if ENABLE(TOUCH_EVENTS)
+    NeedTouchEvents(bool needTouchEvents)
+#endif
 
     # Policy messages
     DecidePolicyForResponse(uint64_t frameID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)

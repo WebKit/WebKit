@@ -729,8 +729,9 @@ WebCore::NotificationPresenter* WebChromeClient::notificationPresenter() const
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-void WebChromeClient::needTouchEvents(bool)
+void WebChromeClient::needTouchEvents(bool needTouchEvents)
 {
+    m_page->send(Messages::WebPageProxy::NeedTouchEvents(needTouchEvents));
 }
 #endif
 

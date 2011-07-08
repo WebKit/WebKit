@@ -61,6 +61,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 #if PLATFORM(EFL)
 #include <Evas.h>
@@ -131,6 +132,17 @@ class WebGestureEvent;
 
 typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
 typedef GenericCallback<WKSerializedScriptValueRef, WebSerializedScriptValue*> ScriptValueCallback;
+
+#if ENABLE(TOUCH_EVENTS)
+struct QueuedTouchEvents {
+    QueuedTouchEvents(const NativeWebTouchEvent& event)
+        : forwardedEvent(event)
+    {
+    }
+    NativeWebTouchEvent forwardedEvent;
+    Vector<NativeWebTouchEvent> deferredTouchEvents;
+};
+#endif
 
 // FIXME: Make a version of CallbackBase with three arguments, and define ValidateCommandCallback as a specialization.
 class ValidateCommandCallback : public CallbackBase {
@@ -651,6 +663,9 @@ private:
     void didChangeContentsSize(const WebCore::IntSize&);
     void didFindZoomableArea(const WebCore::IntRect&);
 #endif
+#if ENABLE(TOUCH_EVENTS)
+    void needTouchEvents(bool);
+#endif
 
     void editorStateChanged(const EditorState&);
 
@@ -869,15 +884,17 @@ private:
     uint64_t m_syncNavigationActionPolicyDownloadID;
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
-#if ENABLE(TOUCH_EVENTS)
-    Deque<NativeWebTouchEvent> m_touchEventQueue;
-#endif
     Deque<NativeWebWheelEvent> m_wheelEventQueue;
     Vector<NativeWebWheelEvent> m_currentlyProcessedWheelEvents;
 
     bool m_processingMouseMoveEvent;
     OwnPtr<NativeWebMouseEvent> m_nextMouseMoveEvent;
     OwnPtr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
+
+#if ENABLE(TOUCH_EVENTS)
+    bool m_needTouchEvents;
+    Deque<QueuedTouchEvents> m_touchEventQueue;
+#endif
 
     uint64_t m_pageID;
 
