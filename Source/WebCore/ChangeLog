@@ -1,3 +1,19 @@
+2011-07-08  Mike Reed  <reed@google.com>
+
+        remove (empty) indirection between GraphicsContextPlatformPrivate and PlatformContextSkia
+        https://bugs.webkit.org/show_bug.cgi?id=64178
+
+        Reviewed by Stephen White.
+
+        No new tests. no functionality change, other than removing an indirection that is not needed
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/skia/GraphicsContextPlatformPrivate.h: Removed.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::platformDestroy):
+        (WebCore::GraphicsContext::platformContext):
+
 2011-07-08  Jeffrey Pfau  <jpfau@apple.com>
 
         Add framework for a new/dummy XMLDocumentParser

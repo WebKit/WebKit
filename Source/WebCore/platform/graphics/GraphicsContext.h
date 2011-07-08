@@ -79,6 +79,7 @@ class wxWindowDC;
 #elif USE(SKIA)
 namespace WebCore {
 class PlatformContextSkia;
+typedef PlatformContextSkia GraphicsContextPlatformPrivate;
 }
 typedef WebCore::PlatformContextSkia PlatformGraphicsContext;
 #elif PLATFORM(HAIKU)
@@ -120,7 +121,9 @@ namespace WebCore {
     class DrawingBuffer;
     class Font;
     class Generator;
+#if !USE(SKIA)
     class GraphicsContextPlatformPrivate;
+#endif
     class ImageBuffer;
     class IntRect;
     class RoundedIntRect;

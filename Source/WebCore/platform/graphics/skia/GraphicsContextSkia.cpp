@@ -36,7 +36,6 @@
 #include "FloatRect.h"
 #include "Gradient.h"
 #include "GraphicsContextGPU.h"
-#include "GraphicsContextPlatformPrivate.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NativeImageSkia.h"
@@ -226,19 +225,19 @@ void addCornerArc(SkPath* path, const SkRect& rect, const IntSize& size, int sta
 // no painting.
 void GraphicsContext::platformInit(PlatformGraphicsContext* gc)
 {
-    m_data = new GraphicsContextPlatformPrivate(gc);
-    setPaintingDisabled(!gc || !platformContext()->canvas());
+    // the caller owns the gc
+    m_data = gc;
+    setPaintingDisabled(!gc || !gc->canvas());
 }
 
 void GraphicsContext::platformDestroy()
 {
-    delete m_data;
 }
 
 PlatformGraphicsContext* GraphicsContext::platformContext() const
 {
     ASSERT(!paintingDisabled());
-    return m_data->context();
+    return m_data;
 }
 
 // State saving ----------------------------------------------------------------
