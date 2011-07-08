@@ -1,3 +1,23 @@
+2011-07-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] testwebview API test fails after http://trac.webkit.org/changeset/90471
+        https://bugs.webkit.org/show_bug.cgi?id=64159
+
+        Rework the icon-uri change test so that the condition for quitting
+        the mainloop is the icon-uri change itself, along with a timeout
+        to avoid taking too long in case of failure. Since the conditions
+        for considering a page loaded were changed we can't rely on that
+        for this test anymore.
+
+        Reviewed by Xan Lopez.
+
+        * tests/testwebview.c:
+        (timeout_cb): error out if it takes too long for the icon-uri
+        change to happen.
+        (icon_uri_changed_cb): quit the loop here instead of waiting on
+        the page being loaded.
+        (test_webkit_web_view_icon_uri):
+
 2011-07-01  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

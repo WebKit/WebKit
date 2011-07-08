@@ -78,9 +78,14 @@ static void idle_quit_loop_cb(WebKitWebView* web_view, GParamSpec* pspec, gpoint
         g_main_loop_quit(loop);
 }
 
+static gboolean timeout_cb(gpointer data)
+{
+    g_error("Didn't get icon-uri before timing out.");
+    return FALSE;
+}
+
 static void icon_uri_changed_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    gboolean* been_here = (gboolean*)data;
     char* expected_uri;
 
     g_assert_cmpstr(g_param_spec_get_name(pspec), ==, "icon-uri");
@@ -89,7 +94,7 @@ static void icon_uri_changed_cb(WebKitWebView* web_view, GParamSpec* pspec, gpoi
     g_assert_cmpstr(webkit_web_view_get_icon_uri(web_view), ==, expected_uri);
     g_free(expected_uri);
 
-    *been_here = TRUE;
+    g_main_loop_quit(loop);
 }
 
 static void icon_loaded_cb(WebKitWebView* web_view, char* icon_uri, gpointer data)
@@ -106,7 +111,6 @@ static void icon_loaded_cb(WebKitWebView* web_view, char* icon_uri, gpointer dat
 
 static void test_webkit_web_view_icon_uri()
 {
-    gboolean been_to_uri_changed = FALSE;
     gboolean been_to_icon_loaded = FALSE;
     WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_object_ref_sink(G_OBJECT(view));
@@ -114,16 +118,18 @@ static void test_webkit_web_view_icon_uri()
     loop = g_main_loop_new(NULL, TRUE);
 
     g_object_connect(G_OBJECT(view),
-                     "signal::notify::progress", idle_quit_loop_cb, NULL,
-                     "signal::notify::icon-uri", icon_uri_changed_cb, &been_to_uri_changed,
+                     "signal::notify::icon-uri", icon_uri_changed_cb, NULL,
                      "signal::icon-loaded", icon_loaded_cb, &been_to_icon_loaded,
                      NULL);
 
     webkit_web_view_load_uri(view, base_uri);
 
+    guint timeout_id = g_timeout_add(500, timeout_cb, 0);
+
     g_main_loop_run(loop);
 
-    g_assert(been_to_uri_changed);
+    g_source_remove(timeout_id);
+
     g_assert(been_to_icon_loaded);
 
     g_object_unref(view);
