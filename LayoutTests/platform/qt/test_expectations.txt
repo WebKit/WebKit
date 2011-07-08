@@ -59,7 +59,7 @@
 
 BUGWK64002 : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
 
-SKIP : fast/forms/textfield-overflow-by-value-update.html = PASS FAIL
+SKIP BUGWK64002 : fast/forms/textfield-overflow-by-value-update.html = PASS FAIL
 
 BUGWK64002 : fast/notifications/notifications-click-event.html = TEXT PASS
 
