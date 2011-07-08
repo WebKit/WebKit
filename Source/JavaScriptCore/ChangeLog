@@ -1,3 +1,30 @@
+2011-07-08  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64181
+        REGRESSION (r90602): Gmail doesn't load
+
+        Rolling out r90601, r90602.
+
+        * dfg/DFGAliasTracker.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addVarArgChild):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::dfgLinkCall):
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isUsingInlineStorage):
+
 2011-07-08  Kalev Lember  <kalev@smartlink.ee>
 
         Reviewed by Adam Roben.
