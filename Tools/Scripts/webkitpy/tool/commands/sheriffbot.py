@@ -43,9 +43,6 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         "eric@webkit.org",
     ]
 
-    def _update(self):
-        self.run_webkit_patch(["update", "--force-clean", "--quiet"])
-
     # AbstractQueue methods
 
     def begin_work_queue(self):
@@ -62,36 +59,13 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
 
     def next_work_item(self):
         self._irc_bot.process_pending_messages()
-        self._update()
-
-        # FIXME: We need to figure out how to provoke_flaky_builders.
-
-        failure_map = self._tool.buildbot.failure_map()
-        failure_map.filter_out_old_failures(self._is_old_failure)
-        if failure_map.is_empty():
-            return None
-        return failure_map
+        return
 
     def should_proceed_with_work_item(self, failure_map):
         # Currently, we don't have any reasons not to proceed with work items.
         return True
 
     def process_work_item(self, failure_map):
-        failing_revisions = failure_map.failing_revisions()
-        number_of_failing_revisions = len(failing_revisions)
-        for revision in failing_revisions:
-            builders = failure_map.builders_failing_for(revision)
-            try:
-                commit_info = self._tool.checkout().commit_info_for_revision(revision)
-                if not commit_info:
-                    print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
-                    continue
-                self._sheriff.post_irc_warning(commit_info, builders)
-                # We used to post on bugs, but it was too spammy.
-            finally:
-                for builder in builders:
-                    self._tool.status_server.update_svn_revision(revision, builder.name())
-        self._sheriff.post_irc_summary(failure_map)
         return True
 
     def handle_unexpected_error(self, failure_map, message):

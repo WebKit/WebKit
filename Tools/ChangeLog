@@ -1,3 +1,21 @@
+2011-07-08  Adam Barth  <abarth@webkit.org>
+
+        sheriffbot is too spammy in IRC
+        https://bugs.webkit.org/show_bug.cgi?id=64153
+
+        Reviewed by Eric Seidel.
+
+        Reporting failures in IRC worked well when the tree was greener than it
+        is today.  Nowadays, this feature mostly just results in spam about
+        false positives.  If we reach a greener state, we can bring this code
+        back.
+
+        (Another possibility is to restrict this feature to builder bots,
+        rather than including testers, as we did before this patch.)
+
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
 2011-07-08  Adam Roben  <aroben@apple.com>
 
         Ensure commit-log-editor adds a "Patch by" line when the author and committer are different
