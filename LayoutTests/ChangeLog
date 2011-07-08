@@ -1,3 +1,13 @@
+2011-07-08  Adam Roben  <aroben@apple.com>
+
+        Skip all HTMLProgressElement tests on Windows
+
+        <http://webkit.org/b/49769> tracks implementing this element on Windows. For now it's just a
+        source of failing tests.
+
+        * platform/win/Skipped: Skip the entire HTMLProgressElement directory so we don't have to
+        keep adding new tests one-by-one.
+
 2011-07-08  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test_expectations update.
