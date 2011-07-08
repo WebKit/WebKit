@@ -1117,7 +1117,7 @@ WebInspector.NetworkPanel.prototype = {
         if (!this._searchRegExp)
             return -1;
 
-        if ((!resource.displayName || !resource.displayName.match(this._searchRegExp)) && (!resource.path || !resource.path.match(this._searchRegExp)))
+        if ((!resource.displayName || !resource.displayName.match(this._searchRegExp)) && !resource.folder.match(this._searchRegExp))
             return -1;
 
         if (resource.identifier in this._matchedResourcesMap)
@@ -1168,7 +1168,7 @@ WebInspector.NetworkPanel.prototype = {
             return;
 
         var nameMatched = resource.displayName && resource.displayName.match(this._searchRegExp);
-        var pathMatched = resource.path && resource.path.match(this._searchRegExp);
+        var pathMatched = resource.path && resource.folder.match(this._searchRegExp);
         if (!nameMatched && pathMatched && !this._largerResourcesButton.toggled)
             this._toggleLargerResources();
 
@@ -1658,11 +1658,8 @@ WebInspector.NetworkDataGridNode.prototype = {
 
         var subtitle = this._resource.displayDomain;
 
-        if (this._resource.path && this._resource.lastPathComponent) {
-            var lastPathComponentIndex = this._resource.path.lastIndexOf("/" + this._resource.lastPathComponent);
-            if (lastPathComponentIndex != -1)
-                subtitle += this._resource.path.substring(0, lastPathComponentIndex);
-        }
+        if (this._resource.path)
+            subtitle += this._resource.folder;
 
         this._appendSubtitle(this._nameCell, subtitle);
         this._nameCell.title = this._resource.url;

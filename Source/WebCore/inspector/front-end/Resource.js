@@ -247,6 +247,16 @@ WebInspector.Resource.prototype = {
         return this._displayName;
     },
 
+    get folder()
+    {
+        var path = this.path;
+        var indexOfQuery = path.indexOf("?");
+        if (indexOfQuery !== -1)
+            path = path.substring(0, indexOfQuery);
+        var lastSlashIndex = path.lastIndexOf("/");
+        return lastSlashIndex !== -1 ? path.substring(0, lastSlashIndex) : "";
+    },
+
     get displayDomain()
     {
         // WebInspector.Database calls this, so don't access more than this.domain.
