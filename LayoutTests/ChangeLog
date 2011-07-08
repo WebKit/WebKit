@@ -1,3 +1,9 @@
+2011-07-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Moving test expectation from platform-specific to generic.
+
+        * fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent-expected.txt.
+
 2011-07-07  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Clear cookies after test in httponly-cookie.pl
