@@ -3881,8 +3881,8 @@ BUGCR86974 : svg/css/composite-shadow-with-opacity.html = TEXT PASS
 
 BUGCR87009 : fast/filesystem/async-operations.html = PASS CRASH
 
-// Test has been updated.  Need rebaseline.
-BUGWK63573 : fast/forms/input-appearance-range.html = IMAGE
+// Flaky since r90436?
+BUGWK63573 MAC : fast/forms/input-appearance-range.html = IMAGE PASS
 
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT

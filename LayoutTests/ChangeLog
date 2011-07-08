@@ -1,3 +1,13 @@
+2011-07-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update baseline files for input-appearance-range.html.
+
+        * platform/chromium-linux/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-range-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-07  MORITA Hajime  <morrita@google.com>
 
         dump-as-markup.js should support shadow tree
