@@ -1,3 +1,34 @@
+2011-07-08  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add framework for a new/dummy XMLDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=63955
+
+        Reviewed by Adam Barth.
+
+        Added a dummy framework NewXMLDocumentParser
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::createParser):
+        * xml/parser/NewXMLDocumentParser.cpp: Added.
+        (WebCore::NewXMLDocumentParser::NewXMLDocumentParser):
+        (WebCore::NewXMLDocumentParser::textPosition):
+        (WebCore::NewXMLDocumentParser::lineNumber):
+        (WebCore::NewXMLDocumentParser::insert):
+        (WebCore::NewXMLDocumentParser::append):
+        (WebCore::NewXMLDocumentParser::finish):
+        (WebCore::NewXMLDocumentParser::detach):
+        (WebCore::NewXMLDocumentParser::hasInsertionPoint):
+        (WebCore::NewXMLDocumentParser::finishWasCalled):
+        (WebCore::NewXMLDocumentParser::processingData):
+        (WebCore::NewXMLDocumentParser::prepareToStopParsing):
+        (WebCore::NewXMLDocumentParser::stopParsing):
+        (WebCore::NewXMLDocumentParser::isWaitingForScripts):
+        (WebCore::NewXMLDocumentParser::isExecutingScript):
+        (WebCore::NewXMLDocumentParser::executeScriptsWaitingForStylesheets):
+        * xml/parser/NewXMLDocumentParser.h: Added.
+        (WebCore::NewXMLDocumentParser::create):
+
 2011-07-08  David Reveman  <reveman@chromium.org>
 
         Remove unused function parameters.

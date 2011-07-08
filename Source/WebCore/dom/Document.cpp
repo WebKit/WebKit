@@ -106,6 +106,7 @@
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NestingLevelIncrementer.h"
+#include "NewXMLDocumentParser.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
 #include "NodeWithIndex.h"
@@ -1913,7 +1914,11 @@ void Document::setVisuallyOrdered()
 PassRefPtr<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
+#if ENABLE(NEW_XML)
+    return NewXMLDocumentParser::create(this);
+#else
     return XMLDocumentParser::create(this, view());
+#endif
 }
 
 ScriptableDocumentParser* Document::scriptableDocumentParser() const
