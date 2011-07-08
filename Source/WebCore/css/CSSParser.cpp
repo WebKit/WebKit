@@ -2657,6 +2657,12 @@ bool CSSParser::parseContent(int propId, bool important)
             } else if (isGeneratedImageValue(val)) {
                 if (!parseGeneratedImage(parsedValue))
                     return false;
+#if ENABLE(CSS_REGIONS)
+            } else if (equalIgnoringCase(val->function->name, "-webkit-from-flow(")) {
+                parsedValue = parseFromFlowContent(args);
+                if (!parsedValue)
+                    return false;
+#endif
             } else
                 return false;
         } else if (val->unit == CSSPrimitiveValue::CSS_IDENT) {
@@ -5864,6 +5870,22 @@ bool CSSParser::parseFlowThread(int propId, bool important)
     }
 
     return false;
+}
+
+// The region name is now specified as an argument to the content property:
+// content: from-flow(flow_thread_name)
+PassRefPtr<CSSValue> CSSParser::parseFromFlowContent(CSSParserValueList* args)
+{
+    // It should be only one name for the region thread.
+    if (args->size() != 1)
+        return 0;
+
+    CSSParserValue* argFlowThreadName = args->current();
+
+    if (argFlowThreadName->unit != CSSPrimitiveValue::CSS_STRING)
+        return 0;
+
+    return CSSPrimitiveValue::create(argFlowThreadName->string, CSSPrimitiveValue::CSS_FROM_FLOW);
 }
 #endif
 

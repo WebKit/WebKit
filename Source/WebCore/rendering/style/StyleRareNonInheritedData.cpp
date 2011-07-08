@@ -57,6 +57,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_pageSizeType(PAGE_SIZE_AUTO)
 #if ENABLE(CSS_REGIONS)
     , m_flowThread(RenderStyle::initialFlowThread())
+    , m_regionThread(RenderStyle::initialRegionThread())
 #endif
 {
 }
@@ -99,6 +100,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_pageSizeType(o.m_pageSizeType)
 #if ENABLE(CSS_REGIONS)
     , m_flowThread(o.m_flowThread)
+    , m_regionThread(o.m_regionThread)
 #endif
 {
 }
@@ -148,6 +150,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && (m_pageSizeType == o.m_pageSizeType)
 #if ENABLE(CSS_REGIONS)
         && (m_flowThread == o.m_flowThread)
+        && (m_regionThread == o.m_regionThread)
 #endif
         ;
 }

@@ -158,6 +158,7 @@ namespace WebCore {
 
 #if ENABLE(CSS_REGIONS)
         bool parseFlowThread(int propId, bool important);
+        PassRefPtr<CSSValue> parseFromFlowContent(CSSParserValueList*);
 #endif
         // CSS3 Parsing Routines (for properties specific to CSS3)
         bool parseShadow(int propId, bool important);

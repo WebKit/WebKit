@@ -1,0 +1,38 @@
+Tests being able to set content to -webkit-from-flow
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testCSSText("content: -webkit-from-flow('first-flow')") is "-webkit-from-flow(first-flow)"
+PASS testCSSText("content: -webkit-from-flow('first flow')") is "-webkit-from-flow('first flow')"
+PASS testCSSText("content: -webkit-from-flow('auto')") is "-webkit-from-flow(auto)"
+PASS testCSSText("content: -webkit-from-flow(auto)") is ""
+PASS testCSSText("content: -webkit-from-flow(initial)") is ""
+PASS testCSSText("content: -webkit-from-flow(inherit)") is ""
+PASS testCSSText("content: -webkit-from-flow()") is ""
+PASS testCSSText("content: -webkit-from-flow('')") is "-webkit-from-flow('')"
+PASS testCSSText("content: ;") is ""
+PASS testCSSText("content: -webkit-from-flow(1)") is ""
+PASS testCSSText("content: -webkit-from-flow(1.2)") is ""
+PASS testCSSText("content: -webkit-from-flow(-1)") is ""
+PASS testCSSText("content: -webkit-from-flow(12px)") is ""
+PASS testCSSText("content: -webkit-from-flow(first flow)") is ""
+PASS testCSSText("content: -webkit-from-flow(first-flow)") is ""
+PASS testComputedStyle("'first-flow'") is "first-flow"
+PASS testComputedStyle("'first flow'") is "'first flow'"
+PASS testComputedStyle("'auto'") is "auto"
+PASS testComputedStyle("auto") is ""
+PASS testComputedStyle("initial") is ""
+PASS testComputedStyle("inherit") is ""
+PASS testComputedStyle("") is ""
+PASS testComputedStyle("1") is ""
+PASS testComputedStyle("1.2") is ""
+PASS testComputedStyle("-1") is ""
+PASS testComputedStyle("12px") is ""
+PASS testComputedStyle("''") is "''"
+PASS testComputedStyle("first flow") is ""
+PASS testComputedStyle("first-flow") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

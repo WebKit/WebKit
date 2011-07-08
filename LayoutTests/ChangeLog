@@ -1,3 +1,14 @@
+2011-07-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Parse content: -webkit-from-flow
+        https://bugs.webkit.org/show_bug.cgi?id=63133
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/content-webkit-from-flow-parsing-expected.txt: Added.
+        * fast/regions/content-webkit-from-flow-parsing.html: Added.
+        * fast/regions/script-tests/content-webkit-from-flow-parsing.js: Added.
+
 2011-07-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         REGRESSION (r90557): http/tests/inspector/network/network-embed.html fails

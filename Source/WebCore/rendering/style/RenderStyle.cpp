@@ -345,8 +345,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             return StyleDifferenceLayout;
 
 #if ENABLE(CSS_REGIONS)
-        if (rareNonInheritedData->m_flowThread != other->rareNonInheritedData->m_flowThread)
-             return StyleDifferenceLayout;
+        if (rareNonInheritedData->m_flowThread != other->rareNonInheritedData->m_flowThread
+            || rareNonInheritedData->m_regionThread != other->rareNonInheritedData->m_regionThread)
+            return StyleDifferenceLayout;
 #endif
         if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()
             && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other->rareNonInheritedData->m_deprecatedFlexibleBox.get())

@@ -4140,6 +4140,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         CSSValueList* list = static_cast<CSSValueList*>(value);
         int len = list->length();
 
+#if ENABLE(CSS_REGIONS)
+        if (len == 1 && list->itemWithoutBoundsCheck(0)->isPrimitiveValue()) {
+            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(list->itemWithoutBoundsCheck(0));
+            if (contentValue->primitiveType() == CSSPrimitiveValue::CSS_FROM_FLOW) {
+                m_style->setRegionThread(contentValue->getStringValue().impl());
+                return;
+            }
+        }
+#endif
+
         bool didSet = false;
         for (int i = 0; i < len; i++) {
             CSSValue* item = list->itemWithoutBoundsCheck(i);
@@ -4147,10 +4157,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 m_style->setContent(static_cast<CSSImageGeneratorValue*>(item)->generatedImage(), didSet);
                 didSet = true;
             }
-            
+
             if (!item->isPrimitiveValue())
                 continue;
-            
+
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             switch (contentValue->primitiveType()) {
             case CSSPrimitiveValue::CSS_STRING:

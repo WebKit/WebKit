@@ -133,6 +133,7 @@ public:
 
 #if ENABLE(CSS_REGIONS)
     AtomicString m_flowThread;
+    AtomicString m_regionThread;
 #endif
 
 private:

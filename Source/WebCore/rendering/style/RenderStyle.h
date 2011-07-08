@@ -745,6 +745,7 @@ public:
 
 #if ENABLE(CSS_REGIONS)
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
+    const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }
 #endif
 
     // Apple-specific property getter methods
@@ -1097,6 +1098,7 @@ public:
 
 #if ENABLE(CSS_REGIONS)
     void setFlowThread(const AtomicString& flowThread) { SET_VAR(rareNonInheritedData, m_flowThread, flowThread); }
+    void setRegionThread(const AtomicString& regionThread) { SET_VAR(rareNonInheritedData, m_regionThread, regionThread); }
 #endif
 
     // Apple-specific property setters
@@ -1330,6 +1332,7 @@ public:
 
 #if ENABLE(CSS_REGIONS)
     static const AtomicString& initialFlowThread() { return nullAtom; }
+    static const AtomicString& initialRegionThread() { return nullAtom; }
 #endif
 
     // Keep these at the end.
