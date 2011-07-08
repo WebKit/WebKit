@@ -1,3 +1,16 @@
+2011-07-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: inspector/styles/styles-url-linkify.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=64171
+
+        Added image files because the behavior differs when they are not available.
+
+        Unreviewed test fix: added image files.
+
+        * inspector/styles/resources/fromcss.png: Added.
+        * inspector/styles/resources/iframed.png: Added.
+        * inspector/styles/styles-url-linkify-expected.txt:
+
 2011-07-08  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] http/tests/plugins/get-url.html is crashing on the bot
