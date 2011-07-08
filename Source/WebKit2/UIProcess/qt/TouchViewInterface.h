@@ -34,6 +34,11 @@ public:
     TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView);
     QTouchWebPage* pageView() const { return m_pageView; }
 
+    void panGestureStarted();
+    void panGestureRequestScroll(qreal deltaX, qreal deltaY);
+    void panGestureEnded();
+    void panGestureCancelled();
+
 private:
     /* Implementation of ViewInterface */
     virtual void setViewNeedsDisplay(const QRect&);

@@ -1,3 +1,42 @@
+2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Add basic support for panning gestures to the QTouchWebView
+        https://bugs.webkit.org/show_bug.cgi?id=64105
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch adds basic support for the panning gesture on the UI process side.
+
+        The events coming back from the WebProcess are processed through
+        the QtPanGestureRecognizer to recognize the pan gesture. When the
+        gesture is recognized, the actions are performed on the view through
+        the TouchViewInterface.
+
+        Currently, the viewport just move the page around without limit.
+        This will be improved when a physics engine is integrated.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::scroll):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/qt/QtPanGestureRecognizer.cpp: Added.
+        (WebKit::QtPanGestureRecognizer::QtPanGestureRecognizer):
+        (WebKit::QtPanGestureRecognizer::recognize):
+        (WebKit::QtPanGestureRecognizer::reset):
+        * UIProcess/qt/QtPanGestureRecognizer.h: Added.
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::panGestureStarted):
+        (WebKit::TouchViewInterface::panGestureRequestScroll):
+        (WebKit::TouchViewInterface::panGestureEnded):
+        (WebKit::TouchViewInterface::panGestureCancelled):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        (QTouchWebPageProxy::processDidCrash):
+        (QTouchWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebKit2.pro:
+
 2011-07-07  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Remove Symbian code.

@@ -28,6 +28,10 @@
 class QTouchWebPage;
 class QTouchWebViewPrivate;
 
+namespace WebKit {
+class TouchViewInterface;
+}
+
 class QWEBKIT_EXPORT QTouchWebView : public QGraphicsWidget
 {
     Q_OBJECT
@@ -40,6 +44,7 @@ public:
     QTouchWebPage *page();
 
 private:
+    friend class WebKit::TouchViewInterface;
     QTouchWebViewPrivate *d;
 };
 

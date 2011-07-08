@@ -18,9 +18,12 @@
  *
  */
 
+#include "config.h"
 #include "TouchViewInterface.h"
+
 #include "qtouchwebpage.h"
 #include "qtouchwebview.h"
+#include "qtouchwebview_p.h"
 
 namespace WebKit {
 
@@ -30,6 +33,28 @@ TouchViewInterface::TouchViewInterface(QTouchWebView* viewportView, QTouchWebPag
 {
     Q_ASSERT(m_viewportView);
     Q_ASSERT(m_pageView);
+}
+
+void TouchViewInterface::panGestureStarted()
+{
+    // FIXME: suspend the Web engine (stop animated GIF, etc).
+    // FIXME: initialize physics for panning (stop animation, etc).
+}
+
+void TouchViewInterface::panGestureRequestScroll(qreal deltaX, qreal deltaY)
+{
+    m_viewportView->d->scroll(deltaX, deltaY);
+}
+
+void TouchViewInterface::panGestureEnded()
+{
+    // FIXME: trigger physics engine for animation (the Web engine should be resumed after the animation.)
+}
+
+void TouchViewInterface::panGestureCancelled()
+{
+    // FIXME: reset physics.
+    // FIXME: resume the Web engine.
 }
 
 void TouchViewInterface::setViewNeedsDisplay(const QRect& invalidatedRect)

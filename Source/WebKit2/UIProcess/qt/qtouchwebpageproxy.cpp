@@ -18,15 +18,19 @@
  *
  */
 
+#include "config.h"
 #include "qtouchwebpageproxy.h"
+
 #include <TiledDrawingAreaProxy.h>
 #include <IntRect.h>
+#include <NativeWebTouchEvent.h>
 #include <WebEventFactoryQt.h>
 
 using namespace WebCore;
 
 QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, QWKContext* context, WKPageGroupRef pageGroupRef)
     : QtWebPageProxy(viewInterface, context, pageGroupRef)
+    , m_panGestureRecognizer(viewInterface)
 {
     init();
     // FIXME: add proper handling of viewport.
@@ -36,6 +40,12 @@ QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, QWKCon
 PassOwnPtr<DrawingAreaProxy> QTouchWebPageProxy::createDrawingAreaProxy()
 {
     return TiledDrawingAreaProxy::create(pageView(), m_webPageProxy.get());
+}
+
+void QTouchWebPageProxy::processDidCrash()
+{
+    QtWebPageProxy::processDidCrash();
+    m_panGestureRecognizer.reset();
 }
 
 void QTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
@@ -50,9 +60,12 @@ void QTouchWebPageProxy::setViewportArguments(const WebCore::ViewportArguments& 
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void QTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
+void QTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
-    // FIXME: Add gesture and synthetic click.
+    if (wasEventHandled)
+        m_panGestureRecognizer.reset();
+    else
+        m_panGestureRecognizer.recognize(event.nativeEvent());
 }
 #endif
 

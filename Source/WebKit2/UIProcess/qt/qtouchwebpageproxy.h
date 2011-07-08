@@ -21,11 +21,13 @@
 #ifndef qtouchwebpageproxy_h
 #define qtouchwebpageproxy_h
 
-#include "QtWebPageProxy.h"
+
 #include "DrawingAreaProxy.h"
-#include <wtf/PassOwnPtr.h>
-#include "qtouchwebpage.h"
+#include "QtPanGestureRecognizer.h"
+#include "QtWebPageProxy.h"
 #include "TouchViewInterface.h"
+#include "qtouchwebpage.h"
+#include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
 
@@ -41,6 +43,7 @@ protected:
 
 private:
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    virtual void processDidCrash();
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
@@ -51,6 +54,7 @@ private:
 
     void touchEvent(QTouchEvent*);
 
+    QtPanGestureRecognizer m_panGestureRecognizer;
     WebCore::ViewportArguments m_viewportArguments;
 };
 

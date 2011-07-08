@@ -37,6 +37,11 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     pageViewPrivate->setPage(&page);
 }
 
+void QTouchWebViewPrivate::scroll(qreal deltaX, qreal deltaY)
+{
+    pageView->moveBy(deltaX, deltaY);
+}
+
 QTouchWebView::QTouchWebView()
     : d(new QTouchWebViewPrivate(this))
 {
