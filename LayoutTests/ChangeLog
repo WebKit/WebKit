@@ -1,5 +1,13 @@
 2011-07-08  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; chromium test rebaseline.
+
+        New baseline for a failing test on GPU linux introduced in r90646.
+
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png:
+
+2011-07-08  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; chromium test expectations cleanup.
 
         Removed some duplicate expectations.
