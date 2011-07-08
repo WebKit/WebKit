@@ -40,6 +40,12 @@ If there are NULL characters in text nodes, they should not be copied to the cli
 
 Copy paste me
 green"
+|   <shadow:root>
+|     <div>
+|       "Copy paste mebold
+
+Copy paste me
+green"
 | "
 "
 | <div>

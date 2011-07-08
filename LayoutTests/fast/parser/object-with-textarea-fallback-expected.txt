@@ -13,6 +13,8 @@
 |       <textarea>
 |         name="editor1"
 |         this.value=""
+|         <shadow:root>
+|           <div>
 |       "
 "
 |     "

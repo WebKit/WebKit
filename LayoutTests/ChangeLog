@@ -1,3 +1,29 @@
+2011-07-07  MORITA Hajime  <morrita@google.com>
+
+        dump-as-markup.js should support shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=62447
+        
+        Reviewed by Ryosuke Niwa.
+
+        - Added shadow support to Markup._get()
+        - Updated expectations caused by this change.
+        - Added explanatory test cases for shadows.
+        
+        * editing/inserting/5607069-2-expected.txt:
+        * editing/inserting/5607069-3-expected.txt:
+        * editing/pasteboard/copy-null-characters-expected.txt:
+        * editing/selection/dump-as-markup-expected.txt:
+        * editing/selection/dump-as-markup-form-text-expected.txt:
+        * fast/parser/object-with-textarea-fallback-expected.txt:
+        * fast/dom/HTMLMeterElement/meter-element-markup-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-element-markup.html: Added.
+        * fast/dom/HTMLProgressElement/progress-element-markup-expected.txt: Added.
+        * fast/dom/HTMLProgressElement/progress-element-markup.html: Added.
+        * fast/dom/HTMLMeterElement/meter-element-markup.html:
+        * fast/dom/HTMLProgressElement/progress-element-markup.html:        
+        * resources/dump-as-markup.js:
+        (Markup._get):
+
 2011-07-07  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Use jsTestIsAsync and finishJSTest() in httponly-cookie.pl

@@ -18,6 +18,8 @@ Tests basic dump-as-markup functionality.
 |     <input>
 |       type="text"
 |       this.value=""
+|       <shadow:root>
+|         <div>
 |     "
 "
 |     <div>

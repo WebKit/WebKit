@@ -204,11 +204,19 @@ Markup._get = function(node, depth)
             }
         }
 
+        if (!Markup._useHTML5libOutputFormat && window.internals) {
+            var pseudoId = window.internals.shadowPseudoId(node);
+            if (pseudoId)
+                str += Markup._indent(depth + 1) + 'shadow:pseudoId="' + pseudoId + '"';
+        }
+
         if (!Markup._useHTML5libOutputFormat)
             if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA")
                 str += Markup._indent(depth + 1) + 'this.value="' + node.value + '"';
 
         break;
+    case 14: // See SHADOW_ROOT_NODE on Node::NodeType
+        str += "<shadow:root>";
     }
 
     for (var i = 0, len = node.childNodes.length; i < len; i++) {
@@ -217,6 +225,12 @@ Markup._get = function(node, depth)
             str += Markup._indent(depth + 1) + selection;
 
         str += Markup._get(node.childNodes[i], depth + 1);
+    }
+
+    if (!Markup._useHTML5libOutputFormat && node.nodeType == Node.ELEMENT_NODE && window.internals) {
+        var root = window.internals.shadowRoot(node);
+        if (root)
+            str += Markup._get(root, depth + 1);
     }
     
     var selection = Markup._getSelectionMarker(node, i);

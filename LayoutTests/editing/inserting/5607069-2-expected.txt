@@ -2,7 +2,11 @@ This tests for a bug where InsertLineBreak would insert a '\n' instead of a <br>
 | <input>
 |   type="text"
 |   this.value=""
+|   <shadow:root>
+|     <div>
 | <br>
 | <input>
 |   type="text"
 |   this.value=""
+|   <shadow:root>
+|     <div>

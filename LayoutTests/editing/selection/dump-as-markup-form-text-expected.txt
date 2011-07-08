@@ -11,11 +11,17 @@ Tests dump-as-markup for input and textarea forms.
 |     <input>
 |       value="original"
 |       this.value="replaced"
+|       <shadow:root>
+|         <div>
+|           "replaced"
 |     "
 "
 |     <textarea>
 |       this.value="replaced"
 |       "original"
+|       <shadow:root>
+|         <div>
+|           "replaced"
 |     "
 "
 |     <script>
