@@ -179,10 +179,8 @@ void QTouchWebPagePrivate::commitScaleChange()
 
 void QTouchWebPagePrivate::onScaleChanged()
 {
-#if ENABLE(TILED_BACKING_STORE)
     if (!m_isChangingScale)
         m_scaleCommitTimer.start(0.1, q);
-#endif
 }
 
 void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)

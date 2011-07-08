@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TiledDrawingAreaProxy.h"
 
-#if ENABLE(TILED_BACKING_STORE)
-
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
@@ -61,5 +59,3 @@ WebPageProxy* TiledDrawingAreaProxy::page()
 }
 
 } // namespace WebKit
-
-#endif

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TiledDrawingAreaTile.h"
 
-#if ENABLE(TILED_BACKING_STORE)
-
 #include "GraphicsContext.h"
 #include "ShareableBitmap.h"
 #include "TiledDrawingAreaProxy.h"
@@ -165,4 +163,3 @@ void TiledDrawingAreaTile::updateBackBuffer()
 }
 
 }
-#endif

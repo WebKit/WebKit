@@ -621,9 +621,7 @@ QWKHistory* QtWebPageProxy::history() const
 
 void QtWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
 {
-#if ENABLE(TILED_BACKING_STORE)
     m_webPageProxy->setResizesToContentsUsingLayoutSize(targetLayoutSize);
-#endif
 }
 
 void QtWebPageProxy::triggerAction(WebAction webAction, bool)

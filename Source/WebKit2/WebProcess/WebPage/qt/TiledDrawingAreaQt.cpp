@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TiledDrawingArea.h"
 
-#if ENABLE(TILED_BACKING_STORE)
-
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include <WebCore/GraphicsContext.h>
@@ -52,5 +50,3 @@ void TiledDrawingArea::paintIntoBitmap(ShareableBitmap* bitmap, const WebCore::I
 }
 
 } // namespace WebKit
-
-#endif // TILED_BACKING_STORE

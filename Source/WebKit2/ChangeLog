@@ -1,5 +1,22 @@
 2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
 
+        [Qt][WK2] Get rid of the check for TILED_BACKING_STORE in Qt
+        https://bugs.webkit.org/show_bug.cgi?id=64175
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Qt no longer supports building WebKit2 without TILED_BACKING_STORE.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPagePrivate::onScaleChanged):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::setResizesToContentsUsingLayoutSize):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        * WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp:
+
+2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
+
         [WK2] Do not forward touch events to the web process when it does not need them
         https://bugs.webkit.org/show_bug.cgi?id=64164
 
