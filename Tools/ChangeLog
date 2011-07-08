@@ -1,3 +1,23 @@
+2011-07-07  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy fails on chromium win
+        https://bugs.webkit.org/show_bug.cgi?id=64137
+
+        Reviewed by Eric Seidel.
+
+        test-webkitpy doesn't play nicely with the multiprocessing
+        module on win32. An earlier change actually reenabled the tests
+        on win32 by mistake.
+
+        This patch also fixes a few cases where path names will trip
+        things up on win32 (e.g., by testing unix paths on windows).
+        We do not lose any real coverage here with those fixes.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-07-07  Leandro Pereira  <leandro@profusion.mobi>
 
         [ImageDiff] Calculate/print difference right after reading baseline image.

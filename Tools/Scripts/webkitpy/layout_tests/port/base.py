@@ -604,11 +604,11 @@ class Port(object):
         raise NotImplementedError('Port.path_to_test_expectations_file')
 
     def relative_test_filename(self, filename):
-        """Relative unix-style path for a filename under the LayoutTests
+        """Returns a test_name a realtive unix-style path for a filename under the LayoutTests
         directory. Filenames outside the LayoutTests directory should raise
         an error."""
-        # FIXME: On Windows, does this return test_names with forward slashes,
-        # or windows-style relative paths?
+        # Ports that run on windows need to override this method to deal with
+        # filenames with backslashes in them.
         assert filename.startswith(self.layout_tests_dir()), "%s did not start with %s" % (filename, self.layout_tests_dir())
         return filename[len(self.layout_tests_dir()) + 1:]
 

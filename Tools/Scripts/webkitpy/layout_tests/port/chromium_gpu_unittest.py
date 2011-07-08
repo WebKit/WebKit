@@ -24,35 +24,37 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from webkitpy.tool import mocktool
 import chromium_gpu
 
 from webkitpy.layout_tests.port import factory
+from webkitpy.layout_tests.port import port_testcase
 
 class ChromiumGpuTest(unittest.TestCase):
-    def test_get_chromium_gpu_linux(self):
-        self.assertOverridesWorked('chromium-gpu-linux')
+    def integration_test_chromium_gpu_linux(self):
+        if sys.platform not in ('linux2', 'linux3'):
+            return
+        self.assert_port_works('chromium-gpu-linux')
+        self.assert_port_works('chromium-gpu-linux', 'chromium-gpu', 'linux2')
+        self.assert_port_works('chromium-gpu-linux', 'chromium-gpu', 'linux3')
 
-    def test_get_chromium_gpu_mac(self):
-        self.assertOverridesWorked('chromium-gpu-mac')
+    def integration_test_chromium_gpu_mac(self):
+        if sys.platform != 'darwin':
+            return
+        self.assert_port_works('chromium-gpu-mac')
+        self.assert_port_works('chromium-gpu-mac', 'chromium-gpu', 'darwin')
 
-    def test_get_chromium_gpu_win(self):
-        self.assertOverridesWorked('chromium-gpu-win')
+    def integration_test_chromium_gpu_win(self):
+        if sys.platform not in ('cygwin', 'win32'):
+            return
+        self.assert_port_works('chromium-gpu-win')
+        self.assert_port_works('chromium-gpu-win', 'chromium-gpu', 'win32')
+        self.assert_port_works('chromium-gpu-win', 'chromium-gpu', 'cygwin')
 
-    def test_get_chromium_gpu__on_linux(self):
-        self.assertOverridesWorked('chromium-gpu-linux', 'chromium-gpu', 'linux2')
-        self.assertOverridesWorked('chromium-gpu-linux', 'chromium-gpu', 'linux3')
-
-    def test_get_chromium_gpu__on_mac(self):
-        self.assertOverridesWorked('chromium-gpu-mac', 'chromium-gpu', 'darwin')
-
-    def test_get_chromium_gpu__on_win(self):
-        self.assertOverridesWorked('chromium-gpu-win', 'chromium-gpu', 'win32')
-        self.assertOverridesWorked('chromium-gpu-win', 'chromium-gpu', 'cygwin')
-
-    def assertOverridesWorked(self, port_name, input_name=None, platform=None):
+    def assert_port_works(self, port_name, input_name=None, platform=None):
         # test that we got the right port
         mock_options = mocktool.MockOptions(accelerated_compositing=None,
                                             accelerated_2d_canvas=None,
@@ -82,6 +84,8 @@ class ChromiumGpuTest(unittest.TestCase):
         # Test that we're limiting to the correct directories.
         # These two tests are picked mostly at random, but we make sure they
         # exist separately from being filtered out by the port.
+
+        # Note that this is using a real filesystem.
         files = port.tests(None)
 
         path = 'compositing/checkerboard.html'
@@ -123,4 +127,4 @@ class ChromiumGpuTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    port_testcase.main()

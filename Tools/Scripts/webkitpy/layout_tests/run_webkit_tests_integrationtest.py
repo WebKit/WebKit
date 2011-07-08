@@ -51,7 +51,7 @@ except ImportError:
 
 # FIXME: remove this when we fix test-webkitpy to work properly on cygwin
 # (bug 63846).
-SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin')
+SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin', 'win32')
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
