@@ -1,3 +1,11 @@
+2011-07-08  Herczeg Zoltan  <zherczeg@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Adding myself as a reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-07  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, remove old files from the tree and update paths to new ones.
