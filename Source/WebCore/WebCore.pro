@@ -835,6 +835,7 @@ SOURCES += \
     inspector/InspectorRuntimeAgent.cpp \
     inspector/InspectorState.cpp \
     inspector/InspectorStyleSheet.cpp \
+    inspector/InspectorStyleTextEditor.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
     inspector/InspectorWorkerAgent.cpp \
@@ -1794,6 +1795,7 @@ HEADERS += \
     inspector/InspectorRuntimeAgent.h \
     inspector/InspectorState.h \
     inspector/InspectorStyleSheet.h \
+    inspector/InspectorStyleTextEditor.h \
     inspector/InspectorTimelineAgent.h \
     inspector/InspectorWorkerAgent.h \
     inspector/InstrumentingAgents.h \

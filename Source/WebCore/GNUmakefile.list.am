@@ -2005,6 +2005,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorState.h \
 	Source/WebCore/inspector/InspectorStyleSheet.cpp \
 	Source/WebCore/inspector/InspectorStyleSheet.h \
+	Source/WebCore/inspector/InspectorStyleTextEditor.cpp \
+	Source/WebCore/inspector/InspectorStyleTextEditor.h \
 	Source/WebCore/inspector/InspectorTimelineAgent.cpp \
 	Source/WebCore/inspector/InspectorTimelineAgent.h \
 	Source/WebCore/inspector/InspectorValues.cpp \

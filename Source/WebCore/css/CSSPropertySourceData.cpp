@@ -54,6 +54,11 @@ SourceRange::SourceRange(unsigned start, unsigned end)
 {
 }
 
+unsigned SourceRange::length() const
+{
+    return end - start;
+}
+
 CSSPropertySourceData::CSSPropertySourceData(const String& name, const String& value, bool important, bool parsedOk, const SourceRange& range)
     : name(name)
     , value(value)

@@ -26,6 +26,7 @@
 #define InspectorStyleSheet_h
 
 #include "CSSPropertySourceData.h"
+#include "InspectorStyleTextEditor.h"
 #include "InspectorValues.h"
 #include "PlatformString.h"
 
@@ -135,23 +136,21 @@ public:
 private:
     InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet);
 
-    static unsigned disabledIndexByOrdinal(unsigned ordinal, bool canUseSubsequent, Vector<InspectorStyleProperty>& allProperties);
-
     bool styleText(String* result) const;
-    bool disableProperty(unsigned indexToDisable, Vector<InspectorStyleProperty>& allProperties);
-    bool enableProperty(unsigned indexToEnable, Vector<InspectorStyleProperty>& allProperties);
     bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
     void populateObjectWithStyleProperties(InspectorObject* result) const;
-    void shiftDisabledProperties(unsigned fromIndex, long offset);
-    bool replacePropertyInStyleText(const InspectorStyleProperty& property, const String& newText);
+    bool applyStyleText(const String&);
     String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;
     Vector<String> longhandProperties(const String& shorthandProperty) const;
+    NewLineAndWhitespace& newLineAndWhitespaceDelimiters() const;
 
     InspectorCSSId m_styleId;
     RefPtr<CSSStyleDeclaration> m_style;
     InspectorStyleSheet* m_parentStyleSheet;
     Vector<InspectorStyleProperty> m_disabledProperties;
+    mutable std::pair<String, String> m_format;
+    mutable bool m_formatAcquired;
 };
 
 class InspectorStyleSheet : public RefCounted<InspectorStyleSheet> {

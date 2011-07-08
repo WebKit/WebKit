@@ -3317,6 +3317,8 @@
             'inspector/InspectorState.h',
             'inspector/InspectorStyleSheet.cpp',
             'inspector/InspectorStyleSheet.h',
+            'inspector/InspectorStyleTextEditor.cpp',
+            'inspector/InspectorStyleTextEditor.h',
             'inspector/InspectorTimelineAgent.cpp',
             'inspector/InspectorTimelineAgent.h',
             'inspector/InspectorValues.cpp',

@@ -44,6 +44,7 @@ class CSSStyleRule;
 struct SourceRange {
     SourceRange();
     SourceRange(unsigned start, unsigned end);
+    unsigned length() const;
 
     unsigned start;
     unsigned end;

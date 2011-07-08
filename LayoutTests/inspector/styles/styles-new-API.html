@@ -198,7 +198,7 @@ function test()
                 return;
             }
             InspectorTest.addResult("");
-            InspectorTest.addResult("=== After two properties disabled, one property added, one property removed ===");
+            InspectorTest.addResult("=== After property manipulations ===");
             dumpRuleOrStyle(style);
             test_enableProperty(style.styleId);
         }
@@ -218,14 +218,14 @@ function test()
             // -moz-goog: 1***;
             // border-width: 0px;
 
-            var style = styles.matchedCSSRules[1].style;
-            CSSAgent.toggleProperty(style.styleId, 0, true); // height: 100%
-            CSSAgent.toggleProperty(style.styleId, 7, true); // border-width: 0px
-            CSSAgent.setPropertyText(style.styleId, 7, "font-size: 12px;", false);
-            CSSAgent.setPropertyText(style.styleId, 9, "font-size: 14px;", false);
-            CSSAgent.toggleProperty(style.styleId, 9, true); // font-size: 14px
-            CSSAgent.setPropertyText(style.styleId, 8, "border-width: 1px;", true);
-            CSSAgent.toggleProperty(style.styleId, 8, false); // border-width: 1px
+            var styleId = styles.matchedCSSRules[1].style.styleId;
+            CSSAgent.toggleProperty(styleId, 0, true); // height: 100%
+            CSSAgent.toggleProperty(styleId, 7, true); // border-width: 0px
+            CSSAgent.setPropertyText(styleId, 7, "font-size: 12px;", false);
+            CSSAgent.setPropertyText(styleId, 9, "font-size: 14px;", false);
+            CSSAgent.toggleProperty(styleId, 9, true); // font-size: 14px
+            CSSAgent.setPropertyText(styleId, 8, "border-width: 1px;", true);
+            CSSAgent.toggleProperty(styleId, 8, false); // border-width: 1px
             // height : 100% ; [d]
             // border: 1px solid;
             // border-width: 2px;
@@ -237,7 +237,7 @@ function test()
             // border-width: 1px;
             // font-size: 14px; [d]
 
-            CSSAgent.setPropertyText(style.styleId, 3, "", true, didDisableProperty);
+            CSSAgent.setPropertyText(styleId, 3, "", true, didDisableProperty);
         }
 
         function nodeCallback(node)

@@ -148,6 +148,7 @@ InspectorStyle::InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyl
     : m_styleId(styleId)
     , m_style(style)
     , m_parentStyleSheet(parentStyleSheet)
+    , m_formatAcquired(false)
 {
     ASSERT(m_style);
 }
@@ -175,14 +176,16 @@ PassRefPtr<InspectorObject> InspectorStyle::buildObjectForStyle() const
 }
 
 // This method does the following preprocessing of |propertyText| with |overwrite| == false and |index| past the last active property:
-// - If the last property (if present) has no subsequent whitespace in the style declaration, a space is prepended to |propertyText|.
 // - If the last property (if present) has no closing ";", the ";" is prepended to the current |propertyText| value.
+// - A heuristic formatting is attempted to retain the style structure.
 //
 // The propertyText (if not empty) is checked to be a valid style declaration (containing at least one property). If not,
 // the method returns false (denoting an error).
 bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, const String& propertyText, bool overwrite)
 {
     ASSERT(m_parentStyleSheet);
+    DEFINE_STATIC_LOCAL(String, bogusPropertyName, ("-webkit-boguz-propertee"));
+
     if (!m_parentStyleSheet->ensureParsedDataReady()) {
         *errorString = "Internal error: no stylesheet parsed data available";
         return false;
@@ -191,14 +194,11 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
     Vector<InspectorStyleProperty> allProperties;
     populateAllProperties(&allProperties);
 
-    unsigned propertyStart = 0; // Need to initialize to make the compiler happy.
-    long propertyLengthDelta;
-
     if (propertyText.stripWhiteSpace().length()) {
         RefPtr<CSSMutableStyleDeclaration> tempMutableStyle = CSSMutableStyleDeclaration::create();
         CSSParser p;
         RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
-        p.parseDeclaration(tempMutableStyle.get(), propertyText + " -webkit-boguz-propertee: none", &sourceData);
+        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData);
         Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
         unsigned propertyCount = propertyData.size();
 
@@ -209,94 +209,32 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
         }
 
         // Check for a proper propertyText termination (the parser could at least restore to the PROPERTY_NAME state).
-        if (propertyData.at(propertyCount - 1).name != "-webkit-boguz-propertee") {
+        if (propertyData.at(propertyCount - 1).name != bogusPropertyName) {
             *errorString = "Invalid property value";
             return false;
         }
     }
 
-    if (overwrite) {
-        ASSERT(index < allProperties.size());
-        InspectorStyleProperty& property = allProperties.at(index);
-        propertyStart = property.sourceData.range.start;
-        unsigned propertyEnd = property.sourceData.range.end;
-        unsigned oldLength = propertyEnd - propertyStart;
-        unsigned newLength = propertyText.length();
-        propertyLengthDelta = newLength - oldLength;
-
-        if (!property.disabled) {
-            bool success = replacePropertyInStyleText(property, propertyText);
-            if (!success) {
-                *errorString = "Internal error: could not replace property value";
-                return false;
-            }
-        } else {
-            unsigned textLength = propertyText.length();
-            unsigned disabledIndex = disabledIndexByOrdinal(index, false, allProperties);
-            if (!textLength) {
-                // Delete disabled property.
-                m_disabledProperties.remove(disabledIndex);
-            } else {
-                // Patch disabled property text.
-                m_disabledProperties.at(disabledIndex).rawText = propertyText;
-            }
-
-            // We should not shift subsequent disabled properties when altering a disabled property.
-            return true;
-        }
-    } else {
-        // Insert at index.
-        RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
-        if (!sourceData) {
-            *errorString = "Internal error: no CSS rule source found";
-            return false;
-        }
-        String text;
-        bool success = styleText(&text);
-        if (!success) {
-            *errorString = "Internal error: could not fetch style text";
-            return false;
-        }
-        propertyLengthDelta = propertyText.length();
-
-        bool insertLast = true;
-        if (index < allProperties.size()) {
-            InspectorStyleProperty& property = allProperties.at(index);
-            if (property.hasSource) {
-                propertyStart = property.sourceData.range.start;
-                // If inserting before a disabled property, it should be shifted, too.
-                insertLast = false;
-            }
-        }
-
-        String textToSet = propertyText;
-        if (insertLast) {
-            propertyStart = sourceData->styleSourceData->styleBodyRange.end - sourceData->styleSourceData->styleBodyRange.start;
-            if (propertyStart && propertyText.length()) {
-                const UChar* characters = text.characters();
-
-                unsigned curPos = propertyStart - 1; // The last position of style declaration, since propertyStart points past one.
-                while (curPos && isHTMLSpace(characters[curPos]))
-                    --curPos;
-                if (curPos && characters[curPos] != ';') {
-                    // Prepend a ";" to the property text if appending to a style declaration where
-                    // the last property has no trailing ";".
-                    textToSet.insert("; ", 0);
-                } else if (!isHTMLSpace(characters[propertyStart - 1])) {
-                    // Prepend a " " if the last declaration character is not an HTML space.
-                    textToSet.insert(" ", 0);
-                }
-            }
-        }
-
-        text.insert(textToSet, propertyStart);
-        m_parentStyleSheet->setStyleText(m_style.get(), text);
+    RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
+    if (!sourceData) {
+        *errorString = "Internal error: no CSS rule source found";
+        return false;
     }
 
-    // Recompute subsequent disabled property ranges if acting on a non-disabled property.
-    shiftDisabledProperties(disabledIndexByOrdinal(index, true, allProperties), propertyLengthDelta);
+    String text;
+    bool success = styleText(&text);
+    if (!success) {
+        *errorString = "Internal error: could not fetch style text";
+        return false;
+    }
 
-    return true;
+    InspectorStyleTextEditor editor(&allProperties, &m_disabledProperties, text, newLineAndWhitespaceDelimiters());
+    if (overwrite)
+        editor.replaceProperty(index, propertyText);
+    else
+        editor.insertProperty(index, propertyText, sourceData->styleSourceData->styleBodyRange.length());
+
+    return applyStyleText(editor.styleText());
 }
 
 bool InspectorStyle::toggleProperty(ErrorString* errorString, unsigned index, bool disable)
@@ -306,9 +244,17 @@ bool InspectorStyle::toggleProperty(ErrorString* errorString, unsigned index, bo
         *errorString = "Can toggle only source-based properties";
         return false;
     }
+
     RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet->ruleSourceDataFor(m_style.get());
     if (!sourceData) {
         *errorString = "Internal error: No source data for the style found";
+        return false;
+    }
+
+    String text;
+    bool success = styleText(&text);
+    if (!success) {
+        *errorString = "Internal error: could not fetch style text";
         return false;
     }
 
@@ -323,29 +269,13 @@ bool InspectorStyle::toggleProperty(ErrorString* errorString, unsigned index, bo
     if (property.disabled == disable)
         return true; // Idempotent operation.
 
-    bool success;
-    if (!disable)
-        success = enableProperty(index, allProperties);
+    InspectorStyleTextEditor editor(&allProperties, &m_disabledProperties, text, newLineAndWhitespaceDelimiters());
+    if (disable)
+        editor.disableProperty(index);
     else
-        success = disableProperty(index, allProperties);
+        editor.enableProperty(index);
 
-    return success;
-}
-
-// static
-unsigned InspectorStyle::disabledIndexByOrdinal(unsigned ordinal, bool canUseSubsequent, Vector<InspectorStyleProperty>& allProperties)
-{
-    unsigned disabledIndex = 0;
-    for (unsigned i = 0, size = allProperties.size(); i < size; ++i) {
-        InspectorStyleProperty& property = allProperties.at(i);
-        if (property.disabled) {
-            if (i == ordinal || (canUseSubsequent && i > ordinal))
-                return disabledIndex;
-            ++disabledIndex;
-        }
-    }
-
-    return UINT_MAX;
+    return applyStyleText(editor.styleText());
 }
 
 bool InspectorStyle::styleText(String* result) const
@@ -363,51 +293,6 @@ bool InspectorStyle::styleText(String* result) const
     SourceRange& bodyRange = sourceData->styleSourceData->styleBodyRange;
     *result = styleSheetText.substring(bodyRange.start, bodyRange.end - bodyRange.start);
     return true;
-}
-
-bool InspectorStyle::disableProperty(unsigned indexToDisable, Vector<InspectorStyleProperty>& allProperties)
-{
-    // Precondition: |indexToEnable| points to an enabled property.
-    const InspectorStyleProperty& property = allProperties.at(indexToDisable);
-    unsigned propertyStart = property.sourceData.range.start;
-    InspectorStyleProperty disabledProperty(property);
-    String oldStyleText;
-    bool success = styleText(&oldStyleText);
-    if (!success)
-        return false;
-    disabledProperty.setRawTextFromStyleDeclaration(oldStyleText);
-    disabledProperty.disabled = true;
-    disabledProperty.sourceData.range.end = propertyStart;
-    // This may have to be negated below.
-    long propertyLength = property.sourceData.range.end - propertyStart;
-    success = replacePropertyInStyleText(property, "");
-    if (!success)
-        return false;
-
-    // Add disabled property at correct position.
-    unsigned insertionIndex = disabledIndexByOrdinal(indexToDisable, true, allProperties);
-    if (insertionIndex == UINT_MAX)
-        m_disabledProperties.append(disabledProperty);
-    else {
-        m_disabledProperties.insert(insertionIndex, disabledProperty);
-        shiftDisabledProperties(insertionIndex + 1, -propertyLength); // Property removed from text - shift these back.
-    }
-    return true;
-}
-
-bool InspectorStyle::enableProperty(unsigned indexToEnable, Vector<InspectorStyleProperty>& allProperties)
-{
-    // Precondition: |indexToEnable| points to a disabled property.
-    unsigned disabledIndex = disabledIndexByOrdinal(indexToEnable, false, allProperties);
-    if (disabledIndex == UINT_MAX)
-        return false;
-
-    InspectorStyleProperty disabledProperty = m_disabledProperties.at(disabledIndex);
-    m_disabledProperties.remove(disabledIndex);
-    bool success = replacePropertyInStyleText(disabledProperty, disabledProperty.rawText);
-    if (success)
-        shiftDisabledProperties(disabledIndex, disabledProperty.rawText.length());
-    return success;
 }
 
 bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* result) const
@@ -546,27 +431,9 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
     result->setArray("shorthandEntries", shorthandEntries);
 }
 
-
-void InspectorStyle::shiftDisabledProperties(unsigned fromIndex, long delta)
+bool InspectorStyle::applyStyleText(const String& text)
 {
-    for (unsigned i = fromIndex, size = m_disabledProperties.size(); i < size; ++i) {
-        SourceRange& range = m_disabledProperties.at(i).sourceData.range;
-        range.start += delta;
-        range.end += delta;
-    }
-}
-
-bool InspectorStyle::replacePropertyInStyleText(const InspectorStyleProperty& property, const String& newText)
-{
-    // Precondition: m_parentStyleSheet->ensureParsedDataReady() has been called successfully.
-    String text;
-    bool success = styleText(&text);
-    if (!success)
-        return false;
-    const SourceRange& range = property.sourceData.range;
-    text.replace(range.start, range.end - range.start, newText);
-    success = m_parentStyleSheet->setStyleText(m_style.get(), text);
-    return success;
+    return m_parentStyleSheet->setStyleText(m_style.get(), text);
 }
 
 String InspectorStyle::shorthandValue(const String& shorthandProperty) const
@@ -618,6 +485,72 @@ Vector<String> InspectorStyle::longhandProperties(const String& shorthandPropert
         properties.append(individualProperty);
     }
     return properties;
+}
+
+NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
+{
+    DEFINE_STATIC_LOCAL(String, defaultPrefix, ("    "));
+
+    if (m_formatAcquired)
+        return m_format;
+
+    RefPtr<CSSRuleSourceData> sourceData = (m_parentStyleSheet && m_parentStyleSheet->ensureParsedDataReady()) ? m_parentStyleSheet->ruleSourceDataFor(m_style.get()) : 0;
+    Vector<CSSPropertySourceData>* sourcePropertyData = sourceData ? &(sourceData->styleSourceData->propertyData) : 0;
+    int propertyCount;
+    if (!sourcePropertyData || !(propertyCount = sourcePropertyData->size())) {
+        m_format.first = "\n";
+        m_format.second = defaultPrefix;
+        return m_format; // Do not remember the default formatting and attempt to acquire it later.
+    }
+
+    String text;
+    bool success = styleText(&text);
+    ASSERT_UNUSED(success, success);
+
+    m_formatAcquired = true;
+
+    String formatLineFeed = "";
+    String formatPropertyPrefix = "";
+    String prefix;
+    String candidatePrefix = defaultPrefix;
+    int scanStart = 0;
+    int propertyIndex = 0;
+    bool isFullPrefixScanned = false;
+    bool lineFeedTerminated = false;
+    const UChar* characters = text.characters();
+    while (propertyIndex < propertyCount) {
+        const WebCore::CSSPropertySourceData& currentProperty = sourcePropertyData->at(propertyIndex++);
+
+        bool processNextProperty = false;
+        int scanEnd = currentProperty.range.start;
+        for (int i = scanStart; i < scanEnd; ++i) {
+            UChar ch = characters[i];
+            bool isLineFeed = isHTMLLineBreak(ch);
+            if (isLineFeed) {
+                if (!lineFeedTerminated)
+                    formatLineFeed.append(ch);
+            } else if (isHTMLSpace(ch))
+                prefix.append(ch);
+            else {
+                candidatePrefix = prefix;
+                prefix = "";
+                scanStart = currentProperty.range.end;
+                ++propertyIndex;
+                processNextProperty = true;
+                break;
+            }
+            if (!isLineFeed && formatLineFeed.length())
+                lineFeedTerminated = true;
+        }
+        if (!processNextProperty) {
+            isFullPrefixScanned = true;
+            break;
+        }
+    }
+
+    m_format.first = formatLineFeed;
+    m_format.second = isFullPrefixScanned ? prefix : candidatePrefix;
+    return m_format;
 }
 
 PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL)

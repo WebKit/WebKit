@@ -1,3 +1,41 @@
+2011-07-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Adding CSS properties results in messy style rules
+        https://bugs.webkit.org/show_bug.cgi?id=63622
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/styles/styles-formatting.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPropertySourceData.cpp:
+        (WebCore::SourceRange::length):
+        * css/CSSPropertySourceData.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::InspectorStyle):
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyle::toggleProperty):
+        (WebCore::InspectorStyle::applyStyleText):
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorStyleTextEditor.cpp: Added.
+        (WebCore::InspectorStyleTextEditor::InspectorStyleTextEditor):
+        (WebCore::InspectorStyleTextEditor::insertProperty):
+        (WebCore::InspectorStyleTextEditor::replaceProperty):
+        (WebCore::InspectorStyleTextEditor::removeProperty):
+        (WebCore::InspectorStyleTextEditor::enableProperty):
+        (WebCore::InspectorStyleTextEditor::disableProperty):
+        (WebCore::InspectorStyleTextEditor::disabledIndexByOrdinal):
+        (WebCore::InspectorStyleTextEditor::shiftDisabledProperties):
+        (WebCore::InspectorStyleTextEditor::internalReplaceProperty):
+        * inspector/InspectorStyleTextEditor.h: Added.
+        (WebCore::InspectorStyleTextEditor::styleText):
+
 2011-07-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Quotes are rendered as &quot; in the DOM tree

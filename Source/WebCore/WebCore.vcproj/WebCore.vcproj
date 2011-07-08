@@ -67754,6 +67754,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorStyleTextEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorStyleTextEditor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.cpp"
 				>
 			</File>

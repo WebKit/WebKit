@@ -310,12 +310,14 @@ body: []
 
 === After style text set ===
 
-StyleSheet: 'html *, body[foo="bar"] {        color: white; background: black;}body {    text-align: justify;}'
+StyleSheet: 'html *, body[foo="bar"] {
+    color: white; background: black;
+}body {    text-align: justify;}'
 
 rule
 html *, body[foo="bar"]: []
-['color':'white'] @[8-21] active
-['background':'black'] @[22-40] active
+['color':'white'] @[5-18] active
+['background':'black'] @[19-37] active
 ['background-image':'initial'] @[undefined-undefined] style
 ['background-repeat-x':'initial'] @[undefined-undefined] style
 ['background-repeat-y':'initial'] @[undefined-undefined] style
@@ -362,8 +364,8 @@ body: []
 
 rule
 html *, body[foo="bar"]: []
-['color':'white'] @[8-21] active
-['background':'black'] @[22-40] active
+['color':'white'] @[5-18] active
+['background':'black'] @[19-37] active
 ['background-image':'initial'] @[undefined-undefined] style
 ['background-repeat-x':'initial'] @[undefined-undefined] style
 ['background-repeat-y':'initial'] @[undefined-undefined] style
@@ -380,7 +382,7 @@ body: []
 
 rule
 body: [inspector]
-['font-family':'serif'] @[0-19] active
+['font-family':'serif'] @[5-24] active
 
 rule
 body.main1: []
@@ -400,18 +402,18 @@ body.main2: []
 ['background-clip':'initial' is-important] @[undefined-undefined] style
 ['background-color':'green' is-important] @[undefined-undefined] style
 
-=== After two properties disabled, one property added, one property removed ===
+=== After property manipulations ===
 
 style
 raw style
 [text='height : 100% ;'] disabled
-['border':'1px solid'] @[6-24] active
-['border-width':'2px'] @[25-43] inactive
-['googles':'abra' non-parsed] @[45-59] active
-['foo':'.bar' non-parsed] @[60-70] active
-['-moz-goog':'1***' non-parsed] @[71-87] active
+['border':'1px solid'] @[1-19] active
+['border-width':'2px'] @[20-38] inactive
+['googles':'abra' non-parsed] @[40-54] active
+['foo':'.bar' non-parsed] @[55-65] active
+['-moz-goog':'1***' non-parsed] @[66-82] active
 ['font-size':'12px'] @[88-104] active
-['border-width':'1px'] @[104-122] active
+['border-width':'1px'] @[109-127] active
 [text='font-size: 14px;'] disabled
 ['border-top-style':'solid'] @[undefined-undefined] style
 ['border-right-style':'solid'] @[undefined-undefined] style
@@ -428,14 +430,14 @@ raw style
 style
 raw style
 [text='height : 100% ;'] disabled
-['border':'1px solid'] @[6-24] active
-['border-width':'2px'] @[25-43] inactive
-['googles':'abra' non-parsed] @[45-59] active
-['foo':'.bar' non-parsed] @[60-70] active
-['-moz-goog':'1***' non-parsed] @[71-87] active
+['border':'1px solid'] @[1-19] active
+['border-width':'2px'] @[20-38] inactive
+['googles':'abra' non-parsed] @[40-54] active
+['foo':'.bar' non-parsed] @[55-65] active
+['-moz-goog':'1***' non-parsed] @[66-82] active
 ['font-size':'12px'] @[88-104] inactive
-['border-width':'1px'] @[104-122] active
-['font-size':'14px'] @[123-139] active
+['border-width':'1px'] @[109-127] active
+['font-size':'14px'] @[132-148] active
 ['border-top-style':'solid'] @[undefined-undefined] style
 ['border-right-style':'solid'] @[undefined-undefined] style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
