@@ -1,3 +1,19 @@
+2011-07-08  Chang Shu  <cshu@webkit.org>
+
+        Rename "makeSecure" to "fill" and remove the support for displaying last character
+        to avoid layering violatation.
+        https://bugs.webkit.org/show_bug.cgi?id=59114
+
+        Reviewed by Alexey Proskuryakov.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.order:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::fill):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::fill):
+
 2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2] Do not forward touch events to the web process when it does not need them

@@ -104,7 +104,7 @@ void WebDrawText(WebTextRenderInfo* info)
         GraphicsContext context(info->cgContext);
         String drawString(info->text, info->length);
         if (info->drawAsPassword)
-            drawString = drawString.impl()->secure(WTF::Unicode::bullet);
+            drawString.fill(WTF::Unicode::bullet);
 
         context.save();
 

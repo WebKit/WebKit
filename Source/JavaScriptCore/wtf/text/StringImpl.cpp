@@ -270,17 +270,15 @@ PassRefPtr<StringImpl> StringImpl::upper()
     return newImpl.release();
 }
 
-PassRefPtr<StringImpl> StringImpl::secure(UChar character, LastCharacterBehavior behavior)
+PassRefPtr<StringImpl> StringImpl::fill(UChar character)
 {
     if (!m_length)
         return this;
 
     UChar* data;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
-    unsigned lastCharacterIndex = m_length - 1;
-    for (unsigned i = 0; i < lastCharacterIndex; ++i)
+    for (unsigned i = 0; i < m_length; ++i)
         data[i] = character;
-    data[lastCharacterIndex] = (behavior == ObscureLastCharacter) ? character : m_data[lastCharacterIndex];
     return newImpl.release();
 }
 

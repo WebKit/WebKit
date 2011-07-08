@@ -1170,13 +1170,13 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
         case TSNONE:
             break;
         case TSCIRCLE:
-            m_text.makeSecure(whiteBullet);
+            m_text.fill(whiteBullet);
             break;
         case TSDISC:
-            m_text.makeSecure(bullet);
+            m_text.fill(bullet);
             break;
         case TSSQUARE:
-            m_text.makeSecure(blackSquare);
+            m_text.fill(blackSquare);
         }
     }
 

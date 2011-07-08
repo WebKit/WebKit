@@ -1,3 +1,18 @@
+2011-07-08  Chang Shu  <cshu@webkit.org>
+
+        Update calling sites after function renamed.
+        https://bugs.webkit.org/show_bug.cgi?id=59114
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, just refactoring.
+
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setTextInternal):
+
 2011-07-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Parse content: -webkit-from-flow
