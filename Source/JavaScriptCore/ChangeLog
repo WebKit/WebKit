@@ -1,3 +1,21 @@
+2011-07-08  Kalev Lember  <kalev@smartlink.ee>
+
+        Reviewed by Adam Roben.
+
+        Add missing _WIN32_WINNT and WINVER definitions
+        https://bugs.webkit.org/show_bug.cgi?id=59702
+
+        Moved _WIN32_WINNT and WINVER definitions to config.h so that they are
+        available for all source files.
+
+        In particular, wtf/FastMalloc.cpp uses CreateTimerQueueTimer and
+        DeleteTimerQueueTimer which are both guarded by
+        #if (_WIN32_WINNT >= 0x0500)
+        in MinGW headers.
+
+        * config.h:
+        * wtf/Assertions.cpp:
+
 2011-07-08  Chang Shu  <cshu@webkit.org>
 
         Rename "makeSecure" to "fill" and remove the support for displaying last character
