@@ -1016,7 +1016,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     if (isTextField()) {
         unsigned max = visibleValue().length();
         if (document()->focusedNode() == this)
-            setSelectionRange(max, max);
+            WebCore::setSelectionRange(this, max, max);
         else
             cacheSelection(max, max);
         m_suggestedValue = String();

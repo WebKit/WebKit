@@ -1,3 +1,35 @@
+2011-07-08  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r90662.
+        http://trac.webkit.org/changeset/90662
+        https://bugs.webkit.org/show_bug.cgi?id=64210
+
+        Introduced regressions in Chromium browser tests (Requested by
+        rniwa on #webkit).
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::selectedText):
+        (WebCore::AccessibilityRenderObject::selectedTextRange):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        (WebCore::HTMLTextFormControlElement::selectionStart):
+        (WebCore::HTMLTextFormControlElement::selectionEnd):
+        (WebCore::HTMLTextFormControlElement::selection):
+        (WebCore::HTMLTextFormControlElement::restoreCachedSelection):
+        (WebCore::HTMLTextFormControlElement::selectionChanged):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::selectionStart):
+        (WebCore::RenderTextControl::selectionEnd):
+        (WebCore::RenderTextControl::hasVisibleTextArea):
+        (WebCore::setSelectionRange):
+        (WebCore::setContainerAndOffsetForRange):
+        (WebCore::RenderTextControl::selection):
+        * rendering/RenderTextControl.h:
+
 2011-07-08  Brian Salomon  <bsalomon@google.com>
 
         Make GL context current before updating layer texture using skia-gpu

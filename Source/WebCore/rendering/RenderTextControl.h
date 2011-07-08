@@ -26,7 +26,6 @@
 
 namespace WebCore {
 
-class HTMLTextFormControlElement;
 class VisibleSelection;
 class TextControlInnerElement;
 class TextControlInnerTextElement;
@@ -35,12 +34,15 @@ class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 
-    HTMLTextFormControlElement* textFormControlElement();
     virtual HTMLElement* innerTextElement() const = 0;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
     bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
     void setLastChangeWasUserEdit(bool lastChangeWasUserEdit);
+
+    int selectionStart() const;
+    int selectionEnd() const;
+    PassRefPtr<Range> selection(int start, int end) const;
 
     virtual void subtreeHasChanged();
     String text();
@@ -94,6 +96,7 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
+    bool hasVisibleTextArea() const;
     friend void setSelectionRange(Node*, int start, int end);
     static bool isSelectableElement(HTMLElement*, Node*);
     
@@ -105,6 +108,8 @@ private:
 
     bool m_lastChangeWasUserEdit;
 };
+
+void setSelectionRange(Node*, int start, int end);
 
 inline RenderTextControl* toRenderTextControl(RenderObject* object)
 { 

@@ -662,16 +662,6 @@ void HTMLTextFormControlElement::select()
     setSelectionRange(0, numeric_limits<int>::max());
 }
 
-String HTMLTextFormControlElement::selectedText() const
-{
-    // FIXME: We should be able to extract selected contents even if there were no renderer.
-    if (!renderer() || renderer()->isTextControl())
-        return String();
-
-    RenderTextControl* textControl = toRenderTextControl(renderer());
-    return textControl->text().substring(selectionStart(), selectionEnd() - selectionStart());
-}
-
 void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 {
     if (m_textAsOfLastFormControlChangeEvent != value()) {
@@ -681,46 +671,9 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-static inline bool hasVisibleTextArea(RenderTextControl* textControl)
-{
-    ASSERT(textControl);
-    HTMLElement* innerText = textControl->innerTextElement();
-    return textControl->style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
-}
-
 void HTMLTextFormControlElement::setSelectionRange(int start, int end)
 {
-    document()->updateLayoutIgnorePendingStylesheets();
-
-    if (!renderer() || !renderer()->isTextControl())
-        return;
-
-    end = max(end, 0);
-    start = min(max(start, 0), end);
-
-    RenderTextControl* control = toRenderTextControl(renderer());
-    if (!hasVisibleTextArea(control)) {
-        cacheSelection(start, end);
-        return;
-    }
-
-    VisiblePosition startPosition = control->visiblePositionForIndex(start);
-    VisiblePosition endPosition;
-    if (start == end)
-        endPosition = startPosition;
-    else
-        endPosition = control->visiblePositionForIndex(end);
-
-    // startPosition and endPosition can be null position for example when
-    // "-webkit-user-select: none" style attribute is specified.
-    if (startPosition.isNotNull() && endPosition.isNotNull()) {
-        ASSERT(startPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == this
-            && endPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == this);
-    }
-
-    VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
-    if (Frame* frame = document()->frame())
-        frame->selection()->setSelection(newSelection);
+    WebCore::setSelectionRange(this, start, end);
 }
 
 int HTMLTextFormControlElement::selectionStart() const
@@ -729,16 +682,9 @@ int HTMLTextFormControlElement::selectionStart() const
         return 0;
     if (document()->focusedNode() != this && hasCachedSelectionStart())
         return m_cachedSelectionStart;
-
-    Frame* frame = document()->frame();
-    if (!renderer() || !frame)
+    if (!renderer())
         return 0;
-
-    HTMLElement* innerText = toRenderTextControl(renderer())->innerTextElement();
-    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
-    // from frame->selection->start() can blow us from underneath. Also, function ordering is
-    // usually dependent on the compiler.
-    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->start());
+    return toRenderTextControl(renderer())->selectionStart();
 }
 
 int HTMLTextFormControlElement::selectionEnd() const
@@ -747,68 +693,21 @@ int HTMLTextFormControlElement::selectionEnd() const
         return 0;
     if (document()->focusedNode() != this && hasCachedSelectionEnd())
         return m_cachedSelectionEnd;
-
-    Frame* frame = document()->frame();
-    if (!renderer() || !frame)
+    if (!renderer())
         return 0;
-
-    HTMLElement* innerText = toRenderTextControl(renderer())->innerTextElement();
-    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
-    // from frame->selection->start() can blow us from underneath. Also, function ordering is
-    // usually dependent on the compiler.
-    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->end());
-}
-
-static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& containerNode, int& offsetInContainer)
-{
-    if (node->isTextNode()) {
-        containerNode = node;
-        offsetInContainer = offset;
-    } else {
-        containerNode = node->parentNode();
-        offsetInContainer = node->nodeIndex() + offset;
-    }
+    return toRenderTextControl(renderer())->selectionEnd();
 }
 
 PassRefPtr<Range> HTMLTextFormControlElement::selection() const
 {
     if (!renderer() || !isTextFormControl() || !hasCachedSelectionStart() || !hasCachedSelectionEnd())
         return 0;
-    
-    int start = m_cachedSelectionStart;
-    int end = m_cachedSelectionEnd;
+    return toRenderTextControl(renderer())->selection(m_cachedSelectionStart, m_cachedSelectionEnd);
+}
 
-    ASSERT(start <= end);
-    HTMLElement* innerText = toRenderTextControl(renderer())->innerTextElement();
-    if (!innerText)
-        return 0;
-
-    if (!innerText->firstChild())
-        return Range::create(document(), innerText, 0, innerText, 0);
-
-    int offset = 0;
-    Node* startNode = 0;
-    Node* endNode = 0;
-    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
-        ASSERT(!node->firstChild());
-        ASSERT(node->isTextNode() || node->hasTagName(brTag));
-        int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
-
-        if (offset <= start && start <= offset + length)
-            setContainerAndOffsetForRange(node, start - offset, startNode, start);
-
-        if (offset <= end && end <= offset + length) {
-            setContainerAndOffsetForRange(node, end - offset, endNode, end);
-            break;
-        }
-
-        offset += length;
-    }
-
-    if (!startNode || !endNode)
-        return 0;
-
-    return Range::create(document(), startNode, start, endNode, end);
+void HTMLTextFormControlElement::restoreCachedSelection()
+{
+    WebCore::setSelectionRange(this, m_cachedSelectionStart, m_cachedSelectionEnd);
 }
 
 void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
@@ -816,7 +715,8 @@ void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
     if (!renderer() || !isTextFormControl())
         return;
 
-    cacheSelection(selectionStart(), selectionEnd());
+    RenderTextControl* renderTextControl = toRenderTextControl(renderer());
+    cacheSelection(renderTextControl->selectionStart(), renderTextControl->selectionEnd());
 
     if (Frame* frame = document()->frame()) {
         if (frame->selection()->isRange() && userTriggered)
