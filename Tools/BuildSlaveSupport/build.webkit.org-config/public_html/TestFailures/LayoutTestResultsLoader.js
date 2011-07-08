@@ -30,16 +30,19 @@ function LayoutTestResultsLoader(builder) {
 LayoutTestResultsLoader.prototype = {
     start: function(buildName, callback, errorCallback) {
         var cacheKey = 'LayoutTestResultsLoader.' + this._builder.name + '.' + buildName;
-        const currentCachedDataVersion = 2;
+        const currentCachedDataVersion = 3;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
             if (cachedData.version === currentCachedDataVersion) {
-                callback(cachedData.tests, cachedData.tooManyFailures);
+                if (cachedData.error)
+                    errorCallback(cachedData.tests, cachedData.tooManyFailures);
+                else
+                    callback(cachedData.tests, cachedData.tooManyFailures);
                 return;
             }
         }
 
-        var result = { tests: {}, tooManyFailures: false, version: currentCachedDataVersion };
+        var result = { tests: {}, tooManyFailures: false, error: false, version: currentCachedDataVersion };
 
         function cacheParseResultsAndCallCallback(parseResult) {
             result.tests = parseResult.tests;
@@ -53,6 +56,7 @@ LayoutTestResultsLoader.prototype = {
         self._fetchAndParseNRWTResults(buildName, cacheParseResultsAndCallCallback, function() {
             self._fetchAndParseORWTResults(buildName, cacheParseResultsAndCallCallback, function() {
                 // We couldn't fetch results for this build.
+                result.error = true;
                 PersistentCache.set(cacheKey, result);
                 errorCallback(result.tests, result.tooManyFailures);
             });

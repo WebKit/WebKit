@@ -1,3 +1,17 @@
+2011-07-08  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures remember that run-webkit-tests timed out, even across reloads
+
+        Fixes <http://webkit.org/b/64193> TestFailures page incorrectly thinks all tests passed in
+        http://build.webkit.org/builders/Windows%207%20Release%20(Tests)/builds/14589 after a reload
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Store an "error" attribute in the cached data.
+        When true, it indicates that there was an error retrieving the results for this build and
+        that the errorCallback should be called.
+
 2011-07-08  Adam Barth  <abarth@webkit.org>
 
         Teach garden-o-matic how to display test results
