@@ -966,6 +966,10 @@ WebHistoryItem WebFrameImpl::previousHistoryItem() const
 
 WebHistoryItem WebFrameImpl::currentHistoryItem() const
 {
+    // We're shutting down.
+    if (!m_frame->loader()->activeDocumentLoader())
+        return WebHistoryItem();
+
     // If we are still loading, then we don't want to clobber the current
     // history item as this could cause us to lose the scroll position and
     // document state.  However, it is OK for new navigations.

@@ -1,3 +1,18 @@
+2011-07-08  Nate Chapin  <japhet@chromium.org>
+
+        Check activeDocumentLoader() in
+        WebFrameImpl::currentHistoryItem() and return
+        early if null, since that should mean we're
+        shutting down.
+        https://bugs.webkit.org/show_bug.cgi?id=52923
+
+        Reviewed by Darin Fisher.
+
+        No known repro, so no new test.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::currentHistoryItem):
+
 2011-07-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for clearing cache and cookies from network panel.
