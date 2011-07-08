@@ -55,7 +55,8 @@ function extension_testCreatePanel(nextTest)
     }
     // The panel code is expected to report its size via InspectorTest.panelCallback()
     evaluateOnFrontend("InspectorTest.waitForPanel(reply);", nextTest);
-    webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", onPanelCreated);
+    var basePath = location.pathname.replace(/\/[^/]*$/, "/");
+    webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "extension-panel.html", onPanelCreated);
 }
 
 function extension_testSidebarPage(nextTest)
@@ -65,7 +66,8 @@ function extension_testSidebarPage(nextTest)
         output("Sidebar created");
         dumpObject(sidebar);
         sidebar.onUpdated.addListener(nextTest);
-        sidebar.setPage("extension-sidebar.html");
+        var basePath = location.pathname.replace(/\/[^/]*$/, "/");
+        sidebar.setPage(basePath + "extension-sidebar.html");
     }
     webInspector.panels.elements.createSidebarPane("Test Sidebar", onSidebarCreated);
 }

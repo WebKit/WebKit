@@ -1,3 +1,12 @@
+2011-07-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: secure access to extensions API
+        https://bugs.webkit.org/show_bug.cgi?id=64080
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/extensions/extensions.html: add explicit base paths to extension resource being loaded.
+
 2011-07-08  Andras Becsi  <abecsi@webkit.org>
 
         Add BUG modifier which was accidentally removed in the previous commit
