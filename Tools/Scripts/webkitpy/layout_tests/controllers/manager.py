@@ -569,7 +569,15 @@ class Manager(object):
                 locked_inputs.append(test_input)
             else:
                 unlocked_inputs.append(test_input)
-        return [TestShard('locked_tests', locked_inputs)], [TestShard('unlocked_tests', unlocked_inputs)]
+
+        locked_shards = []
+        unlocked_shards = []
+        if locked_inputs:
+            locked_shards = [TestShard('locked_tests', locked_inputs)]
+        if unlocked_inputs:
+            unlocked_shards = [TestShard('unlocked_tests', unlocked_inputs)]
+
+        return locked_shards, unlocked_shards
 
     def _shard_every_file(self, test_files):
         """Returns two lists of shards, each shard containing a single test file.

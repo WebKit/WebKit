@@ -67,11 +67,12 @@ class ShardingTests(unittest.TestCase):
         "dom/html/level2/html/HTMLAnchorElement06.html",
     ]
 
-    def get_shards(self, num_workers, fully_parallel):
+    def get_shards(self, num_workers, fully_parallel, test_list=None):
+        test_list = test_list or self.test_list
         port = layout_tests.port.get(port_name='test')
         port._filesystem = filesystem_mock.MockFileSystem()
         self.manager = ManagerWrapper(port=port, options=Mock(), printer=Mock())
-        return self.manager._shard_tests(self.test_list, num_workers, fully_parallel)
+        return self.manager._shard_tests(test_list, num_workers, fully_parallel)
 
     def test_shard_by_dir(self):
         locked, unlocked = self.get_shards(num_workers=2, fully_parallel=False)
@@ -125,6 +126,18 @@ class ShardingTests(unittest.TestCase):
                         'dom/html/level2/html/HTMLAnchorElement03.html',
                         'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
                         'dom/html/level2/html/HTMLAnchorElement06.html'])])
+
+    def test_shard_in_two_has_no_locked_shards(self):
+        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False,
+             test_list=['animations/keyframe.html'])
+        self.assertEquals(len(locked), 0)
+        self.assertEquals(len(unlocked), 1)
+
+    def test_shard_in_two_has_no_unlocked_shards(self):
+        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False,
+             test_list=['http/tests/webcoket/tests/unicode.htm'])
+        self.assertEquals(len(locked), 1)
+        self.assertEquals(len(unlocked), 0)
 
 
 class ManagerTest(unittest.TestCase):
