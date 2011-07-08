@@ -189,7 +189,11 @@ InjectedScript.prototype = {
         var expressionLength = expression.length;
         if (!expressionLength) {
             delete object[propertyName];
-            return propertyName in object ? "Cound not delete property." : undefined;
+            // Avoid explicit assignment to undefined as its value can be overriden (see crbug.com/88414).
+            var result;
+            if (propertyName in object)
+                result = "Cound not delete property.";
+            return result;
         }
 
         try {
@@ -448,7 +452,10 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId)
     var type = injectedScript._type(object);
     var rawType = typeof object;
     var hasChildren = (rawType === "object" && object !== null && (!!Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
-    var className = typeof object === "object" || typeof object === "function" ? InjectedScriptHost.internalConstructorName(object) : undefined;
+    var className;
+    // Avoid explicit assignment to undefined as its value can be overriden (see crbug.com/88414).
+    if (typeof object === "object" || typeof object === "function")
+        className = InjectedScriptHost.internalConstructorName(object);
     var description = injectedScript._describe(object);
     return new InjectedScript.RemoteObject(objectId, type, className, description, hasChildren);
 }

@@ -1,3 +1,19 @@
+2011-07-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: typing undefined = 1 in console crashes browser
+        https://bugs.webkit.org/show_bug.cgi?id=64155
+
+        Do not access undefined value directly when producing JSON objects as undefined
+        may be overriden by the inspected page.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/console/console-eval-undefined-override.html
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        ():
+
 2011-07-07  Emil A Eklund  <eae@chromium.org>
 
         Switch HitTestResult to to new layout types
