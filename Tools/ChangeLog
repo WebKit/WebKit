@@ -1,5 +1,19 @@
 2011-07-08  Adam Roben  <aroben@apple.com>
 
+        Make checkout_unittest more robust against files moving around
+
+        Fixes <http://webkit.org/b/64197> checkout_unittest contains ugly, fragile code to find the
+        Scripts directory
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CommitMessageForThisCommitTest.test_commit_message_for_this_commit): Instantiate a real SCM
+        object and use it to get the path to the Scripts directory, rather than hard-coding the
+        relative path from this file to Scripts.
+
+2011-07-08  Adam Roben  <aroben@apple.com>
+
         Make TestFailures remember that run-webkit-tests timed out, even across reloads
 
         Fixes <http://webkit.org/b/64193> TestFailures page incorrectly thinks all tests passed in

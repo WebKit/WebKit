@@ -119,8 +119,6 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
     # FIXME: This should not need to touch the file system, however
     # ChangeLog is difficult to mock at current.
     def test_commit_message_for_this_commit(self):
-        scm = Mock()
-
         def mock_run(*args, **kwargs):
             # Note that we use a real Executive here, not a MockExecutive, so we can test that we're
             # invoking commit-log-editor correctly.
@@ -129,13 +127,13 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
             kwargs['env'] = env
             return Executive().run_command(*args, **kwargs)
 
-        def mock_script_path(script):
-            return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', script))
+        real_scm = detect_scm_system(self.old_cwd)
 
-        scm.run = mock_run
-        scm.script_path = mock_script_path
+        mock_scm = Mock()
+        mock_scm.run = mock_run
+        mock_scm.script_path = real_scm.script_path
 
-        checkout = Checkout(scm)
+        checkout = Checkout(mock_scm)
         checkout.modified_changelogs = lambda git_commit, changed_files=None: self.changelogs
         commit_message = checkout.commit_message_for_this_commit(git_commit=None)
         self.assertEqual(commit_message.message(), self.expected_commit_message)
