@@ -2,9 +2,9 @@ var ui = ui || {};
 
 (function () {
 
-ui.resultsByTest = function(resultsByTest)
+ui.summarizeResultsByTest = function(resultsByTest)
 {
-    var block = $('<div class="results"></div>');
+    var block = $('<div class="results-summary"></div>');
     $.each(resultsByTest, function(testName, resultNodesByBuilder) {
         var testBlock = $('<div class="test"><div class="testName"></div><div class="builders"></div></div>');
         block.append(testBlock);
@@ -18,6 +18,18 @@ ui.resultsByTest = function(resultsByTest)
         });
     });
 
+    return block;
+};
+
+ui.results = function(resultsURLs)
+{
+    var block = $('<div class="results"></div>');
+    $.each(resultsURLs, function(index, resultURL) {
+        var kind = results.resultKind(resultURL);
+        var type = results.resultType(resultURL);
+        var fragment = type == results.kImageType ? '<img>' : '<iframe></iframe>';
+        block.append($(fragment).attr('src', resultURL).addClass(kind))
+    });
     return block;
 };
 

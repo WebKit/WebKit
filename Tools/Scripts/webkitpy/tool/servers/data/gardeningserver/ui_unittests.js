@@ -19,9 +19,9 @@ var kExampleResultsByTest = {
     }
 }
 
-test("BuilderResults.resultsByTest", 1, function() {
-    var resultsByTest = ui.resultsByTest(kExampleResultsByTest);
-    equal(resultsByTest.html(),
+test("summarizeResultsByTest", 1, function() {
+    var resultsSummary = ui.summarizeResultsByTest(kExampleResultsByTest);
+    equal(resultsSummary.html(),
         '<div class="test">' +
             '<div class="testName">scrollbars/custom-scrollbar-with-incomplete-style.html</div>' +
                 '<div class="builders">' +
@@ -35,4 +35,22 @@ test("BuilderResults.resultsByTest", 1, function() {
                 '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">TEXT</div><div class="expected">PASS</div></div>' +
             '</div>' +
         '</div>');
+});
+
+test("results", 1, function() {
+    var testResults = ui.results([
+        'http://example.com/layout-test-results/foo-bar-expected.txt',
+        'http://example.com/layout-test-results/foo-bar-actual.txt',
+        'http://example.com/layout-test-results/foo-bar-diff.txt',
+        'http://example.com/layout-test-results/foo-bar-expected.png',
+        'http://example.com/layout-test-results/foo-bar-actual.png',
+        'http://example.com/layout-test-results/foo-bar-diff.png',
+    ]);
+    equal(testResults.html(),
+        '<iframe src="http://example.com/layout-test-results/foo-bar-expected.txt" class="expected"></iframe>' +
+        '<iframe src="http://example.com/layout-test-results/foo-bar-actual.txt" class="actual"></iframe>' +
+        '<iframe src="http://example.com/layout-test-results/foo-bar-diff.txt" class="diff"></iframe>' +
+        '<img src="http://example.com/layout-test-results/foo-bar-expected.png" class="expected">' +
+        '<img src="http://example.com/layout-test-results/foo-bar-actual.png" class="actual">' +
+        '<img src="http://example.com/layout-test-results/foo-bar-diff.png" class="diff">');
 });

@@ -1,3 +1,27 @@
+2011-07-08  Adam Barth  <abarth@webkit.org>
+
+        Teach garden-o-matic how to display test results
+        https://bugs.webkit.org/show_bug.cgi?id=64141
+
+        Reviewed by Ojan Vafai.
+
+        This patch includes basic infrastructure for probing build.chromium.org
+        for test results.  We only handle text and image tests, not anything
+        complicated like reftests.  Also, we're using the revision/build
+        independent results store on the server, so we're avoiding that
+        complication for now.
+
+        It's slightly hacky that we need to probe the server to see what kinds
+        of results exist.  A better solution would be to add CORS support to
+        the server or to use the local server to help.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
 2011-07-08  Dirk Pranke  <dpranke@chromium.org>
 
         REGRESSION(90419) NRWT's httpd locking is broken for --child-processes=1

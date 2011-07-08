@@ -62,3 +62,74 @@ test("unexpectedFailuresByTest", 1, function() {
         }
     });
 });
+
+test("resultKind", 12, function() {
+    equals(results.resultKind("http://example.com/foo-actual.txt"), "actual");
+    equals(results.resultKind("http://example.com/foo-expected.txt"), "expected");
+    equals(results.resultKind("http://example.com/foo-diff.txt"), "diff");
+    equals(results.resultKind("http://example.com/foo.bar-actual.txt"), "actual");
+    equals(results.resultKind("http://example.com/foo.bar-expected.txt"), "expected");
+    equals(results.resultKind("http://example.com/foo.bar-diff.txt"), "diff");
+    equals(results.resultKind("http://example.com/foo-actual.png"), "actual");
+    equals(results.resultKind("http://example.com/foo-expected.png"), "expected");
+    equals(results.resultKind("http://example.com/foo-diff.png"), "diff");
+    equals(results.resultKind("http://example.com/foo-pretty-diff.html"), "diff");
+    equals(results.resultKind("http://example.com/foo-wdiff.html"), "diff");
+    equals(results.resultKind("http://example.com/foo-xyz.html"), "unknown");
+});
+
+test("resultType", 12, function() {
+    equals(results.resultType("http://example.com/foo-actual.txt"), "text");
+    equals(results.resultType("http://example.com/foo-expected.txt"), "text");
+    equals(results.resultType("http://example.com/foo-diff.txt"), "text");
+    equals(results.resultType("http://example.com/foo.bar-actual.txt"), "text");
+    equals(results.resultType("http://example.com/foo.bar-expected.txt"), "text");
+    equals(results.resultType("http://example.com/foo.bar-diff.txt"), "text");
+    equals(results.resultType("http://example.com/foo-actual.png"), "image");
+    equals(results.resultType("http://example.com/foo-expected.png"), "image");
+    equals(results.resultType("http://example.com/foo-diff.png"), "image");
+    equals(results.resultType("http://example.com/foo-pretty-diff.html"), "text");
+    equals(results.resultType("http://example.com/foo-wdiff.html"), "text");
+    equals(results.resultType("http://example.com/foo.xyz"), "text");
+});
+
+test("fetchResultsURLs", 3, function() {
+    var realBase = window.base;
+
+    var pendingCallbacks = {};
+    window.base = {};
+    base.probe = function(url, options) {
+        pendingCallbacks[url] = options;
+    };
+    base.endsWith = realBase.endsWith;
+    base.trimExtension = realBase.trimExtension;
+
+    results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", function(resultURLs) {
+        deepEqual(resultURLs, [
+            "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.txt",
+            "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.txt",
+            "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
+        ]);
+    });
+
+    var probedURLs = [];
+    for (var url in pendingCallbacks) {
+        probedURLs.push(url);
+        if (realBase.endsWith(url, '.txt'))
+            pendingCallbacks[url].success.call();
+        else
+            pendingCallbacks[url].error.call();
+    }
+
+    deepEqual(probedURLs, [
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.png",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.png",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.png",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.txt",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.txt",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
+    ]);
+
+    window.base = realBase;
+    equal(window.base, realBase, "Failed to restore real base!");
+});
