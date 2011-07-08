@@ -124,6 +124,9 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
         def mock_run(*args, **kwargs):
             # Note that we use a real Executive here, not a MockExecutive, so we can test that we're
             # invoking commit-log-editor correctly.
+            env = os.environ.copy()
+            env['CHANGE_LOG_EMAIL_ADDRESS'] = 'vestbo@webkit.org'
+            kwargs['env'] = env
             return Executive().run_command(*args, **kwargs)
 
         def mock_script_path(script):

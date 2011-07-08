@@ -1,3 +1,19 @@
+2011-07-08  Adam Roben  <aroben@apple.com>
+
+        Ensure $CHANGE_LOG_EMAIL_ADDRESS is set when testing webkitpy's commit-log-editor integration
+
+        Fixes <http://webkit.org/b/64180> REGRESSION (r90564): test-webkitpy failing on multiple
+        bots due to commit-log-editor errors
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CommitMessageForThisCommitTest.test_commit_message_for_this_commit): Set
+        $CHANGE_LOG_EMAIL_ADDRESS to the patch author's email address. This ensures that
+        commit-log-editor can find a value for the committer's email, and that the committer and
+        author email addresses match, which will prevent commit-log-editor from inserting a "Patch
+        by" line in the commit message.
+
 2011-07-08  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Views should expose QActions for basic navigation.
