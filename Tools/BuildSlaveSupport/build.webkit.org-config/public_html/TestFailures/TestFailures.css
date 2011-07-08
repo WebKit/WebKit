@@ -24,15 +24,19 @@ dt::after {
     content: ':';
 }
 
-#failure-history {
+#failure-history, #possibly-flaky-tests {
     margin: 0;
     padding: 0 0 0 15px;
 }
 
-#failure-history > li {
+#failure-history > li, #possibly-flaky-tests > li {
     background-color: #f0f0f0;
-    padding: 10px 10px 10px 50px;
+    padding: 10px;
     margin-bottom: 10px;
+}
+
+#failure-history > li {
+    padding-left: 50px;
 }
 
 .test-list {

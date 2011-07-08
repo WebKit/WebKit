@@ -501,6 +501,8 @@ ViewController.prototype = {
         var flakyList = document.createElement('ol');
         result.appendChild(flakyList);
 
+        flakyList.id = 'possibly-flaky-tests';
+
         var self = this;
         flakyList.appendChildren(sorted(flakyTests).map(function(testName) {
             var item = document.createElement('li');

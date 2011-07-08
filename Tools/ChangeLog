@@ -1,3 +1,22 @@
+2011-07-08  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures's list of flaky tests look more like the list of non-flaky tests
+
+        Fixes <http://webkit.org/b/64204> TestFailures page's flaky tests list is ugly!
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (#failure-history, #possibly-flaky-tests): Expanded this rule to apply to the list of flaky
+        tests.
+        (#failure-history > li, #possibly-flaky-tests > li): Ditto, but moved the 50px left padding
+        from here...
+        (#failure-history > li): ...to here.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForPossiblyFlakyTests): Give the list an id attribute for
+        styling purposes.
+
 2011-07-08  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed, add myself as committer.
