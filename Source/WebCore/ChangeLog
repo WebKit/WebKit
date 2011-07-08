@@ -1,3 +1,16 @@
+2011-07-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt] Enable HTTP Pipelining by default
+        https://bugs.webkit.org/show_bug.cgi?id=64169
+
+        Reviewed by Andreas Kling.
+
+        QNetworkAccessManager disables HTTP pipelining by default. We enable it by
+        setting an attribute on the request.
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+
 2011-07-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: CSS inspector gets confused about specificity of !important properties
