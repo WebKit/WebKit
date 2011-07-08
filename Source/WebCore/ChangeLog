@@ -1,3 +1,26 @@
+2011-07-08  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r90615.
+        http://trac.webkit.org/changeset/90615
+        https://bugs.webkit.org/show_bug.cgi?id=64158
+
+        broke inspector/extensions/extensions.html (Requested by caseq
+        on #webkit).
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.Panels.prototype.create):
+        (WebInspector.injectedExtensionAPI.ExtensionSidebarPaneImpl.prototype.setPage):
+        (WebInspector.injectedExtensionAPI.expandURL):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._onCreatePanel):
+        (WebInspector.ExtensionServer.prototype._onSetSidebarPage):
+        (WebInspector.ExtensionServer.prototype._addExtensions):
+        (WebInspector.ExtensionServer.prototype._onWindowMessage):
+        (WebInspector.ExtensionServer.prototype._registerSubscriptionHandler):
+
 2011-07-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Adding CSS properties results in messy style rules

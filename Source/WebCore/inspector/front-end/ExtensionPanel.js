@@ -31,8 +31,7 @@
 WebInspector.ExtensionPanel = function(id, label, iconURL, options)
 {
     this.toolbarItemLabel = label;
-    if (iconURL)
-        this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
+    this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
     WebInspector.Panel.call(this, id);
 }
 

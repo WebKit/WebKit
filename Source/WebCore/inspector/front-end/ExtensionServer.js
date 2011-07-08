@@ -38,7 +38,6 @@ WebInspector.ExtensionServer = function()
     this._extraHeaders = {};
     this._resources = {};
     this._lastResourceId = 0;
-    this._allowedOrigins = {};
     this._status = new WebInspector.ExtensionStatus();
 
     this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
@@ -204,12 +203,12 @@ WebInspector.ExtensionServer.prototype = {
         if (id in this._clientObjects || id in WebInspector.panels)
             return this._status.E_EXISTS(id);
 
-        var panel = new WebInspector.ExtensionPanel(id, message.title, this._expandResourcePath(port._extensionOrigin, message.icon));
+        var panel = new WebInspector.ExtensionPanel(id, message.title, message.icon);
         this._clientObjects[id] = panel;
         WebInspector.panels[id] = panel;
         WebInspector.addPanel(panel);
 
-        var iframe = this.createClientIframe(panel.element, this._expandResourcePath(port._extensionOrigin, message.page));
+        var iframe = this.createClientIframe(panel.element, message.url);
         iframe.addStyleClass("panel");
         return this._status.OK();
     },
@@ -258,12 +257,12 @@ WebInspector.ExtensionServer.prototype = {
             sidebar.setObject(message.expression, message.rootTitle);
     },
 
-    _onSetSidebarPage: function(message, port)
+    _onSetSidebarPage: function(message)
     {
         var sidebar = this._clientObjects[message.id];
         if (!sidebar)
             return this._status.E_NOTFOUND(message.id);
-        sidebar.setPage(this._expandResourcePath(port._extensionOrigin, message.page));
+        sidebar.setPage(message.url);
     },
 
     _onLog: function(message)
@@ -402,8 +401,6 @@ WebInspector.ExtensionServer.prototype = {
 
     _addExtensions: function(extensions)
     {
-        const urlOriginRegExp = new RegExp("([^:]+:\/\/[^/]*)\/"); // Can't use regexp literal here, MinJS chokes on it.
-
         // See ExtensionAPI.js and ExtensionCommon.js for details.
         InspectorFrontendHost.setExtensionAPI(this._buildExtensionAPIInjectedScript());
         for (var i = 0; i < extensions.length; ++i) {
@@ -411,12 +408,6 @@ WebInspector.ExtensionServer.prototype = {
             try {
                 if (!extension.startPage)
                     return;
-                var originMatch = urlOriginRegExp.exec(extension.startPage);
-                if (!originMatch) {
-                    console.error("Skipping extension with invalid URL: " + extension.startPage);
-                    continue;
-                }
-                this._allowedOrigins[originMatch[1]] = true;
                 var iframe = document.createElement("iframe");
                 iframe.src = extension.startPage;
                 iframe.style.display = "none";
@@ -450,12 +441,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         if (event.data !== "registerExtension")
             return;
-        if (!this._allowedOrigins.hasOwnProperty(event.origin)) {
-            console.error("Ignoring unauthorized client request from " + event.origin);
-            return;
-        }
         var port = event.ports[0];
-        port._extensionOrigin = event.origin;
         port.addEventListener("message", this._onmessage.bind(this), false);
         port.start();
     },
@@ -483,32 +469,6 @@ WebInspector.ExtensionServer.prototype = {
     {
         this._subscriptionStartHandlers[eventTopic] =  onSubscribeFirst;
         this._subscriptionStopHandlers[eventTopic] =  onUnsubscribeLast;
-    },
-
-    _expandResourcePath: function(extensionPath, resourcePath)
-    {
-        if (!resourcePath)
-            return;
-        return extensionPath + escape(this._normalizePath(resourcePath));
-    },
-
-    _normalizePath: function(path)
-    {
-        var source = path.split("/");
-        var result = [];
-
-        for (var i = 0; i < source.length; ++i) {
-            if (source[i] === ".")
-                continue;
-            // Ignore empty path components resulting from //, as well as a leading and traling slashes.
-            if (source[i] === "")
-                continue;
-            if (source[i] === "..")
-                result.pop();
-            else
-                result.push(source[i]);
-        }
-        return "/" + result.join("/");
     }
 }
 
