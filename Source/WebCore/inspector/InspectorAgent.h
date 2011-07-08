@@ -96,10 +96,6 @@ public:
 
     void setInspectorExtensionAPI(const String& source);
 
-    // InspectorAgent API
-    void getInspectorState(RefPtr<InspectorObject>* state);
-    void setMonitoringXHREnabled(bool enabled, bool* newState);
-
 private:
     void showPanel(const String& panel);
     void unbindAllResources();

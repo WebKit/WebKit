@@ -1,3 +1,12 @@
+2011-07-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Remove unused code from InspectorAgent.h.
+        https://bugs.webkit.org/show_bug.cgi?id=64120
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorAgent.h:
+
 2011-07-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: secure access to extensions API
