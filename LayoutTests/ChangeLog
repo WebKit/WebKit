@@ -1,3 +1,11 @@
+2011-07-08  Andras Becsi  <abecsi@webkit.org>
+
+        Rebaseline expected file after r90567
+
+        Unreviewed.
+
+        * inspector/styles/styles-url-linkify-expected.txt:
+
 2011-07-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Adding CSS properties results in messy style rules
