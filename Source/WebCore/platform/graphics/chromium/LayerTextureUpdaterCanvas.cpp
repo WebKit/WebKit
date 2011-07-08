@@ -160,6 +160,9 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(LayerTexture* texture, cons
     texture->framebufferTexture2D();
     ASSERT(context()->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
 
+    // Make sure SKIA uses the correct GL context.
+    context()->makeContextCurrent();
+
     // Notify SKIA to sync its internal GL state.
     m_skiaContext->resetContext();
     m_canvas->save();
