@@ -92,17 +92,18 @@ def mac_update_dependencies(dylib, prefix, should_copy=True):
     output = commands.getoutput("otool -L %s" % dylib).strip()
     for line in output.split("\n"):
         copy = should_copy
+        change = True
         filename = line.split("(")[0].strip()
+        filedir, basename = os.path.split(filename)
+        dest_filename = os.path.join(prefix, basename)
         if os.path.exists(filename):
             for sys_prefix in system_prefixes:
                 if filename.startswith(sys_prefix):
                     copy = False
+                    change = False
             
             if copy:
                 copydir = os.path.dirname(dylib)
-                
-                filedir, basename = os.path.split(filename)
-                dest_filename = os.path.join(prefix, basename)
                 copyname = os.path.join(copydir, basename)
                 if not os.path.exists(copyname):
                     shutil.copy(filename, copydir)
@@ -110,6 +111,7 @@ def mac_update_dependencies(dylib, prefix, should_copy=True):
                     if result != 0:
                         print "Changing ID failed. Stopping release."
                         sys.exit(result)
+            if change:
                 print "changing %s to %s" % (filename, dest_filename)
                 result = os.system("install_name_tool -change %s %s %s" % (filename, dest_filename, dylib))
                 if result != 0:

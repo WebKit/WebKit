@@ -1,3 +1,9 @@
+2011-07-07  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, more fixes for install name issues.
+
+        * wx/packaging/build-mac-installer.py:
+
 2011-07-07  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy fails on chromium win
