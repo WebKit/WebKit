@@ -63,5 +63,5 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
         }
     }
 
-    return BitmapContext::createByAdoptingBitmapAndContext(0, context.get());
+    return BitmapContext::createByAdoptingBitmapAndContext(0, context.release().leakRef());
 }

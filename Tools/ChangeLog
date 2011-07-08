@@ -1,3 +1,20 @@
+2011-07-07  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Leak cairo_t to make the pixel tests stop crashing
+        https://bugs.webkit.org/show_bug.cgi?id=64107
+
+        Reviewed by Kent Tamura.
+
+        The pointer is later managed by BitmapContext, but it was being
+        de-refed and deleted earlier by our RefPtr, causing crashes in all
+        pixel tests.
+
+        We now call leakRef() to make sure it is not removed when our
+        createBitmapContextFromWebView goes out of context.
+
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView):
+
 2011-07-07  Adam Roben  <aroben@apple.com>
 
         Update TestFailures's title and header immediately upon navigation
