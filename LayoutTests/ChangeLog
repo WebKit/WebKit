@@ -1,3 +1,13 @@
+2011-07-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: styles-disable-then-delete was flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=64170
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/styles/styles-add-invalid-property.html:
+        * inspector/styles/styles-disable-then-delete.html:
+
 2011-07-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: inspector/styles/styles-url-linkify.html is flaky.

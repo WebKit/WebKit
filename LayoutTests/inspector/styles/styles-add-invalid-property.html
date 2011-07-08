@@ -41,7 +41,7 @@ function test()
 
     function step3()
     {
-        InspectorTest.selectNodeAndWaitForStyles("other");
+        InspectorTest.selectNodeWithId("other");
         InspectorTest.runAfterPendingDispatches(step4);
     }
 
