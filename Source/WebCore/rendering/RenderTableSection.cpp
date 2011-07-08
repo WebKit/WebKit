@@ -335,13 +335,14 @@ int RenderTableSection::calcRowLogicalHeight()
 
             int indx = max(r - cell->rowSpan() + 1, 0);
 
-            if (cell->overrideSize() != -1) {
+            if (cell->hasOverrideSize()) {
                 if (!statePusher.didPush()) {
                     // Technically, we should also push state for the row, but since
                     // rows don't push a coordinate transform, that's not necessary.
                     statePusher.push(this, IntSize(x(), y()));
                 }
-                cell->setOverrideSize(-1);
+                cell->clearIntrinsicPadding();
+                cell->clearOverrideSize();
                 cell->setChildNeedsLayout(true, false);
                 cell->layoutIfNeeded();
             }

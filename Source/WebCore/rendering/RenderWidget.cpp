@@ -139,7 +139,7 @@ void RenderWidget::destroy()
 
     // removes from override size map
     if (hasOverrideSize())
-        setOverrideSize(-1);
+        clearOverrideSize();
 
     if (style() && (style()->logicalHeight().isPercent() || style()->logicalMinHeight().isPercent() || style()->logicalMaxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);

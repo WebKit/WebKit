@@ -58,8 +58,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// Used by flexible boxes when flexing this element.
-typedef WTF::HashMap<const RenderBox*, int> OverrideSizeMap;
+// Used by flexible boxes when flexing this element and by table cells.
+typedef WTF::HashMap<const RenderBox*, LayoutSize> OverrideSizeMap;
 static OverrideSizeMap* gOverrideSizeMap = 0;
 
 bool RenderBox::s_hadOverflowClip = false;
@@ -686,36 +686,37 @@ int RenderBox::maxPreferredLogicalWidth() const
     return m_maxPreferredLogicalWidth;
 }
 
-int RenderBox::overrideSize() const
+LayoutSize RenderBox::overrideSize() const
 {
     if (!hasOverrideSize())
-        return -1;
+        return LayoutSize(-1, -1);
     return gOverrideSizeMap->get(this);
 }
 
-void RenderBox::setOverrideSize(int s)
+void RenderBox::setOverrideSize(const LayoutSize& size)
 {
-    if (s == -1) {
-        if (hasOverrideSize()) {
-            setHasOverrideSize(false);
-            gOverrideSizeMap->remove(this);
-        }
-    } else {
-        if (!gOverrideSizeMap)
-            gOverrideSizeMap = new OverrideSizeMap();
-        setHasOverrideSize(true);
-        gOverrideSizeMap->set(this, s);
-    }
+    if (!gOverrideSizeMap)
+        gOverrideSizeMap = new OverrideSizeMap();
+    setHasOverrideSize(true);
+    gOverrideSizeMap->set(this, size);
 }
 
-int RenderBox::overrideWidth() const
+void RenderBox::clearOverrideSize()
 {
-    return hasOverrideSize() ? overrideSize() : width();
+    if (!hasOverrideSize())
+        return;
+    setHasOverrideSize(false);
+    gOverrideSizeMap->remove(this);
 }
 
-int RenderBox::overrideHeight() const
+LayoutUnit RenderBox::overrideWidth() const
 {
-    return hasOverrideSize() ? overrideSize() : height();
+    return hasOverrideSize() ? overrideSize().width() : width();
+}
+
+LayoutUnit RenderBox::overrideHeight() const
+{
+    return hasOverrideSize() ? overrideSize().height() : height();
 }
 
 LayoutUnit RenderBox::computeBorderBoxLogicalWidth(LayoutUnit width) const
@@ -1554,7 +1555,7 @@ void RenderBox::computeLogicalWidth()
     // https://bugs.webkit.org/show_bug.cgi?id=46418
     if (hasOverrideSize() &&  parent()->style()->boxOrient() == HORIZONTAL
             && parent()->isFlexibleBox() && parent()->isFlexingChildren()) {
-        setLogicalWidth(overrideSize());
+        setLogicalWidth(overrideWidth());
         return;
     }
 
@@ -1768,7 +1769,7 @@ void RenderBox::computeLogicalHeight()
         // https://bugs.webkit.org/show_bug.cgi?id=46418
         if (hasOverrideSize() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
                 && parent()->isFlexingChildren())
-            h = Length(overrideSize() - borderAndPaddingLogicalHeight(), Fixed);
+            h = Length(overrideHeight() - borderAndPaddingLogicalHeight(), Fixed);
         else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight(), Fixed);
         else {
@@ -1886,8 +1887,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
     // be a percentage of the cell's current content height.
     if (cb->isTableCell()) {
         if (!skippedAutoHeightContainingBlock) {
-            result = cb->overrideSize();
-            if (result == -1) {
+            if (!cb->hasOverrideSize()) {
                 // Normally we would let the cell size intrinsically, but scrolling overflow has to be
                 // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
                 // While we can't get all cases right, we can at least detect when the cell has a specified
@@ -1900,6 +1900,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
                     return 0;
                 return -1;
             }
+            result = cb->overrideHeight();
             includeBorderPadding = true;
         }
     }
@@ -2052,7 +2053,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     // artificially.  We're going to rely on this cell getting expanded to some new
     // height, and then when we lay out again we'll use the calculation below.
     if (isTableCell() && (h.isAuto() || h.isPercent()))
-        return overrideSize() - borderAndPaddingLogicalWidth();
+        return overrideHeight() - borderAndPaddingLogicalWidth();
 
     if (h.isPercent())
        return computeContentBoxLogicalHeight(h.calcValue(containingBlock()->availableLogicalHeight()));

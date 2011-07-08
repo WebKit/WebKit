@@ -244,10 +244,11 @@ public:
     virtual int minPreferredLogicalWidth() const;
     virtual int maxPreferredLogicalWidth() const;
 
-    int overrideSize() const;
-    int overrideWidth() const;
-    int overrideHeight() const;
-    virtual void setOverrideSize(int);
+    LayoutSize overrideSize() const;
+    LayoutUnit overrideWidth() const;
+    LayoutUnit overrideHeight() const;
+    void setOverrideSize(const LayoutSize&);
+    void clearOverrideSize();
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     

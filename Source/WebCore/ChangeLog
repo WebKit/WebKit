@@ -1,3 +1,41 @@
+2011-07-08  Tony Chang  <tony@chromium.org>
+
+        Refactor override size to be a size rather than just an int
+        https://bugs.webkit.org/show_bug.cgi?id=64195
+
+        Reviewed by David Hyatt.
+
+        Also convert to LayoutSize and LayoutUnit.
+
+        Covered by existing tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overrideSize): Pass in a LayoutSize.
+        (WebCore::RenderBox::setOverrideSize):
+        (WebCore::RenderBox::clearOverrideSize): New method for clearing the
+            override size (previous we would pass in -1)
+        (WebCore::RenderBox::overrideWidth):
+        (WebCore::RenderBox::overrideHeight):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::gatherFlexChildrenInfo):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setOverrideSizeFromRowHeight):
+        * rendering/RenderTableCell.h: Remove setOverrideSize since it was
+            only called in one place to clear the override size.  Inline this
+            logic instead.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2011-07-08  Emil A Eklund  <eae@chromium.org>
 
         Switch pointInContainer and accumulatedOffset to to new layout types

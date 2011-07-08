@@ -293,7 +293,7 @@ static void gatherFlexChildrenInfo(FlexBoxIterator& iterator, bool relayoutChild
         if (!child->isPositioned() && child->style()->boxFlex() > 0.0f) {
             // We always have to lay out flexible objects again, since the flex distribution
             // may have changed, and we need to reallocate space.
-            child->setOverrideSize(-1);
+            child->clearOverrideSize();
             if (!relayoutChildren)
                 child->setChildNeedsLayout(true, false);
             haveFlex = true;
@@ -496,7 +496,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                         if (allowedChildFlex(child, expanding, i)) {
                             int spaceAdd = (int)(spaceAvailableThisPass * (child->style()->boxFlex()/totalFlex));
                             if (spaceAdd) {
-                                child->setOverrideSize(child->overrideWidth() + spaceAdd);
+                                child->setOverrideSize(LayoutSize(child->overrideWidth() + spaceAdd, 0));
                                 m_flexingChildren = true;
                                 relayoutChildren = true;
                             }
@@ -513,7 +513,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                         int spaceAdd = groupRemainingSpace > 0 ? 1 : -1;
                         for (RenderBox* child = iterator.first(); child && groupRemainingSpace; child = iterator.next()) {
                             if (allowedChildFlex(child, expanding, i)) {
-                                child->setOverrideSize(child->overrideWidth() + spaceAdd);
+                                child->setOverrideSize(LayoutSize(child->overrideWidth() + spaceAdd, 0));
                                 m_flexingChildren = true;
                                 relayoutChildren = true;
                                 remainingSpace -= spaceAdd;
@@ -742,7 +742,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                         if (allowedChildFlex(child, expanding, i)) {
                             int spaceAdd = (int)(spaceAvailableThisPass * (child->style()->boxFlex()/totalFlex));
                             if (spaceAdd) {
-                                child->setOverrideSize(child->overrideHeight() + spaceAdd);
+                                child->setOverrideSize(LayoutSize(0, child->overrideHeight() + spaceAdd));
                                 m_flexingChildren = true;
                                 relayoutChildren = true;
                             }
@@ -759,7 +759,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                         int spaceAdd = groupRemainingSpace > 0 ? 1 : -1;
                         for (RenderBox* child = iterator.first(); child && groupRemainingSpace; child = iterator.next()) {
                             if (allowedChildFlex(child, expanding, i)) {
-                                child->setOverrideSize(child->overrideHeight() + spaceAdd);
+                                child->setOverrideSize(LayoutSize(0, child->overrideHeight() + spaceAdd));
                                 m_flexingChildren = true;
                                 relayoutChildren = true;
                                 remainingSpace -= spaceAdd;
@@ -873,11 +873,11 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         child->setChildNeedsLayout(true, false);
-        child->setOverrideSize(newHeight);
+        child->setOverrideSize(LayoutSize(0, newHeight));
         m_flexingChildren = true;
         child->layoutIfNeeded();
         m_flexingChildren = false;
-        child->setOverrideSize(-1);
+        child->clearOverrideSize();
 
         // FIXME: For now don't support RTL.
         if (style()->direction() != LTR)
