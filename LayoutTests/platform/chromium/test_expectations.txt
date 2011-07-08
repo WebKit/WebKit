@@ -3954,11 +3954,6 @@ BUGCR88594 WIN7 : http/tests/appcache/resource-redirect.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
 BUGCR88594 WIN7 : http/tests/appcache/fallback.html = TIMEOUT
 
-// Started failing in skia roll r1788:r1799
-BUGCR88577 WIN LINUX GPU : canvas/philip/tests/2d.pattern.repeat.empty.html = TEXT
-BUGCR88577 WIN LINUX GPU : canvas/philip/tests/2d.pattern.repeat.null.html = TEXT
-BUGCR88577 WIN LINUX GPU : fast/canvas/canvas-pattern-behaviour.html = TEXT
-
 BUGWK61388 GPU : compositing/color-matching/image-color-matching.html = IMAGE
 BUGWK61388 WIN LINUX GPU : compositing/direct-image-compositing.html = IMAGE
 BUGWK61388 GPU : compositing/geometry/fixed-in-composited.html = IMAGE
@@ -3999,7 +3994,9 @@ BUGWK61388 GPU : media/video-zoom-controls.html = IMAGE
 BUGWK61388 GPU : media/video-transformed.html = IMAGE
 BUGWK61388 GPU : media/video-layer-crash.html = IMAGE
 BUGWK61388 WIN GPU : compositing/iframes/composited-iframe-alignment.html = IMAGE
-BUGWK61388 WIN GPU : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK61388 WIN MAC GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK61388 WIN GPU : media/video-controls-rendering.html = IMAGE
-BUGWK61388 WIN GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
-BUGWK61388 WIN GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
+BUGWK61388 WIN MAC GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK61388 WIN MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
+BUGWK61388 MAC GPU : compositing/masks/multiple-masks.html = IMAGE
+BUGWK61388 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE

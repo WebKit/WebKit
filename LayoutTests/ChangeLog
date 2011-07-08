@@ -2,6 +2,14 @@
 
         Unreviewed; chromium test_expectations update.
 
+        Add some MAC GPU failing tests from r90464.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-08  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test_expectations update.
+
         Add some WIN GPU failing tests from r90464 to test_expectations.txt.
 
         * platform/chromium/test_expectations.txt:
