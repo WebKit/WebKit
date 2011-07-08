@@ -42,6 +42,7 @@ use webkitdirs;
 sub createCommitMessage(@);
 sub fixEnvironment();
 sub normalizeLineEndings($$);
+sub patchAuthorshipString($$$);
 sub removeLongestCommonPrefixEndingInDoubleNewline(\%);
 sub isCommitLogEditor($);
 
@@ -250,13 +251,19 @@ sub createCommitMessage(@)
                     next;
                 }
 
-                if ($line =~ m/^Reviewed by .*/ || $line =~ m/^Rubber[ \-]?stamped by .*/) {
-                    # Insert the "Patch by" line just above the "Reviewed by" line, if needed.
-                    my $committerEmail = changeLogEmailAddress();
-                    my $authorAndCommitterAreSamePerson = $email eq $committerEmail;
-                    if (!$authorAndCommitterAreSamePerson) {
-                        $contents .= "Patch by $author <$email> on $date\n";
+                if ($hasAuthorInfoToWrite) {
+                    my $isReviewedByLine = $line =~ m/^(?:Reviewed|Rubber[ \-]?stamped) by/;
+                    my $isModifiedFileLine = $line =~ m/^\* .*:/;
+
+                    # Insert the authorship line if needed just above the "Reviewed by" line or the
+                    # first modified file (whichever comes first).
+                    if ($isReviewedByLine || $isModifiedFileLine) {
                         $hasAuthorInfoToWrite = 0;
+                        my $authorshipString = patchAuthorshipString($author, $email, $date);
+                        if ($authorshipString) {
+                            $contents .= "$authorshipString\n";
+                            $contents .= "\n" if $isModifiedFileLine;
+                        }
                     }
                 }
 
@@ -267,6 +274,13 @@ sub createCommitMessage(@)
                 $blankLines .= $_;
             }
         }
+        if ($hasAuthorInfoToWrite) {
+            # We didn't find anywhere to put the authorship info, so just put it at the end.
+            my $authorshipString = patchAuthorshipString($author, $email, $date);
+            $contents .= "\n$authorshipString\n" if $authorshipString;
+            $hasAuthorInfoToWrite = 0;
+        }
+
         close CHANGELOG;
 
         $changeLog = File::Spec->abs2rel(File::Spec->rel2abs($changeLog), $topLevel);
@@ -323,6 +337,14 @@ sub normalizeLineEndings($$)
     my ($string, $endl) = @_;
     $string =~ s/\r?\n/$endl/g;
     return $string;
+}
+
+sub patchAuthorshipString($$$)
+{
+    my ($authorName, $authorEmail, $authorDate) = @_;
+
+    return if $authorEmail eq changeLogEmailAddress();
+    return "Patch by $authorName <$authorEmail> on $authorDate";
 }
 
 sub removeLongestCommonPrefixEndingInDoubleNewline(\%)

@@ -1,3 +1,22 @@
+2011-07-08  Adam Roben  <aroben@apple.com>
+
+        Ensure commit-log-editor adds a "Patch by" line when the author and committer are different
+
+        Previously we were only adding a "Patch by" line when the ChangeLog contained a "Reviewed
+        by" line. But some patches (like rollout patches) don't contain that line. Now we always add
+        "Patch by" to the commit log regardless of the ChangeLog's contents.
+
+        Fixes <http://webkit.org/b/64127> Committer for r90588 is commit-queue@webkit.org, but
+        should have been abarth@webkit.org
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/commit-log-editor:
+        (createCommitMessage): Try to put the "Patch by" line just above the "Reviewed by" line, as
+        before. If there is no "Reviewed by" line, try to put it just above the first modified file.
+        If all else fails, put it at the end of the commit message.
+        (patchAuthorshipString): Added. Code came from createCommitMessage.
+
 2011-07-08  Herczeg Zoltan  <zherczeg@webkit.org>
 
         Reviewed by Andreas Kling.
