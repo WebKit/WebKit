@@ -1,3 +1,19 @@
+2011-07-07  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Clear cookies after test in httponly-cookie.pl
+        https://bugs.webkit.org/show_bug.cgi?id=64145
+
+        Reviewed by Kent Tamura.
+
+        This test leaks cookies, which would cause a test failure if we put
+        a copy of this test under http/tests/websocket/tests.
+
+        To avoid this issue, cookies should be removed before the test ends.
+
+        * http/tests/websocket/tests/hixie76/httponly-cookie.pl:
+        After the test, send an XHR request to itself with a query parameter,
+        which erases cookies used in this test by setting "Max-Age=0".
+
 2011-07-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update baseline files for input-appearance-range.html.

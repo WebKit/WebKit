@@ -1,6 +1,15 @@
 #!/usr/bin/perl -wT
 use strict;
 
+if ($ENV{"QUERY_STRING"} eq "clear=1") {
+    print "Content-Type: text/plain\r\n";
+    print "Set-Cookie: WK-websocket-test=0; Max-Age=0\r\n";
+    print "Set-Cookie: WK-websocket-test-httponly=0; HttpOnly; Max-Age=0\r\n";
+    print "\r\n";
+    print "Cookies are cleared.";
+    exit;
+}
+
 print "Content-Type: text/html\r\n";
 print "Set-Cookie: WK-websocket-test=1\r\n";
 print "Set-Cookie: WK-websocket-test-httponly=1; HttpOnly\r\n";
@@ -26,6 +35,13 @@ function normalizeCookie(cookie)
     return cookie.split('; ').sort().join('; ');
 }
 
+function clearCookies()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "httponly-cookie.pl?clear=1", false);
+    xhr.send(null);
+}
+
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/echo-cookie");
 ws.onopen = function() {
     debug("WebSocket open");
@@ -38,6 +54,7 @@ ws.onclose = function() {
     debug("WebSocket closed");
     cookie = normalizeCookie(cookie);
     shouldBe("cookie", '"WK-websocket-test-httponly=1; WK-websocket-test=1"');
+    clearCookies();
     finishJSTest();
 };
 
