@@ -1,3 +1,80 @@
+2011-07-08  David Reveman  <reveman@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] Edge anti-aliasing for composited layers.
+        https://bugs.webkit.org/show_bug.cgi?id=61388
+
+        Add transparent outer border to tiled layers and adjust vertex
+        coordinates so that use of a bilinear filter creates a smooth
+        layer edge.
+
+        Tests: platform/chromium/compositing/tiny-layer-rotated.html
+               platform/chromium/compositing/huge-layer-rotated.html (existing)
+               TilingDataTest in webkit_unit_tests
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        Change maxUntiledSize to 510 to ensure that tiles are not greater
+        than 512 with outer borders.
+        (WebCore::ContentLayerChromium::updateLayerSize): We can't use the
+        layer size as tile size when we want to avoid tiling as this will
+        not be enough space to include possible outer borders. We instead use
+        an empty size, which allows the tiler to automatically adjust the
+        tile size to be large enough for the layer to fit in one tile.
+        (WebCore::ContentLayerChromium::createTilerIfNeeded):
+        (WebCore::ContentLayerChromium::setIsMask): Don't use border texels
+        for layer used as mask.
+
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::m_borderTexels) Added.
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::tileTexRect): Added.
+        (WebCore::LayerTilerChromium::tileLayerRect): m_tileSize is no
+        longer the correct layer size. Size of bounds with border should
+        be the correct layer size.
+        (WebCore::LayerTilerChromium::growLayerToContain): Adjust texture
+        size to include outer borders and handle empty m_tileSize.
+        (WebCore::LayerTilerChromium::invalidateRect): Use size of rectangle
+        returned by tileTexRect instead of m_tileSize for texture size.
+        (WebCore::LayerTilerChromium::prepareToUpdate): Ditto.
+        (WebCore::LayerTilerChromium::draw): Compute and intersect tile edges
+        instead of using tile coordinates directly. Edges are adjusted to
+        include outer borders and make sure all partially covered pixels are
+        processed.
+        (WebCore::LayerTilerChromium::drawTexturedQuad): Pass quad to
+        shader using point uniform.
+        (WebCore::LayerTilerChromium::invalidateRect): Invalidate old layer
+        area to clear any contents left from previous layer size.
+
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::tileTexRect) Added.
+        (WebCore::LayerTilerChromium::drawTexturedQuad): Add quad parameter.
+
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderPosTexTransform::getShaderString) Get X/Y vertex
+        components from point uniform.
+        (WebCore::VertexShaderPosTexTransform::VertexShaderPosTexTransform)
+        Added point uniform.
+        (WebCore::VertexShaderPosTexTransform::init) Ditto.
+        (WebCore::VertexShaderPosTexTransform::pointLocation) Added.
+
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::VertexShaderPosTexTransform::pointLocation) Added.
+
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::tileBoundsWithOuterBorder): Added.
+        (WebCore::TilingData::computeNumTiles): Adjust for outer border.
+        (WebCore::TilingData::tileXIndexFromSrcCoord): Ditto.
+        (WebCore::TilingData::tileYIndexFromSrcCoord): Ditto.
+        (WebCore::TilingData::tileSizeX): Ditto.
+        (WebCore::TilingData::tileSizeY): Ditto.
+        (WebCore::TilingData::intersectDrawQuad): Ditto.
+        (WebCore::TilingData::textureOffset): Ditto.
+
+        * platform/graphics/gpu/TilingData.h:
+        (WebCore::TilingData::tileBoundsWithOuterBorder): Added.
+
 2011-07-08  Mike Reed  <reed@google.com>
 
         [skia] don't rely on lockPixels failure to detect gpu-backed device (in prep for skia roll)

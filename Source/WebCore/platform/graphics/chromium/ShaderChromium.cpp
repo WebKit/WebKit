@@ -124,6 +124,7 @@ String VertexShaderPos::getShaderString() const
 VertexShaderPosTexTransform::VertexShaderPosTexTransform()
     : m_matrixLocation(-1)
     , m_texTransformLocation(-1)
+    , m_pointLocation(-1)
 {
 }
 
@@ -131,7 +132,8 @@ void VertexShaderPosTexTransform::init(GraphicsContext3D* context, unsigned prog
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_texTransformLocation = context->getUniformLocation(program, "texTransform");
-    ASSERT(m_matrixLocation != -1 && m_texTransformLocation != -1);
+    m_pointLocation = context->getUniformLocation(program, "point");
+    ASSERT(m_matrixLocation != -1 && m_texTransformLocation != -1 && m_pointLocation != -1);
 }
 
 String VertexShaderPosTexTransform::getShaderString() const
@@ -141,11 +143,18 @@ String VertexShaderPosTexTransform::getShaderString() const
         attribute vec2 a_texCoord;
         uniform mat4 matrix;
         uniform vec4 texTransform;
+        uniform vec2 point[4];
         varying vec2 v_texCoord;
         void main()
         {
-            gl_Position = matrix * a_position;
-            v_texCoord = a_texCoord * texTransform.zw + texTransform.xy;
+            vec2 complement = abs(a_texCoord - 1.0);
+            vec4 pos = vec4(0.0, 0.0, a_position.z, a_position.w);
+            pos.xy += (complement.x * complement.y) * point[0];
+            pos.xy += (a_texCoord.x * complement.y) * point[1];
+            pos.xy += (a_texCoord.x * a_texCoord.y) * point[2];
+            pos.xy += (complement.x * a_texCoord.y) * point[3];
+            gl_Position = matrix * pos;
+            v_texCoord = pos.xy * texTransform.zw + texTransform.xy;
         }
     );
 }

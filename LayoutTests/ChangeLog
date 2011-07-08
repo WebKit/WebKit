@@ -1,3 +1,15 @@
+2011-07-08  David Reveman  <reveman@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] Edge anti-aliasing for composited layers.
+        https://bugs.webkit.org/show_bug.cgi?id=61388
+
+        * platform/chromium/compositing/tiny-layer-rotated-expected.png: Added.
+        * platform/chromium/compositing/tiny-layer-rotated-expected.txt: Added.
+        * platform/chromium/compositing/tiny-layer-rotated.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Parse content: -webkit-from-flow

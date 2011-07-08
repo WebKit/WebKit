@@ -47,7 +47,7 @@
 #include <wtf/CurrentTime.h>
 
 // Start tiling when the width and height of a layer are larger than this size.
-static int maxUntiledSize = 512;
+static int maxUntiledSize = 510;
 
 // When tiling is enabled, use tiles of this dimension squared.
 static int defaultTileSize = 256;
@@ -92,6 +92,7 @@ PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChrom
 ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_tilingOption(ContentLayerChromium::AutoTile)
+    , m_borderTexels(true)
 {
 }
 
@@ -174,7 +175,7 @@ void ContentLayerChromium::updateLayerSize()
     if (!m_tiler)
         return;
 
-    const IntSize tileSize(min(defaultTileSize, contentBounds().width()), min(defaultTileSize, contentBounds().height()));
+    const IntSize tileSize(defaultTileSize, defaultTileSize);
 
     // Tile if both dimensions large, or any one dimension large and the other
     // extends into a second tile. This heuristic allows for long skinny layers
@@ -191,7 +192,8 @@ void ContentLayerChromium::updateLayerSize()
     else
         isTiled = autoTiled;
 
-    IntSize requestedSize = isTiled ? tileSize : contentBounds();
+    // Empty tile size tells the tiler to avoid tiling.
+    IntSize requestedSize = isTiled ? tileSize : IntSize();
     const int maxSize = layerRenderer()->maxTextureSize();
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     m_tiler->setTileSize(clampedSize);
@@ -228,7 +230,8 @@ void ContentLayerChromium::createTilerIfNeeded()
     m_tiler = LayerTilerChromium::create(
         layerRenderer(),
         IntSize(defaultTileSize, defaultTileSize),
-        LayerTilerChromium::HasBorderTexels);
+        m_borderTexels ? LayerTilerChromium::HasBorderTexels :
+        LayerTilerChromium::NoBorderTexels);
 }
 
 void ContentLayerChromium::updateCompositorResources()
@@ -256,6 +259,7 @@ void ContentLayerChromium::bindContentsTexture()
 
 void ContentLayerChromium::setIsMask(bool isMask)
 {
+    m_borderTexels = false;
     setTilingOption(isMask ? NeverTile : AutoTile);
 }
 

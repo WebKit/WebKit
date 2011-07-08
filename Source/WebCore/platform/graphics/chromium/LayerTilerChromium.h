@@ -112,7 +112,7 @@ private:
     void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program, LayerTextureUpdater*);
 
     template <class T>
-    void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
+    void drawTexturedQuad(GraphicsContext3D*, const FloatQuad&, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
                           float width, float height, float opacity,
                           float texTranslateX, float texTranslateY,
                           float texScaleX, float texScaleY,
@@ -134,6 +134,7 @@ private:
     Tile* tileAt(int, int) const;
     IntRect tileContentRect(const Tile*) const;
     IntRect tileLayerRect(const Tile*) const;
+    IntRect tileTexRect(const Tile*) const;
 
     GC3Denum m_textureFormat;
 

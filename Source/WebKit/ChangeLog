@@ -1,3 +1,14 @@
+2011-07-08  David Reveman  <reveman@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] Edge anti-aliasing for composited layers.
+        https://bugs.webkit.org/show_bug.cgi?id=61388
+
+        Track changes to TilingData class which now uses an outer border.
+
+        * chromium/tests/TilingDataTest.cpp:
+
 2011-06-30  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Simon Hausmann.

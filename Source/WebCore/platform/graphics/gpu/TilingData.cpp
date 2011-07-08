@@ -44,10 +44,12 @@ namespace WebCore {
 
 static int computeNumTiles(int maxTextureSize, int totalSize, int borderTexels)
 {
-    if (maxTextureSize - 2 * borderTexels <= 0)
-        return totalSize > 0 && maxTextureSize >= totalSize ? 1 : 0;
+    int totalSizeWithBorder = totalSize + 2 * borderTexels;
 
-    int numTiles = max(1, 1 + (totalSize - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
+    if (maxTextureSize - 2 * borderTexels <= 0)
+        return 0;
+
+    int numTiles = max(1, 1 + (totalSizeWithBorder - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
     return totalSize > 0 ? numTiles : 0;
 }
 
@@ -79,7 +81,7 @@ int TilingData::tileXIndexFromSrcCoord(int srcPos) const
         return 0;
 
     ASSERT(m_maxTextureSize - 2 * m_borderTexels);
-    int x = (srcPos - m_borderTexels) / (m_maxTextureSize - 2 * m_borderTexels);
+    int x = srcPos / (m_maxTextureSize - 2 * m_borderTexels);
     return min(max(x, 0), numTilesX() - 1);
 }
 
@@ -89,7 +91,7 @@ int TilingData::tileYIndexFromSrcCoord(int srcPos) const
         return 0;
 
     ASSERT(m_maxTextureSize - 2 * m_borderTexels);
-    int y = (srcPos - m_borderTexels) / (m_maxTextureSize - 2 * m_borderTexels);
+    int y = srcPos / (m_maxTextureSize - 2 * m_borderTexels);
     return min(max(y, 0), numTilesY() - 1);
 }
 
@@ -132,6 +134,16 @@ IntRect TilingData::tileBoundsWithBorder(int tile) const
     return bounds;
 }
 
+IntRect TilingData::tileBoundsWithOuterBorder(int tile) const
+{
+    IntRect bounds = tileBounds(tile);
+
+    if (m_borderTexels)
+        bounds.inflate(1);
+
+    return bounds;
+}
+
 FloatRect TilingData::tileBoundsNormalized(int tile) const
 {
     assertTile(tile);
@@ -168,8 +180,6 @@ int TilingData::tileSizeX(int xIndex) const
 
     if (!xIndex && m_numTilesX == 1)
         return m_totalSizeX;
-    if (!xIndex && m_numTilesX > 1)
-        return m_maxTextureSize - m_borderTexels;
     if (xIndex < numTilesX() - 1)
         return m_maxTextureSize - 2 * m_borderTexels;
     if (xIndex == numTilesX() - 1)
@@ -185,8 +195,6 @@ int TilingData::tileSizeY(int yIndex) const
 
     if (!yIndex && m_numTilesY == 1)
         return m_totalSizeY;
-    if (!yIndex && m_numTilesY > 1)
-        return m_maxTextureSize - m_borderTexels;
     if (yIndex < numTilesY() - 1)
         return m_maxTextureSize - 2 * m_borderTexels;
     if (yIndex == numTilesY() - 1)
@@ -230,8 +238,8 @@ void TilingData::intersectDrawQuad(const FloatRect& srcRect, const FloatRect& ds
 
     *newSrc = srcRectIntersected;
     newSrc->move(
-        -tileBounds.x() + ((tileXIndex(tile) > 0) ? m_borderTexels : 0),
-        -tileBounds.y() + ((tileYIndex(tile) > 0) ? m_borderTexels : 0));
+        -tileBounds.x() + m_borderTexels,
+        -tileBounds.y() + m_borderTexels);
 
     *newDst = FloatRect(
         srcRectIntersectedNormX * dstRect.width() + dstRect.x(),
@@ -242,10 +250,7 @@ void TilingData::intersectDrawQuad(const FloatRect& srcRect, const FloatRect& ds
 
 IntPoint TilingData::textureOffset(int xIndex, int yIndex) const
 {
-    int left = (!xIndex || m_numTilesX == 1) ? 0 : m_borderTexels;
-    int top = (!yIndex || m_numTilesY == 1) ? 0 : m_borderTexels;
-
-    return IntPoint(left, top);
+    return IntPoint(m_borderTexels, m_borderTexels);
 }
 
 void TilingData::recomputeNumTiles()

@@ -61,6 +61,7 @@ public:
 
     IntRect tileBounds(int tile) const;
     IntRect tileBoundsWithBorder(int tile) const;
+    IntRect tileBoundsWithOuterBorder(int tile) const;
     FloatRect tileBoundsNormalized(int tile) const;
     int tilePositionX(int xIndex) const;
     int tilePositionY(int yIndex) const;

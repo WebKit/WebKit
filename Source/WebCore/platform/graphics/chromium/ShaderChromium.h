@@ -90,10 +90,12 @@ public:
 
     int matrixLocation() const { return m_matrixLocation; }
     int texTransformLocation() const { return m_texTransformLocation; }
+    int pointLocation() const { return m_pointLocation; }
 
 private:
     int m_matrixLocation;
     int m_texTransformLocation;
+    int m_pointLocation;
 };
 
 class FragmentTexAlphaBinding {
