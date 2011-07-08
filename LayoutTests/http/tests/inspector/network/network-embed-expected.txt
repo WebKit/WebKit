@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 57: Done.
+CONSOLE MESSAGE: line 58: Done.
 Tests that network panel shows content for embed objects.
 
 

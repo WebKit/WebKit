@@ -1,3 +1,12 @@
+2011-07-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        REGRESSION (r90557): http/tests/inspector/network/network-embed.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=64103
+
+        Unreviewed test fix (typo).
+
+        * http/tests/inspector/network/network-embed.html:
+
 2011-07-08  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: styles-disable-then-delete was flaky.
