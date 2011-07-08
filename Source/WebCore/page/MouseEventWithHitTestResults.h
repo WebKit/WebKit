@@ -34,7 +34,7 @@ public:
 
     const PlatformMouseEvent& event() const { return m_event; }
     const HitTestResult& hitTestResult() const { return m_hitTestResult; }
-    const IntPoint localPoint() const;
+    const LayoutPoint localPoint() const;
     Scrollbar* scrollbar() const;
     bool isOverLink() const;
     bool isOverWidget() const { return m_hitTestResult.isOverWidget(); }

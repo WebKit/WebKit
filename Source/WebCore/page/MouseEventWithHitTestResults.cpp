@@ -33,7 +33,7 @@ MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEv
 {
 }
 
-const IntPoint MouseEventWithHitTestResults::localPoint() const
+const LayoutPoint MouseEventWithHitTestResults::localPoint() const
 {
     return m_hitTestResult.localPoint();
 }
