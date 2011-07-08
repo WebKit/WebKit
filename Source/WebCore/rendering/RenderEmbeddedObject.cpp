@@ -180,7 +180,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));
 }
 
-bool RenderEmbeddedObject::getReplacementTextGeometry(const IntPoint& accumulatedOffset, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)
+bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)
 {
     contentRect = contentBoxRect();
     contentRect.moveBy(accumulatedOffset);

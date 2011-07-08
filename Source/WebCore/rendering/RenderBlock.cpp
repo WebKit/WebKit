@@ -3936,7 +3936,7 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     return result;
 }
 
-bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
+bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     if (!scrollsOverflow())
         return false;

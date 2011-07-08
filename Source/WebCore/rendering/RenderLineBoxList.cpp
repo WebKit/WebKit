@@ -274,7 +274,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
 }
 
 
-bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction) const
+bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction) const
 {
     if (hitTestAction != HitTestForeground)
         return false;
@@ -285,7 +285,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     if (!firstLineBox())
         return false;
 
-    IntRect rect = firstLineBox()->isHorizontal() ?
+    LayoutRect rect = firstLineBox()->isHorizontal() ?
         IntRect(pointInContainer.x(), pointInContainer.y() - result.topPadding(), 1, result.topPadding() + result.bottomPadding() + 1) :
         IntRect(pointInContainer.x() - result.leftPadding(), pointInContainer.y(), result.rightPadding() + result.leftPadding() + 1, 1);
 

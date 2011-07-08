@@ -335,7 +335,7 @@ void RenderTextControl::computeLogicalHeight()
     RenderBlock::computeLogicalHeight();
 }
 
-void RenderTextControl::hitInnerTextElement(HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
+void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     IntPoint adjustedLocation = accumulatedOffset + location();
     HTMLElement* innerText = innerTextElement();

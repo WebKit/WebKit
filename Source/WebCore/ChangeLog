@@ -1,3 +1,43 @@
+2011-07-08  Emil A Eklund  <eae@chromium.org>
+
+        Switch pointInContainer and accumulatedOffset to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64112
+
+        Reviewed by Eric Seidel.
+
+        Convert remaining IntPoint versions of the pointInContainer and
+        accumulatedOffset arguments to the new layout abstraction.
+
+        No new tests, no functionality changes.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInOverflowControl):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::popContentsClip):
+        * rendering/RenderBox.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+
 2011-07-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move selection related code from RenderTextControl to HTMLTextFormControlElement

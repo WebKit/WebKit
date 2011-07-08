@@ -64,7 +64,7 @@ public:
     void dirtyLinesFromChangedChild(RenderObject* parent, RenderObject* child);
 
     void paint(RenderBoxModelObject*, PaintInfo&, const LayoutPoint&) const;
-    bool hitTest(RenderBoxModelObject*, const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction) const;
+    bool hitTest(RenderBoxModelObject*, const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) const;
     
 private:
     bool anyLineIntersectsRect(RenderBoxModelObject*, const IntRect&, const IntPoint&, bool usePrintRect = false, int outlineSize = 0) const;

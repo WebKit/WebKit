@@ -332,7 +332,7 @@ void RenderTextControlSingleLine::layout()
     }
 }
 
-bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
@@ -343,12 +343,12 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     //  - we hit regions not in any decoration buttons.
     HTMLElement* container = containerElement();
     if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node() || (container && container == result.innerNode())) {
-        IntPoint pointInParent = pointInContainer;
+        LayoutPoint pointInParent = pointInContainer;
         if (container && innerBlockElement()) {
             if (innerBlockElement()->renderBox())
-                pointInParent -= toSize(innerBlockElement()->renderBox()->location());
+                pointInParent -= toLayoutSize(innerBlockElement()->renderBox()->location());
             if (container->renderBox())
-                pointInParent -= toSize(container->renderBox()->location());
+                pointInParent -= toLayoutSize(container->renderBox()->location());
         }
         hitInnerTextElement(result, pointInParent, accumulatedOffset);
     }

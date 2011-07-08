@@ -1102,7 +1102,7 @@ void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const Atomi
 
 #endif
 
-bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const IntPoint& accumulatedOffset)
+bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
 {
     if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseSelfOutline || paintInfo.phase == PaintPhaseMask)
         return false;
@@ -1128,7 +1128,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const IntPoint& accumulat
     return true;
 }
 
-void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, const IntPoint& accumulatedOffset)
+void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, const LayoutPoint& accumulatedOffset)
 {
     ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
 

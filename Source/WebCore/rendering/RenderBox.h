@@ -227,7 +227,7 @@ public:
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
 
-    virtual void absoluteRects(Vector<IntRect>&, const IntPoint& accumulatedOffset);
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&);
     
     IntRect reflectionBox() const;
@@ -346,8 +346,8 @@ public:
     IntRect clipRect(const IntPoint& location);
     virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(const IntPoint&) const { return IntRect(); }
-    bool pushContentsClip(PaintInfo&, const IntPoint& accumulatedOffset);
-    void popContentsClip(PaintInfo&, PaintPhase originalPhase, const IntPoint& accumulatedOffset);
+    bool pushContentsClip(PaintInfo&, const LayoutPoint& accumulatedOffset);
+    void popContentsClip(PaintInfo&, PaintPhase originalPhase, const LayoutPoint& accumulatedOffset);
 
     virtual void paintObject(PaintInfo&, const LayoutPoint&) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
