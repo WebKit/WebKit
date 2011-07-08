@@ -1994,8 +1994,8 @@ String AccessibilityRenderObject::selectedText() const
         return String(); // need to return something distinct from empty string
     
     if (isNativeTextControl()) {
-        RenderTextControl* textControl = toRenderTextControl(m_renderer);
-        return textControl->text().substring(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
+        HTMLTextFormControlElement* textControl = toRenderTextControl(m_renderer)->textFormControlElement();
+        return textControl->selectedText();
     }
     
     if (ariaRoleAttribute() == UnknownRole)
@@ -2028,7 +2028,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
     
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (isNativeTextControl() && ariaRole == UnknownRole) {
-        RenderTextControl* textControl = toRenderTextControl(m_renderer);
+        HTMLTextFormControlElement* textControl = toRenderTextControl(m_renderer)->textFormControlElement();
         return PlainTextRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
     }
     
@@ -2041,7 +2041,8 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
 void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range)
 {
     if (isNativeTextControl()) {
-        setSelectionRange(m_renderer->node(), range.start, range.start + range.length);
+        HTMLTextFormControlElement* textControl = toRenderTextControl(m_renderer)->textFormControlElement();
+        textControl->setSelectionRange(range.start, range.start + range.length);
         return;
     }
 
