@@ -299,10 +299,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
 
     SkBitmap deviceBitmap = dstDevice->accessBitmap(true);
-    SkAutoLockPixels deviceAutoLock(deviceBitmap);
 
     // If the device's bitmap doesn't have pixels we will make a temp and call writePixels on the device.
-    bool temporaryBitmap = !deviceBitmap.getPixels();
+    bool temporaryBitmap = !!deviceBitmap.getTexture();
     SkBitmap destBitmap;
 
     if (temporaryBitmap) {

@@ -1,3 +1,15 @@
+2011-07-08  Mike Reed  <reed@google.com>
+
+        [skia] don't rely on lockPixels failure to detect gpu-backed device (in prep for skia roll)
+        https://bugs.webkit.org/show_bug.cgi?id=64162
+
+        Reviewed by Stephen White.
+
+        No new tests. preparing for skia roll, where lockPixels always succeeds (but slowly for gpu-backed)
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::putImageData):
+
 2011-07-08  Chang Shu  <cshu@webkit.org>
 
         Update calling sites after function renamed.
