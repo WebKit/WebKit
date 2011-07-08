@@ -1,3 +1,16 @@
+2011-07-08  Adam Barth  <abarth@webkit.org>
+
+        TestResultsServer should keep old test results
+        https://bugs.webkit.org/show_bug.cgi?id=64199
+
+        Reviewed by Ojan Vafai.
+
+        Having historical data will help us do failure archeology.
+
+        * TestResultServer/handlers/testfilehandler.py:
+        * TestResultServer/model/testfile.py:
+        * TestResultServer/templates/showfilelist.jsonp: Added.
+
 2011-07-08  Adam Roben  <aroben@apple.com>
 
         Remove commit-log-editor's dependency on Module::Load::Conditional

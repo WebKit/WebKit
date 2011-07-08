@@ -97,22 +97,6 @@ class TestFile(DataStoreFile):
 
         return file
 
-    @classmethod
-    def update(cls, master, builder, test_type, name, data):
-        files = cls.get_files(master, builder, test_type, name)
-        if not files:
-            return cls.add_file(master, builder, test_type, name, data)
-
-        file = files[0]
-        if not file.save(data):
-            return None
-
-        logging.info(
-            "File replaced, master: %s, builder: %s, test_type: %s, name: %s, data key: %s.",
-            master, builder, test_type, file.name, str(file.data_keys))
-
-        return file
-
     def save(self, data):
         if not self.save_data(data):
             return False

@@ -33,6 +33,7 @@ import urllib
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
+from google.appengine.ext import db
 
 from model.jsonresults import JsonResults
 from model.testfile import TestFile
@@ -47,6 +48,12 @@ PARAM_TEST_TYPE = "testtype"
 PARAM_INCREMENTAL = "incremental"
 PARAM_TEST_LIST_JSON = "testlistjson"
 PARAM_CALLBACK = "callback"
+
+
+def _replace_jsonp_callback(json, callback_name):
+    if callback_name and re.search(r"^[A-Za-z0-9_]+$", callback_name):
+        json = re.sub(r"^[A-Za-z0-9_]+[(]", callback_name + "(", json)
+    return json
 
 
 class DeleteFile(webapp.RequestHandler):
@@ -73,7 +80,7 @@ class DeleteFile(webapp.RequestHandler):
 class GetFile(webapp.RequestHandler):
     """Get file content or list of files for given builder and name."""
 
-    def _get_file_list(self, master, builder, test_type, name):
+    def _get_file_list(self, master, builder, test_type, name, callback_name=None):
         """Get and display a list of files that matches builder and file name.
 
         Args:
@@ -98,6 +105,10 @@ class GetFile(webapp.RequestHandler):
             "name": name,
             "files": files,
         }
+        if callback_name:
+            json = template.render("templates/showfilelist.jsonp", template_values)
+            self._serve_json(_replace_jsonp_callback(json, callback_name))
+            return
         self.response.out.write(template.render("templates/showfilelist.html",
                                                 template_values))
 
@@ -119,6 +130,16 @@ class GetFile(webapp.RequestHandler):
 
         return files[0].data
 
+    def _get_file_content_from_key(self, key):
+        file = db.get(key)
+
+        if not file:
+            logging.info("File not found, key %s.", key)
+            return None
+
+        file.load_data()
+        return file.data
+
     def _get_test_list_json(self, master, builder, test_type):
         """Return json file with test name list only, do not include test
            results and other non-test-data .
@@ -134,7 +155,15 @@ class GetFile(webapp.RequestHandler):
 
         return JsonResults.get_test_list(builder, json)
 
+    def _serve_json(self, json):
+        if json:
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.out.write(json)
+        else:
+            self.error(404)
+
     def get(self):
+        key = self.request.get(PARAM_KEY)
         master = self.request.get(PARAM_MASTER)
         builder = self.request.get(PARAM_BUILDER)
         test_type = self.request.get(PARAM_TEST_TYPE)
@@ -147,25 +176,22 @@ class GetFile(webapp.RequestHandler):
             "Getting files, master %s, builder: %s, test_type: %s, name: %s.",
             master, builder, test_type, name)
 
-        # If parameter "dir" is specified or there is no builder or filename
-        # specified in the request, return list of files, otherwise, return
-        # file content.
-        if dir or not builder or not name:
-            return self._get_file_list(master, builder, test_type, name)
+        if not key:
+            # If parameter "dir" is specified or there is no builder or filename
+            # specified in the request, return list of files, otherwise, return
+            # file content.
+            if dir or not builder or not name:
+                return self._get_file_list(master, builder, test_type, name, callback_name)
 
-        if name == "results.json" and test_list_json:
+        if key:
+            json = self._get_file_content_from_key(key)
+        elif name == "results.json" and test_list_json:
             json = self._get_test_list_json(master, builder, test_type)
         else:
             json = self._get_file_content(master, builder, test_type, name)
 
-        if callback_name and re.search(r"^[A-Za-z0-9_]+$", callback_name):
-            json = re.sub(r"^[A-Za-z0-9_]+[(]", callback_name + "(", json)
+        self._serve_json(_replace_jsonp_callback(json, callback_name))
 
-        if json:
-            self.response.headers["Content-Type"] = "application/json"
-            self.response.out.write(json)
-        else:
-            self.error(404)
 
 class Upload(webapp.RequestHandler):
     """Upload test results file to datastore."""
@@ -207,7 +233,7 @@ class Upload(webapp.RequestHandler):
                 # Merge incremental json results.
                 update_succeeded = JsonResults.update(master, builder, test_type, file.value)
             else:
-                update_succeeded = TestFile.update(
+                update_succeeded = TestFile.add_file(
                     master, builder, test_type, file.filename, file.value)
 
             if not update_succeeded:
