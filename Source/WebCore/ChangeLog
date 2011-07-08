@@ -1,3 +1,9 @@
+2011-07-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, clang build fix.
+
+        * inspector/InspectorStyleTextEditor.h:
+
 2011-07-08  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add support for drag'n'drop of non-elements (comments, text, etc.)

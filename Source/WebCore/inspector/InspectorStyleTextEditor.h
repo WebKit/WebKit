@@ -34,8 +34,8 @@ namespace WebCore {
 
 #if ENABLE(INSPECTOR)
 
-class InspectorStyleProperty;
-class SourceRange;
+struct InspectorStyleProperty;
+struct SourceRange;
 
 typedef std::pair<String, String> NewLineAndWhitespace;
 
