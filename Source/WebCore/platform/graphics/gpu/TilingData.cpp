@@ -248,7 +248,7 @@ void TilingData::intersectDrawQuad(const FloatRect& srcRect, const FloatRect& ds
         srcRectIntersectedNormH * dstRect.height());
 }
 
-IntPoint TilingData::textureOffset(int xIndex, int yIndex) const
+IntPoint TilingData::textureOffset(int, int) const
 {
     return IntPoint(m_borderTexels, m_borderTexels);
 }

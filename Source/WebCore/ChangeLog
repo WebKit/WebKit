@@ -1,5 +1,14 @@
 2011-07-08  David Reveman  <reveman@chromium.org>
 
+        Remove unused function parameters.
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::textureOffset):
+
+2011-07-08  David Reveman  <reveman@chromium.org>
+
         Reviewed by Stephen White.
 
         [Chromium] Edge anti-aliasing for composited layers.
