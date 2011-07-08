@@ -1,3 +1,11 @@
+2011-07-08  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations cleanup.
+
+        Removed some duplicate expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-08  David Reveman  <reveman@chromium.org>
 
         Reviewed by Stephen White.
