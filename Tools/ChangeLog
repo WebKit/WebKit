@@ -1,5 +1,33 @@
 2011-07-08  Adam Roben  <aroben@apple.com>
 
+        Teach buildbot to figure out how many webkitpy/webkitperl tests failed
+
+        Fixes <http://webkit.org/b/64192> It's hard to tell how many test-webkitpy/test-webkitperl
+        tests failed when looking at build.webkit.org
+
+        Reviewed by Eric Seidel.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestWithFailureCount): New class that represents a test build step which has an associated
+        failure count. Eventually we should move more of our test classes to deriving from this.
+        (TestWithFailureCount.countFailures): Method for subclasses to override to say how many
+        failures occurred.
+
+        (TestWithFailureCount.commandComplete):
+        (TestWithFailureCount.evaluateCommand):
+        (TestWithFailureCount.getText):
+        (TestWithFailureCount.getText2):
+        These were all based on RunGtkAPITests.
+
+        (RunPythonTests): Changed to inherit from TestWithFailureCount.
+        (RunPythonTests.countFailures): Parses the test-webkitpy output looking for the count of
+        failures.
+        (RunPerlTests): Changed to inherit from TestWithFailureCount.
+        (RunPerlTests.countFailures): Parses the test-webkitperl output looking for the count of
+        failures.
+
+2011-07-08  Adam Roben  <aroben@apple.com>
+
         Ensure $CHANGE_LOG_EMAIL_ADDRESS is set when testing webkitpy's commit-log-editor integration
 
         Fixes <http://webkit.org/b/64180> REGRESSION (r90564): test-webkitpy failing on multiple
