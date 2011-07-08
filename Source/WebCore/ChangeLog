@@ -1,3 +1,17 @@
+2011-07-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Quotes are rendered as &quot; in the DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=64154
+
+        Reviewed by Yury Semikhatsky.
+
+        Since we currently rely on setting textContent rather than innerHTML for the DOM tree elements,
+        escapeHTML() calls unnecessarily HTML-escape certain characters in the DOM tree contents.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._buildAttributeDOM):
+        ():
+
 2011-07-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove unused code from InspectorAgent.h.

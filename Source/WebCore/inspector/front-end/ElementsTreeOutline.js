@@ -1364,7 +1364,7 @@ WebInspector.ElementsTreeElement.prototype = {
         var hasText = (value.length > 0);
         var attrSpanElement = parentElement.createChild("span", "webkit-html-attribute");
         var attrNameElement = attrSpanElement.createChild("span", "webkit-html-attribute-name");
-        attrNameElement.textContent = name.escapeHTML();
+        attrNameElement.textContent = name;
 
         if (hasText)
             attrSpanElement.appendChild(document.createTextNode("=\u200B\""));
@@ -1374,7 +1374,7 @@ WebInspector.ElementsTreeElement.prototype = {
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
             attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
         } else {
-            value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1\u200B");
+            value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
             var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");
             attrValueElement.textContent = value;
         }
@@ -1425,7 +1425,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.ELEMENT_NODE:
-                var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).escapeHTML();
+                var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName());
                 if (this._elementCloseTag) {
                     this._buildTagDOM(info.titleDOM, tagName, true, true);
                     info.hasChildren = false;
@@ -1451,7 +1451,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 // create a subtree for them
                 if (showInlineText) {
                     var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
-                    textNodeElement.textContent = textChild.nodeValue().escapeHTML();
+                    textNodeElement.textContent = textChild.nodeValue();
                     info.titleDOM.appendChild(document.createTextNode("\u200B"));
                     this._buildTagDOM(info.titleDOM, tagName, true, false);
                     info.hasChildren = false;
@@ -1477,7 +1477,7 @@ WebInspector.ElementsTreeElement.prototype = {
                     } else {
                         info.titleDOM.appendChild(document.createTextNode("\""));
                         var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
-                        textNodeElement.textContent = node.nodeValue().escapeHTML();
+                        textNodeElement.textContent = node.nodeValue();
                         info.titleDOM.appendChild(document.createTextNode("\""));
                     }
                 }
@@ -1485,7 +1485,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
             case Node.COMMENT_NODE:
                 var commentElement = info.titleDOM.createChild("span", "webkit-html-comment");
-                commentElement.appendChild(document.createTextNode("<!--" + node.nodeValue().escapeHTML() + "-->"));
+                commentElement.appendChild(document.createTextNode("<!--" + node.nodeValue() + "-->"));
                 break;
 
             case Node.DOCUMENT_TYPE_NODE:
@@ -1506,10 +1506,10 @@ WebInspector.ElementsTreeElement.prototype = {
 
             case Node.CDATA_SECTION_NODE:
                 var cdataElement = info.titleDOM.createChild("span", "webkit-html-text-node");
-                cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue().escapeHTML() + "]]>"));
+                cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue() + "]]>"));
                 break;
             default:
-                var defaultElement = info.titleDOM.appendChild(document.createTextNode(this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace().escapeHTML()));
+                var defaultElement = info.titleDOM.appendChild(document.createTextNode(this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace()));
         }
 
         return info;

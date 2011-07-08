@@ -1,6 +1,6 @@
-Tests that elements panel shows dom tree structure.
+Tests that elements panel shows DOM tree structure.
 
-Text
+"Quoted Text"
       <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 - <html>
     - <head>
@@ -11,10 +11,10 @@ Text
           </script>
       </head>
     - <body onload="runTest()">
-          <p>Tests that elements panel shows dom tree structure.</p>
+          <p>Tests that elements panel shows DOM tree structure.</p>
         - <div id="level1">
             - <div id="level2">
-                  "Text        "
+                  ""Quoted Text"        "
                   <div id="level3"></div>
               </div>
           </div>
