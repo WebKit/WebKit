@@ -61,8 +61,11 @@ BrokerConnection).
 import cPickle
 import logging
 import Queue
+import sys
 import time
+import traceback
 
+from webkitpy.common.system import stack_utils
 
 _log = logging.getLogger(__name__)
 
@@ -194,3 +197,10 @@ class BrokerConnection(object):
     def post_message(self, message_name, *message_args):
         self._broker.post_message(self._client, self._post_topic,
                                   message_name, *message_args)
+
+    def raise_exception(self, exc_info):
+        # Since tracebacks aren't picklable, send the extracted stack instead.
+        exception_type, exception_value, exception_traceback = sys.exc_info()
+        stack_utils.log_traceback(_log.debug, exception_traceback)
+        stack = traceback.extract_tb(exception_traceback)
+        self._broker.post_message(self._client, self._post_topic, 'exception', exception_type, exception_value, stack)

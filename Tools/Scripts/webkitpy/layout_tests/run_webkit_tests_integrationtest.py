@@ -236,8 +236,21 @@ class MainTest(unittest.TestCase):
         self.assertEqual(batch_tests_run, [])
 
     def test_exception_raised(self):
-        self.assertRaises(run_webkit_tests.WorkerException, logging_run,
+        # Exceptions raised by a worker are treated differently depending on
+        # whether they are in-process or out. inline exceptions work as normal,
+        # which allows us to get the full stack trace and traceback from the
+        # worker. The downside to this is that it could be any error, but this
+        # is actually useful in testing, which is what --worker-model=inline is
+        # usually used for.
+        #
+        # Exceptions raised in a separate process are re-packaged into
+        # WorkerExceptions, which have a string capture of the stack which can
+        # be printed, but don't display properly in the unit test exception handlers.
+        self.assertRaises(ValueError, logging_run,
             ['failures/expected/exception.html'], tests_included=True)
+
+        self.assertRaises(run_webkit_tests.WorkerException, logging_run,
+            ['--worker-model', 'processes', 'failures/expected/exception.html'], tests_included=True)
 
     def test_full_results_html(self):
         # FIXME: verify html?
@@ -325,7 +338,9 @@ class MainTest(unittest.TestCase):
     def test_run_force(self):
         # This raises an exception because we run
         # failures/expected/exception.html, which is normally SKIPped.
-        self.assertRaises(run_webkit_tests.WorkerException, logging_run, ['--force'])
+
+        # See also the comments in test_exception_raised() about ValueError vs. WorkerException.
+        self.assertRaises(ValueError, logging_run, ['--force'])
 
     def test_run_part(self):
         # Test that we actually select the right part

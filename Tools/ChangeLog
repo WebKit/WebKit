@@ -1,3 +1,29 @@
+2011-07-09  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: stack traces from worker-side exceptions aren't very useful inside test-webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=64218
+
+        Reviewed by Eric Seidel.
+
+        Exceptions aren't picklable and can't be sent across the
+        manager/worker message queue without losing information. NRWT
+        handles this by turning the stack trace into a set of strings,
+        and logging the strings when we receive an exception from the
+        worker. However, when you are running tests and something
+        crashes on the worker side, test-webkitpy prints the
+        manager-side stack trace, which is just confusing and useless.
+
+        This patch changes the logic so that exceptions are passed
+        through as-is when the worker and manager are in the same
+        process (the --worker-model=inline option). This increases the
+        code paths slightly but makes crashes much more useful.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/controllers/message_broker.py:
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-07-09  Darin Fisher  <darin@chromium.org>
 
         Eliminate bad dependency on gfx::Point.

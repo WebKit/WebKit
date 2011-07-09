@@ -235,6 +235,12 @@ class _InlineWorkerConnection(_WorkerConnection):
     def yield_to_broker(self):
         self._broker.run_all_pending(MANAGER_TOPIC, self._manager_client)
 
+    def raise_exception(self, exc_info):
+        # Since the worker is in the same process as the manager, we can
+        # raise the exception directly, rather than having to send it through
+        # the queue. This allows us to preserve the traceback.
+        raise exc_info[0], exc_info[1], exc_info[2]
+
 
 if multiprocessing:
 

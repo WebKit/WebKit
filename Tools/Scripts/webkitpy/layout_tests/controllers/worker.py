@@ -32,9 +32,7 @@ import logging
 import sys
 import threading
 import time
-import traceback
 
-from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models import test_expectations
@@ -95,22 +93,15 @@ class Worker(manager_worker_broker.AbstractWorker):
                                      % self._name)
         except KeyboardInterrupt:
             exception_msg = ", interrupted"
-            self.post_exception()
+            self._worker_connection.raise_exception(sys.exc_info())
         except:
             exception_msg = ", exception raised"
-            self.post_exception()
+            self._worker_connection.raise_exception(sys.exc_info())
         finally:
             _log.debug("%s done with message loop%s" % (self._name, exception_msg))
             self._worker_connection.post_message('done')
             self.cleanup()
             _log.debug("%s exiting" % self._name)
-
-    def post_exception(self):
-        # Since tracebacks aren't picklable, send the extracted stack instead.
-        exception_type, exception_value, exception_traceback = sys.exc_info()
-        stack_utils.log_traceback(_log.debug, exception_traceback)
-        stack = traceback.extract_tb(exception_traceback)
-        self._worker_connection.post_message('exception', exception_type, exception_value, stack)
 
     def handle_test_list(self, src, list_name, test_list):
         start_time = time.time()

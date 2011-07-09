@@ -778,7 +778,7 @@ class Manager(object):
             self.cancel_workers()
             keyboard_interrupted = True
         except TestRunInterruptedException, e:
-            _log.info(e.reason)
+            _log.warning(e.reason)
             self.cancel_workers()
             interrupted = True
         except WorkerException:
