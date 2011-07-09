@@ -59,3 +59,8 @@ dt::after {
 .new-bug-form {
     display: none;
 }
+
+.flakiness-example-separator {
+    padding-left: 5em;
+    font-size: larger;
+}

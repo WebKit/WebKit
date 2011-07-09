@@ -511,6 +511,12 @@ ViewController.prototype = {
             item.appendChild(historyList);
             historyList.appendChildren(possiblyFlakyTestData[testName].map(function(historyItem) {
                 var item = document.createElement('li');
+                if (historyItem.isSeparator) {
+                    const verticalEllipsis = '\u22ee';
+                    item.appendChild(document.createTextNode(verticalEllipsis));
+                    item.className = 'flakiness-example-separator';
+                    return item;
+                }
                 item.appendChild(self._domForBuildName(builder, historyItem.build));
                 item.appendChild(document.createTextNode(': '));
                 item.appendChild(self._domForFailureDiagnosis(builder, historyItem.build, testName, historyItem.result));

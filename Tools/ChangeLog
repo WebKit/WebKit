@@ -1,3 +1,26 @@
+2011-07-09  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures to abbreviate the examples of test flakiness
+
+        These lists can get quite long, and it's not really helpful in most cases to have soooooo
+        many examples of flakiness.
+
+        Fixes <http://webkit.org/b/64203> Lists of flaky revisions on TestFailures page can get so
+        long they're hard to navigate
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js:
+        (FlakyLayoutTestDetector.prototype.flakinessExamples): If we have more than a certain number
+        of examples, replace the middle items with a separator.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (.flakiness-example-separator): Added styles for the separator.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForPossiblyFlakyTests): Use a vertical ellipsis to represent
+        the separator.
+
 2011-07-09  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: stack traces from worker-side exceptions aren't very useful inside test-webkitpy

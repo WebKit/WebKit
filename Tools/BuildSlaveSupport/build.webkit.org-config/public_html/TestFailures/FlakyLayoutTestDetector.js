@@ -88,6 +88,24 @@ FlakyLayoutTestDetector.prototype = {
             examples.push(history[i + 1]);
         }
 
+        // The list of examples can get quite long. Instead of showing the whole list, we abbreviate
+        // by replacing the middle items with a separator.
+        const startAndEndAbbreviatedExamplesCount = 3;
+        console.assert(startAndEndAbbreviatedExamplesCount > 1);
+        var abbreviatedExamplesToShow = 2 * startAndEndAbbreviatedExamplesCount;
+        if (examples.length > abbreviatedExamplesToShow) {
+            var examplesBeforeSeparator = examples.slice(0, startAndEndAbbreviatedExamplesCount);
+            var examplesAfterSeparator = examples.slice(-startAndEndAbbreviatedExamplesCount);
+
+            // There's no real use in having two "pass" examples in a row immediately next to the
+            // separator.
+            if (examplesBeforeSeparator[examplesBeforeSeparator.length - 1].result.failureType === 'pass' && examplesBeforeSeparator[examplesBeforeSeparator.length - 2].result.failureType === 'pass')
+                examplesBeforeSeparator.splice(examplesBeforeSeparator.length - 1, 1);
+            if (examplesAfterSeparator[0].result.failureType === 'pass' && examplesAfterSeparator[1].result.failureType === 'pass')
+                examplesAfterSeparator.splice(0, 1);
+            examples = examplesBeforeSeparator.concat({ isSeparator: true }, examplesAfterSeparator);
+        }
+
         return examples;
     },
 
