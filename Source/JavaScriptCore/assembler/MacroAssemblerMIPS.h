@@ -330,6 +330,11 @@ public:
         m_assembler.sra(dest, dest, imm.m_value);
     }
 
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.sra(dest, src, imm.m_value);
+    }
+
     void urshift32(RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.srlv(dest, dest, shiftAmount);

@@ -753,7 +753,8 @@ public:
         int32_t result = (*insn & 0x0000ffff) << 16;
         insn++;
         ASSERT((*insn & 0xfc000000) == 0x34000000); // ori
-        result |= *insn & 0x0000ffff
+        result |= *insn & 0x0000ffff;
+        return result;
     }
     
     static void repatchCompact(void* where, int32_t value)
@@ -768,7 +769,7 @@ public:
 
     static void* readPointer(void* from)
     {
-        return static_cast<void*>(readInt32(from));
+        return reinterpret_cast<void*>(readInt32(from));
     }
 
 private:

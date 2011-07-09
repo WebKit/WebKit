@@ -1,3 +1,14 @@
+2011-07-09  Chao-ying Fu  <fu@mips.com>
+
+        Fix MIPS build due to readInt32 and readPointer
+        https://bugs.webkit.org/show_bug.cgi?id=63962
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::readInt32):
+        (JSC::MIPSAssembler::readPointer):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::rshift32):
+
 2011-07-08  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64181
