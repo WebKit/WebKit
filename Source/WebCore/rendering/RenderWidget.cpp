@@ -108,47 +108,24 @@ RenderWidget::RenderWidget(Node* node)
     view()->addWidget(this);
 }
 
-void RenderWidget::destroy()
+void RenderWidget::willBeDestroyed()
 {
-    // We can't call the base class's destroy because we don't
-    // want to unconditionally delete ourselves (we're ref-counted).
-    // So the code below includes copied and pasted contents of
-    // both RenderBox::destroy() and RenderObject::destroy().
-    // Fix originally made for <rdar://problem/4228818>.
-
-    animation()->cancelAnimations(this);
-
     if (RenderView* v = view())
         v->removeWidget(this);
-
     
     if (AXObjectCache::accessibilityEnabled()) {
         document()->axObjectCache()->childrenChanged(this->parent());
         document()->axObjectCache()->remove(this);
     }
 
-    if (!documentBeingDestroyed() && parent()) 
-        parent()->dirtyLinesFromChangedChild(this);
-
-    remove();
-
-    if (m_hasCounterNodeMap)
-        RenderCounter::destroyCounterNodes(this);
-
     setWidget(0);
 
-    // removes from override size map
-    if (hasOverrideSize())
-        clearOverrideSize();
+    RenderReplaced::willBeDestroyed();
+}
 
-    if (style() && (style()->logicalHeight().isPercent() || style()->logicalMinHeight().isPercent() || style()->logicalMaxHeight().isPercent()))
-        RenderBlock::removePercentHeightDescendant(this);
-
-    if (hasLayer()) {
-        layer()->clearClipRects();
-        setHasLayer(false);
-        destroyLayer();
-    }
+void RenderWidget::destroy()
+{
+    willBeDestroyed();
 
     // Grab the arena from node()->document()->renderArena() before clearing the node pointer.
     // Clear the node before deref-ing, as this may be deleted when deref is called.

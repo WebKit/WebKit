@@ -64,7 +64,7 @@ private:
     virtual void layout();
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
-    virtual void destroy();
+    virtual void willBeDestroyed();
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateFromElement();

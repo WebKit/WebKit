@@ -239,8 +239,6 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    virtual void destroy();
-
     virtual int minPreferredLogicalWidth() const;
     virtual int maxPreferredLogicalWidth() const;
 
@@ -411,6 +409,8 @@ public:
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
 
 protected:
+    virtual void willBeDestroyed();
+
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();

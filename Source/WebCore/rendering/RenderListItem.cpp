@@ -66,13 +66,13 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
     }
 }
 
-void RenderListItem::destroy()
+void RenderListItem::willBeDestroyed()
 {    
     if (m_marker) {
         m_marker->destroy();
         m_marker = 0;
     }
-    RenderBlock::destroy();
+    RenderBlock::willBeDestroyed();
 }
 
 static bool isList(Node* node)

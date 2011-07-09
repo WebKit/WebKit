@@ -48,8 +48,6 @@ public:
     RenderBoxModelObject(Node*);
     virtual ~RenderBoxModelObject();
     
-    virtual void destroy();
-
     LayoutUnit relativePositionOffsetX() const;
     LayoutUnit relativePositionOffsetY() const;
     LayoutSize relativePositionOffset() const { return LayoutSize(relativePositionOffsetX(), relativePositionOffsetY()); }
@@ -127,13 +125,16 @@ public:
     virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
 
-    // Called by RenderObject::destroy() (and RenderWidget::destroy()) and is the only way layers should ever be destroyed
+    // Called by RenderObject::willBeDestroyed() and is the only way layers should ever be destroyed
     void destroyLayer();
 
     void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
 
     virtual void setSelectionState(SelectionState s);
+
 protected:
+    virtual void willBeDestroyed();
+
     void calculateBackgroundImageGeometry(const FillLayer*, const IntRect& paintRect, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
     void getBorderEdgeInfo(class BorderEdge[], bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;

@@ -53,7 +53,7 @@ RenderInline::RenderInline(Node* node)
     setChildrenInline(true);
 }
 
-void RenderInline::destroy()
+void RenderInline::willBeDestroyed()
 {
 #ifndef NDEBUG
     // Make sure we do not retain "this" in the continuation outline table map of our containing blocks.
@@ -105,7 +105,7 @@ void RenderInline::destroy()
 
     m_lineBoxes.deleteLineBoxes(renderArena());
 
-    RenderBoxModelObject::destroy();
+    RenderBoxModelObject::willBeDestroyed();
 }
 
 RenderInline* RenderInline::inlineElementContinuation() const

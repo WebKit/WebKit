@@ -268,7 +268,7 @@ void RenderBoxModelObject::destroyLayer()
     m_layer = 0;
 }
 
-void RenderBoxModelObject::destroy()
+void RenderBoxModelObject::willBeDestroyed()
 {
     // This must be done before we destroy the RenderObject.
     if (m_layer)
@@ -277,8 +277,8 @@ void RenderBoxModelObject::destroy()
     // A continuation of this RenderObject should be destroyed at subclasses.
     ASSERT(!continuation());
 
-    // RenderObject::destroy calls back to destroyLayer() for layer destruction
-    RenderObject::destroy();
+    // RenderObject::willBeDestroyed calls back to destroyLayer() for layer destruction
+    RenderObject::willBeDestroyed();
 }
 
 bool RenderBoxModelObject::hasSelfPaintingLayer() const

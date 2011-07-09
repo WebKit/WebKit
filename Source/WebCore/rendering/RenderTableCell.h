@@ -137,7 +137,7 @@ private:
 
     virtual bool isTableCell() const { return true; }
 
-    virtual void destroy();
+    virtual void willBeDestroyed();
 
     virtual void computeLogicalWidth();
 

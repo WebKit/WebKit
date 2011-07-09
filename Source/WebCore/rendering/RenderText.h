@@ -48,8 +48,6 @@ public:
     void attachTextBox(InlineTextBox*);
     void removeTextBox(InlineTextBox*);
 
-    virtual void destroy();
-
     StringImpl* text() const { return m_text.impl(); }
     String textWithoutTranscoding() const;
 
@@ -131,6 +129,8 @@ public:
     void removeAndDestroyTextBoxes();
 
 protected:
+    virtual void willBeDestroyed();
+
     virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

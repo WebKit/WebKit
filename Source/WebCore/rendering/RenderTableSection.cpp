@@ -74,11 +74,11 @@ RenderTableSection::~RenderTableSection()
     clearGrid();
 }
 
-void RenderTableSection::destroy()
+void RenderTableSection::willBeDestroyed()
 {
     RenderTable* recalcTable = table();
     
-    RenderBox::destroy();
+    RenderBox::willBeDestroyed();
     
     // recalc cell info because RenderTable has unguarded pointers
     // stored that point to this RenderTableSection.

@@ -313,10 +313,10 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintOutline(paintInfo.context, LayoutRect(borderBoxOriginInContainer, size()));
 }
 
-void RenderSVGRoot::destroy()
+void RenderSVGRoot::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(this);
-    RenderBox::destroy();
+    RenderBox::willBeDestroyed();
 }
 
 void RenderSVGRoot::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

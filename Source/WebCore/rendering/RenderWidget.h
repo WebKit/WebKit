@@ -65,6 +65,7 @@ protected:
 private:
     virtual bool isWidget() const { return true; }
 
+    virtual void willBeDestroyed();
     virtual void destroy();
     virtual void setSelectionState(SelectionState);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);

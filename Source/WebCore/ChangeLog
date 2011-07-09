@@ -1,3 +1,86 @@
+2011-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up RenderWidget::destroy() to share more code
+        https://bugs.webkit.org/show_bug.cgi?id=64138
+
+        Reviewed by James Robinson.
+
+        RenderWidget::destroy() copied code from various other
+        destroy() methods, which made code maintenance in this
+        area very risky.
+        
+        Fix by adding a virtual willBeDestroyed() method, which
+        replaces most instances of destroy(). Now, only RenderWidget
+        and RenderObject implement destroy(), and each just calls
+        willBeDestroyed(). Code duplication is averted.
+        
+        No behavior change, so no tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreenPlaceholder::willBeDestroyed):
+        (RenderFullScreen::willBeDestroyed):
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        * rendering/RenderInline.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::willBeDestroyed):
+        * rendering/RenderListItem.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::willBeDestroyed):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::willBeDestroyed):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::willBeDestroyed):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::willBeDestroyed):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::willBeDestroyed):
+        * rendering/RenderText.h:
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::willBeDestroyed):
+        * rendering/RenderTextFragment.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::willBeDestroyed):
+        (WebCore::RenderWidget::destroy):
+        * rendering/RenderWidget.h:
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::willBeDestroyed):
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::willBeDestroyed):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::willBeDestroyed):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::willBeDestroyed):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::willBeDestroyed):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::willBeDestroyed):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/SVGResourcesCache.h:
+
 2011-07-08  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r90662.

@@ -43,11 +43,11 @@ RenderTableRow::RenderTableRow(Node* node)
     setInline(false);   // our object is not Inline
 }
 
-void RenderTableRow::destroy()
+void RenderTableRow::willBeDestroyed()
 {
     RenderTableSection* recalcSection = section();
     
-    RenderBox::destroy();
+    RenderBox::willBeDestroyed();
     
     if (recalcSection)
         recalcSection->setNeedsCellRecalc();

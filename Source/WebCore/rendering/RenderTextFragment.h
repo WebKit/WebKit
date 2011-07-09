@@ -39,8 +39,6 @@ public:
 
     virtual bool isTextFragment() const { return true; }
 
-    virtual void destroy();
-
     unsigned start() const { return m_start; }
     unsigned end() const { return m_end; }
 
@@ -54,6 +52,8 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:
+    virtual void willBeDestroyed();
+
     virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual UChar previousCharacter() const;
     RenderBlock* blockForAccompanyingFirstLetter() const;

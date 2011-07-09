@@ -2052,7 +2052,7 @@ bool RenderObject::isSelectionBorder() const
     return st == SelectionStart || st == SelectionEnd || st == SelectionBoth;
 }
 
-void RenderObject::destroy()
+void RenderObject::willBeDestroyed()
 {
     // Destroy any leftover anonymous children.
     RenderObjectChildList* children = virtualChildren();
@@ -2074,10 +2074,6 @@ void RenderObject::destroy()
     }
     animation()->cancelAnimations(this);
 
-    // By default no ref-counting. RenderWidget::destroy() doesn't call
-    // this function because it needs to do ref-counting. If anything
-    // in this function changes, be sure to fix RenderWidget::destroy() as well.
-
     remove();
 
     // If this renderer had a parent, remove should have destroyed any counters
@@ -2094,6 +2090,11 @@ void RenderObject::destroy()
         setHasLayer(false);
         toRenderBoxModelObject(this)->destroyLayer();
     }
+}
+
+void RenderObject::destroy()
+{
+    willBeDestroyed();
     arenaDelete(renderArena(), this);
 }
 

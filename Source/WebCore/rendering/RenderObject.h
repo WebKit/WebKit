@@ -801,6 +801,7 @@ protected:
 
     void adjustRectForOutlineAndShadow(IntRect&) const;
 
+    virtual void willBeDestroyed();
     void arenaDelete(RenderArena*, void* objectBase);
 
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/, IntPoint* /*cachedOffsetToRepaintContainer*/ = 0) const { return IntRect(); }

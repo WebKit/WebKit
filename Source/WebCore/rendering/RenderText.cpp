@@ -193,10 +193,10 @@ void RenderText::removeAndDestroyTextBoxes()
     deleteTextBoxes();
 }
 
-void RenderText::destroy()
+void RenderText::willBeDestroyed()
 {
     removeAndDestroyTextBoxes();
-    RenderObject::destroy();
+    RenderObject::willBeDestroyed();
 }
 
 void RenderText::extractTextBox(InlineTextBox* box)

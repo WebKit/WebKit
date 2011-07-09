@@ -54,11 +54,11 @@ RenderTableCell::RenderTableCell(Node* node)
     updateFromElement();
 }
 
-void RenderTableCell::destroy()
+void RenderTableCell::willBeDestroyed()
 {
     RenderTableSection* recalcSection = parent() ? section() : 0;
 
-    RenderBlock::destroy();
+    RenderBlock::willBeDestroyed();
 
     if (recalcSection)
         recalcSection->setNeedsCellRecalc();

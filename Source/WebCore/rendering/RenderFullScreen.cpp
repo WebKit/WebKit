@@ -45,14 +45,14 @@ public:
     }
 private:
     virtual bool isRenderFullScreenPlaceholder() const { return true; }
-    virtual void destroy();
+    virtual void willBeDestroyed();
     RenderFullScreen* m_owner;
 };
 
-void RenderFullScreenPlaceholder::destroy()
+void RenderFullScreenPlaceholder::willBeDestroyed()
 {
     m_owner->setPlaceholder(0);
-    RenderBlock::destroy();
+    RenderBlock::willBeDestroyed();
 }
 
 RenderFullScreen::RenderFullScreen(Node* node) 
@@ -62,7 +62,7 @@ RenderFullScreen::RenderFullScreen(Node* node)
     setReplaced(false); 
 }
 
-void RenderFullScreen::destroy()
+void RenderFullScreen::willBeDestroyed()
 {
     if (m_placeholder) {
         remove();
@@ -76,7 +76,7 @@ void RenderFullScreen::destroy()
     if (document() && document()->fullScreenRenderer() == this)
         document()->fullScreenRendererDestroyed();
 
-    RenderDeprecatedFlexibleBox::destroy();
+    RenderDeprecatedFlexibleBox::willBeDestroyed();
 }
 
 PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()

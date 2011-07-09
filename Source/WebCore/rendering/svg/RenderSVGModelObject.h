@@ -58,12 +58,13 @@ public:
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
-    virtual void destroy();
-
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateFromElement();
+
+protected:
+    virtual void willBeDestroyed();
 
 private:
     // This method should never be called, SVG uses a different nodeAtPoint method

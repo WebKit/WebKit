@@ -93,13 +93,13 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight())));
 }
 
-void RenderSVGInline::destroy()
+void RenderSVGInline::willBeDestroyed()
 {
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
         textRenderer->setNeedsPositioningValuesUpdate();
 
     SVGResourcesCache::clientDestroyed(this);
-    RenderInline::destroy();
+    RenderInline::willBeDestroyed();
 }
 
 void RenderSVGInline::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

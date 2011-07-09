@@ -126,7 +126,7 @@ private:
 
     virtual bool isTableSection() const { return true; }
 
-    virtual void destroy();
+    virtual void willBeDestroyed();
 
     virtual void layout();
 

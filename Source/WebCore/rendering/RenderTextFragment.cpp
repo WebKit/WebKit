@@ -68,11 +68,11 @@ void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle*
     }
 }
 
-void RenderTextFragment::destroy()
+void RenderTextFragment::willBeDestroyed()
 {
     if (m_firstLetter)
         m_firstLetter->destroy();
-    RenderText::destroy();
+    RenderText::willBeDestroyed();
 }
 
 void RenderTextFragment::setTextInternal(PassRefPtr<StringImpl> text)

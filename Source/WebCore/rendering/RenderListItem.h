@@ -54,7 +54,7 @@ private:
 
     virtual bool isListItem() const { return true; }
     
-    virtual void destroy();
+    virtual void willBeDestroyed();
 
     virtual bool isEmpty() const;
     virtual void paint(PaintInfo&, const LayoutPoint&);

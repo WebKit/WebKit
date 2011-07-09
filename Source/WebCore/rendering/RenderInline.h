@@ -35,8 +35,6 @@ class RenderInline : public RenderBoxModelObject {
 public:
     explicit RenderInline(Node*);
 
-    virtual void destroy();
-
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
 
     virtual LayoutUnit marginLeft() const;
@@ -86,6 +84,8 @@ public:
     void updateAlwaysCreateLineBoxes();
 
 protected:
+    virtual void willBeDestroyed();
+
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:

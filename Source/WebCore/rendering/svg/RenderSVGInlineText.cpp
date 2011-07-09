@@ -71,12 +71,12 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> string)
 {
 }
 
-void RenderSVGInlineText::destroy()
+void RenderSVGInlineText::willBeDestroyed()
 {
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
         textRenderer->setNeedsPositioningValuesUpdate();
 
-    RenderText::destroy();
+    RenderText::willBeDestroyed();
 }
 
 void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

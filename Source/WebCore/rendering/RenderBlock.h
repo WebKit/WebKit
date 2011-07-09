@@ -72,7 +72,6 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    virtual void destroy();
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // These two functions are overridden for inline-block.
@@ -249,7 +248,10 @@ public:
 #ifndef NDEBUG
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
 #endif
+
 protected:
+    virtual void willBeDestroyed();
+
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
     // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
     // the case of column spans), the default for fullRemoveInsert is false rather than true.

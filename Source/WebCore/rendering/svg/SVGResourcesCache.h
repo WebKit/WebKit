@@ -53,7 +53,7 @@ public:
     // Called from all SVG renderers updateFromElement() methods.
     static void clientUpdatedFromElement(RenderObject*, const RenderStyle* newStyle);
 
-    // Called from RenderSVGResourceContainer::destroy().
+    // Called from RenderSVGResourceContainer::willBeDestroyed().
     static void resourceDestroyed(RenderSVGResourceContainer*);
 
 private:

@@ -49,7 +49,7 @@ private:
 
     virtual bool isTableRow() const { return true; }
 
-    virtual void destroy();
+    virtual void willBeDestroyed();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void layout();

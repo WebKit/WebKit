@@ -149,7 +149,7 @@ RenderBlock::~RenderBlock()
     }
 }
 
-void RenderBlock::destroy()
+void RenderBlock::willBeDestroyed()
 {
     // Mark as being destroyed to avoid trouble with merges in removeChild().
     m_beingDestroyed = true;
@@ -191,7 +191,7 @@ void RenderBlock::destroy()
 
     m_lineBoxes.deleteLineBoxes(renderArena());
 
-    RenderBox::destroy();
+    RenderBox::willBeDestroyed();
 }
 
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

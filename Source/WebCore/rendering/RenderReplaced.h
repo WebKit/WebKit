@@ -32,12 +32,12 @@ public:
     RenderReplaced(Node*, const IntSize& intrinsicSize);
     virtual ~RenderReplaced();
 
-    virtual void destroy();
-
     virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
 protected:
+    virtual void willBeDestroyed();
+
     virtual void layout();
 
     virtual IntSize intrinsicSize() const;

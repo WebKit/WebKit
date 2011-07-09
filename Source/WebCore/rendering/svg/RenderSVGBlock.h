@@ -38,7 +38,7 @@ private:
 
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
 
-    virtual void destroy();
+    virtual void willBeDestroyed();
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateFromElement();
