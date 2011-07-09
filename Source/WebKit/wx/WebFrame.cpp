@@ -117,7 +117,7 @@ public:
         pageRect.y = pageRect.y * mmToPixelsY;
         pageRect.width = pageRect.width * mmToPixelsX;
         pageRect.height = pageRect.height * mmToPixelsY;
-
+        
         m_pageWidth = pageRect.width;
         m_printContext.begin(m_pageWidth);
         
@@ -129,6 +129,11 @@ public:
     {
         wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
         pdc->SetMapMode(wxMM_POINTS);
+        int pageWidth = 0;
+        int pageHeight = 0;
+        GetPageSizeMM(&pageWidth, &pageHeight);
+        
+        InitializeWithPageSize(wxRect(0, 0, pageWidth, pageHeight));
     }
     
     void GetPageInfo(int *minPage, int *maxPage, int *pageFrom, int *pageTo)
@@ -579,9 +584,9 @@ void wxWebFrame::Print(bool showDialog)
     
     wxPrintDialogData printdata;
     printdata.GetPrintData().SetPrintMode(wxPRINT_MODE_PRINTER);
-    printdata.GetPrintData().SetPaperId(wxPAPER_LETTER);
     printdata.GetPrintData().SetNoCopies(1);
-        
+    printdata.GetPrintData().ConvertFromNative();
+    
     wxPageSetupDialogData pageSetup(printdata.GetPrintData());
 
     wxRect paperSize = pageSetup.GetPaperSize();
@@ -598,19 +603,17 @@ void wxWebFrame::Print(bool showDialog)
     printdata.SetFromPage(1);
     printdata.SetToPage(printout->GetPageCount());
 
-    wxPrintDialogData data(printdata);
-
     if (showDialog) {
-        wxPrintDialog dialog(0, &data);
+        wxPrintDialog dialog(0, &printdata);
         if (dialog.ShowModal() == wxID_OK) {
-            data = dialog.GetPrintDialogData();
-            printout->SetFirstPage(data.GetFromPage());
-            printout->SetLastPage(data.GetToPage());
+            wxPrintDialogData updatedPrintdata = dialog.GetPrintDialogData();            
+            printout->SetFirstPage(updatedPrintdata.GetFromPage());
+            printout->SetLastPage(updatedPrintdata.GetToPage());
         } else
             return;
     }
     
-    wxPrinter printer(&data);
+    wxPrinter printer(&printdata);
         
     printer.Print(0, printout, false);
         
