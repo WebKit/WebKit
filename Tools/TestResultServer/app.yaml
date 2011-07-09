@@ -7,11 +7,10 @@ handlers:
 - url: /stylesheets
   static_dir: stylesheets
 
-- url: /testfile/delete
-  script: main.py
-  login: admin
+- url: /dashboards
+  static_dir: static-dashboards
 
-- url: /dashboards/delete
+- url: /testfile/delete
   script: main.py
   login: admin
 

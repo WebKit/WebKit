@@ -33,14 +33,10 @@ use_library('django', '1.1')
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from handlers import dashboardhandler
 from handlers import menu
 from handlers import testfilehandler
 
 routes = [
-    ('/dashboards/delete', dashboardhandler.DeleteDashboardFile),
-    ('/dashboards/update', dashboardhandler.UpdateDashboardFile),
-    ('/dashboards/([^?]+)?', dashboardhandler.GetDashboardFile),
     ('/testfile/delete', testfilehandler.DeleteFile),
     ('/testfile/upload', testfilehandler.Upload),
     ('/testfile/uploadform', testfilehandler.UploadForm),

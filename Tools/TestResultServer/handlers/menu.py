@@ -30,13 +30,18 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
+dashboards = [
+    ["Results", "/dashboards/flakiness_dashboard.html"],
+    ["Timeline", "/dashboards/timeline_explorer.html"],
+    ["Treemap", "/dashboards/treemap.html"],
+    ["Stats", "/dashboards/aggregate_results.html"],
+]
+
 menu = [
     ["List of test files", "/testfile"],
     ["List of results.json files", "/testfile?name=results.json"],
     ["List of expectations.json files", "/testfile?name=expectations.json"],
     ["Upload test file", "/testfile/uploadform"],
-    ["List of dashboard files", "/dashboards/"],
-    ["Update dashboard files", "/dashboards/update"],
 ]
 
 
@@ -57,6 +62,7 @@ class Menu(webapp.RequestHandler):
             "login_text": login_text,
             "login_url": login_url,
             "menu": menu,
+            "dashboards": dashboards,
         }
 
         self.response.out.write(

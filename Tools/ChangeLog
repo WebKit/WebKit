@@ -1,3 +1,45 @@
+2011-07-08  Ojan Vafai  <ojan@chromium.org>
+
+        pull static dashboard files into the appengine server from the chromium repository
+        https://bugs.webkit.org/show_bug.cgi?id=64208
+
+        Reviewed by Dirk Pranke.
+
+        These files belong in the WebKit repo since they are tied primarily to the webkit tests.
+        They have some extra bits to support chromium's gtests, but that seems fine.
+        Mainly, this will allow other WebKit hackers to hack on the dashboards.
+
+        As a nice side-effect, we can now push the dashboard files when we do appengine pushes
+        instead of the weird thing we used to do of pulling them from the Chromium repository
+        and storing them in the appengine datastore. This allows for cleaning up a lot of code
+        and will likely make the dashboards load a bit faster.
+
+        The new JS files don't fully match WebKit style, but I'd like to clean that up in a
+        followup patch if possible to maintain my sanity with this patch.
+
+        * TestResultServer/app.yaml:
+        * TestResultServer/handlers/dashboardhandler.py: Removed.
+        * TestResultServer/handlers/menu.py:
+        * TestResultServer/main.py:
+        * TestResultServer/model/dashboardfile.py: Removed.
+        * TestResultServer/static-dashboards/LICENSE.dygraph.txt: Added.
+        * TestResultServer/static-dashboards/README.dygraph.txt: Added.
+        * TestResultServer/static-dashboards/README.webtreemap.txt: Added.
+        * TestResultServer/static-dashboards/aggregate_results.html: Added.
+        * TestResultServer/static-dashboards/builders.js: Added.
+        * TestResultServer/static-dashboards/dashboard_base.js: Added.
+        * TestResultServer/static-dashboards/dygraph-combined.js: Added.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html: Added.
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js: Added.
+        * TestResultServer/static-dashboards/timeline_explorer.html: Added.
+        * TestResultServer/static-dashboards/treemap.html: Added.
+        * TestResultServer/static-dashboards/webtreemap.css: Added.
+        * TestResultServer/static-dashboards/webtreemap.js: Added.
+        * TestResultServer/stylesheets/dashboardfile.css: Removed.
+        * TestResultServer/stylesheets/menu.css:
+        * TestResultServer/templates/dashboardfilelist.html: Removed.
+        * TestResultServer/templates/menu.html:
+
 2011-07-08  Adam Roben  <aroben@apple.com>
 
         Make TestFailures's list of flaky tests look more like the list of non-flaky tests
