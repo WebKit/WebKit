@@ -131,15 +131,15 @@ static void advanceEventTime(int32_t deltaMs)
 }
 
 static void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b,
-                           const gfx::Point& pos, WebMouseEvent* e)
+                           const WebPoint& pos, WebMouseEvent* e)
 {
     e->type = t;
     e->button = b;
     e->modifiers = 0;
-    e->x = pos.x();
-    e->y = pos.y();
-    e->globalX = pos.x();
-    e->globalY = pos.y();
+    e->x = pos.x;
+    e->y = pos.y;
+    e->globalX = pos.x;
+    e->globalY = pos.y;
     e->timeStampSeconds = getCurrentEventTimeSec();
     e->clickCount = clickCount;
 }

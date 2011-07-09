@@ -1,3 +1,13 @@
+2011-07-09  Darin Fisher  <darin@chromium.org>
+
+        Eliminate bad dependency on gfx::Point.
+        https://bugs.webkit.org/show_bug.cgi?id=64228
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (initMouseEvent):
+
 2011-07-08  Ojan Vafai  <ojan@chromium.org>
 
         pull static dashboard files into the appengine server from the chromium repository
