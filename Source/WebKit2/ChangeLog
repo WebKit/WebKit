@@ -1,3 +1,16 @@
+2011-07-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        [WebKit2] Forward focus events to windowless plugins on the windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=63251
+
+        No new tests. Covered by existing tests: plugins/mouse-events.html and
+        plugins/keyboard-events.html.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformSetFocus):
+
 2011-07-08  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Views should expose QActions for basic navigation.

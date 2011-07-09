@@ -308,11 +308,21 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent&)
     return false;
 }
 
-void NetscapePlugin::platformSetFocus(bool)
+void NetscapePlugin::platformSetFocus(bool hasFocus)
 {
     CurrentPluginSetter setCurrentPlugin(this);
 
-    notImplemented();
+    if (m_isWindowed)
+        return;
+
+    controller()->willSendEventToPlugin();
+
+    NPEvent npEvent;
+    npEvent.event = hasFocus ? WM_SETFOCUS : WM_KILLFOCUS;
+    npEvent.wParam = 0;
+    npEvent.lParam = 0;
+
+    NPP_HandleEvent(&npEvent);
 }
 
 bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
