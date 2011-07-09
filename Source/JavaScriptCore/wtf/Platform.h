@@ -365,7 +365,7 @@
 
 #endif /* ARM */
 
-#if CPU(ARM) || CPU(MIPS)
+#if CPU(ARM) || CPU(MIPS) || CPU(SH4)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 

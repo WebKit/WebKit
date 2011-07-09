@@ -1,3 +1,10 @@
+2011-07-09  Thouraya Andolsi  <thouraya.andolsi@st.com>
+
+        Fix unaligned userspace access for SH4 platforms. 
+        https://bugs.webkit.org/show_bug.cgi?id=62993
+
+        * wtf/Platform.h:
+
 2011-07-09  Chao-ying Fu  <fu@mips.com>
 
         Fix MIPS build due to readInt32 and readPointer
