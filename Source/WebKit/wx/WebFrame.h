@@ -134,6 +134,8 @@ public:
     void Undo();
     void Redo();
     
+    wxString GetName();
+    
     wxString GetPageSource();
     void SetPageSource(const wxString& source, const wxString& baseUrl = wxEmptyString, const wxString& mimetype = wxT("text/html"));
     

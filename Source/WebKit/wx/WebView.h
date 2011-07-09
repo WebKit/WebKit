@@ -298,6 +298,8 @@ public:
     void SetURL(const wxString& url) { m_url = url; }
     void SetNavigationType(int navType) { m_navType = navType; }
     int GetNavigationType() const { return m_navType; }
+    wxWebFrame* GetFrame() const { return m_frame; }
+    void SetFrame(wxWebFrame* frame) { m_frame = frame; }
 
     wxWebViewBeforeLoadEvent( wxWindow* win = (wxWindow*) NULL );
     wxEvent *Clone(void) const { return new wxWebViewBeforeLoadEvent(*this); }
@@ -306,6 +308,7 @@ private:
     bool m_cancelled;
     wxString m_url;
     int m_navType;
+    wxWebFrame* m_frame;
 };
 
 class WXDLLIMPEXP_WEBKIT wxWebViewLoadEvent : public wxCommandEvent
@@ -319,6 +322,8 @@ public:
     void SetState(const int state) { m_state = state; }
     wxString GetURL() const { return m_url; }
     void SetURL(const wxString& url) { m_url = url; }
+    wxWebFrame* GetFrame() const { return m_frame; }
+    void SetFrame(wxWebFrame* frame) { m_frame = frame; }
 
     wxWebViewLoadEvent( wxWindow* win = (wxWindow*) NULL );
     wxEvent *Clone(void) const { return new wxWebViewLoadEvent(*this); }
@@ -326,6 +331,7 @@ public:
 private:
     int m_state;
     wxString m_url;
+    wxWebFrame* m_frame;
 };
 
 class WXDLLIMPEXP_WEBKIT wxWebKitWindowFeatures
@@ -367,12 +373,15 @@ public:
     void SetWebView(wxWebView* webView) { m_webView = webView; }
     wxWebKitWindowFeatures GetWindowFeatures() { return m_features; }
     void SetWindowFeatures(wxWebKitWindowFeatures features) { m_features = features; }
+    wxWebFrame* GetFrame() const { return m_frame; }
+    void SetFrame(wxWebFrame* frame) { m_frame = frame; }
 
     wxWebViewNewWindowEvent( wxWindow* win = static_cast<wxWindow*>(NULL));
     wxEvent *Clone(void) const { return new wxWebViewNewWindowEvent(*this); }
 
 private:
     wxWebView* m_webView;
+    wxWebFrame* m_frame;
     wxWebKitWindowFeatures m_features;
     wxString m_url;
     wxString m_targetName;
@@ -497,11 +506,15 @@ public:
     wxString GetTitle() const { return m_title; }
     void SetTitle(const wxString& title) { m_title = title; }
 
+    wxWebFrame* GetFrame() const { return m_frame; }
+    void SetFrame(wxWebFrame* frame) { m_frame = frame; }
+
     wxWebViewReceivedTitleEvent( wxWindow* win = static_cast<wxWindow*>(NULL));
     wxEvent *Clone(void) const { return new wxWebViewReceivedTitleEvent(*this); }
 
 private:
     wxString m_title;
+    wxWebFrame* m_frame;
 };
 
 class WXDLLIMPEXP_WEBKIT wxWebViewWindowObjectClearedEvent : public wxCommandEvent

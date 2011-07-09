@@ -162,6 +162,13 @@ MustHaveApp(wxWebView);
 %include WebSettings.h
 %include WebView.h
 
+%extend wxWebFrame {
+    %pythoncode {
+        def __eq__(self, other):
+            return self.this == other.this
+    }
+}
+
 %constant wxEventType wxEVT_WEBVIEW_BEFORE_LOAD;
 %constant wxEventType wxEVT_WEBVIEW_LOAD;
 %constant wxEventType wxEVT_WEBVIEW_NEW_WINDOW;

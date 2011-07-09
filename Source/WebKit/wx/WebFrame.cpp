@@ -238,6 +238,13 @@ wxWebFrame::~wxWebFrame()
         delete m_impl;
 }
 
+wxString wxWebFrame::GetName()
+{
+    if (m_impl && m_impl->frame && m_impl->frame->tree())
+        return m_impl->frame->tree()->name().string();
+    return wxEmptyString;
+}
+
 WebCore::Frame* wxWebFrame::GetFrame()
 {
     if (m_impl)

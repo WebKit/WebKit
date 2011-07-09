@@ -1,4 +1,30 @@
-2011-07-08  Robin Dunn  <robin@alldunn.com>
+2011-07-09  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] In load events, specify the wxWebFrame that sent them.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=64233
+
+        * WebBrowserShell.cpp:
+        (wxWebBrowserShell::OnLoadEvent):
+        * WebFrame.cpp:
+        (wxWebFrame::GetName):
+        * WebFrame.h:
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientWx::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientWx::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientWx::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientWx::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
+        * WebView.h:
+        * bindings/python/webview.i:
+
+2011-07-09  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
 

@@ -233,6 +233,7 @@ void FrameLoaderClientWx::dispatchDidHandleOnloadEvents()
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_ONLOAD_HANDLED);
         wkEvent.SetURL(m_frame->loader()->documentLoader()->request().url().string());
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -290,6 +291,7 @@ void FrameLoaderClientWx::dispatchDidStartProvisionalLoad()
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_NEGOTIATING);
         wkEvent.SetURL(m_frame->loader()->provisionalDocumentLoader()->request().url().string());
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -299,8 +301,11 @@ void FrameLoaderClientWx::dispatchDidReceiveTitle(const StringWithDirection& tit
 {
     if (m_webView) {
         // FIXME: use direction of title.
-        m_webView->SetPageTitle(title.string());
+        if (m_webFrame == m_webView->GetMainFrame())
+            m_webView->SetPageTitle(title.string());
+        
         wxWebViewReceivedTitleEvent wkEvent(m_webView);
+        wkEvent.SetFrame(m_webFrame);
         wkEvent.SetTitle(title.string());
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
@@ -313,6 +318,7 @@ void FrameLoaderClientWx::dispatchDidCommitLoad()
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_TRANSFERRING);
         wkEvent.SetURL(m_frame->loader()->documentLoader()->request().url().string());
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -323,6 +329,7 @@ void FrameLoaderClientWx::dispatchDidFinishDocumentLoad()
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_DOC_COMPLETED);
         wkEvent.SetURL(m_frame->document()->url().string());
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -397,6 +404,7 @@ void FrameLoaderClientWx::postProgressFinishedNotification()
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_DL_COMPLETED);
         wkEvent.SetURL(m_frame->document()->url().string());
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -751,6 +759,7 @@ void FrameLoaderClientWx::dispatchDidFailLoading(DocumentLoader* loader, unsigne
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_FAILED);
         wkEvent.SetURL(m_frame->loader()->documentLoader()->request().url().string());
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -795,6 +804,7 @@ void FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
         wxWebViewNewWindowEvent wkEvent(m_webView);
         wkEvent.SetURL(request.url().string());
         wkEvent.SetTargetName(targetName);
+        wkEvent.SetFrame(m_webFrame);
         if (m_webView->GetEventHandler()->ProcessEvent(wkEvent)) {
             // if the app handles and doesn't skip the event, 
             // from WebKit's perspective treat it as blocked / ignored
@@ -815,7 +825,7 @@ void FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction(FramePolicyFun
         wxWebViewBeforeLoadEvent wkEvent(m_webView);
         wkEvent.SetNavigationType(wxNavTypeFromWebNavType(action.type()));
         wkEvent.SetURL(request.url().string());
-        
+        wkEvent.SetFrame(m_webFrame);
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
         if (wkEvent.IsCancelled())
             (m_frame->loader()->policyChecker()->*function)(PolicyIgnore);

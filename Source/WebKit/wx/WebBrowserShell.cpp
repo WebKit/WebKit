@@ -229,11 +229,13 @@ void wxWebBrowserShell::OnLoadEvent(wxWebViewLoadEvent& event)
         }
         else if (event.GetState() == wxWEBVIEW_LOAD_TRANSFERRING) {
             GetStatusBar()->SetStatusText(_("Loading ") + event.GetURL());
+            if (event.GetFrame() == webview->GetMainFrame())
+                addressBar->SetValue(event.GetURL());
         }
         else if (event.GetState() == wxWEBVIEW_LOAD_ONLOAD_HANDLED) {
             GetStatusBar()->SetStatusText(_("Load complete."));
-            addressBar->SetValue(event.GetURL());
-            SetTitle(webview->GetPageTitle());
+            if (event.GetFrame() == webview->GetMainFrame())
+                SetTitle(webview->GetPageTitle());
         }
         else if (event.GetState() == wxWEBVIEW_LOAD_FAILED) {
             GetStatusBar()->SetStatusText(_("Failed to load ") + event.GetURL());
