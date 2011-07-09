@@ -1,3 +1,24 @@
+2011-07-08  Dirk Schulze  <krit@webkit.org>
+
+        Refactoring luminance code in RenderSVGResourceMasker
+        https://bugs.webkit.org/show_bug.cgi?id=64146
+
+        Reviewed by Simon Fraser.
+
+        Moved luminance calculcation code to ImageBuffer. The code is doing pixel manipulations and can now get replaced
+        by platform specific algorithms in the ImmageBuffer*.cpp files.
+
+        No change of functionality. No new tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::transformColorSpace):
+        (WebCore::ImageBuffer::genericConvertToLuminanceMask):
+        (WebCore::ImageBuffer::convertToLuminanceMask):
+        * platform/graphics/ImageBuffer.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+
 2011-07-08  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up RenderWidget::destroy() to share more code

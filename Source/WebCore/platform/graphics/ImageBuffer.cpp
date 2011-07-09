@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +27,18 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#if !USE(CG)
-
-#include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
+#if !USE(CG)
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
     if (srcColorSpace == dstColorSpace)
         return;
 
     // only sRGB <-> linearRGB are supported at the moment
-    if ((srcColorSpace != ColorSpaceLinearRGB && srcColorSpace != ColorSpaceDeviceRGB) 
+    if ((srcColorSpace != ColorSpaceLinearRGB && srcColorSpace != ColorSpaceDeviceRGB)
         || (dstColorSpace != ColorSpaceLinearRGB && dstColorSpace != ColorSpaceDeviceRGB))
         return;
 
@@ -66,7 +66,32 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
         platformTransformColorSpace(m_deviceRgbLUT);
     }
 }
+#endif // USE(CG)
 
+inline void ImageBuffer::genericConvertToLuminanceMask()
+{
+    IntRect luminanceRect(IntPoint(), size());
+    RefPtr<ByteArray> srcPixelArray = getUnmultipliedImageData(luminanceRect);
+    
+    unsigned pixelArrayLength = srcPixelArray->length();
+    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
+        unsigned char a = srcPixelArray->get(pixelOffset + 3);
+        if (!a)
+            continue;
+        unsigned char r = srcPixelArray->get(pixelOffset);
+        unsigned char g = srcPixelArray->get(pixelOffset + 1);
+        unsigned char b = srcPixelArray->get(pixelOffset + 2);
+        
+        double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
+        srcPixelArray->set(pixelOffset + 3, luma);
+    }
+    putUnmultipliedImageData(srcPixelArray.get(), luminanceRect.size(), luminanceRect, IntPoint());
 }
 
-#endif // USE(CG)
+void ImageBuffer::convertToLuminanceMask()
+{
+    // Add platform specific functions with platformConvertToLuminanceMask here later.
+    genericConvertToLuminanceMask();
+}
+
+}

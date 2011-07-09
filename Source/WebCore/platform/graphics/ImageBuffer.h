@@ -92,6 +92,8 @@ namespace WebCore {
         void putUnmultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
         void putPremultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
         
+        void convertToLuminanceMask();
+        
         String toDataURL(const String& mimeType, const double* quality = 0) const;
 #if !USE(CG)
         AffineTransform baseTransform() const { return AffineTransform(); }
@@ -109,6 +111,9 @@ namespace WebCore {
                              CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                          const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+        
+        inline void genericConvertToLuminanceMask();
+
         friend class GraphicsContext;
         friend class GeneratedImage;
 

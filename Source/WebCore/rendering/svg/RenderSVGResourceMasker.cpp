@@ -159,23 +159,7 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, c
 #endif
 
     // Create the luminance mask.
-    IntRect maskImageRect(IntPoint(), maskerData->maskImage->size());
-    RefPtr<ByteArray> srcPixelArray = maskerData->maskImage->getUnmultipliedImageData(maskImageRect);
-
-    unsigned pixelArrayLength = srcPixelArray->length();
-    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
-        unsigned char a = srcPixelArray->get(pixelOffset + 3);
-        if (!a)
-            continue;
-        unsigned char r = srcPixelArray->get(pixelOffset);
-        unsigned char g = srcPixelArray->get(pixelOffset + 1);
-        unsigned char b = srcPixelArray->get(pixelOffset + 2);
-
-        double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
-        srcPixelArray->set(pixelOffset + 3, luma);
-    }
-
-    maskerData->maskImage->putUnmultipliedImageData(srcPixelArray.get(), maskImageRect.size(), maskImageRect, IntPoint());
+    maskerData->maskImage->convertToLuminanceMask();
 }
 
 void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
