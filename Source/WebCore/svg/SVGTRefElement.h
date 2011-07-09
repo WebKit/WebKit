@@ -42,9 +42,6 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const;
@@ -56,10 +53,9 @@ private:
 
     virtual void buildPendingResource();
 
-    // Animated property declarations
-
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTRefElement)
+        DECLARE_ANIMATED_STRING(Href, href)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     RefPtr<SubtreeModificationEventListener> m_eventListener;
 };

@@ -36,12 +36,21 @@ DEFINE_ANIMATED_LENGTH(SVGCursorElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_STRING(SVGCursorElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGCursorElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGCursorElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
 {
     ASSERT(hasTagName(SVGNames::cursorTag));
+    registerAnimatedPropertiesForSVGCursorElement();
 }
 
 PassRefPtr<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Document* document)
@@ -96,20 +105,6 @@ void SVGCursorElement::parseMappedAttribute(Attribute* attr)
     ASSERT_NOT_REACHED();
 }
 
-AttributeToPropertyTypeMap& SVGCursorElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGCursorElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
-}
-
 void SVGCursorElement::addClient(SVGElement* element)
 {
     m_clients.add(element);
@@ -145,51 +140,6 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
 
     for (; it != end; ++it)
         (*it)->setNeedsStyleRecalc();
-}
-
-void SVGCursorElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeX();
-        synchronizeY();
-        synchronizeExternalResourcesRequired();
-        synchronizeHref();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
 }
 
 void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

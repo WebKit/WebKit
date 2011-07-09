@@ -74,19 +74,6 @@ bool SVGTSpanElement::rendererIsNeeded(const NodeRenderingContext& context)
     return false;
 }
 
-AttributeToPropertyTypeMap& SVGTSpanElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGTSpanElement::fillAttributeToPropertyTypeMap()
-{        
-    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
-}
-
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

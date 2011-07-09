@@ -37,10 +37,18 @@ DEFINE_ANIMATED_STRING(SVGFEGaussianBlurElement, SVGNames::inAttr, In1, in1)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, stdDeviationXIdentifier(), StdDeviationX, stdDeviationX)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, stdDeviationYIdentifier(), StdDeviationY, stdDeviationY)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEGaussianBlurElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(stdDeviationX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(stdDeviationY)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feGaussianBlurTag));
+    registerAnimatedPropertiesForSVGFEGaussianBlurElement();
 }
 
 PassRefPtr<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedName& tagName, Document* document)
@@ -117,50 +125,6 @@ void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGFEGaussianBlurElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeStdDeviationX();
-        synchronizeStdDeviationY();
-        synchronizeIn1();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::stdDeviationAttr) {
-        synchronizeStdDeviationX();
-        synchronizeStdDeviationY();
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFEGaussianBlurElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEGaussianBlurElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::stdDeviationAttr, AnimatedNumberOptionalNumber);
 }
 
 PassRefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

@@ -32,7 +32,7 @@ typedef SVGAnimatedTransformListPropertyTearOff SVGAnimatedTransformList;
 DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedTransformList, SVGTransformList, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_TRANSFORM_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_LIST_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedTransformList, SVGTransformList, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedTransformList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
 } // namespace WebCore
 

@@ -48,10 +48,24 @@ DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::pointsAtZAttr, PointsAtZ, po
 DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::specularExponentAttr, SpecularExponent, specularExponent)
 DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::limitingConeAngleAttr, LimitingConeAngle, limitingConeAngle)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFELightElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(azimuth)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(elevation)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(z)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(pointsAtX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(pointsAtY)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(pointsAtZ)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(specularExponent)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(limitingConeAngle)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_specularExponent(1)
 {
+    registerAnimatedPropertiesForSVGFELightElement();
 }
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
@@ -192,102 +206,6 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGFELightElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeAzimuth();
-        synchronizeElevation();
-        synchronizeX();
-        synchronizeY();
-        synchronizeZ();
-        synchronizePointsAtX();
-        synchronizePointsAtY();
-        synchronizePointsAtZ();
-        synchronizeSpecularExponent();
-        synchronizeLimitingConeAngle();
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }
-    
-    if (attrName == SVGNames::azimuthAttr) {
-        synchronizeAzimuth();
-        return;
-    }
-
-    if (attrName == SVGNames::elevationAttr) {
-        synchronizeElevation();
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::zAttr) {
-        synchronizeZ();
-        return;
-    }
-
-    if (attrName == SVGNames::pointsAtXAttr) {
-        synchronizePointsAtX();
-        return;
-    }
-
-    if (attrName == SVGNames::pointsAtYAttr) {
-        synchronizePointsAtY();
-        return;
-    }
-
-    if (attrName == SVGNames::pointsAtZAttr) {
-        synchronizePointsAtZ();
-        return;
-    }
-
-    if (attrName == SVGNames::specularExponentAttr) {
-        synchronizeSpecularExponent();
-        return;
-    }
-
-    if (attrName == SVGNames::limitingConeAngleAttr) {
-        synchronizeLimitingConeAngle();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFELightElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFELightElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-    attributeToPropertyTypeMap.set(SVGNames::azimuthAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::elevationAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::zAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::pointsAtXAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::pointsAtYAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::pointsAtZAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::specularExponentAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::limitingConeAngleAttr, AnimatedNumber);
 }
 
 void SVGFELightElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

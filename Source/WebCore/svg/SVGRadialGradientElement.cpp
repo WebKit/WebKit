@@ -47,6 +47,15 @@ DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::rAttr, R, r)
 DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::fxAttr, Fx, fx)
 DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::fyAttr, Fy, fy)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGRadialGradientElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(cx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(cy)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(r)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(fx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(fy)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGradientElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* document)
     : SVGGradientElement(tagName, document)
     , m_cx(LengthModeWidth, "50%")
@@ -57,6 +66,7 @@ inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& t
 {
     // Spec: If the cx/cy/r attribute is not specified, the effect is as if a value of "50%" were specified.
     ASSERT(hasTagName(SVGNames::radialGradientTag));
+    registerAnimatedPropertiesForSVGRadialGradientElement();
 }
 
 PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document* document)
@@ -127,69 +137,6 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
         
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
-}
-
-void SVGRadialGradientElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeCx();
-        synchronizeCy();
-        synchronizeFx();
-        synchronizeFy();
-        synchronizeR();
-        SVGGradientElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGGradientElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::cxAttr) {
-        synchronizeCx();
-        return;
-    }
-
-    if (attrName == SVGNames::cyAttr) {
-        synchronizeCy();
-        return;
-    }
-
-    if (attrName == SVGNames::fxAttr) {
-        synchronizeFx();
-        return;
-    }
-
-    if (attrName == SVGNames::fyAttr) {
-        synchronizeFy();
-        return;
-    }
-
-    if (attrName == SVGNames::rAttr) {
-        synchronizeR();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGRadialGradientElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGRadialGradientElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGGradientElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::rAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::fxAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::fyAttr, AnimatedLength);
 }
 
 RenderObject* SVGRadialGradientElement::createRenderer(RenderArena* arena, RenderStyle*)

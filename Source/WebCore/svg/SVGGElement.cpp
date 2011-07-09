@@ -31,13 +31,20 @@
 
 namespace WebCore {
 
-// Animated property declarations
+// Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGGElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
 
 SVGGElement::SVGGElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::gTag));
+    registerAnimatedPropertiesForSVGGElement();
 }
 
 PassRefPtr<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document* document)
@@ -87,44 +94,6 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (RenderObject* renderer = this->renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-}
-
-void SVGGElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGGElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGGElement::fillAttributeToPropertyTypeMap()
-{
-    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)

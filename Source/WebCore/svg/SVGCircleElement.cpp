@@ -39,6 +39,15 @@ DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::cyAttr, Cy, cy)
 DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::rAttr, R, r)
 DEFINE_ANIMATED_BOOLEAN(SVGCircleElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGCircleElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(cx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(cy)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(r)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
     , m_cx(LengthModeWidth)
@@ -46,6 +55,7 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
     , m_r(LengthModeOther)
 {
     ASSERT(hasTagName(SVGNames::circleTag));
+    registerAnimatedPropertiesForSVGCircleElement();
 }
 
 PassRefPtr<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document* document)
@@ -136,67 +146,6 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGCircleElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeCx();
-        synchronizeCy();
-        synchronizeR();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-   
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::cxAttr) {
-        synchronizeCx();
-        return;
-    }
-
-    if (attrName == SVGNames::cyAttr) {
-        synchronizeCy();
-        return;
-    }
-
-    if (attrName == SVGNames::rAttr) {
-        synchronizeR();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGCircleElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGCircleElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::rAttr, AnimatedLength);
 }
 
 void SVGCircleElement::toPathData(Path& path) const

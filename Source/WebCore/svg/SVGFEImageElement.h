@@ -51,9 +51,6 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual void notifyFinished(CachedResource*);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
@@ -61,14 +58,11 @@ private:
 
     void requestImageResource();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
-
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEImageElement)
+        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     CachedResourceHandle<CachedImage> m_cachedImage;
     OwnPtr<ImageBuffer> m_targetImage;

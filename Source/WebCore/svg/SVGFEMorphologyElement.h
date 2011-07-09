@@ -70,19 +70,17 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     static const AtomicString& radiusXIdentifier();
     static const AtomicString& radiusYIdentifier();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_ENUMERATION(_operator, _operator, MorphologyOperatorType)
-    DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
-    DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMorphologyElement)
+        DECLARE_ANIMATED_STRING(In1, in1)
+        DECLARE_ANIMATED_ENUMERATION(_operator, _operator, MorphologyOperatorType)
+        DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
+        DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

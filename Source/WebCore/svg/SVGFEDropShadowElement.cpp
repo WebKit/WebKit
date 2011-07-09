@@ -39,6 +39,15 @@ DEFINE_ANIMATED_NUMBER(SVGFEDropShadowElement, SVGNames::dyAttr, Dy, dy)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEDropShadowElement, SVGNames::stdDeviationAttr, stdDeviationXIdentifier(), StdDeviationX, stdDeviationX)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEDropShadowElement, SVGNames::stdDeviationAttr, stdDeviationYIdentifier(), StdDeviationY, stdDeviationY)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEDropShadowElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(dx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(dy)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(stdDeviationX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(stdDeviationY)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_dx(2)
@@ -47,6 +56,7 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     , m_stdDeviationY(2)
 {
     ASSERT(hasTagName(SVGNames::feDropShadowTag));
+    registerAnimatedPropertiesForSVGFEDropShadowElement();
 }
 
 PassRefPtr<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& tagName, Document* document)
@@ -134,47 +144,6 @@ void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
         || attrName == SVGNames::dxAttr
         || attrName == SVGNames::dyAttr) {
         invalidate();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-void SVGFEDropShadowElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeStdDeviationX();
-        synchronizeStdDeviationY();
-        synchronizeDx();
-        synchronizeDy();
-        synchronizeIn1();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::stdDeviationAttr) {
-        synchronizeStdDeviationX();
-        synchronizeStdDeviationY();
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
-        return;
-    }
-
-    if (attrName == SVGNames::dxAttr) {
-        synchronizeDx();
-        return;
-    }
-
-    if (attrName == SVGNames::dyAttr) {
-        synchronizeDy();
         return;
     }
 

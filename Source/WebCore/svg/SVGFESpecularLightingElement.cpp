@@ -44,6 +44,16 @@ DEFINE_ANIMATED_NUMBER(SVGFESpecularLightingElement, SVGNames::surfaceScaleAttr,
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFESpecularLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), KernelUnitLengthX, kernelUnitLengthX)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFESpecularLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), KernelUnitLengthY, kernelUnitLengthY)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFESpecularLightingElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(specularConstant)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(specularExponent)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(surfaceScale)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthY)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_specularConstant(1)
@@ -51,6 +61,7 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     , m_surfaceScale(1)
 {
     ASSERT(hasTagName(SVGNames::feSpecularLightingTag));
+    registerAnimatedPropertiesForSVGFESpecularLightingElement();
 }
 
 PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document* document)
@@ -202,71 +213,6 @@ void SVGFESpecularLightingElement::lightElementAttributeChanged(const SVGFELight
 
     // The light element has different attribute names so attrName can identify the requested attribute.
     primitiveAttributeChanged(attrName);
-}
-
-void SVGFESpecularLightingElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeIn1();
-        synchronizeSurfaceScale();
-        synchronizeSpecularConstant();
-        synchronizeSpecularExponent();
-        synchronizeKernelUnitLengthX();
-        synchronizeKernelUnitLengthY();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
-        return;
-    }
-
-    if (attrName == SVGNames::surfaceScaleAttr) {
-        synchronizeSurfaceScale();
-        return;
-    }
-
-    if (attrName == SVGNames::specularConstantAttr) {
-        synchronizeSpecularConstant();
-        return;
-    }
-
-    if (attrName == SVGNames::specularExponentAttr) {
-        synchronizeSpecularExponent();
-        return;
-    }
-
-    if (attrName == SVGNames::kernelUnitLengthAttr) {
-        synchronizeKernelUnitLengthX();
-        synchronizeKernelUnitLengthY();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFESpecularLightingElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFESpecularLightingElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::specularConstantAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::specularExponentAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::surfaceScaleAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::kernelUnitLengthAttr, AnimatedNumberOptionalNumber);
 }
 
 PassRefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

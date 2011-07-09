@@ -105,21 +105,19 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     static const AtomicString& baseFrequencyXIdentifier();
     static const AtomicString& baseFrequencyYIdentifier();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_NUMBER(BaseFrequencyX, baseFrequencyX)
-    DECLARE_ANIMATED_NUMBER(BaseFrequencyY, baseFrequencyY)
-    DECLARE_ANIMATED_INTEGER(NumOctaves, numOctaves)
-    DECLARE_ANIMATED_NUMBER(Seed, seed)
-    DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles, SVGStitchOptions)
-    DECLARE_ANIMATED_ENUMERATION(Type, type, TurbulenceType)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFETurbulenceElement)
+        DECLARE_ANIMATED_NUMBER(BaseFrequencyX, baseFrequencyX)
+        DECLARE_ANIMATED_NUMBER(BaseFrequencyY, baseFrequencyY)
+        DECLARE_ANIMATED_INTEGER(NumOctaves, numOctaves)
+        DECLARE_ANIMATED_NUMBER(Seed, seed)
+        DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles, SVGStitchOptions)
+        DECLARE_ANIMATED_ENUMERATION(Type, type, TurbulenceType)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

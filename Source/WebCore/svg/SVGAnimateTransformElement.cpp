@@ -66,18 +66,21 @@ bool SVGAnimateTransformElement::hasValidAttributeType() const
     if (!targetElement)
         return false;
     
-    return determineAnimatedAttributeType(targetElement) == AnimatedTransformList;
+    return determineAnimatedPropertyType(targetElement) == AnimatedTransformList;
 }
 
-AnimatedAttributeType SVGAnimateTransformElement::determineAnimatedAttributeType(SVGElement* targetElement) const
+AnimatedPropertyType SVGAnimateTransformElement::determineAnimatedPropertyType(SVGElement* targetElement) const
 {
     ASSERT(targetElement);
     
     // Just transform lists can be animated with <animateTransform>
     // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
-    if (targetElement->animatedPropertyTypeForAttribute(attributeName()) != AnimatedTransformList)
+    Vector<AnimatedPropertyType> propertyTypes;
+    targetElement->animatedPropertyTypeForAttribute(attributeName(), propertyTypes);
+    if (propertyTypes.isEmpty() || propertyTypes[0] != AnimatedTransformList)
         return AnimatedUnknown;
 
+    ASSERT(propertyTypes.size() == 1);
     return AnimatedTransformList;
 }
 
@@ -131,7 +134,7 @@ static SVGTransformList* transformListFor(SVGElement* element)
 void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 {
     SVGElement* targetElement = this->targetElement();
-    if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
+    if (!targetElement || determineAnimatedPropertyType(targetElement) == AnimatedUnknown)
         return;
 
     // FIXME: This might not be correct for accumulated sum. Needs checking.
@@ -154,7 +157,7 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement*)
 {
     SVGElement* targetElement = this->targetElement();
-    if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
+    if (!targetElement || determineAnimatedPropertyType(targetElement) == AnimatedUnknown)
         return;
     SVGTransformList* transformList = transformListFor(targetElement);
     ASSERT(transformList);
@@ -203,7 +206,7 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& value
 void SVGAnimateTransformElement::applyResultsToTarget()
 {
     SVGElement* targetElement = this->targetElement();
-    if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
+    if (!targetElement || determineAnimatedPropertyType(targetElement) == AnimatedUnknown)
         return;
 
     // We accumulate to the target element transform list so there is not much to do here.

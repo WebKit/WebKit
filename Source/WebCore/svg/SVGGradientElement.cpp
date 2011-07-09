@@ -45,11 +45,21 @@ DEFINE_ANIMATED_TRANSFORM_LIST(SVGGradientElement, SVGNames::gradientTransformAt
 DEFINE_ANIMATED_STRING(SVGGradientElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGGradientElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGradientElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(spreadMethod)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(gradientUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(gradientTransform)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+END_REGISTER_ANIMATED_PROPERTIES
+ 
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_spreadMethod(SVGSpreadMethodPad)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
 {
+    registerAnimatedPropertiesForSVGGradientElement();
 }
 
 bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -115,61 +125,6 @@ void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
     
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
-}
-
-void SVGGradientElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeGradientUnits();
-        synchronizeGradientTransform();
-        synchronizeSpreadMethod();
-        synchronizeExternalResourcesRequired();
-        synchronizeHref();
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::gradientUnitsAttr) {
-        synchronizeGradientUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::gradientTransformAttr) {
-        synchronizeGradientTransform();
-        return;
-    }
-
-    if (attrName == SVGNames::spreadMethodAttr) {
-        synchronizeSpreadMethod();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-void SVGGradientElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
-{
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-
-    attributeToPropertyTypeMap.set(SVGNames::spreadMethodAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::gradientUnitsAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::gradientTransformAttr, AnimatedTransformList);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
     
 void SVGGradientElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

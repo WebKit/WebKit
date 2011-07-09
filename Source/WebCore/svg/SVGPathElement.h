@@ -91,10 +91,11 @@ public:
     SVGPathSegListPropertyTearOff* animatedNormalizedPathSegList();
 
     SVGPathByteStream* pathByteStream() const { return m_pathByteStream.get(); }
-    SVGAnimatedProperty* animatablePathSegList() const { return m_animatablePathSegList.get(); }
 
     virtual void toPathData(Path&) const;
     void pathSegListChanged(SVGPathSegRole);
+
+    static const SVGPropertyInfo* dPropertyInfo();
 
 private:
     SVGPathElement(const QualifiedName&, Document*);
@@ -104,21 +105,24 @@ private:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
-    virtual void synchronizeProperty(const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual bool supportsMarkers() const { return true; }
 
-    // Animated property declarations
-    DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
+    // Custom 'd' property
+    static void synchronizeD(void* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateDWrapper(void* contextElement);
 
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGPathElement)
+        DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    void synchronizeD();
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
-protected:
+private:
     OwnPtr<SVGPathByteStream> m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;
     RefPtr<SVGAnimatedPathSegListPropertyTearOff> m_animatablePathSegList;

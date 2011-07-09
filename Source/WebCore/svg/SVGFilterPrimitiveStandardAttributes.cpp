@@ -43,6 +43,15 @@ DEFINE_ANIMATED_LENGTH(SVGFilterPrimitiveStandardAttributes, SVGNames::widthAttr
 DEFINE_ANIMATED_LENGTH(SVGFilterPrimitiveStandardAttributes, SVGNames::heightAttr, Height, height)
 DEFINE_ANIMATED_STRING(SVGFilterPrimitiveStandardAttributes, SVGNames::resultAttr, Result, result)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(result)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_x(LengthModeWidth, "0%")
@@ -52,6 +61,7 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
+    registerAnimatedPropertiesForSVGFilterPrimitiveStandardAttributes();
 }
 
 bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedName& attrName)
@@ -121,51 +131,6 @@ void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedNa
     invalidate();
 }
 
-void SVGFilterPrimitiveStandardAttributes::synchronizeProperty(const QualifiedName& attrName)
-{    
-    if (attrName == anyQName()) {
-        synchronizeX();
-        synchronizeY();
-        synchronizeWidth();
-        synchronizeHeight();
-        synchronizeResult();
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::widthAttr) {
-        synchronizeWidth();
-        return;
-    }
-
-    if (attrName == SVGNames::heightAttr) {
-        synchronizeHeight();
-        return;
-    }
-
-    if (attrName == SVGNames::resultAttr) {
-        synchronizeResult();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 void SVGFilterPrimitiveStandardAttributes::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
@@ -202,17 +167,6 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveB
                                height().value(this));
 
     filterEffect->setEffectBoundaries(effectBBox);
-}
-
-void SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
-{
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::resultAttr, AnimatedString);
 }
 
 RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena* arena, RenderStyle*)

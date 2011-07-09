@@ -66473,6 +66473,14 @@
 				Name="properties"
 				>
 				<File
+					RelativePath="..\svg\properties\SVGAttributeToPropertyMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGAttributeToPropertyMap.h"
+					>
+				</File>
+				<File
 					RelativePath="..\svg\properties\SVGAnimatedEnumerationPropertyTearOff.h"
 					>
 				</File>
@@ -66530,6 +66538,10 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGProperty.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGPropertyInfo.h"
 					>
 				</File>
 				<File

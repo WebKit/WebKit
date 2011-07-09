@@ -60,18 +60,6 @@ void SVGTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, 
         document()->setTitleElement(StringWithDirection(textContent(), LTR), this);
 }
 
-AttributeToPropertyTypeMap& SVGTitleElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
 }
 
-void SVGTitleElement::fillAttributeToPropertyTypeMap()
-{        
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
-}
-
-}
-
-// vim:ts=4:noet
 #endif // ENABLE(SVG)

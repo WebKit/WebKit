@@ -42,12 +42,22 @@ DEFINE_ANIMATED_NUMBER(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, 
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), KernelUnitLengthX, kernelUnitLengthX)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), KernelUnitLengthY, kernelUnitLengthY)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEDiffuseLightingElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(diffuseConstant)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(surfaceScale)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthY)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_diffuseConstant(1)
     , m_surfaceScale(1)
 {
     ASSERT(hasTagName(SVGNames::feDiffuseLightingTag));
+    registerAnimatedPropertiesForSVGFEDiffuseLightingElement();
 }
 
 PassRefPtr<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document* document)
@@ -192,67 +202,6 @@ void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightE
 
     // The light element has different attribute names.
     primitiveAttributeChanged(attrName);
-}
-
-void SVGFEDiffuseLightingElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeIn1();
-        synchronizeSurfaceScale();
-        synchronizeDiffuseConstant();
-        synchronizeKernelUnitLengthX();
-        synchronizeKernelUnitLengthY();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::lighting_colorAttr)
-        return;
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
-        return;
-    }
-
-    if (attrName == SVGNames::surfaceScaleAttr) {
-        synchronizeSurfaceScale();
-        return;
-    }
-
-    if (attrName == SVGNames::diffuseConstantAttr) {
-        synchronizeDiffuseConstant();
-        return;
-    }
-
-    if (attrName == SVGNames::kernelUnitLengthAttr) {
-        synchronizeKernelUnitLengthX();
-        synchronizeKernelUnitLengthY();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFEDiffuseLightingElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEDiffuseLightingElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
-    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::diffuseConstantAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::surfaceScaleAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::kernelUnitLengthAttr, AnimatedNumberOptionalNumber);
 }
 
 PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

@@ -1,3 +1,507 @@
+2011-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Add a possibility to retrieve the associated SVGAnimatedProperty object for a certain XML attribute
+        https://bugs.webkit.org/show_bug.cgi?id=63797
+
+        Reviewed by Dirk Schulze.
+
+        In order to prepare animVal support we need a way to map a given SVG DOM attribute to a SVGAnimatedProperty.
+        eg. SVGNames::xAttr -> SVGRectElement::xAnimated(), etc. This will be needed to update the animVal of the
+        SVGAnimatedProperty, if an animation is running. It would required adding a new method to all SVG* classes
+        that define animated properties. Unfortunately we already have lots of repeated code in methods like
+        synchronizeProperty / fillAttributeToPropertyTypeMap. Look at SVGRectElement for example:
+
+        void SVGRectElement::synchronizeProperty(const QualifiedName& attrName)
+        {
+            if (attrName == anyQName()) {
+                synchronizeX();
+                synchronizeY();
+                 ...
+              }
+
+            if (attrName == SVGNames::xAttr) {
+                synchronizeX();
+                return;
+            }
+
+            if (attrName == SVGNames::yAttr) {
+                synchronizeY();
+                return;
+            }
+            ...
+        }
+
+        or
+
+        void SVGRectElement::fillAttributeToPropertyTypeMap()
+        {
+            AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+        
+            SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+            attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
+            attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
+            ...
+        }
+
+        These lookups are all performed dynamically. Each synchronizeProperty() call does a lot of comparisons.
+        fillAttributeToPropertyTypeMap() isn't that bad as the result is cached in a static HashMap per-SVGRectElement.
+        There's no reason to do these things dynamically!
+
+        Inspired by JSC, I'm adding a "static const SVGPropertyInfo s_fooPropertyInfo" object for each animated SVG property.
+        For example, for SVGRectElements SVGAnimatedLength x property we're storing:
+        - "AnimatedPropertyType type" (AnimatedLength -- note the enum was named AnimatedAttributeType, I renamed it to AnimatedPropertyType for clarity)
+        - "const QualifiedName& attributeName" (SVGNames::xAttr)
+        - "const AtomicString& propertyIdentifier" (SVGNames::xAttr.localName() -- only different if N-wrappers map to a single XML DOM attribute, eg. orientAttr)
+        - "SynchronizeProperty synchronizeProperty" (callback to SVGRectElement::synchronizeX)
+        - "LookupOrCreateWrapperForAnimatedProperty lookupOrCreateWrapperForAnimatedProperty" (callback to SVGRectElement::xAnimated)
+
+        Using this information, we can replace all the various synchronizeProperty/fillAttributeToPropertyMap implementations, with a single one in SVGElement.
+        All these are auto-generated, using the standard macros used to define/declare SVG animated properties. This required several changes to the macros.
+        Here's a summary:
+    
+        #1) In all headers, wrap DECLARE_ANIMATED_* calls, in BEGIN_DECLARE_ANIMATED_PROPERTIES(ClassName) / END_DECLARE_ANIMATED_PROPERTIES blocks.
+        
+            Sample change for SVGRectElement:
+            -    DECLARE_ANIMATED_LENGTH(X, x)
+            -    DECLARE_ANIMATED_LENGTH(Y, y)
+            -    ...
+
+            +    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGRectElement)
+            +        DECLARE_ANIMATED_LENGTH(X, x)
+            +        DECLARE_ANIMATED_LENGTH(Y, y)
+            +         ...
+            +    END_DECLARE_ANIMATED_PROPERTIES
+
+        #2) In all cpp files, add a new section wrapped in BEGIN_REGISTER_ANIMATED_PROPERTIES(ClassName / END_REGISTER_ANIMATED_PROPERTIES blocks:
+
+            Sample change for SVGRectElement:
+            +BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGRectElement)
+            +    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+            +    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+            +    ...
+            +    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+            +    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+            +END_REGISTER_ANIMATED_PROPERTIES
+
+            This is the main piece of the logic that replaces the manual synchronizeProperty/fillAttributeToPropertyMap implementation. It expands to following:
+
+            SVGAttributeToPropertyMap& SVGRectElement::attributeToPropertyMap()
+            {
+                DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, s_attributeToPropertyMap, ());
+            }
+
+            static void registerAnimatedPropertiesForSVGRectElement()
+            {
+                SVGAttributeToPropertyMap& map = SVGRectElement::attributeToPropertyMap();
+                if (!map.isEmpty())
+                    return;
+                map.addProperty(SVGRectElement::xPropertyInfo());
+                map.addProperty(SVGRectElement::yPropertyInfo());
+                ...
+                map.addProperties(SVGStyledTransformableElement::attributeToPropertyMap());
+                map.addProperties(SVGTests::attributeToPropertyMap());
+            }
+
+            A single-instance of SVGAttributeToPropertyMap is created for each SVG*Element. The constructor of SVGRectElement is supposed to call
+            registerAnimatedPropertiesForSVGRectElement(), which collects all properties of SVGRectElement and all its parent classes and stores them
+            in a Vector<const SVGPropertyInfo*>. This Vector is stored in a HashMap<QualifiedName, Vector<const SVGPropertyInfo*> > where the key
+            is the attribute name (eg. SVGNames::xAttr -> SVGRectElement::xPropertyInfo). This is only done _once_ per SVGRectElement.
+
+            SVGElement contains a "virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap()" method, and SVGRectElement overrides it
+            and returns SVGRectElement::attributeToPropertyMap() (which is static!) -- this is hidden again in the macros, no need to write any code.
+
+            SVGAttributeToPropertyMap provides following API:
+            - bool synchronizeProperty(SVGElement* contextElement, const QualifiedName& attributeName)
+            - void synchronizeProperties(SVGElement* contextElement)
+            
+                A generic way to synchronize a SVGAnimatedProperty with its XML DOM attribute. Any SVG DOM change to eg. <rect>s x property will now trigger
+                contextElement->localAttributeToPropertyMap().synchronizeProperty(this, SVGNames::xAttr)
+                The SVGAttributeToPropertyMap will ask its HashMap for the Vector containing the properties for SVGNames::xAttr (in that case, just one xAnimated()).
+
+            - void animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>& propertyTypes)
+
+                This method replaces the fillAttributeToPropertyMap implementations everywhere.
+        
+            - void animatedPropertiesForAttribute(SVGElement* contextElement, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty> >& properties);
+
+                This method is not used yet, but allows us to collect all SVGAnimatedProperties for a QualifiedName -- the initial goal for this patch.
+
+        #3) In all cpp files, add a call to "registerAnimatedPropertiesForClassName()" in the constructor. Forgetting this will result in a compile error.
+
+        Doesn't affect any tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        * svg/SVGAElement.h:
+        (WebCore::SVGAElement::synchronizeRequiredFeatures):
+        (WebCore::SVGAElement::synchronizeRequiredExtensions):
+        (WebCore::SVGAElement::synchronizeSystemLanguage):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::SVGAltGlyphElement):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::hasValidAttributeType):
+        (WebCore::SVGAnimateElement::determineAnimatedPropertyType):
+        (WebCore::SVGAnimateElement::determinePropertyValueTypes):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        (WebCore::SVGAnimateElement::ensureAnimator):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType):
+        (WebCore::SVGAnimateTransformElement::determineAnimatedPropertyType):
+        (WebCore::SVGAnimateTransformElement::resetToBaseValue):
+        (WebCore::SVGAnimateTransformElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget):
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimatedAngle.h:
+        * svg/SVGAnimatedBoolean.h:
+        * svg/SVGAnimatedEnumeration.h:
+        * svg/SVGAnimatedInteger.h:
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedLengthList.h:
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedNumberList.h:
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedRect.h:
+        * svg/SVGAnimatedString.h:
+        * svg/SVGAnimatedTransformList.h:
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::SVGAnimatedType):
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::type):
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::synchronizeRequiredFeatures):
+        (WebCore::SVGAnimationElement::synchronizeRequiredExtensions):
+        (WebCore::SVGAnimationElement::synchronizeSystemLanguage):
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        * svg/SVGCircleElement.h:
+        (WebCore::SVGCircleElement::synchronizeRequiredFeatures):
+        (WebCore::SVGCircleElement::synchronizeRequiredExtensions):
+        (WebCore::SVGCircleElement::synchronizeSystemLanguage):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        * svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::synchronizeRequiredFeatures):
+        (WebCore::SVGClipPathElement::synchronizeRequiredExtensions):
+        (WebCore::SVGClipPathElement::synchronizeSystemLanguage):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGCursorElement.h:
+        (WebCore::SVGCursorElement::synchronizeRequiredFeatures):
+        (WebCore::SVGCursorElement::synchronizeRequiredExtensions):
+        (WebCore::SVGCursorElement::synchronizeSystemLanguage):
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * svg/SVGDefsElement.h:
+        (WebCore::SVGDefsElement::synchronizeRequiredFeatures):
+        (WebCore::SVGDefsElement::synchronizeRequiredExtensions):
+        (WebCore::SVGDefsElement::synchronizeSystemLanguage):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::animatedPropertyTypeForAttribute):
+        (WebCore::SVGElement::updateAnimatedSVGAttribute):
+        (WebCore::SVGElement::localAttributeToPropertyMap):
+        (WebCore::SVGElement::synchronizeRequiredFeatures):
+        (WebCore::SVGElement::synchronizeRequiredExtensions):
+        (WebCore::SVGElement::synchronizeSystemLanguage):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::svgAttributeChanged):
+        (WebCore::SVGElement::synchronizeRequiredFeatures):
+        (WebCore::SVGElement::synchronizeRequiredExtensions):
+        (WebCore::SVGElement::synchronizeSystemLanguage):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        * svg/SVGEllipseElement.h:
+        (WebCore::SVGEllipseElement::synchronizeRequiredFeatures):
+        (WebCore::SVGEllipseElement::synchronizeRequiredExtensions):
+        (WebCore::SVGEllipseElement::synchronizeSystemLanguage):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::SVGFEDropShadowElement):
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::SVGFEMergeNodeElement):
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFitToViewBox.cpp:
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        * svg/SVGFontElement.h:
+        (WebCore::SVGFontElement::rendererIsNeeded):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        * svg/SVGForeignObjectElement.h:
+        (WebCore::SVGForeignObjectElement::synchronizeRequiredFeatures):
+        (WebCore::SVGForeignObjectElement::synchronizeRequiredExtensions):
+        (WebCore::SVGForeignObjectElement::synchronizeSystemLanguage):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        * svg/SVGGElement.h:
+        (WebCore::SVGGElement::synchronizeRequiredFeatures):
+        (WebCore::SVGGElement::synchronizeRequiredExtensions):
+        (WebCore::SVGGElement::synchronizeSystemLanguage):
+        * svg/SVGGlyphElement.cpp:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageElement.h:
+        (WebCore::SVGImageElement::synchronizeRequiredFeatures):
+        (WebCore::SVGImageElement::synchronizeRequiredExtensions):
+        (WebCore::SVGImageElement::synchronizeSystemLanguage):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        * svg/SVGLineElement.h:
+        (WebCore::SVGLineElement::synchronizeRequiredFeatures):
+        (WebCore::SVGLineElement::synchronizeRequiredExtensions):
+        (WebCore::SVGLineElement::synchronizeSystemLanguage):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientTypePropertyInfo):
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::synchronizeOrientType):
+        (WebCore::SVGMarkerElement::lookupOrCreateOrientTypeWrapper):
+        (WebCore::SVGMarkerElement::orientTypeAnimated):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        * svg/SVGMaskElement.h:
+        (WebCore::SVGMaskElement::synchronizeRequiredFeatures):
+        (WebCore::SVGMaskElement::synchronizeRequiredExtensions):
+        (WebCore::SVGMaskElement::synchronizeSystemLanguage):
+        * svg/SVGMissingGlyphElement.cpp:
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::dPropertyInfo):
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        (WebCore::SVGPathElement::synchronizeD):
+        (WebCore::SVGPathElement::pathSegList):
+        (WebCore::SVGPathElement::animatedPathSegList):
+        * svg/SVGPathElement.h:
+        (WebCore::SVGPathElement::pathByteStream):
+        (WebCore::SVGPathElement::synchronizeRequiredFeatures):
+        (WebCore::SVGPathElement::synchronizeRequiredExtensions):
+        (WebCore::SVGPathElement::synchronizeSystemLanguage):
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::animatedProperty):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * svg/SVGPatternElement.h:
+        (WebCore::SVGPatternElement::synchronizeRequiredFeatures):
+        (WebCore::SVGPatternElement::synchronizeRequiredExtensions):
+        (WebCore::SVGPatternElement::synchronizeSystemLanguage):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::pointsPropertyInfo):
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        (WebCore::SVGPolyElement::synchronizePoints):
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::synchronizeRequiredFeatures):
+        (WebCore::SVGPolyElement::synchronizeRequiredExtensions):
+        (WebCore::SVGPolyElement::synchronizeSystemLanguage):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        * svg/SVGRectElement.h:
+        (WebCore::SVGRectElement::synchronizeRequiredFeatures):
+        (WebCore::SVGRectElement::synchronizeRequiredExtensions):
+        (WebCore::SVGRectElement::synchronizeSystemLanguage):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::synchronizeRequiredFeatures):
+        (WebCore::SVGSVGElement::synchronizeRequiredExtensions):
+        (WebCore::SVGSVGElement::synchronizeSystemLanguage):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement):
+        * svg/SVGStopElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::SVGStyledElement):
+        (WebCore::cssPropertyToTypeMap):
+        (WebCore::SVGStyledElement::animatedPropertyTypeForAttribute):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        * svg/SVGSwitchElement.h:
+        (WebCore::SVGSwitchElement::synchronizeRequiredFeatures):
+        (WebCore::SVGSwitchElement::synchronizeRequiredExtensions):
+        (WebCore::SVGSwitchElement::synchronizeSystemLanguage):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::requiredFeaturesPropertyInfo):
+        (WebCore::SVGTests::requiredExtensionsPropertyInfo):
+        (WebCore::SVGTests::systemLanguagePropertyInfo):
+        (WebCore::SVGTests::attributeToPropertyMap):
+        (WebCore::SVGTests::synchronizeRequiredFeatures):
+        (WebCore::SVGTests::synchronizeRequiredExtensions):
+        (WebCore::SVGTests::synchronizeSystemLanguage):
+        * svg/SVGTests.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::textLengthPropertyInfo):
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::synchronizeTextLength):
+        (WebCore::SVGTextContentElement::lookupOrCreateTextLengthWrapper):
+        (WebCore::SVGTextContentElement::textLengthAnimated):
+        * svg/SVGTextContentElement.h:
+        (WebCore::SVGTextContentElement::synchronizeRequiredFeatures):
+        (WebCore::SVGTextContentElement::synchronizeRequiredExtensions):
+        (WebCore::SVGTextContentElement::synchronizeSystemLanguage):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTitleElement.cpp:
+        * svg/SVGTitleElement.h:
+        (WebCore::SVGTitleElement::rendererIsNeeded):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        * svg/SVGUseElement.h:
+        (WebCore::SVGUseElement::synchronizeRequiredFeatures):
+        (WebCore::SVGUseElement::synchronizeRequiredExtensions):
+        (WebCore::SVGUseElement::synchronizeSystemLanguage):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        * svg/SVGViewSpec.h:
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::lookupOrCreateWrapper):
+        (WebCore::SVGAnimatedProperty::lookupWrapper):
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        * svg/properties/SVGAnimatedPropertySynchronizer.h:
+        * svg/properties/SVGAttributeToPropertyMap.cpp: Added.
+        (WebCore::SVGAttributeToPropertyMap::addProperties):
+        (WebCore::SVGAttributeToPropertyMap::addProperty):
+        (WebCore::SVGAttributeToPropertyMap::animatedPropertiesForAttribute):
+        (WebCore::SVGAttributeToPropertyMap::animatedPropertyTypeForAttribute):
+        (WebCore::SVGAttributeToPropertyMap::synchronizeProperties):
+        (WebCore::SVGAttributeToPropertyMap::synchronizeProperty):
+        (WebCore::SVGAttributeToPropertyMap::animatedProperty):
+        * svg/properties/SVGAttributeToPropertyMap.h: Added.
+        (WebCore::SVGAttributeToPropertyMap::SVGAttributeToPropertyMap):
+        (WebCore::SVGAttributeToPropertyMap::~SVGAttributeToPropertyMap):
+        (WebCore::SVGAttributeToPropertyMap::isEmpty):
+        * svg/properties/SVGPropertyInfo.h: Added.
+        (WebCore::SVGPropertyInfo::SVGPropertyInfo):
+
 2011-07-09  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix after r90676.

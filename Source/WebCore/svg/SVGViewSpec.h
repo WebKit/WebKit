@@ -50,16 +50,13 @@ public:
     String viewTargetString() const { return m_viewTargetString; }
     SVGElement* viewTarget() const;
 
-    SVGElement* contextElement() const { return const_cast<SVGElement*>(m_contextElement); }
-
 private:
     SVGElement* m_contextElement;
 
-    // Animated property declarations
-
-    // SVGFitToViewBox
-    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
-    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGViewSpec)
+        DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     SVGTransformList m_transform;
     String m_viewTargetString;

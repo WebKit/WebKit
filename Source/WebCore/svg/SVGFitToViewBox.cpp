@@ -104,20 +104,6 @@ bool SVGFitToViewBox::parseMappedAttribute(Document* document, Attribute* attr)
     return false;
 }
 
-void SVGFitToViewBox::synchronizeProperties(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeViewBox();
-        synchronizePreserveAspectRatio();
-        return;
-    }
-
-    if (attrName == SVGNames::viewBoxAttr)
-        synchronizeViewBox();
-    else if (attrName == SVGNames::preserveAspectRatioAttr)
-        synchronizePreserveAspectRatio();
-}
-
 bool SVGFitToViewBox::isKnownAttribute(const QualifiedName& attrName)
 {
     return attrName == SVGNames::viewBoxAttr || attrName == SVGNames::preserveAspectRatioAttr;

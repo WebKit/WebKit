@@ -40,7 +40,7 @@ namespace WebCore {
 
 SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* document)
     : SVGAnimationElement(tagName, document)
-    , m_animatedAttributeType(AnimatedString)
+    , m_animatedPropertyType(AnimatedString)
     , m_fromPropertyValueType(RegularPropertyValue)
     , m_toPropertyValueType(RegularPropertyValue)
 {
@@ -109,14 +109,19 @@ bool SVGAnimateElement::hasValidAttributeType() const
     if (!targetElement)
         return false;
     
-    return determineAnimatedAttributeType(targetElement) != AnimatedUnknown;
+    return determineAnimatedPropertyType(targetElement) != AnimatedUnknown;
 }
 
-AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGElement* targetElement) const
+AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement* targetElement) const
 {
     ASSERT(targetElement);
 
-    AnimatedAttributeType type = targetElement->animatedPropertyTypeForAttribute(attributeName());
+    Vector<AnimatedPropertyType> propertyTypes;
+    targetElement->animatedPropertyTypeForAttribute(attributeName(), propertyTypes);
+    if (propertyTypes.isEmpty())
+        return AnimatedUnknown;
+
+    AnimatedPropertyType type = propertyTypes[0];
     if (hasTagName(SVGNames::animateColorTag) && type != AnimatedColor)
         return AnimatedUnknown;
 
@@ -142,7 +147,7 @@ void SVGAnimateElement::determinePropertyValueTypes(const String& from, const St
     if (inheritsFromProperty(targetElement, attributeName(), to))
         m_toPropertyValueType = InheritValue;
 
-    if (m_animatedAttributeType != AnimatedColor)
+    if (m_animatedPropertyType != AnimatedColor)
         return;
     
     if (attributeValueIsCurrentColor(from))
@@ -155,16 +160,16 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 {
     ASSERT(resultElement);
     ASSERT(percentage >= 0 && percentage <= 1);
-    ASSERT(m_animatedAttributeType != AnimatedEnumeration);
-    ASSERT(m_animatedAttributeType != AnimatedTransformList);
-    ASSERT(m_animatedAttributeType != AnimatedUnknown);
+    ASSERT(m_animatedPropertyType != AnimatedEnumeration);
+    ASSERT(m_animatedPropertyType != AnimatedTransformList);
+    ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animator);
     ASSERT(m_fromType);
     ASSERT(m_toType);
 
     SVGAnimateElement* resultAnimationElement = static_cast<SVGAnimateElement*>(resultElement);
     ASSERT(resultAnimationElement->m_animatedType);
-    ASSERT(resultAnimationElement->m_animatedAttributeType == m_animatedAttributeType);
+    ASSERT(resultAnimationElement->m_animatedPropertyType == m_animatedPropertyType);
     ASSERT(resultAnimationElement->hasTagName(SVGNames::animateTag)
         || resultAnimationElement->hasTagName(SVGNames::animateColorTag) 
         || resultAnimationElement->hasTagName(SVGNames::setTag));
@@ -187,7 +192,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     if (!targetElement)
         return false;
 
-    m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
+    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
 
     ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
     return true;
@@ -200,7 +205,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
         return false;
 
     ASSERT(!hasTagName(SVGNames::setTag));
-    m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
+    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
 
     ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
     return true;
@@ -210,7 +215,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
 {
     SVGElement* targetElement = this->targetElement();
     ASSERT(targetElement);
-    m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
+    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
 
     if (!m_animatedType)
         m_animatedType = ensureAnimator()->constructFromString(baseString);
@@ -220,9 +225,9 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     
 void SVGAnimateElement::applyResultsToTarget()
 {
-    ASSERT(m_animatedAttributeType != AnimatedEnumeration);
-    ASSERT(m_animatedAttributeType != AnimatedTransformList);
-    ASSERT(m_animatedAttributeType != AnimatedUnknown);
+    ASSERT(m_animatedPropertyType != AnimatedEnumeration);
+    ASSERT(m_animatedPropertyType != AnimatedTransformList);
+    ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animatedType);
 
     setTargetAttributeAnimatedValue(m_animatedType->valueAsString());
@@ -234,7 +239,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return -1;
-    m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
+    m_animatedPropertyType = determineAnimatedPropertyType(targetElement);
     
     return ensureAnimator()->calculateDistance(fromString, toString);
 }
@@ -242,7 +247,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
 SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()
 {
     if (!m_animator)
-        m_animator = SVGAnimatorFactory::create(this, targetElement(), m_animatedAttributeType);
+        m_animator = SVGAnimatorFactory::create(this, targetElement(), m_animatedPropertyType);
     return m_animator.get();
 }
 

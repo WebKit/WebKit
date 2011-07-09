@@ -40,6 +40,16 @@ DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::rxAttr, Rx, rx)
 DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::ryAttr, Ry, ry)
 DEFINE_ANIMATED_BOOLEAN(SVGEllipseElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGEllipseElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(cx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(cy)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(rx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(ry)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
     , m_cx(LengthModeWidth)
@@ -48,6 +58,7 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
     , m_ry(LengthModeHeight)
 {
     ASSERT(hasTagName(SVGNames::ellipseTag));
+    registerAnimatedPropertiesForSVGEllipseElement();
 }    
 
 PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document* document)
@@ -147,74 +158,6 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGEllipseElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeCx();
-        synchronizeCy();
-        synchronizeRx();
-        synchronizeRy();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::cxAttr) {
-        synchronizeCx();
-        return;
-    }
-
-    if (attrName == SVGNames::cyAttr) {
-        synchronizeCy();
-        return;
-    }
-
-    if (attrName == SVGNames::rxAttr) {
-        synchronizeRx();
-        return;
-    }
-
-    if (attrName == SVGNames::ryAttr) {
-        synchronizeRy();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGEllipseElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGEllipseElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
-    attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::rxAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::ryAttr, AnimatedLength);
 }
 
 void SVGEllipseElement::toPathData(Path& path) const

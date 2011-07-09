@@ -44,11 +44,16 @@
 #include "SVGUseElement.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGStyledElement, HTMLNames::classAttr, ClassName, className)
+
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(className)
+END_REGISTER_ANIMATED_PROPERTIES
 
 using namespace SVGNames;
 
@@ -62,6 +67,7 @@ void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToId
 SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
+    registerAnimatedPropertiesForSVGStyledElement();
 }
 
 SVGStyledElement::~SVGStyledElement()
@@ -205,10 +211,11 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
     return propertyNameToIdMap->get(attrName.localName().impl());
 }
 
+typedef HashMap<QualifiedName, AnimatedPropertyType> AttributeToPropertyTypeMap;
 static inline AttributeToPropertyTypeMap& cssPropertyToTypeMap()
 {
     DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_cssPropertyMap, ());
-    
+
     if (!s_cssPropertyMap.isEmpty())
         return s_cssPropertyMap;
 
@@ -269,22 +276,20 @@ static inline AttributeToPropertyTypeMap& cssPropertyToTypeMap()
     return s_cssPropertyMap;
 }
 
-AnimatedAttributeType SVGStyledElement::animatedPropertyTypeForCSSProperty(const QualifiedName& attrName)
+void SVGStyledElement::animatedPropertyTypeForAttribute(const QualifiedName& attrName, Vector<AnimatedPropertyType>& propertyTypes)
 {
+    SVGElement::animatedPropertyTypeForAttribute(attrName, propertyTypes);
+    if (!propertyTypes.isEmpty())
+        return;
+
     AttributeToPropertyTypeMap& cssPropertyTypeMap = cssPropertyToTypeMap();
     if (cssPropertyTypeMap.contains(attrName))
-        return cssPropertyTypeMap.get(attrName);
-    return AnimatedUnknown;
+        propertyTypes.append(cssPropertyTypeMap.get(attrName));
 }
 
 bool SVGStyledElement::isAnimatableCSSProperty(const QualifiedName& attrName)
 {
     return cssPropertyToTypeMap().contains(attrName);
-}
-
-void SVGStyledElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
-{
-    attributeToPropertyTypeMap.set(HTMLNames::classAttr, AnimatedString);
 }
 
 bool SVGStyledElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -349,12 +354,6 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGElementInstance::invalidateAllInstancesOfElement(this);
         return;
     }
-}
-
-void SVGStyledElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName() || attrName == HTMLNames::classAttr)
-        synchronizeClassName();
 }
 
 void SVGStyledElement::attach()

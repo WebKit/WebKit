@@ -48,11 +48,28 @@ DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEConvolveMatrixElement, SVGNames::k
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), KernelUnitLengthY, kernelUnitLengthY)
 DEFINE_ANIMATED_BOOLEAN(SVGFEConvolveMatrixElement, SVGNames::preserveAlphaAttr, PreserveAlpha, preserveAlpha)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEConvolveMatrixElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(orderX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(orderY)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelMatrix)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(divisor)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(bias)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(targetX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(targetY)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(edgeMode)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthY)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAlpha)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_edgeMode(EDGEMODE_DUPLICATE)
 {
     ASSERT(hasTagName(SVGNames::feConvolveMatrixTag));
+    registerAnimatedPropertiesForSVGFEConvolveMatrixElement();
 }
 
 PassRefPtr<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document* document)
@@ -243,88 +260,6 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGFEConvolveMatrixElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeEdgeMode();
-        synchronizeDivisor();
-        synchronizeBias();
-        synchronizeTargetX();
-        synchronizeTargetY();
-        synchronizeKernelUnitLengthX();
-        synchronizeKernelUnitLengthY();
-        synchronizePreserveAlpha();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::edgeModeAttr) {
-        synchronizeEdgeMode();
-        return;
-    }
-
-    if (attrName == SVGNames::divisorAttr) {
-        synchronizeDivisor();
-        return;
-    }
-
-    if (attrName == SVGNames::biasAttr) {
-        synchronizeBias();
-        return;
-    }
-
-    if (attrName == SVGNames::targetXAttr) {
-        synchronizeTargetX();
-        return;
-    }
-
-    if (attrName == SVGNames::targetYAttr) {
-        synchronizeTargetY();
-        return;
-    }
-
-    if (attrName == SVGNames::kernelUnitLengthAttr) {
-        synchronizeKernelUnitLengthX();
-        synchronizeKernelUnitLengthY();
-        return;
-    }
-
-    if (attrName == SVGNames::preserveAlphaAttr) {
-        synchronizePreserveAlpha();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFEConvolveMatrixElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEConvolveMatrixElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::orderAttr, AnimatedNumberOptionalNumber);
-    attributeToPropertyTypeMap.set(SVGNames::kernelMatrixAttr, AnimatedNumberList);
-    attributeToPropertyTypeMap.set(SVGNames::divisorAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::biasAttr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::targetXAttr, AnimatedInteger);
-    attributeToPropertyTypeMap.set(SVGNames::targetYAttr, AnimatedInteger);
-    attributeToPropertyTypeMap.set(SVGNames::operatorAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::kernelUnitLengthAttr, AnimatedNumberOptionalNumber);
-    attributeToPropertyTypeMap.set(SVGNames::preserveAlphaAttr, AnimatedBoolean);
 }
 
 PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

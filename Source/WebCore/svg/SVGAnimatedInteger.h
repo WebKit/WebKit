@@ -34,10 +34,11 @@ typedef SVGAnimatedStaticPropertyTearOff<long> SVGAnimatedInteger;
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, long, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_INTEGER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedInteger, long, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedInteger, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
+// FIXME: This currently animates as number-optional-number, instead of integer-optional-integer, which is missing.
 #define DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedInteger, long, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedNumberOptionalNumber, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
 
 #if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;

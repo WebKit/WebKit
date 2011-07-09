@@ -36,11 +36,19 @@ DEFINE_ANIMATED_BOOLEAN(SVGViewElement, SVGNames::externalResourcesRequiredAttr,
 DEFINE_ANIMATED_RECT(SVGViewElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGViewElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGViewElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_viewTarget(SVGNames::viewTargetAttr)
 {
     ASSERT(hasTagName(SVGNames::viewTag));
+    registerAnimatedPropertiesForSVGViewElement();
 }
 
 PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document* document)
@@ -80,51 +88,6 @@ void SVGViewElement::parseMappedAttribute(Attribute* attr)
         return;
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGViewElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::viewTargetAttr)
-        return;
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGViewElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGViewElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
-    attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
 }
 
 }

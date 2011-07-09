@@ -45,18 +45,12 @@ public:
 private:
     SVGAltGlyphElement(const QualifiedName&, Document*);
 
-    virtual void synchronizeProperty(const QualifiedName&);
-
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const;
 
-    // Animated property declarations
-
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAltGlyphElement)
+        DECLARE_ANIMATED_STRING(Href, href)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

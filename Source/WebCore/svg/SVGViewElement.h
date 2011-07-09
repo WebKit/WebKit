@@ -48,20 +48,14 @@ private:
     // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 
-    // Animated property declarations
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
- 
-    // SVGFitToViewBox
-    DECLARE_ANIMATED_RECT(ViewBox, viewBox)
-    DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGViewElement)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_RECT(ViewBox, viewBox)
+        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     SVGStringList m_viewTarget;
 };

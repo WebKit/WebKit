@@ -43,14 +43,14 @@ public:
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     
 protected:
-    SVGAnimatedTypeAnimator(AnimatedAttributeType type, SVGAnimationElement* animationElement, SVGElement* contextElement)
+    SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGAnimationElement* animationElement, SVGElement* contextElement)
         : m_type(type)
         , m_animationElement(animationElement)
         , m_contextElement(contextElement)
     {
     }
 
-    AnimatedAttributeType m_type;
+    AnimatedPropertyType m_type;
     SVGAnimationElement* m_animationElement;
     SVGElement* m_contextElement;
 };

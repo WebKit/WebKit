@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,37 +23,22 @@
 #define SVGAnimatedPropertyMacros_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPropertySynchronizer.h"
+#include "SVGAttributeToPropertyMap.h"
 #include "SVGPropertyTraits.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
-
-// GetOwnerElementForType implementation
-template<typename OwnerType, bool isDerivedFromSVGElement>
-struct GetOwnerElementForType;
-
-template<typename OwnerType>
-struct GetOwnerElementForType<OwnerType, true> {
-    static SVGElement* ownerElement(OwnerType* type)
-    {
-        return type;
-    }
-};
-
-template<typename OwnerType>
-struct GetOwnerElementForType<OwnerType, false> {    
-    static SVGElement* ownerElement(OwnerType* type)
-    {
-        SVGElement* context = type->contextElement();
-        ASSERT(context);
-        return context;
-    }
-};
 
 // IsDerivedFromSVGElement implementation
 template<typename OwnerType>
 struct IsDerivedFromSVGElement {
     static const bool value = true;
+};
+
+class SVGTests;
+template<>
+struct IsDerivedFromSVGElement<SVGTests> {
+    static const bool value = false;
 };
 
 class SVGViewSpec;
@@ -89,60 +74,109 @@ struct SVGSynchronizableAnimatedProperty {
     bool shouldSynchronize : 1;
 };
 
-#define DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, TearOffType, PropertyType, UpperProperty, LowerProperty) \
-void OwnerType::synchronize##UpperProperty() \
+// Property registration helpers
+#define BEGIN_REGISTER_ANIMATED_PROPERTIES(OwnerType) \
+SVGAttributeToPropertyMap& OwnerType::attributeToPropertyMap() \
 { \
-    if (!m_##LowerProperty.shouldSynchronize) \
-         return; \
-    AtomicString value(SVGPropertyTraits<PropertyType>::toString(LowerProperty##BaseValue())); \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    SVGAnimatedPropertySynchronizer<IsDerivedFromSVGElement<OwnerType>::value>::synchronize(contextElement, DOMAttribute, value); \
+    DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, s_attributeToPropertyMap, ()); \
+    return s_attributeToPropertyMap; \
 } \
 \
-PassRefPtr<TearOffType> OwnerType::LowerProperty##Animated() \
+static void registerAnimatedPropertiesFor##OwnerType() \
 { \
-    m_##LowerProperty.shouldSynchronize = true; \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    return SVGAnimatedProperty::lookupOrCreateWrapper<TearOffType, PropertyType>(contextElement, DOMAttribute, SVGDOMAttributeIdentifier, m_##LowerProperty.value); \
-}
+    SVGAttributeToPropertyMap& map = OwnerType::attributeToPropertyMap(); \
+    if (!map.isEmpty()) \
+        return; \
+    typedef OwnerType UseOwnerType;
+
+#define REGISTER_LOCAL_ANIMATED_PROPERTY(LowerProperty) \
+     map.addProperty(UseOwnerType::LowerProperty##PropertyInfo());
+
+#define REGISTER_PARENT_ANIMATED_PROPERTIES(ClassName) \
+     map.addProperties(ClassName::attributeToPropertyMap()); \
+
+#define END_REGISTER_ANIMATED_PROPERTIES }
+
+// Property definition helpers (used in SVG*.cpp files)
+#define DEFINE_ANIMATED_PROPERTY(AnimatedPropertyTypeEnum, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
+const SVGPropertyInfo* OwnerType::LowerProperty##PropertyInfo() { \
+    DEFINE_STATIC_LOCAL(const SVGPropertyInfo, s_propertyInfo, \
+                        (AnimatedPropertyTypeEnum, \
+                         DOMAttribute, \
+                         SVGDOMAttributeIdentifier, \
+                         &OwnerType::synchronize##UpperProperty, \
+                         &OwnerType::lookupOrCreate##UpperProperty##Wrapper)); \
+    return &s_propertyInfo; \
+} 
+
+// Property declaration helpers (used in SVG*.h files)
+#define BEGIN_DECLARE_ANIMATED_PROPERTIES(OwnerType) \
+public: \
+    static SVGAttributeToPropertyMap& attributeToPropertyMap(); \
+    virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap() \
+    { \
+        return attributeToPropertyMap(); \
+    } \
+    typedef OwnerType UseOwnerType;
 
 #define DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
 public: \
-PropertyType& LowerProperty() const \
-{ \
-    return m_##LowerProperty.value; \
-} \
+    static const SVGPropertyInfo* LowerProperty##PropertyInfo(); \
+    PropertyType& LowerProperty() const \
+    { \
+        return m_##LowerProperty.value; \
+    } \
 \
-PropertyType& LowerProperty##BaseValue() const \
-{ \
-    return m_##LowerProperty.value; \
-} \
+    PropertyType& LowerProperty##BaseValue() const \
+    { \
+        return m_##LowerProperty.value; \
+    } \
 \
-void set##UpperProperty##BaseValue(const PropertyType& type) \
-{ \
-    m_##LowerProperty.value = type; \
-} \
+    void set##UpperProperty##BaseValue(const PropertyType& type) \
+    { \
+        m_##LowerProperty.value = type; \
+    } \
 \
-PassRefPtr<TearOffType> LowerProperty##Animated(); \
+    PassRefPtr<TearOffType> LowerProperty##Animated() \
+    { \
+        m_##LowerProperty.shouldSynchronize = true; \
+        return static_pointer_cast<TearOffType>(lookupOrCreate##UpperProperty##Wrapper(this)); \
+    } \
 \
 private: \
-    void synchronize##UpperProperty(); \
+    void synchronize##UpperProperty() \
+    { \
+        if (!m_##LowerProperty.shouldSynchronize) \
+            return; \
+        AtomicString value(SVGPropertyTraits<PropertyType>::toString(m_##LowerProperty.value)); \
+        SVGAnimatedPropertySynchronizer<IsDerivedFromSVGElement<UseOwnerType>::value>::synchronize(this, LowerProperty##PropertyInfo()->attributeName, value); \
+    } \
+\
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreate##UpperProperty##Wrapper(void* maskedOwnerType) \
+    { \
+        ASSERT(maskedOwnerType); \
+        UseOwnerType* ownerType = static_cast<UseOwnerType*>(maskedOwnerType); \
+        return SVGAnimatedProperty::lookupOrCreateWrapper<UseOwnerType, TearOffType, PropertyType, IsDerivedFromSVGElement<UseOwnerType>::value>(ownerType, LowerProperty##PropertyInfo(), ownerType->m_##LowerProperty.value); \
+    } \
+\
+    static void synchronize##UpperProperty(void* maskedOwnerType) \
+    { \
+        ASSERT(maskedOwnerType); \
+        UseOwnerType* ownerType = static_cast<UseOwnerType*>(maskedOwnerType); \
+        ownerType->synchronize##UpperProperty(); \
+    } \
 \
     mutable SVGSynchronizableAnimatedProperty<PropertyType> m_##LowerProperty;
 
+#define END_DECLARE_ANIMATED_PROPERTIES 
+
+// List specific definition/declaration helpers
 #define DECLARE_ANIMATED_LIST_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
 DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
-void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize);
-
-#define DEFINE_ANIMATED_LIST_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, TearOffType, PropertyType, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, TearOffType, PropertyType, UpperProperty, LowerProperty) \
-void OwnerType::detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
+void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
 { \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<TearOffType>(contextElement, DOMAttribute.localName()); \
-    if (!wrapper) \
-        return; \
-    static_cast<TearOffType*>(wrapper)->detachListWrappers(newListSize); \
+    if (SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<TearOffType>(this, LowerProperty##PropertyInfo())) \
+        static_cast<TearOffType*>(wrapper)->detachListWrappers(newListSize); \
 }
 
 }

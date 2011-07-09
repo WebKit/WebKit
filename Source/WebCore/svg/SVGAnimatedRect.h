@@ -35,7 +35,7 @@ typedef SVGAnimatedPropertyTearOff<FloatRect> SVGAnimatedRect;
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_RECT(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedRect, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
 #if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;

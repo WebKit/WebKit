@@ -49,7 +49,7 @@ public:
     static void adjustForCurrentColor(SVGElement* targetElement, Color&);
     void adjustForInheritance(SVGElement* targetElement, const QualifiedName&, String& value);
     
-    AnimatedAttributeType determineAnimatedAttributeType(SVGElement*) const;
+    AnimatedPropertyType determineAnimatedPropertyType(SVGElement*) const;
     void determinePropertyValueTypes(const String&, const String&);
     
     AnimatedPropertyValueType fromPropertyValueType() { return m_fromPropertyValueType; }
@@ -69,7 +69,7 @@ private:
     SVGAnimatedTypeAnimator* ensureAnimator();
     
     virtual bool hasValidAttributeType() const;
-    AnimatedAttributeType m_animatedAttributeType;
+    AnimatedPropertyType m_animatedPropertyType;
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;

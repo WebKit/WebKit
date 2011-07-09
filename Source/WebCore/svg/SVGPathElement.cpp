@@ -46,9 +46,31 @@
 
 namespace WebCore {
 
+// Define custom animated property 'd'.
+const SVGPropertyInfo* SVGPathElement::dPropertyInfo()
+{
+    static const SVGPropertyInfo* s_propertyInfo = 0;
+    if (!s_propertyInfo) {
+        s_propertyInfo = new SVGPropertyInfo(AnimatedPath,
+                                             SVGNames::dAttr,
+                                             SVGNames::dAttr.localName(),
+                                             &SVGPathElement::synchronizeD,
+                                             &SVGPathElement::lookupOrCreateDWrapper);
+    }
+    return s_propertyInfo;
+}
+
 // Animated property definitions
 DEFINE_ANIMATED_NUMBER(SVGPathElement, SVGNames::pathLengthAttr, PathLength, pathLength)
 DEFINE_ANIMATED_BOOLEAN(SVGPathElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGPathElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(d)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(pathLength)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
@@ -56,6 +78,7 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* do
     , m_pathSegList(PathSegUnalteredRole)
 {
     ASSERT(hasTagName(SVGNames::pathTag));
+    registerAnimatedPropertiesForSVGPathElement();
 }
 
 PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document* document)
@@ -238,7 +261,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
 
     if (attrName == SVGNames::dAttr) {
-        if (m_animatablePathSegList) {
+        if (SVGAnimatedProperty::lookupWrapper<SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo())) {
             SVGPathSegList newList(PathSegUnalteredRole);
             SVGPathParserFactory* factory = SVGPathParserFactory::self();
             factory->buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);
@@ -253,80 +276,32 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
-void SVGPathElement::synchronizeProperty(const QualifiedName& attrName)
+PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(void* contextElement)
 {
-    if (attrName == anyQName()) {
-        synchronizeD();
-        synchronizePathLength();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
+    ASSERT(contextElement);
+    SVGPathElement* ownerType = static_cast<SVGPathElement*>(contextElement);
 
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
+    SVGPathParserFactory* factory = SVGPathParserFactory::self();
+    factory->buildSVGPathSegListFromByteStream(ownerType->m_pathByteStream.get(), ownerType, ownerType->m_pathSegList.value, UnalteredParsing);
 
-    if (attrName == SVGNames::dAttr) {
-        synchronizeD();
-        return;
-    }
-
-    if (attrName == SVGNames::pathLengthAttr) {
-        synchronizePathLength();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, SVGPathSegList, true>
+           (ownerType, dPropertyInfo(), ownerType->m_pathSegList.value);
 }
 
-void SVGPathElement::synchronizeD()
+void SVGPathElement::synchronizeD(void* contextElement)
 {
-    if (!m_pathSegList.shouldSynchronize)
+    ASSERT(contextElement);
+    SVGPathElement* ownerType = static_cast<SVGPathElement*>(contextElement);
+    if (!ownerType->m_pathSegList.shouldSynchronize)
         return;
-
-    SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::dAttr, m_pathSegList.value.valueAsString());
-}
-
-AttributeToPropertyTypeMap& SVGPathElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGPathElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::dAttr, AnimatedPath);
-    attributeToPropertyTypeMap.set(SVGNames::pathLengthAttr, AnimatedNumber);
+    SVGAnimatedPropertySynchronizer<true>::synchronize(ownerType, dPropertyInfo()->attributeName, ownerType->m_pathSegList.value.valueAsString());
 }
 
 SVGPathSegListPropertyTearOff* SVGPathElement::pathSegList()
 {
-    if (!m_animatablePathSegList) {
-        m_pathSegList.shouldSynchronize = true;
-
-        SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        factory->buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, m_pathSegList.value, UnalteredParsing);
-
-        m_animatablePathSegList = SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedPathSegListPropertyTearOff, SVGPathSegList>
-                                 (this, SVGNames::dAttr, SVGNames::dAttr.localName(), m_pathSegList.value);
-    }
-
+    m_pathSegList.shouldSynchronize = true;
+    if (!m_animatablePathSegList)
+        m_animatablePathSegList = static_pointer_cast<SVGAnimatedPathSegListPropertyTearOff>(lookupOrCreateDWrapper(this));
     return static_cast<SVGPathSegListPropertyTearOff*>(m_animatablePathSegList->baseVal(PathSegUnalteredRole));
 }
 
@@ -338,16 +313,9 @@ SVGPathSegListPropertyTearOff* SVGPathElement::normalizedPathSegList()
 
 SVGPathSegListPropertyTearOff* SVGPathElement::animatedPathSegList()
 {
-    if (!m_animatablePathSegList) {
-        m_pathSegList.shouldSynchronize = true;
-
-        SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        factory->buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, m_pathSegList.value, UnalteredParsing);
-
-        m_animatablePathSegList = SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedPathSegListPropertyTearOff, SVGPathSegList>
-                                 (this, SVGNames::dAttr, SVGNames::dAttr.localName(), m_pathSegList.value);
-    }
-
+    m_pathSegList.shouldSynchronize = true;
+    if (!m_animatablePathSegList)
+        m_animatablePathSegList = static_pointer_cast<SVGAnimatedPathSegListPropertyTearOff>(lookupOrCreateDWrapper(this));
     return static_cast<SVGPathSegListPropertyTearOff*>(m_animatablePathSegList->animVal(PathSegUnalteredRole));
 }
 

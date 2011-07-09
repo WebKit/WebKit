@@ -37,25 +37,58 @@
 #include "XMLNames.h"
 
 namespace WebCore {
+ 
+// Define custom animated property 'textLength'.
+const SVGPropertyInfo* SVGTextContentElement::textLengthPropertyInfo()
+{
+    static const SVGPropertyInfo* s_propertyInfo = 0;
+    if (!s_propertyInfo) {
+        s_propertyInfo = new SVGPropertyInfo(AnimatedLength,
+                                             SVGNames::textLengthAttr,
+                                             SVGNames::textLengthAttr.localName(),
+                                             &SVGTextContentElement::synchronizeTextLength,
+                                             &SVGTextContentElement::lookupOrCreateTextLengthWrapper);
+    }
+    return s_propertyInfo;
+}
 
 // Animated property definitions
 DEFINE_ANIMATED_ENUMERATION(SVGTextContentElement, SVGNames::lengthAdjustAttr, LengthAdjust, lengthAdjust, SVGLengthAdjustType)
 DEFINE_ANIMATED_BOOLEAN(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextContentElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(textLength)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(lengthAdjust)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
-    , m_specifiedTextLength(LengthModeOther)
     , m_textLength(LengthModeOther)
+    , m_specifiedTextLength(LengthModeOther)
     , m_lengthAdjust(SVGLengthAdjustSpacing)
 {
+    registerAnimatedPropertiesForSVGTextContentElement();
 }
 
-void SVGTextContentElement::synchronizeTextLength()
+void SVGTextContentElement::synchronizeTextLength(void* contextElement)
 {
-    if (!m_textLength.shouldSynchronize)
+    ASSERT(contextElement);
+    SVGTextContentElement* ownerType = static_cast<SVGTextContentElement*>(contextElement);
+    if (!ownerType->m_textLength.shouldSynchronize)
         return;
-    AtomicString value(SVGPropertyTraits<SVGLength>::toString(m_specifiedTextLength));
-    SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::textLengthAttr, value);
+    AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType->m_specifiedTextLength));
+    SVGAnimatedPropertySynchronizer<true>::synchronize(ownerType, textLengthPropertyInfo()->attributeName, value);
+}
+
+PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(void* contextElement)
+{
+    ASSERT(contextElement);
+    SVGTextContentElement* ownerType = static_cast<SVGTextContentElement*>(contextElement);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength, true>
+           (ownerType, textLengthPropertyInfo(), ownerType->m_textLength.value);
 }
 
 PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
@@ -68,7 +101,8 @@ PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
     }
 
     m_textLength.shouldSynchronize = true;
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedLength, SVGLength>(this, SVGNames::textLengthAttr, SVGNames::textLengthAttr.localName(), m_textLength.value);
+    return static_pointer_cast<SVGAnimatedLength>(lookupOrCreateTextLengthWrapper(this));
+
 }
 
 unsigned SVGTextContentElement::getNumberOfChars() const
@@ -236,45 +270,6 @@ void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
     ASSERT_NOT_REACHED();
 }
 
-void SVGTextContentElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeLengthAdjust();
-        synchronizeTextLength();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::lengthAdjustAttr) {
-        synchronizeLengthAdjust();
-        return;
-    }
-
-    if (attrName == SVGNames::textLengthAttr) {
-        synchronizeTextLength();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
@@ -292,14 +287,6 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (RenderObject* renderer = this->renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-}
-
-void SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
-{
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-
-    attributeToPropertyTypeMap.set(SVGNames::textLengthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::lengthAdjustAttr, AnimatedEnumeration);
 }
 
 bool SVGTextContentElement::selfHasRelativeLengths() const

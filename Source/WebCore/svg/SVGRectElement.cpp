@@ -41,6 +41,18 @@ DEFINE_ANIMATED_LENGTH(SVGRectElement, SVGNames::rxAttr, Rx, rx)
 DEFINE_ANIMATED_LENGTH(SVGRectElement, SVGNames::ryAttr, Ry, ry)
 DEFINE_ANIMATED_BOOLEAN(SVGRectElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGRectElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(rx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(ry)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
     , m_x(LengthModeWidth)
@@ -51,6 +63,7 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* do
     , m_ry(LengthModeHeight)
 {
     ASSERT(hasTagName(SVGNames::rectTag));
+    registerAnimatedPropertiesForSVGRectElement();
 }
 
 PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document* document)
@@ -168,88 +181,6 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGRectElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeX();
-        synchronizeY();
-        synchronizeWidth();
-        synchronizeHeight();
-        synchronizeRx();
-        synchronizeRy();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::widthAttr) {
-        synchronizeWidth();
-        return;
-    }
-
-    if (attrName == SVGNames::heightAttr) {
-        synchronizeHeight();
-        return;
-    }
-
-    if (attrName == SVGNames::rxAttr) {
-        synchronizeRx();
-        return;
-    }
-
-    if (attrName == SVGNames::ryAttr) {
-        synchronizeRy();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGRectElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGRectElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::rxAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::ryAttr, AnimatedLength);
 }
 
 void SVGRectElement::toPathData(Path& path) const

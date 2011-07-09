@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-SVGAnimatedType::SVGAnimatedType(AnimatedAttributeType type)
+SVGAnimatedType::SVGAnimatedType(AnimatedPropertyType type)
     : m_type(type)
 {
 }

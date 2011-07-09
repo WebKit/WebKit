@@ -52,7 +52,7 @@ public:
     bool hasPendingResources() const;
     void setHasPendingResources(bool);
 
-    AnimatedAttributeType animatedPropertyTypeForCSSProperty(const QualifiedName&);
+    virtual void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
     static bool isAnimatableCSSProperty(const QualifiedName&);
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
@@ -62,15 +62,11 @@ public:
 
 protected: 
     SVGStyledElement(const QualifiedName&, Document*);
-
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-
-    void fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
     virtual void attach();
     virtual void insertedIntoDocument();
@@ -94,8 +90,9 @@ private:
 
     HashSet<SVGStyledElement*> m_elementsWithRelativeLengths;
 
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(ClassName, className)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGStyledElement)
+        DECLARE_ANIMATED_STRING(ClassName, className)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

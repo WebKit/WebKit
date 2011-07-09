@@ -45,6 +45,18 @@ DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::widthAttr, Width, width)
 DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::heightAttr, Height, height)
 DEFINE_ANIMATED_BOOLEAN(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMaskElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(maskUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(maskContentUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledLocatableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* document)
     : SVGStyledLocatableElement(tagName, document)
     , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
@@ -57,6 +69,7 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* do
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::maskTag));
+    registerAnimatedPropertiesForSVGMaskElement();
 }
 
 PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document* document)
@@ -149,88 +162,6 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
-}
-
-void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeMaskUnits();
-        synchronizeMaskContentUnits();
-        synchronizeX();
-        synchronizeY();
-        synchronizeWidth();
-        synchronizeHeight();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::maskUnitsAttr) {
-        synchronizeMaskUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::maskContentUnitsAttr) {
-        synchronizeMaskContentUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::widthAttr) {
-        synchronizeWidth();
-        return;
-    }
-
-    if (attrName == SVGNames::heightAttr) {
-        synchronizeHeight();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGMaskElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGMaskElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledLocatableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::maskUnitsAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::maskContentUnitsAttr, AnimatedEnumeration);
 }
 
 void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

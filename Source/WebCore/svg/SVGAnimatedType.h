@@ -55,7 +55,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     static PassOwnPtr<SVGAnimatedType> createString(String*);
 
-    AnimatedAttributeType type() const { return m_type; }
+    AnimatedPropertyType type() const { return m_type; }
 
     SVGAngle& angle();
     bool& boolean();
@@ -79,9 +79,9 @@ public:
     void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio&);
 
 private:
-    SVGAnimatedType(AnimatedAttributeType);
+    SVGAnimatedType(AnimatedPropertyType);
 
-    AnimatedAttributeType m_type;
+    AnimatedPropertyType m_type;
 
     union DataUnion {
         DataUnion()

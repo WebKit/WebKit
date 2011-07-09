@@ -73,7 +73,6 @@ struct SVGPropertyTraits<SVGSpreadMethodType> {
     }
 };
 
-
 class SVGGradientElement : public SVGStyledElement,
                            public SVGURIReference,
                            public SVGExternalResourcesRequired {
@@ -93,24 +92,19 @@ protected:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    void fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
 private:
     virtual bool needsPendingResourceHandling() const { return false; }
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    // Animated property declarations
-    DECLARE_ANIMATED_ENUMERATION(SpreadMethod, spreadMethod, SVGSpreadMethodType)
-    DECLARE_ANIMATED_ENUMERATION(GradientUnits, gradientUnits, SVGUnitTypes::SVGUnitType)
-    DECLARE_ANIMATED_TRANSFORM_LIST(GradientTransform, gradientTransform)
-
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGradientElement)
+        DECLARE_ANIMATED_ENUMERATION(SpreadMethod, spreadMethod, SVGSpreadMethodType)
+        DECLARE_ANIMATED_ENUMERATION(GradientUnits, gradientUnits, SVGUnitTypes::SVGUnitType)
+        DECLARE_ANIMATED_TRANSFORM_LIST(GradientTransform, gradientTransform)
+        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

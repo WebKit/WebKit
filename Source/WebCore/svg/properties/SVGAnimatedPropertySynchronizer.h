@@ -27,9 +27,7 @@ namespace WebCore {
 
 // Helper template used for synchronizing SVG <-> XML properties
 template<bool isDerivedFromSVGElement>
-struct SVGAnimatedPropertySynchronizer {
-    static void synchronize(SVGElement*, const QualifiedName&, const AtomicString&);
-};
+struct SVGAnimatedPropertySynchronizer;
 
 template<>
 struct SVGAnimatedPropertySynchronizer<true> {
@@ -48,7 +46,7 @@ struct SVGAnimatedPropertySynchronizer<true> {
 
 template<>
 struct SVGAnimatedPropertySynchronizer<false> {
-    static void synchronize(SVGElement*, const QualifiedName&, const AtomicString&)
+    static void synchronize(void*, const QualifiedName&, const AtomicString&)
     {
         // no-op, for types not inheriting from Element, thus nothing to synchronize
     }

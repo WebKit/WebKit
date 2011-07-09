@@ -32,9 +32,6 @@ public:
 private:
     SVGMissingGlyphElement(const QualifiedName&, Document*);
 
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 };
 
@@ -42,5 +39,3 @@ private:
 
 #endif // ENABLE(SVG_FONTS)
 #endif
-
-// vim:ts=4:noet

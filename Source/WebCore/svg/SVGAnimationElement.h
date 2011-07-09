@@ -108,7 +108,6 @@ protected:
 
 private:
     virtual void attributeChanged(Attribute*, bool preserveDecls);
-    virtual void synchronizeProperty(const QualifiedName&);
 
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
@@ -123,10 +122,14 @@ private:
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
     unsigned calculateKeyTimesIndex(float percent) const;
 
-    // Animated property declarations
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
     bool m_animationValid;
 

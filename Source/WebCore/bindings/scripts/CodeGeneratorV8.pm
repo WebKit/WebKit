@@ -902,8 +902,7 @@ END
                 push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result, $updateMethod)));\n");
             }
         } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
-            my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
-            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($extraImp$result)));\n");
+            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result)));\n");
         } elsif ($tearOffType =~ /SVG(Point|PathSeg)List/) {
             push(@implContentDecls, "    return toV8(WTF::getPtr($result));\n");
         } else {

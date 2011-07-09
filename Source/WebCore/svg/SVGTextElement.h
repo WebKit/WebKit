@@ -56,12 +56,10 @@ private:
     virtual bool childShouldCreateRenderer(Node*) const;
             
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextElement)
+        DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     // Used by <animateMotion>
     OwnPtr<AffineTransform> m_supplementalTransform;

@@ -63,9 +63,6 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual void recalcStyle(StyleChange = NoChange);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -106,17 +103,19 @@ private:
     void updateContainerOffsets();
     void updateContainerSizes();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_LENGTH(X, x)
-    DECLARE_ANIMATED_LENGTH(Y, y)
-    DECLARE_ANIMATED_LENGTH(Width, width)
-    DECLARE_ANIMATED_LENGTH(Height, height)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGUseElement)
+        DECLARE_ANIMATED_LENGTH(X, x)
+        DECLARE_ANIMATED_LENGTH(Y, y)
+        DECLARE_ANIMATED_LENGTH(Width, width)
+        DECLARE_ANIMATED_LENGTH(Height, height)
+        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
     bool m_updatesBlocked;
     bool m_needsShadowTreeRecreation;

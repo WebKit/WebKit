@@ -80,19 +80,17 @@ protected:
     // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     
 private:
-    // Animated property declarations
-    DECLARE_ANIMATED_ENUMERATION(Type, type, ComponentTransferType)
-    DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
-    DECLARE_ANIMATED_NUMBER(Slope, slope)
-    DECLARE_ANIMATED_NUMBER(Intercept, intercept)
-    DECLARE_ANIMATED_NUMBER(Amplitude, amplitude)
-    DECLARE_ANIMATED_NUMBER(Exponent, exponent)
-    DECLARE_ANIMATED_NUMBER(Offset, offset)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGComponentTransferFunctionElement)
+        DECLARE_ANIMATED_ENUMERATION(Type, type, ComponentTransferType)
+        DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
+        DECLARE_ANIMATED_NUMBER(Slope, slope)
+        DECLARE_ANIMATED_NUMBER(Intercept, intercept)
+        DECLARE_ANIMATED_NUMBER(Amplitude, amplitude)
+        DECLARE_ANIMATED_NUMBER(Exponent, exponent)
+        DECLARE_ANIMATED_NUMBER(Offset, offset)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

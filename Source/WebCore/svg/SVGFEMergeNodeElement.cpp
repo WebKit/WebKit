@@ -35,10 +35,15 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEMergeNodeElement, SVGNames::inAttr, In1, in1)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feMergeNodeTag));
+    registerAnimatedPropertiesForSVGFEMergeNodeElement();
 }
 
 PassRefPtr<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document* document)
@@ -88,38 +93,6 @@ void SVGFEMergeNodeElement::svgAttributeChanged(const QualifiedName& attrName)
             return;
 
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFEMergeNodeElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEMergeNodeElement::fillAttributeToPropertyTypeMap()
-{
-    attributeToPropertyTypeMap().set(SVGNames::inAttr, AnimatedString);
-}
-
-void SVGFEMergeNodeElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeIn1();
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }   
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
         return;
     }
 

@@ -31,10 +31,17 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGDefsElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGDefsElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGDefsElement::SVGDefsElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::defsTag));
+    registerAnimatedPropertiesForSVGDefsElement();
 }
 
 PassRefPtr<SVGDefsElement> SVGDefsElement::create(const QualifiedName& tagName, Document* document)
@@ -50,22 +57,6 @@ bool SVGDefsElement::isValid() const
 RenderObject* SVGDefsElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGHiddenContainer(this);
-}
-
-void SVGDefsElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
-        SVGTests::synchronizeProperties(this, attrName);
 }
 
 }

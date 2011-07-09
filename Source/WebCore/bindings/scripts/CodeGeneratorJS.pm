@@ -2737,8 +2737,7 @@ sub NativeToJSValue
                 $value = "${tearOffType}::create(imp, $value, $updateMethod)";
             }
         } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
-            my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
-            $value = "${tearOffType}::create($extraImp$value)";
+            $value = "${tearOffType}::create(imp, $value)";
         } elsif (not $tearOffType =~ /SVG(Point|PathSeg)List/) {
             $value = "${tearOffType}::create($value)";
         }

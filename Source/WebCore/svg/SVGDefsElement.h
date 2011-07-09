@@ -43,12 +43,15 @@ private:
     virtual bool isValid() const;
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void synchronizeProperty(const QualifiedName&);
 
-    // Animated property declarations
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGDefsElement)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 } // namespace WebCore

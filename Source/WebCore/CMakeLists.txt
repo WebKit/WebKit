@@ -1809,6 +1809,7 @@ IF (ENABLE_SVG)
         svg/graphics/filters/SVGFEImage.cpp
         svg/graphics/filters/SVGFilter.cpp
         svg/graphics/filters/SVGFilterBuilder.cpp
+        svg/properties/SVGAttributeToPropertyMap.cpp
         svg/properties/SVGPathSegListPropertyTearOff.cpp
     )
 

@@ -40,10 +40,16 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGTRefElement, XLinkNames::hrefAttr, Href, href)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTRefElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextPositioningElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::trefTag));
+    registerAnimatedPropertiesForSVGTRefElement();
 }
 
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
@@ -162,41 +168,6 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGTRefElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeHref();
-        SVGTextPositioningElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGTextPositioningElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGTRefElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGTRefElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)

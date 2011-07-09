@@ -47,24 +47,25 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual void toPathData(Path&) const;
 
     virtual bool selfHasRelativeLengths() const;
 
-    // Animated property declarations
-    DECLARE_ANIMATED_LENGTH(X, x)
-    DECLARE_ANIMATED_LENGTH(Y, y)
-    DECLARE_ANIMATED_LENGTH(Width, width)
-    DECLARE_ANIMATED_LENGTH(Height, height)
-    DECLARE_ANIMATED_LENGTH(Rx, rx)
-    DECLARE_ANIMATED_LENGTH(Ry, ry)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGRectElement)
+        DECLARE_ANIMATED_LENGTH(X, x)
+        DECLARE_ANIMATED_LENGTH(Y, y)
+        DECLARE_ANIMATED_LENGTH(Width, width)
+        DECLARE_ANIMATED_LENGTH(Height, height)
+        DECLARE_ANIMATED_LENGTH(Rx, rx)
+        DECLARE_ANIMATED_LENGTH(Ry, ry)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 } // namespace WebCore

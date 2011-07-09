@@ -60,19 +60,6 @@ PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilde
     return effect.release();
 }
 
-AttributeToPropertyTypeMap& SVGFEMergeElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEMergeElement::fillAttributeToPropertyTypeMap()
-{
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
-}
-
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

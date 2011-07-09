@@ -34,10 +34,18 @@ DEFINE_ANIMATED_BOOLEAN(SVGSymbolElement, SVGNames::externalResourcesRequiredAtt
 DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGSymbolElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio) 
 DEFINE_ANIMATED_RECT(SVGSymbolElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGSymbolElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio) 
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::symbolTag));
+    registerAnimatedPropertiesForSVGSymbolElement();
 }
 
 PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document* document)
@@ -85,48 +93,6 @@ void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
     // Every other property change is ignored.
     if (attrName == SVGNames::viewBoxAttr)
         updateRelativeLengthsInformation();
-}
-
-void SVGSymbolElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGSymbolElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGSymbolElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
-    attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
 }
 
 bool SVGSymbolElement::selfHasRelativeLengths() const

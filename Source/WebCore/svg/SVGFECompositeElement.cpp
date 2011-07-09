@@ -40,11 +40,23 @@ DEFINE_ANIMATED_NUMBER(SVGFECompositeElement, SVGNames::k2Attr, K2, k2)
 DEFINE_ANIMATED_NUMBER(SVGFECompositeElement, SVGNames::k3Attr, K3, k3)
 DEFINE_ANIMATED_NUMBER(SVGFECompositeElement, SVGNames::k4Attr, K4, k4)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFECompositeElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in2)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(_operator)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(k1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(k2)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(k3)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(k4)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m__operator(FECOMPOSITE_OPERATOR_OVER)
 {
     ASSERT(hasTagName(SVGNames::feCompositeTag));
+    registerAnimatedPropertiesForSVGFECompositeElement();
 }
 
 PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document* document)
@@ -158,83 +170,6 @@ void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronize_operator();
-        synchronizeIn1();
-        synchronizeIn2();
-        synchronizeK1();
-        synchronizeK2();
-        synchronizeK3();
-        synchronizeK4();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::operatorAttr) {
-        synchronize_operator();
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
-        return;
-    }
-
-    if (attrName == SVGNames::in2Attr) {
-        synchronizeIn2();
-        return;
-    }
-
-    if (attrName == SVGNames::k1Attr) {
-        synchronizeK1();
-        return;
-    }
-
-    if (attrName == SVGNames::k2Attr) {
-        synchronizeK2();
-        return;
-    }
-
-    if (attrName == SVGNames::k3Attr) {
-        synchronizeK3();
-        return;
-    }
-
-    if (attrName == SVGNames::k4Attr) {
-        synchronizeK4();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFECompositeElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFECompositeElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
-    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::in2Attr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::operatorAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::k1Attr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::k2Attr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::k3Attr, AnimatedNumber);
-    attributeToPropertyTypeMap.set(SVGNames::k4Attr, AnimatedNumber);
 }
 
 PassRefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

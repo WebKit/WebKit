@@ -73,18 +73,14 @@ public:
 private:
     SVGFontElement(const QualifiedName&, Document*);
 
-    virtual void synchronizeProperty(const QualifiedName&);
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }  
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     void ensureGlyphCache();
     void registerLigaturesInGlyphCache(Vector<String>&);
 
-    // Animated property declarations
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFontElement)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     KerningPairVector m_horizontalKerningPairs;
     KerningPairVector m_verticalKerningPairs;

@@ -34,7 +34,7 @@ typedef SVGAnimatedPropertyTearOff<SVGLength> SVGAnimatedLength;
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedLength, SVGLength, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_LENGTH(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedLength, SVGLength, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedLength, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
 #if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;

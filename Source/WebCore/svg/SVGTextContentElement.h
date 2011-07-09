@@ -95,6 +95,7 @@ public:
     // as its getter needs special handling (return getComputedTextLength(), instead of m_textLength).
     SVGLength& specifiedTextLength() { return m_specifiedTextLength; }
     PassRefPtr<SVGAnimatedLength> textLengthAnimated();
+    static const SVGPropertyInfo* textLengthPropertyInfo();
 
 protected:
     SVGTextContentElement(const QualifiedName&, Document*);
@@ -104,8 +105,6 @@ protected:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    void fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
     virtual bool selfHasRelativeLengths() const;
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
@@ -113,14 +112,21 @@ protected:
 private:
     virtual bool isTextContent() const { return true; }
 
-    // Animated property declarations
-    void synchronizeTextLength();
-    SVGLength m_specifiedTextLength;
+    // Custom 'textLength' property
+    static void synchronizeTextLength(void* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateTextLengthWrapper(void* contextElement);
     mutable SVGSynchronizableAnimatedProperty<SVGLength> m_textLength;
-    DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust, SVGLengthAdjustType)
+    SVGLength m_specifiedTextLength;
+  
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextContentElement)
+        DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust, SVGLengthAdjustType)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired) 
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired) 
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 } // namespace WebCore

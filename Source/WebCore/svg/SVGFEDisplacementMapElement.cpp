@@ -37,12 +37,22 @@ DEFINE_ANIMATED_ENUMERATION(SVGFEDisplacementMapElement, SVGNames::xChannelSelec
 DEFINE_ANIMATED_ENUMERATION(SVGFEDisplacementMapElement, SVGNames::yChannelSelectorAttr, YChannelSelector, yChannelSelector, ChannelSelectorType)
 DEFINE_ANIMATED_NUMBER(SVGFEDisplacementMapElement, SVGNames::scaleAttr, Scale, scale)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEDisplacementMapElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(in2)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(xChannelSelector)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(yChannelSelector)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(scale)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_xChannelSelector(CHANNEL_A)
     , m_yChannelSelector(CHANNEL_A)
 {
     ASSERT(hasTagName(SVGNames::feDisplacementMapTag));
+    registerAnimatedPropertiesForSVGFEDisplacementMapElement();
 }
 
 PassRefPtr<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document* document)
@@ -137,69 +147,6 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGFEDisplacementMapElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeXChannelSelector();
-        synchronizeYChannelSelector();
-        synchronizeIn1();
-        synchronizeIn2();
-        synchronizeScale();
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xChannelSelectorAttr) {
-        synchronizeXChannelSelector();
-        return;
-    }
-
-    if (attrName == SVGNames::yChannelSelectorAttr) {
-        synchronizeYChannelSelector();
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        synchronizeIn1();
-        return;
-    }
-
-    if (attrName == SVGNames::in2Attr) {
-        synchronizeIn2();
-        return;
-    }
-
-    if (attrName == SVGNames::scaleAttr) {
-        synchronizeScale();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFEDisplacementMapElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEDisplacementMapElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::in2Attr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::xChannelSelectorAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::yChannelSelectorAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::scaleAttr, AnimatedNumber);
 }
 
 PassRefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

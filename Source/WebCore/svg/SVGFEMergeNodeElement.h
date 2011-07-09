@@ -37,12 +37,10 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)
+        DECLARE_ANIMATED_STRING(In1, in1)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

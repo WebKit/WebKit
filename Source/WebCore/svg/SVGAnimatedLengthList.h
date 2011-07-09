@@ -34,8 +34,8 @@ typedef SVGAnimatedListPropertyTearOff<SVGLengthList> SVGAnimatedLengthList;
 DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedLengthList, SVGLengthList, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_LENGTH_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_LIST_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedLengthList, SVGLengthList, UpperProperty, LowerProperty)
-    
+DEFINE_ANIMATED_PROPERTY(AnimatedLengthList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+
 #if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 

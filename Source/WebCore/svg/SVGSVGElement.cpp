@@ -65,6 +65,18 @@ DEFINE_ANIMATED_BOOLEAN(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, 
 DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGSVGElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
 DEFINE_ANIMATED_RECT(SVGSVGElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGSVGElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledLocatableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , m_x(LengthModeWidth)
@@ -77,6 +89,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_hasSetContainerSize(false)
 {
     ASSERT(hasTagName(SVGNames::svgTag));
+    registerAnimatedPropertiesForSVGSVGElement();
     doc->registerForDocumentActivationCallbacks(this);
 }
 
@@ -353,55 +366,6 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGStyledElement::svgAttributeChanged(attrName);
-}
-
-void SVGSVGElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeX();
-        synchronizeY();
-        synchronizeWidth();
-        synchronizeHeight();
-        synchronizeExternalResourcesRequired();
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr)
-        synchronizeX();
-    else if (attrName == SVGNames::yAttr)
-        synchronizeY();
-    else if (attrName == SVGNames::widthAttr)
-        synchronizeWidth();
-    else if (attrName == SVGNames::heightAttr)
-        synchronizeHeight();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGFitToViewBox::isKnownAttribute(attrName)) 
-        SVGFitToViewBox::synchronizeProperties(attrName);
-    else if (SVGTests::isKnownAttribute(attrName))
-        SVGTests::synchronizeProperties(this, attrName);
-    else
-        SVGStyledElement::synchronizeProperty(attrName);
-}
-
-AttributeToPropertyTypeMap& SVGSVGElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGSVGElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
-    attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
 }
 
 unsigned SVGSVGElement::suspendRedraw(unsigned /* maxWaitMilliseconds */)

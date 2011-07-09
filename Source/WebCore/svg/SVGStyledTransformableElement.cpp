@@ -35,9 +35,15 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_TRANSFORM_LIST(SVGStyledTransformableElement, SVGNames::transformAttr, Transform, transform)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(transform)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledLocatableElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document)
     : SVGStyledLocatableElement(tagName, document)
 {
+    registerAnimatedPropertiesForSVGStyledTransformableElement();
 }
 
 SVGStyledTransformableElement::~SVGStyledTransformableElement()
@@ -119,27 +125,6 @@ void SVGStyledTransformableElement::svgAttributeChanged(const QualifiedName& att
     ASSERT_NOT_REACHED();
 }
 
-void SVGStyledTransformableElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeTransform();
-        SVGStyledLocatableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledLocatableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::transformAttr) {
-        synchronizeTransform();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 SVGElement* SVGStyledTransformableElement::nearestViewportElement() const
 {
     return SVGTransformable::nearestViewportElement(this);
@@ -159,13 +144,6 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
 {
     // By default, any subclass is expected to do path-based drawing
     return new (arena) RenderSVGPath(this);
-}
-
-void SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
-{
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    
-    attributeToPropertyTypeMap.set(SVGNames::transformAttr, AnimatedTransformList);
 }
 
 void SVGStyledTransformableElement::toClipPath(Path& path) const

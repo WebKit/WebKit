@@ -38,10 +38,16 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_TRANSFORM_LIST(SVGTextElement, SVGNames::transformAttr, Transform, transform)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(transform)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextPositioningElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
 {
     ASSERT(hasTagName(SVGNames::textTag));
+    registerAnimatedPropertiesForSVGTextElement();
 }
 
 PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document* document)
@@ -158,41 +164,6 @@ void SVGTextElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGTextElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeTransform();
-        SVGTextPositioningElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGTextPositioningElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::transformAttr) {
-        synchronizeTransform();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGTextElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGTextElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::transformAttr, AnimatedTransformList);
 }
 
 }

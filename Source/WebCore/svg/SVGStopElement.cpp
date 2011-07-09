@@ -36,11 +36,17 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_NUMBER(SVGStopElement, SVGNames::offsetAttr, Offset, offset)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStopElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(offset)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_offset(0)
 {
     ASSERT(hasTagName(SVGNames::stopTag));
+    registerAnimatedPropertiesForSVGStopElement();
 }
 
 PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document* document)
@@ -93,41 +99,6 @@ void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGStopElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeOffset();
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::offsetAttr) {
-        synchronizeOffset();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGStopElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGStopElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::offsetAttr, AnimatedLength);
 }
 
 RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)

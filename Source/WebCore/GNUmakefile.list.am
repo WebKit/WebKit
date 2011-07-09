@@ -3395,6 +3395,8 @@ webcore_sources += \
 	Source/WebCore/svg/graphics/SVGImage.h \
 	Source/WebCore/svg/LinearGradientAttributes.h \
 	Source/WebCore/svg/PatternAttributes.h \
+	Source/WebCore/svg/properties/SVGAttributeToPropertyMap.cpp \
+	Source/WebCore/svg/properties/SVGAttributeToPropertyMap.h \
 	Source/WebCore/svg/properties/SVGAnimatedEnumerationPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGAnimatedListPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGAnimatedPathSegListPropertyTearOff.h \
@@ -3410,6 +3412,7 @@ webcore_sources += \
 	Source/WebCore/svg/properties/SVGPathSegListPropertyTearOff.cpp \
 	Source/WebCore/svg/properties/SVGPathSegListPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGProperty.h \
+	Source/WebCore/svg/properties/SVGPropertyInfo.h \
 	Source/WebCore/svg/properties/SVGPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGPropertyTraits.h \
 	Source/WebCore/svg/properties/SVGStaticListPropertyTearOff.h \

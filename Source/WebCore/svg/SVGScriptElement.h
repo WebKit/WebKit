@@ -51,9 +51,6 @@ private:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual bool isURLAttribute(Attribute*) const;
     virtual void finishParsingChildren();
 
@@ -75,13 +72,10 @@ private:
 
     PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 
-    // Animated property declarations
-
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
+        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
     String m_type;
 };

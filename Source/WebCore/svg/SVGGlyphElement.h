@@ -46,9 +46,8 @@ public:
 private:
     SVGGlyphElement(const QualifiedName&, Document*);
 
+    // FIXME: svgAttributeChanged missing.
     virtual void parseMappedAttribute(Attribute*);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

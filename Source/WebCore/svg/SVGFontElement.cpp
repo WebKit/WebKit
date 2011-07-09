@@ -36,8 +36,13 @@
 
 namespace WebCore {
 
-// Animated property declarations
+// Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGFontElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
+
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFontElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document) 
@@ -45,19 +50,12 @@ inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* do
     , m_isGlyphCacheValid(false)
 {
     ASSERT(hasTagName(SVGNames::fontTag));
+    registerAnimatedPropertiesForSVGFontElement();
 }
 
 PassRefPtr<SVGFontElement> SVGFontElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGFontElement(tagName, document));
-}
-
-void SVGFontElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    SVGStyledElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
 }
 
 void SVGFontElement::invalidateGlyphCache()
@@ -257,17 +255,6 @@ Glyph SVGFontElement::missingGlyph()
 {
     ensureGlyphCache();
     return m_missingGlyph;
-}
-
-AttributeToPropertyTypeMap& SVGFontElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFontElement::fillAttributeToPropertyTypeMap()
-{
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

@@ -33,40 +33,24 @@
 
 namespace WebCore {
 
-// Animated property declarations
+// Animated property definitions
 DEFINE_ANIMATED_STRING(SVGAltGlyphElement, XLinkNames::hrefAttr, Href, href)
+
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGAltGlyphElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextPositioningElement)
+END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::altGlyphTag));
+    registerAnimatedPropertiesForSVGAltGlyphElement();
 }
 
 PassRefPtr<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGAltGlyphElement(tagName, document));
-}
-
-void SVGAltGlyphElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    SVGTextPositioningElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || SVGURIReference::isKnownAttribute(attrName))
-        synchronizeHref();
-}
-
-AttributeToPropertyTypeMap& SVGAltGlyphElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGAltGlyphElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 void SVGAltGlyphElement::setGlyphRef(const AtomicString&, ExceptionCode& ec)

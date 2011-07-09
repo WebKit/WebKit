@@ -32,10 +32,16 @@ namespace WebCore {
 DEFINE_ANIMATED_STRING(SVGMPathElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGMPathElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMPathElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::mpathTag));
+    registerAnimatedPropertiesForSVGMPathElement();
 }
 
 PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document* document)
@@ -66,41 +72,6 @@ void SVGMPathElement::parseMappedAttribute(Attribute* attr)
         return;
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGMPathElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        synchronizeHref();
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName))
-        return;
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGMPathElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGMPathElement::fillAttributeToPropertyTypeMap()
-{
-    attributeToPropertyTypeMap().set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 SVGPathElement* SVGMPathElement::pathElement()

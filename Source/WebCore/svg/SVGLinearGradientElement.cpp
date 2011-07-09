@@ -46,6 +46,14 @@ DEFINE_ANIMATED_LENGTH(SVGLinearGradientElement, SVGNames::y1Attr, Y1, y1)
 DEFINE_ANIMATED_LENGTH(SVGLinearGradientElement, SVGNames::x2Attr, X2, x2)
 DEFINE_ANIMATED_LENGTH(SVGLinearGradientElement, SVGNames::y2Attr, Y2, y2)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGLinearGradientElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y1)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x2)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y2)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGradientElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document* document)
     : SVGGradientElement(tagName, document)
     , m_x1(LengthModeWidth)
@@ -55,6 +63,7 @@ inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& t
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
     ASSERT(hasTagName(SVGNames::linearGradientTag));
+    registerAnimatedPropertiesForSVGLinearGradientElement();
 }
 
 PassRefPtr<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document* document)
@@ -117,62 +126,6 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
-}
-
-void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName)
-{    
-    if (attrName == anyQName()) {
-        synchronizeX1();
-        synchronizeY1();
-        synchronizeX2();
-        synchronizeY2();
-        SVGGradientElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGGradientElement::synchronizeProperty(attrName);
-        return;
-    }   
-
-    if (attrName == SVGNames::x1Attr) {
-        synchronizeX1();
-        return;
-    }
-
-    if (attrName == SVGNames::y1Attr) {
-        synchronizeY1();
-        return;
-    }
-
-    if (attrName == SVGNames::x2Attr) {
-        synchronizeX2();
-        return;
-    }
-
-    if (attrName == SVGNames::y2Attr) {
-        synchronizeY2();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGLinearGradientElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGLinearGradientElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGGradientElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::x1Attr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::y1Attr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::x2Attr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::y2Attr, AnimatedLength);
 }
 
 RenderObject* SVGLinearGradientElement::createRenderer(RenderArena* arena, RenderStyle*)

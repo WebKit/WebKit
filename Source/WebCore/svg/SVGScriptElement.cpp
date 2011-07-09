@@ -28,6 +28,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "ScriptEventListener.h"
@@ -38,11 +39,17 @@ namespace WebCore {
 DEFINE_ANIMATED_STRING(SVGScriptElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGScriptElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool alreadyStarted)
     : SVGElement(tagName, document)
     , ScriptElement(this, wasInsertedByParser, alreadyStarted)
 {
     ASSERT(hasTagName(SVGNames::scriptTag));
+    registerAnimatedPropertiesForSVGScriptElement();
 }
 
 PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Document* document, bool insertedByParser)
@@ -118,44 +125,6 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGScriptElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        synchronizeHref();
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::synchronizeProperty(attrName);
-        return;
-    }   
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGScriptElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGScriptElement::fillAttributeToPropertyTypeMap()
-{
-    attributeToPropertyTypeMap().set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 void SVGScriptElement::insertedIntoDocument()

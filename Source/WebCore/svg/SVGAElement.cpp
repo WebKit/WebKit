@@ -53,10 +53,19 @@ DEFINE_ANIMATED_STRING(SVGAElement, SVGNames::targetAttr, SVGTarget, svgTarget)
 DEFINE_ANIMATED_STRING(SVGAElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGAElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGAElement)
+     REGISTER_LOCAL_ANIMATED_PROPERTY(svgTarget)
+     REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document* document)
     : SVGStyledTransformableElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::aTag));
+    registerAnimatedPropertiesForSVGAElement();
 }
 
 PassRefPtr<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document* document)
@@ -130,60 +139,6 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
         if (wasLink != isLink())
             setNeedsStyleRecalc();
     }
-}
-
-AttributeToPropertyTypeMap& SVGAElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGAElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::targetAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
-}
-
-void SVGAElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeSVGTarget();
-        synchronizeHref();
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::targetAttr) {
-        synchronizeSVGTarget();
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
 }
 
 RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle*)

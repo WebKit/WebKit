@@ -58,11 +58,10 @@ protected:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    void fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
-    // Animated property declarations
-    DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+        DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
+    END_DECLARE_ANIMATED_PROPERTIES
 
 private:
     virtual bool isStyledTransformable() const { return true; }

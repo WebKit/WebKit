@@ -285,23 +285,9 @@ void SVGElement::parseMappedAttribute(Attribute* attr)
         StyledElement::parseMappedAttribute(attr);
 }
 
-AttributeToPropertyTypeMap& SVGElement::attributeToPropertyTypeMap()
+void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>& propertyTypes)
 {
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-AnimatedAttributeType SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attrName)
-{
-    AttributeToPropertyTypeMap& animatedAttributeMap = attributeToPropertyTypeMap();
-    if (animatedAttributeMap.isEmpty())
-        fillAttributeToPropertyTypeMap();
-    if (animatedAttributeMap.contains(attrName))
-        return animatedAttributeMap.get(attrName);
-    if (isStyled())
-        return static_cast<SVGStyledElement*>(this)->animatedPropertyTypeForCSSProperty(attrName);
-
-    return AnimatedUnknown;
+    localAttributeToPropertyMap().animatedPropertyTypeForAttribute(attributeName, propertyTypes);
 }
 
 bool SVGElement::haveLoadedRequiredResources()
@@ -392,11 +378,40 @@ void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 
     setIsSynchronizingSVGAttributes();
 
-    const_cast<SVGElement*>(this)->synchronizeProperty(name);
-    if (name == anyQName())
+    SVGElement* nonConstThis = const_cast<SVGElement*>(this);
+    if (name == anyQName()) {
+        nonConstThis->localAttributeToPropertyMap().synchronizeProperties(nonConstThis);
         setAreSVGAttributesValid();
+    } else
+        nonConstThis->localAttributeToPropertyMap().synchronizeProperty(nonConstThis, name);
 
     clearIsSynchronizingSVGAttributes();
+}
+
+SVGAttributeToPropertyMap& SVGElement::localAttributeToPropertyMap()
+{
+    ASSERT_NOT_REACHED();
+
+    DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, dummyMap, ());
+    return dummyMap;
+}
+
+void SVGElement::synchronizeRequiredFeatures(void* contextElement)
+{
+    ASSERT(contextElement);
+    static_cast<SVGElement*>(contextElement)->synchronizeRequiredFeatures();
+}
+
+void SVGElement::synchronizeRequiredExtensions(void* contextElement)
+{
+    ASSERT(contextElement);
+    static_cast<SVGElement*>(contextElement)->synchronizeRequiredExtensions();
+}
+
+void SVGElement::synchronizeSystemLanguage(void* contextElement)
+{
+    ASSERT(contextElement);
+    static_cast<SVGElement*>(contextElement)->synchronizeSystemLanguage();
 }
 
 }

@@ -2300,6 +2300,7 @@ HEADERS += \
     svg/graphics/filters/SVGFilterBuilder.h \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/SVGImage.h \
+    svg/properties/SVGAttributeToPropertyMap.h \
     svg/properties/SVGAnimatedEnumerationPropertyTearOff.h \
     svg/properties/SVGAnimatedListPropertyTearOff.h \
     svg/properties/SVGAnimatedPathSegListPropertyTearOff.h \
@@ -2314,6 +2315,7 @@ HEADERS += \
     svg/properties/SVGListPropertyTearOff.h \
     svg/properties/SVGPathSegListPropertyTearOff.h \
     svg/properties/SVGProperty.h \
+    svg/properties/SVGPropertyInfo.h \
     svg/properties/SVGPropertyTearOff.h \
     svg/properties/SVGPropertyTraits.h \
     svg/properties/SVGStaticListPropertyTearOff.h \
@@ -3263,6 +3265,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFilter.cpp \
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/SVGImage.cpp \
+        svg/properties/SVGAttributeToPropertyMap.cpp \
         svg/properties/SVGPathSegListPropertyTearOff.cpp
 
     linux-g++*:CONFIG(debug, debug|release):isEqual(QT_ARCH,i386) {

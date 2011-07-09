@@ -37,6 +37,14 @@ DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::methodAttr, Method, me
 DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::spacingAttr, Spacing, spacing, SVGTextPathSpacingType)
 DEFINE_ANIMATED_STRING(SVGTextPathElement, XLinkNames::hrefAttr, Href, href)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextPathElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(startOffset)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(method)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(spacing)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextContentElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)
     , m_startOffset(LengthModeOther)
@@ -44,6 +52,7 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
     , m_spacing(SVGTextPathSpacingExact)
 {
     ASSERT(hasTagName(SVGNames::textPathTag));
+    registerAnimatedPropertiesForSVGTextPathElement();
 }
 
 PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document* document)
@@ -110,62 +119,6 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (RenderObject* object = renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
-}
-
-void SVGTextPathElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeStartOffset();
-        synchronizeMethod();
-        synchronizeSpacing();
-        synchronizeHref();
-        SVGTextContentElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGTextContentElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::startOffsetAttr) {
-        synchronizeStartOffset();
-        return;
-    }
-    
-    if (attrName == SVGNames::methodAttr) {
-        synchronizeMethod();
-        return;
-    }
-    
-    if (attrName == SVGNames::spacingAttr) {
-        synchronizeSpacing();
-        return;
-    }
-    
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGTextPathElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGTextPathElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::startOffsetAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::methodAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::spacingAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 RenderObject* SVGTextPathElement::createRenderer(RenderArena* arena, RenderStyle*)

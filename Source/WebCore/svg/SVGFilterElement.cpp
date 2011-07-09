@@ -48,11 +48,21 @@ DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(SVGFilterElement, SVGNames::filterResA
 DEFINE_ANIMATED_STRING(SVGFilterElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGFilterElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFilterElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(filterUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(primitiveUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(filterResX)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(filterResY)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
-    , SVGURIReference()
-    , SVGLangSpace()
-    , SVGExternalResourcesRequired()
     , m_filterUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_primitiveUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_x(LengthModeWidth, "-10%")
@@ -63,6 +73,7 @@ inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::filterTag));
+    registerAnimatedPropertiesForSVGFilterElement();
 }
 
 PassRefPtr<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document* document)
@@ -187,98 +198,6 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
-}
-
-void SVGFilterElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeX();
-        synchronizeY();
-        synchronizeWidth();
-        synchronizeHeight();
-        synchronizeFilterUnits();
-        synchronizePrimitiveUnits();
-        synchronizeFilterResX();
-        synchronizeFilterResY();
-        synchronizeExternalResourcesRequired();
-        synchronizeHref();
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::widthAttr) {
-        synchronizeWidth();
-        return;
-    }
-
-    if (attrName == SVGNames::heightAttr) {
-        synchronizeHeight();
-        return;
-    }
-
-    if (attrName == SVGNames::filterUnitsAttr) {
-        synchronizeFilterUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::primitiveUnitsAttr) {
-        synchronizePrimitiveUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::filterResAttr) {
-        synchronizeFilterResX();
-        synchronizeFilterResY();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGFilterElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFilterElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::filterUnitsAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::primitiveUnitsAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::filterResAttr, AnimatedNumberOptionalNumber);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

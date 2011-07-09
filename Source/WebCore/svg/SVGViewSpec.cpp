@@ -34,9 +34,16 @@ namespace WebCore {
 DEFINE_ANIMATED_RECT(SVGViewSpec, SVGNames::viewBoxAttr, ViewBox, viewBox)
 DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGViewSpec, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGViewSpec)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
     : m_contextElement(contextElement)
 {
+    ASSERT(m_contextElement);
+    registerAnimatedPropertiesForSVGViewSpec();
 }
 
 void SVGViewSpec::setTransform(const String& transform)

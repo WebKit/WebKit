@@ -40,9 +40,19 @@ DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::dxAttr, Dx, dx)
 DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::dyAttr, Dy, dy)
 DEFINE_ANIMATED_NUMBER_LIST(SVGTextPositioningElement, SVGNames::rotateAttr, Rotate, rotate)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextPositioningElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(dx)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(dy)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(rotate)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextContentElement)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)
 {
+    registerAnimatedPropertiesForSVGTextPositioningElement();
 }
 
 bool SVGTextPositioningElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -137,62 +147,6 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void SVGTextPositioningElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    if (attrName == anyQName()) {
-        synchronizeX();
-        synchronizeY();
-        synchronizeDx();
-        synchronizeDy();
-        synchronizeRotate();
-        SVGTextContentElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGTextContentElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::dxAttr) {
-        synchronizeDx();
-        return;
-    }
-
-    if (attrName == SVGNames::dyAttr) {
-        synchronizeDy();
-        return;
-    }
-
-    if (attrName == SVGNames::rotateAttr) {
-        synchronizeRotate();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-void SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
-{
-    SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLengthList);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLengthList);
-    attributeToPropertyTypeMap.set(SVGNames::dxAttr, AnimatedLengthList);
-    attributeToPropertyTypeMap.set(SVGNames::dyAttr, AnimatedLengthList);
-    attributeToPropertyTypeMap.set(SVGNames::rotateAttr, AnimatedNumberList);
 }
 
 SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(RenderObject* renderer)

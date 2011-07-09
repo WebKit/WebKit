@@ -34,8 +34,6 @@ public:
 private:
     SVGFEFloodElement(const QualifiedName&, Document*);
 
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 };

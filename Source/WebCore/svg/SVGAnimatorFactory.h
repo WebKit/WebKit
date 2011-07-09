@@ -42,7 +42,7 @@ class SVGAnimationElement;
 
 class SVGAnimatorFactory {
 public:
-    static PassOwnPtr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedAttributeType attributeType)
+    static PassOwnPtr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedPropertyType attributeType)
     {
         ASSERT(animationElement);
         ASSERT(contextElement);

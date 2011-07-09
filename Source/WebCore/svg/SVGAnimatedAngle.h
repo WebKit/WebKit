@@ -34,7 +34,7 @@ typedef SVGAnimatedPropertyTearOff<SVGAngle> SVGAnimatedAngle;
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_ANGLE_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedAngle, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
 
 #if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;

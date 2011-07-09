@@ -43,20 +43,18 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();
 
-    // Animated property declarations
-    DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_NUMBER(DiffuseConstant, diffuseConstant)
-    DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
-    DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
-    DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEDiffuseLightingElement)
+        DECLARE_ANIMATED_STRING(In1, in1)
+        DECLARE_ANIMATED_NUMBER(DiffuseConstant, diffuseConstant)
+        DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
+        DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
+        DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
+    END_DECLARE_ANIMATED_PROPERTIES
 };
 
 } // namespace WebCore

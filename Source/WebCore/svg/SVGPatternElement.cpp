@@ -55,6 +55,22 @@ DEFINE_ANIMATED_BOOLEAN(SVGPatternElement, SVGNames::externalResourcesRequiredAt
 DEFINE_ANIMATED_RECT(SVGPatternElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
 DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGPatternElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio) 
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGPatternElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(patternUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(patternContentUnits)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(patternTransform)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio) 
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
     , m_x(LengthModeWidth)
@@ -65,6 +81,7 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
 {
     ASSERT(hasTagName(SVGNames::patternTag));
+    registerAnimatedPropertiesForSVGPatternElement();
 }
 
 PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document* document)
@@ -178,110 +195,6 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
-}
-
-void SVGPatternElement::synchronizeProperty(const QualifiedName& attrName)
-{    
-    if (attrName == anyQName()) {
-        synchronizePatternUnits();
-        synchronizePatternContentUnits();
-        synchronizePatternTransform();
-        synchronizeX();
-        synchronizeY();
-        synchronizeWidth();
-        synchronizeHeight();
-        synchronizeExternalResourcesRequired();
-        synchronizeHref();
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        SVGTests::synchronizeProperties(this, attrName);
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::synchronizeProperty(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::patternUnitsAttr) {
-        synchronizePatternUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::patternContentUnitsAttr) {
-        synchronizePatternContentUnits();
-        return;
-    }
-
-    if (attrName == SVGNames::patternTransformAttr) {
-        synchronizePatternTransform();
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr) {
-        synchronizeX();
-        return;
-    }
-
-    if (attrName == SVGNames::yAttr) {
-        synchronizeY();
-        return;
-    }
-
-    if (attrName == SVGNames::widthAttr) {
-        synchronizeWidth();
-        return;
-    }
-
-    if (attrName == SVGNames::heightAttr) {
-        synchronizeHeight();
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        synchronizeExternalResourcesRequired();
-        return;
-    }
-
-    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        SVGFitToViewBox::synchronizeProperties(attrName);
-        return;
-    }
-
-    if (SVGURIReference::isKnownAttribute(attrName)) {
-        synchronizeHref();
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName)) {
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-AttributeToPropertyTypeMap& SVGPatternElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGPatternElement::fillAttributeToPropertyTypeMap()
-{
-    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
-
-    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(SVGNames::patternUnitsAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::patternContentUnitsAttr, AnimatedEnumeration);
-    attributeToPropertyTypeMap.set(SVGNames::patternTransformAttr, AnimatedTransformList);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
-    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
-    attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
 }
 
 void SVGPatternElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

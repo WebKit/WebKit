@@ -1316,8 +1316,7 @@ sub GenerateImplementation
                         $getterContentHead = "kit(WTF::getPtr($getterContentHead";
                         $getterContentTail .= "))";
                     } elsif ($idlTypeWithNamespace =~ /SVGStaticListPropertyTearOff/) {
-                        my $extraImp = "WebCore::GetOwnerElementForType<$implClassNameWithNamespace, WebCore::IsDerivedFromSVGElement<$implClassNameWithNamespace>::value>::ownerElement(IMPL), ";
-                        $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($extraImp$getterContentHead";
+                        $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create(IMPL, $getterContentHead";
                         $getterContentTail .= ")))";
                     } else {
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($getterContentHead";

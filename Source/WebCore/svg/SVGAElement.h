@@ -51,10 +51,6 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void synchronizeProperty(const QualifiedName&);
-
-    virtual void fillAttributeToPropertyTypeMap();
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
@@ -67,17 +63,18 @@ private:
 
     virtual bool childShouldCreateRenderer(Node*) const;
 
-    // Animated property declarations
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAElement)
+        // This declaration used to define a non-virtual "String& target() const" method, that clashes with "virtual String Element::target() const".
+        // That's why it has been renamed to "svgTarget", the CodeGenerators take care of calling svgTargetAnimated() instead of targetAnimated(), see CodeGenerator.pm.
+        DECLARE_ANIMATED_STRING(SVGTarget, svgTarget)
+        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    END_DECLARE_ANIMATED_PROPERTIES
 
-    // This declaration used to define a non-virtual "String& target() const" method, that clashes with "virtual String Element::target() const".
-    // That's why it has been renamed to "svgTarget", the CodeGenerators take care of calling svgTargetAnimated() instead of targetAnimated(), see CodeGenerator.pm.
-    DECLARE_ANIMATED_STRING(SVGTarget, svgTarget)
-
-    // SVGURIReference
-    DECLARE_ANIMATED_STRING(Href, href)
-
-    // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+    // SVGTests
+    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 } // namespace WebCore

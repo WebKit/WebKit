@@ -24,30 +24,11 @@
 
 #if ENABLE(SVG)
 #include "SVGLocatable.h"
+#include "SVGPropertyInfo.h"
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-
-enum AnimatedAttributeType {
-    AnimatedAngle,
-    AnimatedBoolean,
-    AnimatedColor,
-    AnimatedEnumeration,
-    AnimatedInteger,
-    AnimatedLength,
-    AnimatedLengthList,
-    AnimatedNumber,
-    AnimatedNumberList,
-    AnimatedNumberOptionalNumber,
-    AnimatedPath,
-    AnimatedPoints,
-    AnimatedPreserveAspectRatio,
-    AnimatedRect,
-    AnimatedString,
-    AnimatedTransformList,
-    AnimatedUnknown
-};
 
 enum SVGParsingError {
     NoError,
@@ -55,16 +36,15 @@ enum SVGParsingError {
     NegativeValueForbiddenError
 };
 
-typedef HashMap<QualifiedName, AnimatedAttributeType> AttributeToPropertyTypeMap;
-
+class AffineTransform;
 class CSSCursorImageValue;
 class Document;
+class SVGAttributeToPropertyMap;
 class SVGCursorElement;
 class SVGDocumentExtensions;
 class SVGElementInstance;
 class SVGElementRareData;
 class SVGSVGElement;
-class AffineTransform;
 
 class SVGElement : public StyledElement {
 public:
@@ -91,12 +71,8 @@ public:
     virtual bool isValid() const { return true; }
 
     virtual void svgAttributeChanged(const QualifiedName&) { }
-    virtual void synchronizeProperty(const QualifiedName&) { }
 
-    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    AnimatedAttributeType animatedPropertyTypeForAttribute(const QualifiedName&);
-
-    virtual void fillAttributeToPropertyTypeMap() { }
+    virtual void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
 
@@ -114,6 +90,16 @@ public:
     void cursorImageValueRemoved();
 
     virtual void updateAnimatedSVGAttribute(const QualifiedName&) const;
+
+    static void synchronizeRequiredFeatures(void* contextElement);
+    static void synchronizeRequiredExtensions(void* contextElement);
+    static void synchronizeSystemLanguage(void* contextElement);
+
+    virtual void synchronizeRequiredFeatures() { }
+    virtual void synchronizeRequiredExtensions() { }
+    virtual void synchronizeSystemLanguage() { }
+
+    virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap();
 
 protected:
     SVGElement(const QualifiedName&, Document*);

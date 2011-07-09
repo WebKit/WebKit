@@ -43,13 +43,9 @@ public:
     bool parseMappedAttribute(Document*, Attribute*);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
-    void synchronizeProperties(const QualifiedName&);
 
     virtual void setViewBoxBaseValue(const FloatRect&) = 0;
     virtual void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio&) = 0;
-
-    virtual void synchronizeViewBox() = 0;
-    virtual void synchronizePreserveAspectRatio() = 0;
 
 private:
     bool parseViewBox(Document*, const String&, FloatRect&);

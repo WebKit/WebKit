@@ -74,19 +74,6 @@ PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter* fil
     return FEFlood::create(filter, color, opacity);
 }
 
-AttributeToPropertyTypeMap& SVGFEFloodElement::attributeToPropertyTypeMap()
-{
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
-    return s_attributeToPropertyTypeMap;
-}
-
-void SVGFEFloodElement::fillAttributeToPropertyTypeMap()
-{
-    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
-}
-
 }
 
 #endif // ENABLE(SVG) && ENABLE(FILTERS)
-
-// vim:ts=4:noet

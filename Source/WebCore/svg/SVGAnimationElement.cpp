@@ -55,10 +55,16 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGAnimationElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGAnimationElement)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+END_REGISTER_ANIMATED_PROPERTIES
+
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* document)
     : SVGSMILElement(tagName, document)
     , m_animationValid(false)
 {
+    registerAnimatedPropertiesForSVGAnimationElement();
 }
 
 static void parseKeyTimes(const String& parse, Vector<float>& result, bool verifyOrder)
@@ -201,22 +207,6 @@ void SVGAnimationElement::attributeChanged(Attribute* attr, bool preserveDecls)
     m_animationValid = false;
     setInactive();
     SVGSMILElement::attributeChanged(attr, preserveDecls);
-}
-
-void SVGAnimationElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    SVGSMILElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName()) {
-        synchronizeExternalResourcesRequired();
-        SVGTests::synchronizeProperties(this, attrName);
-        return;
-    }
-
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
-        SVGTests::synchronizeProperties(this, attrName);
 }
 
 float SVGAnimationElement::getStartTime() const
@@ -486,7 +476,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     CalcMode calcMode = this->calcMode();
     if (hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::animateColorTag)) {
         const SVGAnimateElement* animateElement = static_cast<const SVGAnimateElement*>(this);
-        AnimatedAttributeType attributeType = animateElement->determineAnimatedAttributeType(targetElement());
+        AnimatedPropertyType attributeType = animateElement->determineAnimatedPropertyType(targetElement());
         // Fall back to discrete animations for Strings.
         if (attributeType == AnimatedBoolean
             || attributeType == AnimatedEnumeration
