@@ -3,6 +3,15 @@
         Add a possibility to retrieve the associated SVGAnimatedProperty object for a certain XML attribute
         https://bugs.webkit.org/show_bug.cgi?id=63797
 
+        Fix WinCE build. Funny none other platform complained.
+
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h: Make create public, SVGAnimatedProperty needs it - remove friendship with it.
+
+2011-07-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Add a possibility to retrieve the associated SVGAnimatedProperty object for a certain XML attribute
+        https://bugs.webkit.org/show_bug.cgi?id=63797
+
         Reviewed by Dirk Schulze.
 
         In order to prepare animVal support we need a way to map a given SVG DOM attribute to a SVGAnimatedProperty.

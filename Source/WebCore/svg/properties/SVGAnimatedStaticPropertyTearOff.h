@@ -48,15 +48,13 @@ public:
     // FIXME: No animVal support.
     void setAnimVal(const PropertyType&) { }
 
-protected:
-    friend class SVGAnimatedProperty;
-
     static PassRefPtr<SVGAnimatedStaticPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
     {
         ASSERT(contextElement);
         return adoptRef(new SVGAnimatedStaticPropertyTearOff<PropertyType>(contextElement, attributeName, property));
     }
 
+protected:
     SVGAnimatedStaticPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
         : SVGAnimatedProperty(contextElement, attributeName)
         , m_property(property)
