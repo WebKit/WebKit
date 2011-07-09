@@ -82,9 +82,6 @@ public:
     PropertyType& values() { return m_values; }
     ListWrapperCache& wrappers() { return m_wrappers; }
 
-private:
-    friend class SVGAnimatedProperty;
-
     static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& values)
     {
         ASSERT(contextElement);

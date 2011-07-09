@@ -43,15 +43,13 @@ public:
         return m_animVal.get();
     }
 
-private:
-    friend class SVGAnimatedProperty;
-
     static PassRefPtr<SVGAnimatedTransformListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, SVGTransformList& values)
     {
         ASSERT(contextElement);
         return adoptRef(new SVGAnimatedTransformListPropertyTearOff(contextElement, attributeName, values));
     }
 
+private:
     SVGAnimatedTransformListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, SVGTransformList& values)
         : SVGAnimatedListPropertyTearOff<SVGTransformList>(contextElement, attributeName, values)
     {

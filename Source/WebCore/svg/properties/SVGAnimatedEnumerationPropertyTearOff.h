@@ -40,15 +40,13 @@ public:
         SVGAnimatedStaticPropertyTearOff<int>::setBaseVal(property, ec);
     }
 
-private:
-    friend class SVGAnimatedProperty;
-
     static PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<EnumType> > create(SVGElement* contextElement, const QualifiedName& attributeName, EnumType& property)
     {
         ASSERT(contextElement);
         return adoptRef(new SVGAnimatedEnumerationPropertyTearOff<EnumType>(contextElement, attributeName, reinterpret_cast<int&>(property)));
     }
 
+private:
     SVGAnimatedEnumerationPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, int& property)
         : SVGAnimatedStaticPropertyTearOff<int>(contextElement, attributeName, property)
     {

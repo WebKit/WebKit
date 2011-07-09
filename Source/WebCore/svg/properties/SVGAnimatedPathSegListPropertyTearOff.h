@@ -51,15 +51,13 @@ public:
         return static_pointer_cast<SVGPathSegListPropertyTearOff>(m_baseVal)->removeItemFromList(segment, shouldSynchronizeWrappers);
     }
 
-private:
-    friend class SVGAnimatedProperty;
-
     static PassRefPtr<SVGAnimatedPathSegListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, SVGPathSegList& values)
     {
         ASSERT(contextElement);
         return adoptRef(new SVGAnimatedPathSegListPropertyTearOff(contextElement, attributeName, values));
     }
 
+private:
     SVGAnimatedPathSegListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, SVGPathSegList& values)
         : SVGAnimatedListPropertyTearOff<SVGPathSegList>(contextElement, attributeName, values)
     {
