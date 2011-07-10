@@ -1,3 +1,15 @@
+2011-07-10  Adam Barth  <abarth@webkit.org>
+
+        Clean up style in fallback path calculation
+        https://bugs.webkit.org/show_bug.cgi?id=64239
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2011-07-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Implement the rest of WTR::PlatformWebView

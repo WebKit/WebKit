@@ -39,6 +39,14 @@ _log = logging.getLogger(__name__)
 class WinPort(WebKitPort):
     port_name = "win"
 
+    FALLBACK_PATHS = {
+        'win7': [
+            "win",
+            "mac-snowleopard",
+            "mac",
+        ],
+    }
+
     def __init__(self, **kwargs):
         WebKitPort.__init__(self, **kwargs)
         self._version = 'win7'
@@ -47,8 +55,7 @@ class WinPort(WebKitPort):
     def baseline_search_path(self):
         # Based on code from old-run-webkit-tests expectedDirectoryForTest()
         # FIXME: This does not work for WebKit2.
-        port_names = ["win", "mac-snowleopard", "mac"]
-        return map(self._webkit_baseline_path, port_names)
+        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 
     def _path_to_apache_config_file(self):
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'cygwin-httpd.conf')

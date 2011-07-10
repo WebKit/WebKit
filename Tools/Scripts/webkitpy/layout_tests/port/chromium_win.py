@@ -62,9 +62,27 @@ class ChromiumWinPort(chromium.ChromiumPort):
 
     # FIXME: Do we need mac-snowleopard here, like the base win port?
     FALLBACK_PATHS = {
-        'xp': ['chromium-win-xp', 'chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'],
-        'vista': ['chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'],
-        'win7': ['chromium-win', 'chromium', 'win', 'mac'],
+        'xp': [
+            'chromium-win-xp',
+            'chromium-win-vista',
+            'chromium-win',
+            'chromium',
+            'win',
+            'mac',
+        ],
+        'vista': [
+            'chromium-win-vista',
+            'chromium-win',
+            'chromium',
+            'win',
+            'mac',
+        ],
+        'win7': [
+            'chromium-win',
+            'chromium',
+            'win',
+            'mac',
+        ],
     }
 
     def __init__(self, port_name=None, windows_version=None, **kwargs):

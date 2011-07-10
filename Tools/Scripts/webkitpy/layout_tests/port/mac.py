@@ -66,9 +66,18 @@ class MacPort(WebKitPort):
     SUPPORTED_VERSIONS = ('leopard', 'snowleopard', 'future', 'wk2')
 
     FALLBACK_PATHS = {
-        'leopard': ['mac-leopard', 'mac-snowleopard', 'mac'],
-        'snowleopard': ['mac-snowleopard', 'mac'],
-        'future': ['mac'],
+        'leopard': [
+            'mac-leopard',
+            'mac-snowleopard',
+            'mac',
+        ],
+        'snowleopard': [
+            'mac-snowleopard',
+            'mac',
+        ],
+        'future': [
+            'mac',
+        ],
         'wk2': [],  # wk2 does not make sense as a version, this is only here to make the rebaseline unit tests not crash.
     }
 

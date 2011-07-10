@@ -41,8 +41,21 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     SUPPORTED_ARCHITECTURES = ('x86', 'x86_64')
 
     FALLBACK_PATHS = {
-        'x86_64': ['chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
-        'x86': ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
+        'x86_64': [
+            'chromium-linux',
+            'chromium-win',
+            'chromium',
+            'win',
+            'mac',
+        ],
+        'x86': [
+            'chromium-linux-x86',
+            'chromium-linux',
+            'chromium-win',
+            'chromium',
+            'win',
+            'mac',
+        ],
     }
 
     def __init__(self, port_name=None, **kwargs):
