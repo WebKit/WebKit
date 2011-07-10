@@ -38,6 +38,8 @@ public:
 
     virtual bool handleEvent(QEvent*);
 
+    void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
+
 protected:
     virtual void paintContent(QPainter* painter, const QRect& area);
 

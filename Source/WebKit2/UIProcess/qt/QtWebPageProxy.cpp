@@ -619,11 +619,6 @@ QWKHistory* QtWebPageProxy::history() const
     return m_history;
 }
 
-void QtWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
-{
-    m_webPageProxy->setResizesToContentsUsingLayoutSize(targetLayoutSize);
-}
-
 void QtWebPageProxy::triggerAction(WebAction webAction, bool)
 {
     switch (webAction) {

@@ -81,6 +81,11 @@ bool QTouchWebPageProxy::handleEvent(QEvent* ev)
     return QtWebPageProxy::handleEvent(ev);
 }
 
+void QTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
+{
+    m_webPageProxy->setResizesToContentsUsingLayoutSize(targetLayoutSize);
+}
+
 void QTouchWebPageProxy::touchEvent(QTouchEvent* event)
 {
 #if ENABLE(TOUCH_EVENTS)

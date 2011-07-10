@@ -171,8 +171,6 @@ public:
 
     void setActualVisibleContentsRect(const QRect& rect) const;
 
-    void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
-
     QAction* navigationAction(QtWebKit::NavigationAction) const;
 
     QAction* action(WebAction action) const;
