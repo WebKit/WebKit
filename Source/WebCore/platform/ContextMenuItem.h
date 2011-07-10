@@ -287,11 +287,11 @@ namespace WebCore {
 #endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
     private:
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+        ContextMenuItemType m_type;
+        ContextMenuAction m_action;
         String m_title;
         bool m_enabled;
         bool m_checked;
-        ContextMenuAction m_action;
-        ContextMenuItemType m_type;
         Vector<ContextMenuItem> m_subMenuItems;
 #else
 #if PLATFORM(MAC)
