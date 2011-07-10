@@ -89,19 +89,18 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    // Implement.
-
+    QRect windowRect = m_window->geometry();
     WKRect wkFrame;
-    wkFrame.origin.x = 0;
-    wkFrame.origin.y = 0;
-    wkFrame.size.width = 0;
-    wkFrame.size.height = 0;
+    wkFrame.origin.x = windowRect.x();
+    wkFrame.origin.y = windowRect.y();
+    wkFrame.size.width = windowRect.size().width();
+    wkFrame.size.height = windowRect.size().height();
     return wkFrame;
 }
 
-void PlatformWebView::setWindowFrame(WKRect)
+void PlatformWebView::setWindowFrame(WKRect wkRect)
 {
-    // Implement.
+    m_window->setGeometry(wkRect.origin.x, wkRect.origin.y, wkRect.size.width, wkRect.size.height);
 }
 
 } // namespace WTR
