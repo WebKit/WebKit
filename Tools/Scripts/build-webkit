@@ -506,6 +506,7 @@ if (isGtk()) {
     my @librariesToCopy = (
         "libWebKitSystemInterfaceLeopard.a",
         "libWebKitSystemInterfaceSnowLeopard.a",
+        "libWebKitSystemInterfaceLion.a",
         "libWebCoreSQLite3.a",
     );
     foreach my $libName (@librariesToCopy) {
