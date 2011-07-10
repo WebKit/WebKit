@@ -4023,7 +4023,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
             LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
             LayoutPoint childPoint = flipFloatForWritingMode(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
             if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint)) {
-                updateHitTestResult(result, pointInContainer - toSize(childPoint));
+                updateHitTestResult(result, pointInContainer - toLayoutSize(childPoint));
                 return true;
             }
         }
@@ -5778,7 +5778,7 @@ void RenderBlock::childBecameNonInline(RenderObject*)
     // |this| may be dead here
 }
 
-void RenderBlock::updateHitTestResult(HitTestResult& result, const IntPoint& point)
+void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())
         return;

@@ -464,7 +464,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
         // hit testing would stop immediately. For SVG only trees this doesn't matter. Though when we have a <foreignObject> subtree we need
         // to be able to detect hits on the background of a <div> element. If we'd return true here in the 'Foreground' phase, we are not able 
         // to detect these hits anymore.
-        updateHitTestResult(result, roundedIntPoint(localPoint));
+        updateHitTestResult(result, roundedLayoutPoint(localPoint));
         return true;
     }
 

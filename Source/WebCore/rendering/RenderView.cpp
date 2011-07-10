@@ -708,7 +708,7 @@ bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) cons
     return false;
 }
 
-void RenderView::updateHitTestResult(HitTestResult& result, const IntPoint& point)
+void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())
         return;

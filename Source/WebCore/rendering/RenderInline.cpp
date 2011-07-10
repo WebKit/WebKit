@@ -1195,13 +1195,13 @@ void RenderInline::childBecameNonInline(RenderObject* child)
     splitFlow(beforeChild, newBox, child, oldContinuation);
 }
 
-void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& point)
+void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())
         return;
 
     Node* n = node();
-    IntPoint localPoint(point);
+    LayoutPoint localPoint(point);
     if (n) {
         if (isInlineElementContinuation()) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space

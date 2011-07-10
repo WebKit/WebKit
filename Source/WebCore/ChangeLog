@@ -1,3 +1,38 @@
+2011-07-10  Emil A Eklund  <eae@chromium.org>
+
+        Switch updateHitTestResult to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64209
+
+        Reviewed by Eric Seidel.
+
+        No new tests, no functionality changes.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::updateHitTestResult):
+        * rendering/RenderBlock.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateHitTestResult):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateHitTestResult):
+        * rendering/RenderObject.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateHitTestResult):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+
 2011-07-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

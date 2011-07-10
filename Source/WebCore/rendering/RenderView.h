@@ -125,7 +125,7 @@ public:
     bool layoutStateEnabled() const { return m_layoutStateDisableCount == 0 && m_layoutState; }
     LayoutState* layoutState() const { return m_layoutState; }
 
-    virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
 
     unsigned pageLogicalHeight() const { return m_pageLogicalHeight; }
     void setPageLogicalHeight(unsigned height)

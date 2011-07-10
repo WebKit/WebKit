@@ -313,7 +313,7 @@ protected:
     virtual int firstLineBoxBaseline() const;
     virtual int lastLineBoxBaseline() const;
 
-    virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
 
     // Delay update scrollbar until finishDelayRepaint() will be
     // called. This function is used when a flexbox is laying out its

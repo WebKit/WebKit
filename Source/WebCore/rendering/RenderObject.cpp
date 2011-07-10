@@ -2169,7 +2169,7 @@ bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result,
     return inside;
 }
 
-void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& point)
+void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())
         return;

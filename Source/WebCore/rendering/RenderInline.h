@@ -150,7 +150,7 @@ private:
     
     virtual void childBecameNonInline(RenderObject* child);
 
-    virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 

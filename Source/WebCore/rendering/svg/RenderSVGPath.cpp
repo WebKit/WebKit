@@ -263,7 +263,7 @@ bool RenderSVGPath::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
             fillRule = svgStyle->clipRule();
         if ((hitRules.canHitStroke && (svgStyle->hasStroke() || !hitRules.requireStroke) && strokeContains(localPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (svgStyle->hasFill() || !hitRules.requireFill) && fillContains(localPoint, hitRules.requireFill, fillRule))) {
-            updateHitTestResult(result, roundedIntPoint(localPoint));
+            updateHitTestResult(result, roundedLayoutPoint(localPoint));
             return true;
         }
     }

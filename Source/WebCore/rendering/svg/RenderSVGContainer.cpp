@@ -169,7 +169,7 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
                 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
-            updateHitTestResult(result, roundedIntPoint(localPoint));
+            updateHitTestResult(result, roundedLayoutPoint(localPoint));
             return true;
         }
     }

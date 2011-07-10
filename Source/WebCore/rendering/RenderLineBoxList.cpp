@@ -300,7 +300,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
         if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, accumulatedOffset)) {
             bool inside = curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, root->lineTop(), root->lineBottom());
             if (inside) {
-                renderer->updateHitTestResult(result, toPoint(pointInContainer - accumulatedOffset));
+                renderer->updateHitTestResult(result, pointInContainer - toLayoutSize(accumulatedOffset));
                 return true;
             }
         }
