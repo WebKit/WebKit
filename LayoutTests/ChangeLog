@@ -1,3 +1,27 @@
+2011-07-10  Adam Barth  <abarth@webkit.org>
+
+        Remove LayoutTests/platform/android and LayoutTests/platform/android-v8
+        https://bugs.webkit.org/show_bug.cgi?id=64240
+
+        Reviewed by Sam Weinig.
+
+        These results directories are basically empty and haven't been touched
+        in almost a year.  There are not maintained and are almost certantly
+        out of date.
+
+        * platform/android: Removed.
+        * platform/android-v8: Removed.
+        * platform/android-v8/fast: Removed.
+        * platform/android-v8/fast/dom: Removed.
+        * platform/android-v8/fast/dom/DeviceMotion: Removed.
+        * platform/android-v8/fast/dom/DeviceMotion/window-property-expected.txt: Removed.
+        * platform/android-v8/fast/dom/DeviceOrientation: Removed.
+        * platform/android-v8/fast/dom/DeviceOrientation/window-property-expected.txt: Removed.
+        * platform/android/fast: Removed.
+        * platform/android/fast/text: Removed.
+        * platform/android/fast/text/hyphenate-character-expected.txt: Removed.
+        * platform/android/fast/text/hyphens-expected.txt: Removed.
+
 2011-07-10  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9750062> REGRESSION: Button text missing in many iTunes Store pages
