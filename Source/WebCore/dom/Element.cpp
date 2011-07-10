@@ -1102,8 +1102,11 @@ void Element::recalcStyle(StyleChange change)
     bool hasIndirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByForwardPositionalRules();
 
     if ((change > NoChange || needsStyleRecalc())) {
-        if (hasRareData())
-            rareData()->resetComputedStyle();
+        if (hasRareData()) {
+            ElementRareData* data = rareData();
+            data->resetComputedStyle();
+            data->m_styleAffectedByEmpty = false;
+        }
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
         RefPtr<RenderStyle> newStyle = styleForRenderer(NodeRenderingContext(this, 0));
@@ -1301,10 +1304,10 @@ bool Element::childTypeAllowed(NodeType type) const
 
 static void checkForEmptyStyleChange(Element* element, RenderStyle* style)
 {
-    if (!style)
+    if (!style && !element->styleAffectedByEmpty())
         return;
 
-    if (style->affectedByEmpty() && (!style->emptyState() || element->hasChildNodes()))
+    if (!style || (style->affectedByEmpty() && (!style->emptyState() || element->hasChildNodes())))
         element->setNeedsStyleRecalc();
 }
 
@@ -1748,6 +1751,17 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     if (!data->m_computedStyle)
         data->m_computedStyle = document()->styleForElementIgnoringPendingStylesheets(this);
     return pseudoElementSpecifier ? data->m_computedStyle->getCachedPseudoStyle(pseudoElementSpecifier) : data->m_computedStyle.get();
+}
+
+void Element::setStyleAffectedByEmpty()
+{
+    ElementRareData* data = ensureRareData();
+    data->m_styleAffectedByEmpty = true;
+}
+
+bool Element::styleAffectedByEmpty() const
+{
+    return hasRareData() && rareData()->m_styleAffectedByEmpty;
 }
 
 AtomicString Element::computeInheritedLanguage() const

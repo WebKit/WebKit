@@ -1,3 +1,31 @@
+2011-07-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9750062> REGRESSION: Button text missing in many iTunes Store pages
+        https://bugs.webkit.org/show_bug.cgi?id=64236
+
+        Reviewed by Maciej Stachowiak.
+
+        Test: fast/css/empty-display-none.html
+
+        When an :empty selector caused an element to not have a renderer, the check for empty style
+        change when finishing parsing the elemenet did nothing, because it could not check if the
+        element’s current style was affected by :empty. The fix is to record the fact that the style
+        was affected by :empty in ElementRareData in the no-renderer case.
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Clear the m_styleAffectedByEmpty flag.
+        (WebCore::checkForEmptyStyleChange): If the style is null (meaning there is no renderer), check
+        Element::styleAffectedByEmpty().
+        (WebCore::Element::setStyleAffectedByEmpty): Added. Sets the flag in rare data.
+        (WebCore::Element::styleAffectedByEmpty): Added. Checks for the flag in rare data.
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData): Added m_styleAffectedByEmpty and initialized it
+        to false.
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRendererFactory::createRendererAndStyle): If an element doesn’t need a renderer
+        and its style is affected by :empty, record this fact in the element by calling setStyleAffectedByEmpty().
+
 2011-07-10  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

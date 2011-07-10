@@ -271,8 +271,14 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
         return 0;
 
     m_context.setStyle(node->styleForRenderer(m_context));
-    if (!node->rendererIsNeeded(m_context))
+    if (!node->rendererIsNeeded(m_context)) {
+        if (node->isElementNode()) {
+            Element* element = toElement(node);
+            if (m_context.style()->affectedByEmpty())
+                element->setStyleAffectedByEmpty();
+        }
         return 0;
+    }
 
     RenderObject* newRenderer = node->createRenderer(document->renderArena(), m_context.style());
     if (!newRenderer)

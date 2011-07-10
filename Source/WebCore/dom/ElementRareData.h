@@ -50,6 +50,8 @@ public:
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
     OwnPtr<ClassList> m_classList;
 
+    bool m_styleAffectedByEmpty;
+
 #if ENABLE(FULLSCREEN_API)
     bool m_containsFullScreenElement;
 #endif
@@ -63,6 +65,7 @@ inline IntSize defaultMinimumSizeForResizing()
 inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
     , m_shadowRoot(0)
+    , m_styleAffectedByEmpty(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
 #endif

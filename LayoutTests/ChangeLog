@@ -1,3 +1,13 @@
+2011-07-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9750062> REGRESSION: Button text missing in many iTunes Store pages
+        https://bugs.webkit.org/show_bug.cgi?id=64236
+
+        Reviewed by Maciej Stachowiak.
+
+        * fast/css/empty-display-none-expected.txt: Added.
+        * fast/css/empty-display-none.html: Added.
+
 2011-07-08  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new chromium GPU pixel results for overflow-scroll-expected.
