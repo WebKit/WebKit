@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SVGAnimatedProperty;
 class SVGElement;
-class SVGPropertyInfo;
+struct SVGPropertyInfo;
 
 class SVGAttributeToPropertyMap {
 public:
