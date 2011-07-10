@@ -1,4 +1,0 @@
-Test equality of plugin object properties.
-
-
-Send two references of a JavaScript object to the plugin for identity comparison in C++ PASS
