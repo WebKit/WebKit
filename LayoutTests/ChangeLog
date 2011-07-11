@@ -1,3 +1,16 @@
+2011-07-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt]REGRESSION(r90471): It made 4 fast/notifications tests fail on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=63255
+
+        Reviewed by Csaba Osztrogonác.
+        
+        Modify the tests to wait until the icon loading is finished.
+
+        * fast/notifications/notifications-double-show.html:
+        * fast/notifications/notifications-with-permission.html:
+        * platform/qt/Skipped:
+
 2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

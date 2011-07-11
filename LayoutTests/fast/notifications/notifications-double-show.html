@@ -12,6 +12,7 @@
             if (window.layoutTestController) {
                 layoutTestController.grantDesktopNotificationPermission("file://");
                 layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
             }
 
             if (!window.webkitNotifications) {
@@ -19,6 +20,7 @@
             }
             
             var N = window.webkitNotifications.createNotification("http://localhost/my_icon.png", "New E-mail", "Meet me tonight at 8!");
+            N.ondisplay = function() { layoutTestController.notifyDone(); }
             N.show();
             N.show();
         }
