@@ -27,10 +27,9 @@
 #include "TiledDrawingAreaProxy.h"
 
 #include "ShareableBitmap.h"
+#include "TouchViewInterface.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
-
-#include "qtouchwebpage.h"
 
 using namespace WebCore;
 
@@ -45,12 +44,7 @@ void TiledDrawingAreaProxy::updateWebView(const Vector<IntRect>& paintedArea)
 
     unsigned size = paintedArea.size();
     for (unsigned n = 0; n < size; ++n)
-        m_webView->update(QRect(paintedArea[n]));
-}
-
-IntRect TiledDrawingAreaProxy::webViewVisibleRect()
-{
-    return enclosingIntRect(FloatRect(m_webView->visibleRect()));
+        static_cast<ViewInterface*>(m_webView)->setViewNeedsDisplay(QRect(paintedArea[n]));
 }
 
 WebPageProxy* TiledDrawingAreaProxy::page()

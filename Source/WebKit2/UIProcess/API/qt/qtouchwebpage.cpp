@@ -153,21 +153,6 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
 {
 }
 
-QRectF QTouchWebPage::visibleRect() const
-{
-    if (!scene())
-        return QRectF();
-
-    QList<QGraphicsView*> views = scene()->views();
-    if (views.isEmpty())
-        return QRectF();
-
-    QGraphicsView* graphicsView = views.at(0);
-    int xOffset = graphicsView->horizontalScrollBar()->value();
-    int yOffset = graphicsView->verticalScrollBar()->value();
-    return mapRectFromScene(QRectF(QPointF(xOffset, yOffset), graphicsView->viewport()->size()));
-}
-
 void QTouchWebPagePrivate::prepareScaleChange()
 {
     ASSERT(!m_isChangingScale);
@@ -194,6 +179,12 @@ void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)
     ASSERT(page);
     this->page = page;
     QObject::connect(page, SIGNAL(focusNextPrevChild(bool)), q, SLOT(focusNextPrevChildCallback(bool)));
+}
+
+void QTouchWebPagePrivate::setViewportRect(const QRectF& viewportRect)
+{
+    const QRectF visibleArea = q->boundingRect().intersected(viewportRect);
+    page->setVisibleArea(visibleArea);
 }
 
 #include "moc_qtouchwebpage.cpp"

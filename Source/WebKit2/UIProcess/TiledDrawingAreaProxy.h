@@ -43,9 +43,6 @@
 #else
 class WKView;
 #endif
-#elif PLATFORM(QT)
-class QTouchWebPage;
-#include <QImage>
 #endif
 
 namespace WebKit {
@@ -59,7 +56,8 @@ typedef WKView PlatformWebView;
 class WebView;
 typedef WebView PlatformWebView;
 #elif PLATFORM(QT)
-typedef QTouchWebPage PlatformWebView;
+class TouchViewInterface;
+typedef TouchViewInterface PlatformWebView;
 #endif
 
 class TiledDrawingAreaProxy : public DrawingAreaProxy {
@@ -69,6 +67,7 @@ public:
     TiledDrawingAreaProxy(PlatformWebView*, WebPageProxy*);
     virtual ~TiledDrawingAreaProxy();
 
+    void setVisibleArea(const WebCore::IntRect& visibleRect);
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
 
@@ -102,7 +101,6 @@ public:
 
 private:
     WebPageProxy* page();
-    WebCore::IntRect webViewVisibleRect();
     void updateWebView(const Vector<WebCore::IntRect>& paintedArea);
 
     // DrawingAreaProxy
@@ -114,8 +112,6 @@ private:
     virtual void invalidate(const WebCore::IntRect& rect);
     virtual void tileUpdated(int tileID, const UpdateInfo& updateInfo, float scale, unsigned pendingUpdateCount);
     virtual void allTileUpdatesProcessed();
-
-    void adjustVisibleRect();
 
     void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect);
 
@@ -170,7 +166,7 @@ private:
     WebCore::FloatSize m_keepAreaMultiplier;
     WebCore::FloatSize m_coverAreaMultiplier;
 
-    WebCore::IntRect m_previousVisibleRect;
+    WebCore::IntRect m_visibleArea;
     float m_contentsScale;
 
     friend class TiledDrawingAreaTile;

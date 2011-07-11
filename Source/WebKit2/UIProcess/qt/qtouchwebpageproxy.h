@@ -26,7 +26,6 @@
 #include "QtPanGestureRecognizer.h"
 #include "QtWebPageProxy.h"
 #include "TouchViewInterface.h"
-#include "qtouchwebpage.h"
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
@@ -38,6 +37,7 @@ public:
 
     virtual bool handleEvent(QEvent*);
 
+    void setVisibleArea(const QRectF&);
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
     void findZoomableAreaForPoint(const QPoint&);
 
@@ -54,7 +54,6 @@ private:
     virtual void didFindZoomableArea(const WebCore::IntRect&);
 
     TouchViewInterface* touchViewInterface() const { return static_cast<TouchViewInterface*>(m_viewInterface); }
-    QTouchWebPage* pageView() const { return static_cast<QTouchWebPage*>(touchViewInterface()->pageView()); }
 
     void touchEvent(QTouchEvent*);
 

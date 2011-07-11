@@ -32,7 +32,6 @@ class TouchViewInterface : public ViewInterface
 {
 public:
     TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView);
-    QTouchWebPage* pageView() const { return m_pageView; }
 
     void panGestureStarted();
     void panGestureRequestScroll(qreal deltaX, qreal deltaY);

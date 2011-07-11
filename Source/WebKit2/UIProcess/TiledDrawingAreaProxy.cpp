@@ -181,7 +181,7 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
     TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
     TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
 
-    IntRect coverRect = calculateCoverRect(m_previousVisibleRect);
+    IntRect coverRect = calculateCoverRect(m_visibleArea);
 
     Vector<TiledDrawingAreaTile::Coordinate> tilesToRemove;
 
@@ -265,8 +265,6 @@ bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
             return false;
     }
 
-    adjustVisibleRect();
-
     GraphicsContext gc(context);
     gc.save();
 
@@ -292,14 +290,12 @@ bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
     return true;
 }
 
-void TiledDrawingAreaProxy::adjustVisibleRect()
+void TiledDrawingAreaProxy::setVisibleArea(const WebCore::IntRect& visibleArea)
 {
-    IntRect visibleRect = mapFromContents(webViewVisibleRect());
-    if (m_previousVisibleRect == visibleRect)
-        return;
-    m_previousVisibleRect = visibleRect;
-
-    startTileCreationTimer();
+    if (m_visibleArea != visibleArea) {
+        m_visibleArea = visibleArea;
+        startTileCreationTimer();
+    }
 }
 
 void TiledDrawingAreaProxy::setContentsScale(float scale)
@@ -355,17 +351,14 @@ IntRect TiledDrawingAreaProxy::calculateCoverRect(const IntRect& visibleRect) co
 
 void TiledDrawingAreaProxy::createTiles()
 {
-    IntRect visibleRect = mapFromContents(webViewVisibleRect());
-    m_previousVisibleRect = visibleRect;
-
-    if (visibleRect.isEmpty())
+    if (m_visibleArea.isEmpty())
         return;
 
     // Resize tiles on edges in case the contents size has changed.
     bool didResizeTiles = resizeEdgeTiles();
 
     // Remove tiles outside out current maximum keep rect.
-    dropTilesOutsideRect(calculateKeepRect(visibleRect));
+    dropTilesOutsideRect(calculateKeepRect(m_visibleArea));
 
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.
@@ -373,13 +366,13 @@ void TiledDrawingAreaProxy::createTiles()
     Vector<TiledDrawingAreaTile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
     bool hasVisibleCheckers = false;
-    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(visibleRect.location());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(visibleRect));
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(m_visibleArea.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(m_visibleArea));
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
             // Distance is 0 for all currently visible tiles.
-            double distance = tileDistance(visibleRect, currentCoordinate);
+            double distance = tileDistance(m_visibleArea, currentCoordinate);
 
             RefPtr<TiledDrawingAreaTile> tile = tileAt(currentCoordinate);
             if (!distance && (!tile || !tile->isReadyToPaint()))

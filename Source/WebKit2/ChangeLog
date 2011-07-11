@@ -1,3 +1,49 @@
+2011-07-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Forward the viewport visible area from the view instead of inferring it from the TiledDrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=64275
+
+        Reviewed by Simon Hausmann.
+
+        This patch refactors the way the viewport visible area is handled.
+        Previously, the TiledDrawingAreaProxy would ask for the visible rect
+        when painting or updating. This is reversed with this patch, and the viewport
+        informs the page of any change in the view area.
+
+        With this change, the TiledDrawingAreaProxy does not need to know about QTouchWebPage,
+        and can use the TouchViewInterface directly.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPagePrivate::setViewportRect):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::scroll):
+        (QTouchWebViewPrivate::viewportRectUpdated):
+        (QTouchWebView::resizeEvent):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::invalidate):
+        (WebKit::TiledDrawingAreaProxy::paint):
+        (WebKit::TiledDrawingAreaProxy::setVisibleArea):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::updateWebView):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::contentSizeChanged):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::createDrawingAreaProxy):
+        (QTouchWebPageProxy::setVisibleArea):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+
 2011-07-11  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Move zoomable-area-for-point functionality to QTouchWebPageProxy

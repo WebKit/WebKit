@@ -110,7 +110,6 @@ public:
     virtual void didChangeContentsSize(const WebCore::IntSize&);
 
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-    virtual WebCore::IntRect viewportVisibleRect() const;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
@@ -168,8 +167,6 @@ public:
     QWKPreferences* preferences() const;
 
     QString title() const;
-
-    void setActualVisibleContentsRect(const QRect& rect) const;
 
     QAction* navigationAction(QtWebKit::NavigationAction) const;
 

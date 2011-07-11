@@ -54,9 +54,6 @@ public:
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     virtual bool event(QEvent*);
 
-    // FIXME: should not be public
-    virtual QRectF visibleRect() const;
-
 Q_SIGNALS:
     void urlChanged(const QUrl&);
     void titleChanged(const QString&);

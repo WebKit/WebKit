@@ -533,11 +533,6 @@ void QtWebPageProxy::processDidCrash()
     m_viewInterface->processDidCrash();
 }
 
-void QtWebPageProxy::setActualVisibleContentsRect(const QRect& rect) const
-{
-    m_webPageProxy->setActualVisibleContentRect(rect);
-}
-
 QWKPreferences* QtWebPageProxy::preferences() const
 {
     if (!m_preferences) {
@@ -766,12 +761,6 @@ void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<Sha
                                &clientPosition, &globalPosition, &actualDropAction);
 
     m_webPageProxy->dragEnded(clientPosition, globalPosition, dropActionToDragOperation(actualDropAction));
-}
-
-WebCore::IntRect QtWebPageProxy::viewportVisibleRect() const
-{
-    // FIXME: TODO
-    return IntRect();
 }
 
 void QtWebPageProxy::setPageIsVisible(bool isVisible)

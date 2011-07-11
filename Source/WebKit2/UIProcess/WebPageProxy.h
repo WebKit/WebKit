@@ -510,7 +510,6 @@ public:
 
 #if PLATFORM(QT)
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
-    WebCore::IntRect viewportVisibleRect();
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection) const;

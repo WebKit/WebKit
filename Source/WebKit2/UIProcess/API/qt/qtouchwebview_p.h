@@ -33,6 +33,7 @@ class QTouchWebViewPrivate
 public:
     QTouchWebViewPrivate(QTouchWebView* q);
     void scroll(qreal deltaX, qreal deltaY);
+    void viewportRectUpdated();
 
     QTouchWebView* const q;
     QScopedPointer<QTouchWebPage> pageView;

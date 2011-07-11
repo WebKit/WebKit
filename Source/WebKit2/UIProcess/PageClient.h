@@ -107,8 +107,6 @@ public:
     virtual void didFindZoomableArea(const WebCore::IntRect&) = 0;
 
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) = 0;
-
-    virtual WebCore::IntRect viewportVisibleRect() const = 0;
 #endif
 
     virtual void setCursor(const WebCore::Cursor&) = 0;

@@ -25,8 +25,9 @@
 #include <QBasicTimer>
 #include "qtouchwebpage.h"
 
-class QTouchWebPage;
+class QRectF;
 class QString;
+class QTouchWebPage;
 class QTouchWebPageProxy;
 
 class QTouchWebPagePrivate {
@@ -37,7 +38,7 @@ public:
 
     void setPage(QTouchWebPageProxy*);
 
-    void setViewportSize(const QSizeF&);
+    void setViewportRect(const QRectF&);
 
     void prepareScaleChange();
     void commitScaleChange();

@@ -69,7 +69,13 @@ QSize TouchViewInterface::drawingAreaSize()
 
 void TouchViewInterface::contentSizeChanged(const QSize& newSize)
 {
+    // FIXME: the viewport should take care of:
+    // -resize the page
+    // -change the zoom level if needed
+    // -move the page back in viewport boundaries if needed
+    // -update the viewport rect
     m_pageView->resize(newSize);
+    m_viewportView->d->viewportRectUpdated();
 }
 
 bool TouchViewInterface::isActive()

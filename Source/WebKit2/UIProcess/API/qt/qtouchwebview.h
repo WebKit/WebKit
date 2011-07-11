@@ -43,6 +43,9 @@ public:
 
     QTouchWebPage *page();
 
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent*);
+
 private:
     friend class WebKit::TouchViewInterface;
     QTouchWebViewPrivate *d;
