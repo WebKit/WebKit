@@ -3,6 +3,7 @@ var results = results || {};
 (function() {
 
 var kTestResultsServer = 'http://test-results.appspot.com/';
+var kTestResultsQuery = kTestResultsServer + 'testfile?'
 var kTestType = 'layout-tests';
 var kResultsName = 'full_results.json';
 var kMasterName = 'ChromiumWebkit';
@@ -57,6 +58,57 @@ function isSuccess(result)
     return result === PASS;
 }
 
+function resultsParameters(builderName, testName)
+{
+    return {
+        builder: builderName,
+        master: kMasterName,
+        testtype: kTestType,
+        name: name,
+    };
+}
+
+function resultsSummaryURL(builderName, testName)
+{
+    return kTestResultsQuery + $.param(resultsParameters(builderName, testName));
+}
+
+function directoryOfResultsSummaryURL(builderName, testName)
+{
+    var parameters = resultsParameters(builderName, testName);
+    parameters['dir'] = 1;
+    return kTestResultsQuery + $.param(parameters);
+}
+
+function ResultsCache()
+{
+    this._cache = {};
+}
+
+ResultsCache.prototype._fetch = function(key, callback)
+{
+    var self = this;
+
+    var url = kTestResultsServer + 'testfile?key=' + key;
+    base.jsonp(url, function (resultsTree) {
+        self._cache[key] = resultsTree;
+        callback(resultsTree);
+    });
+};
+
+// Warning! This function can call callback either synchronously or asynchronously.
+// FIXME: Consider using setTimeout to make this method always asynchronous.
+ResultsCache.prototype.get = function(key, callback)
+{
+    if (key in this._cache) {
+        callback(this._cache[key]);
+        return;
+    }
+    this._fetch(key, callback);
+};
+
+var g_resultsCache = new ResultsCache();
+
 function anyIsFailure(resultsList)
 {
     return $.grep(resultsList, isFailure).length > 0;
@@ -98,26 +150,110 @@ function isResultNode(node)
 
 results.BuilderResults = function(resultsJSON)
 {
-    this.m_resultsJSON = resultsJSON;
+    this._resultsJSON = resultsJSON;
 };
 
 results.BuilderResults.prototype.unexpectedFailures = function()
 {
-    return base.filterTree(this.m_resultsJSON.tests, isResultNode, isUnexpectedFailure);
+    return base.filterTree(this._resultsJSON.tests, isResultNode, isUnexpectedFailure);
 };
 
 results.unexpectedFailuresByTest = function(resultsByBuilder)
 {
     var unexpectedFailures = {};
 
-    $.each(resultsByBuilder, function(buildName, builderResults) {
+    $.each(resultsByBuilder, function(builderName, builderResults) {
         $.each(builderResults.unexpectedFailures(), function(testName, resultNode) {
             unexpectedFailures[testName] = unexpectedFailures[testName] || {};
-            unexpectedFailures[testName][buildName] = resultNode;
+            unexpectedFailures[testName][builderName] = resultNode;
         });
     });
 
     return unexpectedFailures;
+};
+
+function TestHistoryWalker(builderName, testName)
+{
+    this._builderName = builderName;
+    this._testName = testName;
+    this._indexOfNextKeyToFetch = 0;
+    this._keyList = [];
+}
+
+TestHistoryWalker.prototype.init = function(callback)
+{
+    var self = this;
+
+    base.jsonp(directoryOfResultsSummaryURL(self._builderName, kResultsName), function(keyList) {
+        self._keyList = keyList.map(function (element) { return element.key; });
+        callback();
+    });
+};
+
+TestHistoryWalker.prototype._fetchNextResultNode = function(callback)
+{
+    var self = this;
+
+    if (self._indexOfNextKeyToFetch >= self._keyList) {
+        callback(0, null);
+        return;
+    }
+
+    var key = self._keyList[self._indexOfNextKeyToFetch];
+    ++self._indexOfNextKeyToFetch;
+    g_resultsCache.get(key, function(resultsTree) {
+        var resultNode = results.resultNodeForTest(resultsTree, self._testName);
+        callback(resultsTree['revision'], resultNode);
+    });
+};
+
+TestHistoryWalker.prototype.walkHistory = function(callback)
+{
+    var self = this;
+    self._fetchNextResultNode(function(revision, resultNode) {
+        var shouldContinue = callback(revision, resultNode);
+        if (!shouldContinue)
+            return;
+        self.walkHistory(callback);
+    });
+}
+
+results.regressionRangeForFailure = function(builderName, testName, callback)
+{
+    var oldestFailingRevision = 0;
+    var newestPassingRevision = 0;
+
+    var historyWalker = new TestHistoryWalker(builderName, testName);
+    historyWalker.init(function() {
+        historyWalker.walkHistory(function(revision, resultNode) {
+            if (!resultNode) {
+                newestPassingRevision = revision;
+                callback(oldestFailingRevision, newestPassingRevision);
+                return false;
+            }
+            if (isUnexpectedFailure(resultNode)) {
+                oldestFailingRevision = revision;
+                return true;
+            }
+            if (!oldestFailingRevision)
+                return true;  // We need to keep looking for a failing revision.
+            newestPassingRevision = revision;
+            callback(oldestFailingRevision, newestPassingRevision);
+            return false;
+        });
+    });
+};
+
+results.resultNodeForTest = function(resultsTree, testName)
+{
+    var testNamePath = testName.split('/');
+    var currentNode = resultsTree['tests'];
+    $.each(testNamePath, function(index, segmentName) {
+        if (!currentNode)
+            return;
+        currentNode = (segmentName in currentNode) ? currentNode[segmentName] : null;
+    });
+    return currentNode;
 };
 
 function resultsDirectoryForBuilder(builderName)
@@ -189,23 +325,10 @@ results.fetchResultsURLs = function(builderName, testName, callback)
     });
 };
 
-function resultsSummaryURL(builderName, name)
-{
-    return kTestResultsServer + 'testfile' +
-          '?builder=' + builderName +
-          '&master=' + kMasterName +
-          '&testtype=' + kTestType +
-          '&name=' + name;
-}
-
 results.fetchResultsForBuilder = function(builderName, onsuccess)
 {
-    $.ajax({
-        url: resultsSummaryURL(builderName, kResultsName),
-        dataType: 'jsonp',
-        success: function(data) {
-            onsuccess(new results.BuilderResults(data));
-        }
+    base.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
+        onsuccess(new results.BuilderResults(resultsTree));
     });
 };
 
@@ -214,8 +337,8 @@ results.fetchResultsByBuilder = function(builderNameList, onsuccess)
     var resultsByBuilder = {}
     var requestsInFlight = builderNameList.length;
     $.each(builderNameList, function(index, builderName) {
-        results.fetchResultsForBuilder(builderName, function(builderResults) {
-            resultsByBuilder[builderName] = builderResults;
+        results.fetchResultsForBuilder(builderName, function(resultsTree) {
+            resultsByBuilder[builderName] = resultsTree;
             --requestsInFlight;
             if (!requestsInFlight)
                 onsuccess(resultsByBuilder);

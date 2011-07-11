@@ -93,33 +93,155 @@ test("resultType", 12, function() {
     equals(results.resultType("http://example.com/foo.xyz"), "text");
 });
 
-test("fetchResultsURLs", 3, function() {
+test("resultNodeForTest", 4, function() {
+    deepEqual(results.resultNodeForTest(kExampleResultsJSON, "userscripts/another-test.html"), {
+        "expected": "PASS",
+        "actual": "TEXT"
+    });
+    equals(results.resultNodeForTest(kExampleResultsJSON, "foo.html"), null);
+    equals(results.resultNodeForTest(kExampleResultsJSON, "userscripts/foo.html"), null);
+    equals(results.resultNodeForTest(kExampleResultsJSON, "userscripts/foo/bar.html"), null);
+});
+
+function NetworkSimulator()
+{
+    this._pendingCallbacks = [];
+};
+
+NetworkSimulator.prototype.scheduleCallback = function(callback)
+{
+    this._pendingCallbacks.push(callback);
+}
+
+NetworkSimulator.prototype.runTest = function(testCase)
+{
+    var self = this;
     var realBase = window.base;
 
-    var pendingCallbacks = {};
     window.base = {};
-    base.probe = function(url, options) {
-        pendingCallbacks[url] = options;
-    };
     base.endsWith = realBase.endsWith;
     base.trimExtension = realBase.trimExtension;
+    if (self.probeHook)
+        base.probe = self.probeHook;
+    if (self.jsonpHook)
+        base.jsonp = self.jsonpHook;
 
-    results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", function(resultURLs) {
-        deepEqual(resultURLs, [
-            "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.txt",
-            "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.txt",
-            "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
-        ]);
+    testCase();
+
+    while (this._pendingCallbacks.length) {
+        var callback = this._pendingCallbacks.shift();
+        callback();
+    }
+
+    window.base = realBase;
+    equal(window.base, realBase, "Failed to restore real base!");
+}
+
+test("regressionRangeForFailure", 3, function() {
+    simulator = new NetworkSimulator();
+
+    var keyMap = {
+        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw": {
+            "tests": {
+                "userscripts": {
+                    "another-test.html": {
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    }
+                },
+            },
+            "revision": "90430"
+        },
+        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNfTUAw":{
+            "tests": {
+                "userscripts": {
+                    "user-script-video-document.html": {
+                        "expected": "FAIL",
+                        "actual": "TEXT"
+                    },
+                    "another-test.html": {
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    }
+                },
+            },
+            "revision": "90429"
+        },
+        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGJWCUQw":{
+            "tests": {
+                "userscripts": {
+                    "another-test.html": {
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    }
+                },
+            },
+            "revision": "90426"
+        },
+        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGKbLUAw":{
+            "tests": {
+                "userscripts": {
+                    "user-script-video-document.html": {
+                        "expected": "FAIL",
+                        "actual": "TEXT"
+                    },
+                },
+            },
+            "revision": "90424"
+        }
+    };
+
+    simulator.jsonpHook = function(url, callback) {
+        simulator.scheduleCallback(function() {
+            if (/dir=1/.test(url)) {
+                callback([
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNfTUAw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGJWCUQw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGKbLUAw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGOj5UAw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGP-AUQw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGPL3UAw" },
+                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNHJQAw" },
+                ]);
+            } else {
+                var key = url.match(/key=([^&]+)/)[1];
+                callback(keyMap[key]);
+            }
+        });
+    };
+    simulator.runTest(function() {
+        results.regressionRangeForFailure("Mock Builder", "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
+            equals(oldestFailingRevision, "90426");
+            equals(newestPassingRevision, "90424");
+        });
     });
+});
+
+test("fetchResultsURLs", 3, function() {
+    var simulator = new NetworkSimulator();
 
     var probedURLs = [];
-    for (var url in pendingCallbacks) {
-        probedURLs.push(url);
-        if (realBase.endsWith(url, '.txt'))
-            pendingCallbacks[url].success.call();
-        else
-            pendingCallbacks[url].error.call();
-    }
+    simulator.probeHook = function(url, options)
+    {
+        simulator.scheduleCallback(function() {
+            probedURLs.push(url);
+            if (base.endsWith(url, '.txt'))
+                options.success.call();
+            else
+                options.error.call();
+        });
+    };
+
+    simulator.runTest(function() {
+        results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", function(resultURLs) {
+            deepEqual(resultURLs, [
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.txt",
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.txt",
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
+            ]);
+        });
+    });
 
     deepEqual(probedURLs, [
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.png",
@@ -129,7 +251,4 @@ test("fetchResultsURLs", 3, function() {
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.txt",
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
     ]);
-
-    window.base = realBase;
-    equal(window.base, realBase, "Failed to restore real base!");
 });

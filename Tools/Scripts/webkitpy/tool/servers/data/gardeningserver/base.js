@@ -64,4 +64,15 @@ base.probe = function(url, options)
     document.head.appendChild(scriptElement);
 };
 
+// jQuery makes jsonp requests somewhat ugly (which is fair given that they're
+// terrible for security). We use this wrapper to make our lives slightly easier.
+base.jsonp = function(url, onsuccess)
+{
+    $.ajax({
+        url: url,
+        dataType: 'jsonp',
+        success: onsuccess
+    });
+};
+
 })();
