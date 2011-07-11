@@ -313,7 +313,8 @@ void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterI
 
 void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)
 {
-    if (offset & 0x3) {
+    // VFP cannot directly access memory that is not four-byte-aligned
+    if (!(offset & 0x3)) {
         if (offset <= 0x3ff && offset >= 0) {
             fdtr_u(isLoad, srcDst, base, offset >> 2);
             return;
