@@ -1,3 +1,9 @@
+2011-07-10  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed; Skip plugins/form-value.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update win/linux pixel expectations for r90701 (part 3/??).
