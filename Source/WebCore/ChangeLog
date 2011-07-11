@@ -1,3 +1,19 @@
+2011-07-11  Mustafizur Rahaman  <mustaf.here@gmail.com>
+
+        Reviewed by James Robinson.
+
+        Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
+        https://bugs.webkit.org/show_bug.cgi?id=48292
+        
+        and
+        
+        Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html
+        https://bugs.webkit.org/show_bug.cgi?id=48302
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere): Added CompositeDestinationAtop 
+        to draw transparency elsewhere for destination-atop
+
 2011-07-08  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Get rid of flickering "Please wait" message in Heap profiler.

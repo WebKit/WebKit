@@ -1,3 +1,23 @@
+2011-07-11  Mustafizur Rahaman  <mustaf.here@gmail.com>
+
+        Reviewed by James Robinson.
+
+        Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
+        https://bugs.webkit.org/show_bug.cgi?id=48292
+        
+        and
+        
+        Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html
+        https://bugs.webkit.org/show_bug.cgi?id=48302
+
+        * canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop-expected.txt: Added 
+        a trailing line
+        * fast/canvas/canvas-composite-alpha.html: Rebaselined for destination-atop test case
+        * platform/chromium/test_expectations.txt: Removed passing test case
+        * platform/gtk/Skipped: Ditto
+        * platform/mac/Skipped: Ditto
+        * platform/qt/Skipped: Ditto
+
 2011-07-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update win/linux pixel expectations for r90701 (part 9/??).

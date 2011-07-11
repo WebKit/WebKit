@@ -1515,7 +1515,7 @@ bool CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere() const
     // CompositeSourceAtop and CompositeDestinationOut are not listed here as the platforms already
     // implement the specification's behavior.
     return state().m_globalComposite == CompositeSourceIn || state().m_globalComposite == CompositeSourceOut
-           || state().m_globalComposite == CompositeDestinationIn;
+           || state().m_globalComposite == CompositeDestinationIn || state().m_globalComposite == CompositeDestinationAtop;
 }
 
 template<class T> void CanvasRenderingContext2D::displayTransparencyElsewhere(const T& area)
