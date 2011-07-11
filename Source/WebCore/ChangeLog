@@ -1,3 +1,19 @@
+2011-07-11  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Simon Fraser.
+
+        Transition LayoutTest using pause API shows wrong result if it tries to pause a transition after its delay time.
+        https://bugs.webkit.org/show_bug.cgi?id=63859
+
+        The existing code to set the m_startTime haven't worked because 
+        the animation is not the right state to accept the start event. 
+        This patch just sets the values directly instead of using event.
+
+        Test: transitions/delay.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+
 2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move selection related code from RenderTextControl to HTMLTextFormControlElement

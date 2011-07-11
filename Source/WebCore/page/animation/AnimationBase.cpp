@@ -1443,8 +1443,9 @@ void AnimationBase::freezeAtTime(double t)
         return;
 
     if (!m_startTime) {
-        // If we haven't started yet, just generate the start event now
-        m_compAnim->animationController()->receivedStartTimeResponse(currentTime());
+        // If we haven't started yet, make it as if we started.
+        m_animState = AnimationStateStartWaitResponse;
+        onAnimationStartResponse(currentTime());
     }
 
     ASSERT(m_startTime);        // if m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
