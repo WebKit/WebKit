@@ -75,7 +75,6 @@ BUGCR24182 WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TIMEOUT
 BUGCR24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 //BUGCR24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
-BUGCR24182 SLOW WIN MAC DEBUG : tables/mozilla/bugs/45621.html = PASS
 //BUGCR24852 started failing since webkit 49583
 BUGCR24182 SLOW WIN : http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/security/cross-origin-css.html = PASS
@@ -591,7 +590,7 @@ BUGCR8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 // Mostly this is because of international text rendering differences.
 
 // Incrorect results, in incorrect international font metrics.
-//BUGCR20521 WIN : fast/text/atsui-multiple-renderers.html = FAIL
+BUGCR20521 WIN : fast/text/atsui-multiple-renderers.html = IMAGE+TEXT
 BUGCR20521 LINUX WIN : fast/text/atsui-pointtooffset-calls-cg.html = FAIL TIMEOUT
 BUGCR20521 LINUX WIN : fast/text/atsui-rtl-override-selection.html = FAIL
 
@@ -1072,7 +1071,7 @@ BUGCR24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 
 // No glyph for U+FFFD (Replacement Character : black diamond with
 // question mark) in them
-//BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = FAIL
+BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = IMAGE+TEXT
 
 // V8 failures as a result of the WebKit merge.
 // http://code.google.com/p/v8/issues/detail?id=92
@@ -1122,9 +1121,6 @@ BUGCR10325 WIN : fast/dom/resource-locations-in-created-html-document.html = FAI
 // New test. We should fix it, but it doesn't need to block the current release
 BUGCR7386 : http/tests/security/postMessage/invalid-origin-throws-exception.html = FAIL
 
-// Linux pixeltest failure: Font mismatch
-BUGCR10327 LINUX : tables/mozilla_expected_failures/bugs/bug14007-2.html = FAIL
-
 // On Linux, we don't seem to be getting Helvetica Bold for all cases.
 BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = FAIL
 
@@ -1147,16 +1143,12 @@ BUGCR10337 LINUX : fast/css/font-face-locally-installed.html = FAIL
 // Font metrics wrong, despite using Lucida Grande?
 BUGCR10338 LINUX : fast/events/updateLayoutForHitTest.html = FAIL
 
-// Layout totally different -- wrong font selected?
-BUGCR10340 LINUX : fast/frames/viewsource-attribute.html = FAIL
-
 // We fail to load a file URL with a port number -- how does this work on
 // Windows?
 BUGCR10342 WONTFIX SKIP LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
 
 // Text doesn't display at all -- maybe we don't have the slow font
 // code enabled?
-BUGCR10343 LINUX : fast/text/atsui-kerning-and-ligatures.html = FAIL
 BUGCR10343 LINUX RELEASE : fast/text/atsui-partial-selection.html = IMAGE
 
 // Started timing out with agl's complext text change.  Page is verrry slow.
@@ -1523,8 +1515,6 @@ BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = TIME
 BUGCR9797 BUGCR9798 WIN RELEASE SLOW : http/tests/xmlhttprequest/state-after-network-error.html = PASS
 BUGCR9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
 BUGCR9798 LINUX RELEASE : svg/carto.net/colourpicker.svg = FAIL
-BUGCR9798 LINUX RELEASE : tables/mozilla/bugs/45621.html = FAIL
-BUGCR9798 LINUX DEBUG SLOW : tables/mozilla/bugs/45621.html = FAIL
 //also BUGCR24868 (crash)
 BUGCR9798 LINUX DEBUG : transitions/mask-transitions.html = FAIL PASS
 BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PASS
@@ -1597,8 +1587,6 @@ BUGCR15267 WIN LINUX : transitions/cancel-transition.html = PASS FAIL
 // WebKit 45431:45444
 BUGCR10384 MAC : fast/events/frame-tab-focus.html = FAIL
 BUGCR11613 LINUX : fast/forms/tabbing-input-iframe.html = FAIL
-BUGCR11613 LINUX RELEASE : fast/overflow/scrollRevealButton.html = FAIL
-BUGCR11613 LINUX DEBUG : fast/overflow/scrollRevealButton.html = FAIL
 
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
@@ -1859,9 +1847,6 @@ BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.ht
 // WebKit roll r55853 -> 55940
 // Flaky test
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
-
-// One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
-BUGCR38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
 
 // WebKit roll 56197:56239.
 // Needs layoutTestController.setMediaType() (implemented on Qt only)
@@ -4835,6 +4820,17 @@ BUGWK61369 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE
 BUGWK61369 WIN LINUX GPU : compositing/geometry/outline-change.html = IMAGE
 BUGWK61369 WIN LINUX GPU : compositing/iframes/iframe-copy-on-scroll.html = IMAGE
 
+BUGWK61369 WIN : fast/forms/001.html = IMAGE
+BUGWK61369 WIN : fast/forms/input-first-letter.html = IMAGE
+BUGWK61369 WIN LINUX : fast/frames/viewsource-attribute.html = IMAGE
+BUGWK61369 WIN LINUX : fast/overflow/scrollRevealButton.html = IMAGE
+BUGWK61369 WIN LINUX : fast/text/atsui-kerning-and-ligatures.html = IMAGE
+BUGWK61369 WIN : fast/text/should-use-atsui.html = IMAGE
+BUGWK61369 WIN LINUX : tables/mozilla/bugs/45621.html = IMAGE
+BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug20804.html = IMAGE
+BUGWK61369 WIN : tables/mozilla_expected_failures/bugs/bug14007-2.html = IMAGE
+BUGWK61369 LINUX : tables/mozilla_expected_failures/bugs/bug14007-2.html = IMAGE+TEXT
+
 // Paying attention to shouldAntialias flag in drawConvexPolygon()
 // These expectations are masking failures elsewhere in the file
 // which should be uncommented once these are rebaselined.
@@ -4846,13 +4842,13 @@ BUGWK61369 SLOW WIN LINUX : tables/mozilla/bugs/bug113235-1.html = IMAGE
 BUGWK61369 WIN LINUX : http/tests/misc/iframe404.html = IMAGE
 BUGWK61369 SLOW WIN LINUX : http/tests/local/file-url-sent-as-referer.html = IMAGE
 BUGWK61369 WIN LINUX : fast/text/international/hebrew-vowels.html = IMAGE
-BUGWK61369 WIN LINUX : fast/text/international/003.html = IMAGE
+BUGWK61369 LINUX : fast/text/international/003.html = IMAGE
 BUGWK61369 WIN LINUX : fast/text/atsui-spacing-features.html = IMAGE
-BUGWK61369 WIN LINUX : fast/text/atsui-multiple-renderers.html = IMAGE
+BUGWK61369 LINUX : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGWK61369 WIN LINUX : fast/text/atsui-negative-spacing-features.html = IMAGE
 BUGWK61369 WIN LINUX : fast/repaint/iframe-scroll-repaint.html = IMAGE
 BUGWK61369 WIN LINUX : fast/repaint/4774354.html = IMAGE
-BUGWK61369 WIN LINUX : fast/encoding/invalid-UTF-8.html = IMAGE
+BUGWK61369 LINUX : fast/encoding/invalid-UTF-8.html = IMAGE
 BUGWK61369 WIN LINUX : fast/dom/34176.html = IMAGE
 BUGWK61369 WIN LINUX : fast/dom/HTMLElement/bdo.html = IMAGE
 BUGWK61369 WIN LINUX : fast/css/acid2-pixel.html = IMAGE
@@ -4889,7 +4885,7 @@ BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
 
 BUGWK61625 : fast/events/dropzone-002.html = TEXT
 
-BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
+BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = IMAGE+TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 
 // Weird failures only on debug bots after r87526.
