@@ -1,0 +1,24 @@
+<html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function run() {
+    var frameElement = document.createElement('iframe')
+    frameElement.setAttribute("src", "resources/images.html");
+    document.getElementById("frameDiv").appendChild(frameElement);
+    if (window.layoutTestController) {
+        layoutTestController.setDefersLoading(true);
+        setTimeout("layoutTestController.setDefersLoading(false);layoutTestController.notifyDone();",1000);
+    } else
+        alert("Deferring loads");
+}
+
+</script>
+<body onload='run()'>
+<p>For the test to pass there should be no crash.</p>
+<div id="frameDiv"></div>
+</body>
+</html>
