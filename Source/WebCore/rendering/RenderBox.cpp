@@ -227,7 +227,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 
         if (parentBlock) {
             RenderObject* parent = parentBlock->parent();
-            if (parent && parent->isFlexibleBox())
+            if (parent && parent->isDeprecatedFlexibleBox())
                 parentBlock = toRenderBlock(parent);
 
             parentBlock->markAllDescendantsWithFloatsForLayout(this, false);
@@ -1549,14 +1549,14 @@ void RenderBox::computeLogicalWidth()
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
     if (hasOverrideSize() &&  parent()->style()->boxOrient() == HORIZONTAL
-            && parent()->isFlexibleBox() && parent()->isFlexingChildren()) {
+            && parent()->isDeprecatedFlexibleBox() && parent()->isFlexingChildren()) {
         setLogicalWidth(overrideWidth());
         return;
     }
 
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    bool inVerticalBox = parent()->isFlexibleBox() && (parent()->style()->boxOrient() == VERTICAL);
+    bool inVerticalBox = parent()->isDeprecatedFlexibleBox() && (parent()->style()->boxOrient() == VERTICAL);
     bool stretching = (parent()->style()->boxAlign() == BSTRETCH);
     bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inVerticalBox || !stretching);
 
@@ -1616,7 +1616,7 @@ void RenderBox::computeLogicalWidth()
         computeInlineDirectionMargins(cb, containerLogicalWidth, logicalWidth());
 
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
-            && !isFloating() && !isInline() && !cb->isFlexibleBox())
+            && !isFloating() && !isInline() && !cb->isDeprecatedFlexibleBox())
         cb->setMarginEndForChild(this, containerLogicalWidth - logicalWidth() - cb->marginStartForChild(this));
 }
 
@@ -1675,7 +1675,7 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
     // that don't stretch their kids lay out their children at their intrinsic widths.
     // FIXME: Think about block-flow here.
     // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (parent()->isFlexibleBox()
+    if (parent()->isDeprecatedFlexibleBox()
             && (parent()->style()->boxOrient() == HORIZONTAL || parent()->style()->boxAlign() != BSTRETCH))
         return true;
 
@@ -1684,7 +1684,7 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
     // stretching vertical flexbox.
     // FIXME: Think about block-flow here.
     // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (logicalWidth.type() == Auto && !(parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL && parent()->style()->boxAlign() == BSTRETCH) && node() && (node()->hasTagName(inputTag) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || node()->hasTagName(textareaTag) || node()->hasTagName(legendTag)))
+    if (logicalWidth.type() == Auto && !(parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == VERTICAL && parent()->style()->boxAlign() == BSTRETCH) && node() && (node()->hasTagName(inputTag) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || node()->hasTagName(textareaTag) || node()->hasTagName(legendTag)))
         return true;
 
     return false;
@@ -1753,7 +1753,7 @@ void RenderBox::computeLogicalHeight()
 
         // FIXME: Account for block-flow in flexible boxes.
         // https://bugs.webkit.org/show_bug.cgi?id=46418
-        bool inHorizontalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL;
+        bool inHorizontalBox = parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL;
         bool stretching = parent()->style()->boxAlign() == BSTRETCH;
         bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inHorizontalBox || !stretching);
         bool checkMinMaxHeight = false;
@@ -1762,7 +1762,7 @@ void RenderBox::computeLogicalHeight()
         // grab our cached flexible height.
         // FIXME: Account for block-flow in flexible boxes.
         // https://bugs.webkit.org/show_bug.cgi?id=46418
-        if (hasOverrideSize() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
+        if (hasOverrideSize() && parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
                 && parent()->isFlexingChildren())
             h = Length(overrideHeight() - borderAndPaddingLogicalHeight(), Fixed);
         else if (treatAsReplaced)
@@ -1775,7 +1775,7 @@ void RenderBox::computeLogicalHeight()
         // Block children of horizontal flexible boxes fill the height of the box.
         // FIXME: Account for block-flow in flexible boxes.
         // https://bugs.webkit.org/show_bug.cgi?id=46418
-        if (h.isAuto() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
+        if (h.isAuto() && parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
                 && parent()->isStretchingChildren()) {
             h = Length(parentBox()->contentLogicalHeight() - marginBefore() - marginAfter() - borderAndPaddingLogicalHeight(), Fixed);
             checkMinMaxHeight = false;

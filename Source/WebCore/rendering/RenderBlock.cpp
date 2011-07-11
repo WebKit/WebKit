@@ -1045,7 +1045,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     RenderBox::removeChild(oldChild);
 
     RenderObject* child = prev ? prev : next;
-    if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && !isFlexibleBox()) {
+    if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && !isDeprecatedFlexibleBox()) {
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
@@ -1452,7 +1452,7 @@ void RenderBlock::addOverflowFromPositionedObjects()
 
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
 {
-    return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBox())
+    return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isDeprecatedFlexibleBox())
            || hasColumns() || isTableCell() || isFieldset() || isWritingModeRoot() || isRoot();
 }
 
@@ -5508,7 +5508,7 @@ static bool shouldCheckLines(RenderObject* obj)
 {
     return !obj->isFloatingOrPositioned() && !obj->isRunIn() &&
             obj->isBlockFlow() && obj->style()->height().isAuto() &&
-            (!obj->isFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
+            (!obj->isDeprecatedFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
 }
 
 static RootInlineBox* getLineAtIndex(RenderBlock* block, int i, int& count)

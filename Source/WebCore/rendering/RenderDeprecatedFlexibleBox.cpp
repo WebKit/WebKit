@@ -216,7 +216,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageH
     m_overflow.clear();
 
     if (previousSize != size()
-        || (parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
+        || (parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
         && parent()->style()->boxAlign() == BSTRETCH))
         relayoutChildren = true;
 

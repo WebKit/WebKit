@@ -739,8 +739,8 @@ public:
 
     virtual void destroy();
 
-    // Virtual function helpers for CSS3 Flexible Box Layout
-    virtual bool isFlexibleBox() const { return false; }
+    // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box)
+    virtual bool isDeprecatedFlexibleBox() const { return false; }
     virtual bool isFlexingChildren() const { return false; }
     virtual bool isStretchingChildren() const { return false; }
 

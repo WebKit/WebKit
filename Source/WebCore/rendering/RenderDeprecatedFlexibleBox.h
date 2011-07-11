@@ -46,7 +46,7 @@ public:
 
     virtual bool avoidsFloats() const { return true; }
 
-    virtual bool isFlexibleBox() const { return true; }
+    virtual bool isDeprecatedFlexibleBox() const { return true; }
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
 
