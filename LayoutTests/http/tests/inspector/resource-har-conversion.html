@@ -27,9 +27,10 @@ var test = function()
     {
         function findResourceByURL(url)
         {
-            for (var id in WebInspector.networkResources) {
-                if (url.test(WebInspector.networkResources[id].url))
-                    return WebInspector.networkResources[id];
+            var resources = WebInspector.networkLog.resources;
+            for (var i = 0; i < resources.length; ++i) {
+                if (url.test(resources[i].url))
+                    return resources[i];
             }
         }
 
@@ -45,7 +46,7 @@ var test = function()
         }
 
         addCookieHeadersToResource(findResourceByURL(/inspector-test\.js$/));
-        var log = (new WebInspector.HARLog()).build();
+        var log = (new WebInspector.HARLog(WebInspector.networkLog.resources)).build();
         // Filter out favicon.ico requests that only appear on certain platforms.
         log.entries = log.entries.filter(function(entry) {
             return !/favicon\.ico$/.test(entry.request.url);

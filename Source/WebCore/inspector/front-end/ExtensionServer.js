@@ -61,8 +61,6 @@ WebInspector.ExtensionServer = function()
     this._registerSubscriptionHandler("timeline-event-recorded", WebInspector.timelineManager.start.bind(WebInspector.timelineManager), WebInspector.timelineManager.stop.bind(WebInspector.timelineManager));
 
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
-
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._addRecordToTimeline, this);
 }
 
 WebInspector.ExtensionServer.prototype = {
@@ -93,6 +91,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _inspectedURLChanged: function(event)
     {
+        this._resources = {};
         var url = event.data;
         this._postNotification("inspectedURLChanged", url);
     },
@@ -116,11 +115,6 @@ WebInspector.ExtensionServer.prototype = {
     stopAuditRun: function(auditRun)
     {
         delete this._clientObjects[auditRun.id];
-    },
-
-    resetResources: function()
-    {
-        this._resources = {};
     },
 
     _notifyResourceFinished: function(event)
@@ -325,9 +319,10 @@ WebInspector.ExtensionServer.prototype = {
 
     _onGetHAR: function(request)
     {
-        var harLog = (new WebInspector.HARLog()).build();
+        var resources = WebInspector.networkLog.resources;
+        var harLog = (new WebInspector.HARLog(resources)).build();
         for (var i = 0; i < harLog.entries.length; ++i)
-            harLog.entries[i]._resourceId = this._resourceId(WebInspector.networkResources[i]);
+            harLog.entries[i]._resourceId = this._resourceId(resources[i]);
         return harLog;
     },
 
@@ -396,6 +391,7 @@ WebInspector.ExtensionServer.prototype = {
         // The networkManager is normally created after the ExtensionServer is constructed, but before initExtensions() is called.
         WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyResourceFinished, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._addRecordToTimeline, this);
 
         InspectorExtensionRegistry.getExtensionsAsync();
     },

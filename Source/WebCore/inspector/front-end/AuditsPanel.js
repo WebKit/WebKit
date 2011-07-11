@@ -122,7 +122,7 @@ WebInspector.AuditsPanel.prototype = {
 
     _executeAudit: function(categories, resultCallback)
     {
-        var resources = WebInspector.networkResources;
+        var resources = WebInspector.networkLog.resources;
 
         var rulesRemaining = 0;
         for (var i = 0; i < categories.length; ++i)

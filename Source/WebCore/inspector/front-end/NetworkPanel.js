@@ -730,7 +730,6 @@ WebInspector.NetworkPanel.prototype = {
         this._viewsContainerElement.removeChildren();
         this._viewsContainerElement.appendChild(this._closeButtonElement);
         this._updateSummaryBar();
-        WebInspector.extensionServer.resetResources();
     },
 
     get resources()
@@ -1015,7 +1014,7 @@ WebInspector.NetworkPanel.prototype = {
     _copyAll: function()
     {
         var harArchive = {
-            log: (new WebInspector.HARLog()).build()
+            log: (new WebInspector.HARLog(this._resources)).build()
         };
         InspectorFrontendHost.copyText(JSON.stringify(harArchive));
     },
@@ -1044,7 +1043,7 @@ WebInspector.NetworkPanel.prototype = {
     _exportAll: function()
     {
         var harArchive = {
-            log: (new WebInspector.HARLog()).build()
+            log: (new WebInspector.HARLog(this._resources)).build()
         };
         InspectorFrontendHost.saveAs(WebInspector.mainResource.domain + ".har", JSON.stringify(harArchive));
     },

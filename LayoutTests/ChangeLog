@@ -1,3 +1,12 @@
+2011-07-11  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [refactoring] Remove dependencies of components requiring network resource list from network panel
+        https://bugs.webkit.org/show_bug.cgi?id=62477
+
+        * http/tests/inspector/resource-har-conversion.html:
+
 2011-07-11  Adam Roben  <aroben@apple.com>
 
         Add back the win-xp and win-wk2 results that were deleted in r90699

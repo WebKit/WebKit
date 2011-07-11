@@ -26,8 +26,9 @@ function test()
     {
         // inspector-test.js appears in network panel occasionally in Safari on
         // Mac, so checking last resource.
-        var resourcesCount = WebInspector.panels.network.resources.length;
-        var resource = WebInspector.panels.network.resources[resourcesCount - 1];
+        var resources = WebInspector.networkLog.resources;
+        var resourcesCount = resources.length;
+        var resource = resources[resourcesCount - 1];
 
         InspectorTest.addResult(resource.url);
         InspectorTest.addResult("resource.isPingRequest(): " + resource.isPingRequest());

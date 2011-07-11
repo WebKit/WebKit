@@ -409,11 +409,6 @@ var WebInspector = {
         this.panels.elements.updateFocusedNode(nodeId);
     },
 
-    get networkResources()
-    {
-        return this.panels.network.resources;
-    },
-
     networkResourceById: function(id)
     {
         return this.panels.network.resourceById(id);
@@ -500,6 +495,7 @@ WebInspector.doLoadedDone = function()
     this.drawer.visibleView = this.console;
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();
+    this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
 
     InspectorBackend.registerDomainDispatcher("Inspector", this);
@@ -1048,7 +1044,6 @@ WebInspector.reset = function()
             panel.reset();
     }
 
-    this.resources = {};
     this.highlightDOMNode(0);
 
     if (!WebInspector.settings.preserveConsoleLog.get())
