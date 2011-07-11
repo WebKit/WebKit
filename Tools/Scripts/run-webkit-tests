@@ -83,7 +83,9 @@ sub useNewRunWebKitTests()
     # will remove the --PORT argument from @ARGV, causing us to fail to pass it to the test harness.
 
     # NRWT Windows support still needs work: https://bugs.webkit.org/show_bug.cgi?id=38756
-    return ((isLeopard() or isSnowLeopard() or isQt() or isGtk()) and !usingWebKit2() and !usingLeaks());
+
+    # NRWT doesn't support qt-mac, qt-arm and qt-4.8 platforms now: https://bugs.webkit.org/show_bug.cgi?id=64071 and https://bugs.webkit.org/show_bug.cgi?id=64086
+    return ((isLeopard() or isSnowLeopard() or (isQt() and !isDarwin() and !isARM() and (getQtVersion() ne "4.8")) or isGtk()) and !usingWebKit2() and !usingLeaks());
 }
 
 my $harnessName = "old-run-webkit-tests";

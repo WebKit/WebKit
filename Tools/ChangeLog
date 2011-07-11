@@ -1,3 +1,16 @@
+2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        new-run-webkit-tests does not support qt-arm or qt-4.8 results
+        https://bugs.webkit.org/show_bug.cgi?id=64071
+
+        [Qt] NRWT should pick up the right httpd config file
+        https://bugs.webkit.org/show_bug.cgi?id=64086
+
+        Reviewed by Zoltán Herczeg.
+
+        * Scripts/run-webkit-tests: Disable NRWT for qt-mac, qt-arm and qt-4.8 platforms until fix.
+        (useNewRunWebKitTests):
+
 2011-07-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         Add TestNetscapePlugIn/Tests/FormValue.cpp to DRT build files
