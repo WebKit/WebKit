@@ -1,3 +1,13 @@
+2011-07-11  Jessie Berlin  <jberlin@apple.com>
+
+        http/tests/cache/history-only-cached-subresource-loads-max-age-https.html timing out on
+        Windows and WebKit2 since it was added.
+        https://bugs.webkit.org/show_bug.cgi?id=63806
+
+        Add the test to the WK2 Skipped list to get the bots green.
+
+        * platform/wk2/Skipped:
+
 2011-07-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
