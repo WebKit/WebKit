@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
 CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (20, 20)
 CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (20, 20)
 CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (30, 30)

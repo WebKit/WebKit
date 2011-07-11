@@ -1,3 +1,13 @@
+2011-07-11  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Forward focus events to windowless plugins on the windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=62375
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::setFocus): Forward focus events if the plugin is windowless.
+
 2011-07-11  Shinya Kawanaka  <shinyak@google.com>
 
         Added accessibility notification when value is changed.

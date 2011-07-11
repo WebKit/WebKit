@@ -472,6 +472,17 @@ void PluginView::setFocus(bool focused)
         SetFocus(platformPluginWidget());
 
     Widget::setFocus(focused);
+
+    if (!m_plugin || m_isWindowed)
+        return;
+
+    NPEvent npEvent;
+
+    npEvent.event = focused ? WM_SETFOCUS : WM_KILLFOCUS;
+    npEvent.wParam = 0;
+    npEvent.lParam = 0;
+
+    dispatchNPEvent(npEvent);
 }
 
 void PluginView::show()
