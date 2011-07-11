@@ -1,3 +1,34 @@
+2011-07-10  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Add useHixie76Protocol flag to WebSocketChannel and WebSocketHandshake
+        https://bugs.webkit.org/show_bug.cgi?id=64244
+
+        Reviewed by Kent Tamura.
+
+        Get the value of Settings::useHixie76WebSocketProtocol() and save it in
+        WebSocketChannel and WebSocketHandshake instances. Obtained flag value
+        is not used for now.
+
+        No behavior change, thus no new tests.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        WebSocketChannel is always created in context of Document (see
+        ThreadableWebSocketChannel::create()).
+        Because m_useHixie76Protocol must be passed to WebSocketHandshake
+        constructor, WebSocketHandshake instance is allocated dynamically
+        and stored in OwnPtr.
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::disconnect):
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::processBuffer):
+        * websockets/WebSocketChannel.h:
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::WebSocketHandshake):
+        * websockets/WebSocketHandshake.h:
+
 2011-07-10  Tom Hudson  <tomhudson@google.com>
 
         Reviewed by James Robinson.

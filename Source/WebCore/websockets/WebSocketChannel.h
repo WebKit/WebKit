@@ -90,7 +90,7 @@ namespace WebCore {
 
         ScriptExecutionContext* m_context;
         WebSocketChannelClient* m_client;
-        WebSocketHandshake m_handshake;
+        OwnPtr<WebSocketHandshake> m_handshake;
         RefPtr<SocketStreamHandle> m_handle;
         char* m_buffer;
         size_t m_bufferSize;
@@ -105,6 +105,8 @@ namespace WebCore {
         unsigned long m_unhandledBufferedAmount;
 
         unsigned long m_identifier; // m_identifier == 0 means that we could not obtain a valid identifier.
+
+        bool m_useHixie76Protocol;
     };
 
 } // namespace WebCore

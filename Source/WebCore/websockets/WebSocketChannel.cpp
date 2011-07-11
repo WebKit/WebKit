@@ -42,6 +42,7 @@
 #include "ProgressTracker.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandle.h"
 #include "WebSocketChannelClient.h"
@@ -61,7 +62,6 @@ const double TCPMaximumSegmentLifetime = 2 * 60.0;
 WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol)
     : m_context(context)
     , m_client(client)
-    , m_handshake(url, protocol, context)
     , m_buffer(0)
     , m_bufferSize(0)
     , m_resumeTimer(this, &WebSocketChannel::resumeTimerFired)
@@ -73,11 +73,16 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_shouldDiscardReceivedData(false)
     , m_unhandledBufferedAmount(0)
     , m_identifier(0)
+    , m_useHixie76Protocol(true)
 {
-    if (m_context->isDocument())
-        if (Page* page = static_cast<Document*>(m_context)->page())
-            m_identifier = page->progress()->createUniqueIdentifier();
+    ASSERT(m_context->isDocument());
+    Document* document = static_cast<Document*>(m_context);
+    if (Settings* settings = document->settings())
+        m_useHixie76Protocol = settings->useHixie76WebSocketProtocol();
+    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, context, m_useHixie76Protocol));
 
+    if (Page* page = document->page())
+        m_identifier = page->progress()->createUniqueIdentifier();
     if (m_identifier)
         InspectorInstrumentation::didCreateWebSocket(m_context, m_identifier, url, m_context->url());
 }
@@ -92,9 +97,9 @@ void WebSocketChannel::connect()
     LOG(Network, "WebSocketChannel %p connect", this);
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
-    m_handshake.reset();
+    m_handshake->reset();
     ref();
-    m_handle = SocketStreamHandle::create(m_handshake.url(), this);
+    m_handle = SocketStreamHandle::create(m_handshake->url(), this);
 }
 
 bool WebSocketChannel::send(const String& msg)
@@ -134,7 +139,7 @@ void WebSocketChannel::fail(const String& reason)
     LOG(Network, "WebSocketChannel %p fail: %s", this, reason.utf8().data());
     ASSERT(!m_suspended);
     if (m_context)
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, 0, m_handshake.clientOrigin(), 0);
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, 0, m_handshake->clientOrigin(), 0);
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didClose().
 }
@@ -144,7 +149,7 @@ void WebSocketChannel::disconnect()
     LOG(Network, "WebSocketChannel %p disconnect", this);
     if (m_identifier && m_context)
         InspectorInstrumentation::didCloseWebSocket(m_context, m_identifier);
-    m_handshake.clearScriptExecutionContext();
+    m_handshake->clearScriptExecutionContext();
     m_client = 0;
     m_context = 0;
     if (m_handle)
@@ -170,8 +175,8 @@ void WebSocketChannel::didOpen(SocketStreamHandle* handle)
     if (!m_context)
         return;
     if (m_identifier)
-        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_context, m_identifier, m_handshake.clientHandshakeRequest());
-    CString handshakeMessage = m_handshake.clientHandshakeMessage();
+        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_context, m_identifier, m_handshake->clientHandshakeRequest());
+    CString handshakeMessage = m_handshake->clientHandshakeMessage();
     if (!handle->send(handshakeMessage.data(), handshakeMessage.length()))
         fail("Failed to send WebSocket handshake.");
 }
@@ -241,9 +246,9 @@ void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamErr
         else
             message = "WebSocket network error: " + error.localizedDescription();
         String failingURL = error.failingURL();
-        ASSERT(failingURL.isNull() || m_handshake.url().string() == failingURL);
+        ASSERT(failingURL.isNull() || m_handshake->url().string() == failingURL);
         if (failingURL.isNull())
-            failingURL = m_handshake.url().string();
+            failingURL = m_handshake->url().string();
         m_context->addMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, 0, failingURL, 0);
     }
     m_shouldDiscardReceivedData = true;
@@ -307,19 +312,19 @@ bool WebSocketChannel::processBuffer()
 
     RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
 
-    if (m_handshake.mode() == WebSocketHandshake::Incomplete) {
-        int headerLength = m_handshake.readServerHandshake(m_buffer, m_bufferSize);
+    if (m_handshake->mode() == WebSocketHandshake::Incomplete) {
+        int headerLength = m_handshake->readServerHandshake(m_buffer, m_bufferSize);
         if (headerLength <= 0)
             return false;
-        if (m_handshake.mode() == WebSocketHandshake::Connected) {
+        if (m_handshake->mode() == WebSocketHandshake::Connected) {
             if (m_identifier)
-                InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_context, m_identifier, m_handshake.serverHandshakeResponse());
-            if (!m_handshake.serverSetCookie().isEmpty()) {
+                InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_context, m_identifier, m_handshake->serverHandshakeResponse());
+            if (!m_handshake->serverSetCookie().isEmpty()) {
                 if (m_context->isDocument()) {
                     Document* document = static_cast<Document*>(m_context);
                     if (cookiesEnabled(document)) {
                         ExceptionCode ec; // Exception (for sandboxed documents) ignored.
-                        document->setCookie(m_handshake.serverSetCookie(), ec);
+                        document->setCookie(m_handshake->serverSetCookie(), ec);
                     }
                 }
             }
@@ -330,14 +335,14 @@ bool WebSocketChannel::processBuffer()
             LOG(Network, "remaining in read buf %lu", static_cast<unsigned long>(m_bufferSize));
             return m_buffer;
         }
-        ASSERT(m_handshake.mode() == WebSocketHandshake::Failed);
+        ASSERT(m_handshake->mode() == WebSocketHandshake::Failed);
         LOG(Network, "WebSocketChannel %p connection failed", this);
         skipBuffer(headerLength);
         m_shouldDiscardReceivedData = true;
-        fail(m_handshake.failureReason());
+        fail(m_handshake->failureReason());
         return false;
     }
-    if (m_handshake.mode() != WebSocketHandshake::Connected)
+    if (m_handshake->mode() != WebSocketHandshake::Connected)
         return false;
 
     const char* nextFrame = m_buffer;

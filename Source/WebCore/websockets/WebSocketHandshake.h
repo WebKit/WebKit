@@ -48,7 +48,7 @@ namespace WebCore {
         enum Mode {
             Incomplete, Normal, Failed, Connected
         };
-        WebSocketHandshake(const KURL&, const String& protocol, ScriptExecutionContext*);
+        WebSocketHandshake(const KURL&, const String& protocol, ScriptExecutionContext*, bool useHixie76Protocol);
         ~WebSocketHandshake();
 
         const KURL& url() const;
@@ -97,6 +97,7 @@ namespace WebCore {
         String m_clientProtocol;
         bool m_secure;
         ScriptExecutionContext* m_context;
+        bool m_useHixie76Protocol;
 
         Mode m_mode;
 

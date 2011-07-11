@@ -159,11 +159,12 @@ static void generateExpectedChallengeResponse(uint32_t number1, uint32_t number2
     memcpy(expectedChallenge, digest.data(), 16);
 }
 
-WebSocketHandshake::WebSocketHandshake(const KURL& url, const String& protocol, ScriptExecutionContext* context)
+WebSocketHandshake::WebSocketHandshake(const KURL& url, const String& protocol, ScriptExecutionContext* context, bool useHixie76Protocol)
     : m_url(url)
     , m_clientProtocol(protocol)
     , m_secure(m_url.protocolIs("wss"))
     , m_context(context)
+    , m_useHixie76Protocol(useHixie76Protocol)
     , m_mode(Incomplete)
 {
     uint32_t number1;
