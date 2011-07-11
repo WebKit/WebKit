@@ -3856,7 +3856,7 @@ BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 BUGWK64028 WIN LINUX : media/adopt-node-crash.html = CRASH PASS
 
 BUGCR88594 WIN7 : fast/loader/recursive-before-unload-crash.html = TIMEOUT
-BUGCR88594 WIN7 : fast/storage/storage-detached-iframe.html = TIMEOUT
+BUGCR88594 BUGWK61326 WIN7 : fast/storage/storage-detached-iframe.html = CRASH TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/access-via-redirect.php = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/crash-when-navigating-away-then-back.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/credential-url.html = TIMEOUT

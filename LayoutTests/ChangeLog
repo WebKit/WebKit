@@ -1,3 +1,8 @@
+2011-07-11  Ojan Vafai  <ojan@chromium.org>
+
+        Update expectation that was missed because the WIN7 bot was down for a long time.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-11  Dirk Pranke  <dpranke@chromium.org>
 
         update the boilerplate documentation in the test_expectations.txt files
