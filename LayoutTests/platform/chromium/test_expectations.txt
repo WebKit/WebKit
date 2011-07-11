@@ -4827,6 +4827,12 @@ BUGWK61369 WIN LINUX : transforms/2d/transform-borderbox.html = IMAGE
 BUGWK61369 WIN LINUX : transforms/2d/transform-fixed-container.html = IMAGE
 BUGWK61369 WIN LINUX : transforms/2d/transform-origin-borderbox.html = IMAGE
 
+BUGWK61369 WIN LINUX : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
+BUGWK61369 WIN LINUX : fast/html/details-writing-mode.html = IMAGE
+BUGWK61369 WIN LINUX : fast/replaced/outline-replaced-elements.html = IMAGE
+BUGWK61369 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
+BUGWK61369 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE
+
 // Paying attention to shouldAntialias flag in drawConvexPolygon()
 // These expectations are masking failures elsewhere in the file
 // which should be uncommented once these are rebaselined.
