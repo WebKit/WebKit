@@ -46,13 +46,24 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
     def __init__(self, server):
         self.server = server
 
+    def _serve_text(self, text):
+        print "== Begin Response =="
+        print text
+        print "== End Response =="
+
 
 class GardeningServerTest(unittest.TestCase):
-    def _post_to_path(self, path, expected_stderr=None):
+    def _post_to_path(self, path, expected_stderr=None, expected_stdout=None):
         handler = TestGardeningHTTPRequestHandler(MockServer())
         handler.path = path
-        OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
-    def test_empty_state(self):
+    def test_rollout(self):
         expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason']\n"
-        self._post_to_path("/rollout?revision=2314&reason=MOCK+rollout+reason", expected_stderr=expected_stderr)
+        expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
+        self._post_to_path("/rollout?revision=2314&reason=MOCK+rollout+reason", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+
+    def test_rebaseline_test(self):
+        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html', 'txt']\n"
+        expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
+        self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&suffix=txt", expected_stderr=expected_stderr, expected_stdout=expected_stdout)

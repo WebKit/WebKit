@@ -86,11 +86,11 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # otherwise there's a deadlock
         threading.Thread(target=lambda: self.server.shutdown()).start()
 
-    def _serve_text(self, html):
+    def _serve_text(self, text):
         self.send_response(200)
         self.send_header("Content-type", "text/plain")
         self.end_headers()
-        self.wfile.write(html)
+        self.wfile.write(text)
 
     def _serve_json(self, json):
         self.send_response(200)

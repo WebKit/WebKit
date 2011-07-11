@@ -62,3 +62,16 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
             revision,
             reason,
         ])
+        self._serve_text('success')
+
+    def rebaseline(self):
+        builder = self.query['builder'][0]
+        test = self.query['test'][0]
+        suffix = self.query['suffix'][0]
+        self._run_webkit_patch([
+            'rebaseline-test',
+            builder,
+            test,
+            suffix,
+        ])
+        self._serve_text('success')
