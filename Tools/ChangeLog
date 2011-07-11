@@ -1,3 +1,17 @@
+2011-07-11  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should be able to roll out patches
+        https://bugs.webkit.org/show_bug.cgi?id=64185
+
+        Reviewed by Eric Seidel.
+
+        This gardening server API is simply a binding to the rollout machinery
+        already present in webkit-patch.
+
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py: Added.
+
 2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Unreviewed fix after r90746.

@@ -31,3 +31,8 @@ class GardenOMatic(AbstractLocalServerCommand):
     help_text = "Experimental command for gardening the WebKit tree."
 
     server = GardeningHTTPServer
+
+    def _prepare_config(self, options, args, tool):
+        return {
+            'tool': tool,
+        }

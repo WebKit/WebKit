@@ -30,7 +30,8 @@ from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
 class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
     def __init__(self, httpd_port, config):
-        server_name = ""
+        server_name = ''
+        self.tool = config['tool']
         BaseHTTPServer.HTTPServer.__init__(self, (server_name, httpd_port), GardeningHTTPRequestHandler)
 
 
@@ -47,3 +48,17 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     ])
 
     STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "gardeningserver")
+
+    def _run_webkit_patch(self, args):
+        return self.server.tool.executive.run_command([self.server.tool.path()] + args)
+
+    def rollout(self):
+        revision = self.query['revision'][0]
+        reason = self.query['reason'][0]
+        self._run_webkit_patch([
+            'rollout',
+            '--force-clean',
+            '--non-interactive',
+            revision,
+            reason,
+        ])
