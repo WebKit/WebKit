@@ -1,3 +1,9 @@
+2011-07-11  Yury Semikhatsky  <yurys@chromium.org>
+        
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-11  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] http/tests/plugins/get-url.html is crashing on the bot

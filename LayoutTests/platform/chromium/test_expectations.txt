@@ -3978,3 +3978,7 @@ BUGWK61388 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.h
 
 // Getting form value is not implemented yet.
 BUGWK13061 : plugins/form-value.html = TEXT
+
+BUGCR88894 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
+BUGCR88894 WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
+BUGWK64255 WIN : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
