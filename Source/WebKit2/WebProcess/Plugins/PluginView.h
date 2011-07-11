@@ -102,7 +102,8 @@ private:
 #endif
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*);
     virtual void privateBrowsingStateChanged(bool);
-    
+    virtual bool getFormValue(String&);
+
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void setBoundsSize(const WebCore::IntSize&);

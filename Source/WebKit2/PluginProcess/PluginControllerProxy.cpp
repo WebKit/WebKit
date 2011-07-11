@@ -593,6 +593,11 @@ void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEn
     m_plugin->privateBrowsingStateChanged(isPrivateBrowsingEnabled);
 }
 
+void PluginControllerProxy::getFormValue(bool& returnValue, String& formValue)
+{
+    returnValue = m_plugin->getFormValue(formValue);
+}
+
 bool PluginControllerProxy::tryToShortCircuitEvaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
     // Only try to short circuit evaluate for plug-ins that have the quirk specified.

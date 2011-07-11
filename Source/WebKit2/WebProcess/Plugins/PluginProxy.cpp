@@ -373,6 +373,15 @@ void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
     m_connection->connection()->send(Messages::PluginControllerProxy::PrivateBrowsingStateChanged(isPrivateBrowsingEnabled), m_pluginInstanceID);
 }
 
+bool PluginProxy::getFormValue(String& formValue)
+{
+    bool returnValue;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::GetFormValue(), Messages::PluginControllerProxy::GetFormValue::Reply(returnValue, formValue), m_pluginInstanceID))
+        return false;
+
+    return returnValue;
+}
+
 void PluginProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
     controller()->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);

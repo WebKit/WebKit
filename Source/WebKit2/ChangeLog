@@ -1,3 +1,33 @@
+2011-07-11  Anders Carlsson  <andersca@apple.com>
+
+        Implement getFormValue for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=64294
+        <rdar://problem/3964087>
+
+        Reviewed by Kevin Decker.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::getFormValue):
+        Call Plugin::getFormValue.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add new GetFormValue message.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::getFormValue):
+        Get the form value and convert it to a String.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add getFormValue pure virtual member function.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::getFormValue):
+        Send a GetFormValue message to the plug-in process.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::getFormValue):
+        Call Plugin::getFormValue.
+
 2011-07-11  Ada Chan  <adachan@apple.com>
 
         The original request should be accessible from WebNavigationData.

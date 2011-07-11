@@ -507,6 +507,15 @@ void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
     m_plugin->privateBrowsingStateChanged(privateBrowsingEnabled);
 }
 
+bool PluginView::getFormValue(String& formValue)
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
+    return m_plugin->getFormValue(formValue);
+}
+
 void PluginView::setFrameRect(const WebCore::IntRect& rect)
 {
     Widget::setFrameRect(rect);

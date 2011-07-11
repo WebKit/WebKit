@@ -193,6 +193,7 @@ private:
 #endif
 
     virtual void privateBrowsingStateChanged(bool);
+    virtual bool getFormValue(String& formValue);
 
     bool supportsSnapshotting() const;
 

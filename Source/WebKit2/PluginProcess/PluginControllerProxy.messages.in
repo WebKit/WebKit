@@ -105,6 +105,9 @@ messages -> PluginControllerProxy {
     
     # Sent when private browsing is enabled or disabled
     PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
+
+    # Gets the string representating the form value of the plug-in
+    GetFormValue() -> (bool returnValue, WTF::String formValue)
 }
 
 #endif

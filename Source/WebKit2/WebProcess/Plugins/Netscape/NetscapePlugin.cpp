@@ -767,6 +767,21 @@ void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)
     NPP_SetValue(NPNVprivateModeBool, &value);
 }
 
+bool NetscapePlugin::getFormValue(String& formValue)
+{
+    ASSERT(m_isStarted);
+
+    char* formValueString = 0;
+    if (NPP_GetValue(NPPVformValue, &formValueString) != NPERR_NO_ERROR)
+        return false;
+
+    formValue = String::fromUTF8(formValueString);
+
+    // The plug-in allocates the form value string with NPN_MemAlloc so it needs to be freed with NPN_MemFree.
+    npnMemFree(formValueString);
+    return true;
+}
+
 bool NetscapePlugin::supportsSnapshotting() const
 {
 #if PLATFORM(MAC)

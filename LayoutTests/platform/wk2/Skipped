@@ -1852,9 +1852,6 @@ editing/spelling/spellcheck-input-search-crash.html
 # missing window.internals.createShadowContentElement
 fast/dom/shadow/create-content-element.html
 
-# Need to implement getFormValue().
-plugins/form-value.html
-
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

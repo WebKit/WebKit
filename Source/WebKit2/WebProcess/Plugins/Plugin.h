@@ -192,6 +192,9 @@ public:
     // Called when the private browsing state for this plug-in changes.
     virtual void privateBrowsingStateChanged(bool) = 0;
 
+    // Gets the form value representation for the plug-in, letting plug-ins participate in form submission.
+    virtual bool getFormValue(String& formValue) = 0;
+
 protected:
     Plugin();
 

@@ -101,6 +101,7 @@ private:
 #endif
 
     virtual void privateBrowsingStateChanged(bool);
+    virtual bool getFormValue(String& formValue);
 
     bool needsBackingStore() const;
     uint64_t windowNPObjectID();

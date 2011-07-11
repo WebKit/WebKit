@@ -140,6 +140,7 @@ private:
 #endif
 
     void privateBrowsingStateChanged(bool);
+    void getFormValue(bool& returnValue, String& formValue);
 
     bool tryToShortCircuitEvaluate(NPObject*, const String& scriptString, NPVariant* result);
 
