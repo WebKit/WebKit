@@ -975,17 +975,17 @@ void CanvasRenderingContext2D::stroke()
 
     if (!m_path.isEmpty()) {
 #if PLATFORM(QT)
+        FloatRect dirtyRect = m_path.platformPath().controlPointRect();
+#else
+        FloatRect dirtyRect = m_path.boundingRect();
+#endif
         // Fast approximation of the stroke's bounding rect.
         // This yields a slightly oversized rect but is very fast
         // compared to Path::strokeBoundingRect().
-        FloatRect boundingRect = m_path.platformPath().controlPointRect();
-        boundingRect.inflate(state().m_miterLimit + state().m_lineWidth);
-#else
-        CanvasStrokeStyleApplier strokeApplier(this);
-        FloatRect boundingRect = m_path.strokeBoundingRect(&strokeApplier);
-#endif
+        dirtyRect.inflate(state().m_miterLimit + state().m_lineWidth);
+
         c->strokePath(m_path);
-        didDraw(boundingRect);
+        didDraw(dirtyRect);
     }
 
 #if ENABLE(DASHBOARD_SUPPORT)

@@ -1,3 +1,19 @@
+2011-07-11  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Canvas: Use fast, approximate dirty rects for stroke()
+        https://bugs.webkit.org/show_bug.cgi?id=59764
+
+        No new tests, this is an optimization.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::stroke): Instead of using
+        Path::strokeBoundingRect() to calculate the exact bounding rect
+        for a path stroke, get the Path::boundingRect() and inflate it by
+        miterLimit + lineWidth to get a slightly oversized dirty rect
+        in a fraction of the time.
+
 2011-07-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
