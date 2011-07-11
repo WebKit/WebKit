@@ -3995,3 +3995,6 @@ BUGCR88911 MAC : svg/custom/use-invalid-pattern.svg = PASS TEXT
 BUGCR88911 MAC : svg/custom/use-invalid-style.svg = PASS TEXT
 BUGCR88911 MAC : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
+
+// V8 now follows spec on toisostring, test needs to be fixed.
+BUG88936 : fast/js/date-toisostring.html = TEXT
