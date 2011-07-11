@@ -55,7 +55,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestObj);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjTableValues[37] =
+static const HashTableValue JSTestObjTableValues[] =
 {
     { "readOnlyIntAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyIntAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "readOnlyStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -111,7 +111,7 @@ static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 133, 127, JSTestObjTable
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjConstructorTableValues[12] =
+static const HashTableValue JSTestObjConstructorTableValues[] =
 {
     { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -183,7 +183,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[48] =
+static const HashTableValue JSTestObjPrototypeTableValues[] =
 {
     { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) },

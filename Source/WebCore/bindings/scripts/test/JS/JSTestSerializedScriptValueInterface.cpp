@@ -41,7 +41,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestSerializedScriptValueInterface);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[3] =
+static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[] =
 {
     { "value", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t)0 THUNK_GENERATOR(0) },
     { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -57,7 +57,7 @@ static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceTable =
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTableValues[1] =
+static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTableValues[] =
 {
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };
@@ -105,7 +105,7 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor(E
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[1] =
+static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };

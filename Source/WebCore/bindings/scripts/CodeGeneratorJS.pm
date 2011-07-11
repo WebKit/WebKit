@@ -2827,13 +2827,12 @@ sub GenerateHashTable
     }
 
     # Dump the hash table
-    my $count = scalar @{$keys} + 1;
     push(@implContent, "#if ENABLE(JIT)\n");
     push(@implContent, "#define THUNK_GENERATOR(generator) , generator\n");
     push(@implContent, "#else\n");
     push(@implContent, "#define THUNK_GENERATOR(generator)\n");
     push(@implContent, "#endif\n");
-    push(@implContent, "\nstatic const HashTableValue $nameEntries\[$count\] =\n\{\n");
+    push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
         my $conditional;

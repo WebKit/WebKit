@@ -40,7 +40,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestInterface);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestInterfaceTableValues[2] =
+static const HashTableValue JSTestInterfaceTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t)0 THUNK_GENERATOR(0) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
@@ -55,7 +55,7 @@ static JSC_CONST_HASHTABLE HashTable JSTestInterfaceTable = { 2, 1, JSTestInterf
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestInterfaceConstructorTableValues[1] =
+static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 {
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };
@@ -119,7 +119,7 @@ ConstructType JSTestInterfaceConstructor::getConstructData(ConstructData& constr
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestInterfacePrototypeTableValues[1] =
+static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };

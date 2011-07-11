@@ -1,3 +1,21 @@
+2011-07-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove array size from generated JSC binding tables
+        https://bugs.webkit.org/show_bug.cgi?id=64229
+
+        Reviewed by Brent Fulgham.
+
+        Because many items in the array are surrounded with #if(ENABLE_XXX) lines,
+        the array size isn't fix and correct in all cases.
+        So let the compiler calculate the correct size itself.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHashTable):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+
 2011-07-10  Kenichi Ishibashi  <bashi@chromium.org>
 
         Let plugins participate in form submission

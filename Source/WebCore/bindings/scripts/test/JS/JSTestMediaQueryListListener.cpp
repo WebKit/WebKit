@@ -41,7 +41,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestMediaQueryListListener);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestMediaQueryListListenerTableValues[2] =
+static const HashTableValue JSTestMediaQueryListListenerTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t)0 THUNK_GENERATOR(0) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
@@ -56,7 +56,7 @@ static JSC_CONST_HASHTABLE HashTable JSTestMediaQueryListListenerTable = { 2, 1,
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[1] =
+static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[] =
 {
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
 };
@@ -104,7 +104,7 @@ bool JSTestMediaQueryListListenerConstructor::getOwnPropertyDescriptor(ExecState
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[2] =
+static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
     { "method", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t)1 THUNK_GENERATOR(0) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) }
