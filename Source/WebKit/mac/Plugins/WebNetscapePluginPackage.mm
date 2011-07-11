@@ -659,6 +659,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return &pluginFuncs;
 }
 
+- (NPNetscapeFuncs *)browserFuncs
+{
+    return &browserFuncs;
+}
+
 - (void)wasRemovedFromPluginDatabase:(WebPluginDatabase *)database
 {
     [super wasRemovedFromPluginDatabase:database];

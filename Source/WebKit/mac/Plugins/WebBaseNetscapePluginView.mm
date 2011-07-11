@@ -989,6 +989,12 @@ String WebHaltablePlugin::pluginName() const
     return nil;
 }
 
+- (BOOL)getFormValue:(NSString **)value
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 @end
 
 namespace WebKit {

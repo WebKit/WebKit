@@ -1617,6 +1617,19 @@ public:
     }
 #endif
 
+    virtual bool getFormValue(String& value)
+    {
+        NSString* nsValue = 0;
+        if ([(WebBaseNetscapePluginView *)platformWidget() getFormValue:&nsValue]) {
+            if (!nsValue)
+                return false;
+            value = String(nsValue);
+            [nsValue release];
+            return true;
+        }
+        return false;
+    }
+
     virtual void handleEvent(Event* event)
     {
         Frame* frame = Frame::frameForWidget(this);

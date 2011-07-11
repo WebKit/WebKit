@@ -127,6 +127,9 @@ typedef union PluginPort {
 // The return value is expected to be retained.
 - (NPObject *)createPluginScriptableObject;
 
+// Returns the form value associated with the plugin instance.
+- (BOOL)getFormValue:(NSString **)value;
+
 // -willCallPlugInFunction must be called before calling any of the NPP_* functions for this view's plugin.
 // This is necessary to ensure that plug-ins are not destroyed while WebKit calls into them.  Some plug-ins (Flash
 // at least) are written with the assumption that nothing they do in their plug-in functions can cause NPP_Destroy()

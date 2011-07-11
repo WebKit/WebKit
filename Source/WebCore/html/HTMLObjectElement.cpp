@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
@@ -39,12 +40,14 @@
 #include "MIMETypeRegistry.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "Text.h"
+#include "Widget.h"
 
 namespace WebCore {
 
@@ -535,10 +538,19 @@ void HTMLObjectElement::removedFromTree(bool deep)
     HTMLPlugInImageElement::removedFromTree(deep);
 }
 
-bool HTMLObjectElement::appendFormData(FormDataList&, bool)
+bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
 {
-    // FIXME: Implements this function.
-    return false;
+    if (name().isEmpty())
+        return false;
+
+    Widget* widget = pluginWidget();
+    if (!widget || !widget->isPluginViewBase())
+        return false;
+    String value;
+    if (!static_cast<PluginViewBase*>(widget)->getFormValue(value))
+        return false;
+    encoding.appendData(name(), value);
+    return true;
 }
 
 const AtomicString& HTMLObjectElement::formControlName() const

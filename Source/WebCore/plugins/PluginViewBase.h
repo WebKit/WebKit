@@ -27,6 +27,7 @@
 
 #include "Widget.h"
 #include "GraphicsLayer.h"
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
     class ExecState;
@@ -46,6 +47,7 @@ public:
 
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) { return 0; }
     virtual void privateBrowsingStateChanged(bool) { }
+    virtual bool getFormValue(String&) { return false; }
 
 protected:
     PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }

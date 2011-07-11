@@ -1343,3 +1343,6 @@ fast/exclusions
 
 # Causes a SyntaxError (http://webkit.org/b/62595).
 fast/workers/worker-crash-with-invalid-location.html
+
+# Need to implement getFormValue().
+plugins/form-value.html

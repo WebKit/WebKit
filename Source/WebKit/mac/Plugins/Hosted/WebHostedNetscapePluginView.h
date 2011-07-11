@@ -59,6 +59,7 @@ namespace WebKit {
 
 - (void)pluginHostDied;
 - (CALayer *)pluginLayer;
+- (BOOL)getFormValue:(NSString **)value;
 - (void)webFrame:(WebFrame *)webFrame didFinishLoadWithReason:(NPReason)reason;
 
 @end

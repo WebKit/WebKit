@@ -146,6 +146,8 @@ class WebHaltablePlugin;
 
 - (CALayer *)pluginLayer;
 
+- (BOOL)getFormValue:(NSString **)value;
+
 @end
 
 

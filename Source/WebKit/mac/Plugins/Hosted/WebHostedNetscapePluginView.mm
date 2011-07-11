@@ -156,6 +156,14 @@ extern "C" {
     return _pluginLayer.get();
 }
 
+- (BOOL)getFormValue:(NSString **)value
+{
+    // FIXME: We cannot implement this method for now because NPP_GetValue
+    // is not currently exposed by the plugin host. Once we have an IPC routine
+    // which allows us to invoke NPP_GetValue, we could implement this method.
+    return false;
+}
+
 - (void)setLayer:(CALayer *)newLayer
 {
     // FIXME: This should use the same implementation as WebNetscapePluginView (and move to the base class).

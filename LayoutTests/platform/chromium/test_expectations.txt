@@ -5119,3 +5119,6 @@ BUGWK61388 WIN MAC GPU : platform/chromium/compositing/layout-width-change.html 
 BUGWK61388 WIN MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
 BUGWK61388 MAC GPU : compositing/masks/multiple-masks.html = IMAGE
 BUGWK61388 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
+
+// Getting form value is not implemented yet.
+BUGWK13061 : plugins/form-value.html = TEXT

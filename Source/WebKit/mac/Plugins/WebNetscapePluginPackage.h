@@ -73,6 +73,7 @@ typedef enum {
 
 - (WebExecutableType)executableType;
 - (NPPluginFuncs *)pluginFuncs;
+- (NPNetscapeFuncs *)browserFuncs;
 
 - (BOOL)supportsSnapshotting;
 

@@ -1452,6 +1452,26 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return value;
 }
 
+- (BOOL)getFormValue:(NSString **)value
+{
+    if (![_pluginPackage.get() pluginFuncs]->getvalue || !_isStarted)
+        return false;
+    // Plugins will allocate memory for the buffer by using NPN_MemAlloc().
+    char* buffer = NULL;
+    NPError error;
+    [self willCallPlugInFunction];
+    {
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        error = [_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVformValue, &buffer);
+    }
+    [self didCallPlugInFunction];
+    if (error != NPERR_NO_ERROR || !buffer)
+        return false;
+    *value = [[NSString alloc] initWithUTF8String:buffer];
+    [_pluginPackage.get() browserFuncs]->memfree(buffer);
+    return true;
+}
+
 - (void)willCallPlugInFunction
 {
     ASSERT(plugin);

@@ -658,6 +658,9 @@ plugins/plugin-initiate-popup-window.html
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html
 
+# Need to implement getFormValue().
+plugins/form-value.html
+
 # Tests in security/ directory
 #   Tests failing
 security/set-form-autocomplete-attribute.html
