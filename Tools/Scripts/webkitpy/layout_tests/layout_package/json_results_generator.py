@@ -66,6 +66,33 @@ def write_json(filesystem, json_object, file_path):
     json_string = _JSON_PREFIX + json_data + _JSON_SUFFIX
     filesystem.write_text_file(file_path, json_string)
 
+
+def convert_trie_to_flat_paths(trie, prefix=None):
+    """Converts the directory structure in the given trie to flat paths, prepending a prefix to each."""
+    result = {}
+    for name, data in trie.iteritems():
+        if prefix:
+            name = prefix + "/" + name
+
+        if len(data) and not "results" in data:
+            result.update(convert_trie_to_flat_paths(data, name))
+        else:
+            result[name] = data
+
+    return result
+
+
+def add_path_to_trie(path, value, trie):
+    """Inserts a single flat directory path and associated value into a directory trie structure."""
+    if not "/" in path:
+        trie[path] = value
+        return
+
+    directory, slash, rest = path.partition("/")
+    if not directory in trie:
+        trie[directory] = {}
+    add_path_to_trie(rest, value, trie[directory])
+
 def test_timings_trie(port, individual_test_timings):
     """Breaks a test name into chunks by directory and puts the test time as a value in the lowest part, e.g.
     foo/bar/baz.html: 1ms
@@ -83,16 +110,8 @@ def test_timings_trie(port, individual_test_timings):
     for test_result in individual_test_timings:
         test = test_result.test_name
 
-        parts = test.split('/')
-        current_map = trie
-        for i, part in enumerate(parts):
-            if i == (len(parts) - 1):
-                current_map[part] = int(1000 * test_result.test_run_time)
-                break
+        add_path_to_trie(test, int(1000 * test_result.test_run_time), trie)
 
-            if part not in current_map:
-                current_map[part] = {}
-            current_map = current_map[part]
     return trie
 
 # FIXME: We already have a TestResult class in test_results.py
@@ -147,7 +166,7 @@ class JSONResultsGeneratorBase(object):
                         TestResult.FAILS: FAIL_RESULT,
                         TestResult.FLAKY: FLAKY_RESULT}
 
-    VERSION = 3
+    VERSION = 4
     VERSION_KEY = "version"
     RESULTS = "results"
     TIMES = "times"
@@ -265,7 +284,8 @@ class JSONResultsGeneratorBase(object):
         # Update the all failing tests with result type and time.
         tests = results_for_builder[self.TESTS]
         all_failing_tests = self._get_failed_test_names()
-        all_failing_tests.update(tests.iterkeys())
+        all_failing_tests.update(convert_trie_to_flat_paths(tests))
+
         for test in all_failing_tests:
             self._insert_test_time_and_result(test, tests)
 
@@ -516,32 +536,57 @@ class JSONResultsGeneratorBase(object):
         result = self._get_result_char(test_name)
         time = self._get_test_timing(test_name)
 
-        if test_name not in tests:
-            tests[test_name] = self._create_results_and_times_json()
+        this_test = tests
+        for segment in test_name.split("/"):
+            if segment not in this_test:
+                this_test[segment] = {}
+            this_test = this_test[segment]
 
-        thisTest = tests[test_name]
-        if self.RESULTS in thisTest:
-            self._insert_item_run_length_encoded(result, thisTest[self.RESULTS])
-        else:
-            thisTest[self.RESULTS] = [[1, result]]
+        if not len(this_test):
+            self._populate_results_and_times_json(this_test)
 
-        if self.TIMES in thisTest:
-            self._insert_item_run_length_encoded(time, thisTest[self.TIMES])
+        if self.RESULTS in this_test:
+            self._insert_item_run_length_encoded(result, this_test[self.RESULTS])
         else:
-            thisTest[self.TIMES] = [[1, time]]
+            this_test[self.RESULTS] = [[1, result]]
+
+        if self.TIMES in this_test:
+            self._insert_item_run_length_encoded(time, this_test[self.TIMES])
+        else:
+            this_test[self.TIMES] = [[1, time]]
 
     def _convert_json_to_current_version(self, results_json):
         """If the JSON does not match the current version, converts it to the
         current version and adds in the new version number.
         """
-        if (self.VERSION_KEY in results_json and
-            results_json[self.VERSION_KEY] == self.VERSION):
-            return
+        if self.VERSION_KEY in results_json:
+            archive_version = results_json[self.VERSION_KEY]
+            if archive_version == self.VERSION:
+                return
+        else:
+            archive_version = 3
+
+        # version 3->4
+        if archive_version == 3:
+            num_results = len(results_json.values())
+            for builder, results in results_json.iteritems():
+                self._convert_tests_to_trie(results)
 
         results_json[self.VERSION_KEY] = self.VERSION
 
-    def _create_results_and_times_json(self):
-        results_and_times = {}
+    def _convert_tests_to_trie(self, results):
+        if not self.TESTS in results:
+            return
+
+        test_results = results[self.TESTS]
+        test_results_trie = {}
+        for test in test_results.iterkeys():
+            single_test_result = test_results[test]
+            add_path_to_trie(test, single_test_result, test_results_trie)
+
+        results[self.TESTS] = test_results_trie
+
+    def _populate_results_and_times_json(self, results_and_times):
         results_and_times[self.RESULTS] = []
         results_and_times[self.TIMES] = []
         return results_and_times

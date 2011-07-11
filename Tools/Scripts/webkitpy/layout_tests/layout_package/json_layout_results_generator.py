@@ -125,30 +125,6 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         return self._get_modifier_char(test_name)
 
     # override
-    def _convert_json_to_current_version(self, results_json):
-        archive_version = None
-        if self.VERSION_KEY in results_json:
-            archive_version = results_json[self.VERSION_KEY]
-
-        super(JSONLayoutResultsGenerator,
-              self)._convert_json_to_current_version(results_json)
-
-        # version 2->3
-        if archive_version == 2:
-            for results_for_builder in results_json.itervalues():
-                try:
-                    test_results = results_for_builder[self.TESTS]
-                except:
-                    continue
-
-            for test in test_results:
-                # Make sure all paths are relative
-                test_path = self._get_path_relative_to_layout_test_root(test)
-                if test_path != test:
-                    test_results[test_path] = test_results[test]
-                    del test_results[test]
-
-    # override
     def _insert_failure_summaries(self, results_for_builder):
         summary = self._result_summary
 
