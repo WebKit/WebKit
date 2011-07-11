@@ -46,6 +46,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
+    virtual void didFindZoomableArea(const WebCore::IntRect&);
 
     virtual void timerEvent(QTimerEvent*);
 

@@ -225,3 +225,8 @@ void QDesktopWebPageProxy::timerEvent(QTimerEvent* ev)
     else
         QObject::timerEvent(ev);
 }
+
+void QDesktopWebPageProxy::didFindZoomableArea(const IntRect&)
+{
+    // This feature is only used by QTouchWebView.
+}

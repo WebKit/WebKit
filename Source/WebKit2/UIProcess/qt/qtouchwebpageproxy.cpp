@@ -96,3 +96,13 @@ void QTouchWebPageProxy::touchEvent(QTouchEvent* event)
     ev->ignore();
 #endif
 }
+
+void QTouchWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
+{
+    m_webPageProxy->findZoomableAreaForPoint(point);
+}
+
+void QTouchWebPageProxy::didFindZoomableArea(const IntRect& area)
+{
+    emit zoomableAreaFound(QRect(area));
+}

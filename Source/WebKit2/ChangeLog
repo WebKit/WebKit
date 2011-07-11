@@ -1,3 +1,20 @@
+2011-07-11  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Move zoomable-area-for-point functionality to QTouchWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=64273
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::didFindZoomableArea):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::findZoomableAreaForPoint):
+        (QTouchWebPageProxy::didFindZoomableArea):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+
 2011-07-10  Anders Carlsson  <andersca@apple.com>
 
         WebKit2 is leaking NSCursors created by leakNamedCursor

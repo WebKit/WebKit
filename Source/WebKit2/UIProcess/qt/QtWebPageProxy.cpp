@@ -745,16 +745,6 @@ QAction* QtWebPageProxy::action(WebAction action) const
     return a;
 }
 
-void QtWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
-{
-    m_webPageProxy->findZoomableAreaForPoint(point);
-}
-
-void QtWebPageProxy::didFindZoomableArea(const IntRect& area)
-{
-    emit zoomableAreaFound(QRect(area));
-}
-
 void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {
     QImage dragQImage;

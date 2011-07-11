@@ -39,6 +39,7 @@ public:
     virtual bool handleEvent(QEvent*);
 
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
+    void findZoomableAreaForPoint(const QPoint&);
 
 protected:
     virtual void paintContent(QPainter* painter, const QRect& area);
@@ -50,6 +51,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
+    virtual void didFindZoomableArea(const WebCore::IntRect&);
 
     TouchViewInterface* touchViewInterface() const { return static_cast<TouchViewInterface*>(m_viewInterface); }
     QTouchWebPage* pageView() const { return static_cast<QTouchWebPage*>(touchViewInterface()->pageView()); }

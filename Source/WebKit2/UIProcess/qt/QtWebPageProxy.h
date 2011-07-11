@@ -108,7 +108,7 @@ public:
     virtual void pageClosed() { }
     virtual void didRelaunchProcess();
     virtual void didChangeContentsSize(const WebCore::IntSize&);
-    virtual void didFindZoomableArea(const WebCore::IntRect&);
+
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
     virtual WebCore::IntRect viewportVisibleRect() const;
     virtual void setCursor(const WebCore::Cursor&);
@@ -187,8 +187,6 @@ public:
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
 
     QWKHistory* history() const;
-
-    void findZoomableAreaForPoint(const QPoint&);
 
     void setPageIsVisible(bool);
 
