@@ -3993,5 +3993,5 @@ BUGCR88911 MAC : fast/text/find-kana.html = PASS TEXT
 BUGCR88911 MAC : fast/xsl/mozilla-tests.xml = PASS TEXT
 BUGCR88911 MAC : svg/custom/use-invalid-pattern.svg = PASS TEXT
 BUGCR88911 MAC : svg/custom/use-invalid-style.svg = PASS TEXT
-BUGCR88911 MAC : fast/text/atsui-multiple-renderers.html = PASS TEXT
-BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = PASS TEXT
+BUGCR88911 MAC : fast/text/atsui-multiple-renderers.html = IMAGE
+BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
