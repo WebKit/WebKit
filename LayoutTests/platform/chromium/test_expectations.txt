@@ -765,7 +765,9 @@ BUGCR6139 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEX
 // Plugin tests
 // -----------------------------------------------------------------
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
-BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TEXT TIMEOUT
+
+// This test seems to hang on Vista, in addition to the other problems.
+BUGWK64319 BUGCR61799 SKIP : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TEXT TIMEOUT
 BUGCR37962 MAC : plugins/iframe-shims.html = TEXT PASS TIMEOUT
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT

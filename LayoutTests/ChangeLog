@@ -1,3 +1,13 @@
+2011-07-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Skip plugins/evaluate-js-after-removing-plugin-element.html on Chromium Vista.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64319
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-11  Yi Shen  <yi.4.shen@nokia.com>
 
         [Qt] Unreviewed rollout 90779 which may fail the layout-test.
