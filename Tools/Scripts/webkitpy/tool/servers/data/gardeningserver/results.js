@@ -203,7 +203,10 @@ TestHistoryWalker.prototype._fetchNextResultNode = function(callback)
     ++self._indexOfNextKeyToFetch;
     g_resultsCache.get(key, function(resultsTree) {
         var resultNode = results.resultNodeForTest(resultsTree, self._testName);
-        callback(resultsTree['revision'], resultNode);
+        var revision = parseInt(resultsTree['revision'])
+        if (isNaN(revision))
+            revision = 0;
+        callback(revision, resultNode);
     });
 };
 

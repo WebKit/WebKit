@@ -24,15 +24,18 @@ test("summarizeResultsByTest", 1, function() {
     equal(resultsSummary.html(),
         '<div class="test">' +
             '<div class="testName">scrollbars/custom-scrollbar-with-incomplete-style.html</div>' +
-                '<div class="builders">' +
-                    '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">CRASH</div><div class="expected">IMAGE</div></div>' +
-                    '<div class="builder"><div class="builderName">Mock Linux</div><div class="actual">CRASH</div><div class="expected">TEXT</div></div>' +
-                '</div>' +
-            '</div>' +
+             '<div class="builders">' +
+                 '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">CRASH</div><div class="expected">IMAGE</div>' +
+                     '<button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>' +
+                 '<div class="builder"><div class="builderName">Mock Linux</div><div class="actual">CRASH</div><div class="expected">TEXT</div>' +
+                     '<button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>' +
+             '</div>' +
+        '</div>' +
         '<div class="test">' +
             '<div class="testName">userscripts/another-test.html</div>' +
             '<div class="builders">' +
-                '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">TEXT</div><div class="expected">PASS</div></div>' +
+                '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">TEXT</div><div class="expected">PASS</div>' +
+                    '<button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>' +
             '</div>' +
         '</div>');
 });

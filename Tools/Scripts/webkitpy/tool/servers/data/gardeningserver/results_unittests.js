@@ -138,7 +138,7 @@ NetworkSimulator.prototype.runTest = function(testCase)
 }
 
 test("regressionRangeForFailure", 3, function() {
-    simulator = new NetworkSimulator();
+    var simulator = new NetworkSimulator();
 
     var keyMap = {
         "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw": {
@@ -212,8 +212,8 @@ test("regressionRangeForFailure", 3, function() {
     };
     simulator.runTest(function() {
         results.regressionRangeForFailure("Mock Builder", "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
-            equals(oldestFailingRevision, "90426");
-            equals(newestPassingRevision, "90424");
+            equals(oldestFailingRevision, 90426);
+            equals(newestPassingRevision, 90424);
         });
     });
 });

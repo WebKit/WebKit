@@ -10,7 +10,7 @@ ui.summarizeResultsByTest = function(resultsByTest)
         block.append(testBlock);
         $('.testName', testBlock).text(testName);
         $.each(resultNodesByBuilder, function(builderName, resultNode) {
-            var builderBlock = $('<div class="builder"><div class="builderName"></div><div class="actual"></div><div class="expected"></div></div>');
+            var builderBlock = $('<div class="builder"><div class="builderName"></div><div class="actual"></div><div class="expected"></div><button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>');
             $('.builders', testBlock).append(builderBlock);
             $('.builderName', builderBlock).text(builderName);
             $('.actual', builderBlock).text(resultNode.actual);

@@ -29,9 +29,10 @@ function fetchResults(onsuccess)
     setIconState($('.failures').length);
 }
 
-function expandResults()
+function showResults()
 {
-    var resultsSummary = $(this);
+    // FIXME: This is fragile.
+    var resultsSummary = $(this).parent().parent().parent();
     var testName = $('.testName', resultsSummary).text();
     $('.builderName', resultsSummary).each(function() {
         var builderName = $(this).text();
@@ -41,9 +42,25 @@ function expandResults()
     });
 }
 
+function findRegressionRange()
+{
+    // FIXME: This is fragile!
+    var builderName = $('.builderName', $(this).parent()).text();
+    var testName = $('.testName', $(this).parent().parent().parent()).text();
+    results.regressionRangeForFailure(builderName, testName, function(oldestFailingRevision, newestPassingRevision) {
+        var tracURLs = [];
+        for (var i = newestPassingRevision + 1; i <= oldestFailingRevision; ++i) {
+            tracURLs.push('<a href="http://trac.webkit.org/changeset/' + i + '">' + i + '</a>');
+        }
+        $('.butterbar .status').html('Regression range: ' + tracURLs.join(' '));
+        $('.butterbar').fadeIn();
+    });
+}
+
 $('.hide').live('click', hide);
 $('.quit').live('click', quit);
-$('.results-summary .test').live('click', expandResults);
+$('.show-results').live('click', showResults);
+$('.regression-range').live('click', findRegressionRange);
 
 $(document).ready(function() {
     fetchResults(function() {
