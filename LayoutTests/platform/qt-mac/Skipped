@@ -568,17 +568,12 @@ css3/css3-modsel-33.html
 css3/css3-modsel-35.html
 css3/css3-modsel-36.html
 css3/css3-modsel-37.html
-editing/deleting/4845371.html
 editing/deleting/4922367.html
-editing/deleting/5026848-1.html
-editing/deleting/5026848-2.html
-editing/deleting/5026848-3.html
 editing/deleting/5032066.html
 editing/deleting/5099303.html
 editing/deleting/5115601.html
 editing/deleting/5126166.html
 editing/deleting/5144139-2.html
-editing/deleting/5156801-2.html
 editing/deleting/5206311-1.html
 editing/deleting/5206311-2.html
 editing/deleting/5272440.html
@@ -2366,7 +2361,6 @@ fast/selectors/lang-vs-xml-lang-xhtml.xhtml
 fast/selectors/lang-vs-xml-lang.html
 fast/selectors/nondeterministic-combinators.html
 fast/selectors/unqualified-hover-quirks.html
-fast/selectors/unqualified-hover-strict.html
 fast/spatial-navigation/snav-multiple-select-focusring.html
 fast/spatial-navigation/snav-radio-group.html
 fast/spatial-navigation/snav-radio.html
@@ -4586,7 +4580,6 @@ svg/W3C-SVG-1.1-SE/styling-css-04-f.svg
 svg/custom/linking-uri-01-b.svg
 svg/text/text-overflow-ellipsis-svgfont.html
 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
-http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 
 # Qt specific results committed in r90007, but fail on Qt-Mac platform
 svg/W3C-SVG-1.1-SE/text-tref-03-b.svg
