@@ -31,6 +31,7 @@ SOURCES = PluginObject.cpp \
           main.cpp \
           Tests/DocumentOpenInDestroyStream.cpp \
           Tests/EvaluateJSAfterRemovingPluginElement.cpp \
+          Tests/FormValue.cpp \
           Tests/GetURLNotifyWithURLThatFailsToLoad.cpp \
           Tests/GetURLWithJavaScriptURL.cpp \
           Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \

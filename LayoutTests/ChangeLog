@@ -1,3 +1,14 @@
+2011-07-11  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Add TestNetscapePlugIn/Tests/FormValue.cpp to DRT build files
+        https://bugs.webkit.org/show_bug.cgi?id=64248
+
+        Updates test_expectations.
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/test_expectations.txt: Removed SKIP from plugins/form-value.html.
+
 2011-07-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update win/linux pixel expectations for r90701 (part 12/12).

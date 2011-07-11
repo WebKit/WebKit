@@ -402,6 +402,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\FormValue.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\GetURLNotifyWithURLThatFailsToLoad.cpp"
 				>
 			</File>

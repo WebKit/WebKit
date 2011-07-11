@@ -243,6 +243,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/FormValue.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLNotifyWithURLThatFailsToLoad.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \

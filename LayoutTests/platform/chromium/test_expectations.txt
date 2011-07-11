@@ -3977,4 +3977,4 @@ BUGWK61388 MAC GPU : compositing/masks/multiple-masks.html = IMAGE
 BUGWK61388 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
 
 // Getting form value is not implemented yet.
-BUGWK13061 SKIP : plugins/form-value.html = TEXT
+BUGWK13061 : plugins/form-value.html = TEXT
