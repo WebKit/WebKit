@@ -491,7 +491,9 @@ void SpeculativeJIT::compile(Node& node)
         }
         case PredictArray: {
             SpeculateCellOperand cell(this, node.child1());
-            m_jit.storePtr(cell.gpr(), JITCompiler::addressFor(node.local()));
+            GPRReg cellGPR = cell.gpr();
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+            m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
             break;
         }
