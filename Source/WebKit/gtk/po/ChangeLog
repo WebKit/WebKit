@@ -1,3 +1,12 @@
+2011-07-11  Yuri Chornoivan  <yurchor@ukr.net>
+
+        Ukrainian translation for WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=36415
+
+        Reviewed by Gustavo Noronha.
+
+        * uk.po: added.
+
 2011-07-11  Andika Triwidada  <andika@gmail.com>
 
         Indonesian translation
