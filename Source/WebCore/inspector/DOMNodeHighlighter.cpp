@@ -132,7 +132,7 @@ inline IntSize frameToMainFrameOffset(Frame* frame)
     return mainFramePoint - IntPoint();
 }
 
-void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, Settings* settings)
+void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
 {
     static const int rectInflatePx = 4;
     static const int fontHeightPx = 12;
@@ -266,22 +266,21 @@ void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
         LayoutRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
                           borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
 
-        FrameView* containingView = containingFrame->view();
-        FloatQuad absContentQuad = containingView->convertFromRenderer(renderer, FloatRect(contentBox));
-        FloatQuad absPaddingQuad = containingView->convertFromRenderer(renderer, FloatRect(paddingBox));
-        FloatQuad absBorderQuad = containingView->convertFromRenderer(renderer, FloatRect(borderBox));
-        FloatQuad absMarginQuad = containingView->convertFromRenderer(renderer, FloatRect(marginBox));
 
-        absContentQuad = containingView->convertToRootContainingView(absContentQuad);
-        absPaddingQuad = containingView->convertToRootContainingView(absPaddingQuad);
-        absBorderQuad = containingView->convertToRootContainingView(absBorderQuad);
-        absMarginQuad = containingView->convertToRootContainingView(absMarginQuad);
+        FloatQuad absContentQuad = renderBox->localToAbsoluteQuad(FloatRect(contentBox));
+        FloatQuad absPaddingQuad = renderBox->localToAbsoluteQuad(FloatRect(paddingBox));
+        FloatQuad absBorderQuad = renderBox->localToAbsoluteQuad(FloatRect(borderBox));
+        FloatQuad absMarginQuad = renderBox->localToAbsoluteQuad(FloatRect(marginBox));
+
+        absContentQuad.move(mainFrameOffset);
+        absPaddingQuad.move(mainFrameOffset);
+        absBorderQuad.move(mainFrameOffset);
+        absMarginQuad.move(mainFrameOffset);
 
         titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
         drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, mode);
     } else if (renderer->isRenderInline() || isSVGRenderer) {
-        // FIXME: Does not handle transformed content correctly.
         // FIXME: We should show margins/padding/border for inlines.
         Vector<FloatQuad> lineBoxQuads;
         renderer->absoluteQuads(lineBoxQuads);
@@ -296,7 +295,7 @@ void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
     if (!node->isElementNode())
         return;
 
-    Settings* settings = containingFrame->settings();
+    WebCore::Settings* settings = containingFrame->settings();
     if (mode == DOMNodeHighlighter::HighlightAll)
         drawElementTitle(context, node, boundingBox, titleAnchorBox, overlayRect, settings);
 }

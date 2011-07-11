@@ -136,12 +136,11 @@ void RenderView::layout()
     setNeedsLayout(false);
 }
 
-void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
+void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
     ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
-    ASSERT_UNUSED(wasFixed, !wasFixed || *wasFixed == fixed);
 
     if (!repaintContainer && useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;

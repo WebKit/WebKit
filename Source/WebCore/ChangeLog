@@ -1,3 +1,53 @@
+2011-07-11  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [REGRESSION r89753-89754] highlight does not respect scroller location.
+        https://bugs.webkit.org/show_bug.cgi?id=63982
+
+        Rolling out 89760, 89756, 89754, 89753 for breaking inspector highlight.
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.exp.in:
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawNodeHighlight):
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/Widget.cpp:
+        * platform/Widget.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+
 2011-07-11  Mustafizur Rahaman  <mustaf.here@gmail.com>
 
         Reviewed by James Robinson.
