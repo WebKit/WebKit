@@ -30,7 +30,7 @@ function LayoutTestResultsLoader(builder) {
 LayoutTestResultsLoader.prototype = {
     start: function(buildName, callback, errorCallback) {
         var cacheKey = 'LayoutTestResultsLoader.' + this._builder.name + '.' + buildName;
-        const currentCachedDataVersion = 3;
+        const currentCachedDataVersion = 4;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
             if (cachedData.version === currentCachedDataVersion) {
@@ -82,35 +82,54 @@ LayoutTestResultsLoader.prototype = {
 
         var self = this;
 
-        function fetchAndParseResultsHTMLAndCallCallback() {
+        function fetchAndParseResultsHTML(successCallback, errorCallback) {
             getResource(self._builder.resultsPageURL(buildName), function(xhr) {
                 var parseResult = (new ORWTResultsParser()).parse(xhr.responseText);
                 result.tests = parseResult.tests;
                 if (resultsHTMLSupportsTooManyFailuresInfo)
                     result.tooManyFailures = parseResult.tooManyFailures;
-
-                successCallback(result);
+                successCallback();
             },
             function(xhr) {
-                // We failed to fetch results.html. run-webkit-tests must have aborted early.
+                // We failed to fetch results.html.
                 errorCallback();
             });
         }
 
+        function fetchNumberOfFailingTests(successCallback, errorCallback) {
+            self._builder.getNumberOfFailingTests(parsedBuildName.buildNumber, function(failingTestCount, tooManyFailures) {
+                result.tooManyFailures = tooManyFailures;
+
+                if (failingTestCount < 0) {
+                    // The number of failing tests couldn't be determined.
+                    errorCallback();
+                    return;
+                }
+
+                successCallback(failingTestCount);
+            });
+        }
+
         if (resultsHTMLSupportsTooManyFailuresInfo) {
-            fetchAndParseResultsHTMLAndCallCallback();
+            fetchAndParseResultsHTML(function() {
+                successCallback(result);
+            },
+            function() {
+                fetchNumberOfFailingTests(function(failingTestCount) {
+                    if (!failingTestCount) {
+                        // All tests passed, so no results.html was generated.
+                        successCallback(result);
+                        return;
+                    }
+
+                    // Something went wrong with fetching results.
+                    errorCallback();
+                }, errorCallback);
+            });
             return;
         }
 
-        self._builder.getNumberOfFailingTests(parsedBuildName.buildNumber, function(failingTestCount, tooManyFailures) {
-            result.tooManyFailures = tooManyFailures;
-
-            if (failingTestCount < 0) {
-                // The number of failing tests couldn't be determined.
-                errorCallback();
-                return;
-            }
-
+        fetchNumberOfFailingTests(function(failingTestCount) {
             if (!failingTestCount) {
                 // All tests passed.
                 successCallback(result);
@@ -118,7 +137,9 @@ LayoutTestResultsLoader.prototype = {
             }
 
             // Find out which tests failed.
-            fetchAndParseResultsHTMLAndCallCallback();
-        });
+            fetchAndParseResultsHTML(function() {
+                successCallback(result);
+            }, errorCallback);
+        }, errorCallback);
     },
 };

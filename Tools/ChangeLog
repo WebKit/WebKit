@@ -1,3 +1,40 @@
+2011-07-11  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures that ORWT's results.html file might be missing due to all tests passing
+
+        There are three reasons why we might fail to fetch ORWT's results.html:
+          - All tests passed, so no results.html was generated
+          - Some error during the test run caused results.html not to be generated (e.g., ORWT
+            timed out)
+          - Some network error occurred when fetching results.html
+
+        We were failing to account for the first possibility in some cases. For test runs before
+        r89610, we first check build.webkit.org/json to determine how many tests failed and whether
+        ORWT exited early due to too many failures; if all tests passed then we don't fetch
+        results.html at all. r89610 changed ORWT to put information in results.html about exiting
+        early due to too many failures, so we no longer needed to check build.webkit.org/json to get
+        that information, and in r89619 I changed TestFailures to do just that. But I forgot that we
+        still needed to check build.webkit.org/json to find out if all tests passed!
+
+        Now, for test runs after r89610, we check results.html first, and then check
+        build.webkit.org/json if we fail to fetch results.html. This lets us distinguish between all
+        tests passing and the error cases.
+
+        Fixes <http://webkit.org/b/64280> TestFailures page can't pinpoint that r90699 caused 13
+        tests to fail on Windows 7 Release (WebKit2 Tests)
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Bumped the cache version so that old, buggy
+        cached data will get evicted. We were marking builds where all tests passed as errors!
+        (LayoutTestResultsLoader.prototype._fetchAndParseORWTResults): Added success/error callback
+        parameters to the fetchAndParseResultsHTML helper function, and added a similar
+        fetchNumberOfFailingTests function that fetches data from build.webkit.org/json (code came
+        from later in the function). For test runs before r89610, we first check
+        build.webkit.org/json then check results.html. For builds after r89610, we first check
+        results.html and then check build.webkit.org/json if we couldn't fetch results.html.
+
 2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         new-run-webkit-tests does not support qt-arm or qt-4.8 results
