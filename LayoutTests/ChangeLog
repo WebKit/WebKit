@@ -1,3 +1,41 @@
+2011-07-11  Adam Roben  <aroben@apple.com>
+
+        Add back the win-xp and win-wk2 results that were deleted in r90699
+
+        Deleting these results caused the tests to start failing on the bots. The only test result I
+        didn't add back was
+        win-wk2/http/tests/uri/username-with-no-hostname-expected.txt, as that test is not currently
+        failing on the bots.
+
+        Fixes <http://webkit.org/b/64277> REGRESSION (r90699): 12 svg tests failing on Windows XP
+        Debug (Tests) and 13 tests failing on Windows 7 Release (WebKit2 Tests)
+
+        * platform/win-wk2/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/win-wk2/editing/selection/drag-text-delay-expected.txt: Added.
+        * platform/win-wk2/fast/css/pseudo-any-expected.txt: Added.
+        * platform/win-wk2/fast/forms/textfield-overflow-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/after-block-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/after-table-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/before-block-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/before-table-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/generated-after-counter-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/generated-before-and-after-counter-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/fast/ruby/generated-before-counter-doesnt-crash-expected.txt: Added.
+        * platform/win-wk2/plugins/npruntime/embed-property-equality-expected.txt: Added.
+        * platform/win-wk2/plugins/resize-from-plugin-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Added.
+        * platform/win-xp/svg/text/bidi-tspans-expected.txt: Added.
+
 2011-07-11  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Adam Roben.
