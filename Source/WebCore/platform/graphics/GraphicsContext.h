@@ -535,12 +535,8 @@ namespace WebCore {
         void setPlatformStrokeColor(const Color&, ColorSpace);
         void setPlatformStrokeStyle(StrokeStyle);
         void setPlatformStrokeThickness(float);
-        void setPlatformStrokeGradient(Gradient*);
-        void setPlatformStrokePattern(Pattern*);
 
         void setPlatformFillColor(const Color&, ColorSpace);
-        void setPlatformFillGradient(Gradient*);
-        void setPlatformFillPattern(Pattern*);
 
         void setPlatformShouldAntialias(bool);
         void setPlatformShouldSmoothFonts(bool);

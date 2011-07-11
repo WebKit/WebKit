@@ -265,7 +265,6 @@ void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
     }
     m_state.strokeGradient.clear();
     m_state.strokePattern = pattern;
-    setPlatformStrokePattern(m_state.strokePattern.get());
 }
 
 void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
@@ -277,7 +276,6 @@ void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
     }
     m_state.fillGradient.clear();
     m_state.fillPattern = pattern;
-    setPlatformFillPattern(m_state.fillPattern.get());
 }
 
 void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
@@ -289,7 +287,6 @@ void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
     }
     m_state.strokeGradient = gradient;
     m_state.strokePattern.clear();
-    setPlatformStrokeGradient(m_state.strokeGradient.get());
 }
 
 void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
@@ -301,7 +298,6 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
     }
     m_state.fillGradient = gradient;
     m_state.fillPattern.clear();
-    setPlatformFillGradient(m_state.fillGradient.get());
 }
 
 Gradient* GraphicsContext::fillGradient() const
@@ -667,24 +663,6 @@ CompositeOperator GraphicsContext::compositeOperation() const
 {
     return m_state.compositeOperator;
 }
-
-#if !USE(SKIA)
-void GraphicsContext::setPlatformFillGradient(Gradient*)
-{
-}
-
-void GraphicsContext::setPlatformFillPattern(Pattern*)
-{
-}
-
-void GraphicsContext::setPlatformStrokeGradient(Gradient*)
-{
-}
-
-void GraphicsContext::setPlatformStrokePattern(Pattern*)
-{
-}
-#endif
 
 #if !USE(CG) && !USE(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context

@@ -225,6 +225,9 @@ void addCornerArc(SkPath* path, const SkRect& rect, const IntSize& size, int sta
 // no painting.
 void GraphicsContext::platformInit(PlatformGraphicsContext* gc)
 {
+    if (gc)
+        gc->setGraphicsContext(this);
+
     // the caller owns the gc
     m_data = gc;
     setPaintingDisabled(!gc || !gc->canvas());
@@ -1046,22 +1049,6 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
     platformContext()->setFillColor(color.rgb());
 }
 
-void GraphicsContext::setPlatformFillGradient(Gradient* gradient)
-{
-    if (paintingDisabled())
-        return;
-
-    platformContext()->setFillShader(gradient->platformGradient());
-}
-
-void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
-{
-    if (paintingDisabled())
-        return;
-
-    platformContext()->setFillShader(pattern->platformPattern(getCTM()));
-}
-
 void GraphicsContext::setPlatformShadow(const FloatSize& size,
                                         float blurFloat,
                                         const Color& color,
@@ -1169,22 +1156,6 @@ void GraphicsContext::setPlatformStrokeThickness(float thickness)
         return;
 
     platformContext()->setStrokeThickness(thickness);
-}
-
-void GraphicsContext::setPlatformStrokeGradient(Gradient* gradient)
-{
-    if (paintingDisabled())
-        return;
-
-    platformContext()->setStrokeShader(gradient->platformGradient());
-}
-
-void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
-{
-    if (paintingDisabled())
-        return;
-
-    platformContext()->setStrokeShader(pattern->platformPattern(getCTM()));
 }
 
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)

@@ -81,6 +81,10 @@ public:
     PlatformContextSkia(SkCanvas*);
     ~PlatformContextSkia();
 
+    // Sets the graphics context associated with this context.
+    // GraphicsContextSkia calls this from its constructor.
+    void setGraphicsContext(const GraphicsContext* gc) { m_gc = gc; }
+
     // Sets the canvas associated with this context. Use when supplying NULL
     // to the constructor.
     void setCanvas(SkCanvas*);
@@ -126,11 +130,9 @@ public:
     void setLineJoin(SkPaint::Join);
     void setXfermodeMode(SkXfermode::Mode);
     void setFillColor(SkColor);
-    void setFillShader(SkShader*);
     void setStrokeStyle(StrokeStyle);
     void setStrokeColor(SkColor);
     void setStrokeThickness(float thickness);
-    void setStrokeShader(SkShader*);
     void setTextDrawingMode(TextDrawingModeFlags mode);
     void setUseAntialiasing(bool enable);
     void setDashPathEffect(SkDashPathEffect*);
@@ -210,11 +212,15 @@ private:
     void uploadSoftwareToHardware(CompositeOperator) const;
     void readbackHardwareToSoftware() const;
 
+    // common code between setupPaintFor[Filling,Stroking]
+    void setupShader(SkPaint*, Gradient*, Pattern*, SkColor) const;
+
     // Defines drawing style.
     struct State;
 
     // NULL indicates painting is disabled. Never delete this object.
     SkCanvas* m_canvas;
+    const GraphicsContext* m_gc;
 
     // States stack. Enables local drawing state change with save()/restore()
     // calls.

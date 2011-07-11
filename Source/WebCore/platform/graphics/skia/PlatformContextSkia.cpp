@@ -83,12 +83,10 @@ struct PlatformContextSkia::State {
 
     // Fill.
     SkColor m_fillColor;
-    SkShader* m_fillShader;
 
     // Stroke.
     StrokeStyle m_strokeStyle;
     SkColor m_strokeColor;
-    SkShader* m_strokeShader;
     float m_strokeThickness;
     int m_dashRatio;  // Ratio of the length of a dash to its width.
     float m_miterLimit;
@@ -129,10 +127,8 @@ PlatformContextSkia::State::State()
     , m_useAntialiasing(true)
     , m_looper(0)
     , m_fillColor(0xFF000000)
-    , m_fillShader(0)
     , m_strokeStyle(SolidStroke)
     , m_strokeColor(Color::black)
-    , m_strokeShader(0)
     , m_strokeThickness(0)
     , m_dashRatio(3)
     , m_miterLimit(4)
@@ -151,10 +147,8 @@ PlatformContextSkia::State::State(const State& other)
     , m_useAntialiasing(other.m_useAntialiasing)
     , m_looper(other.m_looper)
     , m_fillColor(other.m_fillColor)
-    , m_fillShader(other.m_fillShader)
     , m_strokeStyle(other.m_strokeStyle)
     , m_strokeColor(other.m_strokeColor)
-    , m_strokeShader(other.m_strokeShader)
     , m_strokeThickness(other.m_strokeThickness)
     , m_dashRatio(other.m_dashRatio)
     , m_miterLimit(other.m_miterLimit)
@@ -171,16 +165,12 @@ PlatformContextSkia::State::State(const State& other)
     // Up the ref count of these. SkSafeRef does nothing if its argument is 0.
     SkSafeRef(m_looper);
     SkSafeRef(m_dash);
-    SkSafeRef(m_fillShader);
-    SkSafeRef(m_strokeShader);
 }
 
 PlatformContextSkia::State::~State()
 {
     SkSafeUnref(m_looper);
     SkSafeUnref(m_dash);
-    SkSafeUnref(m_fillShader);
-    SkSafeUnref(m_strokeShader);
 }
 
 // Returns a new State with all of this object's inherited properties copied.
@@ -218,6 +208,9 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
+
+    // will be assigned in setGraphicsContext()
+    m_gc = 0;
 }
 
 PlatformContextSkia::~PlatformContextSkia()
@@ -349,14 +342,11 @@ void PlatformContextSkia::drawRect(SkRect rect)
     if (m_state->m_strokeStyle != NoStroke
         && (m_state->m_strokeColor & 0xFF000000)) {
         // We do a fill of four rects to simulate the stroke of a border.
-        SkColor oldFillColor = m_state->m_fillColor;
-
-        // setFillColor() will set the shader to NULL, so save a ref to it now.
-        SkShader* oldFillShader = m_state->m_fillShader;
-        SkSafeRef(oldFillShader);
-        setFillColor(m_state->m_strokeColor);
         paint.reset();
         setupPaintForFilling(&paint);
+        // need to jam in the strokeColor
+        paint.setColor(this->effectiveStrokeColor());
+
         SkRect topBorder = { rect.fLeft, rect.fTop, rect.fRight, rect.fTop + 1 };
         canvas()->drawRect(topBorder, paint);
         SkRect bottomBorder = { rect.fLeft, rect.fBottom - 1, rect.fRight, rect.fBottom };
@@ -365,9 +355,6 @@ void PlatformContextSkia::drawRect(SkRect rect)
         canvas()->drawRect(leftBorder, paint);
         SkRect rightBorder = { rect.fRight - 1, rect.fTop + 1, rect.fRight, rect.fBottom - 1 };
         canvas()->drawRect(rightBorder, paint);
-        setFillColor(oldFillColor);
-        setFillShader(oldFillShader);
-        SkSafeUnref(oldFillShader);
     }
 }
 
@@ -385,20 +372,39 @@ void PlatformContextSkia::setupPaintCommon(SkPaint* paint) const
     paint->setLooper(m_state->m_looper);
 }
 
+void PlatformContextSkia::setupShader(SkPaint* paint, Gradient* grad, Pattern* pat, SkColor color) const
+{
+    SkShader* shader = 0;
+
+    if (grad) {
+        shader = grad->platformGradient();
+        color = SK_ColorBLACK;
+    } else if (pat) {
+        shader = pat->platformPattern(m_gc->getCTM());
+        color = SK_ColorBLACK;
+    }
+
+    paint->setColor(m_state->applyAlpha(color));
+    paint->setShader(shader);
+}
+
 void PlatformContextSkia::setupPaintForFilling(SkPaint* paint) const
 {
     setupPaintCommon(paint);
-    paint->setColor(m_state->applyAlpha(m_state->m_fillColor));
-    paint->setShader(m_state->m_fillShader);
+
+    const GraphicsContextState& state = m_gc->state();
+    setupShader(paint, state.fillGradient.get(), state.fillPattern.get(), m_state->m_fillColor);
 }
 
 float PlatformContextSkia::setupPaintForStroking(SkPaint* paint, SkRect* rect, int length) const
 {
     setupPaintCommon(paint);
+
+    const GraphicsContextState& state = m_gc->state();
+    setupShader(paint, state.strokeGradient.get(), state.strokePattern.get(), m_state->m_strokeColor);
+
     float width = m_state->m_strokeThickness;
 
-    paint->setColor(m_state->applyAlpha(m_state->m_strokeColor));
-    paint->setShader(m_state->m_strokeShader);
     paint->setStyle(SkPaint::kStroke_Style);
     paint->setStrokeWidth(SkFloatToScalar(width));
     paint->setStrokeCap(m_state->m_lineCap);
@@ -476,7 +482,6 @@ void PlatformContextSkia::setXfermodeMode(SkXfermode::Mode pdm)
 void PlatformContextSkia::setFillColor(SkColor color)
 {
     m_state->m_fillColor = color;
-    setFillShader(0);
 }
 
 SkDrawLooper* PlatformContextSkia::getDrawLooper() const
@@ -497,7 +502,6 @@ void PlatformContextSkia::setStrokeStyle(StrokeStyle strokeStyle)
 void PlatformContextSkia::setStrokeColor(SkColor strokeColor)
 {
     m_state->m_strokeColor = strokeColor;
-    setStrokeShader(0);
 }
 
 float PlatformContextSkia::getStrokeThickness() const
@@ -508,18 +512,6 @@ float PlatformContextSkia::getStrokeThickness() const
 void PlatformContextSkia::setStrokeThickness(float thickness)
 {
     m_state->m_strokeThickness = thickness;
-}
-
-void PlatformContextSkia::setStrokeShader(SkShader* strokeShader)
-{
-    if (strokeShader)
-        m_state->m_strokeColor = Color::black;
-
-    if (strokeShader != m_state->m_strokeShader) {
-        SkSafeUnref(m_state->m_strokeShader);
-        m_state->m_strokeShader = strokeShader;
-        SkSafeRef(m_state->m_strokeShader);
-    }
 }
 
 TextDrawingModeFlags PlatformContextSkia::getTextDrawingMode() const
@@ -569,18 +561,6 @@ void PlatformContextSkia::canvasClipPath(const SkPath& path)
 {
     m_state->m_canvasClipApplied = true;
     m_canvas->clipPath(path);
-}
-
-void PlatformContextSkia::setFillShader(SkShader* fillShader)
-{
-    if (fillShader)
-        m_state->m_fillColor = Color::black;
-
-    if (fillShader != m_state->m_fillShader) {
-        SkSafeUnref(m_state->m_fillShader);
-        m_state->m_fillShader = fillShader;
-        SkSafeRef(m_state->m_fillShader);
-    }
 }
 
 InterpolationQuality PlatformContextSkia::interpolationQuality() const
@@ -696,7 +676,9 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 
 bool PlatformContextSkia::canAccelerate() const
 {
-    return !m_state->m_fillShader; // Can't accelerate with a fill gradient or pattern.
+    // Can't accelerate with a fill gradient or pattern.
+    const GraphicsContextState& state = m_gc->state();
+    return !state.fillGradient.get() && !state.fillPattern.get();
 }
 
 bool PlatformContextSkia::canvasClipApplied() const
