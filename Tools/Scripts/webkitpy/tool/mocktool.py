@@ -747,6 +747,11 @@ class MockWorkspace(object):
         return object()  # Something that is not None
 
 
+class MockWeb(object):
+    def get_binary(self, url):
+        return "MOCK Web result"
+
+
 class MockTool(object):
 
     def __init__(self, log_executive=False):
@@ -754,6 +759,7 @@ class MockTool(object):
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = MockExecutive(should_log=log_executive)
+        self.web = MockWeb()
         self.filesystem = MockFileSystem()
         self.workspace = MockWorkspace()
         self._irc = None

@@ -1,5 +1,27 @@
 2011-07-11  Adam Barth  <abarth@webkit.org>
 
+        Add a webkit-patch command for rebaselining an individual test
+        https://bugs.webkit.org/show_bug.cgi?id=64246
+
+        Reviewed by Eric Seidel.
+
+        This patch introduces a command that's able to rebaseline a single
+        test.  Currently, the command works only with the build.chromium.org
+        buildbots, but extending it to work with the build.webkit.org bots
+        shouldn't be that hard.
+
+        A complete rebaseling tool should also include an "optimize baselines"
+        command (which moves/deletes baselines in order to reduce the number of
+        expected results files), but that will come in a future patch.
+
+        Really BuilderToPort should be merged into builders.py, but I'm going
+        to save that for a future patch as well.  (We need to stop shaving yaks
+        at some point.)
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-07-11  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should be able to roll out patches
         https://bugs.webkit.org/show_bug.cgi?id=64185
 

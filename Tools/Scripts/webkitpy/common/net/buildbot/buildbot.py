@@ -69,6 +69,11 @@ class Builder(object):
     def results_url(self):
         return "%s/results/%s" % (self._buildbot.buildbot_url, self.url_encoded_name())
 
+    # In addition to per-build results, the build.chromium.org builders also
+    # keep a directory that accumulates test results over many runs.
+    def accumulated_results_url(self):
+        return None
+
     def url_encoded_name(self):
         return urllib.quote(self._name)
 
@@ -280,8 +285,11 @@ class Build(object):
 
 
 class BuildBot(object):
-    def __init__(self, url=config_urls.buildbot_url):
-        self.buildbot_url = url
+    _builder_factory = Builder
+    _default_url = config_urls.buildbot_url
+
+    def __init__(self, url=None):
+        self.buildbot_url = url if url else self._default_url
         self._builder_by_name = {}
 
         # If any core builder is red we should not be landing patches.  Other
@@ -440,7 +448,7 @@ class BuildBot(object):
     def builder_with_name(self, name):
         builder = self._builder_by_name.get(name)
         if not builder:
-            builder = Builder(name, self)
+            builder = self._builder_factory(name, self)
             self._builder_by_name[name] = builder
         return builder
 

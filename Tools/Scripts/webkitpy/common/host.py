@@ -31,7 +31,7 @@
 from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.config.ports import WebKitPort
-from webkitpy.common.net import bugzilla, buildbot, statusserver
+from webkitpy.common.net import bugzilla, buildbot, statusserver, web
 from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.layout_tests import port
@@ -42,6 +42,7 @@ class Host(object):
         self.bugs = bugzilla.Bugzilla()
         self.buildbot = buildbot.BuildBot()
         self.executive = executive.Executive()
+        self.web = web.Web()
         self._irc = None
         self.filesystem = filesystem.FileSystem()
         self.workspace = workspace.Workspace(self.filesystem, self.executive)

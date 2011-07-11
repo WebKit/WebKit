@@ -30,17 +30,26 @@ import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.commands.rebaseline import BuilderToPort, Rebaseline
+from webkitpy.tool.commands.rebaseline import *
 from webkitpy.tool.mocktool import MockTool
 
 
-class RebaselineTest(unittest.TestCase):
+class TestRebaseline(unittest.TestCase):
     # This just makes sure the code runs without exceptions.
     def test_tests_to_update(self):
         command = Rebaseline()
         command.bind_to_tool(MockTool())
         build = Mock()
         OutputCapture().assert_outputs(self, command._tests_to_update, [build])
+
+
+class TestRebaselineTest(unittest.TestCase):
+    def test_tests_to_update(self):
+        command = RebaselineTest()
+        command.bind_to_tool(MockTool())
+        build = Mock()
+        expected_stdout = "Retrieving http://build.chromium.org/f/chromium/layout_test_results/Webkit_Linux/results/layout-test-results/userscripts/another-test-actual.txt ...\n"
+        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Linux", "userscripts/another-test.html", "txt"], expected_stdout=expected_stdout)
 
 
 class BuilderToPortTest(unittest.TestCase):

@@ -30,31 +30,32 @@
 import re
 
 
-def _path_from_name(name):
-    return re.sub(r'[\s().]', '_', name)
+def builder_path_from_name(builder_name):
+    return re.sub(r'[\s().]', '_', builder_name)
+
 
 # Compiled manually from http://build.chromium.org/p/chromium/json/builders/help?as_text=1
 # Values of None mean there are no bots running at build.webkit.org or
 # build.chromium.org for that port.
 # FIXME Make the values in this map into lists.
 CHROMIUM_PORT_TO_BUILDER_NAME = {
-    'chromium-gpu-linux': _path_from_name('Webkit Linux - GPU'),
+    'chromium-gpu-linux': builder_path_from_name('Webkit Linux - GPU'),
 
-    'chromium-gpu-mac-snowleopard': _path_from_name('Webkit Mac10.6 - GPU'),
-    'chromium-gpu-mac-leopard': _path_from_name('Webkit Mac10.5 - GPU'),
+    'chromium-gpu-mac-snowleopard': builder_path_from_name('Webkit Mac10.6 - GPU'),
+    'chromium-gpu-mac-leopard': builder_path_from_name('Webkit Mac10.5 - GPU'),
 
-    'chromium-gpu-win-xp': _path_from_name('Webkit Win - GPU'),
-    'chromium-gpu-win-vista': _path_from_name('Webkit Vista - GPU'),
-    'chromium-gpu-win-win7': _path_from_name('Webkit Win7 - GPU'),
+    'chromium-gpu-win-xp': builder_path_from_name('Webkit Win - GPU'),
+    'chromium-gpu-win-vista': builder_path_from_name('Webkit Vista - GPU'),
+    'chromium-gpu-win-win7': builder_path_from_name('Webkit Win7 - GPU'),
 
-    'chromium-linux-x86_64': _path_from_name('Linux Tests x64'),
-    'chromium-linux-x86': _path_from_name('Linux Tests (dbg)(1)'),
+    'chromium-linux-x86_64': builder_path_from_name('Linux Tests x64'),
+    'chromium-linux-x86': builder_path_from_name('Linux Tests (dbg)(1)'),
 
-    'chromium-mac-leopard': _path_from_name('Mac10.5 Tests (1)'),
-    'chromium-mac-snowleopard': _path_from_name('Mac 10.6 Tests (dbg)(1)'),
+    'chromium-mac-leopard': builder_path_from_name('Mac10.5 Tests (1)'),
+    'chromium-mac-snowleopard': builder_path_from_name('Mac 10.6 Tests (dbg)(1)'),
 
-    'chromium-win-xp': _path_from_name('XP Tests (dbg)(5)'),
-    'chromium-win-vista': _path_from_name('Vista Tests (dbg)(1)'),
+    'chromium-win-xp': builder_path_from_name('XP Tests (dbg)(5)'),
+    'chromium-win-vista': builder_path_from_name('Vista Tests (dbg)(1)'),
     'chromium-win-win7': None,
 
     'google-chrome-linux32': None,
