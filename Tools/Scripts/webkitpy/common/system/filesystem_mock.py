@@ -253,24 +253,36 @@ class MockFileSystem(object):
 
     def open_binary_tempfile(self, suffix=''):
         path = self._mktemp(suffix)
-        return (WritableFileObject(self, path), path)
-
-    def open_text_file_for_writing(self, path, append=False):
-        return WritableFileObject(self, path, append)
-
-    def read_text_file(self, path):
-        return self.read_binary_file(path).decode('utf-8')
+        return (WritableBinaryFileObject(self, path), path)
 
     def open_binary_file_for_reading(self, path):
         if self.files[path] is None:
             self._raise_not_found(path)
-        return ReadableFileObject(self, path, self.files[path])
+        return ReadableBinaryFileObject(self, path, self.files[path])
 
     def read_binary_file(self, path):
         # Intentionally raises KeyError if we don't recognize the path.
         if self.files[path] is None:
             self._raise_not_found(path)
         return self.files[path]
+
+    def write_binary_file(self, path, contents):
+        self.files[path] = contents
+        self.written_files[path] = contents
+
+    def open_text_file_for_reading(self, path):
+        if self.files[path] is None:
+            self._raise_not_found(path)
+        return ReadableTextFileObject(self, path)
+
+    def open_text_file_for_writing(self, path):
+        return WritableTextFileObject(self, path)
+
+    def read_text_file(self, path):
+        return self.read_binary_file(path).decode('utf-8')
+
+    def write_text_file(self, path, contents):
+        return self.write_binary_file(path, contents.encode('utf-8'))
 
     def relpath(self, path, start='.'):
         return ospath.relpath(path, start, self.abspath, self.sep)
@@ -302,21 +314,13 @@ class MockFileSystem(object):
             idx = 0
         return (path[0:idx], path[idx:])
 
-    def write_text_file(self, path, contents):
-        return self.write_binary_file(path, contents.encode('utf-8'))
 
-    def write_binary_file(self, path, contents):
-        self.files[path] = contents
-        self.written_files[path] = contents
-
-
-class WritableFileObject(object):
-    def __init__(self, fs, path, append=False, encoding=None):
+class WritableBinaryFileObject(object):
+    def __init__(self, fs, path):
         self.fs = fs
         self.path = path
         self.closed = False
-        if path not in self.fs.files or not append:
-            self.fs.files[path] = ""
+        self.fs.files[path] = ""
 
     def __enter__(self):
         return self
@@ -332,7 +336,12 @@ class WritableFileObject(object):
         self.fs.written_files[self.path] = self.fs.files[self.path]
 
 
-class ReadableFileObject(object):
+class WritableTextFileObject(WritableBinaryFileObject):
+    def write(self, str):
+        WritableBinaryFileObject.write(self, str.encode('utf-8'))
+
+
+class ReadableBinaryFileObject(object):
     def __init__(self, fs, path, data=""):
         self.fs = fs
         self.path = path
@@ -355,3 +364,8 @@ class ReadableFileObject(object):
         start = self.offset
         self.offset += bytes
         return self.data[start:self.offset]
+
+
+class ReadableTextFileObject(ReadableBinaryFileObject):
+    def read(self, bytes=None):
+        return ReadableBinaryFileObject.read(self, bytes).decode('utf-8')

@@ -191,12 +191,6 @@ class FileSystem(object):
         f = os.fdopen(temp_fd, 'wb')
         return f, temp_name
 
-    def open_text_file_for_writing(self, path, append=False):
-        mode = 'w'
-        if append:
-            mode = 'a'
-        return codecs.open(path, mode, 'utf8')
-
     def open_binary_file_for_reading(self, path):
         return codecs.open(path, 'rb')
 
@@ -205,12 +199,29 @@ class FileSystem(object):
         with file(path, 'rb') as f:
             return f.read()
 
+    def write_binary_file(self, path, contents):
+        with file(path, 'wb') as f:
+            f.write(contents)
+
+    def open_text_file_for_reading(self, path):
+        return codecs.open(path, 'r', 'utf8')
+
+    def open_text_file_for_writing(self, path):
+        return codecs.open(path, 'w', 'utf8')
+
     def read_text_file(self, path):
         """Return the contents of the file at the given path as a Unicode string.
 
         The file is read assuming it is a UTF-8 encoded file with no BOM."""
         with codecs.open(path, 'r', 'utf8') as f:
             return f.read()
+
+    def write_text_file(self, path, contents):
+        """Write the contents to the file at the given location.
+
+        The file is written encoded as UTF-8 with no BOM."""
+        with codecs.open(path, 'w', 'utf8') as f:
+            f.write(contents)
 
     def relpath(self, path, start='.'):
         return ospath.relpath(path, start)
@@ -252,14 +263,3 @@ class FileSystem(object):
     def splitext(self, path):
         """Return (dirname + os.sep + basename, '.' + ext)"""
         return os.path.splitext(path)
-
-    def write_binary_file(self, path, contents):
-        with file(path, 'wb') as f:
-            f.write(contents)
-
-    def write_text_file(self, path, contents):
-        """Write the contents to the file at the given location.
-
-        The file is written encoded as UTF-8 with no BOM."""
-        with codecs.open(path, 'w', 'utf8') as f:
-            f.write(contents)

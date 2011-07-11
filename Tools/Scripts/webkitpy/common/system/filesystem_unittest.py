@@ -142,12 +142,33 @@ class FileSystemTest(unittest.TestCase):
             if os.path.exists(sub_dir):
                 os.rmdir(sub_dir)
 
+    def test_read_and_write_text_file(self):
+        fs = FileSystem()
+        text_path = None
+
+        unicode_text_string = u'\u016An\u012Dc\u014Dde\u033D'
+        hex_equivalent = '\xC5\xAA\x6E\xC4\xAD\x63\xC5\x8D\x64\x65\xCC\xBD'
+        try:
+            text_path = tempfile.mktemp(prefix='tree_unittest_')
+            file = fs.open_text_file_for_writing(text_path)
+            file.write(unicode_text_string)
+            file.close()
+
+            file = fs.open_text_file_for_reading(text_path)
+            read_text = file.read()
+            file.close()
+
+            self.assertEqual(read_text, unicode_text_string)
+        finally:
+            if text_path and fs.isfile(text_path):
+                os.remove(text_path)
+
     def test_read_and_write_file(self):
         fs = FileSystem()
         text_path = None
         binary_path = None
 
-        unicode_text_string = u'Ūnĭcōde̽'
+        unicode_text_string = u'\u016An\u012Dc\u014Dde\u033D'
         hex_equivalent = '\xC5\xAA\x6E\xC4\xAD\x63\xC5\x8D\x64\x65\xCC\xBD'
         try:
             text_path = tempfile.mktemp(prefix='tree_unittest_')
