@@ -1,3 +1,19 @@
+2011-07-11  Gabor Loki  <loki@webkit.org>
+
+        Signed arithmetic bug in dataTransfer32.
+        https://bugs.webkit.org/show_bug.cgi?id=64257
+
+        Reviewed by Zoltan Herczeg.
+
+        An arithmetic bug is fixed. If the offset of dataTransfer is half of the
+        addressable memory space on a 32-bit machine (-2147483648 = 0x80000000)
+        a load instruction is emitted with a wrong zero offset.
+
+        Inspired by Jacob Bramley's patch from JaegerMonkey.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::dataTransfer32):
+
 2011-07-09  Thouraya Andolsi  <thouraya.andolsi@st.com>
 
         Fix unaligned userspace access for SH4 platforms. 
