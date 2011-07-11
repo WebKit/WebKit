@@ -1,0 +1,46 @@
+<p>Test sending and receiving small messages of different lengths.</p>
+<p>Should say PASS:</p>
+<pre id=log>Running the test...
+</pre>
+<script>
+var maxLength = 1025;
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+}
+
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "\n";
+}
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+
+var lastString;
+var failed = false;
+ws.onopen = function() {
+    lastString = "";
+    ws.send(lastString);
+}
+
+ws.onmessage = function(msg) {
+    if (msg.data != lastString) {
+        log("FAIL - incorrect response. Expected '" + lastString + "', got '" + msg.data + "'.");
+        failed = true;
+    }
+
+    if (lastString.length == maxLength) {
+        if (!failed)
+            log("PASS");
+        ws.send("Goodbye");
+        ws.onmessage = null;
+        if (window.layoutTestController)
+            setTimeout("layoutTestController.notifyDone()", 0);
+    } else {
+        lastString += "*";
+        ws.send(lastString);
+    }
+}
+</script>

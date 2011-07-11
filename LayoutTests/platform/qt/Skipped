@@ -1940,6 +1940,13 @@ printing/compositing-layer-printing.html
 printing/media-queries-print.html
 
 # ============================================================================= #
+# failing websocket tests
+# ============================================================================= #
+
+# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
+http/tests/websocket/tests/hybi/
+
+# ============================================================================= #
 # new tests without expected results
 # ============================================================================= #
 editing/selection/transformed-selection-rects.html

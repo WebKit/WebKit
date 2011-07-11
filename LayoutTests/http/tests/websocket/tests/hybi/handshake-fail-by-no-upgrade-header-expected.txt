@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 0: Error during WebSocket handshake: 'Upgrade' header is missing
+Test that WebSocket handshake fails if Upgrade header field isn't reflected by the server.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

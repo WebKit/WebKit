@@ -1,0 +1,34 @@
+<body onload="test()">
+<p>Should alert "PASS".</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+function test()
+{
+    var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+    ws.onopen = function() {
+        this.send("PASS");
+    }
+    ws.onmessage = function(msg) {
+        alert(msg.data);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    ws = null;
+    gc();
+}
+</script>
