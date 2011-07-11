@@ -7,6 +7,7 @@
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+# Copyright (C) 2011 Patrick Gansterer <paroga@webkit.org>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -1751,7 +1752,23 @@ sub GenerateImplementation
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;
                             if ($constructorType ne "DOMObject") {
-                                $implIncludes{"JS" . $constructorType . ".h"} = 1;
+                                my $header = "JS" . $constructorType . ".h";
+                                my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
+                                if (not $conditional) {
+                                    $implIncludes{$header} = 1;
+                                } elsif (not exists($implIncludes{$header})) {
+                                    $implIncludes{$header} = $conditional;
+                                } else {
+                                    my $oldValue = $implIncludes{$header};
+                                    if ($oldValue ne 1) {
+                                        my %newValue = ();
+                                        $newValue{$conditional} = 1;
+                                        foreach my $condition (split(/\|/, $oldValue)) {
+                                            $newValue{$condition} = 1;
+                                        }
+                                        $implIncludes{$header} = join("|", sort keys %newValue);
+                                    }
+                                }
                             }
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             if ($interfaceName eq "DOMWindow" && $className eq "JSblah") {
@@ -2926,16 +2943,30 @@ sub WriteData
         print $IMPL @implContentHeader;
 
         my @includes = ();
+        my %implIncludeConditions = ();
         foreach my $include (keys %implIncludes) {
+            my $condition = $implIncludes{$include};
             my $checkType = $include;
             $checkType =~ s/\.h//;
             next if $codeGenerator->IsSVGAnimatedType($checkType);
 
             $include = "\"$include\"" unless $include =~ /^["<]/; # "
-            push @includes, $include;
+
+            if ($condition eq 1) {
+                push @includes, $include;
+            } else {
+                push @{$implIncludeConditions{$condition}}, $include;
+            }
         }
         foreach my $include (sort @includes) {
             print $IMPL "#include $include\n";
+        }
+        foreach my $condition (sort keys %implIncludeConditions) {
+            print $IMPL "\n#if " . GenerateConditionalStringFromAttributeValue($condition) . "\n";
+            foreach my $include (sort @{$implIncludeConditions{$condition}}) {
+                print $IMPL "#include $include\n";
+            }
+            print $IMPL "#endif\n";
         }
 
         print $IMPL @implContent;
