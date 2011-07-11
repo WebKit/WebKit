@@ -207,6 +207,7 @@ public:
     void select();
     void setSelectionRange(int start, int end);
     PassRefPtr<Range> selection() const;
+    String selectedText() const;
 
     virtual void dispatchFormControlChangeEvent();
 
@@ -235,6 +236,9 @@ protected:
     bool hasCachedSelectionEnd() const { return m_cachedSelectionEnd >= 0; }
 
 private:
+    int computeSelectionStart() const;
+    int computeSelectionEnd() const;
+
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
 

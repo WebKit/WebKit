@@ -82,6 +82,11 @@ RenderTextControl::~RenderTextControl()
 {
 }
 
+HTMLTextFormControlElement* RenderTextControl::textFormControlElement()
+{
+    return static_cast<HTMLTextFormControlElement*>(node());
+}
+
 void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
@@ -173,73 +178,6 @@ void RenderTextControl::setLastChangeWasUserEdit(bool lastChangeWasUserEdit)
     document()->setIgnoreAutofocus(lastChangeWasUserEdit);
 }
 
-int RenderTextControl::selectionStart() const
-{
-    Frame* frame = this->frame();
-    if (!frame)
-        return 0;
-    
-    HTMLElement* innerText = innerTextElement();
-    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
-    // from frame->selection->start() can blow us from underneath. Also, function ordering is
-    // usually dependent on the compiler.
-    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->start());
-}
-
-int RenderTextControl::selectionEnd() const
-{
-    Frame* frame = this->frame();
-    if (!frame)
-        return 0;
-
-    HTMLElement* innerText = innerTextElement();
-    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
-    // from frame->selection->end() can blow us from underneath. Also, function ordering is
-    // usually dependent on the compiler.
-    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->end());
-}
-
-bool RenderTextControl::hasVisibleTextArea() const
-{
-    HTMLElement* innerText = innerTextElement();
-    return style()->visibility() == HIDDEN || !innerText || !innerText->renderer() || !innerText->renderBox()->height();
-}
-
-void setSelectionRange(Node* node, int start, int end)
-{
-    ASSERT(node);
-    node->document()->updateLayoutIgnorePendingStylesheets();
-
-    if (!node->renderer() || !node->renderer()->isTextControl())
-        return;
-
-    end = max(end, 0);
-    start = min(max(start, 0), end);
-
-    RenderTextControl* control = toRenderTextControl(node->renderer());
-
-    if (control->hasVisibleTextArea()) {
-        static_cast<HTMLTextFormControlElement*>(node)->cacheSelection(start, end);
-        return;
-    }
-    VisiblePosition startPosition = control->visiblePositionForIndex(start);
-    VisiblePosition endPosition;
-    if (start == end)
-        endPosition = startPosition;
-    else
-        endPosition = control->visiblePositionForIndex(end);
-
-    // startPosition and endPosition can be null position for example when
-    // "-webkit-user-select: none" style attribute is specified.
-    if (startPosition.isNotNull() && endPosition.isNotNull()) {
-        ASSERT(startPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == node && endPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == node);
-    }
-    VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
-
-    if (Frame* frame = node->document()->frame())
-        frame->selection()->setSelection(newSelection);
-}
-
 bool RenderTextControl::isSelectableElement(HTMLElement* innerText, Node* node)
 {
     if (!node || !innerText)
@@ -254,52 +192,6 @@ bool RenderTextControl::isSelectableElement(HTMLElement* innerText, Node* node)
     Node* shadowAncestor = node->shadowAncestorNode();
     return shadowAncestor && (shadowAncestor->hasTagName(textareaTag)
         || (shadowAncestor->hasTagName(inputTag) && static_cast<HTMLInputElement*>(shadowAncestor)->isTextField()));
-}
-
-static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& containerNode, int& offsetInContainer)
-{
-    if (node->isTextNode()) {
-        containerNode = node;
-        offsetInContainer = offset;
-    } else {
-        containerNode = node->parentNode();
-        offsetInContainer = node->nodeIndex() + offset;
-    }
-}
-
-PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
-{
-    ASSERT(start <= end);
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText)
-        return 0;
-
-    if (!innerText->firstChild())
-        return Range::create(document(), innerText, 0, innerText, 0);
-
-    int offset = 0;
-    Node* startNode = 0;
-    Node* endNode = 0;
-    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
-        ASSERT(!node->firstChild());
-        ASSERT(node->isTextNode() || node->hasTagName(brTag));
-        int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
-    
-        if (offset <= start && start <= offset + length)
-            setContainerAndOffsetForRange(node, start - offset, startNode, start);
-
-        if (offset <= end && end <= offset + length) {
-            setContainerAndOffsetForRange(node, end - offset, endNode, end);
-            break;
-        }
-
-        offset += length;
-    }
-    
-    if (!startNode || !endNode)
-        return 0;
-
-    return Range::create(document(), startNode, start, endNode, end);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const

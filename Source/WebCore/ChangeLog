@@ -1,3 +1,39 @@
+2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move selection related code from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=64133
+
+        Reviewed by Dimitri Glazkov.
+
+        Moved selectionStart, selectionEnd, hasVisibleTextArea, setSelectionRange, setContainerAndOffsetForRange
+        and selection from RenderTextControl.cpp to HTMLFormControlElement.cpp.
+
+        This refactoring removes RenderTextControl's dependency on FrameSelection.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::selectedText): Calls HTMLTextFromControl::selectedText.
+        (WebCore::AccessibilityRenderObject::selectedTextRange): Calls selectionStart and selectionEnd.
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange): Ditto.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selectedText): Extracted from AccessibilityRenderObject::selectedText.
+        (WebCore::hasVisibleTextArea): Added.
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Merged with the function of the same name in RenderTextControl.
+        (WebCore::HTMLTextFormControlElement::selectionStart): Calls computeSelectionStart instead of RenderTextControl::selectionStart.
+        (WebCore::HTMLTextFormControlElement::computeSelectionStart): Moved from RenderTextControl::selectionStart.
+        (WebCore::HTMLTextFormControlElement::selectionEnd): Calls computeSelectionEnd instead of RenderText::selectionEnd.
+        (WebCore::HTMLTextFormControlElement::computeSelectionEnd): Moved from RenderTextControl::selectionStart.
+        (WebCore::setContainerAndOffsetForRange): Moved from RenderTextControl.cpp.
+        (WebCore::HTMLTextFormControlElement::selection): Merged with the function of the same name in RenderTextControl.
+        (WebCore::HTMLTextFormControlElement::restoreCachedSelection): Calls computeSelectionStart and computeSelectionEnd instead of
+        RenderTextControl::selectionStart and RenderTextControl::selectionEnd.
+        (WebCore::HTMLTextFormControlElement::selectionChanged): Calls selectionStart and selectionEnd.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): Calls setSelectionRange.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textFormControlElement): Added.
+        * rendering/RenderTextControl.h:
+
 2011-07-11  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Oliver Hunt.
