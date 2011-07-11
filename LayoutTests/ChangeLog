@@ -1,3 +1,164 @@
+2011-07-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update win/linux pixel expectations for r90701 (part 12/12).
+
+        * platform/chromium-gpu-linux/compositing/geometry/outline-change-expected.png:
+        * platform/chromium-gpu-linux/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/outline-change-expected.png:
+        * platform/chromium-gpu-win/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/chromium-linux/editing/pasteboard/3976872-expected.png:
+        * platform/chromium-linux/fast/blockflow/vertical-align-table-baseline-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+        * platform/chromium-linux/fast/css/acid2-pixel-expected.png:
+        * platform/chromium-linux/fast/dom/34176-expected.png:
+        * platform/chromium-linux/fast/dom/HTMLElement/bdo-expected.png:
+        * platform/chromium-linux/fast/encoding/invalid-UTF-8-expected.png:
+        * platform/chromium-linux/fast/frames/viewsource-attribute-expected.png:
+        * platform/chromium-linux/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-linux/fast/repaint/4774354-expected.png:
+        * platform/chromium-linux/fast/repaint/iframe-scroll-repaint-expected.png: Removed.
+        * platform/chromium-linux/fast/replaced/outline-replaced-elements-expected.png:
+        * platform/chromium-linux/fast/text/atsui-kerning-and-ligatures-expected.png: Added.
+        * platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/chromium-linux/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/chromium-linux/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-linux/fast/text/international/003-expected.png:
+        * platform/chromium-linux/fast/text/international/hebrew-vowels-expected.png:
+        * platform/chromium-linux/http/tests/misc/iframe404-expected.png:
+        * platform/chromium-linux/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-linux/http/tests/navigation/javascriptlink-frames-expected.txt: Added.
+        * platform/chromium-linux/plugins/embed-attributes-style-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-fallback-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/45621-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1220-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug20804-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51140-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug14007-2-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_frame_rhs-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_frame_void-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_frame_vsides-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_td_dynamic_deactivate-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/tables_caption_align_left-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/tables_caption_align_right-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/tables_cellspacing_pct-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/x_caption_align_left-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/x_caption_align_right-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-linux/transforms/2d/transform-borderbox-expected.png:
+        * platform/chromium-linux/transforms/2d/transform-fixed-container-expected.png:
+        * platform/chromium-linux/transforms/2d/transform-origin-borderbox-expected.png:
+        * platform/chromium-mac-leopard/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/atsui-kerning-and-ligatures-expected.png:
+        * platform/chromium-win-vista/fast/text/atsui-spacing-features-expected.png: Removed.
+        * platform/chromium-win-vista/http/tests/misc/iframe404-expected.png: Added.
+        * platform/chromium-win-vista/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-win-xp/fast/blockflow/vertical-align-table-baseline-expected.png: Added.
+        * platform/chromium-win-xp/fast/dom/34176-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/atsui-negative-spacing-features-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-win-xp/fast/text/international/003-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/international/hebrew-vowels-expected.png: Added.
+        * platform/chromium-win/editing/pasteboard/3976872-expected.png:
+        * platform/chromium-win/fast/blockflow/vertical-align-table-baseline-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-win/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+        * platform/chromium-win/fast/css/acid2-pixel-expected.png:
+        * platform/chromium-win/fast/dom/34176-expected.png:
+        * platform/chromium-win/fast/dom/HTMLElement/bdo-expected.png:
+        * platform/chromium-win/fast/forms/001-expected.png:
+        * platform/chromium-win/fast/forms/input-first-letter-expected.png:
+        * platform/chromium-win/fast/frames/viewsource-attribute-expected.png:
+        * platform/chromium-win/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-win/fast/repaint/4774354-expected.png:
+        * platform/chromium-win/fast/replaced/outline-replaced-elements-expected.png:
+        * platform/chromium-win/fast/text/atsui-kerning-and-ligatures-expected.png:
+        * platform/chromium-win/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/chromium-win/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-win/fast/text/international/003-expected.png:
+        * platform/chromium-win/fast/text/international/003-expected.txt:
+        * platform/chromium-win/fast/text/international/hebrew-vowels-expected.png:
+        * platform/chromium-win/fast/text/should-use-atsui-expected.png:
+        * platform/chromium-win/plugins/embed-attributes-style-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-fallback-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/45621-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1220-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug15933-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug20804-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug51140-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug51140-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_frame_rhs-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_frame_void-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_frame_vsides-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_td_dynamic_deactivate-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/tables_caption_align_left-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/tables_caption_align_right-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/tables_cellspacing_pct-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/x_caption_align_left-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/x_caption_align_right-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-win/transforms/2d/transform-borderbox-expected.png:
+        * platform/chromium-win/transforms/2d/transform-fixed-container-expected.png:
+        * platform/chromium-win/transforms/2d/transform-origin-borderbox-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-10  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Copy existing WebSocket tests

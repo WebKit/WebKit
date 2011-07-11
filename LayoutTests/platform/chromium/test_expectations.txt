@@ -62,10 +62,11 @@
 
 BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
+BUGCR24182 SLOW WIN LINUX : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUGCR24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW : tables/mozilla/other/slashlogo.html = PASS
-//BUGCR24182 SLOW WIN RELEASE : tables/mozilla/bugs/bug113235-1.html = PASS
+BUGCR24182 SLOW WIN RELEASE : tables/mozilla/bugs/bug113235-1.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 
 // This tests is normally <1 second, but occasionally takes >20s.
@@ -2556,7 +2557,7 @@ BUG_DRT MAC : fast/loader/font-face-empty.html = TIMEOUT PASS
 BUG_DRT MAC : fast/loader/for-window-event-onload-scripts.html = TIMEOUT PASS
 BUG_DRT MAC : fast/loader/fragment-after-redirect-gets-back-entry.html = TIMEOUT PASS
 BUG_DRT DEBUG : fast/loader/non-deferred-substitute-load.html = CRASH
-//BUG_DRT WIN : fast/repaint/iframe-scroll-repaint.html = IMAGE
+BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUG_DRT LINUX : fast/table/border-changes.html = TIMEOUT PASS
 BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
@@ -3714,93 +3715,6 @@ BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
 BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
 
 BUGWK61326 MAC LINUX XP VISTA : fast/storage/storage-detached-iframe.html = CRASH
-
-// Paying attention to shouldAntialias flag in drawConvexPolygon()
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_frame_rhs.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_frame_void.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_frame_vsides.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption_left.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption_right.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_caption_top.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_hidden_table.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_td_align_right.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_td_dynamic_deactivate.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/tables_caption_align_left.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/tables_caption_align_right.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/tables_cellspacing_pct.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/x_caption_align_left.xml = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/x_caption_align_right.xml = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/marvin/x_colgroup_width_px.xml = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/other/empty_cells.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla_expected_failures/other/test4.html = IMAGE
-BUGWK61369 WIN LINUX : transforms/2d/transform-borderbox.html = IMAGE
-BUGWK61369 WIN LINUX : transforms/2d/transform-fixed-container.html = IMAGE
-BUGWK61369 WIN LINUX : transforms/2d/transform-origin-borderbox.html = IMAGE
-
-BUGWK61369 WIN LINUX : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
-BUGWK61369 WIN LINUX : fast/replaced/outline-replaced-elements.html = IMAGE
-BUGWK61369 CPU WIN LINUX : plugins/embed-attributes-style.html = IMAGE
-BUGWK61369 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE
-
-BUGWK61369 WIN LINUX GPU : compositing/geometry/outline-change.html = IMAGE
-BUGWK61369 WIN LINUX GPU : compositing/iframes/iframe-copy-on-scroll.html = IMAGE
-
-BUGWK61369 WIN : fast/forms/001.html = IMAGE
-BUGWK61369 WIN : fast/forms/input-first-letter.html = IMAGE
-BUGWK61369 WIN LINUX : fast/frames/viewsource-attribute.html = IMAGE
-BUGWK61369 WIN LINUX : fast/text/atsui-kerning-and-ligatures.html = IMAGE
-BUGWK61369 WIN : fast/text/should-use-atsui.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/bugs/45621.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug20804.html = IMAGE
-BUGWK61369 WIN : tables/mozilla_expected_failures/bugs/bug14007-2.html = IMAGE
-BUGWK61369 LINUX : tables/mozilla_expected_failures/bugs/bug14007-2.html = IMAGE+TEXT
-
-// Paying attention to shouldAntialias flag in drawConvexPolygon()
-// These expectations are masking failures elsewhere in the file
-// which should be uncommented once these are rebaselined.
-BUGWK61369 WIN LINUX : fast/html/details-writing-mode.html = IMAGE+TEXT IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug51140.html = IMAGE+TEXT
-BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug15933.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug1220.html = IMAGE
-BUGWK61369 SLOW WIN LINUX : tables/mozilla/bugs/bug113235-1.html = IMAGE
-BUGWK61369 WIN LINUX : http/tests/misc/iframe404.html = IMAGE
-BUGWK61369 SLOW WIN LINUX : http/tests/local/file-url-sent-as-referer.html = IMAGE
-BUGWK61369 WIN LINUX : fast/text/international/hebrew-vowels.html = IMAGE
-BUGWK61369 LINUX : fast/text/international/003.html = IMAGE
-BUGWK61369 WIN : fast/text/international/003.html = IMAGE+TEXT
-BUGWK61369 WIN LINUX : fast/text/atsui-spacing-features.html = IMAGE
-BUGWK61369 LINUX : fast/text/atsui-multiple-renderers.html = IMAGE
-BUGWK61369 WIN LINUX : fast/text/atsui-negative-spacing-features.html = IMAGE
-BUGWK61369 WIN LINUX : fast/repaint/iframe-scroll-repaint.html = IMAGE
-BUGWK61369 WIN LINUX : fast/repaint/4774354.html = IMAGE
-BUGWK61369 LINUX : fast/encoding/invalid-UTF-8.html = IMAGE
-BUGWK61369 WIN LINUX : fast/dom/34176.html = IMAGE
-BUGWK61369 WIN LINUX : fast/dom/HTMLElement/bdo.html = IMAGE
-BUGWK61369 WIN LINUX : fast/css/acid2-pixel.html = IMAGE
-BUGWK61369 WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-BUGWK61369 WIN LINUX : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGWK61369 WIN LINUX : editing/pasteboard/3976872.html = IMAGE
-BUGWK61369 LINUX : http/tests/navigation/javascriptlink-frames.html = IMAGE+TEXT
-BUGWK61369 WIN MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE
 
 // New tests added in r87121
 BUGWK61169 WIN LINUX : css3/images/optimize-contrast-canvas.html = IMAGE
