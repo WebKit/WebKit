@@ -142,8 +142,8 @@ Builder.prototype = {
                 var match = /^(\d+)/.exec(outputLine);
                 if (!match)
                     return sum;
-                // Don't count new tests or passes as failures.
-                if (outputLine.contains('were new') || outputLine.contains('new passes'))
+                // Don't count leaks, new tests, or passes as failures.
+                if (outputLine.contains('leak') || outputLine.contains('were new') || outputLine.contains('new passes'))
                     return sum;
                 return sum + parseInt(match[1], 10);
             }, 0);

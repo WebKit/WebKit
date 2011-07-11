@@ -1,3 +1,24 @@
+2011-07-11  Adam Roben  <aroben@apple.com>
+
+        Don't count leaks as test failures on TestFailures's front page
+
+        As a bonus, this patch adds our first unit test.
+
+        Fixes <http://webkit.org/b/64303> REGRESSION (r90489): TestFailures page says far more tests
+        are failing on the Leaks bot than actually are
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Exclude lines containing "leak" when summing
+        failure counts.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Added. Contains a simple test to show that leaks aren't counted as test failures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Added. This is the test harness.
+
 2011-06-14  Mike Stegeman  <mrstegeman@gmail.com>
 
         [GTK] Add API to allow setting local storage database path
