@@ -1050,10 +1050,6 @@ BUGWK61470 : fast/canvas/canvas-composite.html = IMAGE
 
 BUGCR87292 DEBUG GPU : fast/canvas/canvas-large-dimensions.html = CRASH TIMEOUT
 
-// Started failing in skia roll r1799:r1814
-BUGCR88681 WIN LINUX GPU : fast/canvas/canvas-empty-image-pattern.html = IMAGE
-
-
 // -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
@@ -2551,7 +2547,6 @@ BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT DEBUG : fast/frames/calculate-round.html = TIMEOUT PASS
 BUG_DRT BUGCR43890 WIN DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
-BUG_DRT BUGCR43890 LINUX : fast/forms/implicit-submission.html = CRASH
 BUG_DRT BUGCR43890 MAC DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-double-onchange.html = FAIL
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-script-onchange.html = FAIL
@@ -3469,8 +3464,6 @@ BUGDPRANKE LINUX RELEASE : http/tests/navigation/forward-to-fragment-fires-onloa
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
-BUGWK60127 WIN LINUX GPU : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
-
 BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS TIMEOUT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = TEXT PASS
 BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = TEXT PASS
@@ -3722,106 +3715,6 @@ BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
 BUGWK61326 MAC LINUX XP VISTA : fast/storage/storage-detached-iframe.html = CRASH
 
 // Paying attention to shouldAntialias flag in drawConvexPolygon()
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_auto_fixPer.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_auto_per.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_fix_auto.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_fix_autoFix.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_fix_autoPer.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_fix_fix.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_fix_fixPer.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/col_widths_fix_per.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/margins.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/misc.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/nested1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/one_row.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/row_span.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/table_frame.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/table_heights.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/core/table_widths.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/appendCol2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/appendRowsExpand1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/appendTbodyExpand1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteCellsRebuild1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteCellsShrink1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteCellsShrink2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteCol1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteCol2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteCol3.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteColGroup1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteColGroup2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteRowsRebuild1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteRowsShrink1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteTbodyExpand1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/deleteTbodyRebuild1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCellsExpand1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCellsExpand2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCellsRebuild1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCellsRebuild2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertColGroups1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertColGroups2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCols1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCols2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCols3.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCols4.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertCols5.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertRowsExpand1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/insertRowsRebuild1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/dom/tableDom.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/body_col.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/col_span.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_align_center.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_align_justify.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_align_left.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_align_right.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_span.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_valign_baseline.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_valign_bottom.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_valign_middle.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_valign_top.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_width_pct.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/colgroup_width_px.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_frame_border.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_frame_box.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_overflow_hidden_td.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_overflow_td_dynamic_deactivate.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_row_align_center.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_row_align_left.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/table_row_align_right.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_aqua.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_aqua_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_black.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_black_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_blue.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_blue_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_fuchsia.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_fuchsia_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_gray.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_gray_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_green.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_green_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_lime.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_lime_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_maroon.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_maroon_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_navy.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_navy_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_olive.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_olive_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_purple.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_purple_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_red.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_red_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_silver.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_silver_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_teal.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_teal_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_white.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_white_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_yellow.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_bgcolor_yellow_rgb.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_border_1.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_border_2.html = IMAGE
-BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_border_3.html = IMAGE
 BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_caption_align_bot.html = IMAGE
 BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_caption_align_top.html = IMAGE
 BUGWK61369 WIN LINUX : tables/mozilla/marvin/tables_cellpadding.html = IMAGE
@@ -4207,26 +4100,6 @@ BUGWK61369 WIN LINUX : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGWK61369 WIN LINUX : editing/pasteboard/3976872.html = IMAGE
 BUGWK61369 LINUX : http/tests/navigation/javascriptlink-frames.html = IMAGE+TEXT
 BUGWK61369 WIN MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE
-
-// Timing out on the win7 canary bot
-BUGWK63358 WIN : http/tests/appcache/simple.html = TIMEOUT
-BUGWK63358 WIN : http/tests/appcache/top-frame-1.html = TIMEOUT
-BUGWK63358 WIN : http/tests/appcache/video.html = TIMEOUT
-BUGWK63358 WIN : http/tests/appcache/whitelist-wildcard.html = TIMEOUT
-BUGWK63358 WIN : http/tests/appcache/xhr-foreign-resource.html = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/history-only-cached-subresource-loads.html = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/post-redirect-get.php = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/post-with-cached-subresources.php = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/stopped-revalidation.html = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/subresource-expiration-1.html = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/subresource-expiration-2.html = TIMEOUT
-BUGWK63358 WIN : http/tests/cache/subresource-fragment-identifier.html = TIMEOUT
-BUGWK63358 WIN : http/tests/canvas/philip/tests/security.drawImage.canvas.html = TIMEOUT
-BUGWK63358 WIN : http/tests/canvas/philip/tests/security.drawImage.image.html = TIMEOUT
-BUGWK63358 WIN : http/tests/canvas/philip/tests/security.pattern.canvas.fillStyle.html = TIMEOUT
-BUGWK63358 WIN : http/tests/canvas/philip/tests/security.pattern.canvas.strokeStyle.html = TIMEOUT
-BUGWK63358 WIN : http/tests/canvas/philip/tests/security.pattern.canvas.timing.html = TIMEOUT
 
 // New tests added in r87121
 BUGWK61169 WIN LINUX : css3/images/optimize-contrast-canvas.html = IMAGE
