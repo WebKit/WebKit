@@ -1,3 +1,9 @@
+2011-07-11  Ojan Vafai  <ojan@chromium.org>
+
+        Fix syntax error from r90757.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-11  Jessie Berlin  <jberlin@apple.com>
 
         http/tests/cache/history-only-cached-subresource-loads-max-age-https.html timing out on
