@@ -96,6 +96,7 @@ enum {
     PROP_ENABLE_CARET_BROWSING,
     PROP_ENABLE_HTML5_DATABASE,
     PROP_ENABLE_HTML5_LOCAL_STORAGE,
+    PROP_HTML5_LOCAL_STORAGE_DATABASE_PATH,
     PROP_ENABLE_XSS_AUDITOR,
     PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_ENABLE_FRAME_FLATTENING,
@@ -522,6 +523,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether to enable HTML5 Local Storage support"),
                                                          TRUE,
                                                          flags));
+    /**
+    * WebKitWebSettings:html5-local-storage-database-path:
+    *
+    * Path to store persistent HTML5 localStorage databases, which are enabled by
+    * "enable-html5-local-storage". The default path is $XDG_DATA_HOME/webkit/databases/.
+    *
+    * Since: 1.5.2
+    */
+    GOwnPtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+    g_object_class_install_property(gobject_class,
+                                    PROP_HTML5_LOCAL_STORAGE_DATABASE_PATH,
+                                    g_param_spec_string("html5-local-storage-database-path",
+                                                        _("Local Storage Database Path"),
+                                                        _("The path to where HTML5 Local Storage databases are stored."),
+                                                        localStoragePath.get(),
+                                                        flags));
     /**
     * WebKitWebSettings:enable-xss-auditor
     *
@@ -988,6 +1005,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_HTML5_LOCAL_STORAGE:
         priv->enableHTML5LocalStorage = g_value_get_boolean(value);
         break;
+    case PROP_HTML5_LOCAL_STORAGE_DATABASE_PATH:
+        priv->html5LocalStorageDatabasePath = g_value_get_string(value);
+        break;
     case PROP_ENABLE_SPELL_CHECKING:
         priv->enableSpellChecking = g_value_get_boolean(value);
         break;
@@ -1146,6 +1166,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_HTML5_LOCAL_STORAGE:
         g_value_set_boolean(value, priv->enableHTML5LocalStorage);
+        break;
+    case PROP_HTML5_LOCAL_STORAGE_DATABASE_PATH:
+        g_value_set_string(value, priv->html5LocalStorageDatabasePath.data());
         break;
     case PROP_ENABLE_SPELL_CHECKING:
         g_value_set_boolean(value, priv->enableSpellChecking);

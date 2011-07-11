@@ -404,12 +404,14 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
 static void resetDefaultsToConsistentValues()
 {
     WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    GOwnPtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "DumpRenderTreeGtk", "databases", NULL));
     g_object_set(G_OBJECT(settings),
                  "enable-private-browsing", FALSE,
                  "enable-developer-extras", FALSE,
                  "enable-spell-checking", TRUE,
                  "enable-html5-database", TRUE,
                  "enable-html5-local-storage", TRUE,
+                 "html5-local-storage-database-path", localStoragePath.get(),
                  "enable-xss-auditor", FALSE,
                  "enable-spatial-navigation", FALSE,
                  "enable-frame-flattening", FALSE,

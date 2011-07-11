@@ -56,6 +56,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enableCaretBrowsing;
     gboolean enableHTML5Database;
     gboolean enableHTML5LocalStorage;
+    CString html5LocalStorageDatabasePath;
     gboolean enableXSSAuditor;
     gboolean enableSpatialNavigation;
     gboolean enableFrameFlattening;

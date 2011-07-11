@@ -1,3 +1,17 @@
+2011-06-14  Mike Stegeman  <mrstegeman@gmail.com>
+
+        [GTK] Add API to allow setting local storage database path
+        https://bugs.webkit.org/show_bug.cgi?id=62091
+
+        Reviewed by Martin Robinson and Gustavo Noronha.
+
+        Expose the path of the localStorage databases through a setting
+        to allow HTML5 localStorage to be persistent. New setting is:
+        html5-local-storage-database-path
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2011-07-11  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should be able to rebaseline tests

@@ -3199,6 +3199,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setPrivateBrowsingEnabled(settingsPrivate->enablePrivateBrowsing);
     coreSettings->setCaretBrowsingEnabled(settingsPrivate->enableCaretBrowsing);
     coreSettings->setLocalStorageEnabled(settingsPrivate->enableHTML5LocalStorage);
+    coreSettings->setLocalStorageDatabasePath(settingsPrivate->html5LocalStorageDatabasePath.data());
     coreSettings->setXSSAuditorEnabled(settingsPrivate->enableXSSAuditor);
     coreSettings->setSpatialNavigationEnabled(settingsPrivate->enableSpatialNavigation);
     coreSettings->setFrameFlatteningEnabled(settingsPrivate->enableFrameFlattening);
@@ -3307,6 +3308,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 #endif
     else if (name == g_intern_string("enable-html5-local-storage"))
         settings->setLocalStorageEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("html5-local-storage-database-path"))
+        settings->setLocalStorageDatabasePath(g_value_get_string(&value));
     else if (name == g_intern_string("enable-xss-auditor"))
         settings->setXSSAuditorEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-spatial-navigation"))
