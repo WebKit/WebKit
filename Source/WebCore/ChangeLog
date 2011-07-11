@@ -1,3 +1,18 @@
+2011-07-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] Transition to Mozilla named cursors have incorrect hotspot and rendering
+        https://bugs.webkit.org/show_bug.cgi?id=62752
+
+        Instead of offsetting the cursor blit by the hotspot, just pass the hotspot
+        arguments to the GdkCursor constructor.
+
+        No new tests. This is covered by manual-tests/cursor.html.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor):
+
 2011-07-11  Yi Shen  <yi.4.shen@nokia.com>
 
         [Qt] Unreviewed rollout 90779 which may fail the layout-test.
