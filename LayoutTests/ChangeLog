@@ -1,5 +1,21 @@
 2011-07-11  Ojan Vafai  <ojan@chromium.org>
 
+        Win7 rebaselines after http://trac.webkit.org/changeset/90701.
+        Should have been part of http://trac.webkit.org/changeset/90716/,
+        but the Win7 bot was down at that time.
+
+        * platform/chromium-win/http/tests/loading/simple-subframe-expected.png:
+        * platform/chromium-win/http/tests/local/file-url-sent-as-referer-expected.png:
+        * platform/chromium-win/http/tests/misc/acid2-pixel-expected.png:
+        * platform/chromium-win/http/tests/misc/iframe404-expected.png:
+        * platform/chromium-win/http/tests/misc/location-replace-crossdomain-expected.png:
+        * platform/chromium-win/http/tests/multipart/invalid-image-data-standalone-expected.png:
+        * platform/chromium-win/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium/test_expectations.txt:
+        Removing useless duplicated comment line.
+
+2011-07-11  Ojan Vafai  <ojan@chromium.org>
+
         Update expectation that was missed because the WIN7 bot was down for a long time.
         * platform/chromium/test_expectations.txt:
 

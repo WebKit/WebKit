@@ -20,7 +20,6 @@ BUGCR24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
 BUGCR24182 WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TIMEOUT
 BUGCR24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
-//BUGCR24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
 //BUGCR24852 started failing since webkit 49583
 BUGCR24182 SLOW WIN : http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url.html = PASS
