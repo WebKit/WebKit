@@ -45,6 +45,7 @@ public:
 
     String title() const { return m_store.title; }
     String url() const { return m_store.url; }
+    const WebCore::ResourceRequest& originalRequest() const { return m_store.originalRequest; }
 
 private:
     WebNavigationData(const WebNavigationDataStore&);

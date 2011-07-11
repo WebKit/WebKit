@@ -870,6 +870,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     data.url = loader->urlForHistory().string();
     // FIXME: use direction of title.
     data.title = loader->title().string();
+    data.originalRequest = loader->originalRequestCopy();
 
     WebProcess::shared().connection()->send(Messages::WebContext::DidNavigateWithNavigationData(webPage->pageID(), data, m_frame->frameID()), 0);
 }

@@ -29,6 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/ResourceRequest.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -38,6 +39,7 @@ struct WebNavigationDataStore {
     {
         encoder->encode(url);
         encoder->encode(title);
+        encoder->encode(originalRequest);
     }
 
     static bool decode(CoreIPC::ArgumentDecoder* decoder, WebNavigationDataStore& store)
@@ -46,12 +48,15 @@ struct WebNavigationDataStore {
             return false;
         if (!decoder->decode(store.title))
             return false;
+        if (!decoder->decode(store.originalRequest))
+            return false;
         return true;
     }
 
     // FIXME: Add the remaining items we want to track for history.
     String url;
     String title;
+    WebCore::ResourceRequest originalRequest;
 };
 
 } // namespace WebKit

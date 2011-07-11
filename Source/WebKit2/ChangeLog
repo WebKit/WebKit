@@ -1,3 +1,21 @@
+2011-07-11  Ada Chan  <adachan@apple.com>
+
+        The original request should be accessible from WebNavigationData.
+        https://bugs.webkit.org/show_bug.cgi?id=64227
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebNavigationDataStore.h:
+        (WebKit::WebNavigationDataStore::encode): Handle the encoding of the original request.
+        (WebKit::WebNavigationDataStore::decode): Handle the decoding of the original request.
+        * UIProcess/API/C/WKNavigationData.cpp:
+        (WKNavigationDataCopyOriginalRequest): 
+        * UIProcess/API/C/WKNavigationData.h:
+        * UIProcess/WebNavigationData.h:
+        (WebKit::WebNavigationData::originalRequest):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory): Store the original request in the WebNavigationDataStore.
+
 2011-07-11  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Forward the viewport visible area from the view instead of inferring it from the TiledDrawingAreaProxy
