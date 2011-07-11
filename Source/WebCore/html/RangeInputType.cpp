@@ -32,6 +32,7 @@
 #include "config.h"
 #include "RangeInputType.h"
 
+#include "AXObjectCache.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -216,6 +217,9 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
     if (newValue != current) {
         ExceptionCode ec;
         setValueAsNumber(newValue, ec);
+
+        if (AXObjectCache::accessibilityEnabled())
+            element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);
         element()->dispatchFormControlChangeEvent();
     }
 

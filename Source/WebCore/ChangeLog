@@ -1,3 +1,18 @@
+2011-07-11  Shinya Kawanaka  <shinyak@google.com>
+
+        Added accessibility notification when value is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=64256
+
+        Notifies the value change of range input when accessibility is enabled.
+
+        Reviewed by Kent Tamura.
+
+        Covered by existing tests.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+          Added accessibility notification when value is changed.
+
 2011-07-08  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: Fix resizing of sidebar pane in Timeline and Profile panels.
