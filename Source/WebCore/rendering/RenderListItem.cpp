@@ -251,31 +251,31 @@ void RenderListItem::addOverflowFromChildren()
 void RenderListItem::positionListMarker()
 {
     if (m_marker && m_marker->parent()->isBox() && !m_marker->isInside() && m_marker->inlineBoxWrapper()) {
-        int markerOldLogicalLeft = m_marker->logicalLeft();
-        int blockOffset = 0;
-        int lineOffset = 0;
+        LayoutUnit markerOldLogicalLeft = m_marker->logicalLeft();
+        LayoutUnit blockOffset = 0;
+        LayoutUnit lineOffset = 0;
         for (RenderBox* o = m_marker->parentBox(); o != this; o = o->parentBox()) {
             blockOffset += o->logicalTop();
             lineOffset += o->logicalLeft();
         }
 
         bool adjustOverflow = false;
-        int markerLogicalLeft;
+        LayoutUnit markerLogicalLeft;
         RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
         bool hitSelfPaintingLayer = false;
         
         RootInlineBox* rootBox = m_marker->inlineBoxWrapper()->root();
-        int lineTop = rootBox->lineTop();
-        int lineBottom = rootBox->lineBottom();
+        LayoutUnit lineTop = rootBox->lineTop();
+        LayoutUnit lineBottom = rootBox->lineBottom();
 
         // FIXME: Need to account for relative positioning in the layout overflow.
         if (style()->isLeftToRightDirection()) {
-            int leftLineOffset = logicalLeftOffsetForLine(blockOffset, logicalLeftOffsetForLine(blockOffset, false), false);
+            LayoutUnit leftLineOffset = logicalLeftOffsetForLine(blockOffset, logicalLeftOffsetForLine(blockOffset, false), false);
             markerLogicalLeft = leftLineOffset - lineOffset - paddingStart() - borderStart() + m_marker->marginStart();
             m_marker->inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
             for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
-                IntRect newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
-                IntRect newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
+                LayoutRect newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
+                LayoutRect newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
                 if (markerLogicalLeft < newLogicalVisualOverflowRect.x() && !hitSelfPaintingLayer) {
                     newLogicalVisualOverflowRect.setWidth(newLogicalVisualOverflowRect.maxX() - markerLogicalLeft);
                     newLogicalVisualOverflowRect.setX(markerLogicalLeft);
@@ -294,12 +294,12 @@ void RenderListItem::positionListMarker()
             }
         } else {
             markerLogicalLeft = m_marker->logicalLeft() + paddingStart() + borderStart() + m_marker->marginEnd();
-            int rightLineOffset = logicalRightOffsetForLine(blockOffset, logicalRightOffsetForLine(blockOffset, false), false);
+            LayoutUnit rightLineOffset = logicalRightOffsetForLine(blockOffset, logicalRightOffsetForLine(blockOffset, false), false);
             markerLogicalLeft = rightLineOffset - lineOffset + paddingStart() + borderStart() + m_marker->marginEnd();
             m_marker->inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
             for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
-                IntRect newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
-                IntRect newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
+                LayoutRect newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
+                LayoutRect newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
                 if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalVisualOverflowRect.maxX() && !hitSelfPaintingLayer) {
                     newLogicalVisualOverflowRect.setWidth(markerLogicalLeft + m_marker->logicalWidth() - newLogicalVisualOverflowRect.x());
                     if (box == root)
@@ -318,7 +318,7 @@ void RenderListItem::positionListMarker()
         }
 
         if (adjustOverflow) {
-            IntRect markerRect(markerLogicalLeft + lineOffset, blockOffset, m_marker->width(), m_marker->height());
+            LayoutRect markerRect(markerLogicalLeft + lineOffset, blockOffset, m_marker->width(), m_marker->height());
             if (!style()->isHorizontalWritingMode())
                 markerRect = markerRect.transposedRect();
             RenderBox* o = m_marker;

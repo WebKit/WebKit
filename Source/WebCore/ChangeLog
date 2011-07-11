@@ -1,3 +1,69 @@
+2011-07-11  Levi Weintraub  <leviw@chromium.org>
+
+        Switch lineTop and lineBottom to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64317
+
+        Reviewed by Eric Seidel.
+
+        Changing lineTop and lineBottom to LayoutUnits and preparing all uses
+        of them for the upcoming conversion.
+
+        No new tests, no new functionality.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/GapRects.h:
+        (WebCore::GapRects::left):
+        (WebCore::GapRects::center):
+        (WebCore::GapRects::right):
+        (WebCore::GapRects::uniteLeft):
+        (WebCore::GapRects::uniteCenter):
+        (WebCore::GapRects::uniteRight):
+        (WebCore::GapRects::operator LayoutRect):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::flipLinesInBlockDirection):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::setLayoutOverflow):
+        (WebCore::InlineFlowBox::setVisualOverflow):
+        (WebCore::InlineFlowBox::setOverflowFromLogicalRects):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::lineTop):
+        (WebCore::RootInlineBox::lineBottom):
+        (WebCore::RootInlineBox::setLineTopBottomPositions):
+        (WebCore::RootInlineBox::logicalTopVisualOverflow):
+        (WebCore::RootInlineBox::logicalBottomVisualOverflow):
+        (WebCore::RootInlineBox::logicalTopLayoutOverflow):
+        (WebCore::RootInlineBox::logicalBottomLayoutOverflow):
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRootInlineBox.h:
+
 2011-07-11  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Daniel Bates.

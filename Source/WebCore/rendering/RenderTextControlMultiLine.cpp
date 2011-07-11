@@ -92,7 +92,7 @@ int RenderTextControlMultiLine::preferredContentWidth(float charWidth) const
     return static_cast<int>(ceilf(charWidth * factor)) + scrollbarThickness();
 }
 
-void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(int lineHeight)
+void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight)
 {
     setHeight(height() + lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows());
 }

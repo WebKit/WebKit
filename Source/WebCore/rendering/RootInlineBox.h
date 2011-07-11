@@ -47,8 +47,8 @@ public:
 
     virtual void adjustPosition(float dx, float dy);
 
-    int lineTop() const { return m_lineTop; }
-    int lineBottom() const { return m_lineBottom; }
+    LayoutUnit lineTop() const { return m_lineTop; }
+    LayoutUnit lineBottom() const { return m_lineBottom; }
 
     int paginationStrut() const { return m_paginationStrut; }
     void setPaginationStrut(int s) { m_paginationStrut = s; }
@@ -60,7 +60,11 @@ public:
     int blockDirectionPointInLine() const { return max(lineTop(), selectionTop()); }
 
     int alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
-    void setLineTopBottomPositions(int top, int bottom);
+    void setLineTopBottomPositions(LayoutUnit top, LayoutUnit bottom)
+    { 
+        m_lineTop = top; 
+        m_lineBottom = bottom; 
+    }
 
     virtual RenderLineBoxList* rendererLineBoxes() const;
 
@@ -98,7 +102,7 @@ public:
 #endif
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
     bool hasSelectedChildren() const { return m_hasSelectedChildrenOrCanHaveLeadingExpansion; }
     void setHasSelectedChildren(bool hasSelectedChildren) { m_hasSelectedChildrenOrCanHaveLeadingExpansion = hasSelectedChildren; }
@@ -145,19 +149,19 @@ public:
     bool fitsToGlyphs() const;
     bool includesRootLineBoxFontOrLeading() const;
     
-    int logicalTopVisualOverflow() const
+    LayoutUnit logicalTopVisualOverflow() const
     {
         return InlineFlowBox::logicalTopVisualOverflow(lineTop());
     }
-    int logicalBottomVisualOverflow() const
+    LayoutUnit logicalBottomVisualOverflow() const
     {
         return InlineFlowBox::logicalBottomVisualOverflow(lineBottom());
     }
-    int logicalTopLayoutOverflow() const
+    LayoutUnit logicalTopLayoutOverflow() const
     {
         return InlineFlowBox::logicalTopLayoutOverflow(lineTop());
     }
-    int logicalBottomLayoutOverflow() const
+    LayoutUnit logicalBottomLayoutOverflow() const
     {
         return InlineFlowBox::logicalBottomLayoutOverflow(lineBottom());
     }
@@ -179,8 +183,8 @@ private:
     unsigned m_lineBreakPos;
     RefPtr<BidiContext> m_lineBreakContext;
 
-    int m_lineTop;
-    int m_lineBottom;
+    LayoutUnit m_lineTop;
+    LayoutUnit m_lineBottom;
 
     int m_paginationStrut;
 
@@ -202,12 +206,6 @@ private:
     WTF::Unicode::Direction m_lineBreakBidiStatusLastStrong : 5;
     WTF::Unicode::Direction m_lineBreakBidiStatusLast : 5;
 };
-
-inline void RootInlineBox::setLineTopBottomPositions(int top, int bottom) 
-{ 
-    m_lineTop = top; 
-    m_lineBottom = bottom; 
-}
 
 } // namespace WebCore
 

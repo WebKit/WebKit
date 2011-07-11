@@ -67,9 +67,9 @@ public:
     bool hitTest(RenderBoxModelObject*, const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) const;
     
 private:
-    bool anyLineIntersectsRect(RenderBoxModelObject*, const IntRect&, const IntPoint&, bool usePrintRect = false, int outlineSize = 0) const;
-    bool lineIntersectsDirtyRect(RenderBoxModelObject*, InlineFlowBox*, const PaintInfo&, const IntPoint&) const;
-    bool rangeIntersectsRect(RenderBoxModelObject*, int logicalTop, int logicalBottom, const IntRect&, const IntPoint&) const;
+    bool anyLineIntersectsRect(RenderBoxModelObject*, const LayoutRect&, const LayoutPoint&, bool usePrintRect = false, LayoutUnit outlineSize = 0) const;
+    bool lineIntersectsDirtyRect(RenderBoxModelObject*, InlineFlowBox*, const PaintInfo&, const LayoutPoint&) const;
+    bool rangeIntersectsRect(RenderBoxModelObject*, LayoutUnit logicalTop, LayoutUnit logicalBottom, const LayoutRect&, const LayoutPoint&) const;
 
     // For block flows, each box represents the root inline box for a line in the
     // paragraph.

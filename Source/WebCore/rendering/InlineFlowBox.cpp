@@ -572,8 +572,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
     }
 }
 
-void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop,
-                                               int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
+void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
+                                               LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     bool isRootBox = isRootInlineBox();
     if (isRootBox) {
@@ -581,7 +581,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         setLogicalTop(top + maxAscent - fontMetrics.ascent(baselineType));
     }
 
-    int adjustmentForChildrenWithSameLineHeightAndBaseline = 0;
+    LayoutUnit adjustmentForChildrenWithSameLineHeightAndBaseline = 0;
     if (descendantsHaveSameLineHeightAndBaseline()) {
         adjustmentForChildrenWithSameLineHeightAndBaseline = logicalTop();
         if (parent())
@@ -607,14 +607,14 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
             if (!strictMode && inlineFlowBox && !inlineFlowBox->hasTextChildren() && !curr->boxModelObject()->hasInlineDirectionBordersOrPadding()
                 && !(inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants()))
                 childAffectsTopBottomPos = false;
-            int posAdjust = maxAscent - curr->baselinePosition(baselineType);
+            LayoutUnit posAdjust = maxAscent - curr->baselinePosition(baselineType);
             curr->setLogicalTop(curr->logicalTop() + top + posAdjust);
         }
         
-        int newLogicalTop = curr->logicalTop();
-        int newLogicalTopIncludingMargins = newLogicalTop;
-        int boxHeight = curr->logicalHeight();
-        int boxHeightIncludingMargins = boxHeight;
+        LayoutUnit newLogicalTop = curr->logicalTop();
+        LayoutUnit newLogicalTopIncludingMargins = newLogicalTop;
+        LayoutUnit boxHeight = curr->logicalHeight();
+        LayoutUnit boxHeightIncludingMargins = boxHeight;
             
         if (curr->isText() || curr->isInlineFlowBox()) {
             const FontMetrics& fontMetrics = curr->renderer()->style(m_firstLine)->fontMetrics();
@@ -628,8 +628,8 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         } else if (!curr->renderer()->isBR()) {
             RenderBox* box = toRenderBox(curr->renderer());
             newLogicalTopIncludingMargins = newLogicalTop;
-            int overSideMargin = curr->isHorizontal() ? box->marginTop() : box->marginRight();
-            int underSideMargin = curr->isHorizontal() ? box->marginBottom() : box->marginLeft();
+            LayoutUnit overSideMargin = curr->isHorizontal() ? box->marginTop() : box->marginRight();
+            LayoutUnit underSideMargin = curr->isHorizontal() ? box->marginBottom() : box->marginLeft();
             newLogicalTop += overSideMargin;
             boxHeightIncludingMargins += overSideMargin + underSideMargin;
         }
@@ -648,8 +648,8 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
 
                 RenderRubyRun* rubyRun = toRenderRubyRun(curr->renderer());
                 if (RenderRubyBase* rubyBase = rubyRun->rubyBase()) {
-                    int bottomRubyBaseLeading = (curr->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0);
-                    int topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0);
+                    LayoutUnit bottomRubyBaseLeading = (curr->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0);
+                    LayoutUnit topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0);
                     newLogicalTop += !renderer()->style()->isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
                     boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
                 }
@@ -703,7 +703,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
     }
 }
 
-void InlineFlowBox::flipLinesInBlockDirection(int lineTop, int lineBottom)
+void InlineFlowBox::flipLinesInBlockDirection(LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // Flip the box on the line such that the top is now relative to the lineBottom instead of the lineTop.
     setLogicalTop(lineBottom - (logicalTop() - lineTop) - logicalHeight());
@@ -823,7 +823,7 @@ inline void InlineFlowBox::addReplacedChildOverflow(const InlineBox* inlineBox, 
     logicalLayoutOverflow.unite(childLogicalLayoutOverflow);
 }
 
-void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // If we know we have no overflow, we can just bail.
     if (knownToHaveNoOverflow())
@@ -832,8 +832,8 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
     // Visual overflow just includes overflow for stuff we need to repaint ourselves.  Self-painting layers are ignored.
     // Layout overflow is used to determine scrolling extent, so it still includes child layers and also factors in
     // transforms, relative positioning, etc.
-    IntRect logicalLayoutOverflow(enclosingIntRect(logicalFrameRectIncludingLineHeight(lineTop, lineBottom)));
-    IntRect logicalVisualOverflow(logicalLayoutOverflow);
+    LayoutRect logicalLayoutOverflow(enclosingLayoutRect(logicalFrameRectIncludingLineHeight(lineTop, lineBottom)));
+    LayoutRect logicalVisualOverflow(logicalLayoutOverflow);
   
     // box-shadow on root line boxes is applying to the block and not to the lines.
     addBoxShadowVisualOverflow(logicalVisualOverflow);
@@ -847,7 +847,7 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
             RenderText* rt = toRenderText(text->renderer());
             if (rt->isBR())
                 continue;
-            IntRect textBoxOverflow(enclosingIntRect(text->logicalFrameRect()));
+            LayoutRect textBoxOverflow(enclosingLayoutRect(text->logicalFrameRect()));
             addTextBoxVisualOverflow(text, textBoxDataMap, textBoxOverflow);
             logicalVisualOverflow.unite(textBoxOverflow);
         } else  if (curr->renderer()->isRenderInline()) {
@@ -855,7 +855,7 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
             flow->computeOverflow(lineTop, lineBottom, textBoxDataMap);
             if (!flow->boxModelObject()->hasSelfPaintingLayer())
                 logicalVisualOverflow.unite(flow->logicalVisualOverflowRect(lineTop, lineBottom));
-            IntRect childLayoutOverflow = flow->logicalLayoutOverflowRect(lineTop, lineBottom);
+            LayoutRect childLayoutOverflow = flow->logicalLayoutOverflowRect(lineTop, lineBottom);
             childLayoutOverflow.move(flow->boxModelObject()->relativePositionLogicalOffset());
             logicalLayoutOverflow.unite(childLayoutOverflow);
         } else
@@ -865,9 +865,9 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
     setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, lineTop, lineBottom);
 }
 
-void InlineFlowBox::setLayoutOverflow(const IntRect& rect, int lineTop, int lineBottom)
+void InlineFlowBox::setLayoutOverflow(const LayoutRect& rect, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    IntRect frameBox = enclosingIntRect(frameRectIncludingLineHeight(lineTop, lineBottom));
+    LayoutRect frameBox = enclosingLayoutRect(frameRectIncludingLineHeight(lineTop, lineBottom));
     if (frameBox.contains(rect) || rect.isEmpty())
         return;
 
@@ -877,9 +877,9 @@ void InlineFlowBox::setLayoutOverflow(const IntRect& rect, int lineTop, int line
     m_overflow->setLayoutOverflow(rect);
 }
 
-void InlineFlowBox::setVisualOverflow(const IntRect& rect, int lineTop, int lineBottom)
+void InlineFlowBox::setVisualOverflow(const LayoutRect& rect, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    IntRect frameBox = enclosingIntRect(frameRectIncludingLineHeight(lineTop, lineBottom));
+    LayoutRect frameBox = enclosingLayoutRect(frameRectIncludingLineHeight(lineTop, lineBottom));
     if (frameBox.contains(rect) || rect.isEmpty())
         return;
         
@@ -889,16 +889,16 @@ void InlineFlowBox::setVisualOverflow(const IntRect& rect, int lineTop, int line
     m_overflow->setVisualOverflow(rect);
 }
 
-void InlineFlowBox::setOverflowFromLogicalRects(const IntRect& logicalLayoutOverflow, const IntRect& logicalVisualOverflow, int lineTop, int lineBottom)
+void InlineFlowBox::setOverflowFromLogicalRects(const LayoutRect& logicalLayoutOverflow, const LayoutRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    IntRect layoutOverflow(isHorizontal() ? logicalLayoutOverflow : logicalLayoutOverflow.transposedRect());
+    LayoutRect layoutOverflow(isHorizontal() ? logicalLayoutOverflow : logicalLayoutOverflow.transposedRect());
     setLayoutOverflow(layoutOverflow, lineTop, lineBottom);
     
-    IntRect visualOverflow(isHorizontal() ? logicalVisualOverflow : logicalVisualOverflow.transposedRect());
+    LayoutRect visualOverflow(isHorizontal() ? logicalVisualOverflow : logicalVisualOverflow.transposedRect());
     setVisualOverflow(visualOverflow, lineTop, lineBottom);
 }
 
-bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, int lineTop, int lineBottom)
+bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
     flipForWritingMode(overflowRect);

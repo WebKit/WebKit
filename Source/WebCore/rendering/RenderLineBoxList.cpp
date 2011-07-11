@@ -171,7 +171,7 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, int 
     return true;
 }
 
-bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, const IntRect& rect, const IntPoint& offset, bool usePrintRect, int outlineSize) const
+bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, const LayoutRect& rect, const LayoutPoint& offset, bool usePrintRect, LayoutUnit outlineSize) const
 {
     // We can check the first box and last box and avoid painting/hit testing if we don't
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
@@ -179,14 +179,14 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
     RootInlineBox* firstRootBox = firstLineBox()->root();
     RootInlineBox* lastRootBox = lastLineBox()->root();
-    int firstLineTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox->lineTop());
+    LayoutUnit firstLineTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox->lineTop());
     if (usePrintRect && !firstLineBox()->parent())
         firstLineTop = min(firstLineTop, firstLineBox()->root()->lineTop());
-    int lastLineBottom = lastLineBox()->logicalBottomVisualOverflow(lastRootBox->lineBottom());
+    LayoutUnit lastLineBottom = lastLineBox()->logicalBottomVisualOverflow(lastRootBox->lineBottom());
     if (usePrintRect && !lastLineBox()->parent())
         lastLineBottom = max(lastLineBottom, lastLineBox()->root()->lineBottom());
-    int logicalTop = firstLineTop - outlineSize;
-    int logicalBottom = outlineSize + lastLineBottom;
+    LayoutUnit logicalTop = firstLineTop - outlineSize;
+    LayoutUnit logicalBottom = outlineSize + lastLineBottom;
     
     return rangeIntersectsRect(renderer, logicalTop, logicalBottom, rect, offset);
 }

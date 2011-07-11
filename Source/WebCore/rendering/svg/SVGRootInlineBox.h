@@ -45,7 +45,7 @@ public:
     virtual int virtualLogicalHeight() const { return m_logicalHeight; }
     void setLogicalHeight(int height) { m_logicalHeight = height; }
 
-    virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
 
     void computePerCharacterLayoutInformation();
 

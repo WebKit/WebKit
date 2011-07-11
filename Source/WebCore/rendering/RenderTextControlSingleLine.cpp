@@ -480,7 +480,7 @@ int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
     return result;
 }
 
-void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(int lineHeight)
+void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight)
 {
     HTMLElement* resultsButton = resultsButtonElement();
     if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {

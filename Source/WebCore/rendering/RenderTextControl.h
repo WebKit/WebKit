@@ -73,7 +73,7 @@ protected:
     static bool hasValidAvgCharWidth(AtomicString family);
     virtual float getAvgCharWidth(AtomicString family);
     virtual int preferredContentWidth(float charWidth) const = 0;
-    virtual void adjustControlHeightBasedOnLineHeight(int lineHeight) = 0;
+    virtual void adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight) = 0;
     virtual RenderStyle* textBaseStyle() const = 0;
 
     virtual void updateFromElement();

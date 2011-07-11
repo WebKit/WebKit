@@ -23,23 +23,23 @@
 #ifndef GapRects_h
 #define GapRects_h
 
-#include "IntRect.h"
+#include "LayoutTypes.h"
 
 namespace WebCore {
 
     struct GapRects {
-        const IntRect& left() const { return m_left; }
-        const IntRect& center() const { return m_center; }
-        const IntRect& right() const { return m_right; }
+        const LayoutRect& left() const { return m_left; }
+        const LayoutRect& center() const { return m_center; }
+        const LayoutRect& right() const { return m_right; }
         
-        void uniteLeft(const IntRect& r) { m_left.unite(r); }
-        void uniteCenter(const IntRect& r) { m_center.unite(r); }
-        void uniteRight(const IntRect& r) { m_right.unite(r); }
+        void uniteLeft(const LayoutRect& r) { m_left.unite(r); }
+        void uniteCenter(const LayoutRect& r) { m_center.unite(r); }
+        void uniteRight(const LayoutRect& r) { m_right.unite(r); }
         void unite(const GapRects& o) { uniteLeft(o.left()); uniteCenter(o.center()); uniteRight(o.right()); }
 
-        operator IntRect() const
+        operator LayoutRect() const
         {
-            IntRect result = m_left;
+            LayoutRect result = m_left;
             result.unite(m_center);
             result.unite(m_right);
             return result;
@@ -52,9 +52,9 @@ namespace WebCore {
         bool operator!=(const GapRects& other) { return !(*this == other); }
 
     private:
-        IntRect m_left;
-        IntRect m_center;
-        IntRect m_right;
+        LayoutRect m_left;
+        LayoutRect m_center;
+        LayoutRect m_right;
     };
 
 } // namespace WebCore
