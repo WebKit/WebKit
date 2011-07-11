@@ -67,46 +67,6 @@ QString QTouchWebPage::title() const
     return d->page->title();
 }
 
-class FriendlyWidget : public QWidget {
-public:
-    bool focusNextPrevChild(bool next);
-};
-
-void QTouchWebPage::focusNextPrevChildCallback(bool next)
-{
-    if (!hasFocus())
-        return;
-
-    // Find the view which has the focus.
-    QList<QGraphicsView*> views = scene()->views();
-    const int viewCount = views.count();
-    QGraphicsView* focusedView = 0;
-    for (int i = 0; i < viewCount; ++i) {
-        if (views[i]->hasFocus()) {
-            focusedView = views[i];
-            break;
-        }
-    }
-
-    if (focusedView) {
-        QWidget* window = focusedView->window();
-        FriendlyWidget* friendlyWindow = static_cast<FriendlyWidget*>(window);
-        friendlyWindow->focusNextPrevChild(next);
-    }
-}
-
-/*! \reimp
-*/
-bool QTouchWebPage::focusNextPrevChild(bool next)
-{
-#if 0
-    // FIXME: Key event is handled by the QtWebPageProxy subclass.
-    QKeyEvent ev(QEvent::KeyPress, Qt::Key_Tab, Qt::KeyboardModifiers(next ? Qt::NoModifier : Qt::ShiftModifier));
-    d->page.keyPressEvent(&ev);
-#endif
-    return true;
-}
-
 /*! \reimp
 */
 bool QTouchWebPage::event(QEvent* ev)

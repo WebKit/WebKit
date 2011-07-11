@@ -65,10 +65,6 @@ protected:
     virtual void timerEvent(QTimerEvent*);
     virtual void resizeEvent(QGraphicsSceneResizeEvent*);
 
-    Q_SLOT void focusNextPrevChildCallback(bool next);
-
-    virtual bool focusNextPrevChild(bool next);
-
 private:
     Q_PRIVATE_SLOT(d, void onScaleChanged())
 

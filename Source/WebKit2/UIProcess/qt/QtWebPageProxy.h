@@ -194,7 +194,6 @@ public:
     Q_SIGNAL void scrollRequested(int dx, int dy);
     Q_SIGNAL void windowCloseRequested();
     Q_SIGNAL void zoomableAreaFound(const QRect&);
-    Q_SIGNAL void focusNextPrevChild(bool);
 
 protected:
     void init();

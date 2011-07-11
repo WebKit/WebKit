@@ -171,7 +171,6 @@ void qt_wk_close(WKPageRef page, const void* clientInfo)
 
 void qt_wk_takeFocus(WKPageRef page, WKFocusDirection direction, const void *clientInfo)
 {
-    emit toQtWebPageProxy(clientInfo)->focusNextPrevChild(direction == kWKFocusDirectionForward);
 }
 
 void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
