@@ -1,3 +1,10 @@
+2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed fix after r90746.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests): Really disable NRWT for qt-mac platform.
+
 2011-07-11  Adam Roben  <aroben@apple.com>
 
         Teach TestFailures that ORWT's results.html file might be missing due to all tests passing
