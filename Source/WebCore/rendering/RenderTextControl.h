@@ -35,8 +35,7 @@ class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 
-    HTMLTextFormControlElement* textFormControlElement();
-    virtual HTMLElement* innerTextElement() const = 0;
+    HTMLTextFormControlElement* textFormControlElement() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
     bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
@@ -53,6 +52,9 @@ public:
 
 protected:
     RenderTextControl(Node*, bool);
+
+    // This convenience function should not be made public because innerTextElement may outlive the render tree.
+    HTMLElement* innerTextElement() const;
 
     int scrollbarThickness() const;
     void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;

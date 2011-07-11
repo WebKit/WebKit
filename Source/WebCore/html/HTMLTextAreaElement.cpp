@@ -269,6 +269,13 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
     return proposedValue.left(numCharactersInGraphemeClusters(proposedValue, maxLength));
 }
 
+HTMLElement* HTMLTextAreaElement::innerTextElement() const
+{
+    Node* node = shadowRoot()->firstChild();
+    ASSERT(!node || node->hasTagName(divTag));
+    return static_cast<HTMLElement*>(node);
+}
+
 void HTMLTextAreaElement::rendererWillBeDestroyed()
 {
     updateValue();

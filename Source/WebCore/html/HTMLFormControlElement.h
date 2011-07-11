@@ -214,6 +214,8 @@ public:
     virtual int maxLength() const = 0;
     virtual String value() const = 0;
 
+    virtual HTMLElement* innerTextElement() const = 0;
+
     void cacheSelection(int start, int end)
     {
         m_cachedSelectionStart = start;

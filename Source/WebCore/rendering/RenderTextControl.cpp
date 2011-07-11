@@ -82,9 +82,14 @@ RenderTextControl::~RenderTextControl()
 {
 }
 
-HTMLTextFormControlElement* RenderTextControl::textFormControlElement()
+HTMLTextFormControlElement* RenderTextControl::textFormControlElement() const
 {
     return static_cast<HTMLTextFormControlElement*>(node());
+}
+
+HTMLElement* RenderTextControl::innerTextElement() const
+{
+    return textFormControlElement()->innerTextElement();
 }
 
 void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

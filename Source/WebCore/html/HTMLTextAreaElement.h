@@ -51,8 +51,10 @@ public:
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
     bool isValidValue(const String&) const;
     
+    virtual HTMLElement* innerTextElement() const;
+
     void rendererWillBeDestroyed();
-    
+
     void setCols(int);
     void setRows(int);
 

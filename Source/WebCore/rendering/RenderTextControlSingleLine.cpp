@@ -94,11 +94,6 @@ inline HTMLElement* RenderTextControlSingleLine::containerElement() const
     return inputElement()->containerElement();
 }
 
-inline HTMLElement* RenderTextControlSingleLine::innerTextElement() const
-{
-    return inputElement()->innerTextElement();
-}
-
 inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 {
     return inputElement()->innerBlockElement();

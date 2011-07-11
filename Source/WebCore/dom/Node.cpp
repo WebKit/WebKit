@@ -2343,9 +2343,6 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
 
         ContainerNode* rootNode = shadowRoot(const_cast<Node*>(node));
 
-        if (!rootNode && node->renderer() && node->renderer()->isTextControl())
-            rootNode = static_cast<RenderTextControl*>(node->renderer())->innerTextElement();
-
         if (rootNode) {
             indent += "\t";
             traverseTreeAndMark(indent, rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);

@@ -131,7 +131,6 @@ private:
     virtual int textBlockInsetTop() const;
 
     HTMLElement* containerElement() const;
-    virtual HTMLElement* innerTextElement() const;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;

@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "htmlediting.h"
 #include "InlineTextBox.h"
@@ -637,7 +638,7 @@ bool TextIterator::handleReplacedElement()
     }
 
     if (m_entersTextControls && renderer->isTextControl()) {
-        if (HTMLElement* innerTextElement = toRenderTextControl(renderer)->innerTextElement()) {
+        if (HTMLElement* innerTextElement = toRenderTextControl(renderer)->textFormControlElement()->innerTextElement()) {
             m_node = innerTextElement->shadowTreeRootNode();
             pushFullyClippedState(m_fullyClippedStack, m_node);
             m_offset = 0;

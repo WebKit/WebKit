@@ -681,11 +681,10 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-static inline bool hasVisibleTextArea(RenderTextControl* textControl)
+static inline bool hasVisibleTextArea(RenderTextControl* textControl, HTMLElement* innerText)
 {
     ASSERT(textControl);
-    HTMLElement* innerText = textControl->innerTextElement();
-    return textControl->style()->visibility() == HIDDEN || !innerText || !innerText->renderer() || !innerText->renderBox()->height();
+    return textControl->style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
 }
 
 void HTMLTextFormControlElement::setSelectionRange(int start, int end)
@@ -699,7 +698,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end)
     start = min(max(start, 0), end);
 
     RenderTextControl* control = toRenderTextControl(renderer());
-    if (hasVisibleTextArea(control)) {
+    if (!hasVisibleTextArea(control, innerTextElement())) {
         cacheSelection(start, end);
         return;
     }
@@ -735,14 +734,10 @@ int HTMLTextFormControlElement::selectionStart() const
 int HTMLTextFormControlElement::computeSelectionStart() const
 {
     Frame* frame = document()->frame();
-    if (!renderer() || !frame)
+    if (!frame)
         return 0;
 
-    HTMLElement* innerText = toRenderTextControl(renderer())->innerTextElement();
-    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
-    // from frame->selection->start() can blow us from underneath. Also, function ordering is
-    // usually dependent on the compiler.
-    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->start());
+    return RenderTextControl::indexForVisiblePosition(innerTextElement(), frame->selection()->start());
 }
 
 int HTMLTextFormControlElement::selectionEnd() const
@@ -757,14 +752,10 @@ int HTMLTextFormControlElement::selectionEnd() const
 int HTMLTextFormControlElement::computeSelectionEnd() const
 {
     Frame* frame = document()->frame();
-    if (!renderer() || !frame)
+    if (!frame)
         return 0;
 
-    HTMLElement* innerText = toRenderTextControl(renderer())->innerTextElement();
-    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
-    // from frame->selection->end() can blow us from underneath. Also, function ordering is
-    // usually dependent on the compiler.
-    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->end());
+    return RenderTextControl::indexForVisiblePosition(innerTextElement(), frame->selection()->end());
 }
 
 static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& containerNode, int& offsetInContainer)
@@ -787,7 +778,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
     int end = m_cachedSelectionEnd;
 
     ASSERT(start <= end);
-    HTMLElement* innerText = toRenderTextControl(renderer())->innerTextElement();
+    HTMLElement* innerText = innerTextElement();
     if (!innerText)
         return 0;
 

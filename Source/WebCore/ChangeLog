@@ -1,3 +1,46 @@
+2011-07-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move innerTextElement() from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=64134
+
+        Reviewed by Kent Tamura.
+
+        Moved innerTextElement from RenderTextControl to HTMLTextFormControlElement. It is implemented by
+        HTMLInputElement and HTMLTextAreaElement instead of RenderTextControlSingleLine and
+        RenderTextControlMultiLine.
+
+        This refactoring removes the indirection through RenderTextControl and makes the ownership of
+        shadow DOM for input and textarea elements clear. Accessing the shadow DOM of input and textarea elements
+        are now less error prone because it no longer depends on the lifetime of the render tree.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition): Access innerTextElement via
+        HTMLTextFormControlElement.
+        * dom/Node.cpp:
+        (WebCore::traverseTreeAndMark): No longer calls innerTextElement because this was a work-around
+        needed before making input and textarea elements use the new shadow DOM model.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleReplacedElement): Access innerTextElement via HTMLTextFormControlElement.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::hasVisibleTextArea): Takes innerTextElement.
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Calls innerTextElement().
+        (WebCore::HTMLTextFormControlElement::selection): Ditto.
+        (WebCore::HTMLTextFormControlElement::selectionStart): Ditto; no longer uses a temporary local variable
+        for innerTextElement because innerTextElement() no longer depends on the lifetime of the render tree.
+        (WebCore::HTMLTextFormControlElement::selectionEnd): Ditto.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::innerTextElement): Added.
+        * html/HTMLTextAreaElement.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textFormControlElement): Made this function a const member.
+        (WebCore::RenderTextControl::innerTextElement): Added.
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-07-11  Tony Chang  <tony@chromium.org>
 
         rename RenderObject::isFlexibleBox to isDeprecatedFlexibleBox

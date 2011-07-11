@@ -44,11 +44,6 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
         static_cast<HTMLTextAreaElement*>(node())->rendererWillBeDestroyed();
 }
 
-HTMLElement* RenderTextControlMultiLine::innerTextElement() const
-{
-    return toHTMLElement(toElement(node())->shadowRoot()->firstChild());
-}
-
 void RenderTextControlMultiLine::subtreeHasChanged()
 {
     RenderTextControl::subtreeHasChanged();
