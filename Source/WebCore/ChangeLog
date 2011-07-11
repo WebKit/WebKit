@@ -1,3 +1,36 @@
+2011-07-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: make SourceFrame a View.
+        https://bugs.webkit.org/show_bug.cgi?id=64274
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.createSearchRegex):
+        (WebInspector.SourceFrame.prototype.show):
+        (WebInspector.SourceFrame.prototype.hide):
+        (WebInspector.SourceFrame.prototype._beforeTextChanged):
+        (WebInspector.SourceFrame.prototype._afterTextChanged):
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+        (WebInspector.SourceFrame.prototype.performSearch.doFindSearchMatches):
+        (WebInspector.SourceFrame.prototype.performSearch):
+        (WebInspector.SourceFrame.prototype._populateTextAreaContextMenu):
+        (WebInspector.SourceFrame.prototype._suggestedFileName):
+        (WebInspector.SourceFrame.prototype._doubleClick):
+        (WebInspector.SourceFrame.prototype._cancelEditing):
+        (WebInspector.TextViewerDelegateForSourceFrame):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.doubleClick):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.beforeTextChanged):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.afterTextChanged):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.commitEditing):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.cancelEditing):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.populateLineGutterContextMenu):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.suggestedFileName):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewerDelegate.prototype.populateLineGutterContextMenu):
+
 2011-07-11  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Adam Roben.

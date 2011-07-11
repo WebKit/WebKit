@@ -30,7 +30,8 @@
 
 WebInspector.SourceFrame = function(delegate, url)
 {
-    WebInspector.TextViewerDelegate.call(this);
+    WebInspector.View.call(this);
+    this.element.addStyleClass("script-view");
 
     this._delegate = delegate;
     this._url = url;
@@ -38,9 +39,9 @@ WebInspector.SourceFrame = function(delegate, url)
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.replaceTabsWithSpaces = true;
 
-    this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, this);
-    this._textViewer.element.addStyleClass("script-view");
-    this._visible = false;
+    var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
+    this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, textViewerDelegate);
+    this.element.appendChild(this._textViewer.element);
 
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
@@ -59,7 +60,7 @@ WebInspector.SourceFrame.Events = {
 WebInspector.SourceFrame.createSearchRegex = function(query)
 {
     var regex;
-    
+
     // First try creating regex if user knows the / / hint.
     try {
         if (/^\/.*\/$/.test(query))
@@ -69,29 +70,19 @@ WebInspector.SourceFrame.createSearchRegex = function(query)
     }
 
     // Otherwise just do case-insensitive search.
-    if (!regex) 
+    if (!regex)
         regex = createSearchRegex(query);
-    
+
     return regex;
 }
 
 
 WebInspector.SourceFrame.prototype = {
-    get visible()
-    {
-        return this._textViewer.visible;
-    },
-
-    set visible(x)
-    {
-        this._textViewer.visible = x;
-    },
-
     show: function(parentElement)
     {
-        this._ensureContentLoaded();
+        WebInspector.View.prototype.show.call(this, parentElement);
 
-        this._textViewer.show(parentElement);
+        this._ensureContentLoaded();
 
         if (this.loaded) {
             if (this._scrollTop)
@@ -105,6 +96,8 @@ WebInspector.SourceFrame.prototype = {
 
     hide: function()
     {
+        WebInspector.View.prototype.hide.call(this);
+
         if (this.loaded) {
             this._scrollTop = this._textViewer.scrollTop;
             this._scrollLeft = this._textViewer.scrollLeft;
@@ -114,16 +107,6 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.hide();
         this._hidePopup();
         this._clearLineHighlight();
-    },
-
-    detach: function()
-    {
-        this._textViewer.detach();
-    },
-
-    get element()
-    {
-        return this._textViewer.element;
     },
 
     get loaded()
@@ -254,7 +237,7 @@ WebInspector.SourceFrame.prototype = {
         delete this._viewerState;
     },
 
-    beforeTextChanged: function()
+    _beforeTextChanged: function()
     {
         if (!this._viewerState) {
             this._saveViewerState();
@@ -265,7 +248,7 @@ WebInspector.SourceFrame.prototype = {
         this.clearMessages();
     },
 
-    afterTextChanged: function(oldRange, newRange)
+    _afterTextChanged: function(oldRange, newRange)
     {
         if (!oldRange || !newRange)
             return;
@@ -348,9 +331,6 @@ WebInspector.SourceFrame.prototype = {
         this.dispatchEventToListeners(WebInspector.SourceFrame.Events.Loaded);
 
         this._textViewer.endUpdates();
-
-        if (this._parentElement)
-            this.show(this._parentElement)
     },
 
     _setTextViewerDecorations: function()
@@ -380,7 +360,7 @@ WebInspector.SourceFrame.prototype = {
 
             var regex = WebInspector.SourceFrame.createSearchRegex(query);
             this._searchResults = this._collectRegexMatches(regex);
-            
+
             callback(this, this._searchResults.length);
         }
 
@@ -613,7 +593,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.endUpdates();
     },
 
-    populateLineGutterContextMenu: function(lineNumber, contextMenu)
+    _populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Continue to here" : "Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
 
@@ -658,11 +638,11 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
-    populateTextAreaContextMenu: function(contextMenu)
+    _populateTextAreaContextMenu: function(contextMenu)
     {
     },
 
-    suggestedFileName: function()
+    _suggestedFileName: function()
     {
         return this._delegate.suggestedFileName();
     },
@@ -892,7 +872,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.resize();
     },
 
-    doubleClick: function(lineNumber)
+    _doubleClick: function(lineNumber)
     {
         if (!this._delegate.canEditScriptSource())
             return;
@@ -903,7 +883,7 @@ WebInspector.SourceFrame.prototype = {
         this._setReadOnly(false);
     },
 
-    commitEditing: function()
+    _commitEditing: function()
     {
         if (!this._viewerState) {
             // No editing was actually done.
@@ -951,7 +931,7 @@ WebInspector.SourceFrame.prototype = {
         this._delegate.setScriptSource(newContent, callback);
     },
 
-    cancelEditing: function()
+    _cancelEditing: function()
     {
         this._restoreViewerState();
         this._setReadOnly(true);
@@ -966,7 +946,57 @@ WebInspector.SourceFrame.prototype = {
     }
 }
 
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.TextViewerDelegate.prototype;
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.View.prototype;
+
+
+WebInspector.TextViewerDelegateForSourceFrame = function(sourceFrame)
+{
+    this._sourceFrame = sourceFrame;
+}
+
+WebInspector.TextViewerDelegateForSourceFrame.prototype = {
+    doubleClick: function(lineNumber)
+    {
+        this._sourceFrame._doubleClick(lineNumber);
+    },
+
+    beforeTextChanged: function()
+    {
+        this._sourceFrame._beforeTextChanged();
+    },
+
+    afterTextChanged: function(oldRange, newRange)
+    {
+        this._sourceFrame._afterTextChanged(oldRange, newRange);
+    },
+
+    commitEditing: function()
+    {
+        this._sourceFrame._commitEditing();
+    },
+
+    cancelEditing: function()
+    {
+        this._sourceFrame._cancelEditing();
+    },
+
+    populateLineGutterContextMenu: function(lineNumber, contextMenu)
+    {
+        this._sourceFrame._populateLineGutterContextMenu(lineNumber, contextMenu);
+    },
+
+    populateTextAreaContextMenu: function(contextMenu)
+    {
+        this._sourceFrame._populateTextAreaContextMenu(contextMenu);
+    },
+
+    suggestedFileName: function()
+    {
+        return this._sourceFrame._suggestedFileName();
+    }
+};
+
+WebInspector.TextViewerDelegateForSourceFrame.prototype.__proto__ = WebInspector.TextViewerDelegate.prototype;
 
 
 WebInspector.SourceFrameDelegate = function()

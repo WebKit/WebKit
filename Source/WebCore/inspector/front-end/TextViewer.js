@@ -357,7 +357,7 @@ WebInspector.TextViewerDelegate.prototype = {
         // Should be implemented by subclasses.
     },
 
-    populateLineGutterContextMenu: function(contextMenu)
+    populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
         // Should be implemented by subclasses.
     },
