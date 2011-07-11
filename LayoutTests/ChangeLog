@@ -1,3 +1,11 @@
+2011-07-11  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        Mark 2d.gradient.object.update as passing after r90767.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-11  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Simon Fraser.

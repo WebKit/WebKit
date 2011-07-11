@@ -1991,7 +1991,6 @@ BUGWK50859 : canvas/philip/tests/2d.text.font.parse.system.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 
 // These tests fail everywhere we use skia and are most likely skia bugs
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.object.update.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
