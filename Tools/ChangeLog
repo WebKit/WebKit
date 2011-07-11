@@ -1,3 +1,11 @@
+2011-07-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix hang on win32 in a multiprocessing test that shouldn't have been running.
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-07-11  Adam Roben  <aroben@apple.com>
 
         Don't count leaks as test failures on TestFailures's front page

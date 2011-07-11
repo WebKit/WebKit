@@ -249,8 +249,9 @@ class MainTest(unittest.TestCase):
         self.assertRaises(ValueError, logging_run,
             ['failures/expected/exception.html'], tests_included=True)
 
-        self.assertRaises(run_webkit_tests.WorkerException, logging_run,
-            ['--worker-model', 'processes', 'failures/expected/exception.html'], tests_included=True)
+        if SHOULD_TEST_PROCESSES:
+            self.assertRaises(run_webkit_tests.WorkerException, logging_run,
+                ['--worker-model', 'processes', 'failures/expected/exception.html'], tests_included=True)
 
     def test_full_results_html(self):
         # FIXME: verify html?
