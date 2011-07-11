@@ -1,3 +1,14 @@
+2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkit-patch roll-chromium-deps no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=64324
+
+        Reviewed by James Robinson.
+
+        Lower the minimum commit message length to 10.
+
+        * Scripts/webkitpy/tool/steps/commit.py:
+
 2011-07-11  Alice Boxhall  <aboxhall@chromium.org>
 
         Convert json_results_generator.py to output version 4 JSON.

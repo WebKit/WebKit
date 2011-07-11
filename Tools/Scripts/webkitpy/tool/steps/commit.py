@@ -44,8 +44,8 @@ class Commit(AbstractStep):
 
     def run(self, state):
         self._commit_message = self._tool.checkout().commit_message_for_this_commit(self._options.git_commit).message()
-        if len(self._commit_message) < 50:
-            raise Exception("Attempted to commit with a commit message shorter than 50 characters.  Either your patch is missing a ChangeLog or webkit-patch may have a bug.")
+        if len(self._commit_message) < 10:
+            raise Exception("Attempted to commit with a commit message shorter than 10 characters.  Either your patch is missing a ChangeLog or webkit-patch may have a bug.")
 
         self._state = state
 
