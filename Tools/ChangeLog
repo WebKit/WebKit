@@ -1,3 +1,15 @@
+2011-07-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [NRWT] Pixel tests do not work
+        https://bugs.webkit.org/show_bug.cgi?id=64091
+
+        Reviewed by Eric Seidel.
+
+        Fix pixel test runs for GTK+ new-run-webkit-tests by exposing the
+        path to the ImageDiff binary.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py: Implement _path_to_image_diff.
+
 2011-07-11  Dirk Pranke  <dpranke@chromium.org>
 
         Fix hang on win32 in a multiprocessing test that shouldn't have been running.

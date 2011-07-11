@@ -77,6 +77,9 @@ class GtkPort(webkit.WebKitPort):
     def _path_to_driver(self):
         return self._build_path('Programs', self.driver_name())
 
+    def _path_to_image_diff(self):
+        return self._build_path('Programs', 'ImageDiff')
+
     def check_build(self, needs_http):
         return self._check_driver()
 
