@@ -3727,11 +3727,11 @@ BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
 BUGWK61326 MAC LINUX XP VISTA : fast/storage/storage-detached-iframe.html = CRASH
 
 // Paying attention to shouldAntialias flag in drawConvexPolygon()
-BUGWK61369 WIN LINUX REBASELINE : editing/deleting/5032066.html = IMAGE
-BUGWK61369 WIN LINUX REBASELINE : editing/deleting/5115601.html = IMAGE
-BUGWK61369 WIN LINUX REBASELINE : editing/deleting/5206311-2.html = IMAGE
-BUGWK61369 WIN LINUX REBASELINE : editing/selection/4895428-1.html = IMAGE
-BUGWK61369 WIN LINUX REBASELINE : editing/selection/4895428-4.html = IMAGE
+BUGWK61369 WIN LINUX : editing/deleting/5032066.html = IMAGE
+BUGWK61369 WIN LINUX : editing/deleting/5115601.html = IMAGE
+BUGWK61369 WIN LINUX : editing/deleting/5206311-2.html = IMAGE
+BUGWK61369 WIN LINUX : editing/selection/4895428-1.html = IMAGE
+BUGWK61369 WIN LINUX : editing/selection/4895428-4.html = IMAGE
 BUGWK61369 WIN LINUX : editing/selection/7152-1.html = IMAGE
 BUGWK61369 WIN LINUX : editing/selection/7152-2.html = IMAGE
 BUGWK61369 WIN LINUX : editing/selection/click-start-of-line.html = IMAGE

@@ -1,5 +1,11 @@
 2011-07-10  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Fix test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-10  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update win/linux pixel baselines for r90701 (part 2/??)
 
         * platform/chromium-linux/css1/box_properties/padding_left_inline-expected.png:
