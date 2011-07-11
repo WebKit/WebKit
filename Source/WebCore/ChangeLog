@@ -1,3 +1,15 @@
+2011-07-10  Yuzo Fujishima  <yuzo@google.com>
+
+        Fix for Bug 63968 - Add comment to explain Vector usage in FontCache::purgeInactiveFontData
+        https://bugs.webkit.org/show_bug.cgi?id=63968
+
+        Reviewed by Dan Bernstein.
+
+        No new tests because this changes comments only.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData): Add explanation why SimpleFontData is not deleted in the iteration loop.
+
 2011-07-10  Emil A Eklund  <eae@chromium.org>
 
         Switch updateHitTestResult to to new layout types

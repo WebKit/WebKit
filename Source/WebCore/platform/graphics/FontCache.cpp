@@ -345,6 +345,7 @@ void FontCache::purgeInactiveFontData(int count)
     for (int i = 0; i < count && it != end; ++it, ++i) {
         const SimpleFontData* fontData = *it.get();
         gFontDataCache->remove(fontData->platformData());
+        // We should not delete SimpleFontData here because deletion can modify gInactiveFontData. See http://trac.webkit.org/changeset/44011
         fontDataToDelete.append(fontData);
     }
 
