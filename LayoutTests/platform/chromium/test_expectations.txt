@@ -3981,4 +3981,16 @@ BUGWK13061 : plugins/form-value.html = TEXT
 
 BUGCR88894 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
-BUGWK64255 WIN : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
+
+BUGCR88911 MAC : fast/css/stylesheet-candidate-nodes-crash.xhtml = PASS TEXT
+BUGCR88911 MAC : fast/dom/getElementsByClassName/011.xml = PASS TEXT
+BUGCR88911 MAC : fast/forms/input-number-unacceptable-style.html = PASS TEXT
+BUGCR88911 MAC : fast/parser/external-entities.xml = PASS TEXT
+BUGCR88911 MAC : fast/text/find-kana.html = PASS TEXT
+BUGCR88911 MAC : fast/xsl/mozilla-tests.xml,svg/custom/use-invalid-pattern.svg = PASS TEXT
+BUGCR88911 MAC : svg/custom/use-invalid-style.svg = PASS TEXT
+BUGCR88911 MAC : fast/text/atsui-multiple-renderers.html = PASS TEXT
+BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = PASS TEXT
+BUGCR88911 MAC : fast/invalid/missing-end-tag.xhtml = PASS TEXT
+BUGCR88911 MAC : fast/parser/xhtml-alternate-entities.xml = PASS TEXT
+BUGCR88911 MAC : fast/xsl/xslt-extra-content-at-end.xml = PASS TEXT
