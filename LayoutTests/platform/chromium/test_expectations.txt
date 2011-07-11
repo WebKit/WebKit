@@ -4828,15 +4828,17 @@ BUGWK61369 WIN LINUX : transforms/2d/transform-fixed-container.html = IMAGE
 BUGWK61369 WIN LINUX : transforms/2d/transform-origin-borderbox.html = IMAGE
 
 BUGWK61369 WIN LINUX : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
-BUGWK61369 WIN LINUX : fast/html/details-writing-mode.html = IMAGE
 BUGWK61369 WIN LINUX : fast/replaced/outline-replaced-elements.html = IMAGE
-BUGWK61369 WIN LINUX : plugins/embed-attributes-style.html = IMAGE
+BUGWK61369 CPU WIN LINUX : plugins/embed-attributes-style.html = IMAGE
 BUGWK61369 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE
+
+BUGWK61369 WIN LINUX GPU : compositing/geometry/outline-change.html = IMAGE
+BUGWK61369 WIN LINUX GPU : compositing/iframes/iframe-copy-on-scroll.html = IMAGE
 
 // Paying attention to shouldAntialias flag in drawConvexPolygon()
 // These expectations are masking failures elsewhere in the file
 // which should be uncommented once these are rebaselined.
-BUGWK61369 WIN LINUX : fast/html/details-writing-mode.html = IMAGE+TEXT
+BUGWK61369 WIN LINUX : fast/html/details-writing-mode.html = IMAGE+TEXT IMAGE
 BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug51140.html = IMAGE+TEXT
 BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug15933.html = IMAGE
 BUGWK61369 WIN LINUX : tables/mozilla/bugs/bug1220.html = IMAGE

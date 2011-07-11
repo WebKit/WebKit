@@ -1,5 +1,11 @@
 2011-07-10  James Robinson  <jamesr@chromium.org>
 
+        [chromium] More expectation fixes.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-10  James Robinson  <jamesr@chromium.org>
+
         [chromium] Add more test expectations for r90701
 
         * platform/chromium/test_expectations.txt:
