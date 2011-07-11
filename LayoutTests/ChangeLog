@@ -1,3 +1,9 @@
+2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Remove non-existent editing/pasteboard/do-not-copy-body-color.html.
+
 2011-07-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
