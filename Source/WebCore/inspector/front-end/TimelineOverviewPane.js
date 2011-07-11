@@ -202,7 +202,8 @@ WebInspector.TimelineOverviewPane.prototype = {
     updateMainViewWidth: function(width, records)
     {
         this._overviewGrid.element.style.left = width + "px";
-        this.statusBarFilters.style.left = Math.max(155, width) + "px";
+        // Min width = <number of buttons on the left> * 31
+        this.statusBarFilters.style.left = Math.max(7 * 31, width) + "px";
     },
 
     reset: function()

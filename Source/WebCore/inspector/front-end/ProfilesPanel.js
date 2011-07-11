@@ -641,7 +641,8 @@ WebInspector.ProfilesPanel.prototype = {
     {
         this.welcomeView.element.style.left = width + "px";
         this.profileViews.style.left = width + "px";
-        this.profileViewStatusBarItemsContainer.style.left = Math.max(155, width) + "px";
+        // Min width = <number of buttons on the left> * 31
+        this.profileViewStatusBarItemsContainer.style.left = Math.max(6 * 31, width) + "px";
         this.resize();
     },
 

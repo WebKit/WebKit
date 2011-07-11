@@ -1,3 +1,15 @@
+2011-07-08  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: Fix resizing of sidebar pane in Timeline and Profile panels.
+        https://bugs.webkit.org/show_bug.cgi?id=64161
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.updateMainViewWidth):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.updateMainViewWidth):
+
 2011-07-11  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [REGRESSION r89753-89754] highlight does not respect scroller location.
