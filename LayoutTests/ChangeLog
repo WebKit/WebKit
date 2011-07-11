@@ -1,4 +1,10 @@
 2011-07-11  Yury Semikhatsky  <yurys@chromium.org>
+        
+        Unreviewed. Remove duplicates from Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations after r90698.
 

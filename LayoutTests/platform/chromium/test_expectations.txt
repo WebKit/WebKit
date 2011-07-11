@@ -1311,8 +1311,10 @@ BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
 BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
 
 // Disagreeing XML parsing error messages
-BUGCR23475 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
-BUGCR23475 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
+//BUGCR23475 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
+//BUGCR23475 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
+BUGCR88911 MAC : fast/parser/xhtml-alternate-entities.xml = PASS IMAGE+TEXT
+BUGCR88911 MAC : fast/xsl/xslt-extra-content-at-end.xml = PASS IMAGE+TEXT
 
 // Repaint tests failing on Mac.  Need to be manually triaged.
 BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
@@ -2439,7 +2441,8 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 
 // These tests started failing presumably after r70850
-BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
+//BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
+BUGCR88911 LEOPARD : fast/invalid/missing-end-tag.xhtml = PASS IMAGE+TEXT
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 
 // Failures after WebKit roll 70949:71000
@@ -3991,6 +3994,3 @@ BUGCR88911 MAC : fast/xsl/mozilla-tests.xml,svg/custom/use-invalid-pattern.svg =
 BUGCR88911 MAC : svg/custom/use-invalid-style.svg = PASS TEXT
 BUGCR88911 MAC : fast/text/atsui-multiple-renderers.html = PASS TEXT
 BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = PASS TEXT
-BUGCR88911 MAC : fast/invalid/missing-end-tag.xhtml = PASS TEXT
-BUGCR88911 MAC : fast/parser/xhtml-alternate-entities.xml = PASS TEXT
-BUGCR88911 MAC : fast/xsl/xslt-extra-content-at-end.xml = PASS TEXT
