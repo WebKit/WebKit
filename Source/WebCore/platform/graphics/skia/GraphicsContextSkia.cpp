@@ -484,6 +484,7 @@ void GraphicsContext::drawConvexPolygon(size_t numPoints,
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
+    paint.setAntiAlias(shouldAntialias);
     platformContext()->canvas()->drawPath(path, paint);
 
     if (strokeStyle() != NoStroke) {

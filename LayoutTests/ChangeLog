@@ -1,3 +1,14 @@
+2011-07-10  Tom Hudson  <tomhudson@google.com>
+
+        Reviewed by James Robinson.
+
+        GraphicsContextSkia::drawConvexPolygon doesn't pay attention to shouldAntialias
+        https://bugs.webkit.org/show_bug.cgi?id=61369
+
+        * platform/chromium/test_expectations.txt: Temporarily add roughly
+        1100 images that were incorrectly being antialiased; will remove
+        once they've been rebaselined off of the bots.
+
 2011-07-10  Adam Barth  <abarth@webkit.org>
 
         Optmize LayoutTest resutls by removing redundant results.
