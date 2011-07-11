@@ -1,5 +1,14 @@
+2011-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        inspector/cookie-parser.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=62662
+
+        * platform/qt/test_expectations.txt: Set inspector/cookie-parser.html as flakey test.
+
 2011-07-11  Yury Semikhatsky  <yurys@chromium.org>
-        
+
         Unreviewed. Remove duplicates from Chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
