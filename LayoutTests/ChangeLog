@@ -1,3 +1,12 @@
+2011-07-11  Yi Shen  <yi.4.shen@nokia.com>
+
+        [Qt] Unreviewed rollout 90779 which may fail the layout-test.
+
+        * loader/load-defer-resume-crash-expected.txt: Removed.
+        * loader/load-defer-resume-crash.html: Removed.
+        * loader/resources/images.html: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-11  Jessie Berlin  <jberlin@apple.com>
 
         WebKitTestRunner needs an implementation of layoutTestController.setDefersLoading.

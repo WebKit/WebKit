@@ -181,7 +181,7 @@ void QNetworkReplyHandlerCallQueue::unlock()
 void QNetworkReplyHandlerCallQueue::setDeferSignals(bool defer)
 {
     m_deferSignals = defer;
-    QMetaObject::invokeMethod(this, "flush",  Qt::QueuedConnection);
+    flush();
 }
 
 void QNetworkReplyHandlerCallQueue::flush()

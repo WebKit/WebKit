@@ -1,3 +1,11 @@
+2011-07-11  Yi Shen  <yi.4.shen@nokia.com>
+
+        [Qt] Unreviewed rollout 90779 which may fail the layout-test.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandlerCallQueue::setDeferSignals):
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2011-07-11  Bradley Nelson  <bradnelson@chromium.org>
 
         Reviewed by Darin Fisher.

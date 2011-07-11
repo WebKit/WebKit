@@ -41,8 +41,7 @@ class ResourceRequest;
 class ResourceResponse;
 class QNetworkReplyHandler;
 
-class QNetworkReplyHandlerCallQueue : public QObject {
-    Q_OBJECT
+class QNetworkReplyHandlerCallQueue {
 public:
     QNetworkReplyHandlerCallQueue(QNetworkReplyHandler*, bool deferSignals);
     bool deferSignals() const { return m_deferSignals; }
@@ -61,7 +60,7 @@ private:
     bool m_flushing;
     QList<EnqueuedCall> m_enqueuedCalls;
 
-    Q_INVOKABLE void flush();
+    void flush();
 };
 
 class QNetworkReplyWrapper : public QObject {
