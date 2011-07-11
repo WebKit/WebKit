@@ -1,61 +1,6 @@
-// This file consists of lines with specifications of what
-// to expect from layout test cases. The test cases can be directories
-// in which case the expectations apply to all test cases in that
-// directory and any subdirectory. The format of the file is along the
-// lines of:
+// These are the layout test expectations for Apple's Mac port of WebKit.
 //
-// fast/js/fixme.js = FAIL
-// fast/js/flaky.js = FAIL PASS
-// fast/js/crash.js = CRASH TIMEOUT FAIL PASS
-//
-// The format of a test line is as follows:
-// METADATA : relative/path/to/test.html = EXPECTATIONS
-//
-// Valid values for METADATA:
-//
-// BUG(CR|WK|V8_)[0-9]+: See this chromium/webkit/v8 bug for more information.
-//                       Every test that isn't marked WONTFIX should have the
-//                       appropriate BUG annotation.
-// SKIP: Doesn't run the test.
-// SLOW: The test takes a long time to run, but does not timeout indefinitely.
-// DEFER: For tests we'll fix in the future.
-// WONTFIX: For tests that we never intend to pass on a given platform.
-// DEBUG: Expectations apply only to the debug build.
-// RELEASE: Expectations apply only to release build.
-// MAC/MAC-LEOPARD/MAC-TIGER/MAC-SNOWLEOPARD: Expectations apply only to
-//     these platforms.
-//
-// Valid values for EXPECTATIONS:
-//
-// PASS: Test should pass
-// CRASH: Test should crash
-// TIMEOUT: Test should timeout
-// IMAGE: Test will produce an incorrect image dump
-// TEXT: Test will produce incorrect text output (either full or simplified)
-// IMAGE+TEXT: Test will produce both incorrect text and images
-// FAIL: Test will produce either incorrect text, images, or both
-//
-// If a line contains multiple expectations, it is considered "flakey",
-// because it means that we're not producing consistent, reliable results.
-//
-// For example,
-// MAC : media = PASS FAIL
-//
-// The above means that all the media tests are flaky, but only on Linux.
-//
-// Other examples:
-//
-// SKIP : fast/js/no-good.js = TIMEOUT PASS
-// DEBUG : fast/js/no-good.js = TIMEOUT PASS
-// DEBUG SKIP : fast/js/no-good.js = TIMEOUT PASS
-// LINUX DEBUG SKIP : fast/js/no-good.js = TIMEOUT PASS
-// BUGCR1234 DEBUG MAC : fast/js/no-good.js = TIMEOUT PASS
-//
-// Notes:
-// -A test cannot be both SLOW and TIMEOUT
-// -A test can be included twice, but not via the same path.
-// -If a test is included twice, then the more precise path wins.
-// -CRASH tests cannot be WONTFIX
+// See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS

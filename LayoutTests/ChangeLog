@@ -1,5 +1,23 @@
 2011-07-11  Dirk Pranke  <dpranke@chromium.org>
 
+        update the boilerplate documentation in the test_expectations.txt files
+        https://bugs.webkit.org/show_bug.cgi?id=64221
+
+        Reviewed by Eric Seidel.
+
+        The test expectations files either had documentation for the
+        Chromium port's version of the file (which was also incorrect),
+        or were undocumented. This adds a comment with a link to the
+        documentation for the file to each.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/win/test_expectations.txt:
+
+2011-07-11  Dirk Pranke  <dpranke@chromium.org>
+
         Skip plugins/evaluate-js-after-removing-plugin-element.html on Chromium Vista.
 
         https://bugs.webkit.org/show_bug.cgi?id=64319
