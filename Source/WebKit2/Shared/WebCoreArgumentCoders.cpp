@@ -335,7 +335,12 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder* decoder, Cursor& cursor)
         return false;
 
     if (type != Cursor::Custom) {
-        cursor = Cursor::fromType(type);
+        const Cursor& cursorReference = Cursor::fromType(type);
+        // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
+        // This will avoid having to re-create the platform cursors over and over.
+        (void)cursorReference.platformCursor();
+
+        cursor = cursorReference;
         return true;
     }
 

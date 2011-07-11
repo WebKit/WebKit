@@ -53,21 +53,17 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     return 0;
 }
 
-// Leak these cursors intentionally, that way we won't waste time trying to clean them
-// up at process exit time.
-static NSCursor* leakNamedCursor(const char* name, int x, int y)
+static RetainPtr<NSCursor> createNamedCursor(const char* name, int x, int y)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSString* resourceName = [[NSString alloc] initWithUTF8String:name];
-    NSImage* cursorImage = [[NSImage alloc] initWithContentsOfFile:
-        [[NSBundle bundleForClass:[WebCoreCursorBundle class]]
-        pathForResource:resourceName ofType:@"png"]];
-    [resourceName release];
-    NSCursor* cursor = 0;
+    RetainPtr<NSString> resourceName(AdoptNS, [[NSString alloc] initWithUTF8String:name]);
+    RetainPtr<NSImage> cursorImage(AdoptNS, [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreCursorBundle class]] pathForResource:resourceName.get() ofType:@"png"]]);
+    
+    RetainPtr<NSCursor> cursor;
+
     if (cursorImage) {
         NSPoint hotSpotPoint = {x, y}; // workaround for 4213314
-        cursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:hotSpotPoint];
-        [cursorImage release];
+        cursor.adoptNS([[NSCursor alloc] initWithImage:cursorImage.get() hotSpot:hotSpotPoint]);
     }
     return cursor;
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -92,24 +88,24 @@ void Cursor::ensurePlatformCursor() const
 #else
         // The pointingHandCursor from NSCursor does not have a shadow on
         // older versions of Mac OS X, so use our own custom cursor.
-        m_platformCursor = leakNamedCursor("linkCursor", 6, 1);
+        m_platformCursor = createNamedCursor("linkCursor", 6, 1);
 #endif
         break;
     case Cursor::IBeam:
         m_platformCursor = [NSCursor IBeamCursor];
         break;
     case Cursor::Wait:
-        m_platformCursor = leakNamedCursor("waitCursor", 7, 7);
+        m_platformCursor = createNamedCursor("waitCursor", 7, 7);
         break;
     case Cursor::Help:
-        m_platformCursor = leakNamedCursor("helpCursor", 8, 8);
+        m_platformCursor = createNamedCursor("helpCursor", 8, 8);
         break;
     case Cursor::Move:
     case Cursor::MiddlePanning:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("Move");
 #else
-        m_platformCursor = leakNamedCursor("moveCursor", 7, 7);
+        m_platformCursor = createNamedCursor("moveCursor", 7, 7);
 #endif
         break;
     case Cursor::EastResize:
@@ -117,7 +113,7 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeEast");
 #else
-        m_platformCursor = leakNamedCursor("eastResizeCursor", 14, 7);
+        m_platformCursor = createNamedCursor("eastResizeCursor", 14, 7);
 #endif
         break;
     case Cursor::NorthResize:
@@ -125,7 +121,7 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeNorth");
 #else
-        m_platformCursor = leakNamedCursor("northResizeCursor", 7, 1);
+        m_platformCursor = createNamedCursor("northResizeCursor", 7, 1);
 #endif
         break;
     case Cursor::NorthEastResize:
@@ -133,7 +129,7 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeNortheast");
 #else
-        m_platformCursor = leakNamedCursor("northEastResizeCursor", 14, 1);
+        m_platformCursor = createNamedCursor("northEastResizeCursor", 14, 1);
 #endif
         break;
     case Cursor::NorthWestResize:
@@ -141,7 +137,7 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeNorthwest");
 #else
-        m_platformCursor = leakNamedCursor("northWestResizeCursor", 0, 0);
+        m_platformCursor = createNamedCursor("northWestResizeCursor", 0, 0);
 #endif
         break;
     case Cursor::SouthResize:
@@ -149,7 +145,7 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeSouth");
 #else
-        m_platformCursor = leakNamedCursor("southResizeCursor", 7, 14);
+        m_platformCursor = createNamedCursor("southResizeCursor", 7, 14);
 #endif
         break;
     case Cursor::SouthEastResize:
@@ -157,7 +153,7 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeSoutheast");
 #else
-        m_platformCursor = leakNamedCursor("southEastResizeCursor", 14, 14);
+        m_platformCursor = createNamedCursor("southEastResizeCursor", 14, 14);
 #endif
         break;
     case Cursor::SouthWestResize:
@@ -165,21 +161,21 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeSouthwest");
 #else
-        m_platformCursor = leakNamedCursor("southWestResizeCursor", 1, 14);
+        m_platformCursor = createNamedCursor("southWestResizeCursor", 1, 14);
 #endif
         break;
     case Cursor::WestResize:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeWest");
 #else
-        m_platformCursor = leakNamedCursor("westResizeCursor", 1, 7);
+        m_platformCursor = createNamedCursor("westResizeCursor", 1, 7);
 #endif
         break;
     case Cursor::NorthSouthResize:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeNorthSouth");
 #else
-        m_platformCursor = leakNamedCursor("northSouthResizeCursor", 7, 7);
+        m_platformCursor = createNamedCursor("northSouthResizeCursor", 7, 7);
 #endif
         break;
     case Cursor::EastWestResize:
@@ -187,21 +183,21 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeEastWest");
 #else
-        m_platformCursor = leakNamedCursor("eastWestResizeCursor", 7, 7);
+        m_platformCursor = createNamedCursor("eastWestResizeCursor", 7, 7);
 #endif
         break;
     case Cursor::NorthEastSouthWestResize:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeNortheastSouthwest");
 #else
-        m_platformCursor = leakNamedCursor("northEastSouthWestResizeCursor", 7, 7);
+        m_platformCursor = createNamedCursor("northEastSouthWestResizeCursor", 7, 7);
 #endif
         break;
     case Cursor::NorthWestSouthEastResize:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("ResizeNorthwestSoutheast");
 #else
-        m_platformCursor = leakNamedCursor("northWestSouthEastResizeCursor", 7, 7);
+        m_platformCursor = createNamedCursor("northWestSouthEastResizeCursor", 7, 7);
 #endif
         break;
     case Cursor::ColumnResize:
@@ -214,58 +210,58 @@ void Cursor::ensurePlatformCursor() const
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = [NSCursor IBeamCursorForVerticalLayout];
 #else
-        m_platformCursor = leakNamedCursor("verticalTextCursor", 7, 7);
+        m_platformCursor = createNamedCursor("verticalTextCursor", 7, 7);
 #endif
         break;
     case Cursor::Cell:
-        m_platformCursor = leakNamedCursor("cellCursor", 7, 7);
+        m_platformCursor = createNamedCursor("cellCursor", 7, 7);
         break;
     case Cursor::ContextMenu:
 #if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor contextualMenuCursor];
 #else
-        m_platformCursor = leakNamedCursor("contextMenuCursor", 3, 2);
+        m_platformCursor = createNamedCursor("contextMenuCursor", 3, 2);
 #endif
         break;
     case Cursor::Alias:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("MakeAlias");
 #else
-        m_platformCursor = leakNamedCursor("aliasCursor", 11, 3);
+        m_platformCursor = createNamedCursor("aliasCursor", 11, 3);
 #endif
         break;
     case Cursor::Progress:
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         m_platformCursor = wkCursor("BusyButClickable");
 #else
-        m_platformCursor = leakNamedCursor("progressCursor", 3, 2);
+        m_platformCursor = createNamedCursor("progressCursor", 3, 2);
 #endif
         break;
     case Cursor::NoDrop:
-        m_platformCursor = leakNamedCursor("noDropCursor", 3, 1);
+        m_platformCursor = createNamedCursor("noDropCursor", 3, 1);
         break;
     case Cursor::Copy:
 #if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor dragCopyCursor];
 #else
-        m_platformCursor = leakNamedCursor("copyCursor", 3, 2);
+        m_platformCursor = createNamedCursor("copyCursor", 3, 2);
 #endif
         break;
     case Cursor::None:
-        m_platformCursor = leakNamedCursor("noneCursor", 7, 7);
+        m_platformCursor = createNamedCursor("noneCursor", 7, 7);
         break;
     case Cursor::NotAllowed:
 #if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor operationNotAllowedCursor];
 #else
-        m_platformCursor = leakNamedCursor("notAllowedCursor", 11, 11);
+        m_platformCursor = createNamedCursor("notAllowedCursor", 11, 11);
 #endif
         break;
     case Cursor::ZoomIn:
-        m_platformCursor = leakNamedCursor("zoomInCursor", 7, 7);
+        m_platformCursor = createNamedCursor("zoomInCursor", 7, 7);
         break;
     case Cursor::ZoomOut:
-        m_platformCursor = leakNamedCursor("zoomOutCursor", 7, 7);
+        m_platformCursor = createNamedCursor("zoomOutCursor", 7, 7);
         break;
     case Cursor::Grab:
         m_platformCursor = [NSCursor openHandCursor];

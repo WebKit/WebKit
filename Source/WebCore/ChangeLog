@@ -1,3 +1,21 @@
+2011-07-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2 is leaking NSCursors created by leakNamedCursor
+        https://bugs.webkit.org/show_bug.cgi?id=64241
+        <rdar://problem/9507151>
+
+        Reviewed by Oliver Hunt.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::createNamedCursor):
+        Rename this from leakNamedCursor to createNamedCursor and make it return a
+        RetainPtr<NSCursor> instead of a raw pointer.
+
+        (WebCore::Cursor::ensurePlatformCursor):
+        Don't leak cursors here. We still won't deallocate cursors during shutdown (which leakNamedCursor
+        was said to prevent) because the cursor singletons are all allocated from the heap and are never destroyed
+        anyway.
+
 2011-07-10  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Add useHixie76Protocol flag to WebSocketChannel and WebSocketHandshake

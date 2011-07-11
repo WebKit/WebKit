@@ -1,3 +1,17 @@
+2011-07-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2 is leaking NSCursors created by leakNamedCursor
+        https://bugs.webkit.org/show_bug.cgi?id=64241
+        <rdar://problem/9507151>
+
+        Reviewed by Oliver Hunt.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        When decoding a cursor of a known type, make sure to eagerly create the platform cursor
+        for the cursor singleton. This way we avoid re-creating new NSCursor objects over and over for
+        standard cursors.
+
 2011-07-10  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Move setResizesToContentsUsingLayoutSize() to the touch specific page proxy
