@@ -1253,6 +1253,30 @@
       ],
     },
     {
+      'target_name': 'webcore_dom',
+      'type': 'static_library',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'sources': [
+        '<@(webcore_privateheader_files)',
+        '<@(webcore_files)',
+      ],
+      'sources/': [
+        # Start by excluding everything then include dom files only.
+        ['exclude', '.*'],
+        ['include', 'dom/'],
+
+        # FIXME: Figure out how to store these patterns in a variable.
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|haiku|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+
+        ['exclude', 'AllInOne\\.cpp$'],
+        ['exclude', 'dom/StaticStringList\\.cpp$'],
+        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
+      ],
+    },
+    {
       'target_name': 'webcore_html',
       'type': 'static_library',
       'dependencies': [
@@ -1614,6 +1638,7 @@
         '<@(webcore_files)',
       ],
       'sources/': [
+        ['exclude', 'dom/'],
         ['exclude', 'html/'],
         ['exclude', 'platform/'],
         ['exclude', 'rendering/'],
@@ -1636,8 +1661,6 @@
 
         ['exclude', 'AllInOne\\.cpp$'],
 
-        ['exclude', 'dom/StaticStringList\\.cpp$'],
-        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
         ['exclude', 'fileapi/LocalFileSystem\\.cpp$'],
         ['exclude', 'inspector/InspectorFrontendClientLocal\\.cpp$'],
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
@@ -1741,6 +1764,7 @@
       'type': 'none',
       'dependencies': [
         'webcore_arm_neon',
+        'webcore_dom',
         'webcore_html',
         'webcore_platform',
         'webcore_remaining',

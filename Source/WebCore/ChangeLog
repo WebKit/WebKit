@@ -1,3 +1,14 @@
+2011-07-11  Bradley Nelson  <bradnelson@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Split webcore_dom off webcore_remaining to reduce its size for
+        whole program optimization builds.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64299
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-07-11  Yi Shen  <yi.4.shen@nokia.com>
 
         [Qt] ASSERTION FAILED in ResourceHandle::setDefersLoading causes crash
