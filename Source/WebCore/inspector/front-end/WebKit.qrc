@@ -72,7 +72,6 @@
     <file>PanelEnablerView.js</file>
     <file>PartialQuickSort.js</file>
     <file>Placard.js</file>
-    <file>PleaseWaitMessage.js</file>
     <file>Popover.js</file>
     <file>ProfileDataGridTree.js</file>
     <file>ProfilesPanel.js</file>
@@ -217,6 +216,10 @@
     <file>Images/segmentSelectedEnd.png</file>
     <file>Images/sessionStorage.png</file>
     <file>Images/spinner.gif</file>
+    <file>Images/spinnerActive.gif</file>
+    <file>Images/spinnerActiveSelected.gif</file>
+    <file>Images/spinnerInactive.gif</file>
+    <file>Images/spinnerInactiveSelected.gif</file>
     <file>Images/splitviewDimple.png</file>
     <file>Images/splitviewDividerBackground.png</file>
     <file>Images/statusbarBackground.png</file>

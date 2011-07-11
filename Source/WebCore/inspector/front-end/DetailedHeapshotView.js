@@ -73,12 +73,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
                 result = -result;
             return result;
         }
-
-        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.element, this, "sorting complete", sort.bind(this));
-        function sort()
-        {
-            this._performSorting(SortByTwoFields);
-        }
+        this._performSorting(SortByTwoFields);
     },
 
     _performSorting: function(sortFunction)
@@ -410,12 +405,9 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
 
     showNext: function(pathsCount)
     {
-        WebInspector.PleaseWaitMessage.prototype.show(this.element, this.searchCancelled.bind(this, pathsCount));
-
         function pathFound(result)
         {
             if (result === null) {
-                WebInspector.PleaseWaitMessage.prototype.hide();
                 if (!this.children.length)
                     this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Can't find any paths."), len:""}, false));
                 return;
@@ -449,7 +441,6 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
 
     searchCancelled: function(pathsCount)
     {
-        WebInspector.PleaseWaitMessage.prototype.hide();
         this._counter = 0;
         this._cancel = this.pathFinder;
         if (pathsCount) {
@@ -606,12 +597,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
             this.baseSelectElement.selectedIndex = profileIndex - 1;
         else
             this.baseSelectElement.selectedIndex = profileIndex;
-        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.dataGrid, "sorting complete", setDataSource.bind(this));
-    }
-
-    function setDataSource()
-    {
-        this.dataGrid.setDataSource(this, this.profileWrapper); 
+        this.dataGrid.setDataSource(this, this.profileWrapper);
         this._updatePercentButton();
     }
 }
@@ -845,11 +831,6 @@ WebInspector.DetailedHeapshotView.prototype = {
         {
             delete this._baseProfileWrapper;
             this.baseProfile._lastShown = Date.now();
-            WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.diffDataGrid, "sorting complete", setDataSource.bind(this));
-        }
-
-        function setDataSource()
-        {
             this.diffDataGrid.setBaseDataSource(this.baseProfileWrapper);
         }
 
@@ -887,7 +868,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         profile.nodes = snapshot.nodes;
         profile.strings = snapshot.strings;
         var s = new WebInspector.HeapSnapshot(profile);
-        profile.sideBarElement.subtitle = Number.bytesToString(s.totalSize);
+        profile.sidebarElement.subtitle = Number.bytesToString(s.totalSize);
     },
 
     _mouseClickInContainmentGrid: function(event)
@@ -970,14 +951,8 @@ WebInspector.DetailedHeapshotView.prototype = {
         } else {
             this.baseSelectElement.addStyleClass("hidden");
             if (!this.dataGrid.snapshotView)
-                WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.dataGrid, "sorting complete", setDataSource.bind(this));
+                this.dataGrid.setDataSource(this, this.profileWrapper);
         }
-
-        function setDataSource()
-        {
-            this.dataGrid.setDataSource(this, this.profileWrapper);
-        }
-
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;

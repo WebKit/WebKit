@@ -153,6 +153,14 @@ WebInspector.SidebarTreeElement.prototype = {
         this.bubbleElement.textContent = x;
     },
 
+    set wait(x)
+    {
+        if (x)
+            this._listItemNode.addStyleClass("wait");
+        else
+            this._listItemNode.removeStyleClass("wait");
+    },
+
     refreshTitles: function()
     {
         var mainTitle = this.mainTitle;

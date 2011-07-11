@@ -91,6 +91,7 @@ WebInspector.HeapSnapshotWorker = function()
     this._nextObjectId = 1;
     this._nextCallId = 1;
     this._callbacks = [];
+    this._previousCallbacks = [];
     // There is no support for workers in Chromium DRT.
     this._worker = typeof InspectorTest === "undefined" ? new WebInspector.HeapSnapshotRealWorker() : new WebInspector.HeapSnapshotFakeWorker();
     this._worker.addEventListener("message", this._messageReceived.bind(this), false);
@@ -109,6 +110,8 @@ WebInspector.HeapSnapshotWorker.prototype = {
     dispose: function()
     {
         this._worker.terminate();
+        if (this._interval)
+            clearInterval(this._interval);
     },
 
     disposeObject: function(objectId)
@@ -152,6 +155,27 @@ WebInspector.HeapSnapshotWorker.prototype = {
         this._postMessage({callId: callId, disposition: "method", objectId: objectId, methodName: methodName, methodArguments: methodArguments});
     },
 
+    startCheckingForLongRunningCalls: function()
+    {
+        this._checkLongRunningCalls();
+        this._interval = setInterval(this._checkLongRunningCalls.bind(this), 300);
+    },
+
+    _checkLongRunningCalls: function()
+    {
+        for (var callId in this._previousCallbacks)
+            if (!(callId in this._callbacks))
+                delete this._previousCallbacks[callId];
+        var hasLongRunningCalls = false;
+        for (callId in this._previousCallbacks) {
+            hasLongRunningCalls = true;
+            break;
+        }
+        this.dispatchEventToListeners("wait", hasLongRunningCalls);
+        for (callId in this._callbacks)
+            this._previousCallbacks[callId] = true;
+    },
+
     _findFunction: function(name)
     {
         var path = name.split(".");
@@ -176,6 +200,8 @@ WebInspector.HeapSnapshotWorker.prototype = {
         this._worker.postMessage(message);      
     }
 };
+
+WebInspector.HeapSnapshotWorker.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.HeapSnapshotProxyObject = function(worker, objectId)
 {
@@ -213,6 +239,10 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
     callMethod: function(callback, methodName)
     {
         return this._callWorker("callMethod", Array.prototype.slice.call(arguments, 0));
+    },
+
+    get worker() {
+        return this._worker;
     }
 };
 

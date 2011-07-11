@@ -68,13 +68,11 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         {
             this.populateChildren();
         }
-        WebInspector.PleaseWaitMessage.prototype.show(this.dataGrid.element);
         this._provider.sortAndRewind(this.comparator(), sorted.bind(this));
     },
 
     populateChildren: function(provider, howMany, atIndex, afterPopulate, suppressNotifyAboutCompletion)
     {
-        WebInspector.PleaseWaitMessage.prototype.show(this.dataGrid.element);
         if (!howMany && provider) {
             howMany = provider.instanceCount;
             provider.instanceCount = 0;
@@ -132,7 +130,6 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 }
                 setTimeout(notify.bind(this), 0);
             }
-            WebInspector.PleaseWaitMessage.prototype.hide();
         }
         setTimeout(callSerialize.bind(this), 0);
     },
@@ -149,7 +146,6 @@ WebInspector.HeapSnapshotGridNode.prototype = {
 
     sort: function()
     {
-        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.dataGrid.element, this.dataGrid, "sorting complete");
         this.dataGrid.recursiveSortingEnter();
         function afterSort(sorted)
         {

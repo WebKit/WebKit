@@ -1,3 +1,60 @@
+2011-07-08  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] Get rid of flickering "Please wait" message in Heap profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=61175
+
+        The message has been replaced with spinner icons appearing instead of profile's
+        icon. As each profile owns a worker, they run independently, and there can be
+        multiple spinners at the same time.
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._populate.sorted):
+        (WebInspector.HeapSnapshotGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren.childrenRetrieved):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.searchCancelled):
+        (WebInspector.DetailedHeapshotView.profileCallback):
+        (WebInspector.DetailedHeapshotView):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase.baseProfileLoaded):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase):
+        (WebInspector.DetailedHeapshotView.prototype.processLoadedSnapshot):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotWorker):
+        (WebInspector.HeapSnapshotWorker.prototype.dispose):
+        (WebInspector.HeapSnapshotWorker.prototype.startCheckingForLongRunningCalls):
+        (WebInspector.HeapSnapshotWorker.prototype._checkLongRunningCalls):
+        (WebInspector.HeapSnapshotProxyObject.prototype.callMethod):
+        (WebInspector.HeapSnapshotProxyObject.prototype.get worker):
+        * inspector/front-end/Images/spinnerActive.gif: Added. Generated using ajaxload.info.
+        * inspector/front-end/Images/spinnerActiveSelected.gif: Added. Generated using ajaxload.info.
+        * inspector/front-end/Images/spinnerInactive.gif: Added. Generated using ajaxload.info.
+        * inspector/front-end/Images/spinnerInactiveSelected.gif: Added. Generated using ajaxload.info.
+        * inspector/front-end/PleaseWaitMessage.js: Removed.
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.loadHeapSnapshot.setProfileWait):
+        (WebInspector.ProfilesPanel.prototype.loadHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.parsed):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        * inspector/front-end/SidebarTreeElement.js:
+        (WebInspector.SidebarTreeElement.prototype.set wait):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/heapProfiler.css:
+        (.heap-snapshot-sidebar-tree-item.wait .icon):
+        (.heap-snapshot-sidebar-tree-item.wait.selected .icon):
+        (body.inactive .heap-snapshot-sidebar-tree-item.wait .icon):
+        (body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon):
+        * inspector/front-end/inspector.html:
+
 2011-07-10  Patrick Gansterer  <paroga@webkit.org>
 
         Generate conditional include statements in CodeGeneratorJS

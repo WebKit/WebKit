@@ -336,7 +336,7 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         var profileTreeElement = profileType.createSidebarTreeElementForProfile(profile);
-        profile.sideBarElement = profileTreeElement;
+        profile.sidebarElement = profileTreeElement;
         profileTreeElement.small = small;
         if (alternateTitle)
             profileTreeElement.mainTitle = alternateTitle;
@@ -441,11 +441,18 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile)
             return;
 
-        if (!profile.proxy)
-            profile.proxy = (new WebInspector.HeapSnapshotWorker()).createObject("WebInspector.HeapSnapshotLoader");
+        if (!profile.proxy) {
+            function setProfileWait(event) {
+                profile.sidebarElement.wait = event.data;
+            }
+            var worker = new WebInspector.HeapSnapshotWorker();
+            worker.addEventListener("wait", setProfileWait, this);
+            profile.proxy = worker.createObject("WebInspector.HeapSnapshotLoader");
+        }
         var proxy = profile.proxy;
         if (proxy.startLoading(callback)) {
-            profile.sideBarElement.subtitle = WebInspector.UIString("Loading\u2026");
+            profile.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
+            profile.sidebarElement.wait = true;
             ProfilerAgent.getProfile(profile.typeId, profile.uid);
         }
     },
@@ -467,10 +474,12 @@ WebInspector.ProfilesPanel.prototype = {
         function parsed(snapshotProxy)
         {
             profile.proxy = snapshotProxy;
-            profile.sideBarElement.subtitle = Number.bytesToString(snapshotProxy.totalSize);
+            profile.sidebarElement.subtitle = Number.bytesToString(snapshotProxy.totalSize);
+            profile.sidebarElement.wait = false;
+            snapshotProxy.worker.startCheckingForLongRunningCalls();
         }
         if (proxy.finishLoading(parsed))
-            profile.sideBarElement.subtitle = WebInspector.UIString("Parsing\u2026");
+            profile.sidebarElement.subtitle = WebInspector.UIString("Parsing\u2026");
     },
 
     showView: function(view)
@@ -675,7 +684,8 @@ WebInspector.ProfilesPanel.prototype = {
     _reportHeapSnapshotProgress: function(done, total)
     {
         if (this.hasTemporaryProfile(WebInspector.DetailedHeapshotProfileType.TypeId)) {
-            this._temporaryTakingSnapshot.sideBarElement.subtitle = WebInspector.UIString("%.2f%%", (done / total) * 100);
+            this._temporaryTakingSnapshot.sidebarElement.subtitle = WebInspector.UIString("%.2f%%", (done / total) * 100);
+            this._temporaryTakingSnapshot.sidebarElement.wait = true;
             if (done >= total)
                 this._removeProfileHeader(this._temporaryTakingSnapshot);
         }
