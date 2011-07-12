@@ -1605,6 +1605,7 @@ plugins/plugin-initiate-popup-window.html
 # WebKitTestRunner needs an implemenation of allowRoundingHacks
 # http://webkit.org/b/63477
 platform/mac/fast/text/rounding-hacks.html
+platform/mac/fast/text/rounding-hacks-expansion.html
 
 # Sometimes fails
 # http://webkit.org/b/58990

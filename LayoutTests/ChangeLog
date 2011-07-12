@@ -1,3 +1,13 @@
+2011-07-12  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner needs an implemenation of allowRoundingHacks
+        https://bugs.webkit.org/show_bug.cgi?id=63477
+
+        Add platform/mac/fast/text/rounding-hacks-expansion.html to the wk2 Skipped list to get the
+        bots green.
+
+        * platform/wk2/Skipped:
+
 2011-07-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: make TextViewerDelegate methods implementations public in SourceFrame.
