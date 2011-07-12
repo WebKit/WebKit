@@ -254,7 +254,7 @@ int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, L
     return RenderBox::baselinePosition(baselineType, firstLine, lineDirection, linePositionMode) - baselineAdjustment;
 }
 
-IntRect RenderListBox::itemBoundingBoxRect(const IntPoint& additionalOffset, int index)
+IntRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffset, int index)
 {
     return IntRect(additionalOffset.x() + borderLeft() + paddingLeft(),
                    additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset),

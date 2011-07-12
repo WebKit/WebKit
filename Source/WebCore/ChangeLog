@@ -1,3 +1,47 @@
+2011-07-12  Emil A Eklund  <eae@chromium.org>
+
+        Switch preferred width/height and columns to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64329
+
+        Reviewed by Eric Seidel.
+
+        No new tests, no new functionality.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::ceiledLayoutUnit):
+        Add ceiledLayoutUnit to go with the floored version.
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::flipForWritingModeIncludingColumns):
+        (WebCore::RenderBlock::adjustStartEdgeForWritingModeIncludingColumns):
+        Rename rect version of flipForWritingModeIncludingColumns to
+        adjustStartEdgeForWritingModeIncludingColumns as it adjust the start edge
+        and does not flip the rect.
+       
+        (WebCore::RenderBlock::adjustForColumns):
+        (WebCore::updatePreferredWidth):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::minPreferredLogicalWidth):
+        (WebCore::RenderBox::maxPreferredLogicalWidth):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::flipForWritingMode):
+        (WebCore::RenderBox::flipForWritingModeIncludingColumns):
+        * rendering/RenderBox.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::minPreferredLogicalWidth):
+        (WebCore::RenderObject::maxPreferredLogicalWidth):
+        (WebCore::RenderObject::adjustForColumns):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/TableLayout.h:
+
 2011-07-12  Levi Weintraub  <leviw@chromium.org>
 
         Change roundedIntRect to roundedRect

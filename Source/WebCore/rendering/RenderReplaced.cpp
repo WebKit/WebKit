@@ -219,7 +219,7 @@ int RenderReplaced::computeIntrinsicLogicalHeight(RenderBox* contentRenderer) co
     return contentRenderer->computeReplacedLogicalHeightRespectingMinMaxHeight(contentRenderer->computeReplacedLogicalHeightUsing(contentRenderer->style()->logicalHeight()));
 }
 
-int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
+LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     if (style()->logicalWidth().isSpecified())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style()->logicalWidth()), includeMaxWidth);
@@ -304,7 +304,7 @@ int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
     return computeReplacedLogicalWidthRespectingMinMaxWidth(intrinsicLogicalWidth(), includeMaxWidth);
 }
 
-int RenderReplaced::computeReplacedLogicalHeight() const
+LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     // If the height of the containing block is not specified explicitly (i.e., it depends on

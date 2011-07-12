@@ -239,8 +239,8 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    virtual int minPreferredLogicalWidth() const;
-    virtual int maxPreferredLogicalWidth() const;
+    virtual LayoutUnit minPreferredLogicalWidth() const;
+    virtual LayoutUnit maxPreferredLogicalWidth() const;
 
     LayoutSize overrideSize() const;
     LayoutUnit overrideWidth() const;
@@ -388,10 +388,10 @@ public:
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     enum FlippingAdjustment { ChildToParentFlippingAdjustment, ParentToChildFlippingAdjustment };
-    IntPoint flipForWritingMode(const RenderBox* child, const IntPoint&, FlippingAdjustment) const;
+    LayoutPoint flipForWritingMode(const RenderBox* child, const LayoutPoint&, FlippingAdjustment) const;
     int flipForWritingMode(int position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     IntPoint flipForWritingMode(const IntPoint&) const;
-    IntPoint flipForWritingModeIncludingColumns(const IntPoint&) const;
+    LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
     IntSize flipForWritingMode(const IntSize&) const;
     void flipForWritingMode(IntRect&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;
@@ -474,10 +474,10 @@ protected:
     LayoutUnit m_marginBottom;
 
     // The preferred logical width of the element if it were to break its lines at every possible opportunity.
-    int m_minPreferredLogicalWidth;
+    LayoutUnit m_minPreferredLogicalWidth;
     
     // The preferred logical width of the element if it never breaks any lines at all.
-    int m_maxPreferredLogicalWidth;
+    LayoutUnit m_maxPreferredLogicalWidth;
 
     // For inline replaced elements, the inline box that owns us.
     InlineBox* m_inlineBoxWrapper;

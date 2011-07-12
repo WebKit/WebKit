@@ -667,7 +667,7 @@ bool RenderBox::needsPreferredWidthsRecalculation() const
     return style()->paddingStart().isPercent() || style()->paddingEnd().isPercent();
 }
 
-int RenderBox::minPreferredLogicalWidth() const
+LayoutUnit RenderBox::minPreferredLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
         const_cast<RenderBox*>(this)->computePreferredLogicalWidths();
@@ -675,7 +675,7 @@ int RenderBox::minPreferredLogicalWidth() const
     return m_minPreferredLogicalWidth;
 }
 
-int RenderBox::maxPreferredLogicalWidth() const
+LayoutUnit RenderBox::maxPreferredLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
         const_cast<RenderBox*>(this)->computePreferredLogicalWidths();
@@ -1298,7 +1298,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
         if (style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
             if (o->hasColumns()) {
                 LayoutRect columnRect(frameRect());
-                toRenderBlock(o)->flipForWritingModeIncludingColumns(columnRect);
+                toRenderBlock(o)->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
                 offset += LayoutSize(columnRect.location().x(), columnRect.location().y());
                 columnRect.moveBy(point);
                 o->adjustForColumns(offset, columnRect.location());
@@ -1927,7 +1927,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
             // box model.  This is essential for sizing inside
             // table cells using percentage heights.
             result -= borderAndPaddingLogicalHeight();
-            result = max(0, result);
+            result = max<LayoutUnit>(0, result);
         }
     }
     return result;
@@ -3393,7 +3393,7 @@ IntRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle) co
     return rect;
 }
 
-IntPoint RenderBox::flipForWritingMode(const RenderBox* child, const IntPoint& point, FlippingAdjustment adjustment) const
+LayoutPoint RenderBox::flipForWritingMode(const RenderBox* child, const LayoutPoint& point, FlippingAdjustment adjustment) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return point;
@@ -3401,8 +3401,8 @@ IntPoint RenderBox::flipForWritingMode(const RenderBox* child, const IntPoint& p
     // The child is going to add in its x() and y(), so we have to make sure it ends up in
     // the right place.
     if (isHorizontalWritingMode())
-        return IntPoint(point.x(), point.y() + height() - child->height() - child->y() - (adjustment == ParentToChildFlippingAdjustment ? child->y() : 0));
-    return IntPoint(point.x() + width() - child->width() - child->x() - (adjustment == ParentToChildFlippingAdjustment ? child->x() : 0), point.y());
+        return LayoutPoint(point.x(), point.y() + height() - child->height() - child->y() - (adjustment == ParentToChildFlippingAdjustment ? child->y() : 0));
+    return LayoutPoint(point.x() + width() - child->width() - child->x() - (adjustment == ParentToChildFlippingAdjustment ? child->x() : 0), point.y());
 }
 
 void RenderBox::flipForWritingMode(IntRect& rect) const
@@ -3430,7 +3430,7 @@ IntPoint RenderBox::flipForWritingMode(const IntPoint& position) const
     return isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
 }
 
-IntPoint RenderBox::flipForWritingModeIncludingColumns(const IntPoint& point) const
+LayoutPoint RenderBox::flipForWritingModeIncludingColumns(const LayoutPoint& point) const
 {
     if (!hasColumns() || !style()->isFlippedBlocksWritingMode())
         return flipForWritingMode(point);

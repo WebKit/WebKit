@@ -71,6 +71,11 @@ inline LayoutUnit roundedLayoutUnit(float value)
     return lroundf(value);
 }
 
+inline LayoutUnit ceiledLayoutUnit(float value)
+{
+    return ceilf(value);
+}
+
 inline LayoutSize toLayoutSize(const LayoutPoint& p)
 {
     return LayoutSize(p.x(), p.y());

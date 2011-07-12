@@ -127,8 +127,8 @@ public:
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
     virtual LayoutUnit availableLogicalWidth() const;
 
-    IntPoint flipForWritingModeIncludingColumns(const IntPoint&) const;
-    void flipForWritingModeIncludingColumns(IntRect&) const;
+    LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
+    void adjustStartEdgeForWritingModeIncludingColumns(LayoutRect&) const;
 
     RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
     RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
@@ -149,8 +149,8 @@ public:
     int heightForLineCount(int);
     void clearTruncation();
 
-    void adjustRectForColumns(IntRect&) const;
-    virtual void adjustForColumns(IntSize&, const IntPoint&) const;
+    void adjustRectForColumns(LayoutRect&) const;
+    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const;
 
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);

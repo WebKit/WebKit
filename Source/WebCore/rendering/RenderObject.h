@@ -604,8 +604,8 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     LayoutRect paintingRootRect(LayoutRect& topLevelRect);
 
-    virtual int minPreferredLogicalWidth() const { return 0; }
-    virtual int maxPreferredLogicalWidth() const { return 0; }
+    virtual LayoutUnit minPreferredLogicalWidth() const { return 0; }
+    virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style.get(); }
     RenderStyle* firstLineStyle() const { return document()->usesFirstLineRules() ? firstLineStyleSlowCase() : style(); }
@@ -669,7 +669,7 @@ public:
 
     // If multiple-column layout results in applying an offset to the given point, add the same
     // offset to the given size.
-    virtual void adjustForColumns(IntSize&, const IntPoint&) const { }
+    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const { }
 
     virtual unsigned int length() const { return 1; }
 

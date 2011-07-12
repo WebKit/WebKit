@@ -4494,7 +4494,7 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
     }
 }
 
-void RenderBlock::adjustRectForColumns(IntRect& r) const
+void RenderBlock::adjustRectForColumns(LayoutRect& r) const
 {
     // Just bail if we have no columns.
     if (!hasColumns())
@@ -4503,25 +4503,25 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     ColumnInfo* colInfo = columnInfo();
 
     // Begin with a result rect that is empty.
-    IntRect result;
+    LayoutRect result;
     
     // Determine which columns we intersect.
     unsigned colCount = columnCount(colInfo);
     if (!colCount)
         return;
     
-    int logicalLeft = logicalLeftOffsetForContent();
-    int currLogicalOffset = 0;
+    LayoutUnit logicalLeft = logicalLeftOffsetForContent();
+    LayoutUnit currLogicalOffset = 0;
 
     for (unsigned i = 0; i < colCount; i++) {
-        IntRect colRect = columnRectAt(colInfo, i);
-        IntRect repaintRect = r;
+        LayoutRect colRect = columnRectAt(colInfo, i);
+        LayoutRect repaintRect = r;
         if (isHorizontalWritingMode()) {
-            int currXOffset = colRect.x() - logicalLeft;
+            LayoutUnit currXOffset = colRect.x() - logicalLeft;
             repaintRect.move(currXOffset, currLogicalOffset);
             currLogicalOffset -= colRect.height();
         } else {
-            int currYOffset = colRect.y() - logicalLeft;
+            LayoutUnit currYOffset = colRect.y() - logicalLeft;
             repaintRect.move(currLogicalOffset, currYOffset);
             currLogicalOffset -= colRect.width();
         }
@@ -4532,56 +4532,57 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     r = result;
 }
 
-IntPoint RenderBlock::flipForWritingModeIncludingColumns(const IntPoint& point) const
+LayoutPoint RenderBlock::flipForWritingModeIncludingColumns(const LayoutPoint& point) const
 {
     ASSERT(hasColumns());
     if (!hasColumns() || !style()->isFlippedBlocksWritingMode())
         return point;
     ColumnInfo* colInfo = columnInfo();
-    int columnLogicalHeight = colInfo->columnHeight();
-    int expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
+    LayoutUnit columnLogicalHeight = colInfo->columnHeight();
+    LayoutUnit expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
     if (isHorizontalWritingMode())
-        return IntPoint(point.x(), expandedLogicalHeight - point.y());
-    return IntPoint(expandedLogicalHeight - point.x(), point.y());
+        return LayoutPoint(point.x(), expandedLogicalHeight - point.y());
+    return LayoutPoint(expandedLogicalHeight - point.x(), point.y());
 }
 
-void RenderBlock::flipForWritingModeIncludingColumns(IntRect& rect) const
+void RenderBlock::adjustStartEdgeForWritingModeIncludingColumns(LayoutRect& rect) const
 {
     ASSERT(hasColumns());
     if (!hasColumns() || !style()->isFlippedBlocksWritingMode())
         return;
     
     ColumnInfo* colInfo = columnInfo();
-    int columnLogicalHeight = colInfo->columnHeight();
-    int expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
+    LayoutUnit columnLogicalHeight = colInfo->columnHeight();
+    LayoutUnit expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
+    
     if (isHorizontalWritingMode())
         rect.setY(expandedLogicalHeight - rect.maxY());
     else
         rect.setX(expandedLogicalHeight - rect.maxX());
 }
 
-void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
+void RenderBlock::adjustForColumns(LayoutSize& offset, const LayoutPoint& point) const
 {
     if (!hasColumns())
         return;
 
     ColumnInfo* colInfo = columnInfo();
 
-    int logicalLeft = logicalLeftOffsetForContent();
+    LayoutUnit logicalLeft = logicalLeftOffsetForContent();
     size_t colCount = columnCount(colInfo);
-    int colLogicalWidth = colInfo->desiredColumnWidth();
-    int colLogicalHeight = colInfo->columnHeight();
+    LayoutUnit colLogicalWidth = colInfo->desiredColumnWidth();
+    LayoutUnit colLogicalHeight = colInfo->columnHeight();
 
     for (size_t i = 0; i < colCount; ++i) {
         // Compute the edges for a given column in the block progression direction.
-        IntRect sliceRect = IntRect(logicalLeft, borderBefore() + paddingBefore() + i * colLogicalHeight, colLogicalWidth, colLogicalHeight);
+        LayoutRect sliceRect = LayoutRect(logicalLeft, borderBefore() + paddingBefore() + i * colLogicalHeight, colLogicalWidth, colLogicalHeight);
         if (!isHorizontalWritingMode())
             sliceRect = sliceRect.transposedRect();
         
         // If we have a flipped blocks writing mode, then convert the column so that it's coming from the after edge (either top or left edge).
-        flipForWritingModeIncludingColumns(sliceRect);
+        adjustStartEdgeForWritingModeIncludingColumns(sliceRect);
         
-        int logicalOffset = style()->isFlippedBlocksWritingMode() ? (colCount - 1 - i) * colLogicalHeight : i * colLogicalHeight;
+        LayoutUnit logicalOffset = style()->isFlippedBlocksWritingMode() ? (colCount - 1 - i) * colLogicalHeight : i * colLogicalHeight;
 
         // Now we're in the same coordinate space as the point.  See if it is inside the rectangle.
         if (isHorizontalWritingMode()) {
@@ -4758,9 +4759,9 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin,
     }
 }
 
-static inline void updatePreferredWidth(int& preferredWidth, float& result)
+static inline void updatePreferredWidth(LayoutUnit& preferredWidth, float& result)
 {
-    int snappedResult = ceilf(result);
+    LayoutUnit snappedResult = ceiledLayoutUnit(result);
     preferredWidth = max(snappedResult, preferredWidth);
 }
 

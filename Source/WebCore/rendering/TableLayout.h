@@ -38,7 +38,7 @@ public:
 
     virtual ~TableLayout() { }
 
-    virtual void computePreferredLogicalWidths(int& minWidth, int& maxWidth) = 0;
+    virtual void computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) = 0;
     virtual void layout() = 0;
 
 protected:
