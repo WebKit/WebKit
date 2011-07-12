@@ -1,3 +1,51 @@
+2011-07-11  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Remove WebSocket tests that do not apply to hybi protocol
+        https://bugs.webkit.org/show_bug.cgi?id=64288
+
+        Reviewed by Kent Tamura.
+
+        Remove tests from http/tests/websocket/tests/hybi that are not meaningful in terms of
+        the hybi protocol. The most recent WebSocket protocol draft is available at
+        <http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10>, and referred as
+        "hybi-10" here.
+
+        * http/tests/websocket/tests/hybi/error-detect-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/error-detect.html: Removed.
+        Hybi protocol has a completely different scheme of representing frame types.
+        Additionally, hybi-10 no longer fires "error" events (which invoke "onerror" handler).
+        * http/tests/websocket/tests/hybi/fixed-origin_wsh.py: Removed.
+        * http/tests/websocket/tests/hybi/frame-length-longer-than-buffer-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/frame-length-longer-than-buffer.html: Removed.
+        Variable-length encoding (which is used to represent frame length in hixie-76) is no longer
+        used in hybi-10.
+        * http/tests/websocket/tests/hybi/frame-length-longer-than-buffer_wsh.py: Removed.
+        * http/tests/websocket/tests/hybi/frame-length-overflow-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/frame-length-overflow.html: Removed. Ditto.
+        * http/tests/websocket/tests/hybi/frame-length-overflow_wsh.py: Removed.
+        * http/tests/websocket/tests/hybi/frame-length-skip-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/frame-length-skip.html: Removed.
+        There are two ways to indicate the length of a frame in hixie-76 protocol, but
+        hybi-10 has only one method (length-prefixed frames). Skipping unwanted frames will
+        be covered by other tests that will be added in a later patch.
+        * http/tests/websocket/tests/hybi/frame-length-skip_wsh.py: Removed.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-cross-origin-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-cross-origin.html: Removed.
+        In hybi-10, servers no longer returns Origin header in handshake response, and clients
+        are not required to validate this value.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-sub-protocol-mismatch-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-sub-protocol-mismatch.html: Removed.
+        In hybi-10, clients are not required to (and must not) compare the values of subprotocols
+        in client's request and server's response.
+        * http/tests/websocket/tests/hybi/unknown-frame-type_wsh.py: Removed.
+        * http/tests/websocket/tests/hybi/url-with-query-for-no-query-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/url-with-query-for-no-query.html: Removed.
+        In hybi-10, servers do not provide "Sec-WebSocket-Location" header, and clients are not required
+        to validate this value.
+        * http/tests/websocket/tests/hybi/websocket-protocol-ignored-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/websocket-protocol-ignored.html: Removed.
+        Same as handshake-fail-by-sub-protocol-mismatch.html.
+
 2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         positionForPoint is broken when a block is positioned relatively inside the parent
