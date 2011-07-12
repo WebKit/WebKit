@@ -38,16 +38,11 @@ import os
 import signal
 import sys
 
-from webkitpy.common.net import resultsjsonparser
-from webkitpy.layout_tests import layout_package
+from webkitpy import layout_tests
+
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
-from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.views import printing
 
-from webkitpy.common.system import user
-from webkitpy.thirdparty import simplejson
-
-import port
 
 _log = logging.getLogger(__name__)
 
@@ -86,7 +81,7 @@ def run(port, options, args, regular_output=sys.stderr,
     num_unexpected_results = -1
     try:
         manager = Manager(port, options, printer)
-        manager._print_config()
+        manager.print_config()
 
         printer.print_update("Collecting tests ...")
         try:
@@ -119,13 +114,13 @@ def run(port, options, args, regular_output=sys.stderr,
     return num_unexpected_results
 
 
-def _set_up_derived_options(port_obj, options):
+def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""
     # We return a list of warnings to print after the printer is initialized.
     warnings = []
 
     if options.worker_model is None:
-        options.worker_model = port_obj.default_worker_model()
+        options.worker_model = port.default_worker_model()
 
     if options.worker_model == 'inline':
         if options.child_processes and int(options.child_processes) > 1:
@@ -133,10 +128,10 @@ def _set_up_derived_options(port_obj, options):
         options.child_processes = "1"
     if not options.child_processes:
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
-                                                 str(port_obj.default_child_processes()))
+                                                 str(port.default_child_processes()))
 
     if not options.configuration:
-        options.configuration = port_obj.default_configuration()
+        options.configuration = port.default_configuration()
 
     if options.pixel_tests is None:
         options.pixel_tests = True
@@ -152,10 +147,10 @@ def _set_up_derived_options(port_obj, options):
     if options.additional_platform_directory:
         normalized_platform_directories = []
         for path in options.additional_platform_directory:
-            if not port_obj._filesystem.isabs(path):
+            if not port.filesystem.isabs(path):
                 warnings.append("--additional-platform-directory=%s is ignored since it is not absolute" % path)
                 continue
-            normalized_platform_directories.append(port_obj._filesystem.normpath(path))
+            normalized_platform_directories.append(port.filesystem.normpath(path))
         options.additional_platform_directory = normalized_platform_directories
 
     return warnings
@@ -429,8 +424,8 @@ def parse_args(args=None):
 
 def main():
     options, args = parse_args()
-    port_obj = port.get(options.platform, options)
-    return run(port_obj, options, args)
+    port = layout_tests.port.get(options.platform, options)
+    return run(port, options, args)
 
 
 if '__main__' == __name__:
@@ -440,7 +435,7 @@ if '__main__' == __name__:
         # This mirrors what the shell normally does.
         INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
         sys.exit(INTERRUPTED_EXIT_STATUS)
-    except WorkerException, e:
+    except WorkerException:
         # This is a randomly chosen exit code that can be tested against to
         # indicate that an unexpected exception occurred.
         EXCEPTIONAL_EXIT_STATUS = 254

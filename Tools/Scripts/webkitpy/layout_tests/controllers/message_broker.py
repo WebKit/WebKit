@@ -57,13 +57,12 @@ BrokerConnection.  BrokerConnection passes a reference to BrokerClient to
 Broker, and Broker only invokes that reference, never talking directly to
 BrokerConnection).
 """
+import sys
+import traceback
 
 import cPickle
 import logging
 import Queue
-import sys
-import time
-import traceback
 
 from webkitpy.common.system import stack_utils
 
@@ -80,9 +79,6 @@ class BrokerClient(object):
     where MESSAGE_NAME matches the string passed to post_message(), and
     src indicates the name of the sender. If the message contains values in
     the message body, those will be provided as optparams."""
-
-    def __init__(self, *optargs, **kwargs):
-        raise NotImplementedError
 
     def is_done(self):
         """Called from inside run_message_loop() to indicate whether to exit."""
@@ -156,8 +152,8 @@ class Broker(object):
 
 class _Message(object):
     @staticmethod
-    def loads(str):
-        obj = cPickle.loads(str)
+    def loads(string_value):
+        obj = cPickle.loads(string_value)
         assert(isinstance(obj, _Message))
         return obj
 

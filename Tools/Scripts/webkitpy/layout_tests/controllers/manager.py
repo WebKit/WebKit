@@ -37,7 +37,6 @@ create a final report.
 
 from __future__ import with_statement
 
-import copy
 import errno
 import logging
 import math
@@ -53,7 +52,6 @@ from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import worker
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
-from webkitpy.layout_tests.layout_package import test_results_uploader
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
@@ -61,7 +59,6 @@ from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.views import printing
 
-from webkitpy.thirdparty import simplejson
 from webkitpy.tool import grammar
 
 _log = logging.getLogger(__name__)
@@ -223,6 +220,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
 class TestRunInterruptedException(Exception):
     """Raised when a test run should be stopped immediately."""
     def __init__(self, reason):
+        Exception.__init__(self)
         self.reason = reason
         self.msg = reason
 
@@ -269,10 +267,11 @@ class Manager(object):
           printer: a Printer object to record updates to.
         """
         self._port = port
-        self._fs = port._filesystem
+        self._fs = port.filesystem
         self._options = options
         self._printer = printer
         self._message_broker = None
+        self._expectations = None
 
         self.HTTP_SUBDIR = port.TEST_PATH_SEPARATOR + 'http' + port.TEST_PATH_SEPARATOR
         self.WEBSOCKET_SUBDIR = port.TEST_PATH_SEPARATOR + 'websocket' + port.TEST_PATH_SEPARATOR
@@ -322,7 +321,7 @@ class Manager(object):
         if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):
             return path[len(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):]
         if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._fs.sep):
-            return path[len(self.LAYOUT_TEST_DIRECTORY + self._fs.sep):]
+            return path[len(self.LAYOUT_TESTS_DIRECTORY + self._fs.sep):]
         return path
 
     def lint(self):
@@ -408,7 +407,7 @@ class Manager(object):
                 assert(chunk_num >= 0)
                 test_size = int(chunk_len)
                 assert(test_size > 0)
-            except:
+            except AssertionError:
                 _log.critical("invalid chunk '%s'" % chunk_value)
                 return None
 
@@ -754,15 +753,15 @@ class Manager(object):
         # are sent after all of the tests, and because each worker will stop
         # reading messsages after receiving a stop, we can be sure each
         # worker will get a stop message and hence they will all shut down.
-        for i in xrange(num_workers):
+        for _ in xrange(num_workers):
             manager_connection.post_message('stop')
 
         try:
             while not self.is_done():
                 # Temporarily disabled to see how this code effect performance on the buildbots.
-                # if self._port.executive().running_pids(self._port.is_crash_reporter):
+                # if self._port.executive.running_pids(self._port.is_crash_reporter):
                 #     self._printer.print_update("Waiting for crash reporter ...")
-                #     self._port.executive().wait_newest(self._port.is_crash_reporter)
+                #     self._port.executive.wait_newest(self._port.is_crash_reporter)
                 manager_connection.run_message_loop(delay_secs=1.0)
 
             # Make sure all of the workers have shut down (if possible).
@@ -1091,7 +1090,7 @@ class Manager(object):
 
         generator.upload_json_files(json_files)
 
-    def _print_config(self):
+    def print_config(self):
         """Prints the configuration for the test run."""
         p = self._printer
         p.print_config("Using port '%s'" % self._port.name())
@@ -1291,8 +1290,8 @@ class Manager(object):
 
         mean = sum(timings) / num_tests
 
-        for time in timings:
-            sum_of_deviations = math.pow(time - mean, 2)
+        for timing in timings:
+            sum_of_deviations = math.pow(timing - mean, 2)
 
         std_deviation = math.sqrt(sum_of_deviations / num_tests)
         self._printer.print_timing("  Median:          %6.3f" % median)
@@ -1437,7 +1436,7 @@ class Manager(object):
         self._update_summary_with_result(self._current_result_summary, result)
 
     def _log_worker_stack(self, stack):
-        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._port._filesystem.sep
+        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._port.filesystem.sep
         for filename, line_number, function_name, text in stack:
             if filename.startswith(webkitpydir):
                 filename = filename.replace(webkitpydir, '')
@@ -1445,13 +1444,13 @@ class Manager(object):
             _log.error('    %s' % text)
 
 
-def read_test_files(fs, files, test_path_separator):
+def read_test_files(fs, filenames, test_path_separator):
     tests = []
-    for file in files:
+    for filename in filenames:
         try:
             if test_path_separator != fs.sep:
-                file = file.replace(test_path_separator, fs.sep)
-            file_contents = fs.read_text_file(file).split('\n')
+                filename = filename.replace(test_path_separator, fs.sep)
+            file_contents = fs.read_text_file(filename).split('\n')
             for line in file_contents:
                 line = test_expectations.strip_comments(line)
                 if line:
@@ -1488,7 +1487,7 @@ def natural_sort_key(string_to_split):
     def tryint(val):
         try:
             return int(val)
-        except:
+        except ValueError:
             return val
 
     return [tryint(chunk) for chunk in re.split('(\d+)', string_to_split)]

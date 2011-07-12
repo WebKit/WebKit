@@ -36,8 +36,6 @@ import cgi
 import difflib
 import errno
 import os
-import sys
-import time
 
 from webkitpy.common.net.testoutputset import AggregateTestOutputSet
 
@@ -48,7 +46,6 @@ except ImportError:
     multiprocessing = None
 
 from webkitpy.common import system
-from webkitpy.common.system import filesystem
 from webkitpy.common.system import logutils
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import Executive, ScriptError
@@ -62,7 +59,6 @@ from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
 
 _log = logutils.get_logger(__file__)
-
 
 class DummyOptions(object):
     """Fake implementation of optparse.Values. Cloned from webkitpy.tool.mocktool.MockOptions."""
@@ -103,12 +99,19 @@ class Port(object):
         # FIXME: Ideally we'd have a package-wide way to get a
         # well-formed options object that had all of the necessary
         # options defined on it.
-        self._options = options or DummyOptions()
+        self.options = options or DummyOptions()
 
-        self._executive = executive or Executive()
-        self._user = user or User()
-        self._filesystem = filesystem or system.filesystem.FileSystem()
-        self._config = config or port_config.Config(self._executive, self._filesystem)
+        self.executive = executive or Executive()
+        self.user = user or User()
+        self.filesystem = filesystem or system.filesystem.FileSystem()
+        self.config = config or port_config.Config(self.executive, self.filesystem)
+
+        # FIXME: Remove all of the old "protected" versions when we can.
+        self._options = self.options
+        self._executive = self.executive
+        self._filesystem = self.filesystem
+        self._user = self.user
+        self._config = self.config
 
         self._helper = None
         self._http_server = None
@@ -138,9 +141,6 @@ class Port(object):
         self._test_configuration = None
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
-
-    def executive(self):
-        return self._executive
 
     def wdiff_available(self):
         if self._wdiff_available is None:
@@ -193,7 +193,7 @@ class Port(object):
     def check_pretty_patch(self, logging=True):
         """Checks whether we can use the PrettyPatch ruby script."""
         try:
-            result = self._executive.run_command(['ruby', '--version'])
+            _ = self._executive.run_command(['ruby', '--version'])
         except OSError, e:
             if e.errno in [errno.ENOENT, errno.EACCES, errno.ECHILD]:
                 if logging:
@@ -215,7 +215,7 @@ class Port(object):
             return False
 
         try:
-            result = self._executive.run_command([self._path_to_wdiff(), '--help'])
+            _ = self._executive.run_command([self._path_to_wdiff(), '--help'])
         except OSError:
             if logging:
                 _log.error("wdiff is not installed.")
@@ -225,14 +225,14 @@ class Port(object):
 
     def check_httpd(self):
         if self._uses_apache():
-            path = self._path_to_apache()
+            httpd_path = self._path_to_apache()
         else:
-            path = self._path_to_lighttpd()
+            httpd_path = self._path_to_lighttpd()
 
         try:
             env = self.setup_environ_for_server()
-            return self._executive.run_command([path, "-v"], env=env, return_exit_code=True) == 0
-        except OSError, e:
+            return self._executive.run_command([httpd_path, "-v"], env=env, return_exit_code=True) == 0
+        except OSError:
             _log.error("No httpd found. Cannot run http tests.")
             return False
 
@@ -269,10 +269,10 @@ class Port(object):
         # The filenames show up in the diff output, make sure they're
         # raw bytes and not unicode, so that they don't trigger join()
         # trying to decode the input.
-        def to_raw_bytes(str):
-            if isinstance(str, unicode):
-                return str.encode('utf-8')
-            return str
+        def to_raw_bytes(string_value):
+            if isinstance(string_value, unicode):
+                return string_value.encode('utf-8')
+            return string_value
         expected_filename = to_raw_bytes(expected_filename)
         actual_filename = to_raw_bytes(actual_filename)
         diff = difflib.unified_diff(expected_text.splitlines(True),
@@ -377,16 +377,16 @@ class Port(object):
 
     def expected_image(self, test_name):
         """Returns the image we expect the test to produce."""
-        path = self.expected_filename(test_name, '.png')
-        if not self._filesystem.exists(path):
+        baseline_path = self.expected_filename(test_name, '.png')
+        if not self._filesystem.exists(baseline_path):
             return None
-        return self._filesystem.read_binary_file(path)
+        return self._filesystem.read_binary_file(baseline_path)
 
     def expected_audio(self, test_name):
-        path = self.expected_filename(test_name, '.wav')
-        if not self._filesystem.exists(path):
+        baseline_path = self.expected_filename(test_name, '.wav')
+        if not self._filesystem.exists(baseline_path):
             return None
-        return self._filesystem.read_binary_file(path)
+        return self._filesystem.read_binary_file(baseline_path)
 
     def expected_text(self, test_name):
         """Returns the text output we expect the test to produce, or None
@@ -395,12 +395,12 @@ class Port(object):
         # FIXME: DRT output is actually utf-8, but since we don't decode the
         # output from DRT (instead treating it as a binary string), we read the
         # baselines as a binary string, too.
-        path = self.expected_filename(test_name, '.txt')
-        if not self._filesystem.exists(path):
-            path = self.expected_filename(test_name, '.webarchive')
-            if not self._filesystem.exists(path):
+        baseline_path = self.expected_filename(test_name, '.txt')
+        if not self._filesystem.exists(baseline_path):
+            baseline_path = self.expected_filename(test_name, '.webarchive')
+            if not self._filesystem.exists(baseline_path):
                 return None
-        text = self._filesystem.read_binary_file(path)
+        text = self._filesystem.read_binary_file(baseline_path)
         return text.replace("\r\n", "\n")
 
     def reftest_expected_filename(self, test_name):
@@ -417,7 +417,6 @@ class Port(object):
         LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
 
         port = None
-        use_ssl = False
 
         relative_path = test_name
         if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
@@ -453,15 +452,15 @@ class Port(object):
     def test_isdir(self, test_name):
         """Return True if the test name refers to a directory of tests."""
         # Used by test_expectations.py to apply rules to whole directories.
-        path = self.abspath_for_test(test_name)
-        return self._filesystem.isdir(path)
+        test_path = self.abspath_for_test(test_name)
+        return self._filesystem.isdir(test_path)
 
     def test_exists(self, test_name):
         """Return True if the test name refers to an existing test or baseline."""
         # Used by test_expectations.py to determine if an entry refers to a
         # valid test and by printing.py to determine if baselines exist.
-        path = self.abspath_for_test(test_name)
-        return self._filesystem.exists(path)
+        test_path = self.abspath_for_test(test_name)
+        return self._filesystem.exists(test_path)
 
     def split_test(self, test_name):
         """Splits a test name into the 'directory' part and the 'basename' part."""
@@ -481,16 +480,16 @@ class Port(object):
         driver = self.create_driver(0)
         return driver.cmd_line()
 
-    def update_baseline(self, path, data):
+    def update_baseline(self, baseline_path, data):
         """Updates the baseline for a test.
 
         Args:
-            path: the actual path to use for baseline, not the path to
+            baseline_path: the actual path to use for baseline, not the path to
               the test. This function is used to update either generic or
               platform-specific baselines, but we can't infer which here.
             data: contents of the baseline.
         """
-        self._filesystem.write_binary_file(path, data)
+        self._filesystem.write_binary_file(baseline_path, data)
 
     def uri_to_test_name(self, uri):
         """Return the base layout test name for a given URI.
@@ -522,6 +521,9 @@ class Port(object):
         """Return the absolute path to the top of the LayoutTests directory."""
         return self.path_from_webkit_base('LayoutTests')
 
+    def skipped_layout_tests(self):
+        return []
+
     def skips_layout_test(self, test_name):
         """Figures out if the givent test is being skipped or not.
 
@@ -536,9 +538,9 @@ class Port(object):
                 return True
         return False
 
-    def maybe_make_directory(self, *path):
+    def maybe_make_directory(self, *comps):
         """Creates the specified directory if it doesn't already exist."""
-        self._filesystem.maybe_make_directory(*path)
+        self._filesystem.maybe_make_directory(*comps)
 
     def name(self):
         """Returns a name that uniquely identifies this particular type of port
@@ -921,7 +923,7 @@ class TestConfiguration(object):
     def __init__(self, port=None, version=None, architecture=None, build_type=None, graphics_type=None):
         self.version = version or port.version()
         self.architecture = architecture or port.architecture()
-        self.build_type = build_type or port._options.configuration.lower()
+        self.build_type = build_type or port.options.configuration.lower()
         self.graphics_type = graphics_type or port.graphics_type()
 
     def items(self):
@@ -946,12 +948,12 @@ class TestConfiguration(object):
         # By default, we assume we want to test every graphics type in
         # every configuration on every system.
         test_configurations = []
-        for system in self.all_systems():
+        for version, architecture in self.all_systems():
             for build_type in self.all_build_types():
                 for graphics_type in self.all_graphics_types():
                     test_configurations.append(TestConfiguration(
-                        version=system[0],
-                        architecture=system[1],
+                        version=version,
+                        architecture=architecture,
                         build_type=build_type,
                         graphics_type=graphics_type))
         return test_configurations

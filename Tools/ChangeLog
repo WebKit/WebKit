@@ -1,3 +1,23 @@
+2011-07-08  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: linting fixes
+        https://bugs.webkit.org/show_bug.cgi?id=64225
+
+        Reviewed by Eric Siedel.
+
+        Miscellaneous linting fixes. The most notable change is that
+        we add public attributes for user, executive, filesystem, and
+        options on the Port object, so we don't have to refer to the
+        "protected" versions all over the place".
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/controllers/message_broker.py:
+        * Scripts/webkitpy/layout_tests/controllers/message_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkit-patch roll-chromium-deps no longer works

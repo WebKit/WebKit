@@ -45,9 +45,6 @@ import logging
 import optparse
 import Queue
 import sys
-import thread
-import threading
-import time
 
 # Handle Python < 2.6 where multiprocessing isn't available.
 try:
@@ -55,8 +52,7 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy.common.system import stack_utils
-from webkitpy.layout_tests import port
+from webkitpy import layout_tests
 from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.views import printing
 
@@ -111,7 +107,7 @@ def get(port, options, client, worker_class):
 
 
 class AbstractWorker(message_broker.BrokerClient):
-    def __init__(self, broker_connection, worker_number, options):
+    def __init__(self, worker_connection, worker_number, options):
         """The constructor should be used to do any simple initialization
         necessary, but should not do anything that creates data structures
         that cannot be Pickled or sent across processes (like opening
@@ -119,12 +115,15 @@ class AbstractWorker(message_broker.BrokerClient):
         start of the run() call.
 
         Args:
-            broker_connection - handle to the BrokerConnection object creating
+            worker_connection - handle to the BrokerConnection object creating
                 the worker and that can be used for messaging.
             worker_number - identifier for this particular worker
             options - command-line argument object from optparse"""
-
-        raise NotImplementedError
+        message_broker.BrokerClient.__init__(self)
+        self._worker_connection = worker_connection
+        self._options = options
+        self._worker_number = worker_number
+        self._name = 'worker/%d' % worker_number
 
     def run(self, port):
         """Callback for the worker to start executing. Typically does any
@@ -213,7 +212,7 @@ class _WorkerConnection(message_broker.BrokerConnection):
 
 class _InlineWorkerConnection(_WorkerConnection):
     def __init__(self, broker, port, manager_client, worker_class, worker_number):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, port._options)
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, port.options)
         self._alive = False
         self._port = port
         self._manager_client = manager_client
@@ -254,7 +253,7 @@ if multiprocessing:
 
         def run(self):
             options = self._options
-            port_obj = port.get(self._platform_name, options)
+            port_obj = layout_tests.port.get(self._platform_name, options)
 
             # The unix multiprocessing implementation clones the
             # log handler configuration into the child processes,

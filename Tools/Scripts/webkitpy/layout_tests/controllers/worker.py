@@ -44,13 +44,16 @@ _log = logging.getLogger(__name__)
 
 class Worker(manager_worker_broker.AbstractWorker):
     def __init__(self, worker_connection, worker_number, options):
-        self._worker_connection = worker_connection
-        self._worker_number = worker_number
-        self._options = options
-        self._name = 'worker/%d' % worker_number
+        manager_worker_broker.AbstractWorker.__init__(self, worker_connection, worker_number, options)
         self._done = False
         self._canceled = False
         self._port = None
+        self._batch_size = 0
+        self._batch_count = 0
+        self._filesystem = None
+        self._driver = None
+        self._tests_run_file = None
+        self._tests_run_filename = None
 
     def __del__(self):
         self.cleanup()
@@ -62,10 +65,9 @@ class Worker(manager_worker_broker.AbstractWorker):
         This routine exists so that the mixin can be created and then marshaled
         across into a child process."""
         self._port = port
-        self._filesystem = port._filesystem
+        self._filesystem = port.filesystem
         self._batch_count = 0
         self._batch_size = self._options.batch_size
-        self._driver = None
         tests_run_filename = self._filesystem.join(port.results_directory(),
                                                    "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
@@ -124,7 +126,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         # parallel with ReportCrash.
         #
         # Temporarily disabled to see how this code effect performance on the buildbots.
-        # self._port.executive().wait_newest(self._port.is_crash_reporter)
+        # self._port.executive.wait_newest(self._port.is_crash_reporter)
 
         test_timeout_sec = self.timeout(test_input)
         start = time.time()
@@ -168,9 +170,7 @@ class Worker(manager_worker_broker.AbstractWorker):
     def run_test_with_timeout(self, test_input, timeout):
         if self._options.run_singly:
             return self._run_test_in_another_thread(test_input, timeout)
-        else:
-            return self._run_test_in_this_thread(test_input)
-        return result
+        return self._run_test_in_this_thread(test_input)
 
     def clean_up_after_test(self, test_input, result):
         self._batch_count += 1
@@ -213,17 +213,21 @@ class Worker(manager_worker_broker.AbstractWorker):
         """
         worker = self
 
-        driver = worker._port.create_driver(worker._worker_number)
+        driver = self._port.create_driver(self._worker_number)
         driver.start()
 
         class SingleTestThread(threading.Thread):
+            def __init__(self):
+                threading.Thread.__init__(self)
+                self.result = None
+
             def run(self):
-                self.result = worker._run_single_test(driver, test_input)
+                self.result = worker.run_single_test(driver, test_input)
 
         thread = SingleTestThread()
         thread.start()
         thread.join(thread_timeout_sec)
-        result = getattr(thread, 'result', None)
+        result = thread.result
         if thread.isAlive():
             # If join() returned with the thread still running, the
             # DumpRenderTree is completely hung and there's nothing
@@ -252,8 +256,8 @@ class Worker(manager_worker_broker.AbstractWorker):
         if not self._driver or self._driver.poll() is not None:
             self._driver = self._port.create_driver(self._worker_number)
             self._driver.start()
-        return self._run_single_test(self._driver, test_input)
+        return self.run_single_test(self._driver, test_input)
 
-    def _run_single_test(self, driver, test_input):
+    def run_single_test(self, driver, test_input):
         return single_test_runner.run_single_test(self._port, self._options,
             test_input, driver, self._name)

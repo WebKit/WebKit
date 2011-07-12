@@ -65,16 +65,9 @@ class InterfaceTest(unittest.TestCase):
     # that classes do implement every abstract method in an interface.
 
     def test_brokerclient_is_abstract(self):
-        # Test that we can't create an instance directly.
-        self.assertRaises(NotImplementedError, message_broker.BrokerClient)
-
-        class TestClient(message_broker.BrokerClient):
-            def __init__(self):
-                pass
-
         # Test that all the base class methods are abstract and have the
         # signature we expect.
-        obj = TestClient()
+        obj = message_broker.BrokerClient()
         self.assertRaises(NotImplementedError, obj.is_done)
         self.assertRaises(NotImplementedError, obj.name)
 
