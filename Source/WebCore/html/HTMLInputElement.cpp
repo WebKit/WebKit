@@ -189,11 +189,10 @@ void HTMLInputElement::updateCheckedRadioButtons()
             control->setNeedsValidityCheck();
         }
     } else {
-        // FIXME: Traversing the document is inefficient.
-        for (Node* node = document()->body(); node; node = node->traverseNextNode()) {
-            if (!node->isElementNode())
-                continue;
-            Element* element = static_cast<Element*>(node);
+        typedef Document::FormElementListHashSet::const_iterator Iterator;
+        Iterator end = document()->getFormElements()->end();
+        for (Iterator it = document()->getFormElements()->begin(); it != end; ++it) {
+            Element* element = *it;
             if (element->formControlName() != name())
                 continue;
             if (element->formControlType() != type())
@@ -888,8 +887,8 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     m_reflectsCheckedAttribute = false;
     m_isChecked = nowChecked;
     setNeedsStyleRecalc();
-
-    updateCheckedRadioButtons();
+    if (isRadioButton()) 
+        updateCheckedRadioButtons();
     setNeedsValidityCheck();
 
     // Ideally we'd do this from the render tree (matching

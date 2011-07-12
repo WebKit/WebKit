@@ -1,3 +1,18 @@
+2011-07-11  Zeng Huiqing  <huiqing.zeng@intel.com>
+
+        Optimize HTMLInputElement::updateCheckedRadioButtons
+        https://bugs.webkit.org/show_bug.cgi?id=62840
+
+        Reviewed by Kent Tamura.
+
+        No new tests.
+
+        * dom/Document.h:
+        (WebCore::Document::getFormElements):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        (WebCore::HTMLInputElement::setChecked):
+
 2011-06-23  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by David Kilzer.

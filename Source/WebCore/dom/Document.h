@@ -218,6 +218,9 @@ public:
     }
     virtual ~Document();
 
+    typedef ListHashSet<Element*, 64> FormElementListHashSet;
+    const FormElementListHashSet* getFormElements() const { return &m_formElementsWithState; }    
+
     MediaQueryMatcher* mediaQueryMatcher();
 
     using TreeScope::ref;
@@ -1226,7 +1229,6 @@ private:
     typedef ListHashSet<Node*, 32> StyleSheetCandidateListHashSet;
     StyleSheetCandidateListHashSet m_styleSheetCandidateNodes; // All of the nodes that could potentially provide stylesheets to the document (<link>, <style>, <?xml-stylesheet>)
 
-    typedef ListHashSet<Element*, 64> FormElementListHashSet;
     FormElementListHashSet m_formElementsWithState;
     typedef ListHashSet<RefPtr<FormAssociatedElement>, 32> FormAssociatedElementListHashSet;
     FormAssociatedElementListHashSet m_formElementsWithFormAttribute;
