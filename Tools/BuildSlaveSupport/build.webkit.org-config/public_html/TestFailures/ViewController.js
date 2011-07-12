@@ -383,100 +383,10 @@ ViewController.prototype = {
             closedList.appendChildren(closedBugs.map(bugToListItem));
         });
 
-        var parsedFailingBuildName = this._buildbot.parseBuildName(failingBuildName);
-        var regressionRangeString = 'r' + parsedFailingBuildName.revision;
-        if (passingBuildName) {
-            var parsedPassingBuildName = this._buildbot.parseBuildName(passingBuildName);
-            if (parsedFailingBuildName.revision - parsedPassingBuildName.revision > 1)
-                regressionRangeString = 'r' + parsedPassingBuildName.revision + '-' + regressionRangeString;
-        }
+        var bugForm = new TestFailureBugForm(this._bugzilla, this._trac, tester, failingBuildName, passingBuildName, failingTests);
 
-        // FIXME: Some of this code should move into a new method on the Bugzilla class.
-
-        // FIXME: When a newly-added test has been failing since its introduction, it isn't really a
-        // "regression". We should use a different title and keywords in that case.
-        // <http://webkit.org/b/61645>
-
-        var titlePrefix = 'REGRESSION (' + regressionRangeString + '): ';
-        var titleSuffix = ' failing on ' + tester.name;
-        var title = titlePrefix + failingTests.join(', ') + titleSuffix;
-        if (title.length > Bugzilla.maximumBugTitleLength) {
-            var pathPrefix = longestCommonPathPrefix(failingTests);
-            if (pathPrefix)
-                title = titlePrefix + failingTests.length + ' ' + pathPrefix + ' tests' + titleSuffix;
-            if (title.length > Bugzilla.maximumBugTitleLength)
-                title = titlePrefix + failingTests.length + ' tests' + titleSuffix;
-        }
-        console.assert(title.length <= Bugzilla.maximumBugTitleLength);
-
-        var firstSuspectRevision = parsedPassingBuildName ? parsedPassingBuildName.revision + 1 : parsedFailingBuildName.revision;
-        var lastSuspectRevision = parsedFailingBuildName.revision;
-
-        var endOfFirstSentence;
-        if (passingBuildName) {
-            endOfFirstSentence = 'started failing on ' + tester.name;
-            if (firstSuspectRevision === lastSuspectRevision)
-                endOfFirstSentence += ' in r' + firstSuspectRevision + ' <' + this._trac.changesetURL(firstSuspectRevision) + '>';
-            else
-                endOfFirstSentence += ' between r' + firstSuspectRevision + ' and r' + lastSuspectRevision + ' (inclusive)';
-        } else
-            endOfFirstSentence = (failingTests.length === 1 ? 'has' : 'have') + ' been failing on ' + tester.name + ' since at least r' + firstSuspectRevision + ' <' + this._trac.changesetURL(firstSuspectRevision) + '>';
-
-        var description;
-        if (failingTests.length === 1)
-            description = failingTests[0] + ' ' + endOfFirstSentence + '.\n\n';
-        else if (failingTests.length === 2)
-            description = failingTests.join(' and ') + ' ' + endOfFirstSentence + '.\n\n';
-        else {
-            description = 'The following tests ' + endOfFirstSentence + ':\n\n'
-                + failingTests.map(function(test) { return '    ' + test }).join('\n')
-                + '\n\n';
-        }
-        if (firstSuspectRevision !== lastSuspectRevision)
-            description += this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision) + '\n\n';
-        if (passingBuildName)
-            description += encodeURI(tester.resultsPageURL(passingBuildName)) + ' passed\n';
-        var failingResultsHTML = tester.resultsPageURL(failingBuildName);
-        description += encodeURI(failingResultsHTML) + ' failed\n';
-
-        var formData = {
-            product: 'WebKit',
-            version: '528+ (Nightly build)',
-            component: 'Tools / Tests',
-            keywords: 'LayoutTestFailure, MakingBotsRed, Regression',
-            short_desc: title,
-            comment: description,
-            bug_file_loc: failingResultsHTML,
-        };
-
-        if (/Windows/.test(tester.name)) {
-            formData.rep_platform = 'PC';
-            if (/Windows 7/.test(tester.name))
-                formData.op_sys = 'Windows 7';
-            else if (/Windows XP/.test(tester.name))
-                formData.op_sys = 'Windows XP';
-        } else if (/Leopard/.test(tester.name)) {
-            formData.rep_platform = 'Macintosh';
-            if (/SnowLeopard/.test(tester.name))
-                formData.op_sys = 'Mac OS X 10.6';
-            else
-                formData.op_sys = 'Mac OS X 10.5';
-        }
-
-        var form = document.createElement('form');
+        var form = bugForm.domElement();
         result.appendChild(form);
-        form.className = 'new-bug-form';
-        form.method = 'POST';
-        form.action = this._bugzilla.baseURL + 'enter_bug.cgi';
-        form.target = '_blank';
-
-        for (var key in formData) {
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = formData[key];
-            form.appendChild(input);
-        }
 
         var link = document.createElement('a');
         container.appendChild(link);

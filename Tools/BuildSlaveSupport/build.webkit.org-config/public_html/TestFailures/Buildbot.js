@@ -69,7 +69,7 @@ Buildbot.prototype = {
     },
 
     resultsDirectoryURL: function(builderName, buildName) {
-        return this.baseURL + 'results/' + builderName + '/' + buildName + '/';
+        return this.baseURL + 'results/' + encodeURIComponent(builderName) + '/' + encodeURIComponent(buildName) + '/';
     },
 
     _buildersForNames: function(names) {

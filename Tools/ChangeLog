@@ -1,3 +1,62 @@
+2011-07-11  Adam Roben  <aroben@apple.com>
+
+        Extract TestFailures's bug-filing code into two new classes
+
+        Fixes <http://webkit.org/b/64300> TestFailures page's new-bug-filing code is a mess!
+
+        Reviewed by Darin Adler and Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot.js:
+        (Buildbot.prototype.resultsDirectoryURL): Changed to return a URI-encoded URL. Otherwise the
+        URL isn't valid (and it's harder to mock this function).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot_unittests.js:
+        Added. Just tests the above change (for now).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Added a license header, enclosed everything in a closure to avoid polluting the global
+        namespace, changed the test name to actually describe the passing condition, and replaced
+        uses of equals() with equal(). (The latter is the actual name of the function, and matches
+        deepEqual, etc.)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm.js: Added.
+        (NewBugForm): This class knows how to construct a <form> used for filing new bugs in
+        Bugzilla based on some parameters.
+        (NewBugForm.prototype.domElement): Creates and returns the <form> element. Code came from
+        ViewController.prototype._domForNewAndExistingBugs.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm_unittests.js:
+        Added. Tests the above code.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailureBugForm.js: Added.
+        (TestFailureBugForm): This class knows how to construct a <form> element used for filing new
+        bugs specifically about test failures. Code came from
+        ViewController.prototype._domForNewAndExistingBugs.
+        (TestFailureBugForm.prototype.domElement): Slightly customizes the <form> element returned
+        by NewBugForm.
+        (TestFailureBugForm.prototype._computeOperatingSystem):
+        (TestFailureBugForm.prototype._computePlatform):
+        (TestFailureBugForm.prototype._createBugTitle):
+        (TestFailureBugForm.prototype._failingResultsHTMLURL):
+        (TestFailureBugForm.prototype._failingRevision):
+        (TestFailureBugForm.prototype._passingRevision):
+        (TestFailureBugForm.prototype._regressionRangeString):
+        Code came from ViewController.prototype._domForNewAndExistingBugs. I broke it out into
+        separate functions to break up the rat's nest a bit.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailureBugForm_unittests.js:
+        Added. Tests the above code.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForNewAndExistingBugs): Moved code from here to
+        TestFailureBugForm/NewBugForm, and changed this code to use a TestFailureBugForm.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        NewBugForm/TestFailureBugForm.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Added new tests and required files.
+
 2011-07-12  Adam Roben  <aroben@apple.com>
 
         Test that no intermediate WTF::Strings are created when concatenating with string literals
