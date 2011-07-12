@@ -72,10 +72,11 @@ public:
     virtual void draw();
     virtual void updateCompositorResources();
     void unreserveContentsTexture();
-    void bindContentsTexture();
+    virtual void bindContentsTexture();
 
     // Returns true if this layer has content to draw.
-    virtual bool drawsContent() const;
+    void setDrawsContent(bool drawsContent) { m_drawsContent = drawsContent; }
+    bool drawsContent() const { return m_drawsContent; }
 
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantsDrawsContent();
@@ -200,6 +201,8 @@ private:
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
     bool m_usesLayerScissor;
+
+    bool m_drawsContent;
 
     // Properties owned exclusively by this CCLayerImpl.
     // Debugging.

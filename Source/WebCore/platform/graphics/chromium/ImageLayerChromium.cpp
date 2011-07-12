@@ -115,14 +115,19 @@ PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(GraphicsLayerChromium*
 }
 
 ImageLayerChromium::ImageLayerChromium(GraphicsLayerChromium* owner)
-    : ContentLayerChromium(owner)
+    : TiledLayerChromium(owner)
     , m_imageForCurrentFrame(0)
-    , m_contents(0)
 {
 }
 
 ImageLayerChromium::~ImageLayerChromium()
 {
+}
+
+void ImageLayerChromium::cleanupResources()
+{
+    m_textureUpdater.clear();
+    TiledLayerChromium::cleanupResources();
 }
 
 void ImageLayerChromium::setContents(Image* contents)
@@ -145,10 +150,8 @@ void ImageLayerChromium::paintContentsIfDirty()
     ASSERT(layerRenderer());
 
     if (!m_dirtyRect.isEmpty()) {
-        // FIXME: This downcast is bad. The fix is to make ImageLayerChromium not derive from ContentLayerChromium.
-        ImageLayerTextureUpdater* imageTextureUpdater = static_cast<ImageLayerTextureUpdater*>(m_textureUpdater.get());
-        imageTextureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
-        updateLayerSize();
+        m_textureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
+        updateTileSizeAndTilingOption();
         IntRect paintRect(IntPoint(), contentBounds());
         if (!m_dirtyRect.isEmpty()) {
             m_tiler->invalidateRect(paintRect);
@@ -156,23 +159,33 @@ void ImageLayerChromium::paintContentsIfDirty()
         }
     }
 
+    if (visibleLayerRect().isEmpty())
+        return;
+
     m_tiler->prepareToUpdate(visibleLayerRect(), m_textureUpdater.get());
 }
 
-void ImageLayerChromium::updateCompositorResources()
+LayerTextureUpdater* ImageLayerChromium::textureUpdater() const
 {
-    m_tiler->updateRect(m_textureUpdater.get());
+    return m_textureUpdater.get();
+}
+
+IntSize ImageLayerChromium::contentBounds() const
+{
+    if (!m_contents)
+        return IntSize();
+    return m_contents->size();
+}
+
+bool ImageLayerChromium::drawsContent() const
+{
+    return m_contents && TiledLayerChromium::drawsContent();
 }
 
 void ImageLayerChromium::createTextureUpdaterIfNeeded()
 {
     if (!m_textureUpdater)
         m_textureUpdater = ImageLayerTextureUpdater::create(layerRendererContext(), layerRenderer()->contextSupportsMapSub());
-}
-
-IntSize ImageLayerChromium::contentBounds() const
-{
-    return m_contents->size();
 }
 
 }

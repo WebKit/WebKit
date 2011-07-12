@@ -136,15 +136,9 @@ bool CCLayerImpl::descendantsDrawsContent()
     return false;
 }
 
-// These belong on CCLayerImpl, but should be overridden by each type and not defer to the LayerChromium subtypes.
-bool CCLayerImpl::drawsContent() const
-{
-    return m_owner->drawsContent();
-}
-
 void CCLayerImpl::draw()
 {
-    return m_owner->draw();
+    ASSERT_NOT_REACHED();
 }
 
 void CCLayerImpl::updateCompositorResources()

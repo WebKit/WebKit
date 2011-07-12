@@ -227,7 +227,7 @@ void LayerRendererChromium::drawRootLayer()
     TransformationMatrix scroll;
     scroll.translate(-m_viewportVisibleRect.x(), -m_viewportVisibleRect.y());
 
-    m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f, m_rootLayerTextureUpdater.get());
+    m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
 }
 
 void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)

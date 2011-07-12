@@ -1,3 +1,89 @@
+2011-07-12  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Move draw implementation for ContentLayerChromium/ImageLayerChromium to the appropriate CCLayerImpl subclass
+        https://bugs.webkit.org/show_bug.cgi?id=58833
+
+        Adds a TiledLayerChromium class to handle the tiling logic shared by ContentLayerChromium and ImageLayerChromium
+        so that they can be siblings in the class hierarchy instead of children. Also adds a CCTiledLayerImpl to handle
+        the drawing responsibilities for tiled layers.
+
+        TiledLayerChromium maintains a tiler, tiling options, and calculates the tiling transform. Subclasses are
+        responsible for providing an appropriate texture updater implementation. CCTiledLayerImpl takes the tiler,
+        tiling transform and layer properties and draws the layer.  Longer term it'd be better of the CCTiledLayerImpl
+        owned the tiler and the TiledLayerChromium only owned an updater, but getting there will require changing the
+        way tile eviction works.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::drawsContent):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::textureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        (WebCore::ImageLayerChromium::cleanupResources):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::textureUpdater):
+        (WebCore::ImageLayerChromium::contentBounds):
+        (WebCore::ImageLayerChromium::drawsContent):
+        (WebCore::ImageLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        (WebCore::LayerChromium::ccLayerImpl):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::contentBounds):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::visibleLayerRect):
+        (WebCore::paintLayerContentsIfDirty):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::drawTiles):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp: Added.
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::~TiledLayerChromium):
+        (WebCore::TiledLayerChromium::createCCLayerImpl):
+        (WebCore::TiledLayerChromium::cleanupResources):
+        (WebCore::TiledLayerChromium::setLayerRenderer):
+        (WebCore::TiledLayerChromium::updateTileSizeAndTilingOption):
+        (WebCore::TiledLayerChromium::drawsContent):
+        (WebCore::TiledLayerChromium::createTilerIfNeeded):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::setTilingOption):
+        (WebCore::TiledLayerChromium::setIsMask):
+        (WebCore::TiledLayerChromium::tilingTransform):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::writeIndent):
+        (WebCore::TiledLayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/TiledLayerChromium.h: Copied from Source/WebCore/platform/graphics/chromium/ContentLayerChromium.h.
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::setDrawsContent):
+        (WebCore::CCLayerImpl::drawsContent):
+        (WebCore::CCLayerImpl::contentBounds):
+        (WebCore::CCLayerImpl::setContentBounds):
+        (WebCore::CCLayerImpl::doubleSided):
+        (WebCore::CCLayerImpl::setDoubleSided):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp: Added.
+        (WebCore::CCTiledLayerImpl::CCTiledLayerImpl):
+        (WebCore::CCTiledLayerImpl::~CCTiledLayerImpl):
+        (WebCore::CCTiledLayerImpl::draw):
+        (WebCore::CCTiledLayerImpl::bindContentsTexture):
+        (WebCore::CCTiledLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h: Added.
+        (WebCore::CCTiledLayerImpl::create):
+        (WebCore::CCTiledLayerImpl::setTilingTransform):
+        (WebCore::CCTiledLayerImpl::setTiler):
+
 2011-07-12  Arno Renevier  <arno@renevier.net>
 
         [GTK] DOM bindings do not have gir annotations
