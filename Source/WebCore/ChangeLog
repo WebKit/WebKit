@@ -1,3 +1,15 @@
+2011-07-12  Arno Renevier  <arno@renevier.net>
+
+        [GTK] DOM bindings do not have gir annotations
+        https://bugs.webkit.org/show_bug.cgi?id=45395
+
+        Reviewed by Xan Lopez.
+
+        * bindings/scripts/CodeGeneratorGObject.pm: generate introspection annotations.
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h: update for new output.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h: ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h: ditto.
+
 2011-07-12  Chris Rogers  <crogers@google.com>
 
         webkitAudioContext does not do proper sanity checking on its arguments.

@@ -46,18 +46,58 @@ struct _WebKitDOMTestCallbackClass {
 WEBKIT_API GType
 webkit_dom_test_callback_get_type (void);
 
+/**
+ * webkit_dom_test_callback_callback_with_no_param:
+ * @self: A #WebKitDOMTestCallback
+ *
+ * Returns:
+ *
+**/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
 
+/**
+ * webkit_dom_test_callback_callback_with_class1param:
+ * @self: A #WebKitDOMTestCallback
+ * @class1param: A #WebKitDOMClass1
+ *
+ * Returns:
+ *
+**/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param);
 
+/**
+ * webkit_dom_test_callback_callback_with_class2param:
+ * @self: A #WebKitDOMTestCallback
+ * @class2param: A #WebKitDOMClass2
+ * @str_arg: A #gchar
+ *
+ * Returns:
+ *
+**/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, WebKitDOMClass2* class2param, const gchar* str_arg);
 
+/**
+ * webkit_dom_test_callback_callback_with_non_bool_return_type:
+ * @self: A #WebKitDOMTestCallback
+ * @class3param: A #WebKitDOMClass3
+ *
+ * Returns:
+ *
+**/
 WEBKIT_API glong
 webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3param);
 
+/**
+ * webkit_dom_test_callback_callback_with_string_list:
+ * @self: A #WebKitDOMTestCallback
+ * @list_param: A #WebKitDOMDOMStringList
+ *
+ * Returns:
+ *
+**/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param);
 

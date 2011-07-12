@@ -784,6 +784,30 @@ sub GenerateFunction {
         $functionSig .= ", GError **error";
     }
 
+    # Insert introspection annotations
+    push(@hBody, "/**\n");
+    push(@hBody, " * ${functionName}:\n");
+    push(@hBody, " * \@self: A #${className}\n");
+
+    foreach my $param (@{$function->parameters}) {
+        my $paramType = GetGlibTypeName($param->type);
+        # $paramType can have a trailing * in some cases
+        $paramType =~ s/\*$//;
+        my $paramName = decamelize($param->name);
+        push(@hBody, " * \@${paramName}: A #${paramType}\n");
+    }
+    if(@{$function->raisesExceptions}) {
+        push(@hBody, " * \@error: #GError\n");
+    }
+    push(@hBody, " *\n");
+    if (IsGDOMClassType($function->signature->type)) {
+        push(@hBody, " * Returns: (transfer none):\n");
+    } else {
+        push(@hBody, " * Returns:\n");
+    }
+    push(@hBody, " *\n");
+    push(@hBody, "**/\n");
+
     push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n");
     push(@hBody, "\n");
 

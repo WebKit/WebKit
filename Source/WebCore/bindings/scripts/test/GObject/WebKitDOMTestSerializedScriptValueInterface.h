@@ -46,6 +46,13 @@ struct _WebKitDOMTestSerializedScriptValueInterfaceClass {
 WEBKIT_API GType
 webkit_dom_test_serialized_script_value_interface_get_type (void);
 
+/**
+ * webkit_dom_test_serialized_script_value_interface_get_value:
+ * @self: A #WebKitDOMTestSerializedScriptValueInterface
+ *
+ * Returns: (transfer none):
+ *
+**/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self);
 
