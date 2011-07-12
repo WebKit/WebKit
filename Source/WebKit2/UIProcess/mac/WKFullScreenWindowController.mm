@@ -325,12 +325,16 @@ using namespace WebCore;
         NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
         [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
 #endif
-        // The user may have moved the fullScreen window in Spaces, so temporarily change 
-        // the collectionBehavior of the webView's window:
-        NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
-        [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-        [webWindow setCollectionBehavior:behavior];
+        // If the user has moved the fullScreen window into a new space, temporarily change
+        // the collectionBehavior of the webView's window so that it is pulled into the active space:
+        if (![webWindow isOnActiveSpace]) {
+            NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
+            [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
+            [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
+            [webWindow setCollectionBehavior:behavior];
+        } else
+            [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         [webWindow setAnimationBehavior:animationBehavior];
 #endif

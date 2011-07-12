@@ -1,3 +1,17 @@
+2011-06-22  Jer Noble  <jer.noble@apple.com>
+
+        Full-screen: Don't change the collectionBehavior of the WebView's NSWindow if not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=63217
+        <rdar://problem/9660291>
+
+        Reviewed by Darin Adler.
+
+        Check to see if the NSWindow hosting the WebView is not on the active space before changing the window's
+        collectionBehavior.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]):
+
 2011-07-12  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Navigation actions in incorrect state when loadStarted() is emitted.
