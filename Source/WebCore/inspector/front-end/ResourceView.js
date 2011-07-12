@@ -142,7 +142,8 @@ WebInspector.EditableResourceSourceFrame.prototype = {
     {
         this._clearIncrementalUpdateTimer();
         const majorChange = false;
-        this.resource.setContent(this._viewerState.textModelContent, majorChange);
+        if (this._viewerState)
+            this.resource.setContent(this._viewerState.textModelContent, majorChange);
         WebInspector.SourceFrame.prototype.cancelEditing.call(this);
     },
 

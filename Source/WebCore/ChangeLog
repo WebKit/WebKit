@@ -1,5 +1,15 @@
 2011-07-12  Pavel Podivilov  <podivilov@chromium.org>
 
+        Web Inspector: Cancelling an empty edit fails.
+        https://bugs.webkit.org/show_bug.cgi?id=64351
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.EditableResourceSourceFrame.prototype.cancelEditing):
+
+2011-07-12  Pavel Podivilov  <podivilov@chromium.org>
+
         Web Inspector: make TextViewerDelegate methods implementations public in SourceFrame.
         https://bugs.webkit.org/show_bug.cgi?id=64353
 
