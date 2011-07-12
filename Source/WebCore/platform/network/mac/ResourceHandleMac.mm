@@ -808,27 +808,7 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     if (!m_handle || !m_handle->client())
         return;
 
-    if (m_handle->client()->supportsDataArray())
-        m_handle->client()->didReceiveDataArray(m_handle, reinterpret_cast<CFArrayRef>(dataArray));
-    else {
-        NSUInteger count = [dataArray count];
-        ASSERT(count);
-        if (count == 1) {
-            NSData *data = [dataArray objectAtIndex:0];
-            m_handle->client()->didReceiveData(m_handle, static_cast<const char*>([data bytes]), [data length], static_cast<int>([data length]));
-        } else {
-            NSUInteger totalSize = 0;
-            for (NSData *data in dataArray)
-                totalSize += [data length];
-
-            RetainPtr<NSMutableData> mergedData(AdoptNS, [[NSMutableData alloc] initWithCapacity:totalSize]);
-            for (NSData *data in dataArray)
-                [mergedData.get() appendData:data];
-
-            m_handle->client()->didReceiveData(m_handle, static_cast<const char*>([mergedData.get() bytes]), totalSize, static_cast<int>(totalSize));
-        }
-    }
-
+    m_handle->handleDataArray(reinterpret_cast<CFArrayRef>(dataArray));
     // The call to didReceiveData above can cancel a load, and if so, the delegate (self) could have been deallocated by this point.
 }
 #endif

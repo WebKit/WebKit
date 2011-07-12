@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(CFNETWORK)
-
 #include "ResourceHandleInternal.h"
 
 #include "AuthenticationCF.h"
@@ -46,13 +44,21 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <CFNetwork/CFNetwork.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#include <process.h> // for _beginthread()
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(MAC) && USE(CFNETWORK)
+#include "WebCoreSystemInterface.h"
+#include "WebCoreURLResponse.h"
+#include <CFNetwork/CFURLConnectionPriv.h>
+#endif
+
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <process.h>
 
 // FIXME: Remove this declaration once it's in WebKitSupportLibrary.
 extern "C" {
@@ -62,8 +68,11 @@ __declspec(dllimport) CFURLConnectionRef CFURLConnectionCreateWithProperties(
   CFURLConnectionClient *  client,
   CFDictionaryRef properties);
 }
+#endif
 
 namespace WebCore {
+
+#if USE(CFNETWORK)
 
 class WebCoreSynchronousLoaderClient : public ResourceHandleClient {
 public:
@@ -204,6 +213,22 @@ static void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfRespo
     
     handle->client()->didReceiveResponse(handle, cfResponse);
 }
+
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+static void didReceiveDataArray(CFURLConnectionRef conn, CFArrayRef dataArray, const void* clientInfo)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
+    ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
+    if (!handle->client())
+        return;
+
+    LOG(Network, "CFNet - didReceiveDataArray(conn=%p, handle=%p, arrayLength=%ld) (%s)", conn, handle, CFArrayGetCount(dataArray), handle->firstRequest().url().string().utf8().data());
+
+    handle->handleDataArray(dataArray);
+}
+#endif
 
 static void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLength, const void* clientInfo)
 {
@@ -420,7 +445,11 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(firstRequest(), shouldContentSniff));
 
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+    CFURLConnectionClient_V6 client = { 6, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0, 0, 0, didReceiveDataArray};
+#else
     CFURLConnectionClient_V3 client = { 3, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
+#endif
     RetainPtr<CFDictionaryRef> connectionProperties(AdoptCF, createConnectionProperties(shouldUseCredentialStorage));
 
     d->m_connection.adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), connectionProperties.get()));
@@ -838,6 +867,40 @@ bool WebCoreSynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
     return m_allowStoredCredentials;
 }
 
+#endif // USE(CFNETWORK)
+
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+void ResourceHandle::handleDataArray(CFArrayRef dataArray)
+{
+    ASSERT(client());
+    if (client()->supportsDataArray()) {
+        client()->didReceiveDataArray(this, dataArray);
+        return;
+    }
+
+    CFIndex count = CFArrayGetCount(dataArray);
+    ASSERT(count);
+    if (count == 1) {
+        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, 0));
+        CFIndex length = CFDataGetLength(data);
+        client()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), length, static_cast<int>(length));
+        return;
+    }
+
+    CFIndex totalSize = 0;
+    CFIndex index;
+    for (index = 0; index < count; index++)
+        totalSize += CFDataGetLength(static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index)));
+
+    RetainPtr<CFMutableDataRef> mergedData(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, totalSize));
+    for (index = 0; index < count; index++) {
+        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, index));
+        CFDataAppendBytes(mergedData.get(), CFDataGetBytePtr(data), CFDataGetLength(data));
+    }
+
+    client()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(mergedData.get())), totalSize, static_cast<int>(totalSize));
+}
+#endif
+
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)

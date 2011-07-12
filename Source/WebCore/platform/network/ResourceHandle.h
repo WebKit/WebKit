@@ -211,6 +211,10 @@ public:
     static CFStringRef synchronousLoadRunLoopMode();
 #endif
 
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+    void handleDataArray(CFArrayRef dataArray);
+#endif
+
 protected:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
 
