@@ -1,5 +1,18 @@
 2011-07-12  Andreas Kling  <kling@webkit.org>
 
+        [Qt][WK2] QDesktopWebView crashes if resized without web process.
+        https://bugs.webkit.org/show_bug.cgi?id=64371
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::paint): Remove an invalid assertion. The drawing
+        area may be null if the web process has crashed.
+        (QtWebPageProxy::setDrawingAreaSize): Fail silently if there is no
+        drawing area.
+
+2011-07-12  Andreas Kling  <kling@webkit.org>
+
         [Qt][WK2] Add informative loadFailed() signal to web views.
         https://bugs.webkit.org/show_bug.cgi?id=64362
 

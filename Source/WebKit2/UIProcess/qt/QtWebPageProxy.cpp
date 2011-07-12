@@ -467,7 +467,6 @@ void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
 
 void QtWebPageProxy::paint(QPainter* painter, QRect area)
 {
-    ASSERT(m_webPageProxy->drawingArea());
     if (m_webPageProxy->isValid())
         paintContent(painter, area);
     else
@@ -585,7 +584,8 @@ QString QtWebPageProxy::title() const
 
 void QtWebPageProxy::setDrawingAreaSize(const QSize& size)
 {
-    ASSERT(m_webPageProxy->drawingArea());
+    if (!m_webPageProxy->drawingArea())
+        return;
     m_webPageProxy->drawingArea()->setSize(IntSize(size), IntSize());
 }
 
