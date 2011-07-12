@@ -36,6 +36,10 @@
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
+#if ENABLE(EXCLUSION)
+#include "CSSWrapShapes.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -568,6 +572,16 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill
         || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
         return StyleDifferenceRepaint;
+        
+#if ENABLE(CSS_EXCLUSIONS)
+        // FIXME: The current spec is being reworked to remove dependencies between exclusions and affected 
+        // content. There's a proposal to use floats instead. In that case, wrap-shape should actually relayout 
+        // the parent container. For sure, I will have to revisit this code, but for now I've added this in order 
+        // to avoid having diff() == StyleDifferenceEqual where wrap-shapes actually differ.
+        // Tracking bug: https://bugs.webkit.org/show_bug.cgi?id=62991
+        if (rareNonInheritedData->m_wrapShape != other->rareNonInheritedData->m_wrapShape)
+            return StyleDifferenceRepaint;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {

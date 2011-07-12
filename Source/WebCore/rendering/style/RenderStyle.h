@@ -1151,6 +1151,16 @@ public:
     void setFloodOpacity(float f) { accessSVGStyle()->setFloodOpacity(f); }
 #endif
 
+#if ENABLE(CSS_EXCLUSIONS)
+    void setWrapShape(PassRefPtr<CSSWrapShape> shape)
+    {
+        if (rareNonInheritedData->m_wrapShape != shape)
+            rareNonInheritedData.access()->m_wrapShape = shape;
+    }
+    CSSWrapShape* wrapShape() const { return rareNonInheritedData->m_wrapShape.get(); }
+    static CSSWrapShape* initialWrapShape() { return 0; }
+#endif
+
     bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
     bool contentDataEquivalent(const RenderStyle* otherStyle) const { return const_cast<RenderStyle*>(this)->rareNonInheritedData->contentDataEquivalent(*const_cast<RenderStyle*>(otherStyle)->rareNonInheritedData); }

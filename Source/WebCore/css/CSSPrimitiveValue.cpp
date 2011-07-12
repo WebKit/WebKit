@@ -43,6 +43,10 @@
 #include "DashboardRegion.h"
 #endif
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "CSSWrapShapes.h"
+#endif
+
 using namespace WTF;
 
 namespace WebCore {
@@ -210,6 +214,15 @@ void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
     m_value.pair = p.releaseRef();
 }
 
+#if ENABLE(CSS_EXCLUSIONS)
+void CSSPrimitiveValue::init(PassRefPtr<CSSWrapShape> shape)
+{
+    m_type = CSS_SHAPE;
+    m_hasCachedCSSText = false;
+    m_value.shape = shape.releaseRef();
+}
+#endif
+
 CSSPrimitiveValue::~CSSPrimitiveValue()
 {
     cleanup();
@@ -241,6 +254,11 @@ void CSSPrimitiveValue::cleanup()
         case CSS_DASHBOARD_REGION:
             if (m_value.region)
                 m_value.region->deref();
+            break;
+#endif
+#if ENABLE(CSS_EXCLUSIONS)
+        case CSS_SHAPE:
+            m_value.shape->deref();
             break;
 #endif
         default:
@@ -826,6 +844,11 @@ String CSSPrimitiveValue::cssText() const
         case CSS_PARSER_IDENTIFIER:
             text = quoteCSSStringIfNeeded(m_value.string);
             break;
+#if ENABLE(CSS_EXCLUSIONS)
+        case CSS_SHAPE:
+            text = m_value.shape->cssText();
+            break;
+#endif
     }
 
     ASSERT(!cssTextCache().contains(this));

@@ -5332,6 +5332,22 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setLineBoxContain(lineBoxContainValue->value());
         return;
     }
+    
+#if ENABLE(CSS_EXCLUSIONS)
+    case CSSPropertyWebkitWrapShape:
+        if (isInitial) {
+            HANDLE_INITIAL_COND(CSSPropertyWebkitWrapShape, WrapShape)
+            return;
+        }
+        
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setWrapShape(0);
+        
+        if (primitiveValue && primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
+            m_style->setWrapShape(primitiveValue->getShapeValue());
+
+        return;
+#endif
 
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:

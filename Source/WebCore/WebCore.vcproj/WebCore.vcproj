@@ -27701,6 +27701,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\WindRule.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\WOFFFileFormat.cpp"
 					>
 				</File>
@@ -32895,6 +32899,14 @@
 			</File>
 			<File
 				RelativePath="..\css\ShadowValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSWrapShapes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSWrapShapes.h"
 				>
 			</File>
 			<File

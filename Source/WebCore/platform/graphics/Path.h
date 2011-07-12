@@ -29,6 +29,7 @@
 #define Path_h
 
 #include "RoundedRect.h"
+#include "WindRule.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 
@@ -80,11 +81,6 @@ namespace WebCore {
     class FloatSize;
     class GraphicsContext;
     class StrokeStyleApplier;
-
-    enum WindRule {
-        RULE_NONZERO = 0,
-        RULE_EVENODD = 1
-    };
 
     enum PathElementType {
         PathElementMoveToPoint,

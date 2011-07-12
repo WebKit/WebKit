@@ -1775,6 +1775,15 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitTransformOriginZ:
         case CSSPropertyWebkitTransition:
             break;
+
+#if ENABLE(CSS_EXCLUSIONS)
+        case CSSPropertyWebkitWrapShape:
+            if (!style->wrapShape())
+                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+
+            return primitiveValueCache->createValue(style->wrapShape());
+#endif
+
 #if ENABLE(SVG)
         case CSSPropertyClipPath:
         case CSSPropertyClipRule:

@@ -59,6 +59,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
 #endif
+#if ENABLE(CSS_EXCLUSIONS)
+    , m_wrapShape(RenderStyle::initialWrapShape())
+#endif
 {
 }
 
@@ -101,6 +104,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #if ENABLE(CSS_REGIONS)
     , m_flowThread(o.m_flowThread)
     , m_regionThread(o.m_regionThread)
+#endif
+#if ENABLE(CSS_EXCLUSIONS)
+    , m_wrapShape(o.m_wrapShape)
 #endif
 {
 }
@@ -151,6 +157,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(CSS_REGIONS)
         && (m_flowThread == o.m_flowThread)
         && (m_regionThread == o.m_regionThread)
+#endif
+#if ENABLE(CSS_EXCLUSIONS)
+        && (m_wrapShape == o.m_wrapShape)
 #endif
         ;
 }

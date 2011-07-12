@@ -810,3 +810,9 @@ replaced
 //optimizeSpeed
 optimizeQuality
 -webkit-optimize-contrast
+
+#if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
+// -webkit-wrap-shape
+nonzero
+evenodd
+#endif

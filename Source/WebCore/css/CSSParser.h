@@ -53,6 +53,10 @@ namespace WebCore {
     class WebKitCSSKeyframeRule;
     class WebKitCSSKeyframesRule;
 
+#if ENABLE(CSS_EXCLUSIONS)
+    class CSSWrapShape;
+#endif
+
     class CSSParser {
     public:
         CSSParser(bool strictParsing = true);
@@ -124,6 +128,14 @@ namespace WebCore {
         bool parseDashboardRegions(int propId, bool important);
 
         bool parseShape(int propId, bool important);
+
+#if ENABLE(CSS_EXCLUSIONS)
+        bool parseWrapShape(bool important);
+        PassRefPtr<CSSWrapShape> parseWrapShapeRect(CSSParserValueList* args);
+        PassRefPtr<CSSWrapShape> parseWrapShapeCircle(CSSParserValueList* args);
+        PassRefPtr<CSSWrapShape> parseWrapShapeEllipse(CSSParserValueList* args);
+        PassRefPtr<CSSWrapShape> parseWrapShapePolygon(CSSParserValueList* args);
+#endif
 
         bool parseFont(bool important);
         PassRefPtr<CSSValueList> parseFontFamily();

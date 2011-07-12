@@ -1,3 +1,19 @@
+2011-07-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Reviewed by David Hyatt.
+
+        [CSS Exclusions] Parse wrap-shape property
+        https://bugs.webkit.org/show_bug.cgi?id=61726
+
+        * fast/exclusions/parsing-wrap-shape-expected.txt: Added.
+        * fast/exclusions/parsing-wrap-shape.html: Added.
+        * fast/exclusions/script-tests/parsing-wrap-shape.js: Added.
+        (testCSSText):
+        (testComputedStyle):
+        (testNotInherited):
+        (test):
+        (negative_test):
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota

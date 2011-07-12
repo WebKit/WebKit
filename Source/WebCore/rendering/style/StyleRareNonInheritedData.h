@@ -36,6 +36,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "CSSWrapShapes.h"
+#endif
+
 namespace WebCore {
 
 class AnimationList;
@@ -134,6 +138,10 @@ public:
 #if ENABLE(CSS_REGIONS)
     AtomicString m_flowThread;
     AtomicString m_regionThread;
+#endif
+
+#if ENABLE(CSS_EXCLUSIONS)
+    RefPtr<CSSWrapShape> m_wrapShape;
 #endif
 
 private:

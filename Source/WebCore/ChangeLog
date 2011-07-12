@@ -1,3 +1,102 @@
+2011-07-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Reviewed by David Hyatt.
+
+        [CSS Exclusions] Parse wrap-shape property
+        https://bugs.webkit.org/show_bug.cgi?id=61726
+
+        Parsing wrap-shape: rect, circle, ellipse and polygon.
+        Moved WindRule from Path.h to it's own file.
+
+        Test: fast/exclusions/parsing-wrap-shape.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseWrapShapeRect):
+        (WebCore::CSSParser::parseWrapShapeCircle):
+        (WebCore::CSSParser::parseWrapShapeEllipse):
+        (WebCore::CSSParser::parseWrapShapePolygon):
+        (WebCore::CSSParser::parseWrapShape):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getShapeValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * css/CSSWrapShapes.cpp: Added.
+        (WebCore::CSSWrapShapeRect::cssText):
+        (WebCore::CSSWrapShapeCircle::cssText):
+        (WebCore::CSSWrapShapeEllipse::cssText):
+        (WebCore::CSSWrapShapePolygon::cssText):
+        * css/CSSWrapShapes.h: Added.
+        (WebCore::CSSWrapShape::~CSSWrapShape):
+        (WebCore::CSSWrapShape::CSSWrapShape):
+        (WebCore::CSSWrapShapeRect::create):
+        (WebCore::CSSWrapShapeRect::left):
+        (WebCore::CSSWrapShapeRect::top):
+        (WebCore::CSSWrapShapeRect::width):
+        (WebCore::CSSWrapShapeRect::height):
+        (WebCore::CSSWrapShapeRect::radiusX):
+        (WebCore::CSSWrapShapeRect::radiusY):
+        (WebCore::CSSWrapShapeRect::setLeft):
+        (WebCore::CSSWrapShapeRect::setTop):
+        (WebCore::CSSWrapShapeRect::setWidth):
+        (WebCore::CSSWrapShapeRect::setHeight):
+        (WebCore::CSSWrapShapeRect::setRadiusX):
+        (WebCore::CSSWrapShapeRect::setRadiusY):
+        (WebCore::CSSWrapShapeRect::type):
+        (WebCore::CSSWrapShapeRect::CSSWrapShapeRect):
+        (WebCore::CSSWrapShapeCircle::create):
+        (WebCore::CSSWrapShapeCircle::left):
+        (WebCore::CSSWrapShapeCircle::top):
+        (WebCore::CSSWrapShapeCircle::radius):
+        (WebCore::CSSWrapShapeCircle::setLeft):
+        (WebCore::CSSWrapShapeCircle::setTop):
+        (WebCore::CSSWrapShapeCircle::setRadius):
+        (WebCore::CSSWrapShapeCircle::type):
+        (WebCore::CSSWrapShapeCircle::CSSWrapShapeCircle):
+        (WebCore::CSSWrapShapeEllipse::create):
+        (WebCore::CSSWrapShapeEllipse::left):
+        (WebCore::CSSWrapShapeEllipse::top):
+        (WebCore::CSSWrapShapeEllipse::radiusX):
+        (WebCore::CSSWrapShapeEllipse::radiusY):
+        (WebCore::CSSWrapShapeEllipse::setLeft):
+        (WebCore::CSSWrapShapeEllipse::setTop):
+        (WebCore::CSSWrapShapeEllipse::setRadiusX):
+        (WebCore::CSSWrapShapeEllipse::setRadiusY):
+        (WebCore::CSSWrapShapeEllipse::type):
+        (WebCore::CSSWrapShapeEllipse::CSSWrapShapeEllipse):
+        (WebCore::CSSWrapShapePolygon::create):
+        (WebCore::CSSWrapShapePolygon::appendPoint):
+        (WebCore::CSSWrapShapePolygon::getXAt):
+        (WebCore::CSSWrapShapePolygon::getYAt):
+        (WebCore::CSSWrapShapePolygon::setWindRule):
+        (WebCore::CSSWrapShapePolygon::windRule):
+        (WebCore::CSSWrapShapePolygon::type):
+        (WebCore::CSSWrapShapePolygon::CSSWrapShapePolygon):
+        * css/SVGCSSValueKeywords.in:
+        * platform/graphics/Path.h:
+        * platform/graphics/WindRule.h: Added.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setWrapShape):
+        (WebCore::InheritedFlags::wrapShape):
+        (WebCore::InheritedFlags::initialWrapShape):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-07-12  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up some RenderLayerCompositor code relating to scroll and root layers

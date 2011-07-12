@@ -82,6 +82,10 @@
 #include "DashboardRegion.h"
 #endif
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "CSSWrapShapes.h"
+#endif
+
 #define YYDEBUG 0
 
 #if YYDEBUG > 0
@@ -2077,6 +2081,15 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseLineBoxContain(important);
         break;
 
+#if ENABLE(CSS_EXCLUSIONS)
+    case CSSPropertyWebkitWrapShape:
+        if (id == CSSValueAuto)
+            validPrimitive = true;
+        else if (value->unit == CSSParserValue::Function)
+            return parseWrapShape(important);
+        break;
+#endif
+
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);
@@ -3648,6 +3661,251 @@ bool CSSParser::parseShape(int propId, bool important)
     }
     return false;
 }
+
+#if ENABLE(CSS_EXCLUSIONS)
+PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
+{
+    ASSERT(args);
+    
+    // rect(x, y, width, height, [[rx], ry])
+    if (args->size() != 7 && args->size() != 9 && args->size() != 11)
+        return 0;
+        
+    bool valid = true;
+    
+    RefPtr<CSSWrapShapeRect> shape = CSSWrapShapeRect::create();
+    
+    unsigned argumentNumber = 0;
+    CSSParserValue* argument = args->current();
+    while (argument) {
+        valid = validUnit(argument, FLength, m_strict);
+        if (!valid)
+            break;
+        
+        RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue, 
+            (CSSPrimitiveValue::UnitTypes) argument->unit);
+        ASSERT(argumentNumber < 6);
+        switch (argumentNumber) {
+        case 0:
+            shape->setLeft(length);
+            break;
+        case 1:
+            shape->setTop(length);
+            break;
+        case 2:
+            shape->setWidth(length);
+            break;
+        case 3:
+            shape->setHeight(length);
+            break;
+        case 4:
+            shape->setRadiusX(length);
+            break;
+        case 5:
+            shape->setRadiusY(length);
+            break;
+        }
+        argument = args->next();
+        if (argument) {
+            if (argument->unit == CSSParserValue::Operator && argument->iValue == ',')
+                argument = args->next();
+            else {
+                valid = false;
+                break;
+            }
+        }
+        argumentNumber++;
+    }
+    
+    if (!valid || argumentNumber < 4)
+        return 0;    
+    return shape;
+}
+
+PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeCircle(CSSParserValueList* args)
+{
+    ASSERT(args);
+    
+    // circle(x, y, r)
+    if (args->size() != 5)
+        return 0;
+        
+    bool valid = true;
+    
+    RefPtr<CSSWrapShapeCircle> shape = CSSWrapShapeCircle::create();
+    
+    unsigned argumentNumber = 0;
+    CSSParserValue* argument = args->current();
+    while (argument) {
+        valid = validUnit(argument, FLength, m_strict);
+        if (!valid)
+            break;
+
+        RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue, 
+            (CSSPrimitiveValue::UnitTypes) argument->unit);
+        ASSERT(argumentNumber < 3);
+        switch (argumentNumber) {
+        case 0:
+            shape->setLeft(length);
+            break;
+        case 1:
+            shape->setTop(length);
+            break;
+        case 2:
+            shape->setRadius(length);
+            break;
+        }
+        
+        argument = args->next();
+        if (argument) {
+            if (argument->unit == CSSParserValue::Operator && argument->iValue == ',')
+                argument = args->next();
+            else {
+                valid = false;
+                break;
+            }
+        }
+        argumentNumber++;
+    }
+    
+    if (!valid || argumentNumber < 3)
+        return 0;    
+    return shape;
+}
+
+PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeEllipse(CSSParserValueList* args)
+{
+    ASSERT(args);
+    
+    // ellipse(x, y, rx, ry)
+    if (args->size() != 7)
+        return 0;
+        
+    bool valid = false;
+    
+    RefPtr<CSSWrapShapeEllipse> shape = CSSWrapShapeEllipse::create();
+    unsigned argumentNumber = 0;
+    CSSParserValue* argument = args->current();
+    while (argument) {
+        valid = validUnit(argument, FLength, m_strict);
+        if (!valid)
+            break;
+        
+        RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue, 
+            (CSSPrimitiveValue::UnitTypes) argument->unit);
+        ASSERT(argumentNumber < 4);
+        switch (argumentNumber) {
+        case 0:
+            shape->setLeft(length);
+            break;
+        case 1:
+            shape->setTop(length);
+            break;
+        case 2:
+            shape->setRadiusX(length);
+            break;
+        case 3:
+            shape->setRadiusY(length);
+            break;
+        }
+        
+        argument = args->next();
+        if (argument) {
+            if (argument && argument->unit == CSSParserValue::Operator && argument->iValue == ',')
+                argument = args->next();
+            else {
+                valid = false;
+                break;
+            }
+        }
+        argumentNumber++;
+    }
+    
+    if (!valid || argumentNumber < 4)
+        return 0;
+    return shape;
+}
+
+PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapePolygon(CSSParserValueList* args)
+{
+    ASSERT(args);
+
+    unsigned size = args->size();
+    if (!size)
+        return 0;
+    
+    RefPtr<CSSWrapShapePolygon> shape = CSSWrapShapePolygon::create();
+
+    CSSParserValue* argument = args->current();
+    if (argument->id == CSSValueEvenodd || argument->id == CSSValueNonzero) {
+        shape->setWindRule(argument->id == CSSValueEvenodd ? RULE_EVENODD : RULE_NONZERO);
+
+        CSSParserValue* comma = args->next();
+        if (!comma || comma->unit != CSSParserValue::Operator || comma->iValue != ',')
+            return 0;
+
+        argument = args->next();
+        size -= 2;
+    }
+    
+    // <length>, <length> ... <length>, <length> -> each pair has 3 elements
+    if (!size || (size % 3))
+        return 0;
+    
+    CSSParserValue* argumentX = argument;
+    while (argumentX) {
+        if (!validUnit(argumentX, FLength, m_strict))
+            return 0;
+        
+        CSSParserValue* comma = args->next();
+        if (!comma || comma->unit != CSSParserValue::Operator || comma->iValue != ',')
+            return 0;
+        
+        CSSParserValue* argumentY = args->next();
+        if (!argumentY || !validUnit(argumentY, FLength, m_strict))
+            return 0;
+        
+        RefPtr<CSSPrimitiveValue> xLength = primitiveValueCache()->createValue(argumentX->fValue, 
+            (CSSPrimitiveValue::UnitTypes) argumentX->unit);
+        RefPtr<CSSPrimitiveValue> yLength = primitiveValueCache()->createValue(argumentY->fValue, 
+            (CSSPrimitiveValue::UnitTypes) argumentY->unit);
+        
+        shape->appendPoint(xLength.release(), yLength.release());
+        
+        argumentX = args->next();
+    }
+    
+    return shape;
+}
+
+bool CSSParser::parseWrapShape(bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    CSSParserValueList* args = value->function->args.get();
+
+    if (!args)
+        return false;
+    
+    RefPtr<CSSWrapShape> shape;
+    
+    if (equalIgnoringCase(value->function->name, "rect("))
+        shape = parseWrapShapeRect(args);
+    else if (equalIgnoringCase(value->function->name, "circle("))
+        shape = parseWrapShapeCircle(args);
+    else if (equalIgnoringCase(value->function->name, "ellipse("))
+        shape = parseWrapShapeEllipse(args);
+    else if (equalIgnoringCase(value->function->name, "polygon("))
+        shape = parseWrapShapePolygon(args);
+
+    if (shape) {
+        addProperty(CSSPropertyWebkitWrapShape, primitiveValueCache()->createValue(shape.release()), important);
+        m_valueList->next();
+        return true;
+    }
+
+    return false;
+}
+#endif // ENABLE(CSS_EXCLUSIONS)
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
 bool CSSParser::parseFont(bool important)
