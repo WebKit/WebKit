@@ -71,7 +71,7 @@ public:
     static PassRefPtr<AudioContext> create(Document*);
 
     // Create an AudioContext for offline (non-realtime) rendering.
-    static PassRefPtr<AudioContext> createOfflineContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate);
+    static PassRefPtr<AudioContext> createOfflineContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate, ExceptionCode&);
 
     virtual ~AudioContext();
 

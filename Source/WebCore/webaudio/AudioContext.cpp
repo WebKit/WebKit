@@ -72,14 +72,34 @@ const int UndefinedThreadIdentifier = 0xffffffff;
 const unsigned MaxNodesToDeletePerQuantum = 10;
 
 namespace WebCore {
+    
+namespace {
+    
+bool isSampleRateRangeGood(double sampleRate)
+{
+    return sampleRate >= 22050 && sampleRate <= 96000;
+}
+
+}
 
 PassRefPtr<AudioContext> AudioContext::create(Document* document)
 {
+    ASSERT(document);
     return adoptRef(new AudioContext(document));
 }
 
-PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
+PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate, ExceptionCode& ec)
 {
+    ASSERT(document);
+
+    // FIXME: offline contexts have limitations on supported sample-rates.
+    // Currently all AudioContexts must have the same sample-rate.
+    HRTFDatabaseLoader* loader = HRTFDatabaseLoader::loader();
+    if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate) || (loader && loader->databaseSampleRate() != sampleRate)) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
     return adoptRef(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate));
 }
 
@@ -236,6 +256,9 @@ void AudioContext::refBuffer(PassRefPtr<AudioBuffer> buffer)
 
 PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
 {
+    if (!isSampleRateRangeGood(sampleRate) || numberOfChannels > 10 || !numberOfFrames)
+        return 0;
+    
     return AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
 }
 

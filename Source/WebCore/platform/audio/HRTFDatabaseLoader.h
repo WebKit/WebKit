@@ -60,6 +60,8 @@ public:
     void waitForLoaderThreadCompletion();
     
     HRTFDatabase* database() { return m_hrtfDatabase.get(); }
+
+    double databaseSampleRate() const { return m_databaseSampleRate; }
     
     // Called in asynchronous loading thread.
     void load();
@@ -76,8 +78,6 @@ private:
     // If it hasn't already been loaded, creates a new thread and initiates asynchronous loading of the default database.
     // This must be called from the main thread.
     void loadAsynchronously();
-
-    double databaseSampleRate() const { return m_databaseSampleRate; }
 
     static HRTFDatabaseLoader* s_loader; // singleton
     OwnPtr<HRTFDatabase> m_hrtfDatabase;

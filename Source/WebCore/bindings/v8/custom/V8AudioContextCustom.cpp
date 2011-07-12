@@ -43,6 +43,9 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
 {
     INC_STATS("DOM.AudioContext.Contructor");
 
+    if (!args.IsConstructCall())
+        return throwError("AudioContext constructor cannot be called as a function.");
+
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
         return throwError("AudioContext constructor associated frame is unavailable", V8Proxy::ReferenceError);
@@ -64,17 +67,22 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
 
         bool ok = false;
 
-        unsigned numberOfChannels = toInt32(args[0], ok);
-        if (!ok)
+        int32_t numberOfChannels = toInt32(args[0], ok);
+        if (!ok || numberOfChannels <= 0 || numberOfChannels > 10)
             return throwError("Invalid number of channels", V8Proxy::SyntaxError);
 
-        unsigned numberOfFrames = toInt32(args[1], ok);
-        if (!ok)
+        int32_t numberOfFrames = toInt32(args[1], ok);
+        if (!ok || numberOfFrames <= 0)
             return throwError("Invalid number of frames", V8Proxy::SyntaxError);
 
         float sampleRate = toFloat(args[2]);
+        if (sampleRate <= 0)
+            return throwError("Invalid sample rate", V8Proxy::SyntaxError);
 
-        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate);
+        ExceptionCode ec = 0;
+        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate, ec);
+        if (ec)
+            return throwError(ec);
     }
 
     if (!audioContext.get())
@@ -122,12 +130,12 @@ v8::Handle<v8::Value> V8AudioContext::createBufferCallback(const v8::Arguments& 
 
     bool ok = false;
     
-    unsigned numberOfChannels = toInt32(args[0], ok);
-    if (!ok)
+    int32_t numberOfChannels = toInt32(args[0], ok);
+    if (!ok || numberOfChannels <= 0 || numberOfChannels > 10)
         return throwError("Invalid number of channels", V8Proxy::SyntaxError);
     
-    unsigned numberOfFrames = toInt32(args[1], ok);
-    if (!ok)
+    int32_t numberOfFrames = toInt32(args[1], ok);
+    if (!ok || numberOfFrames <= 0)
         return throwError("Invalid number of frames", V8Proxy::SyntaxError);
     
     float sampleRate = toFloat(args[2]);

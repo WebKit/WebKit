@@ -1,3 +1,26 @@
+2011-07-12  Chris Rogers  <crogers@google.com>
+
+        webkitAudioContext does not do proper sanity checking on its arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=64076
+
+        Reviewed by Kenneth Russell.
+
+        No new tests since audio API is not yet implemented.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        (WebCore::JSAudioContext::createBuffer):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        (WebCore::V8AudioContext::createBufferCallback):
+        * platform/audio/HRTFDatabaseLoader.h:
+        (WebCore::HRTFDatabaseLoader::databaseSampleRate):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        (WebCore::AudioContext::createOfflineContext):
+        (WebCore::AudioContext::createBuffer):
+        * webaudio/AudioContext.h:
+
 2011-07-12  Pratik Solanki  <psolanki@apple.com>
 
         Implement didReceiveDataArray callback for CFNetwork based loader

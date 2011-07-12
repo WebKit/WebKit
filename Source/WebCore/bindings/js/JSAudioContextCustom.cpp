@@ -74,11 +74,25 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
         if (exec->argumentCount() < 3)
             return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
 
-        unsigned numberOfChannels = exec->argument(0).toInt32(exec);
-        unsigned numberOfFrames = exec->argument(1).toInt32(exec);
+        int32_t numberOfChannels = exec->argument(0).toInt32(exec);
+        int32_t numberOfFrames = exec->argument(1).toInt32(exec);
         float sampleRate = exec->argument(2).toFloat(exec);
+        
+        if (numberOfChannels <= 0 || numberOfChannels > 10)
+            return throwVMError(exec, createSyntaxError(exec, "Invalid number of channels"));
 
-        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate);
+        if (numberOfFrames <= 0)
+            return throwVMError(exec, createSyntaxError(exec, "Invalid number of frames"));
+
+        if (sampleRate <= 0)
+            return throwVMError(exec, createSyntaxError(exec, "Invalid sample rate"));
+
+        ExceptionCode ec = 0;
+        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate, ec);
+        if (ec) {
+            setDOMException(exec, ec);
+            return jsUndefined();
+        }
     }
 
     if (!audioContext.get())
@@ -117,9 +131,18 @@ JSValue JSAudioContext::createBuffer(ExecState* exec)
     if (exec->argumentCount() < 3)
         return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
     
-    unsigned numberOfChannels = exec->argument(0).toInt32(exec);
-    unsigned numberOfFrames = exec->argument(1).toInt32(exec);
+    int32_t numberOfChannels = exec->argument(0).toInt32(exec);
+    int32_t numberOfFrames = exec->argument(1).toInt32(exec);
     float sampleRate = exec->argument(2).toFloat(exec);
+
+    if (numberOfChannels <= 0 || numberOfChannels > 10)
+        return throwVMError(exec, createSyntaxError(exec, "Invalid number of channels"));
+
+    if (numberOfFrames <= 0)
+        return throwVMError(exec, createSyntaxError(exec, "Invalid number of frames"));
+
+    if (sampleRate <= 0)
+        return throwVMError(exec, createSyntaxError(exec, "Invalid sample rate"));
 
     RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(numberOfChannels, numberOfFrames, sampleRate);
     if (!audioBuffer.get())
