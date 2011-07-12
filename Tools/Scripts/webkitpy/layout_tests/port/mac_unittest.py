@@ -33,11 +33,13 @@ import unittest
 from webkitpy.layout_tests.port.mac import MacPort
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
 
 
 class MacTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
+        # FIXME: This platform check should no longer be necessary and should be removed as soon as possible.
         if platform != 'darwin':
             return None
         return MacPort
@@ -140,6 +142,13 @@ svg/batik/text/smallFonts.svg
 
         self._assert_search_path(['mac-wk2', 'mac-leopard', 'mac-snowleopard', 'mac'], 'leopard', use_webkit2=True)
         self._assert_search_path(['mac-wk2', 'mac-snowleopard', 'mac'], 'snowleopard', use_webkit2=True)
+
+    def test_show_results_html_file(self):
+        port = MacPort(filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        # Delay setting a should_log executive to avoid logging from MacPort.__init__.
+        port._executive = MockExecutive(should_log=True)
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-safari', '--release', '-NSOpen', 'test.html']\n"
+        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
 
 
 if __name__ == '__main__':

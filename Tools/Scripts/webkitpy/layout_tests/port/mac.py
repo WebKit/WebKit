@@ -115,3 +115,6 @@ class MacPort(WebKitPort):
 
     def _path_to_webcore_library(self):
         return self._build_path('WebCore.framework/Versions/A/WebCore')
+
+    def show_results_html_file(self, results_filename):
+        self._run_script('run-safari', ['-NSOpen', results_filename])

@@ -75,8 +75,7 @@ def _get_kwargs(**kwargs):
                 port_to_use = 'mac'
 
     if port_to_use is None:
-        raise NotImplementedError('unknown port; sys.platform = "%s"' %
-                                  sys.platform)
+        raise NotImplementedError('unknown port; sys.platform = "%s"' % sys.platform)
 
     if port_to_use.startswith('test'):
         import test

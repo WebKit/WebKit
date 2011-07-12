@@ -183,7 +183,8 @@ class Executive(object):
         return 2
 
     @staticmethod
-    def interpreter_for_script(script_path, fs=FileSystem()):
+    def interpreter_for_script(script_path, fs=None):
+        fs = fs or FileSystem()
         lines = fs.read_text_file(script_path).splitlines()
         if not len(lines):
             return None
@@ -199,7 +200,8 @@ class Executive(object):
         return None
 
     @staticmethod
-    def shell_command_for_script(script_path, fs=FileSystem()):
+    def shell_command_for_script(script_path, fs=None):
+        fs = fs or FileSystem()
         # Win32 does not support shebang. We need to detect the interpreter ourself.
         if sys.platform == 'win32':
             interpreter = Executive.interpreter_for_script(script_path, fs)

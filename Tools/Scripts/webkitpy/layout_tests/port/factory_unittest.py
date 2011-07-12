@@ -29,7 +29,8 @@
 import sys
 import unittest
 
-from webkitpy.tool import mocktool
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
 
 import chromium_gpu
 import chromium_linux
@@ -56,9 +57,8 @@ class FactoryTest(unittest.TestCase):
 
     def setUp(self):
         self.real_sys_platform = sys.platform
-        self.webkit_options = mocktool.MockOptions(pixel_tests=False)
-        self.chromium_options = mocktool.MockOptions(pixel_tests=False,
-                                                    chromium=True)
+        self.webkit_options = MockOptions(pixel_tests=False)
+        self.chromium_options = MockOptions(pixel_tests=False, chromium=True)
 
     def tearDown(self):
         sys.platform = self.real_sys_platform
@@ -71,7 +71,8 @@ class FactoryTest(unittest.TestCase):
           expected_port: class of expected port object.
           port_obj: optional port object
         """
-        port_obj = port_obj or factory.get(port_name=port_name)
+
+        port_obj = port_obj or factory.get(port_name=port_name, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
         self.assertTrue(isinstance(port_obj, expected_port))
 
     def assert_platform_port(self, platform, options, expected_port):
@@ -85,16 +86,8 @@ class FactoryTest(unittest.TestCase):
         """
         orig_platform = sys.platform
         sys.platform = platform
-        self.assertTrue(isinstance(factory.get(options=options),
-                                   expected_port))
+        self.assertTrue(isinstance(factory.get(options=options, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive()), expected_port))
         sys.platform = orig_platform
-
-    def test_test(self):
-        self.assert_port("test", test.TestPort)
-
-    def test_dryrun(self):
-        self.assert_port("dryrun-test", dryrun.DryRunPort)
-        self.assert_port("dryrun-mac", dryrun.DryRunPort)
 
     def test_mac(self):
         self.assert_port("mac", mac.MacPort)
@@ -111,14 +104,10 @@ class FactoryTest(unittest.TestCase):
     def test_google_chrome(self):
         # The actual Chrome class names aren't available so we test that the
         # objects we get are at least subclasses of the Chromium versions.
-        self.assert_port("google-chrome-linux32",
-                         chromium_linux.ChromiumLinuxPort)
-        self.assert_port("google-chrome-linux64",
-                         chromium_linux.ChromiumLinuxPort)
-        self.assert_port("google-chrome-win",
-                         chromium_win.ChromiumWinPort)
-        self.assert_port("google-chrome-mac",
-                         chromium_mac.ChromiumMacPort)
+        self.assert_port("google-chrome-linux32", chromium_linux.ChromiumLinuxPort)
+        self.assert_port("google-chrome-linux64", chromium_linux.ChromiumLinuxPort)
+        self.assert_port("google-chrome-win", chromium_win.ChromiumWinPort)
+        self.assert_port("google-chrome-mac", chromium_mac.ChromiumMacPort)
 
     def test_gtk(self):
         self.assert_port("gtk", gtk.GtkPort)
@@ -157,8 +146,7 @@ class FactoryTest(unittest.TestCase):
     def test_unknown_specified(self):
         # Test what happens when you specify an unknown port.
         orig_platform = sys.platform
-        self.assertRaises(NotImplementedError, factory.get,
-                          port_name='unknown')
+        self.assertRaises(NotImplementedError, factory.get, port_name='unknown')
 
     def test_unknown_default(self):
         # Test what happens when you're running on an unknown platform.

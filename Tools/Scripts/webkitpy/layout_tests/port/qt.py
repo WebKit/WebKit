@@ -42,6 +42,9 @@ _log = logging.getLogger(__name__)
 class QtPort(WebKitPort):
     port_name = "qt"
 
+    def _port_flag_for_scripts(self):
+        return "--qt"
+
     def _operating_system_for_platform(self, platform):
         if platform.startswith('linux'):
             return "linux"
@@ -83,3 +86,11 @@ class QtPort(WebKitPort):
         env = WebKitPort.setup_environ_for_server(self)
         env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
         return env
+
+    # FIXME: We should find a way to share this implmentation with Gtk,
+    # or teach run-launcher how to call run-safari and move this down to WebKitPort.
+    def show_results_html_file(self, results_filename):
+        run_launcher_args = ["file://%s" % results_filename]
+        if self.get_option('webkit_test_runner'):
+            run_launcher_args.append('--webkit-test-runner')
+        self._run_script("run-launcher", run_launcher_args)

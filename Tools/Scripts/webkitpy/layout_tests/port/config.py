@@ -131,6 +131,8 @@ class Config(object):
         #
         # FIXME: See the comment at the top of the file regarding unit tests
         # and our use of global mutable static variables.
+        # FIXME: We should just @memoize this method and then this will only
+        # be read once per object lifetime (which should be sufficiently fast).
         global _have_determined_configuration, _configuration
         if not _have_determined_configuration:
             contents = self._read_configuration()
@@ -146,8 +148,7 @@ class Config(object):
 
     def _read_configuration(self):
         try:
-            configuration_path = self._filesystem.join(self.build_directory(None),
-                                                       "Configuration")
+            configuration_path = self._filesystem.join(self.build_directory(None), "Configuration")
             if not self._filesystem.exists(configuration_path):
                 return None
         except (OSError, executive.ScriptError):

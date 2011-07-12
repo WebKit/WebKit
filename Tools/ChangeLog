@@ -1,3 +1,48 @@
+2011-07-12  Eric Seidel  <eric@webkit.org>
+
+        NRWT should open test results page with Safari trunk, not the system provided one on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=64346
+
+        Reviewed by Adam Barth.
+
+        To fix this I implemented Port.show_results_html_file in Mac, Gtk and Qt ports with
+        implementations (mostly) matching those found in old-run-webkit-tests.
+        There are still some minor differences for Qt which Qt hackers may wish to tweak.
+
+        I had to add a WebKitPort._port_flag_for_scripts method (similar to flag() in common.config.ports.py)
+        for the Qt/Gtk ports which always require a flag passed to scripts.
+
+        While trying to test this, I found that FactoryTest.test_chromium_gpu_linux
+        was using a real filesystem (due to assert_platform) which due to
+        global variables in config.py was causing set-webkit-configuration to have
+        an affect on unit test results!  So I fixed this by making FactoryTest.assert_port
+        pass a mock file system whenever calling factory.get.
+
+        Unfortunately TestPort was depending on always being passed a None filesystem
+        and asserting filesystem._tests (only true for unit_test_filesystem()).
+        So I just removed the FactoryTest.test_test and FactoryTest.test_dryrun tests
+        deciding that they were pretty much useless anyway.  If others feel strongly
+        I'm happy to fix this in a different way.
+
+        * Scripts/webkitpy/common/system/executive.py:
+         - default arguments in python are screwy.  They use a single shared
+           instance, so it's better to use argument=None and then argument = argument or Default()
+           if you have any chance of mutating (or returning) the default argument.
+        * Scripts/webkitpy/layout_tests/port/config.py:
+         - This code is wrong.  We don't need to use a global variable here (as far as I can tell).
+           I'm not fixing it in this patch, but I've marked it with a FIXME and we can convert to
+           storing the results of the read on the Config object (which should only be created once during normal operation).
+           Unit tests shouldn't be hitting the disk anyway.  It's possible Config should move off of Port and onto Tool/Host directly.
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-07-12  Adam Roben  <aroben@apple.com>
 
         Teach TestFailures to recognize when run-webkit-tests gets killed by buildbot

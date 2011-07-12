@@ -59,6 +59,9 @@ class GtkDriver(webkit.WebKitDriver):
 class GtkPort(webkit.WebKitPort):
     port_name = "gtk"
 
+    def _port_flag_for_scripts(self):
+        return "--gtk"
+
     def create_driver(self, worker_number):
         return GtkDriver(self, worker_number)
 
@@ -105,3 +108,13 @@ class GtkPort(webkit.WebKitPort):
 
     def _runtime_feature_list(self):
         return None
+
+    # FIXME: We should find a way to share this implmentation with Gtk,
+    # or teach run-launcher how to call run-safari and move this down to WebKitPort.
+    def show_results_html_file(self, results_filename):
+        run_launcher_args = ["file://%s" % results_filename]
+        if self.get_option('webkit_test_runner'):
+            run_launcher_args.append('--webkit-test-runner')
+        # FIXME: old-run-webkit-tests also added ["-graphicssystem", "raster", "-style", "windows"]
+        # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
+        self._run_script("run-launcher", run_launcher_args)

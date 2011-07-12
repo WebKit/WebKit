@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,42 +28,18 @@
 
 import unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.qt import QtPort
+from webkitpy.layout_tests.port.gtk import GtkPort
 from webkitpy.layout_tests.port import port_testcase
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.tool.mocktool import MockExecutive
 
 
-class QtPortTest(port_testcase.PortTestCase):
+class GtkPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
-        return QtPort
-
-    def _assert_search_path(self, search_paths, sys_platform, use_webkit2=False):
-        # FIXME: Port constructors should not "parse" the port name, but
-        # rather be passed components (directly or via setters).  Once
-        # we fix that, this method will need a re-write.
-        port = QtPort(sys_platform=sys_platform,
-            options=MockOptions(webkit_test_runner=use_webkit2),
-            filesystem=MockFileSystem(),
-            user=MockUser(),
-            executive=MockExecutive())
-        absolute_search_paths = map(port._webkit_baseline_path, search_paths)
-        self.assertEquals(port.baseline_search_path(), absolute_search_paths)
-
-    def test_baseline_search_path(self):
-        self._assert_search_path(['qt-mac', 'qt'], 'darwin')
-        self._assert_search_path(['qt-win', 'qt'], 'win32')
-        self._assert_search_path(['qt-win', 'qt'], 'cygwin')
-        self._assert_search_path(['qt-linux', 'qt'], 'linux2')
-        self._assert_search_path(['qt-linux', 'qt'], 'linux3')
-
-        self._assert_search_path(['qt-wk2', 'qt-mac', 'qt'], 'darwin', use_webkit2=True)
-        self._assert_search_path(['qt-wk2', 'qt-win', 'qt'], 'cygwin', use_webkit2=True)
-        self._assert_search_path(['qt-wk2', 'qt-linux', 'qt'], 'linux2', use_webkit2=True)
+        return GtkPort
 
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-launcher', '--release', '--qt', 'file://test.html']\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-launcher', '--release', '--gtk', 'file://test.html']\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)

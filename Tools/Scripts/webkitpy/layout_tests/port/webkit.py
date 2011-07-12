@@ -93,15 +93,33 @@ class WebKitPort(Port):
             return "build-webkittestrunner"
         return "build-dumprendertree"
 
+    def _port_flag_for_scripts(self):
+        # This is overrriden by ports which need a flag passed to scripts to distinguish the use of that port.
+        # For example --qt on linux, since a user might have both Gtk and Qt libraries installed.
+        # FIXME: Chromium should override this once ChromiumPort is a WebKitPort.
+        return None
+
+    # This is modeled after webkitdirs.pm argumentsForConfiguration() from old-run-webkit-tests
+    def _arguments_for_configuration(self):
+        config_args = []
+        config_args.append(self._config.flag_for_configuration(self.get_option('configuration')))
+        # FIXME: We may need to add support for passing --32-bit like old-run-webkit-tests had.
+        port_flag = self._port_flag_for_scripts()
+        if port_flag:
+            config_args.append(port_flag)
+        return config_args
+
+    def _run_script(self, script_name, args=None, include_configuration_arguments=True):
+        run_script_command = [self._config.script_path(script_name)]
+        if include_configuration_arguments:
+            run_script_command.extend(self._arguments_for_configuration())
+        if args:
+            run_script_command.extend(args)
+        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir())  # It's unclear if setting cwd is necessary for all callers.
+
     def _build_driver(self):
-        configuration = self.get_option('configuration')
         try:
-            # FIXME: We should probably have a run_script helper which automatically adds the configuration flags.
-            self._executive.run_command([
-                self._config.script_path(self._driver_build_script_name()),
-                self._config.flag_for_configuration(configuration)],
-                # FIXME: It's unclear if this cwd= is necessary. Again a helper should do this for us.
-                cwd=self._config.webkit_base_dir())
+            self._run_script(self._driver_build_script_name())
         except ScriptError:
             _log.error("Failed to build %s" % self.driver_name())
             return False
