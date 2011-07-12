@@ -223,10 +223,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
     unsigned destBytesPerRow = 4 * rect.width();
 
     SkBitmap srcBitmap;
-    SkIRect srcRect = SkIRect::MakeXYWH(originX, originY, numColumns, numRows);
-    if (!srcDevice.accessBitmap(false).extractSubset(&srcBitmap, srcRect))
-        return result.release();
-    SkAutoLockPixels alp(srcBitmap);
+    srcDevice.readPixels(SkIRect::MakeXYWH(originX, originY, numColumns, numRows), &srcBitmap);
 
     unsigned char* destRow = data + destY * destBytesPerRow + destX * 4;
 
@@ -301,8 +298,10 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
 
-    const SkBitmap& deviceBitmap = dstDevice->accessBitmap(true);
-    bool temporaryBitmap = !deviceBitmap.lockPixelsAreWritable();
+    SkBitmap deviceBitmap = dstDevice->accessBitmap(true);
+
+    // If the device's bitmap doesn't have pixels we will make a temp and call writePixels on the device.
+    bool temporaryBitmap = !!deviceBitmap.getTexture();
     SkBitmap destBitmap;
 
     if (temporaryBitmap) {
