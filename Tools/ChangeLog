@@ -1,5 +1,18 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        sheriffbot can't perform rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=64370
+
+        Reviewed by Eric Seidel.
+
+        Now that we're not updating the working copy before processing every
+        IRC message, the rollout command needs to update it manually.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         Fix the grammar in the FIXME comment.
 
         * Scripts/webkitpy/common/net/resultsjsonparser.py:

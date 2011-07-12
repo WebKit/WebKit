@@ -30,7 +30,7 @@ import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.irc_command import *
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockTool, MockExecutive
 
 
 class IRCCommandTest(unittest.TestCase):
@@ -75,6 +75,13 @@ class IRCCommandTest(unittest.TestCase):
         roll = RollChromiumDEPS()
         self.assertEquals(None, roll._parse_args([]))
         self.assertEquals("1234", roll._parse_args(["1234"]))
+
+    def test_rollout_updates_working_copy(self):
+        rollout = Rollout()
+        tool = MockTool()
+        tool.executive = MockExecutive(should_log=True)
+        expected_stderr = "MOCK run_and_throw_if_fail: ['mock-update-webkit']\n"
+        OutputCapture().assert_outputs(self, rollout._update_working_copy, [tool], expected_stderr=expected_stderr)
 
     def test_rollout(self):
         rollout = Rollout()

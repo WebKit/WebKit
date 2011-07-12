@@ -100,12 +100,18 @@ class Rollout(IRCCommand):
         target_nicks = [requester_nick] + self._responsible_nicknames_from_revisions(tool, sheriff, svn_revision_list)
         return ", ".join(target_nicks)
 
+    def _update_working_copy(self, tool):
+        tool.scm().ensure_clean_working_directory(force_clean=True)
+        tool.executive.run_and_throw_if_fail(tool.port().update_webkit_command(), quiet=True)
+
     def execute(self, nick, args, tool, sheriff):
         svn_revision_list, rollout_reason = self._parse_args(args)
 
         if (not svn_revision_list or not rollout_reason):
             # return is equivalent to an irc().post(), but makes for easier unit testing.
             return "%s: Usage: SVN_REVISION [SVN_REVISIONS] REASON" % nick
+
+        self._update_working_copy(tool)
 
         # FIXME: IRCCommand should bind to a tool and have a self._tool like Command objects do.
         # Likewise we should probably have a self._sheriff.
