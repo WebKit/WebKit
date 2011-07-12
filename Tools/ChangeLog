@@ -1,3 +1,21 @@
+2011-07-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Add code related to font management.
+        https://bugs.webkit.org/show_bug.cgi?id=63989
+
+        Reviewed by Kent Tamura.
+
+        The added files are responsible for managing fontconfig and adding the
+        fonts required by some layout tests to fontconfig's path.
+
+        * DumpRenderTree/efl/FontManagement.cpp: Added.
+        (getFontDirectories):
+        (getFontFiles):
+        (addFontDirectories):
+        (addFontFiles):
+        (addFontsToEnvironment):
+        * DumpRenderTree/efl/FontManagement.h: Added.
+
 2011-07-08  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: linting fixes
