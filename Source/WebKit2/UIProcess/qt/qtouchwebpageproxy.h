@@ -25,6 +25,7 @@
 #include "DrawingAreaProxy.h"
 #include "QtPanGestureRecognizer.h"
 #include "QtWebPageProxy.h"
+#include "TiledDrawingAreaProxy.h"
 #include "TouchViewInterface.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -40,6 +41,7 @@ public:
     void setVisibleArea(const QRectF&);
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
     void findZoomableAreaForPoint(const QPoint&);
+    void setContentsScale(qreal);
 
 protected:
     virtual void paintContent(QPainter* painter, const QRect& area);
@@ -54,6 +56,7 @@ private:
     virtual void didFindZoomableArea(const WebCore::IntRect&);
 
     TouchViewInterface* touchViewInterface() const { return static_cast<TouchViewInterface*>(m_viewInterface); }
+    TiledDrawingAreaProxy* drawingArea() const { return static_cast<WebKit::TiledDrawingAreaProxy*>(m_webPageProxy->drawingArea()); }
 
     void touchEvent(QTouchEvent*);
 

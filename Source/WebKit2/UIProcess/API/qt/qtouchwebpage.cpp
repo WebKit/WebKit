@@ -124,7 +124,7 @@ void QTouchWebPagePrivate::commitScaleChange()
 {
     ASSERT(m_isChangingScale);
     m_isChangingScale = false;
-    // FIXME: add webpage support when the view has its proper WKPage subclass.
+    page->setContentsScale(q->scale());
 }
 
 void QTouchWebPagePrivate::onScaleChanged()

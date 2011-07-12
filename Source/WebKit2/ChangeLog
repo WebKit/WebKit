@@ -1,3 +1,19 @@
+2011-07-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Forward the touch view scale changes to the tiled drawing area.
+        https://bugs.webkit.org/show_bug.cgi?id=64357
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The drawing area needs to know the new scale to render tiles accordingly.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPagePrivate::commitScaleChange):
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::setContentsScale):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        (QTouchWebPageProxy::drawingArea):
+
 2011-07-12  Adam Roben  <aroben@apple.com>
 
         Export some symbols needed by TestWebKitAPI

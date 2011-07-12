@@ -21,7 +21,6 @@
 #include "config.h"
 #include "qtouchwebpageproxy.h"
 
-#include <TiledDrawingAreaProxy.h>
 #include <IntRect.h>
 #include <NativeWebTouchEvent.h>
 #include <WebEventFactoryQt.h>
@@ -111,6 +110,11 @@ void QTouchWebPageProxy::touchEvent(QTouchEvent* event)
 void QTouchWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
 {
     m_webPageProxy->findZoomableAreaForPoint(point);
+}
+
+void QTouchWebPageProxy::setContentsScale(qreal scale)
+{
+    drawingArea()->setContentsScale(scale);
 }
 
 void QTouchWebPageProxy::didFindZoomableArea(const IntRect& area)
