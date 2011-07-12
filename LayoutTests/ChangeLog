@@ -1,3 +1,9 @@
+2011-07-12  Adam Roben  <aroben@apple.com>
+
+        Update Windows expected results for plugins/mouse-events-fixedpos.html after r90742
+
+        * platform/win/plugins/mouse-events-fixedpos-expected.txt:
+
 2011-07-12  Eric Seidel  <eric@webkit.org>
 
         [Qt] NRWT should pick up the right httpd config file
