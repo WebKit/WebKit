@@ -82,9 +82,19 @@ bool isSampleRateRangeGood(double sampleRate)
 
 }
 
+// Don't allow more than this number of simultaneous AudioContexts talking to hardware.
+const unsigned MaxHardwareContexts = 4;
+unsigned AudioContext::s_hardwareContextCount = 0;
+    
 PassRefPtr<AudioContext> AudioContext::create(Document* document)
 {
     ASSERT(document);
+    ASSERT(isMainThread());
+    if (s_hardwareContextCount >= MaxHardwareContexts)
+        return 0;
+
+    ++s_hardwareContextCount;
+        
     return adoptRef(new AudioContext(document));
 }
 
@@ -194,6 +204,8 @@ void AudioContext::lazyInitialize()
 
 void AudioContext::uninitialize()
 {
+    ASSERT(isMainThread());
+
     if (m_isInitialized) {    
         // This stops the audio thread and all audio rendering.
         m_destinationNode->uninitialize();
@@ -203,6 +215,11 @@ void AudioContext::uninitialize()
 
         // We have to release our reference to the destination node before the context will ever be deleted since the destination node holds a reference to the context.
         m_destinationNode.clear();
+
+        if (!isOfflineContext()) {
+            ASSERT(s_hardwareContextCount);
+            --s_hardwareContextCount;
+        }
         
         // Get rid of the sources which may still be playing.
         derefUnfinishedSourceNodes();

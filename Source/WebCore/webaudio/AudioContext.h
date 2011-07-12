@@ -213,6 +213,8 @@ public:
     void startRendering();
     void fireCompletionEvent();
     
+    static unsigned s_hardwareContextCount;
+    
 private:
     AudioContext(Document*);
     AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate);

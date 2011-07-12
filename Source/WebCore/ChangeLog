@@ -1,3 +1,21 @@
+2011-07-12  Chris Rogers  <crogers@google.com>
+
+        AudioDevice::Stop can close NULL handle.
+        https://bugs.webkit.org/show_bug.cgi?id=64157
+
+        Reviewed by Kenneth Russell.
+
+        No new tests since audio API is not yet implemented.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        (WebCore::AudioContext::uninitialize):
+        * webaudio/AudioContext.h:
+
 2011-07-12  John Bates  <jbates@google.com>
 
         Move call to syncCompositingLayers so that we do not trigger redundant draws.

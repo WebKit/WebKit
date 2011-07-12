@@ -68,6 +68,8 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
     if (!exec->argumentCount()) {
         // Constructor for default AudioContext which talks to audio hardware.
         audioContext = AudioContext::create(document);
+        if (!audioContext.get())
+            return throwVMError(exec, createSyntaxError(exec, "audio resources unavailable for AudioContext construction"));
     } else {
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
