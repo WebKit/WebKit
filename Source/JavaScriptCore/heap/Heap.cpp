@@ -248,6 +248,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_machineThreads(this)
     , m_slotVisitor(globalData->jsArrayVPtr)
     , m_handleHeap(globalData)
+    , m_isSafeToCollect(false)
     , m_globalData(globalData)
 {
     m_newSpace.setHighWaterMark(minBytesPerCycle);
@@ -311,6 +312,14 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     m_extraCost += cost;
 }
 
+inline void* Heap::tryAllocate(NewSpace::SizeClass& sizeClass)
+{
+    m_operationInProgress = Allocation;
+    void* result = m_newSpace.allocate(sizeClass);
+    m_operationInProgress = NoOperation;
+    return result;
+}
+
 void* Heap::allocate(NewSpace::SizeClass& sizeClass)
 {
 #if COLLECT_ON_EVERY_ALLOCATION
@@ -318,20 +327,32 @@ void* Heap::allocate(NewSpace::SizeClass& sizeClass)
     ASSERT(m_operationInProgress == NoOperation);
 #endif
 
-    m_operationInProgress = Allocation;
-    void* result = m_newSpace.allocate(sizeClass);
-    m_operationInProgress = NoOperation;
+    void* result = tryAllocate(sizeClass);
 
-    if (result)
+    if (LIKELY(result != 0))
         return result;
 
-    if (m_newSpace.waterMark() < m_newSpace.highWaterMark()) {
+    if (m_newSpace.waterMark() < m_newSpace.highWaterMark() || !m_isSafeToCollect) {
         m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize));
-        return allocate(sizeClass);
+        void* result = tryAllocate(sizeClass);
+        ASSERT(result);
+        return result;
     }
 
     collect(DoNotSweep);
-    return allocate(sizeClass);
+    
+    result = tryAllocate(sizeClass);
+    
+    if (result)
+        return result;
+    
+    ASSERT(m_newSpace.waterMark() < m_newSpace.highWaterMark());
+    
+    m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize));
+    
+    result = tryAllocate(sizeClass);
+    ASSERT(result);
+    return result;
 }
 
 void Heap::protect(JSValue k)
@@ -525,6 +546,8 @@ PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
 
 void Heap::collectAllGarbage()
 {
+    if (!m_isSafeToCollect)
+        return;
     m_slotVisitor.setShouldUnlinkCalls(true);
     collect(DoSweep);
     m_slotVisitor.setShouldUnlinkCalls(false);
@@ -533,6 +556,7 @@ void Heap::collectAllGarbage()
 void Heap::collect(SweepToggle sweepToggle)
 {
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
+    ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
 
     markRoots();

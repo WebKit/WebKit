@@ -261,6 +261,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #endif
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
+
+    heap.notifyIsSafeToCollect();
 }
 
 void JSGlobalData::clearBuiltinStructures()

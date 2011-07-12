@@ -82,6 +82,7 @@ namespace JSC {
 
         void* allocate(size_t);
         void* allocate(NewSpace::SizeClass&);
+        void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         void collectAllGarbage();
 
         void reportExtraMemoryCost(size_t cost);
@@ -135,6 +136,8 @@ namespace JSC {
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
 
+        void* tryAllocate(NewSpace::SizeClass&);
+        
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);
         void shrink();
@@ -160,6 +163,8 @@ namespace JSC {
         SlotVisitor m_slotVisitor;
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
+        
+        bool m_isSafeToCollect;
 
         JSGlobalData* m_globalData;
     };

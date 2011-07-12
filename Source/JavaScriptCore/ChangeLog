@@ -1,5 +1,33 @@
 2011-07-12  Filip Pizlo  <fpizlo@apple.com>
 
+        COLLECT_ON_EVERY_ALLOCATION no longer works.
+        https://bugs.webkit.org/show_bug.cgi?id=64388
+
+        Reviewed by Oliver Hunt.
+        
+        Added a flag to Heap that determines if it's safe to collect (which for now means that
+        JSGlobalObject has actually been initialized, but it should work for other things, too).
+        This allows JSGlobalObject to allocate even if the allocator wants to GC; instead of
+        GCing it just grows the heap, if necessary.
+        
+        Then changed Heap::allocate() to not recurse ad infinitum when
+        COLLECT_ON_EVERY_ALLOCATION is set.  This also makes the allocator generally more
+        resilient against bugs; this change allowed me to put in handy assertions, such as that
+        an allocation must succeed after either a collection or after a new block was added.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::tryAllocate):
+        (JSC::Heap::allocate):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (JSC::Heap::notifyIsSafeToCollect):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
+2011-07-12  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT put_by_id transition caching does not inform the GC about the structure and
         prototype chain that it is referencing.
         https://bugs.webkit.org/show_bug.cgi?id=64387
