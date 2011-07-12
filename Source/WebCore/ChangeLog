@@ -1,3 +1,15 @@
+2011-07-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: remove more dead code from the Network panel
+        https://bugs.webkit.org/show_bug.cgi?id=64291
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._toggleGridMode):
+        (WebInspector.NetworkPanel.prototype._toggleViewingResourceMode):
+        * inspector/front-end/networkPanel.css:
+
 2011-07-12  Adam Roben  <aroben@apple.com>
 
         Unreviewed, rolling out r90811.

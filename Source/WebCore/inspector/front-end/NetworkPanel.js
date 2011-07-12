@@ -592,20 +592,6 @@ WebInspector.NetworkPanel.prototype = {
         return node;
     },
 
-    revealAndSelectItem: function(resource)
-    {
-        var node = this._resourceGridNode(resource);
-        if (node) {
-            node.reveal();
-            node.select(true);
-        }
-    },
-
-    addEventDivider: function(divider)
-    {
-        this._timelineGrid.addEventDivider(divider);
-    },
-
     _createStatusbarButtons: function()
     {
         this._preserveLogToggle = new WebInspector.StatusBarButton(WebInspector.UIString("Preserve Log upon Navigation"), "record-profile-status-bar-item");
@@ -904,7 +890,6 @@ WebInspector.NetworkPanel.prototype = {
         if (this._viewingResourceMode) {
             this._viewingResourceMode = false;
             this.element.removeStyleClass("viewing-resource");
-            this._dataGrid.element.removeStyleClass("viewing-resource-mode");
             this._viewsContainerElement.addStyleClass("hidden");
             this.sidebarElement.style.right = 0;
             this.sidebarElement.style.removeProperty("width");
@@ -912,42 +897,23 @@ WebInspector.NetworkPanel.prototype = {
                 this._dataGrid.selectedNode.selected = false;
         }
 
-        if (this._briefGrid) {
-            this._dataGrid.element.removeStyleClass("full-grid-mode");
-            this._dataGrid.element.addStyleClass("brief-grid-mode");
+        this._dataGrid.showColumn("method");
+        this._dataGrid.showColumn("status");
+        this._dataGrid.showColumn("type");
+        this._dataGrid.showColumn("size");
+        this._dataGrid.showColumn("time");
 
-            this._dataGrid.hideColumn("method");
-            this._dataGrid.hideColumn("status");
-            this._dataGrid.hideColumn("type");
-            this._dataGrid.hideColumn("size");
-            this._dataGrid.hideColumn("time");
-
-            var widths = {};
-            widths.name = 20;
-            widths.timeline = 80;
-        } else {
-            this._dataGrid.element.addStyleClass("full-grid-mode");
-            this._dataGrid.element.removeStyleClass("brief-grid-mode");
-
-            this._dataGrid.showColumn("method");
-            this._dataGrid.showColumn("status");
-            this._dataGrid.showColumn("type");
-            this._dataGrid.showColumn("size");
-            this._dataGrid.showColumn("time");
-
-            var widths = {};
-            widths.name = 20;
-            widths.method = 6;
-            widths.status = 6;
-            widths.type = 6;
-            widths.size = 6;
-            widths.time = 6;
-            widths.timeline = 50;
-        }
+        var widths = {};
+        widths.name = 20;
+        widths.method = 6;
+        widths.status = 6;
+        widths.type = 6;
+        widths.size = 6;
+        widths.time = 6;
+        widths.timeline = 50;
 
         this._dataGrid.showColumn("timeline");
         this._dataGrid.applyColumnWidthsMap(widths);
-
     },
 
     _toggleViewingResourceMode: function()
@@ -955,12 +921,8 @@ WebInspector.NetworkPanel.prototype = {
         if (this._viewingResourceMode)
             return;
         this._viewingResourceMode = true;
-        this._preservedColumnWidths = this._dataGrid.columnWidthsMap();
 
         this.element.addStyleClass("viewing-resource");
-        this._dataGrid.element.addStyleClass("viewing-resource-mode");
-        this._dataGrid.element.removeStyleClass("full-grid-mode");
-        this._dataGrid.element.removeStyleClass("brief-grid-mode");
 
         this._dataGrid.hideColumn("method");
         this._dataGrid.hideColumn("status");

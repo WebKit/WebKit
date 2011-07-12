@@ -591,30 +591,7 @@
     display: block;
 }
 
-
-.network-log-grid.full-grid-mode .viewer-column {
-    display: none;
-}
-
-.network-log-grid.brief-grid-mode .viewer-column,
-.network-log-grid.brief-grid-mode .method-column,
-.network-log-grid.brief-grid-mode .status-column,
-.network-log-grid.brief-grid-mode .type-column,
-.network-log-grid.brief-grid-mode .size-column,
-.network-log-grid.brief-grid-mode .time-column {
-    display: none;
-}
-
 .network.panel.viewing-resource .network-timeline-grid {
-    display: none;
-}
-
-.network-log-grid.viewing-resource-mode .method-column,
-.network-log-grid.viewing-resource-mode .status-column,
-.network-log-grid.viewing-resource-mode .type-column,
-.network-log-grid.viewing-resource-mode .size-column,
-.network-log-grid.viewing-resource-mode .time-column,
-.network-log-grid.viewing-resource-mode .timeline-column {
     display: none;
 }
 
