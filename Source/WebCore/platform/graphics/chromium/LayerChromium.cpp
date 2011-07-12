@@ -295,7 +295,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugBorderColor(m_debugBorderColor);
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDoubleSided(m_doubleSided);
-    layer->setDrawsContent(drawsContent());
     layer->setLayerRenderer(m_layerRenderer.get());
     layer->setMasksToBounds(m_masksToBounds);
     layer->setName(m_name);
@@ -384,7 +383,7 @@ PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()
     return CCLayerImpl::create(this, m_layerId);
 }
 
-CCLayerImpl* LayerChromium::ccLayerImpl() const
+CCLayerImpl* LayerChromium::ccLayerImpl()
 {
     return m_ccLayerImpl;
 }

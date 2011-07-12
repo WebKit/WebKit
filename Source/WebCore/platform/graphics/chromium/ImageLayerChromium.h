@@ -44,36 +44,31 @@
 namespace WebCore {
 
 class Image;
-class ImageLayerTextureUpdater;
 
 // A Layer that contains only an Image element.
-class ImageLayerChromium : public TiledLayerChromium {
+class ImageLayerChromium : public ContentLayerChromium {
 public:
     static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
     virtual ~ImageLayerChromium();
 
-    virtual bool drawsContent() const;
     virtual void paintContentsIfDirty();
+    virtual void updateCompositorResources();
+    virtual bool drawsContent() const { return m_contents; }
 
     void setContents(Image* image);
 
 protected:
     virtual const char* layerTypeAsString() const { return "ImageLayer"; }
 
+    virtual IntSize contentBounds() const;
+
 private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
 
-    virtual void cleanupResources();
     virtual void createTextureUpdaterIfNeeded();
-    void setTilingOption(TilingOption);
-
-    virtual LayerTextureUpdater* textureUpdater() const;
-    virtual IntSize contentBounds() const;
 
     NativeImagePtr m_imageForCurrentFrame;
     RefPtr<Image> m_contents;
-
-    OwnPtr<ImageLayerTextureUpdater> m_textureUpdater;
 };
 
 }

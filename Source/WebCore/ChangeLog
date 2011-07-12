@@ -1,3 +1,59 @@
+2011-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r90842.
+        http://trac.webkit.org/changeset/90842
+        https://bugs.webkit.org/show_bug.cgi?id=64401
+
+        Causes crash in debug on compositing/overflow/content-gains-
+        scrollbars.html (Requested by jamesr on #webkit).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::cleanupResources):
+        (WebCore::ContentLayerChromium::setLayerRenderer):
+        (WebCore::ContentLayerChromium::tilingTransform):
+        (WebCore::ContentLayerChromium::contentBounds):
+        (WebCore::ContentLayerChromium::updateLayerSize):
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::drawsContent):
+        (WebCore::ContentLayerChromium::createTilerIfNeeded):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        (WebCore::ContentLayerChromium::setTilingOption):
+        (WebCore::ContentLayerChromium::bindContentsTexture):
+        (WebCore::ContentLayerChromium::setIsMask):
+        (WebCore::writeIndent):
+        (WebCore::ContentLayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        (WebCore::ImageLayerChromium::contentBounds):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (WebCore::ImageLayerChromium::drawsContent):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        (WebCore::LayerChromium::ccLayerImpl):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::draw):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::drawTiles):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp: Removed.
+        * platform/graphics/chromium/TiledLayerChromium.h: Removed.
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::drawsContent):
+        (WebCore::CCLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp: Removed.
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h: Removed.
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota

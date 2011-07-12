@@ -161,6 +161,7 @@ public:
     virtual void setIsMask(bool) {}
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
+    virtual void draw() { }
 
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);
@@ -171,7 +172,7 @@ public:
     void setBorderWidth(float);
 
     // Everything from here down in the public section will move to CCLayerImpl.
-    CCLayerImpl* ccLayerImpl() const;
+    CCLayerImpl* ccLayerImpl();
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,

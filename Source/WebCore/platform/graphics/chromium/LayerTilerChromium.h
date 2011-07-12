@@ -31,7 +31,6 @@
 
 #include "LayerChromium.h"
 #include "LayerTexture.h"
-#include "LayerTextureUpdater.h"
 #include "TilingData.h"
 #include <wtf/HashTraits.h>
 #include <wtf/RefCounted.h>
@@ -60,7 +59,7 @@ public:
     // Update invalid textures that intersect with contentRect provided in prepareToUpdate().
     void updateRect(LayerTextureUpdater*);
     // Draw all tiles that intersect with the content rect.
-    void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity);
+    void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity, LayerTextureUpdater*);
 
     int numTiles() const { return m_tilingData.numTiles(); }
 
@@ -110,7 +109,7 @@ private:
 
     // Draw all tiles that intersect with contentRect.
     template <class T>
-    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program);
+    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program, LayerTextureUpdater*);
 
     template <class T>
     void drawTexturedQuad(GraphicsContext3D*, const FloatQuad&, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
@@ -166,8 +165,6 @@ private:
     IntRect m_paintRect;
     IntRect m_updateRect;
 
-    LayerTextureUpdater::Orientation m_textureOrientation;
-    LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
     TilingData m_tilingData;
 
     LayerRendererChromium* m_layerRenderer;

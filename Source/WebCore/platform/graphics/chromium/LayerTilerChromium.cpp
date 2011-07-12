@@ -326,8 +326,6 @@ void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
         return;
 
     GraphicsContext3D* context = layerRendererContext();
-    m_textureOrientation = textureUpdater->orientation();
-    m_sampledTexelFormat = textureUpdater->sampledTexelFormat(m_textureFormat);
 
     int left, top, right, bottom;
     contentRectToTileIndices(m_updateRect, left, top, right, bottom);
@@ -387,17 +385,17 @@ void LayerTilerChromium::setLayerPosition(const IntPoint& layerPosition)
     m_layerPosition = layerPosition;
 }
 
-void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity)
+void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, LayerTextureUpdater* textureUpdater)
 {
     if (m_skipsDraw || !m_tiles.size() || contentRect.isEmpty())
         return;
 
-    switch (m_sampledTexelFormat) {
+    switch (textureUpdater->sampledTexelFormat(m_textureFormat)) {
     case LayerTextureUpdater::SampledTexelFormatRGBA:
-        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram());
+        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram(), textureUpdater);
         break;
     case LayerTextureUpdater::SampledTexelFormatBGRA:
-        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle());
+        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle(), textureUpdater);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -455,7 +453,7 @@ static FloatPoint intersect(const Edge& a, const Edge& b)
 }
 
 template <class T>
-void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program)
+void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program, LayerTextureUpdater* textureUpdater)
 {
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->useProgram(program->program()));
@@ -549,7 +547,7 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             float texScaleY = tileRect.height() / tileHeight;
             // OpenGL coordinate system is bottom-up.
             // If tile texture is top-down, we need to flip the texture coordinates.
-            if (m_textureOrientation == LayerTextureUpdater::TopDownOrientation) {
+            if (textureUpdater->orientation() == LayerTextureUpdater::TopDownOrientation) {
                 texTranslateY = 1.0 - texTranslateY;
                 texScaleY *= -1.0;
             }
