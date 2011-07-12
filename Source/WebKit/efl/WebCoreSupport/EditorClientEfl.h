@@ -46,7 +46,9 @@ class Page;
 
 class EditorClientEfl : public EditorClient, public TextCheckerClient {
 protected:
+    bool m_isInRedo;
     WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > undoStack;
+    WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > redoStack;
 
 public:
     EditorClientEfl(Evas_Object *view);

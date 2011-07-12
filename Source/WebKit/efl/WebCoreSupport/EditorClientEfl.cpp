@@ -163,17 +163,20 @@ void EditorClientEfl::didSetSelectionTypesForPasteboard()
 
 void EditorClientEfl::registerCommandForUndo(WTF::PassRefPtr<EditCommand> command)
 {
-    undoStack.append(command);
+    if (!m_isInRedo)
+        redoStack.clear();
+    undoStack.prepend(command);
 }
 
-void EditorClientEfl::registerCommandForRedo(WTF::PassRefPtr<EditCommand>)
+void EditorClientEfl::registerCommandForRedo(WTF::PassRefPtr<EditCommand> command)
 {
-    notImplemented();
+    redoStack.prepend(command);
 }
 
 void EditorClientEfl::clearUndoRedoOperations()
 {
     undoStack.clear();
+    redoStack.clear();
 }
 
 bool EditorClientEfl::canCopyCut(Frame*, bool defaultValue) const
@@ -193,20 +196,27 @@ bool EditorClientEfl::canUndo() const
 
 bool EditorClientEfl::canRedo() const
 {
-    notImplemented();
-    return false;
+    return !redoStack.isEmpty();
 }
 
 void EditorClientEfl::undo()
 {
-    RefPtr<WebCore::EditCommand> command(*(--undoStack.end()));
-    undoStack.remove(--undoStack.end());
-    command->unapply();
+    if (canUndo()) {
+        RefPtr<WebCore::EditCommand> command = undoStack.takeFirst();
+        command->unapply();
+    }
 }
 
 void EditorClientEfl::redo()
 {
-    notImplemented();
+    if (canRedo()) {
+        RefPtr<WebCore::EditCommand> command = redoStack.takeFirst();
+
+        ASSERT(!m_isInRedo);
+        m_isInRedo = true;
+        command->reapply();
+        m_isInRedo = false;
+    }
 }
 
 bool EditorClientEfl::shouldInsertNode(Node*, Range*, EditorInsertAction)
@@ -425,8 +435,9 @@ void EditorClientEfl::handleInputMethodKeydown(KeyboardEvent* event)
 {
 }
 
-EditorClientEfl::EditorClientEfl(Evas_Object *view)
-    : m_view(view)
+EditorClientEfl::EditorClientEfl(Evas_Object* view)
+    : m_isInRedo(false)
+    , m_view(view)
 {
     notImplemented();
 }
