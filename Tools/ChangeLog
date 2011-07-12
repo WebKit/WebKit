@@ -1,3 +1,25 @@
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
+        Re-work garden-o-matic UI to begin to look like the mocks
+        https://bugs.webkit.org/show_bug.cgi?id=64334
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch changes how we display failures to be more like the mock the
+        dglazkov made. We now can display the same information much more
+        compactly.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css: Added.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
 2011-07-11  Adam Roben  <aroben@apple.com>
 
         Extract TestFailures's bug-filing code into two new classes

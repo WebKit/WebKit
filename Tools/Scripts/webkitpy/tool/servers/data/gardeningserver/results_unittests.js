@@ -7,7 +7,7 @@ var kExampleResultsJSON = {
                 "expected": "IMAGE",
                 "actual": "IMAGE"
             },
-            "flaky-scrollbarhtml": {
+            "flaky-scrollbar.html": {
                 "expected": "PASS",
                 "actual": "PASS TEXT"
             }
@@ -35,7 +35,7 @@ var kExampleResultsJSON = {
     "uses_expectations_file": true,
     "has_wdiff": true,
     "revision": "90430"
-}
+};
 
 test("BuilderResults.unexpectedFailures", 1, function() {
     var builderResults = new results.BuilderResults(kExampleResultsJSON);
@@ -216,6 +216,34 @@ test("regressionRangeForFailure", 3, function() {
             equals(newestPassingRevision, 90424);
         });
     });
+});
+
+test("collectUnexpectedResults", 1, function() {
+    var dictionaryOfResultNodes = {
+        "foo": {
+            "expected": "IMAGE",
+            "actual": "IMAGE"
+        },
+        "bar": {
+            "expected": "PASS",
+            "actual": "PASS TEXT"
+        },
+        "baz": {
+            "expected": "TEXT",
+            "actual": "IMAGE"
+        },
+        "qux": {
+            "expected": "PASS",
+            "actual": "TEXT"
+        },
+        "taco": {
+            "expected": "PASS",
+            "actual": "TEXT"
+        },
+    };
+
+    var collectedResults = results.collectUnexpectedResults(dictionaryOfResultNodes);
+    deepEqual(collectedResults, ["TEXT", "IMAGE"]);
 });
 
 test("fetchResultsURLs", 3, function() {

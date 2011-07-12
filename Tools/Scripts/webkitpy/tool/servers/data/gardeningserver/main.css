@@ -1,0 +1,108 @@
+body {
+    font-family: Tahoma, sans-serif;
+    font-size: 11px;
+    margin: 0;
+    padding: 10px;
+}
+
+a {
+    color: Black;
+    font-weight: bold;
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 5px;
+    overflow: hidden;
+    vertical-align: top;
+    border-bottom: 1px solid LightGray;
+    border-top: 0;
+}
+
+tr:last-of-type td {
+    border-bottom: 0;
+}
+
+.butterbar {
+    background-color: #f3f3f3;
+    padding: 5px;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+}
+
+.butterbar .hide {
+    margin-left: 20px;
+}
+
+.regression {
+    padding: 0 0 10px 0;
+}
+
+.regression .test {
+    margin: 10px 0px;
+}
+
+.regression ul {
+    margin: 0;
+    list-style: none;
+    padding: 0 0 0 10px;
+}
+
+.regression li {
+}
+
+.regression a {
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.regression .what a[draggable].IMAGE\+TEXT::after {
+    content: 'IMAGE+TEXT';
+    color: white;
+    background-color: Indigo;
+    font-size: 10px;
+    padding: 1px 2px;
+    margin: 0 0 0 3px;
+    border-radius: 4px;
+}
+
+.regression .what a[draggable].IMAGE::after {
+    content: 'IMAGE';
+    color: white;
+    background-color: MidnightBlue;
+    font-size: 10px;
+    padding: 1px 2px;
+    margin: 0 0 0 3px;
+    border-radius: 4px;
+}
+
+.regression .what a[draggable].TEXT::after {
+    content: 'TEXT';
+    color: white;
+    background-color: DodgerBlue;
+    font-size: 10px;
+    padding: 1px 2px;
+    margin: 0 0 0 3px;
+    border-radius: 4px;
+}
+
+.regression .what a {
+    padding: 1px 2px;
+    border-radius: 4px;
+    color: black;
+    background-color: #f0f0f0;
+}
+
+.regression .where li {
+    margin: 3px;
+    display: inline-block;
+    padding: 1px 2px;
+    border-radius: 4px;
+    color: #555;
+}

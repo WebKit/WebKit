@@ -25,6 +25,19 @@ base.trimExtension = function(url)
     return url.substr(0, index);
 }
 
+base.uniquifyArray = function(array)
+{
+    var seen = {};
+    var result = [];
+    $.each(array, function(index, value) {
+        if (seen[value])
+            return;
+        seen[value] = true;
+        result.push(value);
+    });
+    return result;
+};
+
 base.filterTree = function(tree, isLeaf, predicate)
 {
     var filteredTree = {};

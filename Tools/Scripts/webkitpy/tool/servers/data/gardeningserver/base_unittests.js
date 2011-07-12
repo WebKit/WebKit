@@ -31,6 +31,14 @@ test("joinPath with empty parent", 1, function() {
     equals(value, "test.html");
 });
 
+test("uniquifyArray", 5, function() {
+    deepEqual(base.uniquifyArray([]), []);
+    deepEqual(base.uniquifyArray(["a"]), ["a"]);
+    deepEqual(base.uniquifyArray(["a", "b"]), ["a", "b"]);
+    deepEqual(base.uniquifyArray(["a", "b", "b"]), ["a", "b"]);
+    deepEqual(base.uniquifyArray(["a", "b", "b", "a"]), ["a", "b"]);
+});
+
 test("filterTree", 2, function() {
     var tree = {
         'path': {

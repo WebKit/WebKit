@@ -1,16 +1,8 @@
 (function() {
 
-function quit()
+function dismissButterbar()
 {
-    $.post('/quitquitquit', function(data){
-        $('.butterbar .status').html(data)
-        $('.butterbar').fadeIn();
-    });
-}
-
-function hide()
-{
-    $(this).parent().fadeOut();
+    $('.butterbar').fadeOut();
 }
 
 function setIconState(hasFailures)
@@ -22,45 +14,20 @@ function setIconState(hasFailures)
 function fetchResults(onsuccess)
 {
     results.fetchResultsByBuilder(config.builders, function(resultsByBuilder) {
-        var unexpectedFailures = ui.summarizeResultsByTest(results.unexpectedFailuresByTest(resultsByBuilder));
-        $('.failures').append(unexpectedFailures);
+        var unexpectedFailures = results.unexpectedFailuresByTest(resultsByBuilder);
+        var hasFailures = !$.isEmptyObject(unexpectedFailures)
+        if (!hasFailures) {
+            $('.results').text('No failures. Party time!');
+        } else {
+            var resultsSummary = ui.summarizeResultsByTest(unexpectedFailures);
+            $('.results').append($(resultsSummary).addClass('regression'));
+        }
+        setIconState(hasFailures);
         onsuccess();
     });
-    setIconState($('.failures').length);
 }
 
-function showResults()
-{
-    // FIXME: This is fragile.
-    var resultsSummary = $(this).parent().parent().parent();
-    var testName = $('.testName', resultsSummary).text();
-    $('.builderName', resultsSummary).each(function() {
-        var builderName = $(this).text();
-        results.fetchResultsURLs(builderName, testName, function(resultURLs) {
-            resultsSummary.append(ui.results(resultURLs));
-        });
-    });
-}
-
-function findRegressionRange()
-{
-    // FIXME: This is fragile!
-    var builderName = $('.builderName', $(this).parent()).text();
-    var testName = $('.testName', $(this).parent().parent().parent()).text();
-    results.regressionRangeForFailure(builderName, testName, function(oldestFailingRevision, newestPassingRevision) {
-        var tracURLs = [];
-        for (var i = newestPassingRevision + 1; i <= oldestFailingRevision; ++i) {
-            tracURLs.push('<a href="http://trac.webkit.org/changeset/' + i + '">' + i + '</a>');
-        }
-        $('.butterbar .status').html('Regression range: ' + tracURLs.join(' '));
-        $('.butterbar').fadeIn();
-    });
-}
-
-$('.hide').live('click', hide);
-$('.quit').live('click', quit);
-$('.show-results').live('click', showResults);
-$('.regression-range').live('click', findRegressionRange);
+$('.butterbar .dismiss').live('click', dismissButterbar);
 
 $(document).ready(function() {
     fetchResults(function() {

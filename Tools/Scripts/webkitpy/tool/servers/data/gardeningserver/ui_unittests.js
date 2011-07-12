@@ -19,25 +19,12 @@ var kExampleResultsByTest = {
     }
 }
 
-test("summarizeResultsByTest", 1, function() {
+test("summarizeResultsByTest", 3, function() {
     var resultsSummary = ui.summarizeResultsByTest(kExampleResultsByTest);
-    equal(resultsSummary.html(),
-        '<div class="test">' +
-            '<div class="testName">scrollbars/custom-scrollbar-with-incomplete-style.html</div>' +
-             '<div class="builders">' +
-                 '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">CRASH</div><div class="expected">IMAGE</div>' +
-                     '<button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>' +
-                 '<div class="builder"><div class="builderName">Mock Linux</div><div class="actual">CRASH</div><div class="expected">TEXT</div>' +
-                     '<button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>' +
-             '</div>' +
-        '</div>' +
-        '<div class="test">' +
-            '<div class="testName">userscripts/another-test.html</div>' +
-            '<div class="builders">' +
-                '<div class="builder"><div class="builderName">Mock Builder</div><div class="actual">TEXT</div><div class="expected">PASS</div>' +
-                    '<button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>' +
-            '</div>' +
-        '</div>');
+    var resultsSummaryHTML = resultsSummary.html();
+    ok(resultsSummaryHTML.indexOf('scrollbars/custom-scrollbar-with-incomplete-style.html') != -1);
+    ok(resultsSummaryHTML.indexOf('userscripts/another-test.html') != -1);
+    ok(resultsSummaryHTML.indexOf('Mock Builder') != -1);
 });
 
 test("results", 1, function() {

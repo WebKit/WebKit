@@ -2,22 +2,41 @@ var ui = ui || {};
 
 (function () {
 
+function displayNameForBuilder(builderName)
+{
+    return builderName.replace(/Webkit /, '');
+}
+
+ui.urlForTest = function(testName)
+{
+    return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
+}
+
+ui.summarizeTest = function(testName, resultNodesByBuilder)
+{
+    var unexpectedResults = results.collectUnexpectedResults(resultNodesByBuilder);
+    var block = $(
+        '<div class="test">' +
+          '<span class="what"><a draggable></a></span>' +
+          '<span>fails on</span>' +
+          '<ul class="where"></ul>' +
+        '</div>');
+    $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
+
+    var where = $('.where', block);
+    $.each(resultNodesByBuilder, function(builderName, resultNode) {
+        where.append($('<li></li>').text(displayNameForBuilder(builderName)));
+    });
+
+    return block;
+};
+
 ui.summarizeResultsByTest = function(resultsByTest)
 {
     var block = $('<div class="results-summary"></div>');
     $.each(resultsByTest, function(testName, resultNodesByBuilder) {
-        var testBlock = $('<div class="test"><div class="testName"></div><div class="builders"></div></div>');
-        block.append(testBlock);
-        $('.testName', testBlock).text(testName);
-        $.each(resultNodesByBuilder, function(builderName, resultNode) {
-            var builderBlock = $('<div class="builder"><div class="builderName"></div><div class="actual"></div><div class="expected"></div><button class="show-results">Show Results</button><button class="regression-range">Regression Range</button></div>');
-            $('.builders', testBlock).append(builderBlock);
-            $('.builderName', builderBlock).text(builderName);
-            $('.actual', builderBlock).text(resultNode.actual);
-            $('.expected', builderBlock).text(resultNode.expected);
-        });
+        block.append(ui.summarizeTest(testName, resultNodesByBuilder));
     });
-
     return block;
 };
 

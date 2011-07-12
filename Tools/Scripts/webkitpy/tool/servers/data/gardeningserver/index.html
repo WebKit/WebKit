@@ -6,58 +6,12 @@
 <html>
 <head>
 <title>Garden-O-Matic</title>
-<style>
-body {
-  margin: 0;
-  padding: 0px;
-}
-h1 {
-  margin: 0px;
-  padding: 3px;
-}
-.butterbar {
-  width: 500px;
-  margin-left: -250px;
-  position: fixed;
-  border-radius: 5px;
-  top: 1px;
-  left: 50%;
-  padding: 3px;
-  background-color: #F5F6CE;
-}
-.butterbar .hide {
-  float: right;
-}
-.toolbar {
-  float: right;
-}
-.failures {
-  padding: 3px;
-}
-.failures .test {
-  margin: 6px 3px;
-}
-.failures .builders {
-  color: #888;
-}
-.builder .builderName, .builder .actual {
-  float: left;
-  width: 200px;
-}
-.results iframe, .results img {
-  width: 400px;
-  height: 300px;
-}
-</style>
+<link rel="stylesheet" href="main.css">
 <link rel="icon" id="favicon" type="image/png" href="favicon-green.png">
 </head>
 <body>
-<div class="butterbar"><span class="status">Loading...</span> <a class="hide" href="#">Dismiss</a></div>
-<div class="toolbar">
-  <button class="quit">Quit</button>
-</div>
-<h1>Garden-O-Matic</h1>
-<div class="failures"></div>
+<div class="butterbar"><span class="status">Loading...</span> <a class="dismiss" href="#">Dismiss</a></div>
+<div class="results"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 <script src="config.js"></script>
 <script src="base.js"></script>

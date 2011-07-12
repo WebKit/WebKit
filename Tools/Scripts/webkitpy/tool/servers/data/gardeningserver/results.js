@@ -172,6 +172,16 @@ results.unexpectedFailuresByTest = function(resultsByBuilder)
     return unexpectedFailures;
 };
 
+results.collectUnexpectedResults = function(dictionaryOfResultNodes)
+{
+    var collectedResults = {};
+    var results = [];
+    $.each(dictionaryOfResultNodes, function(key, resultNode) {
+        results = results.concat(unexpectedResults(resultNode));
+    });
+    return base.uniquifyArray(results);
+};
+
 function TestHistoryWalker(builderName, testName)
 {
     this._builderName = builderName;
