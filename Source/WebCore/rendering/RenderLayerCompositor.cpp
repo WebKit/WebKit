@@ -131,10 +131,10 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
         m_compositing = enable;
         
         if (m_compositing) {
-            ensureRootPlatformLayer();
+            ensureRootLayer();
             notifyIFramesOfCompositingChange();
         } else
-            destroyRootPlatformLayer();
+            destroyRootLayer();
     }
 }
 
@@ -200,7 +200,7 @@ void RenderLayerCompositor::flushPendingLayerChanges()
     // frame, so when compositing layers are connected between frames, we'll
     // end up syncing subframe's layers multiple times.
     // https://bugs.webkit.org/show_bug.cgi?id=52489
-    if (GraphicsLayer* rootLayer = rootPlatformLayer())
+    if (GraphicsLayer* rootLayer = rootGraphicsLayer())
         rootLayer->syncCompositingState();
 
     ASSERT(m_flushingLayers);
@@ -299,9 +299,9 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         // Host the document layer in the RenderView's root layer.
         if (updateRoot == rootRenderLayer()) {
             if (childList.isEmpty())
-                destroyRootPlatformLayer();
+                destroyRootLayer();
             else
-                m_rootPlatformLayer->setChildren(childList);
+                m_rootContentLayer->setChildren(childList);
         }
     } else if (needGeometryUpdate) {
         // We just need to do a geometry update. This is only used for position:fixed scrolling;
@@ -961,12 +961,12 @@ String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
     if (compositingLayerUpdatePending())
         updateCompositingLayers();
 
-    if (!m_rootPlatformLayer)
+    if (!m_rootContentLayer)
         return String();
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    return m_rootPlatformLayer->layerTreeAsText(showDebugInfo ? LayerTreeAsTextDebug : LayerTreeAsTextBehaviorNormal);
+    return m_rootContentLayer->layerTreeAsText(showDebugInfo ? LayerTreeAsTextDebug : LayerTreeAsTextBehaviorNormal);
 }
 
 RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderPart* renderer)
@@ -994,7 +994,7 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderPart* renderer)
 
     RenderLayerBacking* backing = layer->backing();
     GraphicsLayer* hostingLayer = backing->parentForSublayers();
-    GraphicsLayer* rootLayer = innerCompositor->rootPlatformLayer();
+    GraphicsLayer* rootLayer = innerCompositor->rootGraphicsLayer();
     if (hostingLayer->children().size() != 1 || hostingLayer->children()[0] != rootLayer) {
         hostingLayer->removeAllChildren();
         hostingLayer->addChild(rootLayer);
@@ -1144,11 +1144,11 @@ RenderLayer* RenderLayerCompositor::rootRenderLayer() const
     return m_renderView->layer();
 }
 
-GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
+GraphicsLayer* RenderLayerCompositor::rootGraphicsLayer() const
 {
     if (m_overflowControlsHostLayer)
         return m_overflowControlsHostLayer.get();
-    return m_rootPlatformLayer.get();
+    return m_rootContentLayer.get();
 }
 
 void RenderLayerCompositor::didMoveOnscreen()
@@ -1157,7 +1157,7 @@ void RenderLayerCompositor::didMoveOnscreen()
         return;
 
     RootLayerAttachment attachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
-    attachRootPlatformLayer(attachment);
+    attachRootLayer(attachment);
 }
 
 void RenderLayerCompositor::willMoveOffscreen()
@@ -1165,7 +1165,7 @@ void RenderLayerCompositor::willMoveOffscreen()
     if (!inCompositingMode() || m_rootLayerAttachment == RootLayerUnattached)
         return;
 
-    detachRootPlatformLayer();
+    detachRootLayer();
 }
 
 void RenderLayerCompositor::clearBackingForLayerIncludingDescendants(RenderLayer* layer)
@@ -1187,10 +1187,10 @@ void RenderLayerCompositor::clearBackingForAllLayers()
 
 void RenderLayerCompositor::updateRootLayerPosition()
 {
-    if (m_rootPlatformLayer) {
+    if (m_rootContentLayer) {
         const IntRect& documentRect = m_renderView->documentRect();
-        m_rootPlatformLayer->setSize(documentRect.size());
-        m_rootPlatformLayer->setPosition(documentRect.location());
+        m_rootContentLayer->setSize(documentRect.size());
+        m_rootContentLayer->setPosition(documentRect.location());
     }
     if (m_clipLayer) {
         FrameView* frameView = m_renderView->frameView();
@@ -1606,22 +1606,22 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         m_renderView->frameView()->positionScrollbarLayers();
 }
 
-void RenderLayerCompositor::ensureRootPlatformLayer()
+void RenderLayerCompositor::ensureRootLayer()
 {
     RootLayerAttachment expectedAttachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
     if (expectedAttachment == m_rootLayerAttachment)
          return;
 
-    if (!m_rootPlatformLayer) {
-        m_rootPlatformLayer = GraphicsLayer::create(0);
+    if (!m_rootContentLayer) {
+        m_rootContentLayer = GraphicsLayer::create(0);
 #ifndef NDEBUG
-        m_rootPlatformLayer->setName("Root platform");
+        m_rootContentLayer->setName("Root platform");
 #endif
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->maxXLayoutOverflow(), m_renderView->maxYLayoutOverflow()));
-        m_rootPlatformLayer->setPosition(FloatPoint());
+        m_rootContentLayer->setSize(FloatSize(m_renderView->maxXLayoutOverflow(), m_renderView->maxYLayoutOverflow()));
+        m_rootContentLayer->setPosition(FloatPoint());
 
         // Need to clip to prevent transformed content showing outside this frame
-        m_rootPlatformLayer->setMasksToBounds(true);
+        m_rootContentLayer->setMasksToBounds(true);
     }
 
     if (requiresScrollLayer(expectedAttachment)) {
@@ -1650,7 +1650,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
             // Hook them up
             m_overflowControlsHostLayer->addChild(m_clipLayer.get());
             m_clipLayer->addChild(m_scrollLayer.get());
-            m_scrollLayer->addChild(m_rootPlatformLayer.get());
+            m_scrollLayer->addChild(m_rootContentLayer.get());
 
             frameViewDidChangeSize();
             frameViewDidScroll(m_renderView->frameView()->scrollPosition());
@@ -1665,17 +1665,17 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
 
     // Check to see if we have to change the attachment
     if (m_rootLayerAttachment != RootLayerUnattached)
-        detachRootPlatformLayer();
+        detachRootLayer();
 
-    attachRootPlatformLayer(expectedAttachment);
+    attachRootLayer(expectedAttachment);
 }
 
-void RenderLayerCompositor::destroyRootPlatformLayer()
+void RenderLayerCompositor::destroyRootLayer()
 {
-    if (!m_rootPlatformLayer)
+    if (!m_rootContentLayer)
         return;
 
-    detachRootPlatformLayer();
+    detachRootLayer();
 
     if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
@@ -1702,12 +1702,12 @@ void RenderLayerCompositor::destroyRootPlatformLayer()
         m_scrollLayer = nullptr;
     }
     ASSERT(!m_scrollLayer);
-    m_rootPlatformLayer = nullptr;
+    m_rootContentLayer = nullptr;
 }
 
-void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachment)
+void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
 {
-    if (!m_rootPlatformLayer)
+    if (!m_rootContentLayer)
         return;
 
     switch (attachment) {
@@ -1720,7 +1720,7 @@ void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachme
             if (!page)
                 return;
 
-            page->chrome()->client()->attachRootGraphicsLayer(frame, rootPlatformLayer());
+            page->chrome()->client()->attachRootGraphicsLayer(frame, rootGraphicsLayer());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -1735,9 +1735,9 @@ void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachme
     rootLayerAttachmentChanged();
 }
 
-void RenderLayerCompositor::detachRootPlatformLayer()
+void RenderLayerCompositor::detachRootLayer()
 {
-    if (!m_rootPlatformLayer || m_rootLayerAttachment == RootLayerUnattached)
+    if (!m_rootContentLayer || m_rootLayerAttachment == RootLayerUnattached)
         return;
 
     switch (m_rootLayerAttachment) {
@@ -1747,7 +1747,7 @@ void RenderLayerCompositor::detachRootPlatformLayer()
         if (m_overflowControlsHostLayer)
             m_overflowControlsHostLayer->removeFromParent();
         else
-            m_rootPlatformLayer->removeFromParent();
+            m_rootContentLayer->removeFromParent();
 
         if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
             ownerElement->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
@@ -1772,7 +1772,7 @@ void RenderLayerCompositor::detachRootPlatformLayer()
 
 void RenderLayerCompositor::updateRootLayerAttachment()
 {
-    ensureRootPlatformLayer();
+    ensureRootLayer();
 }
 
 void RenderLayerCompositor::rootLayerAttachmentChanged()

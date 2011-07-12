@@ -691,13 +691,6 @@ bool FrameView::syncCompositingStateForThisFrame()
     if (needsLayout())
         return false;
 
-    if (GraphicsLayer* graphicsLayer = view->compositor()->layerForHorizontalScrollbar())
-        graphicsLayer->syncCompositingStateForThisLayerOnly();
-    if (GraphicsLayer* graphicsLayer = view->compositor()->layerForVerticalScrollbar())
-        graphicsLayer->syncCompositingStateForThisLayerOnly();
-    if (GraphicsLayer* graphicsLayer = view->compositor()->layerForScrollCorner())
-        graphicsLayer->syncCompositingStateForThisLayerOnly();
-
     view->compositor()->flushPendingLayerChanges();
 
 #if ENABLE(FULLSCREEN_API)

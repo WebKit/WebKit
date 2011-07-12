@@ -1,3 +1,42 @@
+2011-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some RenderLayerCompositor code relating to scroll and root layers
+        https://bugs.webkit.org/show_bug.cgi?id=64400
+
+        Reviewed by James Robinson.
+
+        There was no need for FrameView::syncCompositingStateForThisFrame()
+        to call syncCompositingStateForThisLayerOnly() on the various
+        scrollbar-related layers, because the subsequent call to 
+        compositor()->flushPendingLayerChanges() starts to flush at
+        m_overflowControlsHostLayer if one exists, and it's an ancestor
+        of the scrollbar layers.
+        
+        Also clean up terminology in RenderLayerCompositor.
+            m_rootPlatformLayer -> m_rootContentLayer
+            rootPlatformLayer() -> rootGraphicsLayer()
+        
+        No behavior change, so no new tests.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateForThisFrame):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::rootGraphicsLayer):
+        (WebCore::RenderLayerCompositor::didMoveOnscreen):
+        (WebCore::RenderLayerCompositor::willMoveOffscreen):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::destroyRootLayer):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::updateRootLayerAttachment):
+        * rendering/RenderLayerCompositor.h:
+
 2011-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90842.

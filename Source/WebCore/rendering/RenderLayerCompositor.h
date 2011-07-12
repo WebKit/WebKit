@@ -133,7 +133,7 @@ public:
     void repaintCompositedLayersAbsoluteRect(const IntRect&);
 
     RenderLayer* rootRenderLayer() const;
-    GraphicsLayer* rootPlatformLayer() const;
+    GraphicsLayer* rootGraphicsLayer() const;
 
     enum RootLayerAttachment {
         RootLayerUnattached,
@@ -239,11 +239,11 @@ private:
     bool layerHas3DContent(const RenderLayer*) const;
     bool hasNonIdentity3DTransform(RenderObject*) const;
 
-    void ensureRootPlatformLayer();
-    void destroyRootPlatformLayer();
+    void ensureRootLayer();
+    void destroyRootLayer();
 
-    void attachRootPlatformLayer(RootLayerAttachment);
-    void detachRootPlatformLayer();
+    void attachRootLayer(RootLayerAttachment);
+    void detachRootLayer();
     
     void rootLayerAttachmentChanged();
 
@@ -268,7 +268,7 @@ private:
 
 private:
     RenderView* m_renderView;
-    OwnPtr<GraphicsLayer> m_rootPlatformLayer;
+    OwnPtr<GraphicsLayer> m_rootContentLayer;
     Timer<RenderLayerCompositor> m_updateCompositingLayersTimer;
 
     bool m_hasAcceleratedCompositing;
