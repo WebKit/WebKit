@@ -39,6 +39,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_NAMES = frozenset([
         "index.html",
         "main.css",
+        "partytime.gif",
         "base.js",
         "config.js",
         "main.js",

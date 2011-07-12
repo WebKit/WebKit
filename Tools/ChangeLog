@@ -1,5 +1,19 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        Add a happy animation to garden-o-matic when there are no failures
+        https://bugs.webkit.org/show_bug.cgi?id=64382
+
+        Reviewed by Ojan Vafai.
+
+        As requested by Ojan.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/partytime.gif: Added.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         sheriffbot can't perform rollouts
         https://bugs.webkit.org/show_bug.cgi?id=64370
 

@@ -99,6 +99,11 @@ tr:last-of-type td {
     background-color: #f0f0f0;
 }
 
+.partytime {
+    display: none;
+    text-align:center;
+}
+
 .regression .where li {
     margin: 3px;
     display: inline-block;

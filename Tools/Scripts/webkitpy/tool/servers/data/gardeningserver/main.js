@@ -18,6 +18,9 @@ function fetchResults(onsuccess)
         var hasFailures = !$.isEmptyObject(unexpectedFailures)
         if (!hasFailures) {
             $('.results').text('No failures. Party time!');
+            var partyTime = $('<div class="partytime"><img src="partytime.gif"></div>');
+            $('.results').append(partyTime);
+            partyTime.fadeIn(1200).delay(7000).fadeOut();
         } else {
             var resultsSummary = ui.summarizeResultsByTest(unexpectedFailures);
             $('.results').append($(resultsSummary).addClass('regression'));
