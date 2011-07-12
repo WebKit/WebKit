@@ -628,7 +628,7 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
     notImplemented();
 }
 
-void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
 {
     notImplemented();
 }

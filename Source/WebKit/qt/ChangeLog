@@ -1,3 +1,17 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/ChromeClientQt.h:
+        Pass the spaceNeeded value through to the applicationCacheQuotaExceeded signal.
+
 2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move selection related code from RenderTextControl to HTMLTextFormControlElement

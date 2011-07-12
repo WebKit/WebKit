@@ -227,7 +227,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
-- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin
+- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
 {
 }
 

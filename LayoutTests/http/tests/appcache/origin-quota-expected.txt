@@ -1,4 +1,4 @@
-UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{http, 127.0.0.1, 8000}
+UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{http, 127.0.0.1, 8000} spaceNeeded:31161
 CONSOLE MESSAGE: line 0: Application Cache update failed, because size quota was exceeded.
 This test checks that per-origin application cache quotas are enforced.
 

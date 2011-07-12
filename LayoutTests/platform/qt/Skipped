@@ -29,7 +29,6 @@
 # - failing editing/input tests
 # - Failing SVG tests
 # - failing animations tests
-# - failing application cache quota tests
 # - Failing CSS Tests
 # - Failing dom/xhtml tests
 # - Failing editing/deleting tests

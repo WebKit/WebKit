@@ -2141,8 +2141,10 @@ BUGCR49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
 // Flaky since WebKit r63994
 BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
 
-// Application Cache Quotas
-BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
+// Application Cache Quotas are N/A to the chromium port.
+BUGWK43459 WONTFIX: http/tests/appcache/origin-quota.html = TEXT MISSING
+BUGWK43459 WONTFIX: http/tests/appcache/origin-quota-continued-download.html = TEXT MISSING
+BUGWK43459 WONTFIX: http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = TEXT MISSING
 
 // Need to support DeviceMotion.
 BUGCR51416 : fast/dom/DeviceMotion/window-property.html = TEXT

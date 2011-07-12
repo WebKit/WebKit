@@ -4183,7 +4183,7 @@ quint64 QWebPage::bytesReceived() const
     \sa QWebDatabase
 */
 /*!
-    \fn void QWebPage::applicationCacheQuotaExceeded(QWebSecurityOrigin* origin, quint64 defaultOriginQuota);
+    \fn void QWebPage::applicationCacheQuotaExceeded(QWebSecurityOrigin* origin, quint64 defaultOriginQuota, quint64 totalSpaceNeeded);
 
     This signal is emitted whenever the web site is asking to store data to the application cache
     database databaseName and the quota allocated to that web site is exceeded.

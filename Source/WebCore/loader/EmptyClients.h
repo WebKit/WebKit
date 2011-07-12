@@ -185,7 +185,7 @@ public:
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void reachedMaxAppCacheSize(int64_t) { }
-    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*) { }
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) { }
 #endif
 
 #if ENABLE(NOTIFICATIONS)

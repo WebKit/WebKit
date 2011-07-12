@@ -459,8 +459,8 @@ DumpRenderTree::DumpRenderTree()
             SLOT(titleChanged(const QString&)));
     connect(m_page, SIGNAL(databaseQuotaExceeded(QWebFrame*,QString)),
             this, SLOT(dumpDatabaseQuota(QWebFrame*,QString)));
-    connect(m_page, SIGNAL(applicationCacheQuotaExceeded(QWebSecurityOrigin *, quint64)),
-            this, SLOT(dumpApplicationCacheQuota(QWebSecurityOrigin *, quint64)));
+    connect(m_page, SIGNAL(applicationCacheQuotaExceeded(QWebSecurityOrigin *, quint64, quint64)),
+            this, SLOT(dumpApplicationCacheQuota(QWebSecurityOrigin *, quint64, quint64)));
     connect(m_page, SIGNAL(statusBarMessage(const QString&)),
             this, SLOT(statusBarMessage(const QString&)));
 
@@ -1039,16 +1039,21 @@ void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
     origin.setDatabaseQuota(databaseDefaultQuota);
 }
 
-void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint64 defaultOriginQuota)
+void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint64 defaultOriginQuota, quint64 totalSpaceNeeded)
 {
     if (!m_controller->shouldDumpApplicationCacheDelegateCallbacks())
         return;
 
-    printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i}\n",
+    printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i}\n totalSpaceNeeded:%llu",
            origin->scheme().toUtf8().data(),
            origin->host().toUtf8().data(),
-           origin->port()
+           origin->port(),
+           totalSpaceNeeded
            );
+
+    if (m_controller->shouldDisallowIncreaseForApplicationCacheQuota())
+        return;
+
     origin->setApplicationCacheQuota(defaultOriginQuota);
 }
 

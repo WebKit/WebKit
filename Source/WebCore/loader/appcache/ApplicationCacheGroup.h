@@ -103,7 +103,6 @@ private:
     static void postListenerTask(ApplicationCacheHost::EventID, int progressTotal, int progressDone, DocumentLoader*);
 
     void scheduleReachedMaxAppCacheSizeCallback();
-    void scheduleReachedOriginQuotaCallback();
 
     PassRefPtr<ResourceHandle> createResourceHandle(const KURL&, ApplicationCacheResource* newestCachedResource);
 
@@ -120,13 +119,13 @@ private:
     void didReceiveManifestData(const char*, int);
     void didFinishLoadingManifest();
     void didReachMaxAppCacheSize();
-    void didReachOriginQuota(PassRefPtr<Frame> frame);
+    void didReachOriginQuota(int64_t totalSpaceNeeded);
     
     void startLoadingEntry();
     void deliverDelayedMainResources();
     void checkIfLoadIsComplete();
     void cacheUpdateFailed();
-    void cacheUpdateFailedDueToOriginQuota();
+    void recalculateAvailableSpaceInQuota();
     void manifestNotFound();
     
     void addEntry(const String&, unsigned type);
@@ -202,10 +201,9 @@ private:
 
     int64_t m_loadedSize;
     int64_t m_availableSpaceInQuota;
-    bool m_originQuotaReached;
+    bool m_originQuotaExceededPreviously;
 
     friend class ChromeClientCallbackTimer;
-    friend class OriginQuotaReachedCallbackTimer;
 };
 
 } // namespace WebCore

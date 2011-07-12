@@ -1,3 +1,20 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebUIDelegatePrivate.h:
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:spaceNeeded:]):
+        Update the delegate to include a space needed parameter.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::reachedApplicationCacheOriginQuota):
+        Call the delegate with the new space needed information.
+
 2011-07-12  Adam Roben  <aroben@apple.com>
 
         Delete some redundant code in WebHTMLView

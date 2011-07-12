@@ -59,6 +59,7 @@ class LayoutTestController : public QObject {
 public:
     LayoutTestController(WebCore::DumpRenderTree* drt);
 
+    bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }
     bool shouldDumpBackForwardList() const { return m_dumpBackForwardList; }
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
@@ -91,11 +92,12 @@ signals:
 
 public slots:
     void maybeDump(bool ok);
+    void disallowIncreaseForApplicationCacheQuota() { m_disallowIncreaseForApplicationCacheQuota = true; }
     void dumpAsText() { m_textDump = true; }
     void dumpChildFramesAsText() { m_dumpChildrenAsText = true; }
     void dumpChildFrameScrollPositions() { m_dumpChildFrameScrollPositions = true; }
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
-    void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true;}
+    void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void setPrinting() { m_isPrinting = true; }
@@ -285,6 +287,7 @@ private:
 private:
     bool m_hasDumped;
     bool m_textDump;
+    bool m_disallowIncreaseForApplicationCacheQuota;
     bool m_dumpBackForwardList;
     bool m_dumpChildrenAsText;
     bool m_dumpChildFrameScrollPositions;

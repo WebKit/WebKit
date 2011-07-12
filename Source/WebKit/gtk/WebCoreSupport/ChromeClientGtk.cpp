@@ -602,7 +602,7 @@ void ChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
     notImplemented();
 }
 
-void ChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+void ChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
 {
     notImplemented();
 }

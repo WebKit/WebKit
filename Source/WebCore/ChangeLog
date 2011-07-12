@@ -1,3 +1,71 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        New behavior of handling ApplicationCache per-origin quotas. Previously,
+        if the quota was reached while downloading we would fail the download
+        and then prompt the user for a storage increase. This required a refresh,
+        a redownload of resources, and the total storage was not known so the
+        process could be repeated multiple times before an acceptable quota
+        was found or the user disallowed an increase.
+        
+        The new behavior is to complete the download of the entire appcache.
+        When the cache completes downloading and it is greater than the origin
+        quota, prompt the user to allow a quota increase with the known space
+        needed. If the quota is increased, the cache will succeed, otherwise
+        it will fail with the normal failure steps.
+
+        An alternative behavior is prompting while downloading immediately
+        when the origin quota is reached, however at that point the entire
+        space needed is unknown and so quota increases might not be enough
+        and could result in multiple prompts to the user.
+
+        Tests: http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
+               http/tests/appcache/origin-quota-continued-download.html
+
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        Rename instance variable to be more clear on its intent.
+
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        Check the quota limit while downloading so we can fail early
+        if the user already denied a quota increase.
+
+        (WebCore::ApplicationCacheGroup::didReachOriginQuota):
+        Pass the space needed information to the chrome client.
+
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailedDueToOriginQuota):
+        Removed. Instead convert the callers to update state and console
+        log when the per-origin quota is reached. This allows us to follow
+        the normal failure steps if the quota is reached at the end of a
+        download, and the alternative short path when we fail during downloading.
+
+        (WebCore::ApplicationCacheGroup::recalculateAvailableSpaceInQuota):
+        Extract to a helper function.
+
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        Allow for a quota increase at the end of the download now that
+        we know the space needed. Then proceed to fail or succeed
+        as we normally would.
+
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::checkOriginQuota):
+        (WebCore::ApplicationCacheStorage::storeNewestCache):
+        Extract checking the origin quota for when an ApplicationCacheGroup
+        will be replacing an ApplicationCacheGroup into a helper function.
+        The helper also provides an out parameter for the space needed
+        to properly fit the new cache group if it wouldn't fit.
+
+        * page/ChromeClient.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::reachedApplicationCacheOriginQuota):
+        Add a space needed parameter when reaching the per-origin quota.
+
 2011-07-12  Chris Rogers  <crogers@google.com>
 
         AudioDevice::Stop can close NULL handle.

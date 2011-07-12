@@ -43,7 +43,8 @@
 #include <wtf/RefPtr.h>
 
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash)
-    : m_dumpApplicationCacheDelegateCallbacks(false)
+    : m_disallowIncreaseForApplicationCacheQuota(false)
+    , m_dumpApplicationCacheDelegateCallbacks(false)
     , m_dumpAsAudio(false)
     , m_dumpAsPDF(false)
     , m_dumpAsText(false)
@@ -97,6 +98,13 @@ PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string&
 }
 
 // Static Functions
+
+static JSValueRef disallowIncreaseForApplicationCacheQuotaCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setDisallowIncreaseForApplicationCacheQuota(true);
+    return JSValueMakeUndefined(context);
+}
 
 static JSValueRef dumpApplicationCacheDelegateCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -2263,6 +2271,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "nodesFromRect", nodesFromRectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "decodeHostName", decodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "disableImageLoading", disableImageLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "disallowIncreaseForApplicationCacheQuota", disallowIncreaseForApplicationCacheQuotaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dispatchPendingLoadRequests", dispatchPendingLoadRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "display", displayCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "displayInvalidatedRegion", displayInvalidatedRegionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -1,3 +1,14 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-06-22  Jer Noble  <jer.noble@apple.com>
 
         Full-screen: Don't change the collectionBehavior of the WebView's NSWindow if not necessary

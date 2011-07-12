@@ -445,7 +445,7 @@ void ChromeClientWx::reachedMaxAppCacheSize(int64_t spaceNeeded)
     notImplemented();
 }
 
-void ChromeClientWx::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+void ChromeClientWx::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
 {
     notImplemented();
 }

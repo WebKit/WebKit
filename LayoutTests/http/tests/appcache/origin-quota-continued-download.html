@@ -1,0 +1,60 @@
+<html>
+<head>
+<script>
+
+// Helpers.
+
+function log(message) {
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+// Start and end.
+
+function startTest() {
+    if (window.layoutTestController) {
+        layoutTestController.clearAllApplicationCaches();
+        layoutTestController.dumpApplicationCacheDelegateCallbacks();
+        layoutTestController.setApplicationCacheOriginQuota(1024);
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    addIFrame();
+}
+
+function finishTest() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+// Stages.
+
+function addIFrameWithContinuation(src, continuation) {
+    window.onmessage = continuation;
+    var iframe = document.createElement("iframe");
+    iframe.src = src;
+    document.body.appendChild(iframe);
+}
+
+function addIFrame() {
+    // Expected to succeed. Default handling will raise the quota back up to 5MB which is enough.
+    addIFrameWithContinuation("resources/quota-origin-continued-download.html", function(event) {
+        log(event.data);
+        finishTest();
+    });
+}
+
+</script>
+</head>
+<body onload="startTest()">
+<p>This test checks that per-origin application cache quota don't require a refresh to complete successfully.</p>
+<p>
+    This test sets the quota for the origin to 1kb, and attempts to fill
+    it up with more than 1kb of data. The download should complete
+    successfully, with the quota being increased to the default of 5MB. The
+    delegate should be informed for the exceeded quota, increase it to a size
+    large enough, and the download succeed.
+</p>
+<pre id="console"></pre>
+</body>
+</html>

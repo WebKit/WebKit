@@ -1,3 +1,43 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        Include spaceNeeded information in the output dumped for appcache quota delegates.
+        Add and update tests related to handling of per-origin quotas.
+
+        * http/tests/appcache/origin-quota-continued-download-expected.txt: Added.
+        * http/tests/appcache/origin-quota-continued-download.html: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download.html: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download.manifest: Added.
+        New test which checks that there will still be a successful cache
+        when the per-origin quota is reached and increased at the end of downloading.
+
+        * http/tests/appcache/origin-quota-continued-download-multiple-manifests-expected.txt: Added.
+        * http/tests/appcache/origin-quota-continued-download-multiple-manifests.html: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download-multiple-manifests-1.html: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download-multiple-manifests-1.manifest: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download-multiple-manifests-2.html: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download-multiple-manifests-2.manifest: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download.html: Added.
+        * http/tests/appcache/resources/quota-origin-continued-download.manifest: Added.
+        New test which checks that the spaceNeeded appropriately lists enough space for
+        multiple manifests across multiple frames for the same origin.
+
+        * http/tests/appcache/resources/quota-origin-iframe-3.manifest: Fix a typo.
+        * http/tests/appcache/origin-quota.html:
+        Update the old test to disallow automatic increase of the quota,
+        which is the default handling of DRT when reaching the quota.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wk2/Skipped:
+        Skip the test on ports that don't implement ApplicationCache per-origin quotas.
+
 2011-07-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce UserMetrics for collecting stats in Chromium port.

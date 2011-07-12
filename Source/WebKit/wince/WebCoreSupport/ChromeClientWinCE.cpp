@@ -316,7 +316,7 @@ void ChromeClientWinCE::reachedMaxAppCacheSize(int64_t)
     notImplemented();
 }
 
-void ChromeClientWinCE::reachedApplicationCacheOriginQuota(SecurityOrigin*)
+void ChromeClientWinCE::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
 {
     notImplemented();
 }

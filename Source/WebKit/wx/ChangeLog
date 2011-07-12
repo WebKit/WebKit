@@ -1,3 +1,14 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::reachedApplicationCacheOriginQuota):
+        * WebKitSupport/ChromeClientWx.h:
+
 2011-07-09  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

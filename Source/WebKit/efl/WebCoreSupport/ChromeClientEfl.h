@@ -114,7 +114,7 @@ public:
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
-    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*);
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

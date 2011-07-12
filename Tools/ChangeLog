@@ -1,3 +1,38 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add layoutTestController.disallowIncreaseForApplicationCacheQuota()
+        to disable the default behavior of raising the default per-origin
+        quota to 5MB when reached. This allows us to test what happens
+        when the quota is reached and not increased.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (disallowIncreaseForApplicationCacheQuotaCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::disallowIncreaseForApplicationCacheQuota):
+        (LayoutTestController::setDisallowIncreaseForApplicationCacheQuota):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::disallowIncreaseForApplicationCacheQuota):
+        (LayoutTestController::dumpApplicationCacheDelegateCallbacks):
+        Expose a function to prevent automatically increasing the per-origin
+        quota when the quota is reached. This allows us to test what happens
+        when a user would "disallow" a quota increase.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:spaceNeeded:]):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dumpApplicationCacheQuota):
+        Respect the new disallowIncrease flag and dump the spaceNeeded values
+        for ports that implement application cache quotas.
+
 2011-07-12  Ojan Vafai  <ojan@chromium.org>
 
         fix flakiness dashboard to work with new crash log filenames

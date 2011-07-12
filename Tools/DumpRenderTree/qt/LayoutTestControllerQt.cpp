@@ -56,6 +56,7 @@ void LayoutTestController::reset()
     m_dumpChildFrameScrollPositions = false;
     m_canOpenWindows = false;
     m_waitForDone = false;
+    m_disallowIncreaseForApplicationCacheQuota = false;
     m_dumpTitleChanges = false;
     m_dumpDatabaseCallbacks = false;
     m_dumpApplicationCacheDelegateCallbacks = false;

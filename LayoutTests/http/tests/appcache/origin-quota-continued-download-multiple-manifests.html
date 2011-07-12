@@ -14,7 +14,6 @@ function startTest() {
     if (window.layoutTestController) {
         layoutTestController.clearAllApplicationCaches();
         layoutTestController.dumpApplicationCacheDelegateCallbacks();
-        layoutTestController.disallowIncreaseForApplicationCacheQuota();
         layoutTestController.setApplicationCacheOriginQuota(20*1024);
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
@@ -38,25 +37,16 @@ function addIFrameWithContinuation(src, continuation) {
 }
 
 function addFirstIFrame() {
-    // Expected to succeed.
-    addIFrameWithContinuation("resources/quota-origin-iframe-1.html", function(event) {
+    // Expected to succeed. Will be ~15kb out of the 20kb limit.
+    addIFrameWithContinuation("resources/quota-origin-continued-download-multiple-manifests-1.html", function(event) {
         log(event.data);
         addSecondIFrame();
     });
 }
 
 function addSecondIFrame() {
-    // Expected to fail, then increase the quota.
-    addIFrameWithContinuation("resources/quota-origin-iframe-2.html", function(event) {
-        log(event.data);
-        layoutTestController.setApplicationCacheOriginQuota(100*1024);
-        addThirdIFrame();
-    });
-}
-
-function addThirdIFrame() {
-    // Expected to succeed.
-    addIFrameWithContinuation("resources/quota-origin-iframe-3.html", function(event) {
+    // Expected to succeed, due to automatically increasing the quota.
+    addIFrameWithContinuation("resources/quota-origin-continued-download-multiple-manifests-2.html", function(event) {
         log(event.data);
         finishTest();
     });
@@ -65,13 +55,17 @@ function addThirdIFrame() {
 </script>
 </head>
 <body onload="startTest()">
-<p>This test checks that per-origin application cache quotas are enforced.</p>
+<p>This test checks that per-origin application cache quota works correctly with multiple manifests/caches per-origin.</p>
 <p>
     This test sets the quota for the origin to 20kb, and attempts to fill
-    it up with 2 iframes that are 13kb each. The application cache download
-    process should fail on the 2nd iframe and the UI Delegate should be
-    informed of the exceeded quota. Increasing the size to 40kb. A 3rd
-    iframe is added, which should succeed.
+    it up with 2 different application caches about 15kb each.
+
+    The first frame will cache successfully and fill up about 15kb of
+    the origin quota.
+
+    The second frame will reach the quota, cause a delegate callback,
+    dump the spaceNeeded (which should be enough for both iframe caches),
+    and succeed due to the default DRT behavior or raising the quota.
 </p>
 <pre id="console"></pre>
 </body>

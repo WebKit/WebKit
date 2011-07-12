@@ -197,14 +197,16 @@ extern NSString *WebConsoleMessageDebugMessageLevel;
 - (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier;
 
 /*!
-    @method webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:
+    @method webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:
     @param sender The WebView sending the delegate method.
-    @param origin The security origin that needs a larger quota
+    @param origin The security origin that needs a larger quota.
+    @param totalSpaceNeeded The amount of space needed to store the new manifest and keep all other
+    previously stored caches for this origin.
     @discussion This method is called when a page attempts to store more in the Application Cache
     for an origin than was allowed by the quota (or default) set for the origin. This allows the
     quota to be increased for the security origin.
 */
-- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin;
+- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded;
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 

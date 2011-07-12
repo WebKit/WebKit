@@ -72,7 +72,7 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCop
     , m_calledReachedMaxAppCacheSize(false)
     , m_loadedSize(0)
     , m_availableSpaceInQuota(ApplicationCacheStorage::unknownQuota())
-    , m_originQuotaReached(false)
+    , m_originQuotaExceededPreviously(false)
 {
 }
 
@@ -600,17 +600,20 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 
     // After finishing the loading of any resource, we check if it will
     // fit in our last known quota limit.
-    if (m_availableSpaceInQuota == ApplicationCacheStorage::unknownQuota()) {
-        // Failed to determine what is left in the quota. Fallback to allowing anything.
-        if (!cacheStorage().remainingSizeForOriginExcludingCache(m_origin.get(), m_newestCache.get(), m_availableSpaceInQuota))
-            m_availableSpaceInQuota = ApplicationCacheStorage::noQuota();
-    }
+    // FIXME: The quota could be changed by another appcache in the same origin.
+    if (m_availableSpaceInQuota == ApplicationCacheStorage::unknownQuota())
+        recalculateAvailableSpaceInQuota();
 
-    // Check each resource, as it loads, to see if it would fit in our
-    // idea of the available quota space.
-    if (m_availableSpaceInQuota < m_loadedSize) {
+    // While downloading check to see if we have exceeded the available quota.
+    // We can stop immediately if we have already previously failed
+    // due to an earlier quota restriction. The client was already notified
+    // of the quota being reached and decided not to increase it then.
+    // FIXME: Should we break earlier and prevent redownloading on later page loads?
+    // We could then also get rid of m_loadedSize.
+    if (m_originQuotaExceededPreviously && m_availableSpaceInQuota < m_loadedSize) {
         m_currentResource = 0;
-        cacheUpdateFailedDueToOriginQuota();
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because size quota was exceeded.", 0, String());
+        cacheUpdateFailed();
         return;
     }
 
@@ -795,11 +798,11 @@ void ApplicationCacheGroup::didReachMaxAppCacheSize()
     checkIfLoadIsComplete();
 }
 
-void ApplicationCacheGroup::didReachOriginQuota(PassRefPtr<Frame> frame)
+void ApplicationCacheGroup::didReachOriginQuota(int64_t totalSpaceNeeded)
 {
-    // Inform the client the origin quota has been reached,
-    // they may decide to increase the quota.
-    frame->page()->chrome()->client()->reachedApplicationCacheOriginQuota(m_origin.get());
+    // Inform the client the origin quota has been reached, they may decide to increase the quota.
+    // We expect quota to be increased synchronously while waiting for the call to return.
+    m_frame->page()->chrome()->client()->reachedApplicationCacheOriginQuota(m_origin.get(), totalSpaceNeeded);
 }
 
 void ApplicationCacheGroup::cacheUpdateFailed()
@@ -812,17 +815,12 @@ void ApplicationCacheGroup::cacheUpdateFailed()
     deliverDelayedMainResources();
 }
 
-void ApplicationCacheGroup::cacheUpdateFailedDueToOriginQuota()
+void ApplicationCacheGroup::recalculateAvailableSpaceInQuota()
 {
-    if (!m_originQuotaReached) {
-        m_originQuotaReached = true;
-        scheduleReachedOriginQuotaCallback();
+    if (!cacheStorage().remainingSizeForOriginExcludingCache(m_origin.get(), m_newestCache.get(), m_availableSpaceInQuota)) {
+        // Failed to determine what is left in the quota. Fallback to allowing anything.
+        m_availableSpaceInQuota = ApplicationCacheStorage::noQuota();
     }
-
-    m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because size quota was exceeded.", 0, String());
-
-    // FIXME: Should not abort cache update - the user may choose to increase the quota.
-    cacheUpdateFailed();
 }
     
 void ApplicationCacheGroup::manifestNotFound()
@@ -903,8 +901,15 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             ASSERT(cacheStorage().isMaximumSizeReached() && m_calledReachedMaxAppCacheSize);
         }
 
-        ApplicationCacheStorage::FailureReason failureReason;
         RefPtr<ApplicationCache> oldNewestCache = (m_newestCache == m_cacheBeingUpdated) ? RefPtr<ApplicationCache>() : m_newestCache;
+
+        // If we exceeded the origin quota while downloading we can request a quota
+        // increase now, before we attempt to store the cache.
+        int64_t totalSpaceNeeded;
+        if (!cacheStorage().checkOriginQuota(this, oldNewestCache.get(), m_cacheBeingUpdated.get(), totalSpaceNeeded))
+            didReachOriginQuota(totalSpaceNeeded);
+
+        ApplicationCacheStorage::FailureReason failureReason;
         setNewestCache(m_cacheBeingUpdated.release());
         if (cacheStorage().storeNewestCache(this, oldNewestCache.get(), failureReason)) {
             // New cache stored, now remove the old cache.
@@ -918,17 +923,18 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // Fire the success event.
             postListenerTask(isUpgradeAttempt ? ApplicationCacheHost::UPDATEREADY_EVENT : ApplicationCacheHost::CACHED_EVENT, m_associatedDocumentLoaders);
             // It is clear that the origin quota was not reached, so clear the flag if it was set.
-            m_originQuotaReached = false;
+            m_originQuotaExceededPreviously = false;
         } else {
             if (failureReason == ApplicationCacheStorage::OriginQuotaReached) {
-                // We ran out of space for this origin. Roll back to previous state.
-                if (oldNewestCache)
-                    setNewestCache(oldNewestCache.release());
-                cacheUpdateFailedDueToOriginQuota();
-                return;
+                // We ran out of space for this origin. Fall down to the normal error handling
+                // after recording this state.
+                m_originQuotaExceededPreviously = true;
+                m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because size quota was exceeded.", 0, String());
             }
 
             if (failureReason == ApplicationCacheStorage::TotalQuotaReached && !m_calledReachedMaxAppCacheSize) {
+                // FIXME: Should this be handled more like Origin Quotas? Does this fail properly?
+
                 // We ran out of space. All the changes in the cache storage have
                 // been rolled back. We roll back to the previous state in here,
                 // as well, call the chrome client asynchronously and retry to
@@ -1090,12 +1096,6 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
     ChromeClientCallbackTimer* timer = new ChromeClientCallbackTimer(this);
     timer->startOneShot(0);
     // The timer will delete itself once it fires.
-}
-
-void ApplicationCacheGroup::scheduleReachedOriginQuotaCallback()
-{
-    // FIXME: it might be nice to run this asynchronously, because there is no return value to wait for.
-    didReachOriginQuota(m_frame);
 }
 
 class CallCacheListenerTask : public ScriptExecutionContext::Task {

@@ -1,3 +1,14 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::reachedApplicationCacheOriginQuota):
+        * src/ChromeClientImpl.h:
+
 2011-07-12  John Bates  <jbates@google.com>
 
         Move call to syncCompositingLayers so that we do not trigger redundant draws.

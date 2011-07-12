@@ -1,3 +1,14 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2011-06-14  Mike Stegeman  <mrstegeman@gmail.com>
 
         Add API to WebKit-GTK to allow setting localStorage database path

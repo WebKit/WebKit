@@ -155,6 +155,9 @@ public:
     bool generatePixelResults() const { return m_generatePixelResults; }
     void setGeneratePixelResults(bool generatePixelResults) { m_generatePixelResults = generatePixelResults; }
 
+    bool disallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
+    void setDisallowIncreaseForApplicationCacheQuota(bool disallowIncrease) { m_disallowIncreaseForApplicationCacheQuota = disallowIncrease; }
+
     bool dumpApplicationCacheDelegateCallbacks() const { return m_dumpApplicationCacheDelegateCallbacks; }
     void setDumpApplicationCacheDelegateCallbacks(bool dumpCallbacks) { m_dumpApplicationCacheDelegateCallbacks = dumpCallbacks; }
 
@@ -351,6 +354,7 @@ private:
 
     void setGeolocationPermissionCommon(bool allow);
 
+    bool m_disallowIncreaseForApplicationCacheQuota;
     bool m_dumpApplicationCacheDelegateCallbacks;
     bool m_dumpAsAudio;
     bool m_dumpAsPDF;

@@ -955,6 +955,28 @@ bool ApplicationCacheStorage::ensureOriginRecord(const SecurityOrigin* origin)
     return true;
 }
 
+bool ApplicationCacheStorage::checkOriginQuota(ApplicationCacheGroup* group, ApplicationCache* oldCache, ApplicationCache* newCache, int64_t& totalSpaceNeeded)
+{
+    // Check if the oldCache with the newCache would reach the per-origin quota.
+    int64_t remainingSpaceInOrigin;
+    const SecurityOrigin* origin = group->origin();
+    if (remainingSizeForOriginExcludingCache(origin, oldCache, remainingSpaceInOrigin)) {
+        if (remainingSpaceInOrigin < newCache->estimatedSizeInStorage()) {
+            int64_t quota;
+            if (quotaForOrigin(origin, quota)) {
+                totalSpaceNeeded = quota - remainingSpaceInOrigin + newCache->estimatedSizeInStorage();
+                return false;
+            }
+
+            ASSERT_NOT_REACHED();
+            totalSpaceNeeded = 0;
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group, ApplicationCache* oldCache, FailureReason& failureReason)
 {
     openDatabase(true);
@@ -970,12 +992,10 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group, App
     storeCacheTransaction.begin();
 
     // Check if this would reach the per-origin quota.
-    int64_t remainingSpaceInOrigin;
-    if (remainingSizeForOriginExcludingCache(group->origin(), oldCache, remainingSpaceInOrigin)) {
-        if (remainingSpaceInOrigin < group->newestCache()->estimatedSizeInStorage()) {
-            failureReason = OriginQuotaReached;
-            return false;
-        }
+    int64_t totalSpaceNeededIgnored;
+    if (!checkOriginQuota(group, oldCache, group->newestCache(), totalSpaceNeededIgnored)) {
+        failureReason = OriginQuotaReached;
+        return false;
     }
 
     GroupStorageIDJournal groupStorageIDJournal;

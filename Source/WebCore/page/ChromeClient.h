@@ -192,8 +192,11 @@ namespace WebCore {
         // means that the resources attempting to be cached via the manifest are
         // more than allowed on this origin. This callback allows the chrome client
         // to take action, such as prompting the user to ask to increase the quota
-        // for this origin.
-        virtual void reachedApplicationCacheOriginQuota(SecurityOrigin* origin) = 0;
+        // for this origin. The totalSpaceNeeded parameter is the total amount of
+        // storage, in bytes, needed to store the new cache along with all of the
+        // other existing caches for the origin that would not be replaced by
+        // the new cache.
+        virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)

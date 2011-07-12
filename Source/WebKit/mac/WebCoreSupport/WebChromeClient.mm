@@ -698,12 +698,12 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
     // FIXME: Free some space.
 }
 
-void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin)
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, int64_t totalSpaceNeeded)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
-    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:), webOrigin);
+    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:), webOrigin, static_cast<NSUInteger>(totalSpaceNeeded));
     [webOrigin release];
 
     END_BLOCK_OBJC_EXCEPTIONS;

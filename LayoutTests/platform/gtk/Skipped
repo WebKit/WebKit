@@ -584,6 +584,8 @@ fast/js/i18n-bindings-locale.html
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/appcache/fallback.html
 http/tests/appcache/origin-quota.html
+http/tests/appcache/origin-quota-continued-download.html
+http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
 http/tests/appcache/origin-delete.html
 http/tests/appcache/origins-with-appcache.html
 # LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127

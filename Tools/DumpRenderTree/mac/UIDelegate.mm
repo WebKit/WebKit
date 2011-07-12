@@ -166,12 +166,15 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     [[origin databaseQuotaManager] setQuota:defaultQuota];
 }
 
-- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin
+- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
 {
     if (!done && gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
-        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i}\n",
-            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port]);
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:%lu\n",
+            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], totalSpaceNeeded);
     }
+
+    if (gLayoutTestController->disallowIncreaseForApplicationCacheQuota())
+        return;
 
     static const unsigned long long defaultOriginQuota = [WebApplicationCache defaultOriginQuota];
     [[origin applicationCacheQuotaManager] setQuota:defaultOriginQuota];

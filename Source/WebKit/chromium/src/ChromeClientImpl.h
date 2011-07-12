@@ -131,7 +131,7 @@ public:
         WebCore::Frame*, const WTF::String& databaseName);
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
-    virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*);
+    virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
 #endif
 #if ENABLE(NOTIFICATIONS)
     virtual WebCore::NotificationPresenter* notificationPresenter() const;

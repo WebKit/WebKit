@@ -131,7 +131,7 @@ public:
     // more than allowed on this origin. This callback allows the chrome client
     // to take action, such as prompting the user to ask to increase the quota
     // for this origin.
-    virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*);
+    virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
