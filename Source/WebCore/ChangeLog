@@ -1,3 +1,54 @@
+2011-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Isolate HTMLTextFormControlElement into a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=64381
+
+        Reviewed by Dimitri Glazkov.
+
+        Extracted HTMLTextFormControlElement.h and HTMLTextFormControlElement.cpp out of
+        HTMLFormControlElement.h and HTMLFormControlElement.cpp.
+
+        Also moved defaultEventHandler from HTMLFormControlElementWithState to HTMLTextFormControlElement
+        because it was specific to HTMLTextFormControlElement, and replaced all references to
+        HTMLFormControlElementWithState in HTMLInputElement and HTMLTextAreaElement by ones to
+        HTMLTextFormControlElement.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/TextIterator.cpp:
+        * editing/htmlediting.cpp:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isFocusable):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable):
+        (WebCore::HTMLInputElement::isMouseFocusable):
+        (WebCore::HTMLInputElement::updateFocusAppearance):
+        (WebCore::HTMLInputElement::canStartSelection):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::finishParsingChildren):
+        (WebCore::HTMLInputElement::rendererIsNeeded):
+        (WebCore::HTMLInputElement::attach):
+        (WebCore::HTMLInputElement::detach):
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument):
+        (WebCore::HTMLInputElement::addSubresourceAttributeURLs):
+        (WebCore::HTMLInputElement::recalcWillValidate):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp: Copied from Source/WebCore/html/HTMLFormControlElement.cpp.
+        (WebCore::HTMLTextFormControlElement::defaultEventHandler):
+        * html/HTMLTextFormControlElement.h: Copied from Source/WebCore/html/HTMLFormControlElement.h.
+
 2011-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90831.

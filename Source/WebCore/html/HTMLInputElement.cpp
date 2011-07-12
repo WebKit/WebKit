@@ -456,15 +456,15 @@ void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (isTextField())
-        return HTMLFormControlElementWithState::isFocusable();
-    return HTMLFormControlElementWithState::isKeyboardFocusable(event) && m_inputType->isKeyboardFocusable();
+        return HTMLTextFormControlElement::isFocusable();
+    return HTMLTextFormControlElement::isKeyboardFocusable(event) && m_inputType->isKeyboardFocusable();
 }
 
 bool HTMLInputElement::isMouseFocusable() const
 {
     if (isTextField())
-        return HTMLFormControlElementWithState::isFocusable();
-    return HTMLFormControlElementWithState::isMouseFocusable();
+        return HTMLTextFormControlElement::isFocusable();
+    return HTMLTextFormControlElement::isMouseFocusable();
 }
 
 void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
@@ -477,7 +477,7 @@ void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
         if (document()->frame())
             document()->frame()->selection()->revealSelection();
     } else
-        HTMLFormControlElementWithState::updateFocusAppearance(restorePreviousSelection);
+        HTMLTextFormControlElement::updateFocusAppearance(restorePreviousSelection);
 }
 
 void HTMLInputElement::aboutToUnload()
@@ -629,7 +629,7 @@ bool HTMLInputElement::canStartSelection() const
 {
     if (!isTextField())
         return false;
-    return HTMLFormControlElementWithState::canStartSelection();
+    return HTMLTextFormControlElement::canStartSelection();
 }
 
 bool HTMLInputElement::canHaveSelection() const
@@ -666,7 +666,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         checkedRadioButtons().removeButton(this);
         m_name = attr->value();
         checkedRadioButtons().addButton(this);
-        HTMLFormControlElementWithState::parseMappedAttribute(attr);
+        HTMLTextFormControlElement::parseMappedAttribute(attr);
     } else if (attr->name() == autocompleteAttr) {
         if (equalIgnoringCase(attr->value(), "off")) {
             m_autocomplete = Off;
@@ -777,7 +777,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 void HTMLInputElement::finishParsingChildren()
 {
     m_parsingInProgress = false;
-    HTMLFormControlElementWithState::finishParsingChildren();
+    HTMLTextFormControlElement::finishParsingChildren();
     if (!m_stateRestored) {
         bool checked = hasAttribute(checkedAttr);
         if (checked)
@@ -788,7 +788,7 @@ void HTMLInputElement::finishParsingChildren()
 
 bool HTMLInputElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    return m_inputType->rendererIsNeeded() && HTMLFormControlElementWithState::rendererIsNeeded(context);
+    return m_inputType->rendererIsNeeded() && HTMLTextFormControlElement::rendererIsNeeded(context);
 }
 
 RenderObject* HTMLInputElement::createRenderer(RenderArena* arena, RenderStyle* style)
@@ -803,7 +803,7 @@ void HTMLInputElement::attach()
     if (!m_hasType)
         updateType();
 
-    HTMLFormControlElementWithState::attach();
+    HTMLTextFormControlElement::attach();
 
     m_inputType->attach();
 
@@ -815,7 +815,7 @@ void HTMLInputElement::attach()
 
 void HTMLInputElement::detach()
 {
-    HTMLFormControlElementWithState::detach();
+    HTMLTextFormControlElement::detach();
     setFormControlValueMatchesRenderer(false);
 }
 
@@ -936,7 +936,7 @@ void HTMLInputElement::copyNonAttributeProperties(const Element* source)
     m_reflectsCheckedAttribute = sourceElement->m_reflectsCheckedAttribute;
     m_isIndeterminate = sourceElement->m_isIndeterminate;
 
-    HTMLFormControlElementWithState::copyNonAttributeProperties(source);
+    HTMLTextFormControlElement::copyNonAttributeProperties(source);
 }
 
 String HTMLInputElement::value() const
@@ -1150,7 +1150,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // Makes editing keyboard handling take precedence over the keydown and keypress handling in this function.
     bool callBaseClassEarly = isTextField() && (evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent);
     if (callBaseClassEarly) {
-        HTMLFormControlElementWithState::defaultEventHandler(evt);
+        HTMLTextFormControlElement::defaultEventHandler(evt);
         if (evt->defaultHandled())
             return;
     }
@@ -1216,7 +1216,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     m_inputType->forwardEvent(evt);
 
     if (!callBaseClassEarly && !evt->defaultHandled())
-        HTMLFormControlElementWithState::defaultEventHandler(evt);
+        HTMLTextFormControlElement::defaultEventHandler(evt);
 }
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const
@@ -1389,26 +1389,26 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
 
     document()->checkedRadioButtons().removeButton(this);
 
-    HTMLFormControlElementWithState::willMoveToNewOwnerDocument();
+    HTMLTextFormControlElement::willMoveToNewOwnerDocument();
 }
 
 void HTMLInputElement::didMoveToNewOwnerDocument()
 {
     registerForActivationCallbackIfNeeded();
 
-    HTMLFormControlElementWithState::didMoveToNewOwnerDocument();
+    HTMLTextFormControlElement::didMoveToNewOwnerDocument();
 }
 
 void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    HTMLFormControlElementWithState::addSubresourceAttributeURLs(urls);
+    HTMLTextFormControlElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, src());
 }
 
 bool HTMLInputElement::recalcWillValidate() const
 {
-    return m_inputType->supportsValidation() && HTMLFormControlElementWithState::recalcWillValidate();
+    return m_inputType->supportsValidation() && HTMLTextFormControlElement::recalcWillValidate();
 }
 
 #if ENABLE(DATALIST)

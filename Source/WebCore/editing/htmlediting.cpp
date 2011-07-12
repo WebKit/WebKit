@@ -31,7 +31,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElementFactory.h"
-#include "HTMLFormControlElement.h"
+#include "HTMLTextFormControlElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"

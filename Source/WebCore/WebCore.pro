@@ -732,6 +732,7 @@ SOURCES += \
     html/HTMLTableRowsCollection.cpp \
     html/HTMLTableSectionElement.cpp \
     html/HTMLTextAreaElement.cpp \
+    html/HTMLTextFormControlElement.cpp \
     html/HTMLTitleElement.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
@@ -1725,6 +1726,7 @@ HEADERS += \
     html/HTMLTableRowsCollection.h \
     html/HTMLTableSectionElement.h \
     html/HTMLTextAreaElement.h \
+    html/HTMLTextFormControlElement.h \
     html/HTMLTitleElement.h \
     html/HTMLTrackElement.h \
     html/HTMLUListElement.h \

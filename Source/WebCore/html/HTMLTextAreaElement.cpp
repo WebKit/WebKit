@@ -239,7 +239,7 @@ void HTMLTextAreaElement::defaultEventHandler(Event* event)
     else if (renderer() && event->isBeforeTextInsertedEvent())
         handleBeforeTextInsertedEvent(static_cast<BeforeTextInsertedEvent*>(event));
 
-    HTMLFormControlElementWithState::defaultEventHandler(event);
+    HTMLTextFormControlElement::defaultEventHandler(event);
 }
 
 void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event) const

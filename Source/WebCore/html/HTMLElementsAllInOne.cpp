@@ -102,6 +102,7 @@
 #include "HTMLTableRowElement.cpp"
 #include "HTMLTableSectionElement.cpp"
 #include "HTMLTextAreaElement.cpp"
+#include "HTMLTextFormControlElement.cpp"
 #include "HTMLTitleElement.cpp"
 #include "HTMLUListElement.cpp"
 #include "HTMLVideoElement.cpp"

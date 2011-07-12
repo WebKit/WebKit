@@ -24,7 +24,7 @@
 #ifndef HTMLInputElement_h
 #define HTMLInputElement_h
 
-#include "HTMLFormControlElement.h"
+#include "HTMLTextFormControlElement.h"
 
 namespace WebCore {
 

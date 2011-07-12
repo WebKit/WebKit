@@ -31,10 +31,8 @@ namespace WebCore {
 
 class FormDataList;
 class HTMLFormElement;
-class RenderTextControl;
 class ValidationMessage;
 class ValidityState;
-class VisibleSelection;
 
 // HTMLFormControlElement is the default implementation of FormAssociatedElement,
 // and form-associated element implementations should use HTMLFormControlElement
@@ -179,95 +177,10 @@ protected:
     virtual void finishParsingChildren();
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
-    virtual void defaultEventHandler(Event*);
 
 private:
     virtual bool shouldSaveAndRestoreFormControlState() const;
 };
-
-// FIXME: Give this class its own header file.
-class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
-public:
-    // Common flag for HTMLInputElement::tooLong() and HTMLTextAreaElement::tooLong().
-    enum NeedsToCheckDirtyFlag {CheckDirtyFlag, IgnoreDirtyFlag};
-
-    virtual ~HTMLTextFormControlElement();
-
-    virtual void insertedIntoDocument();
-
-    // The derived class should return true if placeholder processing is needed.
-    virtual bool supportsPlaceholder() const = 0;
-    String strippedPlaceholder() const;
-    bool placeholderShouldBeVisible() const;
-
-    int selectionStart() const;
-    int selectionEnd() const;
-    void setSelectionStart(int);
-    void setSelectionEnd(int);
-    void select();
-    void setSelectionRange(int start, int end);
-    PassRefPtr<Range> selection() const;
-    String selectedText() const;
-
-    virtual void dispatchFormControlChangeEvent();
-
-    virtual int maxLength() const = 0;
-    virtual String value() const = 0;
-
-    virtual HTMLElement* innerTextElement() const = 0;
-
-    void cacheSelection(int start, int end)
-    {
-        m_cachedSelectionStart = start;
-        m_cachedSelectionEnd = end;
-    }
-
-    void selectionChanged(bool userTriggered);
-
-protected:
-    HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
-
-    void updatePlaceholderVisibility(bool);
-
-    virtual void parseMappedAttribute(Attribute*);
-
-    void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
-
-    void restoreCachedSelection();
-    bool hasCachedSelectionStart() const { return m_cachedSelectionStart >= 0; }
-    bool hasCachedSelectionEnd() const { return m_cachedSelectionEnd >= 0; }
-
-private:
-    int computeSelectionStart() const;
-    int computeSelectionEnd() const;
-
-    virtual void dispatchFocusEvent();
-    virtual void dispatchBlurEvent();
-
-    bool isPlaceholderEmpty() const;
-
-    // Returns true if user-editable value is empty. Used to check placeholder visibility.
-    virtual bool isEmptyValue() const = 0;
-    // Returns true if suggested value is empty. Used to check placeholder visibility.
-    virtual bool isEmptySuggestedValue() const { return true; }
-    // Called in dispatchFocusEvent(), after placeholder process, before calling parent's dispatchFocusEvent().
-    virtual void handleFocusEvent() { }
-    // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
-    virtual void handleBlurEvent() { }
-
-    RenderTextControl* textRendererAfterUpdateLayout();
-
-    String m_textAsOfLastFormControlChangeEvent;
-    
-    int m_cachedSelectionStart;
-    int m_cachedSelectionEnd;
-};
-
-// This function returns 0 when node is an input element and not a text field.
-inline HTMLTextFormControlElement* toTextFormControl(Node* node)
-{
-    return (node && node->isElementNode() && static_cast<Element*>(node)->isTextFormControl()) ? static_cast<HTMLTextFormControlElement*>(node) : 0;
-}
 
 } // namespace
 

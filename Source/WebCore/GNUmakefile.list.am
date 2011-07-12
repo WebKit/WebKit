@@ -1776,6 +1776,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLTableSectionElement.h \
 	Source/WebCore/html/HTMLTextAreaElement.cpp \
 	Source/WebCore/html/HTMLTextAreaElement.h \
+	Source/WebCore/html/HTMLTextFormControlElement.cpp \
+	Source/WebCore/html/HTMLTextFormControlElement.h \
 	Source/WebCore/html/HTMLTitleElement.cpp \
 	Source/WebCore/html/HTMLTitleElement.h \
 	Source/WebCore/html/HTMLTrackElement.cpp \

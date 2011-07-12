@@ -774,6 +774,7 @@ SET(WebCore_SOURCES
     html/HTMLTableRowsCollection.cpp
     html/HTMLTableSectionElement.cpp
     html/HTMLTextAreaElement.cpp
+    html/HTMLTextFormControlElement.cpp
     html/HTMLTitleElement.cpp
     html/HTMLUListElement.cpp
     html/HTMLViewSourceDocument.cpp
