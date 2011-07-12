@@ -1,5 +1,20 @@
 2011-07-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG speculative JIT does not guard itself against floating point speculation
+        failures on non-floating-point constants.
+        https://bugs.webkit.org/show_bug.cgi?id=64330
+
+        Reviewed by Gavin Barraclough.
+        
+        Made fillSpeculateDouble immediate invoke terminateSpeculativeExecution() as
+        soon as it notices that it's speculating on something that is a non-numeric
+        JSConstant.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
+2011-07-11  Filip Pizlo  <fpizlo@apple.com>
+
         DFG Speculative JIT does not always insert speculation checks when speculating
         arrays.
         https://bugs.webkit.org/show_bug.cgi?id=64254

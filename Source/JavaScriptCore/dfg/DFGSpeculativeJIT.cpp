@@ -206,12 +206,8 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
                 info.fillDouble(fpr);
                 return fpr;
             }
-            ASSERT(isJSConstant(nodeIndex));
-            JSValue jsValue = valueOfJSConstant(nodeIndex);
-            m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
-            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            info.fillJSValue(gpr, DataFormatJS);
-            unlock(gpr);
+            terminateSpeculativeExecution();
+            return fprAllocate();
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
