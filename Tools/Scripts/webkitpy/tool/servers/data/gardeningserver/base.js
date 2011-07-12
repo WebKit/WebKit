@@ -38,6 +38,15 @@ base.uniquifyArray = function(array)
     return result;
 };
 
+base.keys = function(dictionary)
+{
+    var keys = [];
+    $.each(dictionary, function(key, value) {
+        keys.push(key);
+    });
+    return keys;
+};
+
 base.filterTree = function(tree, isLeaf, predicate)
 {
     var filteredTree = {};

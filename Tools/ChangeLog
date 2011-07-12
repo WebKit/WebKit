@@ -1,5 +1,28 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should display regression ranges
+        https://bugs.webkit.org/show_bug.cgi?id=64407
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch computes a regression range for a failure by intersecting
+        the regression ranges seen by the various bots.  We make the underlying
+        assumption that a test is only failing due to one revision at any given
+        moment.  If that's not true, this code probably explodes.
+
+        The regression ranges appear asynchronously, which might be a jarring
+        UI.  We'll have to experiment to see.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         cr-linux-ews should run pixel tests
         https://bugs.webkit.org/show_bug.cgi?id=64394
 

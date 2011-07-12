@@ -22,8 +22,17 @@ function fetchResults(onsuccess)
             $('.results').append(partyTime);
             partyTime.fadeIn(1200).delay(7000).fadeOut();
         } else {
-            var resultsSummary = ui.summarizeResultsByTest(unexpectedFailures);
-            $('.results').append($(resultsSummary).addClass('regression'));
+            var regressions = $('<div class="results-summary regression"></div>');
+            $.each(resultsByTest, function(testName, resultNodesByBuilder) {
+                var testSummary = ui.summarizeTest(testName, resultNodesByBuilder);
+                regressions.append(testSummary);
+
+                var builderNameList = base.keys(resultNodesByBuilder);
+                results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
+                    $('.when', regressions).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+                });
+            });
+            $('.results').append(regressions);
         }
         setIconState(hasFailures);
         onsuccess();

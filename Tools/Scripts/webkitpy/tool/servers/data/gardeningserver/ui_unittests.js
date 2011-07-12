@@ -19,12 +19,23 @@ var kExampleResultsByTest = {
     }
 }
 
-test("summarizeResultsByTest", 3, function() {
-    var resultsSummary = ui.summarizeResultsByTest(kExampleResultsByTest);
-    var resultsSummaryHTML = resultsSummary.html();
-    ok(resultsSummaryHTML.indexOf('scrollbars/custom-scrollbar-with-incomplete-style.html') != -1);
-    ok(resultsSummaryHTML.indexOf('userscripts/another-test.html') != -1);
-    ok(resultsSummaryHTML.indexOf('Mock Builder') != -1);
+test("summarizeTest", 3, function() {
+    var testName = 'userscripts/another-test.html';
+    var summary = ui.summarizeTest(testName, kExampleResultsByTest[testName]);
+    var summaryHTML = summary.html();
+    ok(summaryHTML.indexOf('scrollbars/custom-scrollbar-with-incomplete-style.html') == -1);
+    ok(summaryHTML.indexOf('userscripts/another-test.html') != -1);
+    ok(summaryHTML.indexOf('Mock Builder') != -1);
+});
+
+test("summarizeRegressionRange", 2, function() {
+    var summaryWithMultipleRevisions = ui.summarizeRegressionRange(90424, 90426);
+    summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
+    equal(summaryWithMultipleRevisions.parent().html(), '<a class="regression-range" href="http://trac.webkit.org/log/trunk/?rev=90427&amp;stop_rev=90424&amp;limit=100&amp;verbose=on">Regression 90427:90424</a>');
+
+    var summaryWithOneRevision = ui.summarizeRegressionRange(90425, 90426);
+    summaryWithOneRevision.wrap('<wrapper></wrapper>');
+    equal(summaryWithOneRevision.parent().html(), '<a class="regression-range" href="http://trac.webkit.org/log/trunk/?rev=90427&amp;stop_rev=90425&amp;limit=100&amp;verbose=on">Regression 90427:90425</a>');
 });
 
 test("results", 1, function() {

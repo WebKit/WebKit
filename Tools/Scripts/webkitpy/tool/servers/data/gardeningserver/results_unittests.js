@@ -137,7 +137,7 @@ NetworkSimulator.prototype.runTest = function(testCase)
     equal(window.base, realBase, "Failed to restore real base!");
 }
 
-test("regressionRangeForFailure", 3, function() {
+test("regressionRangeForFailure", 5, function() {
     var simulator = new NetworkSimulator();
 
     var keyMap = {
@@ -188,22 +188,47 @@ test("regressionRangeForFailure", 3, function() {
                 },
             },
             "revision": "90424"
+        },
+        "abc":{
+            "tests": {
+                "userscripts": {
+                    "another-test.html": {
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    }
+                },
+            },
+            "revision": "90426"
+        },
+        "xyz":{
+            "tests": {
+            },
+            "revision": "90425"
         }
     };
 
     simulator.jsonpHook = function(url, callback) {
         simulator.scheduleCallback(function() {
             if (/dir=1/.test(url)) {
-                callback([
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNfTUAw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGJWCUQw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGKbLUAw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGOj5UAw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGP-AUQw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGPL3UAw" },
-                    { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNHJQAw" },
-                ]);
+                if (/builder=Mock/.test(url)) {
+                    callback([
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNfTUAw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGJWCUQw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGKbLUAw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGOj5UAw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGP-AUQw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGPL3UAw" },
+                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNHJQAw" },
+                    ]);
+                } else if (/builder=Another/.test(url)) {
+                    callback([
+                        { "key": "abc" },
+                        { "key": "xyz" },
+                    ]);
+                } else {
+                    ok(false, 'Unexpected URL: ' + url);
+                }
             } else {
                 var key = url.match(/key=([^&]+)/)[1];
                 callback(keyMap[key]);
@@ -214,6 +239,11 @@ test("regressionRangeForFailure", 3, function() {
         results.regressionRangeForFailure("Mock Builder", "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
             equals(oldestFailingRevision, 90426);
             equals(newestPassingRevision, 90424);
+        });
+
+        results.unifyRegressionRanges(["Mock Builder", "Another Builder"], "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
+            equals(oldestFailingRevision, 90426);
+            equals(newestPassingRevision, 90425);
         });
     });
 });

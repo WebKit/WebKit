@@ -257,6 +257,50 @@ results.regressionRangeForFailure = function(builderName, testName, callback)
     });
 };
 
+function mergeRegressionRanges(regressionRanges)
+{
+    var mergedRange = {};
+
+    mergedRange.oldestFailingRevision = 0;
+    mergedRange.newestPassingRevision = 0;
+
+    $.each(regressionRanges, function(builderName, range) {
+        if (!mergedRange.oldestFailingRevision)
+            mergedRange.oldestFailingRevision = range.oldestFailingRevision;
+        if (!mergedRange.newestPassingRevision)
+            mergedRange.newestPassingRevision = range.newestPassingRevision;
+
+        if (range.oldestFailingRevision < mergedRange.oldestFailingRevision)
+            mergedRange.oldestFailingRevision = range.oldestFailingRevision;
+        if (range.newestPassingRevision > mergedRange.newestPassingRevision)
+            mergedRange.newestPassingRevision = range.newestPassingRevision;
+    });
+    return mergedRange;
+}
+
+results.unifyRegressionRanges = function(builderNameList, testName, callback)
+{
+    var queriesInFlight = builderNameList.length;
+    if (!queriesInFlight)
+        callback(0, 0);
+
+    var regressionRanges = {};
+    $.each(builderNameList, function(index, builderName) {
+        results.regressionRangeForFailure(builderName, testName, function(oldestFailingRevision, newestPassingRevision) {
+            var range = {};
+            range.oldestFailingRevision = oldestFailingRevision;
+            range.newestPassingRevision = newestPassingRevision;
+            regressionRanges[builderName] = range;
+
+            --queriesInFlight;
+            if (!queriesInFlight) {
+                var mergedRange = mergeRegressionRanges(regressionRanges);
+                callback(mergedRange.oldestFailingRevision, mergedRange.newestPassingRevision);
+            }
+        });
+    });
+};
+
 results.resultNodeForTest = function(resultsTree, testName)
 {
     var testNamePath = testName.split('/');
