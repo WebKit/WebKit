@@ -73,7 +73,7 @@ class DummyOptions(object):
             self.__dict__[key] = value
 
 
-# FIXME: This class should merge with webkitpy.common.config.ports.
+# FIXME: This class should merge with WebKitPort now that Chromium behaves mostly like other webkit ports.
 class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package."""
 

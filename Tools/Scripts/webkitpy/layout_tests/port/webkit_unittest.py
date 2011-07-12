@@ -146,3 +146,43 @@ BUG_SKIPPED SKIP : media = FAIL""")
         port._executive = MockExecutive(should_log=True, should_throw=True)
         expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release']\n"
         self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
+
+    def _assert_config_file_for_platform(self, port, platform, config_file):
+        self.assertEquals(port._apache_config_file_name_for_platform(platform), config_file)
+
+    def test_linux_distro_detection(self):
+        port = TestWebKitPort()
+        self.assertFalse(port._is_redhat_based())
+        self.assertFalse(port._is_debian_based())
+
+        port._filesystem = MockFileSystem({'/etc/redhat-release': ''})
+        self.assertTrue(port._is_redhat_based())
+        self.assertFalse(port._is_debian_based())
+
+        port._filesystem = MockFileSystem({'/etc/debian_version': ''})
+        self.assertFalse(port._is_redhat_based())
+        self.assertTrue(port._is_debian_based())
+
+    def test_apache_config_file_name_for_platform(self):
+        port = TestWebKitPort()
+        self._assert_config_file_for_platform(port, 'cygwin', 'cygwin-httpd.conf')
+
+        self._assert_config_file_for_platform(port, 'linux2', 'apache2-httpd.conf')
+        self._assert_config_file_for_platform(port, 'linux3', 'apache2-httpd.conf')
+
+        port._is_redhat_based = lambda: True
+        self._assert_config_file_for_platform(port, 'linux2', 'fedora-httpd.conf')
+
+        port = TestWebKitPort()
+        port._is_debian_based = lambda: True
+        self._assert_config_file_for_platform(port, 'linux2', 'apache2-debian-httpd.conf')
+
+        self._assert_config_file_for_platform(port, 'mac', 'apache2-httpd.conf')
+        self._assert_config_file_for_platform(port, 'win32', 'apache2-httpd.conf')  # win32 isn't a supported sys.platform.  AppleWin/WinCairo/WinCE ports all use cygwin.
+        self._assert_config_file_for_platform(port, 'barf', 'apache2-httpd.conf')
+
+    def test_path_to_apache_config_file(self):
+        port = TestWebKitPort()
+        # Mock out _apache_config_file_name_for_platform to ignore the passed sys.platform value.
+        port._apache_config_file_name_for_platform = lambda platform: 'httpd.conf'
+        self.assertEquals(port._path_to_apache_config_file(), '/mock/LayoutTests/http/conf/httpd.conf')

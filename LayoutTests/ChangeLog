@@ -1,3 +1,15 @@
+2011-07-12  Eric Seidel  <eric@webkit.org>
+
+        [Qt] NRWT should pick up the right httpd config file
+        https://bugs.webkit.org/show_bug.cgi?id=64086
+
+        Reviewed by Adam Barth.
+
+        Removed this old httpd.conf file (used by Tiger and old linux distros)
+        since no supported WebKit ports use it anymore.
+
+        * http/conf/httpd.conf: Removed.
+
 2011-07-11  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Adam Roben.

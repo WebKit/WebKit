@@ -57,5 +57,6 @@ class WinPort(WebKitPort):
         # FIXME: This does not work for WebKit2.
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 
-    def _path_to_apache_config_file(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'cygwin-httpd.conf')
+    # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
+    # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
+    # We might use setup_environ_for_server for such a hack (or modify apache_http_server.py).

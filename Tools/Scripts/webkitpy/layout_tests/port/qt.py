@@ -63,10 +63,6 @@ class QtPort(WebKitPort):
             name_components.append(self._operating_system)
         self._name = "-".join(name_components)
 
-    def _path_to_apache_config_file(self):
-        # FIXME: This needs to detect the distribution and change config files.
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'apache2-debian-httpd.conf')
-
     def _build_driver(self):
         # The Qt port builds DRT as part of the main build step
         return True

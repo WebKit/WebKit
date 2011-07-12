@@ -136,26 +136,30 @@ sub getHTTPDConfigPathForTestDirectory
 {
     my ($testDirectory) = @_;
     die "No test directory has been specified." unless ($testDirectory);
+
     my $httpdConfig;
     my $httpdPath = getHTTPDPath();
+    my $httpdConfDirectory = "$testDirectory/http/conf/";
+
     if (isCygwin()) {
-        my $windowsConfDirectory = "$testDirectory/http/conf/";
-        unless (-x "/usr/lib/apache/libphp4.dll") {
-            copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
-            chmod(0755, "/usr/lib/apache/libphp4.dll");
+        my $libPHP4DllPath = "/usr/lib/apache/libphp4.dll";
+        # FIXME: run-webkit-tests should not modify the user's system, especially not in this method!
+        unless (-x $libPHP4DllPath) {
+            copy("$httpdConfDirectory/libphp4.dll", $libPHP4DllPath);
+            chmod(0755, $libPHP4DllPath);
         }
-        $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+        $httpdConfig = "cygwin-httpd.conf";  # This is an apache 1.3 config.
     } elsif (isMsys()) {
-        $httpdConfig = "$testDirectory/http/conf/apache2-msys-httpd.conf";
+        $httpdConfig = "apache2-msys-httpd.conf";
     } elsif (isDebianBased()) {
-        $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
+        $httpdConfig = "apache2-debian-httpd.conf";
     } elsif (isFedoraBased()) {
-        $httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf";
+        $httpdConfig = "fedora-httpd.conf"; # This is an apache2 config, despite the name.
     } else {
-        $httpdConfig = "$testDirectory/http/conf/httpd.conf";
-        $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+        # All other ports use apache2, so just use our default apache2 config.
+        $httpdConfig = "apache2-httpd.conf";
     }
-    return $httpdConfig;
+    return "$httpdConfDirectory/$httpdConfig";
 }
 
 sub openHTTPD(@)

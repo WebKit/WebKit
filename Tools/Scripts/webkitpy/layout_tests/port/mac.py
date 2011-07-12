@@ -113,8 +113,5 @@ class MacPort(WebKitPort):
     def _check_port_build(self):
         return self._build_java_test_support()
 
-    def _path_to_apache_config_file(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'apache2-httpd.conf')
-
     def _path_to_webcore_library(self):
         return self._build_path('WebCore.framework/Versions/A/WebCore')

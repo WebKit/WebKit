@@ -36,8 +36,10 @@ import logging
 import operator
 import os
 import re
+import sys
 import time
 
+from webkitpy.common.memoized import memoized
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port import builders, server_process, Port, Driver, DriverOutput
@@ -49,7 +51,6 @@ _log = logging.getLogger(__name__)
 class WebKitPort(Port):
     def __init__(self, **kwargs):
         Port.__init__(self, **kwargs)
-        self._cached_apache_path = None  # FIXME: This class should use @memoized instead.
 
         # FIXME: Disable pixel tests until they are run by default on build.webkit.org.
         self.set_option_default("pixel_tests", False)
@@ -358,19 +359,39 @@ class WebKitPort(Port):
         # FIXME: This does not exist on a default Mac OS X Leopard install.
         return 'wdiff'
 
+    # FIXME: This does not belong on the port object.
+    @memoized
     def _path_to_apache(self):
-        if not self._cached_apache_path:
-            # The Apache binary path can vary depending on OS and distribution
-            # See http://wiki.apache.org/httpd/DistrosDefaultLayout
-            for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
-                if self._filesystem.exists(path):
-                    self._cached_apache_path = path
-                    break
+        # The Apache binary path can vary depending on OS and distribution
+        # See http://wiki.apache.org/httpd/DistrosDefaultLayout
+        for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
+            if self._filesystem.exists(path):
+                return path
+            _log.error("Could not find apache. Not installed or unknown path.")
+        return None
 
-            if not self._cached_apache_path:
-                _log.error("Could not find apache. Not installed or unknown path.")
+    # FIXME: This belongs on some platform abstraction instead of Port.
+    def _is_redhat_based(self):
+        return self._filesystem.exists('/etc/redhat-release')
 
-        return self._cached_apache_path
+    def _is_debian_based(self):
+        return self._filesystem.exists('/etc/debian_version')
+
+    # We pass sys_platform into this method to make it easy to unit test.
+    def _apache_config_file_name_for_platform(self, sys_platform):
+        if sys_platform == 'cygwin':
+            return 'cygwin-httpd.conf'  # CYGWIN is the only platform to still use Apache 1.3.
+        if sys_platform.startswith('linux'):
+            if self._is_redhat_based():
+                return 'fedora-httpd.conf'  # This is an Apache 2.x config file despite the naming.
+            if self._is_debian_based():
+                return 'apache2-debian-httpd.conf'
+        # All platforms use apache2 except for CYGWIN (and Mac OS X Tiger and prior, which we no longer support).
+        return "apache2-httpd.conf"
+
+    def _path_to_apache_config_file(self):
+        config_file_name = self._apache_config_file_name_for_platform(sys.platform)
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_file_name)
 
 
 class WebKitDriver(Driver):

@@ -62,13 +62,10 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         test_dir = self._port_obj.layout_tests_dir()
-        js_test_resources_dir = self._cygwin_safe_join(test_dir, "fast", "js",
-            "resources")
+        js_test_resources_dir = self._cygwin_safe_join(test_dir, "fast", "js", "resources")
         media_resources_dir = self._cygwin_safe_join(test_dir, "media")
-        mime_types_path = self._cygwin_safe_join(test_dir, "http", "conf",
-            "mime.types")
-        cert_file = self._cygwin_safe_join(test_dir, "http", "conf",
-            "webkit-httpd.pem")
+        mime_types_path = self._cygwin_safe_join(test_dir, "http", "conf", "mime.types")
+        cert_file = self._cygwin_safe_join(test_dir, "http", "conf", "webkit-httpd.pem")
         access_log = self._cygwin_safe_join(output_dir, "access_log.txt")
         error_log = self._cygwin_safe_join(output_dir, "error_log.txt")
         document_root = self._cygwin_safe_join(test_dir, "http", "tests")
@@ -99,8 +96,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-k', "stop"]
 
         if self._is_cygwin():
-            cygbin = self._port_obj._path_from_base('third_party', 'cygwin',
-                'bin')
+            cygbin = self._port_obj._path_from_base('third_party', 'cygwin', 'bin')
             # Not entirely sure why, but from cygwin we need to run the
             # httpd command through bash.
             self._start_cmd = [
@@ -126,8 +122,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
     def _is_cygwin(self):
         return sys.platform in ("win32", "cygwin")
 
+    # FIXME: This is the wrong place to have this method.  Perhaps this belongs in filesystem.py?
     def _cygwin_safe_join(self, *parts):
-        """Returns a platform appropriate path."""
         path = os.path.join(*parts)
         if self._is_cygwin():
             return self._get_cygwin_path(path)
@@ -160,6 +156,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         httpd_config = self._port_obj._path_to_apache_config_file()
         httpd_config_copy = os.path.join(output_dir, "httpd.conf")
         httpd_conf = self._filesystem.read_text_file(httpd_config)
+        # FIXME: This only works for Chromium. Instead it should use some abstraction on the port object.
         if self._is_cygwin():
             # This is a gross hack, but it lets us use the upstream .conf file
             # and our checked in cygwin. This tells the server the root
@@ -167,10 +164,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             # plus the relative paths to the .so files listed in the .conf
             # file. We have apache/cygwin checked into our tree so
             # people don't have to install it into their cygwin.
-            cygusr = self._port_obj._path_from_base('third_party', 'cygwin',
-                'usr')
-            httpd_conf = httpd_conf.replace('ServerRoot "/usr"',
-                'ServerRoot "%s"' % self._get_cygwin_path(cygusr))
+            cygusr = self._port_obj._path_from_base('third_party', 'cygwin', 'usr')
+            httpd_conf = httpd_conf.replace('ServerRoot "/usr"', 'ServerRoot "%s"' % self._get_cygwin_path(cygusr))
 
         self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
