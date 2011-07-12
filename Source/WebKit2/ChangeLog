@@ -1,5 +1,25 @@
 2011-07-12  Andreas Kling  <kling@webkit.org>
 
+        [Qt][WK2] Navigation actions should react to web process availability.
+        https://bugs.webkit.org/show_bug.cgi?id=64375
+
+        Reviewed by Benjamin Poulain.
+
+        When the web process is unavailable, the reload and stop actions should
+        behave slightly differently. Stop should always be disabled, and reload
+        should be enabled if there's a reloadable item in the back/forward list.
+
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp:
+        (tst_QDesktopWebView::navigationActionEnabledStatusAtStartup):
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp:
+        (tst_QTouchWebView::navigationActionEnabledStatusAtStartup):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::updateAction):
+        (QtWebPageProxy::didRelaunchProcess):
+        (QtWebPageProxy::processDidCrash):
+
+2011-07-12  Andreas Kling  <kling@webkit.org>
+
         [Qt][WK2] QDesktopWebView crashes if resized without web process.
         https://bugs.webkit.org/show_bug.cgi?id=64371
 

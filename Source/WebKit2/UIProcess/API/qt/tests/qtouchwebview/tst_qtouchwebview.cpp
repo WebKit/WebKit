@@ -17,6 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include <QAction>
 #include <QtTest/QtTest>
 #include <qtouchwebpage.h>
 #include <qtouchwebview.h>
@@ -33,6 +34,7 @@ private slots:
     void cleanup();
 
     void accessPage();
+    void navigationActionsStatusAtStartup();
 
 private:
     inline QTouchWebView* webView() const;
@@ -67,6 +69,26 @@ void tst_QTouchWebView::accessPage()
     QTouchWebPage* const pagePropertyAccess = pagePropertyValue.value<QTouchWebPage*>();
     QCOMPARE(pagePropertyAccess, pageDirectAccess);
 }
+
+void tst_QTouchWebView::navigationActionsStatusAtStartup()
+{
+    QAction* backAction = webView()->page()->navigationAction(QtWebKit::Back);
+    QVERIFY(backAction);
+    QCOMPARE(backAction->isEnabled(), false);
+
+    QAction* forwardAction = webView()->page()->navigationAction(QtWebKit::Forward);
+    QVERIFY(forwardAction);
+    QCOMPARE(forwardAction->isEnabled(), false);
+
+    QAction* stopAction = webView()->page()->navigationAction(QtWebKit::Stop);
+    QVERIFY(stopAction);
+    QCOMPARE(stopAction->isEnabled(), false);
+
+    QAction* reloadAction = webView()->page()->navigationAction(QtWebKit::Reload);
+    QVERIFY(reloadAction);
+    QCOMPARE(reloadAction->isEnabled(), false);
+}
+
 
 QTEST_MAIN(tst_QTouchWebView)
 

@@ -33,6 +33,7 @@
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
+#include "WebBackForwardList.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
@@ -480,11 +481,8 @@ void QtWebPageProxy::updateAction(QtWebPageProxy::WebAction action)
         return;
 
     RefPtr<WebKit::WebFrameProxy> mainFrame = m_webPageProxy->mainFrame();
-    if (!mainFrame)
-        return;
 
     bool enabled = a->isEnabled();
-    bool checked = a->isChecked();
 
     switch (action) {
     case QtWebPageProxy::Back:
@@ -494,19 +492,19 @@ void QtWebPageProxy::updateAction(QtWebPageProxy::WebAction action)
         enabled = m_webPageProxy->canGoForward();
         break;
     case QtWebPageProxy::Stop:
-        enabled = !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
+        enabled = mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
         break;
     case QtWebPageProxy::Reload:
-        enabled = (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
+        if (mainFrame)
+            enabled = (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
+        else
+            enabled = m_webPageProxy->backForwardList()->currentItem();
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     a->setEnabled(enabled);
-
-    if (a->isCheckable())
-        a->setChecked(checked);
 }
 
 void QtWebPageProxy::updateNavigationActions()
@@ -528,12 +526,14 @@ void QtWebPageProxy::webActionTriggered(bool checked)
 
 void QtWebPageProxy::didRelaunchProcess()
 {
+    updateNavigationActions();
     m_viewInterface->didRelaunchProcess();
     setDrawingAreaSize(m_viewInterface->drawingAreaSize());
 }
 
 void QtWebPageProxy::processDidCrash()
 {
+    updateNavigationActions();
     m_viewInterface->processDidCrash();
 }
 

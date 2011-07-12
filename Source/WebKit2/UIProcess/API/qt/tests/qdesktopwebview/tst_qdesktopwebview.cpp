@@ -17,6 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include <QAction>
 #include <QScopedPointer>
 #include <QtTest/QtTest>
 #include <qdesktopwebview.h>
@@ -28,6 +29,8 @@ class tst_QDesktopWebView : public QObject {
 private slots:
     void init();
     void cleanup();
+
+    void navigationActionsStatusAtStartup();
 
 private:
     inline QDesktopWebView* webView() const;
@@ -47,6 +50,25 @@ void tst_QDesktopWebView::cleanup()
 inline QDesktopWebView* tst_QDesktopWebView::webView() const
 {
     return static_cast<QDesktopWebView*>(m_window->webView.data());
+}
+
+void tst_QDesktopWebView::navigationActionsStatusAtStartup()
+{
+    QAction* backAction = webView()->navigationAction(QtWebKit::Back);
+    QVERIFY(backAction);
+    QCOMPARE(backAction->isEnabled(), false);
+
+    QAction* forwardAction = webView()->navigationAction(QtWebKit::Forward);
+    QVERIFY(forwardAction);
+    QCOMPARE(forwardAction->isEnabled(), false);
+
+    QAction* stopAction = webView()->navigationAction(QtWebKit::Stop);
+    QVERIFY(stopAction);
+    QCOMPARE(stopAction->isEnabled(), false);
+
+    QAction* reloadAction = webView()->navigationAction(QtWebKit::Reload);
+    QVERIFY(reloadAction);
+    QCOMPARE(reloadAction->isEnabled(), false);
 }
 
 QTEST_MAIN(tst_QDesktopWebView)
