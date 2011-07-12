@@ -108,6 +108,8 @@ module WTR {
 
         void setPOSIXLocale(in DOMString locale);
 
+        void setTextDirection(in DOMString direction);
+
         void setWillSendRequestReturnsNull(in boolean flag);
     };
 

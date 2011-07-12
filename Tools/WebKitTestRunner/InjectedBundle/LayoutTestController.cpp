@@ -473,4 +473,10 @@ void LayoutTestController::setPOSIXLocale(JSStringRef locale)
     setlocale(LC_ALL, localeBuf);
 }
 
+void LayoutTestController::setTextDirection(JSStringRef direction)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return WKBundleFrameSetTextDirection(mainFrame, toWK(direction).get());
+}
+
 } // namespace WTR

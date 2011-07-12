@@ -1,3 +1,25 @@
+2011-07-11  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Implement layoutTestController.setTextDirection for WebKit2 and Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=61931
+
+        This change implements layoutTextController.setTextDirection for WebKit2
+        and Windows so we can run a layout test added by r87770 on them. Each
+        implementation adds a wrapper function for Editor::setBaseWritingDirection()
+        so LayoutTestController can call it.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp: Added
+        WKBundleFrameSetTextDirection to allow LayoutTestController to change the
+        text direction.
+        (WKBundleFrameSetTextDirection):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h: ditto.
+        * WebProcess/WebPage/WebFrame.cpp: Added setTextDirection to allow
+        WKBundleFrame to change the text direction.
+        (WebKit::WebFrame::setTextDirection):
+        * WebProcess/WebPage/WebFrame.h: ditto.
+
 2011-07-11  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Get rid of focusNextPrevChild()

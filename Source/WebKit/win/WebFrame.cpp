@@ -1061,6 +1061,22 @@ HRESULT STDMETHODCALLTYPE WebFrame::clearOpener()
     return hr;
 }
 
+HRESULT WebFrame::setTextDirection(BSTR direction)
+{
+    Frame* coreFrame = core(this);
+    if (!coreFrame || !coreFrame->editor())
+        return E_FAIL;
+
+    String directionString(direction, SysStringLen(direction));
+    if (directionString == "auto")
+        coreFrame->editor()->setBaseWritingDirection(NaturalWritingDirection);
+    else if (directionString == "ltr")
+        coreFrame->editor()->setBaseWritingDirection(LeftToRightWritingDirection);
+    else if (directionString == "rtl")
+        coreFrame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
+    return S_OK;
+}
+
 // IWebDocumentText -----------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebFrame::supportsTextEncoding( 

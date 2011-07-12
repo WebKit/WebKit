@@ -1,3 +1,24 @@
+2011-07-11  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Implement layoutTestController.setTextDirection for WebKit2 and Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=61931
+
+        This change implements layoutTextController.setTextDirection for WebKit2
+        and Windows so we can run a layout test added by r87770 on them. Each
+        implementation adds a wrapper function for Editor::setBaseWritingDirection()
+        so LayoutTestController can call it.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setTextDirection): Implemented the binding function
+        for layoutTestController.setTextDirection (Windows).
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        Added a binding function for layoutTestController.setTextDirection (WebKit2).
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp: ditto.
+        (WTR::LayoutTestController::setTextDirection):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: ditto.
+
 2011-07-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] ImageDiff: Make sure gEcoreEvas is destroyed at the right time.

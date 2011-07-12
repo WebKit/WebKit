@@ -120,4 +120,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT hasSpellingMarker([in] UINT from, [in] UINT length, [out, retval] BOOL* result);
     
     HRESULT clearOpener();
+
+    HRESULT setTextDirection([in] BSTR direction);
 }

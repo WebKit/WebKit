@@ -1524,7 +1524,11 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
 
 void LayoutTestController::setTextDirection(JSStringRef direction)
 {
-    // FIXME: Implement.
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return;
+
+    framePrivate->setTextDirection(bstrT(direction).GetBSTR());
 }
 
 void LayoutTestController::allowRoundingHacks()

@@ -162,6 +162,8 @@ public:
     bool willSendRequestReturnsNull() { return m_willSendRequestReturnsNull; }
     void setWillSendRequestReturnsNull(bool f) { m_willSendRequestReturnsNull = f; }
 
+    void setTextDirection(JSStringRef);
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 

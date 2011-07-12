@@ -705,4 +705,17 @@ String WebFrame::mimeTypeForResourceWithURL(const KURL& url) const
     return page()->cachedResponseMIMETypeForURL(url);
 }
 
+void WebFrame::setTextDirection(const String& direction)
+{
+    if (!m_coreFrame || !m_coreFrame->editor())
+        return;
+
+    if (direction == "auto")
+        m_coreFrame->editor()->setBaseWritingDirection(NaturalWritingDirection);
+    else if (direction == "ltr")
+        m_coreFrame->editor()->setBaseWritingDirection(LeftToRightWritingDirection);
+    else if (direction == "rtl")
+        m_coreFrame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
+}
+
 } // namespace WebKit

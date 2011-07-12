@@ -121,6 +121,8 @@ public:
     String suggestedFilenameForResourceWithURL(const WebCore::KURL&) const;
     String mimeTypeForResourceWithURL(const WebCore::KURL&) const;
 
+    void setTextDirection(const String&);
+
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener {
     public:

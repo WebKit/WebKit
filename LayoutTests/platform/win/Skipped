@@ -1007,9 +1007,6 @@ editing/spelling/grammar.html
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
 
-# layoutTestController::setTextDirection() is not implemented
-fast/html/set-text-direction.html
-
 # IndexedDB is not yet enabled.
 storage/indexeddb
 

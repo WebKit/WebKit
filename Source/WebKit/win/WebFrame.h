@@ -283,6 +283,8 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE clearOpener();
 
+    virtual HRESULT STDMETHODCALLTYPE setTextDirection(BSTR);
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

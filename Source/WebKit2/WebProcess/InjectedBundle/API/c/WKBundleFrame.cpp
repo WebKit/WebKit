@@ -235,3 +235,8 @@ bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frameRef)
 {
     return toImpl(frameRef)->containsAnyFormElements();
 }
+
+void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef directionRef)
+{
+    toImpl(frameRef)->setTextDirection(toImpl(directionRef)->string());
+}
