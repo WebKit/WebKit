@@ -23,6 +23,7 @@
 
 #include "ViewInterface.h"
 
+class QPointF;
 class QTouchWebPage;
 class QTouchWebView;
 
@@ -37,6 +38,10 @@ public:
     void panGestureRequestScroll(qreal deltaX, qreal deltaY);
     void panGestureEnded();
     void panGestureCancelled();
+
+    void pinchGestureStarted();
+    void pinchGestureRequestUpdate(const QPointF&, qreal);
+    void pinchGestureEnded();
 
 private:
     /* Implementation of ViewInterface */
@@ -70,6 +75,8 @@ private:
 private:
     QTouchWebView* const m_viewportView;
     QTouchWebPage* const m_pageView;
+
+    qreal m_pinchStartScale;
 };
 
 }

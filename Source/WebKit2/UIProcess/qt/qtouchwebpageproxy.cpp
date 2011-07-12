@@ -30,6 +30,7 @@ using namespace WebCore;
 QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, QWKContext* context, WKPageGroupRef pageGroupRef)
     : QtWebPageProxy(viewInterface, context, pageGroupRef)
     , m_panGestureRecognizer(viewInterface)
+    , m_pinchGestureRecognizer(viewInterface)
 {
     init();
     // FIXME: add proper handling of viewport.
@@ -45,6 +46,7 @@ void QTouchWebPageProxy::processDidCrash()
 {
     QtWebPageProxy::processDidCrash();
     m_panGestureRecognizer.reset();
+    m_pinchGestureRecognizer.reset();
 }
 
 void QTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
@@ -61,10 +63,13 @@ void QTouchWebPageProxy::setViewportArguments(const WebCore::ViewportArguments& 
 #if ENABLE(TOUCH_EVENTS)
 void QTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
-    if (wasEventHandled)
+    if (wasEventHandled) {
         m_panGestureRecognizer.reset();
-    else
+        m_pinchGestureRecognizer.reset();
+    } else {
         m_panGestureRecognizer.recognize(event.nativeEvent());
+        m_pinchGestureRecognizer.recognize(event.nativeEvent());
+    }
 }
 #endif
 

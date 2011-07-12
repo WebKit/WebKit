@@ -22,6 +22,7 @@
 #include "TouchViewInterface.h"
 
 #include "qtouchwebpage.h"
+#include "qtouchwebpage_p.h"
 #include "qtouchwebview.h"
 #include "qtouchwebview_p.h"
 
@@ -30,6 +31,7 @@ namespace WebKit {
 TouchViewInterface::TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView)
     : m_viewportView(viewportView)
     , m_pageView(pageView)
+    , m_pinchStartScale(1.f)
 {
     Q_ASSERT(m_viewportView);
     Q_ASSERT(m_pageView);
@@ -55,6 +57,31 @@ void TouchViewInterface::panGestureCancelled()
 {
     // FIXME: reset physics.
     // FIXME: resume the Web engine.
+}
+
+void TouchViewInterface::pinchGestureStarted()
+{
+    // FIXME: suspend the engine.
+    m_pageView->d->prepareScaleChange();
+    m_pinchStartScale = m_pageView->scale();
+}
+
+void TouchViewInterface::pinchGestureRequestUpdate(const QPointF& pinchCenterInPageViewCoordinate, qreal totalScaleFactor)
+{
+    // FIXME: it is a bit more complicated than that, changes of the center position should move the page even
+    // if the zoom factor does not change. Both the zoom and the panning should be handled through the physics
+    // engine.
+    const qreal scale = m_pinchStartScale * totalScaleFactor;
+    m_pageView->setTransformOriginPoint(pinchCenterInPageViewCoordinate);
+    m_pageView->setScale(scale);
+}
+
+void TouchViewInterface::pinchGestureEnded()
+{
+    // FIXME: commit scale with the scale value in the valid range in order to get new tiles.
+    // FIXME: animate the back zoom in the valid range.
+    // FIXME: resume the engine after the animation.
+    m_pageView->d->commitScaleChange();
 }
 
 void TouchViewInterface::setViewNeedsDisplay(const QRect& invalidatedRect)

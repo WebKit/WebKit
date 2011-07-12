@@ -31,7 +31,7 @@
 namespace WebKit {
 
 QtPanGestureRecognizer::QtPanGestureRecognizer(TouchViewInterface* touchViewInterface)
-    : m_touchViewInterface(touchViewInterface)
+    : QtGestureRecognizer(touchViewInterface)
 {
     reset();
 }
@@ -94,7 +94,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
 
 void QtPanGestureRecognizer::reset()
 {
-    m_state = NoGesture;
+    QtGestureRecognizer::reset();
     m_firstPosition = QPointF();
 }
 

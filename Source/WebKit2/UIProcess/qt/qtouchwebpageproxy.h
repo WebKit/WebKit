@@ -24,6 +24,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "QtPanGestureRecognizer.h"
+#include "QtPinchGestureRecognizer.h"
 #include "QtWebPageProxy.h"
 #include "TiledDrawingAreaProxy.h"
 #include "TouchViewInterface.h"
@@ -61,6 +62,7 @@ private:
     void touchEvent(QTouchEvent*);
 
     QtPanGestureRecognizer m_panGestureRecognizer;
+    QtPinchGestureRecognizer m_pinchGestureRecognizer;
     WebCore::ViewportArguments m_viewportArguments;
 };
 

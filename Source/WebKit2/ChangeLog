@@ -1,3 +1,51 @@
+2011-07-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Add a basic Pinch gesture recognizer for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=64373
+
+        Reviewed by Andreas Kling.
+
+        This patch adds QtPinchGestureRecognizer to recognize pinch gesture out of
+        the events not handled by the WebProcess.
+
+        TouchViewInterface::pinchGestureRequestScale() has a basic default implementation
+        so the feature can be tested manually.
+
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        QtGestureRecognizer is the private base class for both gesture recognizer
+        in order to be able to share some code.
+        (WebKit::QtGestureRecognizer::QtGestureRecognizer):
+        (WebKit::QtGestureRecognizer::reset):
+        * UIProcess/qt/QtGestureRecognizer.h:
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::QtPanGestureRecognizer):
+        (WebKit::QtPanGestureRecognizer::reset):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp: Added.
+        (WebKit::findTouchPointIndex):
+        (WebKit::computeTouchCenter):
+        (WebKit::QtPinchGestureRecognizer::QtPinchGestureRecognizer):
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        (WebKit::QtPinchGestureRecognizer::reset):
+        (WebKit::QtPinchGestureRecognizer::initializeGesture):
+        * UIProcess/qt/QtPinchGestureRecognizer.h: Copied from Source/WebKit2/UIProcess/qt/QtPanGestureRecognizer.h.
+        (WebKit::QtPinchGestureRecognizer::TouchPointInformation::TouchPointInformation):
+        (WebKit::QtPinchGestureRecognizer::TouchPointInformation::isValid):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::TouchViewInterface):
+        (WebKit::TouchViewInterface::pinchGestureStarted):
+        (WebKit::TouchViewInterface::pinchGestureRequestScale):
+        The scale factor reported by the recognizer to the TouchViewInterface is the total scale since the start
+        of the gesture in order to avoid numerical instabilities.
+        (WebKit::TouchViewInterface::pinchGestureEnded):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        (QTouchWebPageProxy::processDidCrash):
+        (QTouchWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebKit2.pro:
+
 2011-07-12  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Navigation actions should react to web process availability.

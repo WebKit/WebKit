@@ -23,32 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QtPanGestureRecognizer_h
-#define QtPanGestureRecognizer_h
-
-#include "QtGestureRecognizer.h"
-
-#include <QPointF>
-#include <QtCore/QtGlobal>
-
-QT_BEGIN_NAMESPACE
-class QTouchEvent;
-QT_END_NAMESPACE
+#ifndef QtGestureRecognizer_h
+#define QtGestureRecognizer_h
 
 namespace WebKit {
 
-const qreal panningInitialTriggerDistanceThreshold = 5.;
+class TouchViewInterface;
 
-class QtPanGestureRecognizer : private QtGestureRecognizer {
-public:
-    QtPanGestureRecognizer(TouchViewInterface*);
-    bool recognize(const QTouchEvent*);
+class QtGestureRecognizer {
+protected:
+    QtGestureRecognizer(TouchViewInterface*);
     void reset();
 
-private:
-    QPointF m_firstPosition;
+    TouchViewInterface* const m_touchViewInterface;
+    enum State {
+        NoGesture,
+        GestureRecognitionStarted,
+        GestureRecognized
+    } m_state;
 };
 
-} // namespace WebKit
+}
 
-#endif /* QtPanGestureRecognizer_h */
+#endif /* QtGestureRecognizer_h */
