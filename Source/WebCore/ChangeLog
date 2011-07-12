@@ -1,3 +1,18 @@
+2011-07-11  Jer Noble  <jer.noble@apple.com>
+
+        HTML5 video controller in fullscreen is partly off-screen (at least on youtube) using ClickToFlash
+        https://bugs.webkit.org/show_bug.cgi?id=64327
+
+        Reviewed by Darin Adler.
+
+        No new tests; no change in functionality, so covered by existing tests.
+
+        Make the rules from fullscreenQuickTime.css !important so they are not overridden
+        by page authors.
+
+        * css/fullscreenQuickTime.css:
+        (video:-webkit-full-screen::-webkit-media-controls-panel):
+
 2011-07-11  Levi Weintraub  <leviw@chromium.org>
 
         Switch lineTop and lineBottom to new layout types
