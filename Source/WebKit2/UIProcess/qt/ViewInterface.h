@@ -25,6 +25,8 @@
 #include <QtCore/QSize>
 #include <QtGui/QMenu>
 
+class QWebError;
+
 QT_BEGIN_NAMESPACE
 class QCursor;
 class QGraphicsWidget;
@@ -59,6 +61,7 @@ public:
     virtual void didChangeCursor(const QCursor&) = 0;
     virtual void loadDidBegin() = 0;
     virtual void loadDidSucceed() = 0;
+    virtual void loadDidFail(const QWebError&) = 0;
     virtual void didChangeLoadProgress(int) = 0;
 
     virtual void showContextMenu(QSharedPointer<QMenu>) = 0;

@@ -6,6 +6,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKCertificateInfo.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItem.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKDictionary.cpp \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/WKError.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGraphicsContext.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKImage.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKMutableDictionary.cpp \
@@ -47,6 +48,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qweberror.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
@@ -69,6 +71,7 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItem.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItemTypes.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKDictionary.h \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/WKError.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGeometry.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGraphicsContext.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKImage.h \
@@ -125,6 +128,8 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview_p.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qweberror.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qweberror_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebkittypes.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \

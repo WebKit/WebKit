@@ -455,6 +455,11 @@ void QtWebPageProxy::loadDidSucceed()
     m_viewInterface->loadDidSucceed();
 }
 
+void QtWebPageProxy::loadDidFail(const QWebError& error)
+{
+    m_viewInterface->loadDidFail(error);
+}
+
 void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
 {
     m_viewInterface->didChangeLoadProgress(newLoadProgress);

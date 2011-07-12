@@ -134,6 +134,11 @@ void TouchViewInterface::loadDidSucceed()
     emit m_pageView->loadSucceeded();
 }
 
+void TouchViewInterface::loadDidFail(const QWebError& error)
+{
+    emit m_pageView->loadFailed(error);
+}
+
 void TouchViewInterface::didChangeLoadProgress(int percentageLoaded)
 {
     emit m_pageView->loadProgress(percentageLoaded);

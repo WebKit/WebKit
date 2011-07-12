@@ -112,6 +112,11 @@ void QDesktopWebViewPrivate::loadDidSucceed()
     emit q->loadSucceeded();
 }
 
+void QDesktopWebViewPrivate::loadDidFail(const QWebError& error)
+{
+    emit q->loadFailed(error);
+}
+
 void QDesktopWebViewPrivate::didChangeLoadProgress(int percentageLoaded)
 {
     emit q->loadProgress(percentageLoaded);

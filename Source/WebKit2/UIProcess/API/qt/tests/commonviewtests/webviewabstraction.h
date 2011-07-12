@@ -45,12 +45,15 @@ public:
 Q_SIGNALS:
     void loadStarted();
     void loadSucceeded();
+    void loadFailed(const QWebError&);
 
 private Q_SLOTS:
     void touchViewLoadStarted();
     void desktopViewLoadStarted();
     void touchViewLoadSucceeded();
     void desktopViewLoadSucceeded();
+    void touchViewLoadFailed(const QWebError&);
+    void desktopViewLoadFailed(const QWebError&);
 
 private:
     QTouchWebView* touchWebView() const;

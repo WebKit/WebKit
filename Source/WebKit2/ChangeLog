@@ -1,3 +1,54 @@
+2011-07-12  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Add informative loadFailed() signal to web views.
+        https://bugs.webkit.org/show_bug.cgi?id=64362
+
+        Reviewed by Benjamin Poulain.
+
+        The web views will now emit loadFailed(QWebError) when a load failure occurs.
+
+        The QWebError object currently contains:
+        - Type of failure (whether it's an engine, network or protocol error.)
+        - The failing URL.
+        - Any error code associated with the failure.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::loadDidFail):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qweberror.cpp: Added.
+        (QWebError::QWebError):
+        (QWebErrorPrivate::createQWebError):
+        (QWebErrorPrivate::QWebErrorPrivate):
+        (QWebErrorPrivate::~QWebErrorPrivate):
+        (QWebError::type):
+        (QWebError::errorCode):
+        (QWebError::url):
+        * UIProcess/API/qt/qweberror.h: Added.
+        * UIProcess/API/qt/qweberror_p.h: Added.
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::loadNonexistentFileUrl):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::touchViewLoadFailed):
+        (WebViewAbstraction::desktopViewLoadFailed):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (dispatchLoadSucceeded):
+        (dispatchLoadFailed):
+        (qt_wk_didFailProvisionalLoadWithErrorForFrame):
+        (qt_wk_didFinishLoadForFrame):
+        (qt_wk_didFailLoadWithErrorForFrame):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadDidFail):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::loadDidFail):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+        * WebKit2API.pri:
+
 2011-07-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Forward the touch view scale changes to the tiled drawing area.

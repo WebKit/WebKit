@@ -147,6 +147,7 @@ public:
 
     void loadDidBegin();
     void loadDidSucceed();
+    void loadDidFail(const QWebError&);
     void didChangeLoadProgress(int);
 
     void paint(QPainter* painter, QRect);

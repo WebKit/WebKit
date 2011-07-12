@@ -34,12 +34,14 @@ WebViewAbstraction::WebViewAbstraction()
     m_touchWebViewWindow.setWindowTitle(QLatin1String("TouchWebView"));
     connect(touchWebView()->page(), SIGNAL(loadStarted()), this, SLOT(touchViewLoadStarted()));
     connect(touchWebView()->page(), SIGNAL(loadSucceeded()), this, SLOT(touchViewLoadSucceeded()));
+    connect(touchWebView()->page(), SIGNAL(loadFailed(QWebError)), this, SLOT(touchViewLoadFailed(QWebError)));
 
     screenHalf.moveLeft(screenHalf.right());
     m_desktopWebViewWindow.setGeometry(screenHalf);
     m_desktopWebViewWindow.setWindowTitle(QLatin1String("DesktopWebView"));
     connect(desktopWebView(), SIGNAL(loadStarted()), this, SLOT(desktopViewLoadStarted()));
     connect(desktopWebView(), SIGNAL(loadSucceeded()), this, SLOT(desktopViewLoadSucceeded()));
+    connect(desktopWebView(), SIGNAL(loadFailed(QWebError)), this, SLOT(desktopViewLoadFailed(QWebError)));
 }
 
 void WebViewAbstraction::show()
@@ -111,6 +113,20 @@ void WebViewAbstraction::desktopViewLoadSucceeded()
     m_desktopViewSignalsCounter[SIGNAL(loadSucceeded())]++;
     if (m_touchViewSignalsCounter[SIGNAL(loadSucceeded())] == m_desktopViewSignalsCounter[SIGNAL(loadSucceeded())])
         emit loadSucceeded();
+}
+
+void WebViewAbstraction::touchViewLoadFailed(const QWebError& error)
+{
+    m_touchViewSignalsCounter[SIGNAL(loadFailed(QWebError))]++;
+    if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QWebError))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QWebError))])
+        emit loadFailed(error);
+}
+
+void WebViewAbstraction::desktopViewLoadFailed(const QWebError& error)
+{
+    m_desktopViewSignalsCounter[SIGNAL(loadFailed(QWebError))]++;
+    if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QWebError))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QWebError))])
+        emit loadFailed(error);
 }
 
 QTouchWebView* WebViewAbstraction::touchWebView() const

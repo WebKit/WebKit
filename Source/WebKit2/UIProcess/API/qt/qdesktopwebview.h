@@ -29,6 +29,7 @@
 #include <QUrl>
 
 class QDesktopWebViewPrivate;
+class QWebError;
 
 namespace WTR {
     class WebView;
@@ -56,6 +57,7 @@ Q_SIGNALS:
     void statusBarMessageChanged(const QString&);
     void loadStarted();
     void loadSucceeded();
+    void loadFailed(const QWebError&);
     void loadProgress(int progress);
     void urlChanged(const QUrl&);
 

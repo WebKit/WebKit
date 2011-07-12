@@ -29,6 +29,7 @@
 
 class QTouchWebPagePrivate;
 class QTouchWebPageProxy;
+class QWebError;
 
 namespace WebKit {
     class TouchViewInterface;
@@ -59,6 +60,7 @@ Q_SIGNALS:
     void titleChanged(const QString&);
     void loadStarted();
     void loadSucceeded();
+    void loadFailed(const QWebError&);
     void loadProgress(int progress);
 
 protected:

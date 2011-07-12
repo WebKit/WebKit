@@ -33,6 +33,7 @@ private slots:
     void loadEmptyUrl();
     void loadEmptyPageViewVisible();
     void loadEmptyPageViewHidden();
+    void loadNonexistentFileUrl();
     void backAndForward();
     void reload();
     void stop();
@@ -80,6 +81,16 @@ void tst_CommonViewTests::loadEmptyPageViewHidden()
     QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
 
     QCOMPARE(loadStartedSpy.size(), 1);
+}
+
+void tst_CommonViewTests::loadNonexistentFileUrl()
+{
+    QSignalSpy loadFailedSpy(viewAbstraction.data(), SIGNAL(loadStarted()));
+
+    viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/file_that_does_not_exist.html")));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadFailed(QWebError))));
+
+    QCOMPARE(loadFailedSpy.size(), 1);
 }
 
 void tst_CommonViewTests::backAndForward()
