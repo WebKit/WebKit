@@ -1,3 +1,19 @@
+2011-07-12  Andreas Kling  <kling@webkit.org>
+
+        [Qt][WK2] Navigation actions in incorrect state when loadStarted() is emitted.
+        https://bugs.webkit.org/show_bug.cgi?id=64383
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update the navigation actions before emitting loadStarted().
+
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp:
+        (LoadStartedCatcher::LoadStartedCatcher):
+        (LoadStartedCatcher::onLoadStarted):
+        (tst_QDesktopWebView::stopActionEnabledAfterLoadStarted):
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_didStartProvisionalLoadForFrame):
+
 2011-07-12  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Add a basic Pinch gesture recognizer for WebKit2

@@ -69,8 +69,9 @@ void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
 {
     if (!WKFrameIsMainFrame(frame))
         return;
-    toQtWebPageProxy(clientInfo)->loadDidBegin();
+
     toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->loadDidBegin();
 }
 
 void qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)

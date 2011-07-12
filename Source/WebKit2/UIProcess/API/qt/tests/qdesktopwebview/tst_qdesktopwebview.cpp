@@ -22,6 +22,7 @@
 #include <QtTest/QtTest>
 #include <qdesktopwebview.h>
 #include "../testwindow.h"
+#include "../util.h"
 
 class tst_QDesktopWebView : public QObject {
     Q_OBJECT
@@ -31,6 +32,7 @@ private slots:
     void cleanup();
 
     void navigationActionsStatusAtStartup();
+    void stopActionEnabledAfterLoadStarted();
 
 private:
     inline QDesktopWebView* webView() const;
@@ -69,6 +71,47 @@ void tst_QDesktopWebView::navigationActionsStatusAtStartup()
     QAction* reloadAction = webView()->navigationAction(QtWebKit::Reload);
     QVERIFY(reloadAction);
     QCOMPARE(reloadAction->isEnabled(), false);
+}
+
+class LoadStartedCatcher : public QObject {
+    Q_OBJECT
+public:
+    LoadStartedCatcher(QDesktopWebView* webView)
+        : m_webView(webView)
+    {
+        connect(m_webView, SIGNAL(loadStarted()), this, SLOT(onLoadStarted()));
+    }
+
+public slots:
+    void onLoadStarted()
+    {
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+
+        QAction* stopAction = m_webView->navigationAction(QtWebKit::Stop);
+        QVERIFY(stopAction);
+        QCOMPARE(stopAction->isEnabled(), true);
+    }
+
+signals:
+    void finished();
+
+private:
+    QDesktopWebView* m_webView;
+};
+
+void tst_QDesktopWebView::stopActionEnabledAfterLoadStarted()
+{
+    QAction* stopAction = webView()->navigationAction(QtWebKit::Stop);
+    QVERIFY(stopAction);
+    QCOMPARE(stopAction->isEnabled(), false);
+
+    LoadStartedCatcher catcher(webView());
+    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    waitForSignal(&catcher, SIGNAL(finished()));
+
+    QCOMPARE(stopAction->isEnabled(), true);
+
+    waitForSignal(webView(), SIGNAL(loadSucceeded()));
 }
 
 QTEST_MAIN(tst_QDesktopWebView)
