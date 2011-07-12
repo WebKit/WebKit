@@ -413,6 +413,8 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), entryLabel);
             repatchBuffer.relink(stubInfo.callReturnLocation, appropriatePutByIdFunction(slot, putKind));
             
+            stubInfo.initPutByIdTransition(*globalData, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain);
+            
             return true;
         }
 

@@ -1,3 +1,16 @@
+2011-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT put_by_id transition caching does not inform the GC about the structure and
+        prototype chain that it is referencing.
+        https://bugs.webkit.org/show_bug.cgi?id=64387
+
+        Reviewed by Gavin Barraclough.
+        
+        Fixed the relevant code in DFGRepatch to call StructureStubInfo::initPutByIdTransition().
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCachePutByID):
+
 2011-07-12  Adam Roben  <aroben@apple.com>
 
         Ensure no intermediate WTF::Strings are created when concatenating with string literals
