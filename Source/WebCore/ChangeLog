@@ -1,3 +1,51 @@
+2011-07-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce UserMetrics for collecting stats in Chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=64350
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/user-metrics.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::recordActionTaken):
+        (WebCore::JSInspectorFrontendHost::recordPanelShown):
+        (WebCore::JSInspectorFrontendHost::recordSettingChanged):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::histogramEnumeration):
+        (WebCore::V8InspectorFrontendHost::recordActionTakenCallback):
+        (WebCore::V8InspectorFrontendHost::recordPanelShownCallback):
+        (WebCore::V8InspectorFrontendHost::recordSettingChangedCallback):
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype.initiateAudit):
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.loadSessionSetting):
+        (.WebInspector.InspectorFrontendHostStub.prototype.recordActionTaken):
+        (.WebInspector.InspectorFrontendHostStub.prototype.recordPanelShown):
+        (.WebInspector.InspectorFrontendHostStub.prototype.recordSettingChanged):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._setRecordingProfile):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+        * inspector/front-end/UserMetrics.js: Added.
+        (WebInspector.UserMetrics.settingChanged):
+        (WebInspector.UserMetrics):
+        (WebInspector.UserMetrics.prototype.panelShown):
+        (WebInspector.UserMetrics._Recorder):
+        (WebInspector.UserMetrics._Recorder.prototype.record):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._toggleAttach):
+
 2011-07-12  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by David Kilzer.

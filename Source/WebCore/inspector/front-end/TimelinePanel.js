@@ -278,6 +278,7 @@ WebInspector.TimelinePanel.prototype = {
         else {
             this._clearPanel();
             WebInspector.timelineManager.start();
+            WebInspector.userMetrics.TimelineStarted.record();
         }
         this.toggleTimelineButton.toggled = !this.toggleTimelineButton.toggled;
     },

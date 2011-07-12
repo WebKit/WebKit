@@ -609,6 +609,8 @@ WebInspector.ConsoleView.prototype = {
             self.addMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }
         this.evalInInspectedWindow(str, "console", true, printResult);
+
+        WebInspector.userMetrics.ConsoleEvaluated.record();
     },
 
     _format: function(output, forceObjectFormat)

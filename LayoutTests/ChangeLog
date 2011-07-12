@@ -1,3 +1,13 @@
+2011-07-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce UserMetrics for collecting stats in Chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=64350
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/user-metrics-expected.txt: Added.
+        * inspector/user-metrics.html: Added.
+
 2011-07-12  Jeff Timanus  <twiz@chromium.org>
 
         Reviewed by Stephen White.

@@ -190,6 +190,8 @@ WebInspector.AuditsPanel.prototype = {
             initiateAuditCallback.call(this, categories, launcherCallback);
         else
             this._reloadResources(initiateAuditCallback.bind(this, categories, launcherCallback));
+
+        WebInspector.userMetrics.AuditsStarted.record();
     },
 
     _reloadResources: function(callback)

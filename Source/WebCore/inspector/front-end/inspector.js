@@ -147,6 +147,7 @@ var WebInspector = {
             if (WebInspector.panels[panelName] === x) {
                 WebInspector.settings.lastActivePanel.set(panelName);
                 this._panelHistory.setPanel(panelName);
+                WebInspector.userMetrics.panelShown(panelName);
             }
         }
     },
@@ -202,10 +203,13 @@ var WebInspector = {
 
     _toggleAttach: function()
     {
-        if (!this._attached)
+        if (!this._attached) {
             InspectorFrontendHost.requestAttachWindow();
-        else
+            WebInspector.userMetrics.WindowDocked.record();
+        } else {
             InspectorFrontendHost.requestDetachWindow();
+            WebInspector.userMetrics.WindowUndocked.record();
+        }
     },
 
     _toggleSettings: function()
@@ -483,6 +487,7 @@ WebInspector.doLoadedDone = function()
         document.body.addStyleClass("remote");
 
     WebInspector.settings = new WebInspector.Settings();
+    WebInspector.userMetrics = new WebInspector.UserMetrics();
 
     this._registerShortcuts();
 

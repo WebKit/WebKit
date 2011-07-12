@@ -658,9 +658,10 @@ WebInspector.ProfilesPanel.prototype = {
                     isTemporary: true
                 };
             }
-            if (isProfiling)
+            if (isProfiling) {
                 this._addProfileHeader(this._temporaryRecordingProfile);
-            else
+                WebInspector.userMetrics.ProfilesCPUProfileTaken.record();
+            } else
                 this._removeProfileHeader(this._temporaryRecordingProfile);
         }
         this.updateProfileTypeButtons();
@@ -680,6 +681,7 @@ WebInspector.ProfilesPanel.prototype = {
             this._addProfileHeader(this._temporaryTakingSnapshot);
         }
         ProfilerAgent.takeHeapSnapshot();
+        WebInspector.userMetrics.ProfilesHeapProfileTaken.record();
     },
 
     _reportHeapSnapshotProgress: function(done, total)

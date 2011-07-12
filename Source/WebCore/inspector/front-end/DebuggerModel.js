@@ -90,6 +90,7 @@ WebInspector.DebuggerModel.prototype = {
                 callback(error ? null : breakpointId, locations);
         }
         DebuggerAgent.setBreakpointByUrl(url, lineNumber, columnNumber, condition, didSetBreakpoint.bind(this));
+        WebInspector.userMetrics.ScriptsBreakpointSet.record();
     },
 
     setBreakpointBySourceId: function(location, condition, callback)
@@ -100,6 +101,7 @@ WebInspector.DebuggerModel.prototype = {
                 callback(error ? null : breakpointId, [actualLocation]);
         }
         DebuggerAgent.setBreakpoint(location, condition, didSetBreakpoint.bind(this));
+        WebInspector.userMetrics.ScriptsBreakpointSet.record();
     },
 
     removeBreakpoint: function(breakpointId, callback)

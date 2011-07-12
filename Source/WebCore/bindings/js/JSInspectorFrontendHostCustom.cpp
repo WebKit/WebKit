@@ -126,6 +126,21 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
     return jsUndefined();
 }
 
+JSValue JSInspectorFrontendHost::recordActionTaken(ExecState*)
+{
+    return jsUndefined();
+}
+
+JSValue JSInspectorFrontendHost::recordPanelShown(ExecState*)
+{
+    return jsUndefined();
+}
+
+JSValue JSInspectorFrontendHost::recordSettingChanged(ExecState*)
+{
+    return jsUndefined();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

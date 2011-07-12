@@ -144,6 +144,18 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     loadSessionSetting: function(key)
     {
+    },
+
+    recordActionTaken: function(actionCode)
+    {
+    },
+
+    recordPanelShown: function(panelCode)
+    {
+    },
+
+    recordSettingChanged: function(settingCode)
+    {
     }
 }
 

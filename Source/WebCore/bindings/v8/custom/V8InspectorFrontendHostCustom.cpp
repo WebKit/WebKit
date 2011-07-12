@@ -35,6 +35,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorFrontendHost.h"
+#include "PlatformBridge.h"
 #include "PlatformString.h"
 
 #include "V8Binding.h"
@@ -112,6 +113,33 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8:
     frontendHost->showContextMenu(event, items);
 
     return v8::Undefined();
+}
+
+static v8::Handle<v8::Value> histogramEnumeration(const char* name, const v8::Arguments& args, int boundaryValue)
+{
+    if (args.Length() < 1 || !args[0]->IsInt32())
+        return v8::Undefined();
+
+    int sample = args[0]->ToInt32()->Value();
+    if (sample < boundaryValue)
+        PlatformBridge::histogramEnumeration(name, sample, boundaryValue);
+
+    return v8::Undefined();
+}
+
+v8::Handle<v8::Value> V8InspectorFrontendHost::recordActionTakenCallback(const v8::Arguments& args)
+{
+    return histogramEnumeration("DevTools.ActionTaken", args, 100);
+}
+
+v8::Handle<v8::Value> V8InspectorFrontendHost::recordPanelShownCallback(const v8::Arguments& args)
+{
+    return histogramEnumeration("DevTools.PanelShown", args, 20);
+}
+
+v8::Handle<v8::Value> V8InspectorFrontendHost::recordSettingChangedCallback(const v8::Arguments& args)
+{
+    return histogramEnumeration("DevTools.SettingChanged", args, 100);
 }
 
 } // namespace WebCore
