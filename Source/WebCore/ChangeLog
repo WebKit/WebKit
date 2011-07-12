@@ -1,3 +1,16 @@
+2011-07-12  Mike Reed  <reed@google.com>
+
+        [skia] optimize getImageData to avoid a copy when not needed. lockPixels() now does the right thing.
+        https://bugs.webkit.org/show_bug.cgi?id=64302
+
+        Reviewed by Stephen White.
+
+        No new tests. Just an optimization for getImageData(), existing <canvas> tests apply
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+
 2011-07-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce UserMetrics for collecting stats in Chromium port.
