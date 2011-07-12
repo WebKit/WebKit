@@ -27,7 +27,7 @@
 
 module("Builder");
 
-test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
+function runGetNumberOfFailingTestsTest(jsonData, callback) {
     var mockBuildbot = {};
     mockBuildbot.baseURL = 'http://example.com/';
 
@@ -36,23 +36,10 @@ test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
     var realGetResource = window.getResource;
     window.getResource = function(url, successCallback, errorCallback) {
         var mockXHR = {};
-        mockXHR.responseText = JSON.stringify({
-            steps: [
-                {
-                    name: 'layout-test',
-                    isStarted: true,
-                    results: [
-                        2,
-                        [
-                            "2178 total leaks found!", 
-                            "2 test cases (<1%) had incorrect layout", 
-                            "2 test cases (<1%) crashed",
-                        ],
-                    ],
-                },
-            ],
-        });
+        mockXHR.responseText = JSON.stringify(jsonData);
 
+        // FIXME: It would be better for this callback to happen
+        // asynchronously, to match what happens for real requests.
         successCallback(mockXHR);
     };
 
@@ -65,15 +52,67 @@ test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
         get: function() { },
     };
 
-    builder.getNumberOfFailingTests(1, function(failureCount, tooManyFailures) {
-        equal(failureCount, 4);
-        equal(tooManyFailures, false);
-    });
+    builder.getNumberOfFailingTests(1, callback);
 
     window.getResource = realGetResource;
     equal(window.getResource, realGetResource);
     window.PersistentCache = realPersistentCache;
     equal(window.PersistentCache, realPersistentCache);
+}
+
+test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                name: 'layout-test',
+                isStarted: true,
+                results: [
+                    2,
+                    [
+                        "2178 total leaks found!", 
+                        "2 test cases (<1%) had incorrect layout", 
+                        "2 test cases (<1%) crashed",
+                    ],
+                ],
+            },
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, 4);
+        equal(tooManyFailures, false);
+    });
+});
+
+test("getNumberOfFailingTests detects spurious run-webkit-tests failures", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                isFinished: true, 
+                isStarted: true, 
+                name: "layout-test", 
+                results: [
+                    2, 
+                    [
+                        "layout-test"
+                    ]
+                ], 
+                step_number: 7, 
+                text: [
+                    "layout-test"
+                ], 
+                times: [
+                    1310437736.00494, 
+                    1310440118.038023
+                ],
+            }, 
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, -1);
+        equal(tooManyFailures, false);
+    });
 });
 
 })();

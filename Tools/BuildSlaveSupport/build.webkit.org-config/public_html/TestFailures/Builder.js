@@ -148,6 +148,14 @@ Builder.prototype = {
                 return sum + parseInt(match[1], 10);
             }, 0);
 
+            if (!result.failureCount) {
+                // run-webkit-tests exited with a non-zero exit status, but we
+                // didn't find any output about the number of failed tests.
+                // Something must have gone wrong (e.g., run-webkit-tests timed
+                // out and was killed by buildbot).
+                result.failureCount = -1;
+            }
+
             PersistentCache.set(cacheKey, result);
             callback(result.failureCount, result.tooManyFailures);
         });

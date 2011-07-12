@@ -1,3 +1,27 @@
+2011-07-12  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures to recognize when run-webkit-tests gets killed by buildbot
+
+        Fixes <http://webkit.org/b/64358> TestFailures page thinks all tests passed in
+        http://build.webkit.org/builders/Windows%207%20Release%20(Tests)/builds/14672
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): If run-webkit-tests exited with a non-zero
+        exit status but we didn't find any failure counts, assume that there was some error that
+        caused run-webkit-tests to die early (like being killed by buildbot due to a timeout).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Added a new test that shows that we get a failingTestCount of -1 when run-webkit-tests dies
+        early.
+        (runGetNumberOfFailingTestsTest): Moved most code here from the only pre-existing test in this
+        file.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Bump the cache number so old cached data that was
+        tainted by the bug fixed in this patch will be evicted.
+
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
         cr-linux-ews complains about tests that aren't actually failing
