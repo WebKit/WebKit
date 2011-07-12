@@ -1,3 +1,20 @@
+2011-07-12  Adam Roben  <aroben@apple.com>
+
+        Delete some redundant code in WebHTMLView
+
+        This code had no user-visible effect, as we were just duplicating work that AppKit would do
+        for us at a slightly different time.
+
+        Fixes <http://webkit.org/b/64390> WebHTMLView sets its root layer's transform unnecessarily
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView attachRootLayer:]):
+        Don't bother setting the root layer's transform to account for the scale factor. AppKit
+        takes care of this for us nowadays.
+
 2011-07-10  Kenichi Ishibashi  <bashi@chromium.org>
 
         Let plugins participate in form submission
