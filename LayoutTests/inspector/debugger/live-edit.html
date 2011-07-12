@@ -112,7 +112,7 @@ function test()
     {
         InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", callback);
         sourceFrame._textViewer._mainPanel.readOnly = false;
-        sourceFrame._beforeTextChanged();
+        sourceFrame.beforeTextChanged();
         var oldRange, newRange;
         var lines = sourceFrame._textModel._lines;
         for (var i = 0; i < lines.length; ++i) {
@@ -126,7 +126,7 @@ function test()
             newRange = new WebInspector.TextRange(i, column, i + lineEndings.length - 1, lastLineLength);
             break;
         }
-        sourceFrame._afterTextChanged(oldRange, newRange);
+        sourceFrame.afterTextChanged(oldRange, newRange);
         sourceFrame._textViewer._commitEditing();
     }
 };

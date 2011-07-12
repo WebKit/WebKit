@@ -1,3 +1,26 @@
+2011-07-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: make TextViewerDelegate methods implementations public in SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=64353
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.beforeTextChanged):
+        (WebInspector.SourceFrame.prototype.afterTextChanged):
+        (WebInspector.SourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.SourceFrame.prototype.suggestedFileName):
+        (WebInspector.SourceFrame.prototype.doubleClick):
+        (WebInspector.SourceFrame.prototype.cancelEditing):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.doubleClick):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.beforeTextChanged):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.afterTextChanged):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.commitEditing):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.cancelEditing):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.populateLineGutterContextMenu):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.suggestedFileName):
+
 2011-07-12  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: remove more dead code from the Network panel

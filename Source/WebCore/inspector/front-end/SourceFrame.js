@@ -237,7 +237,7 @@ WebInspector.SourceFrame.prototype = {
         delete this._viewerState;
     },
 
-    _beforeTextChanged: function()
+    beforeTextChanged: function()
     {
         if (!this._viewerState) {
             this._saveViewerState();
@@ -248,7 +248,7 @@ WebInspector.SourceFrame.prototype = {
         this.clearMessages();
     },
 
-    _afterTextChanged: function(oldRange, newRange)
+    afterTextChanged: function(oldRange, newRange)
     {
         if (!oldRange || !newRange)
             return;
@@ -593,7 +593,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.endUpdates();
     },
 
-    _populateLineGutterContextMenu: function(lineNumber, contextMenu)
+    populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Continue to here" : "Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
 
@@ -638,11 +638,11 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
-    _populateTextAreaContextMenu: function(contextMenu)
+    populateTextAreaContextMenu: function(contextMenu)
     {
     },
 
-    _suggestedFileName: function()
+    suggestedFileName: function()
     {
         return this._delegate.suggestedFileName();
     },
@@ -872,7 +872,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.resize();
     },
 
-    _doubleClick: function(lineNumber)
+    doubleClick: function(lineNumber)
     {
         if (!this._delegate.canEditScriptSource())
             return;
@@ -883,7 +883,7 @@ WebInspector.SourceFrame.prototype = {
         this._setReadOnly(false);
     },
 
-    _commitEditing: function()
+    commitEditing: function()
     {
         if (!this._viewerState) {
             // No editing was actually done.
@@ -931,7 +931,7 @@ WebInspector.SourceFrame.prototype = {
         this._delegate.setScriptSource(newContent, callback);
     },
 
-    _cancelEditing: function()
+    cancelEditing: function()
     {
         this._restoreViewerState();
         this._setReadOnly(true);
@@ -957,42 +957,42 @@ WebInspector.TextViewerDelegateForSourceFrame = function(sourceFrame)
 WebInspector.TextViewerDelegateForSourceFrame.prototype = {
     doubleClick: function(lineNumber)
     {
-        this._sourceFrame._doubleClick(lineNumber);
+        this._sourceFrame.doubleClick(lineNumber);
     },
 
     beforeTextChanged: function()
     {
-        this._sourceFrame._beforeTextChanged();
+        this._sourceFrame.beforeTextChanged();
     },
 
     afterTextChanged: function(oldRange, newRange)
     {
-        this._sourceFrame._afterTextChanged(oldRange, newRange);
+        this._sourceFrame.afterTextChanged(oldRange, newRange);
     },
 
     commitEditing: function()
     {
-        this._sourceFrame._commitEditing();
+        this._sourceFrame.commitEditing();
     },
 
     cancelEditing: function()
     {
-        this._sourceFrame._cancelEditing();
+        this._sourceFrame.cancelEditing();
     },
 
     populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
-        this._sourceFrame._populateLineGutterContextMenu(lineNumber, contextMenu);
+        this._sourceFrame.populateLineGutterContextMenu(lineNumber, contextMenu);
     },
 
     populateTextAreaContextMenu: function(contextMenu)
     {
-        this._sourceFrame._populateTextAreaContextMenu(contextMenu);
+        this._sourceFrame.populateTextAreaContextMenu(contextMenu);
     },
 
     suggestedFileName: function()
     {
-        return this._sourceFrame._suggestedFileName();
+        return this._sourceFrame.suggestedFileName();
     }
 };
 
