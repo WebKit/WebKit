@@ -245,7 +245,7 @@ class ChromiumPort(WebKitPort):
     def run_webkit_tests_command(cls):
         command = cls.script_shell_command("new-run-webkit-tests")
         command.append("--chromium")
-        command.append("--no-pixel-tests")
+        command.append("--skip-failing-tests")
         return command
 
     @classmethod

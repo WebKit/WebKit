@@ -1,3 +1,19 @@
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
+        cr-linux-ews should run pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=64394
+
+        Reviewed by Ojan Vafai.
+
+        This patch enabled pixel test on the cr-linux-ews.  Running a quick
+        test on the bots, it looks like we have five pixel failures, related to
+        some missing fonts.  I've also made the bots skip failing tests to
+        avoid uploading huge zip files to bugs.webkit.org (with all the exected
+        IMAGE failures).
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota
