@@ -1,3 +1,9 @@
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
+        Fix the grammar in the FIXME comment.
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+
 2011-07-12  Eric Seidel  <eric@webkit.org>
 
         NRWT should open test results page with Safari trunk, not the system provided one on Mac

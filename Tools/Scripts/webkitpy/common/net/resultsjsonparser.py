@@ -73,7 +73,8 @@ class JSONTestResult(object):
     def did_run_as_expected(self):
         actual_results = self._actual_as_tokens()
         expected_results = self._expected_as_tokens()
-        # FIXME: We should only remove_pixel_failures this JSONResult can from a run without pixel tests!
+        # FIXME: We should only call remove_pixel_failures when this JSONResult
+        # came from a test run without pixel tests!
         if not test_expectations.has_pixel_failures(actual_results):
             expected_results = test_expectations.remove_pixel_failures(expected_results)
         for actual_result in actual_results:
