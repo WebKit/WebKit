@@ -1,3 +1,9 @@
+2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip hittest-on-relative-positioned-children.html in WebKit2.
+
+        * platform/wk2/Skipped:
+
 2011-07-11  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Remove WebSocket tests that do not apply to hybi protocol

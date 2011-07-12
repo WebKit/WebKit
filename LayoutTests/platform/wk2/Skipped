@@ -177,6 +177,7 @@ editing/spelling/spellcheck-paste.html
 editing/undo/undo-deleteWord.html
 editing/undo/undo-smart-delete-reversed-selection.html
 editing/undo/undo-smart-delete-word.html
+fast/block/positioning/hittest-on-relative-positioned-children.html
 fast/blockflow/horizontal-bt-replaced-selection.html
 fast/blockflow/japanese-lr-selection.html
 fast/blockflow/japanese-rl-selection.html
