@@ -65,7 +65,7 @@ class SimpleFontData;
 // can call |reset| to start over again.
 class ComplexTextController {
 public:
-    ComplexTextController(const TextRun&, unsigned startingX, unsigned startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font*);
+    ComplexTextController(const TextRun&, int startingX, int startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font*);
     ~ComplexTextController();
 
     bool isWordBreak(unsigned);
@@ -73,7 +73,7 @@ public:
     // setPadding sets a number of pixels to be distributed across the TextRun.
     // WebKit uses this to justify text.
     void setPadding(int);
-    void reset(unsigned offset);
+    void reset(int offset);
     // Advance to the next script run, returning false when the end of the
     // TextRun has been reached.
     bool nextScriptRun();
@@ -137,8 +137,8 @@ private:
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
     SkPoint* m_positions; // A vector of positions for each glyph.
     ssize_t m_indexOfNextScriptRun; // Indexes the script run in |m_run|.
-    unsigned m_offsetX; // Offset in pixels to the start of the next script run.
-    unsigned m_startingY; // The Y starting point of the script run.
+    int m_offsetX; // Offset in pixels to the start of the next script run.
+    int m_startingY; // The Y starting point of the script run.
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_glyphsArrayCapacity; // Current size of all the Harfbuzz arrays.
 

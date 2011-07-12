@@ -51,7 +51,7 @@ static int truncateFixedPointToInteger(HB_Fixed value)
     return value >> 6;
 }
 
-ComplexTextController::ComplexTextController(const TextRun& run, unsigned startingX, unsigned startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font* font)
+ComplexTextController::ComplexTextController(const TextRun& run, int startingX, int startingY, unsigned wordSpacing, unsigned letterSpacing, unsigned padding, const Font* font)
     : m_font(font)
     , m_run(getNormalizedTextRun(run, m_normalizedRun, m_normalizedBuffer))
 {
@@ -142,7 +142,7 @@ void ComplexTextController::setPadding(int padding)
         m_padPerWordBreak = 0;
 }
 
-void ComplexTextController::reset(unsigned offset)
+void ComplexTextController::reset(int offset)
 {
     m_indexOfNextScriptRun = 0;
     m_offsetX = offset;
