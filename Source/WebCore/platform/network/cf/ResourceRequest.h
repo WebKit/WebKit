@@ -32,12 +32,12 @@
 #include <wtf/RetainPtr.h>
 #if USE(CFNETWORK)
 typedef const struct _CFURLRequest* CFURLRequestRef;
-#else
+#endif
+
 #ifdef __OBJC__
 @class NSURLRequest;
 #else
 class NSURLRequest;
-#endif
 #endif
 
 #if USE(CFURLSTORAGESESSIONS) && (defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD))
@@ -72,18 +72,32 @@ namespace WebCore {
         }
         
 #if USE(CFNETWORK)
+#if PLATFORM(MAC)
+        ResourceRequest(NSURLRequest *);
+        void updateNSURLRequest();
+#endif
+
         ResourceRequest(CFURLRequestRef cfRequest)
             : ResourceRequestBase()
-            , m_cfRequest(cfRequest) { }
+            , m_cfRequest(cfRequest)
+        {
+#if PLATFORM(MAC)
+            updateNSURLRequest();
+#endif
+        }
+
 
         CFURLRequestRef cfURLRequest() const;
 #else
-        ResourceRequest(NSURLRequest* nsRequest)
+        ResourceRequest(NSURLRequest *nsRequest)
             : ResourceRequestBase()
             , m_nsRequest(nsRequest) { }
 
+#endif
+
+#if PLATFORM(MAC)
         void applyWebArchiveHackForMail();
-        NSURLRequest* nsURLRequest() const;
+        NSURLRequest *nsURLRequest() const;
 #endif
 
 #if USE(CFURLSTORAGESESSIONS)
@@ -108,7 +122,8 @@ namespace WebCore {
 
 #if USE(CFNETWORK)
         RetainPtr<CFURLRequestRef> m_cfRequest;
-#else
+#endif
+#if PLATFORM(MAC)
         RetainPtr<NSURLRequest> m_nsRequest;
 #endif
 

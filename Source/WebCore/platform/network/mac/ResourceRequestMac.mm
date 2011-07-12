@@ -26,10 +26,6 @@
 #import "config.h"
 #import "ResourceRequest.h"
 
-#if !USE(CFNETWORK)
-
-#import "WebCoreSystemInterface.h"
-
 #import "FormDataStreamMac.h"
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
@@ -42,6 +38,7 @@
 - (NSArray *)contentDispositionEncodingFallbackArray;
 + (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
 - (CFURLRequestRef)_CFURLRequest;
+- (id)_initWithCFURLRequest:(CFURLRequestRef)request;
 @end
 
 @interface NSMutableURLRequest (WebMutableNSURLRequestDetails)
@@ -50,12 +47,29 @@
 
 namespace WebCore {
 
-NSURLRequest* ResourceRequest::nsURLRequest() const
+NSURLRequest *ResourceRequest::nsURLRequest() const
 { 
     updatePlatformRequest();
     
     return [[m_nsRequest.get() retain] autorelease]; 
 }
+
+#if USE(CFNETWORK)
+
+ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
+    : ResourceRequestBase()
+    , m_cfRequest([nsRequest _CFURLRequest])
+    , m_nsRequest(nsRequest)
+{
+}
+
+void ResourceRequest::updateNSURLRequest()
+{
+    if (m_cfRequest)
+        m_nsRequest.adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
+}
+
+#else
 
 void ResourceRequest::doUpdateResourceRequest()
 {
@@ -177,6 +191,8 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 
 #endif
     
+#endif // USE(CFNETWORK)
+
 static bool initQuickLookResourceCachingQuirks()
 {
     if (applicationIsSafari())
@@ -204,4 +220,3 @@ bool ResourceRequest::useQuickLookResourceCachingQuirks()
 
 } // namespace WebCore
 
-#endif // !USE(CFNETWORK)
