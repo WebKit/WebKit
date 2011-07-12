@@ -1,3 +1,12 @@
+2011-07-12  Ojan Vafai  <ojan@chromium.org>
+
+        fix flakiness dashboard to work with new crash log filenames
+        https://bugs.webkit.org/show_bug.cgi?id=64393
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
         Add a happy animation to garden-o-matic when there are no failures

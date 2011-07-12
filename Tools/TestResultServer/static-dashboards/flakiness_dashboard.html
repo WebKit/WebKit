@@ -2264,7 +2264,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     var innerHTML;
     if (builder) {
       var resultsType;
-      if (endsWith(path, '-stack.txt')) {
+      if (endsWith(path, '-crash-log.txt')) {
         resultsType = 'STACKTRACE';
       } else if (endsWith(path, '-actual.txt') ||
                  endsWith(path, '-actual.png')) {
@@ -2399,7 +2399,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                       reftest_html_file, reftest_mismatch_html_file);
     }
 
-    var actualResultSuffixes = ['-actual.txt', '-actual.png', '-stack.txt',
+    var actualResultSuffixes = ['-actual.txt', '-actual.png', '-crash-log.txt',
         '-diff.txt', '-wdiff.html', '-diff.png'];
 
     for (var builder in builders) {
