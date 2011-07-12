@@ -262,10 +262,10 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Qt Windows 32-bit Release', },
             {'name': u'Qt Windows 32-bit Debug', },
             {'name': u'Chromium Win Release', },
-            {'name': u'Chromium Mac Release', },
-            {'name': u'Chromium Linux Release', },
             {'name': u'Chromium Win Release (Tests)', },
+            {'name': u'Chromium Mac Release', },
             {'name': u'Chromium Mac Release (Tests)', },
+            {'name': u'Chromium Linux Release', },
             {'name': u'Chromium Linux Release (Tests)', },
             {'name': u'Leopard Intel Release (NRWT)', },
             {'name': u'SnowLeopard Intel Release (NRWT)', },
@@ -288,6 +288,7 @@ class BuildBotTest(unittest.TestCase):
             "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
             "Qt",
             "Chromium.*Release$",
+            "Chromium.*(Mac|Linux).*Release.*\(Tests",
         ]
         expected_builders = [
             {'name': u'Leopard Intel Release (Build)', },
@@ -311,7 +312,9 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Qt Windows 32-bit Debug', },
             {'name': u'Chromium Win Release', },
             {'name': u'Chromium Mac Release', },
+            {'name': u'Chromium Mac Release (Tests)', },
             {'name': u'Chromium Linux Release', },
+            {'name': u'Chromium Linux Release (Tests)', },
             {'name': u'WinCairo Debug (Build)', },
             {'name': u'WinCE Release (Build)', },
             {'name': u'EFL Linux Release (Build)', },

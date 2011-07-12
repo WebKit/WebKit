@@ -193,24 +193,24 @@
                       "slavenames": ["google-windows-1"]
                     },
                     {
-                      "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
-                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-mac-1", "google-mac-3"]
-                    },
-                    {
-                      "name": "Chromium Linux Release", "type": "Build", "builddir": "chromium-linux-release",
-                      "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-linux-1"]
-                    },
-                    {
                       "name": "Chromium Win Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-win-release-tests",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-windows-2"]
                     },
                     {
+                      "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
+                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-mac-1", "google-mac-3"]
+                    },
+                    {
                       "name": "Chromium Mac Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-mac-release-tests",
                       "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-2", "google-mac-4"]
+                    },
+                    {
+                      "name": "Chromium Linux Release", "type": "Build", "builddir": "chromium-linux-release",
+                      "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-linux-1"]
                     },
                     {
                       "name": "Chromium Linux Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-linux-release-tests",
@@ -257,8 +257,8 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
-                                       "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
-                                       "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
+                                       "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
+                                       "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
                                        "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-leopard", "branch": "trunk", "treeStableTimer": 45.0,

@@ -1,3 +1,19 @@
+2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make Chromium Mac and Linux tests bot core builders
+        https://bugs.webkit.org/show_bug.cgi?id=63196
+
+        Reviewed by Adam Barth.
+
+        Added Chromium Mac and Linux Release Tests bots core builders.
+
+        Also rearranged the order of bots so that test bots show up right next to
+        respective builders.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-07-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Add code related to font management.
