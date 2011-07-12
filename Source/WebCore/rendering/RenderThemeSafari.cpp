@@ -753,7 +753,7 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
     paintInfo.context->save();
 
-    RoundedIntRect bound = o->style()->getRoundedBorderFor(r);
+    RoundedRect bound = o->style()->getRoundedBorderFor(r);
     int radius = bound.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
@@ -783,14 +783,14 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
     paintInfo.context->save();
     CGContextClipToRect(context, topGradient);
-    paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(topGradient), bound.radii().topLeft(), bound.radii().topRight(), IntSize(), IntSize()));
+    paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(topGradient), bound.radii().topLeft(), bound.radii().topRight(), IntSize(), IntSize()));
     CGContextDrawShading(context, topShading.get());
     paintInfo.context->restore();
 
     if (!bottomGradient.isEmpty()) {
         paintInfo.context->save();
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bound.radii().bottomLeft(), bound.radii().bottomRight()));
+        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bound.radii().bottomLeft(), bound.radii().bottomRight()));
         CGContextDrawShading(context, bottomShading.get());
         paintInfo.context->restore();
     }
@@ -954,7 +954,7 @@ const int trackRadius = 2;
 bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntSize radius(trackRadius, trackRadius);
-    RoundedIntRect bounds(r, radius, radius, radius, radius);
+    RoundedRect bounds(r, radius, radius, radius, radius);
 
     if (o->style()->appearance() ==  SliderHorizontalPart)
         bounds.setRect(IntRect(r.x(),

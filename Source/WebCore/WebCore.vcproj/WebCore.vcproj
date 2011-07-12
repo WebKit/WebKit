@@ -27657,11 +27657,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\RoundedIntRect.cpp"
+					RelativePath="..\platform\graphics\RoundedRect.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\RoundedIntRect.h"
+					RelativePath="..\platform\graphics\RoundedRect.h"
 					>
 				</File>
 				<File

@@ -92,7 +92,7 @@ float Path::normalAngleAtLength(float length, bool& ok) const
 }
 #endif
 
-void Path::addRoundedRect(const RoundedIntRect& r)
+void Path::addRoundedRect(const RoundedRect& r)
 {
     addRoundedRect(r.rect(), r.radii().topLeft(), r.radii().topRight(), r.radii().bottomLeft(), r.radii().bottomRight());
 }

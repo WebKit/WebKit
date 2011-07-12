@@ -3295,8 +3295,8 @@
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A71C30B81381265E00DBC351 /* ShadowContentSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */; };
 		A71C30B91381265E00DBC351 /* ShadowContentSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A71C30B71381265E00DBC351 /* ShadowContentSelector.h */; };
-		A73F95FE12C97BFE0031AAF9 /* RoundedIntRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedIntRect.cpp */; };
-		A73F95FF12C97BFE0031AAF9 /* RoundedIntRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedIntRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */; };
+		A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74C2D3C13811E0D00F83572 /* ShadowContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A74C2D3B13811E0D00F83572 /* ShadowContentElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E497410752ACB00C9B896 /* SerializedScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */; };
@@ -9824,8 +9824,8 @@
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
 		A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowContentSelector.cpp; sourceTree = "<group>"; };
 		A71C30B71381265E00DBC351 /* ShadowContentSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowContentSelector.h; sourceTree = "<group>"; };
-		A73F95FC12C97BFE0031AAF9 /* RoundedIntRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedIntRect.cpp; sourceTree = "<group>"; };
-		A73F95FD12C97BFE0031AAF9 /* RoundedIntRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedIntRect.h; sourceTree = "<group>"; };
+		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
+		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
 		A74C2D3B13811E0D00F83572 /* ShadowContentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowContentElement.h; sourceTree = "<group>"; };
 		A75E497410752ACB00C9B896 /* SerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedScriptValue.h; sourceTree = "<group>"; };
 		A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedScriptValue.cpp; sourceTree = "<group>"; };
@@ -18085,8 +18085,8 @@
 				A88DD4860B4629A300C02990 /* PathTraversalState.h */,
 				A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */,
 				A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */,
-				A73F95FC12C97BFE0031AAF9 /* RoundedIntRect.cpp */,
-				A73F95FD12C97BFE0031AAF9 /* RoundedIntRect.h */,
+				A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */,
+				A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */,
 				371F4FFB0D25E7F300ECE0D5 /* SegmentedFontData.cpp */,
 				371F4FFA0D25E7F300ECE0D5 /* SegmentedFontData.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
@@ -22458,7 +22458,7 @@
 				BC74DA371013F3F7007987AD /* RGBColor.h in Headers */,
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
 				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
-				A73F95FF12C97BFE0031AAF9 /* RoundedIntRect.h in Headers */,
+				A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */,
 				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
 				1A569D1F0D7E2B82007C3983 /* runtime_array.h in Headers */,
 				1A569D210D7E2B82007C3983 /* runtime_method.h in Headers */,
@@ -25363,7 +25363,7 @@
 				BC74DA381013F3F7007987AD /* RGBColor.cpp in Sources */,
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
 				49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */,
-				A73F95FE12C97BFE0031AAF9 /* RoundedIntRect.cpp in Sources */,
+				A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */,
 				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
 				1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */,
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,

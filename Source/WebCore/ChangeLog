@@ -1,3 +1,102 @@
+2011-07-12  Levi Weintraub  <leviw@chromium.org>
+
+        Change roundedIntRect to roundedRect
+        https://bugs.webkit.org/show_bug.cgi?id=64326
+
+        Reviewed by Eric Seidel.
+
+        Renaming RoundedIntRect to RoundedRect and moving the underlying type to Layout units from
+        integer-based versions.
+
+        No new tests, no new functionality
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        * platform/graphics/Path.h:
+        * platform/graphics/RoundedIntRect.cpp: Removed.
+        * platform/graphics/RoundedIntRect.h: Removed.
+        * platform/graphics/RoundedRect.cpp: Copied from Source/WebCore/platform/graphics/RoundedIntRect.cpp.
+        (WebCore::RoundedRect::Radii::isZero):
+        (WebCore::RoundedRect::Radii::scale):
+        (WebCore::RoundedRect::Radii::expand):
+        (WebCore::RoundedRect::inflateWithRadii):
+        (WebCore::RoundedRect::Radii::includeLogicalEdges):
+        (WebCore::RoundedRect::Radii::excludeLogicalEdges):
+        (WebCore::RoundedRect::RoundedRect):
+        (WebCore::RoundedRect::includeLogicalEdges):
+        (WebCore::RoundedRect::excludeLogicalEdges):
+        (WebCore::RoundedRect::isRenderable):
+        * platform/graphics/RoundedRect.h: Copied from Source/WebCore/platform/graphics/RoundedIntRect.h.
+        (WebCore::RoundedRect::Radii::Radii):
+        (WebCore::RoundedRect::Radii::setTopLeft):
+        (WebCore::RoundedRect::Radii::setTopRight):
+        (WebCore::RoundedRect::Radii::setBottomLeft):
+        (WebCore::RoundedRect::Radii::setBottomRight):
+        (WebCore::RoundedRect::Radii::topLeft):
+        (WebCore::RoundedRect::Radii::topRight):
+        (WebCore::RoundedRect::Radii::bottomLeft):
+        (WebCore::RoundedRect::Radii::bottomRight):
+        (WebCore::RoundedRect::Radii::expand):
+        (WebCore::RoundedRect::Radii::shrink):
+        (WebCore::RoundedRect::rect):
+        (WebCore::RoundedRect::setRect):
+        (WebCore::RoundedRect::move):
+        (WebCore::RoundedRect::inflate):
+        (WebCore::RoundedRect::expandRadii):
+        (WebCore::RoundedRect::shrinkRadii):
+        (WebCore::operator==):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::setLastShadowValues):
+        (WebCore::ScratchBuffer::setLastInsetShadowValues):
+        (WebCore::ScratchBuffer::matchesLastShadow):
+        (WebCore::ScratchBuffer::matchesLastInsetShadow):
+        (WebCore::computeSliceSizesFromRadii):
+        (WebCore::ShadowBlur::templateSize):
+        (WebCore::ShadowBlur::drawRectShadow):
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawLayerPieces):
+        * platform/graphics/ShadowBlur.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcRadiiFor):
+        (WebCore::calcConstraintScaleFor):
+        (WebCore::RenderStyle::getRoundedBorderFor):
+        (WebCore::RenderStyle::getRoundedInnerBorderFor):
+        * rendering/style/RenderStyle.h:
+
 2011-07-12  Mike Reed  <reed@google.com>
 
         [skia] optimize getImageData to avoid a copy when not needed. lockPixels() now does the right thing.

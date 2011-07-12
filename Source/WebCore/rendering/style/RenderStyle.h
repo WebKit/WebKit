@@ -44,7 +44,7 @@
 #include "NinePieceImage.h"
 #include "OutlineValue.h"
 #include "RenderStyleConstants.h"
-#include "RoundedIntRect.h"
+#include "RoundedRect.h"
 #include "ShadowData.h"
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
@@ -871,10 +871,10 @@ public:
         setBorderRadius(LengthSize(Length(s.width(), Fixed), Length(s.height(), Fixed)));
     }
     
-    RoundedIntRect getRoundedBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
-    RoundedIntRect getRoundedInnerBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    RoundedRect getRoundedBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    RoundedRect getRoundedInnerBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
 
-    RoundedIntRect getRoundedInnerBorderFor(const IntRect& borderRect,
+    RoundedRect getRoundedInnerBorderFor(const IntRect& borderRect,
         int topWidth, int bottomWidth, int leftWidth, int rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
 
     void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.m_left.m_width, v) }

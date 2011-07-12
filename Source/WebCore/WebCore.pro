@@ -999,7 +999,7 @@ SOURCES += \
     platform/graphics/Path.cpp \
     platform/graphics/PathTraversalState.cpp \
     platform/graphics/Pattern.cpp \
-    platform/graphics/RoundedIntRect.cpp \
+    platform/graphics/RoundedRect.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/graphics/ShadowBlur.cpp \
     platform/graphics/SVGGlyph.cpp \
@@ -1990,7 +1990,7 @@ HEADERS += \
     platform/graphics/Path.h \
     platform/graphics/PathTraversalState.h \
     platform/graphics/Pattern.h \
-    platform/graphics/RoundedIntRect.h \
+    platform/graphics/RoundedRect.h \
     platform/graphics/qt/FontCustomPlatformData.h \
     platform/graphics/qt/ImageDecoderQt.h \
     platform/graphics/qt/StillImageQt.h \

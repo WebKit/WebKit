@@ -1024,7 +1024,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    RoundedIntRect border = o->style()->getRoundedBorderFor(r);
+    RoundedRect border = o->style()->getRoundedBorderFor(r);
     int radius = border.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
@@ -1058,7 +1058,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, topGradient);
-        paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
+        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingLayoutRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, topShading.get());
     }
@@ -1066,7 +1066,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     if (!bottomGradient.isEmpty()) {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
+        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingLayoutRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, bottomShading.get());
     }
@@ -1292,7 +1292,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
         mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
 
     IntSize radius(trackRadius, trackRadius);
-    paintInfo.context->addRoundedRectClip(RoundedIntRect(bounds, radius, radius, radius, radius));
+    paintInfo.context->addRoundedRectClip(RoundedRect(bounds, radius, radius, radius, radius));
     context = localContext.cgContext();
     CGContextDrawShading(context, mainShading.get());
     

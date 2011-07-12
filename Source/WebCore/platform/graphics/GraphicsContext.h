@@ -126,7 +126,7 @@ namespace WebCore {
 #endif
     class ImageBuffer;
     class IntRect;
-    class RoundedIntRect;
+    class RoundedRect;
     class KURL;
     class SharedGraphicsContext3D;
     class TextRun;
@@ -299,8 +299,8 @@ namespace WebCore {
         void fillRect(const FloatRect&, Generator&);
         void fillRect(const FloatRect&, const Color&, ColorSpace, CompositeOperator);
         void fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&, ColorSpace);
-        void fillRoundedRect(const RoundedIntRect&, const Color&, ColorSpace);
-        void fillRectWithRoundedHole(const IntRect&, const RoundedIntRect& roundedHoleRect, const Color&, ColorSpace);
+        void fillRoundedRect(const RoundedRect&, const Color&, ColorSpace);
+        void fillRectWithRoundedHole(const IntRect&, const RoundedRect& roundedHoleRect, const Color&, ColorSpace);
 
         void clearRect(const FloatRect&);
 
@@ -330,10 +330,10 @@ namespace WebCore {
 
         void clip(const IntRect&);
         void clip(const FloatRect&);
-        void addRoundedRectClip(const RoundedIntRect&);
+        void addRoundedRectClip(const RoundedRect&);
         void addInnerRoundedRectClip(const IntRect&, int thickness);
         void clipOut(const IntRect&);
-        void clipOutRoundedRect(const RoundedIntRect&);
+        void clipOutRoundedRect(const RoundedRect&);
         void clipPath(const Path&, WindRule);
         void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
         void clipToImageBuffer(ImageBuffer*, const FloatRect&);

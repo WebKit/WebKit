@@ -149,17 +149,17 @@ private:
 
     IntSize calculateFillTileSize(const FillLayer*, IntSize scaledSize) const;
 
-    RoundedIntRect getBackgroundRoundedRect(const IntRect&, InlineFlowBox*, int inlineBoxWidth, int inlineBoxHeight,
+    RoundedRect getBackgroundRoundedRect(const LayoutRect&, InlineFlowBox*, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
         bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
 
-    void clipBorderSidePolygon(GraphicsContext*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+    void clipBorderSidePolygon(GraphicsContext*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                                BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
-    void paintOneBorderSide(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+    void paintOneBorderSide(GraphicsContext*, const RenderStyle*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                                 const IntRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const class BorderEdge[],
                                 const Path*, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = 0);
-    void paintTranslucentBorderSides(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+    void paintTranslucentBorderSides(GraphicsContext*, const RenderStyle*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                           const class BorderEdge[], BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false);
-    void paintBorderSides(GraphicsContext*, const RenderStyle*, const RoundedIntRect& outerBorder, const RoundedIntRect& innerBorder,
+    void paintBorderSides(GraphicsContext*, const RenderStyle*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                           const class BorderEdge[], BorderEdgeFlags, BackgroundBleedAvoidance,
                           bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false, const Color* overrideColor = 0);
     void drawBoxSideFromPath(GraphicsContext*, const IntRect&, const Path&, const class BorderEdge[],

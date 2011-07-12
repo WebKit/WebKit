@@ -31,7 +31,7 @@
 #include "Generator.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
-#include "RoundedIntRect.h"
+#include "RoundedRect.h"
 #include "TextRun.h"
 
 using namespace std;
@@ -554,7 +554,7 @@ void GraphicsContext::clip(const IntRect& rect)
 }
 #endif
 
-void GraphicsContext::addRoundedRectClip(const RoundedIntRect& rect)
+void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -564,7 +564,7 @@ void GraphicsContext::addRoundedRectClip(const RoundedIntRect& rect)
     clip(path);
 }
 
-void GraphicsContext::clipOutRoundedRect(const RoundedIntRect& rect)
+void GraphicsContext::clipOutRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -620,13 +620,13 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     setCompositeOperation(previousOperator);
 }
 
-void GraphicsContext::fillRoundedRect(const RoundedIntRect& rect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRoundedRect(const RoundedRect& rect, const Color& color, ColorSpace colorSpace)
 {
     fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
 }
 
 #if !USE(CG)
-void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedIntRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;

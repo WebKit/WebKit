@@ -25,21 +25,20 @@
  */
 
 #include "config.h"
-#include "RoundedIntRect.h"
+#include "RoundedRect.h"
 
-#include "IntRect.h"
 #include <algorithm>
 
 using namespace std;
 
 namespace WebCore {
 
-bool RoundedIntRect::Radii::isZero() const
+bool RoundedRect::Radii::isZero() const
 {
     return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero();
 }
 
-void RoundedIntRect::Radii::scale(float factor)
+void RoundedRect::Radii::scale(float factor)
 {
     if (factor == 1)
         return;
@@ -47,20 +46,20 @@ void RoundedIntRect::Radii::scale(float factor)
     // If either radius on a corner becomes zero, reset both radii on that corner.
     m_topLeft.scale(factor);
     if (!m_topLeft.width() || !m_topLeft.height())
-        m_topLeft = IntSize();
+        m_topLeft = LayoutSize();
     m_topRight.scale(factor);
     if (!m_topRight.width() || !m_topRight.height())
-        m_topRight = IntSize();
+        m_topRight = LayoutSize();
     m_bottomLeft.scale(factor);
     if (!m_bottomLeft.width() || !m_bottomLeft.height())
-        m_bottomLeft = IntSize();
+        m_bottomLeft = LayoutSize();
     m_bottomRight.scale(factor);
     if (!m_bottomRight.width() || !m_bottomRight.height())
-        m_bottomRight = IntSize();
+        m_bottomRight = LayoutSize();
 
 }
 
-void RoundedIntRect::Radii::expand(int topWidth, int bottomWidth, int leftWidth, int rightWidth)
+void RoundedRect::Radii::expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth)
 {
     m_topLeft.setWidth(max(0, m_topLeft.width() + leftWidth));
     m_topLeft.setHeight(max(0, m_topLeft.height() + topWidth));
@@ -75,9 +74,9 @@ void RoundedIntRect::Radii::expand(int topWidth, int bottomWidth, int leftWidth,
     m_bottomRight.setHeight(max(0, m_bottomRight.height() + bottomWidth));
 }
 
-void RoundedIntRect::inflateWithRadii(int size)
+void RoundedRect::inflateWithRadii(LayoutUnit size)
 {
-    IntRect old = m_rect;
+    LayoutRect old = m_rect;
 
     m_rect.inflate(size);
     // Considering the inflation factor of shorter size to scale the radii seems appropriate here
@@ -90,7 +89,7 @@ void RoundedIntRect::inflateWithRadii(int size)
     m_radii.scale(factor);
 }
 
-void RoundedIntRect::Radii::includeLogicalEdges(const RoundedIntRect::Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+void RoundedRect::Radii::includeLogicalEdges(const RoundedRect::Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     if (includeLogicalLeftEdge) {
         if (isHorizontal)
@@ -109,53 +108,53 @@ void RoundedIntRect::Radii::includeLogicalEdges(const RoundedIntRect::Radii& edg
     }
 }
 
-void RoundedIntRect::Radii::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge)
+void RoundedRect::Radii::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge)
 {
     if (excludeLogicalLeftEdge) {
         if (isHorizontal)
-            m_bottomLeft = IntSize();
+            m_bottomLeft = LayoutSize();
         else
-            m_topRight = IntSize();
-        m_topLeft = IntSize();
+            m_topRight = LayoutSize();
+        m_topLeft = LayoutSize();
     }
         
     if (excludeLogicalRightEdge) {
         if (isHorizontal)
-            m_topRight = IntSize();
+            m_topRight = LayoutSize();
         else
-            m_bottomLeft = IntSize();
-        m_bottomRight = IntSize();
+            m_bottomLeft = LayoutSize();
+        m_bottomRight = LayoutSize();
     }
 }
 
-RoundedIntRect::RoundedIntRect(int x, int y, int width, int height)
+RoundedRect::RoundedRect(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height)
     : m_rect(x, y, width, height)
 {
 }
 
-RoundedIntRect::RoundedIntRect(const IntRect& rect, const Radii& radii)
+RoundedRect::RoundedRect(const LayoutRect& rect, const Radii& radii)
     : m_rect(rect)
     , m_radii(radii)
 {
 }
 
-RoundedIntRect::RoundedIntRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight)
+RoundedRect::RoundedRect(const LayoutRect& rect, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight)
     : m_rect(rect)
     , m_radii(topLeft, topRight, bottomLeft, bottomRight)
 {
 }
 
-void RoundedIntRect::includeLogicalEdges(const Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+void RoundedRect::includeLogicalEdges(const Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     m_radii.includeLogicalEdges(edges, isHorizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
-void RoundedIntRect::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge)
+void RoundedRect::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge)
 {
     m_radii.excludeLogicalEdges(isHorizontal, excludeLogicalLeftEdge, excludeLogicalRightEdge);
 }
 
-bool RoundedIntRect::isRenderable() const
+bool RoundedRect::isRenderable() const
 {
     return m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
         && m_radii.bottomLeft().width() + m_radii.bottomRight().width() <= m_rect.width()

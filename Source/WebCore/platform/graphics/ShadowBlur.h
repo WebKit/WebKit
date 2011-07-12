@@ -32,7 +32,7 @@
 #include "Color.h"
 #include "ColorSpace.h"
 #include "FloatRect.h"
-#include "RoundedIntRect.h"
+#include "RoundedRect.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -61,8 +61,8 @@ public:
     GraphicsContext* beginShadowLayer(GraphicsContext*, const FloatRect& layerArea);
     void endShadowLayer(GraphicsContext*);
 
-    void drawRectShadow(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&);
-    void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii);
+    void drawRectShadow(GraphicsContext*, const FloatRect&, const RoundedRect::Radii&);
+    void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedRect::Radii& holeRadii);
 
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
 
@@ -82,15 +82,15 @@ private:
     };
     
     IntRect calculateLayerBoundingRect(GraphicsContext*, const FloatRect& layerArea, const IntRect& clipRect);
-    IntSize templateSize(const IntSize& blurredEdgeSize, const RoundedIntRect::Radii&) const;
+    IntSize templateSize(const IntSize& blurredEdgeSize, const RoundedRect::Radii&) const;
 
-    void drawRectShadowWithoutTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, const IntRect& layerRect);
-    void drawRectShadowWithTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
+    void drawRectShadowWithoutTiling(GraphicsContext*, const FloatRect&, const RoundedRect::Radii&, const IntRect& layerRect);
+    void drawRectShadowWithTiling(GraphicsContext*, const FloatRect&, const RoundedRect::Radii&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
 
-    void drawInsetShadowWithoutTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii&, const IntRect& layerRect);
-    void drawInsetShadowWithTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
+    void drawInsetShadowWithoutTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedRect::Radii&, const IntRect& layerRect);
+    void drawInsetShadowWithTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedRect::Radii&, const IntSize& shadowTemplateSize, const IntSize& blurredEdgeSize);
     
-    void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const RoundedIntRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection);
+    void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const RoundedRect::Radii&, const IntSize& roundedRadius, const IntSize& templateSize, ShadowDirection);
     
     void blurShadowBuffer(const IntSize& templateSize);
     void blurAndColorShadowBuffer(const IntSize& templateSize);

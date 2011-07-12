@@ -703,7 +703,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
-        contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii());
+        contextShadow.drawRectShadow(this, rect, RoundedRect::Radii());
     }
 
     CGContextFillRect(context, rect);
@@ -732,7 +732,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
-        contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii());
+        contextShadow.drawRectShadow(this, rect, RoundedRect::Radii());
     }
 
     CGContextFillRect(context, rect);
@@ -765,7 +765,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
         CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 
         ShadowBlur contextShadow(FloatSize(shadowBlur, shadowBlur), m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
-        contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
+        contextShadow.drawRectShadow(this, rect, RoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
     }
 
     bool equalWidths = (topLeft.width() == topRight.width() && topRight.width() == bottomLeft.width() && bottomLeft.width() == bottomRight.width());
@@ -786,7 +786,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
         setCGFillColor(context, oldFillColor, oldColorSpace);
 }
 
-void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedIntRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
