@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ResourceResponse.h"
 
-#if !USE(CFNETWORK)
-
 #import "HTTPParsers.h"
 #import "WebCoreURLResponse.h"
 #import "WebCoreSystemInterface.h"
@@ -36,8 +34,13 @@
 #import <limits>
 #include <wtf/text/CString.h>
 
-@interface NSURLResponse (FoundationSecretsWebCoreKnowsAbout)
+using namespace std;
+
+@interface NSURLResponse (WebNSURLResponseDetails)
 - (NSTimeInterval)_calculatedExpiration;
+- (id)_initWithCFURLResponse:(CFURLResponseRef)response;
+- (CFURLResponseRef) _CFURLResponse;
++ (id)_responseWithCFURLResponse:(CFURLResponseRef)response;
 @end
 
 
@@ -48,19 +51,51 @@ static NSString* const commonHeaderFields[] = {
 };
 static const int numCommonHeaderFields = sizeof(commonHeaderFields) / sizeof(AtomicString*);
 
+void ResourceResponse::initNSURLResponse() const
+{
+    // Work around a mistake in the NSURLResponse class - <rdar://problem/3346574>.
+    // The init function takes an NSInteger, even though the accessor returns a long long.
+    // For values that won't fit in an NSInteger, pass -1 instead.
+    NSInteger expectedContentLength;
+    if (m_expectedContentLength < 0 || m_expectedContentLength > numeric_limits<NSInteger>::max())
+        expectedContentLength = -1;
+    else
+        expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
+    m_nsResponse.adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
+}
+
+#if USE(CFNETWORK)
+
 NSURLResponse *ResourceResponse::nsURLResponse() const
 {
-    if (!m_nsResponse && !m_isNull) {
-        // Work around a mistake in the NSURLResponse class.
-        // The init function takes an NSInteger, even though the accessor returns a long long.
-        // For values that won't fit in an NSInteger, pass -1 instead.
-        NSInteger expectedContentLength;
-        if (m_expectedContentLength < 0 || m_expectedContentLength > std::numeric_limits<NSInteger>::max())
-            expectedContentLength = -1;
-        else
-            expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
-        const_cast<ResourceResponse*>(this)->m_nsResponse.adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
+    if (!m_nsResponse && !m_cfResponse && !m_isNull) {
+        initNSURLResponse();
+        m_cfResponse = [m_nsResponse.get() _CFURLResponse];
     }
+
+    if (!m_cfResponse)
+        return nil;
+
+    if (!m_nsResponse)
+        m_nsResponse.adoptNS([[NSURLResponse _responseWithCFURLResponse:m_cfResponse.get()] retain]);
+
+    return m_nsResponse.get();
+}
+
+ResourceResponse::ResourceResponse(NSURLResponse* nsResponse)
+    : m_cfResponse([nsResponse _CFURLResponse])
+    , m_nsResponse(nsResponse)
+    , m_initLevel(Uninitialized)
+{
+    m_isNull = !nsResponse;
+}
+
+#else
+
+NSURLResponse *ResourceResponse::nsURLResponse() const
+{
+    if (!m_nsResponse && !m_isNull)
+        initNSURLResponse();
     return m_nsResponse.get();
 }
 
@@ -136,6 +171,7 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
     return a.nsURLResponse() == b.nsURLResponse();
 }
 
+#endif // USE(CFNETWORK)
+
 } // namespace WebCore
 
-#endif // !USE(CFNETWORK)
