@@ -3714,7 +3714,7 @@ BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-a
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT IMAGE+TEXT CRASH
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT CRASH
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
@@ -3828,6 +3828,9 @@ BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
 
 BUGCR87732 : fast/regex/toString.html = TEXT
+
+// Discovered after a skia roll r1814:r1832, but likely needs more investigation.
+BUGCR88801 WIN : svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html = CRASH IMAGE+TEXT TIMEOUT
 
 // Added in http://trac.webkit.org/changeset/90148, null-derefing in TestNetscapgePlugin.
 BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = CRASH
@@ -3944,3 +3947,4 @@ BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
 
 // V8 now follows spec on toisostring, test needs to be fixed.
 BUGCR88936 : fast/js/date-toisostring.html = TEXT
+
