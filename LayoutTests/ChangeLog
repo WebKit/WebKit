@@ -1,3 +1,15 @@
+2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        positionForPoint is broken when a block is positioned relatively inside the parent
+        https://bugs.webkit.org/show_bug.cgi?id=64298
+
+        Reviewed by Simon Fraser.
+
+        Added a test for hit testing on relatively positioned children.
+
+        * fast/block/positioning/hittest-on-relative-positioned-children-expected.txt: Added.
+        * fast/block/positioning/hittest-on-relative-positioned-children.html: Added.
+
 2011-07-11  Dan Bernstein  <mitz@apple.com>
 
         Excessive expansion of justified text when rounding hacks are enabled

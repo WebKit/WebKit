@@ -1,3 +1,20 @@
+2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        positionForPoint is broken when a block is positioned relatively inside the parent
+        https://bugs.webkit.org/show_bug.cgi?id=64298
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by positionForPointRespectingEditingBoundaries's not taking relativePositionOffset
+        into account when computing the point in child coordinates. Fixed the bug by adding the offset to
+        childLocation as needed.
+
+        Test: fast/block/positioning/hittest-on-relative-positioned-children.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries): Fixed the bug; also replaced all instances of
+        IntPoint by LayoutPoint.
+
 2011-07-11  Dan Bernstein  <mitz@apple.com>
 
         Excessive expansion of justified text when rounding hacks are enabled

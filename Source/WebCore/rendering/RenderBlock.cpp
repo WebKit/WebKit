@@ -4117,10 +4117,13 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
 // FIXME: This function should go on RenderObject as an instance method. Then
 // all cases in which positionForPoint recurs could call this instead to
 // prevent crossing editable boundaries. This would require many tests.
-static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* parent, RenderBox* child, const IntPoint& pointInParentCoordinates)
+static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* parent, RenderBox* child, const LayoutPoint& pointInParentCoordinates)
 {
+    LayoutPoint childLocation = child->location();
+    if (child->isRelPositioned())
+        childLocation += child->relativePositionOffset();
     // FIXME: This is wrong if the child's writing-mode is different from the parent's.
-    IntPoint pointInChildCoordinates(pointInParentCoordinates - child->location());
+    LayoutPoint pointInChildCoordinates(pointInParentCoordinates - childLocation);
 
     // If this is an anonymous renderer, we just recur normally
     Node* childNode = child->node();
@@ -4138,8 +4141,8 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
         return child->positionForPoint(pointInChildCoordinates);
 
     // Otherwise return before or after the child, depending on if the click was to the logical left or logical right of the child
-    int childMiddle = parent->logicalWidthForChild(child) / 2;
-    int logicalLeft = parent->isHorizontalWritingMode() ? pointInChildCoordinates.x() : pointInChildCoordinates.y();
+    LayoutUnit childMiddle = parent->logicalWidthForChild(child) / 2;
+    LayoutUnit logicalLeft = parent->isHorizontalWritingMode() ? pointInChildCoordinates.x() : pointInChildCoordinates.y();
     if (logicalLeft < childMiddle)
         return ancestor->createVisiblePosition(childNode->nodeIndex(), DOWNSTREAM);
     return ancestor->createVisiblePosition(childNode->nodeIndex() + 1, UPSTREAM);
