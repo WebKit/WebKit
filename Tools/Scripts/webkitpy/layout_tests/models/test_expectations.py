@@ -84,6 +84,10 @@ def remove_pixel_failures(expected_results):
     return expected_results
 
 
+def has_pixel_failures(actual_results):
+    return IMAGE in actual_results or IMAGE_PLUS_TEXT in actual_results
+
+
 def strip_comments(line):
     """Strips comments from a line and return None if the line is empty
     or else the contents of line with leading and trailing spaces removed

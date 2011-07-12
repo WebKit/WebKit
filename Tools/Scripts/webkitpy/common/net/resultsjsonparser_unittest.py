@@ -58,6 +58,10 @@ class ResultsJSONParserTest(unittest.TestCase):
                 "prototype-strawberry.html": {
                     "expected": "PASS",
                     "actual": "TEXT PASS"
+                },
+                "prototype-peach.html": {
+                    "expected": "IMAGE+TEXT",
+                    "actual": "TEXT"
                 }
             }
         },

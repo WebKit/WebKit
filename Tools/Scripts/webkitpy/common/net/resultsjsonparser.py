@@ -73,6 +73,9 @@ class JSONTestResult(object):
     def did_run_as_expected(self):
         actual_results = self._actual_as_tokens()
         expected_results = self._expected_as_tokens()
+        # FIXME: We should only remove_pixel_failures this JSONResult can from a run without pixel tests!
+        if not test_expectations.has_pixel_failures(actual_results):
+            expected_results = test_expectations.remove_pixel_failures(expected_results)
         for actual_result in actual_results:
             if not test_expectations.result_was_expected(actual_result, expected_results, False, False):
                 return False
@@ -82,7 +85,7 @@ class JSONTestResult(object):
         tokens = map(test_expectations.TestExpectations.expectation_from_string, results_string.split(' '))
         if None in tokens:
             log("Unrecognized result in %s" % results_string)
-        return tokens
+        return set(tokens)
 
     @memoized
     def _actual_as_tokens(self):

@@ -1,5 +1,28 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        cr-linux-ews complains about tests that aren't actually failing
+        https://bugs.webkit.org/show_bug.cgi?id=64367
+
+        The underlying problem here is that full_results.json doesn't have
+        enough information to determine whether a given test result was
+        expected because whether an actual result is expected depends on
+        whether full_results.json was generated duing a test run that included
+        pixel tests.
+
+        The right long-term solution is to make full_results.json a complete
+        description of what happened durning a test run.  In this patch
+        however, to stop the spam, this patch makes the jsonresultsparser
+        ignore pixel failures.
+
+        (I'm landing this patch unreviewed in order to stop the bots from
+        spamming.  I'll happily address any review comments in a follow-up
+        patch.)
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         Re-work garden-o-matic UI to begin to look like the mocks
         https://bugs.webkit.org/show_bug.cgi?id=64334
 
