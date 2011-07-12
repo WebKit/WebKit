@@ -343,6 +343,8 @@ int main(int argc, char* argv[])
         fflush(stdout);
     }
 
+    gEcoreEvas.clear(); // Make sure ecore_evas_free is called before the EFL are shut down
+
     shutdownEfl();
     return EXIT_SUCCESS;
 }

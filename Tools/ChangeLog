@@ -1,3 +1,18 @@
+2011-07-11  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] ImageDiff: Make sure gEcoreEvas is destroyed at the right time.
+        https://bugs.webkit.org/show_bug.cgi?id=64293
+
+        Reviewed by Kent Tamura.
+
+        gEcoreEvas was being destroyed after shutdownEfl() was called, so the
+        call to ecore_evas_free() failed.
+
+        We now shut it down manually before shutdownEfl() is called.
+
+        * DumpRenderTree/efl/ImageDiff.cpp:
+        (main): Destroy gEcoreEvas before shutting down the EFL.
+
 2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make Chromium Mac and Linux tests bot core builders
