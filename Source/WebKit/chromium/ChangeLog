@@ -1,3 +1,13 @@
+2011-07-12  Evan Martin  <evan@chromium.org>
+
+        [chromium] DRT depends on v8
+        https://bugs.webkit.org/show_bug.cgi?id=64376
+
+        DumpRenderTree.cpp has calls to v8:: functions, so it should have a build
+        dependency on v8.  This fixes missing references in the shared-object build.
+
+        * WebKit.gyp:
+
 2011-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed.  Rolled DEPS.
