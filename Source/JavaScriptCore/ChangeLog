@@ -1,5 +1,27 @@
 2011-07-12  Adam Roben  <aroben@apple.com>
 
+        Ensure no intermediate WTF::Strings are created when concatenating with string literals
+
+        Fixes <http://webkit.org/b/63330> Concatenating string literals and WTF::Strings using
+        operator+ is suboptimal
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::StringTypeAdapter<String>::writeTo): Added a macro that can be used for testing how
+        many WTF::Strings get copied while evaluating an operator+ expression.
+
+        * wtf/text/StringOperators.h:
+        (WTF::operator+): Changed the overload that takes a StringAppend to take it on the left-hand
+        side, since operator+ is left-associative. Having the StringAppend on the right-hand side
+        was causing us to make intermediate WTF::Strings when evaluating expressions that contained
+        multiple calls to operator+. Added some more overloads for that take a left-hand side of
+        const char* to resolve overload ambiguity for certain expressions. Added overloads that take
+        a left-hand side of const UChar* (matching the const char* overloads) so that wide string
+        literals don't first have to be converted to a WTF::String in operator+ expressions.
+
+2011-07-12  Adam Roben  <aroben@apple.com>
+
         Unreviewed, rolling out r90811.
         http://trac.webkit.org/changeset/90811
         https://bugs.webkit.org/show_bug.cgi?id=61025

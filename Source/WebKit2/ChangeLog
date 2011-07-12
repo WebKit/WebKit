@@ -1,3 +1,14 @@
+2011-07-12  Adam Roben  <aroben@apple.com>
+
+        Export some symbols needed by TestWebKitAPI
+
+        Part of <http://webkit.org/b/63330> Concatenating string literals and WTF::Strings using
+        operator+ is suboptimal
+
+        Reviewed by Darin Adler.
+
+        * win/WebKit2.def:
+
 2011-07-11  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Adam Roben.

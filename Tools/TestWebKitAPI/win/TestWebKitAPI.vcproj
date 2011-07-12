@@ -588,6 +588,10 @@
 				Name="WTF"
 				>
 				<File
+					RelativePath="..\Tests\WTF\StringOperators.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\VectorBasic.cpp"
 					>
 				</File>

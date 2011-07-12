@@ -1,3 +1,20 @@
+2011-07-12  Adam Roben  <aroben@apple.com>
+
+        Test that no intermediate WTF::Strings are created when concatenating with string literals
+
+        Test for <http://webkit.org/b/63330> Concatenating string literals and WTF::Strings using
+        operator+ is suboptimal
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp: Added.
+        (TestWebKitAPI::TEST): Test that a bunch of different string concatenation expressions don't
+        create any intermediate WTF::Strings while they're being evaluated.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Added new file.
+
 2011-07-12  Eric Seidel  <eric@webkit.org>
 
         [Qt] NRWT should pick up the right httpd config file
