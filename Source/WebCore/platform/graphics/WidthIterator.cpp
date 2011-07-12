@@ -161,21 +161,24 @@ unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             if (treatAsSpace || (expandAroundIdeographs && Font::isCJKIdeographOrSymbol(character))) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                 if (m_expansion) {
+                    float previousExpansion = m_expansion;
                     if (!treatAsSpace && !m_isAfterExpansion) {
                         // Take the expansion opportunity before this ideograph.
                         m_expansion -= m_expansionPerOpportunity;
-                        m_runWidthSoFar += m_expansionPerOpportunity;
+                        float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
+                        m_runWidthSoFar += expansionAtThisOpportunity;
                         if (glyphBuffer) {
                             if (glyphBuffer->isEmpty())
-                                glyphBuffer->add(fontData->spaceGlyph(), fontData, m_expansionPerOpportunity);
+                                glyphBuffer->add(fontData->spaceGlyph(), fontData, expansionAtThisOpportunity);
                             else
-                                glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
+                                glyphBuffer->expandLastAdvance(expansionAtThisOpportunity);
                         }
+                        previousExpansion = m_expansion;
                     }
                     if (m_run.allowsTrailingExpansion() || (m_run.ltr() && textIterator.currentCharacter() + advanceLength < static_cast<size_t>(m_run.length()))
                         || (m_run.rtl() && textIterator.currentCharacter())) {
                         m_expansion -= m_expansionPerOpportunity;
-                        width += m_expansionPerOpportunity;
+                        width += !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
                         m_isAfterExpansion = true;
                     }
                 } else

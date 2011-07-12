@@ -489,18 +489,21 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (treatAsSpace || Font::isCJKIdeographOrSymbol(ch)) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion) {
+                        float previousExpansion = m_expansion;
                         if (!treatAsSpace && !m_afterExpansion) {
                             // Take the expansion opportunity before this ideograph.
                             m_expansion -= m_expansionPerOpportunity;
-                            m_totalWidth += m_expansionPerOpportunity;
+                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
+                            m_totalWidth += expansionAtThisOpportunity;
                             if (m_adjustedAdvances.isEmpty())
-                                m_leadingExpansion = m_expansionPerOpportunity;
+                                m_leadingExpansion = expansionAtThisOpportunity;
                             else
-                                m_adjustedAdvances.last().width += m_expansionPerOpportunity;
+                                m_adjustedAdvances.last().width += expansionAtThisOpportunity;
+                            previousExpansion = m_expansion;
                         }
                         if (!lastGlyph || m_run.allowsTrailingExpansion()) {
                             m_expansion -= m_expansionPerOpportunity;
-                            advance.width += m_expansionPerOpportunity;
+                            advance.width += !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
                             m_afterExpansion = true;
                         }
                     } else
