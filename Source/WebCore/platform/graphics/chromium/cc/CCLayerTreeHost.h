@@ -41,7 +41,6 @@ class CCLayerTreeHostClient {
 public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
-    virtual void updateLayers() = 0;
 
 protected:
     virtual ~CCLayerTreeHostClient() { }
@@ -62,8 +61,6 @@ public:
 
     void setNeedsCommitAndRedraw();
     void setNeedsRedraw();
-
-    virtual void updateLayers();
 
 protected:
     virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy() = 0;

@@ -147,10 +147,6 @@ void CCLayerTreeHostImplProxy::requestFrameAndCommit(double frameBeginTime)
     }
 
     m_commitPending = false;
-    {
-        TRACE_EVENT("CCLayerTreeHost::updateLayers", this, 0);
-        m_layerTreeHost->updateLayers();
-    }
 
     OwnPtr<CCLayerTreeHostCommitter> committer = m_layerTreeHost->createLayerTreeHostCommitter();
     m_layerTreeHost->beginCommit();

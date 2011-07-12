@@ -91,9 +91,4 @@ void CCLayerTreeHost::setNeedsRedraw()
 #endif
 }
 
-void CCLayerTreeHost::updateLayers()
-{
-    m_client->updateLayers();
-}
-
 }

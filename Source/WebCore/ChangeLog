@@ -1,3 +1,25 @@
+2011-07-12  John Bates  <jbates@google.com>
+
+        Move call to syncCompositingLayers so that we do not trigger redundant draws.
+        https://bugs.webkit.org/show_bug.cgi?id=64224
+
+        doComposite was triggering two composites every time a canvas was dirtied.
+        By moving syncCompositingLayers call to layout, the client code can draw without triggering
+        a redundant frame. Also renamed WebViewImpl::updateLayers to
+        syncCompositingLayers, because it was confusing. CCLayerTreeHostImplProxy::updateLayers was
+        no longer needed, because animateAndLayout calls WebViewImpl::layout.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::syncCompositingLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp:
+        (WebCore::CCLayerTreeHostImplProxy::requestFrameAndCommit):
+
 2011-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Isolate HTMLTextFormControlElement into a separate file

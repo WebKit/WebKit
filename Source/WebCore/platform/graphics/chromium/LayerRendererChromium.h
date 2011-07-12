@@ -90,7 +90,7 @@ public:
     void setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
 
     // updates and draws the current layers onto the backbuffer
-    virtual void updateLayers();
+    void updateLayers();
     void drawLayers();
 
     // Set by WebViewImpl when animation callbacks are running.

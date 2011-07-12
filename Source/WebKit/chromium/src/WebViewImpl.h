@@ -206,7 +206,6 @@ public:
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual void updateLayers();
 
     // WebViewImpl
 
@@ -432,6 +431,7 @@ private:
     void reallocateRenderer();
     void updateLayerRendererSettings();
     void updateLayerRendererViewport();
+    void syncCompositingLayers();
 #endif
 
     WebViewClient* m_client;

@@ -249,7 +249,6 @@ void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRec
 
 void LayerRendererChromium::updateLayers()
 {
-    CCLayerTreeHost::updateLayers();
     if (m_viewportVisibleRect.isEmpty())
         return;
 

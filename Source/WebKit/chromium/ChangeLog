@@ -1,3 +1,20 @@
+2011-07-12  John Bates  <jbates@google.com>
+
+        Move call to syncCompositingLayers so that we do not trigger redundant draws.
+        https://bugs.webkit.org/show_bug.cgi?id=64224
+
+        doComposite was triggering two composites every time a canvas was dirtied.
+        By moving syncCompositingLayers call to layout, the client code can draw without triggering
+        a redundant frame. Also renamed WebViewImpl::updateLayers to
+        syncCompositingLayers, because it was confusing.
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::layout):
+        (WebKit::WebViewImpl::syncCompositingLayers):
+        * src/WebViewImpl.h:
+
 2011-07-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
