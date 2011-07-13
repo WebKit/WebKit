@@ -1,3 +1,31 @@
+2011-07-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Make RenderObject::containingBlock virtual for better speed and clarity
+        https://bugs.webkit.org/show_bug.cgi?id=64318
+
+        Reviewed by Darin Adler.
+
+        No new tests, performance refactoring.
+
+        On some of my test cases, this method takes between 3 and 5% of the time spend.
+        The method makes 2 calls to virtual methods which could be moved to their overriden
+        version of containingBlock if we made it virtual.
+
+        That's what this patch does. It saves between 1 and 2% on some synthetic test cases
+        as well as made the current method shorter.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock): Removed code for RenderView and RenderTableCell,
+        replaced by ASSERTs.
+
+        * rendering/RenderObject.h: Made containingBlock virtual.
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::containingBlock):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::containingBlock):
+        The code moved from RenderObject is inlined in those 2 methods.
+
 2011-07-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] Chromium win build fix.

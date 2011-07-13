@@ -600,15 +600,8 @@ void RenderObject::setLayerNeedsFullRepaint()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    if (isTableCell()) {
-        const RenderTableCell* cell = toRenderTableCell(this);
-        if (parent() && cell->section())
-            return cell->table();
-        return 0;
-    }
-
-    if (isRenderView())
-        return const_cast<RenderView*>(toRenderView(this));
+    ASSERT(!isTableCell());
+    ASSERT(!isRenderView());
 
     RenderObject* o = parent();
     if (!isText() && m_style->position() == FixedPosition) {

@@ -170,6 +170,8 @@ protected:
 private:
     bool shouldRepaint(const IntRect& r) const;
     
+    virtual RenderBlock* containingBlock() const;
+
     // These functions may only be accessed by LayoutStateMaintainer.
     bool pushLayoutState(RenderBox* renderer, const IntSize& offset, int pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
     {

@@ -257,6 +257,11 @@ bool RenderView::shouldRepaint(const IntRect& r) const
     return true;
 }
 
+RenderBlock* RenderView::containingBlock() const
+{
+    return const_cast<RenderView*>(this);
+}
+
 void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
 {
     if (!shouldRepaint(ur))
