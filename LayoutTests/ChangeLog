@@ -1,3 +1,9 @@
+2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Prettify spacing in test_expectations.txt
+
+        * platform/chromium/test_expectations.txt: Ran through the new parser/serializer code.
+
 2011-07-12  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64424

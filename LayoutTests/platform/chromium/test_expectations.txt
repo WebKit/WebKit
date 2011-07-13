@@ -376,7 +376,7 @@ WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
 // This checks the IDN behavior of WebKit/WebKit on Mac, not WebKit/WebCore or
 // WebKit/JavaScriptCore. Chrome doesn't use WebKit/WebKit, and Chrome's IDN
 // security model is different from it.
-BUGCR21814 WONTFIX SKIP: fast/encoding/idn-security.html = FAIL
+BUGCR21814 WONTFIX SKIP : fast/encoding/idn-security.html = FAIL
 
 // Our implementation of global history is completely different, and
 // these tests are irrelevant.
@@ -619,7 +619,7 @@ BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT TIMEOUT
 BUGCR67662 WIN LINUX : http/tests/inspector/console-websocket-error.html = TEXT
 
-BUGWK54882 WIN DEBUG: inspector/styles/styles-update-from-js.html = PASS TIMEOUT
+BUGWK54882 WIN DEBUG : inspector/styles/styles-update-from-js.html = PASS TIMEOUT
 
 BUGWK56602 SKIP : http/tests/inspector/network/network-timing.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
@@ -718,7 +718,7 @@ BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 // WIN started failing during webkit roll 62670 -> 62844.
-BUGCR38353 MAC LINUX: plugins/keyboard-events.html = TEXT
+BUGCR38353 MAC LINUX : plugins/keyboard-events.html = TEXT
 BUGCR10351 MAC : plugins/mouse-events.html = FAIL
 BUGCR32864 : plugins/mouse-events-fixedpos.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
@@ -1023,7 +1023,7 @@ BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = T
 // ----------------------------------------------------------------------------
 
 // This test isn't hanging, it just takes 12-13 seconds to run.
-BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = FAIL  // See "SVG Tests" section too
+BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = FAIL // See "SVG Tests" section too
 BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
@@ -1537,7 +1537,7 @@ BUGCR25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
 
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
-BUGCR22526 WIN MAC: fast/js/Object-create.html = FAIL
+BUGCR22526 WIN MAC : fast/js/Object-create.html = FAIL
 BUGCR22526 : fast/js/Object-defineProperties.html = FAIL CRASH
 BUGCR22526 : fast/js/Object-defineProperty.html = FAIL CRASH
 BUGCR22526 : http/tests/security/xss-DENIED-defineProperty.html = FAIL
@@ -1715,7 +1715,7 @@ BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PAS
 BUGCR31991 WIN LINUX : fast/text/international/bidi-layout-across-linebreak.html = TEXT
 BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 
-BUGCR31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
+BUGCR31623 WIN : http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 
 // WebKit roll 52852 -> 52867
 BUGCR32018 DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS TEXT TIMEOUT
@@ -1851,8 +1851,8 @@ BUGCR43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 BUGCR43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 
 // WebKit roll 58855:58878
-BUGCR43419: fast/wcss/wap-input-format.xhtml = TEXT
-BUGCR43419: fast/wcss/wap-input-required.xhtml = TEXT
+BUGCR43419 : fast/wcss/wap-input-format.xhtml = TEXT
+BUGCR43419 : fast/wcss/wap-input-required.xhtml = TEXT
 
 // Flaky tests
 BUGCR43890 WIN : http/tests/loading/basic.html = TEXT PASS
@@ -2119,9 +2119,9 @@ BUGCR49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
 BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
 
 // Application Cache Quotas are N/A to the chromium port.
-BUGWK43459 WONTFIX: http/tests/appcache/origin-quota.html = TEXT MISSING
-BUGWK43459 WONTFIX: http/tests/appcache/origin-quota-continued-download.html = TEXT MISSING
-BUGWK43459 WONTFIX: http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = TEXT MISSING
+BUGWK43459 WONTFIX : http/tests/appcache/origin-quota.html = TEXT MISSING
+BUGWK43459 WONTFIX : http/tests/appcache/origin-quota-continued-download.html = TEXT MISSING
+BUGWK43459 WONTFIX : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = TEXT MISSING
 
 // Need to support DeviceMotion.
 BUGCR51416 : fast/dom/DeviceMotion/window-property.html = TEXT
@@ -2375,7 +2375,7 @@ BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
 BUGCR61406 MAC WIN LINUX : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
-BUGCR32153and61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
+BUGCR32153AND61406 WIN LINUX : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
 // Flaky: fails about 5% of the time.
 BUGCR31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
@@ -2590,7 +2590,7 @@ BUGWK55745 MAC : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
 BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
-BUGWK52082 LEOPARD: fast/text/midword-break-after-breakable-char.html = IMAGE
+BUGWK52082 LEOPARD : fast/text/midword-break-after-breakable-char.html = IMAGE
 BUGWK52082 WIN LINUX : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 WIN LINUX : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
@@ -2724,7 +2724,7 @@ BUGWK49629 GPU SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
-BUGCR74979 GPU MAC SKIP: media/video-canvas-alpha.html = IMAGE
+BUGCR74979 GPU MAC SKIP : media/video-canvas-alpha.html = IMAGE
 
 // This test needs completely new baselines.
 BUGWK55718 BUGCR75354 : media/media-document-audio-repaint.html = IMAGE+TEXT
@@ -2759,7 +2759,7 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE  // See "SVG tests" section too
+BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE // See "SVG tests" section too
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
@@ -2835,7 +2835,7 @@ BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style-without-renderer
 BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style.html = TEXT CRASH
 BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-text-rectangle.html = TEXT
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
-BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
+BUGCR75019 WIN LINUX MAC : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
 BUGWK58587 DEBUG GPU LINUX : compositing/direct-image-compositing.html = IMAGE
@@ -3200,9 +3200,9 @@ BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
 // line height may be incorrect
 BUGCR79908 SNOWLEOPARD : fast/css/line-height-font-order.html = IMAGE
 
-BUGCR79910 SNOWLEOPARD: fast/text/international/bidi-linebreak-001.html = IMAGE
-BUGCR79910 SNOWLEOPARD: fast/text/international/bidi-linebreak-002.html = IMAGE
-BUGCR79910 SNOWLEOPARD: fast/text/international/bidi-linebreak-003.html = IMAGE
+BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-001.html = IMAGE
+BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-002.html = IMAGE
+BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 
 // The following are failures due to Skia bugs on Win/Linux
 // http://code.google.com/p/chromium/issues/detail?id=79917
@@ -3464,7 +3464,7 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = FAIL MISSING
 
 // Flakiness around r85622.
-BUG_HCLAM WIN SLOW: http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
+BUG_HCLAM WIN SLOW : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
 
 // Failure introduced by Chromium r83848.
 BUG_HCLAM : fast/url/ipv6.html = TEXT
@@ -3507,9 +3507,9 @@ BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
 BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = CRASH TIMEOUT PASS
 
 // Started crashing after r86584.
-BUGWK60931 DEBUG :  http/tests/security/aboutBlank/window-open-self-about-blank.html = CRASH
-BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
-BUGWK60931 DEBUG :  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
+BUGWK60931 DEBUG : http/tests/security/aboutBlank/window-open-self-about-blank.html = CRASH
+BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
+BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
 
 // Flaky since added by r86478
 BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PASS TEXT
@@ -3546,7 +3546,7 @@ BUGWK60028 : fast/multicol/span/span-as-nested-inline-block-child.html = FAIL
 BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = CRASH PASS
 
 // New pixel tests added for bug 38788, rebaseline when webkit 38788 rolls.
-BUGWK38788 WIN LINUX: fast/css/border-radius-non-negative.html = IMAGE
+BUGWK38788 WIN LINUX : fast/css/border-radius-non-negative.html = IMAGE
 
 // Crashes after CSP changes landed in WebKit 86837
 BUGCR83268 WIN MAC LINUX : inspector/debugger/event-listener-breakpoints.html = CRASH PASS TIMEOUT
