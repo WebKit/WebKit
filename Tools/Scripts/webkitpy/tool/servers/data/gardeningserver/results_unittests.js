@@ -137,7 +137,7 @@ NetworkSimulator.prototype.runTest = function(testCase)
     equal(window.base, realBase, "Failed to restore real base!");
 }
 
-test("regressionRangeForFailure", 5, function() {
+test("walkHistory", 6, function() {
     var simulator = new NetworkSimulator();
 
     var keyMap = {
@@ -244,6 +244,10 @@ test("regressionRangeForFailure", 5, function() {
         results.unifyRegressionRanges(["Mock Builder", "Another Builder"], "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
             equals(oldestFailingRevision, 90426);
             equals(newestPassingRevision, 90425);
+        });
+
+        results.countFailureOccurances(["Mock Builder", "Another Builder"], "userscripts/another-test.html", function(failureCount) {
+            equals(failureCount, 4);
         });
     });
 });

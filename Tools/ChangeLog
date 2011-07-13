@@ -1,3 +1,29 @@
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should display how many times we've seen a failure
+        https://bugs.webkit.org/show_bug.cgi?id=64417
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds some UI to display how many times we've seen a given
+        failure, which can be helpful for determining whether that failure is a
+        real failure or a flaky test.
+
+        When a failure has only been seen once (i.e., only a single run on a
+        single bot), we set the opacity of to 50% to avoid distracting the
+        gardener.
+
+        This patch also refactors the failure walker to have a simpler API
+        internally by moving from an object-oriented paradigm to a functional
+        paradigm.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
 2011-07-12  Chris Rogers  <crogers@google.com>
 
         Enable Web Audio for chromium DRT

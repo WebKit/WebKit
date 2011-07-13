@@ -138,6 +138,8 @@ function unexpectedResults(resultNode)
 
 function isUnexpectedFailure(resultNode)
 {
+    if (!resultNode)
+        return false;
     if (anyIsSuccess(resultNode.actual.split(' ')))
         return false;
     return anyIsFailure(unexpectedResults(resultNode));
@@ -182,52 +184,40 @@ results.collectUnexpectedResults = function(dictionaryOfResultNodes)
     return base.uniquifyArray(results);
 };
 
-function TestHistoryWalker(builderName, testName)
+function walkHistory(builderName, testName, callback)
 {
-    this._builderName = builderName;
-    this._testName = testName;
-    this._indexOfNextKeyToFetch = 0;
-    this._keyList = [];
-}
+    var indexOfNextKeyToFetch = 0;
+    var keyList = [];
 
-TestHistoryWalker.prototype.init = function(callback)
-{
-    var self = this;
+    function continueWalk()
+    {
+        if (indexOfNextKeyToFetch >= keyList.length) {
+            processResultNode(0, null);
+            return;
+        }
 
-    base.jsonp(directoryOfResultsSummaryURL(self._builderName, kResultsName), function(keyList) {
-        self._keyList = keyList.map(function (element) { return element.key; });
-        callback();
-    });
-};
-
-TestHistoryWalker.prototype._fetchNextResultNode = function(callback)
-{
-    var self = this;
-
-    if (self._indexOfNextKeyToFetch >= self._keyList) {
-        callback(0, null);
-        return;
+        var key = keyList[indexOfNextKeyToFetch];
+        ++indexOfNextKeyToFetch;
+        g_resultsCache.get(key, function(resultsTree) {
+            var resultNode = results.resultNodeForTest(resultsTree, testName);
+            var revision = parseInt(resultsTree['revision'])
+            if (isNaN(revision))
+                revision = 0;
+            processResultNode(revision, resultNode);
+        });
     }
 
-    var key = self._keyList[self._indexOfNextKeyToFetch];
-    ++self._indexOfNextKeyToFetch;
-    g_resultsCache.get(key, function(resultsTree) {
-        var resultNode = results.resultNodeForTest(resultsTree, self._testName);
-        var revision = parseInt(resultsTree['revision'])
-        if (isNaN(revision))
-            revision = 0;
-        callback(revision, resultNode);
-    });
-};
-
-TestHistoryWalker.prototype.walkHistory = function(callback)
-{
-    var self = this;
-    self._fetchNextResultNode(function(revision, resultNode) {
+    function processResultNode(revision, resultNode)
+    {
         var shouldContinue = callback(revision, resultNode);
         if (!shouldContinue)
             return;
-        self.walkHistory(callback);
+        continueWalk();
+    }
+
+    base.jsonp(directoryOfResultsSummaryURL(builderName, kResultsName), function(directory) {
+        keyList = directory.map(function (element) { return element.key; });
+        continueWalk();
     });
 }
 
@@ -236,24 +226,21 @@ results.regressionRangeForFailure = function(builderName, testName, callback)
     var oldestFailingRevision = 0;
     var newestPassingRevision = 0;
 
-    var historyWalker = new TestHistoryWalker(builderName, testName);
-    historyWalker.init(function() {
-        historyWalker.walkHistory(function(revision, resultNode) {
-            if (!resultNode) {
-                newestPassingRevision = revision;
-                callback(oldestFailingRevision, newestPassingRevision);
-                return false;
-            }
-            if (isUnexpectedFailure(resultNode)) {
-                oldestFailingRevision = revision;
-                return true;
-            }
-            if (!oldestFailingRevision)
-                return true;  // We need to keep looking for a failing revision.
+    walkHistory(builderName, testName, function(revision, resultNode) {
+        if (!resultNode) {
             newestPassingRevision = revision;
             callback(oldestFailingRevision, newestPassingRevision);
             return false;
-        });
+        }
+        if (isUnexpectedFailure(resultNode)) {
+            oldestFailingRevision = revision;
+            return true;
+        }
+        if (!oldestFailingRevision)
+            return true;  // We need to keep looking for a failing revision.
+        newestPassingRevision = revision;
+        callback(oldestFailingRevision, newestPassingRevision);
+        return false;
     });
 };
 
@@ -297,6 +284,28 @@ results.unifyRegressionRanges = function(builderNameList, testName, callback)
                 var mergedRange = mergeRegressionRanges(regressionRanges);
                 callback(mergedRange.oldestFailingRevision, mergedRange.newestPassingRevision);
             }
+        });
+    });
+};
+
+results.countFailureOccurances = function(builderNameList, testName, callback)
+{
+    var queriesInFlight = builderNameList.length;
+    if (!queriesInFlight)
+        callback(0);
+
+    var failureCount = 0;
+    $.each(builderNameList, function(index, builderName) {
+        walkHistory(builderName, testName, function(revision, resultNode) {
+            if (isUnexpectedFailure(resultNode)) {
+                ++failureCount;
+                return true;
+            }
+
+            --queriesInFlight;
+            if (!queriesInFlight)
+                callback(failureCount);
+            return false;
         });
     });
 };

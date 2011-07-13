@@ -29,7 +29,11 @@ function fetchResults(onsuccess)
 
                 var builderNameList = base.keys(resultNodesByBuilder);
                 results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
-                    $('.when', regressions).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+                    $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+                });
+                results.countFailureOccurances(builderNameList, testName, function(failureCount) {
+                    $(testSummary).attr('data-failure-count', failureCount);
+                    $('.how-many', testSummary).text(ui.failureCount(failureCount));
                 });
             });
             $('.results').append(regressions);

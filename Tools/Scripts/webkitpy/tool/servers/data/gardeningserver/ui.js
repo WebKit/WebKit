@@ -33,6 +33,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
           '<span>fails on</span>' +
           '<ul class="where"></ul>' +
           '<div class="when"></div>' +
+          '<div class="how-many"></div>' +
         '</div>');
     $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
 
@@ -59,6 +60,15 @@ ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevis
     var block = $('<div class="regression-range">Regression Range: <a></a></div>');
     $('a', block).attr('href', href).text(text)
     return block;
+};
+
+ui.failureCount = function(failureCount)
+{
+    if (failureCount < 1)
+        return '';
+    if (failureCount == 1)
+        return '(Seen once.)';
+    return '(Seen ' + failureCount + ' times.)';
 };
 
 ui.results = function(resultsURLs)

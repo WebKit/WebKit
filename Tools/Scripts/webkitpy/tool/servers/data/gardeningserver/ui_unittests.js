@@ -38,6 +38,13 @@ test("summarizeRegressionRange", 2, function() {
     equal(summaryWithOneRevision.parent().html(), '<div class="regression-range">Regression Range: <a href="http://trac.webkit.org/log/trunk/?rev=90425&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90425</a></div>');
 });
 
+test("failureCount", 4, function() {
+    equal(ui.failureCount(0), '');
+    equal(ui.failureCount(1), '(Seen once.)');
+    equal(ui.failureCount(2), '(Seen 2 times.)');
+    equal(ui.failureCount(3), '(Seen 3 times.)');
+});
+
 test("results", 1, function() {
     var testResults = ui.results([
         'http://example.com/layout-test-results/foo-bar-expected.txt',

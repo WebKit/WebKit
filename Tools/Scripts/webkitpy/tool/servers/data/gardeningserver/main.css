@@ -40,6 +40,11 @@ tr:last-of-type td {
     margin-left: 20px;
 }
 
+/* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
+.test[data-failure-count="1"] {
+    opacity: 0.5;
+}
+
 .regression {
     padding: 0 0 10px 0;
 }
@@ -122,5 +127,14 @@ tr:last-of-type td {
     display: inline-block;
     padding: 1px 2px;
     border-radius: 4px;
+    color: #555;
+}
+
+.regression .when, .regression .how-many {
+    padding: 0px 2px;
+    display: inline-block;
+}
+
+.regression .how-many {
     color: #555;
 }
