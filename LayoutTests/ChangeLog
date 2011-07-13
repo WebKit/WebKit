@@ -1,3 +1,15 @@
+2011-07-13  Abhishek Arya  <inferno@chromium.org>
+
+        Tests that we do not crash when frame is blown away in a beforeload
+        event.
+        https://bugs.webkit.org/show_bug.cgi?id=64457
+
+        Reviewed by Adam Barth.
+
+        * fast/events/form-iframe-target-before-load-crash.html:
+        * fast/events/form-iframe-target-before-load-crash2-expected.txt: Added.
+        * fast/events/form-iframe-target-before-load-crash2.html: Added.
+
 2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]content:-webkit-from-flow not applied correctly

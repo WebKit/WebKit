@@ -1,3 +1,22 @@
+2011-07-13  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Issue with Frame lifetime due to deletion in beforeload event.
+        https://bugs.webkit.org/show_bug.cgi?id=64457
+
+        Copy the Frame protector higher in the stack from loadWithDocumentLoader
+        to loadFrameRequest since any of loadPostRequest or loadURL can call
+        loadWithDocumentLoader, thereby dispatching the beforeload event and
+        blowing away the frame. This deleted frame will be later accessed in
+        the loadFrameRequest function causing a crash.       
+ 
+        Test: fast/events/form-iframe-target-before-load-crash2.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]content:-webkit-from-flow not applied correctly

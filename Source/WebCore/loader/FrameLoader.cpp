@@ -1114,6 +1114,9 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const KURL& url)
 void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHistory, bool lockBackForwardList,
     PassRefPtr<Event> event, PassRefPtr<FormState> formState, ReferrerPolicy referrerPolicy)
 {    
+    // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
+    RefPtr<Frame> protect(m_frame);
+
     KURL url = request.resourceRequest().url();
 
     ASSERT(m_frame->document());
