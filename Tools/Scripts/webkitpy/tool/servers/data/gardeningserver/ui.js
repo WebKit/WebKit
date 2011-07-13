@@ -7,6 +7,11 @@ function displayNameForBuilder(builderName)
     return builderName.replace(/Webkit /, '');
 }
 
+function displayNameForRevision(revisionNumber)
+{
+    return 'r' + revisionNumber;
+}
+
 ui.urlForTest = function(testName)
 {
     return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
@@ -15,7 +20,7 @@ ui.urlForTest = function(testName)
 ui.urlForRevisionRange = function(firstRevision, lastRevision)
 {
     if (firstRevision != lastRevision)
-        return 'http://trac.webkit.org/log/trunk/?rev=' + firstRevision + '&stop_rev=' + lastRevision + '&limit=100&verbose=on';
+        return 'http://trac.webkit.org/log/trunk/?rev=' + lastRevision + '&stop_rev=' + firstRevision + '&limit=100&verbose=on';
     return 'http://trac.webkit.org/changeset/' + firstRevision;
 };
 
@@ -47,10 +52,13 @@ ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevis
     var impliedFirstFailingRevision = newestPassingRevision + 1;
 
     var href = ui.urlForRevisionRange(impliedFirstFailingRevision, oldestFailingRevision);
-    var textForRevisionRange = impliedFirstFailingRevision == oldestFailingRevision ? impliedFirstFailingRevision : impliedFirstFailingRevision + ':' + oldestFailingRevision;
-    var text = 'Regression ' + textForRevisionRange;
+    var text = impliedFirstFailingRevision == oldestFailingRevision ?
+        displayNameForRevision(impliedFirstFailingRevision) :
+        displayNameForRevision(impliedFirstFailingRevision) + '-' + displayNameForRevision(oldestFailingRevision);
 
-    return $('<a class="regression-range"></a>').attr('href', href).text(text);
+    var block = $('<div class="regression-range">Regression Range: <a></a></div>');
+    $('a', block).attr('href', href).text(text)
+    return block;
 };
 
 ui.results = function(resultsURLs)

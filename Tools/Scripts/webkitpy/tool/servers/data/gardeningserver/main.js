@@ -23,7 +23,7 @@ function fetchResults(onsuccess)
             partyTime.fadeIn(1200).delay(7000).fadeOut();
         } else {
             var regressions = $('<div class="results-summary regression"></div>');
-            $.each(resultsByTest, function(testName, resultNodesByBuilder) {
+            $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
                 var testSummary = ui.summarizeTest(testName, resultNodesByBuilder);
                 regressions.append(testSummary);
 

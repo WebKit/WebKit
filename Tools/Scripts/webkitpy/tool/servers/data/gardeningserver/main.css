@@ -58,37 +58,50 @@ tr:last-of-type td {
 }
 
 .regression a {
-    text-decoration: none;
     font-weight: normal;
 }
 
-.regression .what a[draggable].IMAGE\+TEXT::after {
+.regression .what a {
+    text-decoration: none;
+}
+
+.regression .what a[draggable].IMAGE\+TEXT::before {
     content: 'IMAGE+TEXT';
     color: white;
     background-color: Indigo;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 0 0 3px;
+    margin: 0 3px 0 0;
     border-radius: 4px;
 }
 
-.regression .what a[draggable].IMAGE::after {
+.regression .what a[draggable].IMAGE::before {
     content: 'IMAGE';
     color: white;
     background-color: MidnightBlue;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 0 0 3px;
+    margin: 0 3px 0 0;
     border-radius: 4px;
 }
 
-.regression .what a[draggable].TEXT::after {
+.regression .what a[draggable].TEXT::before {
     content: 'TEXT';
     color: white;
     background-color: DodgerBlue;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 0 0 3px;
+    margin: 0 3px 0 0;
+    border-radius: 4px;
+}
+
+.regression .what a[draggable].CRASH::before {
+    content: 'CRASH';
+    color: white;
+    background-color: Tomato;
+    font-size: 10px;
+    padding: 1px 2px;
+    margin: 0 3px 0 0;
     border-radius: 4px;
 }
 

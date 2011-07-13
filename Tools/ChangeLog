@@ -1,3 +1,12 @@
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
+        Tweak some UI in garden-o-matic now that the tree actually has a
+        failure and I can see what this all looks like.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Skipping a few tests which fail due to differing output

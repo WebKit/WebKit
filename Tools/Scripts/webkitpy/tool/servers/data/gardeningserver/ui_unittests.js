@@ -31,11 +31,11 @@ test("summarizeTest", 3, function() {
 test("summarizeRegressionRange", 2, function() {
     var summaryWithMultipleRevisions = ui.summarizeRegressionRange(90424, 90426);
     summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
-    equal(summaryWithMultipleRevisions.parent().html(), '<a class="regression-range" href="http://trac.webkit.org/log/trunk/?rev=90427&amp;stop_rev=90424&amp;limit=100&amp;verbose=on">Regression 90427:90424</a>');
+    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Regression Range: <a href="http://trac.webkit.org/log/trunk/?rev=90424&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90424</a></div>');
 
     var summaryWithOneRevision = ui.summarizeRegressionRange(90425, 90426);
     summaryWithOneRevision.wrap('<wrapper></wrapper>');
-    equal(summaryWithOneRevision.parent().html(), '<a class="regression-range" href="http://trac.webkit.org/log/trunk/?rev=90427&amp;stop_rev=90425&amp;limit=100&amp;verbose=on">Regression 90427:90425</a>');
+    equal(summaryWithOneRevision.parent().html(), '<div class="regression-range">Regression Range: <a href="http://trac.webkit.org/log/trunk/?rev=90425&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90425</a></div>');
 });
 
 test("results", 1, function() {

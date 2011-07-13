@@ -64,7 +64,7 @@ function resultsParameters(builderName, testName)
         builder: builderName,
         master: kMasterName,
         testtype: kTestType,
-        name: name,
+        name: testName,
     };
 }
 
