@@ -763,20 +763,16 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // no progressive loading of the background image
     if (shouldPaintBackgroundImage) {
-        LayoutRect destRect;
-        LayoutPoint phase;
-        LayoutSize tileSize;
-
-        calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect, destRect, phase, tileSize);
-        LayoutPoint destOrigin = destRect.location();
-        destRect.intersect(paintInfo.rect);
-        if (!destRect.isEmpty()) {
-            phase += destRect.location() - destOrigin;
+        BackgroundImageGeometry geometry;
+        calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect, geometry);
+        geometry.clip(paintInfo.rect);
+        if (!geometry.destRect().isEmpty()) {
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             RenderObject* clientForBackgroundImage = backgroundObject ? backgroundObject : this;
-            RefPtr<Image> image = bgImage->image(clientForBackgroundImage, tileSize);
-            bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, tileSize);
-            context->drawTiledImage(image.get(), style()->colorSpace(), destRect, phase, tileSize, compositeOp, useLowQualityScaling);
+            RefPtr<Image> image = bgImage->image(clientForBackgroundImage, geometry.tileSize());
+            bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
+            context->drawTiledImage(image.get(), style()->colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), 
+                compositeOp, useLowQualityScaling);
         }
     }
 }
@@ -842,8 +838,38 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
     return image->imageSize(this, style()->effectiveZoom());
 }
 
+void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX(int xOffset)
+{
+    m_destRect.move(max(xOffset, 0), 0);
+    m_phase.setX(-min(xOffset, 0));
+    m_destRect.setWidth(m_tileSize.width() + min(xOffset, 0));
+}
+void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY(int yOffset)
+{
+    m_destRect.move(0, max(yOffset, 0));
+    m_phase.setY(-min(yOffset, 0));
+    m_destRect.setHeight(m_tileSize.height() + min(yOffset, 0));
+}
+
+void RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment(const LayoutPoint& attachmentPoint)
+{
+    m_phase.move(max(attachmentPoint.x() - m_destRect.x(), 0), max(attachmentPoint.y() - m_destRect.y(), 0));
+}
+
+void RenderBoxModelObject::BackgroundImageGeometry::clip(const LayoutRect& clipRect)
+{
+    m_destRect.intersect(clipRect);
+}
+
+LayoutPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
+{
+    LayoutPoint phase = m_phase;
+    phase += m_destRect.location() - m_destOrigin;
+    return phase;
+}
+
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const IntRect& paintRect, 
-                                                            IntRect& destRect, IntPoint& phase, IntSize& tileSize)
+                                                            BackgroundImageGeometry& geometry)
 {
     int left = 0;
     int top = 0;
@@ -864,7 +890,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
 #endif
 
     if (!fixedAttachment) {
-        destRect = paintRect;
+        geometry.setDestRect(paintRect);
 
         int right = 0;
         int bottom = 0;
@@ -892,37 +918,32 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         } else
             positioningAreaSize = IntSize(paintRect.width() - left - right, paintRect.height() - top - bottom);
     } else {
-        destRect = viewRect();
-        positioningAreaSize = destRect.size();
+        geometry.setDestRect(viewRect());
+        positioningAreaSize = geometry.destRect().size();
     }
 
-    tileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
+    geometry.setTileSize(calculateFillTileSize(fillLayer, positioningAreaSize));
 
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
 
-    int xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - tileSize.width(), true);
+    int xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - geometry.tileSize().width(), true);
     if (backgroundRepeatX == RepeatFill)
-        phase.setX(tileSize.width() ? tileSize.width() - (xPosition + left) % tileSize.width() : 0);
-    else {
-        destRect.move(max(xPosition + left, 0), 0);
-        phase.setX(-min(xPosition + left, 0));
-        destRect.setWidth(tileSize.width() + min(xPosition + left, 0));
-    }
+        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
+    else
+        geometry.setNoRepeatX(xPosition + left);
 
-    int yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - tileSize.height(), true);
+    int yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - geometry.tileSize().height(), true);
     if (backgroundRepeatY == RepeatFill)
-        phase.setY(tileSize.height() ? tileSize.height() - (yPosition + top) % tileSize.height() : 0);
-    else {
-        destRect.move(0, max(yPosition + top, 0));
-        phase.setY(-min(yPosition + top, 0));
-        destRect.setHeight(tileSize.height() + min(yPosition + top, 0));
-    }
+        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
+    else 
+        geometry.setNoRepeatY(yPosition + top);
 
     if (fixedAttachment)
-        phase.move(max(paintRect.x() - destRect.x(), 0), max(paintRect.y() - destRect.y(), 0));
+        geometry.useFixedAttachment(paintRect.location());
 
-    destRect.intersect(paintRect);
+    geometry.clip(paintRect);
+    geometry.setDestOrigin(geometry.destRect().location());
 }
 
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const IntRect& rect, const RenderStyle* style,

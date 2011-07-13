@@ -969,11 +969,9 @@ IntRect RenderBox::maskClipRect()
     IntRect result;
     for (const FillLayer* maskLayer = style()->maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         if (maskLayer->image()) {
-            IntRect maskRect;
-            IntPoint phase;
-            IntSize tileSize;
-            calculateBackgroundImageGeometry(maskLayer, bbox, maskRect, phase, tileSize);
-            result.unite(maskRect);
+            BackgroundImageGeometry geometry;
+            calculateBackgroundImageGeometry(maskLayer, bbox, geometry);
+            result.unite(geometry.destRect());
         }
     }
     return result;
@@ -1063,12 +1061,10 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 }
             }
 
-            IntRect repaintRect;
-            IntPoint phase;
-            IntSize tileSize;
-            layerRenderer->calculateBackgroundImageGeometry(curLayer, rendererRect, repaintRect, phase, tileSize);
-            layerRenderer->repaintRectangle(repaintRect);
-            if (repaintRect == rendererRect)
+            BackgroundImageGeometry geometry;
+            layerRenderer->calculateBackgroundImageGeometry(curLayer, rendererRect, geometry);
+            layerRenderer->repaintRectangle(geometry.destRect());
+            if (geometry.destRect() == rendererRect)
                 return true;
         }
     }

@@ -1,3 +1,35 @@
+2011-07-13  Alexandru Chiculita  <achicu@adobe.com>
+
+        Bridge RenderBoxModelObject::calculateBackgroundImageGeometry parameters into a class
+        https://bugs.webkit.org/show_bug.cgi?id=63987
+
+        Reviewed by Hajime Morita.
+
+        Change doesn't add new functionality. No test needed.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::maskClipRect):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::clip):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::relativePhase):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destOrigin):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestOrigin):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destRect):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestRect):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::phase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::tileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setTileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhaseX):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhaseY):
+
 2011-07-13  MORITA Hajime  <morrita@google.com>
 
         Refactoring: Ignored ExceptionCode value should be less annoying.

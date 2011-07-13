@@ -135,7 +135,52 @@ public:
 protected:
     virtual void willBeDestroyed();
 
-    void calculateBackgroundImageGeometry(const FillLayer*, const IntRect& paintRect, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
+    class BackgroundImageGeometry {
+    public:
+        LayoutPoint destOrigin() const { return m_destOrigin; }
+        void setDestOrigin(const LayoutPoint& destOrigin)
+        {
+            m_destOrigin = destOrigin;
+        }
+        
+        LayoutRect destRect() const { return m_destRect; }
+        void setDestRect(const LayoutRect& destRect)
+        {
+            m_destRect = destRect;
+        }
+
+        // Returns the phase relative to the destination rectangle.
+        LayoutPoint relativePhase() const;
+        
+        LayoutPoint phase() const { return m_phase; }   
+        void setPhase(const LayoutPoint& phase)
+        {
+            m_phase = phase;
+        }
+
+        LayoutSize tileSize() const { return m_tileSize; }    
+        void setTileSize(const LayoutSize& tileSize)
+        {
+            m_tileSize = tileSize;
+        }
+        
+        void setPhaseX(int x) { m_phase.setX(x); }
+        void setPhaseY(int y) { m_phase.setY(y); }
+        
+        void setNoRepeatX(int xOffset);
+        void setNoRepeatY(int yOffset);
+        
+        void useFixedAttachment(const LayoutPoint& attachmentPoint);
+        
+        void clip(const LayoutRect&);
+    private:
+        LayoutRect m_destRect;
+        LayoutPoint m_destOrigin;
+        LayoutPoint m_phase;
+        LayoutSize m_tileSize;
+    };
+
+    void calculateBackgroundImageGeometry(const FillLayer*, const IntRect& paintRect, BackgroundImageGeometry&);
     void getBorderEdgeInfo(class BorderEdge[], bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
 
