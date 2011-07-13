@@ -161,7 +161,7 @@ void dfgRepatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& pro
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
-static void dfgRepatchGetMethodFast(JSGlobalData* globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodInfo, JSFunction* callee, Structure* structure, JSObject* slotBaseObject)
+static void dfgRepatchGetMethodFast(JSGlobalData* globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodInfo, JSObjectWithGlobalObject* callee, Structure* structure, JSObject* slotBaseObject)
 {
     ScriptExecutable* owner = codeBlock->ownerExecutable();
     
@@ -190,7 +190,7 @@ static bool tryCacheGetMethod(ExecState* exec, JSValue baseValue, const Identifi
         && (slotBaseObject = asObject(slot.slotBase()))->getPropertySpecificValue(exec, propertyName, specific)
         && specific) {
         
-        JSFunction* callee = (JSFunction*)specific;
+        JSObjectWithGlobalObject* callee = (JSObjectWithGlobalObject*)specific;
         
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.

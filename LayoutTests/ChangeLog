@@ -1,3 +1,15 @@
+2011-07-12  Oliver Hunt  <oliver@apple.com>
+
+        Overzealous type validation in method_check
+        https://bugs.webkit.org/show_bug.cgi?id=64415
+
+        Reviewed by Gavin Barraclough.
+
+        Make sure we don't trip any assertions when caching access
+        to an InternalFunction
+
+        * fast/js/script-tests/method-check.js:
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Skipping a few tests which fail due to differing output

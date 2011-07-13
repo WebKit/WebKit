@@ -1,3 +1,27 @@
+2011-07-12  Oliver Hunt  <oliver@apple.com>
+
+        Overzealous type validation in method_check
+        https://bugs.webkit.org/show_bug.cgi?id=64415
+
+        Reviewed by Gavin Barraclough.
+
+        method_check is essentially just a value look up
+        optimisation, but it internally stores the value
+        as a JSFunction, even though it never relies on
+        this fact.  Under GC validation however we end up
+        trying to enforce that assumption.  The fix is
+        simply to store the value as a correct supertype.
+
+        * bytecode/CodeBlock.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchGetMethodFast):
+        (JSC::DFG::tryCacheGetMethod):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchMethodCallProto):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2011-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         COLLECT_ON_EVERY_ALLOCATION no longer works.
