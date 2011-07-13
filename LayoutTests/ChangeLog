@@ -1,5 +1,11 @@
 2011-07-13  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Add chromium mac gpu baseline for webgl-background-color.html
+
+        * platform/chromium-gpu-mac/compositing/webgl/webgl-background-color-expected.png: Added.
+
+2011-07-13  James Robinson  <jamesr@chromium.org>
+
         [chromium] Add two chromium gpu linux baselines.
 
         * platform/chromium-gpu-linux/compositing/masks/masked-ancestor-expected.png:
