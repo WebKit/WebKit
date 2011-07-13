@@ -442,6 +442,9 @@ void Geolocation::resume()
 
 void Geolocation::setIsAllowed(bool allowed)
 {
+    // Protect the Geolocation object from garbage collection during a callback.
+    RefPtr<Geolocation> protect(this);
+
     // This may be due to either a new position from the service, or a cached
     // position.
     m_allowGeolocation = allowed ? Yes : No;

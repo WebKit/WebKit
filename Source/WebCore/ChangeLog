@@ -1,3 +1,16 @@
+2011-07-13  John Knottenbelt  <jknotten@chromium.org>
+
+        Reference Geolocation object from GeoNotifier and Geolocation::setIsAllowed.
+        https://bugs.webkit.org/show_bug.cgi?id=64363
+
+        Reviewed by Tony Gentilcore.
+
+        Test: fast/dom/Geolocation/remove-remote-context-in-error-callback-crash.html
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::setIsAllowed):
+        * page/Geolocation.h:
+
 2011-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network panel search needs each resource to have unique identifier.

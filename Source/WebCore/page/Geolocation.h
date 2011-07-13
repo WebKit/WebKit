@@ -100,7 +100,7 @@ private:
         void startTimerIfNeeded();
         void timerFired(Timer<GeoNotifier>*);
         
-        Geolocation* m_geolocation;
+        RefPtr<Geolocation> m_geolocation;
         RefPtr<PositionCallback> m_successCallback;
         RefPtr<PositionErrorCallback> m_errorCallback;
         RefPtr<PositionOptions> m_options;

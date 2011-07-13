@@ -1,3 +1,17 @@
+2011-07-13  John Knottenbelt  <jknotten@chromium.org>
+
+        Reference Geolocation object from GeoNotifier and Geolocation::setIsAllowed.
+        https://bugs.webkit.org/show_bug.cgi?id=64363
+
+        Reviewed by Tony Gentilcore.
+
+        * fast/dom/Geolocation/remove-remote-context-in-error-callback-crash.html: Added.
+        * fast/dom/Geolocation/resources/remove-remote-context-in-error-callback-crash-inner.html: Added.
+        * fast/dom/Geolocation/script-tests/remove-remote-context-in-error-callback-crash.js: Added.
+        * fast/dom/Geolocation/remove-remote-context-in-error-callback-crash-expected.txt: Added.
+        (gc):
+        (onIframeReady):
+
 2011-07-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
