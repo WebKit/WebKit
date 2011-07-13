@@ -53,6 +53,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.saveAsAvailable = true;
     Preferences.useLowerCaseMenuTitlesOnWindows = true;
     Preferences.canInspectWorkers = true;
+    Preferences.canClearCacheAndCookies = true;
 })();
 
 // Recognize WebP as a valid image mime type.

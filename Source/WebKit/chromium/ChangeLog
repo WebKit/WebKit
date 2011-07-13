@@ -1,3 +1,13 @@
+2011-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Chromium DevTools: Enable clear cache and cookies from network panel in chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=64095
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/DevTools.js:
+        ():
+
 2011-07-12  Al Patrick  <apatrick@chromium.org>
 
         Added the ability to dynamically change the parent context of a WebGraphicsContext3D.
