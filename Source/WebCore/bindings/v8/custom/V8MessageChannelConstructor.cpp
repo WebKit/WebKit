@@ -67,8 +67,8 @@ v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments&
     // Create references from the MessageChannel wrapper to the two
     // MessagePort wrappers to make sure that the MessagePort wrappers
     // stay alive as long as the MessageChannel wrapper is around.
-    V8DOMWrapper::setHiddenReference(messageChannel, toV8(obj->port1()));
-    V8DOMWrapper::setHiddenReference(messageChannel, toV8(obj->port2()));
+    V8DOMWrapper::setNamedHiddenReference(messageChannel, "port1", toV8(obj->port1()));
+    V8DOMWrapper::setNamedHiddenReference(messageChannel, "port2", toV8(obj->port2()));
 
     // Setup the standard wrapper object internal fields.
     V8DOMWrapper::setDOMWrapper(messageChannel, &info, obj.get());

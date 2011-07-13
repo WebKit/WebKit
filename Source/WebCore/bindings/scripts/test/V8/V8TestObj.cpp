@@ -76,7 +76,7 @@ static v8::Handle<v8::Value> readOnlyTestObjAttrAttrGetter(v8::Local<v8::String>
     if (wrapper.IsEmpty()) {
         wrapper = toV8(result.get());
         if (!wrapper.IsEmpty())
-            V8DOMWrapper::setHiddenReference(info.Holder(), wrapper);
+            V8DOMWrapper::setNamedHiddenReference(info.Holder(), "readOnlyTestObjAttr", wrapper);
     }
     return wrapper;
 }

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
+#include "ArrayBufferView.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "DOMDataStore.h"
 #include "DocumentLoader.h"
@@ -39,10 +40,10 @@
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
-#include "V8DedicatedWorkerContext.h"
 #include "V8DOMApplicationCache.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
+#include "V8DedicatedWorkerContext.h"
 #include "V8EventListener.h"
 #include "V8EventListenerList.h"
 #include "V8EventSource.h"
@@ -51,6 +52,7 @@
 #include "V8FileWriter.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
+#include "V8HiddenPropertyName.h"
 #include "V8IDBDatabase.h"
 #include "V8IDBRequest.h"
 #include "V8IDBTransaction.h"
@@ -75,7 +77,6 @@
 #include "V8WorkerContext.h"
 #include "V8WorkerContextEventListener.h"
 #include "V8XMLHttpRequest.h"
-#include "ArrayBufferView.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
@@ -189,18 +190,13 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, Work
 }
 #endif
 
-void V8DOMWrapper::setHiddenReference(v8::Handle<v8::Object> parent, v8::Handle<v8::Value> child)
+
+void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
 {
-    v8::Local<v8::Value> hiddenReferenceObject = parent->GetInternalField(v8DOMHiddenReferenceArrayIndex);
-    if (hiddenReferenceObject->IsNull() || hiddenReferenceObject->IsUndefined()) {
-        hiddenReferenceObject = v8::Array::New();
-        parent->SetInternalField(v8DOMHiddenReferenceArrayIndex, hiddenReferenceObject);
-    }
-    v8::Local<v8::Array> hiddenReferenceArray = v8::Local<v8::Array>::Cast(hiddenReferenceObject);
-    hiddenReferenceArray->Set(v8::Integer::New(hiddenReferenceArray->Length()), child);
+    parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name), child);
 }
 
-void V8DOMWrapper::setHiddenWindowReference(Frame* frame, v8::Handle<v8::Value> jsObject)
+void V8DOMWrapper::setNamedHiddenWindowReference(Frame* frame, const char* name, v8::Handle<v8::Value> jsObject)
 {
     // Get DOMWindow
     if (!frame)
@@ -214,7 +210,7 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, v8::Handle<v8::Value> 
     global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
     ASSERT(!global.IsEmpty());
 
-    setHiddenReference(global, jsObject);
+    setNamedHiddenReference(global, name, jsObject);
 }
 
 WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)

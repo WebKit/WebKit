@@ -83,7 +83,7 @@ v8::Handle<v8::Value> toV8(NamedNodeMap* impl)
     // Add a hidden reference from named node map to its owner node.
     Element* element = impl->element();
     if (!wrapper.IsEmpty() && element)
-        V8DOMWrapper::setHiddenReference(wrapper, toV8(element));
+        V8DOMWrapper::setNamedHiddenReference(wrapper, "ownerNode", toV8(element));
     return wrapper;
 }
 

@@ -39,8 +39,7 @@ namespace WebCore {
     
     static const int v8DOMWrapperTypeIndex = 0;
     static const int v8DOMWrapperObjectIndex = 1;
-    static const int v8DOMHiddenReferenceArrayIndex = 2;
-    static const int v8DefaultWrapperInternalFieldCount = 3;
+    static const int v8DefaultWrapperInternalFieldCount = 2;
 
     static const uint16_t v8DOMSubtreeClassId = 1;
 

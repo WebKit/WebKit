@@ -856,9 +856,9 @@ END
         push(@implContentDecls, "        wrapper = toV8(result.get());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
         if ($dataNode->name eq "DOMWindow") {
-            push(@implContentDecls, "            V8DOMWrapper::setHiddenWindowReference(imp->frame(), wrapper);\n");
+            push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenWindowReference(imp->frame(), \"${attrName}\", wrapper);\n");
         } else {
-            push(@implContentDecls, "            V8DOMWrapper::setHiddenReference(info.Holder(), wrapper);\n");
+            push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenReference(info.Holder(), \"${attrName}\", wrapper);\n");
         }
         push(@implContentDecls, "    }\n");
         push(@implContentDecls, "    return wrapper;\n");

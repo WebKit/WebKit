@@ -1,3 +1,55 @@
+2011-07-13  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        [V8] Avoid memory leaks with hidden references.
+        https://bugs.webkit.org/show_bug.cgi?id=64467
+
+        Reviewed by Adam Barth.
+
+        We used to have growing arrays of hidden references associated
+        with objects. The entries in this array had no keys and were never
+        removed. This patch changes the interface to require a reference
+        name. This way it's harder to leak an unbounded number of
+        objects. Also it makes our wrapper objects one machine word
+        smaller.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter): Started using new interface.
+
+        Interface changes:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setNamedHiddenReference):
+        (WebCore::V8DOMWrapper::setNamedHiddenWindowReference):
+        * bindings/v8/V8DOMWrapper.h:
+
+        Added a helper to compute hidden reference names as V8 strings:
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        (WebCore::V8HiddenPropertyName::hiddenReferenceName):
+        * bindings/v8/V8HiddenPropertyName.h:
+
+        * bindings/v8/WrapperTypeInfo.h: Removed the hidden reference
+        array internal field.
+
+        Update usages of hidden references:
+        * bindings/v8/custom/V8CSSStyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DOMTokenListCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8StyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::readOnlyTestObjAttrAttrGetter): Updated.
+
 2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
 
         Improve names of some ApplicationCacheStorage accessor methods

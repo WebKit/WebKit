@@ -31,6 +31,9 @@
 #include "config.h"
 #include "V8HiddenPropertyName.h"
 
+#include <string.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 #define V8_AS_STRING(x) V8_AS_STRING_IMPL(x)
@@ -39,11 +42,21 @@ namespace WebCore {
 #define V8_DEFINE_PROPERTY(name) \
 v8::Handle<v8::String> V8HiddenPropertyName::name() \
 { \
-    static v8::Persistent<v8::String>* string = createString("WebCore::V8HiddenPropertyName::" V8_AS_STRING(name)); \
+    static v8::Persistent<v8::String>* string = createString("WebCore::HiddenProperty::" V8_AS_STRING(name)); \
     return *string; \
 }
 
 V8_HIDDEN_PROPERTIES(V8_DEFINE_PROPERTY);
+
+static const char hiddenReferenceNamePrefix[] = "WebCore::HiddenReference::";
+
+v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* name)
+{
+    Vector<char, 64> prefixedName;
+    prefixedName.append(hiddenReferenceNamePrefix, sizeof(hiddenReferenceNamePrefix) - 1);
+    prefixedName.append(name, strlen(name));
+    return v8::String::NewSymbol(prefixedName.data(), static_cast<int>(prefixedName.size()));
+}
 
 v8::Persistent<v8::String>* V8HiddenPropertyName::createString(const char* key)
 {

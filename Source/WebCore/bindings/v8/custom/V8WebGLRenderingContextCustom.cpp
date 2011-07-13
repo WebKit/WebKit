@@ -161,22 +161,27 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     if (!extension)
         return v8::Null();
     v8::Handle<v8::Value> extensionObject;
+    const char* referenceName;
     switch (extension->getName()) {
     case WebGLExtension::WebKitLoseContextName:
         extensionObject = toV8(static_cast<WebKitLoseContext*>(extension));
+        referenceName = "webKitLoseContextName";
         break;
     case WebGLExtension::OESStandardDerivativesName:
         extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension));
+        referenceName = "oesStandardDerivativesName";
         break;
     case WebGLExtension::OESTextureFloatName:
         extensionObject = toV8(static_cast<OESTextureFloat*>(extension));
+        referenceName = "oesTextureFloatName";
         break;
     case WebGLExtension::OESVertexArrayObjectName:
         extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension));
+        referenceName = "oesVertexArrayObjectName";
         break;
     }
     ASSERT(!extensionObject.IsEmpty());
-    V8DOMWrapper::setHiddenReference(contextObject, extensionObject);
+    V8DOMWrapper::setNamedHiddenReference(contextObject, referenceName, extensionObject);
     return extensionObject;
 }
 
