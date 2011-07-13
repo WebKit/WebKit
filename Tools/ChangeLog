@@ -1,5 +1,20 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        Adjust garden-o-matic layout to use fewer lines
+        https://bugs.webkit.org/show_bug.cgi?id=64422
+
+        Reviewed by Ojan Vafai.
+
+        This patch effectively merges the test name line with the list of
+        builders on which the test fails.  Each test failure now occupies two
+        lines instead of three.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should label tests failures of new tests as such
         https://bugs.webkit.org/show_bug.cgi?id=64421
 

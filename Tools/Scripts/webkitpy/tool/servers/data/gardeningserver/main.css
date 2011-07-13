@@ -57,6 +57,7 @@ tr:last-of-type td {
 .regression ul {
     margin: 0;
     list-style: none;
+    display: inline-block;
     padding: 0 0 0 10px;
 }
 
@@ -135,11 +136,11 @@ tr:last-of-type td {
     color: #555;
 }
 
-.regression .when, .regression .how-many {
+.regression .regression-range, .regression .failure-count {
     padding: 0px 2px;
     display: inline-block;
 }
 
-.regression .how-many {
+.regression .failure-count {
     color: #555;
 }

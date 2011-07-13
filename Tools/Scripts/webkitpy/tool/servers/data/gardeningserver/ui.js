@@ -32,8 +32,10 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
           '<span class="what"><a draggable></a></span>' +
           '<span>fails on</span>' +
           '<ul class="where"></ul>' +
-          '<div class="when"></div>' +
-          '<div class="how-many"></div>' +
+          '<div class="when">' +
+            '<div class="regression-range"></div>' +
+            '<div class="failure-count"></div>' +
+          '</div>' +
         '</div>');
     $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
 
