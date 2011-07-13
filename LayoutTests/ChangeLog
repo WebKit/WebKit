@@ -1,3 +1,30 @@
+2011-07-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update expectations+baselines for edge AA changes.
+
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/tall-page-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/perpendicular-layer-sorting-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/perpendicular-layer-sorting-expected.png:
+        * platform/chromium-gpu-win/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/child-layer-3d-sorting-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/child-layer-3d-sorting-expected.txt: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/perpendicular-layer-sorting-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/perpendicular-layer-sorting-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-12  David Reveman  <reveman@chromium.org>
 
         [Chromium] Use nearest filter method with pixel aligned transforms.

@@ -2708,8 +2708,6 @@ WONTFIX GPU LEOPARD : animations/3d = IMAGE PASS
 
 // Will need windows and linux baselines
 BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
-BUGWK58398 GPU : platform/chromium/compositing/child-layer-3d-sorting.html = PASS FAIL MISSING
-BUGVANGELIS GPU WIN LINUX : platform/chromium/compositing/perpendicular-layer-sorting.html = PASS FAIL MISSING
 
 // The picture does not match the video in the test.
 BUGWK55519 GPU WIN LINUX : compositing/video/video-background-color.html = IMAGE+TEXT
@@ -2900,6 +2898,11 @@ BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.h
 BUGWK58587 DEBUG GPU LINUX : compositing/geometry/tall-page-composited.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
+
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3381,10 +3384,6 @@ BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH P
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
-BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
-
 // Looks like some uninitialized memory at the bottom.
 BUGWK60103 : fast/replaced/border-radius-clip.html = IMAGE TIMEOUT IMAGE+TEXT
 
@@ -3769,18 +3768,11 @@ BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT P
 // Has been crashing since WebKit r88279-88297.
 BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 
-// Has been crashing for much longer.
-BUGCR86239 MAC GPU : compositing/direct-image-compositing.html = IMAGE CRASH
-
 // Has been timing out since r88913.
 BUGWK62754 MAC LINUX RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
 BUGWK62754 MAC LINUX DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
 BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
-
-// The scrollbar varies slightly from Release build.  Since we don't maintain separate debug/release results,
-// we're currently unable to fix this.  :(
-WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CRASH PASS
@@ -3877,6 +3869,7 @@ BUGCR88594 WIN7 : http/tests/appcache/reload.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/resource-redirect.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
 BUGCR88594 WIN7 : http/tests/appcache/fallback.html = TIMEOUT
+
 
 BUGWK61388 GPU : compositing/color-matching/image-color-matching.html = IMAGE
 BUGWK61388 GPU : compositing/geometry/fixed-position.html = IMAGE
