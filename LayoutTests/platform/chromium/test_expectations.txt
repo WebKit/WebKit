@@ -2787,9 +2787,8 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
 BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
-// Slight differences.  Need rebaseline?
-BUGCR78999 WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
-BUGCR78999 MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
+BUGCR78999 WIN LINUX GPU REBASELINE : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
+BUGCR78999 MAC GPU REBASELINE : compositing/geometry/ancestor-overflow-change.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
@@ -3222,11 +3221,9 @@ BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
 BUGCR79110 WIN LINUX : fast/block/float/021.html = TEXT
 BUGCR79110 WIN LINUX : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 
-// Regression caused by r83518.
-BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
 
 BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
-BUGWK58328 GPU WIN MAC LINUX DEBUG : compositing/webgl/webgl-reflection.html = IMAGE PASS CRASH
+BUGWK58328 GPU WIN LINUX DEBUG : compositing/webgl/webgl-reflection.html = IMAGE
 
 BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 
@@ -3719,18 +3716,7 @@ BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
-BUGCR84157 GPU : plugins/embed-attributes-style.html = IMAGE+TEXT
-BUGCR84157 GPU : svg/as-image/svg-as-background-with-relative-size.html = IMAGE+TEXT
-BUGCR84157 GPU : svg/custom/embedding-external-svgs.xhtml = IMAGE+TEXT
-BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = IMAGE
-BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = IMAGE
-BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = IMAGE
-BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
-BUGCR84157 GPU : fast/dom/object-plugin-hides-properties.html = TEXT
-BUGCR84157 GPU : fast/js/property-getters-and-setters.html = TEXT
 BUGCR84157 GPU WIN : fast/canvas/canvas-currentColor.html = TEXT
-BUGCR84157 GPU WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT PASS
-BUGCR84157 BUGCR74979 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGWK62255 : animations/animation-iteration-event-destroy-renderer.html = TIMEOUT PASS
 
@@ -3836,9 +3822,6 @@ BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT
 
-// Started failing at WebKit r90259-90261.
-BUGCR88400 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
-
 // Started around WebKit r90233:r90242
 BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 BUGWK64003 MAC DEBUG : media/video-delay-load-event.html = PASS TEXT
@@ -3869,22 +3852,6 @@ BUGCR88594 WIN7 : http/tests/appcache/reload.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/resource-redirect.html = TIMEOUT
 BUGCR88594 WIN7 : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
 BUGCR88594 WIN7 : http/tests/appcache/fallback.html = TIMEOUT
-
-
-BUGWK61388 GPU : compositing/color-matching/image-color-matching.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/fixed-position.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/layer-due-to-layer-children.html = IMAGE
-BUGWK61388 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/nested-reflection-transition.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/transform-inside-reflection.html = IMAGE
-BUGWK61388 GPU : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK61388 GPU : compositing/transitions/scale-transition-no-start.html = IMAGE
-BUGWK61388 GPU : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
-BUGWK61388 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
-BUGWK61388 GPU : media/video-transformed.html = IMAGE
-BUGWK61388 GPU : media/video-zoom-controls.html = IMAGE
-BUGWK61388 WIN MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
 
 // Getting form value is not implemented yet.
 BUGWK13061 : plugins/form-value.html = TEXT
