@@ -227,6 +227,8 @@ public:
     void updateLayoutAndStyleIfNeededRecursive();
     void flushDeferredRepaints();
 
+    void incrementVisuallyNonEmptyCharacterCount(unsigned);
+    void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     void setIsVisuallyNonEmpty() { m_isVisuallyNonEmpty = true; }
 
     void forceLayout(bool allowSubtree = false);
@@ -433,6 +435,8 @@ private:
     PaintBehavior m_paintBehavior;
     bool m_isPainting;
 
+    unsigned m_visuallyNonEmptyCharacterCount;
+    unsigned m_visuallyNonEmptyPixelCount;
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 
@@ -448,6 +452,29 @@ private:
     static double s_maxDeferredRepaintDelayDuringLoading;
     static double s_deferredRepaintDelayIncrementDuringLoading;
 };
+
+inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
+{
+    if (m_isVisuallyNonEmpty)
+        return;
+    m_visuallyNonEmptyCharacterCount += count;
+    // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout.
+    // The first few hundred characters rarely contain the interesting content of the page.
+    static const unsigned visualCharacterThreshold = 200;
+    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
+        setIsVisuallyNonEmpty();
+}
+
+inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
+{
+    if (m_isVisuallyNonEmpty)
+        return;
+    m_visuallyNonEmptyPixelCount += size.width() * size.height();
+    // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout
+    static const unsigned visualPixelThreshold = 256 * 256;
+    if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
+        setIsVisuallyNonEmpty();
+}
 
 } // namespace WebCore
 

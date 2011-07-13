@@ -98,6 +98,7 @@ private:
     String m_altText;
     OwnPtr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText;
+    bool m_didIncrementVisuallyNonEmptyPixelCount;
 
     friend class RenderImageScaleObserver;
 };

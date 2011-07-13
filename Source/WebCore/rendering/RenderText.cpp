@@ -111,10 +111,7 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
 
     setIsText();
 
-    // FIXME: It would be better to call this only if !m_text->containsOnlyWhitespace().
-    // But that might slow things down, and maybe should only be done if visuallyNonEmpty
-    // is still false. Not making any change for now, but should consider in the future.
-    view()->frameView()->setIsVisuallyNonEmpty();
+    view()->frameView()->incrementVisuallyNonEmptyCharacterCount(m_text.length());
 }
 
 #ifndef NDEBUG

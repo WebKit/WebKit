@@ -51,10 +51,9 @@ using namespace HTMLNames;
 RenderImage::RenderImage(Node* node)
     : RenderReplaced(node, IntSize(0, 0))
     , m_needsToSetSizeForAltText(false)
+    , m_didIncrementVisuallyNonEmptyPixelCount(false)
 {
     updateAltText();
-
-    view()->frameView()->setIsVisuallyNonEmpty();
 }
 
 RenderImage::~RenderImage()
@@ -140,6 +139,11 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (newImage != m_imageResource->imagePtr() || !newImage)
         return;
+    
+    if (!m_didIncrementVisuallyNonEmptyPixelCount) {
+        view()->frameView()->incrementVisuallyNonEmptyPixelCount(m_imageResource->imageSize(1.0f));
+        m_didIncrementVisuallyNonEmptyPixelCount = true;
+    }
 
     bool imageSizeChanged = false;
 

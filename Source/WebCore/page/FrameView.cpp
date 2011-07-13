@@ -227,6 +227,8 @@ void FrameView::reset()
     m_lastPaintTime = 0;
     m_paintBehavior = PaintBehaviorNormal;
     m_isPainting = false;
+    m_visuallyNonEmptyCharacterCount = 0;
+    m_visuallyNonEmptyPixelCount = 0;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     m_maintainScrollPositionAnchor = 0;
@@ -2042,8 +2044,13 @@ void FrameView::performPostLayoutTasks()
             m_firstLayoutCallbackPending = false;
             m_frame->loader()->didFirstLayout();
         }
-        
-        if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
+
+        // Ensure that we always send this eventually.
+        if (!m_frame->document()->parsing())
+            m_isVisuallyNonEmpty = true;
+
+        // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
+        if (m_isVisuallyNonEmpty && !m_frame->document()->didLayoutWithPendingStylesheets() && m_firstVisuallyNonEmptyLayoutCallbackPending) {
             m_firstVisuallyNonEmptyLayoutCallbackPending = false;
             m_frame->loader()->didFirstVisuallyNonEmptyLayout();
         }

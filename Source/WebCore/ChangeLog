@@ -1,3 +1,28 @@
+2011-07-12  Antti Koivisto  <antti@apple.com>
+
+        didFirstVisuallyNonEmptyLayout dispatched too early
+        https://bugs.webkit.org/show_bug.cgi?id=64412
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        Improve the mechanism that dispatches didFirstVisuallyNonEmptyLayout
+
+        - Wait until a threshold of characters and pixels has been exceeded before dispatching.
+        - Wait until stylesheets are loaded (painting is disabled in this case).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyCharacterCount):
+        (WebCore::FrameView::incrementVisuallyNonEmptyPixelCount):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderImage.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+
 2011-07-12  MORITA Hajime  <morrita@google.com>
 
         [Refactoring][ShadowContentElement] Forwarded node list should be a linked-list.
