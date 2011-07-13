@@ -977,29 +977,6 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // shadow rendering issues
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 
-// Misc. render failures
-BUGWK62138 WIN MAC GPU : compositing/tiling/huge-layer-img.html = TEXT PASS
-BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
-
-// fillRect failures
-BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect_gradient.html = IMAGE
-BUGCR78457 WIN LINUX GPU : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGCR78457 WIN LINUX GPU : fast/canvas/image-pattern-rotate.html = IMAGE
-BUGCR78457 WIN LINUX GPU : fast/canvas/patternfill-repeat.html = IMAGE
-BUGCR78457 WIN LINUX GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
-BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
-
-//Text rendering failures
-BUGCR81605 WIN LINUX GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGCR81605 WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
-
-// Skia/GPU Anti-aliasing
-BUGCR78458 WIN LINUX GPU : fast/canvas/arc360.html = IMAGE
-BUGCR78458 WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
-
-BUGWK61470 : fast/canvas/canvas-composite.html = IMAGE
-
-BUGCR87292 DEBUG GPU : fast/canvas/canvas-large-dimensions.html = CRASH TIMEOUT
 
 // -----------------------------------------------------------------
 // Other failures
@@ -2727,20 +2704,6 @@ BUGWK47925 GPU MAC : compositing/plugins/small-to-large-composited-plugin.html =
 BUGWK47925 GPU MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
 BUGWK47925 GPU MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
 
-// The word "compositing" appears in Chromium's pixel results and not
-// in Safari's; this should probably be fixed.
-BUGWK47926 GPU MAC : compositing/geometry/composited-html-size.html = IMAGE
-
-// The following failure seems suspicious because it does not contain
-// any text; it seems that the layer tree should precisely match
-// Safari's.
-BUGWK47944 DEBUG GPU WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = PASS TEXT
-
-// The following failure is missing a tiled layer where Safari has
-// one, in addition to having a layer positioned differently than in
-// Safari.
-BUGWK47946 GPU MAC : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
-
 // Skia does not handle multiple masks correctly
 BUGWK47947 GPU LINUX WIN : compositing/masks/multiple-masks.html = IMAGE+TEXT
 
@@ -2750,28 +2713,13 @@ BUGWK47949 GPU WIN LINUX : compositing/reflections/reflection-opacity.html = IMA
 BUGWK47949 GPU MAC : compositing/reflections/reflection-opacity.html = IMAGE
 BUGWK54306 GPU WIN LINUX MAC : compositing/reflections/animation-inside-reflection.html = IMAGE PASS
 BUGWK54306 GPU WIN LINUX MAC : compositing/reflections/nested-reflection-animated.html = IMAGE PASS
-
-// Most of the tiling tests are misbehaving in Chrome even though the
-// DRT output looks similar to Safari's. These need to be investigated.
-BUGWK47951 GPU MAC : compositing/tiling/huge-layer-with-layer-children.html = TEXT
-
-BUGWK48012 GPU WIN LINUX : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT PASS
-
-// WebGL canvas cleared to purely transparent is affecting the color of things under it.
-BUGWK47953 GPU WIN LINUX : compositing/webgl/webgl-background-color.html = IMAGE+TEXT
-BUGWK47953 GPU MAC : compositing/webgl/webgl-background-color.html = IMAGE
-
-// The following tests are failing on Mac.
-BUGWK48029 GPU MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
-BUGWK48029 GPU MAC : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT
+BUGWK47953 GPU MAC : REBASELINE compositing/webgl/webgl-background-color.html = IMAGE
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
 // bots running tests on real hardware.
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 BUGWK49629 GPU SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
-
-//BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
@@ -2787,8 +2735,6 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
 BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
-BUGCR78999 WIN LINUX GPU REBASELINE : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
-BUGCR78999 MAC GPU REBASELINE : compositing/geometry/ancestor-overflow-change.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 

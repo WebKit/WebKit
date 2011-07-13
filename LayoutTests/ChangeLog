@@ -1,3 +1,46 @@
+2011-07-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Assorted chromium gpu rebaselines and expectation cleanups.
+
+        * platform/chromium-gpu-linux/compositing/geometry/ancestor-overflow-change-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/webgl/webgl-background-color-expected.png: Added.
+        * platform/chromium-gpu-linux/fast/canvas/arc360-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-baseline-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/drawImage-with-globalAlpha-expected.png: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/patternfill-repeat-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/ancestor-overflow-change-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/composited-html-size-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/tiling/crash-reparent-tiled-layer-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/ancestor-overflow-change-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/ancestor-overflow-change-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/webgl/webgl-background-color-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/webgl/webgl-background-color-expected.txt: Added.
+        * platform/chromium-gpu-win/fast/canvas/arc360-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-baseline-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/drawImage-with-globalAlpha-expected.png: Removed.
+        * platform/chromium-gpu-win/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/patternfill-repeat-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-linux/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-composite-expected.png: Added.
+        * platform/chromium-win/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Unreviewed gardening.
