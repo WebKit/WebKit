@@ -2,7 +2,7 @@
 
 function dismissButterbar()
 {
-    $('.butterbar').fadeOut();
+    $('.butterbar').fadeOut('fast');
 }
 
 function displayOnButterbar(message)
@@ -65,7 +65,7 @@ function showResultsDetail()
     if ($('.results', content).attr(config.kBuilderNameAttr) == builderName && $('.results', content).attr(config.kTestNameAttr) == testName)
         return;
 
-    displayOnButterbar('Loading results');
+    displayOnButterbar('Loading...');
 
     results.fetchResultsURLs(builderName, testName, failureTypeList, function(resultsURLs) {
         var status = $('.results-detail .toolbar .status');
@@ -101,7 +101,6 @@ function hideResultsDetail()
     });
 }
 
-$('.butterbar .dismiss').live('click', dismissButterbar);
 $('.regression .where li').live('mouseenter', showResultsDetail);
 $('.results-detail .dismiss').live('click', hideResultsDetail);
 

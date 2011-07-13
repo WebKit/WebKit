@@ -1,5 +1,18 @@
 2011-07-13  Adam Barth  <abarth@webkit.org>
 
+        Remove "Dismiss" button from garden-o-matic butterbar
+        https://bugs.webkit.org/show_bug.cgi?id=64443
+
+        Reviewed by Dimitri Glazkov.
+
+        We don't have any persistent butter bar messages yet, so the dismiss
+        button is premature (and fairly heavy, visually).
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+
+2011-07-13  Adam Barth  <abarth@webkit.org>
+
         Refine garden-o-matic status pane
         https://bugs.webkit.org/show_bug.cgi?id=64442
 
