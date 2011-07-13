@@ -1,3 +1,11 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed. Skipping a few tests which fail due to differing output
+        in recent ApplicationCache quota tests. Reenabling the tests is
+        tracked by <http://webkit.org/b/64410>.
+
+        * platform/qt/Skipped:
+
 2011-07-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] SVG text is not rendered sometimes with geometricPrecision

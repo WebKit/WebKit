@@ -1,3 +1,13 @@
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed. Skipping a few tests which fail due to differing output
+        in recent ApplicationCache quota tests. Reenabling the tests is
+        tracked by <http://webkit.org/b/64410>.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dumpApplicationCacheQuota): This should
+        have been a space, not a newline.
+
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should display regression ranges

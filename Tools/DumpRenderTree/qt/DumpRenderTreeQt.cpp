@@ -1044,7 +1044,7 @@ void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint
     if (!m_controller->shouldDumpApplicationCacheDelegateCallbacks())
         return;
 
-    printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i}\n totalSpaceNeeded:%llu",
+    printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:%llu",
            origin->scheme().toUtf8().data(),
            origin->host().toUtf8().data(),
            origin->port(),

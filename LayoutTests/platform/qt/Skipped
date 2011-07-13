@@ -2187,6 +2187,12 @@ http/tests/appcache/origins-with-appcache.html
 # LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
 http/tests/appcache/origin-usage.html
 
+# ApplicationCache Quota Output Differs for Qt Tests
+# https://bugs.webkit.org/show_bug.cgi?id=64410
+http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
+http/tests/appcache/origin-quota-continued-download.html
+http/tests/appcache/origin-quota.html
+
 # Needs rebaseline
 fast/dom/HTMLMeterElement/meter-element.html
 fast/dom/HTMLMeterElement/meter-boundary-values.html
