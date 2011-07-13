@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 57x22
+          text run at (0,0) width 57: "Test for "
+        RenderInline {A} at (0,0) size 322x22 [color=#0000EE]
+          RenderText {#text} at (57,0) size 322x22
+            text run at (57,0) width 322: "https://bugs.webkit.org/show_bug.cgi?id=23093"
+        RenderText {#text} at (379,0) size 346x22
+          text run at (379,0) width 346: ". The cancel button in a search field fails to redraw."
+      RenderBlock (anonymous) at (0,38) size 784x30
+        RenderTextControl {INPUT} at (2,2) size 166x26
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
+            RenderBlock {DIV} at (0,11) size 0x0
+            RenderBlock {DIV} at (0,0) size 151x22
+            RenderBlock {DIV} at (151,5) size 11x11
+        RenderText {#text} at (0,0) size 0x0
+layer at (12,50) size 151x22
+  RenderBlock {DIV} at (0,0) size 151x22
+    RenderText {#text} at (1,0) size 63x22
+      text run at (1,0) width 63: "some text"

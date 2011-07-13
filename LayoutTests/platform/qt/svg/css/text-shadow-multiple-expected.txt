@@ -1,0 +1,87 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x420
+  RenderBlock {html} at (0,0) size 800x420
+    RenderBody {body} at (0,16) size 800x404
+      RenderBlock {p} at (0,0) size 800x22
+        RenderText {#text} at (0,0) size 475x22
+          text run at (0,0) width 475: "The first two texts should look identical, as there is no shadow applied."
+      RenderBlock (anonymous) at (0,38) size 800x156
+        RenderSVGRoot {svg} at (20,124) size 720x64
+          RenderSVGText {text} at (20,20) size 720x64 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 95x64
+              RenderSVGInlineText {#text} at (0,0) size 95x64
+                chunk 1 text run 1 at (20.00,68.40) startOffset 0 endOffset 4 width 95.00: "This"
+            RenderSVGInlineText {#text} at (95,0) size 14x64
+              chunk 1 text run 1 at (115.00,68.40) startOffset 0 endOffset 1 width 14.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 81x64
+              RenderSVGInlineText {#text} at (109,0) size 81x64
+                chunk 1 text run 1 at (129.00,68.40) startOffset 0 endOffset 4 width 81.00: "text"
+            RenderSVGInlineText {#text} at (190,0) size 14x64
+              chunk 1 text run 1 at (210.00,68.40) startOffset 0 endOffset 1 width 14.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 304x64
+              RenderSVGInlineText {#text} at (204,0) size 304x64
+                chunk 1 text run 1 at (224.00,68.40) startOffset 0 endOffset 14 width 304.00: "casts multiple"
+            RenderSVGInlineText {#text} at (508,0) size 212x64
+              chunk 1 text run 1 at (528.00,68.40) startOffset 0 endOffset 1 width 14.00: " "
+              chunk 1 text run 1 at (542.00,68.40) startOffset 0 endOffset 7 width 198.00: "shadows"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,210) size 800x22
+        RenderText {#text} at (0,0) size 591x22
+          text run at (0,0) width 591: "The next two texts have subtle differences, as the stroke/fill is painted seperated in SVG."
+      RenderBlock (anonymous) at (0,248) size 800x156
+        RenderSVGRoot {svg} at (0,317) size 747x97
+          RenderSVGText {text} at (20,20) size 720x64 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 95x64
+              RenderSVGInlineText {#text} at (0,0) size 95x64
+                chunk 1 text run 1 at (20.00,68.40) startOffset 0 endOffset 4 width 95.00: "This"
+            RenderSVGInlineText {#text} at (95,0) size 14x64
+              chunk 1 text run 1 at (115.00,68.40) startOffset 0 endOffset 1 width 14.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 81x64
+              RenderSVGInlineText {#text} at (109,0) size 81x64
+                chunk 1 text run 1 at (129.00,68.40) startOffset 0 endOffset 4 width 81.00: "text"
+            RenderSVGInlineText {#text} at (190,0) size 14x64
+              chunk 1 text run 1 at (210.00,68.40) startOffset 0 endOffset 1 width 14.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 304x64
+              RenderSVGInlineText {#text} at (204,0) size 304x64
+                chunk 1 text run 1 at (224.00,68.40) startOffset 0 endOffset 14 width 304.00: "casts multiple"
+            RenderSVGInlineText {#text} at (508,0) size 212x64
+              chunk 1 text run 1 at (528.00,68.40) startOffset 0 endOffset 1 width 14.00: " "
+              chunk 1 text run 1 at (542.00,68.40) startOffset 0 endOffset 7 width 198.00: "shadows"
+        RenderText {#text} at (0,0) size 0x0
+layer at (20,54) size 720x63
+  RenderBlock (positioned) {div} at (20,54) size 720x63
+    RenderInline {span} at (0,0) size 95x63 [textStrokeWidth=1.00]
+      RenderText {#text} at (0,0) size 95x63
+        text run at (0,0) width 95: "This"
+    RenderText {#text} at (95,0) size 14x63
+      text run at (95,0) width 14: " "
+    RenderInline {span} at (0,0) size 81x63 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+      RenderText {#text} at (109,0) size 81x63
+        text run at (109,0) width 81: "text"
+    RenderText {#text} at (190,0) size 14x63
+      text run at (190,0) width 14: " "
+    RenderInline {span} at (0,0) size 304x63
+      RenderText {#text} at (204,0) size 304x63
+        text run at (204,0) width 304: "casts multiple"
+    RenderText {#text} at (508,0) size 212x63
+      text run at (508,0) width 14: " "
+      text run at (522,0) width 198: "shadows"
+layer at (20,264) size 720x63
+  RenderBlock (positioned) {div} at (20,264) size 720x63
+    RenderInline {span} at (0,0) size 95x63 [textStrokeWidth=1.00]
+      RenderText {#text} at (0,0) size 95x63
+        text run at (0,0) width 95: "This"
+    RenderText {#text} at (95,0) size 14x63
+      text run at (95,0) width 14: " "
+    RenderInline {span} at (0,0) size 81x63 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+      RenderText {#text} at (109,0) size 81x63
+        text run at (109,0) width 81: "text"
+    RenderText {#text} at (190,0) size 14x63
+      text run at (190,0) width 14: " "
+    RenderInline {span} at (0,0) size 304x63
+      RenderText {#text} at (204,0) size 304x63
+        text run at (204,0) width 304: "casts multiple"
+    RenderText {#text} at (508,0) size 212x63
+      text run at (508,0) width 14: " "
+      text run at (522,0) width 198: "shadows"

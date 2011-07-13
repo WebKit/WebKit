@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 84x600
+  RenderBlock {HTML} at (0,0) size 84x600
+    RenderBody {BODY} at (8,8) size 68x584
+layer at (8,8) size 68x314
+  RenderBlock (relative positioned) {DIV} at (0,0) size 68x314 [bgcolor=#FF0000] [border: (2px solid #000000)]
+layer at (10,10) size 64x310
+  RenderImage {IMG} at (2,2) size 64x310
+layer at (31,15) size 22x300
+  RenderBlock (relative positioned) zI: 1 {P} at (23,7) size 22x300
+    RenderText zI: 1 {#text} at (0,28) size 22x244
+      text run at (0,28) width 243: "There should be no red on this page"

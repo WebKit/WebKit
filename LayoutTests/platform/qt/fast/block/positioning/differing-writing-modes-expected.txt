@@ -1,0 +1,218 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 373x22
+        text run at (0,0) width 373: "All of the boxes below should look identical to this one: "
+      RenderBR {BR} at (373,16) size 0x0
+      RenderText {#text} at (72,74) size 4x22
+        text run at (72,74) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,96) size 105x22
+        text run at (0,96) width 105: "The test boxes: "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (72,170) size 4x22
+        text run at (72,170) width 4: " "
+      RenderText {#text} at (148,170) size 4x22
+        text run at (148,170) width 4: " "
+      RenderText {#text} at (224,170) size 4x22
+        text run at (224,170) width 4: " "
+      RenderText {#text} at (300,170) size 4x22
+        text run at (300,170) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (72,244) size 4x22
+        text run at (72,244) width 4: " "
+      RenderText {#text} at (148,244) size 4x22
+        text run at (148,244) width 4: " "
+      RenderText {#text} at (224,244) size 4x22
+        text run at (224,244) width 4: " "
+      RenderText {#text} at (300,244) size 4x22
+        text run at (300,244) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (72,318) size 4x22
+        text run at (72,318) width 4: " "
+      RenderText {#text} at (148,318) size 4x22
+        text run at (148,318) width 4: " "
+      RenderText {#text} at (224,318) size 4x22
+        text run at (224,318) width 4: " "
+      RenderText {#text} at (300,318) size 4x22
+        text run at (300,318) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (72,392) size 4x22
+        text run at (72,392) width 4: " "
+      RenderText {#text} at (148,392) size 4x22
+        text run at (148,392) width 4: " "
+      RenderText {#text} at (224,392) size 4x22
+        text run at (224,392) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (13,35) size 62x58
+  RenderBlock (relative positioned) {DIV} at (5,27) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (17,36) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (53,36) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (17,70) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (53,70) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (13,131) size 62x58
+  RenderBlock (relative positioned) {DIV} at (5,123) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (17,132) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (53,132) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (17,166) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (53,166) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (89,131) size 62x58
+  RenderBlock (relative positioned) {DIV} at (81,123) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (93,132) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (129,132) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (93,166) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (129,166) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (165,131) size 62x58
+  RenderBlock (relative positioned) {DIV} at (157,123) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (169,132) size 20x20
+  RenderBlock (positioned) {DIV} at (4,37) size 20x20 [bgcolor=#008000]
+layer at (205,132) size 20x20
+  RenderBlock (positioned) {DIV} at (40,37) size 20x20 [bgcolor=#008000]
+layer at (169,166) size 20x20
+  RenderBlock (positioned) {DIV} at (4,3) size 20x20 [bgcolor=#008000]
+layer at (205,166) size 20x20
+  RenderBlock (positioned) {DIV} at (40,3) size 20x20 [bgcolor=#008000]
+layer at (241,131) size 62x58
+  RenderBlock (relative positioned) {DIV} at (233,123) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (245,132) size 20x20
+  RenderBlock (positioned) {DIV} at (38,1) size 20x20 [bgcolor=#008000]
+layer at (281,132) size 20x20
+  RenderBlock (positioned) {DIV} at (2,1) size 20x20 [bgcolor=#008000]
+layer at (245,166) size 20x20
+  RenderBlock (positioned) {DIV} at (38,35) size 20x20 [bgcolor=#008000]
+layer at (281,166) size 20x20
+  RenderBlock (positioned) {DIV} at (2,35) size 20x20 [bgcolor=#008000]
+layer at (13,205) size 62x58
+  RenderBlock (relative positioned) {DIV} at (5,197) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (53,206) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (17,240) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (53,240) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (17,206) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (89,205) size 62x58
+  RenderBlock (relative positioned) {DIV} at (81,197) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (129,206) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (93,240) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (129,240) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (93,206) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (165,205) size 62x58
+  RenderBlock (relative positioned) {DIV} at (157,197) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (205,206) size 20x20
+  RenderBlock (positioned) {DIV} at (40,37) size 20x20 [bgcolor=#008000]
+layer at (169,240) size 20x20
+  RenderBlock (positioned) {DIV} at (4,3) size 20x20 [bgcolor=#008000]
+layer at (205,240) size 20x20
+  RenderBlock (positioned) {DIV} at (40,3) size 20x20 [bgcolor=#008000]
+layer at (169,206) size 20x20
+  RenderBlock (positioned) {DIV} at (4,37) size 20x20 [bgcolor=#008000]
+layer at (241,205) size 62x58
+  RenderBlock (relative positioned) {DIV} at (233,197) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (281,206) size 20x20
+  RenderBlock (positioned) {DIV} at (2,1) size 20x20 [bgcolor=#008000]
+layer at (245,240) size 20x20
+  RenderBlock (positioned) {DIV} at (38,35) size 20x20 [bgcolor=#008000]
+layer at (281,240) size 20x20
+  RenderBlock (positioned) {DIV} at (2,35) size 20x20 [bgcolor=#008000]
+layer at (245,206) size 20x20
+  RenderBlock (positioned) {DIV} at (38,1) size 20x20 [bgcolor=#008000]
+layer at (13,279) size 62x58
+  RenderBlock (relative positioned) {DIV} at (5,271) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (17,314) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (53,314) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (17,280) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (53,280) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (89,279) size 62x58
+  RenderBlock (relative positioned) {DIV} at (81,271) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (93,314) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (129,314) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (93,280) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (129,280) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (165,279) size 62x58
+  RenderBlock (relative positioned) {DIV} at (157,271) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (169,314) size 20x20
+  RenderBlock (positioned) {DIV} at (4,3) size 20x20 [bgcolor=#008000]
+layer at (205,314) size 20x20
+  RenderBlock (positioned) {DIV} at (40,3) size 20x20 [bgcolor=#008000]
+layer at (169,280) size 20x20
+  RenderBlock (positioned) {DIV} at (4,37) size 20x20 [bgcolor=#008000]
+layer at (205,280) size 20x20
+  RenderBlock (positioned) {DIV} at (40,37) size 20x20 [bgcolor=#008000]
+layer at (241,279) size 62x58
+  RenderBlock (relative positioned) {DIV} at (233,271) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (245,314) size 20x20
+  RenderBlock (positioned) {DIV} at (38,35) size 20x20 [bgcolor=#008000]
+layer at (281,314) size 20x20
+  RenderBlock (positioned) {DIV} at (2,35) size 20x20 [bgcolor=#008000]
+layer at (245,280) size 20x20
+  RenderBlock (positioned) {DIV} at (38,1) size 20x20 [bgcolor=#008000]
+layer at (281,280) size 20x20
+  RenderBlock (positioned) {DIV} at (2,1) size 20x20 [bgcolor=#008000]
+layer at (13,353) size 62x58
+  RenderBlock (relative positioned) {DIV} at (5,345) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (53,388) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (17,354) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (53,354) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (17,388) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (89,353) size 62x58
+  RenderBlock (relative positioned) {DIV} at (81,345) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (129,388) size 20x20
+  RenderBlock (positioned) {DIV} at (40,35) size 20x20 [bgcolor=#008000]
+layer at (93,354) size 20x20
+  RenderBlock (positioned) {DIV} at (4,1) size 20x20 [bgcolor=#008000]
+layer at (129,354) size 20x20
+  RenderBlock (positioned) {DIV} at (40,1) size 20x20 [bgcolor=#008000]
+layer at (93,388) size 20x20
+  RenderBlock (positioned) {DIV} at (4,35) size 20x20 [bgcolor=#008000]
+layer at (165,353) size 62x58
+  RenderBlock (relative positioned) {DIV} at (157,345) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (205,388) size 20x20
+  RenderBlock (positioned) {DIV} at (40,3) size 20x20 [bgcolor=#008000]
+layer at (169,354) size 20x20
+  RenderBlock (positioned) {DIV} at (4,37) size 20x20 [bgcolor=#008000]
+layer at (205,354) size 20x20
+  RenderBlock (positioned) {DIV} at (40,37) size 20x20 [bgcolor=#008000]
+layer at (169,388) size 20x20
+  RenderBlock (positioned) {DIV} at (4,3) size 20x20 [bgcolor=#008000]
+layer at (241,353) size 62x58
+  RenderBlock (relative positioned) {DIV} at (233,345) size 62x58 [border: (1px solid #000000) (2px solid #000000) (3px solid #000000) (4px solid #000000)]
+layer at (281,388) size 20x20
+  RenderBlock (positioned) {DIV} at (2,35) size 20x20 [bgcolor=#008000]
+layer at (245,354) size 20x20
+  RenderBlock (positioned) {DIV} at (38,1) size 20x20 [bgcolor=#008000]
+layer at (281,354) size 20x20
+  RenderBlock (positioned) {DIV} at (2,1) size 20x20 [bgcolor=#008000]
+layer at (245,388) size 20x20
+  RenderBlock (positioned) {DIV} at (38,35) size 20x20 [bgcolor=#008000]

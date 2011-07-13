@@ -1,3 +1,13 @@
+2011-07-13  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        [Qt] Add expected results for the new passing tests and unskip them.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/[...]: Added.
+        * platform/qt/svg/[...]: Added.
+
 2011-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90893 and r90894.
