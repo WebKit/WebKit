@@ -1,3 +1,10 @@
+2011-07-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Skip failing tests.
+        * platform/qt/Skipped: Skip svg/text/small-fonts-2.svg because of the 32/64 bit bug.
+
 2011-07-13  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt] REGRESSION(r90634): It made http/tests/misc/script-async.html fail with Qt 4.8.x
