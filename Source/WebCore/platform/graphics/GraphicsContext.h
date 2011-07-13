@@ -53,7 +53,6 @@ typedef class WebCore::SurfaceOpenVG PlatformGraphicsContext;
 #elif PLATFORM(QT)
 #include <QPainter>
 namespace WebCore {
-class ContextShadow;
 class ShadowBlur;
 }
 typedef QPainter PlatformGraphicsContext;

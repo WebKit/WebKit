@@ -42,6 +42,9 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPen>
+#if HAVE(QRAWFONT)
+#include <QPointF>
+#endif
 #include <QTextLayout>
 #include <qalgorithms.h>
 #include <qdebug.h>
@@ -333,9 +336,6 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
     // Stroking text should always take the complex path.
     ASSERT(!shouldStroke);
 
-    // Shadowed text should always take the complex path.
-    ASSERT(context->contextShadow()->type() == ShadowBlur::NoShadow);
-
     if (!shouldFill && !shouldStroke)
         return;
 
@@ -366,30 +366,31 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
 
     QPainter* painter = context->platformContext();
 
-    ContextShadow* shadow = context->contextShadow();
+    ShadowBlur* shadow = context->shadowBlur();
     switch (shadow->type()) {
-    case ContextShadow::SolidShadow: {
+    case ShadowBlur::SolidShadow: {
         QPen previousPen = painter->pen();
-        painter->setPen(shadow->m_color);
-        painter->translate(shadow->offset());
+        painter->setPen(context->state().shadowColor);
+        const QPointF shadowOffset(context->state().shadowOffset.width(), context->state().shadowOffset.height());
+        painter->translate(shadowOffset);
         painter->drawGlyphRun(point, qtGlyphs);
-        painter->translate(-shadow->offset());
+        painter->translate(-shadowOffset);
         painter->setPen(previousPen);
         break;
     }
-    case ContextShadow::BlurShadow: {
+    case ShadowBlur::BlurShadow: {
         qreal height = rawFont.ascent() + rawFont.descent() + 1;
         QRectF boundingRect(point.x(), point.y() - rawFont.ascent(), width, height);
         GraphicsContext* shadowContext = shadow->beginShadowLayer(context, boundingRect);
         if (shadowContext) {
             QPainter* shadowPainter = shadowContext->platformContext();
-            shadowPainter->setPen(shadow->m_color);
+            shadowPainter->setPen(context->state().shadowColor);
             shadowPainter->drawGlyphRun(point, qtGlyphs);
             shadow->endShadowLayer(context);
         }
         break;
     }
-    case ContextShadow::NoShadow:
+    case ShadowBlur::NoShadow:
         break;
     default:
         ASSERT_NOT_REACHED();
