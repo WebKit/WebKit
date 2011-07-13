@@ -381,8 +381,6 @@ static void drawGlyphsWin(GraphicsContext* graphicsContext,
                           int from,
                           int numGlyphs,
                           const FloatPoint& point) {
-    graphicsContext->platformContext()->prepareForSoftwareDraw();
-
     TransparencyAwareGlyphPainter painter(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
 
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
