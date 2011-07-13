@@ -1546,9 +1546,6 @@ fast/exclusions
 # https://bugs.webkit.org/show_bug.cgi?id=62585
 fast/workers/worker-crash-with-invalid-location.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=63699
-# access to file:// uris should be restricted in some cases.
-media/media-blocked-by-willsendrequest.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=64085
 http/tests/misc/iframe-reparenting-id-collision.html

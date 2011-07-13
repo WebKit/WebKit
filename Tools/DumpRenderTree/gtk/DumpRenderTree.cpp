@@ -1054,8 +1054,11 @@ static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFram
 
 static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, WebKitWebResource*, WebKitNetworkRequest* request, WebKitNetworkResponse*)
 {
-    if (!done && gLayoutTestController->willSendRequestReturnsNull())
+    if (!done && gLayoutTestController->willSendRequestReturnsNull()) {
+        // As requested by the LayoutTestController, don't perform the request.
+        webkit_network_request_set_uri(request, "about:blank");
         return;
+    }
 
     SoupMessage* soupMessage = webkit_network_request_get_message(request);
     SoupURI* uri = soup_uri_new(webkit_network_request_get_uri(request));

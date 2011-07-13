@@ -1,3 +1,14 @@
+2011-07-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] media/media-blocked-by-willsendrequest.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=63699
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback): Abort the request if explicitely asked
+        by the LayoutTestController's willSendRequestReturnsNull() function.
+
 2011-07-13  Adam Barth  <abarth@webkit.org>
 
         Remove "Dismiss" button from garden-o-matic butterbar
