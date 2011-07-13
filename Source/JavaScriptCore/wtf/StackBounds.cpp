@@ -41,10 +41,12 @@
 
 #elif OS(QNX)
 
-#include <fcntl.h>
-#include <sys/procfs.h>
-#include <stdio.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/procfs.h>
 
 #elif OS(UNIX)
 

@@ -1,3 +1,21 @@
+2011-07-13  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Broken build on QNX
+        https://bugs.webkit.org/show_bug.cgi?id=63717
+
+        QNX doesn't support pthread's SA_RESTART (required by
+        JSC_MULTIPLE_THREADS), JIT is broken at runtime and there a
+        few minor compilation errors here and there.
+
+        Original patch by Ritt Konstantin <ritt.ks@gmail.com>, also
+        tested by him on QNX v6.5 (x86)
+
+        * wtf/DateMath.cpp: fix usage of abs/labs
+        * wtf/Platform.h: Disable JIT and JSC_MULTIPLE_THREADS
+        * wtf/StackBounds.cpp: Add a couple of missing includes (and sort them)
+
 2011-07-12  Anders Carlsson  <andersca@apple.com>
 
         If a compiler has nullptr support, include <cstddef> to get the nullptr_t definition

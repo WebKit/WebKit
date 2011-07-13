@@ -698,7 +698,7 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
             return std::numeric_limits<double>::quiet_NaN();
         if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
             return std::numeric_limits<double>::quiet_NaN();
-        tzHoursAbs = abs(tzHours);
+        tzHoursAbs = labs(tzHours);
         currentPosition = postParsePosition + 1;
         
         if (!isASCIIDigit(*currentPosition))
