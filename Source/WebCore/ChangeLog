@@ -1,3 +1,15 @@
+2011-07-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Regression: OOB read in svg text run
+        https://bugs.webkit.org/show_bug.cgi?id=63627
+
+        Not reviewed.
+
+        Fixed last minute typo leading to assertions.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSelection):
+
 2011-07-12  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: factor NetworkLogView out of Network panel

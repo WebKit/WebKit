@@ -817,7 +817,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == length && hasHyphen();
-    TextRun textRun = constructTextRun(style, font, characters, length, textRenderer()->textLength() - length, respectHyphen ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(style, font, characters, length, textRenderer()->textLength() - m_start, respectHyphen ? &charactersWithHyphen : 0);
     if (respectHyphen)
         ePos = textRun.length();
 
