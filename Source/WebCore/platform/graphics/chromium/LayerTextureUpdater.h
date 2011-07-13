@@ -45,11 +45,13 @@ public:
 
     enum Orientation {
         BottomUpOrientation,
-        TopDownOrientation
+        TopDownOrientation,
+        InvalidOrientation,
     };
     enum SampledTexelFormat {
         SampledTexelFormatRGBA,
-        SampledTexelFormatBGRA
+        SampledTexelFormatBGRA,
+        SampledTexelFormatInvalid,
     };
     // Returns the orientation of the texture uploaded by this interface.
     virtual Orientation orientation() = 0;

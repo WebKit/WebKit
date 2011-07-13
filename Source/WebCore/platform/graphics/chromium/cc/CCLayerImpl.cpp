@@ -71,6 +71,7 @@ CCLayerImpl::CCLayerImpl(LayerChromium* owner, int id)
     , m_opacity(1.0)
     , m_preserves3D(false)
     , m_usesLayerScissor(false)
+    , m_drawsContent(false)
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
@@ -136,15 +137,9 @@ bool CCLayerImpl::descendantsDrawsContent()
     return false;
 }
 
-// These belong on CCLayerImpl, but should be overridden by each type and not defer to the LayerChromium subtypes.
-bool CCLayerImpl::drawsContent() const
-{
-    return m_owner->drawsContent();
-}
-
 void CCLayerImpl::draw()
 {
-    return m_owner->draw();
+    ASSERT_NOT_REACHED();
 }
 
 void CCLayerImpl::updateCompositorResources()

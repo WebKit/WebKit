@@ -34,25 +34,11 @@
 
 #include "ContentLayerChromium.h"
 
-#include "cc/CCLayerImpl.h"
-#include "GraphicsContext3D.h"
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
 #include "LayerTextureUpdaterCanvas.h"
-#include "LayerTilerChromium.h"
 #include "PlatformBridge.h"
-#include "RenderLayerBacking.h"
-#include "TextStream.h"
 #include <wtf/CurrentTime.h>
-
-// Start tiling when the width and height of a layer are larger than this size.
-static int maxUntiledSize = 510;
-
-// When tiling is enabled, use tiles of this dimension squared.
-static int defaultTileSize = 256;
-
-using namespace std;
 
 namespace WebCore {
 
@@ -90,9 +76,7 @@ PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChrom
 }
 
 ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
-    , m_tilingOption(ContentLayerChromium::AutoTile)
-    , m_borderTexels(true)
+    : TiledLayerChromium(owner)
 {
 }
 
@@ -106,7 +90,7 @@ void ContentLayerChromium::paintContentsIfDirty()
     ASSERT(drawsContent());
     ASSERT(layerRenderer());
 
-    updateLayerSize();
+    updateTileSizeAndTilingOption();
 
     const IntRect& layerRect = visibleLayerRect();
     if (layerRect.isEmpty())
@@ -119,21 +103,13 @@ void ContentLayerChromium::paintContentsIfDirty()
     if (!drawsContent())
         return;
 
-    m_tiler->prepareToUpdate(layerRect, m_textureUpdater.get());
+    m_tiler->prepareToUpdate(layerRect, textureUpdater());
     m_dirtyRect = FloatRect();
 }
 
-void ContentLayerChromium::cleanupResources()
+bool ContentLayerChromium::drawsContent() const
 {
-    m_textureUpdater.clear();
-    m_tiler.clear();
-    LayerChromium::cleanupResources();
-}
-
-void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer)
-{
-    LayerChromium::setLayerRenderer(layerRenderer);
-    createTilerIfNeeded();
+    return m_owner && m_owner->drawsContent() && TiledLayerChromium::drawsContent();
 }
 
 void ContentLayerChromium::createTextureUpdaterIfNeeded()
@@ -147,133 +123,6 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
     }
 #endif
     m_textureUpdater = LayerTextureUpdaterBitmap::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->contextSupportsMapSub());
-}
-
-TransformationMatrix ContentLayerChromium::tilingTransform()
-{
-    TransformationMatrix transform = ccLayerImpl()->drawTransform();
-
-    if (contentBounds().isEmpty())
-        return transform;
-
-    transform.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
-                              bounds().height() / static_cast<double>(contentBounds().height()));
-
-    // Tiler draws with a different origin from other layers.
-    transform.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
-
-    return transform;
-}
-
-IntSize ContentLayerChromium::contentBounds() const
-{
-    return bounds();
-}
-
-void ContentLayerChromium::updateLayerSize()
-{
-    if (!m_tiler)
-        return;
-
-    const IntSize tileSize(defaultTileSize, defaultTileSize);
-
-    // Tile if both dimensions large, or any one dimension large and the other
-    // extends into a second tile. This heuristic allows for long skinny layers
-    // (e.g. scrollbars) that are Nx1 tiles to minimize wasted texture space.
-    const bool anyDimensionLarge = contentBounds().width() > maxUntiledSize || contentBounds().height() > maxUntiledSize;
-    const bool anyDimensionOneTile = contentBounds().width() <= defaultTileSize || contentBounds().height() <= defaultTileSize;
-    const bool autoTiled = anyDimensionLarge && !anyDimensionOneTile;
-
-    bool isTiled;
-    if (m_tilingOption == AlwaysTile)
-        isTiled = true;
-    else if (m_tilingOption == NeverTile)
-        isTiled = false;
-    else
-        isTiled = autoTiled;
-
-    // Empty tile size tells the tiler to avoid tiling.
-    IntSize requestedSize = isTiled ? tileSize : IntSize();
-    const int maxSize = layerRenderer()->maxTextureSize();
-    IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
-    m_tiler->setTileSize(clampedSize);
-}
-
-void ContentLayerChromium::draw()
-{
-    const IntRect& layerRect = visibleLayerRect();
-    if (!layerRect.isEmpty())
-        m_tiler->draw(layerRect, tilingTransform(), ccLayerImpl()->drawOpacity(), m_textureUpdater.get());
-}
-
-bool ContentLayerChromium::drawsContent() const
-{
-    if (!m_owner || !m_owner->drawsContent())
-        return false;
-
-    if (!m_tiler)
-        return true;
-
-    if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)
-        return false;
-
-    return !m_tiler->skipsDraw();
-}
-
-void ContentLayerChromium::createTilerIfNeeded()
-{
-    if (m_tiler)
-        return;
-
-    createTextureUpdaterIfNeeded();
-
-    m_tiler = LayerTilerChromium::create(
-        layerRenderer(),
-        IntSize(defaultTileSize, defaultTileSize),
-        m_borderTexels ? LayerTilerChromium::HasBorderTexels :
-        LayerTilerChromium::NoBorderTexels);
-}
-
-void ContentLayerChromium::updateCompositorResources()
-{
-    m_tiler->updateRect(m_textureUpdater.get());
-}
-
-void ContentLayerChromium::setTilingOption(TilingOption option)
-{
-    m_tilingOption = option;
-    updateLayerSize();
-}
-
-void ContentLayerChromium::bindContentsTexture()
-{
-    // This function is only valid for single texture layers, e.g. masks.
-    ASSERT(m_tilingOption == NeverTile);
-    ASSERT(m_tiler);
-
-    LayerTexture* texture = m_tiler->getSingleTexture();
-    ASSERT(texture);
-
-    texture->bindTexture();
-}
-
-void ContentLayerChromium::setIsMask(bool isMask)
-{
-    m_borderTexels = false;
-    setTilingOption(isMask ? NeverTile : AutoTile);
-}
-
-static void writeIndent(TextStream& ts, int indent)
-{
-    for (int i = 0; i != indent; ++i)
-        ts << "  ";
-}
-
-void ContentLayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
-{
-    LayerChromium::dumpLayerProperties(ts, indent);
-    writeIndent(ts, indent);
-    ts << "skipsDraw: " << (!m_tiler || m_tiler->skipsDraw()) << "\n";
 }
 
 }

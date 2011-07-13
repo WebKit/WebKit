@@ -34,7 +34,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerChromium.h"
+#include "TiledLayerChromium.h"
+#include "cc/CCTiledLayerImpl.h"
 
 namespace WebCore {
 
@@ -43,45 +44,24 @@ class LayerTilerChromium;
 class LayerTextureUpdater;
 
 // A Layer that requires a GraphicsContext to render its contents.
-class ContentLayerChromium : public LayerChromium {
-    friend class LayerRendererChromium;
+class ContentLayerChromium : public TiledLayerChromium {
 public:
-    enum TilingOption { AlwaysTile, NeverTile, AutoTile };
-
     static PassRefPtr<ContentLayerChromium> create(GraphicsLayerChromium* owner = 0);
 
     virtual ~ContentLayerChromium();
 
     virtual void paintContentsIfDirty();
-    virtual void updateCompositorResources();
-    virtual void setIsMask(bool);
-    virtual void bindContentsTexture();
 
-    virtual void draw();
-    virtual bool drawsContent() const;
-
-protected:
+private:
     explicit ContentLayerChromium(GraphicsLayerChromium* owner);
 
     virtual const char* layerTypeAsString() const { return "ContentLayer"; }
-    virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-    virtual void cleanupResources();
-    virtual void setLayerRenderer(LayerRendererChromium*);
-
-    virtual IntSize contentBounds() const;
-
-    TransformationMatrix tilingTransform();
-
-    void updateLayerSize();
-    void createTilerIfNeeded();
+    virtual bool drawsContent() const;
     virtual void createTextureUpdaterIfNeeded();
-    void setTilingOption(TilingOption);
+    virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
 
     OwnPtr<LayerTextureUpdater> m_textureUpdater;
-    OwnPtr<LayerTilerChromium> m_tiler;
-    TilingOption m_tilingOption;
-    bool m_borderTexels;
 };
 
 }
