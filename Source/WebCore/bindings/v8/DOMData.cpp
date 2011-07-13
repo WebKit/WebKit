@@ -30,36 +30,28 @@
 
 #include "config.h"
 #include "DOMData.h"
+#include "V8Binding.h"
 #include "V8IsolatedContext.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 
 namespace WebCore {
 
-DOMData::DOMData()
-    : m_defaultStore(this)
+static StaticDOMDataStore& getDefaultStore() 
 {
+    DEFINE_STATIC_LOCAL(StaticDOMDataStore, defaultStore, ());
+    return defaultStore;
 }
 
-DOMData::~DOMData()
+DOMDataStore& DOMData::getCurrentStore()
 {
-}
-
-DOMData* DOMData::getCurrent()
-{
-    DEFINE_STATIC_LOCAL(DOMData, mainThreadDOMData, ());
-    return &mainThreadDOMData;
-}
-
-DOMDataStore& DOMData::getMainThreadStore()
-{
-    // This is broken out as a separate non-virtual method from getStore()
-    // so that it can be inlined by getCurrentMainThreadStore, which is
-    // a hot spot in Dromaeo DOM tests.
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    if (UNLIKELY(data->domDataStore() != 0))
+        return *data->domDataStore();
     V8IsolatedContext* context = V8IsolatedContext::getEntered();
     if (UNLIKELY(context != 0))
         return *context->world()->domDataStore();
-    return m_defaultStore;
+    return getDefaultStore();
 }
 
 void DOMData::derefObject(WrapperTypeInfo* type, void* domObject)

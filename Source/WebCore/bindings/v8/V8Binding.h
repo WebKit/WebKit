@@ -32,6 +32,7 @@
 #define V8Binding_h
 
 #include "BindingSecurity.h"
+#include "DOMDataStore.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
 #include "V8DOMWrapper.h"
@@ -108,6 +109,12 @@ namespace WebCore {
         v8::Persistent<v8::FunctionTemplate>& toStringTemplate() { return m_toStringTemplate; }
         StringCache* stringCache() { return &m_stringCache; }
 
+        DOMDataList& allStores() { return m_DOMDataList; }
+
+        DOMDataStore* domDataStore() { return m_DOMDataStore; }
+        // DOMDataStore is owned outside V8BindingPerIsolateData.
+        void setDOMDataStore(DOMDataStore* store) { m_DOMDataStore = store; }
+
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);
         ~V8BindingPerIsolateData();
@@ -117,6 +124,9 @@ namespace WebCore {
         v8::Persistent<v8::String> m_toStringName;
         v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
         StringCache m_stringCache;
+
+        DOMDataList m_DOMDataList;
+        DOMDataStore* m_DOMDataStore;
     };
 
 

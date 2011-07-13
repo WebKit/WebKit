@@ -45,23 +45,17 @@ namespace WebCore {
     // use different subclasses.
     //
     class DOMData {
-        WTF_MAKE_NONCOPYABLE(DOMData);
     public:
-        DOMData();
-        virtual ~DOMData();
-
-        static DOMData* getCurrent();
-        DOMDataStore& getStore() { return getMainThreadStore(); }
-
         template<typename T>
         static void handleWeakObject(DOMDataStore::DOMWrapperMapType, v8::Persistent<v8::Object>, T* domObject);
 
         template<typename T>
         static void removeObjectsFromWrapperMap(DOMDataStore* store, AbstractWeakReferenceMap<T, v8::Object>& domMap);
 
-        static DOMDataStore& getCurrentMainThreadStore() { return getCurrent()->getMainThreadStore(); }
 
+        static DOMDataStore& getCurrentStore();
     private:
+        DOMData();
         static void derefObject(WrapperTypeInfo* type, void* domObject);
 
         template<typename T>
@@ -74,9 +68,6 @@ namespace WebCore {
                 v8Object.Dispose();
             }
         };
-
-        DOMDataStore& getMainThreadStore();
-        StaticDOMDataStore m_defaultStore;
     };
 
     template<typename T>

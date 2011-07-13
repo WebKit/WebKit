@@ -44,7 +44,7 @@ namespace WebCore {
     //
     class ScopedDOMDataStore : public DOMDataStore {
     public:
-        ScopedDOMDataStore(DOMData*);
+        ScopedDOMDataStore();
 
         // This can be called when WTF thread is tearing down.
         // We assume that all child threads running V8 instances are created by WTF.

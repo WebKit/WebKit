@@ -38,7 +38,7 @@
 namespace WebCore {
 
 DOMDataStoreHandle::DOMDataStoreHandle()
-    : m_store(adoptPtr(new ScopedDOMDataStore(DOMData::getCurrent())))
+    : m_store(adoptPtr(new ScopedDOMDataStore()))
 {
 }
 
@@ -46,16 +46,13 @@ DOMDataStoreHandle::~DOMDataStoreHandle()
 {
 }
 
-static bool fasterDOMStoreAccess = false;
-
 static inline DOMDataStore& getDOMDataStore()
 {
-    return DOMData::getCurrentMainThreadStore();
+    return DOMData::getCurrentStore();
 }
 
 void enableFasterDOMStoreAccess()
 {
-    fasterDOMStoreAccess = true;
 }
 
 DOMNodeMapping& getDOMNodeMap()

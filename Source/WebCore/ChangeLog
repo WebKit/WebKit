@@ -1,3 +1,39 @@
+2011-07-12  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=63041
+        [Chromium][V8] Make DOMDataStore per-isolate
+        This patch:
+         - makes DOMData class an utility class with static members only
+         - adds an isolate-specific DOMDataStore in V8BindingPerIsolateData.
+        Dromaeo benchmarks are not affected.
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/DOMData.cpp:
+        (WebCore::getDefaultStore):
+        (WebCore::DOMData::getCurrentStore):
+        * bindings/v8/DOMData.h:
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::allStores):
+        * bindings/v8/DOMDataStore.h:
+        * bindings/v8/ScopedDOMDataStore.cpp:
+        (WebCore::ScopedDOMDataStore::ScopedDOMDataStore):
+        * bindings/v8/ScopedDOMDataStore.h:
+        * bindings/v8/StaticDOMDataStore.cpp:
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.h:
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::allStores):
+        (WebCore::V8BindingPerIsolateData::getDOMDataStore):
+        (WebCore::V8BindingPerIsolateData::setDOMDataStore):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::V8BindingPerIsolateData):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::DOMDataStoreHandle::DOMDataStoreHandle):
+        (WebCore::getDOMDataStore):
+        (WebCore::enableFasterDOMStoreAccess):
+
 2011-07-12  Simon Fraser  <simon.fraser@apple.com>
 
         Rename compositing-related updateContentsScale() methods

@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-StaticDOMDataStore::StaticDOMDataStore(DOMData* domData)
-    : DOMDataStore(domData)
+StaticDOMDataStore::StaticDOMDataStore()
+    : DOMDataStore()
     , m_staticDomNodeMap(&DOMDataStore::weakNodeCallback)
     , m_staticDomObjectMap(&DOMDataStore::weakDOMObjectCallback)
     , m_staticActiveDomObjectMap(&DOMDataStore::weakActiveDOMObjectCallback)

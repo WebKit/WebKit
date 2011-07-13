@@ -49,6 +49,7 @@ namespace WebCore {
 
 
 V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
+    : m_DOMDataStore(0)
 {
 }
 
