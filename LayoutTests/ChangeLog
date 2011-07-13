@@ -1,3 +1,12 @@
+2011-07-12  Chris Rogers  <crogers@google.com>
+
+        Enable Web Audio for chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=64409
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
 2011-07-12  Oliver Hunt  <oliver@apple.com>
 
         Overzealous type validation in method_check

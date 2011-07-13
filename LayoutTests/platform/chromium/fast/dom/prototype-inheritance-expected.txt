@@ -791,6 +791,8 @@ FAIL inner.toolbar.isInner should be true. Was false.
 FAIL inner.toolbar.constructor.isInner should be true. Was false.
 PASS inner.unescape.isInner is true
 PASS inner.unescape.constructor.isInner is true
+PASS inner.webkitAudioContext.isInner is true
+PASS inner.webkitAudioContext.constructor.isInner is true
 PASS inner.webkitCancelRequestAnimationFrame.isInner is true
 PASS inner.webkitCancelRequestAnimationFrame.constructor.isInner is true
 PASS inner.webkitConvertPointFromNodeToPage.isInner is true

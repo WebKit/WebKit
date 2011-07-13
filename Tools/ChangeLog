@@ -1,3 +1,13 @@
+2011-07-12  Chris Rogers  <crogers@google.com>
+
+        Enable Web Audio for chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=64409
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
         Tweak some UI in garden-o-matic now that the tree actually has a
