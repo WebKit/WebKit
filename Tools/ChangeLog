@@ -1,3 +1,12 @@
+2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Consolidate expectations parsing code.
+        https://bugs.webkit.org/show_bug.cgi?id=64460
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Folded TestExpectationParser._split_expectation_string into TestExpectationParser.parse.
+
 2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
 
         Standardize WinCairo conditionalized code under PLATFORM macro.

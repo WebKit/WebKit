@@ -173,26 +173,40 @@ class TestExpectationParser:
         Any errant whitespace is not preserved.
 
         """
-        result = TestExpectationLine()
+        expectation = TestExpectationLine()
         errors = []
-        (modifiers, name, expectations, comment) = cls._split_expectation_string(expectation_string, errors)
-        if len(errors) > 0:
-            result.malformed = True
-            result.comment = expectation_string
-            result.valid = False
+        comment_index = expectation_string.find("//")
+        if comment_index == -1:
+            comment_index = len(expectation_string)
         else:
-            result.malformed = False
-            result.comment = comment
-            result.valid = True
-            result.name = name
-            # FIXME: Modifiers should be its own class eventually.
-            if modifiers is not None:
-                result.modifiers = cls._split_space_separated(modifiers)
-            # FIXME: Expectations should be its own class eventually.
-            if expectations is not None:
-                result.expectations = cls._split_space_separated(expectations)
+            expectation.comment = expectation_string[comment_index + 2:]
 
-        return (result, errors)
+        remaining_string = re.sub(r"\s+", " ", expectation_string[:comment_index].strip())
+        if len(remaining_string) == 0:
+            expectation.malformed = False
+            expectation.valid = True
+            return expectation, errors
+
+        parts = remaining_string.split(':')
+        if len(parts) != 2:
+            errors.append(("Missing a ':' in" if len(parts) < 2 else "Extraneous ':' in", "'" + expectation_string + "'"))
+        else:
+            test_and_expectation = parts[1].split('=')
+            if len(test_and_expectation) != 2:
+                errors.append(("Missing expectations in" if len(test_and_expectation) < 2 else "Extraneous '=' in", "'" + expectation_string + "'"))
+
+        if len(errors) > 0:
+            expectation.comment = expectation_string
+            expectation.malformed = True
+            expectation.valid = False
+        else:
+            expectation.malformed = False
+            expectation.valid = True
+            expectation.modifiers = cls._split_space_separated(parts[0])
+            expectation.name = test_and_expectation[0].strip()
+            expectation.expectations = cls._split_space_separated(test_and_expectation[1])
+
+        return expectation, errors
 
     @classmethod
     def parse_list(cls, expectations_string, validator):
@@ -205,35 +219,6 @@ class TestExpectationParser:
             expectation.valid = validator.validate(line_number, expectation, errors)
             expectations.append(expectation)
         return expectations
-
-    @classmethod
-    def _split_expectation_string(cls, line, errors):
-        """Splits line into a string of modifiers, a test name, a string of expectations, and a comment,
-        returning them as a tuple. In case parsing error, returns empty tuple.
-        """
-        comment_index = line.find("//")
-        comment = ''
-        if comment_index == -1:
-            comment_index = len(line)
-            comment = None
-        else:
-            comment = line[comment_index + 2:]
-
-        line = re.sub(r"\s+", " ", line[:comment_index].strip())
-        if len(line) == 0:
-            return (None, None, None, comment)
-
-        parts = line.split(':')
-        if len(parts) != 2:
-            errors.append(("Missing a ':' in" if len(parts) < 2 else "Extraneous ':' in", "'" + line + "'"))
-            return (None, None, None, None)
-
-        test_and_expectation = parts[1].split('=')
-        if len(test_and_expectation) != 2:
-            errors.append(("Missing expectations in" if len(test_and_expectation) < 2 else "Extraneous '=' in", "'" + line + "'"))
-            return (None, None, None, None)
-
-        return (parts[0].strip(), test_and_expectation[0].strip(), test_and_expectation[1].strip(), comment)
 
     @classmethod
     def _split_space_separated(cls, space_separated_string):
