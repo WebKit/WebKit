@@ -154,6 +154,7 @@ PlatformGraphicsContext3D GraphicsContext3DInternal::platformGraphicsContext3D()
 
 Platform3DObject GraphicsContext3DInternal::platformTexture() const
 {
+    m_impl->setParentContext(m_webViewImpl->graphicsContext3D());
     return m_impl->getPlatformTextureId();
 }
 

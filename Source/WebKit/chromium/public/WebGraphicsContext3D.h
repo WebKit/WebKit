@@ -132,6 +132,8 @@ public:
     // Query whether it is built on top of compliant GLES2 implementation.
     virtual bool isGLES2Compliant() = 0;
 
+    virtual bool setParentContext(WebGraphicsContext3D* parentContext) { return false; }
+
     // Helper for software compositing path. Reads back the frame buffer into
     // the memory region pointed to by "pixels" with size "bufferSize". It is
     // expected that the storage for "pixels" covers (4 * width * height) bytes.

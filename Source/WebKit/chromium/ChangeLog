@@ -1,3 +1,16 @@
+2011-07-12  Al Patrick  <apatrick@chromium.org>
+
+        Added the ability to dynamically change the parent context of a WebGraphicsContext3D.
+        GraphicsContext3DInternal::platformTexture uses this to set the parent as appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=64397
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::setParentContext):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::platformTexture):
+
 2011-07-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] Delete the unused legacy accelerated canvas 2d code
