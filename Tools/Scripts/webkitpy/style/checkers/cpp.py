@@ -923,7 +923,7 @@ def get_header_guard_cpp_variable(filename):
     standard_name = sub(r'[-.\s]', '_', os.path.basename(filename))
 
     # Files under WTF typically have header guards that start with WTF_.
-    if filename.find('/wtf/'):
+    if '/wtf/' in filename:
         special_name = "WTF_" + standard_name
     else:
         special_name = standard_name

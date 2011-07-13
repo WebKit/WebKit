@@ -1,3 +1,13 @@
+2011-07-13  Ilya Sherman  <isherman@chromium.org>
+
+        Fix WTF header guard style check
+        https://bugs.webkit.org/show_bug.cgi?id=64488
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Verify that we don't *always* suggest "WTF_" as a prefix
+
 2011-07-13  Ojan Vafai  <ojan@chromium.org>
 
         bring flakiness_dashboard.html closer to webkit style

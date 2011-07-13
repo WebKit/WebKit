@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8; -*-
 #
-# Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
@@ -2175,6 +2175,9 @@ class CppStyleTest(CppStyleTestBase):
                 'No #ifndef header guard found, suggested CPP variable is: %s'
                 '  [build/header_guard] [5]' % expected_guard),
             error_collector.result_list())
+
+        # Verify that we don't blindly suggest the WTF prefix for all headers.
+        self.assertFalse(expected_guard.startswith('WTF_'))
 
         # Allow the WTF_ prefix for files in that directory.
         header_guard_filter = FilterConfiguration(('-', '+build/header_guard'))
