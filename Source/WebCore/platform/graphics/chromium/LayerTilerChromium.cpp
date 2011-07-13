@@ -500,6 +500,8 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
     topEdge.move(0, 0, zDistance);
     bottomEdge.move(0, 0, zDistance);
 
+    GC3Dint filter = (m_tilingData.borderTexels() && !matrix.isIntegerTranslation()) ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
+
     Edge prevEdgeY = topEdge;
 
     int left, top, right, bottom;
@@ -531,6 +533,8 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             ASSERT(tile->texture()->isReserved());
 
             tile->texture()->bindTexture();
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
 
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.

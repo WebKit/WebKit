@@ -1,3 +1,14 @@
+2011-07-12  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Use nearest filter method with pixel aligned transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=64338
+
+        Reviewed by James Robinson.
+
+        Update expected results.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not implement op_construct.

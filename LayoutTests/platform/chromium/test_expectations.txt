@@ -2895,12 +2895,11 @@ BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
-// Commented because of BUGWK61388
-//BUGWK58587 DEBUG GPU LINUX : compositing/direct-image-compositing.html = IMAGE
-//BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-//BUGWK58587 DEBUG GPU LINUX : compositing/geometry/tall-page-composited.html = IMAGE
-//BUGWK58587 DEBUG GPU LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
-//BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/direct-image-compositing.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/tall-page-composited.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3224,8 +3223,7 @@ BUGCR79110 WIN LINUX : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
 
 BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
-// Commented because of BUGWK61388
-//BUGWK58328 GPU WIN MAC LINUX DEBUG : compositing/webgl/webgl-reflection.html = IMAGE PASS CRASH
+BUGWK58328 GPU WIN MAC LINUX DEBUG : compositing/webgl/webgl-reflection.html = IMAGE PASS CRASH
 
 BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 
@@ -3383,11 +3381,9 @@ BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH P
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
-// Commented because of BUGWK61388
-//BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
-// Commented because of BUGWK61388
-//BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
 
 // Looks like some uninitialized memory at the bottom.
 BUGWK60103 : fast/replaced/border-radius-clip.html = IMAGE TIMEOUT IMAGE+TEXT
@@ -3849,8 +3845,7 @@ BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT
 
 // Started failing at WebKit r90259-90261.
-// Commented because of BUGWK61388
-//BUGCR88400 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGCR88400 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
 
 // Started around WebKit r90233:r90242
 BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
@@ -3884,51 +3879,19 @@ BUGCR88594 WIN7 : http/tests/appcache/manifest-redirect-2.html = TIMEOUT PASS
 BUGCR88594 WIN7 : http/tests/appcache/fallback.html = TIMEOUT
 
 BUGWK61388 GPU : compositing/color-matching/image-color-matching.html = IMAGE
-BUGWK61388 WIN LINUX GPU : compositing/direct-image-compositing.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK61388 GPU : compositing/geometry/fixed-position.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK61388 GPU : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
 BUGWK61388 GPU : compositing/geometry/layer-due-to-layer-children.html = IMAGE
-BUGWK61388 WIN LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
-BUGWK61388 GPU : compositing/geometry/video-opacity-overlay.html = IMAGE
-BUGWK61388 GPU : compositing/iframes/nested-iframe-scrolling.html = IMAGE
-BUGWK61388 GPU : compositing/masks/direct-image-mask.html = IMAGE
-BUGWK61388 GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK61388 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/deeply-nested-reflections.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/nested-reflection-on-overflow.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/nested-reflection-transformed.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/nested-reflection-transformed2.html = IMAGE
 BUGWK61388 GPU : compositing/reflections/nested-reflection-transition.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/reflection-in-composited.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/reflection-on-composited.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/reflection-ordering.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/reflection-positioning.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/reflection-positioning2.html = IMAGE
-BUGWK61388 GPU : compositing/reflections/simple-composited-reflections.html = IMAGE
 BUGWK61388 GPU : compositing/reflections/transform-inside-reflection.html = IMAGE
-BUGWK61388 GPU : compositing/rtl/rtl-iframe-absolute-overflow.html = IMAGE
-BUGWK61388 GPU : compositing/rtl/rtl-iframe-fixed-overflow.html = IMAGE
 BUGWK61388 GPU : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK61388 GPU : compositing/text-on-large-layer.html = IMAGE
 BUGWK61388 GPU : compositing/transitions/scale-transition-no-start.html = IMAGE
-BUGWK61388 GPU : compositing/webgl/webgl-reflection.html = IMAGE
-BUGWK61388 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 BUGWK61388 GPU : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
-BUGWK61388 WIN LINUX GPU : media/video-zoom.html = IMAGE
-BUGWK61388 GPU : media/video-zoom-controls.html = IMAGE
+BUGWK61388 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 BUGWK61388 GPU : media/video-transformed.html = IMAGE
-BUGWK61388 GPU : media/video-layer-crash.html = IMAGE
-BUGWK61388 WIN GPU : compositing/iframes/composited-iframe-alignment.html = IMAGE
-BUGWK61388 WIN MAC GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK61388 WIN GPU : media/video-controls-rendering.html = IMAGE
-BUGWK61388 WIN MAC GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK61388 GPU : media/video-zoom-controls.html = IMAGE
 BUGWK61388 WIN MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGWK61388 MAC GPU : compositing/masks/multiple-masks.html = IMAGE
-BUGWK61388 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
 
 // Getting form value is not implemented yet.
 BUGWK13061 : plugins/form-value.html = TEXT

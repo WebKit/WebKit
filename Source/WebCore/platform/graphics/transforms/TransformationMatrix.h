@@ -339,6 +339,8 @@ public:
             && m_matrix[3][3] == 1;
     }
 
+    bool isIntegerTranslation() const;
+
 private:
     // multiply passed 2D point by matrix (assume z=0)
     void multVecMatrix(double x, double y, double& dstX, double& dstY) const;

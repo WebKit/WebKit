@@ -1126,4 +1126,20 @@ void TransformationMatrix::recompose(const DecomposedType& decomp)
     scale3d((float) decomp.scaleX, (float) decomp.scaleY, (float) decomp.scaleZ);
 }
 
+bool TransformationMatrix::isIntegerTranslation() const
+{
+    if (!isIdentityOrTranslation())
+        return false;
+
+    // Check for translate Z.
+    if (m_matrix[3][2])
+        return false;
+
+    // Check for non-integer translate X/Y.
+    if (static_cast<int>(m_matrix[3][0]) != m_matrix[3][0] || static_cast<int>(m_matrix[3][1]) != m_matrix[3][1])
+        return false;
+
+    return true;
+}
+
 }

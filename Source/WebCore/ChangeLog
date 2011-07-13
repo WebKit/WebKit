@@ -1,5 +1,23 @@
 2011-07-12  David Reveman  <reveman@chromium.org>
 
+        [Chromium] Use nearest filter method with pixel aligned transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=64338
+
+        Reviewed by James Robinson.
+
+        Check for integer translation and use nearest texture filter when
+        possible to avoid filter precisions problems at the layer edges.
+
+        Test: compositing/iframes/nested-iframe-scrolling.html (existing)
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::drawTiles):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::isIntegerTranslation):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
+2011-07-12  David Reveman  <reveman@chromium.org>
+
         Removed unnecessary function parameters from TilingData::textureOffset.
         https://bugs.webkit.org/show_bug.cgi?id=64245
 
