@@ -1,3 +1,26 @@
+2011-07-13  Emil A Eklund  <eae@chromium.org>
+
+        Switch table rendering to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64478
+
+        Reviewed by Eric Seidel.
+
+        No new tests, no new functionality.
+
+        * rendering/AutoTableLayout.cpp:
+        * rendering/AutoTableLayout.h:
+        * rendering/HitTestResult.cpp:
+        * rendering/HitTestResult.h:
+        * rendering/LayoutTypes.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+
 2011-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Factor some GraphicsLayer creation code in RenderLayerBacking

@@ -650,7 +650,7 @@ private:
     void newLine(EClear);
 
     Position positionForBox(InlineBox*, bool start = true) const;
-    VisiblePosition positionForPointWithInlineChildren(const IntPoint&);
+    VisiblePosition positionForPointWithInlineChildren(const LayoutPoint&);
 
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(IntPoint&) const;

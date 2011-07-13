@@ -508,7 +508,7 @@ bool HitTestResult::isContentEditable() const
     return m_innerNonSharedNode->rendererIsEditable();
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& pointInContainer, const LayoutRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& pointInContainer, const IntRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.

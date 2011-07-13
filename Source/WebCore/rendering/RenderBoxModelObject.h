@@ -72,33 +72,33 @@ public:
     virtual LayoutRect borderBoundingBox() const = 0;
 
     // Virtual since table cells override
-    virtual int paddingTop(bool includeIntrinsicPadding = true) const;
-    virtual int paddingBottom(bool includeIntrinsicPadding = true) const;
-    virtual int paddingLeft(bool includeIntrinsicPadding = true) const;
-    virtual int paddingRight(bool includeIntrinsicPadding = true) const;
-    virtual int paddingBefore(bool includeIntrinsicPadding = true) const;
-    virtual int paddingAfter(bool includeIntrinsicPadding = true) const;
-    virtual int paddingStart(bool includeIntrinsicPadding = true) const;
-    virtual int paddingEnd(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingTop(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingBottom(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingLeft(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingRight(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingBefore(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingAfter(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingStart(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingEnd(bool includeIntrinsicPadding = true) const;
 
-    virtual int borderTop() const { return style()->borderTopWidth(); }
-    virtual int borderBottom() const { return style()->borderBottomWidth(); }
-    virtual int borderLeft() const { return style()->borderLeftWidth(); }
-    virtual int borderRight() const { return style()->borderRightWidth(); }
-    virtual int borderBefore() const { return style()->borderBeforeWidth(); }
-    virtual int borderAfter() const { return style()->borderAfterWidth(); }
-    virtual int borderStart() const { return style()->borderStartWidth(); }
-    virtual int borderEnd() const { return style()->borderEndWidth(); }
+    virtual LayoutUnit borderTop() const { return style()->borderTopWidth(); }
+    virtual LayoutUnit borderBottom() const { return style()->borderBottomWidth(); }
+    virtual LayoutUnit borderLeft() const { return style()->borderLeftWidth(); }
+    virtual LayoutUnit borderRight() const { return style()->borderRightWidth(); }
+    virtual LayoutUnit borderBefore() const { return style()->borderBeforeWidth(); }
+    virtual LayoutUnit borderAfter() const { return style()->borderAfterWidth(); }
+    virtual LayoutUnit borderStart() const { return style()->borderStartWidth(); }
+    virtual LayoutUnit borderEnd() const { return style()->borderEndWidth(); }
 
-    int borderAndPaddingHeight() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
-    int borderAndPaddingWidth() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
-    int borderAndPaddingLogicalHeight() const { return borderBefore() + borderAfter() + paddingBefore() + paddingAfter(); }
-    int borderAndPaddingLogicalWidth() const { return borderStart() + borderEnd() + paddingStart() + paddingEnd(); }
-    int borderAndPaddingLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+    LayoutUnit borderAndPaddingHeight() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
+    LayoutUnit borderAndPaddingWidth() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
+    LayoutUnit borderAndPaddingLogicalHeight() const { return borderBefore() + borderAfter() + paddingBefore() + paddingAfter(); }
+    LayoutUnit borderAndPaddingLogicalWidth() const { return borderStart() + borderEnd() + paddingStart() + paddingEnd(); }
+    LayoutUnit borderAndPaddingLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
 
-    int borderAndPaddingStart() const { return borderStart() + paddingStart(); }
-    int borderLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() : borderTop(); }
-    int borderLogicalRight() const { return style()->isHorizontalWritingMode() ? borderRight() : borderBottom(); }
+    LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart(); }
+    LayoutUnit borderLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() : borderTop(); }
+    LayoutUnit borderLogicalRight() const { return style()->isHorizontalWritingMode() ? borderRight() : borderBottom(); }
 
     virtual LayoutUnit marginTop() const = 0;
     virtual LayoutUnit marginBottom() const = 0;

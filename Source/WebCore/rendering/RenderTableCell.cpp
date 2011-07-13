@@ -140,7 +140,7 @@ void RenderTableCell::computePreferredLogicalWidths()
             // to make the minwidth of the cell into the fixed width.  They do this
             // even in strict mode, so do not make this a quirk.  Affected the top
             // of hiptop.com.
-            m_minPreferredLogicalWidth = max(w.value(), m_minPreferredLogicalWidth);
+            m_minPreferredLogicalWidth = max<LayoutUnit>(w.value(), m_minPreferredLogicalWidth);
     }
 }
 
@@ -163,50 +163,50 @@ void RenderTableCell::layout()
     setCellWidthChanged(false);
 }
 
-int RenderTableCell::paddingTop(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingTop(bool includeIntrinsicPadding) const
 {
-    int result = RenderBlock::paddingTop();
+    LayoutUnit result = RenderBlock::paddingTop();
     if (!includeIntrinsicPadding || !isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
-int RenderTableCell::paddingBottom(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingBottom(bool includeIntrinsicPadding) const
 {
-    int result = RenderBlock::paddingBottom();
+    LayoutUnit result = RenderBlock::paddingBottom();
     if (!includeIntrinsicPadding || !isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
-int RenderTableCell::paddingLeft(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingLeft(bool includeIntrinsicPadding) const
 {
-    int result = RenderBlock::paddingLeft();
+    LayoutUnit result = RenderBlock::paddingLeft();
     if (!includeIntrinsicPadding || isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
     
 }
 
-int RenderTableCell::paddingRight(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingRight(bool includeIntrinsicPadding) const
 {   
-    int result = RenderBlock::paddingRight();
+    LayoutUnit result = RenderBlock::paddingRight();
     if (!includeIntrinsicPadding || isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
-int RenderTableCell::paddingBefore(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingBefore(bool includeIntrinsicPadding) const
 {
-    int result = RenderBlock::paddingBefore();
+    LayoutUnit result = RenderBlock::paddingBefore();
     if (!includeIntrinsicPadding)
         return result;
     return result + intrinsicPaddingBefore();
 }
 
-int RenderTableCell::paddingAfter(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingAfter(bool includeIntrinsicPadding) const
 {
-    int result = RenderBlock::paddingAfter();
+    LayoutUnit result = RenderBlock::paddingAfter();
     if (!includeIntrinsicPadding)
         return result;
     return result + intrinsicPaddingAfter();
@@ -239,11 +239,11 @@ IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
         return RenderBlock::clippedOverflowRectForRepaint(repaintContainer);
 
     bool rtl = !table()->style()->isLeftToRightDirection();
-    int outlineSize = style()->outlineSize();
-    int left = max(borderHalfLeft(true), outlineSize);
-    int right = max(borderHalfRight(true), outlineSize);
-    int top = max(borderHalfTop(true), outlineSize);
-    int bottom = max(borderHalfBottom(true), outlineSize);
+    LayoutUnit outlineSize = style()->outlineSize();
+    LayoutUnit left = max(borderHalfLeft(true), outlineSize);
+    LayoutUnit right = max(borderHalfRight(true), outlineSize);
+    LayoutUnit top = max(borderHalfTop(true), outlineSize);
+    LayoutUnit bottom = max(borderHalfBottom(true), outlineSize);
     if ((left && !rtl) || (right && rtl)) {
         if (RenderTableCell* before = table()->cellBefore(this)) {
             top = max(top, before->borderHalfTop(true));
@@ -270,7 +270,7 @@ IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
     }
     left = max(left, -minXVisualOverflow());
     top = max(top, -minYVisualOverflow());
-    IntRect r(-left, - top, left + max(width() + right, maxXVisualOverflow()), top + max(height() + bottom, maxYVisualOverflow()));
+    LayoutRect r(-left, - top, left + max(width() + right, maxXVisualOverflow()), top + max(height() + bottom, maxYVisualOverflow()));
 
     if (RenderView* v = view()) {
         // FIXME: layoutDelta needs to be applied in parts before/after transforms and
@@ -696,49 +696,49 @@ CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
     return tableStyle->isLeftToRightDirection() ? collapsedEndBorder() : collapsedStartBorder();
 }
 
-int RenderTableCell::borderLeft() const
+LayoutUnit RenderTableCell::borderLeft() const
 {
     return table()->collapseBorders() ? borderHalfLeft(false) : RenderBlock::borderLeft();
 }
 
-int RenderTableCell::borderRight() const
+LayoutUnit RenderTableCell::borderRight() const
 {
     return table()->collapseBorders() ? borderHalfRight(false) : RenderBlock::borderRight();
 }
 
-int RenderTableCell::borderTop() const
+LayoutUnit RenderTableCell::borderTop() const
 {
     return table()->collapseBorders() ? borderHalfTop(false) : RenderBlock::borderTop();
 }
 
-int RenderTableCell::borderBottom() const
+LayoutUnit RenderTableCell::borderBottom() const
 {
     return table()->collapseBorders() ? borderHalfBottom(false) : RenderBlock::borderBottom();
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=46191, make the collapsed border drawing
 // work with different block flow values instead of being hard-coded to top-to-bottom.
-int RenderTableCell::borderStart() const
+LayoutUnit RenderTableCell::borderStart() const
 {
     return table()->collapseBorders() ? borderHalfStart(false) : RenderBlock::borderStart();
 }
 
-int RenderTableCell::borderEnd() const
+LayoutUnit RenderTableCell::borderEnd() const
 {
     return table()->collapseBorders() ? borderHalfEnd(false) : RenderBlock::borderEnd();
 }
 
-int RenderTableCell::borderBefore() const
+LayoutUnit RenderTableCell::borderBefore() const
 {
     return table()->collapseBorders() ? borderHalfBefore(false) : RenderBlock::borderBefore();
 }
 
-int RenderTableCell::borderAfter() const
+LayoutUnit RenderTableCell::borderAfter() const
 {
     return table()->collapseBorders() ? borderHalfAfter(false) : RenderBlock::borderAfter();
 }
 
-int RenderTableCell::borderHalfLeft(bool outer) const
+LayoutUnit RenderTableCell::borderHalfLeft(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -746,7 +746,7 @@ int RenderTableCell::borderHalfLeft(bool outer) const
     return tableStyle->isFlippedBlocksWritingMode() ? borderHalfAfter(outer) : borderHalfBefore(outer);
 }
 
-int RenderTableCell::borderHalfRight(bool outer) const
+LayoutUnit RenderTableCell::borderHalfRight(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -754,7 +754,7 @@ int RenderTableCell::borderHalfRight(bool outer) const
     return tableStyle->isFlippedBlocksWritingMode() ? borderHalfBefore(outer) : borderHalfAfter(outer);
 }
 
-int RenderTableCell::borderHalfTop(bool outer) const
+LayoutUnit RenderTableCell::borderHalfTop(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -762,7 +762,7 @@ int RenderTableCell::borderHalfTop(bool outer) const
     return tableStyle->isLeftToRightDirection() ? borderHalfStart(outer) : borderHalfEnd(outer);
 }
 
-int RenderTableCell::borderHalfBottom(bool outer) const
+LayoutUnit RenderTableCell::borderHalfBottom(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -770,7 +770,7 @@ int RenderTableCell::borderHalfBottom(bool outer) const
     return tableStyle->isLeftToRightDirection() ? borderHalfEnd(outer) : borderHalfStart(outer);
 }
 
-int RenderTableCell::borderHalfStart(bool outer) const
+LayoutUnit RenderTableCell::borderHalfStart(bool outer) const
 {
     CollapsedBorderValue border = collapsedStartBorder();
     if (border.exists())
@@ -778,7 +778,7 @@ int RenderTableCell::borderHalfStart(bool outer) const
     return 0;
 }
     
-int RenderTableCell::borderHalfEnd(bool outer) const
+LayoutUnit RenderTableCell::borderHalfEnd(bool outer) const
 {
     CollapsedBorderValue border = collapsedEndBorder();
     if (border.exists())
@@ -786,7 +786,7 @@ int RenderTableCell::borderHalfEnd(bool outer) const
     return 0;
 }
 
-int RenderTableCell::borderHalfBefore(bool outer) const
+LayoutUnit RenderTableCell::borderHalfBefore(bool outer) const
 {
     CollapsedBorderValue border = collapsedBeforeBorder();
     if (border.exists())
@@ -794,7 +794,7 @@ int RenderTableCell::borderHalfBefore(bool outer) const
     return 0;
 }
 
-int RenderTableCell::borderHalfAfter(bool outer) const
+LayoutUnit RenderTableCell::borderHalfAfter(bool outer) const
 {
     CollapsedBorderValue border = collapsedAfterBorder();
     if (border.exists())
@@ -923,15 +923,15 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     CollapsedBorderValue bottomVal = collapsedBottomBorder();
      
     // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
-    int topWidth = topVal.width();
-    int bottomWidth = bottomVal.width();
-    int leftWidth = leftVal.width();
-    int rightWidth = rightVal.width();
+    LayoutUnit topWidth = topVal.width();
+    LayoutUnit bottomWidth = bottomVal.width();
+    LayoutUnit leftWidth = leftVal.width();
+    LayoutUnit rightWidth = rightVal.width();
     
-    int x = paintRect.x() - leftWidth / 2;
-    int y = paintRect.y() - topWidth / 2;
-    int w = paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2;
-    int h = paintRect.height() + topWidth / 2 + (bottomWidth + 1) / 2;
+    LayoutUnit x = paintRect.x() - leftWidth / 2;
+    LayoutUnit y = paintRect.y() - topWidth / 2;
+    LayoutUnit w = paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2;
+    LayoutUnit h = paintRect.height() + topWidth / 2 + (bottomWidth + 1) / 2;
     
     EBorderStyle topStyle = collapsedBorderStyle(topVal.style());
     EBorderStyle bottomStyle = collapsedBorderStyle(bottomVal.style());
@@ -1045,11 +1045,11 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
 
     // Shrink our intrinsic padding as much as possible to accommodate the scrollbar.
     if (style()->verticalAlign() == MIDDLE) {
-        int totalHeight = logicalHeight();
-        int heightWithoutIntrinsicPadding = totalHeight - intrinsicPaddingBefore() - intrinsicPaddingAfter();
+        LayoutUnit totalHeight = logicalHeight();
+        LayoutUnit heightWithoutIntrinsicPadding = totalHeight - intrinsicPaddingBefore() - intrinsicPaddingAfter();
         totalHeight -= scrollbarHeight;
-        int newBeforePadding = (totalHeight - heightWithoutIntrinsicPadding) / 2;
-        int newAfterPadding = totalHeight - heightWithoutIntrinsicPadding - newBeforePadding;
+        LayoutUnit newBeforePadding = (totalHeight - heightWithoutIntrinsicPadding) / 2;
+        LayoutUnit newAfterPadding = totalHeight - heightWithoutIntrinsicPadding - newBeforePadding;
         setIntrinsicPaddingBefore(newBeforePadding);
         setIntrinsicPaddingAfter(newAfterPadding);
     } else

@@ -491,72 +491,72 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
     return yPos;
 }
 
-int RenderBoxModelObject::paddingTop(bool) const
+LayoutUnit RenderBoxModelObject::paddingTop(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingTop();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingBottom(bool) const
+LayoutUnit RenderBoxModelObject::paddingBottom(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingLeft(bool) const
+LayoutUnit RenderBoxModelObject::paddingLeft(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingRight(bool) const
+LayoutUnit RenderBoxModelObject::paddingRight(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingRight();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingBefore(bool) const
+LayoutUnit RenderBoxModelObject::paddingBefore(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingAfter(bool) const
+LayoutUnit RenderBoxModelObject::paddingAfter(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingStart(bool) const
+LayoutUnit RenderBoxModelObject::paddingStart(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingStart();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
     return padding.calcMinValue(w);
 }
 
-int RenderBoxModelObject::paddingEnd(bool) const
+LayoutUnit RenderBoxModelObject::paddingEnd(bool) const
 {
-    int w = 0;
+    LayoutUnit w = 0;
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
@@ -2153,7 +2153,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const Layout
 
             // Move the fill just outside the clip, adding 1 pixel separation so that the fill does not
             // bleed in (due to antialiasing) if the context is transformed.
-            LayoutSize extraOffset(paintRect.width() + max(0, shadowOffset.width()) + shadowBlur + 2 * shadowSpread + 1, 0);
+            LayoutSize extraOffset(paintRect.width() + max<LayoutUnit>(0, shadowOffset.width()) + shadowBlur + 2 * shadowSpread + 1, 0);
             shadowOffset -= extraOffset;
             fillRect.move(extraOffset);
 
@@ -2210,18 +2210,18 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const Layout
 
             if (!includeLogicalLeftEdge) {
                 if (isHorizontal) {
-                    holeRect.move(-max(shadowOffset.width(), 0) - shadowBlur, 0);
-                    holeRect.setWidth(holeRect.width() + max(shadowOffset.width(), 0) + shadowBlur);
+                    holeRect.move(-max<LayoutUnit>(shadowOffset.width(), 0) - shadowBlur, 0);
+                    holeRect.setWidth(holeRect.width() + max<LayoutUnit>(shadowOffset.width(), 0) + shadowBlur);
                 } else {
-                    holeRect.move(0, -max(shadowOffset.height(), 0) - shadowBlur);
-                    holeRect.setHeight(holeRect.height() + max(shadowOffset.height(), 0) + shadowBlur);
+                    holeRect.move(0, -max<LayoutUnit>(shadowOffset.height(), 0) - shadowBlur);
+                    holeRect.setHeight(holeRect.height() + max<LayoutUnit>(shadowOffset.height(), 0) + shadowBlur);
                 }
             }
             if (!includeLogicalRightEdge) {
                 if (isHorizontal)
-                    holeRect.setWidth(holeRect.width() - min(shadowOffset.width(), 0) + shadowBlur);
+                    holeRect.setWidth(holeRect.width() - min<LayoutUnit>(shadowOffset.width(), 0) + shadowBlur);
                 else
-                    holeRect.setHeight(holeRect.height() - min(shadowOffset.height(), 0) + shadowBlur);
+                    holeRect.setHeight(holeRect.height() - min<LayoutUnit>(shadowOffset.height(), 0) + shadowBlur);
             }
 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
@@ -2238,7 +2238,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const Layout
             } else
                 context->clip(border.rect());
 
-            LayoutSize extraOffset(2 * paintRect.width() + max(0, shadowOffset.width()) + shadowBlur - 2 * shadowSpread + 1, 0);
+            LayoutSize extraOffset(2 * paintRect.width() + max<LayoutUnit>(0, shadowOffset.width()) + shadowBlur - 2 * shadowSpread + 1, 0);
             context->translate(extraOffset.width(), extraOffset.height());
             shadowOffset -= extraOffset;
 

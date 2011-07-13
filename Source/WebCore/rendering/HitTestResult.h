@@ -109,7 +109,7 @@ public:
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
-    bool addNodeToRectBasedTestResult(Node*, const LayoutPoint& pointInContainer, const LayoutRect& = IntRect());
+    bool addNodeToRectBasedTestResult(Node*, const LayoutPoint& pointInContainer, const IntRect& = IntRect());
     bool addNodeToRectBasedTestResult(Node*, const LayoutPoint& pointInContainer, const FloatRect&);
     void append(const HitTestResult&);
 
