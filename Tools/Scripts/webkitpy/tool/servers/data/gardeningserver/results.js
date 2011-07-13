@@ -11,24 +11,6 @@ var kMasterName = 'ChromiumWebkit';
 var kLayoutTestResultsServer = 'http://build.chromium.org/f/chromium/layout_test_results/';
 var kLayoutTestResultsPath = '/results/layout-test-results/';
 
-// FIXME: Add support for the rest of the result types.
-var kPossibleSuffixList = [
-    '-expected.png',
-    '-actual.png',
-    '-diff.png',
-    // '-expected.txt',
-    // '-actual.txt',
-    '-diff.txt',
-    '-crash-log.txt',
-    // '-wdiff.html',
-    // '-pretty-diff.html',
-    // '-expected.html',
-    // '-expected-mismatch.html',
-    // '-expected.wav',
-    // '-actual.wav',
-    // ... and possibly more.
-];
-
 var PASS = 'PASS';
 var TIMEOUT = 'TIMEOUT';
 var TEXT = 'TEXT';
@@ -37,6 +19,21 @@ var IMAGE = 'IMAGE';
 var IMAGE_TEXT = 'IMAGE+TEXT';
 
 var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT];
+
+var kExpectedImageSuffix = '-expected.png';
+var kActualImageSuffix = '-actual.png';
+var kImageDiffSuffix = '-diff.png';
+var kTextDiffSuffix = '-diff.txt';
+var kCrashLogSuffix = '-crash-log.txt';
+
+var kPreferredSuffixOrder = [
+    kExpectedImageSuffix,
+    kActualImageSuffix,
+    kImageDiffSuffix,
+    kTextDiffSuffix,
+    kCrashLogSuffix,
+    // FIXME: Add support for the rest of the result types.
+];
 
 // Kinds of results.
 results.kActualKind = 'actual';
@@ -67,6 +64,55 @@ function resultsParameters(builderName, testName)
         testtype: kTestType,
         name: testName,
     };
+}
+
+function possibleSuffixListFor(failureTypeList)
+{
+    var suffixList = [];
+
+    function pushImageSuffixes()
+    {
+        suffixList.push(kExpectedImageSuffix);
+        suffixList.push(kActualImageSuffix);
+        suffixList.push(kImageDiffSuffix);
+    }
+
+    function pushTextSuffixes()
+    {
+        // '-expected.txt',
+        // '-actual.txt',
+        suffixList.push(kTextDiffSuffix);
+        // '-wdiff.html',
+        // '-pretty-diff.html',
+    }
+
+    $.each(failureTypeList, function(index, failureType) {
+        switch(failureType) {
+            case IMAGE:
+                pushImageSuffixes();
+                break;
+            case TEXT:
+                pushTextSuffixes();
+                break;
+            case IMAGE_TEXT:
+                pushImageSuffixes();
+                pushTextSuffixes();
+                break;
+            case CRASH:
+                suffixList.push(kCrashLogSuffix);
+                break;
+            default:
+                // FIXME: Add support for the rest of the result types.
+                // '-expected.html',
+                // '-expected-mismatch.html',
+                // '-expected.wav',
+                // '-actual.wav',
+                // ... and possibly more.
+                break;
+        }
+    });
+
+    return suffixList;
 }
 
 function resultsSummaryURL(builderName, testName)
@@ -361,7 +407,7 @@ results.resultType = function(url)
 function sortResultURLsBySuffix(urls)
 {
     var sortedURLs = [];
-    $.each(kPossibleSuffixList, function(i, suffix) {
+    $.each(kPreferredSuffixOrder, function(i, suffix) {
         $.each(urls, function(j, url) {
             if (!base.endsWith(url, suffix))
                 return;
@@ -373,13 +419,15 @@ function sortResultURLsBySuffix(urls)
     return sortedURLs;
 }
 
-results.fetchResultsURLs = function(builderName, testName, callback)
+results.fetchResultsURLs = function(builderName, testName, failureTypeList, callback)
 {
     var stem = resultsDirectoryURL(builderName);
     var testNameStem = base.trimExtension(testName);
 
+    var suffixList = possibleSuffixListFor(failureTypeList);
+
     var resultURLs = [];
-    var requestsInFlight = kPossibleSuffixList.length;
+    var requestsInFlight = suffixList.length;
 
     function checkComplete()
     {
@@ -387,7 +435,7 @@ results.fetchResultsURLs = function(builderName, testName, callback)
             callback(sortResultURLsBySuffix(resultURLs));
     }
 
-    $.each(kPossibleSuffixList, function(index, suffix) {
+    $.each(suffixList, function(index, suffix) {
         var url = stem + testNameStem + suffix;
         base.probe(url, {
             success: function() {

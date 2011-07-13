@@ -43,7 +43,7 @@ function fetchResults(onsuccess)
                     });
                 });
                 results.countFailureOccurances(builderNameList, testName, function(failureCount) {
-                    $(testSummary).attr('data-failure-count', failureCount);
+                    $(testSummary).attr(config.kFailureCountAttr, failureCount);
                     $('.failure-count', testSummary).text(ui.failureCount(failureCount));
                 });
             });
@@ -56,8 +56,10 @@ function fetchResults(onsuccess)
 
 function showResultsDetail()
 {
+    var testBlock = $(this).parents('.test');
     var builderName = $(this).attr(config.kBuilderNameAttr);
-    var testName = $('.what', $(this).parents('.test')).text();
+    var testName = $('.what', testBlock).text();
+    var failureTypeList = testBlock.attr(config.kFailureTypesAttr).split(' ');
 
     var content = $('.results-detail .content');
     if ($('.results', content).attr(config.kBuilderNameAttr) == builderName && $('.results', content).attr(config.kTestNameAttr) == testName)
@@ -65,8 +67,11 @@ function showResultsDetail()
 
     displayOnButterbar('Loading results');
 
-    results.fetchResultsURLs(builderName, testName, function(resultsURLs) {
+    results.fetchResultsURLs(builderName, testName, failureTypeList, function(resultsURLs) {
+        var status = $('.results-detail .toolbar .status');
+
         function appendResults() {
+            status.text(testName + ' [' + builderName + ']');
             content.append(ui.failureDetails(resultsURLs));
             $('.results', content).attr(config.kBuilderNameAttr, builderName);
             $('.results', content).attr(config.kTestNameAttr, testName);
@@ -75,9 +80,11 @@ function showResultsDetail()
         var children = content.children();
         if (children.length && $('.results-detail').is(":visible")) {
             // The results-detail pane is already open. Let's do a quick cross-fade.
+            status.fadeOut('fast');
             children.fadeOut('fast', function() {
                 content.empty();
                 appendResults();
+                status.fadeIn('fast');
                 content.children().hide().fadeIn('fast', dismissButterbar);
             });
         } else {

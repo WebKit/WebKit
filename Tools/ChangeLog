@@ -1,5 +1,29 @@
 2011-07-13  Adam Barth  <abarth@webkit.org>
 
+        Refine garden-o-matic status pane
+        https://bugs.webkit.org/show_bug.cgi?id=64442
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch makes two improvements to the status pane:
+
+        1) We only query the server for failure types that we're expecting.
+           This dramatically reduces the number of HTTP requests, making
+           loading the status pane faster.
+
+        2) The status pane now displays which test and which builder it is
+           showing results for.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/config.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+
+2011-07-13  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should show test results
         https://bugs.webkit.org/show_bug.cgi?id=64440
 

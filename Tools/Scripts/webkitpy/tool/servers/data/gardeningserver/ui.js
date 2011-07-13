@@ -38,6 +38,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
           '</div>' +
         '</div>');
     $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
+    block.attr(config.kFailureTypesAttr, unexpectedResults);
 
     var where = $('.where', block);
     $.each(resultNodesByBuilder, function(builderName, resultNode) {

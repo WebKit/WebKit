@@ -21,5 +21,7 @@ config.builders = [
 
 config.kTestNameAttr = 'data-test-name';
 config.kBuilderNameAttr = 'data-builder-name';
+config.kFailureCountAttr = 'data-failure-count';
+config.kFailureTypesAttr = 'data-failure-types';
 
 })();

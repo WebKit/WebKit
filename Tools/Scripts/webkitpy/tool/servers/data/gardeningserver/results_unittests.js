@@ -342,9 +342,8 @@ test("fetchResultsURLs", 3, function() {
     };
 
     simulator.runTest(function() {
-        results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", function(resultURLs) {
+        results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", ['IMAGE', 'CRASH'], function(resultURLs) {
             deepEqual(resultURLs, [
-                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
                 "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-crash-log.txt"
             ]);
         });
@@ -354,7 +353,6 @@ test("fetchResultsURLs", 3, function() {
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.png",
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.png",
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.png",
-        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-crash-log.txt"
     ]);
 });
