@@ -1176,6 +1176,7 @@ webcore_sources += \
 	Source/WebCore/dom/ExclusiveTrackList.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \
 	Source/WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
+	Source/WebCore/dom/ExceptionCodePlaceholder.h \
 	Source/WebCore/dom/IconURL.cpp \
 	Source/WebCore/dom/IconURL.h \
 	Source/WebCore/dom/HashChangeEvent.h \

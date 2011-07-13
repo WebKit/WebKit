@@ -1,3 +1,30 @@
+2011-07-13  MORITA Hajime  <morrita@google.com>
+
+        Refactoring: Ignored ExceptionCode value should be less annoying.
+        https://bugs.webkit.org/show_bug.cgi?id=63688
+
+        - Introduced ExceptionCodePlaceholder class for the default parameter of ExceptionCode.
+        - Introduced ASSERT_NO_EXCEPTION to check ExceptionCode not set to non-zero after the call.
+        - Adopted ASSERT_NO_EXCEPTION in Range.cpp
+
+        No new tests. No behaviour change.
+
+        Reviewed by Darin Adler.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ExceptionCodePlaceholder.h: Added.
+        (WebCore::ExceptionCodePlaceholder::ExceptionCodePlaceholder):
+        (WebCore::ExceptionCodePlaceholder::operator ExceptionCode& ):
+        (WebCore::IgnorableExceptionCode::IgnorableExceptionCode):
+        (WebCore::CheckedExceptionCode::CheckedExceptionCode):
+        (WebCore::CheckedExceptionCode::~CheckedExceptionCode):
+        * dom/Range.cpp:
+        (WebCore::Range::Range):
+        (WebCore::Range::editingStartPosition):
+        * dom/Range.h:        
+
 2011-07-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Regression: OOB read in svg text run

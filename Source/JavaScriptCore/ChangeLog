@@ -1,3 +1,14 @@
+2011-07-13  MORITA Hajime  <morrita@google.com>
+
+        Refactoring: Ignored ExceptionCode value should be less annoying.
+        https://bugs.webkit.org/show_bug.cgi?id=63688
+
+        Added ASSERT_AT macro.
+
+        Reviewed by Darin Adler.
+
+        * wtf/Assertions.h:
+
 2011-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not implement op_construct.

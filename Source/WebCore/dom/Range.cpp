@@ -88,11 +88,8 @@ inline Range::Range(PassRefPtr<Document> ownerDocument, PassRefPtr<Node> startCo
 
     // Simply setting the containers and offsets directly would not do any of the checking
     // that setStart and setEnd do, so we call those functions.
-    ExceptionCode ec = 0;
-    setStart(startContainer, startOffset, ec);
-    ASSERT(!ec);
-    setEnd(endContainer, endOffset, ec);
-    ASSERT(!ec);
+    setStart(startContainer, startOffset);
+    setEnd(endContainer, endOffset);
 }
 
 PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
@@ -1595,10 +1592,9 @@ Position Range::editingStartPosition() const
     if (visiblePosition.isNull())
         return Position();
 
-    ExceptionCode ec = 0;
     // if the selection is a caret, just return the position, since the style
     // behind us is relevant
-    if (collapsed(ec))
+    if (collapsed())
         return visiblePosition.deepEquivalent();
 
     // if the selection starts just before a paragraph break, skip over it

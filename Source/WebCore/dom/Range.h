@@ -25,6 +25,7 @@
 #ifndef Range_h
 #define Range_h
 
+#include "ExceptionCodePlaceholder.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "Node.h"
@@ -61,12 +62,12 @@ public:
     int startOffset(ExceptionCode&) const;
     Node* endContainer(ExceptionCode&) const;
     int endOffset(ExceptionCode&) const;
-    bool collapsed(ExceptionCode&) const;
+    bool collapsed(ExceptionCode& = ASSERT_NO_EXCEPTION) const;
 
     Node* commonAncestorContainer(ExceptionCode&) const;
     static Node* commonAncestorContainer(Node* containerA, Node* containerB);
-    void setStart(PassRefPtr<Node> container, int offset, ExceptionCode&);
-    void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode&);
+    void setStart(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
     void collapse(bool toStart, ExceptionCode&);
     bool isPointInRange(Node* refNode, int offset, ExceptionCode&);
     short comparePoint(Node* refNode, int offset, ExceptionCode&) const;
