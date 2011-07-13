@@ -1,3 +1,9 @@
+2011-07-13  Adam Barth  <abarth@webkit.org>
+
+        Folks should only be listed once.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, adding myself as Reviewer.
