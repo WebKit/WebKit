@@ -1,3 +1,18 @@
+2011-07-13  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Do not grab focus too early in DRT.
+
+        Reviewed by Gustavo Noronha.
+
+        It causes a layout to happen and a progress signal to be emitted
+        since r90900, but at this point we don't have a
+        LayoutTestController object and we'll eventually crash. Since we
+        already grab focus at the beginning of runTest() this is
+        redundant, so get rid of it to fix the crash.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main): remove call to grab_focus
+
 2011-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90893 and r90894.
