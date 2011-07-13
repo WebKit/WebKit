@@ -1,5 +1,12 @@
 2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed fix. Add a "\n" to a printf that somehow got lost.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dumpApplicationCacheQuota):
+
+2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
+
         ApplicationCache Quota Output is Flakey
         https://bugs.webkit.org/show_bug.cgi?id=64410
 

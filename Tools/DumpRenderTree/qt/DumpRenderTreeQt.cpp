@@ -1047,7 +1047,7 @@ void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint
         // sufficient to just get a range of 10000 to determine if we were
         // above or below a threshold.
         quint64 truncatedSpaceNeeded = (totalSpaceNeeded / 10000) * 10000;
-        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%llu",
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%llu\n",
                origin->scheme().toUtf8().data(),
                origin->host().toUtf8().data(),
                origin->port(),
