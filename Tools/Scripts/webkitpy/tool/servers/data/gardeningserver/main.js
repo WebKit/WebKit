@@ -17,7 +17,7 @@ function setIconState(hasFailures)
     $('#favicon').attr('href', faviconURL);
 }
 
-function fetchResults(onsuccess)
+function showResults(onsuccess)
 {
     results.fetchResultsByBuilder(config.builders, function(resultsByBuilder) {
         var unexpectedFailures = results.unexpectedFailuresByTest(resultsByBuilder);
@@ -59,10 +59,15 @@ function showResultsDetail()
     var testBlock = $(this).parents('.test');
     var builderName = $(this).attr(config.kBuilderNameAttr);
     var testName = $('.what', testBlock).text();
-    var failureTypeList = testBlock.attr(config.kFailureTypesAttr).split(' ');
+
+    // FIXME: It's lame that we have two different representations of multiple failure types.
+    var failureTypes = testBlock.attr(config.kFailureTypesAttr);
+    var failureTypeList = failureTypes.split(' ');
 
     var content = $('.results-detail .content');
-    if ($('.results', content).attr(config.kBuilderNameAttr) == builderName && $('.results', content).attr(config.kTestNameAttr) == testName)
+    if ($('.failure-details', content).attr(config.kBuilderNameAttr) == builderName &&
+        $('.failure-details', content).attr(config.kTestNameAttr) == testName &&
+        $('.failure-details', content).attr(config.kFailureTypesAttr) == failureTypes)
         return;
 
     displayOnButterbar('Loading...');
@@ -70,11 +75,14 @@ function showResultsDetail()
     results.fetchResultsURLs(builderName, testName, failureTypeList, function(resultsURLs) {
         var status = $('.results-detail .toolbar .status');
 
-        function appendResults() {
+        function updateResults()
+        {
             status.text(testName + ' [' + builderName + ']');
+            content.empty();
             content.append(ui.failureDetails(resultsURLs));
-            $('.results', content).attr(config.kBuilderNameAttr, builderName);
-            $('.results', content).attr(config.kTestNameAttr, testName);
+            $('.failure-details', content).attr(config.kBuilderNameAttr, builderName);
+            $('.failure-details', content).attr(config.kTestNameAttr, testName);
+            $('.failure-details', content).attr(config.kFailureTypesAttr, failureTypes);
         }
 
         var children = content.children();
@@ -82,13 +90,12 @@ function showResultsDetail()
             // The results-detail pane is already open. Let's do a quick cross-fade.
             status.fadeOut('fast');
             children.fadeOut('fast', function() {
-                content.empty();
-                appendResults();
+                updateResults();
                 status.fadeIn('fast');
                 content.children().hide().fadeIn('fast', dismissButterbar);
             });
         } else {
-            appendResults();
+            updateResults();
             $('.results-detail').fadeIn('fast', dismissButterbar);
         }
     });
@@ -105,7 +112,7 @@ $('.regression .where li').live('mouseenter', showResultsDetail);
 $('.results-detail .dismiss').live('click', hideResultsDetail);
 
 $(document).ready(function() {
-    fetchResults(function() {
+    showResults(function() {
         $('.butterbar').fadeOut();
     });
 });

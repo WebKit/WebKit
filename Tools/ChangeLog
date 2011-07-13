@@ -1,3 +1,10 @@
+2011-07-13  Adam Barth  <abarth@webkit.org>
+
+        Fix flickering bug introduced by my previous patch.  I forgot to change
+        the name of the class everywhere.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+
 2011-07-12  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] media/media-blocked-by-willsendrequest.html fails
