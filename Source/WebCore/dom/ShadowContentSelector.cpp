@@ -51,9 +51,9 @@ ShadowContentSelector::~ShadowContentSelector()
     s_currentInstance = m_parent;
 }
 
-void ShadowContentSelector::selectInclusion(Vector<RefPtr<Node> >& inclusions)
+void ShadowContentSelector::selectInclusion(ShadowInclusionList* inclusions)
 {
-    inclusions.clear();
+    inclusions->clear();
 
     for (size_t i = 0; i < m_children.size(); ++i) {
         Node* child = m_children[i].get();
@@ -62,9 +62,10 @@ void ShadowContentSelector::selectInclusion(Vector<RefPtr<Node> >& inclusions)
         if (!m_activeElement->shouldInclude(child))
             continue;
 
-        inclusions.append(child);
+        inclusions->append(m_activeElement, child);
         m_children[i] = 0;
     }
+
 }
 
 void ShadowContentSelector::willAttachContentFor(ShadowContentElement* element)

@@ -36,6 +36,62 @@
 
 namespace WebCore {
 
+class ShadowContentElement;
+
+class ShadowInclusion : public RefCounted<ShadowInclusion> {
+public:
+    static PassRefPtr<ShadowInclusion> create(ShadowContentElement*, Node*);
+
+    ShadowContentElement* includer() const { return m_includer; }
+    Node* content() const { return m_content.get(); }
+    ShadowInclusion* next() const { return m_next.get(); }
+    ShadowInclusion* previous() const { return m_previous.get(); }
+
+    void append(PassRefPtr<ShadowInclusion>);
+    void unlink();
+
+private:
+    explicit ShadowInclusion(ShadowContentElement* includer, Node* content)
+        : m_includer(includer), m_content(content)
+    { }
+
+    ShadowContentElement* m_includer;
+    RefPtr<Node> m_content;
+    RefPtr<ShadowInclusion> m_next;
+    RefPtr<ShadowInclusion> m_previous;
+};
+
+inline PassRefPtr<ShadowInclusion> ShadowInclusion::create(ShadowContentElement* includer, Node* content)
+{
+    return adoptRef(new ShadowInclusion(includer, content));
+}
+
+
+class ShadowInclusionList {
+public:
+    ShadowInclusionList();
+    ~ShadowInclusionList();
+
+    ShadowInclusion* first() const { return m_first.get(); }
+    ShadowInclusion* last() const { return m_last.get(); }
+    ShadowInclusion* find(Node*) const;
+    bool isEmpty() const { return !m_first; }
+
+    void clear();
+    void append(PassRefPtr<ShadowInclusion>);
+    void append(ShadowContentElement*, Node*);
+
+private:
+    RefPtr<ShadowInclusion> m_first;
+    RefPtr<ShadowInclusion> m_last;
+};
+
+inline void ShadowInclusionList::append(ShadowContentElement* includer, Node* node)
+{
+    append(ShadowInclusion::create(includer, node));
+}
+
+
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
 // You should create ShadowContentElement during the host construction.
 class ShadowContentElement : public StyledElement {
@@ -47,9 +103,7 @@ public:
     virtual void attach();
     virtual void detach();
 
-    Node* inclusionAt(size_t) const;
-    size_t inclusionCount() const;
-    size_t inclusionIndexOf(Node*) const;
+    const ShadowInclusionList* inclusions() const { return &m_inclusions; }
 
 protected:
     ShadowContentElement(const QualifiedName&, Document*);
@@ -59,23 +113,8 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
 
-    Vector<RefPtr<Node> > m_inclusions;
+    ShadowInclusionList m_inclusions;
 };
-
-inline Node* ShadowContentElement::inclusionAt(size_t index) const
-{
-    return m_inclusions.at(index).get();
-}
-
-inline size_t ShadowContentElement::inclusionCount() const
-{
-    return m_inclusions.size();
-}
-
-inline size_t ShadowContentElement::inclusionIndexOf(Node* node) const
-{
-    return m_inclusions.find(node);
-}
 
 inline ShadowContentElement* toShadowContentElement(Node* node)
 {

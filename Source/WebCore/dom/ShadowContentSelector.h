@@ -39,6 +39,7 @@ namespace WebCore {
 class Element;
 class Node;
 class ShadowRoot;
+class ShadowInclusionList;
 class ShadowContentElement;
 class RenderObject;
 
@@ -50,7 +51,7 @@ public:
 
     void willAttachContentFor(ShadowContentElement*);
     void didAttachContent();
-    void selectInclusion(Vector<RefPtr<Node> >& inclusions);
+    void selectInclusion(ShadowInclusionList*);
 
     ShadowRoot* shadowRoot() const { return m_shadowRoot; }
     ShadowContentElement* activeElement() const;

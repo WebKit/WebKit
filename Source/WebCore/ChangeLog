@@ -1,3 +1,49 @@
+2011-07-12  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring][ShadowContentElement] Forwarded node list should be a linked-list.
+        https://bugs.webkit.org/show_bug.cgi?id=64252
+
+        Reviewed by Dimitri Glazkov.
+
+        Introduced ShadowInclusionList and ShadowInclusion for maintaining
+        forwarded content children. ShadowInclusion is doubly-linked list.
+        ShadowContentElement::m_inclusions is replaced by ShadowInclusionList.
+        
+        This change is a prepration for bug 64251, which will introduce
+        forwarded-children to content-element table.
+        
+        No new tests. No behavioral change.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::nextRendererOf):
+        (WebCore::previousRendererOf):
+        (WebCore::firstRendererOf):
+        (WebCore::lastRendererOf):
+        * dom/ShadowContentElement.cpp:
+        (WebCore::ShadowInclusion::append):
+        (WebCore::ShadowInclusion::unlink):
+        (WebCore::ShadowInclusionList::ShadowInclusionList):
+        (WebCore::ShadowInclusionList::~ShadowInclusionList):
+        (WebCore::ShadowInclusionList::find):
+        (WebCore::ShadowInclusionList::clear):
+        (WebCore::ShadowInclusionList::append):
+        (WebCore::ShadowContentElement::attach):
+        * dom/ShadowContentElement.h:
+        (WebCore::ShadowInclusion::includer):
+        (WebCore::ShadowInclusion::content):
+        (WebCore::ShadowInclusion::next):
+        (WebCore::ShadowInclusion::previous):
+        (WebCore::ShadowInclusion::ShadowInclusion):
+        (WebCore::ShadowInclusion::create):
+        (WebCore::ShadowInclusionList::first):
+        (WebCore::ShadowInclusionList::last):
+        (WebCore::ShadowInclusionList::isEmpty):
+        (WebCore::ShadowInclusionList::append):
+        (WebCore::ShadowContentElement::inclusions):
+        * dom/ShadowContentSelector.cpp:
+        (WebCore::ShadowContentSelector::selectInclusion):
+        * dom/ShadowContentSelector.h:
+
 2011-07-12  David Reveman  <reveman@chromium.org>
 
         [Chromium] Use nearest filter method with pixel aligned transforms.

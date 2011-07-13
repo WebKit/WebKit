@@ -32,6 +32,72 @@
 
 namespace WebCore {
 
+void ShadowInclusion::append(PassRefPtr<ShadowInclusion> next)
+{
+    ASSERT(!m_next);
+    ASSERT(!next->previous());
+    m_next = next;
+    m_next->m_previous = this;
+}
+
+void ShadowInclusion::unlink()
+{
+    ASSERT(!m_previous); // Can be called only for a head.
+    RefPtr<ShadowInclusion> item = this;
+    while (item) {
+        ASSERT(!item->previous());
+        RefPtr<ShadowInclusion> nextItem = item->m_next;
+        item->m_next.clear();
+        if (nextItem)
+            nextItem->m_previous.clear();
+        item = nextItem;
+    }
+}
+
+ShadowInclusionList::ShadowInclusionList()
+{
+}
+
+ShadowInclusionList::~ShadowInclusionList()
+{
+    ASSERT(isEmpty());
+}
+
+ShadowInclusion* ShadowInclusionList::find(Node* content) const
+{
+    for (ShadowInclusion* item = first(); item; item = item->next()) {
+        if (content == item->content())
+            return item;
+    }
+    
+    return 0;
+}
+
+void ShadowInclusionList::clear()
+{
+    if (isEmpty()) {
+        ASSERT(!m_last);
+        return;
+    }
+
+    m_first->unlink();
+    m_first.clear();
+    m_last.clear();
+}
+
+void ShadowInclusionList::append(PassRefPtr<ShadowInclusion> child)
+{
+    if (isEmpty()) {
+        ASSERT(!m_last);
+        m_first = m_last = child;
+        return;
+    }
+
+    m_last->append(child);
+    m_last = m_last->next();
+}
+
+
 PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
 {
     DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
@@ -53,11 +119,11 @@ void ShadowContentElement::attach()
     StyledElement::attach();
     if (ShadowContentSelector* selector = ShadowContentSelector::currentInstance()) {
         selector->willAttachContentFor(this);
-        selector->selectInclusion(m_inclusions);
-        for (size_t i = 0; i < m_inclusions.size(); ++i)
-            m_inclusions[i]->detach();
-        for (size_t i = 0; i < m_inclusions.size(); ++i)
-            m_inclusions[i]->attach();
+        selector->selectInclusion(&m_inclusions);
+        for (ShadowInclusion* inclusion = m_inclusions.first(); inclusion; inclusion = inclusion->next())
+            inclusion->content()->detach();
+        for (ShadowInclusion* inclusion = m_inclusions.first(); inclusion; inclusion = inclusion->next())
+            inclusion->content()->attach();
         selector->didAttachContent();
     }
 }
@@ -72,5 +138,6 @@ bool ShadowContentElement::shouldInclude(Node*)
 {
     return true;
 }
+
 
 }

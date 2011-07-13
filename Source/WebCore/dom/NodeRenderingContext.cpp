@@ -102,13 +102,12 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 static RenderObject* nextRendererOf(ShadowContentElement* parent, Node* current)
 {
-    size_t currentIndex = parent->inclusionIndexOf(current);
-    if (currentIndex == notFound)
+    ShadowInclusion* currentInclusion = parent->inclusions()->find(current);
+    if (!currentInclusion)
         return 0;
 
-    for (size_t i = currentIndex + 1; i < parent->inclusionCount(); ++i) {
-        Node* candidate = parent->inclusionAt(i);
-        if (RenderObject* renderer = candidate->renderer())
+    for (ShadowInclusion* inclusion = currentInclusion->next(); inclusion; inclusion = inclusion->next()) {
+        if (RenderObject* renderer = inclusion->content()->renderer())
             return renderer;
     }
 
@@ -119,11 +118,10 @@ static RenderObject* previousRendererOf(ShadowContentElement* parent, Node* curr
 {
     RenderObject* lastRenderer = 0;
 
-    for (size_t i = 0; i < parent->inclusionCount(); ++i) {
-        Node* candidate = parent->inclusionAt(i);
-        if (current == candidate)
+    for (ShadowInclusion* inclusion = parent->inclusions()->first(); inclusion; inclusion = inclusion->next()) {
+        if (inclusion->content() == current)
             break;
-        if (RenderObject* renderer = candidate->renderer())
+        if (RenderObject* renderer = inclusion->content()->renderer())
             lastRenderer = renderer;
     }
 
@@ -132,10 +130,8 @@ static RenderObject* previousRendererOf(ShadowContentElement* parent, Node* curr
 
 static RenderObject* firstRendererOf(ShadowContentElement* parent)
 {
-    size_t inclusionCount = parent->inclusionCount();
-    for (size_t i = 0; i < inclusionCount; ++i) {
-        Node* candidate = parent->inclusionAt(i);
-        if (RenderObject* renderer = candidate->renderer())
+    for (ShadowInclusion* inclusion = parent->inclusions()->first(); inclusion; inclusion = inclusion->next()) {
+        if (RenderObject* renderer = inclusion->content()->renderer())
             return renderer;
     }
 
@@ -144,10 +140,8 @@ static RenderObject* firstRendererOf(ShadowContentElement* parent)
 
 static RenderObject* lastRendererOf(ShadowContentElement* parent)
 {
-    size_t inclusionCount = parent->inclusionCount();
-    for (size_t i = 0; i < inclusionCount; ++i) {
-        Node* candidate = parent->inclusionAt(inclusionCount - i - 1);
-        if (RenderObject* renderer = candidate->renderer())
+    for (ShadowInclusion* inclusion = parent->inclusions()->last(); inclusion; inclusion = inclusion->previous()) {
+        if (RenderObject* renderer = inclusion->content()->renderer())
             return renderer;
     }
 
