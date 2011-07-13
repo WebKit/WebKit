@@ -1,3 +1,9 @@
+2011-07-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, adding myself as Reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-13  Adam Barth  <abarth@webkit.org>
 
         Fix flickering bug introduced by my previous patch.  I forgot to change
