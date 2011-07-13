@@ -50,7 +50,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
 ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevision)
 {
     if (!oldestFailingRevision || !newestPassingRevision)
-        return $();
+        return $('<div class="regression-range">Regression Range: Unknown</div>');
 
     var impliedFirstFailingRevision = newestPassingRevision + 1;
 

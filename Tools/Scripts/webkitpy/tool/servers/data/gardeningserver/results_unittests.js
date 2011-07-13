@@ -254,6 +254,50 @@ test("walkHistory", 6, function() {
     });
 });
 
+test("walkHistory (no revision)", 3, function() {
+    var simulator = new NetworkSimulator();
+
+    var keyMap = {
+        "vsfdsfdsafsdafasd": {
+            "tests": {
+                "userscripts": {
+                    "another-test.html": {
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    }
+                },
+            },
+            "revision": ""
+        },
+        "gavsavsrfgwaevwefawvae":{
+            "tests": {
+            },
+            "revision": ""
+        },
+    };
+
+    simulator.jsonpHook = function(url, callback) {
+        simulator.scheduleCallback(function() {
+            if (/dir=1/.test(url)) {
+                callback([
+                    { "key": "vsfdsfdsafsdafasd" },
+                    { "key": "gavsavsrfgwaevwefawvae" },
+                ]);
+            } else {
+                var key = url.match(/key=([^&]+)/)[1];
+                callback(keyMap[key]);
+            }
+        });
+    };
+
+    simulator.runTest(function() {
+        results.regressionRangeForFailure("Mock Builder", "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
+            equals(oldestFailingRevision, 0);
+            equals(newestPassingRevision, 0);
+        });
+    });
+});
+
 test("collectUnexpectedResults", 1, function() {
     var dictionaryOfResultNodes = {
         "foo": {

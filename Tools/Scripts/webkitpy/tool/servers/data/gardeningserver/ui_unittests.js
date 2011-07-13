@@ -30,7 +30,11 @@ test("summarizeTest", 3, function() {
     ok(summaryHTML.indexOf('Mock Builder') != -1);
 });
 
-test("summarizeRegressionRange", 2, function() {
+test("summarizeRegressionRange", 3, function() {
+    var summaryWithMultipleRevisions = ui.summarizeRegressionRange(0, 0);
+    summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
+    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Regression Range: Unknown</div>');
+
     var summaryWithMultipleRevisions = ui.summarizeRegressionRange(90424, 90426);
     summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
     equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Regression Range: <a href="http://trac.webkit.org/log/trunk/?rev=90424&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90424</a></div>');

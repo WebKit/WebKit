@@ -227,6 +227,10 @@ results.regressionRangeForFailure = function(builderName, testName, callback)
     var newestPassingRevision = 0;
 
     walkHistory(builderName, testName, function(revision, resultNode) {
+        if (!revision) {
+            callback(oldestFailingRevision, newestPassingRevision);
+            return false;
+        }
         if (!resultNode) {
             newestPassingRevision = revision;
             callback(oldestFailingRevision, newestPassingRevision);
@@ -252,6 +256,9 @@ function mergeRegressionRanges(regressionRanges)
     mergedRange.newestPassingRevision = 0;
 
     $.each(regressionRanges, function(builderName, range) {
+        if (!range.oldestFailingRevision || !range.newestPassingRevision)
+            return
+
         if (!mergedRange.oldestFailingRevision)
             mergedRange.oldestFailingRevision = range.oldestFailingRevision;
         if (!mergedRange.newestPassingRevision)

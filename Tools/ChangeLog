@@ -1,5 +1,22 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        Improve garden-o-matic UI when the bots fail to report revision numbers
+        https://bugs.webkit.org/show_bug.cgi?id=64427
+
+        Reviewed by Dimitri Glazkov.
+
+        At least Win (dbg)(2) seems to fail to report the SVN revision number
+        in full_results.json.  This patch makes garden-o-matic more robust to
+        missing revision numbers.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         Adjust garden-o-matic layout to use fewer lines
         https://bugs.webkit.org/show_bug.cgi?id=64422
 
