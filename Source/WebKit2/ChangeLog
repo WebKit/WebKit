@@ -1,3 +1,14 @@
+2011-07-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Also stop the scale commit timer when commitScaleChange is called explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=64357
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::timerEvent):
+        (QTouchWebPagePrivate::commitScaleChange):
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota

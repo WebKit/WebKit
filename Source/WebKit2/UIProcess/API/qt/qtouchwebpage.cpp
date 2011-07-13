@@ -89,10 +89,8 @@ bool QTouchWebPage::event(QEvent* ev)
 
 void QTouchWebPage::timerEvent(QTimerEvent* ev)
 {
-    if (ev->timerId() == d->m_scaleCommitTimer.timerId()) {
+    if (ev->timerId() == d->m_scaleCommitTimer.timerId())
         d->commitScaleChange();
-        d->m_scaleCommitTimer.stop();
-    }
 }
 
 void QTouchWebPage::resizeEvent(QGraphicsSceneResizeEvent* ev)
@@ -124,6 +122,7 @@ void QTouchWebPagePrivate::commitScaleChange()
 {
     ASSERT(m_isChangingScale);
     m_isChangingScale = false;
+    m_scaleCommitTimer.stop();
     page->setContentsScale(q->scale());
 }
 
