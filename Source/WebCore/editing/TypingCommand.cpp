@@ -391,22 +391,11 @@ void TypingCommand::insertText(const String &text, bool selectInsertedText)
 
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
-    RefPtr<InsertTextCommand> command;
-    if (!document()->frame()->selection()->typingStyle() && !m_commands.isEmpty()) {
-        EditCommand* lastCommand = m_commands.last().get();
-        if (lastCommand->isInsertTextCommand())
-            command = static_cast<InsertTextCommand*>(lastCommand);
-    }
-    if (!command) {
-        command = InsertTextCommand::create(document());
-        applyCommandToComposite(command);
-    }
-    if (endingSelection() != command->endingSelection()) {
-        command->setStartingSelection(endingSelection());
-        command->setEndingSelection(endingSelection());
-    }
-    command->input(text, selectInsertedText, 
-                   m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces);
+    RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text, selectInsertedText,
+        m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces);
+
+    applyCommandToComposite(command, endingSelection());
+
     typingAddedToOpenCommand(InsertText);
 }
 

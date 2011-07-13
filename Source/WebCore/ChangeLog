@@ -1,3 +1,24 @@
+2011-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't reuse the last InsertTextCommand
+        https://bugs.webkit.org/show_bug.cgi?id=64416
+
+        Reviewed by Justin Garcia.
+
+        This patch makes the interface of InsertTextCommand less foreign. It now takes arguments in
+        its constructor and executes the command in doApply like other edit commands.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyCommandToComposite): Added.
+        * editing/CompositeEditCommand.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::InsertTextCommand): Takes arguments input used to take.
+        (WebCore::InsertTextCommand::doApply): Renamed from input.
+        * editing/InsertTextCommand.h:
+        (WebCore::InsertTextCommand::create): Takes arguments input used to take.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines): Creates InsertTextCommand.
+
 2011-07-12  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=63041

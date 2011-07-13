@@ -103,6 +103,17 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> cmd)
     m_commands.append(cmd);
 }
 
+void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> command, const VisibleSelection& selection)
+{
+    command->setParent(this);
+    if (selection != command->endingSelection()) {
+        command->setStartingSelection(selection);
+        command->setEndingSelection(selection);
+    }
+    command->apply();
+    m_commands.append(command);
+}
+
 void CompositeEditCommand::applyStyle(const EditingStyle* style, EditAction editingAction)
 {
     applyCommandToComposite(ApplyStyleCommand::create(document(), style, editingAction));

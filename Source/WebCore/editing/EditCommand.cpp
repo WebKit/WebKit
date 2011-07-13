@@ -184,11 +184,6 @@ bool EditCommand::preservesTypingStyle() const
     return false;
 }
 
-bool EditCommand::isInsertTextCommand() const
-{
-    return false;
-}
-
 bool EditCommand::isTypingCommand() const
 {
     return false;

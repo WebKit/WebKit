@@ -38,12 +38,11 @@
 
 namespace WebCore {
 
-InsertTextCommand::InsertTextCommand(Document *document) 
+InsertTextCommand::InsertTextCommand(Document* document, const String& text, bool selectInsertedText, RebalanceType rebalanceType) 
     : CompositeEditCommand(document)
-{
-}
-
-void InsertTextCommand::doApply()
+    , m_text(text)
+    , m_selectInsertedText(selectInsertedText)
+    , m_rebalanceType(rebalanceType)
 {
 }
 
@@ -95,9 +94,9 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     return true;
 }
 
-void InsertTextCommand::input(const String& text, bool selectInsertedText, RebalanceType whitespaceRebalance)
+void InsertTextCommand::doApply()
 {
-    ASSERT(text.find('\n') == notFound);
+    ASSERT(m_text.find('\n') == notFound);
 
     if (!endingSelection().isNonOrphanedCaretOrRange())
         return;
@@ -105,7 +104,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
     // Delete the current selection.
     // FIXME: This delete operation blows away the typing style.
     if (endingSelection().isRange()) {
-        if (performTrivialReplace(text, selectInsertedText))
+        if (performTrivialReplace(m_text, m_selectInsertedText))
             return;
         deleteSelection(false, true, true, false);
     }
@@ -144,13 +143,13 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
     
     Position endPosition;
     
-    if (text == "\t") {
+    if (m_text == "\t") {
         endPosition = insertTab(startPosition);
         startPosition = endPosition.previous();
         if (placeholder.isNotNull())
             removePlaceholderAt(placeholder);
     } else {
-        // Make sure the document is set up to receive text
+        // Make sure the document is set up to receive m_text
         startPosition = positionInsideTextNode(startPosition);
         ASSERT(startPosition.anchorType() == Position::PositionIsOffsetInAnchor);
         ASSERT(startPosition.containerNode());
@@ -160,17 +159,17 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
         RefPtr<Text> textNode = startPosition.containerText();
         const unsigned offset = startPosition.offsetInContainerNode();
 
-        insertTextIntoNode(textNode, offset, text);
-        endPosition = Position(textNode, offset + text.length());
+        insertTextIntoNode(textNode, offset, m_text);
+        endPosition = Position(textNode, offset + m_text.length());
 
-        if (whitespaceRebalance == RebalanceLeadingAndTrailingWhitespaces) {
+        if (m_rebalanceType == RebalanceLeadingAndTrailingWhitespaces) {
             // The insertion may require adjusting adjacent whitespace, if it is present.
             rebalanceWhitespaceAt(endPosition);
             // Rebalancing on both sides isn't necessary if we've inserted only spaces.
-            if (!shouldRebalanceLeadingWhitespaceFor(text))
+            if (!shouldRebalanceLeadingWhitespaceFor(m_text))
                 rebalanceWhitespaceAt(startPosition);
         } else {
-            ASSERT(whitespaceRebalance == RebalanceAllWhitespaces);
+            ASSERT(m_rebalanceType == RebalanceAllWhitespaces);
             if (canRebalance(startPosition) && canRebalance(endPosition))
                 rebalanceWhitespaceOnTextSubstring(textNode, startPosition.offsetInContainerNode(), endPosition.offsetInContainerNode());
         }
@@ -190,7 +189,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
             applyStyle(typingStyle.get());
     }
 
-    if (!selectInsertedText)
+    if (!m_selectInsertedText)
         setEndingSelection(VisibleSelection(endingSelection().end(), endingSelection().affinity()));
 }
 
@@ -231,11 +230,6 @@ Position InsertTextCommand::insertTab(const Position& pos)
 
     // return the position following the new tab
     return lastPositionInNode(spanNode.get());
-}
-
-bool InsertTextCommand::isInsertTextCommand() const
-{
-    return true;
 }
 
 }

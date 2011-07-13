@@ -52,8 +52,7 @@ public:
 
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
-    
-    virtual bool isInsertTextCommand() const;
+
     virtual bool isTypingCommand() const;
     virtual bool isCreateLinkCommand() const;
     

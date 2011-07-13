@@ -51,6 +51,7 @@ protected:
     //
     void appendNode(PassRefPtr<Node>, PassRefPtr<ContainerNode> parent);
     void applyCommandToComposite(PassRefPtr<EditCommand>);
+    void applyCommandToComposite(PassRefPtr<CompositeEditCommand>, const VisibleSelection&);
     void applyStyle(const EditingStyle*, EditAction = EditActionChangeAttributes);
     void applyStyle(const EditingStyle*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
     void applyStyledElement(PassRefPtr<Element>);

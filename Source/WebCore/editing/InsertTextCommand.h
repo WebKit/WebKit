@@ -37,21 +37,19 @@ public:
         RebalanceAllWhitespaces
     };
 
-    static PassRefPtr<InsertTextCommand> create(Document* document)
+    static PassRefPtr<InsertTextCommand> create(Document* document, const String& text, bool selectInsertedText = false,
+        RebalanceType rebalanceType = RebalanceLeadingAndTrailingWhitespaces)
     {
-        return adoptRef(new InsertTextCommand(document));
+        return adoptRef(new InsertTextCommand(document, text, selectInsertedText, rebalanceType));
     }
-
-    void input(const String& text, bool selectInsertedText = false, RebalanceType = RebalanceLeadingAndTrailingWhitespaces);
 
 private:
 
-    InsertTextCommand(Document*);
+    InsertTextCommand(Document*, const String& text, bool selectInsertedText, RebalanceType);
 
     void deleteCharacter();
-    
+
     virtual void doApply();
-    virtual bool isInsertTextCommand() const;
 
     Position positionInsideTextNode(const Position&);
     Position insertTab(const Position&);
@@ -59,6 +57,10 @@ private:
     bool performTrivialReplace(const String&, bool selectInsertedText);
 
     friend class TypingCommand;
+
+    String m_text;
+    bool m_selectInsertedText;
+    RebalanceType m_rebalanceType;
 };
 
 } // namespace WebCore
