@@ -3819,3 +3819,5 @@ BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
 // V8 now follows spec on toisostring, test needs to be fixed.
 BUGCR88936 : fast/js/date-toisostring.html = TEXT
 
+BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
+
