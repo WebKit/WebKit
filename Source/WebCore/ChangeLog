@@ -1,3 +1,55 @@
+2011-07-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: factor NetworkLogView out of Network panel
+        https://bugs.webkit.org/show_bug.cgi?id=64366
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype.get useLargeRows):
+        (WebInspector.NetworkLogView.prototype.set allowPopover):
+        (WebInspector.NetworkLogView.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.NetworkLogView.prototype.resize):
+        (WebInspector.NetworkLogView.prototype._createTable):
+        (WebInspector.NetworkLogView.prototype.show):
+        (WebInspector.NetworkLogView.prototype.hide):
+        (WebInspector.NetworkLogView.prototype._reset):
+        (WebInspector.NetworkLogView.prototype.switchToDetailedView):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkLogView.prototype.get _setLargerResources):
+        (WebInspector.NetworkLogView.prototype._getPopoverAnchor):
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype.get toolbarItemLabel):
+        (WebInspector.NetworkPanel.prototype.get statusBarItems):
+        (WebInspector.NetworkPanel.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.NetworkPanel.prototype.resize):
+        (WebInspector.NetworkPanel.prototype._reset):
+        (WebInspector.NetworkPanel.prototype.updateSidebarWidth):
+        (WebInspector.NetworkPanel.prototype.updateMainViewWidth):
+        (WebInspector.NetworkPanel.prototype.handleShortcut):
+        (WebInspector.NetworkPanel.prototype.show):
+        (WebInspector.NetworkPanel.prototype.hide):
+        (WebInspector.NetworkPanel.prototype.get resources):
+        (WebInspector.NetworkPanel.prototype.resourceById):
+        (WebInspector.NetworkPanel.prototype.canShowAnchorLocation):
+        (WebInspector.NetworkPanel.prototype.showAnchorLocation):
+        (WebInspector.NetworkPanel.prototype._onViewCleared):
+        (WebInspector.NetworkPanel.prototype._onRowSizeChanged):
+        (WebInspector.NetworkPanel.prototype._onResourceSelected):
+        (WebInspector.NetworkPanel.prototype._showResource):
+        (WebInspector.NetworkPanel.prototype._closeVisibleResource):
+        (WebInspector.NetworkPanel.prototype._toggleGridMode):
+        (WebInspector.NetworkPanel.prototype._toggleViewingResourceMode):
+        (WebInspector.NetworkPanel.prototype.performSearch):
+        (WebInspector.NetworkPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.NetworkPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.NetworkPanel.prototype.searchCanceled):
+        (WebInspector.NetworkDataGridNode):
+        (WebInspector.NetworkDataGridNode.prototype.isFilteredOut):
+        (WebInspector.NetworkDataGridNode.prototype.select):
+        (WebInspector.NetworkDataGridNode.prototype.get selectable):
+
 2011-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r90634.

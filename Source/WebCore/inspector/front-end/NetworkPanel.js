@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkPanel = function()
+WebInspector.NetworkLogView = function()
 {
     function eventsCollectionEnabled(error, enabled)
     {
@@ -36,10 +36,9 @@ WebInspector.NetworkPanel = function()
     }
     NetworkAgent.isBackgroundEventsCollectionEnabled(eventsCollectionEnabled.bind(this));
 
-    WebInspector.Panel.call(this, "network");
+    WebInspector.View.call(this);
 
-    this.createSidebar();
-
+    this._allowResourceSelection = false;
     this._resources = [];
     this._resourcesById = {};
     this._resourcesByURL = {};
@@ -55,19 +54,7 @@ WebInspector.NetworkPanel = function()
 
     this._categories = WebInspector.resourceCategories;
 
-    this.containerElement = document.createElement("div");
-    this.containerElement.id = "network-container";
-    this.sidebarElement.appendChild(this.containerElement);
-
-    this._viewsContainerElement = document.createElement("div");
-    this._viewsContainerElement.id = "network-views";
-    this._viewsContainerElement.className = "hidden";
-    this.element.appendChild(this._viewsContainerElement);
-
-    this._closeButtonElement = document.createElement("button");
-    this._closeButtonElement.id = "network-close-button";
-    this._closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
-    this._viewsContainerElement.appendChild(this._closeButtonElement);
+    this.element.id = "network-container";
 
     this._createSortingFunctions();
     this._createTable();
@@ -76,9 +63,10 @@ WebInspector.NetworkPanel = function()
     this._createFilterStatusBarItems();
     this._createSummaryBar();
 
-    if (!WebInspector.settings.resourcesLargeRows.get())
-        this._setLargerResources(WebInspector.settings.resourcesLargeRows.get());
+    if (!this.useLargeRows)
+        this._setLargerResources(this.useLargeRows);
 
+    this._allowPopover = true;
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
     // Enable faster hint.
     this._popoverHelper.setTimeout(100);
@@ -86,7 +74,7 @@ WebInspector.NetworkPanel = function()
     this.calculator = new WebInspector.NetworkTransferTimeCalculator();
     this._filter(this._filterAllElement, false);
 
-    this._toggleGridMode();
+    this.switchToDetailedView();
 
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
@@ -95,54 +83,43 @@ WebInspector.NetworkPanel = function()
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
-
-    this.registerShortcuts();
 }
 
-WebInspector.NetworkPanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Network");
-    },
-
+WebInspector.NetworkLogView.prototype = {
     get statusBarItems()
     {
         return [this._largerResourcesButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement];
     },
 
+    get useLargeRows()
+    {
+        return WebInspector.settings.resourcesLargeRows.get();
+    },
+
+    set allowPopover(flag)
+    {
+        this._allowPopover = flag;
+    },
+
+    get allowResourceSelection()
+    {
+        return this._allowResourceSelection;
+    },
+
+    set allowResourceSelection(flag)
+    {
+        this._allowResourceSelection = !!flag;
+    },
+
     elementsToRestoreScrollPositionsFor: function()
     {
-        return [this.containerElement, this._dataGrid.scrollContainer];
+        return [this.element, this._dataGrid.scrollContainer];
     },
 
     resize: function()
     {
-        WebInspector.Panel.prototype.resize.call(this);
         this._dataGrid.updateWidths();
         this._updateOffscreenRows();
-    },
-
-    updateSidebarWidth: function(width)
-    {
-        if (!this._viewingResourceMode)
-            return;
-        WebInspector.Panel.prototype.updateSidebarWidth.call(this, width);
-    },
-
-    updateMainViewWidth: function(width)
-    {
-        this._viewsContainerElement.style.left = width + "px";
-    },
-
-    handleShortcut: function(event)
-    {
-        if (this._viewingResourceMode && event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
-            this._toggleGridMode();
-            event.handled = true;
-            return;
-        }
-
-        WebInspector.Panel.prototype.handleShortcut.call(this, event);
     },
 
     _createTimelineGrid: function()
@@ -191,10 +168,11 @@ WebInspector.NetworkPanel.prototype = {
         this._dataGrid.resizeMethod = WebInspector.DataGrid.ResizeMethod.Last;
         this._dataGrid.element.addStyleClass("network-log-grid");
         this._dataGrid.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
-        this.containerElement.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
         this._dataGrid.addEventListener("width changed", this._updateDividersIfNeeded, this);
         this._dataGrid.scrollContainer.addEventListener("scroll", this._updateOffscreenRows.bind(this));
+
+        this.element.appendChild(this._dataGrid.element);
 
         this._patchTimelineHeader();
     },
@@ -620,18 +598,13 @@ WebInspector.NetworkPanel.prototype = {
 
     show: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
+        WebInspector.View.prototype.show.call(this);
         this._refreshIfNeeded();
-
-        if (this.visibleView)
-            this.visibleView.show(this._viewsContainerElement);
-
         this._dataGrid.updateWidths();
     },
 
     hide: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
         this._popoverHelper.hidePopup();
     },
 
@@ -690,11 +663,10 @@ WebInspector.NetworkPanel.prototype = {
 
     _reset: function()
     {
-        this._popoverHelper.hidePopup();
-        this._closeVisibleResource();
-        this._clearSearchMatchedList();
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventNames.ViewCleared);
 
-        this._toggleGridMode();
+        this._popoverHelper.hidePopup();
+        this._clearSearchMatchedList();
 
         // Begin reset timeline
         if (this._calculator)
@@ -713,8 +685,6 @@ WebInspector.NetworkPanel.prototype = {
         this._mainResourceLoadTime = -1;
         this._mainResourceDOMContentTime = -1;
 
-        this._viewsContainerElement.removeChildren();
-        this._viewsContainerElement.appendChild(this._closeButtonElement);
         this._updateSummaryBar();
     },
 
@@ -798,50 +768,44 @@ WebInspector.NetworkPanel.prototype = {
             this._appendResource(resourcesToPreserve[i]);
     },
 
-    canShowAnchorLocation: function(anchor)
+    switchToDetailedView: function()
     {
-        return !!this._resourcesByURL[anchor.href];
+        if (this._dataGrid.selectedNode)
+            this._dataGrid.selectedNode.selected = false;
+
+        this._dataGrid.showColumn("method");
+        this._dataGrid.showColumn("status");
+        this._dataGrid.showColumn("type");
+        this._dataGrid.showColumn("size");
+        this._dataGrid.showColumn("time");
+        this._dataGrid.showColumn("timeline");
+
+        var widths = {};
+        widths.name = 20;
+        widths.method = 6;
+        widths.status = 6;
+        widths.type = 6;
+        widths.size = 6;
+        widths.time = 6;
+        widths.timeline = 50;
+
+        this._dataGrid.applyColumnWidthsMap(widths);
     },
 
-    showAnchorLocation: function(anchor)
+    switchToBriefView: function()
     {
-        this._showResource(this._resourcesByURL[anchor.href]);
-    },
+        this._dataGrid.hideColumn("method");
+        this._dataGrid.hideColumn("status");
+        this._dataGrid.hideColumn("type");
+        this._dataGrid.hideColumn("size");
+        this._dataGrid.hideColumn("time");
+        this._dataGrid.hideColumn("timeline");
 
-    _showResource: function(resource)
-    {
-        if (!resource)
-            return;
+        var widths = {};
+        widths.name = 100;
+        this._dataGrid.applyColumnWidthsMap(widths);
 
         this._popoverHelper.hidePopup();
-
-        this._toggleViewingResourceMode();
-
-        if (this.visibleView) {
-            this.visibleView.detach();
-            delete this.visibleView;
-        }
-
-        var view = new WebInspector.NetworkItemView(resource);
-        view.show(this._viewsContainerElement);
-        this.visibleView = view;
-
-        this.updateSidebarWidth();
-    },
-
-    _closeVisibleResource: function()
-    {
-        this.element.removeStyleClass("viewing-resource");
-
-        if (this.visibleView) {
-            this.visibleView.detach();
-            delete this.visibleView;
-        }
-
-        if (this._lastSelectedGraphTreeElement)
-            this._lastSelectedGraphTreeElement.select(true);
-
-        this.updateSidebarWidth();
     },
 
     _toggleLargerResources: function()
@@ -857,18 +821,19 @@ WebInspector.NetworkPanel.prototype = {
             this._largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
             this._dataGrid.element.addStyleClass("small");
             this._timelineGrid.element.addStyleClass("small");
-            this._viewsContainerElement.addStyleClass("small");
         } else {
             this._largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
             this._dataGrid.element.removeStyleClass("small");
             this._timelineGrid.element.removeStyleClass("small");
-            this._viewsContainerElement.removeStyleClass("small");
         }
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventNames.RowSizeChanged, { largeRows: enabled });
         this._updateOffscreenRows();
     },
 
     _getPopoverAnchor: function(element)
     {
+        if (!this._allowPopover)
+            return;
         var anchor = element.enclosingNodeOrSelfWithClass("network-graph-bar") || element.enclosingNodeOrSelfWithClass("network-graph-label");
         if (!anchor)
             return null;
@@ -1190,6 +1155,231 @@ WebInspector.NetworkPanel.prototype = {
         this._clearSearchMatchedList();
         WebInspector.searchController.updateSearchMatchesCount(0, this);
     }
+};
+
+WebInspector.NetworkLogView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.NetworkLogView.EventNames = {
+    ViewCleared: "ViewCleared",
+    RowSizeChanged: "RowSizeChanged",
+    ResourceSelected: "ResourceSelected"
+};
+
+WebInspector.NetworkPanel = function()
+{
+    WebInspector.Panel.call(this, "network");
+
+    this.createSidebar();
+    this._networkLogView = new WebInspector.NetworkLogView();
+
+    this.sidebarElement.appendChild(this._networkLogView.element);
+
+    this._viewsContainerElement = document.createElement("div");
+    this._viewsContainerElement.id = "network-views";
+    this._viewsContainerElement.className = "hidden";
+    if (!this._networkLogView.useLargeRows)
+        this._viewsContainerElement.addStyleClass("small");
+
+    this.element.appendChild(this._viewsContainerElement);
+
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventNames.ViewCleared, this._onViewCleared, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventNames.RowSizeChanged, this._onRowSizeChanged, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventNames.ResourceSelected, this._onResourceSelected, this);
+
+    this._closeButtonElement = document.createElement("button");
+    this._closeButtonElement.id = "network-close-button";
+    this._closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
+    this._viewsContainerElement.appendChild(this._closeButtonElement);
+
+    this.registerShortcuts();
+}
+
+WebInspector.NetworkPanel.prototype = {
+    get toolbarItemLabel()
+    {
+        return WebInspector.UIString("Network");
+    },
+
+    get statusBarItems()
+    {
+        return this._networkLogView.statusBarItems;
+    },
+
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return this._networkLogView.elementsToRestoreScrollPositionsFor();
+    },
+
+    resize: function()
+    {
+        WebInspector.Panel.prototype.resize.call(this);
+        this._networkLogView.resize();
+    },
+
+    // FIXME: only used by the layout tests, should not be exposed.
+    _reset: function()
+    {
+        this._networkLogView._reset();
+    },
+
+    updateSidebarWidth: function(width)
+    {
+        if (!this._viewingResourceMode)
+            return;
+        WebInspector.Panel.prototype.updateSidebarWidth.call(this, width);
+    },
+
+    updateMainViewWidth: function(width)
+    {
+        this._viewsContainerElement.style.left = width + "px";
+    },
+
+    handleShortcut: function(event)
+    {
+        if (this._viewingResourceMode && event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
+            this._toggleGridMode();
+            event.handled = true;
+            return;
+        }
+
+        WebInspector.Panel.prototype.handleShortcut.call(this, event);
+    },
+
+    show: function()
+    {
+        WebInspector.Panel.prototype.show.call(this);
+
+        if (this.visibleView)
+            this.visibleView.show(this._viewsContainerElement);
+        this._networkLogView.show();
+    },
+
+    hide: function()
+    {
+        WebInspector.Panel.prototype.hide.call(this);
+        this._networkLogView.hide();
+    },
+
+    get resources()
+    {
+        return this._networkLogView.resources;
+    },
+
+    resourceById: function(id)
+    {
+        return this._networkLogView.resourceById(id);
+    },
+
+    canShowAnchorLocation: function(anchor)
+    {
+        return !!this.resourceById(anchor.href);
+    },
+
+    showAnchorLocation: function(anchor)
+    {
+        this._showResource(this._resourcesByURL[anchor.href]);
+    },
+
+    _onViewCleared: function(event)
+    {
+        this._closeVisibleResource();
+        this._toggleGridMode();
+        this._viewsContainerElement.removeChildren();
+        this._viewsContainerElement.appendChild(this._closeButtonElement);
+    },
+
+    _onRowSizeChanged: function(event)
+    {
+        if (event.data.largeRows)
+            this._viewsContainerElement.removeStyleClass("small");
+        else
+            this._viewsContainerElement.addStyleClass("small");
+    },
+
+    _onResourceSelected: function(event)
+    {
+        this._showResource(event.data);
+    },
+
+    _showResource: function(resource)
+    {
+        if (!resource)
+            return;
+
+        this._toggleViewingResourceMode();
+
+        if (this.visibleView) {
+            this.visibleView.detach();
+            delete this.visibleView;
+        }
+
+        var view = new WebInspector.NetworkItemView(resource);
+        view.show(this._viewsContainerElement);
+        this.visibleView = view;
+
+        this.updateSidebarWidth();
+    },
+
+    _closeVisibleResource: function()
+    {
+        this.element.removeStyleClass("viewing-resource");
+
+        if (this.visibleView) {
+            this.visibleView.detach();
+            delete this.visibleView;
+        }
+
+        this.updateSidebarWidth();
+    },
+
+    _toggleGridMode: function()
+    {
+        if (this._viewingResourceMode) {
+            this._viewingResourceMode = false;
+            this.element.removeStyleClass("viewing-resource");
+            this._viewsContainerElement.addStyleClass("hidden");
+            this.sidebarElement.style.right = 0;
+            this.sidebarElement.style.removeProperty("width");
+        }
+
+        this._networkLogView.switchToDetailedView();
+        this._networkLogView.allowPopover = true;
+        this._networkLogView.allowResourceSelection = false;
+    },
+
+    _toggleViewingResourceMode: function()
+    {
+        if (this._viewingResourceMode)
+            return;
+        this._viewingResourceMode = true;
+
+        this.element.addStyleClass("viewing-resource");
+        this._viewsContainerElement.removeStyleClass("hidden");
+        this.updateSidebarWidth(200);
+        this._networkLogView.allowPopover = false;
+        this._networkLogView.allowResourceSelection = true;
+        this._networkLogView.switchToBriefView();
+    },
+
+    performSearch: function(searchQuery, sortOrFilterApplied)
+    {
+        this._networkLogView.performSearch(searchQuery, sortOrFilterApplied);
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        this._networkLogView.jumpToPreviousSearchResult();
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        this._networkLogView.jumpToNextSearchResult();
+    },
+
+    searchCanceled: function()
+    {
+        this._networkLogView.searchCanceled();
+    }
 }
 
 WebInspector.NetworkPanel.prototype.__proto__ = WebInspector.Panel.prototype;
@@ -1476,10 +1666,10 @@ WebInspector.NetworkTransferDurationCalculator.prototype = {
 
 WebInspector.NetworkTransferDurationCalculator.prototype.__proto__ = WebInspector.NetworkTimeCalculator.prototype;
 
-WebInspector.NetworkDataGridNode = function(panel, resource)
+WebInspector.NetworkDataGridNode = function(parentView, resource)
 {
     WebInspector.DataGridNode.call(this, {});
-    this._panel = panel;
+    this._parentView = parentView;
     this._resource = resource;
 }
 
@@ -1499,14 +1689,14 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     isFilteredOut: function()
     {
-        if (!this._panel._hiddenCategories.all)
+        if (!this._parentView._hiddenCategories.all)
             return false;
-        return this._resource.category.name in this._panel._hiddenCategories;
+        return this._resource.category.name in this._parentView._hiddenCategories;
     },
 
     select: function()
     {
-        this._panel._showResource(this._resource);
+        this._parentView.dispatchEventToListeners(WebInspector.NetworkLogView.EventNames.ResourceSelected, this._resource);
         WebInspector.DataGridNode.prototype.select.apply(this, arguments);
     },
 
@@ -1525,9 +1715,7 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     get selectable()
     {
-        if (!this._panel._viewingResourceMode)
-            return false;
-        return !this.isFilteredOut();
+        return this._parentView.allowResourceSelection && !this.isFilteredOut();
     },
 
     _createDivInTD: function(columnIdentifier)
