@@ -1,5 +1,14 @@
 2011-07-13  Vincent Scheib  <scheib@chromium.org>
 
+        Unreviewed, rolling out r90957.
+        http://trac.webkit.org/changeset/90957
+
+        Fixing incorrect test expectations
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-13  Vincent Scheib  <scheib@chromium.org>
+
         [chromium] Update chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
