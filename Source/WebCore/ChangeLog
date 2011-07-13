@@ -1,3 +1,20 @@
+2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Standardize WinCairo conditionalized code under PLATFORM macro.
+        https://bugs.webkit.org/show_bug.cgi?id=64377
+
+        Reviewed by Maciej Stachowiak.
+
+        Update compile-time conditions that had previously used #ifdef
+        of WIN_CAIRO to consistently use PLATFORM(WIN_CAIRO).
+
+        * WebCore.vcproj/WebCoreCairo.vsprops: Remove redundant declaration
+          of WIN_CAIRO.
+        * WebCore.vcproj/WebCoreDebugCairoCFLite.vsprops: Update to use
+          the existing WinCairo.vsprops file.
+        * WebCorePrefix.h: Update for new WTF_PLATFORM_WIN_CAIRO define.
+        * config.h: Update to use PLATFORM(WIN_CAIRO).
+
 2011-07-13  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Exclusions] Fix for comment #23 on wrap-shape parsing bug 61726

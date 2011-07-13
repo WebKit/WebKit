@@ -1,3 +1,19 @@
+2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Standardize WinCairo conditionalized code under PLATFORM macro.
+        https://bugs.webkit.org/show_bug.cgi?id=64377
+
+        Reviewed by Maciej Stachowiak.
+
+        Update compile-time conditions that had previously used #ifdef
+        of WIN_CAIRO to consistently use PLATFORM(WIN_CAIRO).
+
+        * DumpRenderTree/config.h: Switch to PLATFORM(WIN_CAIRO)
+        * DumpRenderTree/win/DumpRenderTreeCairo.vsprops: Remove redundant
+          define of WIN_CAIRO=1.
+        * DumpRenderTree/win/DumpRenderTreeDebugCairoCFLite.vsprops: Add
+          WinCairo.vsprops to set (to match Release build).
+
 2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Eliminate TestExpectationsFile.

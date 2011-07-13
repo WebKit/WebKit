@@ -1,3 +1,13 @@
+2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Standardize WinCairo conditionalized code under PLATFORM macro.
+        https://bugs.webkit.org/show_bug.cgi?id=64377
+
+        Reviewed by Maciej Stachowiak.
+
+        * win/tools/vsprops/WinCairo.vsprops: Update to comply with PLATFORM
+          macro definition (WTF_PLATFORM_WIN_CAIRO)
+
 2011-07-02  Mark Rowe  <mrowe@apple.com>
 
         Update the header file too.

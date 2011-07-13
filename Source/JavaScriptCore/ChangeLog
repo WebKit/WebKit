@@ -1,3 +1,12 @@
+2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Standardize WinCairo conditionalized code under PLATFORM macro.
+        https://bugs.webkit.org/show_bug.cgi?id=64377
+
+        Reviewed by Maciej Stachowiak.
+
+        * wtf/Platform.h: Update to use PLATFORM(WIN_CAIRO) for tests.
+
 2011-07-13  David Levin  <levin@chromium.org>
 
         Possible race condition in ThreadIdentifierData::initializeKeyOnce and shouldCallRealDebugger.

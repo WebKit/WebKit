@@ -115,7 +115,7 @@
 
 #if !defined(BUILDING_WX__) && !defined(ANDROID) && !defined(BUILDING_BREWMP__)
 #include <CoreFoundation/CoreFoundation.h>
-#ifdef WIN_CAIRO
+#ifdef WTF_PLATFORM_WIN_CAIRO
 #include <ConditionalMacros.h>
 #include <windows.h>
 #include <stdio.h>
