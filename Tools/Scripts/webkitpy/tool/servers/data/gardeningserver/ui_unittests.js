@@ -1,3 +1,5 @@
+(function () {
+
 module("iu");
 
 var kExampleResultsByTest = {
@@ -62,3 +64,5 @@ test("results", 1, function() {
         '<img src="http://example.com/layout-test-results/foo-bar-actual.png" class="actual">' +
         '<img src="http://example.com/layout-test-results/foo-bar-diff.png" class="diff">');
 });
+
+})();

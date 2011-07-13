@@ -41,7 +41,8 @@ tr:last-of-type td {
 }
 
 /* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
-.test[data-failure-count="1"] {
+.test[data-failure-count="1"][data-new-test="false"] {
+    -webkit-transition: 1s opacity;
     opacity: 0.5;
 }
 
@@ -110,11 +111,15 @@ tr:last-of-type td {
     border-radius: 4px;
 }
 
+.regression .test[data-new-test="true"] .what a[draggable]::after {
+    content: '(new)';
+    margin: 0 3px;
+}
+
 .regression .what a {
     padding: 1px 2px;
     border-radius: 4px;
     color: black;
-    background-color: #f0f0f0;
 }
 
 .partytime {

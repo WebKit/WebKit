@@ -37,16 +37,17 @@ class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
 
 class GardeningHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_NAMES = frozenset([
-        "index.html",
-        "main.css",
-        "partytime.gif",
         "base.js",
+        "checkout.js",
         "config.js",
-        "main.js",
-        "results.js",
-        "ui.js",
         "favicon-green.png",
         "favicon-red.png",
+        "index.html",
+        "main.css",
+        "main.js",
+        "partytime.gif",
+        "results.js",
+        "ui.js",
     ])
 
     STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "gardeningserver")

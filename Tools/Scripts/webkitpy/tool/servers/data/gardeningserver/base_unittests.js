@@ -1,3 +1,5 @@
+(function () {
+
 module("base");
 
 test("joinPath", 1, function() {
@@ -92,3 +94,5 @@ test("filterTree", 2, function() {
         }
     });
 });
+
+})();

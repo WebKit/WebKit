@@ -1,3 +1,5 @@
+(function () {
+
 module("results");
 
 var kExampleResultsJSON = {
@@ -314,3 +316,5 @@ test("fetchResultsURLs", 3, function() {
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.txt",
     ]);
 });
+
+})();

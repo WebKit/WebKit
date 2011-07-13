@@ -30,6 +30,9 @@ function fetchResults(onsuccess)
                 var builderNameList = base.keys(resultNodesByBuilder);
                 results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
                     $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+                    checkout.existsAtRevision(checkout.subversionURLForTest(testName), newestPassingRevision, function(testExistedBeforeFailure) {
+                        $(testSummary).attr('data-new-test', !testExistedBeforeFailure);
+                    });
                 });
                 results.countFailureOccurances(builderNameList, testName, function(failureCount) {
                     $(testSummary).attr('data-failure-count', failureCount);

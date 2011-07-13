@@ -1,5 +1,27 @@
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should label tests failures of new tests as such
+        https://bugs.webkit.org/show_bug.cgi?id=64421
+
+        Reviewed by Ojan Vafai.
+
+        Also, we shouldn't dim failures of new tests, even if we've only seen
+        them once because they're likely to be real problems that need
+        attention.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/checkout.js: Added.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/checkout_unittests.js: Added.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/run-unittests.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
+2011-07-12  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should display how many times we've seen a failure
         https://bugs.webkit.org/show_bug.cgi?id=64417
 
