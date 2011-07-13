@@ -26,7 +26,6 @@
 
 #include "cc/CCLayerSorter.h"
 
-#include "LoopBlinnMathUtils.h"
 #include "RenderSurfaceChromium.h"
 #include "TransformationMatrix.h"
 #include <limits.h>
@@ -46,7 +45,35 @@ static WTFLogChannel LogCCLayerSorter = { 0x00000000, "", WTFLogChannelOff };
 
 namespace WebCore {
 
-using LoopBlinnMathUtils::pointInTriangle;
+static bool pointInTriangle(const FloatPoint& point,
+                            const FloatPoint& a,
+                            const FloatPoint& b,
+                            const FloatPoint& c)
+{
+    // Algorithm from http://www.blackpawn.com/texts/pointinpoly/default.html
+    float x0 = c.x() - a.x();
+    float y0 = c.y() - a.y();
+    float x1 = b.x() - a.x();
+    float y1 = b.y() - a.y();
+    float x2 = point.x() - a.x();
+    float y2 = point.y() - a.y();
+
+    float dot00 = x0 * x0 + y0 * y0;
+    float dot01 = x0 * x1 + y0 * y1;
+    float dot02 = x0 * x2 + y0 * y2;
+    float dot11 = x1 * x1 + y1 * y1;
+    float dot12 = x1 * x2 + y1 * y2;
+    float denominator = dot00 * dot11 - dot01 * dot01;
+    if (!denominator)
+        // Triangle is zero-area. Treat query point as not being inside.
+        return false;
+    // Compute
+    float inverseDenominator = 1.0f / denominator;
+    float u = (dot11 * dot02 - dot01 * dot12) * inverseDenominator;
+    float v = (dot00 * dot12 - dot01 * dot02) * inverseDenominator;
+
+    return (u > 0.0f) && (v > 0.0f) && (u + v < 1.0f);
+}
 
 inline static float perpProduct(const FloatSize& u, const FloatSize& v)
 {

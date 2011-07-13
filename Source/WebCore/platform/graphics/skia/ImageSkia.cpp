@@ -36,7 +36,6 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextGPU.h"
 #include "Logging.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -423,22 +422,6 @@ void Image::drawPattern(GraphicsContext* context,
     context->platformContext()->paintSkPaint(destRect, paint);
 }
 
-static void drawBitmapGLES2(GraphicsContext* ctxt, NativeImageSkia* bitmap, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
-{
-    ctxt->platformContext()->prepareForHardwareDraw();
-    GraphicsContextGPU* gpuCanvas = ctxt->platformContext()->gpuCanvas();
-    Texture* texture = gpuCanvas->getTexture(bitmap);
-    if (!texture) {
-        ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);
-        ASSERT(bitmap->rowBytes() == bitmap->width() * 4);
-        texture = gpuCanvas->createTexture(bitmap, Texture::BGRA8, bitmap->width(), bitmap->height());
-        SkAutoLockPixels lock(*bitmap);
-        ASSERT(bitmap->getPixels());
-        texture->load(bitmap->getPixels());
-    }
-    gpuCanvas->drawTexturedRect(texture, srcRect, dstRect, styleColorSpace, compositeOp);
-}
-
 // ================================================
 // BitmapImage Class
 // ================================================
@@ -499,12 +482,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
 
-    if (ctxt->platformContext()->useGPU() && ctxt->platformContext()->canAccelerate()) {
-        drawBitmapGLES2(ctxt, bm, normSrcRect, normDstRect, colorSpace, compositeOp);
-        return;
-    }
-
-    ctxt->platformContext()->prepareForSoftwareDraw();
+    ctxt->platformContext()->makeGrContextCurrent();
 
     paintSkBitmap(ctxt->platformContext(),
                   *bm,
@@ -527,12 +505,7 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
 
-    if (ctxt->platformContext()->useGPU() && ctxt->platformContext()->canAccelerate()) {
-        drawBitmapGLES2(ctxt, &m_nativeImage, srcRect, dstRect, styleColorSpace, compositeOp);
-        return;
-    }
-
-    ctxt->platformContext()->prepareForSoftwareDraw();
+    ctxt->platformContext()->makeGrContextCurrent();
 
     paintSkBitmap(ctxt->platformContext(),
                   m_nativeImage,

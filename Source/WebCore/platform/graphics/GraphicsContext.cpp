@@ -685,15 +685,7 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 #endif
 
 #if !USE(SKIA)
-void GraphicsContext::setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&)
-{
-}
-
-void GraphicsContext::syncSoftwareCanvas()
-{
-}
-
-void GraphicsContext::markDirtyRect(const IntRect&)
+void GraphicsContext::setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, const IntSize&)
 {
 }
 #endif

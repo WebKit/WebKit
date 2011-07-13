@@ -72,6 +72,10 @@ typedef CGLContextObj PlatformGraphicsContext3D;
 typedef void* PlatformGraphicsContext3D;
 #endif
 
+#if PLATFORM(CHROMIUM) && USE(SKIA)
+class GrContext;
+#endif
+
 // These are currently the same among all implementations.
 const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 const Platform3DObject NullPlatform3DObject = 0;
@@ -464,6 +468,9 @@ public:
 #elif PLATFORM(CHROMIUM)
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
+#if USE(SKIA)
+    GrContext* grContext();
+#endif
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
 #endif

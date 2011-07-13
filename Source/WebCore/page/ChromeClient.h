@@ -60,7 +60,7 @@ namespace WebCore {
     class Page;
     class PopupMenuClient;
     class SecurityOrigin;
-    class SharedGraphicsContext3D;
+    class GraphicsContext3D;
     class Widget;
 
     struct FrameLoadRequest;

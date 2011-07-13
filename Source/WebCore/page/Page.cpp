@@ -76,7 +76,7 @@
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#include "SharedGraphicsContext3D.h"
+#include "GraphicsContext3D.h"
 #endif
 
 #if ENABLE(DOM_STORAGE)
@@ -752,16 +752,17 @@ void Page::setDebugger(JSC::Debugger* debugger)
         frame->script()->attachDebugger(m_debugger);
 }
 
-SharedGraphicsContext3D* Page::sharedGraphicsContext3D()
+GraphicsContext3D* Page::sharedGraphicsContext3D()
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (!m_sharedGraphicsContext3D)
-#if USE(SKIA)
-        // Temporary code to postpone massive test rebaselining
-        m_sharedGraphicsContext3D = SharedGraphicsContext3D::create(chrome(), settings()->legacyAccelerated2dCanvasEnabled() ? 0 : SharedGraphicsContext3D::UseSkiaGPU);
-#else
-        m_sharedGraphicsContext3D = SharedGraphicsContext3D::create(chrome(), 0);
-#endif
+    if (!m_sharedGraphicsContext3D) {
+        GraphicsContext3D::Attributes attr;
+        attr.depth = false;
+        attr.stencil = true;
+        attr.antialias = false;
+        attr.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
+        m_sharedGraphicsContext3D = GraphicsContext3D::create(attr, chrome());
+    }
     return m_sharedGraphicsContext3D.get();
 #else // !ENABLE(ACCELERATED_2D_CANVAS)
     return 0;

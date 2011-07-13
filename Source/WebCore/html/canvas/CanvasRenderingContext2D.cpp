@@ -66,8 +66,6 @@
 #include "ChromeClient.h"
 #include "DrawingBuffer.h"
 #include "FrameView.h"
-#include "GraphicsContext3D.h"
-#include "SharedGraphicsContext3D.h"
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayer.h"
 #endif
@@ -146,12 +144,12 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
     if (GraphicsContext* c = drawingContext()) {
         m_context3D = p->sharedGraphicsContext3D();
         if (m_context3D) {
-            m_drawingBuffer = m_context3D->graphicsContext3D()->createDrawingBuffer(IntSize(canvas->width(), canvas->height()));
+            m_drawingBuffer = m_context3D->createDrawingBuffer(IntSize(canvas->width(), canvas->height()));
             if (!m_drawingBuffer) {
-                c->setSharedGraphicsContext3D(0, 0, IntSize());
+                c->setGraphicsContext3D(0, 0, IntSize());
                 m_context3D.clear();
             } else
-                c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
+                c->setGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
         }
     }
 #endif
@@ -173,7 +171,7 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (GraphicsContext* context = drawingContext())
-        context->setSharedGraphicsContext3D(0, 0, IntSize());
+        context->setGraphicsContext3D(0, 0, IntSize());
 #endif
 }
 
@@ -208,9 +206,9 @@ void CanvasRenderingContext2D::reset()
     if (GraphicsContext* c = drawingContext()) {
         if (m_context3D && m_drawingBuffer) {
             if (m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()))) {
-                c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
+                c->setGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
             } else {
-                c->setSharedGraphicsContext3D(0, 0, IntSize());
+                c->setGraphicsContext3D(0, 0, IntSize());
                 m_drawingBuffer.clear();
                 m_context3D.clear();
             }
@@ -572,15 +570,6 @@ void CanvasRenderingContext2D::setGlobalCompositeOperation(const String& operati
     if (!c)
         return;
     c->setCompositeOperation(op);
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (isAccelerated() && !m_context3D->supportsCompositeOp(op)) {
-        c->setSharedGraphicsContext3D(0, 0, IntSize());
-        m_drawingBuffer.clear();
-        m_context3D.clear();
-        // Mark as needing a style recalc so our compositing layer can be removed.
-        canvas()->setNeedsStyleRecalc(SyntheticStyleChange);
-    }
-#endif
 }
 
 void CanvasRenderingContext2D::scale(float sx, float sy)
@@ -1644,10 +1633,6 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         // we'd have to keep the clip path around.
     }
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (isAccelerated())
-        drawingContext()->markDirtyRect(enclosingIntRect(dirtyRect));
-#endif
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
     // If we are drawing to hardware and we have a composited layer, just call contentChanged().
     RenderBox* renderBox = canvas()->renderBox();
@@ -2036,14 +2021,6 @@ const Font& CanvasRenderingContext2D::accessFont()
     if (!state().m_realizedFont)
         setFont(state().m_unparsedFont);
     return state().m_font;
-}
-
-void CanvasRenderingContext2D::paintRenderingResultsToCanvas()
-{
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (GraphicsContext* c = drawingContext())
-        c->syncSoftwareCanvas();
-#endif
 }
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)

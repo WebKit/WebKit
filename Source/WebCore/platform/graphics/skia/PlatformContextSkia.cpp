@@ -57,11 +57,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include "GraphicsContextGPU.h"
-#include "SharedGraphicsContext3D.h"
-#endif
-
 namespace WebCore {
 
 extern bool isPathSkiaSafe(const SkMatrix& transform, const SkPath& path);
@@ -111,9 +106,6 @@ struct PlatformContextSkia::State {
     WTF::Vector<SkPath> m_antiAliasClipPaths;
     InterpolationQuality m_interpolationQuality;
 
-    // If we currently have a canvas (non-antialiased path) clip applied.
-    bool m_canvasClipApplied;
-
     PlatformContextSkia::State cloneInheritedProperties();
 private:
     // Not supported.
@@ -137,7 +129,6 @@ PlatformContextSkia::State::State()
     , m_dash(0)
     , m_textDrawingMode(TextModeFill)
     , m_interpolationQuality(InterpolationHigh)
-    , m_canvasClipApplied(false)
 {
 }
 
@@ -160,7 +151,6 @@ PlatformContextSkia::State::State(const State& other)
     , m_clip(other.m_clip)
     , m_antiAliasClipPaths(other.m_antiAliasClipPaths)
     , m_interpolationQuality(other.m_interpolationQuality)
-    , m_canvasClipApplied(other.m_canvasClipApplied)
 {
     // Up the ref count of these. SkSafeRef does nothing if its argument is 0.
     SkSafeRef(m_looper);
@@ -203,8 +193,7 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     : m_canvas(canvas)
     , m_printing(false)
     , m_drawingToImageBuffer(false)
-    , m_accelerationMode(NoAcceleration)
-    , m_backingStoreState(None)
+    , m_gpuContext(0)
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -215,17 +204,6 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
 
 PlatformContextSkia::~PlatformContextSkia()
 {
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_gpuCanvas) {
-        // make sure everything related to this platform context has been flushed
-        if (useSkiaGPU()) {
-            SharedGraphicsContext3D* context = m_gpuCanvas->context();
-            context->makeContextCurrent();
-            context->grContext()->flush(0);
-        }
-        m_gpuCanvas->drawingBuffer()->setWillPublishCallback(nullptr);
-    }
-#endif
 }
 
 void PlatformContextSkia::setCanvas(SkCanvas* canvas)
@@ -559,7 +537,6 @@ SkColor PlatformContextSkia::effectiveStrokeColor() const
 
 void PlatformContextSkia::canvasClipPath(const SkPath& path)
 {
-    m_state->m_canvasClipApplied = true;
     m_canvas->clipPath(path);
 }
 
@@ -597,7 +574,7 @@ bool PlatformContextSkia::isNativeFontRenderingAllowed()
 #if ENABLE(SKIA_TEXT)
     return false;
 #else
-    if (m_accelerationMode == SkiaGPU)
+    if (useSkiaGPU())
         return false;
     return skia::SupportsPlatformPaint(m_canvas);
 #endif
@@ -674,55 +651,16 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
     m_canvas->restore();
 }
 
-bool PlatformContextSkia::canAccelerate() const
+void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
 {
-    // Can't accelerate with a fill gradient or pattern.
-    const GraphicsContextState& state = m_gc->state();
-    return !state.fillGradient.get() && !state.fillPattern.get();
-}
-
-bool PlatformContextSkia::canvasClipApplied() const
-{
-    return m_state->m_canvasClipApplied;
-}
-
-class WillPublishCallbackImpl : public DrawingBuffer::WillPublishCallback {
-public:
-    static PassOwnPtr<WillPublishCallback> create(PlatformContextSkia* pcs)
-    {
-        return adoptPtr(new WillPublishCallbackImpl(pcs));
-    }
-
-    virtual void willPublish()
-    {
-        m_pcs->prepareForHardwareDraw();
-    }
-
-private:
-    explicit WillPublishCallbackImpl(PlatformContextSkia* pcs)
-        : m_pcs(pcs)
-    {
-    }
-
-    PlatformContextSkia* m_pcs;
-};
-
-void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
-{
-    m_accelerationMode = NoAcceleration;
+    m_gpuContext = context;
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (context && drawingBuffer) {
-        m_gpuCanvas = adoptPtr(new GraphicsContextGPU(context, drawingBuffer, size));
-        m_uploadTexture.clear();
-        drawingBuffer->setWillPublishCallback(WillPublishCallbackImpl::create(this));
-
         // use skia gpu rendering if available
         GrContext* gr = context->grContext();
         if (gr) {
-            m_accelerationMode = SkiaGPU;
-
             context->makeContextCurrent();
-            m_gpuCanvas->bindFramebuffer();
+            drawingBuffer->bind();
 
             gr->resetContext();
             drawingBuffer->setGrContext(gr);
@@ -732,160 +670,15 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
             SkAutoTUnref<GrTexture> drawBufTex(static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc)));
             m_canvas->setDevice(new SkGpuDevice(gr, drawBufTex.get()))->unref();
         } else
-            m_accelerationMode = GPU;
-    } else {
-        syncSoftwareCanvas();
-        m_uploadTexture.clear();
-        m_gpuCanvas.clear();
+            m_gpuContext = 0;
     }
 #endif
 }
 
-void PlatformContextSkia::prepareForSoftwareDraw() const
+void PlatformContextSkia::makeGrContextCurrent()
 {
-    if (m_accelerationMode == SkiaGPU) {
-#if ENABLE(ACCELERATED_2D_CANVAS)
-        if (m_gpuCanvas)
-            m_gpuCanvas->context()->makeContextCurrent();
-#endif
-        return;
-    }
-
-    if (m_backingStoreState == Hardware) {
-        // Depending on the blend mode we need to do one of a few things:
-
-        // * For associative blend modes, we can draw into an initially empty
-        // canvas and then composite the results on top of the hardware drawn
-        // results before the next hardware draw or swapBuffers().
-
-        // * For non-associative blend modes we have to do a readback and then
-        // software draw.  When we re-upload in this mode we have to blow
-        // away whatever is in the hardware backing store (do a copy instead
-        // of a compositing operation).
-
-        if (m_state->m_xferMode == SkXfermode::kSrcOver_Mode) {
-            // Note that we have rendering results in both the hardware and software backing stores.
-            m_backingStoreState = Mixed;
-        } else {
-            readbackHardwareToSoftware();
-            // When we switch back to hardware copy the results, don't composite.
-            m_backingStoreState = Software;
-        }
-    } else if (m_backingStoreState == Mixed) {
-        if (m_state->m_xferMode != SkXfermode::kSrcOver_Mode) {
-            // Have to composite our currently software drawn data...
-            uploadSoftwareToHardware(CompositeSourceOver);
-            // then do a readback so we can hardware draw stuff.
-            readbackHardwareToSoftware();
-            m_backingStoreState = Software;
-        }
-    } else if (m_backingStoreState == None) {
-        m_backingStoreState = Software;
-    }
-}
-
-void PlatformContextSkia::prepareForHardwareDraw() const
-{
-    if (!(m_accelerationMode == GPU))
-        return;
-
-    if (m_backingStoreState == Software) {
-        // Last drawn in software; upload everything we've drawn.
-        uploadSoftwareToHardware(CompositeCopy);
-    } else if (m_backingStoreState == Mixed) {
-        // Stuff in software/hardware, composite the software stuff on top of
-        // the hardware stuff.
-        uploadSoftwareToHardware(CompositeSourceOver);
-    }
-    m_backingStoreState = Hardware;
-}
-
-void PlatformContextSkia::syncSoftwareCanvas() const
-{
-    if (m_accelerationMode == SkiaGPU) {
-#if ENABLE(ACCELERATED_2D_CANVAS)
-        if (m_gpuCanvas)
-            m_gpuCanvas->context()->makeContextCurrent();
-#endif
-        return;
-    }
-
-    if (m_backingStoreState == Hardware)
-        readbackHardwareToSoftware();
-    else if (m_backingStoreState == Mixed) {
-        // Have to composite our currently software drawn data..
-        uploadSoftwareToHardware(CompositeSourceOver);
-        // then do a readback.
-        readbackHardwareToSoftware();
-        m_backingStoreState = Software;
-    }
-    m_backingStoreState = Software;
-}
-
-void PlatformContextSkia::markDirtyRect(const IntRect& rect)
-{
-    if (m_accelerationMode != GPU)
-        return;
-
-    switch (m_backingStoreState) {
-    case Software:
-    case Mixed:
-        m_softwareDirtyRect.unite(rect);
-        return;
-    case Hardware:
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
-{
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
-    SkAutoLockPixels lock(bitmap);
-    SharedGraphicsContext3D* context = m_gpuCanvas->context();
-    if (!m_uploadTexture || m_uploadTexture->tiles().totalSizeX() < bitmap.width() || m_uploadTexture->tiles().totalSizeY() < bitmap.height())
-        m_uploadTexture = context->createTexture(Texture::BGRA8, bitmap.width(), bitmap.height());
-
-    m_uploadTexture->updateSubRect(bitmap.getPixels(), m_softwareDirtyRect);
-    AffineTransform identity;
-    gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), m_softwareDirtyRect, m_softwareDirtyRect, identity, 1.0, ColorSpaceDeviceRGB, op, false);
-    // Clear out the region of the software canvas we just uploaded.
-    m_canvas->save();
-    m_canvas->resetMatrix();
-    SkRect bounds = m_softwareDirtyRect;
-    m_canvas->clipRect(bounds, SkRegion::kReplace_Op);
-    m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
-    m_canvas->restore();
-    m_softwareDirtyRect.setWidth(0); // Clear dirty rect.
-#endif
-}
-
-void PlatformContextSkia::readbackHardwareToSoftware() const
-{
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(true);
-    SkAutoLockPixels lock(bitmap);
-    int width = bitmap.width(), height = bitmap.height();
-    SharedGraphicsContext3D* context = m_gpuCanvas->context();
-    m_gpuCanvas->bindFramebuffer();
-    // Flips the image vertically.
-    for (int y = 0; y < height; ++y) {
-        uint32_t* pixels = bitmap.getAddr32(0, y);
-        if (context->supportsBGRA())
-            context->readPixels(0, height - 1 - y, width, 1, Extensions3D::BGRA_EXT, GraphicsContext3D::UNSIGNED_BYTE, pixels);
-        else {
-            context->readPixels(0, height - 1 - y, width, 1, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels);
-            for (int i = 0; i < width; ++i) {
-                uint32_t pixel = pixels[i];
-                // Swizzles from RGBA -> BGRA.
-                pixels[i] = (pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
-            }
-        }
-    }
-    m_softwareDirtyRect.unite(IntRect(0, 0, width, height)); // Mark everything as dirty.
-#endif
+    if (m_gpuContext)
+        m_gpuContext->makeContextCurrent();
 }
 
 } // namespace WebCore

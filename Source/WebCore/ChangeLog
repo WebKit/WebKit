@@ -1,3 +1,102 @@
+2011-07-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Delete the unused legacy accelerated canvas 2d code
+        https://bugs.webkit.org/show_bug.cgi?id=64214
+
+        Reviewed by Stephen White.
+
+        This removes the legacy accelerated canvas 2d path and support logic since we (chromium) are no longer using
+        this codepath and it seems clear that no other port is interested.
+
+        Refactoring and removing unused code, so no new tests.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::sharedGraphicsContext3D):
+        * page/Page.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setSharedGraphicsContext3D):
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::setGrContext):
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::pointInTriangle):
+        * platform/graphics/gpu/BicubicShader.cpp: Removed.
+        * platform/graphics/gpu/BicubicShader.h: Removed.
+        * platform/graphics/gpu/ConvolutionShader.cpp: Removed.
+        * platform/graphics/gpu/ConvolutionShader.h: Removed.
+        * platform/graphics/gpu/GraphicsContextGPU.cpp: Removed.
+        * platform/graphics/gpu/GraphicsContextGPU.h: Removed.
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp: Removed.
+        * platform/graphics/gpu/SharedGraphicsContext3D.h: Removed.
+        * platform/graphics/gpu/SolidFillShader.cpp: Removed.
+        * platform/graphics/gpu/SolidFillShader.h: Removed.
+        * platform/graphics/gpu/TexShader.cpp: Removed.
+        * platform/graphics/gpu/TexShader.h: Removed.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::setCTM):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::setSharedGraphicsContext3D):
+        (WebCore::GraphicsContext::syncSoftwareCanvas):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::~NativeImageSkia):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        (WebCore::PlatformContextSkia::~PlatformContextSkia):
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+        (WebCore::PlatformContextSkia::makeGrContextCurrent):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2011-07-12  Emil A Eklund  <eae@chromium.org>
 
         Switch InlineFlowBox to to new layout types

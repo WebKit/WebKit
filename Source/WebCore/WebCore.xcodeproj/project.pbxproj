@@ -1092,18 +1092,8 @@
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
 		498770DB1242C535002226BA /* DrawingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770C21242C535002226BA /* DrawingBuffer.cpp */; };
 		498770DC1242C535002226BA /* DrawingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770C31242C535002226BA /* DrawingBuffer.h */; };
-		498770E41242C535002226BA /* PODArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CB1242C535002226BA /* PODArena.h */; };
-		498770E51242C535002226BA /* PODInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CC1242C535002226BA /* PODInterval.h */; };
-		498770E61242C535002226BA /* PODIntervalTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CD1242C535002226BA /* PODIntervalTree.h */; };
-		498770E71242C535002226BA /* PODRedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CE1242C535002226BA /* PODRedBlackTree.h */; };
 		498770E81242C535002226BA /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770CF1242C535002226BA /* Shader.cpp */; };
 		498770E91242C535002226BA /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D01242C535002226BA /* Shader.h */; };
-		498770EA1242C535002226BA /* SharedGraphicsContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D11242C535002226BA /* SharedGraphicsContext3D.cpp */; };
-		498770EB1242C535002226BA /* SharedGraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D21242C535002226BA /* SharedGraphicsContext3D.h */; };
-		498770EC1242C535002226BA /* SolidFillShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D31242C535002226BA /* SolidFillShader.cpp */; };
-		498770ED1242C535002226BA /* SolidFillShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D41242C535002226BA /* SolidFillShader.h */; };
-		498770EE1242C535002226BA /* TexShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D51242C535002226BA /* TexShader.cpp */; };
-		498770EF1242C535002226BA /* TexShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D61242C535002226BA /* TexShader.h */; };
 		498770F01242C535002226BA /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D71242C535002226BA /* Texture.cpp */; };
 		498770F11242C535002226BA /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D81242C535002226BA /* Texture.h */; };
 		498770F21242C535002226BA /* TilingData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D91242C535002226BA /* TilingData.cpp */; };
@@ -1117,13 +1107,6 @@
 		49A85B6C138D573A00ECB7B3 /* StreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A85B69138D573A00ECB7B3 /* StreamEvent.h */; };
 		49A85B77138D58EE00ECB7B3 /* JSStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */; };
 		49A85B78138D58EE00ECB7B3 /* JSStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */; };
-		49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */; };
-		49B69E5F1254FEED007D57EB /* LoopBlinnClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */; };
-		49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E571254FEED007D57EB /* LoopBlinnConstants.h */; };
-		49B69E631254FEED007D57EB /* LoopBlinnMathUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E5A1254FEED007D57EB /* LoopBlinnMathUtils.cpp */; };
-		49B69E641254FEED007D57EB /* LoopBlinnMathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E5B1254FEED007D57EB /* LoopBlinnMathUtils.h */; };
-		49B69E651254FEED007D57EB /* LoopBlinnTextureCoords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E5C1254FEED007D57EB /* LoopBlinnTextureCoords.cpp */; };
-		49B69E661254FEED007D57EB /* LoopBlinnTextureCoords.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E5D1254FEED007D57EB /* LoopBlinnTextureCoords.h */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */; };
 		49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSInt8Array.cpp */; };
@@ -7606,18 +7589,8 @@
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
 		498770C21242C535002226BA /* DrawingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrawingBuffer.cpp; path = gpu/DrawingBuffer.cpp; sourceTree = "<group>"; };
 		498770C31242C535002226BA /* DrawingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingBuffer.h; path = gpu/DrawingBuffer.h; sourceTree = "<group>"; };
-		498770CB1242C535002226BA /* PODArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODArena.h; path = gpu/PODArena.h; sourceTree = "<group>"; };
-		498770CC1242C535002226BA /* PODInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODInterval.h; path = gpu/PODInterval.h; sourceTree = "<group>"; };
-		498770CD1242C535002226BA /* PODIntervalTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODIntervalTree.h; path = gpu/PODIntervalTree.h; sourceTree = "<group>"; };
-		498770CE1242C535002226BA /* PODRedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODRedBlackTree.h; path = gpu/PODRedBlackTree.h; sourceTree = "<group>"; };
 		498770CF1242C535002226BA /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shader.cpp; path = gpu/Shader.cpp; sourceTree = "<group>"; };
 		498770D01242C535002226BA /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shader.h; path = gpu/Shader.h; sourceTree = "<group>"; };
-		498770D11242C535002226BA /* SharedGraphicsContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedGraphicsContext3D.cpp; path = gpu/SharedGraphicsContext3D.cpp; sourceTree = "<group>"; };
-		498770D21242C535002226BA /* SharedGraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedGraphicsContext3D.h; path = gpu/SharedGraphicsContext3D.h; sourceTree = "<group>"; };
-		498770D31242C535002226BA /* SolidFillShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SolidFillShader.cpp; path = gpu/SolidFillShader.cpp; sourceTree = "<group>"; };
-		498770D41242C535002226BA /* SolidFillShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SolidFillShader.h; path = gpu/SolidFillShader.h; sourceTree = "<group>"; };
-		498770D51242C535002226BA /* TexShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TexShader.cpp; path = gpu/TexShader.cpp; sourceTree = "<group>"; };
-		498770D61242C535002226BA /* TexShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TexShader.h; path = gpu/TexShader.h; sourceTree = "<group>"; };
 		498770D71242C535002226BA /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = gpu/Texture.cpp; sourceTree = "<group>"; };
 		498770D81242C535002226BA /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = gpu/Texture.h; sourceTree = "<group>"; };
 		498770D91242C535002226BA /* TilingData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TilingData.cpp; path = gpu/TilingData.cpp; sourceTree = "<group>"; };
@@ -7632,13 +7605,6 @@
 		49A85B6A138D573A00ECB7B3 /* StreamEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamEvent.idl; sourceTree = "<group>"; };
 		49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStreamEvent.cpp; sourceTree = "<group>"; };
 		49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStreamEvent.h; sourceTree = "<group>"; };
-		49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnClassifier.cpp; path = gpu/LoopBlinnClassifier.cpp; sourceTree = "<group>"; };
-		49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnClassifier.h; path = gpu/LoopBlinnClassifier.h; sourceTree = "<group>"; };
-		49B69E571254FEED007D57EB /* LoopBlinnConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnConstants.h; path = gpu/LoopBlinnConstants.h; sourceTree = "<group>"; };
-		49B69E5A1254FEED007D57EB /* LoopBlinnMathUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnMathUtils.cpp; path = gpu/LoopBlinnMathUtils.cpp; sourceTree = "<group>"; };
-		49B69E5B1254FEED007D57EB /* LoopBlinnMathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnMathUtils.h; path = gpu/LoopBlinnMathUtils.h; sourceTree = "<group>"; };
-		49B69E5C1254FEED007D57EB /* LoopBlinnTextureCoords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnTextureCoords.cpp; path = gpu/LoopBlinnTextureCoords.cpp; sourceTree = "<group>"; };
-		49B69E5D1254FEED007D57EB /* LoopBlinnTextureCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnTextureCoords.h; path = gpu/LoopBlinnTextureCoords.h; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLBuffer.h; sourceTree = "<group>"; };
 		49C7B9821042D2D30009D447 /* JSInt8Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8Array.cpp; sourceTree = "<group>"; };
@@ -13903,25 +13869,8 @@
 				498771161242CD7F002226BA /* mac */,
 				498770C21242C535002226BA /* DrawingBuffer.cpp */,
 				498770C31242C535002226BA /* DrawingBuffer.h */,
-				49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */,
-				49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */,
-				49B69E571254FEED007D57EB /* LoopBlinnConstants.h */,
-				49B69E5A1254FEED007D57EB /* LoopBlinnMathUtils.cpp */,
-				49B69E5B1254FEED007D57EB /* LoopBlinnMathUtils.h */,
-				49B69E5C1254FEED007D57EB /* LoopBlinnTextureCoords.cpp */,
-				49B69E5D1254FEED007D57EB /* LoopBlinnTextureCoords.h */,
-				498770CB1242C535002226BA /* PODArena.h */,
-				498770CC1242C535002226BA /* PODInterval.h */,
-				498770CD1242C535002226BA /* PODIntervalTree.h */,
-				498770CE1242C535002226BA /* PODRedBlackTree.h */,
 				498770CF1242C535002226BA /* Shader.cpp */,
 				498770D01242C535002226BA /* Shader.h */,
-				498770D11242C535002226BA /* SharedGraphicsContext3D.cpp */,
-				498770D21242C535002226BA /* SharedGraphicsContext3D.h */,
-				498770D31242C535002226BA /* SolidFillShader.cpp */,
-				498770D41242C535002226BA /* SolidFillShader.h */,
-				498770D51242C535002226BA /* TexShader.cpp */,
-				498770D61242C535002226BA /* TexShader.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
 				498770D81242C535002226BA /* Texture.h */,
 				498770D91242C535002226BA /* TilingData.cpp */,
@@ -22119,10 +22068,6 @@
 				511F231A0DC160DA004F0032 /* LocalStorageThread.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
-				49B69E5F1254FEED007D57EB /* LoopBlinnClassifier.h in Headers */,
-				49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */,
-				49B69E641254FEED007D57EB /* LoopBlinnMathUtils.h in Headers */,
-				49B69E661254FEED007D57EB /* LoopBlinnTextureCoords.h in Headers */,
 				FD31603912B0267600C1A359 /* LowPass2FilterNode.h in Headers */,
 				656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
@@ -22298,10 +22243,6 @@
 				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
 				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
 				0AFDAC3D10F5448C00E1F3D2 /* PluginViewBase.h in Headers */,
-				498770E41242C535002226BA /* PODArena.h in Headers */,
-				498770E51242C535002226BA /* PODInterval.h in Headers */,
-				498770E61242C535002226BA /* PODIntervalTree.h in Headers */,
-				498770E71242C535002226BA /* PODRedBlackTree.h in Headers */,
 				B2B1F7170D00CAA8004AEA64 /* PointerEventsHitRules.h in Headers */,
 				84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */,
 				97059978107D975200A50A7C /* PolicyCallback.h in Headers */,
@@ -22565,7 +22506,6 @@
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
-				498770EB1242C535002226BA /* SharedGraphicsContext3D.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				41E1B1D40FF5986900576B3B /* SharedWorker.h in Headers */,
 				41D168E810226E89009BC827 /* SharedWorkerContext.h in Headers */,
@@ -22584,7 +22524,6 @@
 				510D4A37103165EE0049EA54 /* SocketStreamHandleBase.h in Headers */,
 				510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */,
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
-				498770ED1242C535002226BA /* SolidFillShader.h in Headers */,
 				4B3043C70AE0370300A82647 /* Sound.h in Headers */,
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
 				84A81F420FC7E02700955300 /* SourceGraphic.h in Headers */,
@@ -22912,7 +22851,6 @@
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 				BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */,
 				F55B3DD61251F12D003EF269 /* TelephoneInputType.h in Headers */,
-				498770EF1242C535002226BA /* TexShader.h in Headers */,
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
 				B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */,
@@ -25109,9 +25047,6 @@
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
-				49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */,
-				49B69E631254FEED007D57EB /* LoopBlinnMathUtils.cpp in Sources */,
-				49B69E651254FEED007D57EB /* LoopBlinnTextureCoords.cpp in Sources */,
 				FD31603812B0267600C1A359 /* LowPass2FilterNode.cpp in Sources */,
 				93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
@@ -25462,7 +25397,6 @@
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
-				498770EA1242C535002226BA /* SharedGraphicsContext3D.cpp in Sources */,
 				93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */,
 				41E1B1D30FF5986900576B3B /* SharedWorker.cpp in Sources */,
 				41D168E710226E89009BC827 /* SharedWorkerContext.cpp in Sources */,
@@ -25481,7 +25415,6 @@
 				510D4A33103165EE0049EA54 /* SocketStreamErrorBase.cpp in Sources */,
 				510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */,
-				498770EC1242C535002226BA /* SolidFillShader.cpp in Sources */,
 				4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */,
 				84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */,
 				84A81F410FC7E02700955300 /* SourceGraphic.cpp in Sources */,
@@ -25727,7 +25660,6 @@
 				6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */,
 				BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */,
 				F55B3DD51251F12D003EF269 /* TelephoneInputType.cpp in Sources */,
-				498770EE1242C535002226BA /* TexShader.cpp in Sources */,
 				6550B6A5099DF0270090D781 /* Text.cpp in Sources */,
 				372C00C4129611F1005C9575 /* TextBoundaries.cpp in Sources */,
 				B2AFFC970D00A5DF0030074D /* TextBoundaries.mm in Sources */,

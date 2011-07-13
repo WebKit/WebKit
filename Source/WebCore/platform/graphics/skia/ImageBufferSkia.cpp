@@ -38,7 +38,6 @@
 #include "BitmapImageSingleFrameSkia.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextGPU.h"
 #include "ImageData.h"
 #include "JPEGImageEncoder.h"
 #include "MIMETypeRegistry.h"
@@ -105,7 +104,7 @@ bool ImageBuffer::drawsUsingCopy() const
 
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
-    m_context->platformContext()->syncSoftwareCanvas();
+    m_context->platformContext()->makeGrContextCurrent();
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), true);
 }
 
@@ -117,22 +116,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    if (m_data.m_platformContext.useGPU() && context->platformContext()->useGPU()) {
-        if (context->platformContext()->canAccelerate()) {
-            m_data.m_platformContext.prepareForHardwareDraw();
-            DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
-            unsigned sourceTexture = static_cast<unsigned>(sourceDrawingBuffer->platformColorBuffer());
-            FloatRect destRectNormalized(normalizeRect(destRect));
-            FloatRect srcRectFlipped(normalizeRect(srcRect));
-            srcRectFlipped.setY(m_size.height() - srcRect.y());
-            srcRectFlipped.setHeight(-srcRect.height());
-            context->platformContext()->prepareForHardwareDraw();
-            context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRectFlipped, destRectNormalized, styleColorSpace, op);
-            return;
-        }
-        m_data.m_platformContext.syncSoftwareCanvas();
-    }
-
+    context->platformContext()->makeGrContextCurrent();
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
@@ -140,6 +124,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
+    context->platformContext()->makeGrContextCurrent();
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
     image->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
@@ -256,13 +241,13 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
 
 PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
-    context()->platformContext()->syncSoftwareCanvas();
+    m_context->platformContext()->makeGrContextCurrent();
     return getImageData<Unmultiplied>(rect, *context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
 PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
-    context()->platformContext()->syncSoftwareCanvas();
+    m_context->platformContext()->makeGrContextCurrent();
     return getImageData<Premultiplied>(rect, *context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
@@ -337,13 +322,13 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    context()->platformContext()->syncSoftwareCanvas();
+    m_context->platformContext()->makeGrContextCurrent();
     putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    context()->platformContext()->syncSoftwareCanvas();
+    m_context->platformContext()->makeGrContextCurrent();
     putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
 }
 

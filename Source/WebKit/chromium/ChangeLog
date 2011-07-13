@@ -1,3 +1,22 @@
+2011-07-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Delete the unused legacy accelerated canvas 2d code
+        https://bugs.webkit.org/show_bug.cgi?id=64214
+
+        Reviewed by Stephen White.
+
+        Adds a way to stash a GrContext* on a GraphicsContext3D. Previously, this was handled by
+        SharedGraphicsContext3D, but we don't need that class any more.  This is used only for the shared
+        GraphicsContext3D stashed on the Page and shared by all accelerated canvases within the Page, for WebGL and
+        compositor contexts the GrContext is never set.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::grContext):
+        (WebCore::GraphicsContext3D::grContext):
+        * src/GraphicsContext3DInternal.h:
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota

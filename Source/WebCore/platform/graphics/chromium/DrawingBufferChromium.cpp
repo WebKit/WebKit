@@ -34,7 +34,6 @@
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "SharedGraphicsContext3D.h"
 
 #if USE(SKIA)
 #include "GrContext.h"
@@ -161,7 +160,7 @@ Platform3DObject DrawingBuffer::platformColorBuffer() const
 void DrawingBuffer::setGrContext(GrContext* context)
 {
     // We just take a ptr without referencing it, as we require that we never outlive
-    // the SharedGraphicsContext3D object that is giving us the context.
+    // the GraphicsContext3D object that is giving us the context.
     m_grContext = context;
 }
 

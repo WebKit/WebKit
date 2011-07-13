@@ -128,7 +128,7 @@ namespace WebCore {
     class IntRect;
     class RoundedRect;
     class KURL;
-    class SharedGraphicsContext3D;
+    class GraphicsContext3D;
     class TextRun;
 
     enum TextDrawingMode {
@@ -512,9 +512,7 @@ namespace WebCore {
         pattern getHaikuStrokeStyle();
 #endif
 
-        void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
-        void syncSoftwareCanvas();
-        void markDirtyRect(const IntRect&); // Hints that a portion of the backing store is dirty.
+        void setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, const IntSize&);
 
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 

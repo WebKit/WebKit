@@ -34,6 +34,10 @@
 #include "SkBitmap.h"
 #endif
 
+#if USE(SKIA)
+class GrContext;
+#endif
+
 namespace WebKit {
 class WebGraphicsContext3D;
 class WebViewImpl;
@@ -62,6 +66,9 @@ public:
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
+#if USE(SKIA)
+    GrContext* grContext();
+#endif
 
     bool makeContextCurrent();
 
@@ -305,6 +312,8 @@ private:
     // frame buffer into. This seems to happen when CSS styles are
     // used to resize the Canvas.
     SkBitmap m_resizingBitmap;
+
+    GrContext* m_grContext;
 #endif
 
 #if USE(CG)

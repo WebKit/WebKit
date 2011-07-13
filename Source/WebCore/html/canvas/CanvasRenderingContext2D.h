@@ -56,7 +56,7 @@ class TextMetrics;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
 class DrawingBuffer;
-class SharedGraphicsContext3D;
+class GraphicsContext3D;
 #endif
 
 typedef int ExceptionCode;
@@ -219,8 +219,6 @@ public:
     LineCap getLineCap() const { return state().m_lineCap; }
     LineJoin getLineJoin() const { return state().m_lineJoin; }
 
-    virtual void paintRenderingResultsToCanvas();
-
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const;
 #endif
@@ -305,7 +303,7 @@ private:
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     RefPtr<DrawingBuffer> m_drawingBuffer;
-    RefPtr<SharedGraphicsContext3D> m_context3D;
+    RefPtr<GraphicsContext3D> m_context3D;
 #endif
 };
 

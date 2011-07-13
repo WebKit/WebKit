@@ -47,7 +47,6 @@ namespace WebCore {
 enum CompositeOperator;
 class DrawingBuffer;
 class GraphicsContext3D;
-class GraphicsContextGPU;
 class Texture;
 
 // This class holds the platform-specific state for GraphicsContext. We put
@@ -70,12 +69,6 @@ class Texture;
 class PlatformContextSkia {
     WTF_MAKE_NONCOPYABLE(PlatformContextSkia);
 public:
-    enum AccelerationMode {
-        NoAcceleration,
-        GPU,
-        SkiaGPU
-    };
-
     // For printing, there shouldn't be any canvas. canvas can be NULL. If you
     // supply a NULL canvas, you can also call setCanvas later.
     PlatformContextSkia(SkCanvas*);
@@ -184,33 +177,15 @@ public:
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
 
-    bool canAccelerate() const;
-    bool canvasClipApplied() const;
-    AccelerationMode accelerationMode() const { return m_accelerationMode; }
-    bool useGPU() const { return m_accelerationMode == GPU; }
-    bool useSkiaGPU() const { return m_accelerationMode == SkiaGPU; }
-    void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    GraphicsContextGPU* gpuCanvas() const { return m_gpuCanvas.get(); }
-#else
-    GraphicsContextGPU* gpuCanvas() const { return 0; }
-#endif
-    // Call these before making a call that manipulates the underlying
-    // SkCanvas or WebCore::GraphicsContextGPU
-    void prepareForSoftwareDraw() const;
-    void prepareForHardwareDraw() const;
-    // Call to force the SkCanvas to contain all rendering results.
-    void syncSoftwareCanvas() const;
-    void markDirtyRect(const IntRect& rect);
+    bool useSkiaGPU() const { return m_gpuContext; }
+    void setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, const IntSize&);
+    void makeGrContextCurrent();
 
 private:
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
     void applyClipFromImage(const FloatRect&, const SkBitmap&);
     void applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths);
-
-    void uploadSoftwareToHardware(CompositeOperator) const;
-    void readbackHardwareToSoftware() const;
 
     // common code between setupPaintFor[Filling,Stroking]
     void setupShader(SkPaint*, Gradient*, Pattern*, SkColor) const;
@@ -235,13 +210,7 @@ private:
     FloatSize m_imageResamplingHintDstSize;
     bool m_printing;
     bool m_drawingToImageBuffer;
-    AccelerationMode m_accelerationMode;
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    OwnPtr<GraphicsContextGPU> m_gpuCanvas;
-    mutable RefPtr<Texture> m_uploadTexture;
-#endif
-    mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
-    mutable IntRect m_softwareDirtyRect;
+    GraphicsContext3D* m_gpuContext;
 };
 
 }

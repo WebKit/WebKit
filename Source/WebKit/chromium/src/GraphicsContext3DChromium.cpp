@@ -61,6 +61,10 @@
 #include <CoreGraphics/CGImage.h>
 #endif
 
+#if USE(SKIA)
+#include "GrContext.h"
+#endif
+
 // There are two levels of delegation in this file:
 //
 //   1. GraphicsContext3D delegates to GraphicsContext3DInternal. This is done
@@ -84,6 +88,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
     , m_initializedAvailableExtensions(false)
     , m_layerComposited(false)
 #if USE(SKIA)
+    , m_grContext(0)
 #elif USE(CG)
     , m_renderOutput(0)
 #else
@@ -97,6 +102,12 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
 #if USE(CG)
     if (m_renderOutput)
         delete[] m_renderOutput;
+#endif
+#if USE(SKIA)
+    if (m_grContext) {
+        m_grContext->contextDestroyed();
+        GrSafeUnref(m_grContext);
+    }
 #endif
 }
 
@@ -145,6 +156,23 @@ Platform3DObject GraphicsContext3DInternal::platformTexture() const
 {
     return m_impl->getPlatformTextureId();
 }
+
+#if USE(SKIA)
+GrContext* GraphicsContext3DInternal::grContext()
+{
+    // Limit the number of textures we hold in the bitmap->texture cache.
+    static const int maxTextureCacheCount = 512;
+    // Limit the bytes allocated toward textures in the bitmap->texture cache.
+    static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
+
+    if (!m_grContext) {
+        m_grContext = GrContext::CreateGLShaderContext();
+        if (m_grContext)
+            m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+    }
+    return m_grContext;
+}
+#endif
 
 void GraphicsContext3DInternal::prepareTexture()
 {
@@ -961,6 +989,13 @@ Platform3DObject GraphicsContext3D::platformTexture() const
 {
     return m_internal->platformTexture();
 }
+
+#if USE(SKIA)
+GrContext* GraphicsContext3D::grContext()
+{
+    return m_internal->grContext();
+}
+#endif
 
 void GraphicsContext3D::prepareTexture()
 {

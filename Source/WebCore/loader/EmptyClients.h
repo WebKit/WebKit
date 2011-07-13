@@ -62,7 +62,7 @@
 
 namespace WebCore {
 
-class SharedGraphicsContext3D;
+class GraphicsContext3D;
 
 class EmptyPopupMenu : public PopupMenu {
 public:

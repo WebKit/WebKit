@@ -91,8 +91,10 @@ void DrawingBuffer::clear()
         m_multisampleFBO = 0;
     }
 
-    m_context->deleteFramebuffer(m_fbo);
-    m_fbo = 0;
+    if (m_fbo) {
+        m_context->deleteFramebuffer(m_fbo);
+        m_fbo = 0;
+    }
 }
 
 void DrawingBuffer::createSecondaryBuffers()
