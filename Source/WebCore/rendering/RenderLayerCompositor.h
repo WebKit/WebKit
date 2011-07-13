@@ -184,7 +184,7 @@ public:
     bool compositorShowDebugBorders() const { return m_showDebugBorders; }
     bool compositorShowRepaintCounter() const { return m_showRepaintCounter; }
 
-    void updateContentsScale(float, RenderLayer* = 0);
+    void pageScaleFactorChanged(float, RenderLayer* = 0);
 
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }

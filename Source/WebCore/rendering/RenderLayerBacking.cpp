@@ -1475,7 +1475,7 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
     return ContainerCompositingLayer;
 }
 
-void RenderLayerBacking::updateContentsScale(float scale)
+void RenderLayerBacking::pageScaleFactorChanged(float scale)
 {
     float combinedScale = scale * backingScaleFactor();
 
