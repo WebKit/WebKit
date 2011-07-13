@@ -557,6 +557,12 @@ class TestExpectationSerializerTests(unittest.TestCase):
             expected_string = in_string
         self.assertEqual(expected_string, TestExpectationSerializer.to_string(expectation))
 
+    def assert_list_round_trip(self, in_string, expected_string=None):
+        expectations = TestExpectationParser.parse_list(in_string, TestValidator())
+        if expected_string is None:
+            expected_string = in_string
+        self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations))
+
     def assert_to_string(self, expectation, expected_string):
         self.assertEqual(TestExpectationSerializer.to_string(expectation), expected_string)
 
@@ -601,6 +607,14 @@ class TestExpectationSerializerTests(unittest.TestCase):
         self.assert_round_trip('// Foo')
         self.assert_round_trip('// Foo :')
         self.assert_round_trip('// Foo : =')
+
+    def test_list_roundtrip(self):
+        self.assert_list_round_trip('')
+        self.assert_list_round_trip('\n')
+        self.assert_list_round_trip('\n\n')
+        self.assert_list_round_trip('bar')
+        self.assert_list_round_trip('bar\n//Qux.')
+        self.assert_list_round_trip('bar\n//Qux.\n')
 
     def test_string_whitespace_stripping(self):
         self.assert_round_trip('\n', '')

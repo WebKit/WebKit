@@ -157,6 +157,10 @@ class TestExpectationSerializer:
 
         return ''.join(result)
 
+    @classmethod
+    def list_to_string(cls, expectations):
+        return "\n".join([TestExpectationSerializer.to_string(expectation) for expectation in expectations])
+
 
 class TestExpectationParser:
     """Provides parsing facilities for lines in the test_expectation.txt file."""
@@ -507,11 +511,10 @@ class TestExpectations:
 
     def remove_rebaselined_tests(self, tests):
         """Returns a copy of the expectations with the tests removed."""
-        lines = []
-        for expectation in self._expectations:
-            if not (expectation.valid and expectation.name in tests and "rebaseline" in expectation.modifiers):
-                lines.append(TestExpectationSerializer.to_string(expectation))
-        return "\n".join(lines)
+        def without_rebaseline_modifier(expectation):
+            return not (expectation.valid and expectation.name in tests and "rebaseline" in expectation.modifiers)
+
+        return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
     def _add_to_all_expectations(self, test, options, expectations):
         if not test in self._all_expectations:
