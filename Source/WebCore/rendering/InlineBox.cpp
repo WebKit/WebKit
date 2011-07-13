@@ -124,7 +124,7 @@ void InlineBox::showBox(int printedCharacters) const
 }
 #endif
 
-int InlineBox::logicalHeight() const
+LayoutUnit InlineBox::logicalHeight() const
 {
 #if ENABLE(SVG)
     if (hasVirtualLogicalHeight())
@@ -139,7 +139,7 @@ int InlineBox::logicalHeight() const
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
     const FontMetrics& fontMetrics = renderer()->style(m_firstLine)->fontMetrics();
-    int result = fontMetrics.height();
+    LayoutUnit result = fontMetrics.height();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();
     return result;

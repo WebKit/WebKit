@@ -220,7 +220,7 @@ void RootInlineBox::childRemoved(InlineBox* box)
     }
 }
 
-int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
+LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
 #if ENABLE(SVG)
     // SVG will handle vertical alignment on its own.
@@ -228,10 +228,10 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
         return 0;
 #endif
 
-    int maxPositionTop = 0;
-    int maxPositionBottom = 0;
-    int maxAscent = 0;
-    int maxDescent = 0;
+    LayoutUnit maxPositionTop = 0;
+    LayoutUnit maxPositionBottom = 0;
+    LayoutUnit maxAscent = 0;
+    LayoutUnit maxDescent = 0;
     bool setMaxAscent = false;
     bool setMaxDescent = false;
 
@@ -246,11 +246,11 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     if (maxAscent + maxDescent < max(maxPositionTop, maxPositionBottom))
         adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
 
-    int maxHeight = maxAscent + maxDescent;
-    int lineTop = heightOfBlock;
-    int lineBottom = heightOfBlock;
-    int lineTopIncludingMargins = heightOfBlock;
-    int lineBottomIncludingMargins = heightOfBlock;
+    LayoutUnit maxHeight = maxAscent + maxDescent;
+    LayoutUnit lineTop = heightOfBlock;
+    LayoutUnit lineBottom = heightOfBlock;
+    LayoutUnit lineTopIncludingMargins = heightOfBlock;
+    LayoutUnit lineBottomIncludingMargins = heightOfBlock;
     bool setLineTop = false;
     bool hasAnnotationsBefore = false;
     bool hasAnnotationsAfter = false;
@@ -268,7 +268,7 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
         heightOfBlock += annotationsAdjustment;
     }
 
-    maxHeight = max(0, maxHeight);
+    maxHeight = max<LayoutUnit>(0, maxHeight);
 
     return heightOfBlock + maxHeight;
 }
@@ -304,8 +304,8 @@ int RootInlineBox::beforeAnnotationsAdjustment() const
     return result;
 }
 
-GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock, 
-                                         int selTop, int selHeight, const PaintInfo* paintInfo)
+GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, 
+                                         LayoutUnit selTop, LayoutUnit selHeight, const PaintInfo* paintInfo)
 {
     RenderObject::SelectionState lineState = selectionState();
 
@@ -332,13 +332,13 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const IntPoint&
     // We can see that the |bbb| run is not part of the selection while the runs around it are.
     if (firstBox && firstBox != lastBox) {
         // Now fill in any gaps on the line that occurred between two selected elements.
-        int lastLogicalLeft = firstBox->logicalRight();
+        LayoutUnit lastLogicalLeft = firstBox->logicalRight();
         bool isPreviousBoxSelected = firstBox->selectionState() != RenderObject::SelectionNone;
         for (InlineBox* box = firstBox->nextLeafChild(); box; box = box->nextLeafChild()) {
             if (box->selectionState() != RenderObject::SelectionNone) {
-                IntRect logicalRect(lastLogicalLeft, selTop, box->logicalLeft() - lastLogicalLeft, selHeight);
-                logicalRect.move(renderer()->isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
-                IntRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
+                LayoutRect logicalRect(lastLogicalLeft, selTop, box->logicalLeft() - lastLogicalLeft, selHeight);
+                logicalRect.move(renderer()->isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
+                LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                 if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
                     if (paintInfo && box->parent()->renderer()->style()->visibility() == VISIBLE)
                         paintInfo->context->fillRect(gapRect, box->parent()->renderer()->selectionBackgroundColor(), box->parent()->renderer()->style()->colorSpace());
@@ -565,7 +565,7 @@ static void setAscentAndDescent(int& ascent, int& descent, int newAscent, int ne
     }
 }
 
-void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, int& ascent, int& descent,
+void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutUnit& ascent, LayoutUnit& descent,
                                            bool& affectsAscent, bool& affectsDescent) const
 {
     bool ascentDescentSet = false;
@@ -602,11 +602,11 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
         usedFonts->append(box->renderer()->style(m_firstLine)->font().primaryFont());
         for (size_t i = 0; i < usedFonts->size(); ++i) {
             const FontMetrics& fontMetrics = usedFonts->at(i)->fontMetrics();
-            int usedFontAscent = fontMetrics.ascent(baselineType());
-            int usedFontDescent = fontMetrics.descent(baselineType());
-            int halfLeading = (fontMetrics.lineSpacing() - fontMetrics.height()) / 2;
-            int usedFontAscentAndLeading = usedFontAscent + halfLeading;
-            int usedFontDescentAndLeading = fontMetrics.lineSpacing() - usedFontAscentAndLeading;
+            LayoutUnit usedFontAscent = fontMetrics.ascent(baselineType());
+            LayoutUnit usedFontDescent = fontMetrics.descent(baselineType());
+            LayoutUnit halfLeading = (fontMetrics.lineSpacing() - fontMetrics.height()) / 2;
+            LayoutUnit usedFontAscentAndLeading = usedFontAscent + halfLeading;
+            LayoutUnit usedFontDescentAndLeading = fontMetrics.lineSpacing() - usedFontAscentAndLeading;
             if (includeFont) {
                 setAscentAndDescent(ascent, descent, usedFontAscent, usedFontDescent, ascentDescentSet);
                 setUsedFont = true;
@@ -667,7 +667,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     }
 }
 
-int RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache& verticalPositionCache)
+LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache& verticalPositionCache)
 {
     if (box->renderer()->isText())
         return box->parent()->logicalTop();
@@ -685,7 +685,7 @@ int RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache&
     // Check the cache.
     bool isRenderInline = renderer->isRenderInline();
     if (isRenderInline && !firstLine) {
-        int verticalPosition = verticalPositionCache.get(renderer, baselineType());
+        LayoutUnit verticalPosition = verticalPositionCache.get(renderer, baselineType());
         if (verticalPosition != PositionUndefined)
             return verticalPosition;
     }

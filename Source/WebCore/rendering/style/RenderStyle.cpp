@@ -1064,7 +1064,7 @@ void RenderStyle::setBlendedFontSize(int size)
     font().update(currentFontSelector);
 }
 
-void RenderStyle::getShadowExtent(const ShadowData* shadow, int &top, int &right, int &bottom, int &left) const
+void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit &top, LayoutUnit &right, LayoutUnit &bottom, LayoutUnit &left) const
 {
     top = 0;
     right = 0;
@@ -1083,7 +1083,7 @@ void RenderStyle::getShadowExtent(const ShadowData* shadow, int &top, int &right
     }
 }
 
-void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, int &left, int &right) const
+void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit &left, LayoutUnit &right) const
 {
     left = 0;
     right = 0;
@@ -1098,7 +1098,7 @@ void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, int &left,
     }
 }
 
-void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, int &top, int &bottom) const
+void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &top, LayoutUnit &bottom) const
 {
     top = 0;
     bottom = 0;

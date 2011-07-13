@@ -26,13 +26,11 @@
 #define ShadowData_h
 
 #include "Color.h"
+#include "LayoutTypes.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-
-class FloatRect;
-class IntRect;
 
 enum ShadowStyle { Normal, Inset };
 
@@ -51,7 +49,7 @@ public:
     {
     }
 
-    ShadowData(int x, int y, int blur, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
+    ShadowData(LayoutUnit x, LayoutUnit y, int blur, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
         : m_x(x)
         , m_y(y)
         , m_blur(blur)
@@ -70,8 +68,8 @@ public:
         return !(*this == o);
     }
     
-    int x() const { return m_x; }
-    int y() const { return m_y; }
+    LayoutUnit x() const { return m_x; }
+    LayoutUnit y() const { return m_y; }
     int blur() const { return m_blur; }
     int spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }
@@ -85,8 +83,8 @@ public:
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
 
 private:
-    int m_x;
-    int m_y;
+    LayoutUnit m_x;
+    LayoutUnit m_y;
     int m_blur;
     int m_spread;
     Color m_color;

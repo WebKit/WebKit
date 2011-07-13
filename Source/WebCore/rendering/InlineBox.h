@@ -254,9 +254,9 @@ public:
     int pixelSnappedLogicalRight() const { return ceilf(logicalRight()); }
 
     // The logicalTop[ position is the top edge of the line box in a horizontal line and the left edge in a vertical line.
-    int logicalTop() const { return isHorizontal() ? m_topLeft.y() : m_topLeft.x(); }
-    int logicalBottom() const { return logicalTop() + logicalHeight(); }
-    void setLogicalTop(int top)
+    LayoutUnit logicalTop() const { return isHorizontal() ? m_topLeft.y() : m_topLeft.x(); }
+    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
+    void setLogicalTop(LayoutUnit top)
     {
         if (isHorizontal())
             setY(top);
@@ -269,7 +269,7 @@ public:
     float logicalWidth() const { return m_logicalWidth; }
 
     // The logical height is our extent in the block flow direction, i.e., height for horizontal text and width for vertical text.
-    int logicalHeight() const;
+    LayoutUnit logicalHeight() const;
 
     FloatRect logicalFrameRect() const { return isHorizontal() ? IntRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : IntRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
 

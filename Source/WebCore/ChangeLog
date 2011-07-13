@@ -1,3 +1,65 @@
+2011-07-12  Emil A Eklund  <eae@chromium.org>
+
+        Switch InlineFlowBox to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64399
+
+        Reviewed by Eric Seidel.
+
+        First step in moving floats over to the new layout abstraction.
+
+        No new tests, no new functionality.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::logicalTop):
+        (WebCore::InlineBox::logicalBottom):
+        (WebCore::InlineBox::setLogicalTop):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::addReplacedChildOverflow):
+        (WebCore::InlineFlowBox::constrainToLineTopAndBottomIfNeeded):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+        * rendering/RenderBlock.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::RootInlineBox::lineSelectionGap):
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        * rendering/RootInlineBox.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getShadowExtent):
+        (WebCore::RenderStyle::getShadowHorizontalExtent):
+        (WebCore::RenderStyle::getShadowVerticalExtent):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::getTextShadowExtent):
+        (WebCore::InheritedFlags::getTextShadowHorizontalExtent):
+        (WebCore::InheritedFlags::getTextShadowVerticalExtent):
+        (WebCore::InheritedFlags::getTextShadowInlineDirectionExtent):
+        (WebCore::InheritedFlags::getTextShadowBlockDirectionExtent):
+        (WebCore::InheritedFlags::getBoxShadowExtent):
+        (WebCore::InheritedFlags::getBoxShadowHorizontalExtent):
+        (WebCore::InheritedFlags::getBoxShadowVerticalExtent):
+        (WebCore::InheritedFlags::getBoxShadowInlineDirectionExtent):
+        (WebCore::InheritedFlags::getBoxShadowBlockDirectionExtent):
+        (WebCore::InheritedFlags::getShadowInlineDirectionExtent):
+        (WebCore::InheritedFlags::getShadowBlockDirectionExtent):
+        * rendering/style/ShadowData.cpp:
+        (WebCore::calculateShadowExtent):
+        (WebCore::ShadowData::adjustRectForShadow):
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::x):
+        (WebCore::ShadowData::y):
+
 2011-07-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] SVG text is not rendered sometimes with geometricPrecision

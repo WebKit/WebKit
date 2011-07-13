@@ -22,9 +22,6 @@
 #include "config.h"
 #include "ShadowData.h"
 
-#include "FloatRect.h"
-#include "IntRect.h"
-
 using namespace std;
 
 namespace WebCore {
@@ -56,7 +53,7 @@ bool ShadowData::operator==(const ShadowData& o) const
         && m_isWebkitBoxShadow == o.m_isWebkitBoxShadow;
 }
 
-static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, int& shadowLeft, int& shadowRight, int& shadowTop, int& shadowBottom)
+static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
 {
     do {
         int blurAndSpread = shadow->blur() + shadow->spread() + additionalOutlineSize;
@@ -86,10 +83,10 @@ void ShadowData::adjustRectForShadow(IntRect& rect, int additionalOutlineSize) c
 
 void ShadowData::adjustRectForShadow(FloatRect& rect, int additionalOutlineSize) const
 {
-    int shadowLeft = 0;
-    int shadowRight = 0;
-    int shadowTop = 0;
-    int shadowBottom = 0;
+    LayoutUnit shadowLeft = 0;
+    LayoutUnit shadowRight = 0;
+    LayoutUnit shadowTop = 0;
+    LayoutUnit shadowBottom = 0;
     calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);

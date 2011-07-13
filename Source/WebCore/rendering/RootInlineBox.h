@@ -59,7 +59,7 @@ public:
 
     int blockDirectionPointInLine() const { return max(lineTop(), selectionTop()); }
 
-    int alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
+    LayoutUnit alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void setLineTopBottomPositions(LayoutUnit top, LayoutUnit bottom)
     { 
         m_lineTop = top; 
@@ -111,7 +111,7 @@ public:
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
-    GapRects lineSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock, int selTop, int selHeight, const PaintInfo*);
+    GapRects lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, LayoutUnit selTop, LayoutUnit selHeight, const PaintInfo*);
 
     RenderBlock* block() const;
 
@@ -140,8 +140,8 @@ public:
 
     IntRect paddedLayoutOverflowRect(int endPadding) const;
 
-    void ascentAndDescentForBox(InlineBox*, GlyphOverflowAndFallbackFontsMap&, int& ascent, int& descent, bool& affectsAscent, bool& affectsDescent) const;
-    int verticalPositionForBox(InlineBox*, VerticalPositionCache&);
+    void ascentAndDescentForBox(InlineBox*, GlyphOverflowAndFallbackFontsMap&, LayoutUnit& ascent, LayoutUnit& descent, bool& affectsAscent, bool& affectsDescent) const;
+    LayoutUnit verticalPositionForBox(InlineBox*, VerticalPositionCache&);
     bool includeLeadingForBox(InlineBox*) const;
     bool includeFontForBox(InlineBox*) const;
     bool includeGlyphsForBox(InlineBox*) const;
