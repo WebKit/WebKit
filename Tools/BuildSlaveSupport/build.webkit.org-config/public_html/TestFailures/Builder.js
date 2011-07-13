@@ -135,11 +135,11 @@ Builder.prototype = {
                 return;
             }
 
-            if (/^Exiting early/.test(layoutTestStep.results[1][0]))
+            if (/Exiting early/.test(layoutTestStep.results[1][0]))
                 result.tooManyFailures = true;
 
             result.failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
-                var match = /^(\d+)/.exec(outputLine);
+                var match = /^(\d+)\s/.exec(outputLine);
                 if (!match)
                     return sum;
                 // Don't count leaks, new tests, or passes as failures.

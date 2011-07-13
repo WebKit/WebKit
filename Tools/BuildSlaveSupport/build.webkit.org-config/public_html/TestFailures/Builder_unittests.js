@@ -115,4 +115,37 @@ test("getNumberOfFailingTests detects spurious run-webkit-tests failures", 4, fu
     });
 });
 
+test("getNumberOfFailingTests understands NRWT exiting early due to too many failures", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                isFinished: true, 
+                isStarted: true, 
+                name: "layout-test", 
+                results: [
+                  2, 
+                  [
+                      "2011-07-13 04:38:46,315 11247 manager.py:780 WARNING Exiting early after 20 crashes and 0 timeouts. 2251 tests run.", 
+                      "20 failed"
+                  ]
+                ], 
+                step_number: 4, 
+                text: [
+                    "2011-07-13 04:38:46,315 11247 manager.py:780 WARNING Exiting early after 20 crashes and 0 timeouts. 2251 tests run.", 
+                    "20 failed"
+                ], 
+                times: [
+                    1310557115.793082, 
+                    1310557129.832104
+                ]
+            }, 
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, 20);
+        equal(tooManyFailures, true);
+    });
+});
+
 })();

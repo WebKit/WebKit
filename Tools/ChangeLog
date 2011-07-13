@@ -1,3 +1,22 @@
+2011-07-13  Adam Roben  <aroben@apple.com>
+        
+        Teach TestFailures to understand NRWT's output when it exits early due to too many failures
+
+        Fixes <http://webkit.org/b/64456> TestFailures page reports way too many failures when NRWT
+        exits early
+
+        Reviewed by Dimitri Glazkov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Relaxed the "Exiting early" test not to require
+        it to be at the beginning of the line, since NRWT prints a bunch of junk earlier in the
+        line. Tightened up the regex that's used to parse the number of failing tests to require the
+        leading number to be followed by whitespace so that we won't parse the "2011" in
+        "2011-07-13" as a number of failures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Added a test for the above.
+
 2011-07-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Extract model-like TestExpectationLine and TestExpectationFile from TestExpectations.
