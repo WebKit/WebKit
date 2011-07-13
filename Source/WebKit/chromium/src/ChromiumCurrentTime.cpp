@@ -41,4 +41,9 @@ double currentTime()
     return WebKit::webKitClient()->currentTime();
 }
 
+double monotonicallyIncreasingTime()
+{
+    return WebKit::webKitClient()->monotonicallyIncreasingTime();
+}
+
 }  // namespace WTF

@@ -32,27 +32,14 @@
 #include "SystemTime.h"
 
 #include "NotImplemented.h"
-#include "PlatformBridge.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
-
-// Get the current time in seconds since epoch.
-double currentTime()
-{
-    return PlatformBridge::currentTime();
-}
-
-double monotonicallyIncreasingTime()
-{
-    return PlatformBridge::monotonicallyIncreasingTime();
-}
 
 float userIdleTime()
 {
     // Needed for back/forward cache, which we currently have disabled.
     notImplemented();
-    return 0.0F;
+    return 0;
 }
 
 } // namespace WebCore

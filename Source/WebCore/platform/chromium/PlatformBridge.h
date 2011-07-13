@@ -246,10 +246,6 @@ public:
     // Sudden Termination
     static void suddenTerminationChanged(bool enabled);
 
-    // SystemTime ---------------------------------------------------------
-    static double currentTime();
-    static double monotonicallyIncreasingTime();
-
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS)
     static void paintButton(

@@ -704,18 +704,6 @@ void PlatformBridge::suddenTerminationChanged(bool enabled)
     webKitClient()->suddenTerminationChanged(enabled);
 }
 
-// SystemTime -----------------------------------------------------------------
-
-double PlatformBridge::currentTime()
-{
-    return webKitClient()->currentTime();
-}
-
-double PlatformBridge::monotonicallyIncreasingTime()
-{
-    return webKitClient()->monotonicallyIncreasingTime();
-}
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS)

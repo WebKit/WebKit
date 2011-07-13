@@ -1,3 +1,16 @@
+2011-07-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] No implementation defined for WTF::monotonicallyIncreasingTime
+        https://bugs.webkit.org/show_bug.cgi?id=64420
+
+        Reviewed by Tony Gentilcore.
+
+        Removes some redundant time related code.
+
+        * platform/chromium/PlatformBridge.h:
+        * platform/chromium/SystemTimeChromium.cpp:
+        (WebCore::userIdleTime):
+
 2011-07-13  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [V8] Avoid memory leaks with hidden references.
