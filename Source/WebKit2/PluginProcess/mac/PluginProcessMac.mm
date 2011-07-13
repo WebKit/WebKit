@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +39,8 @@
 #import <wtf/HashSet.h>
 
 namespace WebKit {
+
+static pthread_once_t shouldCallRealDebuggerOnce = PTHREAD_ONCE_INIT;
 
 class FullscreenWindowTracker {
     WTF_MAKE_NONCOPYABLE(FullscreenWindowTracker);
@@ -132,7 +135,6 @@ static void initShouldCallRealDebugger()
 
 static bool shouldCallRealDebugger()
 {
-    static pthread_once_t shouldCallRealDebuggerOnce = PTHREAD_ONCE_INIT;
     pthread_once(&shouldCallRealDebuggerOnce, initShouldCallRealDebugger);
     
     return isUserbreakSet;

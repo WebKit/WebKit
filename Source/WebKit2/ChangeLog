@@ -1,3 +1,16 @@
+2011-07-13  David Levin  <levin@chromium.org>
+
+        Possible race condition in ThreadIdentifierData::initializeKeyOnce and shouldCallRealDebugger.
+        https://bugs.webkit.org/show_bug.cgi?id=64465
+
+        Reviewed by Dmitry Titov.
+
+        There isn't a good way to test this as it is very highly unlikely to occur.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::shouldCallRealDebugger): :Since scoped static initialization
+        isn't thread-safe, change the initialization to be global.
+
 2011-07-13  Andreas Kling  <kling@webkit.org>
 
         [Qt][WK2] Remove invalid signal/slot connection in QTouchWebView.

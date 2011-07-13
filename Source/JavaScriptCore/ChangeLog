@@ -1,3 +1,16 @@
+2011-07-13  David Levin  <levin@chromium.org>
+
+        Possible race condition in ThreadIdentifierData::initializeKeyOnce and shouldCallRealDebugger.
+        https://bugs.webkit.org/show_bug.cgi?id=64465
+
+        Reviewed by Dmitry Titov.
+
+        There isn't a good way to test this as it is very highly unlikely to occur.
+
+        * wtf/ThreadIdentifierDataPthreads.cpp:
+        (WTF::ThreadIdentifierData::initializeKeyOnce): Since scoped static initialization
+        isn't thread-safe, change the initialization to be global.
+
 2011-07-12  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64424
