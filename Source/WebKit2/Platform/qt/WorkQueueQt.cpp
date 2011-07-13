@@ -65,10 +65,15 @@ public:
             m_workItem->execute();
     }
 
+    Q_SLOT void executeAndDelete()
+    {
+        execute();
+        delete this;
+    }
+
     virtual void timerEvent(QTimerEvent*)
     {
-        execute(); 
-        delete this;
+        executeAndDelete();
     }
 
     WorkQueue* m_queue;
@@ -108,7 +113,7 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 {
     WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, item.leakPtr());
     itemQt->moveToThread(m_workThread);
-    QMetaObject::invokeMethod(itemQt, "execute", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(itemQt, "executeAndDelete", Qt::QueuedConnection);
 }
 
 void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delayInSecond)
