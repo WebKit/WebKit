@@ -53,7 +53,7 @@ WebInspector.NetworkManager.prototype = {
         }
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
-        if (resource.identifier)
+        if (resource.hasNetworkData)
             NetworkAgent.getResourceContent(resource.identifier, callbackWrapper);
         else
             PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
@@ -72,6 +72,7 @@ WebInspector.NetworkDispatcher = function(manager)
     this._manager = manager;
     this._inflightResourcesById = {};
     this._inflightResourcesByURL = {};
+    this._lastIdentifierForCachedResource = 0;
     InspectorBackend.registerDomainDispatcher("Network", this);
 }
 
@@ -133,6 +134,7 @@ WebInspector.NetworkDispatcher.prototype = {
             resource = this._appendRedirect(identifier, time, request.url);
         } else
             resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, stackTrace);
+        resource.hasNetworkData = true;
         this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
 
@@ -204,7 +206,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     resourceLoadedFromMemoryCache: function(frameId, loaderId, documentURL, time, cachedResource)
     {
-        var resource = this._createResource(null, frameId, loaderId, cachedResource.url, documentURL);
+        var resource = this._createResource("cached:" + ++this._lastIdentifierForCachedResource, frameId, loaderId, cachedResource.url, documentURL);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
@@ -272,8 +274,9 @@ WebInspector.NetworkDispatcher.prototype = {
     {
         var originalResource = this._inflightResourcesById[identifier];
         var previousRedirects = originalResource.redirects || [];
-        delete originalResource.identifier;
+        originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
+        originalResource.hasNetworkData = false;
         this._finishResource(originalResource, time);
         var newResource = this._createResource(identifier, originalResource.frameId, originalResource.loaderId,
              redirectURL, originalResource.documentURL, originalResource.stackTrace);

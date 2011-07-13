@@ -706,8 +706,17 @@ WebInspector.NetworkLogView.prototype = {
     _appendResource: function(resource)
     {
         this._resources.push(resource);
-        if (resource.identifier)
-            this._resourcesById[resource.identifier] = resource;
+        
+        // In case of redirect resource identifier is reassigned to a redirected 
+        // resource and we need to update _resourcesById ans search results. 
+        if (this._resourcesById[resource.identifier]) {
+            var oldResource = resource.redirects[resource.redirects.length - 1];
+            this._resourcesById[oldResource.identifier] = oldResource;
+            
+            this._updateSearchMatchedListAfterResourceIdentifierChanged(resource.identifier, oldResource.identifier);
+        }
+        this._resourcesById[resource.identifier] = resource;
+        
         this._resourcesByURL[resource.url] = resource;
 
         // Pull all the redirects of the main resource upon commit load.
@@ -748,7 +757,7 @@ WebInspector.NetworkLogView.prototype = {
             for (var i = 0; i < this._resources.length; ++i) {
                 var resource = this._resources[i];
                 if (resource.loaderId !== loaderId)
-                    resource.identifier = null;
+                    resource.hasNetworkData = false;
             }
             return;
         }
@@ -1061,6 +1070,16 @@ WebInspector.NetworkLogView.prototype = {
         this._matchedResources = [];
         this._matchedResourcesMap = {};
         this._highlightNthMatchedResource(-1, false);
+    },
+
+    _updateSearchMatchedListAfterResourceIdentifierChanged: function(oldIdentifier, newIdentifier)
+    {
+        var resourceIndex = this._matchedResourcesMap[oldIdentifier];
+        if (resourceIndex) {
+            delete this._matchedResourcesMap[oldIdentifier];
+            this._matchedResourcesMap[newIdentifier] = resourceIndex;
+            this._matchedResources[resourceIndex] = newIdentifier;
+        }
     },
 
     _updateHighlightIfMatched: function(resource)
