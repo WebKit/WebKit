@@ -84,9 +84,9 @@ sub useNewRunWebKitTests()
 
     # NRWT Windows support still needs work: https://bugs.webkit.org/show_bug.cgi?id=38756
 
-    # NRWT doesn't support qt-mac, qt-arm and qt-4.8 platforms now: https://bugs.webkit.org/show_bug.cgi?id=64071 and https://bugs.webkit.org/show_bug.cgi?id=64086
+    # NRWT doesn't support qt-arm and qt-4.8 platforms now: https://bugs.webkit.org/show_bug.cgi?id=64071
     if (isQt()) {
-        return (!usingWebKit2() and !isDarwin() and !isARM() and (getQtVersion() ne "4.8"));
+        return (!usingWebKit2() and !isARM() and (getQtVersion() ne "4.8"));
     }
 
     return ((isLeopard() or isSnowLeopard() or isGtk()) and !usingWebKit2() and !usingLeaks());
