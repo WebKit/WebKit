@@ -1,5 +1,18 @@
 2011-07-13  Andreas Kling  <kling@webkit.org>
 
+        [Qt][WK2] Remove invalid signal/slot connection in QTouchWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=64450
+
+        Reviewed by Benjamin Poulain.
+
+        The focusNextPrevChild() signal was removed, so we shouldn't try to
+        connect to it.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPagePrivate::setPage):
+
+2011-07-13  Andreas Kling  <kling@webkit.org>
+
         [Qt][WK2] Undelayed WorkItems are leaked after execution.
         https://bugs.webkit.org/show_bug.cgi?id=64447
 

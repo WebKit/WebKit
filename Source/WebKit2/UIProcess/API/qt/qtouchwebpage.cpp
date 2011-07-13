@@ -137,7 +137,6 @@ void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)
     ASSERT(!this->page);
     ASSERT(page);
     this->page = page;
-    QObject::connect(page, SIGNAL(focusNextPrevChild(bool)), q, SLOT(focusNextPrevChildCallback(bool)));
 }
 
 void QTouchWebPagePrivate::setViewportRect(const QRectF& viewportRect)
