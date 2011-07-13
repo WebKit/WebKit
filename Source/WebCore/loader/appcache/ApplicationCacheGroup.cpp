@@ -70,7 +70,6 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCop
     , m_completionType(None)
     , m_isCopy(isCopy)
     , m_calledReachedMaxAppCacheSize(false)
-    , m_loadedSize(0)
     , m_availableSpaceInQuota(ApplicationCacheStorage::unknownQuota())
     , m_originQuotaExceededPreviously(false)
 {
@@ -583,8 +582,6 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
     
     ASSERT(m_currentResource);
     m_currentResource->data()->append(data, length);
-
-    m_loadedSize += length;
 }
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
@@ -598,25 +595,6 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
         return;
     }
 
-    // After finishing the loading of any resource, we check if it will
-    // fit in our last known quota limit.
-    // FIXME: The quota could be changed by another appcache in the same origin.
-    if (m_availableSpaceInQuota == ApplicationCacheStorage::unknownQuota())
-        recalculateAvailableSpaceInQuota();
-
-    // While downloading check to see if we have exceeded the available quota.
-    // We can stop immediately if we have already previously failed
-    // due to an earlier quota restriction. The client was already notified
-    // of the quota being reached and decided not to increase it then.
-    // FIXME: Should we break earlier and prevent redownloading on later page loads?
-    // We could then also get rid of m_loadedSize.
-    if (m_originQuotaExceededPreviously && m_availableSpaceInQuota < m_loadedSize) {
-        m_currentResource = 0;
-        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because size quota was exceeded.", 0, String());
-        cacheUpdateFailed();
-        return;
-    }
-
     ASSERT(m_currentHandle == handle);
     ASSERT(m_pendingEntries.contains(handle->firstRequest().url()));
     
@@ -626,6 +604,18 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 
     m_cacheBeingUpdated->addResource(m_currentResource.release());
     m_currentHandle = 0;
+
+    // While downloading check to see if we have exceeded the available quota.
+    // We can stop immediately if we have already previously failed
+    // due to an earlier quota restriction. The client was already notified
+    // of the quota being reached and decided not to increase it then.
+    // FIXME: Should we break earlier and prevent redownloading on later page loads?
+    if (m_originQuotaExceededPreviously && m_availableSpaceInQuota < m_cacheBeingUpdated->estimatedSizeInStorage()) {
+        m_currentResource = 0;
+        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache update failed, because size quota was exceeded.", 0, String());
+        cacheUpdateFailed();
+        return;
+    }
     
     // Load the next resource, if any.
     startLoadingEntry();
@@ -785,6 +775,8 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
 
     m_progressTotal = m_pendingEntries.size();
     m_progressDone = 0;
+
+    recalculateAvailableSpaceInQuota();
 
     startLoadingEntry();
 }
@@ -983,7 +975,6 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     m_completionType = None;
     setUpdateStatus(Idle);
     m_frame = 0;
-    m_loadedSize = 0;
     m_availableSpaceInQuota = ApplicationCacheStorage::unknownQuota();
     m_calledReachedMaxAppCacheSize = false;
 }

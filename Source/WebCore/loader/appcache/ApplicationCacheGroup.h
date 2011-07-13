@@ -199,7 +199,6 @@ private:
     RefPtr<ApplicationCacheResource> m_manifestResource;
     RefPtr<ResourceHandle> m_manifestHandle;
 
-    int64_t m_loadedSize;
     int64_t m_availableSpaceInQuota;
     bool m_originQuotaExceededPreviously;
 

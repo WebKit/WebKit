@@ -1,3 +1,32 @@
+2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Some ApplicationCache Origin Cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=64431
+
+        Reviewed by Alexey Proskuryakov.
+
+        - m_loadedSize is inaccurate. This just replaces it with
+        calls to ApplicationCache::estimatedSizeInStorage.
+
+        - m_availableSpaceInQuota can get out of date, so we just
+        recalculate it at the start of appcache downloads.
+
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        Remove references to m_loadedSize.
+
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        Replace m_loadedSize with estimatedSizeInStorage after we
+        add the new cached resource to the cache. The calculation
+        already happened so this check is fast.
+
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        When we start the Downloading phase, recalculate the quota
+        so that we have an up to date quota value so that we can
+        break early if needed.
+
 2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
 
         Standardize WinCairo conditionalized code under PLATFORM macro.
