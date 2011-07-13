@@ -234,7 +234,7 @@ private:
     virtual void refAuthenticationClient() { ref(); }
     virtual void derefAuthenticationClient() { deref(); }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(CFNETWORK)
     void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff);
 #elif USE(CF)
     void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff);

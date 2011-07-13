@@ -155,10 +155,13 @@ namespace WebCore {
         bool m_shouldContentSniff;
 #if USE(CFNETWORK)
         RetainPtr<CFURLConnectionRef> m_connection;
-#elif PLATFORM(MAC)
+#endif
+#if PLATFORM(MAC) && !USE(CFNETWORK)
         RetainPtr<NSURLConnection> m_connection;
         RetainPtr<WebCoreResourceHandleAsDelegate> m_delegate;
         RetainPtr<id> m_proxy;
+#endif
+#if PLATFORM(MAC)
         bool m_startWhenScheduled;
         bool m_needsSiteSpecificQuirks;
 #endif

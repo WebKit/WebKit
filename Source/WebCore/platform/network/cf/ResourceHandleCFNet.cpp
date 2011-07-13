@@ -205,11 +205,23 @@ static void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfRespo
     if (!handle->client())
         return;
 
+#if PLATFORM(MAC)
+    // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
+    CFHTTPMessageRef msg = wkGetCFURLResponseHTTPResponse(cfResponse);
+    int statusCode = msg ? CFHTTPMessageGetResponseStatusCode(msg) : 0;
+
+    if (statusCode != 304)
+        adjustMIMETypeIfNecessary(cfResponse);
+
+    if (_CFURLRequestCopyProtocolPropertyForKey(handle->firstRequest().cfURLRequest(), CFSTR("ForceHTMLMIMEType")))
+        wkSetCFURLResponseMIMEType(cfResponse, CFSTR("text/html"));
+#else
     if (!CFURLResponseGetMIMEType(cfResponse)) {
         // We should never be applying the default MIMEType if we told the networking layer to do content sniffing for handle.
         ASSERT(!handle->shouldContentSniff());
         setDefaultMIMEType(cfResponse);
     }
+#endif
     
     handle->client()->didReceiveResponse(handle, cfResponse);
 }
@@ -338,7 +350,7 @@ static void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef c
 ResourceHandleInternal::~ResourceHandleInternal()
 {
     if (m_connection) {
-        LOG(Network, "CFNet - Cancelling connection %p (%s)", m_connection, m_firstRequest.url().string().utf8().data());
+        LOG(Network, "CFNet - Cancelling connection %p (%s)", m_connection.get(), m_firstRequest.url().string().utf8().data());
         CFURLConnectionCancel(m_connection.get());
     }
 }
@@ -469,11 +481,15 @@ bool ResourceHandle::start(NetworkingContext* context)
 
     createCFURLConnection(shouldUseCredentialStorage, d->m_shouldContentSniff);
 
+#if PLATFORM(WIN)
     CFURLConnectionScheduleWithCurrentMessageQueue(d->m_connection.get());
+#else
+    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+#endif
     CFURLConnectionScheduleDownloadWithRunLoop(d->m_connection.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
     CFURLConnectionStart(d->m_connection.get());
 
-    LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", firstRequest().url().string().utf8().data(), this, d->m_connection);
+    LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", firstRequest().url().string().utf8().data(), this, d->m_connection.get());
 
     return true;
 }
@@ -828,7 +844,8 @@ void WebCoreSynchronousLoaderClient::willSendRequest(ResourceHandle* handle, Res
         RetainPtr<CFErrorRef> cfError(AdoptCF, CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorBadServerResponse, 0));
         m_error = cfError.get();
         m_isDone = true;
-        request = 0;
+        CFURLRequestRef nullRequest = 0;
+        request = nullRequest;
         return;
     }
 }
