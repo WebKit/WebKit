@@ -142,6 +142,7 @@ typedef uint32_t ExceptionInfo;
     \
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \

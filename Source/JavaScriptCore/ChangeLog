@@ -1,3 +1,38 @@
+2011-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not implement op_construct.
+        https://bugs.webkit.org/show_bug.cgi?id=64066
+
+        Reviewed by Gavin Barraclough.
+        
+        This is a fixed implementation of op_construct.  Constructor calls are implemented
+        by reusing almost all of the code for Call, with care taken to make sure that
+        where the are differences (like selecting different code blocks), those differences
+        are respected.  The two fixes over the last patch are: (1) make sure the
+        CodeBlock::unlinkCalls respects differences between Call and Construct, and (2)
+        make sure that virtualFor() in DFGOperations respects the CodeSpecializationKind
+        (either CodeForCall or CodeForConstruct) when invoking the compiler.
+
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::recordConstruct):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkFor):
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/CodeBlock.cpp:
+        (JSC::CodeBlock::unlinkCalls):
+
 2011-07-12  Oliver Hunt  <oliver@apple.com>
 
         Overzealous type validation in method_check

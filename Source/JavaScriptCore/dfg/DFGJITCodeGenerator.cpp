@@ -470,6 +470,18 @@ void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigne
 
 void JITCodeGenerator::emitCall(Node& node)
 {
+    P_DFGOperation_E slowCallFunction;
+    bool isCall;
+    
+    if (node.op == Call) {
+        slowCallFunction = operationLinkCall;
+        isCall = true;
+    } else {
+        ASSERT(node.op == Construct);
+        slowCallFunction = operationLinkConstruct;
+        isCall = false;
+    }
+    
     NodeIndex calleeNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild()];
     JSValueOperand callee(this, calleeNodeIndex);
     GPRReg calleeGPR = callee.gpr();
@@ -501,14 +513,7 @@ void JITCodeGenerator::emitCall(Node& node)
         m_jit.storePtr(argGPR, addressOfCallData(-callDataSize + argIdx));
     }
     
-    switch (node.op) {
-    case Call:
-        m_jit.storePtr(calleeGPR, addressOfCallData(RegisterFile::Callee));
-        break;
-        
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    m_jit.storePtr(calleeGPR, addressOfCallData(RegisterFile::Callee));
     
     flushRegisters();
     
@@ -518,16 +523,9 @@ void JITCodeGenerator::emitCall(Node& node)
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::Jump slowPath;
     
-    switch (node.op) {
-    case Call:
-        slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(JSValue::encode(JSValue())));
-        m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultGPR);
-        m_jit.storePtr(resultGPR, addressOfCallData(RegisterFile::ScopeChain));
-        break;
-        
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(JSValue::encode(JSValue())));
+    m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultGPR);
+    m_jit.storePtr(resultGPR, addressOfCallData(RegisterFile::ScopeChain));
 
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     
@@ -539,7 +537,7 @@ void JITCodeGenerator::emitCall(Node& node)
     slowPath.link(&m_jit);
     
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(operationLinkCall, m_jit.graph()[m_compileIndex].exceptionInfo);
+    JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, m_jit.graph()[m_compileIndex].exceptionInfo);
     m_jit.move(Imm32(numArgs), GPRInfo::regT1);
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), m_jit.graph()[m_compileIndex].exceptionInfo);
@@ -550,7 +548,7 @@ void JITCodeGenerator::emitCall(Node& node)
     
     jsValueResult(resultGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
     
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, true, m_jit.graph()[m_compileIndex].exceptionInfo);
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, m_jit.graph()[m_compileIndex].exceptionInfo);
 }
 
 #ifndef NDEBUG

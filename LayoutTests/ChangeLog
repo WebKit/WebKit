@@ -1,3 +1,20 @@
+2011-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not implement op_construct.
+        https://bugs.webkit.org/show_bug.cgi?id=64066
+
+        Reviewed by Gavin Barraclough.
+
+        Added a test for the DFG op_construct regression, where polymorphic constructor
+        calls will result in the code being compiled for call but then invoked as a
+        constructor.  This test will fail if that part of the patch is omitted.
+
+        * fast/js/polymorphic-construct-expected.txt: Added.
+        * fast/js/polymorphic-construct.html: Added.
+        * fast/js/script-tests/polymorphic-construct.js: Added.
+        (Foo):
+        ():
+
 2011-07-12  Chris Rogers  <crogers@google.com>
 
         Enable Web Audio for chromium DRT

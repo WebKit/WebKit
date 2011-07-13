@@ -1751,7 +1751,7 @@ void CodeBlock::unlinkCalls()
             continue;
         if (getJITCode().jitType() == JITCode::DFGJIT) {
 #if ENABLE(DFG_JIT)
-            repatchBuffer.relink(CodeLocationCall(m_callLinkInfos[i].callReturnLocation), operationLinkCall);
+            repatchBuffer.relink(CodeLocationCall(m_callLinkInfos[i].callReturnLocation), m_callLinkInfos[i].isCall ? operationLinkCall : operationLinkConstruct);
 #else
             ASSERT_NOT_REACHED();
 #endif

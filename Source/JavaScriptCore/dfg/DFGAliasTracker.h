@@ -107,6 +107,12 @@ public:
         m_candidateAliasGetByVal = NoNode;
     }
 
+    void recordConstruct(NodeIndex construct)
+    {
+        ASSERT_UNUSED(construct, m_graph[construct].op == Construct);
+        m_candidateAliasGetByVal = NoNode;
+    }
+
 private:
     // This method returns true for arguments:
     //   - (X, X)

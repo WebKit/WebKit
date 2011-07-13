@@ -1,0 +1,21 @@
+This tests that polymorphic construction works correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS construct(Foo).field is 'foo'
+PASS construct(Foo).field is 'foo'
+PASS construct(Foo).field is 'foo'
+PASS construct(Foo).field is 'foo'
+PASS construct(Bar).field is 'bar'
+PASS construct(Baz).field is 'baz'
+PASS construct(Foo).field is 'foo'
+PASS construct(Bar).field is 'bar'
+PASS construct(Baz).field is 'baz'
+PASS construct(Foo).field is 'foo'
+PASS construct(Bar).field is 'bar'
+PASS construct(Baz).field is 'baz'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

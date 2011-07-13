@@ -434,7 +434,7 @@ void dfgRepatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& pro
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriatePutByIdFunction(slot, putKind));
 }
 
-void dfgLinkCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSFunction* callee, MacroAssemblerCodePtr codePtr)
+void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSFunction* callee, MacroAssemblerCodePtr codePtr, CodeSpecializationKind kind)
 {
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     
@@ -446,7 +446,12 @@ void dfgLinkCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeC
         repatchBuffer.relink(callLinkInfo.hotPathOther, codePtr);
     }
     
-    repatchBuffer.relink(CodeLocationCall(callLinkInfo.callReturnLocation), operationVirtualCall);
+    if (kind == CodeForCall) {
+        repatchBuffer.relink(CodeLocationCall(callLinkInfo.callReturnLocation), operationVirtualCall);
+        return;
+    }
+    ASSERT(kind == CodeForConstruct);
+    repatchBuffer.relink(CodeLocationCall(callLinkInfo.callReturnLocation), operationVirtualConstruct);
 }
 
 } } // namespace JSC::DFG

@@ -1143,6 +1143,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
         
     case Call:
+    case Construct:
         emitCall(node);
         break;
     }
