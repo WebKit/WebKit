@@ -54,6 +54,7 @@ v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* nam
 {
     Vector<char, 64> prefixedName;
     prefixedName.append(hiddenReferenceNamePrefix, sizeof(hiddenReferenceNamePrefix) - 1);
+    ASSERT(name && strlen(name));
     prefixedName.append(name, strlen(name));
     return v8::String::NewSymbol(prefixedName.data(), static_cast<int>(prefixedName.size()));
 }

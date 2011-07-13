@@ -1,3 +1,12 @@
+2011-07-13  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        [chromium] Fix mac build after r90949.
+
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        (WebCore::V8HiddenPropertyName::hiddenReferenceName):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+
 2011-07-13  Emil A Eklund  <eae@chromium.org>
 
         Switch table rendering to to new layout types

@@ -161,7 +161,7 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     if (!extension)
         return v8::Null();
     v8::Handle<v8::Value> extensionObject;
-    const char* referenceName;
+    const char* referenceName = 0;
     switch (extension->getName()) {
     case WebGLExtension::WebKitLoseContextName:
         extensionObject = toV8(static_cast<WebKitLoseContext*>(extension));
