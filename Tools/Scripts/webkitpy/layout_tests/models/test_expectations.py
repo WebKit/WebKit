@@ -351,7 +351,6 @@ class TestExpectations:
         self._full_test_list = tests
         self._test_config = test_config
         self._is_lint_mode = is_lint_mode
-        self._overrides = overrides
         self._errors = []
         self._non_fatal_errors = []
 
@@ -394,7 +393,7 @@ class TestExpectations:
 
         if overrides:
             self._overrides_allowed = True
-            self._expectations += TestExpectationParser.parse_list(self._overrides, self)
+            self._expectations += TestExpectationParser.parse_list(overrides, self)
             self._overrides_allowed = False
 
         self._handle_any_read_errors()

@@ -1,5 +1,14 @@
 2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Remove unused TestExpectations._overrides.
+        https://bugs.webkit.org/show_bug.cgi?id=64470
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Removed unused member.
+
+2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Introduce TestExpectationSerializer.list_to_string.
         https://bugs.webkit.org/show_bug.cgi?id=64462
 
