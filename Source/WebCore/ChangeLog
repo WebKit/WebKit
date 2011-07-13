@@ -1,3 +1,10 @@
+2011-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix non-debug builds.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+
 2011-07-13  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [chromium] Fix mac build after r90949.
