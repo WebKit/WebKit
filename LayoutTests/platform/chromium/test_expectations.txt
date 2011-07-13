@@ -2713,7 +2713,6 @@ BUGWK47949 GPU WIN LINUX : compositing/reflections/reflection-opacity.html = IMA
 BUGWK47949 GPU MAC : compositing/reflections/reflection-opacity.html = IMAGE
 BUGWK54306 GPU WIN LINUX MAC : compositing/reflections/animation-inside-reflection.html = IMAGE PASS
 BUGWK54306 GPU WIN LINUX MAC : compositing/reflections/nested-reflection-animated.html = IMAGE PASS
-BUGWK47953 GPU MAC : REBASELINE compositing/webgl/webgl-background-color.html = IMAGE
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
 // bots running tests on real hardware.
@@ -2847,7 +2846,8 @@ BUGWK58587 DEBUG GPU LINUX : compositing/geometry/fixed-in-composited.html = IMA
 BUGWK58587 DEBUG GPU LINUX : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
-
+BUGWK58587 DEBUG GPU LINUX : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)

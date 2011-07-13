@@ -1,3 +1,9 @@
+2011-07-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update chromium gpu expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Prettify spacing in test_expectations.txt
