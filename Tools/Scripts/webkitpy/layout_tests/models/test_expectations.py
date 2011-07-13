@@ -195,6 +195,18 @@ class TestExpectationParser:
         return (result, errors)
 
     @classmethod
+    def parse_list(cls, expectations_string, validator):
+        """Returns a list of TestExpectationLines, one for each line in expectations_string."""
+        expectations = []
+        line_number = 0
+        for line in expectations_string.split("\n"):
+            expectation, errors = cls.parse(line)
+            line_number += 1
+            expectation.valid = validator.validate(line_number, expectation, errors)
+            expectations.append(expectation)
+        return expectations
+
+    @classmethod
     def _split_expectation_string(cls, line, errors):
         """Splits line into a string of modifiers, a test name, a string of expectations, and a comment,
         returning them as a tuple. In case parsing error, returns empty tuple.
@@ -242,25 +254,6 @@ class TestExpectationLine:
         # FIXME: Should valid and malformed be a single state flag? Probably not, since "malformed" is also "not valid".
         self.valid = False
         self.malformed = False
-
-
-class TestExpectationsFile:
-    """Represents a test expectation file, which is a mutable collection of comments and test expectations."""
-
-    def __init__(self):
-        self._expectations = []
-
-    def __iter__(self):
-        return self._expectations.__iter__()
-
-    def append(self, expectations_string, validator):
-        """Add a TestExpectationLine for each item in expectations_string."""
-        line_number = 0
-        for line in expectations_string.split("\n"):
-            expectation, errors = TestExpectationParser.parse(line)
-            line_number += 1
-            expectation.valid = validator.validate(line_number, expectation, errors)
-            self._expectations.append(expectation)
 
 
 class TestExpectations:
@@ -400,9 +393,8 @@ class TestExpectations:
         self._result_type_to_tests = self._dict_of_sets(self.RESULT_TYPES)
 
         self._matcher = ModifierMatcher(self._test_config)
-        self._expectations = TestExpectationsFile()
         self._overrides_allowed = False
-        self._expectations.append(expectations, self)
+        self._expectations = TestExpectationParser.parse_list(expectations, self)
 
         # List of tests that are in the overrides file (used for checking for
         # duplicates inside the overrides file itself). Note that just because
@@ -413,7 +405,7 @@ class TestExpectations:
 
         if overrides:
             self._overrides_allowed = True
-            self._expectations.append(self._overrides, self)
+            self._expectations += TestExpectationParser.parse_list(self._overrides, self)
             self._overrides_allowed = False
 
         self._handle_any_read_errors()

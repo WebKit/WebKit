@@ -1,3 +1,17 @@
+2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Eliminate TestExpectationsFile.
+        https://bugs.webkit.org/show_bug.cgi?id=64458
+
+        Turns out, we can just use a Python list.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Folded TestExpectationsFile.append into TestExpectationParser.parse_list,
+            removed TestExpectationsFile.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Moved tests to better reflect new names, removed iterator test,
+            since there's no more custom iterator machinery.
+
 2011-07-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, added my other email addresses.

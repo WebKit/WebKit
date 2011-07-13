@@ -536,6 +536,19 @@ class TestExpectationParserTests(unittest.TestCase):
         self.assertEqual(str(expectation.expectations), '[\'baz\']')
         self.assertEqual(len(errors), 0)
 
+    def test_line_number_increment(self):
+        validator = TestValidator()
+        expectations = TestExpectationParser.parse_list('// Bar\nFOO : bar = BAZ\n\n', validator)
+        self.assertEqual(str(validator.line_numbers), '[1, 2, 3, 4]')
+
+    def test_validator_feedback(self):
+        validator = TestValidator()
+        expectations = TestExpectationParser.parse_list('FOO : bar1 = BAZ\nFOO : bar2 = BAZ\nFOO : bar3 = BAZ', validator)
+        line_number = 0
+        for expectation in expectations:
+            line_number += 1
+            self.assertEqual(line_number % 2 == 0, expectation.valid)
+
 
 class TestExpectationSerializerTests(unittest.TestCase):
     def assert_round_trip(self, in_string, expected_string=None):
@@ -606,32 +619,6 @@ class TestValidator:
     def validate(self, line_number, expectation, errors):
         self.line_numbers.append(line_number)
         return line_number % 2 == 0
-
-
-class TestExpectationsFileTests(unittest.TestCase):
-    def test_line_number_increment(self):
-        validator = TestValidator()
-        expectations = TestExpectationsFile()
-        expectations.append('// Bar\nFOO : bar = BAZ\n\n', validator)
-        self.assertEqual(str(validator.line_numbers), '[1, 2, 3, 4]')
-
-    def test_iterator(self):
-        validator = TestValidator()
-        expectations = TestExpectationsFile()
-        expectations.append('\n\n\n\n', validator)
-        line_number = 0
-        for expectation in expectations:
-            line_number += 1
-        self.assertEqual(line_number, 5)
-
-    def test_validator_feedback(self):
-        validator = TestValidator()
-        expectations = TestExpectationsFile()
-        expectations.append('FOO : bar1 = BAZ\nFOO : bar2 = BAZ\nFOO : bar3 = BAZ', validator)
-        line_number = 0
-        for expectation in expectations:
-            line_number += 1
-            self.assertEqual(line_number % 2 == 0, expectation.valid)
 
 if __name__ == '__main__':
     unittest.main()
