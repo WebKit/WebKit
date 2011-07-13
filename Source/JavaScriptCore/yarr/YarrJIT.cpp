@@ -995,6 +995,63 @@ class YarrGenerator : private MacroAssembler {
         m_backtrackingState.fallthrough();
     }
 
+    void generateDotStarEnclosure(size_t opIndex)
+    {
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+
+        const RegisterID character = regT0;
+        const RegisterID matchPos = regT1;
+
+        JumpList foundBeginningNewLine;
+        JumpList saveStartIndex;
+        JumpList foundEndingNewLine;
+
+        if (m_pattern.m_body->m_hasFixedSize) {
+            move(index, matchPos);
+            sub32(Imm32(m_checked), matchPos);
+        } else
+            load32(Address(output), matchPos);
+
+        saveStartIndex.append(branchTest32(Zero, matchPos));
+        Label findBOLLoop(this);
+        sub32(TrustedImm32(1), matchPos);
+        load16(BaseIndex(input, matchPos, TimesTwo, 0), character);
+        matchCharacterClass(character, foundBeginningNewLine, m_pattern.newlineCharacterClass());
+        branchTest32(NonZero, matchPos).linkTo(findBOLLoop, this);
+        saveStartIndex.append(jump());
+
+        foundBeginningNewLine.link(this);
+        add32(TrustedImm32(1), matchPos); // Advance past newline
+        saveStartIndex.link(this);
+
+        if (!m_pattern.m_multiline && term->anchors.bolAnchor)
+            op.m_jumps.append(branchTest32(NonZero, matchPos));
+
+        store32(matchPos, Address(output));
+
+        move(index, matchPos);
+
+        Label findEOLLoop(this);        
+        foundEndingNewLine.append(branch32(Equal, matchPos, length));
+        load16(BaseIndex(input, matchPos, TimesTwo, 0), character);
+        matchCharacterClass(character, foundEndingNewLine, m_pattern.newlineCharacterClass());
+        add32(TrustedImm32(1), matchPos);
+        jump(findEOLLoop);
+
+        foundEndingNewLine.link(this);
+
+        if (!m_pattern.m_multiline && term->anchors.eolAnchor)
+            op.m_jumps.append(branch32(NotEqual, matchPos, length));
+
+        move(matchPos, index);
+    }
+
+    void backtrackDotStarEnclosure(size_t opIndex)
+    {
+        backtrackTermDefault(opIndex);
+    }
+    
     // Code generation/backtracking for simple terms
     // (pattern characters, character classes, and assertions).
     // These methods farm out work to the set of functions above.
@@ -1059,6 +1116,9 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypeBackReference:
             m_shouldFallBack = true;
             break;
+        case PatternTerm::TypeDotStarEnclosure:
+            generateDotStarEnclosure(opIndex);
+            break;
         }
     }
     void backtrackTerm(size_t opIndex)
@@ -1119,6 +1179,11 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypeParenthesesSubpattern:
         case PatternTerm::TypeParentheticalAssertion:
             ASSERT_NOT_REACHED();
+
+        case PatternTerm::TypeDotStarEnclosure:
+            backtrackDotStarEnclosure(opIndex);
+            break;
+
         case PatternTerm::TypeBackReference:
             m_shouldFallBack = true;
             break;

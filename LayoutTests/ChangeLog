@@ -1,3 +1,16 @@
+2011-07-13  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64202
+        Enh: Improve handling of RegExp in the form of /.*blah.*/
+
+        Reviewed by Gavin Barraclough.
+
+        New tests to support /.*<expression>.*/ enhancement.
+
+        * fast/regex/dotstar-expected.txt: Added.
+        * fast/regex/dotstar.html: Added.
+        * fast/regex/script-tests/dotstar.js: Added.
+
 2011-07-13  Vincent Scheib  <scheib@chromium.org>
 
         [chromium] Update chromium test expectations.

@@ -1,3 +1,48 @@
+2011-07-13  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64202
+        Enh: Improve handling of RegExp in the form of /.*blah.*/
+
+        Reviewed by Gavin Barraclough.
+
+        Added code to both the Yarr interpreter and JIT to handle
+        these expressions a little differently.  First off, the terms
+        in between the leading and trailing .*'s cannot capture and
+        also this enhancement is limited to single alternative expressions.
+        If an expression is of the right form with the aforementioned
+        restrictions, we process the inner terms and then look for the
+        beginning of the string and end of the string.  There is handling 
+        for multiline expressions to allow the beginning and end to be 
+        right after and right before newlines.
+
+        This enhancement speeds up expressions of this type 12x on
+        a MacBookPro.
+
+        Cleaned up 'case' statement indentation.
+
+        A new set of tests was added as LayoutTests/fast/regex/dotstar.html
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::InputStream::end):
+        (JSC::Yarr::Interpreter::matchDotStarEnclosure):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::ByteCompiler::assertionDotStarEnclosure):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::DotStarEnclosure):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::backtrackDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::generateTerm):
+        (JSC::Yarr::YarrGenerator::backtrackTerm):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets):
+        (JSC::Yarr::YarrPatternConstructor::containsCapturingTerms):
+        (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+        (JSC::Yarr::YarrPattern::compile):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm):
+
 2011-07-13  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Fix distcheck

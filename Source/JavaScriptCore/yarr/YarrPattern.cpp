@@ -582,6 +582,11 @@ public:
                 term.frameLocation = currentCallFrameSize;
                 currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + YarrStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition);
                 break;
+
+            case PatternTerm::TypeDotStarEnclosure:
+                alternative->m_hasFixedSize = false;
+                term.inputPosition = initialInputPosition;
+                break;
             }
         }
 
@@ -675,6 +680,87 @@ public:
         }
     }
 
+    bool containsCapturingTerms(PatternAlternative* alternative, size_t firstTermIndex, size_t lastTermIndex)
+    {
+        Vector<PatternTerm>& terms = alternative->m_terms;
+
+        for (size_t termIndex = firstTermIndex; termIndex <= lastTermIndex; ++termIndex) {
+            PatternTerm& term = terms[termIndex];
+
+            if (term.m_capture)
+                return true;
+
+            if (term.type == PatternTerm::TypeParenthesesSubpattern) {
+                PatternDisjunction* nestedDisjunction = term.parentheses.disjunction;
+                for (unsigned alt = 0; alt < nestedDisjunction->m_alternatives.size(); ++alt) {
+                    if (containsCapturingTerms(nestedDisjunction->m_alternatives[alt], 0, nestedDisjunction->m_alternatives[alt]->m_terms.size() - 1))
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // This optimization identifies alternatives in the form of 
+    // [^].*[?]<expression>.*[$] for expressions that don't have any 
+    // capturing terms. The alternative is changed to <expression> 
+    // followed by processing of the dot stars to find and adjust the 
+    // beginning and the end of the match.
+    void optimizeDotStarWrappedExpressions()
+    {
+        Vector<PatternAlternative*>& alternatives = m_pattern.m_body->m_alternatives;
+        if (alternatives.size() != 1)
+            return;
+
+        PatternAlternative* alternative = alternatives[0];
+        Vector<PatternTerm>& terms = alternative->m_terms;
+        if (terms.size() >= 3) {
+            bool startsWithBOL = false;
+            bool endsWithEOL = false;
+            size_t termIndex, firstExpressionTerm, lastExpressionTerm;
+
+            termIndex = 0;
+            if (terms[termIndex].type == PatternTerm::TypeAssertionBOL) {
+                startsWithBOL = true;
+                ++termIndex;
+            }
+            
+            PatternTerm& firstNonAnchorTerm = terms[termIndex];
+            if ((firstNonAnchorTerm.type != PatternTerm::TypeCharacterClass) || (firstNonAnchorTerm.characterClass != m_pattern.newlineCharacterClass()) || !((firstNonAnchorTerm.quantityType == QuantifierGreedy) || (firstNonAnchorTerm.quantityType == QuantifierNonGreedy)))
+                return;
+            
+            firstExpressionTerm = termIndex + 1;
+            
+            termIndex = terms.size() - 1;
+            if (terms[termIndex].type == PatternTerm::TypeAssertionEOL) {
+                endsWithEOL = true;
+                --termIndex;
+            }
+            
+            PatternTerm& lastNonAnchorTerm = terms[termIndex];
+            if ((lastNonAnchorTerm.type != PatternTerm::TypeCharacterClass) || (lastNonAnchorTerm.characterClass != m_pattern.newlineCharacterClass()) || (lastNonAnchorTerm.quantityType != QuantifierGreedy))
+                return;
+            
+            lastExpressionTerm = termIndex - 1;
+
+            if (firstExpressionTerm > lastExpressionTerm)
+                return;
+
+            if (!containsCapturingTerms(alternative, firstExpressionTerm, lastExpressionTerm)) {
+                for (termIndex = terms.size() - 1; termIndex > lastExpressionTerm; --termIndex)
+                    terms.remove(termIndex);
+
+                for (termIndex = firstExpressionTerm; termIndex > 0; --termIndex)
+                    terms.remove(termIndex - 1);
+
+                terms.append(PatternTerm(startsWithBOL, endsWithEOL));
+                
+                m_pattern.m_containsBOL = false;
+            }
+        }
+    }
+
 private:
     YarrPattern& m_pattern;
     PatternAlternative* m_alternative;
@@ -708,6 +794,7 @@ const char* YarrPattern::compile(const UString& patternString)
     }
 
     constructor.checkForTerminalParentheses();
+    constructor.optimizeDotStarWrappedExpressions();
     constructor.optimizeBOL();
         
     constructor.setupOffsets();
