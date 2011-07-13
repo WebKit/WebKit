@@ -897,9 +897,6 @@ private:
     bool m_hasMarkupTruncation : 1;
     unsigned m_selectionState : 3; // SelectionState
     bool m_hasColumns : 1;
-    
-    // from RenderTableCell
-    bool m_cellWidthChanged : 1;
 
 private:
     // Store state between styleWillChange and styleDidChange

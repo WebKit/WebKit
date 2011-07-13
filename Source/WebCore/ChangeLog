@@ -1,3 +1,17 @@
+2011-07-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove an unused bit in RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=64485
+
+        Reviewed by Darin Adler.
+
+        No change in behavior so no new test.
+
+        * rendering/RenderObject.h: Removed a bit that was duplicated from RenderTableCell.
+        However it was not used in RenderObject and RenderTableCell already packed this bit.
+        We were lying in the number of used bits in RenderObject which was 33. This change
+        brings us back to what was advertised.
+
 2011-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix non-debug builds.
