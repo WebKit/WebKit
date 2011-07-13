@@ -1,3 +1,16 @@
+2011-07-13  Ojan Vafai  <ojan@chromium.org>
+
+        bring flakiness_dashboard.html closer to webkit style
+        https://bugs.webkit.org/show_bug.cgi?id=64477
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        Fix bad variable name that would hit only when running the tests.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        No code/logic changes. All moving/removing brackets, indents and moving things
+        to one line.
+
 2011-07-13  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Fix distcheck

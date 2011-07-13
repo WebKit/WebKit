@@ -285,7 +285,7 @@ function parseParameters(parameterStr) {
   for (var i = 0; i < paramsList.length; i++) {
     var thisParam = paramsList[i].split('=');
     if (thisParam.length != 2) {
-      console.log('Invalid query parameter: ' + params[i]);
+      console.log('Invalid query parameter: ' + paramsList[i]);
       continue;
     }
 
