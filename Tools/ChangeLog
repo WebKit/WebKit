@@ -1,3 +1,41 @@
+2011-07-13  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should show test results
+        https://bugs.webkit.org/show_bug.cgi?id=64440
+
+        Reviewed by Adam Roben.
+
+        This patch introduces the results detail pane, which appears at the
+        bottom of the window and contains test results from the bots.
+        Currently, you can activate the pane by mousing over one of the builder
+        names associated with a failing test.
+
+        This is just a first iteration of the UI.  There's no way to resize or
+        zoom in on elements of the details pane, and images likely aren't sized
+        correctly, but it's a place to start.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/config.js:
+            - Add constants for our data attributes so we don't typo them!
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+            - Add DOM structure for the details pane.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+            - Bind events for showing and hiding the details pane.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+            - Reduce the number of result types that we query for to avoid
+              overfilling the details pane.  We'll probably need another
+              solution here in the long-term.  For example, we could use tabs
+              to pack more results into the pane.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/run-unittests.html:
+            - Now that we're using the config package during testing, we need
+              to include it in the testing HTML.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+            - Change the DOM structure of the results detail to make it fit
+              nicely in the details pane (rather than flowing freely in the
+              body, as it did before).
+
 2011-07-13  Adam Roben  <aroben@apple.com>
 
         Make TestFailures show every time a possibly-flaky test failed, but hide it by default

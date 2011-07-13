@@ -51,22 +51,25 @@ test("failureCount", 4, function() {
     equal(ui.failureCount(3), '(Seen 3 times.)');
 });
 
-test("results", 1, function() {
-    var testResults = ui.results([
-        'http://example.com/layout-test-results/foo-bar-expected.txt',
-        'http://example.com/layout-test-results/foo-bar-actual.txt',
+test("failureDetails", 1, function() {
+    var testResults = ui.failureDetails([
         'http://example.com/layout-test-results/foo-bar-diff.txt',
         'http://example.com/layout-test-results/foo-bar-expected.png',
         'http://example.com/layout-test-results/foo-bar-actual.png',
         'http://example.com/layout-test-results/foo-bar-diff.png',
     ]);
-    equal(testResults.html(),
-        '<iframe src="http://example.com/layout-test-results/foo-bar-expected.txt" class="expected"></iframe>' +
-        '<iframe src="http://example.com/layout-test-results/foo-bar-actual.txt" class="actual"></iframe>' +
-        '<iframe src="http://example.com/layout-test-results/foo-bar-diff.txt" class="diff"></iframe>' +
-        '<img src="http://example.com/layout-test-results/foo-bar-expected.png" class="expected">' +
-        '<img src="http://example.com/layout-test-results/foo-bar-actual.png" class="actual">' +
-        '<img src="http://example.com/layout-test-results/foo-bar-diff.png" class="diff">');
+    testResults.wrap('<wrapper></wrapper>');
+    equal(testResults.parent().html(),
+        '<table class="failure-details">' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td><iframe src="http://example.com/layout-test-results/foo-bar-diff.txt" class="diff"></iframe></td>' +
+                    '<td><img src="http://example.com/layout-test-results/foo-bar-expected.png" class="expected"></td>' +
+                    '<td><img src="http://example.com/layout-test-results/foo-bar-actual.png" class="actual"></td>' +
+                    '<td><img src="http://example.com/layout-test-results/foo-bar-diff.png" class="diff"></td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>');
 });
 
 })();

@@ -41,7 +41,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
 
     var where = $('.where', block);
     $.each(resultNodesByBuilder, function(builderName, resultNode) {
-        where.append($('<li></li>').text(displayNameForBuilder(builderName)));
+        where.append($('<li></li>').attr(config.kBuilderNameAttr, builderName).text(displayNameForBuilder(builderName)));
     });
 
     return block;
@@ -73,14 +73,15 @@ ui.failureCount = function(failureCount)
     return '(Seen ' + failureCount + ' times.)';
 };
 
-ui.results = function(resultsURLs)
+ui.failureDetails = function(resultsURLs)
 {
-    var block = $('<div class="results"></div>');
+    var block = $('<table class="failure-details"><tbody><tr></tr></tbody></table>');
     $.each(resultsURLs, function(index, resultURL) {
         var kind = results.resultKind(resultURL);
         var type = results.resultType(resultURL);
-        var fragment = type == results.kImageType ? '<img>' : '<iframe></iframe>';
-        block.append($(fragment).attr('src', resultURL).addClass(kind))
+        var fragment = (type == results.kImageType) ? '<img>' : '<iframe></iframe>';
+        var content = $(fragment).attr('src', resultURL).addClass(kind);
+        $('tr', block).append($('<td></td>').append(content));
     });
     return block;
 };

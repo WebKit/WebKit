@@ -2,7 +2,7 @@ body {
     font-family: Tahoma, sans-serif;
     font-size: 11px;
     margin: 0;
-    padding: 10px;
+    padding: 0;
 }
 
 a {
@@ -17,15 +17,13 @@ table {
 }
 
 td {
-    padding: 5px;
     overflow: hidden;
     vertical-align: top;
-    border-bottom: 1px solid LightGray;
-    border-top: 0;
+    border-right: 1px solid #CCC;
 }
 
-tr:last-of-type td {
-    border-bottom: 0;
+td:last-of-type {
+    border-right: 0px;
 }
 
 .butterbar {
@@ -44,6 +42,10 @@ tr:last-of-type td {
 .test[data-failure-count="1"][data-new-test="false"] {
     -webkit-transition: 1s opacity;
     opacity: 0.5;
+}
+
+.results {
+    margin: 10px;
 }
 
 .regression {
@@ -136,6 +138,11 @@ tr:last-of-type td {
     color: #555;
 }
 
+.regression .where li:hover {
+    color: black;
+    background-color: #f3f3f3;
+}
+
 .regression .regression-range, .regression .failure-count {
     padding: 0px 2px;
     display: inline-block;
@@ -143,4 +150,48 @@ tr:last-of-type td {
 
 .regression .failure-count {
     color: #555;
+}
+
+.results-detail {
+    display: none;
+    position: fixed;
+    background-color: #f3f3f3;
+    top: 50%;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+.results-detail .toolbar {
+    border-top: 1px solid #CCC;
+    text-align: right;
+    border-bottom: 1px solid #CCC;
+}
+
+.results-detail .dismiss {
+    display: inline-block;
+    padding: 5px;
+}
+
+.results-detail .toolbar {
+    position: relative;
+}
+
+.results-detail .content {
+    height: 100%;
+    background-color: white;
+}
+
+.results-detail .failure-details {
+    height: 100%;
+}
+
+.results-detail .failure-details iframe {
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.results-detail .failure-details td {
+    height: 100%;
 }

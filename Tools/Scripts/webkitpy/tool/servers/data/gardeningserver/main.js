@@ -5,6 +5,12 @@ function dismissButterbar()
     $('.butterbar').fadeOut();
 }
 
+function displayOnButterbar(message)
+{
+    $('.butterbar .status').text(message);
+    $('.butterbar').fadeIn();
+}
+
 function setIconState(hasFailures)
 {
     var faviconURL = 'favicon-' + (hasFailures ? 'red' : 'green') + '.png';
@@ -48,7 +54,49 @@ function fetchResults(onsuccess)
     });
 }
 
+function showResultsDetail()
+{
+    var builderName = $(this).attr(config.kBuilderNameAttr);
+    var testName = $('.what', $(this).parents('.test')).text();
+
+    var content = $('.results-detail .content');
+    if ($('.results', content).attr(config.kBuilderNameAttr) == builderName && $('.results', content).attr(config.kTestNameAttr) == testName)
+        return;
+
+    displayOnButterbar('Loading results');
+
+    results.fetchResultsURLs(builderName, testName, function(resultsURLs) {
+        function appendResults() {
+            content.append(ui.failureDetails(resultsURLs));
+            $('.results', content).attr(config.kBuilderNameAttr, builderName);
+            $('.results', content).attr(config.kTestNameAttr, testName);
+        }
+
+        var children = content.children();
+        if (children.length && $('.results-detail').is(":visible")) {
+            // The results-detail pane is already open. Let's do a quick cross-fade.
+            children.fadeOut('fast', function() {
+                content.empty();
+                appendResults();
+                content.children().hide().fadeIn('fast', dismissButterbar);
+            });
+        } else {
+            appendResults();
+            $('.results-detail').fadeIn('fast', dismissButterbar);
+        }
+    });
+}
+
+function hideResultsDetail()
+{
+    $('.results-detail').fadeOut('fast', function() {
+        $('.results-detail .content').empty();
+    });
+}
+
 $('.butterbar .dismiss').live('click', dismissButterbar);
+$('.regression .where li').live('mouseenter', showResultsDetail);
+$('.results-detail .dismiss').live('click', hideResultsDetail);
 
 $(document).ready(function() {
     fetchResults(function() {

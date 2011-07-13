@@ -19,4 +19,7 @@ config.builders = [
   'Webkit Mac10.6 (dbg)',
 ];
 
+config.kTestNameAttr = 'data-test-name';
+config.kBuilderNameAttr = 'data-builder-name';
+
 })();

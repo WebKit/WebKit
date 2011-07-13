@@ -11,14 +11,15 @@ var kMasterName = 'ChromiumWebkit';
 var kLayoutTestResultsServer = 'http://build.chromium.org/f/chromium/layout_test_results/';
 var kLayoutTestResultsPath = '/results/layout-test-results/';
 
+// FIXME: Add support for the rest of the result types.
 var kPossibleSuffixList = [
     '-expected.png',
     '-actual.png',
     '-diff.png',
-    '-expected.txt',
-    '-actual.txt',
+    // '-expected.txt',
+    // '-actual.txt',
     '-diff.txt',
-    // FIXME: Add support for these result types.
+    '-crash-log.txt',
     // '-wdiff.html',
     // '-pretty-diff.html',
     // '-expected.html',
