@@ -18,3 +18,10 @@ BUGWK64002 : fast/workers/worker-lifecycle.html = TEXT PASS
 BUGWK64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
 
 BUGWK62662 : inspector/cookie-parser.html = CRASH PASS
+
+// Slow tests
+SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
+SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
+SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = PASS
+SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+SLOW DEBUG: inspector/cookie-resource-match.html = PASS

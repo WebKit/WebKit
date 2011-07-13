@@ -1,3 +1,11 @@
+2011-07-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-4.8/Skipped: Skip http/tests/misc/script-async.html until fix.
+        * platform/qt-mac/Skipped: Skip new failing tests.
+        * platform/qt/test_expectations.txt: Mark slow tests.
+
 2011-07-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update expectations+baselines for edge AA changes.

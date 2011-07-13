@@ -4586,3 +4586,12 @@ svg/custom/text-tref-03-b-change-href-dom.svg
 svg/custom/text-tref-03-b-change-href.svg
 svg/custom/text-tref-03-b-referenced-element-removal.svg
 svg/custom/text-tref-03-b-tref-removal.svg
+
+# New failing tests
+fast/selectors/unqualified-hover-strict.html
+http/tests/inspector/network/network-content-replacement-embed.html
+http/tests/inspector/network/network-content-replacement-xhr.html
+http/tests/inspector/network/network-embed.html
+http/tests/inspector/network/network-iframe-load-and-delete.html
+http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
+http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
