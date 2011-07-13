@@ -143,8 +143,10 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 
 private:
-    void createGraphicsLayer();
-    void destroyGraphicsLayer();
+    void createPrimaryGraphicsLayer();
+    void destroyGraphicsLayers();
+    
+    PassOwnPtr<GraphicsLayer> createGraphicsLayer(const String&);
 
     RenderBoxModelObject* renderer() const { return m_owningLayer->renderer(); }
     RenderLayerCompositor* compositor() const { return m_owningLayer->compositor(); }
