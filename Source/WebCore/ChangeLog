@@ -1,3 +1,33 @@
+2011-07-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Regression: OOB read in svg text run
+        https://bugs.webkit.org/show_bug.cgi?id=63627
+
+        Reviewed by Zoltan Herczeg.
+
+        A TextRun is constructed for a portion of a string [a,b] whose original length is c (0 < a < b < c).
+        The TextRun charactersLength variable stores the length of the remaining text from (b..c) in order
+        to support ligatures in SVG Fonts. Example: <text>ffl</text>. When measuring the advance from char 0
+        to char 1 the whole 'ffl' text must be passed to the SVG glyph selection code, as the SVG Font may
+        define a single glyph for the characters 'ffl' thus leading to a single character long text
+        pointing to the ffl ligature, not three individual 'f' / 'f' / 'l' characters anymore.
+
+        constructTextRun(..const UChar*, int length, ..) did not correctly calculate the maximum length (b..c).
+        The passed in UChar buffer starts at eg. textRenderer->characters() + start(), and following condition
+        holds true for 'length': start() + length <= textRenderer->textLength() (which denotes the maximum length
+        of the textRenderer->characters() buffer). We have to keep track of the start() offset, so that we
+        can calculate the charactersLength for the TextRun correctly: textRenderer->textLength() - start().
+
+        There are also other cases like RenderCombinedText and/or the presence of hyphens that were incorrectly
+        tracked. Only InlineTextBox had to be fixed, the other callsites in eg. RenderBlockLineLayout already
+        computed the maximum length correctly - I assured this by valgrind runs on all SVG Font tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::constructTextRun): Add maximumLength parameter to constructTextRun.
+        * rendering/InlineTextBox.h: Ditto.
+
 2011-07-12  Antti Koivisto  <antti@apple.com>
 
         didFirstVisuallyNonEmptyLayout dispatched too early

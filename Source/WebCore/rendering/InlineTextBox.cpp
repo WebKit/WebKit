@@ -641,14 +641,18 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     int length = m_len;
+    int maximumLength;
     const UChar* characters;
-    if (!combinedText)
+    if (!combinedText) {
         characters = textRenderer()->text()->characters() + m_start;
-    else
+        maximumLength = textRenderer()->textLength() - m_start;
+    } else {
         combinedText->charactersToRender(m_start, characters, length);
+        maximumLength = length;
+    }
 
     BufferForAppendingHyphen charactersWithHyphen;
-    TextRun textRun = constructTextRun(styleToUse, font, characters, length, hasHyphen() ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(styleToUse, font, characters, length, maximumLength, hasHyphen() ? &charactersWithHyphen : 0);
     if (hasHyphen())
         length = textRun.length();
 
@@ -813,7 +817,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == length && hasHyphen();
-    TextRun textRun = constructTextRun(style, font, characters, length, respectHyphen ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(style, font, characters, length, textRenderer()->textLength() - length, respectHyphen ? &charactersWithHyphen : 0);
     if (respectHyphen)
         ePos = textRun.length();
 
@@ -1298,25 +1302,30 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, Bu
     ASSERT(textRenderer);
     ASSERT(textRenderer->characters());
 
-    return constructTextRun(style, font, textRenderer->characters() + start(), len(), charactersWithHyphen);
+    return constructTextRun(style, font, textRenderer->characters() + start(), len(), textRenderer->textLength() - start(), charactersWithHyphen);
 }
 
-TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, const UChar* characters, int length, BufferForAppendingHyphen* charactersWithHyphen) const
+TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, const UChar* characters, int length, int maximumLength, BufferForAppendingHyphen* charactersWithHyphen) const
 {
     ASSERT(style);
 
     RenderText* textRenderer = this->textRenderer();
     ASSERT(textRenderer);
 
-    if (charactersWithHyphen)
+    if (charactersWithHyphen) {
         adjustCharactersAndLengthForHyphen(*charactersWithHyphen, style, characters, length);
+        maximumLength = length;
+    }
+
+    ASSERT(maximumLength >= length);
 
     TextRun run(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->rtlOrdering() == VisualOrder);
     if (textRunNeedsRenderingContext(font))
         run.setRenderingContext(SVGTextRunRenderingContext::create(textRenderer));
 
     // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
-    run.setCharactersLength(textRenderer->textLength());
+    run.setCharactersLength(maximumLength);
+    ASSERT(run.charactersLength() >= run.length());
     return run;
 }
 

@@ -100,7 +100,7 @@ private:
     LayoutUnit selectionHeight();
 
     TextRun constructTextRun(RenderStyle*, const Font&, BufferForAppendingHyphen* = 0) const;
-    TextRun constructTextRun(RenderStyle*, const Font&, const UChar*, int length, BufferForAppendingHyphen* = 0) const;
+    TextRun constructTextRun(RenderStyle*, const Font&, const UChar*, int length, int maximumLength, BufferForAppendingHyphen* = 0) const;
 
 public:
     virtual IntRect calculateBoundaries() const { return IntRect(x(), y(), width(), height()); }
