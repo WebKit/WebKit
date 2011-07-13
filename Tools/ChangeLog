@@ -1,3 +1,11 @@
+2011-07-12  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:]):
+        Cast the NSUInteger value to unsigned long to match the format specifier.
+
 2011-07-12  Adam Barth  <abarth@webkit.org>
 
         Improve garden-o-matic UI when the bots fail to report revision numbers

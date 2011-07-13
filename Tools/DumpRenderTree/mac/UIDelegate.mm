@@ -170,7 +170,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     if (!done && gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
         printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:%lu\n",
-            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], totalSpaceNeeded);
+            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], (unsigned long)totalSpaceNeeded);
     }
 
     if (gLayoutTestController->disallowIncreaseForApplicationCacheQuota())
