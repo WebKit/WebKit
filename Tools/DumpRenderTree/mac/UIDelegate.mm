@@ -169,8 +169,13 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
 {
     if (!done && gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
-        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:%lu\n",
-            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], (unsigned long)totalSpaceNeeded);
+        // For example, numbers from 30000 - 39999 will output as 30000.
+        // Rounding up or down not really matter for these tests. It's
+        // sufficient to just get a range of 10000 to determine if we were
+        // above or below a threshold.
+        unsigned long truncatedSpaceNeeded = static_cast<unsigned long>((totalSpaceNeeded / 10000) * 10000);
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%lu\n",
+            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], truncatedSpaceNeeded);
     }
 
     if (gLayoutTestController->disallowIncreaseForApplicationCacheQuota())

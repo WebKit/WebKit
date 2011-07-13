@@ -1041,15 +1041,19 @@ void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
 
 void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint64 defaultOriginQuota, quint64 totalSpaceNeeded)
 {
-    if (!m_controller->shouldDumpApplicationCacheDelegateCallbacks())
-        return;
-
-    printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:%llu",
-           origin->scheme().toUtf8().data(),
-           origin->host().toUtf8().data(),
-           origin->port(),
-           totalSpaceNeeded
-           );
+    if (m_controller->shouldDumpApplicationCacheDelegateCallbacks()) {
+        // For example, numbers from 30000 - 39999 will output as 30000.
+        // Rounding up or down not really matter for these tests. It's
+        // sufficient to just get a range of 10000 to determine if we were
+        // above or below a threshold.
+        quint64 truncatedSpaceNeeded = (totalSpaceNeeded / 10000) * 10000;
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%llu",
+               origin->scheme().toUtf8().data(),
+               origin->host().toUtf8().data(),
+               origin->port(),
+               truncatedSpaceNeeded
+               );
+    }
 
     if (m_controller->shouldDisallowIncreaseForApplicationCacheQuota())
         return;

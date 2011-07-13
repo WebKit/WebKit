@@ -389,9 +389,3 @@ compositing/rtl/rtl-iframe-relative.html
 
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
-
-# ApplicationCache Quota Output is Flakey
-# https://bugs.webkit.org/show_bug.cgi?id=64410
-http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
-http/tests/appcache/origin-quota-continued-download.html
-http/tests/appcache/origin-quota.html

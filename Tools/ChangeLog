@@ -1,3 +1,21 @@
+2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache Quota Output is Flakey
+        https://bugs.webkit.org/show_bug.cgi?id=64410
+
+        Reviewed by Alexey Proskuryakov.
+
+        Unify the delegate logging for reaching application cache
+        quotas. Truncate the space needed to the nearest 10000
+        for less flakey test output. This also better supports
+        printing NSUInteger on non-64 bit systems by casting to
+        an unsigned long.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:]):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dumpApplicationCacheQuota):
+
 2011-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove unused TestExpectations._overrides.

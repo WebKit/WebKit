@@ -1,3 +1,25 @@
+2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache Quota Output is Flakey
+        https://bugs.webkit.org/show_bug.cgi?id=64410
+
+        Reviewed by Alexey Proskuryakov.
+
+        Have the tests truncate the number of bytes needed in
+        the delegate callback to get an approximation of how
+        much space was needed.
+
+        * http/tests/appcache/origin-quota-continued-download-expected.txt:
+        * http/tests/appcache/origin-quota-continued-download-multiple-manifests-expected.txt:
+        * http/tests/appcache/origin-quota-continued-download-multiple-manifests.html:
+        * http/tests/appcache/origin-quota-expected.txt:
+        Update the output and clarify what the multiple-manifests test
+        is looking for in the space needed output.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        Unskip the tests.
+
 2011-07-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium gpu expectations.

@@ -64,8 +64,10 @@ function addSecondIFrame() {
     the origin quota.
 
     The second frame will reach the quota, cause a delegate callback,
-    dump the spaceNeeded (which should be enough for both iframe caches),
-    and succeed due to the default DRT behavior or raising the quota.
+    dump the totalSpaceNeeded. The space needed should be enough for both
+    iframe caches, so we would expect ~30kb bytes. The delegate will
+    automatically increase the quota and cause the second appcache
+    to succeed.
 </p>
 <pre id="console"></pre>
 </body>
