@@ -49,7 +49,6 @@ QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) con
     QNetworkRequest request;
     request.setUrl(url());
     request.setOriginatingObject(originatingFrame);
-    request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
     const HTTPHeaderMap &headers = httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end();
