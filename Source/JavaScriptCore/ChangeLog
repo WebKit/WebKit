@@ -1,3 +1,38 @@
+2011-07-12  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64424
+        Our direct eval behaviour deviates slightly from the spec.
+
+        Reviewed by Oliver Hunt.
+
+        The ES5 spec defines a concept of 'Direct Call to Eval' (see section 15.1.2.1.1), where
+        behaviour will differ from that of an indirect call (e.g. " { eval: window.eval }.eval();"
+        or "var a = eval; a();" are indirect calls), particularly in non-strict scopes variables
+        may be introduced into the caller's environment.
+
+        ES5 direct calls are any call where the callee function is provided by a reference, a base
+        of that Reference is an EnvironmentRecord (this corresponds to all productions
+        "PrimaryExpression: Identifier", see 10.2.2.1 GetIdentifierReference), and where the name
+        of the reference is "eval". This means any expression of the form "eval(...)", and that
+        calls the standard built in eval method from on the Global Object, is considered to be
+        direct.
+
+        In JavaScriptCore we are currently overly restrictive. We also check that the
+        EnvironmentRecord that is the base of the reference is the Declaractive Environment Record
+        at the root of the scope chain, corresponding to the Global Object - an "eval(..)" statement
+        that hits a var eval in a nested scope is not considered to be direct. This behaviour does
+        not emanate from the spec, and is incorrect.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+            - Fixed direct eval check in op_call_eval.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Fixed direct eval check in op_call_eval.
+        * runtime/Executable.h:
+        (JSC::isHostFunction):
+            - Added check for host function with specific NativeFunction.
+
 2011-07-13  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         Reviewed by Andreas Kling.

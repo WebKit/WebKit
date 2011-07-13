@@ -4099,12 +4099,10 @@ skip_id_custom_self:
         ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         JSValue funcVal = callFrame->r(func).jsValue();
 
-        Register* newCallFrame = callFrame->registers() + registerOffset;
-        Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
-        JSValue thisValue = argv[0].jsValue();
-        JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject.get();
+        if (isHostFunction(callFrame->globalData(), funcVal, globalFuncEval)) {
+            Register* newCallFrame = callFrame->registers() + registerOffset;
+            Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
 
-        if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
             JSValue result = callEval(callFrame, registerFile, argv, argCount, registerOffset);
             if ((exceptionValue = globalData->exception))
                 goto vm_throw;

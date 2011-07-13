@@ -12,7 +12,7 @@ PASS: eval("x") should be 1 and is.
 PASS: window.eval("x") should be 0 and is.
 PASS: globalEval("x") should be 0 and is.
 PASS: localEval("x") should be 0 and is.
-PASS: (function() { var eval = window.eval; return eval("x"); })() should be 0 and is.
+PASS: (function() { var eval = window.eval; return eval("x"); })() should be 1 and is.
 
 ----- Variable Object: -----
 
@@ -20,7 +20,7 @@ PASS: eval("var y; "y" in window") should be false and is.
 PASS: window.eval("var y; "y" in window") should be true and is.
 PASS: globalEval("var y; "y" in window") should be true and is.
 PASS: localEval("var y; "y" in window") should be true and is.
-PASS: (function() { var eval = window.eval; return eval("var y; "y" in window"); })() should be true and is.
+PASS: (function() { var eval = window.eval; return eval("var y; "y" in window"); })() should be false and is.
 
 ----- Scope Chain for Setters: -----
 
@@ -28,7 +28,7 @@ PASS: eval("z = 1; window.z") should be 0 and is.
 PASS: window.eval("z = 2; window.z") should be 2 and is.
 PASS: globalEval("z = 3; window.z") should be 3 and is.
 PASS: localEval("z = 4; window.z") should be 4 and is.
-PASS: (function() { var eval = window.eval; return eval("z = 5; window.z"); })() should be 5 and is.
+PASS: (function() { var eval = window.eval; return eval("z = 5; window.z"); })() should be 4 and is.
 
 ----- This Object: -----
 

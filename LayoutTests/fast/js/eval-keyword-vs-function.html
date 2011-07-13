@@ -43,7 +43,10 @@ function testGetX()
     shouldBe('window.eval("x")', window.eval("x"), 0);
     shouldBe('globalEval("x")', globalEval("x"), 0);
     shouldBe('localEval("x")', localEval("x"), 0);
-    shouldBe('(function() { var eval = window.eval; return eval("x"); })()', (function() { var eval = window.eval; return eval("x"); })(), 0);
+
+    // Per ES5 15.1.2.11 & 10.2.2.1 any reference that hits an enviromment record (i.e. does not have a base)
+    // and has a reference name of "eval" is treated as a direct eval - the assignment to a var makes no difference.
+    shouldBe('(function() { var eval = window.eval; return eval("x"); })()', (function() { var eval = window.eval; return eval("x"); })(), 1);
 }
 
 function testVarY()
@@ -62,7 +65,9 @@ function testVarY()
     shouldBe('localEval("var y; \"y\" in window")', localEval("var y; \"y\" in window"), true);
     delete window.y;
     
-    shouldBe('(function() { var eval = window.eval; return eval("var y; \"y\" in window"); })()', (function() { var eval = window.eval; return eval("var y; \"y\" in window"); })(), true);
+    // Per ES5 15.1.2.11 & 10.2.2.1 any reference that hits an enviromment record (i.e. does not have a base)
+    // and has a reference name of "eval" is treated as a direct eval - the assignment to a var makes no difference.
+    shouldBe('(function() { var eval = window.eval; return eval("var y; \"y\" in window"); })()', (function() { var eval = window.eval; return eval("var y; \"y\" in window"); })(), false);
 }
 
 function testSetZ()
@@ -79,7 +84,9 @@ function testSetZ()
 
     shouldBe('localEval("z = 4; window.z")', localEval("z = 4; window.z"), 4);
 
-    shouldBe('(function() { var eval = window.eval; return eval("z = 5; window.z"); })()', (function() { var eval = window.eval; return eval("z = 5; window.z"); })(), 5);
+    // Per ES5 15.1.2.11 & 10.2.2.1 any reference that hits an enviromment record (i.e. does not have a base)
+    // and has a reference name of "eval" is treated as a direct eval - the assignment to a var makes no difference.
+    shouldBe('(function() { var eval = window.eval; return eval("z = 5; window.z"); })()', (function() { var eval = window.eval; return eval("z = 5; window.z"); })(), 4);
 }
 
 function testThis()

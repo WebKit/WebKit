@@ -3159,18 +3159,15 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)
     int registerOffset = stackFrame.args[1].int32();
     int argCount = stackFrame.args[2].int32();
 
+    if (!isHostFunction(callFrame->globalData(), funcVal, globalFuncEval))
+        return JSValue::encode(JSValue());
+
     Register* newCallFrame = callFrame->registers() + registerOffset;
     Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
-    JSValue baseValue = argv[0].jsValue();
-    JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject.get();
 
-    if (baseValue == globalObject && funcVal == globalObject->evalFunction()) {
-        JSValue result = interpreter->callEval(callFrame, registerFile, argv, argCount, registerOffset);
-        CHECK_FOR_EXCEPTION_AT_END();
-        return JSValue::encode(result);
-    }
-
-    return JSValue::encode(JSValue());
+    JSValue result = interpreter->callEval(callFrame, registerFile, argv, argCount, registerOffset);
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
 }
 
 DEFINE_STUB_FUNCTION(void*, op_throw)

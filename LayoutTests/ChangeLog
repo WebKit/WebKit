@@ -1,3 +1,15 @@
+2011-07-12  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64424
+        Our direct eval behaviour deviates slightly from the spec.
+
+        Reviewed by Oliver Hunt.
+
+        Correct expected results.
+
+        * fast/js/eval-keyword-vs-function-expected.txt:
+        * fast/js/eval-keyword-vs-function.html:
+
 2011-07-13  Abhishek Arya  <inferno@chromium.org>
 
         Tests that we do not crash when frame is blown away in a beforeload
