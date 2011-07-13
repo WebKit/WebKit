@@ -195,7 +195,7 @@ SKIP : failures/expected/image.html""")
         except ParseError, e:
             self.assertTrue(e.fatal)
             exp_errors = [u"Line:1 Unrecognized option 'foo' failures/expected/text.html",
-                          u"Line:2 Missing expectations. [' failures/expected/image.html']"]
+                          u"Line:2 Missing expectations in 'SKIP : failures/expected/image.html'"]
             self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
             self.assertEqual(e.errors, exp_errors)
 
@@ -460,6 +460,178 @@ class ModifierTests(unittest.TestCase):
     def test_none_is_invalid(self):
         self.match(['none'], num_errors=1)
 
+
+class TestExpectationParserTests(unittest.TestCase):
+    def test_blank(self):
+        (expectation, errors) = TestExpectationParser.parse('')
+        self.assertEqual(expectation.malformed, False)
+        self.assertEqual(expectation.valid, True)
+        self.assertEqual(expectation.comment, None)
+        self.assertEqual(len(errors), 0)
+
+    def test_missing_colon(self):
+        (expectation, errors) = TestExpectationParser.parse('Qux.')
+        self.assertEqual(expectation.malformed, True)
+        self.assertEqual(expectation.valid, False)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(str(errors), '[("Missing a \':\' in", "\'Qux.\'")]')
+
+    def test_extra_colon(self):
+        (expectation, errors) = TestExpectationParser.parse('FOO : : bar')
+        self.assertEqual(expectation.malformed, True)
+        self.assertEqual(expectation.valid, False)
+        self.assertEqual(expectation.comment, 'FOO : : bar')
+        self.assertEqual(str(errors), '[("Extraneous \':\' in", "\'FOO : : bar\'")]')
+
+    def test_empty_comment(self):
+        (expectation, errors) = TestExpectationParser.parse('//')
+        self.assertEqual(expectation.malformed, False)
+        self.assertEqual(expectation.valid, True)
+        self.assertEqual(expectation.comment, '')
+        self.assertEqual(len(errors), 0)
+
+    def test_comment(self):
+        (expectation, errors) = TestExpectationParser.parse('//Qux.')
+        self.assertEqual(expectation.malformed, False)
+        self.assertEqual(expectation.valid, True)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(len(errors), 0)
+
+    def test_missing_equal(self):
+        (expectation, errors) = TestExpectationParser.parse('FOO : bar')
+        self.assertEqual(expectation.malformed, True)
+        self.assertEqual(expectation.valid, False)
+        self.assertEqual(expectation.comment, 'FOO : bar')
+        self.assertEqual(str(errors), '[(\'Missing expectations in\', "\'FOO : bar\'")]')
+
+    def test_extra_equal(self):
+        (expectation, errors) = TestExpectationParser.parse('FOO : bar = BAZ = Qux.')
+        self.assertEqual(expectation.malformed, True)
+        self.assertEqual(expectation.valid, False)
+        self.assertEqual(expectation.comment, 'FOO : bar = BAZ = Qux.')
+        self.assertEqual(str(errors), '[("Extraneous \'=\' in", "\'FOO : bar = BAZ = Qux.\'")]')
+
+    def test_valid(self):
+        (expectation, errors) = TestExpectationParser.parse('FOO : bar = BAZ')
+        self.assertEqual(expectation.malformed, False)
+        self.assertEqual(expectation.valid, True)
+        self.assertEqual(expectation.comment, None)
+        self.assertEqual(len(errors), 0)
+
+    def test_valid_with_comment(self):
+        (expectation, errors) = TestExpectationParser.parse('FOO : bar = BAZ //Qux.')
+        self.assertEqual(expectation.malformed, False)
+        self.assertEqual(expectation.valid, True)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(str(expectation.modifiers), '[\'foo\']')
+        self.assertEqual(str(expectation.expectations), '[\'baz\']')
+        self.assertEqual(len(errors), 0)
+
+    def test_valid_with_multiple_modifiers(self):
+        (expectation, errors) = TestExpectationParser.parse('FOO1 FOO2 : bar = BAZ //Qux.')
+        self.assertEqual(expectation.malformed, False)
+        self.assertEqual(expectation.valid, True)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(str(expectation.modifiers), '[\'foo1\', \'foo2\']')
+        self.assertEqual(str(expectation.expectations), '[\'baz\']')
+        self.assertEqual(len(errors), 0)
+
+
+class TestExpectationSerializerTests(unittest.TestCase):
+    def assert_round_trip(self, in_string, expected_string=None):
+        (expectation, _) = TestExpectationParser.parse(in_string)
+        if expected_string is None:
+            expected_string = in_string
+        self.assertEqual(expected_string, TestExpectationSerializer.to_string(expectation))
+
+    def assert_to_string(self, expectation, expected_string):
+        self.assertEqual(TestExpectationSerializer.to_string(expectation), expected_string)
+
+    def test_string_serializer(self):
+        expectation = TestExpectationLine()
+        self.assert_to_string(expectation, '')
+        expectation.comment = 'Qux.'
+        self.assert_to_string(expectation, '//Qux.')
+        expectation.name = 'bar'
+        self.assert_to_string(expectation, ' : bar =  //Qux.')
+        expectation.modifiers = ['foo']
+        self.assert_to_string(expectation, 'FOO : bar =  //Qux.')
+        expectation.expectations = ['bAz']
+        self.assert_to_string(expectation, 'FOO : bar = BAZ //Qux.')
+        expectation.expectations = ['bAz1', 'baZ2']
+        self.assert_to_string(expectation, 'FOO : bar = BAZ1 BAZ2 //Qux.')
+        expectation.modifiers = ['foo1', 'foO2']
+        self.assert_to_string(expectation, 'FOO1 FOO2 : bar = BAZ1 BAZ2 //Qux.')
+        expectation.malformed = True
+        self.assert_to_string(expectation, 'Qux.')
+
+    def test_string_roundtrip(self):
+        self.assert_round_trip('')
+        self.assert_round_trip('FOO')
+        self.assert_round_trip(':')
+        self.assert_round_trip('FOO :')
+        self.assert_round_trip('FOO : bar')
+        self.assert_round_trip('  FOO :')
+        self.assert_round_trip('    FOO : bar')
+        self.assert_round_trip('FOO : bar = BAZ')
+        self.assert_round_trip('FOO : bar = BAZ //Qux.')
+        self.assert_round_trip('FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO : bar = BAZ // Qux.     ')
+        self.assert_round_trip('FOO : bar = BAZ //        Qux.     ')
+        self.assert_round_trip('FOO : : bar = BAZ')
+        self.assert_round_trip('FOO : : bar = BAZ')
+        self.assert_round_trip('FOO : : bar ==== BAZ')
+        self.assert_round_trip('=')
+        self.assert_round_trip('//')
+        self.assert_round_trip('// ')
+        self.assert_round_trip('// Foo')
+        self.assert_round_trip('// Foo')
+        self.assert_round_trip('// Foo :')
+        self.assert_round_trip('// Foo : =')
+
+    def test_string_whitespace_stripping(self):
+        self.assert_round_trip('\n', '')
+        self.assert_round_trip('  FOO : bar = BAZ', 'FOO : bar = BAZ')
+        self.assert_round_trip('FOO    : bar = BAZ', 'FOO : bar = BAZ')
+        self.assert_round_trip('FOO : bar = BAZ       // Qux.', 'FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO : bar =        BAZ // Qux.', 'FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO :       bar =    BAZ // Qux.', 'FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO :       bar     =    BAZ // Qux.', 'FOO : bar = BAZ // Qux.')
+
+
+class TestValidator:
+    def __init__(self):
+        self.line_numbers = []
+
+    def validate(self, line_number, expectation, errors):
+        self.line_numbers.append(line_number)
+        return line_number % 2 == 0
+
+
+class TestExpectationsFileTests(unittest.TestCase):
+    def test_line_number_increment(self):
+        validator = TestValidator()
+        expectations = TestExpectationsFile()
+        expectations.append('// Bar\nFOO : bar = BAZ\n\n', validator)
+        self.assertEqual(str(validator.line_numbers), '[1, 2, 3, 4]')
+
+    def test_iterator(self):
+        validator = TestValidator()
+        expectations = TestExpectationsFile()
+        expectations.append('\n\n\n\n', validator)
+        line_number = 0
+        for expectation in expectations:
+            line_number += 1
+        self.assertEqual(line_number, 5)
+
+    def test_validator_feedback(self):
+        validator = TestValidator()
+        expectations = TestExpectationsFile()
+        expectations.append('FOO : bar1 = BAZ\nFOO : bar2 = BAZ\nFOO : bar3 = BAZ', validator)
+        line_number = 0
+        for expectation in expectations:
+            line_number += 1
+            self.assertEqual(line_number % 2 == 0, expectation.valid)
 
 if __name__ == '__main__':
     unittest.main()

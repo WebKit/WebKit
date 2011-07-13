@@ -1,3 +1,18 @@
+2011-07-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Extract model-like TestExpectationLine and TestExpectationFile from TestExpectations.
+        https://bugs.webkit.org/show_bug.cgi?id=64386
+
+        This is the first step in converting TestExpectations to a real model.
+        * TestExpectationsLine represents a line in the test_expectations.txt file, and
+        * TestExpectationsFile represents the file, which is a collection of lines.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+
 2011-07-13  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Do not grab focus too early in DRT.

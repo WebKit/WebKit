@@ -122,7 +122,7 @@ class TestExpectationsTestCase(unittest.TestCase):
     def test_expectation_errors(self):
         self.assert_lines_lint(
             ["missing expectations"],
-            "Missing a ':' missing expectations  [test/expectations] [5]")
+            "Missing a ':' in 'missing expectations'  [test/expectations] [5]")
         self.assert_lines_lint(
             ["SLOW : passes/text.html = TIMEOUT"],
             "A test can not be both SLOW and TIMEOUT. "

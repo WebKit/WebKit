@@ -88,6 +88,7 @@ def has_pixel_failures(actual_results):
     return IMAGE in actual_results or IMAGE_PLUS_TEXT in actual_results
 
 
+# FIXME: This method is no longer used here in this module. Remove remaining callsite in manager.py and this method.
 def strip_comments(line):
     """Strips comments from a line and return None if the line is empty
     or else the contents of line with leading and trailing spaces removed
@@ -135,6 +136,131 @@ class ExpectationsJsonEncoder(simplejson.JSONEncoder):
         assert isinstance(obj, ModifiersAndExpectations)
         return {"modifiers": obj.modifiers,
                 "expectations": obj.expectations}
+
+
+class TestExpectationSerializer:
+    """Provides means of serializing TestExpectationLine instances."""
+    @classmethod
+    def to_string(cls, expectation):
+        result = []
+        if expectation.malformed:
+            result.append(expectation.comment)
+        else:
+            if expectation.name is None:
+                if expectation.comment is not None:
+                    result.append('//')
+                    result.append(expectation.comment)
+            else:
+                result.append("%s : %s = %s" % (" ".join(expectation.modifiers).upper(), expectation.name, " ".join(expectation.expectations).upper()))
+                if expectation.comment is not None:
+                    result.append(" //%s" % (expectation.comment))
+
+        return ''.join(result)
+
+
+class TestExpectationParser:
+    """Provides parsing facilities for lines in the test_expectation.txt file."""
+
+    @classmethod
+    def parse(cls, expectation_string):
+        """Parses a line from test_expectations.txt and returns a tuple, containing a TestExpectationLine instance
+        and a list syntax erros, if any.
+
+        The format of test expectation is:
+
+        [[<modifiers>] : <name> = <expectations>][ //<comment>]
+
+        Any errant whitespace is not preserved.
+
+        """
+        result = TestExpectationLine()
+        errors = []
+        (modifiers, name, expectations, comment) = cls._split_expectation_string(expectation_string, errors)
+        if len(errors) > 0:
+            result.malformed = True
+            result.comment = expectation_string
+            result.valid = False
+        else:
+            result.malformed = False
+            result.comment = comment
+            result.valid = True
+            result.name = name
+            # FIXME: Modifiers should be its own class eventually.
+            if modifiers is not None:
+                result.modifiers = cls._split_space_separated(modifiers)
+            # FIXME: Expectations should be its own class eventually.
+            if expectations is not None:
+                result.expectations = cls._split_space_separated(expectations)
+
+        return (result, errors)
+
+    @classmethod
+    def _split_expectation_string(cls, line, errors):
+        """Splits line into a string of modifiers, a test name, a string of expectations, and a comment,
+        returning them as a tuple. In case parsing error, returns empty tuple.
+        """
+        comment_index = line.find("//")
+        comment = ''
+        if comment_index == -1:
+            comment_index = len(line)
+            comment = None
+        else:
+            comment = line[comment_index + 2:]
+
+        line = re.sub(r"\s+", " ", line[:comment_index].strip())
+        if len(line) == 0:
+            return (None, None, None, comment)
+
+        parts = line.split(':')
+        if len(parts) != 2:
+            errors.append(("Missing a ':' in" if len(parts) < 2 else "Extraneous ':' in", "'" + line + "'"))
+            return (None, None, None, None)
+
+        test_and_expectation = parts[1].split('=')
+        if len(test_and_expectation) != 2:
+            errors.append(("Missing expectations in" if len(test_and_expectation) < 2 else "Extraneous '=' in", "'" + line + "'"))
+            return (None, None, None, None)
+
+        return (parts[0].strip(), test_and_expectation[0].strip(), test_and_expectation[1].strip(), comment)
+
+    @classmethod
+    def _split_space_separated(cls, space_separated_string):
+        """Splits a space-separated string into an array."""
+        # FIXME: Lower-casing is necessary to support legacy code. Need to eliminate.
+        return [part.strip().lower() for part in space_separated_string.strip().split(' ')]
+
+
+class TestExpectationLine:
+    """Represents a line in test expectations file."""
+
+    def __init__(self):
+        """Initializes a blank-line equivalent of an expectation."""
+        self.name = None
+        self.modifiers = []
+        self.expectations = []
+        self.comment = None
+        # FIXME: Should valid and malformed be a single state flag? Probably not, since "malformed" is also "not valid".
+        self.valid = False
+        self.malformed = False
+
+
+class TestExpectationsFile:
+    """Represents a test expectation file, which is a mutable collection of comments and test expectations."""
+
+    def __init__(self):
+        self._expectations = []
+
+    def __iter__(self):
+        return self._expectations.__iter__()
+
+    def append(self, expectations_string, validator):
+        """Add a TestExpectationLine for each item in expectations_string."""
+        line_number = 0
+        for line in expectations_string.split("\n"):
+            expectation, errors = TestExpectationParser.parse(line)
+            line_number += 1
+            expectation.valid = validator.validate(line_number, expectation, errors)
+            self._expectations.append(expectation)
 
 
 class TestExpectations:
@@ -240,7 +366,6 @@ class TestExpectations:
         """
         self._port = port
         self._fs = port._filesystem
-        self._expectations = expectations
         self._full_test_list = tests
         self._test_config = test_config
         self._is_lint_mode = is_lint_mode
@@ -274,8 +399,10 @@ class TestExpectations:
         self._timeline_to_tests = self._dict_of_sets(self.TIMELINES)
         self._result_type_to_tests = self._dict_of_sets(self.RESULT_TYPES)
 
-        self._read(self._get_iterable_expectations(self._expectations),
-                   overrides_allowed=False)
+        self._matcher = ModifierMatcher(self._test_config)
+        self._expectations = TestExpectationsFile()
+        self._overrides_allowed = False
+        self._expectations.append(expectations, self)
 
         # List of tests that are in the overrides file (used for checking for
         # duplicates inside the overrides file itself). Note that just because
@@ -285,8 +412,9 @@ class TestExpectations:
         self._overridding_tests = set()
 
         if overrides:
-            self._read(self._get_iterable_expectations(self._overrides),
-                       overrides_allowed=True)
+            self._overrides_allowed = True
+            self._expectations.append(self._overrides, self)
+            self._overrides_allowed = False
 
         self._handle_any_read_errors()
         self._process_tests_without_expectations()
@@ -362,17 +490,6 @@ class TestExpectations:
             d[c] = set()
         return d
 
-    def _get_iterable_expectations(self, expectations_str):
-        """Returns an object that can be iterated over. Allows for not caring
-        about whether we're iterating over a file or a new-line separated
-        string."""
-        iterable = [x + "\n" for x in expectations_str.split("\n")]
-        # Strip final entry if it's empty to avoid added in an extra
-        # newline.
-        if iterable[-1] == "\n":
-            return iterable[:-1]
-        return iterable
-
     def get_test_set(self, modifier, expectation=None, include_skips=True):
         if expectation is None:
             tests = self._modifier_to_tests[modifier]
@@ -414,39 +531,10 @@ class TestExpectations:
     def remove_rebaselined_tests(self, tests):
         """Returns a copy of the expectations with the tests removed."""
         lines = []
-        for (lineno, line) in enumerate(self._get_iterable_expectations(self._expectations)):
-            test, options, _ = self.parse_expectations_line(line, lineno)
-            if not (test and test in tests and 'rebaseline' in options):
-                lines.append(line)
-        return ''.join(lines)
-
-    def parse_expectations_line(self, line, lineno):
-        """Parses a line from test_expectations.txt and returns a tuple
-        with the test path, options as a list, expectations as a list."""
-        line = strip_comments(line)
-        if not line:
-            return (None, None, None)
-
-        options = []
-        if line.find(":") is -1:
-            self._add_error(lineno, "Missing a ':'", line)
-            return (None, None, None)
-
-        parts = line.split(':')
-
-        # FIXME: verify that there is exactly one colon in the line.
-
-        options = self._get_options_list(parts[0])
-        test_and_expectation = parts[1].split('=')
-        test = test_and_expectation[0].strip()
-        if (len(test_and_expectation) is not 2):
-            self._add_error(lineno, "Missing expectations.",
-                           test_and_expectation)
-            expectations = None
-        else:
-            expectations = self._get_options_list(test_and_expectation[1])
-
-        return (test, options, expectations)
+        for expectation in self._expectations:
+            if not (expectation.valid and expectation.name in tests and "rebaseline" in expectation.modifiers):
+                lines.append(TestExpectationSerializer.to_string(expectation))
+        return "\n".join(lines)
 
     def _add_to_all_expectations(self, test, options, expectations):
         if not test in self._all_expectations:
@@ -454,20 +542,18 @@ class TestExpectations:
         self._all_expectations[test].append(
             ModifiersAndExpectations(options, expectations))
 
-    def _read(self, expectations, overrides_allowed):
-        """For each test in an expectations iterable, generate the
-        expectations for it."""
-        lineno = 0
-        matcher = ModifierMatcher(self._test_config)
-        for line in expectations:
-            lineno += 1
-            self._process_line(line, lineno, matcher, overrides_allowed)
+    def validate(self, lineno, expectation, syntax_errors):
+        test_list_path = expectation.name
+        options = expectation.modifiers
+        expectations = expectation.expectations
+        matcher = self._matcher
+        overrides_allowed = self._overrides_allowed
 
-    def _process_line(self, line, lineno, matcher, overrides_allowed):
-        test_list_path, options, expectations = \
-            self.parse_expectations_line(line, lineno)
+        for (message, source) in syntax_errors:
+            self._add_error(lineno, message, source)
+
         if not expectations:
-            return
+            return False
 
         self._add_to_all_expectations(test_list_path,
                                         " ".join(options).upper(),
@@ -476,7 +562,7 @@ class TestExpectations:
         num_matches = self._check_options(matcher, options, lineno,
                                           test_list_path)
         if num_matches == ModifierMatcher.NO_MATCH:
-            return
+            return False
 
         expectations = self._parse_expectations(expectations, lineno,
             test_list_path)
@@ -485,7 +571,7 @@ class TestExpectations:
             lineno, test_list_path)
 
         if self._check_path_does_not_exist(lineno, test_list_path):
-            return
+            return False
 
         if not self._full_test_list:
             tests = [test_list_path]
@@ -494,6 +580,8 @@ class TestExpectations:
 
         modifiers = [o for o in options if o in self.MODIFIERS]
         self._add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
+
+        return True
 
     def _get_options_list(self, listString):
         return [part.strip().lower() for part in listString.strip().split(' ')]
