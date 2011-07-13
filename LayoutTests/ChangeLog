@@ -1,3 +1,16 @@
+2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]content:-webkit-from-flow not applied correctly
+        https://bugs.webkit.org/show_bug.cgi?id=64438
+
+        Reviewed by Tony Chang.
+
+        Correct the layout test for content:-webkit-from-flow parsing. Testing getComputedStyle values for content property
+        was not done properly, as "flow-name" was passed instead of "-webkit-from-flow:'flow-name'".
+
+        * fast/regions/content-webkit-from-flow-parsing-expected.txt:
+        * fast/regions/script-tests/content-webkit-from-flow-parsing.js:
+
 2011-07-12  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] media/media-blocked-by-willsendrequest.html fails

@@ -1,3 +1,17 @@
+2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]content:-webkit-from-flow not applied correctly
+        https://bugs.webkit.org/show_bug.cgi?id=64438
+
+        Reviewed by Tony Chang.
+
+        Forgot to modify getStringValue(), i was modifying only getStringValue(ExceptionCode&).
+
+        Test: fast/regions/content-webkit-from-flow-parsing.html (existing).
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getStringValue):
+
 2011-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't reuse the last InsertTextCommand

@@ -545,6 +545,9 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
+#if ENABLE(CSS_REGIONS)
+        case CSS_FROM_FLOW:
+#endif
              return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
