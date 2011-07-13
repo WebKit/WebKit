@@ -7,7 +7,3 @@ http/tests/security/xss-DENIED-xsl-document.xml
 # http://bugreports.qt.nokia.com/browse/QTBUG-19556
 # https://bugs.webkit.org/show_bug.cgi?id=60176
 http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
-
-# [Qt] REGRESSION(r90634): It made http/tests/misc/script-async.html fail with Qt 4.8.x
-# https://bugs.webkit.org/show_bug.cgi?id=64352
-http/tests/misc/script-async.html

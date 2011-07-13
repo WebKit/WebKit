@@ -1,3 +1,14 @@
+2011-07-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt] REGRESSION(r90634): It made http/tests/misc/script-async.html fail with Qt 4.8.x
+        https://bugs.webkit.org/show_bug.cgi?id=64352
+
+        Reviewed by Andreas Kling.
+
+        Unskip http/tests/misc/script-async.html since the original change has been reverted.
+
+        * platform/qt-4.8/Skipped:
+
 2011-07-13  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         [Qt] Add expected results for the new passing tests and unskip them.
