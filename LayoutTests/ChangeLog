@@ -1,3 +1,9 @@
+2011-07-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Remove 2 tests, because they are in test_expectations.txt too.
+
 2011-07-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] More edge AA and misc chromium gpu baselines and expectations updates.
