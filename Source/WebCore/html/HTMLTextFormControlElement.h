@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
+class Position;
 class RenderTextControl;
+class VisiblePosition;
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
@@ -44,6 +46,7 @@ public:
     String strippedPlaceholder() const;
     bool placeholderShouldBeVisible() const;
 
+    int indexForVisiblePosition(const VisiblePosition&) const;
     int selectionStart() const;
     int selectionEnd() const;
     void setSelectionStart(int);
@@ -114,6 +117,8 @@ inline HTMLTextFormControlElement* toTextFormControl(Node* node)
 {
     return (node && node->isElementNode() && static_cast<Element*>(node)->isTextFormControl()) ? static_cast<HTMLTextFormControlElement*>(node) : 0;
 }
+
+HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 
 } // namespace
 

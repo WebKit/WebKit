@@ -37,6 +37,7 @@
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
+#include "TextIterator.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -213,6 +214,20 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end)
         frame->selection()->setSelection(newSelection);
 }
 
+int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& pos) const
+{
+    Position indexPosition = pos.deepEquivalent().parentAnchoredEquivalent();
+    if (enclosingTextFormControl(indexPosition) != this)
+        return 0;
+    ExceptionCode ec = 0;
+    RefPtr<Range> range = Range::create(indexPosition.document());
+    range->setStart(innerTextElement(), 0, ec);
+    ASSERT(!ec);
+    range->setEnd(indexPosition.containerNode(), indexPosition.offsetInContainerNode(), ec);
+    ASSERT(!ec);
+    return TextIterator::rangeLength(range.get());
+}
+
 int HTMLTextFormControlElement::selectionStart() const
 {
     if (!isTextFormControl())
@@ -229,7 +244,7 @@ int HTMLTextFormControlElement::computeSelectionStart() const
     if (!frame)
         return 0;
 
-    return RenderTextControl::indexForVisiblePosition(innerTextElement(), frame->selection()->start());
+    return indexForVisiblePosition(frame->selection()->start());
 }
 
 int HTMLTextFormControlElement::selectionEnd() const
@@ -247,7 +262,7 @@ int HTMLTextFormControlElement::computeSelectionEnd() const
     if (!frame)
         return 0;
 
-    return RenderTextControl::indexForVisiblePosition(innerTextElement(), frame->selection()->end());
+    return indexForVisiblePosition(frame->selection()->end());
 }
 
 static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& containerNode, int& offsetInContainer)
@@ -331,6 +346,17 @@ void HTMLTextFormControlElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
     else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
+}
+
+HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
+{
+    ASSERT(position.isNull() || position.anchorType() == Position::PositionIsOffsetInAnchor
+           || position.containerNode() || !position.anchorNode()->shadowAncestorNode());
+    Node* container = position.containerNode();
+    if (!container)
+        return 0;
+    Node* ancestor = container->shadowAncestorNode();
+    return ancestor != container ? toTextFormControl(ancestor) : 0;
 }
 
 } // namespace Webcore

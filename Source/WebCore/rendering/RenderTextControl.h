@@ -27,9 +27,6 @@
 namespace WebCore {
 
 class HTMLTextFormControlElement;
-class VisibleSelection;
-class TextControlInnerElement;
-class TextControlInnerTextElement;
 
 class RenderTextControl : public RenderBlock {
 public:
@@ -46,7 +43,6 @@ public:
     String textWithHardLineBreaks();
 
     VisiblePosition visiblePositionForIndex(int index) const;
-    static int indexForVisiblePosition(HTMLElement*, const VisiblePosition&);
 
     void updatePlaceholderVisibility(bool, bool);
 

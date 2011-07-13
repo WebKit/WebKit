@@ -856,17 +856,6 @@ Node *tabSpanNode(const Node *node)
 {
     return isTabSpanTextNode(node) ? node->parentNode() : 0;
 }
-
-HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
-{
-    ASSERT(position.isNull() || position.anchorType() == Position::PositionIsOffsetInAnchor
-           || position.containerNode() || !position.anchorNode()->shadowAncestorNode());
-    Node* container = position.containerNode();
-    if (!container)
-        return 0;
-    Node* ancestor = container->shadowAncestorNode();
-    return ancestor != container ? toTextFormControl(ancestor) : 0;
-}
     
 Position positionOutsideTabSpan(const Position& pos)
 {

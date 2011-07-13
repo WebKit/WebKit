@@ -1,3 +1,33 @@
+2011-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move RenderTextControl::indexForVisiblePosition to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=64403
+
+        Reviewed by Hajime Morita.
+
+        Moved indexForVisiblePosition from RenderTextControl to HTMLTextFormControlElement.
+
+        Also replaced the call to RenderTextControl::isSelectableElement by a call to enclosingTextFormControl
+        (moved from htmlediting to HTMLTextFormControlElement) because we are only interested in checking
+        whether the given position is inside the current text form control or not.
+
+        In addition, modernized the code in indexForVisiblePosition by calling parentAnchoredEquivalent on the
+        given position and replacing calls to deprecateNode and deprecatedEditingOffset by calls to containerNode
+        and offsetInContainer.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition): Calls indexForVisiblePosition.
+        * editing/htmlediting.cpp: Removed enclosingTextFromControl.
+        * editing/htmlediting.h: Removed enclosingTextFromControl.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::indexForVisiblePosition): Moved from RenderTextControl.
+        (WebCore::HTMLTextFormControlElement::computeSelectionStart): Calls indexForVisiblePosition.
+        (WebCore::HTMLTextFormControlElement::computeSelectionEnd): Calls indexForVisiblePosition.
+        (WebCore::enclosingTextFormControl): Moved from htmlediting.cpp
+        * html/HTMLTextFormControlElement.h:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+
 2011-07-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Make RenderObject::containingBlock virtual for better speed and clarity

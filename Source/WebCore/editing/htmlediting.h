@@ -218,7 +218,6 @@ PassRefPtr<Element> createBlockPlaceholderElement(Document*);
 
 Element* editableRootForPosition(const Position&);
 Element* unsplittableElementForPosition(const Position&);
-HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 
 // Boolean functions on Element
     

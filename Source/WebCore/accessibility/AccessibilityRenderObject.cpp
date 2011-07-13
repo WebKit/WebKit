@@ -2495,7 +2495,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
 {
     if (isNativeTextControl()) {
         HTMLTextFormControlElement* textControl = toRenderTextControl(m_renderer)->textFormControlElement();
-        return RenderTextControl::indexForVisiblePosition(textControl->innerTextElement(), pos);
+        return textControl->indexForVisiblePosition(pos);
     }
 
     if (!isTextControl())

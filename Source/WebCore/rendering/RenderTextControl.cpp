@@ -29,7 +29,6 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
-#include "HTMLFormControlElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -38,7 +37,6 @@
 #include "RenderText.h"
 #include "ScrollbarTheme.h"
 #include "Text.h"
-#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -183,22 +181,6 @@ void RenderTextControl::setLastChangeWasUserEdit(bool lastChangeWasUserEdit)
     document()->setIgnoreAutofocus(lastChangeWasUserEdit);
 }
 
-bool RenderTextControl::isSelectableElement(HTMLElement* innerText, Node* node)
-{
-    if (!node || !innerText)
-        return false;
-
-    if (node->rootEditableElement() == innerText)
-        return true;
-    
-    if (!innerText->contains(node))
-        return false;
-    
-    Node* shadowAncestor = node->shadowAncestorNode();
-    return shadowAncestor && (shadowAncestor->hasTagName(textareaTag)
-        || (shadowAncestor->hasTagName(inputTag) && static_cast<HTMLInputElement*>(shadowAncestor)->isTextField()));
-}
-
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
@@ -210,20 +192,6 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
     CharacterIterator it(range.get());
     it.advance(index - 1);
     return VisiblePosition(it.range()->endPosition(), UPSTREAM);
-}
-
-int RenderTextControl::indexForVisiblePosition(HTMLElement* innerTextElement, const VisiblePosition& pos)
-{
-    Position indexPosition = pos.deepEquivalent();
-    if (!RenderTextControl::isSelectableElement(innerTextElement, indexPosition.deprecatedNode()))
-        return 0;
-    ExceptionCode ec = 0;
-    RefPtr<Range> range = Range::create(indexPosition.document());
-    range->setStart(innerTextElement, 0, ec);
-    ASSERT(!ec);
-    range->setEnd(indexPosition.deprecatedNode(), indexPosition.deprecatedEditingOffset(), ec);
-    ASSERT(!ec);
-    return TextIterator::rangeLength(range.get());
 }
 
 void RenderTextControl::subtreeHasChanged()
