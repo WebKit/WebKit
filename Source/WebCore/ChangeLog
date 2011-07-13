@@ -1,3 +1,18 @@
+2011-07-12  David Reveman  <reveman@chromium.org>
+
+        Removed unnecessary function parameters from TilingData::textureOffset.
+        https://bugs.webkit.org/show_bug.cgi?id=64245
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, no functionality changes.
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::drawTiles):
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::textureOffset):
+        * platform/graphics/gpu/TilingData.h:
+
 2011-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move RenderTextControl::indexForVisiblePosition to HTMLTextFormControlElement

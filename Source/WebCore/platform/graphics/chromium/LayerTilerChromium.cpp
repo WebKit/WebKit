@@ -537,7 +537,7 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             IntRect tileRect = m_tilingData.tileBounds(m_tilingData.tileIndex(tile->i(), tile->j()));
             tileRect.move(m_layerPosition.x(), m_layerPosition.y());
 
-            IntPoint texOffset = m_tilingData.textureOffset(tile->i(), tile->j());
+            IntPoint texOffset = m_tilingData.textureOffset();
             IntRect texRect = tileTexRect(tile);
             float tileWidth = static_cast<float>(texRect.width());
             float tileHeight = static_cast<float>(texRect.height());
