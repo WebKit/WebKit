@@ -259,6 +259,20 @@ EncodedJSValue operationGetByIdBuildListWithReturnAddress(ExecState* exec, Encod
     return JSValue::encode(result);
 }
 
+EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdProtoBuildList);
+EncodedJSValue operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
+{
+    JSValue baseValue = JSValue::decode(encodedBase);
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(exec, *propertyName, slot);
+
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    dfgBuildGetByIDProtoList(exec, baseValue, *propertyName, slot, stubInfo);
+
+    return JSValue::encode(result);
+}
+
 EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
 FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
 EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)

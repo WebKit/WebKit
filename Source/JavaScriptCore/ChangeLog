@@ -1,3 +1,43 @@
+2011-07-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not implement prototype chain or list caching for get_by_id.
+        https://bugs.webkit.org/show_bug.cgi?id=64147
+
+        Reviewed by Gavin Barraclough.
+        
+        This implements unified support for prototype caching, prototype chain
+        caching, and polymorphic (i.e. list) prototype and prototype chain
+        caching.  This is done by creating common code for emitting prototype
+        or chain access stubs, and having it factored out into
+        generateProtoChainAccessStub().  This function is called by
+        tryCacheGetByID once the latter determines that some form of prototype
+        access caching is necessary (i.e. the slot being accessed is not on the
+        base value but on some other object).
+        
+        Direct prototype list, and prototype chain list, caching is implemented by
+        linking the slow path to operationGetByIdProtoBuildList(), which uses the
+        same helper function (generateProtoChainAccessStub()) as tryCacheGetByID.
+        
+        This change required ensuring that the value in the scratchGPR field in
+        StructureStubInfo is preserved even after the stub info is in the
+        chain, or proto_list, states.  Hence scratchGPR was moved out of the union
+        and into the top-level of StructureStubInfo.
+        
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::emitRestoreScratch):
+        (JSC::DFG::linkRestoreScratch):
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDProtoList):
+        (JSC::DFG::dfgBuildGetByIDProtoList):
+        (JSC::DFG::tryCachePutByID):
+        * dfg/DFGRepatch.h:
+
 2011-07-12  Brent Fulgham  <bfulgham@webkit.org>
 
         Standardize WinCairo conditionalized code under PLATFORM macro.

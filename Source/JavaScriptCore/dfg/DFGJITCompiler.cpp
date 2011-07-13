@@ -398,7 +398,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         info.deltaCallToDone = m_propertyAccesses[i].m_deltaCallToDone;
         info.baseGPR = m_propertyAccesses[i].m_baseGPR;
         info.valueGPR = m_propertyAccesses[i].m_valueGPR;
-        info.u.unset.scratchGPR = m_propertyAccesses[i].m_scratchGPR;
+        info.scratchGPR = m_propertyAccesses[i].m_scratchGPR;
     }
     
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());

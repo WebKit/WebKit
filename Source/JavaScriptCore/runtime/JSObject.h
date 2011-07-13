@@ -220,6 +220,11 @@ namespace JSC {
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage) == static_cast<const void*>(this + 1); }
 
+        void* addressOfPropertyAtOffset(size_t offset)
+        {
+            return static_cast<void*>(&m_propertyStorage[offset]);
+        }
+
         static const unsigned baseExternalStorageCapacity = 16;
 
         void flattenDictionaryObject(JSGlobalData& globalData)
