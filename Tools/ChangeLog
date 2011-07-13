@@ -1,3 +1,11 @@
+2011-07-13  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Fix distcheck
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/GNUmakefile.am: mark built sources as nodist.
+
 2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed fix. Add a "\n" to a printf that somehow got lost.

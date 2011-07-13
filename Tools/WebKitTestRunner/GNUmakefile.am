@@ -51,7 +51,7 @@ Programs_WebKitTestRunner_LDFLAGS = \
 # The InjectedBundle library allows the render process to load harness code.
 noinst_LTLIBRARIES += Libraries/libTestRunnerInjectedBundle.la
 
-injected_bundle_built_sources = \
+nodist_injected_bundle_built_sources = \
 	DerivedSources/InjectedBundle/JSEventSendingController.cpp \
 	DerivedSources/InjectedBundle/JSGCController.cpp \
 	DerivedSources/InjectedBundle/JSLayoutTestController.cpp

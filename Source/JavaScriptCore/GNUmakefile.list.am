@@ -219,6 +219,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITStubCall.h \
 	Source/JavaScriptCore/jit/JITStubs.cpp \
 	Source/JavaScriptCore/jit/JITStubs.h \
+	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
@@ -263,6 +264,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ArrayPrototype.cpp \
 	Source/JavaScriptCore/runtime/ArrayPrototype.h \
 	Source/JavaScriptCore/runtime/BatchedTransitionOptimizer.h \
+	Source/JavaScriptCore/runtime/BigInteger.h \
 	Source/JavaScriptCore/runtime/BooleanConstructor.cpp \
 	Source/JavaScriptCore/runtime/BooleanConstructor.h \
 	Source/JavaScriptCore/runtime/BooleanObject.cpp \
@@ -431,6 +433,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/TimeoutChecker.cpp \
 	Source/JavaScriptCore/runtime/TimeoutChecker.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
+	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
 	Source/JavaScriptCore/runtime/UString.cpp \
 	Source/JavaScriptCore/runtime/UString.h \
 	Source/JavaScriptCore/runtime/UStringBuilder.h \

@@ -1002,6 +1002,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSStyleSheet.h \
 	Source/WebCore/css/CSSTimingFunctionValue.cpp \
 	Source/WebCore/css/CSSTimingFunctionValue.h \
+	Source/WebCore/css/CSSWrapShapes.cpp \
+	Source/WebCore/css/CSSWrapShapes.h \
 	Source/WebCore/css/CSSUnicodeRangeValue.cpp \
 	Source/WebCore/css/CSSUnicodeRangeValue.h \
 	Source/WebCore/css/CSSUnknownRule.h \
@@ -2590,6 +2592,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/UnitBezier.h \
 	Source/WebCore/platform/graphics/WidthIterator.cpp \
 	Source/WebCore/platform/graphics/WidthIterator.h \
+	Source/WebCore/platform/graphics/WindRule.h \
 	Source/WebCore/platform/graphics/WOFFFileFormat.cpp \
 	Source/WebCore/platform/graphics/WOFFFileFormat.h \
 	Source/WebCore/platform/gtk/KURLGtk.cpp \
@@ -2712,7 +2715,6 @@ webcore_sources += \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.h \
 	Source/WebCore/platform/network/soup/CredentialStorageSoup.cpp \
-	Source/WebCore/platform/network/soup/CredentialStorageSoup.h \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
 	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
@@ -3794,6 +3796,8 @@ webcore_sources += \
 	Source/WebCore/workers/WorkerScriptLoader.h \
 	Source/WebCore/workers/WorkerThread.cpp \
 	Source/WebCore/workers/WorkerThread.h \
+	Source/WebCore/xml/parser/NewXMLDocumentParser.cpp \
+	Source/WebCore/xml/parser/NewXMLDocumentParser.h \
 	Source/WebCore/xml/parser/XMLDocumentParser.cpp \
 	Source/WebCore/xml/parser/XMLDocumentParser.h \
 	Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp \

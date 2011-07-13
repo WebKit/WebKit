@@ -1,3 +1,11 @@
+2011-07-13  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Fix distcheck
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: add missing files.
+
 2011-07-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not implement prototype chain or list caching for get_by_id.

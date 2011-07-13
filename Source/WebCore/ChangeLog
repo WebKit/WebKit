@@ -1,3 +1,11 @@
+2011-07-13  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Fix distcheck.
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: add missing files.
+
 2011-07-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] No implementation defined for WTF::monotonicallyIncreasingTime
