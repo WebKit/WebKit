@@ -56,6 +56,7 @@
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "CSSWrapShapes.h"
 #include "Counter.h"
 #include "Document.h"
 #include "FloatConversion.h"
@@ -80,10 +81,6 @@
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
-#endif
-
-#if ENABLE(CSS_EXCLUSIONS)
-#include "CSSWrapShapes.h"
 #endif
 
 #define YYDEBUG 0
@@ -3670,17 +3667,14 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
     // rect(x, y, width, height, [[rx], ry])
     if (args->size() != 7 && args->size() != 9 && args->size() != 11)
         return 0;
-        
-    bool valid = true;
     
     RefPtr<CSSWrapShapeRect> shape = CSSWrapShapeRect::create();
     
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        valid = validUnit(argument, FLength, m_strict);
-        if (!valid)
-            break;
+        if (!validUnit(argument, FLength, m_strict))
+            return 0;
         
         RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue, 
             (CSSPrimitiveValue::UnitTypes) argument->unit);
@@ -3707,17 +3701,15 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
         }
         argument = args->next();
         if (argument) {
-            if (argument->unit == CSSParserValue::Operator && argument->iValue == ',')
-                argument = args->next();
-            else {
-                valid = false;
-                break;
-            }
+            if (argument->unit != CSSParserValue::Operator || argument->iValue != ',')
+                return 0;
+            
+            argument = args->next();
         }
         argumentNumber++;
     }
     
-    if (!valid || argumentNumber < 4)
+    if (argumentNumber < 4)
         return 0;    
     return shape;
 }
@@ -3730,16 +3722,13 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeCircle(CSSParserValueList* arg
     if (args->size() != 5)
         return 0;
         
-    bool valid = true;
-    
     RefPtr<CSSWrapShapeCircle> shape = CSSWrapShapeCircle::create();
     
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        valid = validUnit(argument, FLength, m_strict);
-        if (!valid)
-            break;
+        if (!validUnit(argument, FLength, m_strict))
+            return 0;
 
         RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue, 
             (CSSPrimitiveValue::UnitTypes) argument->unit);
@@ -3758,17 +3747,14 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeCircle(CSSParserValueList* arg
         
         argument = args->next();
         if (argument) {
-            if (argument->unit == CSSParserValue::Operator && argument->iValue == ',')
-                argument = args->next();
-            else {
-                valid = false;
-                break;
-            }
+            if (argument->unit != CSSParserValue::Operator || argument->iValue != ',')
+                return 0;            
+            argument = args->next();
         }
         argumentNumber++;
     }
     
-    if (!valid || argumentNumber < 3)
+    if (argumentNumber < 3)
         return 0;    
     return shape;
 }
@@ -3781,15 +3767,12 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeEllipse(CSSParserValueList* ar
     if (args->size() != 7)
         return 0;
         
-    bool valid = false;
-    
     RefPtr<CSSWrapShapeEllipse> shape = CSSWrapShapeEllipse::create();
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        valid = validUnit(argument, FLength, m_strict);
-        if (!valid)
-            break;
+        if (!validUnit(argument, FLength, m_strict))
+            return 0;
         
         RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue, 
             (CSSPrimitiveValue::UnitTypes) argument->unit);
@@ -3811,17 +3794,14 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeEllipse(CSSParserValueList* ar
         
         argument = args->next();
         if (argument) {
-            if (argument && argument->unit == CSSParserValue::Operator && argument->iValue == ',')
-                argument = args->next();
-            else {
-                valid = false;
-                break;
-            }
+            if (argument->unit != CSSParserValue::Operator || argument->iValue != ',')
+                return 0;
+            argument = args->next();
         }
         argumentNumber++;
     }
     
-    if (!valid || argumentNumber < 4)
+    if (argumentNumber < 4)
         return 0;
     return shape;
 }

@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "CSSWrapShapes.h"
 #include "Color.h"
 #include "Counter.h"
 #include "ExceptionCode.h"
@@ -41,10 +42,6 @@
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
-#endif
-
-#if ENABLE(CSS_EXCLUSIONS)
-#include "CSSWrapShapes.h"
 #endif
 
 using namespace WTF;

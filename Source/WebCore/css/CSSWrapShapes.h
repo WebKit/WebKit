@@ -30,6 +30,8 @@
 #ifndef CSSWrapShapes_h
 #define CSSWrapShapes_h
 
+#if ENABLE(CSS_EXCLUSIONS)
+
 #include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
 #include "WindRule.h"
@@ -149,8 +151,8 @@ public:
         m_values.append(y);
     }
     
-    PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) { return m_values.at(i << 1); }
-    PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) { return m_values.at((i << 1) & 1); }
+    PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) { return m_values.at(i * 2); }
+    PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) { return m_values.at(i * 2 + 1); }
     
     void setWindRule(WindRule w) { m_windRule = w; }
     WindRule windRule() const { return m_windRule; }
@@ -169,5 +171,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(CSS_EXCLUSIONS)
 
 #endif // CSSWrapShapes_h

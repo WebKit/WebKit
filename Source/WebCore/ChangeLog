@@ -1,3 +1,23 @@
+2011-07-13  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Exclusions] Fix for comment #23 on wrap-shape parsing bug 61726
+        https://bugs.webkit.org/show_bug.cgi?id=64464
+
+        Reviewed by Tony Chang.
+
+        No new tests needed.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseWrapShapeRect): Removed the "valid" local.
+        (WebCore::CSSParser::parseWrapShapeCircle): Removed the "valid" local.
+        (WebCore::CSSParser::parseWrapShapeEllipse): Removed the "valid" local.
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSWrapShapes.h:
+        (WebCore::CSSWrapShapePolygon::getXAt): Replaced bit shift with multiplication.
+        (WebCore::CSSWrapShapePolygon::getYAt): Replaced bit shift with multiplication.
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-07-13  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

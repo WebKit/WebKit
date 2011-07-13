@@ -25,6 +25,7 @@
 #ifndef StyleRareNonInheritedData_h
 #define StyleRareNonInheritedData_h
 
+#include "CSSWrapShapes.h"
 #include "CounterDirectives.h"
 #include "CursorData.h"
 #include "DataRef.h"
@@ -35,10 +36,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(CSS_EXCLUSIONS)
-#include "CSSWrapShapes.h"
-#endif
 
 namespace WebCore {
 

@@ -26,6 +26,7 @@
 #include "CursorList.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
+#include "CSSWrapShapes.h"
 #include "FontSelector.h"
 #include "QuotesData.h"
 #include "RenderArena.h"
@@ -35,10 +36,6 @@
 #include "StyleImage.h"
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
-
-#if ENABLE(EXCLUSION)
-#include "CSSWrapShapes.h"
-#endif
 
 using namespace std;
 
