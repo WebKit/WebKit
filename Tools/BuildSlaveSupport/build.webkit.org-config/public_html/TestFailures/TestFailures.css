@@ -52,7 +52,7 @@ dt::after {
     margin-bottom: 0;
 }
 
-.existing-bugs-list, .suspect-revisions-list {
+.existing-bugs-list, .suspect-revisions-list, .flakiness-examples-list {
     font-size: smaller;
 }
 
@@ -63,4 +63,22 @@ dt::after {
 .flakiness-example-separator {
     padding-left: 5em;
     font-size: larger;
+}
+
+.disclosure-triangle {
+    -webkit-transition: -webkit-transform 0.1s;
+    -webkit-user-select: none;
+    cursor: default;
+    display: inline-block;
+    padding: 0px 3px;
+}
+
+.expanded > .disclosure-triangle {
+    -webkit-transform: rotateZ(90deg);
+}
+
+.flakiness-examples-list {
+    -webkit-transition: height 0.25s;
+    height: 0px;
+    overflow: hidden;
 }

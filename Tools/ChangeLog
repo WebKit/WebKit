@@ -1,4 +1,50 @@
 2011-07-13  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures show every time a possibly-flaky test failed, but hide it by default
+
+        It's useful to be able to see every time a flaky test failed to see whether it failed the
+        same way every time. But doing so takes a lot of space, so the list of failures is now
+        collapsed by default and can be revealed using a disclosure triangle.
+
+        Fixes <http://webkit.org/b/64455> TestFailures page doesn't show as much information for
+        flaky tests as I would like, even though the page is already so long
+
+        Reviewed by Dimitri Glazkov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js:
+        (FlakyLayoutTestDetector.prototype.allFailures): Replaced flakinessExamples with this
+        function. Now returns all failures for the given test.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector_unittests.js:
+        Added. This just contains some simple tests of the FlakyLayoutTestDetector class. We'll add
+        more over time.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js:
+        (LayoutTestHistoryAnalyzer.prototype.start): Updated the documentation comment to reflect
+        that we no longer return passing builds for possibly-flaky tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (.existing-bugs-list, .suspect-revisions-list, .flakiness-examples-list): Make the list of
+        flakiness examples small, too, since it can get quite long.
+
+        (.disclosure-triangle):
+        (.expanded > .disclosure-triangle):
+        Simple styles for the disclosure triangle.
+
+        (.flakiness-examples-list): Collapse the list by default.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Pass the total number of builds analyzed to
+        _domForPossiblyFlakyTests.
+        (ViewController.prototype._domForPossiblyFlakyTests): Put a disclosure triangle to the left
+        of each test name, and the number of failures to the right. When the disclosure triangle is
+        clicked for the first time, we build up the list of failures and expand the element. After
+        that we just collapse or expand the element on subsequent clicks.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Pulled in new tests.
+
+2011-07-13  Adam Roben  <aroben@apple.com>
         
         Teach TestFailures to understand NRWT's output when it exits early due to too many failures
 

@@ -56,10 +56,8 @@ LayoutTestHistoryAnalyzer.prototype = {
      *     },
      *     'possiblyFlaky': {
      *         'fast/workers/worker-test.html': [
-     *             { 'build': 'r12345 (679)', 'result': 'pass' },
      *             { 'build': 'r12344 (678)', 'result': 'fail' },
-     *             { 'build': 'r12340 (676)', 'result': 'fail' },
-     *             { 'build': 'r12338 (675)', 'result': 'pass' },
+     *             { 'build': 'r12340 (676)', 'result': 'crash' },
      *         ],
      *     },
      * }
@@ -86,7 +84,7 @@ LayoutTestHistoryAnalyzer.prototype = {
                     possiblyFlaky: {},
                 };
                 self._flakinessDetector.possiblyFlakyTests.forEach(function(testName) {
-                    data.possiblyFlaky[testName] = self._flakinessDetector.flakinessExamples(testName);
+                    data.possiblyFlaky[testName] = self._flakinessDetector.allFailures(testName);
                 });
 
                 var nextIndex = buildIndex + 1;

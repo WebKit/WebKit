@@ -70,7 +70,9 @@ ViewController.prototype = {
 
             var list = document.createElement('ol');
             list.id = 'failure-history';
-            Object.keys(data.history).forEach(function(buildName, buildIndex, buildNameArray) {
+
+            var buildNames = Object.keys(data.history)
+            buildNames.forEach(function(buildName, buildIndex, buildNameArray) {
                 var failingTestNames = Object.keys(data.history[buildName].tests);
                 if (!failingTestNames.length)
                     return;
@@ -107,7 +109,7 @@ ViewController.prototype = {
 
             self._mainContentElement.removeAllChildren();
             self._mainContentElement.appendChild(list);
-            self._mainContentElement.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky));
+            self._mainContentElement.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky, buildNames.length));
 
             if (!stillFetchingData)
                 PersistentCache.prune();
@@ -398,7 +400,7 @@ ViewController.prototype = {
         return result;
     },
 
-    _domForPossiblyFlakyTests: function(builder, possiblyFlakyTestData) {
+    _domForPossiblyFlakyTests: function(builder, possiblyFlakyTestData, buildCount) {
         var result = document.createDocumentFragment();
         var flakyTests = Object.keys(possiblyFlakyTestData);
         if (!flakyTests.length)
@@ -416,22 +418,46 @@ ViewController.prototype = {
         var self = this;
         flakyList.appendChildren(sorted(flakyTests).map(function(testName) {
             var item = document.createElement('li');
-            item.appendChild(document.createTextNode(testName));
-            var historyList = document.createElement('ol');
-            item.appendChild(historyList);
-            historyList.appendChildren(possiblyFlakyTestData[testName].map(function(historyItem) {
-                var item = document.createElement('li');
-                if (historyItem.isSeparator) {
-                    const verticalEllipsis = '\u22ee';
-                    item.appendChild(document.createTextNode(verticalEllipsis));
-                    item.className = 'flakiness-example-separator';
-                    return item;
+
+            var disclosureTriangle = document.createElement('span');
+            item.appendChild(disclosureTriangle);
+
+            disclosureTriangle.className = 'disclosure-triangle';
+            const blackRightPointingSmallTriangle = '\u25b8';
+            disclosureTriangle.appendChild(document.createTextNode(blackRightPointingSmallTriangle));
+
+            var failures = possiblyFlakyTestData[testName];
+
+            item.appendChild(document.createTextNode(testName + ' (failed ' + failures.length + ' out of ' + buildCount + ' times)'));
+
+            var failureList = document.createElement('ol');
+            item.appendChild(failureList);
+
+            failureList.className = 'flakiness-examples-list';
+
+            disclosureTriangle.addEventListener('click', function() {
+                item.classList.toggle('expanded');
+                if (!item.classList.contains('expanded')) {
+                    failureList.style.height = '';
+                    return;
                 }
-                item.appendChild(self._domForBuildName(builder, historyItem.build));
-                item.appendChild(document.createTextNode(': '));
-                item.appendChild(self._domForFailureDiagnosis(builder, historyItem.build, testName, historyItem.result));
-                return item;
-            }));
+
+                if (!failureList.firstChild) {
+                    failureList.appendChildren(failures.map(function(historyItem) {
+                        var item = document.createElement('li');
+                        item.appendChild(self._domForBuildName(builder, historyItem.build));
+                        item.appendChild(document.createTextNode(': '));
+                        item.appendChild(self._domForFailureDiagnosis(builder, historyItem.build, testName, historyItem.result));
+                        return item;
+                    }));
+                }
+
+                // CSS transitions can't transition to a value of 'auto', so we find out the actual
+                // value using getComputedStyle and transition to that.
+                failureList.style.height = 'auto';
+                failureList.style.height = getComputedStyle(failureList).height;
+            });
+
             return item;
         }));
 

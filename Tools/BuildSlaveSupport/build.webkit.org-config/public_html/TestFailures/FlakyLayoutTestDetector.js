@@ -70,43 +70,11 @@ FlakyLayoutTestDetector.prototype = {
         return newFlakyTests;
     },
 
-    flakinessExamples: function(testName) {
-        if (!(testName in this._tests) || this._tests[testName].state !== this._states.PossiblyFlaky)
+    allFailures: function(testName) {
+        if (!(testName in this._tests))
             return null;
 
-        var history = this._tests[testName].history;
-
-        var examples = [];
-        for (var i = 0; i < history.length - 1; ++i) {
-            var thisIsPassing = history[i].result.failureType === 'pass';
-            var nextIsPassing = history[i + 1].result.failureType === 'pass';
-            if (thisIsPassing === nextIsPassing)
-                continue;
-            var last = examples.last();
-            if (!last || last.build !== history[i].build)
-                examples.push(history[i]);
-            examples.push(history[i + 1]);
-        }
-
-        // The list of examples can get quite long. Instead of showing the whole list, we abbreviate
-        // by replacing the middle items with a separator.
-        const startAndEndAbbreviatedExamplesCount = 3;
-        console.assert(startAndEndAbbreviatedExamplesCount > 1);
-        var abbreviatedExamplesToShow = 2 * startAndEndAbbreviatedExamplesCount;
-        if (examples.length > abbreviatedExamplesToShow) {
-            var examplesBeforeSeparator = examples.slice(0, startAndEndAbbreviatedExamplesCount);
-            var examplesAfterSeparator = examples.slice(-startAndEndAbbreviatedExamplesCount);
-
-            // There's no real use in having two "pass" examples in a row immediately next to the
-            // separator.
-            if (examplesBeforeSeparator[examplesBeforeSeparator.length - 1].result.failureType === 'pass' && examplesBeforeSeparator[examplesBeforeSeparator.length - 2].result.failureType === 'pass')
-                examplesBeforeSeparator.splice(examplesBeforeSeparator.length - 1, 1);
-            if (examplesAfterSeparator[0].result.failureType === 'pass' && examplesAfterSeparator[1].result.failureType === 'pass')
-                examplesAfterSeparator.splice(0, 1);
-            examples = examplesBeforeSeparator.concat({ isSeparator: true }, examplesAfterSeparator);
-        }
-
-        return examples;
+        return this._tests[testName].history.filter(function(historyItem) { return historyItem.result.failureType !== 'pass' });
     },
 
     get possiblyFlakyTests() {
