@@ -65,9 +65,9 @@ public:
 
     int64_t defaultOriginQuota() const { return m_defaultOriginQuota; }
     void setDefaultOriginQuota(int64_t quota);
-    bool usageForOrigin(const SecurityOrigin*, int64_t& usage);
-    bool quotaForOrigin(const SecurityOrigin*, int64_t& quota);
-    bool remainingSizeForOriginExcludingCache(const SecurityOrigin*, ApplicationCache*, int64_t& remainingSize);
+    bool calculateUsageForOrigin(const SecurityOrigin*, int64_t& usage);
+    bool calculateQuotaForOrigin(const SecurityOrigin*, int64_t& quota);
+    bool calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin*, ApplicationCache*, int64_t& remainingSize);
     bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
     bool checkOriginQuota(ApplicationCacheGroup*, ApplicationCache* oldCache, ApplicationCache* newCache, int64_t& totalSpaceNeeded);
 

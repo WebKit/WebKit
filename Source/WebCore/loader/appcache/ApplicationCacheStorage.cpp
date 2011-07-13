@@ -433,7 +433,7 @@ void ApplicationCacheStorage::setDefaultOriginQuota(int64_t quota)
     m_defaultOriginQuota = quota;
 }
 
-bool ApplicationCacheStorage::quotaForOrigin(const SecurityOrigin* origin, int64_t& quota)
+bool ApplicationCacheStorage::calculateQuotaForOrigin(const SecurityOrigin* origin, int64_t& quota)
 {
     // If an Origin record doesn't exist, then the COUNT will be 0 and quota will be 0.
     // Using the count to determine if a record existed or not is a safe way to determine
@@ -456,7 +456,7 @@ bool ApplicationCacheStorage::quotaForOrigin(const SecurityOrigin* origin, int64
     return false;
 }
 
-bool ApplicationCacheStorage::usageForOrigin(const SecurityOrigin* origin, int64_t& usage)
+bool ApplicationCacheStorage::calculateUsageForOrigin(const SecurityOrigin* origin, int64_t& usage)
 {
     // If an Origins record doesn't exist, then the SUM will be null,
     // which will become 0, as expected, when converting to a number.
@@ -480,7 +480,7 @@ bool ApplicationCacheStorage::usageForOrigin(const SecurityOrigin* origin, int64
     return false;
 }
 
-bool ApplicationCacheStorage::remainingSizeForOriginExcludingCache(const SecurityOrigin* origin, ApplicationCache* cache, int64_t& remainingSize)
+bool ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin* origin, ApplicationCache* cache, int64_t& remainingSize)
 {
     openDatabase(false);
     if (!m_database.isOpen())
@@ -519,7 +519,7 @@ bool ApplicationCacheStorage::remainingSizeForOriginExcludingCache(const Securit
     if (result == SQLResultRow) {
         int64_t numberOfCaches = statement.getColumnInt64(0);
         if (numberOfCaches == 0)
-            quotaForOrigin(origin, remainingSize);
+            calculateQuotaForOrigin(origin, remainingSize);
         else
             remainingSize = statement.getColumnInt64(1);
         return true;
@@ -960,10 +960,10 @@ bool ApplicationCacheStorage::checkOriginQuota(ApplicationCacheGroup* group, App
     // Check if the oldCache with the newCache would reach the per-origin quota.
     int64_t remainingSpaceInOrigin;
     const SecurityOrigin* origin = group->origin();
-    if (remainingSizeForOriginExcludingCache(origin, oldCache, remainingSpaceInOrigin)) {
+    if (calculateRemainingSizeForOriginExcludingCache(origin, oldCache, remainingSpaceInOrigin)) {
         if (remainingSpaceInOrigin < newCache->estimatedSizeInStorage()) {
             int64_t quota;
-            if (quotaForOrigin(origin, quota)) {
+            if (calculateQuotaForOrigin(origin, quota)) {
                 totalSpaceNeeded = quota - remainingSpaceInOrigin + newCache->estimatedSizeInStorage();
                 return false;
             }

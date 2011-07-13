@@ -51,7 +51,7 @@ using namespace WebCore;
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     long long usage;
-    if (cacheStorage().usageForOrigin([_origin _core], usage))
+    if (cacheStorage().calculateUsageForOrigin([_origin _core], usage))
         return usage;
     return 0;
 #else
@@ -63,7 +63,7 @@ using namespace WebCore;
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     long long quota;
-    if (cacheStorage().quotaForOrigin([_origin _core], quota))
+    if (cacheStorage().calculateQuotaForOrigin([_origin _core], quota))
         return quota;
     return 0;
 #else

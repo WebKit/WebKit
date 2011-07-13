@@ -1,5 +1,33 @@
 2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Improve names of some ApplicationCacheStorage accessor methods
+        https://bugs.webkit.org/show_bug.cgi?id=64433
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some methods returned a bool for success/failure and
+        actually returned a value as an out parameter so their
+        name was confusing. Rename these methods to make them
+        more clear.
+
+        (WebCore::ApplicationCache::diskUsageForOrigin):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::recalculateAvailableSpaceInQuota):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        (WebCore::ApplicationCacheStorage::checkOriginQuota):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/appcache/ApplicationCache.cpp:
+        Rename the methods.
+
+        * WebCore.exp.in:
+        Replaced old versions. Also, calculateRemaining wasn't needed
+        outside WebCore, so no longer export it.
+
+2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
+
         Some ApplicationCache Origin Cleanup
         https://bugs.webkit.org/show_bug.cgi?id=64431
 
