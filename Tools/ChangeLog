@@ -1,3 +1,15 @@
+2011-07-13  Eric Seidel  <eric@webkit.org>
+
+        NRWT doesn't store the svn revision in full_results.json on chromium-win
+        https://bugs.webkit.org/show_bug.cgi?id=64492
+
+        Reviewed by Adam Barth.
+
+        Add a warning message in the revision='' case to help us diagnose
+        what's going wrong on the bot.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
 2011-07-13  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests: print baseline search path as part of config output

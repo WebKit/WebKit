@@ -210,7 +210,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
     try:
         results['revision'] = scm.default_scm().head_svn_revision()
-    except Exception:
+    except Exception, e:
+        _log.warn("Failed to determine svn revision for checkout (cwd: %s), leaving 'revision' key blank in full_results.json.\n%s" % (port_obj._filesystem.getcwd(), e))
         # Handle cases where we're running outside of version control.
         results['revision'] = ""
 
