@@ -1,3 +1,23 @@
+2011-07-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Character reference parser for new XML parser
+        https://bugs.webkit.org/show_bug.cgi?id=64398
+
+        Reviewed by Adam Barth.
+
+        Refactored out the HTML entity parser and added a common template for parsing character references.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::consumeHTMLEntity):
+        * xml/parser/CharacterReferenceParserInlineMethods.h: Copied from Source/WebCore/html/parser/HTMLEntityParser.cpp.
+        (WebCore::isHexDigit):
+        (WebCore::unconsumeCharacters):
+        (WebCore::consumeCharacterReference):
+        * xml/parser/XMLCharacterReferenceParser.cpp: Added.
+        (WebCore::consumeXMLCharacterReference):
+        * xml/parser/XMLCharacterReferenceParser.h: Added.
+
 2011-07-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

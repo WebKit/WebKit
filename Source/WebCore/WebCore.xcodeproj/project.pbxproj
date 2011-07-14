@@ -55,6 +55,9 @@
 		00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */; };
 		00CA93B213C6691600F7FE95 /* NewXMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */; };
 		00CA93B513C6697C00F7FE95 /* NewXMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */; };
+		00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */; };
+		00D0464B13C4D14500326FCC /* XMLCharacterReferenceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */; };
+		00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */; };
 		052BFCE9128ABF1500FD338D /* GeolocationClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052BFCE8128ABF1500FD338D /* GeolocationClientMock.cpp */; };
 		052BFCEB128ABF2100FD338D /* GeolocationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05FD69E012845D4300B2BEB3 /* DOMTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6411,6 +6414,9 @@
 		00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
 		00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewXMLDocumentParser.h; sourceTree = "<group>"; };
 		00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewXMLDocumentParser.cpp; sourceTree = "<group>"; };
+		00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLCharacterReferenceParser.cpp; sourceTree = "<group>"; };
+		00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLCharacterReferenceParser.h; sourceTree = "<group>"; };
+		00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlineMethods.h; sourceTree = "<group>"; };
 		052BFCE8128ABF1500FD338D /* GeolocationClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationClientMock.cpp; path = mock/GeolocationClientMock.cpp; sourceTree = "<group>"; };
 		052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationClientMock.h; path = mock/GeolocationClientMock.h; sourceTree = "<group>"; };
 		05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimeStamp.h; sourceTree = "<group>"; };
@@ -12697,8 +12703,11 @@
 		00B9318013BA867F0035A948 /* parser */ = {
 			isa = PBXGroup;
 			children = (
+				00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */,
 				00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */,
 				00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */,
+				00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */,
+				00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */,
 				00B9318113BA867F0035A948 /* XMLDocumentParser.cpp */,
 				00B9318213BA867F0035A948 /* XMLDocumentParser.h */,
 				00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */,
@@ -20278,6 +20287,7 @@
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
+				00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
 				A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */,
@@ -23048,6 +23058,7 @@
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
+				00D0464B13C4D14500326FCC /* XMLCharacterReferenceParser.h in Headers */,
 				00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */,
 				00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */,
 				59C28046138DC2410079B7E2 /* XMLErrors.h in Headers */,
@@ -25817,6 +25828,7 @@
 				5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
+				00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */,
 				00B9318713BA8DB30035A948 /* XMLDocumentParser.cpp in Sources */,
 				00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */,
 				00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */,
