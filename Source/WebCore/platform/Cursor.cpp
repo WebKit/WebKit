@@ -32,6 +32,9 @@ namespace WebCore {
 
 IntPoint determineHotSpot(Image* image, const IntPoint& specifiedHotSpot)
 {
+    if (image->isNull())
+        return IntPoint();
+
     // Hot spot must be inside cursor rectangle.
     IntRect imageRect = image->rect();
     if (imageRect.contains(specifiedHotSpot))

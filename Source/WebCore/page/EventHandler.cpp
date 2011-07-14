@@ -1204,8 +1204,6 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
             IntSize size = cimage->image()->size();
             if (size.width() > 128 || size.height() > 128)
                 continue;
-            if (cimage->image()->isNull())
-                break;
             if (!cimage->errorOccurred())
                 return Cursor(cimage->image(), hotSpot);
         }
