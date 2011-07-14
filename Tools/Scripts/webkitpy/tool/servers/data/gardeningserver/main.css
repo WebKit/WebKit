@@ -94,6 +94,16 @@ td:last-of-type {
     border-radius: 4px;
 }
 
+.regression .what a[draggable].TIMEOUT::before {
+    content: 'TIMEOUT';
+    color: white;
+    background-color: DarkGoldenRod;
+    font-size: 10px;
+    padding: 1px 2px;
+    margin: 0 3px 0 0;
+    border-radius: 4px;
+}
+
 .regression .what a[draggable].TEXT::before {
     content: 'TEXT';
     color: white;

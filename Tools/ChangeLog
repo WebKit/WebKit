@@ -1,5 +1,16 @@
 2011-07-14  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should badge TIMEOUT failures
+        https://bugs.webkit.org/show_bug.cgi?id=64435
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        (.regression .what a[draggable].TIMEOUT::before):
+            - Add TIMEOUT.
+
+2011-07-14  Adam Barth  <abarth@webkit.org>
+
         Fix Python exception blocking the commit-queue.
 
         * Scripts/webkitpy/common/checkout/scm/git.py:
