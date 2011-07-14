@@ -1,3 +1,22 @@
+2011-07-12  Dominic Cooney  <dominicc@chromium.org>
+
+        Raise if dispatchEvent dispatches an event that is being dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=64150
+
+        Reviewed by Dimitri Glazkov.
+
+        Spec: http://www.w3.org/TR/DOM-Level-3-Events/#events-EventTarget-dispatchEvent
+
+        Test: fast/events/dispatch-event-being-dispatched.html
+
+        * dom/Event.h:
+        (WebCore::Event::isBeingDispatched): Added.
+        * dom/EventException.h:
+        * dom/EventException.idl: Add DISPATCH_REQUEST_ERR.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::dispatchEvent): Raise if being dispatched.
+        * dom/ExceptionCode.cpp: Add gunk for DISPATCH_REQUEST_ERR.
+
 2011-07-13  Kent Tamura  <tkent@chromium.org>
 
         Implement text field placeholders using shadow DOM

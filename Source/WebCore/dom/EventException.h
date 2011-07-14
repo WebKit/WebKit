@@ -44,7 +44,8 @@ namespace WebCore {
         static const int EventExceptionMax = 199;
 
         enum EventExceptionCode {
-            UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset
+            UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset,
+            DISPATCH_REQUEST_ERR
         };
 
     private:

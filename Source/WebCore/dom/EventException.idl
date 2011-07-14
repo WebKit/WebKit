@@ -45,7 +45,7 @@ module events {
 
         // EventExceptionCode
         const unsigned short UNSPECIFIED_EVENT_TYPE_ERR = 0;
-
+        const unsigned short DISPATCH_REQUEST_ERR = 1;
     };
 
 }

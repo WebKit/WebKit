@@ -1,3 +1,19 @@
+2011-07-12  Dominic Cooney  <dominicc@chromium.org>
+
+        Raise if dispatchEvent dispatches an event that is being dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=64150
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/Window/window-properties-expected.txt: Added DISPATCH_REQUEST_ERR.
+        * fast/events/dispatch-event-being-dispatched-expected.txt: Added.
+        * fast/events/dispatch-event-being-dispatched.html: Added.
+        * fast/workers/resources/worker-event-listener.js:
+        (onmessage): Redispatching the MessageEvent throws an exception now.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2011-07-13  Kent Tamura  <tkent@chromium.org>
 
         Implement text field placeholders using shadow DOM

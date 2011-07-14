@@ -326,6 +326,11 @@ bool EventTarget::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
         return false;
     }
 
+    if (event->isBeingDispatched()) {
+        ec = EventException::DISPATCH_REQUEST_ERR;
+        return false;
+    }
+
     if (!scriptExecutionContext())
         return false;
 
@@ -337,7 +342,9 @@ bool EventTarget::dispatchEvent(PassRefPtr<Event> event)
     event->setTarget(this);
     event->setCurrentTarget(this);
     event->setEventPhase(Event::AT_TARGET);
-    return fireEventListeners(event.get());
+    bool defaultPrevented = fireEventListeners(event.get());
+    event->setEventPhase(0);
+    return defaultPrevented;
 }
 
 void EventTarget::uncaughtExceptionInEventHandler()
@@ -447,4 +454,3 @@ EventListener* EventListenerIterator::nextListener()
 }
 
 } // namespace WebCore
-

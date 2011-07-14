@@ -171,6 +171,7 @@ namespace WebCore {
 
         virtual Clipboard* clipboard() const { return 0; }
 
+        bool isBeingDispatched() const { return eventPhase(); }
 
     protected:
         Event();

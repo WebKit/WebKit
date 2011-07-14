@@ -112,11 +112,13 @@ static const char* const rangeExceptionDescriptions[] = {
 };
 
 static const char* const eventExceptionNames[] = {
-    "UNSPECIFIED_EVENT_TYPE_ERR"
+    "UNSPECIFIED_EVENT_TYPE_ERR",
+    "DISPATCH_REQUEST_ERR"
 };
 
 static const char* const eventExceptionDescriptions[] = {
-    "The Event's type was not specified by initializing the event before the method was called."
+    "The Event's type was not specified by initializing the event before the method was called.",
+    "The Event object is already being dispatched."
 };
 
 static const char* const xmlHttpRequestExceptionNames[] = {

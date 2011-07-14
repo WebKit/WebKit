@@ -7,14 +7,7 @@ function gc()
 
 function onmessage(evt)
 {
-    try {
-        removeEventListener("message", onmessage, true);
-        addEventListener("message", function(e) { e.foo = "bar" }, true);
-        dispatchEvent(evt);
-        postMessage((evt.foo == "bar") ? "SUCCESS" : "FAIL");
-    } catch (ex) {
-        postMessage(ex);
-    }
+    postMessage("SUCCESS");
 }
 
 addEventListener("message", onmessage, true);
