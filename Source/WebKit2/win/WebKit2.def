@@ -135,9 +135,6 @@ EXPORTS
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
 
         ; Re-exports from WebCore for test harnesses
-        ??0NodeRenderingContext@WebCore@@QAE@PAVNode@1@@Z
-        ??1NodeRenderingContext@WebCore@@QAE@XZ
-        ?toNode@WebCore@@YAPAVNode@1@VJSValue@JSC@@@Z
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
         ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z

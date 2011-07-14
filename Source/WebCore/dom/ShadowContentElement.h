@@ -33,7 +33,6 @@
 
 #include "StyledElement.h"
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -67,6 +66,7 @@ inline PassRefPtr<ShadowInclusion> ShadowInclusion::create(ShadowContentElement*
     return adoptRef(new ShadowInclusion(includer, content));
 }
 
+
 class ShadowInclusionList {
 public:
     ShadowInclusionList();
@@ -91,36 +91,6 @@ inline void ShadowInclusionList::append(ShadowContentElement* includer, Node* no
     append(ShadowInclusion::create(includer, node));
 }
 
-class ShadowInclusionSet {
-public:
-    void add(ShadowInclusion* value) { m_set.add(value); }
-    void remove(ShadowInclusion* value) { m_set.remove(value); }
-    bool isEmpty() const { return m_set.isEmpty(); }
-    ShadowInclusion* find(Node* key) const;
-
-private:
-    struct Translator {
-    public:
-        static unsigned hash(const Node* key) { return PtrHash<const Node*>::hash(key); }
-        static bool equal(const ShadowInclusion* inclusion, const Node* content) { return inclusion->content() == content; }
-    };
-
-    struct Hash {
-        static unsigned hash(ShadowInclusion* key) { return PtrHash<const Node*>::hash(key->content()); }
-        static bool equal(ShadowInclusion* a, ShadowInclusion* b) { return a->content() == b->content(); }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    typedef HashSet<ShadowInclusion*, Hash> PointerSet;
-
-    PointerSet m_set;
-};
-
-inline ShadowInclusion* ShadowInclusionSet::find(Node* key) const
-{
-    PointerSet::iterator found = m_set.find<Node*, ShadowInclusionSet::Translator>(key);
-    return found != m_set.end() ? *found : 0;
-}
 
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
 // You should create ShadowContentElement during the host construction.

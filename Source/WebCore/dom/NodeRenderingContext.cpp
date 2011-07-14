@@ -41,7 +41,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
-    , m_includer(0)
+    , m_contentElement(0)
     , m_style(0)
 {
     ContainerNode* parent = m_node->parentOrHostNode();
@@ -60,9 +60,9 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         m_visualParentShadowRoot = toElement(parent)->shadowRoot();
 
         if (m_visualParentShadowRoot) {
-            if ((m_includer = m_visualParentShadowRoot->includerFor(m_node))) {
+            if ((m_contentElement = m_visualParentShadowRoot->activeContentElement())) {
                 m_phase = AttachContentForwarded;
-                m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_includer).parentNodeForRenderingAndStyle();
+                m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_contentElement).parentNodeForRenderingAndStyle();
                 return;
             } 
                 
@@ -81,7 +81,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
     , m_visualParentShadowRoot(0)
-    , m_includer(0)
+    , m_contentElement(0)
     , m_style(style)
 {
 }
@@ -155,9 +155,9 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         return renderer->nextSibling();
 
     if (m_phase == AttachContentForwarded) {
-        if (RenderObject* found = nextRendererOf(m_includer, m_node))
+        if (RenderObject* found = nextRendererOf(m_contentElement, m_node))
             return found;
-        return NodeRenderingContext(m_includer).nextRenderer();
+        return NodeRenderingContext(m_contentElement).nextRenderer();
     }
 
     // Avoid an O(n^2) problem with this function by not checking for
@@ -184,9 +184,9 @@ RenderObject* NodeRenderingContext::previousRenderer() const
         return renderer->previousSibling();
 
     if (m_phase == AttachContentForwarded) {
-        if (RenderObject* found = previousRendererOf(m_includer, m_node))
+        if (RenderObject* found = previousRendererOf(m_contentElement, m_node))
             return found;
-        return NodeRenderingContext(m_includer).previousRenderer();
+        return NodeRenderingContext(m_contentElement).previousRenderer();
     }
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does

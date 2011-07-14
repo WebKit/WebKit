@@ -29,7 +29,6 @@
 
 #include "HTMLNames.h"
 #include "ShadowContentSelector.h"
-#include "ShadowRoot.h"
 
 namespace WebCore {
 
@@ -98,6 +97,7 @@ void ShadowInclusionList::append(PassRefPtr<ShadowInclusion> child)
     m_last = m_last->next();
 }
 
+
 PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
 {
     DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
@@ -113,44 +113,24 @@ ShadowContentElement::~ShadowContentElement()
 {
 }
 
-static void removeFromSet(ShadowInclusionList* list, ShadowInclusionSet* set)
-{
-    for (ShadowInclusion* inclusion = list->first(); inclusion; inclusion = inclusion->next())
-        set->remove(inclusion);
-}
-
-static void addToSet(ShadowInclusionList* list, ShadowInclusionSet* set)
-{
-    for (ShadowInclusion* inclusion = list->first(); inclusion; inclusion = inclusion->next())
-        set->add(inclusion);
-}
-
 void ShadowContentElement::attach()
 {
     ASSERT(!firstChild()); // Currently doesn't support any light child.
     StyledElement::attach();
     if (ShadowContentSelector* selector = ShadowContentSelector::currentInstance()) {
-
-        removeFromSet(&m_inclusions, selector->shadowRoot()->ensureInclusions());
-        m_inclusions.clear();
-        selector->selectInclusion(this, &m_inclusions);
-        addToSet(&m_inclusions, selector->shadowRoot()->ensureInclusions());
-
+        selector->willAttachContentFor(this);
+        selector->selectInclusion(&m_inclusions);
         for (ShadowInclusion* inclusion = m_inclusions.first(); inclusion; inclusion = inclusion->next())
             inclusion->content()->detach();
         for (ShadowInclusion* inclusion = m_inclusions.first(); inclusion; inclusion = inclusion->next())
             inclusion->content()->attach();
+        selector->didAttachContent();
     }
 }
 
 void ShadowContentElement::detach()
 {
-    if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        removeFromSet(&m_inclusions, root->ensureInclusions());
-        m_inclusions.clear();
-    }
-
-    ASSERT(m_inclusions.isEmpty());
+    m_inclusions.clear();
     StyledElement::detach();
 }
 

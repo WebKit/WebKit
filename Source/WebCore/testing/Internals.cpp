@@ -31,7 +31,6 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "InspectorController.h"
-#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderTreeAsText.h"
 #include "ShadowContentElement.h"
@@ -114,16 +113,6 @@ void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)
     }
 
     host->removeShadowRoot();
-}
-
-Element* Internals::includerFor(Node* node, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return NodeRenderingContext(node).includer();
 }
 
 String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)

@@ -33,7 +33,6 @@ namespace WebCore {
 
 class Document;
 class ShadowContentElement;
-class ShadowInclusionSet;
 
 class ShadowRoot : public TreeScope {
 public:
@@ -41,16 +40,13 @@ public:
 
     virtual void recalcStyle(StyleChange = NoChange);
 
-    ShadowContentElement* includerFor(Node*) const;
+    ShadowContentElement* activeContentElement();
     void hostChildrenChanged();
 
     virtual void attach();
 
     virtual bool applyAuthorSheets() const;
     void setApplyAuthorSheets(bool);
-
-    ShadowInclusionSet* inclusions() const;
-    ShadowInclusionSet* ensureInclusions();
 
 private:
     ShadowRoot(Document*);
@@ -64,18 +60,11 @@ private:
     bool hasContentElement() const;
 
     bool m_applyAuthorSheets;
-    OwnPtr<ShadowInclusionSet> m_inclusions;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)
 {
     return adoptRef(new ShadowRoot(document));
-}
-
-inline ShadowRoot* toShadowRoot(Node* node)
-{
-    ASSERT(!node || node->nodeType() == Node::SHADOW_ROOT_NODE);
-    return static_cast<ShadowRoot*>(node);
 }
 
 } // namespace

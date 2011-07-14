@@ -1,3 +1,16 @@
+2011-07-14  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r90976, r90981, and r90985.
+        http://trac.webkit.org/changeset/90976
+        http://trac.webkit.org/changeset/90981
+        http://trac.webkit.org/changeset/90985
+        https://bugs.webkit.org/show_bug.cgi?id=64251
+
+        build break
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-07-13  MORITA Hajime <morrita@google.com>
 
         Unreviewed attempt at a build fix.
