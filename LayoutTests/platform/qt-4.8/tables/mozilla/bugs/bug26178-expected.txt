@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderTable {TABLE} at (0,0) size 70x56
+        RenderTableSection {THEAD} at (0,0) size 70x28
+          RenderTableRow {TR} at (0,2) size 70x24
+            RenderTableCell {TD} at (2,2) size 66x24 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x22
+                text run at (1,1) width 64: "The head"
+        RenderTableSection {TBODY} at (0,28) size 70x28
+          RenderTableRow {TR} at (0,2) size 70x24
+            RenderTableCell {TD} at (2,2) size 66x24 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 63x22
+                text run at (1,1) width 63: "First row"
+      RenderBlock {FORM} at (0,56) size 784x37
+        RenderButton {INPUT} at (2,2) size 57x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 45x21
+            RenderText at (0,0) size 45x21
+              text run at (0,0) width 45: "insert"
+        RenderText {#text} at (0,0) size 0x0

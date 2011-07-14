@@ -1,0 +1,152 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > CENTER > BODY > HTML > #document to 6 of DIV > CENTER > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,3) size 784x581 [bgcolor=#FFFFFF]
+      RenderBlock {CENTER} at (0,0) size 784x317
+        RenderTable {TABLE} at (0,0) size 784x22
+          RenderTableSection {TBODY} at (0,0) size 784x22
+            RenderTableRow {TR} at (0,0) size 784x18
+              RenderTableCell {TD} at (0,0) size 784x18 [r=0 c=0 rs=1 cs=1]
+                RenderInline {FONT} at (0,0) size 110x18
+                  RenderInline {A} at (0,0) size 110x18 [color=#0000CC]
+                    RenderText {#text} at (674,0) size 110x18
+                      text run at (674,0) width 110: "Personalized Home"
+            RenderTableRow {TR} at (0,18) size 784x4
+              RenderTableCell {TD} at (0,19) size 784x1 [r=1 c=0 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 1x1
+        RenderBlock (anonymous) at (0,22) size 784x44
+          RenderBR {BR} at (392,0) size 0x22
+          RenderBR {BR} at (392,22) size 0x22
+        RenderBlock {DIV} at (0,66) size 784x137 [border: (2px solid #AAAAFF)]
+          RenderTable {TABLE} at (210,2) size 364x26
+            RenderTableSection {TBODY} at (0,0) size 364x26
+              RenderTableRow {TR} at (0,0) size 364x26
+                RenderTableCell {TD} at (0,0) size 364x26 [r=0 c=0 rs=1 cs=1]
+                  RenderInline {FONT} at (0,0) size 356x18
+                    RenderInline {B} at (0,0) size 26x18
+                      RenderText {#text} at (4,4) size 26x18
+                        text run at (4,4) width 26: "Web"
+                    RenderText {#text} at (30,4) size 12x18
+                      text run at (30,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 41x18 [color=#0000CC]
+                      RenderText {#text} at (42,4) size 41x18
+                        text run at (42,4) width 41: "Images"
+                    RenderText {#text} at (83,4) size 12x18
+                      text run at (83,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 42x18 [color=#0000CC]
+                      RenderText {#text} at (95,4) size 42x18
+                        text run at (95,4) width 42: "Groups"
+                    RenderText {#text} at (137,4) size 12x18
+                      text run at (137,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 29x18 [color=#0000CC]
+                      RenderText {#text} at (149,4) size 29x18
+                        text run at (149,4) width 29: "News"
+                    RenderText {#text} at (178,4) size 12x18
+                      text run at (178,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 45x18 [color=#0000CC]
+                      RenderText {#text} at (190,4) size 45x18
+                        text run at (190,4) width 45: "Froogle"
+                    RenderText {#text} at (235,4) size 12x18
+                      text run at (235,4) width 12: "    "
+                    RenderInline {A} at (0,0) size 33x18 [color=#0000CC]
+                      RenderText {#text} at (247,4) size 33x18
+                        text run at (247,4) width 33: "Local"
+                      RenderInline {SUP} at (0,0) size 0x15
+                    RenderInline {A} at (0,0) size 28x18
+                      RenderInline {FONT} at (0,0) size 28x18 [color=#FF0000]
+                        RenderText {#text} at (280,4) size 28x18
+                          text run at (280,4) width 28: "New!"
+                    RenderText {#text} at (308,4) size 12x18
+                      text run at (308,4) width 12: "    "
+                    RenderInline {B} at (0,0) size 40x18
+                      RenderInline {A} at (0,0) size 40x18 [color=#0000CC]
+                        RenderText {#text} at (320,4) size 40x18
+                          text run at (320,4) width 40: "more \x{BB}"
+          RenderTable {TABLE} at (2,28) size 780x67
+            RenderTableSection {TBODY} at (0,0) size 780x67
+              RenderTableRow {TR} at (0,0) size 780x67
+                RenderTableCell {TD} at (0,22) size 157x22 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x22
+                    text run at (0,0) width 4: " "
+                RenderTableCell {TD} at (157,0) size 450x67 [r=0 c=1 rs=1 cs=1]
+                  RenderTextControl {INPUT} at (2,2) size 446x26
+                  RenderBR {BR} at (450,20) size 0x0
+                  RenderButton {INPUT} at (86,32) size 124x33 [bgcolor=#C0C0C0]
+                    RenderBlock (anonymous) at (6,6) size 112x21
+                      RenderText at (0,0) size 112x21
+                        text run at (0,0) width 112: "Google Search"
+                  RenderButton {INPUT} at (214,32) size 150x33 [bgcolor=#C0C0C0]
+                    RenderBlock (anonymous) at (6,6) size 138x21
+                      RenderText at (0,0) size 138x21
+                        text run at (0,0) width 138: "I'm Feeling Lucky"
+                RenderTableCell {TD} at (607,0) size 173x42 [r=0 c=2 rs=1 cs=1]
+                  RenderInline {FONT} at (0,0) size 81x42
+                    RenderText {#text} at (0,0) size 6x14
+                      text run at (0,0) width 6: "  "
+                    RenderInline {A} at (0,0) size 75x14 [color=#0000CC]
+                      RenderText {#text} at (6,0) size 75x14
+                        text run at (6,0) width 75: "Advanced Search"
+                    RenderBR {BR} at (81,10) size 0x0
+                    RenderText {#text} at (0,14) size 6x14
+                      text run at (0,14) width 6: "  "
+                    RenderInline {A} at (0,0) size 47x14 [color=#0000CC]
+                      RenderText {#text} at (6,14) size 47x14
+                        text run at (6,14) width 47: "Preferences"
+                    RenderBR {BR} at (53,24) size 0x0
+                    RenderText {#text} at (0,28) size 6x14
+                      text run at (0,28) width 6: "  "
+                    RenderInline {A} at (0,0) size 70x14 [color=#0000CC]
+                      RenderText {#text} at (6,28) size 70x14
+                        text run at (6,28) width 70: "Language Tools"
+          RenderBlock (anonymous) at (2,95) size 780x40
+            RenderBR {BR} at (390,0) size 0x22
+            RenderInline {FONT} at (0,0) size 154x18
+              RenderInline {FONT} at (0,0) size 29x18 [color=#FF0000]
+                RenderText {#text} at (313,22) size 29x18
+                  text run at (313,22) width 29: "New!"
+              RenderText {#text} at (341,22) size 4x18
+                text run at (341,22) width 4: " "
+              RenderInline {A} at (0,0) size 120x18 [color=#0000CC]
+                RenderText {#text} at (344,22) size 120x18
+                  text run at (344,22) width 120: "Personalize this page"
+              RenderText {#text} at (463,22) size 4x18
+                text run at (463,22) width 4: "."
+            RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,203) size 784x84
+          RenderBR {BR} at (392,0) size 0x22
+          RenderBR {BR} at (392,22) size 0x22
+          RenderBR {BR} at (392,44) size 0x22
+          RenderInline {FONT} at (0,0) size 328x18
+            RenderInline {A} at (0,0) size 127x18 [color=#0000CC]
+              RenderText {#text} at (228,66) size 127x18
+                text run at (228,66) width 127: "Advertising Programs"
+            RenderText {#text} at (354,66) size 11x18
+              text run at (354,66) width 11: " - "
+            RenderInline {A} at (0,0) size 104x18 [color=#0000CC]
+              RenderText {#text} at (364,66) size 104x18
+                text run at (364,66) width 104: "Business Solutions"
+            RenderText {#text} at (467,66) size 11x18
+              text run at (467,66) width 11: " - "
+            RenderInline {A} at (0,0) size 79x18 [color=#0000CC]
+              RenderText {#text} at (477,66) size 79x18
+                text run at (477,66) width 79: "About Google"
+        RenderBlock {P} at (0,303) size 784x14
+          RenderInline {FONT} at (0,0) size 60x14
+            RenderText {#text} at (362,0) size 60x14
+              text run at (362,0) width 60: "\x{A9}2005 Google"
+layer at (171,101) size 442x22
+  RenderBlock {DIV} at (2,2) size 442x22
+selection start: position 0 of child 3 {INPUT} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body
+selection end:   position 1 of child 2 {BR} of child 0 {FONT} of child 2 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body

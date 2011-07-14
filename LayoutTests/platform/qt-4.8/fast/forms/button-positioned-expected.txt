@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (10,10) size 213x33
+  RenderButton {BUTTON} at (10,10) size 213x33 [bgcolor=#C0C0C0]
+    RenderBlock (anonymous) at (6,6) size 201x21
+      RenderText {#text} at (0,0) size 201x21
+        text run at (0,0) width 201: "This button is positioned."
+layer at (10,10) size 244x33
+  RenderButton {INPUT} at (10,10) size 244x33 [bgcolor=#C0C0C0]
+    RenderBlock (anonymous) at (6,6) size 232x21
+      RenderText at (0,0) size 232x21
+        text run at (0,0) width 232: "This button is also positioned"

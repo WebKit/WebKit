@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 560x22
+        text run at (0,0) width 560: "This tests that we don't honor line-height for controls that have restricted font size. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderMenuList {SELECT} at (2,24) size 375x30 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 347x26
+          RenderText at (0,2) size 347x22
+            text run at (0,2) width 347: "This text should be centered vertically in the button"
+      RenderText {#text} at (379,28) size 4x22
+        text run at (379,28) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderButton {INPUT} at (2,58) size 417x33 [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (6,6) size 405x21
+          RenderText at (0,0) size 405x21
+            text run at (0,0) width 405: "This text should be centered vertically in the button"
+      RenderText {#text} at (421,64) size 4x22
+        text run at (421,64) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,95) size 166x30
+        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x26
+          RenderBlock {DIV} at (0,13) size 0x0
+          RenderBlock {DIV} at (0,0) size 151x26
+          RenderBlock {DIV} at (151,7) size 11x11
+      RenderText {#text} at (0,0) size 0x0
+layer at (12,105) size 151x26 scrollWidth 349
+  RenderBlock {DIV} at (0,0) size 151x26
+    RenderText {#text} at (1,2) size 347x22
+      text run at (1,2) width 347: "This text should be centered vertically in the button"

@@ -1,0 +1,270 @@
+layer at (0,0) size 784x1771
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1771
+  RenderBlock {HTML} at (0,0) size 784x1771
+    RenderBody {BODY} at (8,8) size 768x1755 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x22
+        RenderText {#text} at (0,0) size 380x22
+          text run at (0,0) width 380: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,38) size 768x170
+        RenderText {#text} at (0,0) size 232x170
+          text run at (0,0) width 164: ".one {list-style-type: disc;}"
+          text run at (164,0) width 0: " "
+          text run at (0,17) width 172: ".two {list-style-type: circle;}"
+          text run at (172,17) width 0: " "
+          text run at (0,34) width 194: ".three {list-style-type: square;}"
+          text run at (194,34) width 0: " "
+          text run at (0,51) width 222: ".four {list-style-type: lower-roman;}"
+          text run at (222,51) width 0: " "
+          text run at (0,68) width 222: ".five {list-style-type: upper-roman;}"
+          text run at (222,68) width 0: " "
+          text run at (0,85) width 209: ".six {list-style-type: lower-alpha;}"
+          text run at (209,85) width 0: " "
+          text run at (0,102) width 232: ".seven {list-style-type: upper-alpha;}"
+          text run at (232,102) width 0: " "
+          text run at (0,119) width 197: ".eight {list-style-type: decimal;}"
+          text run at (197,119) width 0: " "
+          text run at (0,136) width 176: ".nine {list-style-type: none;}"
+          text run at (176,136) width 0: " "
+          text run at (0,153) width 0: " "
+      RenderBlock {HR} at (0,221) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,239) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-18,0) size 7x22: bullet
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-18,0) size 7x22: bullet
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-18,0) size 7x22: bullet
+          RenderText {#text} at (0,0) size 140x22
+            text run at (0,0) width 140: "...discs for each item."
+      RenderBlock {UL} at (0,321) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-18,0) size 7x22: white bullet
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-18,0) size 7x22: white bullet
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-18,0) size 7x22: white bullet
+          RenderText {#text} at (0,0) size 150x22
+            text run at (0,0) width 150: "...circles for each item."
+      RenderBlock {UL} at (0,403) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-18,0) size 7x22: black square
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-18,0) size 7x22: black square
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-18,0) size 7x22: black square
+          RenderText {#text} at (0,0) size 160x22
+            text run at (0,0) width 160: "...squares for each item."
+      RenderBlock {OL} at (0,485) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-17,0) size 12x22: "i"
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-21,0) size 16x22: "ii"
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-25,0) size 20x22: "iii"
+          RenderText {#text} at (0,0) size 295x22
+            text run at (0,0) width 295: "...lowercase Roman numerals for each item."
+      RenderBlock {OL} at (0,567) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-19,0) size 14x22: "I"
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-25,0) size 20x22: "II"
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-31,0) size 26x22: "III"
+          RenderText {#text} at (0,0) size 298x22
+            text run at (0,0) width 298: "...uppercase Roman numerals for each item."
+      RenderBlock {OL} at (0,649) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-21,0) size 16x22: "a"
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-22,0) size 17x22: "b"
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-20,0) size 15x22: "c"
+          RenderText {#text} at (0,0) size 219x22
+            text run at (0,0) width 219: "...lowercase letters for each item."
+      RenderBlock {OL} at (0,731) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-25,0) size 20x22: "A"
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-24,0) size 19x22: "B"
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-25,0) size 20x22: "C"
+          RenderText {#text} at (0,0) size 222x22
+            text run at (0,0) width 222: "...uppercase letters for each item."
+      RenderBlock {OL} at (0,813) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderListMarker at (-25,0) size 20x22: "A"
+          RenderText {#text} at (0,0) size 166x22
+            text run at (0,0) width 166: "This list should feature..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderListMarker at (-24,0) size 19x22: "B"
+          RenderText {#text} at (0,0) size 157x22
+            text run at (0,0) width 157: "...letters for each item..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderListMarker at (-21,0) size 16x22: "3"
+          RenderText {#text} at (0,0) size 115x22
+            text run at (0,0) width 115: "...except this one."
+      RenderBlock {UL} at (0,895) size 768x66
+        RenderListItem {LI} at (40,0) size 728x22
+          RenderText {#text} at (0,0) size 65x22
+            text run at (0,0) width 65: "This list..."
+        RenderListItem {LI} at (40,22) size 728x22
+          RenderText {#text} at (0,0) size 121x22
+            text run at (0,0) width 121: "...should feature..."
+        RenderListItem {LI} at (40,44) size 728x22
+          RenderText {#text} at (0,0) size 160x22
+            text run at (0,0) width 160: "...nothing for each item."
+      RenderTable {TABLE} at (0,977) size 360x778 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 358x776
+          RenderTableRow {TR} at (0,0) size 358x30
+            RenderTableCell {TD} at (0,0) size 358x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x22
+                RenderText {#text} at (4,4) size 163x22
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 358x746
+            RenderTableCell {TD} at (0,388) size 12x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x22
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,30) size 346x746 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: bullet
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: bullet
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: bullet
+                  RenderText {#text} at (0,0) size 140x22
+                    text run at (0,0) width 140: "...discs for each item."
+              RenderBlock {UL} at (4,86) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: white bullet
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: white bullet
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: white bullet
+                  RenderText {#text} at (0,0) size 150x22
+                    text run at (0,0) width 150: "...circles for each item."
+              RenderBlock {UL} at (4,168) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: black square
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: black square
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-18,0) size 7x22: black square
+                  RenderText {#text} at (0,0) size 160x22
+                    text run at (0,0) width 160: "...squares for each item."
+              RenderBlock {OL} at (4,250) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-17,0) size 12x22: "i"
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-21,0) size 16x22: "ii"
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-25,0) size 20x22: "iii"
+                  RenderText {#text} at (0,0) size 295x22
+                    text run at (0,0) width 295: "...lowercase Roman numerals for each item."
+              RenderBlock {OL} at (4,332) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-19,0) size 14x22: "I"
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-25,0) size 20x22: "II"
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-31,0) size 26x22: "III"
+                  RenderText {#text} at (0,0) size 298x22
+                    text run at (0,0) width 298: "...uppercase Roman numerals for each item."
+              RenderBlock {OL} at (4,414) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-21,0) size 16x22: "a"
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-22,0) size 17x22: "b"
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-20,0) size 15x22: "c"
+                  RenderText {#text} at (0,0) size 219x22
+                    text run at (0,0) width 219: "...lowercase letters for each item."
+              RenderBlock {OL} at (4,496) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-25,0) size 20x22: "A"
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-24,0) size 19x22: "B"
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-25,0) size 20x22: "C"
+                  RenderText {#text} at (0,0) size 222x22
+                    text run at (0,0) width 222: "...uppercase letters for each item."
+              RenderBlock {OL} at (4,578) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderListMarker at (-25,0) size 20x22: "A"
+                  RenderText {#text} at (0,0) size 166x22
+                    text run at (0,0) width 166: "This list should feature..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderListMarker at (-24,0) size 19x22: "B"
+                  RenderText {#text} at (0,0) size 157x22
+                    text run at (0,0) width 157: "...letters for each item..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderListMarker at (-21,0) size 16x22: "3"
+                  RenderText {#text} at (0,0) size 115x22
+                    text run at (0,0) width 115: "...except this one."
+              RenderBlock {UL} at (4,660) size 338x66
+                RenderListItem {LI} at (40,0) size 298x22
+                  RenderText {#text} at (0,0) size 65x22
+                    text run at (0,0) width 65: "This list..."
+                RenderListItem {LI} at (40,22) size 298x22
+                  RenderText {#text} at (0,0) size 121x22
+                    text run at (0,0) width 121: "...should feature..."
+                RenderListItem {LI} at (40,44) size 298x22
+                  RenderText {#text} at (0,0) size 160x22
+                    text run at (0,0) width 160: "...nothing for each item."

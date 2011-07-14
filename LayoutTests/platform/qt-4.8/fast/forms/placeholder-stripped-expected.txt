@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x282
+  RenderBlock {HTML} at (0,0) size 800x282
+    RenderBody {BODY} at (8,16) size 784x258
+      RenderBlock {P} at (0,0) size 784x66
+        RenderText {#text} at (0,0) size 766x66
+          text run at (0,0) width 766: "CR and LF in placeholder values should be stripped. The first input element and the first textarea element should"
+          text run at (0,22) width 756: "have a placeholder \"first line second line\", and the second input element and the second textarea element should"
+          text run at (0,44) width 92: "have nothing."
+      RenderBlock (anonymous) at (0,82) size 784x176
+        RenderTextControl {INPUT} at (2,2) size 166x26
+        RenderBR {BR} at (170,4) size 0x22
+        RenderTextControl {INPUT} at (2,32) size 166x26
+        RenderBR {BR} at (170,34) size 0x22
+        RenderBR {BR} at (184,96) size 0x22
+        RenderText {#text} at (0,0) size 0x0
+layer at (12,102) size 162x22
+  RenderBlock {DIV} at (2,2) size 162x22
+layer at (12,132) size 162x22
+  RenderBlock {DIV} at (2,2) size 162x22
+layer at (10,160) size 180x48
+  RenderTextControl {TEXTAREA} at (2,62) size 180x48
+    RenderBlock {DIV} at (2,2) size 176x22
+layer at (10,218) size 180x48
+  RenderTextControl {TEXTAREA} at (2,120) size 180x48
+    RenderBlock {DIV} at (2,2) size 176x22
+layer at (12,102) size 162x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 162x22 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 133x22
+      text run at (1,0) width 133: "first line second line"
+layer at (12,162) size 176x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 176x22 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 133x22
+      text run at (0,0) width 133: "first line second line"

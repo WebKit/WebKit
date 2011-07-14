@@ -1,3 +1,14 @@
+2011-07-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt]Update layout test results for newer Qt 4.8.x
+        https://bugs.webkit.org/show_bug.cgi?id=64527
+
+        [Qt]http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html fails with Qt 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=60176
+
+        * platform/qt-4.8/[...]: Added.
+        * platform/qt-4.8/Skipped: Unskip http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html.
+
 2011-07-14  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Skip one crashing test in GTK+/debug bots.

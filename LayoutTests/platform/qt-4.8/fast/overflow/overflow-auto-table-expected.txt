@@ -1,0 +1,21 @@
+layer at (0,0) size 5566x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x176
+  RenderBlock {HTML} at (0,0) size 800x176
+    RenderBody {BODY} at (8,16) size 784x152
+      RenderBlock {P} at (0,0) size 784x66
+        RenderText {#text} at (0,0) size 775x66
+          text run at (0,0) width 740: "This tests the interaction of overflow on some very wide text with auto table layout. The CSS 2.1 spec does not"
+          text run at (0,22) width 775: "define how overflow interacts with intrinsic width, so we copy the IE behavior. Therefore the lines should come out"
+          text run at (0,44) width 325: "very very wide and scroll along with the border."
+      RenderTable {TABLE} at (0,82) size 5558x70 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 5556x68
+          RenderTableRow {TR} at (0,2) size 5556x64
+            RenderTableCell {TD} at (2,2) size 5552x64 [r=0 c=0 rs=1 cs=1]
+layer at (12,115) size 5550x36 clip at (13,116) size 5548x34
+  RenderBlock {PRE} at (1,14) size 5550x36 [border: (1px solid #0000FF)]
+    RenderText {#text} at (1,1) size 5548x34
+      text run at (1,1) width 2336: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "
+      text run at (2337,1) width 0: " "
+      text run at (1,18) width 5548: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "
+      text run at (5549,18) width 0: " "

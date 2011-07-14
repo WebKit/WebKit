@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderTable {TABLE} at (0,0) size 382x32 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 376x26
+          RenderTableRow {TR} at (0,0) size 376x26
+            RenderTableCell {TD} at (0,0) size 72x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x22
+                text run at (2,2) width 68: "fieldLabel"
+            RenderTableCell {TD} at (72,0) size 304x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 113x22
+                text run at (2,2) width 113: "   InspectionText"
+      RenderBlock {FORM} at (0,32) size 784x37
+        RenderButton {INPUT} at (2,2) size 117x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 105x21
+            RenderText at (0,0) size 105x21
+              text run at (0,0) width 105: "change width"
+        RenderText {#text} at (121,8) size 4x22
+          text run at (121,8) width 4: " "
+        RenderButton {INPUT} at (127,2) size 250x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 238x21
+            RenderText at (0,0) size 238x21
+              text run at (0,0) width 238: "change width with table reflow"
+        RenderText {#text} at (0,0) size 0x0

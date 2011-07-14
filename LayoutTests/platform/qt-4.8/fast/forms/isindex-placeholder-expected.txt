@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 33x22
+          text run at (0,0) width 33: "Test "
+        RenderInline {TT} at (0,0) size 62x17
+          RenderText {#text} at (33,3) size 62x17
+            text run at (33,3) width 62: "<isindex>"
+        RenderText {#text} at (95,0) size 135x22
+          text run at (95,0) width 135: " placeholder styling."
+      RenderBlock (anonymous) at (0,38) size 784x22
+        RenderText {#text} at (0,0) size 248x22
+          text run at (0,0) width 248: "The placeholder text should be gray:"
+      RenderBlock {FORM} at (0,68) size 784x50
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (0,10) size 784x30
+          RenderInline {LABEL} at (0,0) size 517x22
+            RenderText {#text} at (0,4) size 347x22
+              text run at (0,4) width 347: "This is a searchable index. Enter search keywords: "
+            RenderTextControl {INPUT} at (349,2) size 166x26
+        RenderBlock {HR} at (0,48) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,134) size 784x22
+        RenderText {#text} at (0,0) size 255x22
+          text run at (0,0) width 255: "The placeholder text should be green:"
+      RenderBlock {FORM} at (0,164) size 784x50
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (0,10) size 784x30
+          RenderInline {LABEL} at (0,0) size 517x22
+            RenderText {#text} at (0,4) size 347x22
+              text run at (0,4) width 347: "This is a searchable index. Enter search keywords: "
+            RenderTextControl {INPUT} at (349,2) size 166x26
+        RenderBlock {HR} at (0,48) size 784x2 [border: (1px inset #000000)]
+layer at (359,90) size 162x22
+  RenderBlock {DIV} at (2,2) size 162x22
+layer at (359,186) size 162x22
+  RenderBlock {DIV} at (2,2) size 162x22
+layer at (359,90) size 162x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 162x22 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 79x22
+      text run at (1,0) width 79: "placeholder"
+layer at (359,186) size 162x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 162x22 [color=#008000]
+    RenderText {#text} at (1,0) size 79x22
+      text run at (1,0) width 79: "placeholder"

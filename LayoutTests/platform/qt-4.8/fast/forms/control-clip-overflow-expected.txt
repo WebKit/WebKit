@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x572
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 57x22
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 782x44
+          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
+            RenderText {#text} at (57,0) size 304x22
+              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=17033"
+          RenderText {#text} at (361,0) size 782x44
+            text run at (361,0) width 4: " "
+            text run at (365,0) width 417: "REGRESSION: Really long <option> causes unnecessary page"
+            text run at (0,22) width 228: "scroll bars to accommodate content"
+        RenderText {#text} at (228,22) size 4x22
+          text run at (228,22) width 4: "."
+      RenderBlock {P} at (0,60) size 784x22
+        RenderText {#text} at (0,0) size 435x22
+          text run at (0,0) width 435: "There should not be scroll bars below the popup and the button."
+layer at (8,106) size 100x50
+  RenderBlock {DIV} at (0,98) size 100x50
+    RenderMenuList {SELECT} at (0,2) size 80x27 [bgcolor=#FFFFFF]
+      RenderBlock (anonymous) at (4,2) size 55x22
+        RenderText at (0,0) size 187x22
+          text run at (0,0) width 187: "Lorem ipsum dolor sit amet"
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,176) size 100x50
+  RenderBlock {DIV} at (0,168) size 100x50
+    RenderButton {BUTTON} at (0,2) size 80x33 [bgcolor=#C0C0C0]
+      RenderBlock (anonymous) at (6,6) size 68x21
+        RenderText {#text} at (0,0) size 215x21
+          text run at (0,0) width 215: "Lorem ipsum dolor sit amet"
+    RenderText {#text} at (0,0) size 0x0

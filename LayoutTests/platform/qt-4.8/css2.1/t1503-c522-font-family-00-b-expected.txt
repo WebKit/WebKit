@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x301
+  RenderBlock {HTML} at (0,0) size 800x301
+    RenderBody {BODY} at (8,8) size 784x285
+      RenderBlock {DIV} at (0,0) size 784x124
+        RenderBlock {P} at (0,0) size 784x22 [color=#000080]
+          RenderText {#text} at (0,0) size 257x22
+            text run at (0,0) width 257: "This sentence should be in a serif font."
+        RenderBlock {P} at (0,22) size 784x22 [color=#000080]
+          RenderText {#text} at (0,0) size 257x22
+            text run at (0,0) width 257: "This sentence should be in a serif font."
+        RenderBlock {P} at (0,44) size 784x21 [color=#000080]
+          RenderText {#text} at (0,0) size 311x21
+            text run at (0,0) width 311: "This sentence should be in a sans-serif font."
+        RenderBlock {P} at (0,65) size 784x21 [color=#000080]
+          RenderText {#text} at (0,0) size 325x21
+            text run at (0,0) width 325: "This sentence should be in a cursive font."
+        RenderBlock {P} at (0,86) size 784x21 [color=#000080]
+          RenderText {#text} at (0,0) size 327x21
+            text run at (0,0) width 327: "This sentence should be in a fantasy font."
+        RenderBlock {P} at (0,107) size 784x17 [color=#000080]
+          RenderText {#text} at (0,0) size 295x17
+            text run at (0,0) width 295: "This sentence should be in a monospace font."
+      RenderBlock {P} at (0,124) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 311x21
+          text run at (0,0) width 311: "This sentence should be in a sans-serif font."
+      RenderBlock {P} at (0,145) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 357x21
+          text run at (0,0) width 357: "This sentence should be in a monospace font."
+      RenderBlock {DIV} at (0,166) size 784x119
+        RenderBlock {P} at (0,0) size 784x17 [color=#000080]
+          RenderText {#text} at (0,0) size 295x17
+            text run at (0,0) width 295: "This sentence should be in a monospace font."
+        RenderBlock {P} at (0,17) size 784x22 [color=#000080]
+          RenderText {#text} at (0,0) size 257x22
+            text run at (0,0) width 257: "This sentence should be in a serif font."
+        RenderBlock {P} at (0,39) size 784x21 [color=#000080]
+          RenderText {#text} at (0,0) size 311x21
+            text run at (0,0) width 311: "This sentence should be in a sans-serif font."
+        RenderBlock {P} at (0,60) size 784x21 [color=#000080]
+          RenderText {#text} at (0,0) size 325x21
+            text run at (0,0) width 325: "This sentence should be in a cursive font."
+        RenderBlock {P} at (0,81) size 784x21 [color=#000080]
+          RenderText {#text} at (0,0) size 327x21
+            text run at (0,0) width 327: "This sentence should be in a fantasy font."
+        RenderBlock {P} at (0,102) size 784x17 [color=#000080]
+          RenderText {#text} at (0,0) size 295x17
+            text run at (0,0) width 295: "This sentence should be in a monospace font."

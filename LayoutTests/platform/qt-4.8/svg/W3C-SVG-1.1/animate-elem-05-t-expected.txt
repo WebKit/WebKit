@@ -1,0 +1,30 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (42,0) size 438x318
+      RenderSVGText {text} at (8,0) size 74x11 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 74x11
+          chunk 1 text run 1 at (8.00,8.00) startOffset 0 endOffset 18 width 73.67: "Test a motion path"
+      RenderSVGText {text} at (11,10) size 68x11 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x11
+          chunk 1 text run 1 at (11.00,18.00) startOffset 0 endOffset 19 width 67.83: "'values' attribute."
+      RenderSVGContainer {g} at (42,114) size 384x204
+        RenderSVGPath {path} at (84,174) size 306x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 L 40 30 L 65 30"]
+        RenderSVGPath {rect} at (54,192) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=33.00] [width=10.00] [height=10.00]
+        RenderSVGText {text} at (7,42) size 23x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 23x11
+            chunk 1 text run 1 at (7.00,50.00) startOffset 0 endOffset 6 width 22.50: "0 sec."
+        RenderSVGPath {rect} at (204,114) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=35.00] [y=20.00] [width=10.00] [height=10.00]
+        RenderSVGText {text} at (37,29) size 10x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 10x11
+            chunk 1 text run 1 at (37.00,37.00) startOffset 0 endOffset 2 width 9.83: "3+"
+        RenderSVGPath {rect} at (354,114) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=20.00] [width=10.00] [height=10.00]
+        RenderSVGText {text} at (60,29) size 10x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 10x11
+            chunk 1 text run 1 at (60.00,37.00) startOffset 0 endOffset 2 width 9.83: "6+"
+        RenderSVGPath {path} at (54,186) size 72x78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,43.00)}] [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -5 0 L 0 -10 L 5 0 Z"]
+    RenderSVGText {text} at (5,51) size 41x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 41x9
+        chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 40.50: "$Revision: 1.8 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

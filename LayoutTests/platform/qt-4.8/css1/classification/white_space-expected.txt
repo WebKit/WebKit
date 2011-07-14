@@ -1,0 +1,80 @@
+layer at (0,0) size 982x625
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x625
+  RenderBlock {HTML} at (0,0) size 784x625
+    RenderBody {BODY} at (8,8) size 768x609 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x22
+        RenderText {#text} at (0,0) size 380x22
+          text run at (0,0) width 380: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,38) size 768x68
+        RenderText {#text} at (0,0) size 185x68
+          text run at (0,0) width 149: ".one {white-space: pre;}"
+          text run at (149,0) width 0: " "
+          text run at (0,17) width 175: ".two {white-space: nowrap;}"
+          text run at (175,17) width 0: " "
+          text run at (0,34) width 185: ".three {white-space: normal;}"
+          text run at (185,34) width 0: " "
+          text run at (0,51) width 0: " "
+      RenderBlock {HR} at (0,119) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,137) size 768x110
+        RenderText {#text} at (0,0) size 605x110
+          text run at (0,0) width 0: " "
+          text run at (0,22) width 605: "This sentence should     show extra space  where there    would ordinarily         not be any."
+          text run at (605,22) width 0: " "
+          text run at (0,44) width 320: "     There should also be preservation of returns"
+          text run at (320,44) width 0: " "
+          text run at (0,66) width 103: "as this sentence"
+          text run at (103,66) width 0: " "
+          text run at (0,88) width 197: "     very clearly demonstrates."
+          text run at (197,88) width 0: " "
+      RenderBlock {P} at (0,263) size 768x22
+        RenderText {#text} at (0,0) size 952x22
+          text run at (0,0) width 952: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."
+      RenderBlock {P} at (0,301) size 768x44
+        RenderText {#text} at (0,0) size 311x44
+          text run at (0,0) width 0: " "
+          text run at (0,22) width 311: "This sentence      should     show extra   space, "
+        RenderInline {SPAN} at (0,0) size 165x22
+          RenderText {#text} at (311,22) size 165x22
+            text run at (311,22) width 89: "except in the "
+            text run at (400,22) width 76: "second half"
+        RenderText {#text} at (476,22) size 4x22
+          text run at (476,22) width 4: "."
+          text run at (480,22) width 0: " "
+      RenderTable {TABLE} at (0,361) size 974x248 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 972x246
+          RenderTableRow {TR} at (0,0) size 972x30
+            RenderTableCell {TD} at (0,0) size 972x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x22
+                RenderText {#text} at (4,4) size 163x22
+                  text run at (4,4) width 163: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,30) size 972x216
+            RenderTableCell {TD} at (0,123) size 12x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x22
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,30) size 960x216 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 952x110
+                RenderText {#text} at (0,0) size 605x110
+                  text run at (0,0) width 0: " "
+                  text run at (0,22) width 605: "This sentence should     show extra space  where there    would ordinarily         not be any."
+                  text run at (605,22) width 0: " "
+                  text run at (0,44) width 320: "     There should also be preservation of returns"
+                  text run at (320,44) width 0: " "
+                  text run at (0,66) width 103: "as this sentence"
+                  text run at (103,66) width 0: " "
+                  text run at (0,88) width 197: "     very clearly demonstrates."
+                  text run at (197,88) width 0: " "
+              RenderBlock {P} at (4,130) size 952x22
+                RenderText {#text} at (0,0) size 952x22
+                  text run at (0,0) width 952: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."
+              RenderBlock {P} at (4,168) size 952x44
+                RenderText {#text} at (0,0) size 311x44
+                  text run at (0,0) width 0: " "
+                  text run at (0,22) width 311: "This sentence      should     show extra   space, "
+                RenderInline {SPAN} at (0,0) size 165x22
+                  RenderText {#text} at (311,22) size 165x22
+                    text run at (311,22) width 89: "except in the "
+                    text run at (400,22) width 76: "second half"
+                RenderText {#text} at (476,22) size 4x22
+                  text run at (476,22) width 4: "."
+                  text run at (480,22) width 0: " "

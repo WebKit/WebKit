@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderButton {INPUT} at (2,2) size 70x33 [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (6,6) size 58x21
+          RenderText at (0,0) size 58x21
+            text run at (0,0) width 58: "Submit"
+      RenderBR {BR} at (74,24) size 0x0
+      RenderButton {INPUT} at (2,39) size 54x33 [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (6,6) size 42x21
+          RenderText at (0,0) size 42x21
+            text run at (0,0) width 42: "Reset"
+      RenderBR {BR} at (58,61) size 0x0
