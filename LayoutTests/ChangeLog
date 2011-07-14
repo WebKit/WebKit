@@ -1,3 +1,28 @@
+2011-07-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update platform specific expected results after r90971.
+
+        * platform/qt/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/qt/fast/forms/input-placeholder-text-indent-expected.png:
+        * platform/qt/fast/forms/input-placeholder-text-indent-expected.txt:
+        * platform/qt/fast/forms/isindex-placeholder-expected.png: Added.
+        * platform/qt/fast/forms/isindex-placeholder-expected.txt:
+        * platform/qt/fast/forms/password-placeholder-expected.png: Added.
+        * platform/qt/fast/forms/password-placeholder-expected.txt:
+        * platform/qt/fast/forms/password-placeholder-text-security-expected.png: Added.
+        * platform/qt/fast/forms/password-placeholder-text-security-expected.txt:
+        * platform/qt/fast/forms/placeholder-set-attribute-expected.png: Added.
+        * platform/qt/fast/forms/placeholder-set-attribute-expected.txt:
+        * platform/qt/fast/forms/placeholder-stripped-expected.png:
+        * platform/qt/fast/forms/placeholder-stripped-expected.txt:
+        * platform/qt/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/qt/fast/forms/search-styled-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.png: Added.
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-set-attribute-expected.png: Added.
+        * platform/qt/fast/forms/textarea-placeholder-set-attribute-expected.txt:
+        * platform/qt/test_expectations.txt:
+
 2011-07-14  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r90976, r90981, and r90985.

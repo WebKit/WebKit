@@ -25,3 +25,19 @@ layer at (386,32) size 180x48
 layer at (574,32) size 180x48
   RenderTextControl {TEXTAREA} at (566,24) size 180x48
     RenderBlock {DIV} at (2,2) size 176x22 [color=#545454]
+layer at (12,34) size 176x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 176x22 [color=#640000]
+    RenderText {#text} at (0,0) size 25x22
+      text run at (0,0) width 25: "text"
+layer at (200,34) size 176x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 176x22 [color=#640000]
+    RenderText {#text} at (0,0) size 85x22
+      text run at (0,0) width 85: "disabled text"
+layer at (388,34) size 176x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 176x22 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 47x22
+      text run at (0,0) width 47: "default"
+layer at (576,34) size 176x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 176x22 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 107x22
+      text run at (0,0) width 107: "default disabled"

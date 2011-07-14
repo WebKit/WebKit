@@ -25,3 +25,11 @@ layer at (10,160) size 180x48
 layer at (10,218) size 180x48
   RenderTextControl {TEXTAREA} at (2,120) size 180x48
     RenderBlock {DIV} at (2,2) size 176x22
+layer at (12,102) size 162x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 162x22 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 133x22
+      text run at (1,0) width 133: "first line second line"
+layer at (12,162) size 176x22
+  RenderBlock (relative positioned) {DIV} at (2,2) size 176x22 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 133x22
+      text run at (0,0) width 133: "first line second line"

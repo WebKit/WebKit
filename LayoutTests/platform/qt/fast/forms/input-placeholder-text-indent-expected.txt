@@ -53,3 +53,51 @@ layer at (294,492) size 496x40
   RenderBlock {DIV} at (2,2) size 496x40
 layer at (294,540) size 496x40
   RenderBlock {DIV} at (2,2) size 496x40
+layer at (10,12) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 149x40
+      text run at (1,0) width 149: "placeholder"
+layer at (10,60) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 149x40
+      text run at (1,0) width 149: "placeholder"
+layer at (10,108) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (11,0) size 149x40
+      text run at (11,0) width 149: "placeholder"
+layer at (10,156) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (201,0) size 149x40
+      text run at (201,0) width 149: "placeholder"
+layer at (10,204) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (-9,0) size 149x40
+      text run at (-9,0) width 149: "placeholder"
+layer at (10,252) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (249,0) size 149x40
+      text run at (249,0) width 149: "placeholder"
+layer at (294,300) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (346,0) size 149x40
+      text run at (346,0) width 149: "placeholder"
+layer at (294,348) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (346,0) size 149x40
+      text run at (346,0) width 149: "placeholder"
+layer at (294,396) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (336,0) size 149x40
+      text run at (336,0) width 149: "placeholder"
+layer at (294,444) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (146,0) size 149x40
+      text run at (146,0) width 149: "placeholder"
+layer at (294,492) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (356,0) size 149x40
+      text run at (356,0) width 149: "placeholder"
+layer at (294,540) size 496x40
+  RenderBlock (relative positioned) {DIV} at (2,2) size 496x40 [color=#A9A9A9]
+    RenderText {#text} at (98,0) size 149x40
+      text run at (98,0) width 149: "placeholder"

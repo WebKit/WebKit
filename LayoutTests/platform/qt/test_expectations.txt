@@ -1,19 +1,6 @@
-// These are the layout test expectations for the QT port of WebKit.
+// These are the layout test expectations for the Qt port of WebKit.
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
-
-// Needs new baseline.
-BUGWK64253 : fast/css/pseudo-cache-stale.html = FAIL
-BUGWK64253 : fast/forms/input-placeholder-text-indent.html = FAIL
-BUGWK64253 : fast/forms/isindex-placeholder.html = FAIL
-BUGWK64253 : fast/forms/password-placeholder-text-security.html = FAIL
-BUGWK64253 : fast/forms/password-placeholder.html = FAIL
-BUGWK64253 : fast/forms/placeholder-set-attribute.html = FAIL
-BUGWK64253 : fast/forms/placeholder-stripped.html = FAIL
-BUGWK64253 : fast/forms/search-placeholder-value-changed.html = FAIL
-BUGWK64253 : fast/forms/search-styled.html = FAIL
-BUGWK64253 : fast/forms/textarea-placeholder-pseudo-style.html = FAIL
-BUGWK64253 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
 
 BUGWK64002 : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
 
