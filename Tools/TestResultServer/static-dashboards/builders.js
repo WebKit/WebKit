@@ -73,9 +73,9 @@ function BuilderGroup(isToTWebKit, builders) {
 BuilderGroup.prototype.setup = function() {
   // TODO(mihaip): instead of copying these to globals, it would be better if
   // the rest of the code read things from the BuilderGroup instance directly
-  defaultBuilderName = this.defaultBuilder;
-  expectationsBuilder = this.expectationsBuilder;
-  builders = this.builders;
+  g_defaultBuilderName = this.defaultBuilder;
+  g_expectationsBuilder = this.expectationsBuilder;
+  g_builders = this.builders;
 };
 
 BuilderGroup.TOT_WEBKIT = true;

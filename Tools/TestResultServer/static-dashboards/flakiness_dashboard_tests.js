@@ -48,9 +48,9 @@
 function setupExpectationsTest() {
   allExpectations = null;
   allTests = null;
-  expectationsByTest = {};
-  resultsByBuilder = {};
-  builders = {};
+  g_expectationsByTest = {};
+  g_resultsByBuilder = {};
+  g_builders = {};
 }
 
 /**
@@ -65,13 +65,13 @@ function setupExpectationsTest() {
  *    test ought to be for this builder.
  */
 function runExpectationsTest(builder, test, expectations, modifiers) {
-  builders[builder] = true;
+  g_builders[builder] = true;
 
   // Put in some dummy results. processExpectations expects the test to be
   // there.
   var tests = {};
   tests[test] = {'results': [[100, 'F']], 'times': [[100, 0]]};
-  resultsByBuilder[builder] = {'tests': tests};
+  g_resultsByBuilder[builder] = {'tests': tests};
 
   processExpectations();
   var resultsForTest = createResultsObjectForTest(test, builder);
@@ -97,7 +97,7 @@ function testReleaseFail() {
   var expectationsArray = [
     {'modifiers': 'RELEASE', 'expectations': 'FAIL'}
   ];
-  expectationsByTest[test] = expectationsArray;
+  g_expectationsByTest[test] = expectationsArray;
   runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
 }
 
@@ -108,7 +108,7 @@ function testReleaseFailDebugCrashReleaseBuilder() {
     {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
     {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
   ];
-  expectationsByTest[test] = expectationsArray;
+  g_expectationsByTest[test] = expectationsArray;
   runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
 }
 
@@ -119,16 +119,16 @@ function testReleaseFailDebugCrashDebugBuilder() {
     {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
     {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
   ];
-  expectationsByTest[test] = expectationsArray;
+  g_expectationsByTest[test] = expectationsArray;
   runExpectationsTest(builder, test, 'CRASH', 'DEBUG');
 }
 
 function testOverrideJustBuildType() {
   var test = 'bar/1.html';
-  expectationsByTest['bar'] = [
+  g_expectationsByTest['bar'] = [
     {'modifiers': 'WONTFIX', 'expectations': 'FAIL PASS TIMEOUT'}
   ];
-  expectationsByTest[test] = [
+  g_expectationsByTest[test] = [
     {'modifiers': 'WONTFIX MAC', 'expectations': 'FAIL'},
     {'modifiers': 'LINUX DEBUG', 'expectations': 'CRASH'},
   ];

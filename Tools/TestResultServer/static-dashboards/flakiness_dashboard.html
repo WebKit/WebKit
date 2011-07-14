@@ -345,7 +345,7 @@ var MAX_RESULTS = 1500;
 //////////////////////////////////////////////////////////////////////////////
 function generatePage()
 {
-    if (currentState.useTestData)
+    if (g_currentState.useTestData)
         return;
 
     updateDefaultBuilderState();
@@ -354,14 +354,14 @@ function generatePage()
 
     // tests expands to all tests that match the CSV list.
     // result expands to all tests that ever have the given result
-    if (currentState.tests || currentState.result)
+    if (g_currentState.tests || g_currentState.result)
         generatePageForIndividualTests(individualTests());
-    else if (currentState.expectationsUpdate)
+    else if (g_currentState.expectationsUpdate)
         generatePageForExpectationsUpdate();
     else
-        generatePageForBuilder(currentState.builder);
+        generatePageForBuilder(g_currentState.builder);
 
-    for (var builder in builders)
+    for (var builder in g_builders)
         processTestResultsForBuilderAsync(builder);
 }
 
@@ -369,7 +369,7 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'tests':
-        validateParameter(currentState, key, value,
+        validateParameter(g_currentState, key, value,
             function() {
                 return isValidName(value);
             });
@@ -377,7 +377,7 @@ function handleValidHashParameter(key, value)
 
     case 'result':
         value = value.toUpperCase();
-        validateParameter(currentState, key, value,
+        validateParameter(g_currentState, key, value,
             function() {
                 for (var result in LAYOUT_TEST_EXPECTATIONS_MAP_) {
                     if (value == LAYOUT_TEST_EXPECTATIONS_MAP_[result])
@@ -388,17 +388,17 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'builder':
-        validateParameter(currentState, key, value,
+        validateParameter(g_currentState, key, value,
             function() {
-                return value in builders;
+                return value in g_builders;
             });
         return true;
 
     case 'sortColumn':
-        validateParameter(currentState, key, value,
+        validateParameter(g_currentState, key, value,
             function() {
                 // Get all possible headers since the actual used set of headers
-                // depends on the values in currentState, which are currently being set.
+                // depends on the values in g_currentState, which are currently being set.
                 var headers = tableHeaders(true);
                 for (var i = 0; i < headers.length; i++) {
                     if (value == sortColumnFromTableHeader(headers[i]))
@@ -409,7 +409,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortOrder':
-        validateParameter(currentState, key, value,
+        validateParameter(g_currentState, key, value,
             function() {
                 return value == FORWARD || value == BACKWARD;
             });
@@ -418,7 +418,7 @@ function handleValidHashParameter(key, value)
     case 'resultsHeight':
     case 'updateIndex':
     case 'revision':
-        validateParameter(currentState, key, Number(value),
+        validateParameter(g_currentState, key, Number(value),
             function() {
                 return value.match(/^\d+$/);
             });
@@ -435,7 +435,7 @@ function handleValidHashParameter(key, value)
     case 'showWontFixSkip':
     case 'expectationsUpdate':
     case 'showRunsOnBuilderPage':
-        currentState[key] = value == 'true';
+        g_currentState[key] = value == 'true';
         return true;
 
     default:
@@ -443,7 +443,7 @@ function handleValidHashParameter(key, value)
     }
 }
 
-defaultStateValues = {
+g_defaultStateValues = {
     sortOrder: BACKWARD,
     sortColumn: 'flakiness',
     showExpectations: false,
@@ -458,7 +458,7 @@ defaultStateValues = {
     expectationsUpdate: false,
     showRunsOnBuilderPage: false,
     updateIndex: 0,
-    builder: defaultBuilderName,
+    builder: g_defaultBuilderName,
     resultsHeight: 300,
     revision: null
 };
@@ -567,7 +567,7 @@ function getAllTests()
 {
     if (!g_allTests) {
         g_allTests = {};
-        for (var builder in builders)
+        for (var builder in g_builders)
             addTestsForBuilder(builder, g_allTests);
     }
     return g_allTests;
@@ -578,10 +578,10 @@ function getAllTests()
 // tests in the directory.
 function individualTests()
 {
-    if (currentState.result)
-        return allTestsWithResult(currentState.result);
+    if (g_currentState.result)
+        return allTestsWithResult(g_currentState.result);
 
-    if (!currentState.tests)
+    if (!g_currentState.tests)
         return [];
 
     return individualTestsForSubstringList();
@@ -590,7 +590,7 @@ function individualTests()
 function individualTestsForSubstringList()
 {
     // Convert windows slashes to unix slashes.
-    var tests = currentState.tests.replace(/\\/g, '/');
+    var tests = g_currentState.tests.replace(/\\/g, '/');
     var separator = stringContains(tests, ' ') ? ' ' : ',';
     var testList = tests.split(separator);
 
@@ -677,7 +677,7 @@ function allTestsWithResult(result)
 // Adds all the tests for the given builder to the testMapToPopulate.
 function addTestsForBuilder(builder, testMapToPopulate)
 {
-    var tests = resultsByBuilder[builder].tests;
+    var tests = g_resultsByBuilder[builder].tests;
     for (var test in tests) {
         testMapToPopulate[test] = true;
     }
@@ -697,7 +697,7 @@ function allTestsWithSamePlatformAndBuildType(platform, buildType)
 {
     if (!g_allTestsByPlatformAndBuildType[platform][buildType]) {
         var tests = {};
-        for (var thisBuilder in builders) {
+        for (var thisBuilder in g_builders) {
             var thisBuilderBuildInfo = platformAndBuildType(thisBuilder);
             if (thisBuilderBuildInfo.buildType == buildType && thisBuilderBuildInfo.platform == platform) {
                 addTestsForBuilder(thisBuilder, tests);
@@ -769,7 +769,7 @@ function populateExpectationsData(resultsObject)
     htmlArrays.modifiers = [];
     htmlArrays.bugs = [];
 
-    var tests = resultsByBuilder[resultsObject.builder].tests;
+    var tests = g_resultsByBuilder[resultsObject.builder].tests;
 
     var testObject = g_allExpectations[test];
     var usedExpectations = {};
@@ -882,8 +882,8 @@ function processExpectations()
     g_allExpectations = {};
 
     var expectationsArray = [];
-    for (var path in expectationsByTest)
-        expectationsArray.push({path: path, expectations: expectationsByTest[path]});
+    for (var path in g_expectationsByTest)
+        expectationsArray.push({path: path, expectations: g_expectationsByTest[path]});
 
     // Sort the array to hit more specific paths last. More specific
     // paths (e.g. foo/bar/baz.html) override entries for less-specific ones
@@ -951,7 +951,7 @@ function processTestResultsForBuilderAsync(builder)
 
 function processTestRunsForAllBuilders()
 {
-    for (var builder in builders)
+    for (var builder in g_builders)
         processTestRunsForBuilder(builder);
 }
 
@@ -960,7 +960,7 @@ function processTestRunsForBuilder(builderName)
     if (g_perBuilderFailures[builderName])
       return;
 
-    if (!resultsByBuilder[builderName]) {
+    if (!g_resultsByBuilder[builderName]) {
         console.error('No tests found for ' + builderName);
         g_perBuilderFailures[builderName] = [];
         return;
@@ -975,13 +975,13 @@ function processTestRunsForBuilder(builderName)
     processMissingTestsWithExpectations(builderName, platform, buildType);
 
     var failures = [];
-    var allTestsForThisBuilder = resultsByBuilder[builderName].tests;
+    var allTestsForThisBuilder = g_resultsByBuilder[builderName].tests;
 
     for (var test in allTestsForThisBuilder) {
         var resultsForTest = createResultsObjectForTest(test, builderName);
         populateExpectationsData(resultsForTest);
 
-        var rawTest = resultsByBuilder[builderName].tests[test];
+        var rawTest = g_resultsByBuilder[builderName].tests[test];
         resultsForTest.rawTimes = rawTest.times;
         var rawResults = rawTest.results;
         resultsForTest.rawResults = rawResults;
@@ -1092,7 +1092,7 @@ function processMissingAndExtraExpectations(resultsForTest)
                 // FIXME: Once all the FAIL lines are removed from
                 // test_expectations.txt, delete all the legacyExpectationsSemantics
                 // code.
-                if (currentState.legacyExpectationsSemantics) {
+                if (g_currentState.legacyExpectationsSemantics) {
                     if (element == 'FAIL') {
                         for (var i = 0; i < FAIL_RESULTS.length; i++) {
                             if (resultsMap[FAIL_RESULTS[i]])
@@ -1113,7 +1113,7 @@ function processMissingAndExtraExpectations(resultsForTest)
                 // FIXME: Once all the FAIL lines are removed from
                 // test_expectations.txt, delete all the legacyExpectationsSemantics
                 // code.
-                if (currentState.legacyExpectationsSemantics) {
+                if (g_currentState.legacyExpectationsSemantics) {
                     if (expectation == 'FAIL') {
                         for (var j = 0; j < FAIL_RESULTS.length; j++) {
                             if (result == FAIL_RESULTS[j]) {
@@ -1218,7 +1218,7 @@ function createBlameListHTML(revisions, index, urlBase, separator, repo)
 function isFailure(builder, testName, index)
 {
     var currentIndex = 0;
-    var rawResults = resultsByBuilder[builder].tests[testName].results;
+    var rawResults = g_resultsByBuilder[builder].tests[testName].results;
     for (var i = 0; i < rawResults.length; i++) {
         currentIndex += rawResults[i][RLE.LENGTH];
         if (currentIndex > index)
@@ -1230,8 +1230,8 @@ function isFailure(builder, testName, index)
 // Returns an array of buildNumbers for all builds where this test failed.
 function buildNumbersForFailures(builder, testName)
 {
-    var rawResults = resultsByBuilder[builder].tests[testName].results;
-    var buildNumbers = resultsByBuilder[builder].buildNumbers;
+    var rawResults = g_resultsByBuilder[builder].tests[testName].results;
+    var buildNumbers = g_resultsByBuilder[builder].buildNumbers;
     var index = 0;
     var failures = [];
     for (var i = 0; i < rawResults.length; i++) {
@@ -1248,44 +1248,44 @@ function buildNumbersForFailures(builder, testName)
 // Returns the path to the failure log for this non-webkit test.
 function pathToFailureLog(testName)
 {
-    return '/steps/' + currentState.testType + '/logs/' + testName.split('.')[1]
+    return '/steps/' + g_currentState.testType + '/logs/' + testName.split('.')[1]
 }
 
 function showPopupForBuild(e, builder, index, opt_testName)
 {
     var html = '';
 
-    var time = resultsByBuilder[builder].secondsSinceEpoch[index];
+    var time = g_resultsByBuilder[builder].secondsSinceEpoch[index];
     if (time) {
         var date = new Date(time * 1000);
         html += date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
     }
 
-    var buildNumber = resultsByBuilder[builder].buildNumbers[index];
+    var buildNumber = g_resultsByBuilder[builder].buildNumbers[index];
     var builderMaster = getBuilderMaster(builder);
     var buildBasePath = builderMaster.getLogPath(builder, buildNumber);
 
     html += '<ul><li>' + linkHTMLToOpenWindow(buildBasePath, 'Build log') +
         '</li><li>' +
-        createBlameListHTML(resultsByBuilder[builder].webkitRevision, index,
+        createBlameListHTML(g_resultsByBuilder[builder].webkitRevision, index,
             'http://trac.webkit.org/log/?verbose=on&rev=', '&stop_rev=',
             'WebKit') +
         '</li>';
 
     if (builderMaster == WEBKIT_BUILDER_MASTER) {
-        var revision = resultsByBuilder[builder].webkitRevision[index];
+        var revision = g_resultsByBuilder[builder].webkitRevision[index];
         html += '<li><span class=link onclick="setQueryParameter(\'revision\',' +
             revision + ')">Show results for WebKit r' + revision +
             '</span></li>';
     } else {
         html += '<li>' +
-            createBlameListHTML(resultsByBuilder[builder].chromeRevision, index,
+            createBlameListHTML(g_resultsByBuilder[builder].chromeRevision, index,
                 'http://build.chromium.org/f/chromium/perf/dashboard/ui/changelog.html?url=/trunk/src&mode=html&range=', ':', 'Chrome') +
             '</li>';
 
-        var chromeRevision = resultsByBuilder[builder].chromeRevision[index];
+        var chromeRevision = g_resultsByBuilder[builder].chromeRevision[index];
         if (chromeRevision && isLayoutTestResults()) {
-            html += '<li><a href="' + TEST_RESULTS_BASE_PATH + builders[builder] +
+            html += '<li><a href="' + TEST_RESULTS_BASE_PATH + g_builders[builder] +
                 '/' + chromeRevision + '/layout-test-results.zip">layout-test-results.zip</a></li>';
         }
     }
@@ -1305,7 +1305,7 @@ function showPopupForTest(e, test)
 
 function htmlForTestResults(test)
 {
-    if (!currentState.showRunsOnBuilderPage && !isCrossBuilderView())
+    if (!g_currentState.showRunsOnBuilderPage && !isCrossBuilderView())
         return '<td>' + test.flips;
 
     var html = '';
@@ -1313,7 +1313,7 @@ function htmlForTestResults(test)
     var times = test.rawTimes.concat();
     var builder = test.builder;
     var builderMaster = getBuilderMaster(builder);
-    var buildNumbers = resultsByBuilder[builder].buildNumbers;
+    var buildNumbers = g_resultsByBuilder[builder].buildNumbers;
 
     var indexToReplaceCurrentResult = -1;
     var indexToReplaceCurrentTime = -1;
@@ -1347,7 +1347,7 @@ function htmlForTestResults(test)
         }
 
         var extraClassNames = '';
-        var webkitRevision = resultsByBuilder[builder].webkitRevision;
+        var webkitRevision = g_resultsByBuilder[builder].webkitRevision;
         var isWebkitMerge = webkitRevision[i + 1] && webkitRevision[i] != webkitRevision[i + 1];
         if (isWebkitMerge && builderMaster != WEBKIT_BUILDER_MASTER)
             extraClassNames += ' merge';
@@ -1372,7 +1372,7 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
     var open = '<div onclick="selectContents(this)">';
 
     if (tests.length) {
-        html +=  '<h3>Have not failed in last ' + resultsByBuilder[builder].buildNumbers.length + ' runs.</h3><div id="passing-tests">';
+        html +=  '<h3>Have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs.</h3><div id="passing-tests">';
 
         for (var i = 0; i < tests.length; i++)
             html += open + tests[i].test + '</div>';
@@ -1383,7 +1383,7 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
     if (skippedPaths.length) {
         html += '<h3>' + linkHTMLToToggleState('showSkipped', 'Skipped tests in test_expectations.txt') + '</h3>';
 
-        if (currentState.showSkipped)
+        if (g_currentState.showSkipped)
             html += '<div id="passing-tests">' + open + skippedPaths.join('</div>' + open) + '</div></div>';
     }
     return html;
@@ -1393,18 +1393,18 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
 function shouldHideTest(testResult)
 {
     if (testResult.isWontFixSkip)
-        return !currentState.showWontFixSkip;
+        return !g_currentState.showWontFixSkip;
 
     if (testResult.isFlaky)
-        return !currentState.showFlaky;
+        return !g_currentState.showFlaky;
 
     if (isSlowTest(testResult))
-        return !currentState.showSlow;
+        return !g_currentState.showSlow;
 
     if (testResult.meetsExpectations)
-        return !currentState.showCorrectExpectations;
+        return !g_currentState.showCorrectExpectations;
 
-    return !currentState.showWrongExpectations;
+    return !g_currentState.showWrongExpectations;
 }
 
 // Sets the browser's selection to the element's contents.
@@ -1428,7 +1428,7 @@ function createBugHTML(test)
 
 function isCrossBuilderView()
 {
-    return currentState.tests || currentState.result || currentState.expectationsUpdate;
+    return g_currentState.tests || g_currentState.result || g_currentState.expectationsUpdate;
 }
 
 function tableHeaders(opt_getAll)
@@ -1442,11 +1442,11 @@ function tableHeaders(opt_getAll)
 
     if (isLayoutTestResults() || opt_getAll) {
         headers.push('bugs');
-        if (isCrossBuilderView() || currentState.showRunsOnBuilderPage || opt_getAll)
+        if (isCrossBuilderView() || g_currentState.showRunsOnBuilderPage || opt_getAll)
             headers.push('modifiers', 'expectations');
     }
 
-    if (currentState.showRunsOnBuilderPage || opt_getAll || isCrossBuilderView())
+    if (g_currentState.showRunsOnBuilderPage || opt_getAll || isCrossBuilderView())
         headers.push('missing', 'extra');
 
     headers.push('slowest run', '% fail');
@@ -1454,10 +1454,10 @@ function tableHeaders(opt_getAll)
     var FLAKINESS_HEADER = 'flakiness (numbers are runtimes in seconds)';
     var FLIPS_HEADER = 'flakiness (number of flips)';
 
-    if (currentState.showRunsOnBuilderPage || opt_getAll)
+    if (g_currentState.showRunsOnBuilderPage || opt_getAll)
         headers.push(FLAKINESS_HEADER);
 
-    if (!currentState.showRunsOnBuilderPage || opt_getAll)
+    if (!g_currentState.showRunsOnBuilderPage || opt_getAll)
         headers.push(FLIPS_HEADER);
 
     return headers;
@@ -1514,8 +1514,8 @@ function htmlForTableColumnHeader(headerName, opt_fillColSpan)
 {
     // Use the first word of the header title as the sortkey
     var thisSortValue = sortColumnFromTableHeader(headerName);
-    var arrowHTML = thisSortValue == currentState.sortColumn ?
-        '<span class=' + currentState.sortOrder + '>' + (currentState.sortOrder == FORWARD ? '&uarr;' : '&darr;' ) + '</span>' : '';
+    var arrowHTML = thisSortValue == g_currentState.sortColumn ?
+        '<span class=' + g_currentState.sortOrder + '>' + (g_currentState.sortOrder == FORWARD ? '&uarr;' : '&darr;' ) + '</span>' : '';
     return '<th sortValue=' + thisSortValue +
         // Extend last th through all the rest of the columns.
         (opt_fillColSpan ? ' colspan=10000' : '') +
@@ -1605,7 +1605,7 @@ function changeSort(e)
 
     var sort = 'sortColumn';
     var orderKey = 'sortOrder';
-    if (sortValue == currentState[sort] && currentState[orderKey] == FORWARD)
+    if (sortValue == g_currentState[sort] && g_currentState[orderKey] == FORWARD)
         order = BACKWARD;
     else
         order = FORWARD;
@@ -1680,7 +1680,7 @@ function realModifiers(modifierString)
 function generatePageForExpectationsUpdate()
 {
     // Always show all runs when auto-updating expectations.
-    if (!currentState.showAllRuns)
+    if (!g_currentState.showAllRuns)
         setQueryParameter('showAllRuns', true);
 
     processTestRunsForAllBuilders();
@@ -1701,7 +1701,7 @@ function generatePageForExpectationsUpdate()
         }
     }
 
-    for (var builder in builders) {
+    for (var builder in g_builders) {
         var tests = g_perBuilderWithExpectationsButNoFailures[builder]
         for (var i = 0; i < tests.length; i++) {
             // Anything extra in this case is what is listed in expectations
@@ -1726,9 +1726,9 @@ function generatePageForExpectationsUpdate()
 // @param {Array.<string>} keys Keys into the testNeedingUpdate object.
 function showUpdateInfoForTest(testsNeedingUpdate, keys)
 {
-    var test = keys[currentState.updateIndex];
+    var test = keys[g_currentState.updateIndex];
     document.body.innerHTML = '<b>' + test + '</b>' +
-        '<div style="float:right">' + (currentState.updateIndex + 1) + ' of ' +
+        '<div style="float:right">' + (g_currentState.updateIndex + 1) + ' of ' +
         + keys.length + ' tests</div><br><br>';
 
     var buttonRegion = document.createElement('div');
@@ -1743,7 +1743,7 @@ function showUpdateInfoForTest(testsNeedingUpdate, keys)
     previousBtn.value = 'previous';
     previousBtn.addEventListener('click',
         function() {
-          setUpdateIndex(currentState.updateIndex - 1, testsNeedingUpdate, keys);
+          setUpdateIndex(g_currentState.updateIndex - 1, testsNeedingUpdate, keys);
         },
         false);
     buttonRegion.appendChild(previousBtn);
@@ -1805,7 +1805,7 @@ function finishUpdate()
 // @param {Array.<string>} keys Keys into the testNeedingUpdate object.
 function handleUpdate(testsNeedingUpdate, keys)
 {
-    var test = keys[currentState.updateIndex];
+    var test = keys[g_currentState.updateIndex];
     var updates = testsNeedingUpdate[test];
     for (var builder in updates) {
         // Add included tests, and delete excluded tests if
@@ -1829,7 +1829,7 @@ function handleUpdate(testsNeedingUpdate, keys)
 // @param {Array.<string>} keys Keys into the testNeedingUpdate object.
 function nextUpdate(testsNeedingUpdate, keys)
 {
-    setUpdateIndex(currentState.updateIndex + 1, testsNeedingUpdate, keys);
+    setUpdateIndex(g_currentState.updateIndex + 1, testsNeedingUpdate, keys);
 }
 
 
@@ -1870,10 +1870,10 @@ function htmlForIndividulTestOnAllBuilders(test)
             html += htmlForSingleTestRow(testResults[j]);
         html = htmlForTestTable(html);
     } else {
-        if (expectationsByTest[test]) {
-            for (var i = 0; i < expectationsByTest[test].length; i++) {
-              html += '<div>' + expectationsByTest[test][i].modifiers + ' | ' +
-                  expectationsByTest[test][i].expectations + '</div>';
+        if (g_expectationsByTest[test]) {
+            for (var i = 0; i < g_expectationsByTest[test].length; i++) {
+              html += '<div>' + g_expectationsByTest[test][i].modifiers + ' | ' +
+                  g_expectationsByTest[test][i].expectations + '</div>';
             }
         }
         html += '<div class="not-found">Test not found. Either it does ' +
@@ -1886,7 +1886,7 @@ function htmlForIndividulTestOnAllBuilders(test)
     if (isLayoutTestResults()) {
         html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
         if (builderMaster == WEBKIT_BUILDER_MASTER) {
-            var revision = currentState.revision || '';
+            var revision = g_currentState.revision || '';
             html += '<form onsubmit="setQueryParameter(\'revision\', revision.value);' +
                 'return false;">Show results for WebKit revision: ' +
                 '<input name=revision placeholder="e.g. 65540" value="' + revision +
@@ -1896,7 +1896,7 @@ function htmlForIndividulTestOnAllBuilders(test)
     } else {
       html += ' | <span>Results height:<input ' +
           'onchange="setQueryParameter(\'resultsHeight\',this.value)" value="' +
-          currentState.resultsHeight + '" style="width:2.5em">px</span>';
+          g_currentState.resultsHeight + '" style="width:2.5em">px</span>';
     }
     html += '</div></div>';
     return html;
@@ -1984,7 +1984,7 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
         childContainer.appendChild(expectationsTitle(platform, path, opt_builder || ''));
         childContainer.className = 'expectations-item';
         item.className = 'expectation ' + fileExtension;
-        if (currentState.showLargeExpectations)
+        if (g_currentState.showLargeExpectations)
             item.className += ' large';
         childContainer.appendChild(item);
         handleFinishedLoadingExpectations(container);
@@ -2198,7 +2198,7 @@ function appendNonWebKitResults(container, url)
         var item = document.createElement('iframe');
         item.src = dummyNode.src;
         item.className = 'non-webkit-results';
-        item.style.height = currentState.resultsHeight + 'px';
+        item.style.height = g_currentState.resultsHeight + 'px';
         container.appendChild(item);
     }
     dummyNode.onerror = function() {
@@ -2210,13 +2210,13 @@ function appendNonWebKitResults(container, url)
 
 function buildInfoForRevision(builder, revision)
 {
-    var revisions = resultsByBuilder[builder].webkitRevision;
+    var revisions = g_resultsByBuilder[builder].webkitRevision;
     var revisionStart = 0, revisionEnd = 0, buildNumber = 0;
     for (var i = 0; i < revisions.length; i++) {
         if (revision > revisions[i]) {
             revisionStart = revisions[i - 1];
             revisionEnd = revisions[i];
-            buildNumber = resultsByBuilder[builder].buildNumbers[i - 1];
+            buildNumber = g_resultsByBuilder[builder].buildNumbers[i - 1];
             break;
         }
     }
@@ -2238,9 +2238,9 @@ function loadExpectationsLayoutTests(expectationsContainer)
     var revisionContainer = document.createElement('div');
     revisionContainer.textContent = "Showing results for: "
     expectationsContainer.appendChild(revisionContainer);
-    for (var builder in builders) {
+    for (var builder in g_builders) {
         if (getBuilderMaster(builder) == WEBKIT_BUILDER_MASTER) {
-            var latestRevision = currentState.revision || resultsByBuilder[builder].webkitRevision[0];
+            var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             var revisionInfo = document.createElement('div');
             revisionInfo.style.cssText = 'background:lightgray;margin:0 3px;padding:0 2px;display:inline-block;';
@@ -2270,15 +2270,15 @@ function loadExpectationsLayoutTests(expectationsContainer)
 
     var actualResultSuffixes = ['-actual.txt', '-actual.png', '-crash-log.txt', '-diff.txt', '-wdiff.html', '-diff.png'];
 
-    for (var builder in builders) {
+    for (var builder in g_builders) {
         var actualResultsBase;
         if (getBuilderMaster(builder) == WEBKIT_BUILDER_MASTER) {
-            var latestRevision = currentState.revision || resultsByBuilder[builder].webkitRevision[0];
+            var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             actualResultsBase = 'http://build.webkit.org/results/' + builder +
                 '/r' + buildInfo.revisionStart + ' (' + buildInfo.buildNumber + ')/';
         } else
-            actualResultsBase = TEST_RESULTS_BASE_PATH + builders[builder] + '/results/layout-test-results/';
+            actualResultsBase = TEST_RESULTS_BASE_PATH + g_builders[builder] + '/results/layout-test-results/';
 
         for (var i = 0; i < actualResultSuffixes.length; i++) {
             addExpectationItem(expectationsContainers, expectationsContainer, null,
@@ -2322,7 +2322,7 @@ function allFallbacks()
 
 function appendExpectations()
 {
-    var expectations = currentState.showExpectations ? document.getElementsByClassName('expectations') : [];
+    var expectations = g_currentState.showExpectations ? document.getElementsByClassName('expectations') : [];
     // Loading expectations is *very* slow. Use a large timeout to avoid
     // totally hanging the renderer.
     performChunkedAction(expectations, function(chunk) {
@@ -2345,7 +2345,7 @@ function generatePageForIndividualTests(tests)
     performChunkedAction(tests, function(chunk) {
         appendHTML(htmlForIndividualTests(chunk));
     }, appendExpectations, 500);
-    $('tests-input').value = currentState.tests;
+    $('tests-input').value = g_currentState.tests;
 }
 
 function performChunkedAction(tests, handleChunk, onComplete, timeout, opt_index) {
@@ -2373,7 +2373,7 @@ function htmlForNavBar()
 {
     var extraHTML = '';
     if (!isCrossBuilderView())
-        extraHTML += checkboxHTML('showRunsOnBuilderPage', 'Show flakiness details', currentState.showRunsOnBuilderPage);
+        extraHTML += checkboxHTML('showRunsOnBuilderPage', 'Show flakiness details', g_currentState.showRunsOnBuilderPage);
 
     var html = getHTMLForTestTypeSwitcher(false, extraHTML, isCrossBuilderView());
     html += '<div class=forms><form id=result-form ' +
@@ -2393,7 +2393,7 @@ function htmlForNavBar()
 
 function linkHTMLToToggleState(key, linkText)
 {
-    var isTrue = currentState[key];
+    var isTrue = g_currentState[key];
     return '<span class=link onclick="setQueryParameter(\'' + key + '\', ' +
         !isTrue + ')">' + (isTrue ? 'Hide' : 'Show') + ' ' + linkText + '</span>';
 }
@@ -2403,7 +2403,7 @@ function generatePageForBuilder(builderName)
     processTestRunsForBuilder(builderName);
 
     var results = g_perBuilderFailures[builderName];
-    sortTests(results, currentState.sortColumn, currentState.sortOrder);
+    sortTests(results, g_currentState.sortColumn, g_currentState.sortOrder);
 
     var testsHTML = '';
     if (results.length) {
@@ -2455,15 +2455,15 @@ var VALID_KEYS_FOR_CROSS_BUILDER_VIEW = {
 
 function isInvalidKeyForCrossBuilderView(key)
 {
-    return !(key in VALID_KEYS_FOR_CROSS_BUILDER_VIEW) && !(key in defaultCrossDashboardStateValues);
+    return !(key in VALID_KEYS_FOR_CROSS_BUILDER_VIEW) && !(key in g_defaultCrossDashboardStateValues);
 }
 
 function updateDefaultBuilderState()
 {
     if (isCrossBuilderView())
-        delete defaultStateValues.builder;
+        delete g_defaultStateValues.builder;
     else
-        defaultStateValues.builder = defaultBuilderName;
+        g_defaultStateValues.builder = g_defaultBuilderName;
 }
 
 // Sets the page state to regenerate the page.
@@ -2473,14 +2473,14 @@ function handleQueryParameterChange(params)
     for (key in params) {
         if (key == 'tests') {
             // Entering cross-builder view, only keep valid keys for that view.
-            for (var currentKey in currentState) {
+            for (var currentKey in g_currentState) {
               if (isInvalidKeyForCrossBuilderView(currentKey)) {
-                delete currentState[currentKey];
+                delete g_currentState[currentKey];
               }
             }
         } else if (isInvalidKeyForCrossBuilderView(key)) {
-            delete currentState.tests;
-            delete currentState.result;
+            delete g_currentState.tests;
+            delete g_currentState.result;
         }
     }
 

@@ -154,13 +154,13 @@ function convertToWebTreemapFormat(treename, tree) {
   };
 }
 
-var resultsByBuilder = {};
+var g_resultsByBuilder = {};
 
 function ADD_RESULTS(data) {
   // TODO(ojan): We should probably include the builderName in the JSON
   // rather than relying on only loading one JSON file per page.
-  if (!resultsByBuilder[currentState.builder])
-    resultsByBuilder[currentState.builder] = data;
+  if (!g_resultsByBuilder[g_currentState.builder])
+    g_resultsByBuilder[g_currentState.builder] = data;
 
   handleLocationChange();
 }
@@ -168,19 +168,19 @@ function ADD_RESULTS(data) {
 var isGeneratingPage = false;
 
 function generatePage() {
-  if (!resultsByBuilder[currentState.builder]) {
-    handleResourceLoadError(currentState.builder);
+  if (!g_resultsByBuilder[g_currentState.builder]) {
+    handleResourceLoadError(g_currentState.builder);
     return;
   }
 
   isGeneratingPage = true;
 
-  var rawTree = resultsByBuilder[currentState.builder];
+  var rawTree = g_resultsByBuilder[g_currentState.builder];
   var webtree = convertToWebTreemapFormat('LayoutTests', rawTree);
   appendTreemap($('map'), webtree);
 
-  if (currentState.treemapfocus)
-    focusPath(webtree, currentState.treemapfocus)
+  if (g_currentState.treemapfocus)
+    focusPath(webtree, g_currentState.treemapfocus)
 
   isGeneratingPage = false;
 }
@@ -213,15 +213,15 @@ function focusPath(tree, path) {
 function handleValidHashParameter(key, value) {
   switch(key) {
     case 'builder':
-      validateParameter(currentState, key, value,
+      validateParameter(g_currentState, key, value,
           function() {
-            return value in builders;
+            return value in g_builders;
           });
 
       return true;
 
     case 'treemapfocus':
-      validateParameter(currentState, key, value,
+      validateParameter(g_currentState, key, value,
           function() {
             // TODO(ojan): There's probably a simpler regexp here. Just trying to match ascii + forward-slash.
             // e.g. LayoutTests/foo/bar.html
@@ -235,13 +235,13 @@ function handleValidHashParameter(key, value) {
   }
 }
 
-defaultStateValues = {
-  builder: defaultBuilderName
+g_defaultStateValues = {
+  builder: g_defaultBuilderName
 };
 
 function handleQueryParameterChange(params) {
-  if (!resultsByBuilder[currentState.builder])
-    appendJSONScriptElementFor(currentState.builder);
+  if (!g_resultsByBuilder[g_currentState.builder])
+    appendJSONScriptElementFor(g_currentState.builder);
 
   for (var param in params) {
     if (param != 'treemapfocus') {
@@ -256,7 +256,7 @@ function handleQueryParameterChange(params) {
 function handleResourceLoadError(builderName, e) {
   $('map').innerHTML = '<span class=error>Could not load data for ' + builderName + '. ' +
       'Either there was a server-side error or ' + builderName + ' does not run ' +
-      currentState.testType + '.</span>';
+      g_currentState.testType + '.</span>';
 }
 
 function extractName(node) {
@@ -305,5 +305,5 @@ function handleFocus(tree) {
 }
 
 parseParameters();
-appendJSONScriptElementFor(currentState.builder);
+appendJSONScriptElementFor(g_currentState.builder);
 </script>

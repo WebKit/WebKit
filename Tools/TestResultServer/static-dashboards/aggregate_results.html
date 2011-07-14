@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   //////////////////////////////////////////////////////////////////////////////
   function generatePage() {
     var html = getHTMLForTestTypeSwitcher(true) + '<br>';
-    for (var builder in builders) {
+    for (var builder in g_builders) {
       html += getHTMLForBuilder(builder);
     }
     document.body.innerHTML = html;
@@ -78,7 +78,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   function handleValidHashParameter(key, value) {
     switch(key) {
       case 'rawValues':
-        currentState[key] = value == 'true';
+        g_currentState[key] = value == 'true';
 
         return true;
 
@@ -87,12 +87,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
   }
 
-  defaultStateValues = {
+  g_defaultStateValues = {
     rawValues: false
   };
 
   function getHTMLForBuilder(builder) {
-    var results = resultsByBuilder[builder];
+    var results = g_resultsByBuilder[builder];
     // Some keys were added later than others, so they don't have as many
     // builds. Use the shortest.
     // TODO(ojan): Once 500 runs have finished, we can get rid of passing this
@@ -101,7 +101,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     var numColumns = results[ALL_FIXABLE_COUNT_KEY].length;
     var html = '<div class=container><h2>' + builder + '</h2>';
 
-    if (currentState.rawValues) {
+    if (g_currentState.rawValues) {
       html += getRawValuesHTML(results, numColumns);
     } else {
       html += '<a href="timeline_explorer.html' + (location.hash ? location.hash + '&' : '#') + 'builder=' + builder + '">' +

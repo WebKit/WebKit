@@ -112,17 +112,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   //////////////////////////////////////////////////////////////////////////////
   function generatePage() {
     buildIndicesByTimestamp = {};
-    var results = resultsByBuilder[currentState.builder];
+    var results = g_resultsByBuilder[g_currentState.builder];
 
     for (var i = 0; i < results[FIXABLE_COUNTS_KEY].length; i++) {
       var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
       buildIndicesByTimestamp[buildDate.getTime()] = i;
     }
 
-    if (currentState.buildTimestamp != -1 &&
-        currentState.buildTimestamp in buildIndicesByTimestamp) {
+    if (g_currentState.buildTimestamp != -1 &&
+        g_currentState.buildTimestamp in buildIndicesByTimestamp) {
         var newBuildIndex =
-            buildIndicesByTimestamp[currentState.buildTimestamp];
+            buildIndicesByTimestamp[g_currentState.buildTimestamp];
 
         if (newBuildIndex == currentBuildIndex) {
           // This happens when selectBuild is called, which updates the UI
@@ -140,7 +140,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('test-type-switcher').innerHTML = getHTMLForTestTypeSwitcher(
         false,
         checkboxHTML('ignoreFlakyTests', 'Ignore flaky tests',
-            currentState.ignoreFlakyTests, 'currentBuildIndex = -1')
+            g_currentState.ignoreFlakyTests, 'currentBuildIndex = -1')
     );
 
     updateTimelineForBuilder();
@@ -149,7 +149,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   function initCurrentBuilderTestResults() {
     var startTime = Date.now();
     currentBuilderTestResults =
-        getTestResultsByBuild(resultsByBuilder[currentState.builder]);
+        getTestResultsByBuild(g_resultsByBuilder[g_currentState.builder]);
     console.log(
         'Time to get test results by build: ' + (Date.now() - startTime));
   }
@@ -157,25 +157,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   function handleValidHashParameter(key, value) {
     switch(key) {
       case 'buildTimestamp':
-        currentState.buildTimestamp = parseInt(value, 10);
+        g_currentState.buildTimestamp = parseInt(value, 10);
         return true;
       case 'ignoreFlakyTests':
-        currentState.ignoreFlakyTests = value == 'true';
+        g_currentState.ignoreFlakyTests = value == 'true';
         return true;
       default:
         return false;
     }
   }
 
-  defaultStateValues = {
+  g_defaultStateValues = {
     buildTimestamp: -1,
-    builder: defaultBuilderName,
+    builder: g_defaultBuilderName,
     ignoreFlakyTests: true
   };
 
   function updateTimelineForBuilder() {
-    var builder = currentState.builder;
-    var results = resultsByBuilder[builder];
+    var builder = g_currentState.builder;
+    var results = g_resultsByBuilder[builder];
     var graphData = [];
 
     var annotations = [];
@@ -187,7 +187,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       // exclude runs where every test failed.
       var failureCount = Math.min(results[FIXABLE_COUNT_KEY][i], 10000);
 
-      if (currentState.ignoreFlakyTests) {
+      if (g_currentState.ignoreFlakyTests) {
         failureCount -=
             currentBuilderTestResults.flakyDeltasByBuild[i].total || 0;
       }
@@ -299,7 +299,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     } else {
       var resultsUrl =
           'http://build.chromium.org/f/chromium/layout_test_results/' +
-          builders[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
+          g_builders[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
     }
 
     addRow(
@@ -336,7 +336,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             results[FIXABLE_COUNTS_KEY][index][expectationKey];
         var previousCount =
             results[FIXABLE_COUNTS_KEY][index + 1][expectationKey];
-        if (currentState.ignoreFlakyTests) {
+        if (g_currentState.ignoreFlakyTests) {
           currentCount -= flakyDeltasByBuild[index][expectationKey] || 0;
           previousCount -= flakyDeltasByBuild[index + 1][expectationKey] || 0;
         }
@@ -347,7 +347,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     var currentTotal = results[FIXABLE_COUNT_KEY][index];
     var previousTotal = results[FIXABLE_COUNT_KEY][index + 1];
-    if (currentState.ignoreFlakyTests) {
+    if (g_currentState.ignoreFlakyTests) {
       currentTotal -= flakyDeltasByBuild[index].total || 0;
       previousTotal -= flakyDeltasByBuild[index + 1].total || 0;
     }
@@ -387,7 +387,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     var deltas = {};
     function addDelta(category, testIndex) {
-      if (currentState.ignoreFlakyTests && flakyTests[testIndex]) {
+      if (g_currentState.ignoreFlakyTests && flakyTests[testIndex]) {
         return;
       }
       if (!(category in deltas)) {
@@ -463,15 +463,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     switch (e.keyIdentifier) {
       case 'Left':
         selectBuild(
-            resultsByBuilder[currentState.builder],
-            currentState.builder,
+            g_resultsByBuilder[g_currentState.builder],
+            g_currentState.builder,
             dygraph,
             currentBuildIndex + 1);
         break;
       case 'Right':
         selectBuild(
-            resultsByBuilder[currentState.builder],
-            currentState.builder,
+            g_resultsByBuilder[g_currentState.builder],
+            g_currentState.builder,
             dygraph,
             currentBuildIndex - 1);
         break;
