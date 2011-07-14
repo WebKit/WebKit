@@ -2046,7 +2046,7 @@ void FrameView::performPostLayoutTasks()
         }
 
         // Ensure that we always send this eventually.
-        if (!m_frame->document()->parsing())
+        if (!m_frame->document()->parsing() && m_frame->loader()->stateMachine()->committedFirstRealDocumentLoad())
             m_isVisuallyNonEmpty = true;
 
         // If the layout was done with pending sheets, we are not in fact visually non-empty yet.

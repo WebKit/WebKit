@@ -1,3 +1,16 @@
+2011-07-14  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: Should not dispatch didFirstVisuallyNonEmptyLayout for the initial empty document
+        https://bugs.webkit.org/show_bug.cgi?id=64557
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Avoid sending didFirstVisuallyNonEmptyLayout for the initial empty document of the frame. The
+        clients may not expect it and it doesn't make much sense in any case.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2011-07-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Character reference parser for new XML parser
