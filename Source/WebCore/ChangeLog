@@ -1,3 +1,30 @@
+2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Parse -webkit-content-order property
+        https://bugs.webkit.org/show_bug.cgi?id=63897
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/webkit-content-order-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::regionIndex):
+        (WebCore::InheritedFlags::setRegionIndex):
+        (WebCore::InheritedFlags::initialRegionIndex):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-07-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

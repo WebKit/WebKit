@@ -328,6 +328,7 @@ z-index
 -webkit-user-select
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 -webkit-flow
+-webkit-content-order
 #endif
 #if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 -webkit-wrap-shape

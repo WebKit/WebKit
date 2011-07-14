@@ -1591,6 +1591,9 @@ bool CSSParser::parseValue(int propId, bool important)
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlow:
         return parseFlowThread(propId, important);
+    case CSSPropertyWebkitContentOrder:
+        validPrimitive = validUnit(value, FInteger, m_strict);
+        break;
 #endif
     case CSSPropertyWebkitUserDrag: // auto | none | element
         if (id == CSSValueAuto || id == CSSValueNone || id == CSSValueElement)

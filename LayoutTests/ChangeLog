@@ -1,3 +1,14 @@
+2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Parse -webkit-content-order property
+        https://bugs.webkit.org/show_bug.cgi?id=63897
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/script-tests/webkit-content-order-parsing.js: Added.
+        * fast/regions/webkit-content-order-parsing-expected.txt: Added.
+        * fast/regions/webkit-content-order-parsing.html: Added.
+
 2011-07-13  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64202

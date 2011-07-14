@@ -248,6 +248,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitWritingMode
 #if ENABLE(CSS_REGIONS)
     , CSSPropertyWebkitFlow
+    , CSSPropertyWebkitContentOrder
 #endif
 #if ENABLE(SVG)
     ,
@@ -1667,6 +1668,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->flowThread().isNull())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
             return primitiveValueCache->createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
+        case CSSPropertyWebkitContentOrder:
+            return primitiveValueCache->createValue(style->regionIndex(), CSSPrimitiveValue::CSS_NUMBER);
 #endif
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:

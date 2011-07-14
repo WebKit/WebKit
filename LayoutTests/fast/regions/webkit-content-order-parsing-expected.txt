@@ -1,0 +1,37 @@
+Tests parsing of webkit-content-order property
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testCSSText("-webkit-content-order: auto") is ""
+PASS testCSSText("-webkit-content-order: initial") is "initial"
+PASS testCSSText("-webkit-content-order: inherit") is "inherit"
+PASS testCSSText("-webkit-content-order: 1") is "1"
+PASS testCSSText("-webkit-content-order: 0") is "0"
+PASS testCSSText("-webkit-content-order: -1") is "-1"
+PASS testCSSText("-webkit-content-order: 2147483647") is "2147483647"
+PASS testCSSText("-webkit-content-order: 2147483648") is "2147483648"
+PASS testCSSText("-webkit-content-order: -2147483648") is "-2147483648"
+PASS testCSSText("-webkit-content-order: -2147483649") is "-2147483649"
+PASS testCSSText("-webkit-content-order: 12.5") is ""
+PASS testCSSText("-webkit-content-order: 1px") is ""
+PASS testComputedStyle("auto") is "0"
+PASS testComputedStyle("initial") is "0"
+PASS testComputedStyle("inherit") is "0"
+PASS testComputedStyle("1") is "1"
+PASS testComputedStyle("0") is "0"
+PASS testComputedStyle("-1") is "-1"
+PASS testComputedStyle("2147483647") is "2147483647"
+PASS testComputedStyle("2147483648") is "2147483647"
+PASS testComputedStyle("-2147483648") is "-2147483648"
+PASS testComputedStyle("-2147483649") is "-2147483648"
+PASS testComputedStyle("12.5") is "0"
+PASS testComputedStyle("1px") is "0"
+PASS testNotInherited("0", "0") is "0"
+PASS testNotInherited("0", "1") is "1"
+PASS testNotInherited("1", "0") is "0"
+PASS testNotInherited("1", "2") is "2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

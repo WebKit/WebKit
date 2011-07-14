@@ -4892,6 +4892,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             m_style->setFlowThread(primitiveValue->getStringValue());
         return;
+    case CSSPropertyWebkitContentOrder:
+        HANDLE_INHERIT_AND_INITIAL(regionIndex, RegionIndex);
+        m_style->setRegionIndex(clampToInteger(primitiveValue->getDoubleValue()));
+        return;
 #endif
     case CSSPropertyWebkitMarqueeDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
