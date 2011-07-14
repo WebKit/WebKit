@@ -1,3 +1,9 @@
+2011-07-14  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Skip one crashing test in GTK+/debug bots.
+
+        * platform/gtk/Skipped:
+
 2011-07-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt]svg/animations/svgtransform-animation-1.html asserts intermittently

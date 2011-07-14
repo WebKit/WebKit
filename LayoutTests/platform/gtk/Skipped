@@ -247,6 +247,7 @@ editing/deleting/smart-delete-004.html
 editing/pasteboard/interchange-newline-2.html
 editing/pasteboard/paste-text-008.html
 editing/undo/undo-smart-delete-reversed-selection.html
+editing/selection/directionality-after-undo-replace.html
 
 ###############################################################################
 # EXPECTED FAILURES
