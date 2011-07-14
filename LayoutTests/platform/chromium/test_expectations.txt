@@ -3001,7 +3001,7 @@ BUGWK60094 : fast/encoding/parser-tests-120.html = TIMEOUT PASS
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 
-BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIMEOUT
+BUGWK57754 WIN LINUX DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIMEOUT
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
 BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
@@ -3707,7 +3707,7 @@ BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 BUGWK62754 MAC LINUX RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
 BUGWK62754 MAC LINUX DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
-BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
+BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS SLOW
 
 // Needs new baseline.
 BUGWK64253 : fast/css/pseudo-cache-stale.html = FAIL
@@ -3839,3 +3839,4 @@ BUGCR88936 : fast/js/date-toisostring.html = TEXT
 
 BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
 
+BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = MISSING PASS
