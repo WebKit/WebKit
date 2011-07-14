@@ -27,6 +27,7 @@
 #include "config.h"
 #include "OwnPtr.h"
 
+#include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Evas.h>
 
@@ -41,6 +42,12 @@ void deleteOwnedPtr(Ecore_Evas* ptr)
 void deleteOwnedPtr(Evas_Object* ptr)
 {
     evas_object_del(ptr);
+}
+
+void deleteOwnedPtr(Ecore_Pipe* ptr)
+{
+    if (ptr)
+        ecore_pipe_del(ptr);
 }
 
 }

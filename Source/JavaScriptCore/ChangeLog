@@ -1,3 +1,16 @@
+2011-07-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add OwnPtr specialization for Ecore_Pipe.
+        https://bugs.webkit.org/show_bug.cgi?id=64515
+
+        Add an overload for deleteOwnedPtr(Ecore_Pipe*) on EFL port.
+
+        Reviewed by Xan Lopez.
+
+        * wtf/OwnPtrCommon.h:
+        * wtf/efl/OwnPtrEfl.cpp:
+        (WTF::deleteOwnedPtr):
+
 2011-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT unnecessarily boxes and unboxes values during silent spilling.

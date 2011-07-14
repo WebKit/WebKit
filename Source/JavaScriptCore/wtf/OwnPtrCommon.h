@@ -52,6 +52,7 @@ typedef struct IMemSpace IMemSpace;
 
 #if PLATFORM(EFL)
 typedef struct _Ecore_Evas Ecore_Evas;
+typedef struct _Ecore_Pipe Ecore_Pipe;
 typedef struct _Evas_Object Evas_Object;
 #endif
 
@@ -86,6 +87,7 @@ namespace WTF {
 
 #if PLATFORM(EFL)
     void deleteOwnedPtr(Ecore_Evas*);
+    void deleteOwnedPtr(Ecore_Pipe*);
     void deleteOwnedPtr(Evas_Object*);
 #endif
 
