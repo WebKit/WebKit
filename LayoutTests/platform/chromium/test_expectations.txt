@@ -3003,6 +3003,7 @@ BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 
 BUGWK57754 WIN LINUX DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIMEOUT
+BUGWK57754 LINUX RELEASE : inspector/debugger/xhr-breakpoints.html = CRASH PASS
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
 BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
