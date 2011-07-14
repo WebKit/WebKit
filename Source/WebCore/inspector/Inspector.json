@@ -573,6 +573,7 @@
                 "name": "resourceLoadedFromMemoryCache",
                 "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
                     { "name": "frameId", "type": "string", "description": "Frame identifier." },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },

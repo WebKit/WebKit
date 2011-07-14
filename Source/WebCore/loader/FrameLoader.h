@@ -177,7 +177,7 @@ public:
     void didFirstLayout();
     void didFirstVisuallyNonEmptyLayout();
 
-    void loadedResourceFromMemoryCache(const CachedResource*);
+    void loadedResourceFromMemoryCache(CachedResource*);
     void tellClientAboutPastMemoryCacheLoads();
 
     void checkLoadComplete();

@@ -51,6 +51,7 @@
 #include "InstrumentingAgents.h"
 #include "KURL.h"
 #include "NetworkResourcesData.h"
+#include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -291,9 +292,15 @@ void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLo
     m_frontend->loadingFailed(static_cast<int>(identifier), currentTime(), error.localizedDescription(), error.isCancellation());
 }
 
-void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* loader, const CachedResource* resource)
+void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* loader, CachedResource* resource)
 {
-    m_frontend->resourceLoadedFromMemoryCache(m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), loader->url().string(), currentTime(), buildObjectForCachedResource(*resource));
+    String loaderId = m_pageAgent->loaderId(loader);
+    String frameId = m_pageAgent->frameId(loader->frame());
+    unsigned long identifier = loader->frame()->page()->progress()->createUniqueIdentifier();
+    m_resourcesData->resourceCreated(identifier, loaderId);
+    m_resourcesData->addCachedResource(identifier, resource);
+
+    m_frontend->resourceLoadedFromMemoryCache(static_cast<int>(identifier), frameId, loaderId, loader->url().string(), currentTime(), buildObjectForCachedResource(*resource));
 }
 
 void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)

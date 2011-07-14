@@ -757,7 +757,7 @@ WebInspector.NetworkLogView.prototype = {
             for (var i = 0; i < this._resources.length; ++i) {
                 var resource = this._resources[i];
                 if (resource.loaderId !== loaderId)
-                    resource.hasNetworkData = false;
+                    originalResource.networkDataRemoved = true;
             }
             return;
         }

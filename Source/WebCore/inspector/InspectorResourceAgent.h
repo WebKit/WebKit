@@ -94,7 +94,7 @@ public:
     void didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void didFinishLoading(unsigned long identifier, DocumentLoader*, double finishTime);
     void didFailLoading(unsigned long identifier, DocumentLoader*, const ResourceError&);
-    void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
+    void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource*);
     void mainFrameNavigated(DocumentLoader*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void setInitialXHRContent(unsigned long identifier, const String& sourceString);
