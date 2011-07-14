@@ -1,3 +1,23 @@
+2011-07-14  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION (r89774): svg/W3C-SVG-1.1/animate-elem-82-t.svg hits assertion failure.
+        https://bugs.webkit.org/show_bug.cgi?id=63911
+
+        Some functions assumed calculateKeyTimesIndex() does not return the last index of
+        the keyTimes, but it would be right behavior for calculateKeyTimesIndex() when it
+        accepts 1 as the percent argument.
+
+        To avoid the assumption, and for more efficiency, this patch allows the functions
+        using calculateKeyTimesIndex() to return early when it accepts 1 as the percent argument.
+        These functions have always returned the last element of the corresponding vector
+        in that situation.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::calculatePercentFromKeyPoints):
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+
 2011-07-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: remove more dead code

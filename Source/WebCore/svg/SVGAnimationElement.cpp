@@ -438,6 +438,9 @@ float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
     ASSERT(m_keyTimes.size() > 1);
     ASSERT(m_keyPoints.size() == m_keyTimes.size());
 
+    if (percent == 1)
+        return m_keyPoints[m_keyPoints.size() - 1];
+
     unsigned index = calculateKeyTimesIndex(percent);
     float fromPercent = m_keyTimes[index];
     float toPercent = m_keyTimes[index + 1];
@@ -445,9 +448,9 @@ float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
     float toKeyPoint = m_keyPoints[index + 1];
     
     if (calcMode() == CalcModeDiscrete)
-        return percent == 1 ? toKeyPoint : fromKeyPoint;
+        return fromKeyPoint;
     
-    float keyPointPercent = percent == 1 ? 1 : (percent - fromPercent) / (toPercent - fromPercent);
+    float keyPointPercent = (percent - fromPercent) / (toPercent - fromPercent);
     
     if (calcMode() == CalcModeSpline) {
         ASSERT(m_keySplines.size() == m_keyPoints.size() - 1);
@@ -473,6 +476,13 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     ASSERT(m_animationValid);
     ASSERT(valuesCount > 1);
     
+    if (percent == 1) {
+        from = m_values[valuesCount - 1];
+        to = m_values[valuesCount - 1];
+        effectivePercent = 1;
+        return;
+    }
+
     CalcMode calcMode = this->calcMode();
     if (hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::animateColorTag)) {
         const SVGAnimateElement* animateElement = static_cast<const SVGAnimateElement*>(this);
@@ -494,7 +504,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     unsigned index = calculateKeyTimesIndex(percent);
     if (calcMode == CalcModeDiscrete) {
         if (!keyTimesCount) 
-            index = percent == 1 ? valuesCount - 1 : static_cast<unsigned>(percent * valuesCount);
+            index = static_cast<unsigned>(percent * valuesCount);
         from = m_values[index];
         to = m_values[index];
         effectivePercent = 0;
@@ -517,7 +527,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     from = m_values[index];
     to = m_values[index + 1];
     ASSERT(toPercent > fromPercent);
-    effectivePercent = percent == 1 ? 1 : (percent - fromPercent) / (toPercent - fromPercent);
+    effectivePercent = (percent - fromPercent) / (toPercent - fromPercent);
     
     if (calcMode == CalcModeSpline) {
         ASSERT(m_keySplines.size() == m_values.size() - 1);
