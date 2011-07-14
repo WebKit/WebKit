@@ -1,3 +1,18 @@
+2011-07-14  Eric Seidel  <eric@webkit.org>
+
+        NRWT doesn't store the svn revision in full_results.json on chromium-win
+        https://bugs.webkit.org/show_bug.cgi?id=64492
+
+        Reviewed by Ojan Vafai.
+
+        This should fix the bug.  Unfortunately this code is currently
+        impossible to test since it's impossible to mock detect_scm_system at the
+        moment.  I started re-writing scm.detection.py to be mockable, but decided that
+        was best left for another day.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2011-07-14  Ojan Vafai  <ojan@chromium.org>
 
         fix coding style of dashboard_base.js

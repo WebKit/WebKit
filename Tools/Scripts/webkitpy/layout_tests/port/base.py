@@ -37,7 +37,9 @@ import difflib
 import errno
 import os
 
+from webkitpy.common.memoized import memoized
 from webkitpy.common.net.testoutputset import AggregateTestOutputSet
+
 
 # Handle Python < 2.6 where multiprocessing isn't available.
 try:
@@ -59,6 +61,7 @@ from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
 
 _log = logutils.get_logger(__file__)
+
 
 class DummyOptions(object):
     """Fake implementation of optparse.Values. Cloned from webkitpy.tool.mocktool.MockOptions."""
@@ -597,6 +600,14 @@ class Port(object):
         """Returns the full path to path made by joining the top of the
         WebKit source tree and the list of path components in |*comps|."""
         return self._config.path_from_webkit_base(*comps)
+
+    @memoized
+    def webkit_scm(self):
+        # On the chromium bots, the cwd is the root of the chromium checkout.
+        # self._config.webkit_base_dir() knows where the webkit root is, no other
+        # object in NRWT seems to keep an SCM around.  (Unlike webkit-patch where it's on the Tool/Host object.)
+        # FIXME: We should be able to get the SCM from somewhere else.
+        return scm.detect_scm_system(self._config.webkit_base_dir())
 
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
