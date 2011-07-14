@@ -18,6 +18,7 @@ BUGWK64002 : fast/workers/worker-lifecycle.html = TEXT PASS
 BUGWK64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
 
 BUGWK62662 : inspector/cookie-parser.html = CRASH PASS
+BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
 
 // Slow tests
 SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
