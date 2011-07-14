@@ -1,3 +1,9 @@
+2011-07-13  Kent Tamura  <tkent@chromium.org>
+
+        [Qt] Remove duplicated entries.
+
+        * platform/qt/test_expectations.txt:
+
 2011-07-12  Dominic Cooney  <dominicc@chromium.org>
 
         Raise if dispatchEvent dispatches an event that is being dispatched
