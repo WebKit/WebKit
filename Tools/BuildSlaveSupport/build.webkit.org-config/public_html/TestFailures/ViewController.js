@@ -436,8 +436,8 @@ ViewController.prototype = {
             failureList.className = 'flakiness-examples-list';
 
             disclosureTriangle.addEventListener('click', function() {
-                item.classList.toggle('expanded');
-                if (!item.classList.contains('expanded')) {
+                item.toggleStyleClass('expanded');
+                if (!item.hasStyleClass('expanded')) {
                     failureList.style.height = '';
                     return;
                 }

@@ -140,6 +140,29 @@ Array.prototype.last = function() {
     return this[this.length - 1];
 }
 
+Element.prototype.hasStyleClass = function(klass) {
+    var regex = new RegExp('\\b' + klass + '\\b');
+    return regex.test(this.className);
+}
+
+Element.prototype.addStyleClass = function(klass) {
+    if (this.hasStyleClass(klass))
+        return;
+    this.className += ' ' + klass;
+}
+
+Element.prototype.removeStyleClass = function(klass) {
+    var regex = new RegExp('\\b' + klass + '\\b', 'g');
+    this.className = this.className.replace(regex, '');
+}
+
+Element.prototype.toggleStyleClass = function(klass) {
+    if (this.hasStyleClass(klass))
+        this.removeStyleClass(klass);
+    else
+        this.addStyleClass(klass);
+}
+
 Node.prototype.appendChildren = function(children) {
     for (var i = 0; i < children.length; ++i)
         this.appendChild(children[i]);

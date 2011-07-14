@@ -1,3 +1,32 @@
+2011-07-14  Adam Roben  <aroben@apple.com>
+
+        Don't use Element.prototype.classList in TestFailures
+
+        Safari 5 doesn't support it.
+
+        Fixes <http://webkit.org/b/64550> Can't expand flaky tests on TestFailures page in Safari 5
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js:
+        (Element.prototype.hasStyleClass):
+        (Element.prototype.addStyleClass):
+        (Element.prototype.removeStyleClass):
+        (Element.prototype.toggleStyleClass):
+        Added these helper functions which simulate classList functionality.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities_unittests.js:
+        Added. Tests for the above.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForPossiblyFlakyTests): Changed to use
+        toggleStyleClass/hasStyleClass instead of classList.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Added Utilities_unittests.js, and reordered the tested files to be in
+        roughly dependency order (i.e., the lowest-level files are imported
+        and tested first).
+
 2011-07-14  Eric Seidel  <eric@webkit.org>
 
         NRWT doesn't store the svn revision in full_results.json on chromium-win
