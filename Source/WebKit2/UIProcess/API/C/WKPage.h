@@ -367,6 +367,7 @@ WK_EXPORT bool WKPageHasSelectedRange(WKPageRef page);
 WK_EXPORT bool WKPageIsContentEditable(WKPageRef page);
 
 WK_EXPORT void WKPageSetMaintainsInactiveSelection(WKPageRef page, bool maintainsInactiveSelection);
+WK_EXPORT void WKPageCenterSelectionInVisibleArea(WKPageRef page);
     
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);

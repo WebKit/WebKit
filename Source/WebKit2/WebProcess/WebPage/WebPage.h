@@ -153,6 +153,8 @@ public:
 
     void scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity);
 
+    void centerSelectionInVisibleArea();
+
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
 #endif

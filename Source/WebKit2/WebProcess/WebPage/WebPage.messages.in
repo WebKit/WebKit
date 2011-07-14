@@ -45,6 +45,7 @@ messages -> WebPage {
     ContextMenuHidden()
 
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
+    CenterSelectionInVisibleArea()
 
     GoBack(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     GoForward(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)

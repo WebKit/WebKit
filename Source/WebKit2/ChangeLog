@@ -1,3 +1,22 @@
+2011-07-14  Ada Chan  <adachan@apple.com>
+
+        Implement support to center selection on a page for WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=64481
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCenterSelectionInVisibleArea): Added.  Call WebPageProxy::centerSelectionInVisibleArea().
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::centerSelectionInVisibleArea): Send message to the WebProcess to center selection.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::centerSelectionInVisibleArea): Get the FrameSelection from the main frame and call
+        revealSelection() to center it.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add the CenterSelectionInVisibleArea message.
+
 2011-07-14  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r90976, r90981, and r90985.

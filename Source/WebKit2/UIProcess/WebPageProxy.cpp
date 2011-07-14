@@ -1006,6 +1006,14 @@ void WebPageProxy::scrollBy(ScrollDirection direction, ScrollGranularity granula
     process()->send(Messages::WebPage::ScrollBy(direction, granularity), m_pageID);
 }
 
+void WebPageProxy::centerSelectionInVisibleArea()
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
+}
+
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID)
 {
     if (!isValid())

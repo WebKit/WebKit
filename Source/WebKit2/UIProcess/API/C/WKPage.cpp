@@ -354,6 +354,11 @@ void WKPageSetMaintainsInactiveSelection(WKPageRef pageRef, bool newValue)
     return toImpl(pageRef)->setMaintainsInactiveSelection(newValue);
 }
 
+void WKPageCenterSelectionInVisibleArea(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->centerSelectionInVisibleArea();
+}
+
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
     toImpl(pageRef)->findString(toImpl(string)->string(), toFindOptions(options), maxMatchCount);
