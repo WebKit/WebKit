@@ -131,7 +131,7 @@ class Git(SCM, SVNRepository):
         return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()], cwd=self.checkout_root).splitlines()
 
     def rebase_in_progress(self):
-        return self._filesystem.exists(self.absolute_path('.git', 'rebase-apply'))
+        return self._filesystem.exists(self.absolute_path(self._filesystem.join('.git', 'rebase-apply')))
 
     def working_directory_is_clean(self):
         return self.run(['git', 'diff', 'HEAD', '--name-only'], cwd=self.checkout_root) == ""

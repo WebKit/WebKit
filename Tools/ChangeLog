@@ -1,3 +1,9 @@
+2011-07-14  Adam Barth  <abarth@webkit.org>
+
+        Fix Python exception blocking the commit-queue.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+
 2011-07-13  Eric Seidel  <eric@webkit.org>
 
         Move webkitpy off of loose mocks
