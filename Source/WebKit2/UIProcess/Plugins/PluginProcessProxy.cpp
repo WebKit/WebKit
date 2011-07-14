@@ -37,6 +37,7 @@
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/NotImplemented.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"
@@ -134,10 +135,11 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
         RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-        reply->send(CoreIPC::MachPort(0, MACH_MSG_TYPE_MOVE_SEND));
+        reply->send(CoreIPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
+#elif USE(UNIX_DOMAIN_SOCKETS)
+        reply->send(CoreIPC::Attachment());
 #else
-        // FIXME: Implement.
-        ASSERT_NOT_REACHED();
+        notImplemented();
 #endif
     }
 
@@ -225,17 +227,21 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_numPendingConnectionRequests = 0;
 }
 
-#if PLATFORM(MAC)
-void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::MachPort& machPort)
+void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::Attachment& connectionIdentifier)
 {
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
     // Grab the first pending connection reply.
     RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
-    reply->send(CoreIPC::MachPort(machPort.port(), MACH_MSG_TYPE_MOVE_SEND));
-}
+#if PLATFORM(MAC)
+    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    reply->send(connectionIdentifier);
+#else
+    notImplemented();
 #endif
+}
 
 void PluginProcessProxy::didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID)
 {

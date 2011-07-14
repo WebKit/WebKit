@@ -56,21 +56,20 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
             return m_pluginProcessConnections[i].get();
     }
 
-    CoreIPC::Connection::Identifier connectionIdentifier;
-#if PLATFORM(MAC)
-    CoreIPC::MachPort connectionMachPort;
-
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginPath), Messages::WebProcessProxy::GetPluginProcessConnection::Reply(connectionMachPort), 0))
+    CoreIPC::Attachment encodedConnectionIdentifier;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginPath),
+                                                     Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier), 0))
         return 0;
 
-    connectionIdentifier = connectionMachPort.port();
-#else
-    // FIXME: Implement.
-    connectionIdentifier = 0;
-    ASSERT_NOT_REACHED();
-#endif
+#if PLATFORM(MAC)
+    CoreIPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.port();
     if (!connectionIdentifier)
         return 0;
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    CoreIPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.fileDescriptor();
+    if (connectionIdentifier == -1)
+        return 0;
+#endif
 
     RefPtr<PluginProcessConnection> pluginProcessConnection = PluginProcessConnection::create(this, pluginPath, connectionIdentifier);
     m_pluginProcessConnections.append(pluginProcessConnection);

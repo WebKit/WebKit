@@ -23,9 +23,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginProcessProxy {
-#if PLATFORM(MAC)
-    DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
-#endif
+    DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier)
 
     DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)
     DidClearSiteData(uint64_t callbackID)

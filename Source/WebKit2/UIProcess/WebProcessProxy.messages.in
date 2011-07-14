@@ -28,7 +28,7 @@ messages -> WebProcessProxy {
     ShouldTerminate() -> (bool shouldTerminate)
 
 #if ENABLE(PLUGIN_PROCESS)
-    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::MachPort connectionHandle) Delayed
+    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Attachment connectionHandle) Delayed
     PluginSyncMessageSendTimedOut(WTF::String pluginPath)
 #endif
 

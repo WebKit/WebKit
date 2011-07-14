@@ -1,3 +1,33 @@
+2011-07-14  Balazs Kelemen  <kbalazs@webkit.org> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        Implement plugin process for UNIX platform
+        https://bugs.webkit.org/show_bug.cgi?id=60629
+
+        * Platform/CoreIPC/Attachment.h:
+        * Platform/CoreIPC/unix/AttachmentUnix.cpp:
+        (CoreIPC::Attachment::Attachment): Add the ability to pass a
+        socket via Attachment.
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::encode): Remove assertions that
+        check that the Handle is not null. In
+        PluginProxy::geometryDidChange we pass a null Handle if we do not
+        need to allocate a new backing store.
+        (WebKit::SharedMemory::Handle::releaseToAttachment): Ditto.
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection): Use
+        Attachment. Set up the connection with socketpair.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Use Attachment to pass the connection.
+
 2011-07-14  Ada Chan  <adachan@apple.com>
 
         Implement support to center selection on a page for WebKit2.

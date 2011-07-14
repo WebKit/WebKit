@@ -33,12 +33,17 @@
 namespace CoreIPC {
 
 Attachment::Attachment(int fileDescriptor, size_t size)
-    : m_type(MappedMemory)
+    : m_type(MappedMemoryType)
     , m_fileDescriptor(fileDescriptor)
     , m_size(size)
 {
-    ASSERT(m_fileDescriptor);
-    ASSERT(m_size);
+}
+
+Attachment::Attachment(int fileDescriptor)
+    : m_type(SocketType)
+    , m_fileDescriptor(fileDescriptor)
+    , m_size(0)
+{
 }
 
 void Attachment::dispose()

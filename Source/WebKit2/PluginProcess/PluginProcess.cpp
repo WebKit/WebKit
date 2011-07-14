@@ -29,13 +29,25 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "Attachment.h"
 #include "NetscapePluginModule.h"
 #include "PluginProcessProxyMessages.h"
 #include "PluginProcessCreationParameters.h"
 #include "WebProcessConnection.h"
+#include <WebCore/NotImplemented.h>
 
-#if PLATFORM(MAC)
-#include "MachPort.h"
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/resource.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#if PLATFORM(GTK)
+#define SOCKET_TYPE SOCK_STREAM
+#else
+#define SOCKET_TYPE SOCK_DGRAM
+#endif
 #endif
 
 namespace WebKit {
@@ -150,11 +162,42 @@ void PluginProcess::createWebProcessConnection()
     RefPtr<WebProcessConnection> connection = WebProcessConnection::create(listeningPort);
     m_webProcessConnections.append(connection.release());
 
-    CoreIPC::MachPort clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort), 0);
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    int sockets[2];
+    if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // Don't expose the plugin process socket to the web process.
+    while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            while (close(sockets[0]) == -1 && errno == EINTR) { }
+            while (close(sockets[1]) == -1 && errno == EINTR) { }
+            return;
+        }
+    }
+
+    // Don't expose the web process socket to possible future web processes.
+    while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            while (close(sockets[0]) == -1 && errno == EINTR) { }
+            while (close(sockets[1]) == -1 && errno == EINTR) { }
+            return;
+        }
+    }
+
+    RefPtr<WebProcessConnection> connection = WebProcessConnection::create(sockets[1]);
+    m_webProcessConnections.append(connection.release());
+
+    CoreIPC::Attachment clientSocket(sockets[0]);
+    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientSocket), 0);
 #else
-    // FIXME: Implement.
-    ASSERT_NOT_REACHED();
+    notImplemented();
 #endif
 
     if (NetscapePluginModule* module = netscapePluginModule()) {

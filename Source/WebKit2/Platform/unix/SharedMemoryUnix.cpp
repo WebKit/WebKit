@@ -70,8 +70,6 @@ bool SharedMemory::Handle::isNull() const
 
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    ASSERT(!isNull());
-
     encoder->encode(releaseToAttachment());
 }
 
@@ -90,8 +88,6 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& han
 
 CoreIPC::Attachment SharedMemory::Handle::releaseToAttachment() const
 {
-    ASSERT(!isNull());
-
     int temp = m_fileDescriptor;
     m_fileDescriptor = -1;
     return CoreIPC::Attachment(temp, m_size);

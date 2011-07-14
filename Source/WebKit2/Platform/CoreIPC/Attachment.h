@@ -41,7 +41,8 @@ public:
         MachPortType,
         MachOOLMemoryType,
 #elif USE(UNIX_DOMAIN_SOCKETS)
-        MappedMemory
+        SocketType,
+        MappedMemoryType
 #endif
     };
 
@@ -50,6 +51,7 @@ public:
     Attachment(void* address, mach_msg_size_t size, mach_msg_copy_options_t copyOptions, bool deallocate);
 #elif USE(UNIX_DOMAIN_SOCKETS)
     Attachment(int fileDescriptor, size_t);
+    Attachment(int fileDescriptor);
 #endif
 
     Type type() const { return m_type; }
