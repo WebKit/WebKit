@@ -326,7 +326,7 @@ test("collectUnexpectedResults", 1, function() {
     deepEqual(collectedResults, ["TEXT", "IMAGE"]);
 });
 
-test("fetchResultsURLs", 3, function() {
+test("fetchResultsURLs", 4, function() {
     var simulator = new NetworkSimulator();
 
     var probedURLs = [];
@@ -346,6 +346,9 @@ test("fetchResultsURLs", 3, function() {
             deepEqual(resultURLs, [
                 "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-crash-log.txt"
             ]);
+        });
+        results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", ['TIMEOUT'], function(resultURLs) {
+            deepEqual(resultURLs, []);
         });
     });
 

@@ -1,5 +1,27 @@
 2011-07-14  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic results pane should be more discoverable
+        https://bugs.webkit.org/show_bug.cgi?id=64513
+
+        Reviewed by Eric Seidel.
+
+        This patch causes us to trigger the results pane on mouse clicks
+        instead of mousein.  Also, handle the case of no results details more
+        elegantly.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+            - Change the binding to "click".
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+            - Handle the "no results URLs" case explicitly instead of never
+              calling the callback.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+            - Show a message when there are no result details to show.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
+2011-07-14  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should badge TIMEOUT failures
         https://bugs.webkit.org/show_bug.cgi?id=64435
 

@@ -429,6 +429,11 @@ results.fetchResultsURLs = function(builderName, testName, failureTypeList, call
     var resultURLs = [];
     var requestsInFlight = suffixList.length;
 
+    if (!requestsInFlight) {
+        callback([]);
+        return;
+    }
+
     function checkComplete()
     {
         if (--requestsInFlight == 0)

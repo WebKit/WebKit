@@ -108,7 +108,7 @@ function hideResultsDetail()
     });
 }
 
-$('.regression .where li').live('mouseenter', showResultsDetail);
+$('.regression .where a').live('click', showResultsDetail);
 $('.results-detail .dismiss').live('click', hideResultsDetail);
 
 $(document).ready(function() {

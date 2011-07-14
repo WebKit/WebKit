@@ -72,4 +72,18 @@ test("failureDetails", 1, function() {
         '</table>');
 });
 
+test("failureDetails (empty)", 1, function() {
+    var testResults = ui.failureDetails([]);
+    testResults.wrap('<wrapper></wrapper>');
+    equal(testResults.parent().html(),
+        '<table class="failure-details">' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td><div class="missing-data">No data</div></td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>');
+});
+
+
 })();

@@ -148,11 +148,6 @@ td:last-of-type {
     color: #555;
 }
 
-.regression .where li:hover {
-    color: black;
-    background-color: #f3f3f3;
-}
-
 .regression .regression-range, .regression .failure-count {
     padding: 0px 2px;
     display: inline-block;
@@ -195,6 +190,11 @@ td:last-of-type {
 .results-detail .content {
     height: 100%;
     background-color: white;
+}
+
+.results-detail .failure-details .missing-data {
+    font-style: italic;
+    text-align: center;
 }
 
 .results-detail .failure-details {
