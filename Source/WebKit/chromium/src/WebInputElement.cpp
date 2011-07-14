@@ -120,9 +120,9 @@ bool WebInputElement::isAutofilled() const
     return constUnwrap<HTMLInputElement>()->isAutofilled();
 }
 
-void WebInputElement::setAutofilled(bool autoFilled)
+void WebInputElement::setAutofilled(bool autofilled)
 {
-    unwrap<HTMLInputElement>()->setAutofilled(autoFilled);
+    unwrap<HTMLInputElement>()->setAutofilled(autofilled);
 }
 
 void WebInputElement::setSelectionRange(int start, int end)

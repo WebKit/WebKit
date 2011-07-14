@@ -40,7 +40,7 @@
 namespace WebKit {
 
 class WebAccessibilityObject;
-class WebAutoFillClient;
+class WebAutofillClient;
 class WebDevToolsAgent;
 class WebDevToolsAgentClient;
 class WebDragData;
@@ -95,7 +95,7 @@ public:
     virtual void initializeMainFrame(WebFrameClient*) = 0;
 
     // Initializes the various client interfaces.
-    virtual void setAutoFillClient(WebAutoFillClient*) = 0;
+    virtual void setAutofillClient(WebAutofillClient*) = 0;
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;
     virtual void setPermissionClient(WebPermissionClient*) = 0;
     virtual void setSpellCheckClient(WebSpellCheckClient*) = 0;
@@ -277,16 +277,16 @@ public:
     virtual WebAccessibilityObject accessibilityObject() = 0;
 
 
-    // AutoFill  -----------------------------------------------------------
+    // Autofill  -----------------------------------------------------------
 
-    // Notifies the WebView that AutoFill suggestions are available for a node.
+    // Notifies the WebView that Autofill suggestions are available for a node.
     // |uniqueIDs| is a vector of IDs that represent the unique ID of each
-    // AutoFill profile in the suggestions popup.  If a unique ID is 0, then the
-    // corresponding suggestion comes from Autocomplete rather than AutoFill.
+    // Autofill profile in the suggestions popup. If a unique ID is 0, then the
+    // corresponding suggestion comes from Autocomplete rather than Autofill.
     // If a unique ID is negative, then the corresponding "suggestion" is
-    // actually a user-facing warning, e.g. explaining why AutoFill is
+    // actually a user-facing warning, e.g. explaining why Autofill is
     // unavailable for the current form.
-    virtual void applyAutoFillSuggestions(
+    virtual void applyAutofillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,

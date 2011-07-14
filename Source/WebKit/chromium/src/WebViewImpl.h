@@ -71,7 +71,7 @@ class Widget;
 
 namespace WebKit {
 class AutocompletePopupMenuClient;
-class AutoFillPopupMenuClient;
+class AutofillPopupMenuClient;
 class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
@@ -121,7 +121,7 @@ public:
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
-    virtual void setAutoFillClient(WebAutoFillClient*);
+    virtual void setAutofillClient(WebAutofillClient*);
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*);
     virtual void setPermissionClient(WebPermissionClient*);
     virtual void setSpellCheckClient(WebSpellCheckClient*);
@@ -186,7 +186,7 @@ public:
                                      const WebString& value);
     virtual WebDevToolsAgent* devToolsAgent();
     virtual WebAccessibilityObject accessibilityObject();
-    virtual void applyAutoFillSuggestions(
+    virtual void applyAutofillSuggestions(
         const WebNode&,
         const WebVector<WebString>& names,
         const WebVector<WebString>& labels,
@@ -234,9 +234,9 @@ public:
         return m_client;
     }
 
-    WebAutoFillClient* autoFillClient()
+    WebAutofillClient* autofillClient()
     {
-        return m_autoFillClient;
+        return m_autofillClient;
     }
 
     WebPermissionClient* permissionClient()
@@ -326,9 +326,9 @@ public:
         const WebImage& dragImage,
         const WebPoint& dragImageOffset);
 
-    void autoFillPopupDidHide()
+    void autofillPopupDidHide()
     {
-        m_autoFillPopupShowing = false;
+        m_autofillPopupShowing = false;
     }
 
 #if ENABLE(NOTIFICATIONS)
@@ -344,7 +344,7 @@ public:
     void popupOpened(WebCore::PopupContainer* popupContainer);
     void popupClosed(WebCore::PopupContainer* popupContainer);
 
-    void hideAutoFillPopup();
+    void hideAutofillPopup();
 
     // Returns the input event we're currently processing. This is used in some
     // cases where the WebCore DOM event doesn't have the information we need.
@@ -403,10 +403,10 @@ private:
     // Returns true if the autocomple has consumed the event.
     bool autocompleteHandleKeyEvent(const WebKeyboardEvent&);
 
-    // Repaints the AutoFill popup. Should be called when the suggestions
-    // have changed. Note that this should only be called when the AutoFill
+    // Repaints the Autofill popup. Should be called when the suggestions
+    // have changed. Note that this should only be called when the Autofill
     // popup is showing.
-    void refreshAutoFillPopup();
+    void refreshAutofillPopup();
 
     // Returns true if the view was scrolled.
     bool scrollViewWithKeyboard(int keyCode, int modifiers);
@@ -435,7 +435,7 @@ private:
 #endif
 
     WebViewClient* m_client;
-    WebAutoFillClient* m_autoFillClient;
+    WebAutofillClient* m_autofillClient;
     WebPermissionClient* m_permissionClient;
     WebSpellCheckClient* m_spellCheckClient;
 
@@ -510,14 +510,14 @@ private:
     // current drop target in this WebView (the drop target can accept the drop).
     WebDragOperation m_dragOperation;
 
-    // Whether an AutoFill popup is currently showing.
-    bool m_autoFillPopupShowing;
+    // Whether an Autofill popup is currently showing.
+    bool m_autofillPopupShowing;
 
-    // The AutoFill popup client.
-    OwnPtr<AutoFillPopupMenuClient> m_autoFillPopupClient;
+    // The Autofill popup client.
+    OwnPtr<AutofillPopupMenuClient> m_autofillPopupClient;
 
-    // The AutoFill popup.
-    RefPtr<WebCore::PopupContainer> m_autoFillPopup;
+    // The Autofill popup.
+    RefPtr<WebCore::PopupContainer> m_autofillPopup;
 
     // The popup associated with a select element.
     RefPtr<WebCore::PopupContainer> m_selectPopup;

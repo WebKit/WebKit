@@ -1,3 +1,92 @@
+2011-07-14  Ilya Sherman  <isherman@chromium.org>
+
+        Rename AutoFill -> Autofill and autoFill -> autofill
+        https://bugs.webkit.org/show_bug.cgi?id=64333
+        http://code.google.com/p/chromium/issues/detail?id=72758
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebAutofillClient.h:
+        (WebKit::WebAutofillClient::didAcceptAutofillSuggestion):
+        (WebKit::WebAutofillClient::didSelectAutofillSuggestion):
+        (WebKit::WebAutofillClient::didClearAutofillSelection):
+        (WebKit::WebAutofillClient::removeAutocompleteSuggestion):
+        (WebKit::WebAutofillClient::textFieldDidBeginEditing):
+        (WebKit::WebAutofillClient::textFieldDidEndEditing):
+        (WebKit::WebAutofillClient::textFieldDidChange):
+        (WebKit::WebAutofillClient::textFieldDidReceiveKeyDown):
+        (WebKit::WebAutofillClient::~WebAutofillClient):
+        * public/WebNode.h:
+        * public/WebView.h:
+        * src/AutofillPopupMenuClient.cpp:
+        (WebKit::AutofillPopupMenuClient::AutofillPopupMenuClient):
+        (WebKit::AutofillPopupMenuClient::~AutofillPopupMenuClient):
+        (WebKit::AutofillPopupMenuClient::getSuggestionsCount):
+        (WebKit::AutofillPopupMenuClient::getSuggestion):
+        (WebKit::AutofillPopupMenuClient::getLabel):
+        (WebKit::AutofillPopupMenuClient::getIcon):
+        (WebKit::AutofillPopupMenuClient::removeSuggestionAtIndex):
+        (WebKit::AutofillPopupMenuClient::canRemoveSuggestionAtIndex):
+        (WebKit::AutofillPopupMenuClient::valueChanged):
+        (WebKit::AutofillPopupMenuClient::selectionChanged):
+        (WebKit::AutofillPopupMenuClient::selectionCleared):
+        (WebKit::AutofillPopupMenuClient::itemText):
+        (WebKit::AutofillPopupMenuClient::itemLabel):
+        (WebKit::AutofillPopupMenuClient::itemIcon):
+        (WebKit::AutofillPopupMenuClient::itemIsEnabled):
+        (WebKit::AutofillPopupMenuClient::itemStyle):
+        (WebKit::AutofillPopupMenuClient::menuStyle):
+        (WebKit::AutofillPopupMenuClient::clientPaddingLeft):
+        (WebKit::AutofillPopupMenuClient::clientPaddingRight):
+        (WebKit::AutofillPopupMenuClient::popupDidHide):
+        (WebKit::AutofillPopupMenuClient::itemIsSeparator):
+        (WebKit::AutofillPopupMenuClient::itemIsWarning):
+        (WebKit::AutofillPopupMenuClient::setTextFromItem):
+        (WebKit::AutofillPopupMenuClient::fontSelector):
+        (WebKit::AutofillPopupMenuClient::hostWindow):
+        (WebKit::AutofillPopupMenuClient::createScrollbar):
+        (WebKit::AutofillPopupMenuClient::initialize):
+        (WebKit::AutofillPopupMenuClient::setSuggestions):
+        (WebKit::AutofillPopupMenuClient::convertListIndexToInternalIndex):
+        (WebKit::AutofillPopupMenuClient::getWebView):
+        (WebKit::AutofillPopupMenuClient::textFieldStyle):
+        * src/AutofillPopupMenuClient.h:
+        (WebKit::AutofillPopupMenuClient::itemToolTip):
+        (WebKit::AutofillPopupMenuClient::itemAccessibilityText):
+        (WebKit::AutofillPopupMenuClient::clientInsetLeft):
+        (WebKit::AutofillPopupMenuClient::clientInsetRight):
+        (WebKit::AutofillPopupMenuClient::listSize):
+        (WebKit::AutofillPopupMenuClient::selectedIndex):
+        (WebKit::AutofillPopupMenuClient::itemIsLabel):
+        (WebKit::AutofillPopupMenuClient::itemIsSelected):
+        (WebKit::AutofillPopupMenuClient::shouldPopOver):
+        (WebKit::AutofillPopupMenuClient::valueShouldChangeOnHotTrack):
+        (WebKit::AutofillPopupMenuClient::getTextField):
+        (WebKit::AutofillPopupMenuClient::getSelectedIndex):
+        (WebKit::AutofillPopupMenuClient::setSelectedIndex):
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::textFieldDidBeginEditing):
+        (WebKit::EditorClientImpl::textFieldDidEndEditing):
+        (WebKit::EditorClientImpl::textDidChangeInTextField):
+        (WebKit::EditorClientImpl::doAutofill):
+        (WebKit::EditorClientImpl::doTextFieldCommandFromEvent):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::setAutofilled):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setAutofillClient):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::autocompleteHandleKeyEvent):
+        (WebKit::WebViewImpl::hideAutofillPopup):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        (WebKit::WebViewImpl::hidePopups):
+        (WebKit::WebViewImpl::refreshAutofillPopup):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::autofillClient):
+        (WebKit::WebViewImpl::autofillPopupDidHide):
+
 2011-07-14  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: URL parameters should consistently use camel case names

@@ -43,7 +43,7 @@
 #include "SpellChecker.h"
 
 #include "DOMUtilitiesPrivate.h"
-#include "WebAutoFillClient.h"
+#include "WebAutofillClient.h"
 #include "WebEditingAction.h"
 #include "WebElement.h"
 #include "WebFrameClient.h"
@@ -664,15 +664,15 @@ void EditorClientImpl::handleInputMethodKeydown(KeyboardEvent* keyEvent)
 void EditorClientImpl::textFieldDidBeginEditing(Element* element)
 {
     HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->autoFillClient() && inputElement)
-        m_webView->autoFillClient()->textFieldDidBeginEditing(WebInputElement(inputElement));
+    if (m_webView->autofillClient() && inputElement)
+        m_webView->autofillClient()->textFieldDidBeginEditing(WebInputElement(inputElement));
 }
 
 void EditorClientImpl::textFieldDidEndEditing(Element* element)
 {
     HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->autoFillClient() && inputElement)
-        m_webView->autoFillClient()->textFieldDidEndEditing(WebInputElement(inputElement));
+    if (m_webView->autofillClient() && inputElement)
+        m_webView->autofillClient()->textFieldDidEndEditing(WebInputElement(inputElement));
 
     // Notification that focus was lost.  Be careful with this, it's also sent
     // when the page is being closed.
@@ -682,7 +682,7 @@ void EditorClientImpl::textFieldDidEndEditing(Element* element)
     m_autofillTimer.stop();
 
     // Hide any showing popup.
-    m_webView->hideAutoFillPopup();
+    m_webView->hideAutofillPopup();
 
     if (!m_webView->client())
         return; // The page is getting closed, don't fill the password.
@@ -706,8 +706,8 @@ void EditorClientImpl::textDidChangeInTextField(Element* element)
 {
     ASSERT(element->hasLocalName(HTMLNames::inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
-    if (m_webView->autoFillClient())
-        m_webView->autoFillClient()->textFieldDidChange(WebInputElement(inputElement));
+    if (m_webView->autofillClient())
+        m_webView->autofillClient()->textFieldDidChange(WebInputElement(inputElement));
 
     // Note that we only show the autofill popup in this case if the caret is at
     // the end.  This matches FireFox and Safari but not IE.
@@ -778,7 +778,7 @@ void EditorClientImpl::doAutofill(Timer<EditorClientImpl>* timer)
                        && inputElement->selectionEnd() == static_cast<int>(value.length());
 
     if ((!args->autofillOnEmptyValue && value.isEmpty()) || !isCaretAtEnd) {
-        m_webView->hideAutoFillPopup();
+        m_webView->hideAutofillPopup();
         return;
     }
 
@@ -810,8 +810,8 @@ bool EditorClientImpl::doTextFieldCommandFromEvent(Element* element,
                                                    KeyboardEvent* event)
 {
     HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->autoFillClient() && inputElement) {
-        m_webView->autoFillClient()->textFieldDidReceiveKeyDown(WebInputElement(inputElement),
+    if (m_webView->autofillClient() && inputElement) {
+        m_webView->autofillClient()->textFieldDidReceiveKeyDown(WebInputElement(inputElement),
                                                                 WebKeyboardEventBuilder(*event));
     }
 

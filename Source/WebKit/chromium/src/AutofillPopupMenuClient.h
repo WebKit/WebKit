@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AutoFillPopupMenuClient_h
-#define AutoFillPopupMenuClient_h
+#ifndef AutofillPopupMenuClient_h
+#define AutofillPopupMenuClient_h
 
 #include "PopupMenuClient.h"
 
@@ -45,12 +45,12 @@ class WebString;
 class WebViewImpl;
 template <typename T> class WebVector;
 
-// The AutoFill suggestions popup menu client, used to display name suggestions
+// The Autofill suggestions popup menu client, used to display name suggestions
 // with right-justified labels.
-class AutoFillPopupMenuClient : public WebCore::PopupMenuClient {
+class AutofillPopupMenuClient : public WebCore::PopupMenuClient {
 public:
-    AutoFillPopupMenuClient();
-    virtual ~AutoFillPopupMenuClient();
+    AutofillPopupMenuClient();
+    virtual ~AutofillPopupMenuClient();
 
     // Returns the number of suggestions available.
     virtual unsigned getSuggestionsCount() const;

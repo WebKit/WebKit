@@ -35,6 +35,9 @@
 #include "WebPrivatePtr.h"
 #include "WebString.h"
 
+// TODO(isherman): Remove this once the Chromium side is updated.
+#define CRBUG_72758_FIXED
+
 namespace WebCore { class Node; }
 
 namespace WebKit {
