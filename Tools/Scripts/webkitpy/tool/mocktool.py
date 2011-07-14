@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import StringIO
 import threading
 
 from webkitpy.common.config.committers import CommitterList, Reviewer
@@ -36,7 +37,6 @@ from webkitpy.common.net.bugzilla import Bug, Attachment
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.thirdparty.mock import Mock
 
 
 def _id_to_object_dictionary(*objects):
@@ -207,11 +207,9 @@ _bug5 = {
 }
 
 
-# FIXME: This should not inherit from Mock
-class MockBugzillaQueries(Mock):
+class MockBugzillaQueries(object):
 
     def __init__(self, bugzilla):
-        Mock.__init__(self)
         self._bugzilla = bugzilla
 
     def _all_bugs(self):
@@ -248,14 +246,14 @@ class MockBugzillaQueries(Mock):
     def fetch_bugs_matching_search(self, search_string, author_email=None):
         return [self._bugzilla.fetch_bug(78), self._bugzilla.fetch_bug(77)]
 
+
 _mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
 
 
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork
 #        class we should mock that instead.
 # Most of this class is just copy/paste from Bugzilla.
-# FIXME: This should not inherit from Mock
-class MockBugzilla(Mock):
+class MockBugzilla(object):
 
     bug_server_url = "http://example.com"
 
@@ -270,7 +268,6 @@ class MockBugzilla(Mock):
                                                 _patch7)
 
     def __init__(self):
-        Mock.__init__(self)
         self.queries = MockBugzillaQueries(self)
         self.committers = CommitterList(reviewers=[_mock_reviewer])
         self._override_patch = None
@@ -377,6 +374,21 @@ class MockBugzilla(Mock):
             log(comment_text)
             log("-- End comment --")
 
+    def add_cc_to_bug(self, bug_id, ccs):
+        pass
+
+    def obsolete_attachment(self, attachment_id, message=None):
+        pass
+
+    def reopen_bug(self, bug_id, message):
+        pass
+
+    def close_bug_as_fixed(self, bug_id, message):
+        pass
+
+    def clear_attachment_flags(self, attachment_id, message):
+        pass
+
 
 class MockBuilder(object):
     def __init__(self, name):
@@ -463,33 +475,67 @@ class MockBuildBot(object):
         return MockFailureMap(self)
 
 
-# FIXME: This should not inherit from Mock
-class MockSCM(Mock):
+class MockSCM(object):
 
     fake_checkout_root = os.path.realpath("/tmp") # realpath is needed to allow for Mac OS X's /private/tmp
 
-    def __init__(self, filesystem=None):
-        Mock.__init__(self)
+    def __init__(self, filesystem=None, executive=None):
         # FIXME: We should probably use real checkout-root detection logic here.
         # os.getcwd() can't work here because other parts of the code assume that "checkout_root"
         # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
         self.checkout_root = self.fake_checkout_root
         self.added_paths = set()
-        self._filesystem = filesystem
+        self._filesystem = filesystem or MockFileSystem()
+        self._executive = executive or MockExecutive()
 
     def add(self, destination_path, return_exit_code=False):
         self.added_paths.add(destination_path)
         if return_exit_code:
             return 0
 
+    def ensure_clean_working_directory(self, force_clean):
+        pass
+
+    def supports_local_commits(self):
+        return True
+
+    def ensure_no_local_commits(self, force_clean):
+        pass
+
+    def exists(self, path):
+        # TestRealMain.test_real_main (and several other rebaseline tests) are sensitive to this return value.
+        # We should make those tests more robust, but for now we just return True always (since no test needs otherwise).
+        return True
+
+    def absolute_path(self, *comps):
+        return self._filesystem.join(self.checkout_root, *comps)
+
     def changed_files(self, git_commit=None):
         return ["MockFile1"]
+
+    def changed_files_for_revision(self, revision):
+        return ["MockFile1"]
+
+    def head_svn_revision(self):
+        return 1234
 
     def create_patch(self, git_commit, changed_files=None):
         return "Patch1"
 
     def commit_ids_from_commitish_arguments(self, args):
         return ["Commitish1", "Commitish2"]
+
+    def committer_email_for_revision(self, revision):
+        return "mock@webkit.org"
+
+    def commit_locally_with_message(self, message):
+        pass
+
+    def commit_with_message(self, message, username=None, password=None, git_commit=None, force_squash=False, changed_files=None):
+        pass
+
+    def merge_base(self, git_commit):
+        return None
 
     def commit_message_for_local_commit(self, commit_id):
         if commit_id == "Commitish1":
@@ -504,8 +550,7 @@ class MockSCM(Mock):
         return path + '-diff'
 
     def diff_for_revision(self, revision):
-        return "DiffForRevision%s\n" \
-               "http://bugs.webkit.org/show_bug.cgi?id=12345" % revision
+        return "DiffForRevision%s\nhttp://bugs.webkit.org/show_bug.cgi?id=12345" % revision
 
     def show_head(self, path):
         return path
@@ -527,6 +572,10 @@ class MockDEPS(object):
     def write_variable(self, name, value):
         log("MOCK: MockDEPS.write_variable(%s, %s)" % (name, value))
 
+
+class MockCommitMessage(object):
+    def message(self):
+        return "This is a fake commit message that is at least 50 characters."
 
 class MockCheckout(object):
 
@@ -564,9 +613,7 @@ class MockCheckout(object):
         return []
 
     def commit_message_for_this_commit(self, git_commit, changed_files=None):
-        commit_message = Mock()
-        commit_message.message = lambda:"This is a fake commit message that is at least 50 characters."
-        return commit_message
+        return MockCommitMessage()
 
     def chromium_deps(self):
         return MockDEPS()
@@ -666,9 +713,8 @@ class MockStatusServer(object):
         return "http://dummy_url"
 
 
-# FIXME: This should not inherit from Mock
 # FIXME: Unify with common.system.executive_mock.MockExecutive.
-class MockExecutive(Mock):
+class MockExecutive(object):
     def __init__(self, should_log=False, should_throw=False):
         self._should_log = should_log
         self._should_throw = should_throw
@@ -706,7 +752,7 @@ class MockOptions(object):
             self.__dict__[key] = value
 
 
-class MockPort(Mock):
+class MockPort(object):
     def name(self):
         return "MockPort"
 
@@ -718,6 +764,27 @@ class MockPort(Mock):
 
     def update_webkit_command(self):
         return ["mock-update-webkit"]
+
+    def build_webkit_command(self, build_style=None):
+        return ["mock-build-webkit"]
+
+    def run_bindings_tests_command(self):
+        return ["mock-run-bindings-tests"]
+
+    def prepare_changelog_command(self):
+        return ['mock-prepare-ChangeLog']
+
+    def run_python_unittests_command(self):
+        return ['mock-test-webkitpy']
+
+    def run_perl_unittests_command(self):
+        return ['mock-test-webkitperl']
+
+    def run_javascriptcore_tests_command(self):
+        return ['mock-run-javacriptcore-tests']
+
+    def run_webkit_tests_command(self):
+        return ['mock-run-webkit-tests']
 
 
 class MockTestPort1(object):
@@ -764,11 +831,13 @@ class MockTool(object):
         self.buildbot = MockBuildBot()
         self.executive = MockExecutive(should_log=log_executive)
         self.web = MockWeb()
-        self.filesystem = MockFileSystem()
         self.workspace = MockWorkspace()
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
+        # Various pieces of code (wrongly) call filesystem.chdir(checkout_root).
+        # Making the checkout_root exist in the mock filesystem makes that chdir not raise.
+        self.filesystem = MockFileSystem(dirs=set([self._scm.checkout_root]))
         self._port = MockPort()
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
@@ -809,4 +878,4 @@ class MockBrowser(object):
         self.params[key] = value
 
     def submit(self):
-        return Mock(file)
+        return StringIO.StringIO()

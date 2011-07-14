@@ -30,14 +30,11 @@
 # Python module for interacting with an SCM system (like SVN or Git)
 
 import logging
-import os
 import re
-import sys
-import shutil
 
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.common.system import ospath
+from webkitpy.common.system.filesystem import FileSystem
 
 
 class CheckoutNeedsUpdate(ScriptError):
@@ -61,11 +58,12 @@ class AuthenticationError(Exception):
 
 # SCM methods are expected to return paths relative to self.checkout_root.
 class SCM:
-    def __init__(self, cwd, executive=None):
+    def __init__(self, cwd, executive=None, filesystem=None):
         self.cwd = cwd
         self.checkout_root = self.find_checkout_root(self.cwd)
         self.dryrun = False
         self._executive = executive or Executive()
+        self._filesystem = filesystem or FileSystem()
 
     # A wrapper used by subclasses to create processes.
     def run(self, args, cwd=None, input=None, error_handler=None, return_exit_code=False, return_stderr=True, decode_output=True):
@@ -81,21 +79,21 @@ class SCM:
     # SCM always returns repository relative path, but sometimes we need
     # absolute paths to pass to rm, etc.
     def absolute_path(self, repository_relative_path):
-        return os.path.join(self.checkout_root, repository_relative_path)
+        return self._filesystem.join(self.checkout_root, repository_relative_path)
 
     # FIXME: This belongs in Checkout, not SCM.
     def scripts_directory(self):
-        return os.path.join(self.checkout_root, "Tools", "Scripts")
+        return self._filesystem.join(self.checkout_root, "Tools", "Scripts")
 
     # FIXME: This belongs in Checkout, not SCM.
     def script_path(self, script_name):
-        return os.path.join(self.scripts_directory(), script_name)
+        return self._filesystem.join(self.scripts_directory(), script_name)
 
     def ensure_clean_working_directory(self, force_clean):
         if self.working_directory_is_clean():
             return
         if not force_clean:
-            # FIXME: Shouldn't this use cwd=self.checkout_root?
+            # FIXME: Shouldn't this use cwd=self.checkout_root?  (Git definitely would want that, unclear if SVN would.)
             print self.run(self.status_command(), error_handler=Executive.ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         log("Cleaning working directory")

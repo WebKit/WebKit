@@ -96,12 +96,6 @@ class ScriptError(Exception):
         return os.path.basename(command_path)
 
 
-def run_command(*args, **kwargs):
-    # FIXME: This should not be a global static.
-    # New code should use Executive.run_command directly instead
-    return Executive().run_command(*args, **kwargs)
-
-
 class Executive(object):
     PIPE = subprocess.PIPE
     STDOUT = subprocess.STDOUT

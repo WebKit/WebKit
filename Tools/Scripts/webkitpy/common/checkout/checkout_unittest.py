@@ -38,6 +38,8 @@ from .checkout import Checkout
 from .changelog import ChangeLogEntry
 from .scm import detect_scm_system, CommitMessage
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.tool.mocktool import MockSCM, MockExecutive
 from webkitpy.thirdparty.mock import Mock
 
 
@@ -129,7 +131,7 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
         real_scm = detect_scm_system(self.old_cwd)
 
-        mock_scm = Mock()
+        mock_scm = MockSCM()
         mock_scm.run = mock_run
         mock_scm.script_path = real_scm.script_path
 
@@ -140,8 +142,10 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
 
 class CheckoutTest(unittest.TestCase):
+    def _make_checkout(self):
+        return Checkout(scm=MockSCM(), filesystem=MockFileSystem(), executive=MockExecutive())
+
     def test_latest_entry_for_changelog_at_revision(self):
-        scm = Mock()
         def mock_contents_at_revision(changelog_path, revision):
             self.assertEqual(changelog_path, "foo")
             self.assertEqual(revision, "bar")
@@ -150,8 +154,8 @@ class CheckoutTest(unittest.TestCase):
             # The ChangeLog utf-8 decoding should ignore invalid codepoints.
             invalid_utf8 = "\255"
             return _changelog1.encode("utf-8") + invalid_utf8
-        scm.contents_at_revision = mock_contents_at_revision
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
+        checkout._scm.contents_at_revision = mock_contents_at_revision
         entry = checkout._latest_entry_for_changelog_at_revision("foo", "bar")
         self.assertEqual(entry.contents(), _changelog1entry1)
 
@@ -160,9 +164,8 @@ class CheckoutTest(unittest.TestCase):
     # from revisions, resulting in a ScriptError exception.  Test that we
     # recover from those and still return the other ChangeLog entries.
     def test_changelog_entries_for_revision(self):
-        scm = Mock()
-        scm.changed_files_for_revision = lambda revision: ['foo/ChangeLog', 'bar/ChangeLog']
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
+        checkout._scm.changed_files_for_revision = lambda revision: ['foo/ChangeLog', 'bar/ChangeLog']
 
         def mock_latest_entry_for_changelog_at_revision(path, revision):
             if path == "foo/ChangeLog":
@@ -177,10 +180,9 @@ class CheckoutTest(unittest.TestCase):
         self.assertEqual(entries[0], 'foo')
 
     def test_commit_info_for_revision(self):
-        scm = Mock()
-        scm.changed_files_for_revision = lambda revision: ['path/to/file', 'another/file']
-        scm.committer_email_for_revision = lambda revision, changed_files=None: "committer@example.com"
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
+        checkout._scm.changed_files_for_revision = lambda revision: ['path/to/file', 'another/file']
+        checkout._scm.committer_email_for_revision = lambda revision, changed_files=None: "committer@example.com"
         checkout.changelog_entries_for_revision = lambda revision, changed_files=None: [ChangeLogEntry(_changelog1entry1)]
         commitinfo = checkout.commit_info_for_revision(4)
         self.assertEqual(commitinfo.bug_id(), 36629)
@@ -205,23 +207,20 @@ class CheckoutTest(unittest.TestCase):
         self.assertEqual(checkout.commit_info_for_revision(1), None)
 
     def test_bug_id_for_revision(self):
-        scm = Mock()
-        scm.committer_email_for_revision = lambda revision: "committer@example.com"
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
+        checkout._scm.committer_email_for_revision = lambda revision: "committer@example.com"
         checkout.changelog_entries_for_revision = lambda revision, changed_files=None: [ChangeLogEntry(_changelog1entry1)]
         self.assertEqual(checkout.bug_id_for_revision(4), 36629)
 
     def test_bug_id_for_this_commit(self):
-        scm = Mock()
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
         checkout.commit_message_for_this_commit = lambda git_commit, changed_files=None: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
         self.assertEqual(checkout.bug_id_for_this_commit(git_commit=None), 36629)
 
     def test_modified_changelogs(self):
-        scm = Mock()
-        scm.checkout_root = "/foo/bar"
-        scm.changed_files = lambda git_commit: ["file1", "ChangeLog", "relative/path/ChangeLog"]
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
+        checkout._scm.checkout_root = "/foo/bar"
+        checkout._scm.changed_files = lambda git_commit: ["file1", "ChangeLog", "relative/path/ChangeLog"]
         expected_changlogs = ["/foo/bar/ChangeLog", "/foo/bar/relative/path/ChangeLog"]
         self.assertEqual(checkout.modified_changelogs(git_commit=None), expected_changlogs)
 
@@ -236,11 +235,10 @@ class CheckoutTest(unittest.TestCase):
                 return [3]
             return [4, 8]
 
-        scm = Mock()
-        scm.checkout_root = "/foo/bar"
-        scm.changed_files = lambda git_commit: ["file1", "file2", "relative/path/ChangeLog"]
-        scm.revisions_changing_file = mock_revisions_changing_file
-        checkout = Checkout(scm)
+        checkout = self._make_checkout()
+        checkout._scm.checkout_root = "/foo/bar"
+        checkout._scm.changed_files = lambda git_commit: ["file1", "file2", "relative/path/ChangeLog"]
+        checkout._scm.revisions_changing_file = mock_revisions_changing_file
         checkout.changelog_entries_for_revision = mock_changelog_entries_for_revision
         reviewers = checkout.suggested_reviewers(git_commit=None)
         reviewer_names = [reviewer.full_name for reviewer in reviewers]

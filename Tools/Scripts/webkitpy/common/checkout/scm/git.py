@@ -32,11 +32,18 @@ import re
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system import ospath
 
 from .commitmessage import CommitMessage
 from .scm import AuthenticationError, SCM, commit_error_handler
 from .svn import SVN, SVNRepository
+
+
+def run_command(*args, **kwargs):
+    # FIXME: This should not be a global static.
+    # New code should use Executive.run_command directly instead
+    return Executive().run_command(*args, **kwargs)
 
 
 class AmbiguousCommitError(Exception):
@@ -95,14 +102,13 @@ class Git(SCM, SVNRepository):
     def find_checkout_root(cls, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
         (checkout_root, dot_git) = os.path.split(run_command(['git', 'rev-parse', '--git-dir'], cwd=(path or "./")))
-        # If we were using 2.6 # checkout_root = os.path.relpath(checkout_root, path)
         if not os.path.isabs(checkout_root):  # Sometimes git returns relative paths
             checkout_root = os.path.join(path, checkout_root)
         return checkout_root
 
     @classmethod
     def to_object_name(cls, filepath):
-        root_end_with_slash = os.path.join(cls.find_checkout_root(os.path.dirname(filepath)), '')
+        root_end_with_slash = self._filesystem.join(cls.find_checkout_root(self._filesystem.dirname(filepath)), '')
         return filepath.replace(root_end_with_slash, '')
 
     @classmethod
@@ -125,7 +131,7 @@ class Git(SCM, SVNRepository):
         return self.run(['git', 'log', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()], cwd=self.checkout_root).splitlines()
 
     def rebase_in_progress(self):
-        return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
+        return self._filesystem.exists(self.absolute_path('.git', 'rebase-apply'))
 
     def working_directory_is_clean(self):
         return self.run(['git', 'diff', 'HEAD', '--name-only'], cwd=self.checkout_root) == ""
@@ -334,7 +340,8 @@ class Git(SCM, SVNRepository):
         # We might be in a directory that's present in this branch but not in the
         # trunk.  Move up to the top of the tree so that git commands that expect a
         # valid CWD won't fail after we check out the merge branch.
-        os.chdir(self.checkout_root)
+        # FIXME: We should never be using chdir! We can instead pass cwd= to run_command/self.run!
+        self._filesystem.chdir(self.checkout_root)
 
         # Stuff our change into the merge branch.
         # We wrap in a try...finally block so if anything goes wrong, we clean up the branches.

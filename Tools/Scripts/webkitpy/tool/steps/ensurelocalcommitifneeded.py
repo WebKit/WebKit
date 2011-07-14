@@ -40,4 +40,4 @@ class EnsureLocalCommitIfNeeded(AbstractStep):
 
     def run(self, state):
         if self._options.local_commit and not self._tool.scm().supports_local_commits():
-            error("--local-commit passed, but %s does not support local commits" % self._tool.scm.display_name())
+            error("--local-commit passed, but %s does not support local commits" % self._tool.scm().display_name())

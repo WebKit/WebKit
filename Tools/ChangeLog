@@ -1,5 +1,34 @@
 2011-07-13  Eric Seidel  <eric@webkit.org>
 
+        Move webkitpy off of loose mocks
+        https://bugs.webkit.org/show_bug.cgi?id=64508
+
+        Reviewed by Adam Barth.
+
+        Using Mock has caused us more pain than help.
+        It's possible that there was a cleaner way to use it
+        (maybe Mock(class) instead of inheriting from it?).
+        But for now, I've removed all uses of Mock from mocktool.py.
+
+        I also moved run_command into the only 3 files which call it
+        instead of leaving the deprecated method in executive.py.
+
+        I changed various direct calls to os.* to use filesystem instead.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory_unittest.py:
+        * Scripts/webkitpy/tool/steps/ensurelocalcommitifneeded.py:
+
+2011-07-13  Eric Seidel  <eric@webkit.org>
+
         NRWT doesn't store the svn revision in full_results.json on chromium-win
         https://bugs.webkit.org/show_bug.cgi?id=64492
 

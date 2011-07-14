@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import StringIO
 
 from webkitpy.common.config import urls
@@ -35,7 +34,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.checkout.deps import DEPS
 from webkitpy.common.memoized import memoized
-from webkitpy.common.system.executive import run_command, ScriptError
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -43,11 +42,14 @@ from webkitpy.common.system.deprecated_logging import log
 # FIXME: Move a bunch of ChangeLog-specific processing from SCM to this object.
 # NOTE: All paths returned from this class should be absolute.
 class Checkout(object):
-    def __init__(self, scm):
+    def __init__(self, scm, executive=None, filesystem=None):
         self._scm = scm
+        # FIXME: We shouldn't be grabbing at private members on scm.
+        self._executive = executive or self._scm._executive
+        self._filesystem = filesystem or self._scm._filesystem
 
     def is_path_to_changelog(self, path):
-        return os.path.basename(path) == "ChangeLog"
+        return self._filesystem.basename(path) == "ChangeLog"
 
     def _latest_entry_for_changelog_at_revision(self, changelog_path, revision):
         changelog_contents = self._scm.contents_at_revision(changelog_path, revision)
@@ -111,8 +113,7 @@ class Checkout(object):
         # expect absolute paths, so this method returns absolute paths.
         if not changed_files:
             changed_files = self._scm.changed_files(git_commit)
-        absolute_paths = [os.path.join(self._scm.checkout_root, path) for path in changed_files]
-        return [path for path in absolute_paths if predicate(path)]
+        return filter(predicate, map(self._scm.absolute_path, changed_files))
 
     def modified_changelogs(self, git_commit, changed_files=None):
         return self._modified_files_matching_predicate(git_commit, self.is_path_to_changelog, changed_files=changed_files)
@@ -147,7 +148,7 @@ class Checkout(object):
             pass # We might not have ChangeLogs.
 
     def chromium_deps(self):
-        return DEPS(os.path.join(self._scm.checkout_root, "Source", "WebKit", "chromium", "DEPS"))
+        return DEPS(self._scm.absolute_path("Source", "WebKit", "chromium", "DEPS"))
 
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.
@@ -158,7 +159,7 @@ class Checkout(object):
             args += ['--reviewer', patch.reviewer().full_name]
         if force:
             args.append('--force')
-        self._scm._executive.run_command(args, input=patch.contents())
+        self._executive.run_command(args, input=patch.contents())
 
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)

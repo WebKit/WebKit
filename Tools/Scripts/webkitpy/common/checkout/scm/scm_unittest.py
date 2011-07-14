@@ -49,7 +49,7 @@ from datetime import date
 from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockExecutive
 
@@ -78,6 +78,13 @@ def delete_cached_mock_repo_at_exit():
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
+
+
+def run_command(*args, **kwargs):
+    # FIXME: This should not be a global static.
+    # New code should use Executive.run_command directly instead
+    return Executive().run_command(*args, **kwargs)
+
 
 # FIXME: This should be unified into one of the executive.py commands!
 # Callers could use run_and_throw_if_fail(args, cwd=cwd, quiet=True)

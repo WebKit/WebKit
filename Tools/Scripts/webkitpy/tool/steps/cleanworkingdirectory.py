@@ -47,10 +47,6 @@ class CleanWorkingDirectory(AbstractStep):
     def run(self, state):
         if not self._options.clean:
             return
-        # FIXME: This chdir should not be necessary and can be removed as
-        # soon as ensure_no_local_commits and ensure_clean_working_directory
-        # are known to set the CWD to checkout_root when calling run_command.
-        os.chdir(self._tool.scm().checkout_root)
         if not self._allow_local_commits:
             self._tool.scm().ensure_no_local_commits(self._options.force_clean)
         self._tool.scm().ensure_clean_working_directory(force_clean=self._options.force_clean)

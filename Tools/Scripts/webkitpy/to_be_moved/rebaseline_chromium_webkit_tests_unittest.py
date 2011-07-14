@@ -359,6 +359,7 @@ class TestRealMain(unittest.TestCase):
         # *) 2 files in /tmp for the text diffs for the two ports
         # *) 2 files in /tmp for the image diffs for the two ports
         # *) 1 file in /tmp for the rebaseline results html file
+        # FIXME: These numbers depend on MockSCM.exists() returning True for all files.
         self.assertEqual(res, 0)
         self.assertEqual(len(filesystem.written_files), 38)
 

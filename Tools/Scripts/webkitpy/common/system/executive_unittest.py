@@ -33,7 +33,7 @@ import subprocess
 import sys
 import unittest
 
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.test import cat, echo
 
@@ -95,7 +95,7 @@ class ExecutiveTest(unittest.TestCase):
 
     def test_run_command_with_bad_command(self):
         def run_bad_command():
-            run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True)
+            Executive().run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True)
         self.failUnlessRaises(OSError, run_bad_command)
 
     def test_run_command_args_type(self):

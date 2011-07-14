@@ -35,7 +35,7 @@ import sys
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system import ospath
 
 from .scm import AuthenticationError, SCM, commit_error_handler
@@ -92,8 +92,8 @@ class SVN(SCM, SVNRepository):
     @classmethod
     def value_from_svn_info(cls, path, field_name):
         svn_info_args = ['svn', 'info', path]
-        # FIXME: This should use an Executive.
-        info_output = run_command(svn_info_args).rstrip()
+        # FIXME: This method should use a passed in executive or be made an instance method and use self._executive.
+        info_output = Executive().run_command(svn_info_args).rstrip()
         match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:
             raise ScriptError(script_args=svn_info_args, message='svn info did not contain a %s.' % field_name)

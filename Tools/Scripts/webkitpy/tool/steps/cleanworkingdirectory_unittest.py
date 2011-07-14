@@ -36,6 +36,8 @@ from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
 class CleanWorkingDirectoryTest(unittest.TestCase):
     def test_run(self):
         tool = MockTool()
+        tool._scm = Mock()
+        tool._scm.checkout_root = '/mock'
         step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
         step.run({})
         self.assertEqual(tool._scm.ensure_no_local_commits.call_count, 1)
@@ -43,6 +45,7 @@ class CleanWorkingDirectoryTest(unittest.TestCase):
 
     def test_no_clean(self):
         tool = MockTool()
+        tool._scm = Mock()
         step = CleanWorkingDirectory(tool, MockOptions(clean=False))
         step.run({})
         self.assertEqual(tool._scm.ensure_no_local_commits.call_count, 0)
