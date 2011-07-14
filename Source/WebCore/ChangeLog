@@ -1,5 +1,50 @@
 2011-07-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Move XML errors handling out from XMLDocumentParser (refactoring).
+        https://bugs.webkit.org/show_bug.cgi?id=64305
+
+        XML errors handling logic is moved out from XMLDocumentParser to allow using it for XSLT error handling as well.
+
+        Reviewed by Adam Barth.
+
+        No tests needed as there is no new functionality added.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * xml/XMLErrors.cpp: Added.
+        (WebCore::XMLErrors::XMLErrors):
+        (WebCore::XMLErrors::handleError):
+        (WebCore::XMLErrors::appendErrorMessage):
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+        * xml/XMLErrors.h: Added.
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::pushCurrentNode):
+        (WebCore::XMLDocumentParser::handleError):
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::error):
+        (WebCore::warningHandler):
+        (WebCore::fatalErrorHandler):
+        (WebCore::normalErrorHandler):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseDtd):
+
+2011-07-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: InspectorResourceAgent should generate unique identifier and save cachedResource for resources from memory cache.
         https://bugs.webkit.org/show_bug.cgi?id=64356
 

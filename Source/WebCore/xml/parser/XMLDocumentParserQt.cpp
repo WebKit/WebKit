@@ -101,8 +101,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_errorCount(0)
-    , m_lastErrorPosition(TextPosition1::belowRangePosition())
+    , m_xmlErrors(document)
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition1::belowRangePosition())
     , m_parsingFragment(false)
@@ -128,8 +127,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_errorCount(0)
-    , m_lastErrorPosition(TextPosition1::belowRangePosition())
+    , m_xmlErrors(fragment->document())
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition1::belowRangePosition())
     , m_parsingFragment(true)
@@ -185,7 +183,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
     if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
-        handleError(fatal, "Encoding error", lineNumber(), columnNumber());
+        handleError(XMLErrors::fatal, "Encoding error", lineNumber(), columnNumber());
         return;
     }
 
@@ -225,7 +223,7 @@ void XMLDocumentParser::doEnd()
 
     if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError
         || (m_wroteText && !m_sawFirstElement && !m_sawXSLTransform && !m_sawError))
-        handleError(fatal, qPrintable(m_stream.errorString()), lineNumber(), columnNumber());
+        handleError(XMLErrors::fatal, qPrintable(m_stream.errorString()), lineNumber(), columnNumber());
 }
 
 int XMLDocumentParser::lineNumber() const
@@ -382,7 +380,7 @@ void XMLDocumentParser::parse()
         case QXmlStreamReader::StartElement: {
 #if ENABLE(XHTMLMP)
             if (document()->isXHTMLMPDocument() && !m_hasDocTypeDeclaration) {
-                handleError(fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
+                handleError(XMLErrors::fatal, "DOCTYPE declaration lost.", lineNumber(), columnNumber());
                 break;
             }
 #endif
@@ -440,8 +438,8 @@ void XMLDocumentParser::parse()
             break;
         default: {
             if (m_stream.error() != QXmlStreamReader::PrematureEndOfDocumentError) {
-                ErrorType type = (m_stream.error() == QXmlStreamReader::NotWellFormedError) ?
-                                 fatal : warning;
+                XMLErrors::ErrorType type = (m_stream.error() == QXmlStreamReader::NotWellFormedError) ?
+                                 XMLErrors::fatal : XMLErrors::warning;
                 handleError(type, qPrintable(m_stream.errorString()), lineNumber(),
                             columnNumber());
             }
@@ -501,7 +499,7 @@ void XMLDocumentParser::parseStartElement()
         // ensure the name of the default namespace on the root elment 'html'
         // MUST be 'http://www.w3.org/1999/xhtml'
         if (localName != HTMLNames::htmlTag.localName()) {
-            handleError(fatal, "XHTMLMP document expects 'html' as root element.", lineNumber(), columnNumber());
+            handleError(XMLErrors::fatal, "XHTMLMP document expects 'html' as root element.", lineNumber(), columnNumber());
             return;
         }
 
@@ -705,7 +703,7 @@ void XMLDocumentParser::parseDtd()
     else if ((publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.1//EN"))
              || (publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))) {
         if (AtomicString(name) != HTMLNames::htmlTag.localName()) {
-            handleError(fatal, "Invalid DOCTYPE declaration, expected 'html' as root element.", lineNumber(), columnNumber());
+            handleError(XMLErrors::fatal, "Invalid DOCTYPE declaration, expected 'html' as root element.", lineNumber(), columnNumber());
             return;
         }
 

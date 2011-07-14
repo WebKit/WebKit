@@ -50,7 +50,7 @@
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
 #include "TreeDepthLimit.h"
-#include <wtf/text/WTFString.h>
+#include "XMLErrors.h"
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -66,8 +66,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const int maxErrors = 25;
-
 void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
 {
     ASSERT(n);
@@ -77,7 +75,7 @@ void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
     m_currentNodeStack.append(m_currentNode);
     m_currentNode = n;
     if (m_currentNodeStack.size() > maxDOMTreeDepth)
-        handleError(fatal, "Excessive node nesting.", lineNumber(), columnNumber());
+        handleError(XMLErrors::fatal, "Excessive node nesting.", lineNumber(), columnNumber());
 }
 
 void XMLDocumentParser::popCurrentNode()
@@ -135,31 +133,17 @@ void XMLDocumentParser::append(const SegmentedString& s)
     ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
-void XMLDocumentParser::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
+void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, int lineNumber, int columnNumber)
 {
     handleError(type, m, TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(lineNumber), WTF::OneBasedNumber::fromOneBasedInt(columnNumber)));
 }
 
-void XMLDocumentParser::handleError(ErrorType type, const char* m, TextPosition1 position)
+void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition1 position)
 {
-    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorPosition.m_line != position.m_line && m_lastErrorPosition.m_column != position.m_column)) {
-        switch (type) {
-            case warning:
-                m_errorMessages += "warning on line " + String::number(position.m_line.oneBasedInt()) + " at column " + String::number(position.m_column.oneBasedInt()) + ": " + m;
-                break;
-            case fatal:
-            case nonFatal:
-                m_errorMessages += "error on line " + String::number(position.m_line.oneBasedInt()) + " at column " + String::number(position.m_column.oneBasedInt()) + ": " + m;
-        }
-
-        m_lastErrorPosition = position;
-        ++m_errorCount;
-    }
-
-    if (type != warning)
+    m_xmlErrors.handleError(type, m, position);
+    if (type != XMLErrors::warning)
         m_sawError = true;
-
-    if (type == fatal)
+    if (type == XMLErrors::fatal)
         stopParsing();
 }
 
@@ -251,70 +235,14 @@ bool XMLDocumentParser::finishWasCalled()
     return m_finishCalled;
 }
 
-static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages)
-{
-    RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), false);
-    reportElement->setAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
-
-    ExceptionCode ec = 0;
-    RefPtr<Element> h3 = doc->createElement(h3Tag, false);
-    reportElement->appendChild(h3.get(), ec);
-    h3->appendChild(doc->createTextNode("This page contains the following errors:"), ec);
-
-    RefPtr<Element> fixed = doc->createElement(divTag, false);
-    reportElement->appendChild(fixed.get(), ec);
-    fixed->setAttribute(styleAttr, "font-family:monospace;font-size:12px");
-    fixed->appendChild(doc->createTextNode(errorMessages), ec);
-
-    h3 = doc->createElement(h3Tag, false);
-    reportElement->appendChild(h3.get(), ec);
-    h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), ec);
-
-    return reportElement;
-}
-
 void XMLDocumentParser::insertErrorMessageBlock()
 {
 #if USE(QXMLSTREAM)
     if (m_parsingFragment)
         return;
 #endif
-    // One or more errors occurred during parsing of the code. Display an error block to the user above
-    // the normal content (the DOM tree is created manually and includes line/col info regarding
-    // where the errors are located)
 
-    // Create elements for display
-    ExceptionCode ec = 0;
-    Document* document = this->document();
-    RefPtr<Element> documentElement = document->documentElement();
-    if (!documentElement) {
-        RefPtr<Element> rootElement = document->createElement(htmlTag, false);
-        document->appendChild(rootElement, ec);
-        RefPtr<Element> body = document->createElement(bodyTag, false);
-        rootElement->appendChild(body, ec);
-        documentElement = body.get();
-    }
-#if ENABLE(SVG)
-    else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
-        RefPtr<Element> rootElement = document->createElement(htmlTag, false);
-        RefPtr<Element> body = document->createElement(bodyTag, false);
-        rootElement->appendChild(body, ec);
-        body->appendChild(documentElement, ec);
-        document->appendChild(rootElement.get(), ec);
-        documentElement = body.get();
-    }
-#endif
-    RefPtr<Element> reportElement = createXHTMLParserErrorHeader(document, m_errorMessages);
-    documentElement->insertBefore(reportElement, documentElement->firstChild(), ec);
-#if ENABLE(XSLT)
-    if (document->transformSourceDocument()) {
-        RefPtr<Element> paragraph = document->createElement(pTag, false);
-        paragraph->setAttribute(styleAttr, "white-space: normal");
-        paragraph->appendChild(document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), ec);
-        reportElement->appendChild(paragraph.release(), ec);
-    }
-#endif
-    document->updateStyleIfNeeded();
+    m_xmlErrors.insertErrorMessageBlock();
 }
 
 void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)

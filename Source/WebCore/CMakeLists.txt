@@ -1363,6 +1363,7 @@ SET(WebCore_SOURCES
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp
+    xml/XMLErrors.cpp
     xml/XMLHttpRequest.cpp
     xml/XMLHttpRequestProgressEventThrottle.cpp
     xml/XMLHttpRequestUpload.cpp

@@ -172,7 +172,7 @@ public:
         m_callbacks.append(callback.release());
     }
 
-    void appendErrorCallback(XMLDocumentParser::ErrorType type, const xmlChar* message, int lineNumber, int columnNumber)
+    void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, int lineNumber, int columnNumber)
     {
         OwnPtr<PendingErrorCallback> callback = adoptPtr(new PendingErrorCallback);
 
@@ -328,7 +328,7 @@ private:
             parser->handleError(type, reinterpret_cast<char*>(message), lineNumber, columnNumber);
         }
 
-        XMLDocumentParser::ErrorType type;
+        XMLErrors::ErrorType type;
         xmlChar* message;
         int lineNumber;
         int columnNumber;
@@ -562,8 +562,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_errorCount(0)
-    , m_lastErrorPosition(TextPosition1::belowRangePosition())
+    , m_xmlErrors(document)
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition1::belowRangePosition())
     , m_parsingFragment(false)
@@ -589,8 +588,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_errorCount(0)
-    , m_lastErrorPosition(TextPosition1::belowRangePosition())
+    , m_xmlErrors(fragment->document())
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition1::belowRangePosition())
     , m_parsingFragment(true)
@@ -675,7 +673,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
     // FIXME: Why is this here?  And why is it after we process the passed source?
     if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
-        handleError(fatal, "Encoding error", context->context()->input->line, context->context()->input->col);
+        handleError(XMLErrors::fatal, "Encoding error", context->context()->input->line, context->context()->input->col);
     }
 }
 
@@ -935,7 +933,7 @@ void XMLDocumentParser::characters(const xmlChar* s, int len)
     m_bufferedText.append(s, len);
 }
 
-void XMLDocumentParser::error(ErrorType type, const char* message, va_list args)
+void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va_list args)
 {
     if (isStopped())
         return;
@@ -1157,7 +1155,7 @@ static void warningHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
-    getParser(closure)->error(XMLDocumentParser::warning, message, args);
+    getParser(closure)->error(XMLErrors::warning, message, args);
     va_end(args);
 }
 
@@ -1166,7 +1164,7 @@ static void fatalErrorHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
-    getParser(closure)->error(XMLDocumentParser::fatal, message, args);
+    getParser(closure)->error(XMLErrors::fatal, message, args);
     va_end(args);
 }
 
@@ -1175,7 +1173,7 @@ static void normalErrorHandler(void* closure, const char* message, ...)
 {
     va_list args;
     va_start(args, message);
-    getParser(closure)->error(XMLDocumentParser::nonFatal, message, args);
+    getParser(closure)->error(XMLErrors::nonFatal, message, args);
     va_end(args);
 }
 

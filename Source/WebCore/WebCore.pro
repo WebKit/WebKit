@@ -1195,6 +1195,7 @@ SOURCES += \
     xml/XMLHttpRequest.cpp \
     xml/XMLHttpRequestProgressEventThrottle.cpp \
     xml/XMLHttpRequestUpload.cpp \
+    xml/XMLErrors.cpp \
     xml/XMLSerializer.cpp \
     xml/parser/XMLDocumentParser.cpp 
 
@@ -2497,6 +2498,7 @@ HEADERS += \
     xml/NativeXPathNSResolver.h \
     xml/XMLHttpRequest.h \
     xml/XMLHttpRequestUpload.h \
+    xml/XMLErrors.h \
     xml/XMLSerializer.h \
     xml/XPathEvaluator.h \
     xml/XPathExpression.h \

@@ -30,6 +30,7 @@
 #include "FragmentScriptingPermission.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
+#include "XMLErrors.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
@@ -86,9 +87,8 @@ class Text;
         ~XMLDocumentParser();
 
         // Exposed for callbacks:
-        enum ErrorType { warning, nonFatal, fatal };
-        void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
-        void handleError(ErrorType, const char* message, TextPosition1);
+        void handleError(XMLErrors::ErrorType, const char* message, int lineNumber, int columnNumber);
+        void handleError(XMLErrors::ErrorType, const char* message, TextPosition1);
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
         bool isXHTMLDocument() const { return m_isXHTMLDocument; }
@@ -148,7 +148,7 @@ private:
 #else
 public:
         // callbacks from parser SAX
-        void error(ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0);
+        void error(XMLErrors::ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0);
         void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
                             const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes);
         void endElementNs();
@@ -207,9 +207,7 @@ public:
         bool m_requestingScript;
         bool m_finishCalled;
 
-        int m_errorCount;
-        TextPosition1 m_lastErrorPosition;
-        String m_errorMessages;
+        XMLErrors m_xmlErrors;
 
         CachedResourceHandle<CachedScript> m_pendingScript;
         RefPtr<Element> m_scriptElement;

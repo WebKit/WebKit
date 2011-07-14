@@ -42060,6 +42060,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XMLErrors.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLErrors.h"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XMLHttpRequest.cpp"
 				>
 			</File>

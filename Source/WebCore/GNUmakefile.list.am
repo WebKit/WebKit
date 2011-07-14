@@ -3807,6 +3807,8 @@ webcore_sources += \
 	Source/WebCore/xml/DOMParser.h \
 	Source/WebCore/xml/NativeXPathNSResolver.cpp \
 	Source/WebCore/xml/NativeXPathNSResolver.h \
+	Source/WebCore/xml/XMLErrors.cpp \
+	Source/WebCore/xml/XMLErrors.h \
 	Source/WebCore/xml/XMLHttpRequest.cpp \
 	Source/WebCore/xml/XMLHttpRequestException.h \
 	Source/WebCore/xml/XMLHttpRequest.h \

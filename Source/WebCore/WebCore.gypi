@@ -6111,6 +6111,8 @@
             'xml/DOMParser.h',
             'xml/NativeXPathNSResolver.cpp',
             'xml/NativeXPathNSResolver.h',
+            'xml/XMLErrors.cpp',
+            'xml/XMLErrors.h',
             'xml/XMLHttpRequest.cpp',
             'xml/XMLHttpRequest.h',
             'xml/XMLHttpRequestException.h',
