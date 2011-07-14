@@ -3033,24 +3033,6 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     white-space: nowrap;
 }
 
-.resources-category-documents, .resources-category-stylesheets, .resources-category-images,
-.resources-category-scripts, .resources-category-xhr, .resources-category-fonts,
-.resources-category-websockets, .resources-category-other {
-    display: none;
-}
-
-.filter-all .resources-category-documents, .filter-documents .resources-category-documents,
-.filter-all .resources-category-stylesheets, .filter-stylesheets .resources-category-stylesheets,
-.filter-all .resources-category-images, .filter-images .resources-category-images,
-.filter-all .resources-category-scripts, .filter-scripts .resources-category-scripts,
-.filter-all .resources-category-xhr, .filter-xhr .resources-category-xhr,
-.filter-all .resources-category-fonts, .filter-fonts .resources-category-fonts,
-.filter-all .resources-category-websockets, .filter-websockets .resources-category-websockets,
-.filter-all .resources-category-other, .filter-other .resources-category-other,
-.resource-sidebar-tree-item.selected {
-    display: list-item;
-}
-
 .console-warning-level, .console-error-level, .console-log-level {
     display: none;
 }
@@ -3063,71 +3045,6 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 .console-user-command-result {
     display: block;
-}
-
-.resources-graph-bar.waiting, .resources-graph-bar.waiting-right {
-    opacity: 0.35;
-}
-
-.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillGray.png) 6 7 6 7;
-}
-
-.resources-category-documents .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillBlue.png) 6 7 6 7;
-}
-
-.resources-category-documents.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillBlue.png) 6 7 6 7;
-}
-
-.resources-category-stylesheets .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillGreen.png) 6 7 6 7;
-}
-
-.resources-category-stylesheets.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillGreen.png) 6 7 6 7;
-}
-
-.resources-category-images .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillPurple.png) 6 7 6 7;
-}
-
-.resources-category-images.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillPurple.png) 6 7 6 7;
-}
-
-.resources-category-fonts .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillRed.png) 6 7 6 7;
-}
-
-.resources-category-fonts.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillRed.png) 6 7 6 7;
-}
-
-.resources-category-scripts .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillOrange.png) 6 7 6 7;
-}
-
-.resources-category-scripts.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillOrange.png) 6 7 6 7;
-}
-
-.resources-category-xhr .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
-}
-
-.resources-category-xhr.resource-cached .resources-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillYellow.png) 6 7 6 7;
-}
-
-/* FIXME: Create bar images for WebSocket. */
-.resources-category-websockets .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillGray.png) 6 7 6 7;
-}
-
-.resources-category-websockets.resource-cached .resources-graph-bar {
-   -webkit-border-image: url(Images/timelineHollowPillGray.png) 6 7 6 7;
 }
 
 #resource-views {
