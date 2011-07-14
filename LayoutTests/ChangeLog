@@ -1,3 +1,9 @@
+2011-07-13  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] Update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-13  Kent Tamura  <tkent@chromium.org>
 
         [Qt] Remove duplicated entries.

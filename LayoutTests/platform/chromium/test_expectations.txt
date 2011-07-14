@@ -58,6 +58,9 @@ BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 BUGWK55913 DEBUG : jquery/dimensions.html = TIMEOUT PASS
 
+BUGWK64498 SLOW DEBUG : fast/encoding/parser-tests-40.html = PASS
+BUGWK64502 SLOW DEBUG : fast/forms/form-associated-element-crash3.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
