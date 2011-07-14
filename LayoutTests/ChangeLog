@@ -37,6 +37,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2011-07-14  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] updated test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-14  Tim Horton  <timothy_horton@apple.com>
 
         Clear SVGElementInstance's children immediately upon detachment

@@ -645,7 +645,7 @@ BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = TEXT P
 BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = TEXT PASS
 
 BUGWK62309 WIN DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
-BUGWK62309 WIN : inspector/styles/styles-iframe.html = PASS TEXT
+BUGWK62309 DEBUG SLOW : inspector/styles/styles-iframe.html = PASS
 BUGWK62309 WIN : inspector/styles/parse-utf8-bom.html = PASS TEXT
 BUGWK62309 WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
