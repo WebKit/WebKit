@@ -1,3 +1,9 @@
+2011-07-13  MORITA Hajime <morrita@google.com>
+
+        Unreviewed attempt at a build fix.
+
+        * win/WebKit2CFLite.def:
+
 2011-07-13  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] forwarded node should be able to access its hosting content element.
