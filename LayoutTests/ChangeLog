@@ -1,3 +1,9 @@
+2011-07-14  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] updated test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT crashes on host constructor calls in debug mode.
