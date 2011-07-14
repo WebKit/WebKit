@@ -1,3 +1,9 @@
+2011-07-14  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Adding myself to the reviewers list; No review needed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-14  Adam Roben  <aroben@apple.com>
 
         Don't use Element.prototype.classList in TestFailures
