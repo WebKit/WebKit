@@ -3707,7 +3707,7 @@ BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 BUGWK62754 MAC LINUX RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
 BUGWK62754 MAC LINUX DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
-BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS SLOW
+BUGWK59921 WIN LINUX SLOW : inspector/debugger/debugger-scripts.html = TEXT PASS
 
 // Needs new baseline.
 BUGWK64253 : fast/css/pseudo-cache-stale.html = FAIL
