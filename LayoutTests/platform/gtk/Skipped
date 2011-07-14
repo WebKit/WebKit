@@ -249,6 +249,9 @@ editing/pasteboard/paste-text-008.html
 editing/undo/undo-smart-delete-reversed-selection.html
 editing/selection/directionality-after-undo-replace.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=64530
+editing/selection/editable-html-element.html
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
