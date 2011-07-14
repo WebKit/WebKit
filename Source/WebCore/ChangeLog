@@ -1,3 +1,21 @@
+2011-07-14  Peter Varga  <pvarga@webkit.org>
+
+        [Qt][V8] Build fix after r90830.
+
+        Reviewed by Csaba Osztrogonác.
+
+        The histogramEnumeration() function isn't available from the Qt port's
+        PlatformBridge.h because this function is Chromium specific.
+        Since the http://trac.webkit.org/changeset/90830 change we need to
+        guard the usage of the histogramEnumeration() function.
+
+        No new tests needed.
+
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::recordActionTakenCallback):
+        (WebCore::V8InspectorFrontendHost::recordPanelShownCallback):
+        (WebCore::V8InspectorFrontendHost::recordSettingChangedCallback):
+
 2011-07-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: show only Console and Scripts panels in shared worker inspector front-end
