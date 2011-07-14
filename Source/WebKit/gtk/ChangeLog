@@ -1,3 +1,21 @@
+2011-07-14  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Fix GTK unit tests failures when WebKit is build outside repository directory.
+        https://bugs.webkit.org/show_bug.cgi?id=62935
+
+        WebKit can be build with WEBKITOUTPUTDIR env variable set using build-webkit script.
+        In this case WEBKITOUTPUDIR may be outside repository structure. This causes testmimehandling and testwebview
+        to fail because they use external test files in WebKit Source directory.
+        This bug fixes this issue introducing optional environment variable WEBKITREPODIR
+        Also coding style in existing functions is fixed.
+
+
+        * tests/test_utils.c: Coding style fixes.
+        (testutils_relative_chdir): If WEBKITREPODIR is set, change current directory to it.
+        * tests/test_utils.h: Coding style fixes.
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota

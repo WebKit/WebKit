@@ -22,29 +22,32 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-int testutils_relative_chdir(const gchar* target_filename, const gchar* executable_path)
+int testutils_relative_chdir(const gchar *targetFilename, const gchar *executablePath)
 {
-    if (g_path_is_absolute(executable_path)) {
-        if (g_chdir(g_path_get_dirname(executable_path))) {
+    /* user can set location of the webkit repository directory if it differs from build directory */
+    const gchar *repoPath = g_getenv("WEBKITREPODIR");
+    if (repoPath) {
+        if (g_chdir(repoPath))
             return -1;
-        }
+    } else if (g_path_is_absolute(executablePath)) {
+        if (g_chdir(g_path_get_dirname(executablePath)))
+            return -1;
     }
 
-    while (!g_file_test(target_filename, G_FILE_TEST_EXISTS)) {
-        gchar *path_name;
-        if (g_chdir("..")) {
+    while (!g_file_test(targetFilename, G_FILE_TEST_EXISTS)) {
+        gchar *pathName;
+        if (g_chdir(".."))
             return -1;
-        }
-        g_assert(!g_str_equal((path_name = g_get_current_dir()), "/"));
-        g_free(path_name);
+        g_assert(!g_str_equal((pathName = g_get_current_dir()), "/"));
+        g_free(pathName);
     }
 
-    gchar* dirname = g_path_get_dirname(target_filename);
-    if (g_chdir(dirname)) {
-        g_free(dirname);
+    gchar *dirName = g_path_get_dirname(targetFilename);
+    if (g_chdir(dirName)) {
+        g_free(dirName);
         return -1;
     }
 
-    g_free(dirname);
+    g_free(dirName);
     return 0;
 }
