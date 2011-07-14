@@ -110,7 +110,6 @@
     <file>SourceTokenizer.js</file>
     <file>StatusBarButton.js</file>
     <file>StylesSidebarPane.js</file>
-    <file>SummaryBar.js</file>
     <file>TabbedPane.js</file>
     <file>TestController.js</file>
     <file>TextEditorHighlighter.js</file>

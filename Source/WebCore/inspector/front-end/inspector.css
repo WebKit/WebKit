@@ -2940,64 +2940,6 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     display: none;
 }
 
-#resources-summary {
-    position: absolute;
-    padding-top: 20px;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 93px;
-    margin-left: -1px;
-    border-left: 1px solid rgb(102, 102, 102);
-    background-color: rgb(101, 111, 130);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.5)));
-    background-repeat: repeat-x;
-    background-position: bottom;
-    text-align: center;
-    text-shadow: black 0 1px 1px;
-    white-space: nowrap;
-    color: white;
-    -webkit-background-size: 1px 6px;
-    -webkit-background-origin: padding;
-    -webkit-background-clip: padding;
-    z-index: 400;
-}
-
-.summary-graph-legend {
-    margin-top: -10px;
-    padding-left: 15px;
-}
-
-.summary-graph-legend-item {
-    display: inline-block;
-    font-weight: bold;
-    margin-right: 15px;
-    vertical-align: top;
-}
-
-.summary-graph-legend-item.total {
-    margin-left: 10px;
-}
-
-.summary-graph-legend-label {
-    display: inline-block;
-    text-align: left;
-}
-
-.summary-graph-legend-header {
-    font-size: 12px;
-}
-
-.summary-graph-legend-value {
-    font-size: 10px;
-}
-
-.summary-graph-legend-swatch {
-    vertical-align: top;
-    margin-top: 1px;
-    margin-right: 3px;
-}
-
 .resources-dividers {
     position: absolute;
     left: 0;
@@ -3089,78 +3031,6 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     font-size: 9px;
     color: rgb(50%, 50%, 50%);
     white-space: nowrap;
-}
-
-.resources-graph-label {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto -7px;
-    height: 13px;
-    line-height: 13px;
-    font-size: 9px;
-    color: rgba(0, 0, 0, 0.75);
-    text-shadow: rgba(255, 255, 255, 0.25) 1px 0 0, rgba(255, 255, 255, 0.25) -1px 0 0, rgba(255, 255, 255, 0.333) 0 1px 0, rgba(255, 255, 255, 0.25) 0 -1px 0;
-    z-index: 150;
-    overflow: hidden;
-    text-align: center;
-    font-weight: bold;
-    opacity: 0;
-    -webkit-transition: opacity 250ms ease-in-out;
-}
-
-.resources-graph-side:hover .resources-graph-label {
-    opacity: 1;
-}
-
-.resources-graph-label:empty {
-    display: none;
-}
-
-.resources-graph-label.waiting {
-    margin-right: 5px;
-}
-
-.resources-graph-label.waiting-right {
-    margin-left: 5px;
-}
-
-.resources-graph-label.before {
-    color: rgba(0, 0, 0, 0.7);
-    text-shadow: none;
-    text-align: right;
-    margin-right: 2px;
-}
-
-.resources-graph-label.before::after {
-    padding-left: 2px;
-    height: 6px;
-    content: url(Images/graphLabelCalloutLeft.png);
-}
-
-.resources-graph-label.after {
-    color: rgba(0, 0, 0, 0.7);
-    text-shadow: none;
-    text-align: left;
-    margin-left: 2px;
-}
-
-.resources-graph-label.after::before {
-    padding-right: 2px;
-    height: 6px;
-    content: url(Images/graphLabelCalloutRight.png);
-}
-
-.resources-graph-bar {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto -7px;
-    border-width: 6px 7px;
-    height: 13px;
-    min-width: 14px;
-    opacity: 0.65;
-    -webkit-border-image: url(Images/timelinePillGray.png) 6 7 6 7;
 }
 
 .resources-category-documents, .resources-category-stylesheets, .resources-category-images,
@@ -3549,14 +3419,6 @@ body.inactive .sidebar-tree-item.selected {
     bottom: 0;
     right: 8px;
     left: 9px;
-}
-
-#resources-container:not(.viewing-resource) .resource-sidebar-tree-item:nth-of-type(2n) {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-#resources-container:not(.viewing-resource) .resources-graph-side:nth-of-type(2n) {
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .resources-time-graph-sidebar-item .icon {

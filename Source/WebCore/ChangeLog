@@ -1,3 +1,16 @@
+2011-07-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: remove more dead code
+        https://bugs.webkit.org/show_bug.cgi?id=64524
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * inspector/front-end/SummaryBar.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+
 2011-07-14  Peter Varga  <pvarga@webkit.org>
 
         [Qt][V8] Build fix after r90830.
