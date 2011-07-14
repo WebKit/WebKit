@@ -55,10 +55,10 @@ nodist_injected_bundle_built_sources = \
 	DerivedSources/InjectedBundle/JSEventSendingController.cpp \
 	DerivedSources/InjectedBundle/JSGCController.cpp \
 	DerivedSources/InjectedBundle/JSLayoutTestController.cpp
-BUILT_SOURCES += $(injected_bundle_built_sources)
+BUILT_SOURCES += $(nodist_injected_bundle_built_sources)
 
 Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
-	$(injected_bundle_built_sources) \
+	$(nodist_injected_bundle_built_sources) \
 	Tools/WebKitTestRunner/InjectedBundle/ActivateFonts.h \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp \
