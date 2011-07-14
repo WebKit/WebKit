@@ -458,6 +458,11 @@ bool InputType::canBeSuccessfulSubmitButton()
     return false;
 }
 
+HTMLElement* InputType::placeholderElement() const
+{
+    return 0;
+}
+
 bool InputType::rendererIsNeeded()
 {
     return true;
@@ -658,6 +663,10 @@ bool InputType::shouldRespectHeightAndWidthAttributes()
 bool InputType::supportsPlaceholder() const
 {
     return false;
+}
+
+void InputType::updatePlaceholderText()
+{
 }
 
 void InputType::multipleAttributeChanged()

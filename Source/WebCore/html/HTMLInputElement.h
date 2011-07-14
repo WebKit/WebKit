@@ -118,6 +118,7 @@ public:
 #if ENABLE(INPUT_SPEECH)
     HTMLElement* speechButtonElement() const;
 #endif
+    virtual HTMLElement* placeholderElement() const;
 
     bool checked() const { return m_isChecked; }
     void setChecked(bool, bool sendChangeEvent = false);
@@ -302,6 +303,7 @@ private:
     bool isTextType() const;
 
     virtual bool supportsPlaceholder() const;
+    virtual void updatePlaceholderText();
     virtual bool isEmptyValue() const { return value().isEmpty(); }
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent();

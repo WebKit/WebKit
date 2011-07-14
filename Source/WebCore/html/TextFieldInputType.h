@@ -69,10 +69,13 @@ private:
     virtual bool shouldUseInputMethod() const;
     virtual String sanitizeValue(const String&);
     virtual bool shouldRespectListAttribute();
+    virtual HTMLElement* placeholderElement() const;
+    virtual void updatePlaceholderText();
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;
     RefPtr<HTMLElement> m_innerText;
+    RefPtr<HTMLElement> m_placeholder;
     RefPtr<HTMLElement> m_innerSpinButton;
 #if ENABLE(INPUT_SPEECH)
     RefPtr<HTMLElement> m_speechButton;

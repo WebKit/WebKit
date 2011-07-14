@@ -126,8 +126,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return BEFORE;
     case PseudoAfter:
         return AFTER;
-    case PseudoInputPlaceholder:
-        return INPUT_PLACEHOLDER;
     case PseudoScrollbar:
         return SCROLLBAR;
     case PseudoScrollbarButton:
@@ -256,7 +254,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(DATALIST)
     DEFINE_STATIC_LOCAL(AtomicString, inputListButton, ("-webkit-input-list-button"));
 #endif
-    DEFINE_STATIC_LOCAL(AtomicString, inputPlaceholder, ("-webkit-input-placeholder"));
     DEFINE_STATIC_LOCAL(AtomicString, lastChild, ("last-child"));
     DEFINE_STATIC_LOCAL(AtomicString, lastOfType, ("last-of-type"));
     DEFINE_STATIC_LOCAL(AtomicString, link, ("link"));
@@ -326,7 +323,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(DATALIST)
         nameToPseudoType->set(inputListButton.impl(), CSSSelector::PseudoInputListButton);
 #endif
-        nameToPseudoType->set(inputPlaceholder.impl(), CSSSelector::PseudoInputPlaceholder);
         nameToPseudoType->set(lastChild.impl(), CSSSelector::PseudoLastChild);
         nameToPseudoType->set(lastOfType.impl(), CSSSelector::PseudoLastOfType);
         nameToPseudoType->set(onlyChild.impl(), CSSSelector::PseudoOnlyChild);
@@ -415,7 +411,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoFirstLine:
         compat = true;
     case PseudoInputListButton:
-    case PseudoInputPlaceholder:
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:

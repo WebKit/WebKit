@@ -128,8 +128,16 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderValueChanged)
 {
-    if (supportsPlaceholder() && renderer())
-        toRenderTextControl(renderer())->updatePlaceholderVisibility(placeholderShouldBeVisible(), placeholderValueChanged);
+    if (!supportsPlaceholder())
+        return;
+    if (!placeholderElement() || placeholderValueChanged)
+        updatePlaceholderText();
+    HTMLElement* placeholder = placeholderElement();
+    if (!placeholder)
+        return;
+    ExceptionCode ec = 0;
+    placeholder->getInlineStyleDecl()->setProperty(CSSPropertyVisibility, placeholderShouldBeVisible() ? "visible" : "hidden", ec);
+    ASSERT(!ec);
 }
 
 RenderTextControl* HTMLTextFormControlElement::textRendererAfterUpdateLayout()

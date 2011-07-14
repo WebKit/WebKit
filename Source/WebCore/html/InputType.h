@@ -198,6 +198,7 @@ public:
 #if ENABLE(INPUT_SPEECH)
     virtual HTMLElement* speechButtonElement() const { return 0; }
 #endif
+    virtual HTMLElement* placeholderElement() const;
 
     // Miscellaneous functions
 
@@ -226,6 +227,7 @@ public:
     virtual bool isSteppable() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
     virtual bool supportsPlaceholder() const;
+    virtual void updatePlaceholderText();
     virtual void multipleAttributeChanged();
 
     // Parses the specified string for the type, and return

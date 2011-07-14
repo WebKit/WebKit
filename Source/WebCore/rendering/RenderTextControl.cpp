@@ -69,11 +69,11 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
     return disabledColor;
 }
 
-RenderTextControl::RenderTextControl(Node* node, bool placeholderVisible)
+RenderTextControl::RenderTextControl(Node* node)
     : RenderBlock(node)
-    , m_placeholderVisible(placeholderVisible)
     , m_lastChangeWasUserEdit(false)
 {
+    ASSERT(toTextFormControl(node));
 }
 
 RenderTextControl::~RenderTextControl()
@@ -444,55 +444,15 @@ void RenderTextControl::addFocusRingRects(Vector<LayoutRect>& rects, const Layou
         rects.append(LayoutRect(additionalOffset, size()));
 }
 
-void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisible, bool placeholderValueChanged)
+RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    bool oldPlaceholderVisible = m_placeholderVisible;
-    m_placeholderVisible = placeholderShouldBeVisible;
-    if (oldPlaceholderVisible != m_placeholderVisible || placeholderValueChanged)
-        repaint();
-}
-
-void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (style()->visibility() != VISIBLE)
-        return;
-    
-    LayoutRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
-    if (clipRect.isEmpty())
-        return;
-    
-    GraphicsContextStateSaver stateSaver(*paintInfo.context);
-    paintInfo.context->clip(clipRect);
-    
-    RefPtr<RenderStyle> placeholderStyle = getCachedPseudoStyle(INPUT_PLACEHOLDER);
-    if (!placeholderStyle)
-        placeholderStyle = style();
-    
-    paintInfo.context->setFillColor(placeholderStyle->visitedDependentColor(CSSPropertyColor), placeholderStyle->colorSpace());
-    
-    String placeholderText = static_cast<HTMLTextFormControlElement*>(node())->strippedPlaceholder();
-    TextRun textRun(placeholderText.characters(), placeholderText.length(), false, 0, 0, TextRun::AllowTrailingExpansion, placeholderStyle->direction(), placeholderStyle->unicodeBidi() == Override);
-    
-    RenderBox* textRenderer = innerTextElement() ? innerTextElement()->renderBox() : 0;
-    if (textRenderer) {
-        LayoutPoint textPoint;
-        textPoint.setY(paintOffset.y() + textBlockInsetTop() + placeholderStyle->fontMetrics().ascent());
-        LayoutUnit styleTextIndent = placeholderStyle->textIndent().isFixed() ? placeholderStyle->textIndent().calcMinValue(0) : 0;
-        if (placeholderStyle->isLeftToRightDirection())
-            textPoint.setX(paintOffset.x() + styleTextIndent + textBlockInsetLeft());
-        else
-            textPoint.setX(paintOffset.x() + width() - textBlockInsetRight() - styleTextIndent - style()->font().width(textRun));
-        
-        paintInfo.context->drawBidiText(placeholderStyle->font(), textRun, textPoint);
-    }
-}
-
-void RenderTextControl::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{    
-    if (m_placeholderVisible && paintInfo.phase == PaintPhaseForeground)
-        paintPlaceholder(paintInfo, paintOffset);
-    
-    RenderBlock::paintObject(paintInfo, paintOffset);
+    HTMLElement* placeholder = toTextFormControl(node())->placeholderElement();
+    RenderObject* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
+    if (!placeholderRenderer)
+        return 0;
+    if (relayoutChildren)
+        placeholderRenderer->setNeedsLayout(true);
+    return placeholderRenderer;
 }
 
 } // namespace WebCore

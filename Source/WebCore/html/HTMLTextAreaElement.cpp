@@ -174,7 +174,7 @@ void HTMLTextAreaElement::parseMappedAttribute(Attribute* attr)
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderTextControlMultiLine(this, placeholderShouldBeVisible());
+    return new (arena) RenderTextControlMultiLine(this);
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
@@ -440,6 +440,34 @@ bool HTMLTextAreaElement::lastChangeWasUserEdit() const
 bool HTMLTextAreaElement::shouldUseInputMethod() const
 {
     return true;
+}
+
+HTMLElement* HTMLTextAreaElement::placeholderElement() const
+{
+    return m_placeholder.get();
+}
+
+void HTMLTextAreaElement::updatePlaceholderText()
+{
+    ExceptionCode ec = 0;
+    String placeholderText = strippedPlaceholder();
+    if (placeholderText.isEmpty()) {
+        if (m_placeholder) {
+            shadowRoot()->removeChild(m_placeholder.get(), ec);
+            ASSERT(!ec);
+            m_placeholder.clear();
+        }
+        return;
+    }
+    if (!m_placeholder) {
+        m_placeholder = HTMLDivElement::create(document());
+        m_placeholder->setShadowPseudoId("-webkit-input-placeholder", ec);
+        ASSERT(!ec);
+        shadowRoot()->insertBefore(m_placeholder, shadowRoot()->firstChild()->nextSibling(), ec);
+        ASSERT(!ec);
+    }
+    m_placeholder->setInnerText(placeholderText, ec);
+    ASSERT(!ec);
 }
 
 }

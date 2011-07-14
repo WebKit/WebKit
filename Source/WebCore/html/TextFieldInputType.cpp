@@ -126,7 +126,7 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 
 RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
-    return new (arena) RenderTextControlSingleLine(element(), element()->placeholderShouldBeVisible());
+    return new (arena) RenderTextControlSingleLine(element());
 }
 
 bool TextFieldInputType::needsContainer() const
@@ -207,10 +207,16 @@ HTMLElement* TextFieldInputType::speechButtonElement() const
 }
 #endif
 
+HTMLElement* TextFieldInputType::placeholderElement() const
+{
+    return m_placeholder.get();
+}
+
 void TextFieldInputType::destroyShadowSubtree()
 {
     InputType::destroyShadowSubtree();
     m_innerText.clear();
+    m_placeholder.clear();
     m_innerBlock.clear();
 #if ENABLE(INPUT_SPEECH)
     m_speechButton.clear();
@@ -301,6 +307,31 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
 bool TextFieldInputType::shouldRespectListAttribute()
 {
     return true;
+}
+
+void TextFieldInputType::updatePlaceholderText()
+{
+    if (!supportsPlaceholder())
+        return;
+    ExceptionCode ec = 0;
+    String placeholderText = element()->strippedPlaceholder();
+    if (placeholderText.isEmpty()) {
+        if (m_placeholder) {
+            m_placeholder->parentNode()->removeChild(m_placeholder.get(), ec);
+            ASSERT(!ec);
+            m_placeholder.clear();
+        }
+        return;
+    }
+    if (!m_placeholder) {
+        m_placeholder = HTMLDivElement::create(element()->document());
+        m_placeholder->setShadowPseudoId("-webkit-input-placeholder", ec);
+        ASSERT(!ec);
+        element()->shadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ec);
+        ASSERT(!ec);
+    }
+    m_placeholder->setInnerText(placeholderText, ec);
+    ASSERT(!ec);
 }
 
 } // namespace WebCore

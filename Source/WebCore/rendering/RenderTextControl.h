@@ -44,10 +44,8 @@ public:
 
     VisiblePosition visiblePositionForIndex(int index) const;
 
-    void updatePlaceholderVisibility(bool, bool);
-
 protected:
-    RenderTextControl(Node*, bool);
+    RenderTextControl(Node*);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     HTMLElement* innerTextElement() const;
@@ -74,6 +72,7 @@ protected:
 
     virtual void updateFromElement();
     virtual void computeLogicalHeight();
+    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 
     bool m_placeholderVisible;
 
@@ -84,7 +83,6 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
-    virtual void paintObject(PaintInfo&, const LayoutPoint&);
     
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
 
@@ -94,12 +92,6 @@ private:
 
     static bool isSelectableElement(HTMLElement*, Node*);
     
-    virtual int textBlockInsetLeft() const = 0;
-    virtual int textBlockInsetRight() const = 0;
-    virtual int textBlockInsetTop() const = 0;
-
-    void paintPlaceholder(PaintInfo&, const IntPoint&);
-
     bool m_lastChangeWasUserEdit;
 };
 

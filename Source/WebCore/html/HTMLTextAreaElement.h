@@ -74,6 +74,8 @@ private:
     void setValueCommon(const String&);
 
     virtual bool supportsPlaceholder() const { return true; }
+    virtual HTMLElement* placeholderElement() const;
+    virtual void updatePlaceholderText();
     virtual bool isEmptyValue() const { return value().isEmpty(); }
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
@@ -106,6 +108,7 @@ private:
     int m_rows;
     int m_cols;
     WrapMethod m_wrap;
+    RefPtr<HTMLElement> m_placeholder;
     mutable String m_value;
     mutable bool m_isDirty;
     bool m_wasModifiedByUser;

@@ -35,14 +35,11 @@ class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {
 public:
-    RenderTextControlSingleLine(Node*, bool);
+    RenderTextControlSingleLine(Node*);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
-
-    bool placeholderIsVisible() const { return m_placeholderVisible; }
-    bool placeholderShouldBeVisible() const;
 
     void addSearchResult();
     void stopSearchEventTimer();
@@ -125,10 +122,6 @@ private:
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
     HTMLInputElement* inputElement() const;
-
-    virtual int textBlockInsetLeft() const;
-    virtual int textBlockInsetRight() const;
-    virtual int textBlockInsetTop() const;
 
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;

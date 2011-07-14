@@ -1,3 +1,43 @@
+2011-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Implement text field placeholders using shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=64253
+
+        Reviewed by Dimitri Glazkov.
+
+        Add some test cases, and update expectations because placeholders
+        have their renderers.
+
+        * fast/forms/input-placeholder-text-indent.html:
+          Remove an obsolete comment. A placeholder respects a percentage indent.
+        * fast/forms/placeholder-position.html:
+          Add tests for line-height and text-align.
+        * fast/forms/textarea-placeholder-wrapping.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-text-indent-expected.png:
+        * platform/mac/fast/forms/input-placeholder-text-indent-expected.txt:
+        * platform/mac/fast/forms/isindex-placeholder-expected.png:
+        * platform/mac/fast/forms/isindex-placeholder-expected.txt:
+        * platform/mac/fast/forms/password-placeholder-expected.txt:
+        * platform/mac/fast/forms/password-placeholder-text-security-expected.png:
+        * platform/mac/fast/forms/password-placeholder-text-security-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/placeholder-set-attribute-expected.txt:
+        * platform/mac/fast/forms/placeholder-stripped-expected.txt:
+        * platform/mac/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/mac/fast/forms/search-styled-expected.png:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-set-attribute-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-wrapping-expected.png: Added.
+        * platform/mac/fast/forms/textarea-placeholder-wrapping-expected.txt: Added.
+        * platform/qt/test_expectations.txt:
+
 2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Parse -webkit-content-order property

@@ -497,8 +497,20 @@ textarea {
     word-wrap: break-word;
 }
 
-input::-webkit-input-placeholder, isindex::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+::-webkit-input-placeholder {
+    -webkit-text-security: none;
     color: darkGray;
+    display: block !important;
+    pointer-events: none !important;
+    position: relative !important;
+}
+
+input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {
+    white-space: pre;
+    word-wrap: normal;
+    overflow: hidden;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 input[type="password"] {

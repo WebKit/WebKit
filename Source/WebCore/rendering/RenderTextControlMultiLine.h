@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RenderTextControlMultiLine : public RenderTextControl {
 public:
-    RenderTextControlMultiLine(Node*, bool);
+    RenderTextControlMultiLine(Node*);
     virtual ~RenderTextControlMultiLine();
 
     void forwardEvent(Event*);
@@ -49,9 +49,7 @@ private:
 
     virtual RenderStyle* textBaseStyle() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
-    virtual int textBlockInsetLeft() const;
-    virtual int textBlockInsetRight() const;
-    virtual int textBlockInsetTop() const;
+    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 };
 
 inline RenderTextControlMultiLine* toRenderTextControlMultiLine(RenderObject* object)

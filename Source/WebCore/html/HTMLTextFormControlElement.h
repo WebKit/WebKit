@@ -45,6 +45,7 @@ public:
     virtual bool supportsPlaceholder() const = 0;
     String strippedPlaceholder() const;
     bool placeholderShouldBeVisible() const;
+    virtual HTMLElement* placeholderElement() const = 0;
 
     int indexForVisiblePosition(const VisiblePosition&) const;
     int selectionStart() const;
@@ -75,6 +76,7 @@ protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
 
     void updatePlaceholderVisibility(bool);
+    virtual void updatePlaceholderText() = 0;
 
     virtual void parseMappedAttribute(Attribute*);
 

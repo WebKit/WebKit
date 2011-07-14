@@ -69,8 +69,8 @@ VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint&
 
 // ----------------------------
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node, bool placeholderVisible)
-    : RenderTextControl(node, placeholderVisible)
+RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
+    : RenderTextControl(node)
     , m_searchPopupIsVisible(false)
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextHeight(-1)
@@ -324,6 +324,19 @@ void RenderTextControlSingleLine::layout()
         RenderBox* parentBox = innerSpinBox->parentBox();
         innerSpinBox->setLocation(LayoutPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
         innerSpinBox->setHeight(height() - borderTop() - borderBottom());
+    }
+
+    HTMLElement* placeholderElement = inputElement()->placeholderElement();
+    if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
+        placeholderBox->style()->setWidth(Length(innerTextRenderer->width() - placeholderBox->borderAndPaddingWidth(), Fixed));
+        placeholderBox->style()->setHeight(Length(innerTextRenderer->height() - placeholderBox->borderAndPaddingHeight(), Fixed));
+        placeholderBox->layoutIfNeeded();
+        LayoutPoint textOffset = innerTextRenderer->location();
+        if (innerBlockElement() && innerBlockElement()->renderBox())
+            textOffset += toLayoutSize(innerBlockElement()->renderBox()->location());
+        if (containerRenderer)
+            textOffset += toLayoutSize(containerRenderer->location());
+        placeholderBox->setLocation(textOffset);
     }
 }
 
@@ -846,39 +859,5 @@ HTMLInputElement* RenderTextControlSingleLine::inputElement() const
 {
     return node()->toInputElement();
 }
-
-int RenderTextControlSingleLine::textBlockInsetLeft() const
-{
-    int inset = borderLeft() + clientPaddingLeft();
-    if (HTMLElement* innerText = innerTextElement()) {
-        if (RenderBox* innerTextRenderer = innerText->renderBox())
-            inset += innerTextRenderer->paddingLeft();
-    }
-    return inset;
-}
-    
-int RenderTextControlSingleLine::textBlockInsetRight() const
-{
-    int inset = borderRight() + clientPaddingRight();
-    if (HTMLElement* innerText = innerTextElement()) {
-        if (RenderBox* innerTextRenderer = innerText->renderBox())
-            inset += innerTextRenderer->paddingRight();
-    }
-    return inset;
-}
-
-int RenderTextControlSingleLine::textBlockInsetTop() const
-{
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText || !innerText->renderBox())
-        return borderTop() + paddingTop();
-    HTMLElement* container = containerElement();
-    if (!container)
-        return innerText->renderBox()->y();
-    ASSERT(innerBlockElement());
-    if (!container->renderBox() || !innerBlockElement()->renderBox())
-        return innerText->renderBox()->y();
-    return container->renderBox()->y() + innerBlockElement()->renderBox()->y();
-}    
 
 }

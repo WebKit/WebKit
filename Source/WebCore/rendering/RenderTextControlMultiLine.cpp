@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node, bool placeholderVisible)
-    : RenderTextControl(node, placeholderVisible)
+RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node)
+    : RenderTextControl(node)
 {
 }
 
@@ -123,35 +123,20 @@ RenderStyle* RenderTextControlMultiLine::textBaseStyle() const
 {
     return style();
 }
-    
-int RenderTextControlMultiLine::textBlockInsetLeft() const
-{
-    int inset = borderLeft() + paddingLeft();
-    if (HTMLElement* innerText = innerTextElement()) {
-        if (RenderBox* innerTextRenderer = innerText->renderBox())
-            inset += innerTextRenderer->paddingLeft();
-    }
-    return inset;
-}
 
-int RenderTextControlMultiLine::textBlockInsetRight() const
+RenderObject* RenderTextControlMultiLine::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    int inset = borderRight() + paddingRight();
-    if (HTMLElement* innerText = innerTextElement()) {
-        if (RenderBox* innerTextRenderer = innerText->renderBox())
-            inset += innerTextRenderer->paddingRight();
-    }
-    return inset;
-}
-
-int RenderTextControlMultiLine::textBlockInsetTop() const
-{
-    int inset = borderTop() + paddingTop();
-    if (HTMLElement* innerText = innerTextElement()) {
-        if (RenderBox* innerTextRenderer = innerText->renderBox())
-            inset += innerTextRenderer->paddingTop();
-    }
-    return inset;
+    RenderObject* placeholderRenderer = RenderTextControl::layoutSpecialExcludedChild(relayoutChildren);
+    if (!placeholderRenderer)
+        return 0;
+    if (!placeholderRenderer->isBox())
+        return placeholderRenderer;
+    RenderBox* placeholderBox = toRenderBox(placeholderRenderer);
+    placeholderBox->style()->setWidth(Length(contentWidth() - placeholderBox->borderAndPaddingWidth(), Fixed));
+    placeholderBox->layoutIfNeeded();
+    placeholderBox->setX(borderLeft() + paddingLeft());
+    placeholderBox->setY(borderTop() + paddingTop());
+    return placeholderRenderer;
 }
     
 }

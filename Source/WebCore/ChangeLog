@@ -1,3 +1,102 @@
+2011-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Implement text field placeholders using shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=64253
+
+        Reviewed by Dimitri Glazkov.
+
+        Represents a placeholder text as a shadow element, and its
+        visibility is controlled by 'visibility' CSS property.
+
+        This patch removes all of existing code about placeholder from
+        RenderTextControl*. RenderTextControl* have only small code about
+        placeholder layout.
+
+        Also, this patch removes INPUT_PLACEHOLDER legacy pseudo ID, and
+        the placeholder style uses Element::shadowPseudoId().
+
+        This fixes the following regressions:
+        - https://bugs.webkit.org/show_bug.cgi?id=51290
+        - https://bugs.webkit.org/show_bug.cgi?id=54797
+        - https://bugs.webkit.org/show_bug.cgi?id=54814
+        - https://bugs.webkit.org/show_bug.cgi?id=63367
+
+        Test: fast/forms/textarea-placeholder-wrapping.html
+
+        * css/CSSSelector.cpp: Remove INPUT_PLACEHOLDER legacy pseudo ID.
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h: ditto.
+        * css/html.css:
+        (::-webkit-input-placeholder): Added. This contains properties
+        common in <input> and <textarea>. Some properties have !important
+        so that a stylesheet specified by a page author won't break
+        WebKit's assumption.
+        (input::-webkit-input-placeholder, isindex::-webkit-input-placeholder):
+         Added the default style for <input> placeholders.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::placeholderElement): Delegate to an InputType.
+        (WebCore::HTMLInputElement::updatePlaceholderText): ditto.
+        * html/HTMLInputElement.h: Declare placeholderElement() and updatePlaceholderText().
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createRenderer):
+        Remove the 'placeholderVisible' argument.
+        (WebCore::HTMLTextAreaElement::placeholderElement): Added.
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+         Added. This creates, deletes, or updates the placeholder element.
+        * html/HTMLTextAreaElement.h:
+        - Declare placeholderElement() and updatePlaceholderText().
+        - Add m_placeholder.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        Update the placeholder element and 'visibility' CSS property,
+        instead of delegating the job to a renderer.
+        * html/HTMLTextFormControlElement.h:
+        Declare two pure virtual functions: placeholderElement() and updatePlaceholderText().
+        * html/InputType.cpp:
+        (WebCore::InputType::placeholderElement): Add an empty implementation.
+        (WebCore::InputType::updatePlaceholderText): Add an empty implementation.
+        * html/InputType.h: Declare placeholderElement() and updatePlaceholderText().
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createRenderer):
+        Remove the 'placeholderVisible' argument.
+        (WebCore::TextFieldInputType::placeholderElement): Added.
+        (WebCore::TextFieldInputType::destroyShadowSubtree): Deletes m_placeholder.
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+         Added. This creates, deletes, or updates the placeholder element.
+        * html/TextFieldInputType.h:
+        - Declare placeholderElement() and updatePlaceholderText().
+        - Add m_placeholder.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        Remove the 'placeholderVisible' argument.
+        (WebCore::RenderTextControl::layoutSpecialExcludedChild):
+        Excludes the placeholder renderer in order to avoid to secure a box for
+        the placeholder.
+        * rendering/RenderTextControl.h:
+        - Remove declarations of removed functions.
+        - Update the RenderTextControl signature.
+        - Add layoutSpecialExcludedChild().
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::RenderTextControlMultiLine):
+        Remove the 'placeholderVisible' argument.
+        (WebCore::RenderTextControlMultiLine::layoutSpecialExcludedChild):
+        Laying out the placeholder box so that it has correct width and location.
+        * rendering/RenderTextControlMultiLine.h:
+        - Remove declarations of removed functions.
+        - Update the RenderTextControlMultiLine signature.
+        - Add layoutSpecialExcludedChild().
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        Remove the 'placeholderVisible' argument.
+        (WebCore::RenderTextControlSingleLine::layout):
+        Laying out the placeholder box so that it has correct width and location.
+        * rendering/RenderTextControlSingleLine.h:
+        - Remove declarations of removed functions.
+        - Update the RenderTextControlSingleLine signature.
+        * rendering/style/RenderStyleConstants.h: Remove INPUT_PLACEHOLDER.
+
 2011-07-13  James Simonsen  <simonjam@chromium.org>
 
         Remove hack that forcefully prevents scripts from running in shadow SVG

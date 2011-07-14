@@ -164,6 +164,11 @@ HTMLElement* HTMLInputElement::speechButtonElement() const
 }
 #endif
 
+HTMLElement* HTMLInputElement::placeholderElement() const
+{
+    return m_inputType->placeholderElement();
+}
+
 bool HTMLInputElement::shouldAutocomplete() const
 {
     if (m_autocomplete != Uninitialized)
@@ -1817,6 +1822,11 @@ bool HTMLInputElement::isChecked() const
 bool HTMLInputElement::supportsPlaceholder() const
 {
     return m_inputType->supportsPlaceholder();
+}
+
+void HTMLInputElement::updatePlaceholderText()
+{
+    return m_inputType->updatePlaceholderText();
 }
 
 CheckedRadioButtons& HTMLInputElement::checkedRadioButtons() const
