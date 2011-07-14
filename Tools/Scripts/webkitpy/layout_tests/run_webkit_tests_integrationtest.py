@@ -67,8 +67,7 @@ from webkitpy.test.skip import skip_if
 from webkitpy.thirdparty.mock import Mock
 
 
-def parse_args(extra_args=None, record_results=False, tests_included=False,
-               new_results=False, print_nothing=True):
+def parse_args(extra_args=None, record_results=False, tests_included=False, new_results=False, print_nothing=True):
     extra_args = extra_args or []
     if print_nothing:
         args = ['--print', 'nothing']
@@ -93,17 +92,13 @@ def parse_args(extra_args=None, record_results=False, tests_included=False,
     return run_webkit_tests.parse_args(args)
 
 
-def passing_run(extra_args=None, port_obj=None, record_results=False,
-                tests_included=False, filesystem=None):
-    options, parsed_args = parse_args(extra_args, record_results,
-                                      tests_included)
+def passing_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None):
+    options, parsed_args = parse_args(extra_args, record_results, tests_included)
     if not port_obj:
-        port_obj = port.get(port_name=options.platform, options=options,
-                            user=mocktool.MockUser(), filesystem=filesystem)
+        port_obj = port.get(port_name=options.platform, options=options, user=mocktool.MockUser(), filesystem=filesystem)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
-    res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output,
-                               regular_output=regular_output)
+    res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
     return res == 0 and regular_output.empty() and buildbot_output.empty()
 
 
@@ -114,11 +109,9 @@ def logging_run(extra_args=None, port_obj=None, record_results=False, tests_incl
                                       print_nothing=False, new_results=new_results)
     user = mocktool.MockUser()
     if not port_obj:
-        port_obj = port.get(port_name=options.platform, options=options,
-                            user=user, filesystem=filesystem)
+        port_obj = port.get(port_name=options.platform, options=options, user=user, filesystem=filesystem)
 
-    res, buildbot_output, regular_output = run_and_capture(port_obj, options,
-                                                           parsed_args)
+    res, buildbot_output, regular_output = run_and_capture(port_obj, options, parsed_args)
     return (res, buildbot_output, regular_output, user)
 
 

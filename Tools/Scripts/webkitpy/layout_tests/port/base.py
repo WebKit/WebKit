@@ -37,6 +37,7 @@ import difflib
 import errno
 import os
 
+from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.memoized import memoized
 from webkitpy.common.net.testoutputset import AggregateTestOutputSet
 
@@ -607,7 +608,7 @@ class Port(object):
         # self._config.webkit_base_dir() knows where the webkit root is, no other
         # object in NRWT seems to keep an SCM around.  (Unlike webkit-patch where it's on the Tool/Host object.)
         # FIXME: We should be able to get the SCM from somewhere else.
-        return scm.detect_scm_system(self._config.webkit_base_dir())
+        return detect_scm_system(self._config.webkit_base_dir())
 
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.

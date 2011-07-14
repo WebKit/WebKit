@@ -241,7 +241,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
     # Add in a file should be ignored by test_files.find().
     files[LAYOUT_TEST_DIR + 'userscripts/resources/iframe.html'] = 'iframe'
 
-    fs = filesystem_mock.MockFileSystem(files)
+    fs = filesystem_mock.MockFileSystem(files, dirs=set(['/mock']))  # Make sure at least the checkout_root exists as a directory.
     fs._tests = test_list
     return fs
 

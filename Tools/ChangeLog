@@ -3,6 +3,24 @@
         NRWT doesn't store the svn revision in full_results.json on chromium-win
         https://bugs.webkit.org/show_bug.cgi?id=64492
 
+        Unreviewed.  Just fixing my test-webkitpy regression.
+
+        Fix the unit tests.  Unfortunately scm does not use a filesystem
+        object so we can't control the result of detect_scm_system.
+        When detect_scm_system would fail, we would log, which would
+        cause all passing_run integration tests to fail.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
+2011-07-14  Eric Seidel  <eric@webkit.org>
+
+        NRWT doesn't store the svn revision in full_results.json on chromium-win
+        https://bugs.webkit.org/show_bug.cgi?id=64492
+
         Reviewed by Ojan Vafai.
 
         This should fix the bug.  Unfortunately this code is currently

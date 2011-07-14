@@ -93,8 +93,7 @@ class SCM:
         if self.working_directory_is_clean():
             return
         if not force_clean:
-            # FIXME: Shouldn't this use cwd=self.checkout_root?  (Git definitely would want that, unclear if SVN would.)
-            print self.run(self.status_command(), error_handler=Executive.ignore_error)
+            print self.run(self.status_command(), error_handler=Executive.ignore_error, cwd=self.checkout_root)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         log("Cleaning working directory")
         self.clean_working_directory()
