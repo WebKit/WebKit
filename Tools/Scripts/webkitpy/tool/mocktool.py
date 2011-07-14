@@ -543,6 +543,10 @@ class MockCheckout(object):
             "author": self._committer_list.contributor_by_email("abarth@webkit.org"),
             "reviewer_text": "Darin Adler",
             "reviewer": self._committer_list.committer_by_name("Darin Adler"),
+            "changed_files": [
+                "path/to/file",
+                "another/file",
+            ],
         })
 
     def is_path_to_changelog(self, path):

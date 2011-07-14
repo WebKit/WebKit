@@ -58,8 +58,9 @@ class Checkout(object):
         changelog_file = StringIO.StringIO(changelog_contents.decode("utf-8", "ignore"))
         return ChangeLog.parse_latest_entry_from_file(changelog_file)
 
-    def changelog_entries_for_revision(self, revision):
-        changed_files = self._scm.changed_files_for_revision(revision)
+    def changelog_entries_for_revision(self, revision, changed_files=None):
+        if not changed_files:
+            changed_files = self._scm.changed_files_for_revision(revision)
         # FIXME: This gets confused if ChangeLog files are moved, as
         # deletes are still "changed files" per changed_files_for_revision.
         # FIXME: For now we hack around this by caching any exceptions
@@ -74,26 +75,31 @@ class Checkout(object):
                 pass
         return changelog_entries
 
-    @memoized
-    def commit_info_for_revision(self, revision):
-        committer_email = self._scm.committer_email_for_revision(revision)
-        changelog_entries = self.changelog_entries_for_revision(revision)
+    def _changelog_data_for_revision(self, revision):
+        changed_files = self._scm.changed_files_for_revision(revision)
+        changelog_entries = self.changelog_entries_for_revision(revision, changed_files=changed_files)
         # Assume for now that the first entry has everything we need:
         # FIXME: This will throw an exception if there were no ChangeLogs.
         if not len(changelog_entries):
             return None
         changelog_entry = changelog_entries[0]
-        changelog_data = {
+        return {
             "bug_id": parse_bug_id_from_changelog(changelog_entry.contents()),
             "author_name": changelog_entry.author_name(),
             "author_email": changelog_entry.author_email(),
             "author": changelog_entry.author(),
             "reviewer_text": changelog_entry.reviewer_text(),
             "reviewer": changelog_entry.reviewer(),
+            "contents": changelog_entry.contents(),
+            "changed_files": changed_files,
         }
-        # We could pass the changelog_entry instead of a dictionary here, but that makes
-        # mocking slightly more involved, and would make aggregating data from multiple
-        # entries more difficult to wire in if we need to do that in the future.
+
+    @memoized
+    def commit_info_for_revision(self, revision):
+        committer_email = self._scm.committer_email_for_revision(revision)
+        changelog_data = self._changelog_data_for_revision(revision)
+        if not changelog_data:
+            return None
         return CommitInfo(revision, committer_email, changelog_data)
 
     def bug_id_for_revision(self, revision):

@@ -1,3 +1,21 @@
+2011-07-13  Adam Barth  <abarth@webkit.org>
+
+        gardening server should have an API for parsing changelogs
+        https://bugs.webkit.org/show_bug.cgi?id=64495
+
+        Reviewed by Eric Seidel.
+
+        This patch exposes much of the same information from CommitInfo in a
+        dictionary form, which is easier to send over-the-wire as JSON to the
+        frontend.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+
 2011-07-13  Eric Seidel  <eric@webkit.org>
 
         REGRESSION: GitTestWithMock.test_create_patch fails

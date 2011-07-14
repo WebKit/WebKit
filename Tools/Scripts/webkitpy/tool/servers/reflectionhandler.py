@@ -28,6 +28,12 @@
 
 from __future__ import with_statement
 
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
+
 import BaseHTTPServer
 
 import codecs
@@ -92,11 +98,11 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(text)
 
-    def _serve_json(self, json):
+    def _serve_json(self, json_object):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        simplejson.dump(json, self.wfile)
+        json.dump(json_object, self.wfile)
 
     def _serve_file(self, file_path, cacheable_seconds=0):
         if not os.path.exists(file_path):

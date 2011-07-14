@@ -26,6 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
+
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -51,6 +57,11 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
         print text
         print "== End Response =="
 
+    def _serve_json(self, json_object):
+        print "== Begin JSON Response =="
+        print json.dumps(json_object)
+        print "== End JSON Response =="
+
 
 class GardeningServerTest(unittest.TestCase):
     def _post_to_path(self, path, expected_stderr=None, expected_stdout=None):
@@ -58,12 +69,20 @@ class GardeningServerTest(unittest.TestCase):
         handler.path = path
         OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
+    def test_changelog(self):
+        expected_stderr = "MOCK run_and_throw_if_fail: ['mock-update-webkit']\n"
+        expected_stdout = """== Begin JSON Response ==
+{"bug_id": 42, "author_email": "abarth@webkit.org", "reviewer_text": "Darin Adler", "author_name": "Adam Barth", "changed_files": ["path/to/file", "another/file"]}
+== End JSON Response ==
+"""
+        self._post_to_path("/changelog?revision=2314", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+
     def test_rollout(self):
         expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason']\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rollout?revision=2314&reason=MOCK+rollout+reason", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
-    def test_rebaseline_test(self):
+    def test_rebaseline(self):
         expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html', 'txt']\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&suffix=txt", expected_stderr=expected_stderr, expected_stdout=expected_stdout)

@@ -178,9 +178,10 @@ class CheckoutTest(unittest.TestCase):
 
     def test_commit_info_for_revision(self):
         scm = Mock()
-        scm.committer_email_for_revision = lambda revision: "committer@example.com"
+        scm.changed_files_for_revision = lambda revision: ['path/to/file', 'another/file']
+        scm.committer_email_for_revision = lambda revision, changed_files=None: "committer@example.com"
         checkout = Checkout(scm)
-        checkout.changelog_entries_for_revision = lambda revision: [ChangeLogEntry(_changelog1entry1)]
+        checkout.changelog_entries_for_revision = lambda revision, changed_files=None: [ChangeLogEntry(_changelog1entry1)]
         commitinfo = checkout.commit_info_for_revision(4)
         self.assertEqual(commitinfo.bug_id(), 36629)
         self.assertEqual(commitinfo.author_name(), u"Tor Arne Vestb\u00f8")
@@ -189,15 +190,25 @@ class CheckoutTest(unittest.TestCase):
         self.assertEqual(commitinfo.reviewer(), None)
         self.assertEqual(commitinfo.committer_email(), "committer@example.com")
         self.assertEqual(commitinfo.committer(), None)
+        self.assertEqual(commitinfo.to_json(), {
+            'bug_id': 36629,
+            'author_email': 'vestbo@webkit.org',
+            'changed_files': [
+                'path/to/file',
+                'another/file',
+            ],
+            'reviewer_text': None,
+            'author_name': u'Tor Arne Vestb\xf8',
+        })
 
-        checkout.changelog_entries_for_revision = lambda revision: []
+        checkout.changelog_entries_for_revision = lambda revision, changed_files=None: []
         self.assertEqual(checkout.commit_info_for_revision(1), None)
 
     def test_bug_id_for_revision(self):
         scm = Mock()
         scm.committer_email_for_revision = lambda revision: "committer@example.com"
         checkout = Checkout(scm)
-        checkout.changelog_entries_for_revision = lambda revision: [ChangeLogEntry(_changelog1entry1)]
+        checkout.changelog_entries_for_revision = lambda revision, changed_files=None: [ChangeLogEntry(_changelog1entry1)]
         self.assertEqual(checkout.bug_id_for_revision(4), 36629)
 
     def test_bug_id_for_this_commit(self):
@@ -215,7 +226,7 @@ class CheckoutTest(unittest.TestCase):
         self.assertEqual(checkout.modified_changelogs(git_commit=None), expected_changlogs)
 
     def test_suggested_reviewers(self):
-        def mock_changelog_entries_for_revision(revision):
+        def mock_changelog_entries_for_revision(revision, changed_files=None):
             if revision % 2 == 0:
                 return [ChangeLogEntry(_changelog1entry1)]
             return [ChangeLogEntry(_changelog1entry2)]

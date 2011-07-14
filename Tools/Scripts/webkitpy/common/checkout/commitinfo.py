@@ -36,12 +36,7 @@ class CommitInfo(object):
     def __init__(self, revision, committer_email, changelog_data, committer_list=CommitterList()):
         self._revision = revision
         self._committer_email = committer_email
-        self._bug_id = changelog_data["bug_id"]
-        self._author_name = changelog_data["author_name"]
-        self._author_email = changelog_data["author_email"]
-        self._author = changelog_data["author"]
-        self._reviewer_text = changelog_data["reviewer_text"]
-        self._reviewer = changelog_data["reviewer"]
+        self._changelog_data = changelog_data
 
         # Derived values:
         self._committer = committer_list.committer_by_email(committer_email)
@@ -56,22 +51,34 @@ class CommitInfo(object):
         return self._committer_email
 
     def bug_id(self):
-        return self._bug_id  # May be None
+        return self._changelog_data["bug_id"]  # May be None
 
     def author(self):
-        return self._author  # May be None
+        return self._changelog_data["author"]  # May be None
 
     def author_name(self):
-        return self._author_name
+        return self._changelog_data["author_name"]
 
     def author_email(self):
-        return self._author_email
+        return self._changelog_data["author_email"]
 
     def reviewer(self):
-        return self._reviewer # May be None
+        return self._changelog_data["reviewer"]  # May be None
 
     def reviewer_text(self):
-        return self._reviewer_text # May be None
+        return self._changelog_data["reviewer_text"]  # May be None
+
+    def changed_files(self):
+        return self._changelog_data["changed_files"]
+
+    def to_json(self):
+        return {
+            "bug_id": self.bug_id(),
+            "author_name": self.author_name(),
+            "author_email": self.author_email(),
+            "reviewer_text": self.reviewer_text(),
+            "changed_files": self.changed_files(),
+        }
 
     def responsible_parties(self):
         responsible_parties = [
