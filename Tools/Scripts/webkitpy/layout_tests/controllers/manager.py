@@ -1099,6 +1099,10 @@ class Manager(object):
         if self._options.new_baseline:
             p.print_config("Placing new baselines in %s" %
                            self._port.baseline_path())
+
+        fallback_path = [self._fs.split(x)[1] for x in self._port.baseline_search_path()]
+        p.print_config("Baseline search path: %s -> generic" % " -> ".join(fallback_path))
+
         p.print_config("Using %s build" % self._options.configuration)
         if self._options.pixel_tests:
             p.print_config("Pixel tests enabled")

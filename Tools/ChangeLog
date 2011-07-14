@@ -1,3 +1,13 @@
+2011-07-13  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests: print baseline search path as part of config output
+        https://bugs.webkit.org/show_bug.cgi?id=64499
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+
 2011-07-13  Adam Barth  <abarth@webkit.org>
 
         gardening server should have an API for parsing changelogs
