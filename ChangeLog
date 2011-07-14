@@ -1,3 +1,9 @@
+2011-07-14  MORITA Hajime <morrita@google.com>
+
+        Unreviewed attempt to build fix.
+        
+        * Source/autotools/symbols.filter:
+
 2011-07-13  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] forwarded node should be able to access its hosting content element.
