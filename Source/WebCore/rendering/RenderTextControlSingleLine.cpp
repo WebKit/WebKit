@@ -27,8 +27,6 @@
 #include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
-#include "Event.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -36,12 +34,12 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
-#include "MouseEvent.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
+#include "SearchPopupMenu.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
 #include "TextControlInnerElements.h"
@@ -361,23 +359,6 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
         hitInnerTextElement(result, pointInParent, accumulatedOffset);
     }
     return true;
-}
-
-void RenderTextControlSingleLine::forwardEvent(Event* event)
-{
-    RenderBox* innerTextRenderer = innerTextElement()->renderBox();
-
-    if (event->type() == eventNames().blurEvent) {
-        if (innerTextRenderer) {
-            if (RenderLayer* innerLayer = innerTextRenderer->layer())
-                innerLayer->scrollToOffset(!style()->isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0, RenderLayer::ScrollOffsetClamped);
-        }
-
-        capsLockStateMayHaveChanged();
-    } else if (event->type() == eventNames().focusEvent)
-        capsLockStateMayHaveChanged();
-
-    RenderTextControl::forwardEvent(event);
 }
 
 void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

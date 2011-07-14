@@ -57,7 +57,6 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
-    void forwardEvent(Event*);
 
     int textBlockWidth() const;
     int textBlockHeight() const;

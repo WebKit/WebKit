@@ -89,6 +89,13 @@ void HTMLTextFormControlElement::defaultEventHandler(Event* event)
     HTMLFormControlElementWithState::defaultEventHandler(event);
 }
 
+void HTMLTextFormControlElement::forwardEvent(Event* event)
+{
+    if (event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)
+        return;
+    innerTextElement()->defaultEventHandler(event);
+}
+
 String HTMLTextFormControlElement::strippedPlaceholder() const
 {
     // According to the HTML5 specification, we need to remove CR and LF from

@@ -22,8 +22,6 @@
 #include "config.h"
 #include "RenderTextControlMultiLine.h"
 
-#include "Event.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -68,11 +66,6 @@ bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitT
         hitInnerTextElement(result, pointInContainer, accumulatedOffset);
 
     return true;
-}
-
-void RenderTextControlMultiLine::forwardEvent(Event* event)
-{
-    RenderTextControl::forwardEvent(event);
 }
 
 float RenderTextControlMultiLine::getAvgCharWidth(AtomicString family)

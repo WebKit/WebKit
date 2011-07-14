@@ -24,10 +24,7 @@
 
 #include "AXObjectCache.h"
 #include "Editor.h"
-#include "Event.h"
-#include "EventNames.h"
 #include "Frame.h"
-#include "FrameSelection.h"
 #include "HTMLBRElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -316,13 +313,6 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
     result.setLocalPoint(pointInContainer - toSize(adjustedLocation + innerText->renderBox()->location()));
-}
-
-void RenderTextControl::forwardEvent(Event* event)
-{
-    if (event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)
-        return;
-    innerTextElement()->defaultEventHandler(event);
 }
 
 static const char* fontFamiliesWithInvalidCharWidth[] = {

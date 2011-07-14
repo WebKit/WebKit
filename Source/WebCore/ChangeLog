@@ -1,3 +1,30 @@
+2011-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move forwardEvent from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=64475
+
+        Reviewed by Kent Tamura.
+
+        Moved forwardEvent from RenderTextControl, RenderTextControlSingleLine, and RenderTextControlMultiLine
+        to HTMLTextFormControlElement, HTMLInputElement, and HTMLTextAreaElement.
+
+        This removes the last dependency on Event.h and EventNames.h in the cpp files for the above render
+        objects classes.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::forwardEvent):
+        * html/HTMLTextFormControlElement.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-07-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: if you rename an element into the INPUT element the browser will crash.

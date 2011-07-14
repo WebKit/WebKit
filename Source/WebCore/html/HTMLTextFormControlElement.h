@@ -39,6 +39,8 @@ public:
 
     virtual ~HTMLTextFormControlElement();
 
+    void forwardEvent(Event*);
+
     virtual void insertedIntoDocument();
 
     // The derived class should return true if placeholder processing is needed.
@@ -74,7 +76,6 @@ public:
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
-
     void updatePlaceholderVisibility(bool);
     virtual void updatePlaceholderText() = 0;
 

@@ -31,8 +31,6 @@ public:
     RenderTextControlMultiLine(Node*);
     virtual ~RenderTextControlMultiLine();
 
-    void forwardEvent(Event*);
-
 private:
     virtual bool isTextArea() const { return true; }
 

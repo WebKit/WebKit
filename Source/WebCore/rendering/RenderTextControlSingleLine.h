@@ -23,15 +23,14 @@
 #ifndef RenderTextControlSingleLine_h
 #define RenderTextControlSingleLine_h
 
-#include "HTMLInputElement.h"
 #include "PopupMenuClient.h"
 #include "RenderTextControl.h"
-#include "SearchPopupMenu.h"
 #include "Timer.h"
 
 namespace WebCore {
 
 class HTMLInputElement;
+class SearchPopupMenu;
 
 class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {
 public:
@@ -47,8 +46,6 @@ public:
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
     void hidePopup();
-
-    void forwardEvent(Event*);
 
     void capsLockStateMayHaveChanged();
 

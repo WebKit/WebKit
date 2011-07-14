@@ -37,6 +37,7 @@
 #include "HTMLInputElement.h"
 #include "KeyboardEvent.h"
 #include "Page.h"
+#include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
@@ -115,8 +116,20 @@ void TextFieldInputType::handleWheelEventForSpinButton(WheelEvent* event)
 
 void TextFieldInputType::forwardEvent(Event* event)
 {
-    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent))
-        toRenderTextControlSingleLine(element()->renderer())->forwardEvent(event);
+    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)) {
+        RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(element()->renderer());
+        if (event->type() == eventNames().blurEvent) {
+            if (RenderBox* innerTextRenderer = innerTextElement()->renderBox()) {
+                if (RenderLayer* innerLayer = innerTextRenderer->layer())
+                    innerLayer->scrollToOffset(!renderTextControl->style()->isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0, RenderLayer::ScrollOffsetClamped);
+            }
+
+            renderTextControl->capsLockStateMayHaveChanged();
+        } else if (event->type() == eventNames().focusEvent)
+            renderTextControl->capsLockStateMayHaveChanged();
+
+        element()->forwardEvent(event);
+    }
 }
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
