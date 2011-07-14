@@ -148,7 +148,7 @@ class Checkout(object):
             pass # We might not have ChangeLogs.
 
     def chromium_deps(self):
-        return DEPS(self._scm.absolute_path("Source", "WebKit", "chromium", "DEPS"))
+        return DEPS(self._scm.absolute_path(self._filesystem.join("Source", "WebKit", "chromium", "DEPS")))
 
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.

@@ -1,3 +1,15 @@
+2011-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: webkit-patch roll-chromium-deps is broken
+        https://bugs.webkit.org/show_bug.cgi?id=64568
+
+        Reviewed by Dirk Pranke
+
+        Use _filesystem.join.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittests.py:
+
 2011-07-14  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Adding myself to the reviewers list; No review needed.
