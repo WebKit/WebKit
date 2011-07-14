@@ -1,3 +1,13 @@
+2011-07-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement Plugin Process
+        https://bugs.webkit.org/show_bug.cgi?id=60546
+
+        * configure.ac: Always check for gtk2 when building the plugin
+        process.
+
 2011-07-14  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r90976, r90981, and r90985.

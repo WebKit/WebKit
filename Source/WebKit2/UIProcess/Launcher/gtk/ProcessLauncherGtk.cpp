@@ -44,6 +44,7 @@ using namespace WebCore;
 namespace WebKit {
 
 const char* gWebKitWebProcessName = "WebKitWebProcess";
+const char* gWebKitPluginProcessName = "WebKitPluginProcess";
 
 static void childSetupFunction(gpointer userData)
 {
@@ -75,7 +76,8 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    GOwnPtr<gchar> binaryPath(g_build_filename(applicationDirectoryPath().data(), gWebKitWebProcessName, NULL));
+    GOwnPtr<gchar> binaryPath(g_build_filename(applicationDirectoryPath().data(),
+                                               m_launchOptions.processType == ProcessLauncher::WebProcess ? gWebKitWebProcessName : gWebKitPluginProcessName, NULL));
     GOwnPtr<gchar> socket(g_strdup_printf("%d", sockets[0]));
     char* argv[3];
     argv[0] = binaryPath.get();

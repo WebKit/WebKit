@@ -196,24 +196,29 @@ AC_ARG_WITH([gtk],
         [with_gtk=2.0])
 AC_MSG_RESULT([$with_gtk])
 
+GTK2_REQUIRED_VERSION=2.10
+GAIL2_REQUIRED_VERSION=1.8
+GTK3_REQUIRED_VERSION=3.0
+GAIL3_REQUIRED_VERSION=3.0
+
 case "$with_gtk" in
-     2.0) GTK_REQUIRED_VERSION=2.10
+     2.0) GTK_REQUIRED_VERSION=$GTK2_REQUIRED_VERSION
           GTK_API_VERSION=2.0
           WEBKITGTK_API_MAJOR_VERSION=1
           WEBKITGTK_API_MINOR_VERSION=0
           WEBKITGTK_API_VERSION=1.0
           WEBKITGTK_PC_NAME=webkit
           GAIL_PC_NAME=gail
-          GAIL_REQUIRED_VERSION=1.8
+          GAIL_REQUIRED_VERSION=$GAIL2_REQUIRED_VERSION
           ;;
-     3.0) GTK_REQUIRED_VERSION=3.0
+     3.0) GTK_REQUIRED_VERSION=$GTK3_REQUIRED_VERSION
           GTK_API_VERSION=3.0
           WEBKITGTK_API_MAJOR_VERSION=3
           WEBKITGTK_API_MINOR_VERSION=0
           WEBKITGTK_API_VERSION=3.0
           WEBKITGTK_PC_NAME=webkitgtk
           GAIL_PC_NAME=gail-3.0
-          GAIL_REQUIRED_VERSION=3.0
+          GAIL_REQUIRED_VERSION=$GAIL3_REQUIRED_VERSION
           ;;
 esac
 
@@ -1110,6 +1115,15 @@ AC_ARG_ENABLE(plugin_process,
 if test "$enable_webkit2" = "no"; then
     enable_plugin_process=no
 fi
+
+# Make sure we have gtk+ 2.x to build the plugin process
+if test "$enable_plugin_process" = "yes"; then
+   PKG_CHECK_MODULES(GTK2, gtk+-2.0 >= $GTK2_REQUIRED_VERSION gail >= $GAIL2_REQUIRED_VERSION)
+fi
+
+AC_SUBST(GTK2_CFLAGS)
+AC_SUBST(GTK2_LIBS)
+
 AC_MSG_RESULT([$enable_plugin_process])
 
 GTK_DOC_CHECK([1.10])
