@@ -1,3 +1,9 @@
+2011-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rolled Chromium revision to 92606.
+
+        * DEPS:
+
 2011-07-14  Ilya Sherman  <isherman@chromium.org>
 
         Rename AutoFill -> Autofill and autoFill -> autofill
