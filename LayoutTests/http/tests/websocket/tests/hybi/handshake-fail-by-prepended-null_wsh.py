@@ -19,7 +19,10 @@
 # TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 import time
+from mod_pywebsocket import stream
+from mod_pywebsocket.handshake.hybi06 import compute_accept
 
 
 def web_socket_do_extra_handshake(request):
@@ -28,16 +31,14 @@ def web_socket_do_extra_handshake(request):
     # happens the client does not buffer all the frames as the server continues
     # to send more data - it should abort after reading a reasonable number of
     # bytes (set arbitrarily to 1024).
-    frame = '\0Frame-contains-thirty-two-bytes'
+    frame = stream.create_text_frame('\0Frame-contains-thirty-two-bytes')
 
     msg = frame
-    msg += 'HTTP/1.1 101 WebSocket Protocol Handshake\r\n'
-    msg += 'Upgrade: WebSocket\r\n'
+    msg += 'HTTP/1.1 101 Switching Protocols\r\n'
+    msg += 'Upgrade: websocket\r\n'
     msg += 'Connection: Upgrade\r\n'
-    msg += 'Sec-WebSocket-Location: ' + request.ws_location + '\r\n'
-    msg += 'Sec-WebSocket-Origin: ' + request.ws_origin + '\r\n'
+    msg += 'Sec-WebSocket-Accept: %s\r\n' % compute_accept(request.headers_in['Sec-WebSocket-Key'])[0]
     msg += '\r\n'
-    msg += request.ws_challenge_md5
     request.connection.write(msg)
     # continue writing data until the client disconnects
     while True:

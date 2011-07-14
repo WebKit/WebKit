@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -73,13 +73,15 @@ namespace WebCore {
         Mode mode() const;
         String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
-        String serverWebSocketOrigin() const;
-        String serverWebSocketLocation() const;
+        String serverWebSocketOrigin() const; // Only for hixie-76 handshake.
+        String serverWebSocketLocation() const; // Only for hixie-76 handshake.
         String serverWebSocketProtocol() const;
         String serverSetCookie() const;
         String serverSetCookie2() const;
         String serverUpgrade() const;
         String serverConnection() const;
+        String serverWebSocketAccept() const; // Only for hybi-10 handshake.
+        String serverWebSocketExtensions() const; // Only for hybi-10 handshake.
 
         const WebSocketHandshakeResponse& serverHandshakeResponse() const;
 
@@ -101,14 +103,19 @@ namespace WebCore {
 
         Mode m_mode;
 
-        String m_secWebSocketKey1;
-        String m_secWebSocketKey2;
-        unsigned char m_key3[8];
-        unsigned char m_expectedChallengeResponse[16];
-
         WebSocketHandshakeResponse m_response;
 
         String m_failureReason;
+
+        // For hixie-76 handshake.
+        String m_hixie76SecWebSocketKey1;
+        String m_hixie76SecWebSocketKey2;
+        unsigned char m_hixie76Key3[8];
+        unsigned char m_hixie76ExpectedChallengeResponse[16];
+
+        // For hybi-10 handshake.
+        String m_secWebSocketKey;
+        String m_expectedAccept;
     };
 
 } // namespace WebCore

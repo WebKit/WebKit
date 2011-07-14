@@ -1,3 +1,52 @@
+2011-07-13  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Implement hybi handshake
+        https://bugs.webkit.org/show_bug.cgi?id=64344
+
+        Reviewed by Kent Tamura.
+
+        Fix existing tests so they match the new handshake format, and add tests for new header fields.
+
+        There are several changes in the format of handshake response, such as:
+        - Reason string in HTTP status line has been changed to "Switching Protocols".
+        - The value of "Upgrade" header has been changed to "websocket" (lower-case only).
+        - Sec-WebSocket-Location and Sec-WebSocket-Origin are gone.
+        - "Challenge response" value (16-byte data after the response header fields) is removed, and
+          Sec-WebSocket-Accept header is added instead.
+
+        The value of Sec-WebSocket-Accept header is computed using compute_accept() function
+        located in mod_pywebsocket.handshake.hybi06 module. Although the module name contains
+        "hybi06", this function can be used to calculate the value of Sec-WebSocket-Accept header
+        for hybi-10 (calculation method has not been changed since hybi-06).
+
+        Note: Tests under hybi/ directory (including the new ones) are skipped and cannot be enabled
+        yet, because pywebsocket does not accept requests from half-baked client implementation
+        (i.e. hybi handshake + hixie-76 framing). They will be unskipped when hybi framing is landed
+        in WebCore.
+
+        * http/tests/websocket/tests/handler_map.txt:
+        There must be only one handler that can handle requests to "/". hybi/echo-location_wsh.py
+        is modified to accept requests of both protocol versions.
+        * http/tests/websocket/tests/hybi/bad-handshake-crash_wsh.py:
+        * http/tests/websocket/tests/hybi/echo-challenge_wsh.py:
+        * http/tests/websocket/tests/hybi/echo-location_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/long-invalid-header_wsh.py:
+        * http/tests/websocket/tests/hybi/workers/resources/echo-challenge_wsh.py:
+
 2011-07-13  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] forwarded node should be able to access its hosting content element.

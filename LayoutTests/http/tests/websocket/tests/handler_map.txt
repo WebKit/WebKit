@@ -1,3 +1,4 @@
 # websocket handler map file.
 # request to '/' will be handled by echo-location_wsh.py
-/ /websocket/tests/hixie76/echo-location
+# hybi/echo-location_wsh.py can handle both hixie-76 and hybi-10 protocols.
+/ /websocket/tests/hybi/echo-location

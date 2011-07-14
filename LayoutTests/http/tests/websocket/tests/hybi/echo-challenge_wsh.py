@@ -6,8 +6,4 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
-    msgutil.send_message(request, _hexify(request.ws_challenge))
-
-
-def _hexify(bytes):
-    return ':'.join(['%02X' % ord(byte) for byte in bytes])
+    msgutil.send_message(request, request.headers_in['Sec-WebSocket-Key'])

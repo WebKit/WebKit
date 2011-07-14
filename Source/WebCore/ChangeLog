@@ -1,3 +1,47 @@
+2011-07-13  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Implement hybi handshake
+        https://bugs.webkit.org/show_bug.cgi?id=64344
+
+        Reviewed by Kent Tamura.
+
+        Implement WebSocket handshake which is described at
+        <http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10#section-5.1>.
+
+        Notable differences from hixie-76 protocol are:
+        - Challenge-response scheme has been changed dramatically.
+        - Servers do not send Sec-WebSocket-Location and Sec-WebSocket-Origin anymore.
+        - The value of "Upgrade" header has been changed to "websocket" (lower-case only).
+        - "Origin" header in client's request is renamed to "Sec-WebSocket-Origin".
+
+        New tests: http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
+                   http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header.html
+                   http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header.html
+
+        Note: Tests under hybi/ directory (including the new ones) are skipped and cannot be enabled
+        yet, because pywebsocket does not accept requests from half-baked client implementation
+        (i.e. hybi handshake + hixie-76 framing). They will be unskipped when hybi framing is landed
+        in WebCore.
+
+        * websockets/WebSocketHandshake.cpp:
+        Functions and members only used for hixie-76 handshake are renamed so that they are not confused
+        with hybi-10's ones.
+        (WebCore::generateHixie76SecWebSocketKey):
+        (WebCore::generateHixie76Key3):
+        (WebCore::generateHixie76ExpectedChallengeResponse):
+        (WebCore::generateSecWebSocketKey):
+        Generates a value for Sec-WebSocket-Key as stated in hybi-10.
+        (WebCore::getExpectedWebSocketAccept):
+        Calculates the expected value of Sec-WebSocket-Accept.
+        (WebCore::WebSocketHandshake::WebSocketHandshake):
+        (WebCore::WebSocketHandshake::clientHandshakeMessage):
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::serverWebSocketAccept):
+        (WebCore::WebSocketHandshake::serverWebSocketExtensions):
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        * websockets/WebSocketHandshake.h:
+
 2011-07-13  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] forwarded node should be able to access its hosting content element.

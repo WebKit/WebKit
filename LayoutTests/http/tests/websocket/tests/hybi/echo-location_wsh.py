@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,6 +28,7 @@
 
 
 from mod_pywebsocket import msgutil
+from mod_pywebsocket.handshake._base import build_location
 
 
 def web_socket_do_extra_handshake(request):
@@ -35,5 +36,14 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
-    print request.ws_location
-    msgutil.send_message(request, request.ws_location)
+    if hasattr(request, 'ws_location'):
+        location = request.ws_location
+    else:
+        # When hybi protocol is used, pywebsocket does not provide
+        # ws_location attribute because servers are not required to send
+        # Sec-WebSocket-Location header according to the protocol
+        # specification. If ws_location attribute is not available,
+        # we use pywebsocket's internal function "build_function"
+        # to obtain the identical value.
+        location = build_location(request)
+    msgutil.send_message(request, location)
