@@ -477,7 +477,7 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
         ConstructData constructData;
         ConstructType constructType = getConstructData(callee, constructData);
         
-        ASSERT(constructType = ConstructTypeJS);
+        ASSERT(constructType != ConstructTypeJS);
         
         if (constructType == ConstructTypeHost) {
             if (!globalData->interpreter->registerFile().grow(execCallee->registers())) {
