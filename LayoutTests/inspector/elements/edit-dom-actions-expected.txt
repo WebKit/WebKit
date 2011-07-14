@@ -1,5 +1,6 @@
 Tests that user can mutate DOM by means of elements panel.
 
+ 
 Edited Text
 Span contents
 
@@ -22,6 +23,16 @@ Running: testSetNodeName
 ==== after ====
 - <div id="testSetNodeName">
       <span id="node-to-set-name" ></span>
+  </div>
+
+Running: testSetNodeNameInput
+==== before ====
+- <div id="testSetNodeNameInput">
+      <div id="node-to-set-name-input"></div>
+  </div>
+==== after ====
+- <div id="testSetNodeNameInput">
+      <input id="node-to-set-name-input" >
   </div>
 
 Running: testSetNodeValue

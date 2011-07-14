@@ -38,6 +38,16 @@ function test()
             }
         },
 
+        function testSetNodeNameInput(next)
+        {
+            domActionTest("testSetNodeNameInput", "node-to-set-name-input", testBody, next);
+
+            function testBody(node, done)
+            {
+                editNodePartAndRun(node, "webkit-html-tag-name", "input", done);
+            }
+        },
+
         function testSetNodeValue(next)
         {
             domActionTest("testSetNodeValue", "node-to-set-value", testBody, next);
@@ -173,6 +183,10 @@ Tests that user can mutate DOM by means of elements panel.
 
     <div id="testSetNodeName">
         <div id="node-to-set-name"></div>
+    </div>
+
+    <div id="testSetNodeNameInput">
+        <div id="node-to-set-name-input"></div>
     </div>
 
     <div id="testSetNodeValue">
