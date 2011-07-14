@@ -88,6 +88,7 @@ protected:
     bool hasCachedSelectionEnd() const { return m_cachedSelectionEnd >= 0; }
 
     virtual void defaultEventHandler(Event*);
+    virtual void subtreeHasChanged();
 
 private:
     int computeSelectionStart() const;

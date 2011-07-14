@@ -32,6 +32,7 @@
 #include "SearchInputType.h"
 
 #include "HTMLInputElement.h"
+#include "RenderTextControlSingleLine.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include <wtf/PassOwnPtr.h>
@@ -40,6 +41,7 @@ namespace WebCore {
 
 inline SearchInputType::SearchInputType(HTMLInputElement* element)
     : BaseTextInputType(element)
+    , m_searchEventTimer(this, &SearchInputType::searchEventTimerFired)
 {
 }
 
@@ -102,6 +104,32 @@ void SearchInputType::destroyShadowSubtree()
     TextFieldInputType::destroyShadowSubtree();
     m_resultsButton.clear();
     m_cancelButton.clear();
+}
+
+void SearchInputType::startSearchEventTimer()
+{
+    ASSERT(element()->renderer());
+    unsigned length = toRenderTextControlSingleLine(element()->renderer())->text().length();
+
+    if (!length) {
+        stopSearchEventTimer();
+        element()->onSearch();
+        return;
+    }
+
+    // After typing the first key, we wait 0.5 seconds.
+    // After the second key, 0.4 seconds, then 0.3, then 0.2 from then on.
+    m_searchEventTimer.startOneShot(max(0.2, 0.6 - 0.1 * length));
+}
+
+void SearchInputType::stopSearchEventTimer()
+{
+    m_searchEventTimer.stop();
+}
+
+void SearchInputType::searchEventTimerFired(Timer<SearchInputType>*)
+{
+    element()->onSearch();
 }
 
 

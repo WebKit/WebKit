@@ -42,21 +42,6 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
         static_cast<HTMLTextAreaElement*>(node())->rendererWillBeDestroyed();
 }
 
-void RenderTextControlMultiLine::subtreeHasChanged()
-{
-    RenderTextControl::subtreeHasChanged();
-    HTMLTextAreaElement* textArea = static_cast<HTMLTextAreaElement*>(node());
-    textArea->setChangedSinceLastFormControlChangeEvent(true);
-    textArea->setFormControlValueMatchesRenderer(false);
-    textArea->setNeedsValidityCheck();
-
-    if (!node()->focused())
-        return;
-
-    if (Frame* frame = this->frame())
-        frame->editor()->textDidChangeInTextArea(textArea);
-}
-
 bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))

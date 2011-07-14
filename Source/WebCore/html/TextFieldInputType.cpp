@@ -279,7 +279,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
 
     // We use RenderTextControlSingleLine::text() instead of InputElement::value()
     // because they can be mismatched by sanitizeValue() in
-    // RenderTextControlSingleLine::subtreeHasChanged() in some cases.
+    // HTMLInputElement::subtreeHasChanged() in some cases.
     unsigned oldLength = numGraphemeClusters(toRenderTextControlSingleLine(element()->renderer())->text());
 
     // selectionLength represents the selection length of this text field to be

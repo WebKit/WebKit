@@ -25,7 +25,6 @@
 
 #include "PopupMenuClient.h"
 #include "RenderTextControl.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -39,6 +38,7 @@ public:
     // FIXME: Move create*Style() to their classes.
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
+    void updateCancelButtonVisibility() const;
 
     void addSearchResult();
     void stopSearchEventTimer();
@@ -54,7 +54,6 @@ private:
     virtual IntRect controlClipRect(const IntPoint&) const;
     virtual bool isTextField() const { return true; }
 
-    virtual void subtreeHasChanged();
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void layout();
 
@@ -82,12 +81,8 @@ private:
 
     virtual RenderStyle* textBaseStyle() const;
 
-    void updateCancelButtonVisibility() const;
     EVisibility visibilityForCancelButton() const;
     const AtomicString& autosaveName() const;
-
-    void startSearchEventTimer();
-    void searchEventTimerFired(Timer<RenderTextControlSingleLine>*);
 
     // PopupMenuClient methods
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
@@ -132,7 +127,6 @@ private:
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
     LayoutUnit m_desiredInnerTextHeight;
-    Timer<RenderTextControlSingleLine> m_searchEventTimer;
     RefPtr<SearchPopupMenu> m_searchPopup;
     Vector<String> m_recentSearches;
 };

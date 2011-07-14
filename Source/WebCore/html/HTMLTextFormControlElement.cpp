@@ -82,7 +82,7 @@ void HTMLTextFormControlElement::dispatchBlurEvent()
 void HTMLTextFormControlElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().webkitEditableContentChangedEvent && renderer() && renderer()->isTextControl()) {
-        toRenderTextControl(renderer())->subtreeHasChanged();
+        subtreeHasChanged();
         return;
     }
 
@@ -94,6 +94,11 @@ void HTMLTextFormControlElement::forwardEvent(Event* event)
     if (event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)
         return;
     innerTextElement()->defaultEventHandler(event);
+}
+
+void HTMLTextFormControlElement::subtreeHasChanged()
+{
+    toRenderTextControl(renderer())->respondToChangeByUser();
 }
 
 String HTMLTextFormControlElement::strippedPlaceholder() const

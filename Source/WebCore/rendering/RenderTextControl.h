@@ -36,9 +36,7 @@ public:
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
     bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
-    void setLastChangeWasUserEdit(bool lastChangeWasUserEdit);
-
-    virtual void subtreeHasChanged();
+    void respondToChangeByUser() { m_lastChangeWasUserEdit = true; }
     String text();
     String textWithHardLineBreaks();
 

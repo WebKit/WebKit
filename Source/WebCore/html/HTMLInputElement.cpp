@@ -55,6 +55,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SearchInputType.h"
 #include "ScriptEventListener.h"
 #include "WheelEvent.h"
 #include <wtf/MathExtras.h>
@@ -612,6 +613,45 @@ void HTMLInputElement::updateType()
 
     setNeedsValidityCheck();
     notifyFormStateChanged();
+}
+
+void HTMLInputElement::subtreeHasChanged()
+{
+    ASSERT(isTextField());
+    ASSERT(renderer());
+    RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(renderer());
+
+    HTMLTextFormControlElement::subtreeHasChanged();
+
+    bool wasChanged = wasChangedSinceLastFormControlChangeEvent();
+    setChangedSinceLastFormControlChangeEvent(true);
+
+    // We don't need to call sanitizeUserInputValue() function here because
+    // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
+    // sanitizeUserInputValue().
+    // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
+    String value = toRenderTextControl(renderer())->text();
+    if (isAcceptableValue(value))
+        setValueFromRenderer(sanitizeValue(convertFromVisibleValue(value)));
+    // Recalc for :invalid and hasUnacceptableValue() change.
+    setNeedsStyleRecalc();
+
+    if (cancelButtonElement())
+        renderTextControl->updateCancelButtonVisibility();
+
+    // If the incremental attribute is set, then dispatch the search event
+    if (searchEventsShouldBeDispatched() && isSearchField() && m_inputType)
+        static_cast<SearchInputType*>(m_inputType.get())->startSearchEventTimer();
+
+    if (!wasChanged && focused()) {
+        if (Frame* frame = document()->frame())
+            frame->editor()->textFieldDidBeginEditing(this);
+    }
+
+    if (focused()) {
+        if (Frame* frame = document()->frame())
+            frame->editor()->textDidChangeInTextField(this);
+    }
 }
 
 const AtomicString& HTMLInputElement::formControlType() const
@@ -1373,8 +1413,8 @@ void HTMLInputElement::addSearchResult()
 void HTMLInputElement::onSearch()
 {
     ASSERT(isSearchField());
-    if (renderer())
-        toRenderTextControlSingleLine(renderer())->stopSearchEventTimer();
+    if (m_inputType)
+        static_cast<SearchInputType*>(m_inputType.get())->stopSearchEventTimer();
     dispatchEvent(Event::create(eventNames().searchEvent, true, false));
 }
 

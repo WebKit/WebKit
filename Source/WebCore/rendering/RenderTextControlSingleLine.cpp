@@ -72,7 +72,6 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
     , m_searchPopupIsVisible(false)
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextHeight(-1)
-    , m_searchEventTimer(this, &RenderTextControlSingleLine::searchEventTimerFired)
     , m_searchPopup(0)
 {
     ASSERT(node->isHTMLElement());
@@ -156,11 +155,6 @@ void RenderTextControlSingleLine::addSearchResult()
     m_searchPopup->saveRecentSearches(name, m_recentSearches);
 }
 
-void RenderTextControlSingleLine::stopSearchEventTimer()
-{
-    m_searchEventTimer.stop();
-}
-
 void RenderTextControlSingleLine::showPopup()
 {
     if (m_searchPopupIsVisible)
@@ -194,44 +188,6 @@ void RenderTextControlSingleLine::hidePopup()
 {
     if (m_searchPopup)
         m_searchPopup->popupMenu()->hide();
-}
-
-void RenderTextControlSingleLine::subtreeHasChanged()
-{
-    RenderTextControl::subtreeHasChanged();
-
-    ASSERT(node()->isElementNode());
-    Element* element = static_cast<Element*>(node());
-    bool wasChanged = element->wasChangedSinceLastFormControlChangeEvent();
-    element->setChangedSinceLastFormControlChangeEvent(true);
-
-    HTMLInputElement* input = inputElement();
-    // We don't need to call sanitizeUserInputValue() function here because
-    // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
-    // sanitizeUserInputValue().
-    // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
-    String value = text();
-    if (input->isAcceptableValue(value))
-        input->setValueFromRenderer(input->sanitizeValue(input->convertFromVisibleValue(value)));
-    // Recalc for :invalid and hasUnacceptableValue() change.
-    input->setNeedsStyleRecalc();
-
-    if (cancelButtonElement())
-        updateCancelButtonVisibility();
-
-    // If the incremental attribute is set, then dispatch the search event
-    if (input->searchEventsShouldBeDispatched())
-        startSearchEventTimer();
-
-    if (!wasChanged && node()->focused()) {
-        if (Frame* frame = this->frame())
-            frame->editor()->textFieldDidBeginEditing(static_cast<Element*>(node()));
-    }
-
-    if (node()->focused()) {
-        if (Frame* frame = document()->frame())
-            frame->editor()->textDidChangeInTextField(static_cast<Element*>(node()));
-    }
 }
 
 void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -586,27 +542,6 @@ EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
 const AtomicString& RenderTextControlSingleLine::autosaveName() const
 {
     return static_cast<Element*>(node())->getAttribute(autosaveAttr);
-}
-
-void RenderTextControlSingleLine::startSearchEventTimer()
-{
-    unsigned length = text().length();
-
-    // If there's no text, fire the event right away.
-    if (!length) {
-        stopSearchEventTimer();
-        inputElement()->onSearch();
-        return;
-    }
-
-    // After typing the first key, we wait 0.5 seconds.
-    // After the second key, 0.4 seconds, then 0.3, then 0.2 from then on.
-    m_searchEventTimer.startOneShot(max(0.2, 0.6 - 0.1 * length));
-}
-
-void RenderTextControlSingleLine::searchEventTimerFired(Timer<RenderTextControlSingleLine>*)
-{
-    inputElement()->onSearch();
 }
 
 // PopupMenuClient methods

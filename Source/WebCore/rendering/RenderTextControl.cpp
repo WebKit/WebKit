@@ -172,12 +172,6 @@ void RenderTextControl::setInnerTextValue(const String& value)
     static_cast<Element*>(node())->setFormControlValueMatchesRenderer(true);
 }
 
-void RenderTextControl::setLastChangeWasUserEdit(bool lastChangeWasUserEdit)
-{
-    m_lastChangeWasUserEdit = lastChangeWasUserEdit;
-    document()->setIgnoreAutofocus(lastChangeWasUserEdit);
-}
-
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
@@ -189,11 +183,6 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
     CharacterIterator it(range.get());
     it.advance(index - 1);
     return VisiblePosition(it.range()->endPosition(), UPSTREAM);
-}
-
-void RenderTextControl::subtreeHasChanged()
-{
-    m_lastChangeWasUserEdit = true;
 }
 
 static String finishText(StringBuilder& result)

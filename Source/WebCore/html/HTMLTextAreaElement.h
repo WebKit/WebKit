@@ -82,6 +82,8 @@ private:
     virtual bool isRequiredFormControl() const { return required(); }
 
     virtual void defaultEventHandler(Event*);
+    
+    virtual void subtreeHasChanged();
 
     virtual bool isEnumeratable() const { return true; }
 

@@ -315,6 +315,8 @@ private:
     virtual bool recalcWillValidate() const;
 
     void updateType();
+    
+    virtual void subtreeHasChanged();
 
     bool getAllowedValueStepWithDecimalPlaces(AnyStepHandling, double*, unsigned*) const;
 

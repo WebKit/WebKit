@@ -242,6 +242,21 @@ void HTMLTextAreaElement::defaultEventHandler(Event* event)
     HTMLTextFormControlElement::defaultEventHandler(event);
 }
 
+void HTMLTextAreaElement::subtreeHasChanged()
+{
+    HTMLTextFormControlElement::subtreeHasChanged();
+
+    setChangedSinceLastFormControlChangeEvent(true);
+    setFormControlValueMatchesRenderer(false);
+    setNeedsValidityCheck();
+
+    if (!focused())
+        return;
+
+    if (Frame* frame = document()->frame())
+        frame->editor()->textDidChangeInTextArea(this);
+}
+
 void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event) const
 {
     ASSERT(event);

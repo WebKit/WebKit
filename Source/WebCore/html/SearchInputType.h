@@ -32,6 +32,7 @@
 #define SearchInputType_h
 
 #include "BaseTextInputType.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -41,6 +42,9 @@ class SearchFieldResultsButtonElement;
 class SearchInputType : public BaseTextInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
+
+    void startSearchEventTimer();
+    void stopSearchEventTimer();
 
 private:
     SearchInputType(HTMLInputElement*);
@@ -53,8 +57,11 @@ private:
     virtual HTMLElement* resultsButtonElement() const;
     virtual HTMLElement* cancelButtonElement() const;
 
+    void searchEventTimerFired(Timer<SearchInputType>*);
+
     RefPtr<HTMLElement> m_resultsButton;
     RefPtr<HTMLElement> m_cancelButton;
+    Timer<SearchInputType> m_searchEventTimer;
 };
 
 } // namespace WebCore

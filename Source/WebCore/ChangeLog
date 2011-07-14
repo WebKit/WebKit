@@ -1,3 +1,44 @@
+2011-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move subtreeHasChanged from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=64476
+
+        Reviewed by Kent Tamura.
+
+        Moved subtreeHasChanged from RenderTextControl, RenderTextControlSingleLine, and
+        RenderTextControlMultiLine to HTMLTextFormControlElement, HTMLInputElement, and
+        HTMLTextAreaElement. Also moved m_searchEventTimer and related functions from
+        RenderTextSingleLine to SearchInputType.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::subtreeHasChanged): Moved from RenderTextControlSingleLine.
+        (WebCore::HTMLInputElement::onSearch): Calls stopSearchEventTimer.
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::subtreeHasChanged): Moved from RenderTextMultiLine.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::defaultEventHandler): Calls subtreeHasChanged.
+        (WebCore::HTMLTextFormControlElement::subtreeHasChanged): Added; calls respondToChangeByUser.
+        * html/HTMLTextFormControlElement.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType): Initializes m_searchEventTimer.
+        (WebCore::SearchInputType::startSearchEventTimer): Moved from RenderTextControlSingleLine.
+        (WebCore::SearchInputType::stopSearchEventTimer): Ditto.
+        (WebCore::SearchInputType::searchEventTimerFired): Ditto.
+        * html/SearchInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent): Updated comment.
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::respondToChangeByUser): Renamed from subtreeHasChanged.
+        * rendering/RenderTextControlMultiLine.cpp:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine): No longer initializes
+        m_searchEventTimer.
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-07-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Move XML errors handling out from XMLDocumentParser (refactoring).
