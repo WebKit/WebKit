@@ -69,6 +69,24 @@ InspectorTest.evaluateInPageWithTimeout = function(code)
     InspectorTest.evaluateInPage("setTimeout(unescape('" + escape(code) + "'))");
 }
 
+InspectorTest.showResource = function(resourceURL, callback)
+{
+    callback = InspectorTest.safeWrap(callback);
+    for (var url in WebInspector.resourceTreeModel._resourcesByURL) {
+        if (url.indexOf(resourceURL) !== -1) {
+            var resource = WebInspector.resourceTreeModel._resourcesByURL[url];
+            WebInspector.panels.resources.showResource(resource, 1);
+            var sourceFrame = WebInspector.panels.resources._resourceViewForResource(resource);
+            if (sourceFrame.loaded)
+                callback(sourceFrame);
+            else
+                sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, callback.bind(null, sourceFrame));
+            return;
+        }
+    }
+    InspectorTest.addSniffer(WebInspector.resourceTreeModel, "_bindResourceURL", InspectorTest.showResource.bind(InspectorTest, url, callback));
+};
+
 InspectorTest.addResult = function(text)
 {
     results.push(text);

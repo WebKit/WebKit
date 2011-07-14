@@ -2,6 +2,7 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/live-edit-test.js"></script>
 <script src="resources/edit-me.js"></script>
 <script src="resources/edit-me-when-paused.js"></script>
 
@@ -111,23 +112,7 @@ function test()
     function replaceInSource(sourceFrame, string, replacement, callback)
     {
         InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", callback);
-        sourceFrame._textViewer._mainPanel.readOnly = false;
-        sourceFrame.beforeTextChanged();
-        var oldRange, newRange;
-        var lines = sourceFrame._textModel._lines;
-        for (var i = 0; i < lines.length; ++i) {
-            var column = lines[i].indexOf(string);
-            if (column === -1)
-                continue;
-            lines[i] = lines[i].replace(string, replacement);
-            var lineEndings = replacement.lineEndings();
-            var lastLineLength = lineEndings[lineEndings.length - 1] - (lineEndings[lineEndings.length - 2] || 0);
-            oldRange = new WebInspector.TextRange(i, column, i, column + string.length);
-            newRange = new WebInspector.TextRange(i, column, i + lineEndings.length - 1, lastLineLength);
-            break;
-        }
-        sourceFrame.afterTextChanged(oldRange, newRange);
-        sourceFrame._textViewer._commitEditing();
+        InspectorTest.replaceInSource(sourceFrame, string, replacement);
     }
 };
 
