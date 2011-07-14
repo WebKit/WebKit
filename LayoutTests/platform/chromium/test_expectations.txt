@@ -614,10 +614,10 @@ BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector-enabled = PASS
 
-// Add support for inspector layout tests on non-Windows.
-BUGCR26734 MAC SKIP : inspector = PASS
-BUGCR26734 MAC SKIP : http/tests/inspector = PASS
-BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
+// Add support for inspector layout tests on Mac.
+BUGCR89357 MAC SKIP : inspector = PASS
+BUGCR89357 MAC SKIP : http/tests/inspector = PASS
+BUGCR89357 MAC SKIP : http/tests/inspector-enabled = PASS
 
 BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT TIMEOUT
 BUGCR67662 WIN LINUX : http/tests/inspector/console-websocket-error.html = TEXT
