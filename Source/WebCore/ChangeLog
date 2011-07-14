@@ -1,3 +1,14 @@
+2011-07-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: panel switching is too slow.
+        https://bugs.webkit.org/show_bug.cgi?id=60959
+
+        * inspector/front-end/inspector.css:
+        (.panel):
+        (.panel.visible):
+
 2011-07-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: remove more unused CSS from inspector.css
