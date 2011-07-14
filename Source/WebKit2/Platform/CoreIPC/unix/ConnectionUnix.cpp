@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,6 +90,39 @@ private:
     size_t m_attachmentCount;
 };
 
+class AttachmentInfo {
+public:
+    AttachmentInfo()
+        : m_type(Attachment::Uninitialized)
+        , m_size(0)
+        , m_isNull(false)
+    {
+    }
+
+    void setType(Attachment::Type type) { m_type = type; }
+    Attachment::Type getType() { return m_type; }
+    void setSize(size_t size)
+    {
+        ASSERT(m_type == Attachment::MappedMemoryType);
+        m_size = size;
+    }
+
+    size_t getSize()
+    {
+        ASSERT(m_type == Attachment::MappedMemoryType);
+        return m_size;
+    }
+
+    // The attachment is not null unless explicitly set.
+    void setNull() { m_isNull = true; }
+    bool isNull() { return m_isNull; }
+
+private:
+    Attachment::Type m_type;
+    size_t m_size;
+    bool m_isNull;
+};
+
 void Connection::platformInitialize(Identifier identifier)
 {
     m_socketDescriptor = identifier;
@@ -169,7 +203,7 @@ bool Connection::processMessage()
     memcpy(&messageInfo, messageData, sizeof(messageInfo));
     messageData += sizeof(messageInfo);
 
-    size_t messageLength = sizeof(MessageInfo) + messageInfo.attachmentCount() * sizeof(size_t) + (messageInfo.isMessageBodyOOL() ? 0 : messageInfo.bodySize());
+    size_t messageLength = sizeof(MessageInfo) + messageInfo.attachmentCount() * sizeof(AttachmentInfo) + (messageInfo.isMessageBodyOOL() ? 0 : messageInfo.bodySize());
     if (m_readBufferSize < messageLength)
         return false;
 
@@ -177,27 +211,59 @@ bool Connection::processMessage()
     AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
     RefPtr<WebKit::SharedMemory> oolMessageBody;
 
-    int attachmentCount = messageInfo.attachmentCount();
+    size_t attachmentFileDescriptorCount = 0;
+    size_t attachmentCount = messageInfo.attachmentCount();
     if (attachmentCount) {
-        OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[attachmentCount]);
-        memcpy(attachmentSizes.get(), messageData, sizeof(size_t) * attachmentCount);
-        messageData += sizeof(size_t) * attachmentCount;
+        OwnArrayPtr<AttachmentInfo> attachmentInfo = adoptArrayPtr(new AttachmentInfo[attachmentCount]);
+        memcpy(attachmentInfo.get(), messageData, sizeof(AttachmentInfo) * attachmentCount);
+        messageData += sizeof(AttachmentInfo) * attachmentCount;
+
+        for (size_t i = 0; i < attachmentCount; ++i) {
+            switch (attachmentInfo[i].getType()) {
+            case Attachment::MappedMemoryType:
+            case Attachment::SocketType:
+                if (!attachmentInfo[i].isNull())
+                    attachmentFileDescriptorCount++;
+            case Attachment::Uninitialized:
+            default:
+                break;
+            }
+        }
 
         if (messageInfo.isMessageBodyOOL())
             attachmentCount--;
 
-        for (int i = 0; i < attachmentCount; ++i)
-            attachments.append(Attachment(m_fileDescriptors[i], attachmentSizes[i]));
+        size_t fdIndex = 0;
+        for (size_t i = 0; i < attachmentCount; ++i) {
+            int fd = -1;
+            switch (attachmentInfo[i].getType()) {
+            case Attachment::MappedMemoryType:
+                if (!attachmentInfo[i].isNull())
+                    fd = m_fileDescriptors[fdIndex++];
+                attachments.append(Attachment(fd, attachmentInfo[i].getSize()));
+                break;
+            case Attachment::SocketType:
+                if (!attachmentInfo[i].isNull())
+                    fd = m_fileDescriptors[fdIndex++];
+                attachments.append(Attachment(fd));
+                break;
+            case Attachment::Uninitialized:
+                attachments.append(Attachment());
+            default:
+                break;
+            }
+        }
 
         if (messageInfo.isMessageBodyOOL()) {
             ASSERT(messageInfo.bodySize());
 
-            WebKit::SharedMemory::Handle handle;
-            handle.adoptFromAttachment(m_fileDescriptors[attachmentCount], attachmentSizes[attachmentCount]);
-            if (handle.isNull()) {
+            if (attachmentInfo[attachmentCount].isNull()) {
                 ASSERT_NOT_REACHED();
                 return false;
             }
+
+            WebKit::SharedMemory::Handle handle;
+            handle.adoptFromAttachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].getSize());
 
             oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
             if (!oolMessageBody) {
@@ -227,9 +293,9 @@ bool Connection::processMessage()
     } else
         m_readBufferSize = 0;
 
-    if (messageInfo.attachmentCount()) {
-        if (m_fileDescriptorsSize > messageInfo.attachmentCount()) {
-            size_t fileDescriptorsLength = messageInfo.attachmentCount() * sizeof(int);
+    if (attachmentFileDescriptorCount) {
+        if (m_fileDescriptorsSize > attachmentFileDescriptorCount) {
+            size_t fileDescriptorsLength = attachmentFileDescriptorCount * sizeof(int);
             memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + fileDescriptorsLength, m_fileDescriptorsSize - fileDescriptorsLength);
             m_fileDescriptorsSize -= fileDescriptorsLength;
         } else
@@ -387,7 +453,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     }
 
     MessageInfo messageInfo(messageID, arguments->bufferSize(), attachments.size());
-    size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(size_t)) + arguments->bufferSize();
+    size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(AttachmentInfo)) + arguments->bufferSize();
     if (messageSizeWithBodyInline > messageMaxSize && arguments->bufferSize()) {
         RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::create(arguments->bufferSize());
         if (!oolMessageBody)
@@ -416,28 +482,56 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     iov[0].iov_base = reinterpret_cast<void*>(&messageInfo);
     iov[0].iov_len = sizeof(messageInfo);
 
-    OwnArrayPtr<char> attachmentFDBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * attachments.size())]);
-    OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[attachments.size()]);
+    OwnArrayPtr<AttachmentInfo> attachmentInfo = adoptArrayPtr(new AttachmentInfo[attachments.size()]);
+
+    size_t attachmentFDBufferLength = 0;
+    if (!attachments.isEmpty()) {
+        for (size_t i = 0; i < attachments.size(); ++i) {
+            if (attachments[i].fileDescriptor() != -1)
+                attachmentFDBufferLength++;
+        }
+    }
+    OwnArrayPtr<char> attachmentFDBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * attachmentFDBufferLength)]);
 
     if (!attachments.isEmpty()) {
-        message.msg_control = attachmentFDBuffer.get();
-        message.msg_controllen = sizeof(char) * CMSG_SPACE(sizeof(int) * attachments.size());
+        int* fdPtr = 0;
 
-        struct cmsghdr* cmsg = CMSG_FIRSTHDR(&message);
-        cmsg->cmsg_level = SOL_SOCKET;
-        cmsg->cmsg_type = SCM_RIGHTS;
-        cmsg->cmsg_len = CMSG_LEN(sizeof(int) * attachments.size());
+        if (attachmentFDBufferLength) {
+            message.msg_control = attachmentFDBuffer.get();
+            message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentFDBufferLength);
+            memset(message.msg_control, 0, message.msg_controllen);
 
-        int* fdptr = reinterpret_cast<int*>(CMSG_DATA(cmsg));
-        for (size_t i = 0; i < attachments.size(); ++i) {
-            attachmentSizes[i] = attachments[i].size();
-            fdptr[i] = attachments[i].fileDescriptor();
+            struct cmsghdr* cmsg = CMSG_FIRSTHDR(&message);
+            cmsg->cmsg_level = SOL_SOCKET;
+            cmsg->cmsg_type = SCM_RIGHTS;
+            cmsg->cmsg_len = CMSG_LEN(sizeof(int) * attachmentFDBufferLength);
+
+            fdPtr = reinterpret_cast<int*>(CMSG_DATA(cmsg));
         }
 
-        message.msg_controllen = cmsg->cmsg_len;
+        int fdIndex = 0;
+        for (size_t i = 0; i < attachments.size(); ++i) {
+            attachmentInfo[i].setType(attachments[i].type());
 
-        iov[iovLength].iov_base = attachmentSizes.get();
-        iov[iovLength].iov_len = sizeof(size_t) * attachments.size();
+            switch (attachments[i].type()) {
+            case Attachment::MappedMemoryType:
+                attachmentInfo[i].setSize(attachments[i].size());
+                // Fall trhough, set file descriptor or null.
+            case Attachment::SocketType:
+                if (attachments[i].fileDescriptor() != -1) {
+                    ASSERT(fdPtr);
+                    fdPtr[fdIndex++] = attachments[i].fileDescriptor();
+                } else
+                    attachmentInfo[i].setNull();
+                break;
+            case Attachment::Uninitialized:
+            default:
+                break;
+            }
+        }
+
+        iov[iovLength].iov_base = attachmentInfo.get();
+        iov[iovLength].iov_len = sizeof(AttachmentInfo) * attachments.size();
         ++iovLength;
     }
 

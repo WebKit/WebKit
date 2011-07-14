@@ -1,5 +1,33 @@
 2011-07-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Anders Carlsson.
+
+        [UNIX] Allow sending null handles in messages
+        https://bugs.webkit.org/show_bug.cgi?id=60621
+
+        Only valid file descriptors are now sent using sendmsg() control
+        messages, and instead of sending a list of attachment sizes we now
+        send a list of AttachmentInfo structs. AttachmentInfo contains
+        information about the attachments including the size for
+        MappedMemory attachmens and whether the attachment is null or not.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::AttachmentInfo::AttachmentInfo): New class containing
+        information about the attachments sent.
+        (CoreIPC::AttachmentInfo::setType): Set the attachment type.
+        (CoreIPC::AttachmentInfo::getType): Return the attachment type.
+        (CoreIPC::AttachmentInfo::setSize): Set the size for MappedMemory attachments.
+        (CoreIPC::AttachmentInfo::getSize): Get the size for MappedMemory attachments.
+        (CoreIPC::AttachmentInfo::setNull): Set attachment as null, it
+        contains an invalid file descriptor, so the receiver shouldn't
+        expect a file desriptor for this attachment.
+        (CoreIPC::AttachmentInfo::isNull): Return whether attachment is
+        null, it contains an invalid file descriptor.
+        (CoreIPC::Connection::processMessage):
+        (CoreIPC::Connection::sendOutgoingMessage):
+
+2011-07-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] Implement Plugin Process
