@@ -1,3 +1,19 @@
+2011-07-13  James Simonsen  <simonjam@chromium.org>
+
+        Remove hack that forcefully prevents scripts from running in shadow SVG
+        https://bugs.webkit.org/show_bug.cgi?id=64419
+
+        This hack was put in to prevent scripts from running in shadow SVG. This should never have
+        happened, but did because we didn't parse <script> tags in SVG properly. This was fixed in
+        r88584, so the hack is no longer needed.
+
+        No new tests since there is no change in functionality.
+
+        Reviewed by Tony Gentilcore.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+
 2011-07-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Parse -webkit-content-order property
