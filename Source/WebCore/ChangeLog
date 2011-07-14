@@ -1,3 +1,58 @@
+2011-07-13  MORITA Hajime  <morrita@google.com>
+
+        [ShadowContentElement] forwarded node should be able to access its hosting content element.
+        https://bugs.webkit.org/show_bug.cgi?id=64251
+        
+        Reviewed by Dimitri Glazkov.
+
+        - Introduced ShadowInclusionSet to manage included nodes to its includer content element.
+          ShadowInclusionSet instance is owned by ShadowRoot.
+        - Updated the set on inclusion list changes.
+        - Used the set to retrieve the content element of NodeRenderingContext.
+        
+        There are also related refactoring and cleanup:
+        - Renamed NodeRenderingContext::m_contentElement to m_includer
+        - ShadowContentSelector::m_activeElement is no longer used, thus removed.
+        
+        Test: fast/dom/shadow/content-element-includer.html
+
+        * WebCore.exp.in:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        * dom/NodeRenderingContext.h:
+        (WebCore::NodeRenderingContext::includer): 
+        * dom/ShadowContentElement.cpp:
+        (WebCore::removeFromSet): Added
+        (WebCore::addToSet): Added
+        (WebCore::ShadowContentElement::attach):
+        (WebCore::ShadowContentElement::detach):
+        * dom/ShadowContentElement.h:
+        (WebCore::ShadowInclusionSet::add):
+        (WebCore::ShadowInclusionSet::remove):
+        (WebCore::ShadowInclusionSet::isEmpty):
+        (WebCore::ShadowInclusionSet::Translator::hash):
+        (WebCore::ShadowInclusionSet::Translator::equal):
+        (WebCore::ShadowInclusionSet::Hash::hash):
+        (WebCore::ShadowInclusionSet::Hash::equal):
+        (WebCore::ShadowInclusionSet::find):
+        * dom/ShadowContentSelector.cpp:
+        (WebCore::ShadowContentSelector::ShadowContentSelector):
+        (WebCore::ShadowContentSelector::selectInclusion):
+        * dom/ShadowContentSelector.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::~ShadowRoot):
+        (WebCore::ShadowRoot::includerFor): Replaced activeElement()
+        (WebCore::ShadowRoot::inclusions): Added
+        (WebCore::ShadowRoot::ensureInclusions): Added
+        * dom/ShadowRoot.h:
+        (WebCore::toShadowRoot):
+        * testing/Internals.cpp:
+        (WebCore::Internals::includerFor):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-07-12  Dominic Cooney  <dominicc@chromium.org>
 
         Raise if dispatchEvent dispatches an event that is being dispatched

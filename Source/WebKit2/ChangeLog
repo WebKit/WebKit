@@ -1,3 +1,14 @@
+2011-07-13  MORITA Hajime  <morrita@google.com>
+
+        [ShadowContentElement] forwarded node should be able to access its hosting content element.
+        https://bugs.webkit.org/show_bug.cgi?id=64251
+
+        Reviewed by Dimitri Glazkov.
+
+        Exported additional symbols for window.internals object.
+        
+        * win/WebKit2.def:
+
 2011-07-13  David Levin  <levin@chromium.org>
 
         Possible race condition in ThreadIdentifierData::initializeKeyOnce and shouldCallRealDebugger.

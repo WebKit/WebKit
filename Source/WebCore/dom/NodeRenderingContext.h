@@ -50,6 +50,7 @@ public:
     RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
+    ShadowContentElement* includer() const;
 
     RenderStyle* style() const;
     void setStyle(PassRefPtr<RenderStyle>);
@@ -79,7 +80,7 @@ private:
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
-    ShadowContentElement* m_contentElement;
+    ShadowContentElement* m_includer;
     RefPtr<RenderStyle> m_style;
 };
 
@@ -97,6 +98,11 @@ inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() con
 inline RenderStyle* NodeRenderingContext::style() const
 {
     return m_style.get();
+}
+
+inline ShadowContentElement* NodeRenderingContext::includer() const
+{
+    return m_includer;
 }
 
 class NodeRendererFactory {

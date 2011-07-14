@@ -1,3 +1,21 @@
+2011-07-13  MORITA Hajime  <morrita@google.com>
+
+        [ShadowContentElement] forwarded node should be able to access its hosting content element.
+        https://bugs.webkit.org/show_bug.cgi?id=64251
+
+        Reviewed by Dimitri Glazkov.
+
+        - Added a new test.
+        - Updated expectations. This change make ShadowContentElement availability on NodeRenderingContext
+          more strict. that makes some redundant node disappeared.
+        
+        * fast/dom/shadow/content-element-includer-expected.txt: Added.
+        * fast/dom/shadow/content-element-includer.html: Added.
+        * platform/chromium-win/fast/html/details-nested-2-expected.txt:
+        * platform/gtk/fast/html/details-nested-2-expected.txt:
+        * platform/mac/fast/html/details-nested-2-expected.txt:
+        * platform/qt/fast/html/details-nested-2-expected.txt:
+
 2011-07-13  Vincent Scheib  <scheib@chromium.org>
 
         [chromium] Update chromium test expectations.

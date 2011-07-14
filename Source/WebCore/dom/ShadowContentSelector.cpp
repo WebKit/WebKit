@@ -38,7 +38,6 @@ ShadowContentSelector* ShadowContentSelector::s_currentInstance = 0;
 ShadowContentSelector::ShadowContentSelector(ShadowRoot* shadowRoot)
     : m_parent(s_currentInstance)
     , m_shadowRoot(shadowRoot)
-    , m_activeElement(0)
 {
     s_currentInstance = this;
     for (Node* node = shadowRoot->shadowHost()->firstChild(); node; node = node->nextSibling())
@@ -51,38 +50,20 @@ ShadowContentSelector::~ShadowContentSelector()
     s_currentInstance = m_parent;
 }
 
-void ShadowContentSelector::selectInclusion(ShadowInclusionList* inclusions)
+void ShadowContentSelector::selectInclusion(ShadowContentElement* contentElement, ShadowInclusionList* inclusions)
 {
-    inclusions->clear();
+    ASSERT(inclusions->isEmpty());
 
     for (size_t i = 0; i < m_children.size(); ++i) {
         Node* child = m_children[i].get();
         if (!child)
             continue;
-        if (!m_activeElement->shouldInclude(child))
+        if (!contentElement->shouldInclude(child))
             continue;
 
-        inclusions->append(m_activeElement, child);
+        inclusions->append(contentElement, child);
         m_children[i] = 0;
     }
-
-}
-
-void ShadowContentSelector::willAttachContentFor(ShadowContentElement* element)
-{
-    ASSERT(!m_activeElement);
-    m_activeElement = element;
-}
-
-void ShadowContentSelector::didAttachContent()
-{
-    ASSERT(m_activeElement);
-    m_activeElement = 0;
-}
-
-ShadowContentElement* ShadowContentSelector::activeElement() const
-{
-    return m_activeElement;
 }
 
 }
