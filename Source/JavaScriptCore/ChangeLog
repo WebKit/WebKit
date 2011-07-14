@@ -1,3 +1,44 @@
+2011-07-14  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT unnecessarily boxes and unboxes values during silent spilling.
+        https://bugs.webkit.org/show_bug.cgi?id=64068
+
+        Reviewed by Gavin Barraclough.
+        
+        Silent spilling and filling of registers is done during slow-path C
+        function calls.  The silent spill/fill logic does not affect register
+        allocation on paths that don't involve the C function call.
+        
+        This changes the silent spilling code to spill in unboxed form.  The
+        silent fill will refill in whatever form the register was spilled in.
+        For example, the silent spill code may choose not to spill the register
+        because it was already spilled previously, which would imply that it
+        was spilled in boxed form.  The filling code detects this and either
+        unboxes, or not, depending on what is appropriate.
+        
+        This change also results in a simplification of the silent spill/fill
+        API: silent spilling no longer needs to know about the set of registers
+        that cannot be trampled, since it never does boxing and hence does not
+        need a temporary register.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentSpillGPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillFPR):
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillAllRegisters):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::valueToNumber):
+        (JSC::DFG::NonSpeculativeJIT::valueToInt32):
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+        (JSC::DFG::NonSpeculativeJIT::compare):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-07-13  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64202

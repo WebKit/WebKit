@@ -349,7 +349,7 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultG
     
     JITCompiler::Label slowCase = m_jit.label();
 
-    silentSpillAllRegisters(resultGPR, baseGPR);
+    silentSpillAllRegisters(resultGPR);
     m_jit.move(baseGPR, GPRInfo::argumentGPR1);
     m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR2);
     m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -414,7 +414,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
 
     JITCompiler::Label slowCase = m_jit.label();
 
-    silentSpillAllRegisters(InvalidGPRReg, baseGPR, valueGPR);
+    silentSpillAllRegisters(InvalidGPRReg);
     setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(valueGPR, baseGPR);
     m_jit.move(JITCompiler::ImmPtr(identifier(identifierNumber)), GPRInfo::argumentGPR3);
     m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);

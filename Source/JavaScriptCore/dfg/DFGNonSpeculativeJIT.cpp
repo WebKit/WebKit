@@ -69,7 +69,7 @@ void NonSpeculativeJIT::valueToNumber(JSValueOperand& operand, GPRReg gpr)
 
     // Next handle cells (& other JS immediates)
     nonNumeric.link(&m_jit);
-    silentSpillAllRegisters(gpr, jsValueGpr);
+    silentSpillAllRegisters(gpr);
     m_jit.move(jsValueGpr, GPRInfo::argumentGPR1);
     m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     appendCallWithExceptionCheck(dfgConvertJSValueToNumber);
@@ -91,7 +91,7 @@ void NonSpeculativeJIT::valueToInt32(JSValueOperand& operand, GPRReg result)
     JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
 
     // First handle non-integers
-    silentSpillAllRegisters(result, jsValueGpr);
+    silentSpillAllRegisters(result);
     m_jit.move(jsValueGpr, GPRInfo::argumentGPR1);
     m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     appendCallWithExceptionCheck(dfgConvertJSValueToInt32);
@@ -220,7 +220,7 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
     if (!isKnownInteger(regChild))
         notInt.link(&m_jit);
     
-    silentSpillAllRegisters(resultGPR, regArgGPR);
+    silentSpillAllRegisters(resultGPR);
     switch (op) {
     case ValueAdd:
         if (commute) {
@@ -310,7 +310,7 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     
     slowPath.link(&m_jit);
     
-    silentSpillAllRegisters(resultGPR, arg1GPR, arg2GPR);
+    silentSpillAllRegisters(resultGPR);
     if (op == ValueAdd) {
         setupStubArguments(arg1GPR, arg2GPR);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -367,7 +367,7 @@ void NonSpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition 
     
     slowPath.link(&m_jit);
     
-    silentSpillAllRegisters(resultGPR, arg1GPR, arg2GPR);
+    silentSpillAllRegisters(resultGPR);
     setupStubArguments(arg1GPR, arg2GPR);
     m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     appendCallWithExceptionCheck(helperFunction);
@@ -718,7 +718,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), resultGPR);
         JITCompiler::Jump fastCase = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR, TrustedImm32(static_cast<int32_t>(~1)));
         
-        silentSpillAllRegisters(resultGPR, arg1GPR);
+        silentSpillAllRegisters(resultGPR);
         m_jit.move(arg1GPR, GPRInfo::argumentGPR1);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
@@ -794,7 +794,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         outOfBounds.link(&m_jit);
         loadFailed.link(&m_jit);
 
-        silentSpillAllRegisters(storageGPR, baseGPR, propertyGPR);
+        silentSpillAllRegisters(storageGPR);
         setupStubArguments(baseGPR, propertyGPR);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         appendCallWithExceptionCheck(operationGetByVal);
@@ -1038,7 +1038,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         notDefaultHasInstance.link(&m_jit);
         protoNotObject.link(&m_jit);
 
-        silentSpillAllRegisters(scratchReg, valueReg, baseReg, prototypeReg);
+        silentSpillAllRegisters(scratchReg);
         setupStubArguments(valueReg, baseReg, prototypeReg);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         appendCallWithExceptionCheck(operationInstanceOf);

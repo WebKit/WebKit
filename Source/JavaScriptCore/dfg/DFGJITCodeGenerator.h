@@ -188,7 +188,7 @@ protected:
     // they spill all live values to the appropriate
     // slots in the RegisterFile without changing any state
     // in the GenerationInfo.
-    void silentSpillGPR(VirtualRegister spillMe, GPRReg canTrample, GPRReg exclude = InvalidGPRReg)
+    void silentSpillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
         ASSERT(info.registerFormat() != DataFormatNone);
@@ -200,23 +200,30 @@ protected:
         DataFormat registerFormat = info.registerFormat();
 
         if (registerFormat == DataFormatInteger) {
-            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, info.gpr(), canTrample);
-            m_jit.storePtr(canTrample, JITCompiler::addressFor(spillMe));
+            m_jit.store32(info.gpr(), JITCompiler::addressFor(spillMe));
         } else {
             ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
             m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
         }
     }
-    void silentSpillFPR(VirtualRegister spillMe, GPRReg canTrample, FPRReg exclude = InvalidFPRReg)
+    void silentSpillFPR(VirtualRegister spillMe, FPRReg exclude = InvalidFPRReg)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
         ASSERT(info.registerFormat() == DataFormatDouble);
 
-        if (!info.needsSpill() || (info.fpr() == exclude))
+        if (info.fpr() == exclude)
             return;
+        if (!info.needsSpill()) {
+            // it's either a constant or it's already been spilled
+            ASSERT(m_jit.graph()[info.nodeIndex()].isConstant() || info.spillFormat() != DataFormatNone);
+            return;
+        }
+        
+        // it's neither a constant nor has it been spilled.
+        ASSERT(!m_jit.graph()[info.nodeIndex()].isConstant());
+        ASSERT(info.spillFormat() == DataFormatNone);
 
-        boxDouble(info.fpr(), canTrample);
-        m_jit.storePtr(canTrample, JITCompiler::addressFor(spillMe));
+        m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
     }
 
     void silentFillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
@@ -261,38 +268,40 @@ protected:
             ASSERT(isDoubleConstant(nodeIndex));
             m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfDoubleConstant(nodeIndex))), canTrample);
             m_jit.movePtrToDouble(canTrample, info.fpr());
-        } else {
+            return;
+        }
+        
+        if (info.spillFormat() != DataFormatNone) {
+            // it was already spilled previously, which means we need unboxing.
+            ASSERT(info.spillFormat() & DataFormatJS);
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), canTrample);
             unboxDouble(canTrample, info.fpr());
+            return;
         }
+
+        m_jit.loadDouble(JITCompiler::addressFor(spillMe), info.fpr());
     }
     
-    void silentSpillAllRegisters(GPRReg exclude, GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
+    void silentSpillAllRegisters(GPRReg exclude)
     {
-        GPRReg canTrample = selectScratchGPR(preserve1, preserve2, preserve3);
-        
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
-                silentSpillGPR(iter.name(), canTrample, exclude);
+                silentSpillGPR(iter.name(), exclude);
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
-                silentSpillFPR(iter.name(), canTrample);
+                silentSpillFPR(iter.name());
         }
     }
-    void silentSpillAllRegisters(FPRReg exclude, GPRReg preserve = InvalidGPRReg)
+    void silentSpillAllRegisters(FPRReg exclude)
     {
-        GPRReg canTrample = GPRInfo::regT0;
-        if (preserve == GPRInfo::regT0)
-            canTrample = GPRInfo::regT1;
-        
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
-                silentSpillGPR(iter.name(), canTrample);
+                silentSpillGPR(iter.name());
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
-                silentSpillFPR(iter.name(), canTrample, exclude);
+                silentSpillFPR(iter.name(), exclude);
         }
     }
     void silentFillAllRegisters(GPRReg exclude)

@@ -876,7 +876,7 @@ void SpeculativeJIT::compile(Node& node)
         MacroAssembler::Jump withinArrayBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
 
         // Code to handle put beyond array bounds.
-        silentSpillAllRegisters(scratchReg, baseReg, propertyReg, valueReg);
+        silentSpillAllRegisters(scratchReg);
         setupStubArguments(baseReg, propertyReg, valueReg);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationPutByValBeyondArrayBounds);
