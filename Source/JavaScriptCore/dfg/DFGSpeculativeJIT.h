@@ -204,10 +204,7 @@ private:
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution()
     {
-        // FIXME: in cases where we can statically determine we're going to bail out from the speculative
-        // JIT we should probably rewind code generation and only produce the non-speculative path.
         m_compileOkay = false;
-        speculationCheck(m_jit.jump());
     }
 
     template<bool strict>

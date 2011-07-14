@@ -1,3 +1,14 @@
+2011-07-14  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculative JIT contains a FIXME for rewinding speculative code generation that
+        has already been fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=64022
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+
 2011-07-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add OwnPtr specialization for Ecore_Pipe.
