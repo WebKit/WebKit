@@ -1,3 +1,17 @@
+2011-07-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show only Console and Scripts panels in shared worker inspector front-end
+        https://bugs.webkit.org/show_bug.cgi?id=64519
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager):
+        (WebInspector.WorkerManager.isWorkerFrontend):
+        (WebInspector.WorkerManager.isSharedWorkerFrontend):
+        (WebInspector.WorkerManager.prototype._openInspectorWindow):
+        (WebInspector.DedicatedWorkerMessageForwarder):
+
 2011-07-14  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r90976, r90981, and r90985.

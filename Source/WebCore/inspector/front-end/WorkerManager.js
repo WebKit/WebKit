@@ -31,17 +31,18 @@
 WebInspector.WorkerManager = function()
 {
     this._workerIdToWindow = {};
-    InspectorBackend.registerDomainDispatcher("Worker", new WebInspector.WorkerMessageForwarder(this));
+    InspectorBackend.registerDomainDispatcher("Worker", new WebInspector.DedicatedWorkerMessageForwarder(this));
 }
 
 WebInspector.WorkerManager.isWorkerFrontend = function()
 {
-    return !!WebInspector.queryParamsObject["workerId"];
+    return !!WebInspector.queryParamsObject["dedicatedWorkerId"] ||
+           !!WebInspector.queryParamsObject["isSharedWorker"];
 }
 
 WebInspector.WorkerManager.loaded = function()
 {
-    var workerId = WebInspector.queryParamsObject["workerId"];
+    var workerId = WebInspector.queryParamsObject["dedicatedWorkerId"];
     if (!workerId) {
         WebInspector.workerManager = new WebInspector.WorkerManager();
         return;
@@ -102,7 +103,7 @@ WebInspector.WorkerManager.prototype = {
 
     _openInspectorWindow: function(workerId)
     {
-        var url = location.href + "&workerId=" + workerId;
+        var url = location.href + "&dedicatedWorkerId=" + workerId;
         url = url.replace("docked=true&", "");
         var workerInspectorWindow = window.open(url);
         this._workerIdToWindow[workerId] = workerInspectorWindow;
@@ -133,13 +134,13 @@ WebInspector.WorkerManager.prototype = {
 
 WebInspector.WorkerManager.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.WorkerMessageForwarder = function(workerManager)
+WebInspector.DedicatedWorkerMessageForwarder = function(workerManager)
 {
     this._workerManager = workerManager;
     window.addEventListener("message", this._receiveMessage.bind(this), true);
 }
 
-WebInspector.WorkerMessageForwarder.prototype = {
+WebInspector.DedicatedWorkerMessageForwarder.prototype = {
     _receiveMessage: function(event)
     {
         var workerId = event.data.workerId;
