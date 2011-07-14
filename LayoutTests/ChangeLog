@@ -1,3 +1,9 @@
+2011-07-14  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Make an entry for input-appearance-range.html specific.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add platform specific expected result for a new test.
