@@ -59,6 +59,7 @@ public:
     SVGUseElement* correspondingUseElement() const { return m_correspondingUseElement; }
     SVGUseElement* directUseElement() const { return m_directUseElement; }
     SVGElement* shadowTreeElement() const { return m_shadowTreeElement.get(); }
+    void clearChildren();
     void clearUseElements()
     {
         m_directUseElement = 0;

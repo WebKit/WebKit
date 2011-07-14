@@ -1,3 +1,25 @@
+2011-07-14  Tim Horton  <timothy_horton@apple.com>
+
+        Clear SVGElementInstance's children immediately upon detachment
+        https://bugs.webkit.org/show_bug.cgi?id=63739
+        <rdar://problem/9705708>
+
+        Reviewed by Nikolas Zimmermann.
+
+        In addition to clearing the instance's children in the destructor,
+        clear them when the instance is detached from its <use>. This way,
+        we won't attempt to use them after we're detached but before the
+        destructor has been called.
+
+        Test: svg/custom/use-crash-using-children-before-destroy.svg
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::~SVGElementInstance):
+        (WebCore::SVGElementInstance::clearChildren):
+        * svg/SVGElementInstance.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::detachInstance):
+
 2011-07-14  Nate Chapin  <japhet@chromium.org>
 
         Don't skip custom cursors if an Image* is null,
