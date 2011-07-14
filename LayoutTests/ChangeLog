@@ -1,3 +1,16 @@
+2011-07-14  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Add platform-specific test results for hybi tests
+        https://bugs.webkit.org/show_bug.cgi?id=64349
+
+        Reviewed by Kent Tamura.
+
+        These results are identical to ones in hixie76/ directory.
+
+        * platform/chromium/http/tests/websocket/tests/hybi/bad-sub-protocol-control-chars-expected.txt: Added.
+        * platform/chromium/http/tests/websocket/tests/hybi/url-parsing-expected.txt: Added.
+        * platform/qt/http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii-expected.txt: Added.
+
 2011-07-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update platform specific expected results after r90971.
