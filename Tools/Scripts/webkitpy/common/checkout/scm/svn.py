@@ -92,6 +92,7 @@ class SVN(SCM, SVNRepository):
     @classmethod
     def value_from_svn_info(cls, path, field_name):
         svn_info_args = ['svn', 'info', path]
+        # FIXME: This should use an Executive.
         info_output = run_command(svn_info_args).rstrip()
         match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:

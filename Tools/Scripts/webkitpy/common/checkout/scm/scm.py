@@ -36,7 +36,7 @@ import sys
 import shutil
 
 from webkitpy.common.system.deprecated_logging import error, log
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system import ospath
 
 

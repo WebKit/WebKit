@@ -107,6 +107,7 @@ def read_from_path(file_path, encoding="utf-8"):
 def _make_diff(command, *args):
     # We use this wrapper to disable output decoding. diffs should be treated as
     # binary files since they may include text files of multiple differnet encodings.
+    # FIXME: This should use an Executive.
     return run_command([command, "diff"] + list(args), decode_output=False)
 
 
@@ -1484,27 +1485,28 @@ class GitSVNTest(SCMTest):
 # We need to split off more of these SCM tests to use mocks instead of the filesystem.
 # This class is the first part of that.
 class GitTestWithMock(unittest.TestCase):
-    def setUp(self):
-        executive = MockExecutive(should_log=False)
+    def make_scm(self, logging_executive=False):
         # We do this should_log dance to avoid logging when Git.__init__ runs sysctl on mac to check for 64-bit support.
-        self.scm = Git(None, executive=executive)
-        executive.should_log = True
+        scm = Git(cwd=None, executive=MockExecutive())
+        scm._executive._should_log = logging_executive
+        return scm
 
     def test_create_patch(self):
+        scm = self.make_scm(logging_executive=True)
         expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD']\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--']\nMOCK run_command: ['git', 'log', '-25']\n"
-        OutputCapture().assert_outputs(self, self.scm.create_patch, kwargs={'changed_files': None}, expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, scm.create_patch, expected_stderr=expected_stderr)
 
     def test_push_local_commits_to_server_with_username_and_password(self):
-        self.assertEquals(self.scm.push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")
+        self.assertEquals(self.make_scm().push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")
 
     def test_push_local_commits_to_server_without_username_and_password(self):
-        self.assertRaises(AuthenticationError, self.scm.push_local_commits_to_server)
+        self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server)
 
     def test_push_local_commits_to_server_with_username_and_without_password(self):
-        self.assertRaises(AuthenticationError, self.scm.push_local_commits_to_server, {'username': 'dbates@webkit.org'})
+        self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server, {'username': 'dbates@webkit.org'})
 
     def test_push_local_commits_to_server_without_username_and_with_password(self):
-        self.assertRaises(AuthenticationError, self.scm.push_local_commits_to_server, {'password': 'blah'})
+        self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server, {'password': 'blah'})
 
 if __name__ == '__main__':
     unittest.main()

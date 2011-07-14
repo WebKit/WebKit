@@ -88,6 +88,7 @@ class Git(SCM, SVNRepository):
 
     @classmethod
     def in_working_directory(cls, path):
+        # FIXME: This should use an Executive.
         return run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=Executive.ignore_error).rstrip() == "true"
 
     @classmethod
@@ -109,6 +110,7 @@ class Git(SCM, SVNRepository):
         # FIXME: This should probably use cwd=self.checkout_root.
         # Pass --get-all for cases where the config has multiple values
         # Pass the cwd if provided so that we can handle the case of running webkit-patch outside of the working directory.
+        # FIXME: This should use an Executive.
         return run_command(["git", "config", "--get-all", key], error_handler=Executive.ignore_error, cwd=cwd).rstrip('\n')
 
     @staticmethod

@@ -1,3 +1,27 @@
+2011-07-13  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION: GitTestWithMock.test_create_patch fails
+        https://bugs.webkit.org/show_bug.cgi?id=62945
+
+        Reviewed by Daniel Bates.
+
+        I was not able to reproduce the exact failure seen in the bug,
+        however this test was failing on my machine for other reasons.
+
+        I went through and did an audit of our run_command usage, it's
+        entirely in scm classes after this change.  (Not surprising given
+        that scm.py was the second file ever created in webkit.py.)
+
+        The real bug I'm fixing here is that we were setting executive.should_log
+        when the value had changed to executive._should_log.  Now we set the right one
+        and the test works again.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+
 2011-07-13  Ilya Sherman  <isherman@chromium.org>
 
         Fix WTF header guard style check

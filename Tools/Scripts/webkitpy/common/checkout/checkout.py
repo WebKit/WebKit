@@ -152,7 +152,7 @@ class Checkout(object):
             args += ['--reviewer', patch.reviewer().full_name]
         if force:
             args.append('--force')
-        run_command(args, input=patch.contents())
+        self._scm._executive.run_command(args, input=patch.contents())
 
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)
