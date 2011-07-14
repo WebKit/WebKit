@@ -66,6 +66,8 @@ devtools.domContentLoaded = function()
     WebInspector.setAttachedWindow(WebInspector.queryParamsObject.docked === "true");
     if (WebInspector.queryParamsObject.toolbar_color && WebInspector.queryParamsObject.text_color)
         WebInspector.setToolbarColors(WebInspector.queryParamsObject.toolbar_color, WebInspector.queryParamsObject.text_color);
+    if (WebInspector.queryParamsObject.toolbarColor && WebInspector.queryParamsObject.textColor)
+        WebInspector.setToolbarColors(WebInspector.queryParamsObject.toolbarColor, WebInspector.queryParamsObject.textColor);
 }
 document.addEventListener("DOMContentLoaded", devtools.domContentLoaded, false);
 

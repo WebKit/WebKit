@@ -1,3 +1,13 @@
+2011-07-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: URL parameters should consistently use camel case names
+        https://bugs.webkit.org/show_bug.cgi?id=64520
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/DevTools.js:
+        (devtools.domContentLoaded):
+
 2011-07-13  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Clean undeeded WebCore:: namespace prefixing from WebBindings.
