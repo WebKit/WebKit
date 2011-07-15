@@ -1,5 +1,12 @@
 2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Revert http://trac.webkit.org/changeset/91091, since Python 2.5
+        does not support enumerate() start argument.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Reverted.
+
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Clean up test_expectations.py after refactorings.
         https://bugs.webkit.org/show_bug.cgi?id=64620
 
