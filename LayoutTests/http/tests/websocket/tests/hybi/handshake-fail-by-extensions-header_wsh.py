@@ -1,4 +1,4 @@
-from mod_pywebsocket.handshake.hybi06 import compute_accept
+from mod_pywebsocket.handshake.hybi import compute_accept
 
 
 def web_socket_do_extra_handshake(request):

@@ -289,10 +289,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Key2: " + m_hixie76SecWebSocketKey2);
     } else {
         fields.append("Sec-WebSocket-Key: " + m_secWebSocketKey);
-        // FIXME: Current version of pywebsocket only accepts version value of 7,
-        // while hybi-10 requires this value to be 8. Should be fixed when
-        // a new version of pywebsocket is released.
-        fields.append("Sec-WebSocket-Version: 7");
+        fields.append("Sec-WebSocket-Version: 8");
     }
 
     // Fields in the handshake are sent by the client in a random order; the
@@ -352,7 +349,7 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setKey3(m_hixie76Key3);
     } else {
         request.addHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
-        request.addHeaderField("Sec-WebSocket-Version", "7"); // FIXME: See FIXME in clientHandshakeMessage().
+        request.addHeaderField("Sec-WebSocket-Version", "8");
     }
 
     return request;

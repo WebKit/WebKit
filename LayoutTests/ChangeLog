@@ -1,3 +1,20 @@
+2011-07-14  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Introduce pywebsocket-0.6b2
+        https://bugs.webkit.org/show_bug.cgi?id=64534
+
+        Reviewed by Kent Tamura.
+
+        Module "mod_pywebsocket.handshake.hybi06" has been renamed to "mod_pywebsocket.handshake.hybi".
+
+        * http/tests/websocket/tests/hybi/bad-handshake-crash_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null_wsh.py:
+
 2011-07-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         <input form="x"> should not associate the input with any forms when there is no  form with id="x"
