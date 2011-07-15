@@ -1,3 +1,21 @@
+2011-07-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        Move useRepaintBounds from RenderBlock::layoutRunsAndFloats to LineLayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=64360
+
+        Reviewed by Hajime Morita.
+
+        No new tests needed because the patch is just a refactor.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::usesRepaintBounds):
+        (WebCore::LineLayoutState::setRepaintRange):
+        (WebCore::LineLayoutState::updateRepaintRangeFromBox):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::determineStartPosition):
+
 2011-07-14  MORITA Hajime  <morrita@google.com>
 
         ExceptionCodePlaceholder should have its own ExceptionCodePlaceholder.cpp file

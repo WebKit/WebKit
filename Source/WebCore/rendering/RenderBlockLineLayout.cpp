@@ -844,14 +844,23 @@ public:
         : m_isFullLayout(fullLayout)
         , m_repaintLogicalTop(repaintLogicalTop)
         , m_repaintLogicalBottom(repaintLogicalBottom)
+        , m_usesRepaintBounds(false)
     { }
 
     void markForFullLayout() { m_isFullLayout = true; }
     bool isFullLayout() const { return m_isFullLayout; }
 
-    void setRepaintRange(int logicalHeight) { m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight; }
+    bool usesRepaintBounds() const { return m_usesRepaintBounds; }
+
+    void setRepaintRange(int logicalHeight)
+    { 
+        m_usesRepaintBounds = true;
+        m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight; 
+    }
+    
     void updateRepaintRangeFromBox(RootInlineBox* box, int paginationDelta = 0)
     {
+        m_usesRepaintBounds = true;
         m_repaintLogicalTop = min(m_repaintLogicalTop, box->logicalTopVisualOverflow() + min(paginationDelta, 0));
         m_repaintLogicalBottom = max(m_repaintLogicalBottom, box->logicalBottomVisualOverflow() + max(paginationDelta, 0));
     }
@@ -862,6 +871,8 @@ private:
     // FIXME: Should this be a range object instead of two ints?
     int& m_repaintLogicalTop;
     int& m_repaintLogicalBottom;
+    
+    bool m_usesRepaintBounds;
 };
 
 static void deleteLineRange(LineLayoutState& layoutState, RenderArena* arena, RootInlineBox* startLine, RootInlineBox* stopLine = 0)
@@ -883,11 +894,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
     InlineBidiResolver resolver;
     unsigned floatIndex;
     LineInfo lineInfo;
-    // FIXME: Should useRepaintBounds be on the LineLayoutState?
-    // It appears to be used to track the case where we're only repainting a subset of our lines.
-    bool useRepaintBounds = false;
-
-    RootInlineBox* startLine = determineStartPosition(layoutState, lineInfo, resolver, floats, floatIndex, useRepaintBounds);
+    RootInlineBox* startLine = determineStartPosition(layoutState, lineInfo, resolver, floats, floatIndex);
 
     // FIXME: This would make more sense outside of this function, but since
     // determineStartPosition can change the fullLayout flag we have to do this here. Failure to call
@@ -918,10 +925,8 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
         0 : determineEndPosition(startLine, floats, floatIndex, cleanLineStart, cleanLineBidiStatus, endLineLogicalTop);
 
     if (startLine) {
-        if (!useRepaintBounds) {
-            useRepaintBounds = true;
+        if (!layoutState.usesRepaintBounds())
             layoutState.setRepaintRange(logicalHeight());
-        }
         deleteLineRange(layoutState, renderArena(), startLine);
     }
 
@@ -1011,7 +1016,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
 
             if (lineBox) {
                 lineBox->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
-                if (useRepaintBounds)
+                if (layoutState.usesRepaintBounds())
                     layoutState.updateRepaintRangeFromBox(lineBox);
 
                 if (paginated) {
@@ -1020,7 +1025,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
                     if (adjustment) {
                         int oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, lineInfo.isFirstLine());
                         lineBox->adjustBlockDirectionPosition(adjustment);
-                        if (useRepaintBounds)
+                        if (layoutState.usesRepaintBounds())
                             layoutState.updateRepaintRangeFromBox(lineBox);
 
                         if (availableLogicalWidthForLine(oldLogicalHeight + adjustment, lineInfo.isFirstLine()) != oldLineWidth) {
@@ -1267,7 +1272,7 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
 }
 
 RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState, LineInfo& lineInfo, InlineBidiResolver& resolver, Vector<FloatWithRect>& floats,
-                                                   unsigned& numCleanFloats, bool& useRepaintBounds)
+                                                   unsigned& numCleanFloats)
 {
     RootInlineBox* curr = 0;
     RootInlineBox* last = 0;
@@ -1289,9 +1294,6 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
                         layoutState.markForFullLayout();
                         break;
                     }
-
-                    if (!useRepaintBounds)
-                        useRepaintBounds = true;
 
                     layoutState.updateRepaintRangeFromBox(curr, paginationDelta);
                     curr->adjustBlockDirectionPosition(paginationDelta);

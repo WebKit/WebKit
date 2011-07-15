@@ -543,7 +543,7 @@ private:
     };
 
     void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
-    RootInlineBox* determineStartPosition(LineLayoutState&, LineInfo&, InlineBidiResolver&, Vector<FloatWithRect>&, unsigned& numCleanFloats, bool& useRepaintBounds);
+    RootInlineBox* determineStartPosition(LineLayoutState&, LineInfo&, InlineBidiResolver&, Vector<FloatWithRect>&, unsigned& numCleanFloats);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, Vector<FloatWithRect>&, size_t floatIndex, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus, int& yPos);
     bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus, RootInlineBox*& endLine, int& endYPos);
 
