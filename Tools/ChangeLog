@@ -1,3 +1,24 @@
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Refactor TestExpectationModel to use TestExpectationLine as data item.
+        https://bugs.webkit.org/show_bug.cgi?id=64635
+
+        This is a bit largish in scope. Does the following things:
+
+        1) Adds "path" member to TestExpectationLine to hold normalized path to test, computed at parsing,
+           and changes code that used Port.normalize_test_name to rely on TestExpectationLine.path. As a result, TestExpectationModel no longer
+           needs to have any port knowledge.
+
+        2) Adds "create_passing_expectation" class method to TestExpectationLine to generate a pristine passing expectation out of a test name,
+           and changes TestExpectations._process_tests_without_expectations to use it, thus eliminating the need for a special API entry point.
+           Now all expectations are added to the model in the same way!
+
+        3) Changes TestExpectationModel's main test index to store a tuple consisting of line number and TestExpectationLine instance.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Refactored code.
+
 2011-07-15  Adam Roben  <aroben@apple.com>
 
         Teach TestFailures how to detect interrupted build steps

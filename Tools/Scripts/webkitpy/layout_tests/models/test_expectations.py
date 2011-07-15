@@ -192,10 +192,8 @@ class TestExpectationParser:
         if self._check_path_does_not_exist(expectation_line):
             return
 
-        if not self._full_test_list:
-            expectation_line.matching_tests = [expectation_line.name]
-        else:
-            expectation_line.matching_tests = self._collect_matching_tests(expectation_line.name)
+        expectation_line.path = self._port.normalize_test_name(expectation_line.name)
+        self._collect_matching_tests(expectation_line)
 
         expectation_line.parsed_modifiers = [modifier for modifier in expectation_line.modifiers if modifier in TestExpectations.MODIFIERS]
         self._parse_expectations(expectation_line)
@@ -242,7 +240,7 @@ class TestExpectationParser:
             return True
         return False
 
-    def _collect_matching_tests(self, test_list_path):
+    def _collect_matching_tests(self, expectation_line):
         """Convert the test specification to an absolute, normalized
         path and make sure directories end with the OS path separator."""
         # FIXME: full_test_list can quickly contain a big amount of
@@ -251,18 +249,19 @@ class TestExpectationParser:
         # lists to represent the tree of tests, leaves being test
         # files and nodes being categories.
 
-        if self._port.test_isdir(test_list_path):
-            # this is a test category, return all the tests of the category.
-            test_list_path = self._port.normalize_test_name(test_list_path)
+        if not self._full_test_list:
+            expectation_line.matching_tests = [expectation_line.path]
+            return
 
-            return [test for test in self._full_test_list if test.startswith(test_list_path)]
+        if self._port.test_isdir(expectation_line.path):
+            # this is a test category, return all the tests of the category.
+            expectation_line.matching_tests = [test for test in self._full_test_list if test.startswith(expectation_line.path)]
+            return
 
         # this is a test file, do a quick check if it's in the
         # full test suite.
-        result = []
-        if test_list_path in self._full_test_list:
-            result = [test_list_path, ]
-        return result
+        if expectation_line.path in self._full_test_list:
+            expectation_line.matching_tests.append(expectation_line.path)
 
     @classmethod
     def tokenize(cls, expectation_string):
@@ -324,6 +323,7 @@ class TestExpectationLine:
     def __init__(self):
         """Initializes a blank-line equivalent of an expectation."""
         self.name = None
+        self.path = None
         self.modifiers = []
         self.parsed_modifiers = []
         self.expectations = []
@@ -340,23 +340,29 @@ class TestExpectationLine:
     def is_invalid(self):
         return self.is_malformed() or len(self.warnings) > 0
 
-# FIXME: Refactor to use TestExpectationLine as data item.
+    @classmethod
+    def create_passing_expectation(cls, test):
+        expectation_line = TestExpectationLine()
+        expectation_line.name = test
+        expectation_line.path = test
+        expectation_line.parsed_expectations = set([PASS])
+        expectation_line.matching_tests = [test]
+        return expectation_line
+
+
 # FIXME: Refactor API to be a proper CRUD.
 class TestExpectationsModel:
     """Represents relational store of all expectations and provides CRUD semantics to manage it."""
 
-    def __init__(self, port):
-        self._port = port
-
+    def __init__(self):
         # Maps a test to its list of expectations.
         self._test_to_expectations = {}
 
         # Maps a test to list of its modifiers (string values)
         self._test_to_modifiers = {}
 
-        # Maps a test to the base path that it was listed with in the list and
-        # the number of matches that base path had.
-        self._test_list_paths = {}
+        # Maps a test to a tuple of line number and TestExpectationLine instance.
+        self._test_to_expectation_line = {}
 
         # List of tests that are in the overrides file (used for checking for
         # duplicates inside the overrides file itself). Note that just because
@@ -404,12 +410,12 @@ class TestExpectationsModel:
         return test in self._modifier_to_tests[modifier]
 
     def has_test(self, test):
-        return test in self._test_list_paths
+        return test in self._test_to_expectation_line
 
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
-    def add_tests(self, lineno, expectation_line, overrides_allowed):
+    def add_expectation_line(self, lineno, expectation_line, overrides_allowed):
         """Returns a list of errors, encountered while matching modifiers."""
 
         if expectation_line.is_invalid():
@@ -419,11 +425,11 @@ class TestExpectationsModel:
             if self._already_seen_better_match(test, expectation_line, lineno, overrides_allowed):
                 continue
 
-            self._clear_expectations_for_test(test, expectation_line.name)
-            self._test_list_paths[test] = (self._port.normalize_test_name(expectation_line.name), expectation_line.num_matches, lineno)
-            self.add_test(test, expectation_line, overrides_allowed)
+            self._clear_expectations_for_test(test, expectation_line)
+            self._test_to_expectation_line[test] = (expectation_line, lineno)
+            self._add_test(test, expectation_line, overrides_allowed)
 
-    def add_test(self, test, expectation_line, overrides_allowed):
+    def _add_test(self, test, expectation_line, overrides_allowed):
         """Sets the expected state for a given test.
 
         This routine assumes the test has not been added before. If it has,
@@ -461,7 +467,7 @@ class TestExpectationsModel:
         if overrides_allowed:
             self._overridding_tests.add(test)
 
-    def _clear_expectations_for_test(self, test, test_list_path):
+    def _clear_expectations_for_test(self, test, expectation_line):
         """Remove prexisting expectations for this test.
         This happens if we are seeing a more precise path
         than a previous listing.
@@ -473,7 +479,7 @@ class TestExpectationsModel:
             self._remove_from_sets(test, self._timeline_to_tests)
             self._remove_from_sets(test, self._result_type_to_tests)
 
-        self._test_list_paths[test] = self._port.normalize_test_name(test_list_path)
+        self._test_to_expectation_line[test] = (expectation_line, 0)
 
     def _remove_from_sets(self, test, dict):
         """Removes the given test from the sets in the dictionary.
@@ -496,14 +502,13 @@ class TestExpectationsModel:
             # We've never seen this test before.
             return False
 
-        prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
-        base_path = self._port.normalize_test_name(expectation_line.name)
+        prev_expectation_line, prev_lineno = self._test_to_expectation_line[test]
 
-        if len(prev_base_path) > len(base_path):
+        if len(prev_expectation_line.path) > len(expectation_line.path):
             # The previous path matched more of the test.
             return True
 
-        if len(prev_base_path) < len(base_path):
+        if len(prev_expectation_line.path) < len(expectation_line.path):
             # This path matches more of the test.
             return False
 
@@ -530,11 +535,11 @@ class TestExpectationsModel:
         # To use the "more modifiers wins" policy, change the errors for overrides
         # to be warnings and return False".
 
-        if prev_num_matches == expectation_line.num_matches:
+        if prev_expectation_line.num_matches == expectation_line.num_matches:
             expectation_line.errors.append('Duplicate or ambiguous %s.' % expectation_source)
             return True
 
-        if prev_num_matches < expectation_line.num_matches:
+        if prev_expectation_line.num_matches < expectation_line.num_matches:
             expectation_line.errors.append('More specific entry on line %d overrides line %d' % (lineno, prev_lineno))
             # FIXME: return False if we want more specific to win.
             return True
@@ -647,7 +652,7 @@ class TestExpectations:
         self._full_test_list = tests
         self._test_config = test_config
         self._is_lint_mode = is_lint_mode
-        self._model = TestExpectationsModel(port)
+        self._model = TestExpectationsModel()
         self._parser = TestExpectationParser(port, test_config, tests, is_lint_mode)
 
         # Maps relative test paths as listed in the expectations file to a
@@ -760,12 +765,10 @@ class TestExpectations:
                     raise ParseError(fatal=False, errors=warnings)
 
     def _process_tests_without_expectations(self):
-        expectation = TestExpectationLine()
-        expectation.parsed_expectations = set([PASS])
         if self._full_test_list:
             for test in self._full_test_list:
                 if not self._model.has_test(test):
-                    self._model.add_test(test, expectation, overrides_allowed=False)
+                    self._model.add_expectation_line(0, TestExpectationLine.create_passing_expectation(test), overrides_allowed=False)
 
     def get_expectations_json_for_all_platforms(self):
         # Specify separators in order to get compact encoding.
@@ -790,19 +793,17 @@ class TestExpectations:
 
     def _add_expectations(self, expectation_list, overrides_allowed):
         lineno = 0
-        for expectation in expectation_list:
+        for expectation_line in expectation_list:
             lineno += 1
-            expectations = expectation.expectations
-
-            if not expectation.expectations:
+            if not expectation_line.expectations:
                 continue
 
-            self._add_to_all_expectations(expectation.name,
-                                            " ".join(expectation.modifiers).upper(),
-                                            " ".join(expectation.expectations).upper())
+            self._add_to_all_expectations(expectation_line.name,
+                                            " ".join(expectation_line.modifiers).upper(),
+                                            " ".join(expectation_line.expectations).upper())
 
-            self._parser.parse(expectation)
-            self._model.add_tests(lineno, expectation, overrides_allowed)
+            self._parser.parse(expectation_line)
+            self._model.add_expectation_line(lineno, expectation_line, overrides_allowed)
 
 
 class ModifierMatchResult(object):
