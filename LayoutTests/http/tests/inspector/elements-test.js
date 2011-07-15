@@ -84,7 +84,7 @@ InspectorTest.waitForStyles = function(idValue, callback)
             callback();
             return;
         }
-        InspectorTest.addSniffer(WebInspector.ElementsPanel.prototype, "_stylesUpdated", sniff);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_nodeStylesUpdatedForTest", sniff);
     })(null);
 }
 

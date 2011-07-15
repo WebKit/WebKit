@@ -1,3 +1,50 @@
+2011-07-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Focusing on another node while editing CSS property does not update styles
+        https://bugs.webkit.org/show_bug.cgi?id=64283
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/styles/styles-change-node-while-editing.html
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setText.callback):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._inlineStyleInvalidated):
+        (WebInspector.DOMDispatcher.prototype.inlineStyleInvalidated):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._attributesUpdated):
+        (WebInspector.ElementsPanel.prototype.updateStyles):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane):
+        (WebInspector.MetricsSidebarPane.prototype.update):
+        (WebInspector.MetricsSidebarPane.prototype._innerUpdate.callback):
+        (WebInspector.MetricsSidebarPane.prototype._innerUpdate.inlineStyleCallback):
+        (WebInspector.MetricsSidebarPane.prototype._innerUpdate):
+        (WebInspector.MetricsSidebarPane.prototype._styleSheetChanged):
+        (WebInspector.MetricsSidebarPane.prototype._attributesUpdated):
+        (WebInspector.MetricsSidebarPane.prototype.startEditing):
+        (WebInspector.MetricsSidebarPane.prototype.editingEnded):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._innerUpdate.stylesCallback):
+        (WebInspector.StylesSidebarPane.prototype._innerUpdate.computedStyleCallback):
+        (WebInspector.StylesSidebarPane.prototype._innerUpdate):
+        (WebInspector.StylesSidebarPane.prototype._styleSheetChanged):
+        (WebInspector.StylesSidebarPane.prototype._attributesUpdated):
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._nodeStylesUpdatedForTest):
+        (WebInspector.StylesSidebarPane.prototype._toggleElementStatePane):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane.clickListener):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.event):
+        (WebInspector.StylePropertyTreeElement.prototype.element.userInput.previousContent.context.moveDirection):
+        (WebInspector.StylePropertyTreeElement.prototype.styleText.updateInterface.majorChange.isRevert):
+
 2011-07-15  Mike Reed  <reed@google.com>
 
         [skia] remove legacy draw-text-as-paths code, as skia now draws all text as text

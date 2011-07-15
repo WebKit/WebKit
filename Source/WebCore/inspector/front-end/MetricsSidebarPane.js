@@ -29,6 +29,9 @@
 WebInspector.MetricsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Metrics"));
+
+    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
 }
 
 WebInspector.MetricsSidebarPane.prototype = {
@@ -36,29 +39,50 @@ WebInspector.MetricsSidebarPane.prototype = {
     {
         if (node)
             this.node = node;
-        else
-            node = this.node;
+        this._innerUpdate();
+    },
+
+    _innerUpdate: function()
+    {
+        // FIXME: avoid updates of a collapsed pane.
+        var node = this.node;
 
         if (!node || node.nodeType() !== Node.ELEMENT_NODE) {
             this.bodyElement.removeChildren();
             return;
         }
 
-        var self = this;
-        var callback = function(style) {
-            if (!style)
+        function callback(style)
+        {
+            if (!style || this.node !== node)
                 return;
-            self._update(style);
-        };
-        WebInspector.cssModel.getComputedStyleAsync(node.id, callback);
+            this._updateMetrics(style);
+        }
+        WebInspector.cssModel.getComputedStyleAsync(node.id, callback.bind(this));
 
-        var inlineStyleCallback = function(style) {
-            if (!style)
+        function inlineStyleCallback(style)
+        {
+            if (!style || this.node !== node)
                 return;
-            self.inlineStyle = style;
-        };
-        WebInspector.cssModel.getInlineStyleAsync(node.id, inlineStyleCallback);
+            this.inlineStyle = style;
+        }
+        WebInspector.cssModel.getInlineStyleAsync(node.id, inlineStyleCallback.bind(this));
     },
+
+    _styleSheetChanged: function()
+    {
+        this._innerUpdate();
+    },
+
+    _attributesUpdated: function(event)
+    {
+        if (this.node !== event.data)
+            return;
+
+        // "style" attribute might have changed. Update metrics unless they are being edited.
+        if (!this._isEditingMetrics)
+            this._innerUpdate();
+    },    
 
     _getPropertyValueAsPx: function(style, propertyName)
     {
@@ -124,7 +148,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         WebInspector.highlightDOMNode(nodeId, mode);
     },
 
-    _update: function(style)
+    _updateMetrics: function(style)
     {
         // Updating with computed style.
         var metricsElement = document.createElement("div");
@@ -272,7 +296,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         context.keyDownHandler = boundKeyDown;
         targetElement.addEventListener("keydown", boundKeyDown, false);
 
-        WebInspector.panels.elements.startEditingStyle();
+        this._isEditingMetrics = true;
         WebInspector.startEditing(targetElement, {
             context: context,
             commitHandler: this.editingCommitted.bind(this),
@@ -340,7 +364,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         delete this.originalPropertyData;
         delete this.previousPropertyDataCandidate;
         element.removeEventListener("keydown", context.keyDownHandler, false);
-        WebInspector.panels.elements.endEditingStyle();
+        delete this._isEditingMetrics;
     },
 
     editingCancelled: function(element, context)

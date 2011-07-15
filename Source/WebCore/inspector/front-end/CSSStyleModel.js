@@ -513,8 +513,8 @@ WebInspector.CSSProperty.prototype = {
         function enabledCallback(style)
         {
             if (style)
-                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange);
-            if (userCallback)
+                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback ? userCallback.bind(null, style) : null);
+            else if (userCallback)
                 userCallback(style);
         }
 
@@ -530,7 +530,7 @@ WebInspector.CSSProperty.prototype = {
                     return;
                 }
 
-                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback ? userCallback.bind(this, style) : null);
+                WebInspector.cssModel._fireStyleSheetChanged(style.id.styleSheetId, majorChange, userCallback ? userCallback.bind(null, style) : null);
             } else {
                 if (userCallback)
                     userCallback(null);

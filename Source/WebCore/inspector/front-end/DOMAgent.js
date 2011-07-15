@@ -429,6 +429,12 @@ WebInspector.DOMAgent.prototype = {
         this._loadNodeAttributesSoon(nodeIds);
     },
 
+    _inlineStyleInvalidated: function(nodeIds)
+    {
+        // FIXME: handle differently (we don't necessarily need to update attributes upon this message).
+        this._loadNodeAttributesSoon(nodeIds);
+    },
+
     _loadNodeAttributesSoon: function(nodeIds)
     {
         for (var i = 0; i < nodeIds.length; ++i)
@@ -590,7 +596,7 @@ WebInspector.DOMDispatcher.prototype = {
 
     inlineStyleInvalidated: function(nodeIds)
     {
-        this._domAgent._attributesUpdated(nodeIds);
+        this._domAgent._inlineStyleInvalidated(nodeIds);
     },
 
     characterDataModified: function(nodeId, newValue)

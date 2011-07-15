@@ -93,7 +93,6 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles.addEventListener("style edited", this._stylesPaneEdited, this);
     this.sidebarPanes.styles.addEventListener("style property toggled", this._stylesPaneEdited, this);
     this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
-    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
 
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "elements-sidebar";
@@ -426,24 +425,11 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.focusedDOMNode = x;
     },
 
-    startEditingStyle: function()
-    {
-        this._isEditingStyle = true;
-    },
-
-    endEditingStyle: function()
-    {
-        delete this._isEditingStyle;
-    },
-
     _attributesUpdated: function(event)
     {
         this.recentlyModifiedNodes.push({node: event.data, updated: true});
         if (this.visible)
             this._updateModifiedNodesSoon();
-
-        if (!this._isEditingStyle && event.data === this.focusedDOMNode)
-            this._styleSheetChanged();
     },
 
     _characterDataModified: function(event)
@@ -537,12 +523,6 @@ WebInspector.ElementsPanel.prototype = {
         // Once metrics are edited, the Styles pane should be updated.
         this.sidebarPanes.styles.needsUpdate = true;
         this.updateStyles(true);
-    },
-
-    _styleSheetChanged: function()
-    {
-        this._metricsPaneEdited();
-        this._stylesPaneEdited();
     },
 
     _mouseMovedInCrumbs: function(event)
@@ -1017,16 +997,11 @@ WebInspector.ElementsPanel.prototype = {
     {
         var stylesSidebarPane = this.sidebarPanes.styles;
         var computedStylePane = this.sidebarPanes.computedStyle;
-        if ((!stylesSidebarPane.expanded && !computedStylePane.expanded) || !stylesSidebarPane.needsUpdate || this._isEditingStyle)
+        if ((!stylesSidebarPane.expanded && !computedStylePane.expanded) || !stylesSidebarPane.needsUpdate)
             return;
 
-        stylesSidebarPane.update(this.focusedDOMNode, null, forceUpdate, this._stylesUpdated.bind(this, this.focusedDOMNode));
+        stylesSidebarPane.update(this.focusedDOMNode, forceUpdate);
         stylesSidebarPane.needsUpdate = false;
-    },
-
-    _stylesUpdated: function(node)
-    {
-        // This method is overriden in tests.
     },
 
     updateMetrics: function()

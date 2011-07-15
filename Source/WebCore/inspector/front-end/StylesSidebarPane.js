@@ -83,6 +83,9 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.bodyElement.appendChild(this._elementStatePane);
     this._sectionsContainer = document.createElement("div");
     this.bodyElement.appendChild(this._sectionsContainer);
+
+    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
 }
 
 WebInspector.StylesSidebarPane.ColorFormat = {
@@ -210,14 +213,14 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    update: function(node, editedSection, forceUpdate, callback)
+    update: function(node, forceUpdate)
     {
         var refresh = false;
 
         if (forceUpdate)
             delete this.node;
 
-        if (!forceUpdate && (!node || node === this.node))
+        if (!forceUpdate && (node === this.node))
             refresh = true;
 
         if (node && node.nodeType() === Node.TEXT_NODE && node.parentNode)
@@ -231,12 +234,16 @@ WebInspector.StylesSidebarPane.prototype = {
         else
             node = this.node;
 
+        this._innerUpdate(refresh, null);
+    },
+
+    _innerUpdate: function(refresh, editedSection)
+    {
+        var node = this.node;
         if (!node) {
             this._sectionsContainer.removeChildren();
             this._computedStylePane.bodyElement.removeChildren();
             this.sections = {};
-            if (callback)
-                callback();
             return;
         }
 
@@ -244,22 +251,36 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             if (this.node === node && styles)
                 this._rebuildUpdate(node, styles);
-            if (callback)
-                callback();
         }
 
         function computedStyleCallback(computedStyle)
         {
             if (this.node === node && computedStyle)
                 this._refreshUpdate(node, computedStyle, editedSection);
-            if (callback)
-                callback();
         }
 
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
         else
             WebInspector.cssModel.getStylesAsync(node.id, this._forcedPseudoClasses, stylesCallback.bind(this));
+    },
+
+    _styleSheetChanged: function()
+    {
+        if (this._userOperation || this._isEditingStyle)
+            return;
+
+        this._innerUpdate(false);
+    },
+
+    _attributesUpdated: function(event)
+    {
+        if (this.node !== event.data)
+            return;
+
+        // "style" attribute might have changed. Update styles unless they are being edited.
+        if (!this._isEditingStyle && !this._userOperation)
+            this._innerUpdate(false);
     },
 
     _refreshUpdate: function(node, computedStyle, editedSection)
@@ -273,6 +294,8 @@ WebInspector.StylesSidebarPane.prototype = {
         }
         // Trace the computed style.
         this.sections[0][0].rebuildComputedTrace(this.sections[0]);
+
+        this._nodeStylesUpdatedForTest(node, true);
     },
 
     _rebuildUpdate: function(node, styles)
@@ -308,6 +331,13 @@ WebInspector.StylesSidebarPane.prototype = {
             this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
             this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, pseudoId, anchorElement);
         }
+
+        this._nodeStylesUpdatedForTest(node, false);
+    },
+
+    _nodeStylesUpdatedForTest: function(node, refresh)
+    {
+        // Tests override this method.
     },
 
     _refreshStyleRules: function(sections, computedStyle)
@@ -680,7 +710,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 for (var i = 0; i < this._elementStatePane.inputs.length; ++i)
                     this._elementStatePane.inputs[i].checked = false;
                 delete this._forcedPseudoClasses;
-                this.update(WebInspector.panels.elements.focusedDOMNode, null, true);
+                this._innerUpdate(false);
             }
         }
     },
@@ -702,7 +732,7 @@ WebInspector.StylesSidebarPane.prototype = {
                     pseudoClasses.push(inputs[i].state);
             }
             this._forcedPseudoClasses = pseudoClasses.length ? pseudoClasses : undefined;
-            this.update(WebInspector.panels.elements.focusedDOMNode, null, true);
+            this._innerUpdate(false);
         }
 
         function createCheckbox(state)
@@ -1581,12 +1611,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.tooltip = this.property.propertyText;
     },
 
-    updateAll: function(updateAllRules)
+    _updateAll: function()
     {
         if (!this.treeOutline)
             return;
-        if (updateAllRules && this.treeOutline.section && this.treeOutline.section.pane)
-            this.treeOutline.section.pane.update(null, this.treeOutline.section);
+        if (this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane._innerUpdate(true, this.treeOutline.section);
         else if (this.treeOutline.section)
             this.treeOutline.section.update(true);
         else
@@ -1608,7 +1638,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (this.treeOutline.section && this.treeOutline.section.pane)
                 this.treeOutline.section.pane.dispatchEventToListeners("style property toggled");
 
-            this.updateAll(true);
+            this._updateAll();
         }
 
         this.property.setDisabled(disabled, callback.bind(this));
@@ -1785,7 +1815,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
 
         delete this.originalPropertyText;
-        WebInspector.panels.elements.startEditingStyle();
+
+        this._parentPane._isEditingStyle = true;
         WebInspector.startEditing(selectElement, {
             context: context,
             commitHandler: this.editingCommitted.bind(this),
@@ -1907,7 +1938,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (editedElement.parentElement)
             editedElement.parentElement.removeStyleClass("child-editing");
 
-        WebInspector.panels.elements.endEditingStyle();
+        delete this._parentPane._isEditingStyle;
     },
 
     editingCancelled: function(element, context)
@@ -1961,7 +1992,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var isDirtyViaPaste = isDataPasted && (this.nameElement.textContent !== context.originalName || this.valueElement.textContent !== context.originalValue);
         var shouldCommitNewProperty = this._newProperty && (moveToOther || (!moveDirection && !isEditingName) || (isEditingName && blankInput));
         if (((userInput !== previousContent || isDirtyViaPaste) && !this._newProperty) || shouldCommitNewProperty) {
-            WebInspector.panels.elements.startEditingStyle();
             this.treeOutline.section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput, this.treeOutline.section);
             var propertyText;
             if (blankInput || (this._newProperty && /^\s*$/.test(this.valueElement.textContent)))
@@ -1984,8 +2014,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // The Callback to start editing the next/previous property/selector.
         function moveToNextCallback(alreadyNew, valueChanged, section)
         {
-            WebInspector.panels.elements.endEditingStyle();
-
             if (!moveDirection)
                 return;
 
@@ -2070,8 +2098,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return;
         }
 
+        var currentNode = this._parentPane.node;
+        this._parentPane._userOperation = true;
+
         function callback(originalPropertyText, newStyle)
         {
+            delete this._parentPane._userOperation;
             if (!newStyle) {
                 if (updateInterface) {
                     // It did not apply, cancel editing.
@@ -2087,8 +2119,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (section && section.pane)
                 section.pane.dispatchEventToListeners("style edited");
 
-            if (updateInterface)
-                this.updateAll(true);
+            if (updateInterface && currentNode === section.pane.node)
+                this._updateAll();
         }
 
         // Append a ";" if the new text does not end in ";".
