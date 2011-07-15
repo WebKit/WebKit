@@ -181,7 +181,10 @@ public:
         void setFontSize(FontDescription&, float size);
 
         static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
+
     public:
+        bool useSVGZoomRules();
+
         Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;
 
         bool hasSelectorForAttribute(const AtomicString&) const;

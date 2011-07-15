@@ -189,7 +189,6 @@ private:
     InitialFunction m_initial;
 };
 
-// CSSPropertyDirection
 class ApplyPropertyDirection : public ApplyPropertyDefault<TextDirection> {
 public:
     ApplyPropertyDirection(GetterFunction getter, SetterFunction setter, InitialFunction initial)
@@ -387,42 +386,48 @@ protected:
     void (CSSStyleSelector::*m_mapFill)(CSSPropertyID, FillLayer*, CSSValue*);
 };
 
-class ApplyPropertyWidth : public ApplyPropertyDefaultBase<unsigned short> {
+enum ComputeLengthNormal {NormalDisabled = 0, NormalEnabled};
+enum ComputeLengthThickness {ThicknessDisabled = 0, ThicknessEnabled};
+enum ComputeLengthSVGZoom {SVGZoomDisabled = 0, SVGZoomEnabled};
+template <typename T,
+          ComputeLengthNormal normalEnabled = NormalDisabled,
+          ComputeLengthThickness thicknessEnabled = ThicknessDisabled,
+          ComputeLengthSVGZoom svgZoomEnabled = SVGZoomDisabled>
+class ApplyPropertyComputeLength : public ApplyPropertyDefaultBase<T> {
 public:
-    ApplyPropertyWidth(GetterFunction getter, SetterFunction setter, InitialFunction initial)
-        : ApplyPropertyDefaultBase<unsigned short>(getter, setter, initial)
+    ApplyPropertyComputeLength(typename ApplyPropertyDefaultBase<T>::GetterFunction getter, typename ApplyPropertyDefaultBase<T>::SetterFunction setter, typename ApplyPropertyDefaultBase<T>::InitialFunction initial)
+        : ApplyPropertyDefaultBase<T>(getter, setter, initial)
     {
     }
 
 private:
     virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
+        // note: CSSPropertyLetter/WordSpacing right now sets to zero if it's not a primitive value for some reason...
         if (!value->isPrimitiveValue())
             return;
 
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        short width;
-        switch (primitiveValue->getIdent()) {
-        case CSSValueThin:
-            width = 1;
-            break;
-        case CSSValueMedium:
-            width = 3;
-            break;
-        case CSSValueThick:
-            width = 5;
-            break;
-        case CSSValueInvalid:
-            width = primitiveValue->computeLength<short>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
-            // CSS2 box model does not allow negative lengths for borders.
-            if (width < 0)
-                return;
-            break;
-        default:
-            return;
+
+        int ident = primitiveValue->getIdent();
+        T length;
+        if (normalEnabled && ident == CSSValueNormal) {
+            length = 0;
+        } else if (thicknessEnabled && ident == CSSValueThin) {
+            length = 1;
+        } else if (thicknessEnabled && ident == CSSValueMedium) {
+            length = 3;
+        } else if (thicknessEnabled && ident == CSSValueThick) {
+            length = 5;
+        } else if (ident == CSSValueInvalid) {
+            float zoom = (svgZoomEnabled && selector->useSVGZoomRules()) ? 1.0f : selector->style()->effectiveZoom();
+            length = primitiveValue->computeLength<T>(selector->style(), selector->rootElementStyle(), zoom);
+        } else {
+            ASSERT_NOT_REACHED();
+            length = 0;
         }
 
-        setValue(selector->style(), width);
+        setValue(selector->style(), length);
     }
 };
 
@@ -582,12 +587,12 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderBottomStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle, &RenderStyle::initialBorderStyle));
     setPropertyHandler(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
 
-    setPropertyHandler(CSSPropertyBorderTopWidth, new ApplyPropertyWidth(&RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth, &RenderStyle::initialBorderWidth));
-    setPropertyHandler(CSSPropertyBorderRightWidth, new ApplyPropertyWidth(&RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, &RenderStyle::initialBorderWidth));
-    setPropertyHandler(CSSPropertyBorderBottomWidth, new ApplyPropertyWidth(&RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth, &RenderStyle::initialBorderWidth));
-    setPropertyHandler(CSSPropertyBorderLeftWidth, new ApplyPropertyWidth(&RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, &RenderStyle::initialBorderWidth));
-    setPropertyHandler(CSSPropertyOutlineWidth, new ApplyPropertyWidth(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
-    setPropertyHandler(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyWidth(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderTopWidth, new ApplyPropertyComputeLength<unsigned short, NormalDisabled, ThicknessEnabled>(&RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderRightWidth, new ApplyPropertyComputeLength<unsigned short, NormalDisabled, ThicknessEnabled>(&RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderBottomWidth, new ApplyPropertyComputeLength<unsigned short, NormalDisabled, ThicknessEnabled>(&RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyBorderLeftWidth, new ApplyPropertyComputeLength<unsigned short, NormalDisabled, ThicknessEnabled>(&RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyOutlineWidth, new ApplyPropertyComputeLength<unsigned short, NormalDisabled, ThicknessEnabled>(&RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth, &RenderStyle::initialBorderWidth));
+    setPropertyHandler(CSSPropertyWebkitColumnRuleWidth, new ApplyPropertyComputeLength<unsigned short, NormalDisabled, ThicknessEnabled>(&RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth, &RenderStyle::initialBorderWidth));
 
     setPropertyHandler(CSSPropertyBorderTop, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderTopColor), propertyHandler(CSSPropertyBorderTopStyle), propertyHandler(CSSPropertyBorderTopWidth)));
     setPropertyHandler(CSSPropertyBorderRight, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderRightColor), propertyHandler(CSSPropertyBorderRightStyle), propertyHandler(CSSPropertyBorderRightWidth)));
@@ -606,6 +611,13 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderRadius, new ApplyPropertyExpanding<ExpandValue>(propertyHandler(CSSPropertyBorderTopLeftRadius), propertyHandler(CSSPropertyBorderTopRightRadius), propertyHandler(CSSPropertyBorderBottomLeftRadius), propertyHandler(CSSPropertyBorderBottomRightRadius)));
     setPropertyHandler(CSSPropertyWebkitBorderRadius, CSSPropertyBorderRadius);
 
+    setPropertyHandler(CSSPropertyWebkitBorderHorizontalSpacing, new ApplyPropertyComputeLength<short>(&RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing, &RenderStyle::initialHorizontalBorderSpacing));
+    setPropertyHandler(CSSPropertyWebkitBorderVerticalSpacing, new ApplyPropertyComputeLength<short>(&RenderStyle::verticalBorderSpacing, &RenderStyle::setVerticalBorderSpacing, &RenderStyle::initialVerticalBorderSpacing));
+    setPropertyHandler(CSSPropertyBorderSpacing, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyWebkitBorderHorizontalSpacing), propertyHandler(CSSPropertyWebkitBorderVerticalSpacing)));
+
+    setPropertyHandler(CSSPropertyLetterSpacing, new ApplyPropertyComputeLength<int, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>(&RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing, &RenderStyle::initialLetterWordSpacing));
+    setPropertyHandler(CSSPropertyWordSpacing, new ApplyPropertyComputeLength<int, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>(&RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, &RenderStyle::initialLetterWordSpacing));
+
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
     setPropertyHandler(CSSPropertyFontVariant, new ApplyPropertyFont<FontSmallCaps>(&FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff));
     setPropertyHandler(CSSPropertyTextRendering, new ApplyPropertyFont<TextRenderingMode>(&FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering));
@@ -615,7 +627,6 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
     setPropertyHandler(CSSPropertyOutlineStyle, new ApplyPropertyExpanding<ExpandValue>(new ApplyPropertyDefault<OutlineIsAuto>(&RenderStyle::outlineStyleIsAuto, &RenderStyle::setOutlineStyleIsAuto, &RenderStyle::initialOutlineStyleIsAuto), new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::outlineStyle, &RenderStyle::setOutlineStyle, &RenderStyle::initialBorderStyle)));
     setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
-
 
     setPropertyHandler(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
     setPropertyHandler(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));

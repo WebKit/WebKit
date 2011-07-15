@@ -1,3 +1,30 @@
+2011-07-14  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Introduce templated compute length class in CSSStyleApplyProperty, and use to handle several CSS properties.
+        https://bugs.webkit.org/show_bug.cgi?id=62957
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        Add computeLength function that returns unsigned short.
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyComputeLength::ApplyPropertyComputeLength):
+        Added class to handle computeLength based properties.
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Initialize ApplyPropertyComputeLength for appropriate properties.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::useSVGZoomRules):
+        Make this a public member function instead of a private static function.
+        (WebCore::CSSStyleSelector::applyProperty):
+        Removed code now implemented in CSSStyleApplyProperty.
+        (WebCore::CSSStyleSelector::setFontSize):
+        Use new useSVGZoomRules function.
+        * css/CSSStyleSelector.h:
+        Add interface for useSVGZoomRules.
+
 2011-07-14  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: Should not dispatch didFirstVisuallyNonEmptyLayout for the initial empty document

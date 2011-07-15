@@ -3667,9 +3667,9 @@ inline SVGDisplayPropertyGuard::~SVGDisplayPropertyGuard()
 // width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
 // if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
 // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
-static inline bool useSVGZoomRules(const Element* e)
+bool CSSStyleSelector::useSVGZoomRules()
 {
-    return e && e->isSVGElement();
+    return m_element && m_element->isSVGElement();
 }
 
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
@@ -3780,33 +3780,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWhiteSpace:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
         return;
-    case CSSPropertyBorderSpacing: {
-        if (isInherit) {
-            m_style->setHorizontalBorderSpacing(m_parentStyle->horizontalBorderSpacing());
-            m_style->setVerticalBorderSpacing(m_parentStyle->verticalBorderSpacing());
-        }
-        else if (isInitial) {
-            m_style->setHorizontalBorderSpacing(0);
-            m_style->setVerticalBorderSpacing(0);
-        }
-        return;
-    }
-    case CSSPropertyWebkitBorderHorizontalSpacing: {
-        HANDLE_INHERIT_AND_INITIAL(horizontalBorderSpacing, HorizontalBorderSpacing)
-        if (!primitiveValue)
-            return;
-        short spacing = primitiveValue->computeLength<short>(style(), m_rootElementStyle, zoomFactor);
-        m_style->setHorizontalBorderSpacing(spacing);
-        return;
-    }
-    case CSSPropertyWebkitBorderVerticalSpacing: {
-        HANDLE_INHERIT_AND_INITIAL(verticalBorderSpacing, VerticalBorderSpacing)
-        if (!primitiveValue)
-            return;
-        short spacing = primitiveValue->computeLength<short>(style(), m_rootElementStyle, zoomFactor);
-        m_style->setVerticalBorderSpacing(spacing);
-        return;
-    }
     case CSSPropertyCursor:
         if (isInherit) {
             m_style->setCursor(m_parentStyle->cursor());
@@ -3852,41 +3825,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setListStyleImage(styleImage(CSSPropertyListStyleImage, value));
         return;
     }
-    case CSSPropertyLetterSpacing:
-    case CSSPropertyWordSpacing:
-    {
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyLetterSpacing, letterSpacing, LetterSpacing)
-            HANDLE_INHERIT_COND(CSSPropertyWordSpacing, wordSpacing, WordSpacing)
-            return;
-        }
-        else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyLetterSpacing, LetterSpacing, LetterWordSpacing)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWordSpacing, WordSpacing, LetterWordSpacing)
-            return;
-        }
-        
-        int width = 0;
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal) {
-            width = 0;
-        } else {
-            if (!primitiveValue)
-                return;
-            width = primitiveValue->computeLength<int>(style(), m_rootElementStyle, useSVGZoomRules(m_element) ? 1.0f : zoomFactor);
-        }
-        switch (id) {
-        case CSSPropertyLetterSpacing:
-            m_style->setLetterSpacing(width);
-            break;
-        case CSSPropertyWordSpacing:
-            m_style->setWordSpacing(width);
-            break;
-            // ### needs the definitions in renderstyle
-        default: break;
-        }
-        return;
-    }
-
     case CSSPropertyWordBreak:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordBreak, WordBreak)
         return;
@@ -4496,7 +4434,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 fontDescription.setUsePrinterFont(m_checker.m_document->printing());
            
                 // Handle the zoom factor.
-                fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), fontDescription.specifiedSize(), useSVGZoomRules(m_element)));
+                fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), fontDescription.specifiedSize(), useSVGZoomRules()));
                 if (m_style->setFontDescription(fontDescription))
                     m_fontDirty = true;
             }
@@ -5398,6 +5336,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderTopRightRadius:
     case CSSPropertyBorderBottomLeftRadius:
     case CSSPropertyBorderBottomRightRadius:
+    case CSSPropertyBorderSpacing:
+    case CSSPropertyWebkitBorderHorizontalSpacing:
+    case CSSPropertyWebkitBorderVerticalSpacing:
+    case CSSPropertyLetterSpacing:
+    case CSSPropertyWordSpacing:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
     case CSSPropertyTextRendering:
@@ -6162,9 +6105,7 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* style, RenderSty
 void CSSStyleSelector::setFontSize(FontDescription& fontDescription, float size)
 {
     fontDescription.setSpecifiedSize(size);
-
-    bool useSVGZoomRules = m_element && m_element->isSVGElement();
-    fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), size, useSVGZoomRules)); 
+    fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), size, useSVGZoomRules()));
 }
 
 float CSSStyleSelector::getComputedSizeFromSpecifiedSize(Document* document, RenderStyle* style, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules)
