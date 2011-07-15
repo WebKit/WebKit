@@ -692,12 +692,12 @@ void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents* instru
         consoleAgent->stopTiming(title, stack);
 }
 
-void InspectorInstrumentation::consoleMarkTimelineImpl(InstrumentingAgents* instrumentingAgents, PassRefPtr<ScriptArguments> arguments)
+void InspectorInstrumentation::consoleTimeStampImpl(InstrumentingAgents* instrumentingAgents, PassRefPtr<ScriptArguments> arguments)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {
         String message;
         arguments->getFirstArgumentAsString(message);
-        timelineAgent->didMarkTimeline(message);
+        timelineAgent->didTimeStamp(message);
      }
 }
 

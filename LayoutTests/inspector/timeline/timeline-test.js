@@ -83,7 +83,7 @@ InspectorTest.dumpTimelineRecord = function(record, level)
         prefix = "----" + prefix;
     if (level > 0)
         prefix = prefix + "> ";
-    if (record.type === WebInspector.TimelineAgent.RecordType.MarkTimeline) {
+    if (record.type === WebInspector.TimelineAgent.RecordType.TimeStamp) {
         suffix = " : " + record.data.message;
     }
     InspectorTest.addResult(prefix + InspectorTest._timelineAgentTypeToString(record.type) + suffix);

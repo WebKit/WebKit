@@ -140,7 +140,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewCalculator.reset();
         this._forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
 
-        function markTimeline(record)
+        function markPercentagesForRecord(record)
         {
             if (!(this._showShortEvents || record.isLong()))
                 return;
@@ -151,7 +151,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             for (var j = Math.round(percentages.start); j <= end; ++j)
                 timelines[categoryName][j] = true;
         }
-        this._forAllRecords(records, markTimeline.bind(this));
+        this._forAllRecords(records, markPercentagesForRecord.bind(this));
 
         // Convert sparse arrays to continuous segments, render graphs for each.
         for (var category in this._categories) {

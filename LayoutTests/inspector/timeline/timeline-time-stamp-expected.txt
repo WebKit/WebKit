@@ -1,10 +1,10 @@
-Tests the Timeline API mark feature
+Tests the Timeline API timeStamp feature
 
 TimeStamp Properties:
 {
     startTime : <number>
     data : {
-        message : "MARK TIMELINE"
+        message : "TIME STAMP"
     }
     type : "TimeStamp"
     usedHeapSize : <number>

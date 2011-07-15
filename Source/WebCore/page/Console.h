@@ -77,6 +77,7 @@ public:
 #endif
     void time(const String&);
     void timeEnd(const String&, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
+    void timeStamp(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void group(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void groupCollapsed(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void groupEnd();

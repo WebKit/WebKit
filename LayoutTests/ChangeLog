@@ -1,3 +1,23 @@
+2011-07-15  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Rename console.markTimeline() to console.timeStamp() for Firebug compatibility.
+        https://bugs.webkit.org/show_bug.cgi?id=63317
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/timeline/resources/timeline-iframe-data.html:
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * inspector/timeline/timeline-event-dispatch.html:
+        * inspector/timeline/timeline-mark-timeline-expected.txt:
+        * inspector/timeline/timeline-mark-timeline.html:
+        * inspector/timeline/timeline-script-tag-1-expected.txt:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.dumpTimelineRecord):
+        * inspector/timeline/timeline-time-stamp-expected.txt: Added.
+        * inspector/timeline/timeline-time-stamp.html: Copied from LayoutTests/inspector/timeline/timeline-mark-timeline.html.
+        * platform/chromium/inspector/timeline/timeline-mark-timeline-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-time-stamp-expected.txt: Copied from LayoutTests/platform/chromium/inspector/timeline/timeline-mark-timeline-expected.txt.
+
 2011-07-15  Kentaro Hara  <haraken@google.com>
 
         Clear the content of a search input form when 'Escape' is pressed.

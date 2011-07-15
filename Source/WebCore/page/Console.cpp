@@ -253,9 +253,9 @@ void Console::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCall
     InspectorInstrumentation::consoleCount(page(), arguments, callStack);
 }
 
-void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>)
+void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::consoleMarkTimeline(page(), arguments);
+    InspectorInstrumentation::consoleTimeStamp(page(), arguments);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -307,6 +307,11 @@ void Console::time(const String& title)
 void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack)
 {
     InspectorInstrumentation::stopConsoleTiming(page(), title, callStack);
+}
+
+void Console::timeStamp(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>)
+{
+    InspectorInstrumentation::consoleTimeStamp(page(), arguments);
 }
 
 void Console::group(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)

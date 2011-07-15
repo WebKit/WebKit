@@ -148,7 +148,7 @@ public:
     static void consoleCount(Page*, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void startConsoleTiming(Page*, const String& title);
     static void stopConsoleTiming(Page*, const String& title, PassRefPtr<ScriptCallStack>);
-    static void consoleMarkTimeline(Page*, PassRefPtr<ScriptArguments>);
+    static void consoleTimeStamp(Page*, PassRefPtr<ScriptArguments>);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, const String& sourceURL);
@@ -276,7 +276,7 @@ private:
     static void consoleCountImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void startConsoleTimingImpl(InstrumentingAgents*, const String& title);
     static void stopConsoleTimingImpl(InstrumentingAgents*, const String& title, PassRefPtr<ScriptCallStack>);
-    static void consoleMarkTimelineImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>);
+    static void consoleTimeStampImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsoleImpl(InstrumentingAgents*, const String& title, unsigned lineNumber, const String& sourceURL);

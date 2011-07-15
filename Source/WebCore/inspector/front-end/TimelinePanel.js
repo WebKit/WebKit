@@ -97,7 +97,7 @@ WebInspector.TimelinePanel = function()
     // Disable short events filter by default.
     this.toggleFilterButton.toggled = true;
     this._calculator._showShortEvents = this.toggleFilterButton.toggled;
-    this._markTimelineRecords = [];
+    this._timeStampRecords = [];
     this._expandOffset = 15;
 
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onTimelineEventRecorded, this);
@@ -184,7 +184,7 @@ WebInspector.TimelinePanel.prototype = {
             recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: this.categories.scripting };
             recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: this.categories.scripting };
             recordStyles[recordTypes.EvaluateScript] = { title: WebInspector.UIString("Evaluate Script"), category: this.categories.scripting };
-            recordStyles[recordTypes.MarkTimeline] = { title: WebInspector.UIString("Mark"), category: this.categories.scripting };
+            recordStyles[recordTypes.TimeStamp] = { title: WebInspector.UIString("Stamp"), category: this.categories.scripting };
             recordStyles[recordTypes.ResourceSendRequest] = { title: WebInspector.UIString("Send Request"), category: this.categories.loading };
             recordStyles[recordTypes.ResourceReceiveResponse] = { title: WebInspector.UIString("Receive Response"), category: this.categories.loading };
             recordStyles[recordTypes.ResourceFinish] = { title: WebInspector.UIString("Finish Loading"), category: this.categories.loading };
@@ -227,8 +227,8 @@ WebInspector.TimelinePanel.prototype = {
         this._timelineGrid.removeEventDividers();
         var clientWidth = this._graphRowsElement.offsetWidth - this._expandOffset;
         var dividers = [];
-        for (var i = 0; i < this._markTimelineRecords.length; ++i) {
-            var record = this._markTimelineRecords[i];
+        for (var i = 0; i < this._timeStampRecords.length; ++i) {
+            var record = this._timeStampRecords[i];
             var positions = this._calculator.computeBarGraphWindowPosition(record, clientWidth);
             var dividerPosition = Math.round(positions.left);
             if (dividerPosition < 0 || dividerPosition >= clientWidth || dividers[dividerPosition])
@@ -238,7 +238,7 @@ WebInspector.TimelinePanel.prototype = {
             dividers[dividerPosition] = divider;
         }
         this._timelineGrid.addEventDividers(dividers);
-        this._overviewPane.updateEventDividers(this._markTimelineRecords, this._createEventDivider.bind(this));
+        this._overviewPane.updateEventDividers(this._timeStampRecords, this._createEventDivider.bind(this));
     },
 
     _createEventDivider: function(record)
@@ -255,7 +255,7 @@ WebInspector.TimelinePanel.prototype = {
             eventDivider.className += " resources-blue-divider";
         else if (record.type === recordTypes.MarkLoad)
             eventDivider.className += " resources-red-divider";
-        else if (record.type === recordTypes.MarkTimeline) {
+        else if (record.type === recordTypes.TimeStamp) {
             eventDivider.className += " resources-orange-divider";
             eventDividerPadding.title = record.data.message;
         }
@@ -369,7 +369,7 @@ WebInspector.TimelinePanel.prototype = {
         var formattedRecord = new WebInspector.TimelinePanel.FormattedRecord(record, parentRecord, this, scriptDetails);
 
         if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad) {
-            this._markTimelineRecords.push(formattedRecord);
+            this._timeStampRecords.push(formattedRecord);
             return;
         }
 
@@ -398,8 +398,8 @@ WebInspector.TimelinePanel.prototype = {
                 parentRecord._selfTime -= formattedRecord.endTime - formattedRecord.startTime;
 
         // Keep bar entry for mark timeline since nesting might be interesting to the user.
-        if (record.type === recordTypes.MarkTimeline)
-            this._markTimelineRecords.push(formattedRecord);
+        if (record.type === recordTypes.TimeStamp)
+            this._timeStampRecords.push(formattedRecord);
     },
 
     setSidebarWidth: function(width)
@@ -434,7 +434,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _clearPanel: function()
     {
-        this._markTimelineRecords = [];
+        this._timeStampRecords = [];
         this._sendRequestRecords = {};
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
@@ -1036,7 +1036,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
             case WebInspector.TimelineAgent.RecordType.ResourceFinish:
                 return WebInspector.displayNameForURL(this.url);
-            case WebInspector.TimelineAgent.RecordType.MarkTimeline:
+            case WebInspector.TimelineAgent.RecordType.TimeStamp:
                 return this.data.message;
             default:
                 return null;

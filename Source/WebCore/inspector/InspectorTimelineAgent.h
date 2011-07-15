@@ -107,7 +107,7 @@ public:
     void willEvaluateScript(const String&, int);
     void didEvaluateScript();
 
-    void didMarkTimeline(const String&);
+    void didTimeStamp(const String&);
     void didMarkDOMContentEvent();
     void didMarkLoadEvent();
 

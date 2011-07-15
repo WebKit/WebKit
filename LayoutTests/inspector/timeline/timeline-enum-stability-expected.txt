@@ -14,7 +14,7 @@ Applications outside of WebKit depend on the stability of the mapping of these t
     XHRReadyStateChange : "XHRReadyStateChange"
     XHRLoad : "XHRLoad"
     EvaluateScript : "EvaluateScript"
-    MarkTimeline : "MarkTimeline"
+    TimeStamp : "TimeStamp"
     MarkLoad : "MarkLoad"
     MarkDOMContent : "MarkDOMContent"
     ScheduleResourceRequest : "ScheduleResourceRequest"

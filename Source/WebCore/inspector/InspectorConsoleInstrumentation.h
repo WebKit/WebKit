@@ -78,12 +78,12 @@ inline void InspectorInstrumentation::stopConsoleTiming(Page* page, const String
 #endif
 }
 
-inline void InspectorInstrumentation::consoleMarkTimeline(Page* page, PassRefPtr<ScriptArguments> arguments)
+inline void InspectorInstrumentation::consoleTimeStamp(Page* page, PassRefPtr<ScriptArguments> arguments)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        consoleMarkTimelineImpl(instrumentingAgents, arguments);
+        consoleTimeStampImpl(instrumentingAgents, arguments);
 #endif
 }
 

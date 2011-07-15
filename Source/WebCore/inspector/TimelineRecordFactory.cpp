@@ -115,7 +115,7 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(cons
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createMarkTimelineData(const String& message)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createTimeStampData(const String& message)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setString("message", message);

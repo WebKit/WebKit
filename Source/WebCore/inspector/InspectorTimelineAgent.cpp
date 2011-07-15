@@ -65,7 +65,8 @@ static const char EvaluateScript[] = "EvaluateScript";
 
 static const char MarkLoad[] = "MarkLoad";
 static const char MarkDOMContent[] = "MarkDOMContent";
-static const char MarkTimeline[] = "MarkTimeline";
+
+static const char TimeStamp[] = "TimeStamp";
 
 static const char ScheduleResourceRequest[] = "ScheduleResourceRequest";
 static const char ResourceSendRequest[] = "ResourceSendRequest";
@@ -326,12 +327,12 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
     m_frontend->eventRecorded(record.release());
 }
 
-void InspectorTimelineAgent::didMarkTimeline(const String& message)
+void InspectorTimelineAgent::didTimeStamp(const String& message)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->setObject("data", TimelineRecordFactory::createMarkTimelineData(message));
-    addRecordToTimeline(record.release(), TimelineRecordType::MarkTimeline);
+    record->setObject("data", TimelineRecordFactory::createTimeStampData(message));
+    addRecordToTimeline(record.release(), TimelineRecordType::TimeStamp);
 }
 
 void InspectorTimelineAgent::didMarkDOMContentEvent()

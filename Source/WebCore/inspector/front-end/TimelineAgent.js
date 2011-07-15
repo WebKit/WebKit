@@ -32,13 +32,14 @@ WebInspector.TimelineAgent = function() {
     // Not implemented.
 }
 
-// Must be kept in sync with TimelineItem.h
+// Must be kept in sync with InspectorTimelineAgent.h
 WebInspector.TimelineAgent.RecordType = {
     EventDispatch: "EventDispatch",
     Layout: "Layout",
     RecalculateStyles: "RecalculateStyles",
     Paint: "Paint",
     ParseHTML: "ParseHTML",
+
 
     TimerInstall: "TimerInstall",
     TimerRemove: "TimerRemove",
@@ -48,7 +49,8 @@ WebInspector.TimelineAgent.RecordType = {
     XHRLoad: "XHRLoad",
     EvaluateScript: "EvaluateScript",
 
-    MarkTimeline: "MarkTimeline",
+    TimeStamp: "TimeStamp",
+
     MarkLoad: "MarkLoad",
     MarkDOMContent: "MarkDOMContent",
 

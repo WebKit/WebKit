@@ -54,6 +54,7 @@ module window {
 
         void time(in [ConvertUndefinedOrNullToNullString] DOMString title);
         [CustomArgumentHandling] void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [CustomArgumentHandling] void timeStamp();
         [CustomArgumentHandling] void group();
         [CustomArgumentHandling] void groupCollapsed();
         void groupEnd();

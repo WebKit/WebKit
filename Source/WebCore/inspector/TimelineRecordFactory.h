@@ -62,7 +62,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
 
-        static PassRefPtr<InspectorObject> createMarkTimelineData(const String&);
+        static PassRefPtr<InspectorObject> createTimeStampData(const String&);
 
         static PassRefPtr<InspectorObject> createResourceSendRequestData(unsigned long identifier, const ResourceRequest&);
 
