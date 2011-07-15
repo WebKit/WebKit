@@ -25,3 +25,19 @@ layer at (384,30) size 179x36 clip at (385,31) size 177x34
 layer at (571,30) size 179x36 clip at (572,31) size 177x34
   RenderTextControl {TEXTAREA} at (563,22) size 179x36 [bgcolor=#EBEBE4] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x16 [color=#545454]
+layer at (13,33) size 175x16
+  RenderBlock (relative positioned) {DIV} at (3,3) size 175x16 [color=#640000]
+    RenderText {#text} at (0,0) size 32x16
+      text run at (0,0) width 32: "text"
+layer at (200,33) size 175x16
+  RenderBlock (relative positioned) {DIV} at (3,3) size 175x16 [color=#640000]
+    RenderText {#text} at (0,0) size 104x16
+      text run at (0,0) width 104: "disabled text"
+layer at (387,33) size 175x16
+  RenderBlock (relative positioned) {DIV} at (3,3) size 175x16 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 56x16
+      text run at (0,0) width 56: "default"
+layer at (574,33) size 175x16
+  RenderBlock (relative positioned) {DIV} at (3,3) size 175x16 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 128x16
+      text run at (0,0) width 128: "default disabled"

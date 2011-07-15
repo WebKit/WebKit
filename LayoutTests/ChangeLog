@@ -1,3 +1,42 @@
+2011-07-14  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Updat test expectations for r90971.
+
+        * platform/chromium-linux/fast/forms/input-placeholder-text-indent-expected.png:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/fast/forms/placeholder-stripped-expected.png:
+        * platform/chromium-linux/fast/forms/search-styled-expected.png:
+        * platform/chromium-linux/fast/forms/search-styled-expected.txt:
+        * platform/chromium-linux/fast/forms/textarea-placeholder-wrapping-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/pseudo-cache-stale-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/isindex-placeholder-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/password-placeholder-text-security-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/search-styled-expected.png:
+        * platform/chromium-mac/fast/forms/isindex-placeholder-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/css/pseudo-cache-stale-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-text-indent-expected.png:
+        * platform/chromium-win/fast/forms/input-placeholder-text-indent-expected.txt:
+        * platform/chromium-win/fast/forms/isindex-placeholder-expected.txt:
+        * platform/chromium-win/fast/forms/password-placeholder-expected.txt:
+        * platform/chromium-win/fast/forms/password-placeholder-text-security-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-set-attribute-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-stripped-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-stripped-expected.txt:
+        * platform/chromium-win/fast/forms/search-placeholder-value-changed-expected.txt:
+        * platform/chromium-win/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-set-attribute-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-wrapping-expected.png: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-wrapping-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-14  Adam Barth  <abarth@webkit.org>
 
         The beforeload event allows tracking URI changes in a frame

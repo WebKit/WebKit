@@ -24,3 +24,13 @@ layer at (10,126) size 181x38 clip at (11,127) size 179x36
 layer at (10,173) size 181x38 clip at (11,174) size 179x36
   RenderTextControl {TEXTAREA} at (2,101) size 181x38 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x16
+layer at (12,77) size 151x16
+  RenderBlock (relative positioned) {DIV} at (2,3) size 151x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 115x16
+      text run at (1,0) width 115: "first line second line"
+layer at (13,129) size 175x32
+  RenderBlock (relative positioned) {DIV} at (3,3) size 175x32 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 144x32
+      text run at (0,0) width 136: "first line second"
+      text run at (136,0) width 8: " "
+      text run at (0,16) width 32: "line"
