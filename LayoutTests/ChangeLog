@@ -1,3 +1,9 @@
+2011-07-15  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] updated test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Rob Buis  <rbuis@rim.com>
 
         Stroking of zero-length paths in SVG should change according to erratum

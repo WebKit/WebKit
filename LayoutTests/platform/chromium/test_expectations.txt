@@ -3834,3 +3834,8 @@ BUGCR89372 MAC : svg/dom/use-style-recalc-script-execute-crash.html = CRASH PASS
 
 BUGWK64368 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK64368 WIN GPU : fast/canvas/canvas-text-baseline.html = IMAGE
+
+BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
+
+BUGCR89477 : editing/selection/image-before-linebreak.html = IMAGE
+BUGCR89477 : editing/selection/replaced-boundaries-3.html = IMAGE
