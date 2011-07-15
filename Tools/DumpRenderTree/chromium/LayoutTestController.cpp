@@ -112,6 +112,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
     bindMethod("setIsolatedWorldSecurityOrigin", &LayoutTestController::setIsolatedWorldSecurityOrigin);
     bindMethod("execCommand", &LayoutTestController::execCommand);
+    bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
     bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
@@ -1597,6 +1598,12 @@ void LayoutTestController::evaluateInWebInspector(const CppArgumentList& argumen
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
         return;
     m_shell->drtDevToolsAgent()->evaluateInWebInspector(arguments[0].toInt32(), arguments[1].toString());
+}
+
+void LayoutTestController::forceRedSelectionColors(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    m_shell->webView()->setSelectionColors(0xffee0000, 0xff00ee00, 0xff000000, 0xffc0c0c0);
 }
 
 void LayoutTestController::addUserScript(const CppArgumentList& arguments, CppVariant* result)

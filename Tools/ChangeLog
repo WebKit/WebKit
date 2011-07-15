@@ -1,3 +1,20 @@
+2011-07-15  Tony Chang  <tony@chromium.org>
+
+        [chromium] land linux selection color layout test
+        https://bugs.webkit.org/show_bug.cgi?id=64631
+
+        Reviewed by Ojan Vafai.
+
+        I had removed this code in r76620 because I thought it wasn't used.
+        Turns out there was a layout test in the chromium tree that never
+        got migrated that used it.  Re-add the code and land the layout
+        test (I will remove it from the chromium tree soon).
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::forceRedSelectionColors):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Revert http://trac.webkit.org/changeset/91091, since Python 2.5
