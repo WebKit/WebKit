@@ -1,3 +1,23 @@
+2011-07-15  Pratik Solanki  <psolanki@apple.com>
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=63674
+        Get webkit to compile with USE(CFNETWORK) enabled on Mac
+
+        Reviewed by David Kilzer.
+
+        Get LoaderRunLoop to work on Mac when USE(CFNETWORK) is enabled. Although we could use the
+        main run loop, it's better to have a separate thread handling the loads so that it can work
+        in parallel to the main thread. This is similar to what NSURLConnection does for us
+        internally when we use the NS APIs.
+
+        No new tests because no change in functionality and option is not enabled on Mac.
+
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::runLoaderThread): Create an autorelease pool for objc code that might be called in
+        the run loop.
+        (WebCore::loaderRunLoop):
+        * platform/network/cf/LoaderRunLoopCF.h:
+
 2011-07-15  Xiaomei Ji  <xji@chromium.org>
 
         --webkit-visual-word crash on mixed editability
