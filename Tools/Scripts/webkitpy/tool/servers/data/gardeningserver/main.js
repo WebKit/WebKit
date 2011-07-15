@@ -80,6 +80,7 @@ function showResultsDetail()
             status.text(testName + ' [' + builderName + ']');
             content.empty();
             content.append(ui.failureDetails(resultsURLs));
+            $('.results-detail .actions .rebaseline').toggle(results.canRebaseline(failureTypeList));
             $('.failure-details', content).attr(config.kBuilderNameAttr, builderName);
             $('.failure-details', content).attr(config.kTestNameAttr, testName);
             $('.failure-details', content).attr(config.kFailureTypesAttr, failureTypes);
@@ -108,8 +109,22 @@ function hideResultsDetail()
     });
 }
 
+function rebaselineResults()
+{
+    var failureDetails = $('.failure-details', $(this).parents('.results-detail'));
+
+    var builderName = failureDetails.attr(config.kBuilderNameAttr);
+    var testName = failureDetails.attr(config.kTestNameAttr);
+    var failureTypes = failureDetails.attr(config.kFailureTypesAttr);
+    var failureTypeList = failureTypes.split(' ');
+
+    displayOnButterbar('Rebaselining...');
+    checkout.rebaseline(builderName, testName, failureTypeList, dismissButterbar);
+}
+
 $('.regression .where a').live('click', showResultsDetail);
-$('.results-detail .dismiss').live('click', hideResultsDetail);
+$('.results-detail .actions .dismiss').live('click', hideResultsDetail);
+$('.results-detail .actions .rebaseline').live('click', rebaselineResults);
 
 $(document).ready(function() {
     showResults(function() {

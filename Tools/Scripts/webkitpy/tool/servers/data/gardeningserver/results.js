@@ -26,6 +26,9 @@ var kImageDiffSuffix = '-diff.png';
 var kTextDiffSuffix = '-diff.txt';
 var kCrashLogSuffix = '-crash-log.txt';
 
+var kPNGExtension = 'png';
+var kTXTExtension = 'txt';
+
 var kPreferredSuffixOrder = [
     kExpectedImageSuffix,
     kActualImageSuffix,
@@ -88,32 +91,59 @@ function possibleSuffixListFor(failureTypeList)
 
     $.each(failureTypeList, function(index, failureType) {
         switch(failureType) {
-            case IMAGE:
-                pushImageSuffixes();
-                break;
-            case TEXT:
-                pushTextSuffixes();
-                break;
-            case IMAGE_TEXT:
-                pushImageSuffixes();
-                pushTextSuffixes();
-                break;
-            case CRASH:
-                suffixList.push(kCrashLogSuffix);
-                break;
-            default:
-                // FIXME: Add support for the rest of the result types.
-                // '-expected.html',
-                // '-expected-mismatch.html',
-                // '-expected.wav',
-                // '-actual.wav',
-                // ... and possibly more.
-                break;
+        case IMAGE:
+            pushImageSuffixes();
+            break;
+        case TEXT:
+            pushTextSuffixes();
+            break;
+        case IMAGE_TEXT:
+            pushImageSuffixes();
+            pushTextSuffixes();
+            break;
+        case CRASH:
+            suffixList.push(kCrashLogSuffix);
+            break;
+        default:
+            // FIXME: Add support for the rest of the result types.
+            // '-expected.html',
+            // '-expected-mismatch.html',
+            // '-expected.wav',
+            // '-actual.wav',
+            // ... and possibly more.
+            break;
         }
     });
 
     return suffixList;
 }
+
+results.failureTypeToExtensionList = function(failureType)
+{
+    switch(failureType) {
+    case IMAGE:
+        return [kPNGExtension];
+    case TEXT:
+        return [kTXTExtension];
+    case IMAGE_TEXT:
+        return [kTXTExtension, kPNGExtension];
+    default:
+        // FIXME: Add support for the rest of the result types.
+        // '-expected.html',
+        // '-expected-mismatch.html',
+        // '-expected.wav',
+        // '-actual.wav',
+        // ... and possibly more.
+        return [];
+    }
+};
+
+results.canRebaseline = function(failureTypeList)
+{
+    return failureTypeList.some(function(element) {
+        return results.failureTypeToExtensionList(element).length > 0;
+    });
+};
 
 function resultsSummaryURL(builderName, testName)
 {

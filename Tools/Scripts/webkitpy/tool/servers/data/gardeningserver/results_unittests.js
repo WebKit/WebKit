@@ -326,6 +326,23 @@ test("collectUnexpectedResults", 1, function() {
     deepEqual(collectedResults, ["TEXT", "IMAGE"]);
 });
 
+test("failureTypeToExtensionList", 5, function() {
+    deepEqual(results.failureTypeToExtensionList('TEXT'), ['txt']);
+    deepEqual(results.failureTypeToExtensionList('IMAGE+TEXT'), ['txt', 'png']);
+    deepEqual(results.failureTypeToExtensionList('IMAGE'), ['png']);
+    deepEqual(results.failureTypeToExtensionList('CRASH'), []);
+    deepEqual(results.failureTypeToExtensionList('TIMEOUT'), []);
+});
+
+test("canRebaseline", 6, function() {
+    ok(results.canRebaseline(['TEXT']));
+    ok(results.canRebaseline(['IMAGE+TEXT', 'CRASH']));
+    ok(results.canRebaseline(['IMAGE']));
+    ok(!results.canRebaseline(['CRASH']));
+    ok(!results.canRebaseline(['TIMEOUT']));
+    ok(!results.canRebaseline([]));
+});
+
 test("fetchResultsURLs", 4, function() {
     var simulator = new NetworkSimulator();
 

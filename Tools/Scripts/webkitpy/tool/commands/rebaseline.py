@@ -101,7 +101,9 @@ class RebaselineTest(AbstractDeclarativeCommand):
         return port.baseline_path()
 
     def _save_baseline(self, data, target_baseline):
-        self._tool.filesystem.write_binary_file(target_baseline, data)
+        filesystem = self._tool.filesystem
+        filesystem.maybe_make_directory(filesystem.dirname(target_baseline))
+        filesystem.write_binary_file(target_baseline, data)
         if not self._tool.scm().exists(target_baseline):
             self._tool.scm().add(target_baseline)
 

@@ -177,10 +177,13 @@ td:last-of-type {
     padding: 5px;
 }
 
-.results-detail .toolbar .dismiss {
+.results-detail .toolbar .actions {
     float: right;
+}
+
+.results-detail .toolbar .actions a {
     display: inline-block;
-    padding: 5px;
+    padding: 5px 5px 5px 0px;
 }
 
 .results-detail .toolbar {

@@ -1,3 +1,37 @@
+2011-07-14  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should have a "rebaseline" button
+        https://bugs.webkit.org/show_bug.cgi?id=64446
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds a basic Rebaseline button that copies the baselines
+        displayed in the results pane into the appropriate directory in your
+        working copy.
+
+        There are two main limitations:
+
+        1) There is no UI for actually committing the baselines.
+
+        2) The baselines are not optimized for redundancy (meaning you can have
+           identical baselines in both chromium-mac and chromium-win).
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+            - Turns out we need to create the directory for the baseline if it doesn't exist yet.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/checkout.js:
+            - Add an programatic API to call the server.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+            - Add the rebaseline button itself.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+            - Change the CSS so that the Rebaseline and Close buttons can
+              appear in the normal order in the DOM.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+            - Bind the event and translate the parameters.
+            - Hide/show the rebaseline button, as appropriate.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+            - Add some helpful utility functions for manipulating failure types.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js:
+
 2011-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: webkit-patch roll-chromium-deps is broken

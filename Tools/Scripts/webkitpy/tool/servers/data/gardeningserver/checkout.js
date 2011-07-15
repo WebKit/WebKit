@@ -28,4 +28,31 @@ checkout.existsAtRevision = function (subversionURL, revision, callback)
     });
 };
 
+checkout.rebaseline = function(builderName, testName, failureTypeList, callback)
+{
+    var extensionList = [];
+
+    $.each(failureTypeList, function(index, failureType) {
+        extensionList = extensionList.concat(results.failureTypeToExtensionList(failureType));
+    });
+
+    var requestsInFlight = extensionList.length;
+
+    if (!requestsInFlight)
+        callback();
+
+    $.each(extensionList, function(index, extension) {
+        $.post('/rebaseline?' + $.param({
+            'builder': builderName,
+            'test': testName,
+            // FIXME: Rename "suffix" query parameter to "extension".
+            'suffix': extension
+        }), function() {
+            --requestsInFlight;
+            if (!requestsInFlight)
+                callback();
+        });
+    });
+};
+
 })();
