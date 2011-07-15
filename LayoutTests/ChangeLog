@@ -1,5 +1,14 @@
 2011-07-15  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed.  Yet more chromium test baselines.
+
+        Somehow I messed these up in my mass-rebaselining.
+
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-baseline-expected.png:
+
+2011-07-15  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; chromium test expectations update.
 
         Remove some now-passing tests from chromium's text_expectations.
