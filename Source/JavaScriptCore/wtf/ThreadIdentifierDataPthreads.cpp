@@ -36,7 +36,7 @@
 
 #include "Threading.h"
 
-#include <pthread.h>
+#include <limits.h>
 
 namespace WTF {
 

@@ -1,5 +1,12 @@
 2011-07-15  David Levin  <levin@chromium.org>
 
+        Another attempted build fix.
+
+        * wtf/ThreadIdentifierDataPthreads.cpp: Add include to pick
+        up the definition of PTHREAD_KEYS_MAX.
+
+2011-07-15  David Levin  <levin@chromium.org>
+
         Chromium build fix.
 
         * wtf/ThreadIdentifierDataPthreads.cpp: Add include to pick
