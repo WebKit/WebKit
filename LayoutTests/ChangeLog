@@ -1,3 +1,11 @@
+2011-07-15  Adrienne Walker  <enne@google.com>
+
+        [chromium] Rebaseline overflow-scroll on Linux after r91114.
+
+        Unreviewed.
+
+        * platform/chromium-gpu-linux/compositing/overflow/overflow-scroll-expected.png:
+
 2011-07-15  Tony Chang  <tony@chromium.org>
 
         [chromium] land linux selection color layout test
