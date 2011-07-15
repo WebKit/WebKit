@@ -55,7 +55,7 @@ public:
 
     virtual void formDestroyed() { m_form = 0; }
 
-    void resetFormOwner(HTMLFormElement*);
+    void resetFormOwner();
 
 protected:
     FormAssociatedElement(HTMLFormElement*);

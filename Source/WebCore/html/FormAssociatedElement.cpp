@@ -77,13 +77,19 @@ void FormAssociatedElement::insertedIntoTree()
 {
     HTMLElement* element = toHTMLElement(this);
     if (element->fastHasAttribute(formAttr)) {
+        // Resets the form owner at first to make sure the element don't
+        // associate any form elements when there is no element which has
+        // the given ID.
+        if (m_form) {
+            m_form->removeFormElement(this);
+            m_form = 0;
+        }
         Element* formElement = element->treeScope()->getElementById(element->fastGetAttribute(formAttr));
         if (formElement && formElement->hasTagName(formTag)) {
-            if (m_form)
-                m_form->removeFormElement(this);
             m_form = static_cast<HTMLFormElement*>(formElement);
             m_form->registerFormElement(this);
         }
+        return;
     }
     if (!m_form) {
         // This handles the case of a new form element being created by
@@ -122,7 +128,7 @@ void FormAssociatedElement::removeFromForm()
     m_form = 0;
 }
 
-void FormAssociatedElement::resetFormOwner(HTMLFormElement* form)
+void FormAssociatedElement::resetFormOwner()
 {
     HTMLElement* element = toHTMLElement(this);
     const AtomicString& formId(element->fastGetAttribute(formAttr));
@@ -140,8 +146,6 @@ void FormAssociatedElement::resetFormOwner(HTMLFormElement* form)
         Element* firstElement = element->treeScope()->getElementById(formId);
         if (firstElement && firstElement->hasTagName(formTag))
             m_form = static_cast<HTMLFormElement*>(firstElement);
-        else
-            m_form = form;
     } else
         m_form = element->findFormAncestor();
     if (m_form)
@@ -160,7 +164,7 @@ void FormAssociatedElement::formAttributeChanged()
             form()->registerFormElement(this);
         element->document()->unregisterFormElementWithFormAttribute(this);
     } else
-        resetFormOwner(0);
+        resetFormOwner();
 }
 
 const HTMLElement* toHTMLElement(const FormAssociatedElement* associatedElement)

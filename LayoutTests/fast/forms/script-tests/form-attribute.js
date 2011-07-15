@@ -61,9 +61,9 @@ debug('- Ensures that the form attribute points the form owner even if the form 
 debug('NOTE: It seems that nesting form elements is not allowed so we ensure each form-associated elements associate with the outmost form element.');
 container.innerHTML = '<form id=owner>' +
     '    <form>' +
-    '        <input id=inputElement1 name=victim form=owner/>' +
+    '        <input id=inputElement1 name=victim form=owner />' +
     '        <input id=inputElement2 name=victim />' +
-    '        <input id=inputElement3 name=victim form=owner/>' +
+    '        <input id=inputElement3 name=victim form=owner />' +
     '    </form>' +
     '</form>';
 owner = document.getElementById('owner');

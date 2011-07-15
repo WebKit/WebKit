@@ -1,3 +1,18 @@
+2011-07-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        <input form="x"> should not associate the input with any forms when there is no  form with id="x"
+        https://bugs.webkit.org/show_bug.cgi?id=64509
+
+        Adds a test for checking input elements don't associate any form elements when they have the form attribute which points nonexistence form.
+        Fixes existing tests that contain unintended form attributes.
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/form-attribute-nonexistence-form-id-expected.txt: Added.
+        * fast/forms/form-attribute-nonexistence-form-id.html: Added.
+        * fast/forms/script-tests/form-attribute.js: Fixed unintended form attributes.
+        * fast/forms/script-tests/form-collection-elements-order.js: Ditto.
+
 2011-07-14  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r90809): Setting a checkbox's checked property, doesn't render as checked until app window loses focus

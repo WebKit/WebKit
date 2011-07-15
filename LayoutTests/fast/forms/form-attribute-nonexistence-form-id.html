@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<form id="form">
+    <input type="hidden" id="input1" value="value1">
+    <input type="hidden" id="input2" value="value2" form="X">
+</form>
+<div id="console"></div>
+<script>
+description('This page ensures that &lt;input from="X"&gt; don\'t associate with any form elements when there is no &lt;form id="X"&gt;.');
+
+var form = document.getElementById('form');
+var elementShouldHaveForm = document.getElementById('input1');
+var elementShouldNotHaveForm = document.getElementById('input2');
+shouldBe('elementShouldHaveForm.form', 'form');
+shouldBeNull('elementShouldNotHaveForm.form');
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

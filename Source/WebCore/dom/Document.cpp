@@ -4373,12 +4373,12 @@ void Document::unregisterFormElementWithFormAttribute(FormAssociatedElement* ele
     m_formElementsWithFormAttribute.remove(element);
 }
 
-void Document::resetFormElementsOwner(HTMLFormElement* form)
+void Document::resetFormElementsOwner()
 {
     typedef FormAssociatedElementListHashSet::iterator Iterator;
     Iterator end = m_formElementsWithFormAttribute.end();
     for (Iterator it = m_formElementsWithFormAttribute.begin(); it != end; ++it)
-        (*it)->resetFormOwner(form);
+        (*it)->resetFormOwner();
 }
 
 void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)

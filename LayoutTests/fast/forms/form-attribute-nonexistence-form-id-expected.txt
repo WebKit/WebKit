@@ -1,0 +1,11 @@
+This page ensures that <input from="X"> don't associate with any form elements when there is no <form id="X">.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS elementShouldHaveForm.form is form
+PASS elementShouldNotHaveForm.form is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

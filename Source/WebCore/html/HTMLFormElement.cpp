@@ -138,7 +138,7 @@ void HTMLFormElement::insertedIntoDocument()
     HTMLElement::insertedIntoDocument();
 
     if (hasID())
-        document()->resetFormElementsOwner(this);
+        document()->resetFormElementsOwner();
 }
 
 void HTMLFormElement::removedFromDocument()
@@ -149,7 +149,7 @@ void HTMLFormElement::removedFromDocument()
     HTMLElement::removedFromDocument();
 
     if (hasID())
-        document()->resetFormElementsOwner(0);
+        document()->resetFormElementsOwner();
 }
 
 void HTMLFormElement::handleLocalEvents(Event* event)

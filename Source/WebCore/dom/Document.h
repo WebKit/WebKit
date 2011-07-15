@@ -520,7 +520,7 @@ public:
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
-    void resetFormElementsOwner(HTMLFormElement*);
+    void resetFormElementsOwner();
 
     FrameView* view() const; // can be NULL
     Frame* frame() const { return m_frame; } // can be NULL

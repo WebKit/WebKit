@@ -1,3 +1,26 @@
+2011-07-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        <input form="x"> should not associate the input with any forms when there is no  form with id="x"
+        https://bugs.webkit.org/show_bug.cgi?id=64509
+
+        Don't set form owner when a form associated element has the form attribute but there is no such form element.
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/form-attribute-nonexistence-form-id.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::resetFormElementsOwner): Removed the argument which is no longer needed.
+        * dom/Document.h: Ditto.
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::insertedIntoTree): Resets m_form whenever the element has the form attribute.
+        (WebCore::FormAssociatedElement::resetFormOwner): Don't set m_form when there is no form element which has the given id.
+        (WebCore::FormAssociatedElement::formAttributeChanged): Removed the argument of resetFormOwner().
+        * html/FormAssociatedElement.h: Ditto.
+        * html/HTMLFormElement.cpp: Ditto.
+        (WebCore::HTMLFormElement::insertedIntoDocument):
+        (WebCore::HTMLFormElement::removedFromDocument):
+
 2011-07-14  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r90809): Setting a checkbox's checked property, doesn't render as checked until app window loses focus

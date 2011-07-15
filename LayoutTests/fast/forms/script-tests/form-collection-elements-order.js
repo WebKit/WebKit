@@ -57,7 +57,7 @@ debug('');
 debug('- Checks the order of form associated elements with form attribute.');
 container.innerHTML = '<button name=victim form=owner></button>' +
     '<fieldset name=victim form=owner>Test</fieldset>' +
-    '<input name=victim form=owner/>' +
+    '<input name=victim form=owner />' +
     '<keygen name=victim form=owner></keygen>' +
     '<form id=owner>' +
     '<label name=victim></label>' +
