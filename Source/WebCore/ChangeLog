@@ -1,3 +1,16 @@
+2011-07-14  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64250
+        Global strict mode function leaking global object as "this".
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::call):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+            - Change call to pass DOM Window shell, instead of the global varaible object.
+
 2011-07-15  Brian Salomon  <bsalomon@google.com>
 
         [SKIA] Must make skia's GL context current before drawing in GraphicsContext::clearRect

@@ -414,11 +414,10 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
         instructions().append(m_thisRegister.index());
         instructions().append(funcProto->index());
     } else if (functionBody->usesThis() || m_shouldEmitDebugHooks) {
-        if (codeBlock->isStrictMode())
-            emitOpcode(op_convert_this_strict);
-        else
+        if (!codeBlock->isStrictMode()) {
             emitOpcode(op_convert_this);
-        instructions().append(m_thisRegister.index());
+            instructions().append(m_thisRegister.index());
+        }
     }
 }
 
@@ -1387,6 +1386,53 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
 
     // Global object is the base
     emitLoad(baseDst, JSValue(globalObject));
+
+    if (index != missingSymbolMarker() && !forceGlobalResolve) {
+        // Directly index the property lookup across multiple scopes.
+        emitGetScopedVar(propDst, depth, index, globalObject);
+        return baseDst;
+    }
+    if (shouldAvoidResolveGlobal()) {
+        emitOpcode(op_resolve);
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
+        return baseDst;
+    }
+#if ENABLE(JIT)
+    m_codeBlock->addGlobalResolveInfo(instructions().size());
+#endif
+#if ENABLE(INTERPRETER)
+    m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
+    emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
+    instructions().append(propDst->index());
+    instructions().append(addConstant(property));
+    instructions().append(0);
+    instructions().append(0);
+    if (requiresDynamicChecks)
+        instructions().append(depth);
+    return baseDst;
+}
+
+RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const Identifier& property)
+{
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    bool requiresDynamicChecks = false;
+    if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) || !globalObject || requiresDynamicChecks) {
+        // We can't optimise at all :-(
+        emitOpcode(op_resolve_with_this);
+        instructions().append(baseDst->index());
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
+        return baseDst;
+    }
+
+    bool forceGlobalResolve = false;
+
+    // Global object is the base
+    emitLoad(baseDst, jsUndefined());
 
     if (index != missingSymbolMarker() && !forceGlobalResolve) {
         // Directly index the property lookup across multiple scopes.

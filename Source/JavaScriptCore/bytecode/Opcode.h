@@ -45,7 +45,6 @@ namespace JSC {
         macro(op_create_this, 3) \
         macro(op_get_callee, 2) \
         macro(op_convert_this, 2) \
-        macro(op_convert_this_strict, 2) \
         \
         macro(op_new_object, 2) \
         macro(op_new_array, 4) \
@@ -107,6 +106,7 @@ namespace JSC {
         macro(op_resolve_base, 4) \
         macro(op_ensure_property_exists, 3) \
         macro(op_resolve_with_base, 4) \
+        macro(op_resolve_with_this, 4) \
         macro(op_get_by_id, 8) \
         macro(op_get_by_id_self, 8) \
         macro(op_get_by_id_self_list, 8) \

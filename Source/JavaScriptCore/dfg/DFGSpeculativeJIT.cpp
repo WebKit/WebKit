@@ -975,10 +975,8 @@ void SpeculativeJIT::compile(Node& node)
 
     case ConvertThis: {
         SpeculateCellOperand thisValue(this, node.child1());
-        GPRTemporary temp(this);
 
-        m_jit.loadPtr(JITCompiler::Address(thisValue.gpr(), JSCell::structureOffset()), temp.gpr());
-        speculationCheck(m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(temp.gpr(), Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(NeedsThisConversion)));
+        speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
 
         cellResult(thisValue.gpr(), m_compileIndex);
         break;

@@ -291,7 +291,7 @@ bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue f
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, globalObject, arguments[i]));
 
     exec->globalData().timeoutChecker.start();
-    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject.get(), argumentList);
+    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject->toThisObject(exec), argumentList);
     exec->globalData().timeoutChecker.stop();
 
     // Convert and return the result of the function call.

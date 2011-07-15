@@ -212,8 +212,6 @@ namespace JSC {
 
         unsigned index() const { return m_data.index; }
 
-        JSValue thisValue() const { return m_thisValue; }
-
         GetValueFunc customGetter() const
         {
             ASSERT(m_cachedPropertyType == Custom);

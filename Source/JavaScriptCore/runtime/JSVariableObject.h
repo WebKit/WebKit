@@ -65,7 +65,7 @@ namespace JSC {
         }
         
     protected:
-        static const unsigned StructureFlags = OverridesGetPropertyNames | JSObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetPropertyNames | JSNonFinalObject::StructureFlags;
 
         JSVariableObject(JSGlobalData& globalData, Structure* structure, SymbolTable* symbolTable, Register* registers)
             : JSNonFinalObject(globalData, structure)

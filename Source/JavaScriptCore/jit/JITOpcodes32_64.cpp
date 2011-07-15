@@ -1102,6 +1102,14 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
     stubCall.call(currentInstruction[2].u.operand);
 }
 
+void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_resolve_with_this);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
+    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+    stubCall.call(currentInstruction[2].u.operand);
+}
+
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func_exp);
@@ -1444,52 +1452,26 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
     emitLoad(thisRegister, regT1, regT0);
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
-
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    addSlowCase(branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(NeedsThisConversion)));
+    addSlowCase(branchPtr(Equal, Address(regT0), TrustedImmPtr(m_globalData->jsStringVPtr)));
 
     map(m_bytecodeOffset + OPCODE_LENGTH(op_convert_this), thisRegister, regT1, regT0);
 }
 
-void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
-{
-    unsigned thisRegister = currentInstruction[1].u.operand;
-    
-    emitLoad(thisRegister, regT1, regT0);
-    
-    Jump notNull = branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag));
-    emitStore(thisRegister, jsNull());
-    Jump setThis = jump();
-    notNull.link(this);
-    Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    Jump notAnObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
-    addSlowCase(branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), TrustedImm32(NeedsThisConversion)));
-    isImmediate.link(this);
-    notAnObject.link(this);
-    setThis.link(this);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_convert_this_strict), thisRegister, regT1, regT0);
-}
-
 void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    void* globalThis = m_codeBlock->globalObject()->globalScopeChain()->globalThis.get();
     unsigned thisRegister = currentInstruction[1].u.operand;
 
     linkSlowCase(iter);
-    linkSlowCase(iter);
+    Jump isNotUndefined = branch32(NotEqual, regT1, TrustedImm32(JSValue::UndefinedTag));
+    move(TrustedImmPtr(globalThis), regT0);
+    move(TrustedImm32(JSValue::CellTag), regT1);
+    emitStore(thisRegister, regT1, regT0);
+    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_convert_this));
 
+    isNotUndefined.link(this);
+    linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_convert_this);
-    stubCall.addArgument(regT1, regT0);
-    stubCall.call(thisRegister);
-}
-
-void JIT::emitSlow_op_convert_this_strict(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned thisRegister = currentInstruction[1].u.operand;
-    
-    linkSlowCase(iter);
-    
-    JITStubCall stubCall(this, cti_op_convert_this_strict);
     stubCall.addArgument(regT1, regT0);
     stubCall.call(thisRegister);
 }

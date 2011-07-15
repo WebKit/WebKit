@@ -321,6 +321,50 @@ NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Inst
     return false;
 }
 
+NEVER_INLINE bool Interpreter::resolveThisAndProperty(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
+{
+    int thisDst = vPC[1].u.operand;
+    int propDst = vPC[2].u.operand;
+    int property = vPC[3].u.operand;
+
+    ScopeChainNode* scopeChain = callFrame->scopeChain();
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+
+    // FIXME: add scopeDepthIsZero optimization
+
+    ASSERT(iter != end);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    Identifier& ident = codeBlock->identifier(property);
+    JSObject* base;
+    do {
+        base = iter->get();
+        ++iter;
+        PropertySlot slot(base);
+        if (base->getPropertySlot(callFrame, ident, slot)) {
+            JSValue result = slot.getValue(callFrame, ident);
+            exceptionValue = callFrame->globalData().exception;
+            if (exceptionValue)
+                return false;
+            callFrame->uncheckedR(propDst) = JSValue(result);
+            // All entries on the scope chain should be EnvironmentRecords (activations etc),
+            // other then 'with' object, which are directly referenced from the scope chain,
+            // and the global object. If we hit either an EnvironmentRecord or a global
+            // object at the end of the scope chain, this is undefined. If we hit a non-
+            // EnvironmentRecord within the scope chain, pass the base as the this value.
+            if (iter == end || base->structure()->typeInfo().isEnvironmentRecord())
+                callFrame->uncheckedR(thisDst) = jsUndefined();
+            else
+                callFrame->uncheckedR(thisDst) = JSValue(base);
+            return true;
+        }
+    } while (iter != end);
+
+    exceptionValue = createUndefinedVariableError(callFrame, ident);
+    return false;
+}
+
 #endif // ENABLE(INTERPRETER)
 
 ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newCodeBlock, RegisterFile* registerFile, CallFrame* callFrame, size_t registerOffset, int argc)
@@ -409,7 +453,9 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     if (UNLIKELY(!eval))
         return throwError(callFrame, exceptionValue);
 
-    return callFrame->globalData().interpreter->execute(eval, callFrame, callFrame->uncheckedR(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->begin() + registerOffset, scopeChain);
+    JSValue thisValue = callFrame->uncheckedR(codeBlock->thisRegister()).jsValue();
+    ASSERT(isValidThisObject(thisValue, callFrame));
+    return callFrame->globalData().interpreter->execute(eval, callFrame, thisValue, callFrame->registers() - registerFile->begin() + registerOffset, scopeChain);
 }
 
 Interpreter::Interpreter()
@@ -718,6 +764,7 @@ static inline JSObject* checkedReturn(JSObject* returnValue)
 
 JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, ScopeChainNode* scopeChain, JSObject* thisObj)
 {
+    ASSERT(isValidThisObject(thisObj, callFrame));
     ASSERT(!scopeChain->globalData->exception);
     ASSERT(!callFrame->globalData().isCollectorBusy());
     if (callFrame->globalData().isCollectorBusy())
@@ -843,6 +890,7 @@ failedJSONP:
 
 JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
+    ASSERT(isValidThisObject(thisValue, callFrame));
     ASSERT(!callFrame->hadException());
     ASSERT(!callFrame->globalData().isCollectorBusy());
     if (callFrame->globalData().isCollectorBusy())
@@ -1118,16 +1166,17 @@ void Interpreter::endRepeatCall(CallFrameClosure& closure)
     m_registerFile.shrink(closure.oldEnd);
 }
 
-JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObject* thisObj, ScopeChainNode* scopeChain)
+JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, ScopeChainNode* scopeChain)
 {
     JSObject* compileError = eval->compile(callFrame, scopeChain);
     if (UNLIKELY(!!compileError))
         return checkedReturn(throwError(callFrame, compileError));
-    return execute(eval, callFrame, thisObj, m_registerFile.size() + eval->generatedBytecode().m_numParameters + RegisterFile::CallFrameHeaderSize, scopeChain);
+    return execute(eval, callFrame, thisValue, m_registerFile.size() + eval->generatedBytecode().m_numParameters + RegisterFile::CallFrameHeaderSize, scopeChain);
 }
 
-JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObject* thisObj, int globalRegisterOffset, ScopeChainNode* scopeChain)
+JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, int globalRegisterOffset, ScopeChainNode* scopeChain)
 {
+    ASSERT(isValidThisObject(thisValue, callFrame));
     ASSERT(!scopeChain->globalData->exception);
     ASSERT(!callFrame->globalData().isCollectorBusy());
     if (callFrame->globalData().isCollectorBusy())
@@ -1191,7 +1240,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);
-    newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = JSValue(thisObj);
+    newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = thisValue.toThisObject(newCallFrame);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -2602,6 +2651,22 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             goto vm_throw;
 
         vPC += OPCODE_LENGTH(op_resolve_with_base);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_resolve_with_this) {
+        /* resolve_with_this thisDst(r) propDst(r) property(id)
+
+           Searches the scope chain for an object containing
+           identifier property, and if one is found, writes the
+           retrieved property value to register propDst, and the
+           this object to pass in a call to thisDst.
+
+           If the property is not found, raises an exception.
+        */
+        if (UNLIKELY(!resolveThisAndProperty(callFrame, vPC, exceptionValue)))
+            goto vm_throw;
+
+        vPC += OPCODE_LENGTH(op_resolve_with_this);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_by_id) {
@@ -4556,29 +4621,10 @@ skip_id_custom_self:
 
         int thisRegister = vPC[1].u.operand;
         JSValue thisVal = callFrame->r(thisRegister).jsValue();
-        if (thisVal.needsThisConversion())
+        if (!thisVal.isCell() || thisVal.isString())
             callFrame->uncheckedR(thisRegister) = JSValue(thisVal.toThisObject(callFrame));
 
         vPC += OPCODE_LENGTH(op_convert_this);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_convert_this_strict) {
-        /* convert_this_strict this(r)
-         
-         Takes the value in the 'this' register, and converts it to
-         its "this" form if (and only if) "this" is an object with a
-         custom this conversion
-         
-         This opcode should only be used at the beginning of a code
-         block.
-         */
-        
-        int thisRegister = vPC[1].u.operand;
-        JSValue thisVal = callFrame->r(thisRegister).jsValue();
-        if (thisVal.isObject() && thisVal.needsThisConversion())
-            callFrame->uncheckedR(thisRegister) = JSValue(thisVal.toStrictThisObject(callFrame));
-        
-        vPC += OPCODE_LENGTH(op_convert_this_strict);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_init_lazy_reg) {

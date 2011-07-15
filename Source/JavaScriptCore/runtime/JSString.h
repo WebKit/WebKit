@@ -328,7 +328,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
         {
-            return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot), AnonymousSlotCount, &s_info);
         }
         
         static const ClassInfo s_info;

@@ -708,6 +708,14 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
     stubCall.call(currentInstruction[2].u.operand);
 }
 
+void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_resolve_with_this);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
+    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+    stubCall.call(currentInstruction[2].u.operand);
+}
+
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_func_exp);
@@ -1136,25 +1144,7 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
     emitJumpSlowCaseIfNotJSCell(regT0);
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    addSlowCase(branchTest8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(NeedsThisConversion)));
-}
-
-void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
-{
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
-    Jump notNull = branchTestPtr(NonZero, regT0);
-    move(TrustedImmPtr(JSValue::encode(jsNull())), regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand, regT0);
-    Jump setThis = jump();
-    notNull.link(this);
-    Jump isImmediate = emitJumpIfNotJSCell(regT0);
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    Jump notAnObject = branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
-    addSlowCase(branchTest8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), TrustedImm32(NeedsThisConversion)));
-    isImmediate.link(this);
-    notAnObject.link(this);
-    setThis.link(this);
+    addSlowCase(branchPtr(Equal, Address(regT0), TrustedImmPtr(m_globalData->jsStringVPtr)));
 }
 
 void JIT::emit_op_get_callee(Instruction* currentInstruction)
@@ -1199,17 +1189,17 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    void* globalThis = m_codeBlock->globalObject()->globalScopeChain()->globalThis.get();
+
     linkSlowCase(iter);
+    Jump isNotUndefined = branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(jsUndefined())));
+    move(TrustedImmPtr(globalThis), regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_convert_this));
+
+    isNotUndefined.link(this);
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_convert_this);
-    stubCall.addArgument(regT0);
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
-void JIT::emitSlow_op_convert_this_strict(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_convert_this_strict);
     stubCall.addArgument(regT0);
     stubCall.call(currentInstruction[1].u.operand);
 }

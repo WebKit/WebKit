@@ -45,6 +45,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */; };
 		0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */; };
 		0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 00146289103CD1DE000B20DB /* OriginAccessEntry.h */; };
 		003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 003F1FE911E6AB43008258D9 /* UserContentTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -57,7 +58,6 @@
 		00CA93B513C6697C00F7FE95 /* NewXMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */; };
 		00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */; };
 		00D0464B13C4D14500326FCC /* XMLCharacterReferenceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */; };
-		00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */; };
 		052BFCE9128ABF1500FD338D /* GeolocationClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052BFCE8128ABF1500FD338D /* GeolocationClientMock.cpp */; };
 		052BFCEB128ABF2100FD338D /* GeolocationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05FD69E012845D4300B2BEB3 /* DOMTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6405,6 +6405,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlineMethods.h; sourceTree = "<group>"; };
 		00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessEntry.cpp; sourceTree = "<group>"; };
 		00146289103CD1DE000B20DB /* OriginAccessEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAccessEntry.h; sourceTree = "<group>"; };
 		003F1FE911E6AB43008258D9 /* UserContentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentTypes.h; sourceTree = "<group>"; };
@@ -6417,7 +6418,6 @@
 		00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewXMLDocumentParser.cpp; sourceTree = "<group>"; };
 		00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLCharacterReferenceParser.cpp; sourceTree = "<group>"; };
 		00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLCharacterReferenceParser.h; sourceTree = "<group>"; };
-		00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlineMethods.h; sourceTree = "<group>"; };
 		052BFCE8128ABF1500FD338D /* GeolocationClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationClientMock.cpp; path = mock/GeolocationClientMock.cpp; sourceTree = "<group>"; };
 		052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationClientMock.h; path = mock/GeolocationClientMock.h; sourceTree = "<group>"; };
 		05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimeStamp.h; sourceTree = "<group>"; };

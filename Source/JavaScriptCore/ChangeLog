@@ -1,3 +1,97 @@
+2011-07-14  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64250
+        Global strict mode function leaking global object as "this".
+
+        Reviewed by Oliver Hunt.
+
+        The root problem here is that we pass the wrong values into
+        calls, and then try to fix them up in the callee. Correct
+        behaviour per the spec is to pass in the value undefined,
+        as this unless either (1) the function call is based on an
+        explicit property access or (2) the base of the call comes
+        directly from a 'with'.
+
+        This change does away with the need for this conversion of
+        objects (non strict code should only box primitives), and
+        does away with all this conversion for strict functions.
+
+        This patch may have web compatibility ramifications, and may
+        require some advocacy.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * bytecode/Opcode.h:
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * bytecompiler/BytecodeGenerator.h:
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Change NeedsThisConversion check to test for JSString's vptr
+              (objects no longer need conversion).
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveThisAndProperty):
+            - Based on resolveBaseAndProperty, but produce correct this value.
+        (JSC::Interpreter::privateExecute):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_with_this):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+            - Change NeedsThisConversion check to test for JSString's vptr
+              (objects no longer need conversion).
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve_with_this):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+            - Change NeedsThisConversion check to test for JSString's vptr
+              (objects no longer need conversion).
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * jit/JITStubs.h:
+            - Removed op_convert_this_strict, added op_resolve_with_this.
+        * runtime/JSActivation.h:
+            - removed NeedsThisConversion flag, added IsEnvironmentRecord.
+        * runtime/JSStaticScopeObject.h:
+            - removed NeedsThisConversion flag, added IsEnvironmentRecord.
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::createStructure):
+            - removed NeedsThisConversion.
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::isEnvironmentRecord):
+        (JSC::TypeInfo::overridesHasInstance):
+            - removed NeedsThisConversion flag, added IsEnvironmentRecord.
+        * runtime/JSValue.h:
+            - removed NeedsThisConversion.
+        * runtime/JSVariableObject.h:
+            - Corrected StructureFlags inheritance.
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::createStructure):
+            - Added IsEnvironmentRecord to StructureFlags, addded createStructure.
+        * runtime/Structure.h:
+            - removed NeedsThisConversion.
+        * tests/mozilla/ecma/String/15.5.4.6-2.js:
+        (getTestCases):
+            - Removed invalid test case.
+
 2011-07-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91082, r91087, and r91089.

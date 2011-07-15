@@ -322,7 +322,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_convert_this_strict(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION);
@@ -372,6 +371,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_resolve_global_dynamic(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_with_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION);

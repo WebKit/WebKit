@@ -1280,19 +1280,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this)
     JSValue v1 = stackFrame.args[0].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSObject* result = v1.toThisObject(callFrame);
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
+    ASSERT(!v1.isCell() || v1.isString());
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this_strict)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    JSValue v1 = stackFrame.args[0].jsValue();
-    CallFrame* callFrame = stackFrame.callFrame;
-    ASSERT(v1.asCell()->structure()->typeInfo().needsThisConversion());
-    JSValue result = v1.toStrictThisObject(callFrame);
+    JSObject* result = v1.toThisObject(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -3029,6 +3019,48 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
             return JSValue::encode(result);
         }
         ++iter;
+    } while (iter != end);
+
+    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident);
+    VM_THROW_EXCEPTION_AT_END();
+    return JSValue::encode(JSValue());
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_this)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    ScopeChainNode* scopeChain = callFrame->scopeChain();
+
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+
+    // FIXME: add scopeDepthIsZero optimization
+
+    ASSERT(iter != end);
+
+    Identifier& ident = stackFrame.args[0].identifier();
+    JSObject* base;
+    do {
+        base = iter->get();
+        ++iter;
+        PropertySlot slot(base);
+        if (base->getPropertySlot(callFrame, ident, slot)) {
+            JSValue result = slot.getValue(callFrame, ident);
+            CHECK_FOR_EXCEPTION_AT_END();
+
+            // All entries on the scope chain should be EnvironmentRecords (activations etc),
+            // other then 'with' object, which are directly referenced from the scope chain,
+            // and the global object. If we hit either an EnvironmentRecord or a global
+            // object at the end of the scope chain, this is undefined. If we hit a non-
+            // EnvironmentRecord within the scope chain, pass the base as the this value.
+            if (iter == end || base->structure()->typeInfo().isEnvironmentRecord())
+                callFrame->registers()[stackFrame.args[1].int32()] = jsUndefined();
+            else
+                callFrame->registers()[stackFrame.args[1].int32()] = JSValue(base);
+            return JSValue::encode(result);
+        }
     } while (iter != end);
 
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident);

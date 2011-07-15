@@ -147,7 +147,9 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
                 CallType callType = setterFunc->getCallData(callData);
                 MarkedArgumentBuffer args;
                 args.append(value);
-                call(exec, setterFunc, callType, callData, this, args);
+
+                // If this is WebCore's global object then we need to substitute the shell.
+                call(exec, setterFunc, callType, callData, this->toThisObject(exec), args);
                 return;
             }
 

@@ -1,3 +1,14 @@
+2011-07-14  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64250
+        Global strict mode function leaking global object as "this".
+
+        Reviewed by Oliver Hunt.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::invoke):
+            - Change call to pass DOM Window shell, instead of the global varaible object.
+
 2011-07-15  Anders Carlsson  <andersca@apple.com>
 
         Find indicator should take scale factor into account

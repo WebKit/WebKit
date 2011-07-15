@@ -1,3 +1,28 @@
+2011-07-14  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64250
+        Global strict mode function leaking global object as "this".
+
+        Reviewed by Oliver Hunt.
+
+        Add test case / update test results.
+
+        * fast/js/call-base-resolution-expected.txt: Added.
+        * fast/js/call-base-resolution.html: Added.
+            - Add test for ES5 correct this value resolution in calls.
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.13_String.prototype.slice/S15.5.4.13_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.15_String.prototype.substring/S15.5.4.15_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.4_String.prototype.charAt/S15.5.4.4_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.5_String.prototype.charCodeAt/S15.5.4.5_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.6_String.prototype.concat/S15.5.4.6_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.7_String.prototype.indexOf/S15.5.4.7_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.8_String.prototype.lastIndexOf/S15.5.4.8_A1_T3-expected.txt:
+            - Check in failing results for these tests - these tests were asserting incorrect behaviour,
+              and have since been fixed in test-262, see https://bugs.ecmascript.org/show_bug.cgi?id=117
+
 2011-07-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.  Yet more chromium test baselines.

@@ -50,7 +50,7 @@ namespace JSC{
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
+        static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
         SymbolTable m_symbolTable;

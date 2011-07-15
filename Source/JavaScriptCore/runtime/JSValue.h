@@ -206,7 +206,6 @@ namespace JSC {
         void putDirect(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         void put(ExecState*, unsigned propertyName, JSValue);
 
-        bool needsThisConversion() const;
         JSObject* toThisObject(ExecState*) const;
         JSValue toStrictThisObject(ExecState*) const;
         UString toThisString(ExecState*) const;

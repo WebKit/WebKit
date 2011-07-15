@@ -36,6 +36,14 @@ public:
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual JSObject* toThisObject(ExecState*) const;
     virtual JSValue toStrictThisObject(ExecState*) const;
+
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    {
+        return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
+    
+protected:
+    static const unsigned StructureFlags = IsEnvironmentRecord | JSNonFinalObject::StructureFlags;
 };
 
 } // namespace JSC

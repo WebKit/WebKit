@@ -313,6 +313,7 @@ namespace JSC {
         RegisterID* emitResolveBase(RegisterID* dst, const Identifier& property);
         RegisterID* emitResolveBaseForPut(RegisterID* dst, const Identifier& property);
         RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
+        RegisterID* emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
 
         void emitMethodCheck();
 

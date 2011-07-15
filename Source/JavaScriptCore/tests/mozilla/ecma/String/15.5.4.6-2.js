@@ -184,10 +184,11 @@ function getTestCases() {
                                   2,
                                   eval("var obj = new Object(); obj.indexOf = String.prototype.indexOf; obj.indexOf('bject')") );
 
-    array[item++] = new TestCase( SECTION,
-                                  "var f = new Object( String.prototype.indexOf ); f('"+GLOBAL+"')",
-                                  0,
-                                  eval("var f = new Object( String.prototype.indexOf ); f('"+GLOBAL+"')") );
+// This correctly throws, due to ES5 15.5.4.7 step 1
+//    array[item++] = new TestCase( SECTION,
+//                                  "var f = new Object( String.prototype.indexOf ); f('"+GLOBAL+"')",
+//                                  0,
+//                                  eval("var f = new Object( String.prototype.indexOf ); f('"+GLOBAL+"')") );
 
     array[item++] = new TestCase( SECTION,
                                   "var f = new Function(); f.toString = Object.prototype.toString; f.indexOf = String.prototype.indexOf; f.indexOf('[object Function]')",

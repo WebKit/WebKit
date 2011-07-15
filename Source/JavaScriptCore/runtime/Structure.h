@@ -289,13 +289,6 @@ namespace JSC {
         return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, &s_dummyCellInfo);
     }
 
-    inline bool JSValue::needsThisConversion() const
-    {
-        if (UNLIKELY(!isCell()))
-            return true;
-        return asCell()->structure()->typeInfo().needsThisConversion();
-    }
-
     ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);

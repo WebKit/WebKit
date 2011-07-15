@@ -522,11 +522,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] convert_this %s\n", location, registerName(exec, r0).data());
             break;
         }
-        case op_convert_this_strict: {
-            int r0 = (++it)->u.operand;
-            printf("[%4d] convert_this_strict %s\n", location, registerName(exec, r0).data());
-            break;
-        }
         case op_new_object: {
             int r0 = (++it)->u.operand;
             printf("[%4d] new_object\t %s\n", location, registerName(exec, r0).data());
@@ -801,6 +796,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             printf("[%4d] resolve_with_base %s, %s, %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
+            break;
+        }
+        case op_resolve_with_this: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            printf("[%4d] resolve_with_this %s, %s, %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
             break;
         }
         case op_get_by_id: {
