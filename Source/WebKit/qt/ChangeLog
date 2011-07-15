@@ -1,5 +1,16 @@
 2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        REGRESSION(91064): Upstream QtWebKit/N9 changes related tovisibleContentRect
+
+        Reviewed by Antonio Gomes.
+
+        Only set setFixedVisibleContentRect when in resizesToContents mode.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
+2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Upstream QtWebKit/N9 changes related to visibleContentRect
         https://bugs.webkit.org/show_bug.cgi?id=64589
 
