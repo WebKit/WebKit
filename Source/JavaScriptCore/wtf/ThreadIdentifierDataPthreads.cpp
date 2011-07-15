@@ -36,6 +36,8 @@
 
 #include "Threading.h"
 
+#include <pthread.h>
+
 namespace WTF {
 
 pthread_key_t ThreadIdentifierData::m_key = PTHREAD_KEYS_MAX;
