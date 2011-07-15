@@ -1174,6 +1174,8 @@ webcore_sources += \
 	Source/WebCore/dom/ExceptionBase.h \
 	Source/WebCore/dom/ExceptionCode.cpp \
 	Source/WebCore/dom/ExceptionCode.h \
+	Source/WebCore/dom/ExceptionCodePlaceholder.cpp \
+	Source/WebCore/dom/ExceptionCodePlaceholder.h \
 	Source/WebCore/dom/ExclusiveTrackList.cpp \
 	Source/WebCore/dom/ExclusiveTrackList.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \

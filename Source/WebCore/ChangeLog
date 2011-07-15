@@ -1,3 +1,24 @@
+2011-07-14  MORITA Hajime  <morrita@google.com>
+
+        ExceptionCodePlaceholder should have its own ExceptionCodePlaceholder.cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=64503
+
+        Reviewed by Darin Adler.
+
+        No new tests. Just a file reorg.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/ExceptionCodePlaceholder.cpp: Added.
+        (WebCore::NoExceptionAssertionChecker::NoExceptionAssertionChecker):
+        (WebCore::NoExceptionAssertionChecker::~NoExceptionAssertionChecker):
+        * dom/ExceptionCodePlaceholder.h: Removed NoExceptionAssertionChecker::m_function, which is loonger used.
+
 2011-07-14  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from WebGL

@@ -75,6 +75,7 @@
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
 #include "ExceptionCode.cpp"
+#include "ExceptionCodePlaceholder.cpp"
 #include "ExclusiveTrackList.cpp"
 #include "IconURL.cpp"
 #include "KeyboardEvent.cpp"

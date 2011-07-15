@@ -28,56 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExceptionCodePlaceholder_h
-#define ExceptionCodePlaceholder_h
-
-#include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
+#include "config.h"
+#include "ExceptionCodePlaceholder.h"
 
 namespace WebCore {
 
-typedef int ExceptionCode;
+#if !ASSERT_DISABLED
 
-class ExceptionCodePlaceholder {
-    WTF_MAKE_NONCOPYABLE(ExceptionCodePlaceholder);
-public:
-    ExceptionCodePlaceholder() { }
-    explicit ExceptionCodePlaceholder(ExceptionCode);
-
-    operator ExceptionCode& () const { return m_code; }
-
-protected:
-    mutable ExceptionCode m_code;
-};
-
-inline ExceptionCodePlaceholder::ExceptionCodePlaceholder(ExceptionCode code)
-    : m_code(code)
+NoExceptionAssertionChecker::NoExceptionAssertionChecker(const char* file, int line)
+    : ExceptionCodePlaceholder(0)
+    , m_file(file)
+    , m_line(line)
 {
 }
 
-class IgnorableExceptionCode : public ExceptionCodePlaceholder {
-};
-
-#if ASSERT_DISABLED
-
-#define ASSERT_NO_EXCEPTION ::WebCore::IgnorableExceptionCode()
-
-#else
-
-class NoExceptionAssertionChecker : public ExceptionCodePlaceholder {
-public:
-    NoExceptionAssertionChecker(const char* file, int line);
-    ~NoExceptionAssertionChecker();
-
-private:
-    const char* m_file;
-    int m_line;
-};
-
-#define ASSERT_NO_EXCEPTION ::WebCore::NoExceptionAssertionChecker(__FILE__, __LINE__)
+NoExceptionAssertionChecker::~NoExceptionAssertionChecker()
+{
+    ASSERT_AT(!m_code, m_file, m_line, "");
+}
 
 #endif
 
 }
-
-#endif

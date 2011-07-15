@@ -3329,6 +3329,7 @@
 		A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA595B0B27BD9E00FA021D /* DragController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA595C0B27BD9E00FA021D /* DragController.cpp */; };
 		A7CA59630B27C1F200FA021D /* DragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA59620B27C1F200FA021D /* DragClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */; };
 		A7CFB3D10B7ED10A0070C32D /* DragImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */; };
 		A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CFB3D00B7ED10A0070C32D /* DragImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */; };
@@ -9853,6 +9854,7 @@
 		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
 		A7CA595C0B27BD9E00FA021D /* DragController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragController.cpp; sourceTree = "<group>"; };
 		A7CA59620B27C1F200FA021D /* DragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragClient.h; sourceTree = "<group>"; };
+		A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCodePlaceholder.cpp; sourceTree = "<group>"; };
 		A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DragImage.cpp; sourceTree = "<group>"; };
 		A7CFB3D00B7ED10A0070C32D /* DragImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragImage.h; sourceTree = "<group>"; };
 		A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageMac.mm; sourceTree = "<group>"; };
@@ -19638,6 +19640,7 @@
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				93831B560D087D6000E5C984 /* ExceptionCode.cpp */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
+				A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */,
 				A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */,
 				B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */,
 				B12D233613560282002A28D4 /* ExclusiveTrackList.h */,
@@ -24055,6 +24058,7 @@
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,
 				93831B570D087D6000E5C984 /* ExceptionCode.cpp in Sources */,
+				A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */,
 				148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */,
 				B12D233E13560282002A28D4 /* ExclusiveTrackList.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,

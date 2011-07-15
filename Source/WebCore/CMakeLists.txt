@@ -540,6 +540,7 @@ SET(WebCore_SOURCES
     dom/EventQueue.cpp
     dom/ExceptionBase.cpp
     dom/ExceptionCode.cpp
+    dom/ExceptionCodePlaceholder.cpp
     dom/ExclusiveTrackList.cpp
     dom/IconURL.cpp
     dom/KeyboardEvent.cpp
