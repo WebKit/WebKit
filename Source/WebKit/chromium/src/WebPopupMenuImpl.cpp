@@ -365,6 +365,10 @@ void WebPopupMenuImpl::setCursor(const WebCore::Cursor&)
 {
 }
 
+void WebPopupMenuImpl::setCursorHiddenUntilMouseMoves(bool)
+{
+}
+
 //-----------------------------------------------------------------------------
 // WebCore::FramelessScrollViewClient
 
