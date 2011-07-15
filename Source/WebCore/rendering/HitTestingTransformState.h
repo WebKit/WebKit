@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 namespace WebCore {
 
 // FIXME: Now that TransformState lazily creates its TransformationMatrix it takes up less space.
-// So there's really no need for a ref counted version. So This class should be tossed and replaced
+// So there's really no need for a ref counted version. So This class should be removed and replaced
 // with TransformState. There are some minor differences (like the way translate() works slightly
 // differently than move()) so care has to be taken when this is done.
 class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
