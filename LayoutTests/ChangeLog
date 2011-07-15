@@ -1,3 +1,12 @@
+2011-07-15  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark more tests failing as a result of r91069
+        https://bugs.webkit.org/show_bug.cgi?id=64368
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Focusing on another node while editing CSS property does not update styles
