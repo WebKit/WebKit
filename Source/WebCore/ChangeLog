@@ -1,3 +1,17 @@
+2011-07-15  Piroska András  <Piroska.Andras@stud.u-szeged.hu>
+
+        Pixel difference in FEMorphology effect
+        https://bugs.webkit.org/show_bug.cgi?id=63930
+
+        Reviewed by Zoltan Herczeg.
+
+        Using short-circuit evaluation in the setFilterEffectAttribute function
+        was wrong. We should call both setRadius functions and evaluate the
+        changes separately.
+
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::setFilterEffectAttribute):
+
 2011-07-15  Jeff Miller  <jeffm@apple.com>
 
         Fullscreen content doesn't use fullscreen controller on Windows

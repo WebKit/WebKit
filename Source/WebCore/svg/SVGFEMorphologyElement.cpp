@@ -125,8 +125,12 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, cons
     FEMorphology* morphology = static_cast<FEMorphology*>(effect);
     if (attrName == SVGNames::operatorAttr)
         return morphology->setMorphologyOperator(_operator());
-    if (attrName == SVGNames::radiusAttr)
-        return (morphology->setRadiusX(radiusX()) || morphology->setRadiusY(radiusY()));
+    if (attrName == SVGNames::radiusAttr) {
+        // Both setRadius functions should be evaluated separately.
+        bool isRadiusXChanged = morphology->setRadiusX(radiusX());
+        bool isRadiusYChanged = morphology->setRadiusY(radiusY());
+        return isRadiusXChanged || isRadiusYChanged;
+    }
 
     ASSERT_NOT_REACHED();
     return false;
