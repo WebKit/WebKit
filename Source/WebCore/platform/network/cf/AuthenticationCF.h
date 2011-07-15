@@ -28,16 +28,6 @@
 
 #if USE(CFNETWORK)
 
-#ifdef __OBJC__
-@class NSURLAuthenticationChallenge;
-@class NSURLCredential;
-@class NSURLProtectionSpace;
-#else
-class NSURLAuthenticationChallenge;
-class NSURLCredential;
-class NSURLProtectionSpace;
-#endif
-
 #include <CFNetwork/CFURLCredentialPriv.h>
 
 typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
@@ -58,16 +48,6 @@ AuthenticationChallenge core(CFURLAuthChallengeRef);
 #endif
 Credential core(CFURLCredentialRef);
 ProtectionSpace core(CFURLProtectionSpaceRef);
-
-#if PLATFORM(MAC)
-AuthenticationChallenge core(NSURLAuthenticationChallenge *);
-Credential core(NSURLCredential *);
-ProtectionSpace core(NSURLProtectionSpace*);
-
-NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
-NSURLCredential *mac(const Credential&);
-NSURLProtectionSpace *mac(const ProtectionSpace&);
-#endif
 
 }
 

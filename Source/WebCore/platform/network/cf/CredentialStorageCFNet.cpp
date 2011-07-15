@@ -31,8 +31,13 @@
 #include "AuthenticationCF.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#elif PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 namespace WebCore {
 
