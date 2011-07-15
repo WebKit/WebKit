@@ -554,7 +554,7 @@ function expectationsFileStringForResult(result)
     if (result == 'N')
         return '';
 
-    return getExpectationsMap()[result];
+    return expectationsMap()[result];
 }
 
 // Map of all tests to true values. This is just so we can have the list of
@@ -986,7 +986,7 @@ function processTestRunsForBuilder(builderName)
         var rawResults = rawTest.results;
         resultsForTest.rawResults = rawResults;
 
-        // FIXME: Switch to getTestResultsByBuild
+        // FIXME: Switch to testResultsByBuild
         var times = resultsForTest.rawTimes;
         var numTimesSeen = 0;
         var numResultsSeen = 0;
@@ -1197,7 +1197,7 @@ function linkHTMLToOpenWindow(url, text)
     return '<div class=link onclick="window.open(\'' + url + '\')">' + text + '</div>';
 }
 
-// FIXME: replaced with getChromiumRevisionLink/getWebKitRevisionLink
+// FIXME: replaced with chromiumRevisionLink/webKitRevisionLink
 function createBlameListHTML(revisions, index, urlBase, separator, repo)
 {
     var thisRevision = revisions[index];
@@ -1262,8 +1262,8 @@ function showPopupForBuild(e, builder, index, opt_testName)
     }
 
     var buildNumber = g_resultsByBuilder[builder].buildNumbers[index];
-    var builderMaster = getBuilderMaster(builder);
-    var buildBasePath = builderMaster.getLogPath(builder, buildNumber);
+    var master = builderMaster(builder);
+    var buildBasePath = master.getLogPath(builder, buildNumber);
 
     html += '<ul><li>' + linkHTMLToOpenWindow(buildBasePath, 'Build log') +
         '</li><li>' +
@@ -1272,7 +1272,7 @@ function showPopupForBuild(e, builder, index, opt_testName)
             'WebKit') +
         '</li>';
 
-    if (builderMaster == WEBKIT_BUILDER_MASTER) {
+    if (master == WEBKIT_BUILDER_MASTER) {
         var revision = g_resultsByBuilder[builder].webkitRevision[index];
         html += '<li><span class=link onclick="setQueryParameter(\'revision\',' +
             revision + ')">Show results for WebKit r' + revision +
@@ -1312,7 +1312,7 @@ function htmlForTestResults(test)
     var results = test.rawResults.concat();
     var times = test.rawTimes.concat();
     var builder = test.builder;
-    var builderMaster = getBuilderMaster(builder);
+    var master = builderMaster(builder);
     var buildNumbers = g_resultsByBuilder[builder].buildNumbers;
 
     var indexToReplaceCurrentResult = -1;
@@ -1349,7 +1349,7 @@ function htmlForTestResults(test)
         var extraClassNames = '';
         var webkitRevision = g_resultsByBuilder[builder].webkitRevision;
         var isWebkitMerge = webkitRevision[i + 1] && webkitRevision[i] != webkitRevision[i + 1];
-        if (isWebkitMerge && builderMaster != WEBKIT_BUILDER_MASTER)
+        if (isWebkitMerge && master != WEBKIT_BUILDER_MASTER)
             extraClassNames += ' merge';
 
         html += '<td title="' + (resultString || 'NO DATA') + '. Click for more info." class="results ' + currentResult +
@@ -1667,14 +1667,14 @@ function addUpdate(testsNeedingUpdate, test, builderName, missing, extra)
 //     the results.
 function realModifiers(modifierString)
 {
-    var realModifiers = [];
+    var newModifiers = [];
     var modifiers = modifierString.split(' ');;
     for (var j = 0; j < modifiers.length; j++) {
         var modifier = modifiers[j];
         if (!(modifier in BUILD_TYPES) && !(modifier in PLATFORMS) && !startsWith(modifier, 'BUG'))
-            realModifiers.push(modifier);
+            newModifiers.push(modifier);
     }
-    return realModifiers.join(' ');
+    return newModifiers.join(' ');
 }
 
 function generatePageForExpectationsUpdate()
@@ -1706,16 +1706,16 @@ function generatePageForExpectationsUpdate()
         for (var i = 0; i < tests.length; i++) {
             // Anything extra in this case is what is listed in expectations
             // plus modifiers other than bug, platform, build type.
-            var realModifiers = realModifiers(tests[i].modifiers);
+            var modifiers = realModifiers(tests[i].modifiers);
             var extras = tests[i].expectations;
-            extras += realModifiers ? ' ' + realModifiers : '';
+            extras += modifiers ? ' ' + modifiers : '';
             addUpdate(testsNeedingUpdate, tests[i].test, builder, null, extras);
         }
     }
 
     // Get the keys in alphabetical order, so it is easy to process groups
     // of tests.
-    var keys = getKeys(testsNeedingUpdate).sort();
+    var keys = Object.keys(testsNeedingUpdate).sort();
     showUpdateInfoForTest(testsNeedingUpdate, keys);
 }
 
@@ -1816,7 +1816,7 @@ function handleUpdate(testsNeedingUpdate, keys)
             g_confirmedTests[test][builder] = testsNeedingUpdate[test][builder];
         } else if (g_confirmedTests[test] && g_confirmedTests[test][builder]) {
             delete g_confirmedTests[test][builder];
-            if (!getKeys(g_confirmedTests[test]).length)
+            if (!Object.keys(g_confirmedTests[test]).length)
                 delete g_confirmedTests[test];
         }
     }
@@ -1853,10 +1853,10 @@ function htmlForIndividulTestOnAllBuilders(test)
     processTestRunsForAllBuilders();
 
     var testResults = g_testToResultsMap[test];
-    var builderMaster;
+    var master;
     var html = '';
     if (testResults && testResults.length) {
-        builderMaster = getBuilderMaster(testResults[0].builder);
+        master = builderMaster(testResults[0].builder);
         if (isLayoutTestResults()) {
             var tracURL = TEST_URL_BASE_PATH_TRAC + test
             html += linkHTMLToOpenWindow(tracURL, tracURL);
@@ -1885,7 +1885,7 @@ function htmlForIndividulTestOnAllBuilders(test)
 
     if (isLayoutTestResults()) {
         html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
-        if (builderMaster == WEBKIT_BUILDER_MASTER) {
+        if (master == WEBKIT_BUILDER_MASTER) {
             var revision = g_currentState.revision || '';
             html += '<form onsubmit="setQueryParameter(\'revision\', revision.value);' +
                 'return false;">Show results for WebKit revision: ' +
@@ -2182,7 +2182,7 @@ function loadNonWebKitResultsForBuilder(builder, test, expectationsContainer)
     container.innerHTML = '<div><b>' + builder + '</b></div>';
     expectationsContainer.appendChild(container);
     for (var i = 0; i < failures.length; i++) {
-        var pathToLog = getBuilderMaster(builder).getLogPath(builder, failures[i]) + pathToFailureLog(test);
+        var pathToLog = builderMaster(builder).getLogPath(builder, failures[i]) + pathToFailureLog(test);
         appendNonWebKitResults(container, pathToLog);
     }
 }
@@ -2239,7 +2239,7 @@ function loadExpectationsLayoutTests(expectationsContainer)
     revisionContainer.textContent = "Showing results for: "
     expectationsContainer.appendChild(revisionContainer);
     for (var builder in g_builders) {
-        if (getBuilderMaster(builder) == WEBKIT_BUILDER_MASTER) {
+        if (builderMaster(builder) == WEBKIT_BUILDER_MASTER) {
             var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             var revisionInfo = document.createElement('div');
@@ -2272,7 +2272,7 @@ function loadExpectationsLayoutTests(expectationsContainer)
 
     for (var builder in g_builders) {
         var actualResultsBase;
-        if (getBuilderMaster(builder) == WEBKIT_BUILDER_MASTER) {
+        if (builderMaster(builder) == WEBKIT_BUILDER_MASTER) {
             var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             actualResultsBase = 'http://build.webkit.org/results/' + builder +
@@ -2375,7 +2375,7 @@ function htmlForNavBar()
     if (!isCrossBuilderView())
         extraHTML += checkboxHTML('showRunsOnBuilderPage', 'Show flakiness details', g_currentState.showRunsOnBuilderPage);
 
-    var html = getHTMLForTestTypeSwitcher(false, extraHTML, isCrossBuilderView());
+    var html = htmlForTestTypeSwitcher(false, extraHTML, isCrossBuilderView());
     html += '<div class=forms><form id=result-form ' +
         'onsubmit="setQueryParameter(\'result\', result.value);' +
         'return false;">Show all tests with result: ' +
@@ -2524,8 +2524,8 @@ function showLegend()
     var html = '<div id=legend-toggle onclick="hideLegend()">Hide ' +
         'legend [type esc]</div><div>Number of flaky tests listed next to ' +
         'each builder</div><div id=legend-contents>';
-    for (var expectation in getExpectationsMap())
-        html += '<div class=' + expectation + '>' + getExpectationsMap()[expectation] + '</div>';
+    for (var expectation in expectationsMap())
+        html += '<div class=' + expectation + '>' + expectationsMap()[expectation] + '</div>';
 
     html += '<div class=merge>WEBKIT MERGE</div>';
     if (isLayoutTestResults()) {

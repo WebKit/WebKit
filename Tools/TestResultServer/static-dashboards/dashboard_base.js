@@ -336,7 +336,7 @@ function diffStates()
     return changedParams;
 }
 
-function getDefaultValue(key)
+function defaultValue(key)
 {
     if (key in g_defaultStateValues)
         return g_defaultStateValues[key];
@@ -388,7 +388,7 @@ function isLayoutTestResults()
     return g_currentState.testType == 'layout-tests';
 }
 
-function getCurrentBuilderGroup(opt_state)
+function currentBuilderGroup(opt_state)
 {
     var state = opt_state || g_currentState;
     switch (state.testType) {
@@ -426,14 +426,14 @@ function getCurrentBuilderGroup(opt_state)
     }
 }
 
-function getBuilderMaster(builderName)
+function builderMaster(builderName)
 {
     return BUILDER_TO_MASTER[builderName];
 }
 
 function isTipOfTreeWebKitBuilder()
 {
-    return getCurrentBuilderGroup().isToTWebKit;
+    return currentBuilderGroup().isToTWebKit;
 }
 
 var g_defaultBuilderName, g_builders, g_expectationsBuilder;
@@ -454,7 +454,7 @@ function initBuilders(state)
             window.location.hash = window.location.hash.replace('master=' + state.master, 'group=' + state.group);
             delete state.master;
         }
-        getCurrentBuilderGroup(state).setup();
+        currentBuilderGroup(state).setup();
     }
 }
 initBuilders(g_currentState);
@@ -472,10 +472,10 @@ function ADD_RESULTS(builds)
     handleResourceLoad();
 }
 
-function getPathToBuilderResultsFile(builderName)
+function pathToBuilderResultsFile(builderName)
 {
     return TEST_RESULTS_SERVER + 'testfile?builder=' + builderName +
-            '&master=' + getBuilderMaster(builderName).name +
+            '&master=' + builderMaster(builderName).name +
             '&testtype=' + g_currentState.testType + '&name=';
 }
 
@@ -505,7 +505,7 @@ function appendJSONScriptElementFor(builderName)
     else
         resultsFilename = 'results-small.json';
 
-    appendScript(getPathToBuilderResultsFile(builderName) + resultsFilename,
+    appendScript(pathToBuilderResultsFile(builderName) + resultsFilename,
             partial(handleResourceLoadError, builderName),
             partial(handleScriptLoaded, builderName));
 }
@@ -530,7 +530,7 @@ function appendJSONScriptElements()
     // Grab expectations file from the fastest builder, which is Linux release
     // right now.    Could be changed to any other builder if needed.
     if (g_waitingOnExpectations)
-        appendScript(getPathToBuilderResultsFile(g_expectationsBuilder) + 'expectations.json');
+        appendScript(pathToBuilderResultsFile(g_expectationsBuilder) + 'expectations.json');
 }
 
 var g_hasDoneInitialPageGeneration = false;
@@ -660,7 +660,7 @@ function handleLocationChange()
     if (Object.keys(params).length)
         shouldGeneratePage = handleQueryParameterChange(params);
 
-    var newHash = getPermaLinkURLHash();
+    var newHash = permaLinkURLHash();
     var winHash = window.location.hash || "#";
     // Make sure the location is the same as the state we are using internally.
     // These get out of sync if processQueryParamChange changed state.
@@ -685,11 +685,11 @@ function setQueryParameter(var_args)
     // Note: We use window.location.hash rather that window.location.replace
     // because of bugs in Chrome where extra entries were getting created
     // when back button was pressed and full page navigation was occuring.
-    // TODO: file those bugs.
-    window.location.hash = getPermaLinkURLHash(state);
+    // FIXME: file those bugs.
+    window.location.hash = permaLinkURLHash(state);
 }
 
-function getPermaLinkURLHash(opt_state)
+function permaLinkURLHash(opt_state)
 {
     var state = opt_state || g_currentState;
     return '#' + joinParameters(state);
@@ -700,7 +700,7 @@ function joinParameters(stateObject)
     var state = [];
     for (var key in stateObject) {
         var value = stateObject[key];
-        if (value != getDefaultValue(key))
+        if (value != defaultValue(key))
             state.push(key + '=' + encodeURIComponent(value));
     }
     return state.join('&');
@@ -762,21 +762,8 @@ function partial(fn, var_args)
     };
 };
 
-// Returns the keys of the object/map/hash.
-// Taken from goog.object.getKeys in the Closure library.
-//
-// @param {Object} obj The object from which to get the keys.
-// @return {!Array.<string>} Array of property keys.
-function getKeys(obj)
-{
-    var res = [];
-    for (var key in obj)
-        res.push(key);
-    return res;
-}
-
 // Returns the appropriate expectatiosn map for the current testType.
-function getExpectationsMap()
+function expectationsMap()
 {
     return isLayoutTestResults() ? LAYOUT_TEST_EXPECTATIONS_MAP_ : GTEST_EXPECTATIONS_MAP_;
 }
@@ -811,7 +798,7 @@ function selectHTML(label, queryParameter, options)
 }
 
 // Returns the HTML for the select element to switch to different testTypes.
-function getHTMLForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includeNoneBuilder)
+function htmlForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includeNoneBuilder)
 {
     var html = '<div style="border-bottom:1px dashed">';
     html += '' +
@@ -830,7 +817,7 @@ function getHTMLForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includ
     }
 
     if (isLayoutTestResults())
-        html += selectHTML('Group', 'group', getKeys(LAYOUT_TESTS_BUILDER_GROUPS));
+        html += selectHTML('Group', 'group', Object.keys(LAYOUT_TESTS_BUILDER_GROUPS));
 
     if (!isTreeMap())
         html += checkboxHTML('showAllRuns', 'Show all runs', g_currentState.showAllRuns);
@@ -868,32 +855,32 @@ function htmlForDashboardLink(html, fileName)
     return htmlForTopLink(html, onClick, isSelected);
 }
 
-function getRevisionLink(results, index, key, singleUrlTemplate, rangeUrlTemplate)
+function revisionLink(results, index, key, singleUrlTemplate, rangeUrlTemplate)
 {
     var currentRevision = parseInt(results[key][index], 10);
     var previousRevision = parseInt(results[key][index + 1], 10);
 
-    function getSingleUrl()
+    function singleUrl()
     {
         return singleUrlTemplate.replace('<rev>', currentRevision);
     }
 
-    function getRangeUrl()
+    function rangeUrl()
     {
         return rangeUrlTemplate.replace('<rev1>', currentRevision).replace('<rev2>', previousRevision + 1);
     }
 
     if (currentRevision == previousRevision)
-        return 'At <a href="' + getSingleUrl() + '">r' + currentRevision    + '</a>';
+        return 'At <a href="' + singleUrl() + '">r' + currentRevision    + '</a>';
     else if (currentRevision - previousRevision == 1)
-        return '<a href="' + getSingleUrl() + '">r' + currentRevision    + '</a>';
+        return '<a href="' + singleUrl() + '">r' + currentRevision    + '</a>';
     else
-        return '<a href="' + getRangeUrl() + '">r' + (previousRevision + 1) + ' to r' + currentRevision + '</a>';
+        return '<a href="' + rangeUrl() + '">r' + (previousRevision + 1) + ' to r' + currentRevision + '</a>';
 }
 
-function getChromiumRevisionLink(results, index)
+function chromiumRevisionLink(results, index)
 {
-    return getRevisionLink(
+    return revisionLink(
         results,
         index,
         CHROME_REVISIONS_KEY,
@@ -901,9 +888,9 @@ function getChromiumRevisionLink(results, index)
         'http://build.chromium.org/f/chromium/perf/dashboard/ui/changelog.html?url=/trunk/src&range=<rev2>:<rev1>&mode=html');
 }
 
-function getWebKitRevisionLink(results, index)
+function webKitRevisionLink(results, index)
 {
-    return getRevisionLink(
+    return revisionLink(
         results,
         index,
         WEBKIT_REVISIONS_KEY,
@@ -923,7 +910,7 @@ function getWebKitRevisionLink(results, index)
 //                                 considered flaky (more than one single-build failure).
 //     - flakyDeltasByBuild: array of builds, for each build a count of flaky
 //                                                 test results by expectation, as well as a total.
-function getTestResultsByBuild(builderResults)
+function testResultsByBuild(builderResults)
 {
     var builderTestResults = builderResults[TESTS_KEY];
     var buildCount = builderResults[FIXABLE_COUNTS_KEY].length;

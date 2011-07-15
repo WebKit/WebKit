@@ -1,3 +1,17 @@
+2011-07-14  Ojan Vafai  <ojan@chromium.org>
+
+        fix remaining style issues in the static-dashboards directory
+        https://bugs.webkit.org/show_bug.cgi?id=64561
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+
 2011-07-14  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Introduce pywebsocket-0.6b2

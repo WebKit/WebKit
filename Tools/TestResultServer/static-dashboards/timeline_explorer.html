@@ -30,150 +30,147 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html>
 
 <head>
-  <title>Test Timeline Explorer</title>
-  <style>
-    body {
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 12px;
-    }
+<title>Test Timeline Explorer</title>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
 
-    #timeline-container {
-      position: relative;
-    }
+#timeline-container {
+    position: relative;
+}
 
-    #inspector-container {
-      width: 300px;
-      float: right;
-      border-left: 1px dashed;
-      padding-left: 5px;
-      margin-left: 5px;
-    }
+#inspector-container {
+    width: 300px;
+    float: right;
+    border-left: 1px dashed;
+    padding-left: 5px;
+    margin-left: 5px;
+}
 
-    #inspector-container caption {
-      background: #eee;
-      font-weight: bold;
-      padding: 2px;
-      font-size: 14px;
-      text-align: left;
-    }
+#inspector-container caption {
+    background: #eee;
+    font-weight: bold;
+    padding: 2px;
+    font-size: 14px;
+    text-align: left;
+}
 
-    #inspector-table {
-      width: 100%;
-    }
+#inspector-table {
+    width: 100%;
+}
 
-    #inspector-table td {
-      white-space: nowrap;
-    }
+#inspector-table td {
+    white-space: nowrap;
+}
 
-    #inspector-table .label {
-      color: #666;
-      text-align: right;
-      width: 10em;
-    }
+#inspector-table .label {
+    color: #666;
+    text-align: right;
+    width: 10em;
+}
 
-    #inspector-table .delta.positive {
-      color: #090;
-    }
+#inspector-table .delta.positive {
+    color: #090;
+}
 
-    #inspector-table .delta.negative {
-      color: #900;
-    }
+#inspector-table .delta.negative {
+    color: #900;
+}
 
-    #inspector-container .buttons {
-      padding: 1em 0;
-      text-align: center;
-    }
+#inspector-container .buttons {
+    padding: 1em 0;
+    text-align: center;
+}
 
-    #inspector-container #build-buttons {
-      border-top: 1px dashed;
-    }
+#inspector-container #build-buttons {
+    border-top: 1px dashed;
+}
 
-    #indicator {
-      top: 0;
-      width: 1px;
-      position: absolute;
-      background: red;
-    }
-  </style>
-  <script src="dygraph-combined.js"></script>
-  <script src="builders.js"></script>
-  <script src="dashboard_base.js"></script>
-  <script>
-  var FAILING_TESTS_DATASET_NAME = 'Failing tests';
+#indicator {
+    top: 0;
+    width: 1px;
+    position: absolute;
+    background: red;
+}
+</style>
+<script src="dygraph-combined.js"></script>
+<script src="builders.js"></script>
+<script src="dashboard_base.js"></script>
+<script>
+var FAILING_TESTS_DATASET_NAME = 'Failing tests';
 
-  var shouldShowWebKitRevisionsOnly = isTipOfTreeWebKitBuilder();
-  var dygraph;
-  var buildIndicesByTimestamp = {};
-  var currentBuildIndex = -1;
-  var currentBuilderTestResults;
+var g_shouldShowWebKitRevisionsOnly = isTipOfTreeWebKitBuilder();
+var g_dygraph;
+var g_buildIndicesByTimestamp = {};
+var g_currentBuildIndex = -1;
+var g_currentBuilderTestResults;
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Methods and objects from dashboard_base.js to override.
-  //////////////////////////////////////////////////////////////////////////////
-  function generatePage() {
-    buildIndicesByTimestamp = {};
+//////////////////////////////////////////////////////////////////////////////
+// Methods and objects from dashboard_base.js to override.
+//////////////////////////////////////////////////////////////////////////////
+function generatePage()
+{
+    g_buildIndicesByTimestamp = {};
     var results = g_resultsByBuilder[g_currentState.builder];
 
     for (var i = 0; i < results[FIXABLE_COUNTS_KEY].length; i++) {
-      var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
-      buildIndicesByTimestamp[buildDate.getTime()] = i;
+        var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
+        g_buildIndicesByTimestamp[buildDate.getTime()] = i;
     }
 
-    if (g_currentState.buildTimestamp != -1 &&
-        g_currentState.buildTimestamp in buildIndicesByTimestamp) {
-        var newBuildIndex =
-            buildIndicesByTimestamp[g_currentState.buildTimestamp];
+    if (g_currentState.buildTimestamp != -1 && g_currentState.buildTimestamp in g_buildIndicesByTimestamp) {
+        var newBuildIndex = g_buildIndicesByTimestamp[g_currentState.buildTimestamp];
 
-        if (newBuildIndex == currentBuildIndex) {
-          // This happens when selectBuild is called, which updates the UI
-          // immediately, in addition to updating the location hash (we don't
-          // just rely on the hash change since we don't want to regenerate the
-          // whole page just because the user clicked on something)
-          return;
-        } else if (newBuildIndex) {
-          currentBuildIndex = newBuildIndex;
-        }
+        if (newBuildIndex == g_currentBuildIndex) {
+            // This happens when selectBuild is called, which updates the UI
+            // immediately, in addition to updating the location hash (we don't
+            // just rely on the hash change since we don't want to regenerate the
+            // whole page just because the user clicked on something)
+            return;
+        } else if (newBuildIndex)
+            g_currentBuildIndex = newBuildIndex;
     }
 
     initCurrentBuilderTestResults();
 
-    $('test-type-switcher').innerHTML = getHTMLForTestTypeSwitcher(
-        false,
-        checkboxHTML('ignoreFlakyTests', 'Ignore flaky tests',
-            g_currentState.ignoreFlakyTests, 'currentBuildIndex = -1')
+    $('test-type-switcher').innerHTML = htmlForTestTypeSwitcher( false,
+        checkboxHTML('ignoreFlakyTests', 'Ignore flaky tests', g_currentState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
     );
 
     updateTimelineForBuilder();
-  }
+}
 
-  function initCurrentBuilderTestResults() {
+function initCurrentBuilderTestResults()
+{
     var startTime = Date.now();
-    currentBuilderTestResults =
-        getTestResultsByBuild(g_resultsByBuilder[g_currentState.builder]);
-    console.log(
-        'Time to get test results by build: ' + (Date.now() - startTime));
-  }
+    g_currentBuilderTestResults = testResultsByBuild(g_resultsByBuilder[g_currentState.builder]);
+    console.log( 'Time to get test results by build: ' + (Date.now() - startTime));
+}
 
-  function handleValidHashParameter(key, value) {
+function handleValidHashParameter(key, value)
+{
     switch(key) {
-      case 'buildTimestamp':
+    case 'buildTimestamp':
         g_currentState.buildTimestamp = parseInt(value, 10);
         return true;
-      case 'ignoreFlakyTests':
+    case 'ignoreFlakyTests':
         g_currentState.ignoreFlakyTests = value == 'true';
         return true;
-      default:
+    default:
         return false;
     }
-  }
+}
 
-  g_defaultStateValues = {
+g_defaultStateValues = {
     buildTimestamp: -1,
     builder: g_defaultBuilderName,
     ignoreFlakyTests: true
-  };
+};
 
-  function updateTimelineForBuilder() {
+function updateTimelineForBuilder()
+{
     var builder = g_currentState.builder;
     var results = g_resultsByBuilder[builder];
     var graphData = [];
@@ -182,30 +179,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     // Dygraph prefers to be handed data in chronological order.
     for (var i = results[FIXABLE_COUNTS_KEY].length - 1; i >= 0; i--) {
-      var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
-      // FIXME: Find a better way to exclude outliers. This is just so we
-      // exclude runs where every test failed.
-      var failureCount = Math.min(results[FIXABLE_COUNT_KEY][i], 10000);
+        var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
+        // FIXME: Find a better way to exclude outliers. This is just so we
+        // exclude runs where every test failed.
+        var failureCount = Math.min(results[FIXABLE_COUNT_KEY][i], 10000);
 
-      if (g_currentState.ignoreFlakyTests) {
-        failureCount -=
-            currentBuilderTestResults.flakyDeltasByBuild[i].total || 0;
-      }
+        if (g_currentState.ignoreFlakyTests)
+            failureCount -= g_currentBuilderTestResults.flakyDeltasByBuild[i].total || 0;
 
-      graphData.push([buildDate, failureCount]);
+        graphData.push([buildDate, failureCount]);
 
-      if (!shouldShowWebKitRevisionsOnly &&
-          (results[WEBKIT_REVISIONS_KEY][i] !=
-              results[WEBKIT_REVISIONS_KEY][i + 1])) {
-        annotations.push({
-            series: FAILING_TESTS_DATASET_NAME,
-            x: buildDate,
-            shortText: 'R',
-            text: 'WebKit roll: r' +
-                results[WEBKIT_REVISIONS_KEY][i + 1] + ' to ' +
-                results[WEBKIT_REVISIONS_KEY][i]
-          });
-      }
+        if (!g_shouldShowWebKitRevisionsOnly && (results[WEBKIT_REVISIONS_KEY][i] != results[WEBKIT_REVISIONS_KEY][i + 1])) {
+            annotations.push({
+                series: FAILING_TESTS_DATASET_NAME,
+                x: buildDate,
+                shortText: 'R',
+                text: 'WebKit roll: r' + results[WEBKIT_REVISIONS_KEY][i + 1] + ' to ' + results[WEBKIT_REVISIONS_KEY][i]
+            });
+        }
     }
 
     var windowWidth = document.documentElement.clientWidth;
@@ -213,146 +204,135 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     var switcherNode = $('test-type-switcher');
     var inspectorNode = $('inspector-container');
     var graphWidth = windowWidth - 20 - inspectorNode.offsetWidth;
-    var graphHeight = windowHeight -
-        switcherNode.offsetTop - switcherNode.offsetHeight - 20;
+    var graphHeight = windowHeight - switcherNode.offsetTop - switcherNode.offsetHeight - 20;
 
     var containerNode = $('timeline-container');
     containerNode.style.height = graphHeight + 'px';
     containerNode.style.width = graphWidth + 'px';
     inspectorNode.style.height = graphHeight + 'px';
 
-    dygraph = new Dygraph(
+    g_dygraph = new Dygraph(
         containerNode,
         graphData, {
-          labels: ['Date', FAILING_TESTS_DATASET_NAME],
-          width: graphWidth,
-          height: graphHeight,
-          clickCallback: function(event, date) {
-            selectBuild(results, builder, dygraph, buildIndicesByTimestamp[date]);
-          },
-          drawCallback: function(dygraph, isInitial) {
-            if (isInitial) return;
-            updateBuildIndicator(results, dygraph);
-          },
-          // xValueParser is necessary for annotations to work, even though we
-          // already have Date instances
-          xValueParser: function(input) { return input.getTime(); }
+            labels: ['Date', FAILING_TESTS_DATASET_NAME],
+            width: graphWidth,
+            height: graphHeight,
+            clickCallback: function(event, date) {
+                selectBuild(results, builder, g_dygraph, g_buildIndicesByTimestamp[date]);
+            },
+            drawCallback: function(dygraph, isInitial) {
+                if (isInitial)
+                    return;
+                updateBuildIndicator(results, dygraph);
+            },
+            // xValueParser is necessary for annotations to work, even though we
+            // already have Date instances
+            xValueParser: function(input) { return input.getTime(); }
         });
-    if (annotations.length) {
-      dygraph.setAnnotations(annotations);
-    }
+    if (annotations.length)
+        g_dygraph.setAnnotations(annotations);
 
     inspectorNode.style.visibility = 'visible';
 
-    if (currentBuildIndex != -1) {
-      selectBuild(results, builder, dygraph, currentBuildIndex);
-    }
-  }
+    if (g_currentBuildIndex != -1)
+        selectBuild(results, builder, g_dygraph, g_currentBuildIndex);
+}
 
-  function selectBuild(results, builder, dygraph, index) {
-    currentBuildIndex = index;
+function selectBuild(results, builder, dygraph, index)
+{
+    g_currentBuildIndex = index;
     updateBuildIndicator(results, dygraph);
     updateBuildInspector(results, builder, dygraph, index);
     setQueryParameter('buildTimestamp', results[TIMESTAMPS_KEY][index] * 1000);
-  }
+}
 
-  function updateBuildIndicator(results, dygraph) {
+function updateBuildIndicator(results, dygraph)
+{
     var indicatorNode = $('indicator');
 
     if (!indicatorNode) {
-      var containerNode = $('timeline-container');
-      indicatorNode = document.createElement('div');
-      indicatorNode.id = 'indicator';
-      indicatorNode.style.height = containerNode.offsetHeight + 'px';
-      containerNode.appendChild(indicatorNode);
+        var containerNode = $('timeline-container');
+        indicatorNode = document.createElement('div');
+        indicatorNode.id = 'indicator';
+        indicatorNode.style.height = containerNode.offsetHeight + 'px';
+        containerNode.appendChild(indicatorNode);
     }
 
-    if (currentBuildIndex == -1) {
-      indicatorNode.style.display = 'none';
-    } else {
-      indicatorNode.style.display = 'block';
-      var buildDate =
-          new Date(results[TIMESTAMPS_KEY][currentBuildIndex] * 1000);
-      var domCoords = dygraph.toDomCoords(buildDate, 0);
-      indicatorNode.style.left = domCoords[0] + 'px';
+    if (g_currentBuildIndex == -1)
+        indicatorNode.style.display = 'none';
+    else {
+        indicatorNode.style.display = 'block';
+        var buildDate = new Date(results[TIMESTAMPS_KEY][g_currentBuildIndex] * 1000);
+        var domCoords = dygraph.toDomCoords(buildDate, 0);
+        indicatorNode.style.left = domCoords[0] + 'px';
     }
-  }
+}
 
-  function updateBuildInspector(results, builder, dygraph, index) {
+function updateBuildInspector(results, builder, dygraph, index)
+{
     var html = '<table id="inspector-table"><caption>Details</caption>';
 
-    function addRow(label, value) {
-      html +=
-          '<tr><td class="label">' + label + '</td><td>' + value + '</td></tr>';
+    function addRow(label, value)
+    {
+        html += '<tr><td class="label">' + label + '</td><td>' + value + '</td></tr>';
     }
 
     // Builder and results links
     var buildNumber = results[BUILD_NUMBERS_KEY][index];
     addRow('', '');
-    var master = getBuilderMaster(builder);
+    var master = builderMaster(builder);
     var buildUrl = master.getLogPath(builder, results[BUILD_NUMBERS_KEY][index]);
     if (master == WEBKIT_BUILDER_MASTER) {
-      var resultsUrl =
-          'http://build.webkit.org/results/' + builder + '/r' +
-              results[WEBKIT_REVISIONS_KEY][index] +
-              ' (' + results[BUILD_NUMBERS_KEY][index] + ')';
+        var resultsUrl = 'http://build.webkit.org/results/' + builder + '/r' + results[WEBKIT_REVISIONS_KEY][index] +
+            ' (' + results[BUILD_NUMBERS_KEY][index] + ')';
     } else {
-      var resultsUrl =
-          'http://build.chromium.org/f/chromium/layout_test_results/' +
-          g_builders[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
+        var resultsUrl = 'http://build.chromium.org/f/chromium/layout_test_results/' +
+            g_builders[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
     }
 
-    addRow(
-        'Build:',
-        '<a href="' + buildUrl + '" target="_blank">' + buildNumber + '</a>' +
-        ' (<a href="' + resultsUrl + '" target="_blank">results</a>)');
+    addRow('Build:', '<a href="' + buildUrl + '" target="_blank">' + buildNumber + '</a> (<a href="' + resultsUrl + '" target="_blank">results</a>)');
 
     // Revision link(s)
-    if (!shouldShowWebKitRevisionsOnly) {
-      addRow('Chromium change:', getChromiumRevisionLink(results, index));
-    }
-    addRow('WebKit change:', getWebKitRevisionLink(results, index));
+    if (!g_shouldShowWebKitRevisionsOnly)
+        addRow('Chromium change:', chromiumRevisionLink(results, index));
+    addRow('WebKit change:', webKitRevisionLink(results, index));
 
     // Test status/counts
     addRow('', '');
 
-    function addNumberRow(label, currentValue, previousValue) {
-      var delta = currentValue - previousValue;
-      var deltaText = ''
-      if (delta < 0) {
-        deltaText = ' <span class="delta negative">' + delta + '</span>';
-      } else if (delta > 0) {
-        deltaText = ' <span class="delta positive">+' + delta + '</span>';
-      }
+    function addNumberRow(label, currentValue, previousValue)
+    {
+        var delta = currentValue - previousValue;
+        var deltaText = ''
+        if (delta < 0)
+            deltaText = ' <span class="delta negative">' + delta + '</span>';
+        else if (delta > 0)
+            deltaText = ' <span class="delta positive">+' + delta + '</span>';
 
-      addRow(label, currentValue + deltaText);
+        addRow(label, currentValue + deltaText);
     }
 
-    var expectationsMap = getExpectationsMap();
-    var flakyDeltasByBuild = currentBuilderTestResults.flakyDeltasByBuild;
-    for (var expectationKey in expectationsMap) {
-      if (expectationKey in results[FIXABLE_COUNTS_KEY][index]) {
-        var currentCount =
-            results[FIXABLE_COUNTS_KEY][index][expectationKey];
-        var previousCount =
-            results[FIXABLE_COUNTS_KEY][index + 1][expectationKey];
-        if (g_currentState.ignoreFlakyTests) {
-          currentCount -= flakyDeltasByBuild[index][expectationKey] || 0;
-          previousCount -= flakyDeltasByBuild[index + 1][expectationKey] || 0;
+    var expectations = expectationsMap();
+    var flakyDeltasByBuild = g_currentBuilderTestResults.flakyDeltasByBuild;
+    for (var expectationKey in expectations) {
+        if (expectationKey in results[FIXABLE_COUNTS_KEY][index]) {
+            var currentCount = results[FIXABLE_COUNTS_KEY][index][expectationKey];
+            var previousCount = results[FIXABLE_COUNTS_KEY][index + 1][expectationKey];
+            if (g_currentState.ignoreFlakyTests) {
+                currentCount -= flakyDeltasByBuild[index][expectationKey] || 0;
+                previousCount -= flakyDeltasByBuild[index + 1][expectationKey] || 0;
+            }
+            addNumberRow(expectations[expectationKey], currentCount, previousCount);
         }
-        addNumberRow(
-            expectationsMap[expectationKey], currentCount, previousCount);
-      }
     }
 
     var currentTotal = results[FIXABLE_COUNT_KEY][index];
     var previousTotal = results[FIXABLE_COUNT_KEY][index + 1];
     if (g_currentState.ignoreFlakyTests) {
-      currentTotal -= flakyDeltasByBuild[index].total || 0;
-      previousTotal -= flakyDeltasByBuild[index + 1].total || 0;
+        currentTotal -= flakyDeltasByBuild[index].total || 0;
+        previousTotal -= flakyDeltasByBuild[index + 1].total || 0;
     }
-    addNumberRow(
-        'Total failing tests:', currentTotal, previousTotal);
+    addNumberRow('Total failing tests:', currentTotal, previousTotal);
 
     html += '</table>';
 
@@ -368,72 +348,56 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     inspectorNode.innerHTML = html;
 
     inspectorNode.getElementsByTagName('button')[0].onclick = function() {
-      showResultsDelta(index, buildNumber, buildUrl, resultsUrl);
+        showResultsDelta(index, buildNumber, buildUrl, resultsUrl);
     };
     inspectorNode.getElementsByTagName('button')[1].onclick = function() {
-      selectBuild(results, builder, dygraph, index + 1);
+        selectBuild(results, builder, dygraph, index + 1);
     };
     inspectorNode.getElementsByTagName('button')[2].onclick = function() {
-      selectBuild(results, builder, dygraph, index - 1);
+        selectBuild(results, builder, dygraph, index - 1);
     };
-  }
+}
 
-  function showResultsDelta(index, buildNumber, buildUrl, resultsUrl) {
-    var flakyTests = currentBuilderTestResults.flakyTests;
-    var currentResults = currentBuilderTestResults.resultsByBuild[index];
-    var testNames = currentBuilderTestResults.testNames;
-    var previousResults = currentBuilderTestResults.resultsByBuild[index + 1];
-    var expectationsMap = getExpectationsMap();
+function showResultsDelta(index, buildNumber, buildUrl, resultsUrl)
+{
+    var flakyTests = g_currentBuilderTestResults.flakyTests;
+    var currentResults = g_currentBuilderTestResults.resultsByBuild[index];
+    var testNames = g_currentBuilderTestResults.testNames;
+    var previousResults = g_currentBuilderTestResults.resultsByBuild[index + 1];
+    var expectations = expectationsMap();
 
     var deltas = {};
-    function addDelta(category, testIndex) {
-      if (g_currentState.ignoreFlakyTests && flakyTests[testIndex]) {
-        return;
-      }
-      if (!(category in deltas)) {
-        deltas[category] = [];
-      }
-      var testName = testNames[testIndex];
-      var flakinessDashboardUrl =
-          'flakiness_dashboard.html' +
-          (location.hash ? location.hash + '&' : '#') +
-          'tests=' + testName;
-      var html = '<a href="' +
-          flakinessDashboardUrl + '">' + testName + '</a>';
-      if (flakyTests[testIndex]) {
-        html += ' <span style="color: #f66">possibly flaky</span>';
-      }
-
-      deltas[category].push(html);
+    function addDelta(category, testIndex)
+    {
+        if (g_currentState.ignoreFlakyTests && flakyTests[testIndex])
+            return;
+        if (!(category in deltas))
+            deltas[category] = [];
+        var testName = testNames[testIndex];
+        var flakinessDashboardUrl = 'flakiness_dashboard.html' + (location.hash ? location.hash + '&' : '#') + 'tests=' + testName;
+        var html = '<a href="' + flakinessDashboardUrl + '">' + testName + '</a>';
+        if (flakyTests[testIndex])
+            html += ' <span style="color: #f66">possibly flaky</span>';
+        deltas[category].push(html);
     }
 
     for (var testIndex = 0; testIndex < currentResults.length; testIndex++) {
-      if (currentResults[testIndex] === undefined) {
-        continue;
-      }
+        if (currentResults[testIndex] === undefined)
+            continue;
 
-      if (previousResults[testIndex] !== undefined) {
-        if (currentResults[testIndex] == previousResults[testIndex]) {
-          continue;
-        }
-        addDelta(
-            'Was <b>' + expectationsMap[previousResults[testIndex]] + '</b> ' +
-            'now <b>' + expectationsMap[currentResults[testIndex]] + '</b>',
-            testIndex);
-      } else {
-        addDelta(
-            'Newly <b>' + expectationsMap[currentResults[testIndex]] + '</b>',
-            testIndex);
-      }
+        if (previousResults[testIndex] !== undefined) {
+            if (currentResults[testIndex] == previousResults[testIndex])
+                continue;
+            addDelta('Was <b>' + expectations[previousResults[testIndex]] + '</b> now <b>' + expectations[currentResults[testIndex]] + '</b>', testIndex);
+        } else
+            addDelta('Newly <b>' + expectations[currentResults[testIndex]] + '</b>', testIndex);
     }
 
     for (var testIndex = 0; testIndex < previousResults.length; testIndex++) {
-      if (previousResults[testIndex] === undefined) continue;
-      if (currentResults[testIndex] === undefined) {
-        addDelta(
-            'Was <b>' + expectationsMap[previousResults[testIndex]] + '</b>',
-            testIndex);
-      }
+        if (previousResults[testIndex] === undefined)
+            continue;
+        if (currentResults[testIndex] === undefined)
+            addDelta('Was <b>' + expectations[previousResults[testIndex]] + '</b>', testIndex);
     }
 
     var html = '';
@@ -446,46 +410,47 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         '" target="_blank">results</a>)</p>';
 
     for (var deltaCategory in deltas) {
-      html += '<p><div>' + deltaCategory + ' (' + deltas[deltaCategory].length + ')</div><ul>';
-      deltas[deltaCategory].forEach(function(deltaHtml) {
-        html += '<li>' + deltaHtml + '</li>';
-      });
-      html += '</ul></p>';
+        html += '<p><div>' + deltaCategory + ' (' + deltas[deltaCategory].length + ')</div><ul>';
+        deltas[deltaCategory].forEach(function(deltaHtml) {
+            html += '<li>' + deltaHtml + '</li>';
+        });
+        html += '</ul></p>';
     }
 
     var deltaWindow = window.open();
     deltaWindow.document.write(html);
-  }
+}
 
-  document.addEventListener('keydown', function(e) {
-    if (currentBuildIndex == -1) return;
+document.addEventListener('keydown', function(e) {
+    if (g_currentBuildIndex == -1)
+        return;
 
     switch (e.keyIdentifier) {
-      case 'Left':
+    case 'Left':
         selectBuild(
             g_resultsByBuilder[g_currentState.builder],
             g_currentState.builder,
-            dygraph,
-            currentBuildIndex + 1);
+            g_dygraph,
+            g_currentBuildIndex + 1);
         break;
-      case 'Right':
+    case 'Right':
         selectBuild(
             g_resultsByBuilder[g_currentState.builder],
             g_currentState.builder,
-            dygraph,
-            currentBuildIndex - 1);
+            g_dygraph,
+            g_currentBuildIndex - 1);
         break;
     }
-  });
-  </script>
-  </head>
-  <body>
+});
+</script>
+</head>
+<body>
     <div id="test-type-switcher"></div>
 
     <div id="inspector-container" style="visibility: hidden">
-      <p>Click on a point on the graph to see details about that build.</p>
-      <p>Click and drag on the graph to zoom in to that period.</p>
+        <p>Click on a point on the graph to see details about that build.</p>
+        <p>Click and drag on the graph to zoom in to that period.</p>
     </div>
     <div id="timeline-container">Loading...</div>
-  </body>
+</body>
 </html>

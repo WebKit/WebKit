@@ -30,132 +30,123 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html>
 
 <head>
-  <title>Layout test passing status</title>
-  <style>
-    h2 {
-      margin: 0;
-      font-size: 1.2em;
-    }
-    h3 {
-      margin-bottom: 0;
-      font-size: 1em;
-    }
-    .container {
-      display: inline-block;
-      padding: 3px;
-    }
-    img {
-      border: 1px dotted grey;
-      margin-right: 5px;
-      padding: 2px;
-    }
-  </style>
-  <script src="builders.js"></script>
-  <script src="dashboard_base.js"></script>
-  <script>
-  /**
-   * @fileoverview Creates a dashboard for tracking number of passes/failures
-   * per run.
-   *
-   * Currently, only webkit tests are supported, but adding other test types
-   * should just require the following steps:
-   *   -generate results.json for these tests
-   *   -copy them to the appropriate location
-   *   -add the builder name to the list of builders in dashboard_base.js.
-   */
+<title>Layout test passing status</title>
+<style>
+h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+h3 {
+    margin-bottom: 0;
+    font-size: 1em;
+}
+.container {
+    display: inline-block;
+    padding: 3px;
+}
+img {
+    border: 1px dotted grey;
+    margin-right: 5px;
+    padding: 2px;
+}
+</style>
+<script src="builders.js"></script>
+<script src="dashboard_base.js"></script>
+<script>
+// @fileoverview Creates a dashboard for tracking number of passes/failures per run.
+//
+// Currently, only webkit tests are supported, but adding other test types
+// should just require the following steps:
+//     -generate results.json for these tests
+//     -copy them to the appropriate location
+//     -add the builder name to the list of builders in dashboard_base.js.
 
-  //////////////////////////////////////////////////////////////////////////////
-  // Methods and objects from dashboard_base.js to override.
-  //////////////////////////////////////////////////////////////////////////////
-  function generatePage() {
-    var html = getHTMLForTestTypeSwitcher(true) + '<br>';
-    for (var builder in g_builders) {
-      html += getHTMLForBuilder(builder);
-    }
+//////////////////////////////////////////////////////////////////////////////
+// Methods and objects from dashboard_base.js to override.
+//////////////////////////////////////////////////////////////////////////////
+function generatePage()
+{
+    var html = htmlForTestTypeSwitcher(true) + '<br>';
+    for (var builder in g_builders)
+        html += htmlForBuilder(builder);
     document.body.innerHTML = html;
-  }
+}
 
-  function handleValidHashParameter(key, value) {
+function handleValidHashParameter(key, value)
+{
     switch(key) {
-      case 'rawValues':
+    case 'rawValues':
         g_currentState[key] = value == 'true';
-
         return true;
 
-      default:
+    default:
         return false;
     }
-  }
+}
 
-  g_defaultStateValues = {
+g_defaultStateValues = {
     rawValues: false
-  };
+};
 
-  function getHTMLForBuilder(builder) {
+function htmlForBuilder(builder)
+{
     var results = g_resultsByBuilder[builder];
     // Some keys were added later than others, so they don't have as many
     // builds. Use the shortest.
-    // TODO(ojan): Once 500 runs have finished, we can get rid of passing this
+    // FIXME: Once 500 runs have finished, we can get rid of passing this
     // around and just assume all keys have the same number of builders for a
     // given builder.
     var numColumns = results[ALL_FIXABLE_COUNT_KEY].length;
     var html = '<div class=container><h2>' + builder + '</h2>';
 
-    if (g_currentState.rawValues) {
-      html += getRawValuesHTML(results, numColumns);
-    } else {
-      html += '<a href="timeline_explorer.html' + (location.hash ? location.hash + '&' : '#') + 'builder=' + builder + '">' +
-          getChartHTML(results, numColumns) + '</a>';
+    if (g_currentState.rawValues)
+        html += rawValuesHTML(results, numColumns);
+    else {
+        html += '<a href="timeline_explorer.html' + (location.hash ? location.hash + '&' : '#') + 'builder=' + builder + '">' +
+            chartHTML(results, numColumns) + '</a>';
     }
 
     html += '</div>';
-
     return html;
-  }
+}
 
-  function getRawValuesHTML(results, numColumns) {
-    var html = getHTMLForSummaryTable(results, numColumns) +
-        getHTMLForTestType(results, FIXABLE_COUNTS_KEY, FIXABLE_DESCRIPTION,
-            numColumns);
+function rawValuesHTML(results, numColumns)
+{
+    var html = htmlForSummaryTable(results, numColumns) +
+        htmlForTestType(results, FIXABLE_COUNTS_KEY, FIXABLE_DESCRIPTION, numColumns);
     if (isLayoutTestResults()) {
-      html +=
-          getHTMLForTestType(results, DEFERRED_COUNTS_KEY,
-              DEFERRED_DESCRIPTION, numColumns) +
-          getHTMLForTestType(results, WONTFIX_COUNTS_KEY, WONTFIX_DESCRIPTION,
-              numColumns);
+        html += htmlForTestType(results, DEFERRED_COUNTS_KEY, DEFERRED_DESCRIPTION, numColumns) +
+            htmlForTestType(results, WONTFIX_COUNTS_KEY, WONTFIX_DESCRIPTION, numColumns);
     }
     return html;
-  }
+}
 
-  function getChartHTML(results, numColumns) {
+function chartHTML(results, numColumns)
+{
     var shouldShowWebKitRevisions = isTipOfTreeWebKitBuilder();
-    var revisionKey = shouldShowWebKitRevisions ? WEBKIT_REVISIONS_KEY :
-        CHROME_REVISIONS_KEY;
+    var revisionKey = shouldShowWebKitRevisions ? WEBKIT_REVISIONS_KEY : CHROME_REVISIONS_KEY;
     var startRevision = results[revisionKey][numColumns - 1];
     var endRevision = results[revisionKey][0];
-    var revisionLabel = shouldShowWebKitRevisions ? "WebKit Revision" :
-        "Chromium Revision";
+    var revisionLabel = shouldShowWebKitRevisions ? "WebKit Revision" : "Chromium Revision";
 
     var fixable = results[FIXABLE_COUNT_KEY].slice(0, numColumns);
-    var html = getChart("Total failing", {"": fixable}, revisionLabel,
-        startRevision, endRevision);
+    var html = chart("Total failing", {"": fixable}, revisionLabel, startRevision, endRevision);
 
     var values = valuesPerExpectation(results[FIXABLE_COUNTS_KEY], numColumns);
     // Don't care about number of passes for the charts.
     delete(values['P']);
 
-    return html + getChart("Detailed breakdown", values, revisionLabel,
-        startRevision, endRevision);
-  }
+    return html + chart("Detailed breakdown", values, revisionLabel, startRevision, endRevision);
+}
 
-  var LABEL_COLORS = ['FF0000', '00FF00', '0000FF', '000000', 'FF6EB4',
-      'FFA812', '9B30FF', '00FFCC'];
+var LABEL_COLORS = ['FF0000', '00FF00', '0000FF', '000000', 'FF6EB4', 'FFA812', '9B30FF', '00FFCC'];
 
-  // FIXME: Find a better way to exclude outliers. This is just so we exclude
-  // runs where every test failed.
-  var MAX_VALUE = 10000;
+// FIXME: Find a better way to exclude outliers. This is just so we exclude
+// runs where every test failed.
+var MAX_VALUE = 10000;
 
-  function filteredValues(values, desiredNumberOfPoints) {
+function filteredValues(values, desiredNumberOfPoints)
+{
     // Filter out values to make the graph a bit more readable and to keep URLs
     // from exceeding the browsers max length restriction.
     var filterAmount = Math.floor(values.length / desiredNumberOfPoints);
@@ -163,20 +154,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         return values;
 
     return values.filter(function(element, index, array) {
-      // Include the most recent and oldest values and exclude outliers.
-      return (index % filterAmount == 0 || index == array.length - 1) &&
-          (array[index] < MAX_VALUE && array[index] != 0);
+        // Include the most recent and oldest values and exclude outliers.
+        return (index % filterAmount == 0 || index == array.length - 1) && (array[index] < MAX_VALUE && array[index] != 0);
     });
-  }
+}
 
-  function chartUrl(title, values, revisionLabel, startRevision, endRevision,
-      desiredNumberOfPoints) {
+function chartUrl(title, values, revisionLabel, startRevision, endRevision, desiredNumberOfPoints) {
     var maxValue = 0;
-    for (var expectation in values) {
-      maxValue = Math.max(maxValue,
-          Math.max.apply(null, filteredValues(values[expectation],
-              desiredNumberOfPoints)));
-    }
+    for (var expectation in values)
+        maxValue = Math.max(maxValue, Math.max.apply(null, filteredValues(values[expectation], desiredNumberOfPoints)));
 
     var chartData = '';
     var labels = '';
@@ -184,139 +170,129 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     var first = true;
     for (var expectation in values) {
-      chartData += (first ? 'e:' : ',') +
-          extendedEncode(filteredValues(values[expectation],
-              desiredNumberOfPoints).reverse(), maxValue);
+        chartData += (first ? 'e:' : ',') + extendedEncode(filteredValues(values[expectation], desiredNumberOfPoints).reverse(), maxValue);
 
-      if (expectation) {
-        numLabels++;
-        labels += (first ? '' : '|') + getExpectationsMap()[expectation];
-      }
-      first = false;
+        if (expectation) {
+            numLabels++;
+            labels += (first ? '' : '|') + expectationsMap()[expectation];
+        }
+        first = false;
     }
 
     var url = "http://chart.apis.google.com/chart?cht=lc&chs=600x400&chd=" +
-        chartData + "&chg=15,15,1,3&chxt=x,x,y&chxl=1:||" + revisionLabel +
-        "|&chxr=0," + startRevision + "," + endRevision + "|2,0," + maxValue +
-        "&chtt=" + title;
+            chartData + "&chg=15,15,1,3&chxt=x,x,y&chxl=1:||" + revisionLabel +
+            "|&chxr=0," + startRevision + "," + endRevision + "|2,0," + maxValue + "&chtt=" + title;
 
 
-    if (labels) {
-      url += "&chdl=" + labels + "&chco=" +
-          LABEL_COLORS.slice(0, numLabels).join(',');
-    }
+    if (labels)
+        url += "&chdl=" + labels + "&chco=" + LABEL_COLORS.slice(0, numLabels).join(',');
     return url;
-  }
+}
 
-  function getChart(title, values, revisionLabel, startRevision, endRevision) {
+function chart(title, values, revisionLabel, startRevision, endRevision)
+{
     var desiredNumberOfPoints = 400;
-    var url = chartUrl(title, values, revisionLabel, startRevision, endRevision,
-        desiredNumberOfPoints);
+    var url = chartUrl(title, values, revisionLabel, startRevision, endRevision, desiredNumberOfPoints);
 
     while (url.length >= 2048) {
-      // Decrease the desired number of points gradually until we get a URL that
-      // doesn't exceed chartserver's max URL length.
-      desiredNumberOfPoints = 3 / 4 * desiredNumberOfPoints;
-      url = chartUrl(title, values, revisionLabel, startRevision, endRevision,
-          desiredNumberOfPoints);
+        // Decrease the desired number of points gradually until we get a URL that
+        // doesn't exceed chartserver's max URL length.
+        desiredNumberOfPoints = 3 / 4 * desiredNumberOfPoints;
+        url = chartUrl(title, values, revisionLabel, startRevision, endRevision, desiredNumberOfPoints);
     }
 
     return '<img src="' + url + '">';
-  }
+}
 
-  function getHTMLForRevisionRows(results, numColumns) {
-    return getHTMLForTableRow('WebKit Revision',
-            results[WEBKIT_REVISIONS_KEY].slice(0, numColumns)) +
-        getHTMLForTableRow('Chrome Revision',
-            results[CHROME_REVISIONS_KEY].slice(0, numColumns));
-  }
+function htmlForRevisionRows(results, numColumns)
+{
+    return htmlForTableRow('WebKit Revision', results[WEBKIT_REVISIONS_KEY].slice(0, numColumns)) +
+        htmlForTableRow('Chrome Revision', results[CHROME_REVISIONS_KEY].slice(0, numColumns));
+}
 
-  function wrapHTMLInTable(description, html) {
-    return '<h3>' + description + '</h3><table><tbody>' + html +
-        '</tbody></table>';
-  }
+function wrapHTMLInTable(description, html)
+{
+    return '<h3>' + description + '</h3><table><tbody>' + html + '</tbody></table>';
+}
 
-  function getHTMLForSummaryTable(results, numColumns) {
+function htmlForSummaryTable(results, numColumns)
+{
     var percent = [];
     var fixable = results[FIXABLE_COUNT_KEY].slice(0, numColumns);
     var allFixable = results[ALL_FIXABLE_COUNT_KEY].slice(0, numColumns);
     for (var i = 0; i < numColumns; i++) {
-      var percentage = 100 * (allFixable[i] - fixable[i]) / allFixable[i];
-      // Round to the nearest tenth of a percent.
-      percent.push(Math.round(percentage * 10) / 10 + '%');
+        var percentage = 100 * (allFixable[i] - fixable[i]) / allFixable[i];
+        // Round to the nearest tenth of a percent.
+        percent.push(Math.round(percentage * 10) / 10 + '%');
     }
-    var html = getHTMLForRevisionRows(results, numColumns) +
-        getHTMLForTableRow('Percent passed', percent) +
-        getHTMLForTableRow('Failures (deduped)', fixable) +
-        getHTMLForTableRow('Fixable Tests', allFixable);
+    var html = htmlForRevisionRows(results, numColumns) +
+        htmlForTableRow('Percent passed', percent) +
+        htmlForTableRow('Failures (deduped)', fixable) +
+        htmlForTableRow('Fixable Tests', allFixable);
     return wrapHTMLInTable('Summary', html);
-  }
+}
 
-  function valuesPerExpectation(counts, numColumns) {
+function valuesPerExpectation(counts, numColumns)
+{
     var values = {};
     for (var i = 0; i < numColumns; i++) {
-      for (var expectation in getExpectationsMap()) {
-        if (expectation in counts[i]) {
-          var count = counts[i][expectation];
-
-          if (!values[expectation])
-            values[expectation] = [];
-
-          values[expectation].push(count);
+        for (var expectation in expectationsMap()) {
+            if (expectation in counts[i]) {
+                var count = counts[i][expectation];
+                if (!values[expectation])
+                    values[expectation] = [];
+                values[expectation].push(count);
+            }
         }
-      }
     }
     return values;
-  }
+}
 
-  function getHTMLForTestType(results, key, description, numColumns) {
+function htmlForTestType(results, key, description, numColumns)
+{
     var counts = results[key];
-    var html = getHTMLForRevisionRows(results, numColumns);
-
+    var html = htmlForRevisionRows(results, numColumns);
     var values = valuesPerExpectation(counts, numColumns);
-    for (var expectation in values) {
-      html += getHTMLForTableRow(getExpectationsMap()[expectation],
-          values[expectation]);
-    }
-
+    for (var expectation in values)
+        html += htmlForTableRow(expectationsMap()[expectation], values[expectation]);
     return wrapHTMLInTable(description, html);
-  }
+}
 
-  function getHTMLForTableRow(columnName, values) {
-    return '<tr><td>' + columnName + '</td><td>' + values.join('</td><td>') +
-        '</td></tr>';
-  }
+function htmlForTableRow(columnName, values)
+{
+    return '<tr><td>' + columnName + '</td><td>' + values.join('</td><td>') + '</td></tr>';
+}
 
-  // Taken from http://code.google.com/apis/chart/docs/data_formats.html.
-  function extendedEncode(arrVals, maxVal) {
-    var map =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.';
+// Taken from http://code.google.com/apis/chart/docs/data_formats.html.
+function extendedEncode(arrVals, maxVal)
+{
+    var map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.';
     var mapLength = map.length;
     var mapLengthSquared = mapLength * mapLength;
 
     var chartData = '';
 
-    for(var i = 0, len = arrVals.length; i < len; i++) {
-      // In case the array vals were translated to strings.
-      var numericVal = new Number(arrVals[i]);
-      // Scale the value to maxVal.
-      var scaledVal = Math.floor(mapLengthSquared * numericVal / maxVal);
+    for (var i = 0, len = arrVals.length; i < len; i++) {
+        // In case the array vals were translated to strings.
+        var numericVal = new Number(arrVals[i]);
+        // Scale the value to maxVal.
+        var scaledVal = Math.floor(mapLengthSquared * numericVal / maxVal);
 
-      if(scaledVal > mapLengthSquared - 1)
-        chartData += "..";
-      else if (scaledVal < 0)
-        chartData += '__';
-      else {
-        // Calculate first and second digits and add them to the output.
-        var quotient = Math.floor(scaledVal / mapLength);
-        var remainder = scaledVal - mapLength * quotient;
-        chartData += map.charAt(quotient) + map.charAt(remainder);
-      }
+        if(scaledVal > mapLengthSquared - 1)
+            chartData += "..";
+        else if (scaledVal < 0)
+            chartData += '__';
+        else {
+            // Calculate first and second digits and add them to the output.
+            var quotient = Math.floor(scaledVal / mapLength);
+            var remainder = scaledVal - mapLength * quotient;
+            chartData += map.charAt(quotient) + map.charAt(remainder);
+        }
     }
 
     return chartData;
-  }
-  </script>
-  </head>
-  <body></body>
+}
+</script>
+</head>
+<body></body>
 </html>
