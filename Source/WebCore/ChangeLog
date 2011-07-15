@@ -1,3 +1,17 @@
+2011-07-14  Darin Adler  <darin@apple.com>
+
+        [Mac] Use [NSCursor operationNotAllowedCursor] for CSS no-drop as well as CSS not-allowed
+        https://bugs.webkit.org/show_bug.cgi?id=64570
+
+        Reviewed by Alexey Proskuryakov.
+
+        Mac OS X documentation and usage makes it clear that this cursor is usually used for no-drop,
+        and that it's also reasonable to use it for not-allowed.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor): Use [NSCursor operationNotAllowedCursor] for
+        Cursor::NoDrop.
+
 2011-07-14  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.

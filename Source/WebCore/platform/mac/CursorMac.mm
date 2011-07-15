@@ -238,7 +238,11 @@ void Cursor::ensurePlatformCursor() const
 #endif
         break;
     case Cursor::NoDrop:
+#if !defined(BUILDING_ON_LEOPARD)
+        m_platformCursor = [NSCursor operationNotAllowedCursor];
+#else
         m_platformCursor = createNamedCursor("noDropCursor", 3, 1);
+#endif
         break;
     case Cursor::Copy:
 #if !defined(BUILDING_ON_LEOPARD)
