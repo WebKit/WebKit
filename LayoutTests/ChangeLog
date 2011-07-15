@@ -1,5 +1,13 @@
 2011-07-15  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; chromium test expectations update.
+
+        Remove some now-passing tests from chromium's text_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-15  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed.  New chromium test baselines after r91069.
 
         * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.png:

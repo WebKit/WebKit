@@ -2739,7 +2739,7 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
 
-BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
+BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
@@ -3381,16 +3381,6 @@ BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
 BUGWK60125 : fast/files/create-blob-url-crash.html = CRASH PASS
 
-// Need rebaselining
-BUGWK64368 XP : http/tests/loading/simple-subframe.html = IMAGE
-BUGWK64368 XP : http/tests/misc/location-replace-crossdomain.html = IMAGE
-BUGWK64368 XP : http/tests/misc/acid2-pixel.html = IMAGE
-BUGWK64368 XP : http/tests/misc/iframe404.html = IMAGE
-BUGWK64368 XP : http/tests/multipart/invalid-image-data-standalone.html = IMAGE
-BUGWK64368 XP : http/tests/navigation/javascriptlink-frames.html = IMAGE
-BUGWK64368 XP : svg/text/bidi-text-query.svg = IMAGE TEXT
-
-
 // flakiness
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
@@ -3766,7 +3756,7 @@ BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
 BUGCR87732 : fast/regex/toString.html = TEXT
 
 // Discovered after a skia roll r1814:r1832, but likely needs more investigation.
-BUGCR88801 WIN : svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html = CRASH IMAGE+TEXT TIMEOUT
+BUGCR88801 WIN : svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html = CRASH PASS
 
 // Added in http://trac.webkit.org/changeset/90148, null-derefing in TestNetscapgePlugin.
 BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = CRASH
