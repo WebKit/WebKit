@@ -106,6 +106,7 @@ protected:
  
 private:
     static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static bool platformHandleKeydownEvent(SelectElementData&, Element*, KeyboardEvent*);
     static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
     static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
 };

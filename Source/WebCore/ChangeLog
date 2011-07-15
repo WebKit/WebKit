@@ -1,3 +1,42 @@
+2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        ALT + DOWN arrow key does not open select
+
+        https://bugs.webkit.org/show_bug.cgi?id=14407
+        <rdar://problem/5319507>
+
+        Reviewed by Alexey Proskuryakov.
+
+        No test, because eventSender sends events to the WebView, rather than
+        the popup menu, so the popup isn't closed.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Add SelectElementWin.cpp to project.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::platformHandleKeydownEvent):
+        Moved ARROW_KEYS_POP_MENU code here. Updated to return whether the
+        function has handled the key, or whether the caller needs to process it
+        further.
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+        Allow the platform the first chance at handling the keyboard event.
+
+        * dom/SelectElement.h:
+        Declare platformHandleKeydownEvent().
+        * dom/SelectElementWin.cpp: Added.
+        (WebCore::SelectElement::platformHandleKeyboardEvent):
+        Allow (Shift) F4 and (Ctrl/Shift) Alt/AltGr + Up/Down
+        arrow to show the popup. After the popup is dismissed, call
+        setSelectedIndex(), and report that we handled the event.
+
+        * platform/win/PopupMenuWin.cpp:
+        Declare HIGH_BIT_MASK_SHORT.
+        (WebCore::PopupMenuWin::show):
+        Forward WM_SYSKEYDOWN to the popup's HWND.
+        (WebCore::PopupMenuWin::wndProc):
+        Allow the same shortcuts that show the menu to hide it, matching
+        Firefox.
+
 2011-07-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Ensure that a single select element's child option elements are

@@ -49,6 +49,8 @@
 #define MAKEPOINTS(l) (*((POINTS FAR *)&(l)))
 #endif
 
+#define HIGH_BIT_MASK_SHORT 0x8000
+
 using std::min;
 
 namespace WebCore {
@@ -244,6 +246,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
             case WM_KEYUP:
             case WM_CHAR:
             case WM_DEADCHAR:
+            case WM_SYSKEYDOWN:
             case WM_SYSKEYUP:
             case WM_SYSCHAR:
             case WM_SYSDEADCHAR:
@@ -809,17 +812,46 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
             break;
         }
-        case WM_KEYDOWN:
+        case WM_SYSKEYDOWN:
+        case WM_KEYDOWN: {
             if (!client())
                 break;
 
+            bool altKeyPressed = GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT;
+            bool ctrlKeyPressed = GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT;
+
             lResult = 0;
             switch (LOWORD(wParam)) {
+                case VK_F4: {
+                    if (!altKeyPressed && !ctrlKeyPressed) {
+                        int index = focusedIndex();
+                        ASSERT(index >= 0);
+                        client()->valueChanged(index);
+                        hide();
+                    }
+                    break;
+                }
                 case VK_DOWN:
+                    if (altKeyPressed) {
+                        int index = focusedIndex();
+                        ASSERT(index >= 0);
+                        client()->valueChanged(index);
+                        hide();
+                    } else
+                        down();
+                    break;
                 case VK_RIGHT:
                     down();
                     break;
                 case VK_UP:
+                    if (altKeyPressed) {
+                        int index = focusedIndex();
+                        ASSERT(index >= 0);
+                        client()->valueChanged(index);
+                        hide();
+                    } else
+                        up();
+                    break;
                 case VK_LEFT:
                     up();
                     break;
@@ -869,6 +901,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     break;
             }
             break;
+        }
         case WM_CHAR: {
             if (!client())
                 break;

@@ -47806,6 +47806,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\SelectElementWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\SelectorNodeList.cpp"
 				>
 				<FileConfiguration

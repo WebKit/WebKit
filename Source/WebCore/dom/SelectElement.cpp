@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -557,44 +558,57 @@ void SelectElement::reset(SelectElementData& data, Element* element)
     element->setNeedsStyleRecalc();
 }
 
+#if !PLATFORM(WIN)
+bool SelectElement::platformHandleKeydownEvent(SelectElementData& data, Element* element, KeyboardEvent* event)
+{
+#if ARROW_KEYS_POP_MENU
+    if (!isSpatialNavigationEnabled(element->document()->frame())) {
+        if (event->keyIdentifier() == "Down" || event->keyIdentifier() == "Up") {
+            element->focus();
+
+            // Calling focus() may cause us to lose our renderer. Return true so that our caller doesn't process the event
+            // further, but don't set the event as handled.
+            if (!element->renderer())
+                return true;
+
+            // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
+            // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
+            saveLastSelection(data, element);
+            if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
+                menuList->showPopup();
+            event->setDefaultHandled();
+        }
+        return true;
+    }
+#endif
+    return false;
+}
+#endif
+
 void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
     if (event->type() == eventNames().keydownEvent) {
         if (!element->renderer() || !event->isKeyboardEvent())
             return;
 
-        const String& keyIdentifier = static_cast<KeyboardEvent*>(event)->keyIdentifier();
-        bool handled = false;
-
-#if ARROW_KEYS_POP_MENU
-        if (!isSpatialNavigationEnabled(element->document()->frame())) {
-            if (keyIdentifier == "Down" || keyIdentifier == "Up") {
-                element->focus();
-
-                if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
-                    return;
-
-                // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
-                // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
-                saveLastSelection(data, element);
-                if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
-                    menuList->showPopup();
-
-                event->setDefaultHandled();
-            }
+        if (platformHandleKeydownEvent(data, element, static_cast<KeyboardEvent*>(event)))
             return;
-        }
-#endif
+
         // When using spatial navigation, we want to be able to navigate away from the select element
         // when the user hits any of the arrow keys, instead of changing the selection.
-        if (isSpatialNavigationEnabled(element->document()->frame()))
+        if (isSpatialNavigationEnabled(element->document()->frame())) {
             if (!data.activeSelectionState())
                 return;
+        }
+
+        const String& keyIdentifier = static_cast<KeyboardEvent*>(event)->keyIdentifier();
+        bool handled = false;
 
         UNUSED_PARAM(htmlForm);
         const Vector<Element*>& listItems = data.listItems(element);
 
         int listIndex = optionToListIndex(data, element, selectedIndex(data, element));
+
         if (keyIdentifier == "Down" || keyIdentifier == "Right") {
             listIndex = nextValidIndex(listItems, listIndex, SkipForwards, 1);
             handled = true;
