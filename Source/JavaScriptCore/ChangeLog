@@ -1,5 +1,55 @@
 2011-07-14  Filip Pizlo  <fpizlo@apple.com>
 
+        GC allocation fast path has too many operations.
+        https://bugs.webkit.org/show_bug.cgi?id=64493
+
+        Reviewed by Darin Adler.
+        
+        Changed the timing of the lazy sweep so that it occurs when we land on
+        a previously-unsweeped block, rather than whenever we land on an unsweeped
+        cell.  After the per-block lazy sweep occurs, the block is turned into a
+        singly linked list of free cells.  The allocation fast path is now just a
+        load-branch-store to remove a cell from the head of the list.
+        
+        Additionally, this changes the way new blocks are allocated.  Previously,
+        they would be populated with dummy cells.  With this patch, they are
+        turned into a free list, which means that there will never be destructor
+        calls for allocations in fresh blocks.
+        
+        These changes result in a 1.9% speed-up on V8, and a 0.6% speed-up on
+        SunSpider.  There are no observed statistically significant slow-downs
+        on any individual benchmark.
+
+        * JavaScriptCore.exp:
+        * heap/Heap.cpp:
+        (JSC::Heap::allocateSlowCase):
+        (JSC::Heap::collect):
+        (JSC::Heap::canonicalizeBlocks):
+        (JSC::Heap::resetAllocator):
+        * heap/Heap.h:
+        (JSC::Heap::forEachProtectedCell):
+        (JSC::Heap::forEachCell):
+        (JSC::Heap::forEachBlock):
+        (JSC::Heap::allocate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::lazySweep):
+        (JSC::MarkedBlock::blessNewBlockForFastPath):
+        (JSC::MarkedBlock::blessNewBlockForSlowPath):
+        (JSC::MarkedBlock::canonicalizeBlock):
+        * heap/MarkedBlock.h:
+        * heap/NewSpace.cpp:
+        (JSC::NewSpace::addBlock):
+        (JSC::NewSpace::canonicalizeBlocks):
+        * heap/NewSpace.h:
+        (JSC::NewSpace::allocate):
+        (JSC::NewSpace::SizeClass::SizeClass):
+        (JSC::NewSpace::SizeClass::canonicalizeBlock):
+        * heap/OldSpace.cpp:
+        (JSC::OldSpace::addBlock):
+
+2011-07-14  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT crashes on host constructor calls in debug mode.
         https://bugs.webkit.org/show_bug.cgi?id=64562
         

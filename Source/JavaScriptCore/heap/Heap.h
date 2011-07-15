@@ -24,9 +24,10 @@
 
 #include "HandleHeap.h"
 #include "HandleStack.h"
-#include "SlotVisitor.h"
+#include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "NewSpace.h"
+#include "SlotVisitor.h"
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -124,8 +125,8 @@ namespace JSC {
         static const size_t maxExtraCost = 1024 * 1024;
 
         bool isValidAllocation(size_t);
-        void* allocateSlowCase(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
+        void canonicalizeBlocks();
         void resetAllocator();
 
         MarkedBlock* allocateBlock(size_t cellSize);
@@ -137,6 +138,7 @@ namespace JSC {
         void markTempSortVectors(HeapRootVisitor&);
 
         void* tryAllocate(NewSpace::SizeClass&);
+        void* allocateSlowCase(NewSpace::SizeClass&);
         
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);
@@ -242,6 +244,7 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
     {
+        canonicalizeBlocks();
         ProtectCountSet::iterator end = m_protectedValues.end();
         for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
             functor(it->first);
@@ -258,6 +261,7 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachCell(Functor& functor)
     {
+        canonicalizeBlocks();
         BlockIterator end = m_blocks.set().end();
         for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
             (*it)->forEachCell(functor);
@@ -272,6 +276,7 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachBlock(Functor& functor)
     {
+        canonicalizeBlocks();
         BlockIterator end = m_blocks.set().end();
         for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
             functor(*it);
@@ -282,6 +287,17 @@ namespace JSC {
     {
         Functor functor;
         return forEachBlock(functor);
+    }
+    
+    inline void* Heap::allocate(NewSpace::SizeClass& sizeClass)
+    {
+        // This is a light-weight fast path to cover the most common case.
+        MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
+        if (UNLIKELY(!firstFreeCell))
+            return allocateSlowCase(sizeClass);
+        
+        sizeClass.firstFreeCell = firstFreeCell->next;
+        return firstFreeCell;
     }
 
     inline void* Heap::allocate(size_t bytes)

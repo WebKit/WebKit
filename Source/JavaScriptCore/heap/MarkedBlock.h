@@ -48,6 +48,10 @@ namespace JSC {
         static const size_t atomsPerBlock = blockSize / atomSize; // ~1.5% overhead
         static const size_t ownerSetsPerBlock = 8; // ~2% overhead.
 
+        struct FreeCell {
+            FreeCell* next;
+        };
+        
         struct VoidFunctor {
             typedef void ReturnType;
             void returnValue() { }
@@ -84,8 +88,21 @@ namespace JSC {
         void setInNewSpace(bool);
 
         void* allocate();
-        void resetAllocator();
         void sweep();
+        
+        // This invokes destructors on all cells that are not marked, marks
+        // them, and returns a linked list of those cells.
+        FreeCell* lazySweep();
+        
+        // These should be called immediately after a block is created.
+        // Blessing for fast path creates a linked list, while blessing for
+        // slow path creates dummy cells.
+        FreeCell* blessNewBlockForFastPath();
+        void blessNewBlockForSlowPath();
+        
+        // This unmarks all cells on the free list, and allocates dummy JSCells
+        // in their place.
+        void canonicalizeBlock(FreeCell* firstFreeCell);
         
         bool isEmpty();
 
@@ -118,7 +135,6 @@ namespace JSC {
         size_t atomNumber(const void*);
         size_t ownerSetNumber(const JSCell*);
 
-        size_t m_nextAtom;
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
         size_t m_atomsPerCell;
         WTF::Bitmap<blockSize / atomSize> m_marks;
@@ -163,11 +179,6 @@ namespace JSC {
     inline void MarkedBlock::setInNewSpace(bool inNewSpace)
     {
         m_inNewSpace = inNewSpace;
-    }
-
-    inline void MarkedBlock::resetAllocator()
-    {
-        m_nextAtom = firstAtom();
     }
 
     inline bool MarkedBlock::isEmpty()
@@ -235,22 +246,7 @@ namespace JSC {
             functor(reinterpret_cast<JSCell*>(&atoms()[i]));
         }
     }
-
-    inline void* MarkedBlock::allocate()
-    {
-        while (m_nextAtom < m_endAtom) {
-            if (!m_marks.testAndSet(m_nextAtom)) {
-                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[m_nextAtom]);
-                m_nextAtom += m_atomsPerCell;
-                destructor(cell);
-                return cell;
-            }
-            m_nextAtom += m_atomsPerCell;
-        }
-
-        return 0;
-    }
-
+    
     inline size_t MarkedBlock::ownerSetNumber(const JSCell* cell)
     {
         return (reinterpret_cast<Bits>(cell) - reinterpret_cast<Bits>(this)) * ownerSetsPerBlock / blockSize;

@@ -49,17 +49,12 @@ void MarkedBlock::destroy(MarkedBlock* block)
 }
 
 MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize)
-    : m_nextAtom(firstAtom())
-    , m_inNewSpace(false)
+    : m_inNewSpace(false)
     , m_allocation(allocation)
     , m_heap(heap)
 {
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
     m_endAtom = atomsPerBlock - m_atomsPerCell + 1;
-
-    Structure* dummyMarkableCellStructure = heap->globalData()->dummyMarkableCellStructure.get();
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        new (&atoms()[i]) JSCell(*heap->globalData(), dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
 }
 
 void MarkedBlock::sweep()
@@ -82,6 +77,64 @@ void MarkedBlock::sweep()
         cell->~JSCell();
         new (cell) JSCell(*m_heap->globalData(), dummyMarkableCellStructure);
 #endif
+    }
+}
+
+MarkedBlock::FreeCell* MarkedBlock::lazySweep()
+{
+    // This returns a free list that is ordered in reverse through the block.
+    // This is fine, since the allocation code makes no assumptions about the
+    // order of the free list.
+    
+    FreeCell* result = 0;
+    
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+        if (!m_marks.testAndSet(i)) {
+            JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
+            cell->~JSCell();
+            FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);
+            freeCell->next = result;
+            result = freeCell;
+        }
+    }
+    
+    return result;
+}
+
+MarkedBlock::FreeCell* MarkedBlock::blessNewBlockForFastPath()
+{
+    // This returns a free list that is ordered in reverse through the block,
+    // as in lazySweep() above.
+    
+    FreeCell* result = 0;
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+        m_marks.set(i);
+        FreeCell* freeCell = reinterpret_cast<FreeCell*>(&atoms()[i]);
+        freeCell->next = result;
+        result = freeCell;
+    }
+    return result;
+}
+
+void MarkedBlock::blessNewBlockForSlowPath()
+{
+    Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
+        new (&atoms()[i]) JSCell(*m_heap->globalData(), dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
+}
+
+void MarkedBlock::canonicalizeBlock(FreeCell* firstFreeCell)
+{
+    Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
+    
+    for (FreeCell* current = firstFreeCell; current;) {
+        FreeCell* next = current->next;
+        size_t i = atomNumber(current);
+        
+        m_marks.clear(i);
+        new (static_cast<void*>(current)) JSCell(*m_heap->globalData(), dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
+
+        current = next;
     }
 }
 

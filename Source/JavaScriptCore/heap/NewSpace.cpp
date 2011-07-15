@@ -48,6 +48,10 @@ void NewSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
     block->setInNewSpace(true);
     sizeClass.nextBlock = block;
     sizeClass.blockList.append(block);
+    ASSERT(!sizeClass.currentBlock);
+    ASSERT(!sizeClass.firstFreeCell);
+    sizeClass.currentBlock = block;
+    sizeClass.firstFreeCell = block->blessNewBlockForFastPath();
 }
 
 void NewSpace::removeBlock(MarkedBlock* block)
@@ -67,6 +71,15 @@ void NewSpace::resetAllocator()
 
     for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
         sizeClassFor(cellSize).resetAllocator();
+}
+
+void NewSpace::canonicalizeBlocks()
+{
+    for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
+        sizeClassFor(cellSize).canonicalizeBlock();
+
+    for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
+        sizeClassFor(cellSize).canonicalizeBlock();
 }
 
 } // namespace JSC

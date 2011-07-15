@@ -50,7 +50,10 @@ namespace JSC {
         struct SizeClass {
             SizeClass();
             void resetAllocator();
+            void canonicalizeBlock();
 
+            MarkedBlock::FreeCell* firstFreeCell;
+            MarkedBlock* currentBlock;
             MarkedBlock* nextBlock;
             DoublyLinkedList<MarkedBlock> blockList;
             size_t cellSize;
@@ -64,6 +67,8 @@ namespace JSC {
 
         void addBlock(SizeClass&, MarkedBlock*);
         void removeBlock(MarkedBlock*);
+        
+        void canonicalizeBlocks();
 
         size_t waterMark();
         size_t highWaterMark();
@@ -115,14 +120,43 @@ namespace JSC {
 
     inline void* NewSpace::allocate(SizeClass& sizeClass)
     {
-        for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
-            if (void* result = block->allocate())
-                return result;
-
-            m_waterMark += block->capacity();
+        MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
+        if (!firstFreeCell) {
+            // There are two possibilities for why we got here:
+            // 1) We've exhausted the allocation cache for currentBlock, in which case
+            //    currentBlock == nextBlock, and we know that there is no reason to
+            //    repeat a lazy sweep of nextBlock because we won't find anything.
+            // 2) Allocation caches have been cleared, in which case nextBlock may
+            //    have (and most likely does have) free cells, so we almost certainly
+            //    should do a lazySweep for nextBlock. This also implies that
+            //    currentBlock == 0.
+            
+            if (sizeClass.currentBlock) {
+                ASSERT(sizeClass.currentBlock == sizeClass.nextBlock);
+                m_waterMark += sizeClass.nextBlock->capacity();
+                sizeClass.nextBlock = sizeClass.nextBlock->next();
+                sizeClass.currentBlock = 0;
+            }
+            
+            for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
+                firstFreeCell = block->lazySweep();
+                if (firstFreeCell) {
+                    sizeClass.firstFreeCell = firstFreeCell;
+                    sizeClass.currentBlock = block;
+                    break;
+                }
+                
+                m_waterMark += block->capacity();
+            }
+            
+            if (!firstFreeCell)
+                return 0;
         }
-
-        return 0;
+        
+        ASSERT(firstFreeCell);
+        
+        sizeClass.firstFreeCell = firstFreeCell->next;
+        return firstFreeCell;
     }
 
     template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock(Functor& functor)
@@ -155,7 +189,9 @@ namespace JSC {
     }
 
     inline NewSpace::SizeClass::SizeClass()
-        : nextBlock(0)
+        : firstFreeCell(0)
+        , currentBlock(0)
+        , nextBlock(0)
         , cellSize(0)
     {
     }
@@ -163,6 +199,19 @@ namespace JSC {
     inline void NewSpace::SizeClass::resetAllocator()
     {
         nextBlock = blockList.head();
+    }
+    
+    inline void NewSpace::SizeClass::canonicalizeBlock()
+    {
+        if (currentBlock) {
+            currentBlock->canonicalizeBlock(firstFreeCell);
+            firstFreeCell = 0;
+        }
+        
+        ASSERT(!firstFreeCell);
+        
+        currentBlock = 0;
+        firstFreeCell = 0;
     }
 
 } // namespace JSC

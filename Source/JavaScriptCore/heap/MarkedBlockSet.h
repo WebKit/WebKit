@@ -28,6 +28,7 @@
 
 #include "MarkedBlock.h"
 #include "TinyBloomFilter.h"
+#include <wtf/HashSet.h>
 
 namespace JSC {
 

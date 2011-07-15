@@ -102,15 +102,6 @@ inline void ClearMarks::operator()(MarkedBlock* block)
     block->clearMarks();
 }
 
-struct ResetAllocator : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock*);
-};
-
-inline void ResetAllocator::operator()(MarkedBlock* block)
-{
-    block->resetAllocator();
-}
-
 struct Sweep : MarkedBlock::VoidFunctor {
     void operator()(MarkedBlock*);
 };
@@ -320,7 +311,7 @@ inline void* Heap::tryAllocate(NewSpace::SizeClass& sizeClass)
     return result;
 }
 
-void* Heap::allocate(NewSpace::SizeClass& sizeClass)
+void* Heap::allocateSlowCase(NewSpace::SizeClass& sizeClass)
 {
 #if COLLECT_ON_EVERY_ALLOCATION
     collectAllGarbage();
@@ -558,7 +549,9 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
-
+    
+    canonicalizeBlocks();
+    
     markRoots();
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
@@ -588,11 +581,15 @@ void Heap::collect(SweepToggle sweepToggle)
     (*m_activityCallback)();
 }
 
+void Heap::canonicalizeBlocks()
+{
+    m_newSpace.canonicalizeBlocks();
+}
+
 void Heap::resetAllocator()
 {
     m_extraCost = 0;
     m_newSpace.resetAllocator();
-    forEachBlock<ResetAllocator>();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)

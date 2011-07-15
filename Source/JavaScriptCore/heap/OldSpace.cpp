@@ -36,6 +36,7 @@ OldSpace::OldSpace(Heap* heap)
 void OldSpace::addBlock(MarkedBlock* block)
 {
     m_blocks.append(block);
+    block->blessNewBlockForSlowPath();
 }
 
 void OldSpace::removeBlock(MarkedBlock* block)
