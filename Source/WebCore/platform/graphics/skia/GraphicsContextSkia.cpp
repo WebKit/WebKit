@@ -326,6 +326,8 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (!isRectSkiaSafe(getCTM(), r))
         ClipRectToCanvas(*platformContext()->canvas(), r, &r);
 
+    platformContext()->makeGrContextCurrent();
+
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
     paint.setXfermodeMode(SkXfermode::kClear_Mode);

@@ -1,3 +1,15 @@
+2011-07-15  Brian Salomon  <bsalomon@google.com>
+
+        [SKIA] Must make skia's GL context current before drawing in GraphicsContext::clearRect
+        https://bugs.webkit.org/show_bug.cgi?id=64612
+
+        Reviewed by Stephen White.
+
+        Tested by compositing/shadows/shadow-drawing.html
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clearRect):
+
 2011-07-15  Ian Henderson  <ianh@apple.com>
 
         Avoid rounded rect corner-drawing overhead if no corners are visible
