@@ -209,9 +209,6 @@ void HTMLInputElement::updateCheckedRadioButtons()
             control->setNeedsValidityCheck();
         }
     }
-
-    if (renderer() && renderer()->style()->hasAppearance())
-        renderer()->theme()->stateChanged(renderer(), CheckedState);
 }
 
 bool HTMLInputElement::lastChangeWasUserEdit() const
@@ -932,8 +929,10 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     m_reflectsCheckedAttribute = false;
     m_isChecked = nowChecked;
     setNeedsStyleRecalc();
-    if (isRadioButton()) 
+    if (isRadioButton())
         updateCheckedRadioButtons();
+    if (renderer() && renderer()->style()->hasAppearance())
+        renderer()->theme()->stateChanged(renderer(), CheckedState);
     setNeedsValidityCheck();
 
     // Ideally we'd do this from the render tree (matching

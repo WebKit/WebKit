@@ -1,5 +1,15 @@
 2011-07-14  Kent Tamura  <tkent@chromium.org>
 
+        REGRESSION (r90809): Setting a checkbox's checked property, doesn't render as checked until app window loses focus
+        https://bugs.webkit.org/show_bug.cgi?id=64537
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/checkbox-appearance-change-by-checked-expected.html: Added.
+        * fast/forms/checkbox-appearance-change-by-checked.html: Added.
+
+2011-07-14  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Updat test expectations for r90971.
 
         * platform/chromium-linux/fast/forms/input-placeholder-text-indent-expected.png:

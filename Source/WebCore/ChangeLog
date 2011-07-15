@@ -1,3 +1,22 @@
+2011-07-14  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION (r90809): Setting a checkbox's checked property, doesn't render as checked until app window loses focus
+        https://bugs.webkit.org/show_bug.cgi?id=64537
+
+        Reviewed by Darin Adler.
+
+        We stopped to call updateCheckedRadioButtons() for checkboxes
+        since r90809, but we need to call RenderTheme::stateChanged(),
+        which was in updateCheckedRadioButtons(), for checkboxes.
+
+        Tests: fast/forms/checkbox-appearance-change-by-checked-expected.html
+               fast/forms/checkbox-appearance-change-by-checked.html
+
+        * html/HTMLInputElement.cpp: Move the RenderTheme::stateChanged() call
+        from updateCheckedRadioButtons() to setChecked().
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        (WebCore::HTMLInputElement::setChecked):
+
 2011-07-14  Adam Barth  <abarth@webkit.org>
 
         The beforeload event allows tracking URI changes in a frame
