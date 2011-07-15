@@ -1,3 +1,33 @@
+2011-07-15  Ian Henderson  <ianh@apple.com>
+
+        Avoid rounded rect corner-drawing overhead if no corners are visible
+        https://bugs.webkit.org/show_bug.cgi?id=64584
+
+        Reviewed by Simon Fraser.
+
+        No new tests, rendering is visually identical.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations): Pass PaintInfo into
+        paintBorder.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::unroundClippedCorners):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        Any invisible corner may be replaced with a corner of radius zero, as
+        long as the stroke style is solid.  Change the GraphicsContext
+        parameter into a PaintInfo parameter so we can get the rect to be
+        drawn.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations): Pass PaintInfo into
+        paintBorder.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations): Ditto.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations): Ditto.
+
 2011-07-15  Jeff Miller  <jeffm@apple.com>
 
         Add UserAgentStyleSheetsData.cpp to WebCore.vcproj

@@ -1371,9 +1371,51 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphics
     }
 }
 
-void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, const IntRect& rect, const RenderStyle* style,
+static void unroundClippedCorners(RoundedRect& border, const LayoutRect& clipRect)
+{
+    LayoutRect boundingRect = border.rect();
+    if (!border.isRounded() || clipRect.contains(boundingRect))
+        return;
+
+    RoundedRect::Radii adjustedRadii = border.radii();
+    bool didAdjustRadii = false;
+
+    LayoutRect topLeftRect(boundingRect.location(), adjustedRadii.topLeft());
+    if (!clipRect.intersects(topLeftRect)) {
+        adjustedRadii.setTopLeft(IntSize());
+        didAdjustRadii = true;
+    }
+
+    LayoutRect topRightRect(boundingRect.location(), adjustedRadii.topRight());
+    topRightRect.setX(boundingRect.maxX() - topRightRect.width());
+    if (!clipRect.intersects(topRightRect)) {
+        adjustedRadii.setTopRight(IntSize());
+        didAdjustRadii = true;
+    }
+
+    LayoutRect bottomLeftRect(boundingRect.location(), adjustedRadii.bottomLeft());
+    bottomLeftRect.setY(boundingRect.maxY() - bottomLeftRect.height());
+    if (!clipRect.intersects(bottomLeftRect)) {
+        adjustedRadii.setBottomLeft(IntSize());
+        didAdjustRadii = true;
+    }
+
+    LayoutRect bottomRightRect(boundingRect.location(), adjustedRadii.bottomRight());
+    bottomRightRect.setX(boundingRect.maxX() - bottomRightRect.width());
+    bottomRightRect.setY(boundingRect.maxY() - bottomRightRect.height());
+    if (!clipRect.intersects(bottomRightRect)) {
+        adjustedRadii.setBottomRight(IntSize());
+        didAdjustRadii = true;
+    }
+
+    if (didAdjustRadii)
+        border.setRadii(adjustedRadii);
+}
+
+void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rect, const RenderStyle* style,
                                        BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
+    GraphicsContext* graphicsContext = info.context;
     // border-image is not affected by border-radius.
     if (paintNinePieceImage(graphicsContext, rect, style, style->borderImage()))
         return;
@@ -1420,7 +1462,12 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, const I
         if (currEdge.style != SOLID)
             haveAllSolidEdges = false;
     }
-    
+
+    // If one of the corners falls outside the clip region, pretend it has no
+    // radius to improve performance.
+    if (haveAllSolidEdges)
+        unroundClippedCorners(outerBorder, info.rect);
+
     // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
     if (haveAllSolidEdges && allEdgesVisible && allEdgesShareColor && innerBorder.isRenderable()) {
         // Fast path for drawing all solid edges.
@@ -1613,9 +1660,10 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
     graphicsContext->drawRect(borderRect);
 }
 #else
-void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, const IntRect& rect, const RenderStyle* style,
+void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rect, const RenderStyle* style,
                                        BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
+    GraphicsContext* graphicsContext = info.context;
     // FIXME: This old version of paintBorder should be removed when all ports implement 
     // GraphicsContext::clipConvexPolygon()!! This should happen soon.
     if (paintNinePieceImage(graphicsContext, rect, style, style->borderImage()))
