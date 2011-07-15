@@ -69,8 +69,79 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
 	$(WebKit2)/UIProcess/API/gtk/webkit/webkit.h
 
-nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
-	$(webkit2_built_sources)
+webkit2_built_sources += \
+	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
+	DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp \
+	DerivedSources/WebKit2/DrawingAreaMessages.h \
+	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
+	DerivedSources/WebKit2/DrawingAreaProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/DownloadProxyMessages.h \
+	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
+	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
+	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginControllerProxyMessages.h \
+	DerivedSources/WebKit2/PluginProcessMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginProcessMessages.h \
+	DerivedSources/WebKit2/PluginProcessProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginProcessProxyMessages.h \
+	DerivedSources/WebKit2/PluginProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginProxyMessages.h \
+	DerivedSources/WebKit2/WebApplicationCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebApplicationCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebContextMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebContextMessages.h \
+	DerivedSources/WebKit2/WebCookieManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebCookieManagerMessages.h \
+	DerivedSources/WebKit2/WebCookieManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebCookieManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebDatabaseManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebDatabaseManagerMessages.h \
+	DerivedSources/WebKit2/WebDatabaseManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebDatabaseManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebFullScreenManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebFullScreenManagerMessages.h \
+	DerivedSources/WebKit2/WebFullScreenManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebFullScreenManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebGeolocationManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebGeolocationManagerMessages.h \
+	DerivedSources/WebKit2/WebGeolocationManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebGeolocationManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebIconDatabaseMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebIconDatabaseMessages.h \
+	DerivedSources/WebKit2/WebIconDatabaseProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebIconDatabaseProxyMessages.h \
+	DerivedSources/WebKit2/WebInspectorMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebInspectorMessages.h \
+	DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebInspectorProxyMessages.h \
+	DerivedSources/WebKit2/WebKeyValueStorageManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebKeyValueStorageManagerMessages.h \
+	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebMediaCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebMediaCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebPageProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebPageProxyMessages.h \
+	DerivedSources/WebKit2/WebPageMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebPageMessages.h \
+	DerivedSources/WebKit2/WebResourceCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebProcessConnectionMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebProcessConnectionMessages.h \
+	DerivedSources/WebKit2/WebProcessMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebProcessMessages.h \
+	DerivedSources/WebKit2/WebProcessProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebProcessProxyMessages.h
+BUILT_SOURCES += $(webkit2_built_sources)
+nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES =$(webkit2_built_sources)
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	Source/WebKit/gtk/webkit/webkiterror.h \
@@ -840,86 +911,11 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 pkgconfig_DATA += Source/WebKit2/gtk/@WEBKITGTK_PC_NAME@2-@WEBKITGTK_API_VERSION@.pc
 
 # WebKit2 specific variables
-webkit2_built_sources += \
-	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
-	DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp \
-	DerivedSources/WebKit2/DrawingAreaMessages.h \
-	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
-	DerivedSources/WebKit2/DrawingAreaProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/DownloadProxyMessages.h \
-	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
-	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
-	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/PluginControllerProxyMessages.h \
-	DerivedSources/WebKit2/PluginProcessMessageReceiver.cpp \
-	DerivedSources/WebKit2/PluginProcessMessages.h \
-	DerivedSources/WebKit2/PluginProcessProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/PluginProcessProxyMessages.h \
-	DerivedSources/WebKit2/PluginProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/PluginProxyMessages.h \
-	DerivedSources/WebKit2/WebApplicationCacheManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebApplicationCacheManagerMessages.h \
-	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebContextMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebContextMessages.h \
-	DerivedSources/WebKit2/WebCookieManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebCookieManagerMessages.h \
-	DerivedSources/WebKit2/WebCookieManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebCookieManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebDatabaseManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebDatabaseManagerMessages.h \
-	DerivedSources/WebKit2/WebDatabaseManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebDatabaseManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebFullScreenManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebFullScreenManagerMessages.h \
-	DerivedSources/WebKit2/WebFullScreenManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebFullScreenManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebGeolocationManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebGeolocationManagerMessages.h \
-	DerivedSources/WebKit2/WebGeolocationManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebGeolocationManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebIconDatabaseMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebIconDatabaseMessages.h \
-	DerivedSources/WebKit2/WebIconDatabaseProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebIconDatabaseProxyMessages.h \
-	DerivedSources/WebKit2/WebInspectorMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebInspectorMessages.h \
-	DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebInspectorProxyMessages.h \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerMessages.h \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebMediaCacheManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebMediaCacheManagerMessages.h \
-	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebPageProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebPageProxyMessages.h \
-	DerivedSources/WebKit2/WebPageMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebPageMessages.h \
-	DerivedSources/WebKit2/WebResourceCacheManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebResourceCacheManagerMessages.h \
-	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessages.h \
-	DerivedSources/WebKit2/WebProcessConnectionMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebProcessConnectionMessages.h \
-	DerivedSources/WebKit2/WebProcessMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebProcessMessages.h \
-	DerivedSources/WebKit2/WebProcessProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebProcessProxyMessages.h
-
-BUILT_SOURCES += \
-	$(webkit2_built_sources) \
-	generate-webkit2-forwarding-headers
-
 forwarding_headers := $(GENSOURCES_WEBKIT2)/include
 generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(libWebKit2_la_SOURCES)
 	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) gtk
 	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) soup 
+BUILT_SOURCES += generate-webkit2-forwarding-headers
 
 vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \
@@ -981,7 +977,8 @@ Programs_WebKitWebProcess_CFLAGS = \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
+	$(LIBSOUP_CFLAGS) \
+	$(ZLIB_CFLAGS)
 
 Programs_WebKitWebProcess_SOURCES = \
 	Source/WebKit2/gtk/MainGtk.cpp
@@ -990,7 +987,8 @@ Programs_WebKitWebProcess_LDADD = \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
-	$(LIBSOUP_LIBS)
+	$(LIBSOUP_LIBS) \
+	$(ZLIB_CFLAGS)
 
 Programs_WebKitWebProcess_LDFLAGS = \
 	-no-fast-install \
@@ -1035,17 +1033,8 @@ libWebCoreGtk2_la_CPPFLAGS = \
 	$(SQLITE3_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
-	$(XT_CFLAGS)
-
-plugin_process_built_sources = \
-	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
-	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
-	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/PluginControllerProxyMessages.h \
-	DerivedSources/WebKit2/PluginProcessMessageReceiver.cpp \
-	DerivedSources/WebKit2/PluginProcessMessages.h \
-	DerivedSources/WebKit2/WebProcessConnectionMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebProcessConnectionMessages.h
+	$(XT_CFLAGS) \
+	$(ZLIB_LIBS)
 
 bin_PROGRAMS += \
 	Programs/WebKitPluginProcess
@@ -1093,8 +1082,19 @@ Programs_WebKitPluginProcess_CFLAGS = \
 	$(LIBSOUP_CFLAGS) \
 	$(UNICODE_CFLAGS)
 
+webkit2_plugin_process_built_sources += \
+	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
+	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
+	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginControllerProxyMessages.h \
+	DerivedSources/WebKit2/PluginProcessMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginProcessMessages.h \
+	DerivedSources/WebKit2/WebProcessConnectionMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebProcessConnectionMessages.h
+nodist_Programs_WebKitPluginProcess_SOURCES = $(webkit2_plugin_process_built_sources)
+BUILT_SOURCES += $(nodist_Programs_WebKitPluginProcess_SOURCES)
+
 Programs_WebKitPluginProcess_SOURCES = \
-	$(plugin_process_built_sources) \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.cpp \
@@ -1192,6 +1192,7 @@ Programs_WebKitPluginProcess_LDADD = \
 	libWebCore.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWebCoreGtk2.la \
+	$(webcore_ldflags) \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
 	$(GEOCLUE_LIBS) \
@@ -1202,11 +1203,16 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(LIBSOUP_LIBS) \
 	$(LIBXML_LIBS) \
 	$(LIBXSLT_LIBS) \
+	$(OLE32_LIBS) \
 	$(PANGO_LIBS) \
 	$(PNG_LIBS) \
+	$(SHLWAPI_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(UNICODE_LIBS) \
-	$(XT_LIBS)
+	$(XRENDER_LIBS) \
+	$(XT_LIBS) \
+	$(WINMM_LIBS) \
+	$(ZLIB_LIBS)
 
 Programs_WebKitPluginProcess_LDFLAGS = \
 	-no-fast-install \

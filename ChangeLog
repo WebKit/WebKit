@@ -1,3 +1,13 @@
+2011-07-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fixes for WebKit2. Ensure that all generated sources are
+        on nodist primaries, that they are on forward declared variables
+        so that BUILT_SOURCES is calculated properly and that zlib is 
+        included during linking (for WOFF support).
+
+        * GNUmakefile.am:
+        * Source/autotools/webkit.m4: Include test for zlib.
+
 2011-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build plugin process by default when building WebKit2
