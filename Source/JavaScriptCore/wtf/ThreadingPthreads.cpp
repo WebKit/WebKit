@@ -81,6 +81,7 @@ void initializeThreading()
     atomicallyInitializedStaticMutex = new Mutex;
     threadMapMutex();
     initializeRandomNumberGenerator();
+    ThreadIdentifierData::initializeOnce();
 }
 
 void lockAtomicallyInitializedStaticMutex()
