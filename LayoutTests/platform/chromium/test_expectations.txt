@@ -645,7 +645,7 @@ BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = TEXT P
 BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = TEXT PASS
 
 BUGWK62309 WIN DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
-BUGWK89372 DEBUG : inspector/styles/styles-iframe.html = PASS TIMEOUT
+BUGCR89372 DEBUG : inspector/styles/styles-iframe.html = PASS TIMEOUT
 BUGWK62309 WIN : inspector/styles/parse-utf8-bom.html = PASS TEXT
 BUGWK62309 WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
@@ -3006,7 +3006,7 @@ BUGWK57754 WIN LINUX DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PAS
 BUGWK57754 LINUX RELEASE : inspector/debugger/xhr-breakpoints.html = CRASH PASS
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
-BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
+BUGCR78326 : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
@@ -3826,3 +3826,5 @@ BUGCR88936 : fast/js/date-toisostring.html = TEXT
 BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
 
 BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = MISSING PASS
+
+BUGCR89372 MAC : svg/dom/use-style-recalc-script-execute-crash.html = CRASH PASS

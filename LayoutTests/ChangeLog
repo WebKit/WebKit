@@ -1,3 +1,9 @@
+2011-07-15  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] updated test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-14  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64250
