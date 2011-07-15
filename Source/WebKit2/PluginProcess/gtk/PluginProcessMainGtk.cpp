@@ -28,11 +28,26 @@
 
 #include "PluginProcess.h"
 #include <WebKit2/RunLoop.h>
+#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
 
 namespace WebKit {
+
+static int webkitgtkXError(Display* xdisplay, XErrorEvent* error)
+{
+    gchar errorMessage[64];
+    XGetErrorText(xdisplay, error->error_code, errorMessage, 63);
+    g_warning("The program '%s' received an X Window System error.\n"
+              "This probably reflects a bug in a browser plugin.\n"
+              "The error was '%s'.\n"
+              "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n",
+              g_get_prgname(), errorMessage,
+              error->serial, error->error_code,
+              error->request_code, error->minor_code);
+    return 0;
+}
 
 WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[])
 {
@@ -43,6 +58,11 @@ WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[])
     JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
+
+    // Plugins can produce X errors that are handled by the GDK X error handler, which
+    // exits the process. Since we don't want to crash due to plugin bugs, we install a
+    // custom error handler to show a warning when a X error happens without aborting.
+    XSetErrorHandler(webkitgtkXError);
 
     int socket = atoi(argv[1]);
     WebKit::PluginProcess::shared().initialize(socket, RunLoop::main());

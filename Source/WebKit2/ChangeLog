@@ -1,3 +1,20 @@
+2011-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Install a custom X error handler in plugin process
+        https://bugs.webkit.org/show_bug.cgi?id=63248
+
+        Some plugins, specially flash, can cause X errors that when
+        handled by the default X error handler (or the GDK one) abort the
+        process. Since we don't want to crash due to buggy plugins, we
+        install a custom error handler to show a warning when a X error
+        happens without aborting.
+
+        * PluginProcess/gtk/PluginProcessMainGtk.cpp:
+        (WebKit::webkitgtkXError):
+        (WebKit::PluginProcessMainGtk):
+
 2011-07-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Anders Carlsson.
