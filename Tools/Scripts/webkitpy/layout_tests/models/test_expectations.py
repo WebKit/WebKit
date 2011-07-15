@@ -245,6 +245,220 @@ class TestExpectationLine:
         self.malformed = False
 
 
+# FIXME: Refactor to use TestExpectationLine as data item
+# FIXME: Refactor API to be a proper CRUD.
+class TestExpectationsModel:
+    """Represents relational store of all expectations and provides CRUD semantics to manage it."""
+
+    def __init__(self, port):
+        self._port = port
+
+        # Maps a test to its list of expectations.
+        self._test_to_expectations = {}
+
+        # Maps a test to its list of options (string values)
+        self._test_to_options = {}
+
+        # Maps a test to its list of modifiers: the constants associated with
+        # the options minus any bug or platform strings
+        self._test_to_modifiers = {}
+
+        # Maps a test to the base path that it was listed with in the list and
+        # the number of matches that base path had.
+        self._test_list_paths = {}
+
+        # List of tests that are in the overrides file (used for checking for
+        # duplicates inside the overrides file itself). Note that just because
+        # a test is in this set doesn't mean it's necessarily overridding a
+        # expectation in the regular expectations; the test might not be
+        # mentioned in the regular expectations file at all.
+        self._overridding_tests = set()
+
+        self._modifier_to_tests = self._dict_of_sets(TestExpectations.MODIFIERS)
+        self._expectation_to_tests = self._dict_of_sets(TestExpectations.EXPECTATIONS)
+        self._timeline_to_tests = self._dict_of_sets(TestExpectations.TIMELINES)
+        self._result_type_to_tests = self._dict_of_sets(TestExpectations.RESULT_TYPES)
+
+    def _dict_of_sets(self, strings_to_constants):
+        """Takes a dict of strings->constants and returns a dict mapping
+        each constant to an empty set."""
+        d = {}
+        for c in strings_to_constants.values():
+            d[c] = set()
+        return d
+
+    def get_test_set(self, modifier, expectation=None, include_skips=True):
+        if expectation is None:
+            tests = self._modifier_to_tests[modifier]
+        else:
+            tests = (self._expectation_to_tests[expectation] &
+                self._modifier_to_tests[modifier])
+
+        if not include_skips:
+            tests = tests - self.get_test_set(SKIP, expectation)
+
+        return tests
+
+    def get_tests_with_result_type(self, result_type):
+        return self._result_type_to_tests[result_type]
+
+    def get_tests_with_timeline(self, timeline):
+        return self._timeline_to_tests[timeline]
+
+    def get_options(self, test):
+        """This returns the entire set of options for the given test
+        (the modifiers plus the BUGXXXX identifier). This is used by the
+        LTTF dashboard."""
+        return self._test_to_options[test]
+
+    def has_modifier(self, test, modifier):
+        return test in self._modifier_to_tests[modifier]
+
+    def has_test(self, test):
+        return test in self._test_list_paths
+
+    def get_expectations(self, test):
+        return self._test_to_expectations[test]
+
+    def add_tests(self, tests, expectations, test_list_path, lineno,
+                   modifiers, num_matches, options, overrides_allowed):
+        """Returns a list of errors, encountered while matching modifiers."""
+        # FIXME: Shouldn't return anything, this is a temporary layering volation.
+        errors = []
+        for test in tests:
+            if self._already_seen_better_match(test, test_list_path, num_matches, lineno, overrides_allowed, errors):
+                continue
+
+            self._clear_expectations_for_test(test, test_list_path)
+            self._test_list_paths[test] = (self._port.normalize_test_name(test_list_path), num_matches, lineno)
+            self.add_test(test, modifiers, expectations, options, overrides_allowed)
+
+        return errors
+
+    def add_test(self, test, modifiers, expectations, options, overrides_allowed):
+        """Sets the expected state for a given test.
+
+        This routine assumes the test has not been added before. If it has,
+        use _clear_expectations_for_test() to reset the state prior to
+        calling this.
+
+        Args:
+          test: test to add
+          modifiers: sequence of modifier keywords ('wontfix', 'slow', etc.)
+          expectations: sequence of expectations (PASS, IMAGE, etc.)
+          options: sequence of keywords and bug identifiers.
+          overrides_allowed: whether we're parsing the regular expectations
+              or the overridding expectations"""
+        self._test_to_expectations[test] = expectations
+        for expectation in expectations:
+            self._expectation_to_tests[expectation].add(test)
+
+        self._test_to_options[test] = options
+        self._test_to_modifiers[test] = set()
+        for modifier in modifiers:
+            mod_value = TestExpectations.MODIFIERS[modifier]
+            self._modifier_to_tests[mod_value].add(test)
+            self._test_to_modifiers[test].add(mod_value)
+
+        if 'wontfix' in modifiers:
+            self._timeline_to_tests[WONTFIX].add(test)
+        else:
+            self._timeline_to_tests[NOW].add(test)
+
+        if 'skip' in modifiers:
+            self._result_type_to_tests[SKIP].add(test)
+        elif expectations == set([PASS]):
+            self._result_type_to_tests[PASS].add(test)
+        elif len(expectations) > 1:
+            self._result_type_to_tests[FLAKY].add(test)
+        else:
+            self._result_type_to_tests[FAIL].add(test)
+
+        if overrides_allowed:
+            self._overridding_tests.add(test)
+
+    def _clear_expectations_for_test(self, test, test_list_path):
+        """Remove prexisting expectations for this test.
+        This happens if we are seeing a more precise path
+        than a previous listing.
+        """
+        if self.has_test(test):
+            self._test_to_expectations.pop(test, '')
+            self._remove_from_sets(test, self._expectation_to_tests)
+            self._remove_from_sets(test, self._modifier_to_tests)
+            self._remove_from_sets(test, self._timeline_to_tests)
+            self._remove_from_sets(test, self._result_type_to_tests)
+
+        self._test_list_paths[test] = self._port.normalize_test_name(test_list_path)
+
+    def _remove_from_sets(self, test, dict):
+        """Removes the given test from the sets in the dictionary.
+
+        Args:
+          test: test to look for
+          dict: dict of sets of files"""
+        for set_of_tests in dict.itervalues():
+            if test in set_of_tests:
+                set_of_tests.remove(test)
+
+    def _already_seen_better_match(self, test, test_list_path, num_matches, lineno, overrides_allowed, errors):
+        """Returns whether we've seen a better match already in the file.
+
+        Returns True if we've already seen a test_list_path that matches more of the test
+            than this path does
+        """
+        # FIXME: See comment below about matching test configs and num_matches.
+        if not self.has_test(test):
+            # We've never seen this test before.
+            return False
+
+        prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
+        base_path = self._port.normalize_test_name(test_list_path)
+
+        if len(prev_base_path) > len(base_path):
+            # The previous path matched more of the test.
+            return True
+
+        if len(prev_base_path) < len(base_path):
+            # This path matches more of the test.
+            return False
+
+        if overrides_allowed and test not in self._overridding_tests:
+            # We have seen this path, but that's okay because it is
+            # in the overrides and the earlier path was in the
+            # expectations (not the overrides).
+            return False
+
+        # At this point we know we have seen a previous exact match on this
+        # base path, so we need to check the two sets of modifiers.
+
+        if overrides_allowed:
+            expectation_source = "override"
+        else:
+            expectation_source = "expectation"
+
+        # FIXME: This code was originally designed to allow lines that matched
+        # more modifiers to override lines that matched fewer modifiers.
+        # However, we currently view these as errors. If we decide to make
+        # this policy permanent, we can probably simplify this code
+        # and the ModifierMatcher code a fair amount.
+        #
+        # To use the "more modifiers wins" policy, change the "_add_error" lines for overrides
+        # to _log_non_fatal_error() and change the commented-out "return False".
+
+        if prev_num_matches == num_matches:
+            errors.append(('Duplicate or ambiguous %s.' % expectation_source, test))
+            return True
+
+        if prev_num_matches < num_matches:
+            errors.append(('More specific entry on line %d overrides line %d' % (lineno, prev_lineno), test_list_path))
+            # FIXME: return False if we want more specific to win.
+            return True
+
+        errors.append(('More specific entry on line %d overrides line %d' % (prev_lineno, lineno), test_list_path))
+        return True
+
+
 class TestExpectations:
     """Test expectations consist of lines with specifications of what
     to expect from layout test cases. The test cases can be directories
@@ -353,6 +567,7 @@ class TestExpectations:
         self._is_lint_mode = is_lint_mode
         self._errors = []
         self._non_fatal_errors = []
+        self._model = TestExpectationsModel(port)
 
         # Maps relative test paths as listed in the expectations file to a
         # list of maps containing modifiers and expectations for each time
@@ -361,35 +576,9 @@ class TestExpectations:
         # invalid ones.
         self._all_expectations = {}
 
-        # Maps a test to its list of expectations.
-        self._test_to_expectations = {}
-
-        # Maps a test to its list of options (string values)
-        self._test_to_options = {}
-
-        # Maps a test to its list of modifiers: the constants associated with
-        # the options minus any bug or platform strings
-        self._test_to_modifiers = {}
-
-        # Maps a test to the base path that it was listed with in the list and
-        # the number of matches that base path had.
-        self._test_list_paths = {}
-
-        self._modifier_to_tests = self._dict_of_sets(self.MODIFIERS)
-        self._expectation_to_tests = self._dict_of_sets(self.EXPECTATIONS)
-        self._timeline_to_tests = self._dict_of_sets(self.TIMELINES)
-        self._result_type_to_tests = self._dict_of_sets(self.RESULT_TYPES)
-
         self._matcher = ModifierMatcher(self._test_config)
         self._overrides_allowed = False
         self._expectations = TestExpectationParser.parse_list(expectations, self)
-
-        # List of tests that are in the overrides file (used for checking for
-        # duplicates inside the overrides file itself). Note that just because
-        # a test is in this set doesn't mean it's necessarily overridding a
-        # expectation in the regular expectations; the test might not be
-        # mentioned in the regular expectations file at all.
-        self._overridding_tests = set()
 
         if overrides:
             self._overrides_allowed = True
@@ -403,16 +592,40 @@ class TestExpectations:
     # tests to run, but not when getting metrics.
 
     def get_rebaselining_failures(self):
-        return (self.get_test_set(REBASELINE, FAIL) |
-                self.get_test_set(REBASELINE, IMAGE) |
-                self.get_test_set(REBASELINE, TEXT) |
-                self.get_test_set(REBASELINE, IMAGE_PLUS_TEXT) |
-                self.get_test_set(REBASELINE, AUDIO))
+        return (self._model.get_test_set(REBASELINE, FAIL) |
+                self._model.get_test_set(REBASELINE, IMAGE) |
+                self._model.get_test_set(REBASELINE, TEXT) |
+                self._model.get_test_set(REBASELINE, IMAGE_PLUS_TEXT) |
+                self._model.get_test_set(REBASELINE, AUDIO))
+
+    # FIXME: Change the callsites to use TestExpectationsModel and remove.
+    def get_expectations(self, test):
+        return self._model.get_expectations(test)
+
+    # FIXME: Change the callsites to use TestExpectationsModel and remove.
+    def has_modifier(self, test, modifier):
+        return self._model.has_modifier(test, modifier)
+
+    # FIXME: Change the callsites to use TestExpectationsModel and remove.
+    def get_tests_with_result_type(self, result_type):
+        return self._model.get_tests_with_result_type(result_type)
+
+    # FIXME: Change the callsites to use TestExpectationsModel and remove.
+    def get_test_set(self, modifier, expectation=None, include_skips=True):
+        return self._model.get_test_set(modifier, expectation, include_skips)
+
+    # FIXME: Change the callsites to use TestExpectationsModel and remove.
+    def get_options(self, test):
+        return self._model.get_options(test)
+
+    # FIXME: Change the callsites to use TestExpectationsModel and remove.
+    def get_tests_with_timeline(self, timeline):
+        return self._model.get_tests_with_timeline(timeline)
 
     def get_expectations_string(self, test):
         """Returns the expectatons for the given test as an uppercase string.
         If there are no expectations for the test, then "PASS" is returned."""
-        expectations = self.get_expectations(test)
+        expectations = self._model.get_expectations(test)
         retval = []
 
         for expectation in expectations:
@@ -428,16 +641,16 @@ class TestExpectations:
         raise ValueError(expectation)
 
     def matches_an_expected_result(self, test, result, pixel_tests_are_enabled):
-        expected_results = self.get_expectations(test)
+        expected_results = self._model.get_expectations(test)
         if not pixel_tests_are_enabled:
             expected_results = remove_pixel_failures(expected_results)
         return result_was_expected(result,
                                    expected_results,
                                    self.is_rebaselining(test),
-                                   self.has_modifier(test, SKIP))
+                                   self._model.has_modifier(test, SKIP))
 
     def is_rebaselining(self, test):
-        return self.has_modifier(test, REBASELINE)
+        return self._model.has_modifier(test, REBASELINE)
 
     def _handle_any_read_errors(self):
         if len(self._errors) or len(self._non_fatal_errors):
@@ -459,46 +672,8 @@ class TestExpectations:
         modifiers = []
         if self._full_test_list:
             for test in self._full_test_list:
-                if not test in self._test_list_paths:
-                    self._add_test(test, modifiers, expectations, options, overrides_allowed=False)
-
-    def _dict_of_sets(self, strings_to_constants):
-        """Takes a dict of strings->constants and returns a dict mapping
-        each constant to an empty set."""
-        d = {}
-        for c in strings_to_constants.values():
-            d[c] = set()
-        return d
-
-    def get_test_set(self, modifier, expectation=None, include_skips=True):
-        if expectation is None:
-            tests = self._modifier_to_tests[modifier]
-        else:
-            tests = (self._expectation_to_tests[expectation] &
-                self._modifier_to_tests[modifier])
-
-        if not include_skips:
-            tests = tests - self.get_test_set(SKIP, expectation)
-
-        return tests
-
-    def get_tests_with_result_type(self, result_type):
-        return self._result_type_to_tests[result_type]
-
-    def get_tests_with_timeline(self, timeline):
-        return self._timeline_to_tests[timeline]
-
-    def get_options(self, test):
-        """This returns the entire set of options for the given test
-        (the modifiers plus the BUGXXXX identifier). This is used by the
-        LTTF dashboard."""
-        return self._test_to_options[test]
-
-    def has_modifier(self, test, modifier):
-        return test in self._modifier_to_tests[modifier]
-
-    def get_expectations(self, test):
-        return self._test_to_expectations[test]
+                if not self._model.has_test(test):
+                    self._model.add_test(test, modifiers, expectations, options, overrides_allowed=False)
 
     def get_expectations_json_for_all_platforms(self):
         # Specify separators in order to get compact encoding.
@@ -558,10 +733,14 @@ class TestExpectations:
             tests = self._expand_tests(test_list_path)
 
         modifiers = [o for o in options if o in self.MODIFIERS]
-        self._add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
+        # FIXME: Eliminate this awful error plumbing
+        modifier_errors = self._model.add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
+        for (message, source) in modifier_errors:
+            self._add_error(lineno, message, source)
 
         return True
 
+    # FIXME: Remove, no longer used anywhere?
     def _get_options_list(self, listString):
         return [part.strip().lower() for part in listString.strip().split(' ')]
 
@@ -649,146 +828,6 @@ class TestExpectations:
         if test_list_path in self._full_test_list:
             result = [test_list_path, ]
         return result
-
-    def _add_tests(self, tests, expectations, test_list_path, lineno,
-                   modifiers, num_matches, options, overrides_allowed):
-        for test in tests:
-            if self._already_seen_better_match(test, test_list_path, num_matches, lineno, overrides_allowed):
-                continue
-
-            self._clear_expectations_for_test(test, test_list_path)
-            self._test_list_paths[test] = (self._port.normalize_test_name(test_list_path), num_matches, lineno)
-            self._add_test(test, modifiers, expectations, options, overrides_allowed)
-
-    def _add_test(self, test, modifiers, expectations, options, overrides_allowed):
-        """Sets the expected state for a given test.
-
-        This routine assumes the test has not been added before. If it has,
-        use _clear_expectations_for_test() to reset the state prior to
-        calling this.
-
-        Args:
-          test: test to add
-          modifiers: sequence of modifier keywords ('wontfix', 'slow', etc.)
-          expectations: sequence of expectations (PASS, IMAGE, etc.)
-          options: sequence of keywords and bug identifiers.
-          overrides_allowed: whether we're parsing the regular expectations
-              or the overridding expectations"""
-        self._test_to_expectations[test] = expectations
-        for expectation in expectations:
-            self._expectation_to_tests[expectation].add(test)
-
-        self._test_to_options[test] = options
-        self._test_to_modifiers[test] = set()
-        for modifier in modifiers:
-            mod_value = self.MODIFIERS[modifier]
-            self._modifier_to_tests[mod_value].add(test)
-            self._test_to_modifiers[test].add(mod_value)
-
-        if 'wontfix' in modifiers:
-            self._timeline_to_tests[WONTFIX].add(test)
-        else:
-            self._timeline_to_tests[NOW].add(test)
-
-        if 'skip' in modifiers:
-            self._result_type_to_tests[SKIP].add(test)
-        elif expectations == set([PASS]):
-            self._result_type_to_tests[PASS].add(test)
-        elif len(expectations) > 1:
-            self._result_type_to_tests[FLAKY].add(test)
-        else:
-            self._result_type_to_tests[FAIL].add(test)
-
-        if overrides_allowed:
-            self._overridding_tests.add(test)
-
-    def _clear_expectations_for_test(self, test, test_list_path):
-        """Remove prexisting expectations for this test.
-        This happens if we are seeing a more precise path
-        than a previous listing.
-        """
-        if test in self._test_list_paths:
-            self._test_to_expectations.pop(test, '')
-            self._remove_from_sets(test, self._expectation_to_tests)
-            self._remove_from_sets(test, self._modifier_to_tests)
-            self._remove_from_sets(test, self._timeline_to_tests)
-            self._remove_from_sets(test, self._result_type_to_tests)
-
-        self._test_list_paths[test] = self._port.normalize_test_name(test_list_path)
-
-    def _remove_from_sets(self, test, dict):
-        """Removes the given test from the sets in the dictionary.
-
-        Args:
-          test: test to look for
-          dict: dict of sets of files"""
-        for set_of_tests in dict.itervalues():
-            if test in set_of_tests:
-                set_of_tests.remove(test)
-
-    def _already_seen_better_match(self, test, test_list_path, num_matches,
-                                   lineno, overrides_allowed):
-        """Returns whether we've seen a better match already in the file.
-
-        Returns True if we've already seen a test_list_path that matches more of the test
-            than this path does
-        """
-        # FIXME: See comment below about matching test configs and num_matches.
-        if not test in self._test_list_paths:
-            # We've never seen this test before.
-            return False
-
-        prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
-        base_path = self._port.normalize_test_name(test_list_path)
-
-        if len(prev_base_path) > len(base_path):
-            # The previous path matched more of the test.
-            return True
-
-        if len(prev_base_path) < len(base_path):
-            # This path matches more of the test.
-            return False
-
-        if overrides_allowed and test not in self._overridding_tests:
-            # We have seen this path, but that's okay because it is
-            # in the overrides and the earlier path was in the
-            # expectations (not the overrides).
-            return False
-
-        # At this point we know we have seen a previous exact match on this
-        # base path, so we need to check the two sets of modifiers.
-
-        if overrides_allowed:
-            expectation_source = "override"
-        else:
-            expectation_source = "expectation"
-
-        # FIXME: This code was originally designed to allow lines that matched
-        # more modifiers to override lines that matched fewer modifiers.
-        # However, we currently view these as errors. If we decide to make
-        # this policy permanent, we can probably simplify this code
-        # and the ModifierMatcher code a fair amount.
-        #
-        # To use the "more modifiers wins" policy, change the "_add_error" lines for overrides
-        # to _log_non_fatal_error() and change the commented-out "return False".
-
-        if prev_num_matches == num_matches:
-            self._add_error(lineno,
-                'Duplicate or ambiguous %s.' % expectation_source,
-                test)
-            return True
-
-        if prev_num_matches < num_matches:
-            self._add_error(lineno,
-                'More specific entry on line %d overrides line %d' %
-                (lineno, prev_lineno), test_list_path)
-            # FIXME: return False if we want more specific to win.
-            return True
-
-        self._add_error(lineno,
-            'More specific entry on line %d overrides line %d' %
-            (prev_lineno, lineno), test_list_path)
-        return True
 
     def _add_error(self, lineno, msg, path):
         """Reports an error that will prevent running the tests. Does not

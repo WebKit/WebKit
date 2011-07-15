@@ -1,3 +1,15 @@
+2011-07-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Introduce TestExpectationsModel, split out of TestExpectations.
+        https://bugs.webkit.org/show_bug.cgi?id=64531
+
+        This is a simple split-and-make-work refactoring, a first step among many.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Moved all model-related members
+            out of TestExpectations and into TestExpectationsModel.
+
 2011-07-14  Eric Seidel  <eric@webkit.org>
 
         Move webkitpy off of loose mocks
