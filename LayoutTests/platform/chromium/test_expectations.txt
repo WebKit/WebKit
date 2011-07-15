@@ -165,7 +165,7 @@ BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
 BUGWK50099 SKIP : http/tests/websocket/tests/hybi/ = PASS FAIL TIMEOUT
 
 // CSS3 Selectors3 test suite
-BUGCR89468 SKIP : css3/selectors3 = PASS
+BUGCR89468 : css3/selectors3 = PASS FAIL
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
