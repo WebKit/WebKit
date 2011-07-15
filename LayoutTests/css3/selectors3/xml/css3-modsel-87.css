@@ -1,0 +1,2 @@
+p { color: red; }
+blockquote + div ~ p { color: green; }

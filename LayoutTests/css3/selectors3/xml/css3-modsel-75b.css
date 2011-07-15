@@ -1,0 +1,3 @@
+.green { background-color : lime ! important }
+p:not(:nth-of-type(3)) { background-color : red }
+dl > *:not(:nth-of-type(3n+1)) { background-color : red }

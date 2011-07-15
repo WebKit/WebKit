@@ -1,0 +1,4 @@
+
+ tests, tests * { display: block; color: green }
+ testA:not([*|attribute="pass"]) { color: red; }
+ testB:not([*|attribute="pass"]) { color: red; }

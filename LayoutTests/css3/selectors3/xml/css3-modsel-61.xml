@@ -1,0 +1,7 @@
+<?xml-stylesheet href="css3-modsel-61.css" type="text/css"?>
+<test>
+<div xmlns="http://www.w3.org/1999/xhtml" class="stub">
+<a href="http://www.w3.org/">This anchor should have a green background</a>
+(Note: You must have visited http://www.w3.org/ for this test to be valid.)
+</div>
+</test>

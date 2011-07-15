@@ -1,0 +1,3 @@
+
+   [test] { background: red; display: block; padding: 1em; }
+   stub ~ [|attribute^=start]:not([|attribute~=mid])[|attribute*=dle][|attribute$=end] ~ t { background: lime; }

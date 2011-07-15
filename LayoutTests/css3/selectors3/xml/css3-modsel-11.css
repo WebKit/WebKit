@@ -1,0 +1,2 @@
+p { background-color : red }
+p[title*="bar"] { background-color : lime }

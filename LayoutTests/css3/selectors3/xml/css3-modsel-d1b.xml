@@ -1,0 +1,25 @@
+<?xml-stylesheet href="css3-modsel-d1b.css" type="text/css"?>
+<test>
+
+ <div xmlns="http://www.w3.org/1999/xhtml">
+
+  <script type="text/javascript">
+   <![CDATA[
+
+    function test() {
+      document.getElementById('test1').appendChild(document.createTextNode(''));
+      document.getElementById('test2').appendChild(document.createTextNode(' '));
+    }
+
+    window.setTimeout("test()", 100);
+   ]]>
+  </script>
+
+  <p> The following two bars should be green. </p>
+
+  <div id="test1"></div>
+  <div id="test2"></div>
+
+ </div>
+
+</test>

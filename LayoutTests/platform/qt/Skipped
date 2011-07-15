@@ -1950,6 +1950,7 @@ http/tests/websocket/tests/hybi/
 # ============================================================================= #
 editing/selection/transformed-selection-rects.html
 svg/W3C-SVG-1.1/filters-light-04-f.svg
+css3/selectors3
 
 # ============================================================================= #
 # Qt 4.7 related bugs
@@ -2534,3 +2535,4 @@ svg/text/text-text-06-t.svg
 svg/text/text-vkern-on-horizontal-text.svg
 svg/text/text-vkern.svg
 http/tests/misc/SVGFont-delayed-load.html
+

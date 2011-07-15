@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+ <head>
+  <title>Impossible rules (:root:first-child, etc)</title>
+  <style type="text/css">
+:root:first-child { background-color: red; }
+:root:last-child { background-color: red; }
+:root:only-child { background-color: red; }
+:root:nth-child(1) { background-color: red; }
+:root:nth-child(n) { background-color: red; }
+:root:nth-last-child(1) { background-color: red; }
+:root:nth-last-child(n) { background-color: red; }
+:root:first-of-type { background-color: red; }
+:root:last-of-type { background-color: red; }
+:root:only-of-type { background-color: red; }
+:root:nth-of-type(1) { background-color: red; }
+:root:nth-of-type(n) { background-color: red; }
+:root:nth-last-of-type(1) { background-color: red; }
+:root:nth-last-of-type(n) { background-color: red; }
+p { color: green; }</style>
+  <link rel="first" href="css3-modsel-1.html" title="Groups of selectors">
+  <link rel="prev" href="css3-modsel-27.html" title=":root pseudo-class">
+  <link rel="next" href="css3-modsel-27b.html" title="Impossible rules (* html, * :root)">
+  <link rel="last" href="css3-modsel-d4.html" title="Dynamic updating of :first-child and :last-child">
+  <link rel="up" href="./index.html">
+  <link rel="top" href="../../index.html">
+ </head>
+ <body>
+<p>This line should be green (there should be no red on this page).</p>
+</body>
+</html>

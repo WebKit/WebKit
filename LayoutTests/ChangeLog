@@ -1,3 +1,28 @@
+2011-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        We should import the CSS 3 Selectors test suite
+        https://bugs.webkit.org/show_bug.cgi?id=64610
+
+        Add dump of the CSS 3 Selectors test suite from http://www.w3.org/Style/CSS/Test/CSS3/Selectors/current/.
+        Add standalone versions of the html, xhtml and xml suites.
+
+        * css3/selectors3: Added.
+        * css3/selectors3/html: Added.
+        * css3/selectors3/xhtml: Added.
+        * css3/selectors3/xml: Added.
+        * platform/mac/css3/selectors3: Added.
+        * platform/mac/css3/selectors3/html: Added.
+        * platform/mac/css3/selectors3/xhtml: Added.
+        * platform/mac/css3/selectors3/xml: Added.
+        [Individual tests elided]
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        Added css3/selectors3 pending results.
+
 2011-07-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.  Updated chromium test expectations.

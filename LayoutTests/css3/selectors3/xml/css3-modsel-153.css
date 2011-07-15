@@ -1,0 +1,4 @@
+
+ address { background: red; margin: 0; height: 1em; display: block; }
+ address:empty { background: lime; }
+ .text { margin: -1em 0 0 0; }
