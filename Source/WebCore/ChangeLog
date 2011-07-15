@@ -1,5 +1,68 @@
 2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Focus and selection events are not fired when a <select>'s selection
+        changes
+        https://bugs.webkit.org/show_bug.cgi?id=64504
+        <rdar://problem/9319881>
+
+        Reviewed by Alice Liu.
+
+        Test: platform/win/accessibility/option-element-selection-and-focus-events.html
+
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        Add new notification type to the section of unhandled notifications.
+
+        * accessibility/AXObjectCache.h:
+        Declare a new notification, AXMenuListItemSelected.
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        Tell our child popup that the active option changed, and post a
+        notification that our value changed.
+
+        * accessibility/AccessibilityMenuList.h:
+        Declare didUpdateActiveOption().
+
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+        Get the child <option> element that is selected, and fire focus and
+        selection events for it.
+
+        * accessibility/AccessibilityMenuListPopup.h:
+        Declare didUpdateActiveOption().
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        Map AXMenuListItemSelected -> EVENT_OBJECT_SELECTION.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::setSelectedIndex):
+        Pass the newly-selected index.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        Update the initialization list for the renamed m_lastActiveIndex.
+        (WebCore::RenderMenuList::setTextFromOption):
+        A new selection has been made in the popup; call
+        didUpdateActiveOption().
+        (WebCore::RenderMenuList::didSetSelectedIndex):
+        Call didUpdateActiveOption(), passing the index of the newly-selected
+        <option>.
+        (WebCore::RenderMenuList::didUpdateActiveOption):
+        If accessibility is disabled, or if the active option has not changed,
+        return early. Check whether the option index is in the range of list
+        items, and assert that the item at that index is an <option> element.
+        Tell the AccessibilityMenuList for this element that we updated the
+        active option.
+
+        * rendering/RenderMenuList.h:
+        Updated the declaration of didSetSelectedIndex() to take the selected
+        index. Declared didUpdateActiveOption(). Renamed m_lastSelectedIndex to
+        m_lastActiveIndex.
+
+2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
         ALT + DOWN arrow key does not open select
 
         https://bugs.webkit.org/show_bug.cgi?id=14407

@@ -87,6 +87,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     case AXLayoutComplete:
     case AXLiveRegionChanged:
     case AXLoadComplete:
+    case AXMenuListItemSelected:
     case AXMenuListValueChanged:
     case AXRowCollapsed:
     case AXRowCountChanged:

@@ -33,6 +33,7 @@ namespace WebCore {
 class AccessibilityMenuList;
 class AccessibilityMenuListOption;
 class HTMLElement;
+class HTMLSelectElement;
 
 class AccessibilityMenuListPopup : public AccessibilityObject {
 public:
@@ -42,6 +43,8 @@ public:
 
     virtual bool isEnabled() const;
     virtual bool isOffScreen() const;
+
+    void didUpdateActiveOption(int optionIndex);
 
 private:
     AccessibilityMenuListPopup();

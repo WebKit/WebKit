@@ -1,3 +1,31 @@
+2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Focus and selection events are not fired when a <select>'s selection
+        changes
+        https://bugs.webkit.org/show_bug.cgi?id=64504
+        <rdar://problem/9319881>
+
+        Reviewed by Alice Liu.
+
+        * DumpRenderTree/AccessibilityController.h:
+        Added m_notificationsEventHook for addNotificationListener().
+        m_allEventsHook will now be used for setLogAccessibilityEvents().
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::AccessibilityController):
+        Initialize m_notificationsEventHook.
+        (AccessibilityController::~AccessibilityController):
+        Turn off logging of all accessibility events. If
+        m_notificationsEventHook is non-null, unhook it.
+        (logEventProc):
+        Add handling of EVENT_OBJECT_SELECTION.
+        (AccessibilityController::setLogAccessibilityEvents):
+        If the state of logging is not changing, return early. If we're turning
+        off logging, unhook m_allEventsHook, and zero it out. Otherwise, add a
+        hook for all events.
+        (AccessibilityController::addNotificationListener):
+        Use m_notificationsEventHook rather than m_allEventsHook.
+
 2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Refactor TestExpectationModel to use TestExpectationLine as data item.

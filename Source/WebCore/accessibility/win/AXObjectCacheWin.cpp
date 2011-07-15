@@ -88,6 +88,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             msaaEvent = EVENT_OBJECT_VALUECHANGE;
             break;
 
+        case AXMenuListItemSelected:
+            msaaEvent = EVENT_OBJECT_SELECTION;
+            break;
+
         default:
             return;
     }
