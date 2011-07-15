@@ -1,5 +1,23 @@
 2011-07-14  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT does not optimize Branch as well as it could.
+        https://bugs.webkit.org/show_bug.cgi?id=64574
+
+        Reviewed by Gavin Barraclough.
+        
+        This creates a common code path for emitting unfused branches, which does
+        no speculation, and only performs a slow call if absolutely necessary.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitBranch):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-07-14  Filip Pizlo  <fpizlo@apple.com>
+
         GC allocation fast path has too many operations.
         https://bugs.webkit.org/show_bug.cgi?id=64493
 

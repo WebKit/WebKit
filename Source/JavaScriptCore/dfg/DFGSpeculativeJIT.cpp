@@ -943,31 +943,9 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case Branch: {
-        JSValueOperand value(this, node.child1());
-        GPRReg valueReg = value.gpr();
-
-        BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
-        BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-
-        // Integers
-        addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueReg, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
-        MacroAssembler::Jump isNonZeroInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueReg, GPRInfo::tagTypeNumberRegister);
-
-        // Booleans
-        addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueReg, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
-        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, valueReg, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))));
-
-        if (taken == (m_block + 1))
-            isNonZeroInteger.link(&m_jit);
-        else {
-            addBranch(isNonZeroInteger, taken);
-            addBranch(m_jit.jump(), taken);
-        }
-
-        noResult(m_compileIndex);
+    case Branch:
+        emitBranch(node);
         break;
-    }
 
     case Return: {
         ASSERT(GPRInfo::callFrameRegister != GPRInfo::regT1);

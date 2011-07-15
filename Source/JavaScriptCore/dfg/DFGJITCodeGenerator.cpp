@@ -468,6 +468,36 @@ void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigne
     m_jit.addMethodGet(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction);
 }
 
+void JITCodeGenerator::emitBranch(Node& node)
+{
+    JSValueOperand value(this, node.child1());
+    GPRReg valueGPR = value.gpr();
+    
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
+
+    addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
+    addBranch(m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister), taken);
+    addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
+    addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
+    
+    silentSpillAllRegisters(resultGPR);
+    m_jit.move(valueGPR, GPRInfo::argumentGPR1);
+    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
+    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+    silentFillAllRegisters(resultGPR);
+    
+    addBranch(m_jit.branchTest8(MacroAssembler::NonZero, resultGPR), taken);
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+    
+    noResult(m_compileIndex);
+}
+
 void JITCodeGenerator::emitCall(Node& node)
 {
     P_DFGOperation_E slowCallFunction;

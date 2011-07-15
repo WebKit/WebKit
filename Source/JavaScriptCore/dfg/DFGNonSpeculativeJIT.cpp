@@ -920,24 +920,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
     }
 
-    case Branch: {
-        JSValueOperand value(this, node.child1());
-        GPRReg valueGPR = value.gpr();
-        flushRegisters();
-
-        GPRResult result(this);
-        callOperation(dfgConvertJSValueToBoolean, result.gpr(), valueGPR);
-
-        BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
-        BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-
-        addBranch(m_jit.branchTest8(MacroAssembler::NonZero, result.gpr()), taken);
-        if (notTaken != (m_block + 1))
-            addBranch(m_jit.jump(), notTaken);
-
-        noResult(m_compileIndex);
+    case Branch:
+        emitBranch(node);
         break;
-    }
 
     case Return: {
         ASSERT(GPRInfo::callFrameRegister != GPRInfo::regT1);
