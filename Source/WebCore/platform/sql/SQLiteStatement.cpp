@@ -287,6 +287,17 @@ bool SQLiteStatement::isColumnNull(int col)
     return sqlite3_column_type(m_statement, col) == SQLITE_NULL;
 }
 
+bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
+{
+    ASSERT(col >= 0);
+    if (!m_statement) {
+        if (prepare() != SQLITE_OK)
+            return false;
+    }
+
+    return equalIgnoringCase(String("BLOB"), String(reinterpret_cast<const UChar*>(sqlite3_column_decltype16(m_statement, col))));
+}
+
 String SQLiteStatement::getColumnName(int col)
 {
     ASSERT(col >= 0);

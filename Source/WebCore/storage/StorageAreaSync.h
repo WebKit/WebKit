@@ -102,6 +102,7 @@ namespace WebCore {
         mutable ThreadCondition m_importCondition;
         mutable bool m_importComplete;
         void markImported();
+        void migrateItemTableIfNeeded();
     };
 
 } // namespace WebCore

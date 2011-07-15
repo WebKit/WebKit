@@ -1,3 +1,36 @@
+2011-07-15  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        LocalStorage: Changed the value type of ItemTable from TEXT to BLOB
+        to avoid string truncation.
+        This patch will also convert the exsisting ItemTable and perform
+        the DATA MIGRATION job.
+        https://bugs.webkit.org/show_bug.cgi?id=58762
+
+        Reviewed by Jeremy Orlow.
+
+        Tests: manual-tests/localstorage-value-truncation.html
+
+        * manual-tests/localstorage-value-truncation.html: Added.
+        Demostrate the testcase shown in bug 58762.
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::isColumnDeclearedAsBlob):
+        Test if the pre-defined type of column is BLOB.
+        * platform/sql/SQLiteStatement.h:
+        * storage/StorageAreaSync.cpp:
+        Change the localStorage value type from Text to BLOB to avoid the
+        value string truncation at \x00.
+        (WebCore::StorageAreaSync::openDatabase):
+        Change the database structure, use BLOB to replace the TEXT type of
+        value segment in ItemTable.
+        (WebCore::StorageAreaSync::migrateItemTableIfNeeded):
+        Migrate the ItemTable if the pre-defined type of value is TEXT.
+        (WebCore::StorageAreaSync::performImport):
+        Use getColumnBlobAsString() to import the BLOB value.
+        (WebCore::StorageAreaSync::sync):
+        Use bindBlob() to bind value string to the SQLiteStatement for the
+        database execution.
+        * storage/StorageAreaSync.h:
+
 2011-07-15  Kentaro Hara  <haraken@google.com>
 
         Clear the content of a search input form when 'Escape' is pressed.
