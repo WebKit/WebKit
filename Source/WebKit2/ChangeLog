@@ -1,3 +1,37 @@
+2011-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Find indicator should take scale factor into account
+        https://bugs.webkit.org/show_bug.cgi?id=64611
+        <rdar://problem/9761020>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::create):
+        (WebKit::FindIndicator::FindIndicator):
+        Keep track of the scale factor of the find indicator bitmap.
+
+        (WebKit::FindIndicator::draw):
+        Pass the scale factor to ShareableBitmap::draw.
+
+        * UIProcess/FindIndicator.h:
+        Add scale factor member variable.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFindIndicator):
+        This now takes the content image scale factor.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add the scale factor.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        Size the backing store correctly, and apply the scale factor to
+        the graphics context.
+
+        (WebKit::FindController::hideFindIndicator):
+        Pass the scale factor along.
+
 2011-07-15  Martin Robinson  <mrobinson@igalia.com>
 
         Build fixes for WebKit2. Ensure that all generated sources are

@@ -77,19 +77,20 @@ static const int gradientLightAlpha = 255;
 
 namespace WebKit {
 
-PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle)
+PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle)
 {
     RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(contentImageHandle);
     if (!contentImage)
         return 0;
-    ASSERT(contentImage->size() == enclosingIntRect(selectionRectInWindowCoordinates).size());
+    ASSERT(contentImageScaleFactor != 1 || contentImage->size() == enclosingIntRect(selectionRectInWindowCoordinates).size());
 
-    return adoptRef(new FindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImage.release()));
+    return adoptRef(new FindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImage.release()));
 }
 
-FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, PassRefPtr<ShareableBitmap> contentImage)
+FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage)
     : m_selectionRectInWindowCoordinates(selectionRectInWindowCoordinates)
     , m_textRectsInSelectionRectCoordinates(textRectsInSelectionRectCoordinates)
+    , m_contentImageScaleFactor(contentImageScaleFactor)
     , m_contentImage(contentImage)
 {
 }
@@ -171,7 +172,7 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyR
         {
             GraphicsContextStateSaver stateSaver(graphicsContext);
             graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
-            m_contentImage->paint(graphicsContext, IntPoint(0, 0), m_contentImage->bounds());
+            m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, IntPoint(0, 0), m_contentImage->bounds());
         }
     }
 }
