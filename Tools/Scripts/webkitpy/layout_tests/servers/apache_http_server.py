@@ -62,18 +62,16 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         test_dir = self._port_obj.layout_tests_dir()
-        js_test_resources_dir = self._cygwin_safe_join(test_dir, "fast", "js", "resources")
-        media_resources_dir = self._cygwin_safe_join(test_dir, "media")
-        mime_types_path = self._cygwin_safe_join(test_dir, "http", "conf", "mime.types")
-        cert_file = self._cygwin_safe_join(test_dir, "http", "conf", "webkit-httpd.pem")
-        access_log = self._cygwin_safe_join(output_dir, "access_log.txt")
-        error_log = self._cygwin_safe_join(output_dir, "error_log.txt")
-        document_root = self._cygwin_safe_join(test_dir, "http", "tests")
+        js_test_resources_dir = self._filesystem.join(test_dir, "fast", "js", "resources")
+        media_resources_dir = self._filesystem.join(test_dir, "media")
+        mime_types_path = self._filesystem.join(test_dir, "http", "conf", "mime.types")
+        cert_file = self._filesystem.join(test_dir, "http", "conf", "webkit-httpd.pem")
+        access_log = self._filesystem.join(output_dir, "access_log.txt")
+        error_log = self._filesystem.join(output_dir, "error_log.txt")
+        document_root = self._filesystem.join(test_dir, "http", "tests")
 
         # FIXME: We shouldn't be calling a protected method of _port_obj!
         executable = self._port_obj._path_to_apache()
-        if self._is_cygwin():
-            executable = self._get_cygwin_path(executable)
 
         start_cmd = [executable,
             '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
@@ -85,8 +83,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,
-            '-C', "\'User \"%s\"\'" % os.environ.get("USERNAME",
-                os.environ.get("USER", "")),
+            '-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", "")),
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "start"]
 
@@ -95,57 +92,13 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "stop"]
 
-        if self._is_cygwin():
-            cygbin = self._port_obj._path_from_base('third_party', 'cygwin', 'bin')
-            # Not entirely sure why, but from cygwin we need to run the
-            # httpd command through bash.
-            self._start_cmd = [
-                os.path.join(cygbin, 'bash.exe'),
-                '-c',
-                'PATH=%s %s' % (self._get_cygwin_path(cygbin), " ".join(start_cmd)),
-              ]
-            self._stop_cmd = [
-                os.path.join(cygbin, 'bash.exe'),
-                '-c',
-                'PATH=%s %s' % (self._get_cygwin_path(cygbin), " ".join(stop_cmd)),
-              ]
-        else:
-            # TODO(ojan): When we get cygwin using Apache 2, use set the
-            # cert file for cygwin as well.
-            start_cmd.extend(['-c', "\'SSLCertificateFile %s\'" % cert_file])
-            # Join the string here so that Cygwin/Windows and Mac/Linux
-            # can use the same code. Otherwise, we could remove the single
-            # quotes above and keep cmd as a sequence.
-            self._start_cmd = " ".join(start_cmd)
-            self._stop_cmd = " ".join(stop_cmd)
-
-    def _is_cygwin(self):
-        return sys.platform in ("win32", "cygwin")
-
-    # FIXME: This is the wrong place to have this method.  Perhaps this belongs in filesystem.py?
-    def _cygwin_safe_join(self, *parts):
-        path = os.path.join(*parts)
-        if self._is_cygwin():
-            return self._get_cygwin_path(path)
-        return path
-
-    def _get_cygwin_path(self, path):
-        """Convert a Windows path to a cygwin path.
-
-        The cygpath utility insists on converting paths that it thinks are
-        Cygwin root paths to what it thinks the correct roots are.  So paths
-        such as "C:\b\slave\webkit-release\build\third_party\cygwin\bin"
-        are converted to plain "/usr/bin".  To avoid this, we
-        do the conversion manually.
-
-        The path is expected to be an absolute path, on any drive.
-        """
-        drive_regexp = re.compile(r'([a-z]):[/\\]', re.IGNORECASE)
-
-        def lower_drive(matchobj):
-            return '/cygdrive/%s/' % matchobj.group(1).lower()
-        path = drive_regexp.sub(lower_drive, path)
-        return path.replace('\\', '/')
+        start_cmd.extend(['-c', "\'SSLCertificateFile %s\'" % cert_file])
+        # Join the string here so that Cygwin/Windows and Mac/Linux
+        # can use the same code. Otherwise, we could remove the single
+        # quotes above and keep cmd as a sequence.
+        # FIXME: It's unclear if this is still needed.
+        self._start_cmd = " ".join(start_cmd)
+        self._stop_cmd = " ".join(stop_cmd)
 
     def _get_apache_config_file_path(self, test_dir, output_dir):
         """Returns the path to the apache config file to use.
@@ -156,21 +109,10 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         httpd_config = self._port_obj._path_to_apache_config_file()
         httpd_config_copy = os.path.join(output_dir, "httpd.conf")
         httpd_conf = self._filesystem.read_text_file(httpd_config)
-        # FIXME: This only works for Chromium. Instead it should use some abstraction on the port object.
-        if self._is_cygwin():
-            # This is a gross hack, but it lets us use the upstream .conf file
-            # and our checked in cygwin. This tells the server the root
-            # directory to look in for .so modules. It will use this path
-            # plus the relative paths to the .so files listed in the .conf
-            # file. We have apache/cygwin checked into our tree so
-            # people don't have to install it into their cygwin.
-            cygusr = self._port_obj._path_from_base('third_party', 'cygwin', 'usr')
-            httpd_conf = httpd_conf.replace('ServerRoot "/usr"', 'ServerRoot "%s"' % self._get_cygwin_path(cygusr))
 
+        # FIXME: Why do we need to copy the config file since we're not modifying it?
         self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
-        if self._is_cygwin():
-            return self._get_cygwin_path(httpd_config_copy)
         return httpd_config_copy
 
     def _spawn_process(self):

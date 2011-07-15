@@ -1,3 +1,14 @@
+2011-07-15  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests crashes on Apple's Windows port when trying to launch Apache
+        https://bugs.webkit.org/show_bug.cgi?id=64533
+
+        Reviewed by Adam Roben.
+
+        Blind removal of Chromium-specific code (now that Chromium does not use this file).
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+
 2011-07-15  Adam Roben  <aroben@apple.com>
 
         Make TestFailures's list of possibly-flaky tests not so tall
