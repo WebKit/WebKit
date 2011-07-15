@@ -1,3 +1,10 @@
+2011-07-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix build failure introduced in r91061.
+
+        * page/Console.cpp:
+        (WebCore::Console::markTimeline): Remove argument name from unused parameter.
+
 2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Upstream QtWebKit/N9 changes related to visibleContentRect

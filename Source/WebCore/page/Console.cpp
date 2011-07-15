@@ -253,7 +253,7 @@ void Console::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCall
     InspectorInstrumentation::consoleCount(page(), arguments, callStack);
 }
 
-void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>)
 {
     InspectorInstrumentation::consoleTimeStamp(page(), arguments);
 }
