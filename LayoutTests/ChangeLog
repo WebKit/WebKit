@@ -1,3 +1,17 @@
+2011-07-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Ensure that a single select element's child option elements are
+        reported correctly to accessibility clients if the children are
+        changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64500
+        <rdar://problem/9773066>
+
+        Reviewed by Beth Dakin.
+
+        * platform/win/accessibility/single-select-children-changed-expected.txt: Added.
+        * platform/win/accessibility/single-select-children-changed.html: Added.
+
 2011-07-15  Vincent Scheib  <scheib@chromium.org>
 
         [chromium] updated test expectations.

@@ -95,8 +95,6 @@ void AccessibilityMenuListPopup::addChildren()
     const Vector<Element*>& listItems = static_cast<HTMLSelectElement*>(selectNode)->listItems();
     unsigned length = listItems.size();
     for (unsigned i = 0; i < length; i++) {
-        // The cast to HTMLElement below is safe because the only other possible listItem type
-        // would be a WMLElement, but WML builds don't use accessbility features at all.
         AccessibilityMenuListOption* option = menuListOptionAccessibilityObject(toHTMLElement(listItems[i]));
         if (option) {
             option->setParent(this);
@@ -111,9 +109,11 @@ void AccessibilityMenuListPopup::childrenChanged()
         AccessibilityObject* child = m_children[i - 1].get();
         if (child->actionElement() && !child->actionElement()->attached()) {
             m_menuList->renderer()->document()->axObjectCache()->remove(child->axObjectID());
-            m_children.remove(i - 1);
         }
     }
+    m_children.clear();
+    m_haveChildren = false;
+    addChildren();
 }
 
 void AccessibilityMenuListPopup::setMenuList(AccessibilityMenuList* menuList)
