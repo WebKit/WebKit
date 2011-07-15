@@ -1173,6 +1173,16 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
 
 static const int invalidOffset = -1;
 
+static bool positionIsInBox(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
+{
+    if (wordBreak.isNull())
+        return false;
+
+    InlineBox* boxOfWordBreak;
+    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
+    return box == boxOfWordBreak;
+}
+
 static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(const InlineBox* box, const VisiblePosition& previousWordBreak, int& offsetOfWordBreak)
 {
     // In a LTR block, the word break should be on the left boundary of a word.
@@ -1201,26 +1211,21 @@ static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(c
         if ((box->isLeftToRightDirection() && box->nextLeafChild())
             || (!box->isLeftToRightDirection() && box->prevLeafChild())) {
     
-            VisiblePosition positionAfterWord = nextWordPosition(wordBreak);
-            VisiblePosition positionBeforeWord = previousWordPosition(positionAfterWord);
-        
-            InlineBox* boxContainingPreviousWordBreak;
-            positionBeforeWord.getInlineBoxAndOffset(boxContainingPreviousWordBreak, offsetOfWordBreak);
-        
-            if (boxContainingPreviousWordBreak == box)
-                return positionBeforeWord;
+            VisiblePosition positionAfterWord = nextBoundary(wordBreak, nextWordPositionBoundary);
+            if (positionAfterWord.isNotNull()) {
+                VisiblePosition positionBeforeWord = previousBoundary(positionAfterWord, previousWordPositionBoundary);
+            
+                if (positionIsInBox(positionBeforeWord, box, offsetOfWordBreak))
+                    return positionBeforeWord;
+            }
         }
     }
   
-    wordBreak = previousWordPosition(wordBreak);
+    wordBreak = previousBoundary(wordBreak, previousWordPositionBoundary);
     if (previousWordBreak == wordBreak)
         return VisiblePosition();
 
-    InlineBox* boxContainingPreviousWordBreak;
-    wordBreak.getInlineBoxAndOffset(boxContainingPreviousWordBreak, offsetOfWordBreak);
-    if (boxContainingPreviousWordBreak != box)
-        return VisiblePosition();
-    return wordBreak;
+    return positionIsInBox(wordBreak, box, offsetOfWordBreak) ? wordBreak : VisiblePosition();
 }
 
 static VisiblePosition leftmostPositionInRTLBoxInLTRBlock(const InlineBox* box)
@@ -1287,25 +1292,20 @@ static VisiblePosition lastWordBreakInBox(const InlineBox* box, int& offsetOfWor
     if (boundaryPosition.isNull())
         return VisiblePosition();            
 
-    VisiblePosition wordBreak = nextWordPosition(boundaryPosition);
-    if (wordBreak != boundaryPosition)
-        wordBreak = previousWordPosition(wordBreak);
+    VisiblePosition wordBreak = nextBoundary(boundaryPosition, nextWordPositionBoundary);
+    if (wordBreak.isNull())
+        wordBreak = boundaryPosition;
+    else if (wordBreak != boundaryPosition)
+        wordBreak = previousBoundary(wordBreak, previousWordPositionBoundary);
 
-    InlineBox* boxOfWordBreak;
-    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
-    if (boxOfWordBreak == box)
-        return wordBreak;
-    return VisiblePosition();    
+    return positionIsInBox(wordBreak, box, offsetOfWordBreak) ? wordBreak : VisiblePosition();    
 }
 
 static bool positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
 {
     int previousOffset = offsetOfWordBreak;
-    InlineBox* boxOfWordBreak;
-    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
-    if (boxOfWordBreak == box && (previousOffset == invalidOffset || previousOffset < offsetOfWordBreak))
-        return true;
-    return false;
+    return positionIsInBox(wordBreak, box, offsetOfWordBreak)
+        && (previousOffset == invalidOffset || previousOffset < offsetOfWordBreak);
 }
     
 static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
@@ -1321,7 +1321,7 @@ static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
     
     bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
     VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : Position(box->renderer()->node(), box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
-    wordBreak = nextWordPosition(wordBreak);
+    wordBreak = nextBoundary(wordBreak, nextWordPositionBoundary);
   
     // Given RTL box "ABC DEF" either follows a LTR box or is the first visual box in an LTR block as an example,
     // the visual display of the RTL box is: "(0)J(10)I(9)H(8) (7)F(6)E(5)D(4) (3)C(2)B(1)A(11)",
@@ -1512,17 +1512,20 @@ static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextD
     
 static bool positionIsInsideBox(const VisiblePosition& wordBreak, const InlineBox* box)
 {
-    InlineBox* boxOfWordBreak;
     int offsetOfWordBreak;
-    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
-    return box == boxOfWordBreak && offsetOfWordBreak != box->caretMaxOffset() && offsetOfWordBreak != box->caretMinOffset();
+    return positionIsInBox(wordBreak, box, offsetOfWordBreak)
+        && offsetOfWordBreak != box->caretMaxOffset() && offsetOfWordBreak != box->caretMinOffset();
 }
 
-VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
+static VisiblePosition leftWordPositionAcrossBoundary(const VisiblePosition& visiblePosition)
 {
     InlineBox* box;
     int offset;
     visiblePosition.getInlineBoxAndOffset(box, offset);
+
+    if (!box)
+        return VisiblePosition();
+
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     
     // FIXME: If the box's directionality is the same as that of the enclosing block, when the offset is at the box boundary
@@ -1537,9 +1540,9 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
     VisiblePosition wordBreak;
     if (blockDirection == LTR) {
         if (box->direction() == blockDirection)
-            wordBreak = previousWordPosition(visiblePosition);
+            wordBreak = previousBoundary(visiblePosition, previousWordPositionBoundary);
         else
-            wordBreak = nextWordPosition(visiblePosition);
+            wordBreak = nextBoundary(visiblePosition, nextWordPositionBoundary);
     }
     if (wordBreak.isNotNull() && positionIsInsideBox(wordBreak, box))
         return wordBreak;
@@ -1555,11 +1558,15 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
     return leftWordBoundary(box->prevLeafChild(), invalidOffset, blockDirection);
 }
 
-VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
+static VisiblePosition rightWordPositionAcrossBoundary(const VisiblePosition& visiblePosition)
 {
     InlineBox* box;
     int offset;
     visiblePosition.getInlineBoxAndOffset(box, offset);
+
+    if (!box)
+        return VisiblePosition();
+
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     
     if (offset == box->caretLeftmostOffset())
@@ -1570,9 +1577,9 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
     VisiblePosition wordBreak;
     if (blockDirection == RTL) {
         if (box->direction() == blockDirection)
-            wordBreak = previousWordPosition(visiblePosition);
+            wordBreak = previousBoundary(visiblePosition, previousWordPositionBoundary);
         else
-            wordBreak = nextWordPosition(visiblePosition);
+            wordBreak = nextBoundary(visiblePosition, nextWordPositionBoundary);
     }
     if (wordBreak.isNotNull() && positionIsInsideBox(wordBreak, box))
         return wordBreak;
@@ -1586,6 +1593,24 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
         return orderedWordBoundaries[index].visiblePosition;
     
     return rightWordBoundary(box->nextLeafChild(), invalidOffset, blockDirection);
+}
+
+VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
+{
+    if (visiblePosition.isNull())
+        return VisiblePosition();
+
+    VisiblePosition leftWordBreak = leftWordPositionAcrossBoundary(visiblePosition);
+    return visiblePosition.honorEditableBoundaryAtOrBefore(leftWordBreak);
+}
+
+VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
+{
+    if (visiblePosition.isNull())
+        return VisiblePosition();
+
+    VisiblePosition rightWordBreak = rightWordPositionAcrossBoundary(visiblePosition);
+    return visiblePosition.honorEditableBoundaryAtOrBefore(rightWordBreak);
 }
 
 }

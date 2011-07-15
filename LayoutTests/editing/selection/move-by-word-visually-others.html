@@ -88,6 +88,12 @@ where child_node_index is optional, default is the first child of the anchor nod
 <!-- test words not separated by spaces -->
 <div style="white-space:pre" contenteditable dir=ltr class="test_move_by_word" title="0 1 2 3 4 9 10 11 17 21|24 21 17 11 10 9 4 3 2 1 0">人一氧喝大    笑抬的     abc def</div>
 
+<!-- mixed editability -->
+<div dir=ltr class="test_move_by_word" title="0 4|8 5 1">abc def <span contenteditable> inside span </span> hij opq</div>
+
+<div dir=ltr contenteditable></div>
+00<base dir=ltr class="test_move_by_word" title="3|3 1">
+
 </div>
 <pre id="console"></pre>
 </body>

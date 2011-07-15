@@ -221,4 +221,14 @@ Move right by one word
 "䤫䡱暘倎厘    疂崝烵     abc def"[0, 1, 2, 3, 4, 9, 10, 11, 17, 21]
 Move left by one word
 "䤫䡱暘倎厘    疂崝烵     abc def"[24, 21, 17, 11, 10, 9, 4, 3, 2, 1, 0]
+Test 44, LTR:
+Move right by one word
+"abc def "[0, 4]
+Move left by one word
+" hij opq"[8, 5, 1]
+Test 45, LTR:
+Move right by one word
+"\n00"[3]
+Move left by one word
+"\n00"[3, 1]
 

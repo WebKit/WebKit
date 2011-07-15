@@ -1,3 +1,36 @@
+2011-07-15  Xiaomei Ji  <xji@chromium.org>
+
+        --webkit-visual-word crash on mixed editability
+        https://bugs.webkit.org/show_bug.cgi?id=61978
+
+        --webkit-visual-word crashes (VisiblePosition.getInlineBoxAndOffset could return null box)
+        https://bugs.webkit.org/show_bug.cgi?id=62814
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace previousWordPosition/nextWordPosition with previousBoundary/nextBoundary which do
+        not honor editable bounary. Honor editable boundary as the last stage of leftWordPosition
+        and rightWordPosition.
+
+        Check previousBoundary/nextBoundary against NULL.  Have a static function to encapsulate the
+        usage of getInlineBoxAndOffset and check the visible position is not NULL before passing to 
+        getInlineBoxAndOffset. Check the box returned from getInlineBoxAndOffset is not NULL before
+        accessing.
+
+        Test: editing/selection/move-by-word-visually-null-box.html
+
+        * editing/visible_units.cpp:
+        (WebCore::positionIsInBox):
+        (WebCore::previousWordBreakInBoxInsideBlockWithSameDirectionality):
+        (WebCore::lastWordBreakInBox):
+        (WebCore::positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality):
+        (WebCore::nextWordBreakInBoxInsideBlockWithDifferentDirectionality):
+        (WebCore::positionIsInsideBox):
+        (WebCore::leftWordPositionAcrossBoundary):
+        (WebCore::rightWordPositionAcrossBoundary):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+
 2011-07-15  Pratik Solanki  <psolanki@apple.com>
 
         Remove unncessary creation of connectionProperties dictionary
