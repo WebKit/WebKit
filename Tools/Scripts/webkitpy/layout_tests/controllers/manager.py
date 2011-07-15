@@ -209,7 +209,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
     try:
-        results['revision'] = port_obj.webkit_scm().head_svn_revision()
+        results['revision'] = port_obj.webkit_source_scm().head_svn_revision()
     except Exception, e:
         # FIXME: We would like to warn here, but that would cause all passing_run integration tests
         # to fail, since they assert that we have no logging output.

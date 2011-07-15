@@ -603,12 +603,16 @@ class Port(object):
         return self._config.path_from_webkit_base(*comps)
 
     @memoized
-    def webkit_scm(self):
+    def webkit_source_scm(self):
         # On the chromium bots, the cwd is the root of the chromium checkout.
         # self._config.webkit_base_dir() knows where the webkit root is, no other
-        # object in NRWT seems to keep an SCM around.  (Unlike webkit-patch where it's on the Tool/Host object.)
+        # object in NRWT seems to keep an SCM around. (Unlike webkit-patch
+        # where it's on the Tool/Host object.)
         # FIXME: We should be able to get the SCM from somewhere else.
-        return detect_scm_system(self._config.webkit_base_dir())
+        # FIXME: Due to Chromium's insane DEPS system, the root of the WebKit
+        # checkout isn't actually from svn.webkit.org. Instead, we detect the
+        # scm from the Source directory, which really does map to svn.webkit.org.
+        return detect_scm_system(self.path_from_webkit_base('Source'))
 
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
