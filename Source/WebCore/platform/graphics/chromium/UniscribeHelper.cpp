@@ -376,13 +376,14 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
                     SkPoint origin;
                     origin.fX = curX + + innerOffset;
                     origin.fY = y + m_ascent;
-                    textOutOk = paintSkiaText(graphicsContext,
-                                              shaping.m_hfont,
-                                              glyphCount,
-                                              &shaping.m_glyphs[fromGlyph],
-                                              &shaping.m_advance[fromGlyph],
-                                              &shaping.m_offsets[fromGlyph],
-                                              &origin);
+                    paintSkiaText(graphicsContext,
+                                  shaping.m_hfont,
+                                  glyphCount,
+                                  &shaping.m_glyphs[fromGlyph],
+                                  &shaping.m_advance[fromGlyph],
+                                  &shaping.m_offsets[fromGlyph],
+                                  &origin);
+                    textOutOk = true;
                 }
 
                 if (!textOutOk && 0 == executions) {

@@ -262,8 +262,9 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
     if (!m_useGDI) {
         SkPoint origin = m_point;
         origin.fX += SkFloatToScalar(startAdvance);
-        return paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
-                             numGlyphs, glyphs, advances, 0, &origin);
+        paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
+                      numGlyphs, glyphs, advances, 0, &origin);
+        return true;
     }
 
     if (!m_graphicsContext || !m_hdc)

@@ -1,3 +1,12 @@
+2011-07-15  Mike Reed  <reed@google.com>
+
+        [skia] remove legacy draw-text-as-paths code, as skia now draws all text as text
+        https://bugs.webkit.org/show_bug.cgi?id=64368
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Gabor Loki  <loki@webkit.org>
 
         Pixel difference in FEMorphology effect

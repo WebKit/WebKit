@@ -34,25 +34,12 @@
 #include <windows.h>
 #include <usp10.h>
 
-class SkPath;
 class SkPoint;
 
 namespace WebCore {
 
 class GraphicsContext;
 class PlatformContextSkia;
-
-// FIXME: Rename file to SkiaWinOutlineCache
-class SkiaWinOutlineCache {
-public:
-    static const SkPath* lookupOrCreatePathForGlyph(HDC, HFONT, WORD);
-    // Removes any cached glyphs from the outline cache corresponding to the
-    // given font handle.
-    static void removePathsForFont(HFONT);
-
-private:
-    SkiaWinOutlineCache();
-};
 
 // The functions below are used for more complex font drawing (effects such as
 // stroking and more complex transforms) than Windows supports directly.  Since 
@@ -82,11 +69,8 @@ bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext*);
 
 // Note that the offsets parameter is optional.  If not NULL it represents a
 // per glyph offset (such as returned by ScriptPlace Windows API function).
-//
-// Returns true of the text was drawn successfully. False indicates an error
-// from Windows.
-bool paintSkiaText(GraphicsContext* graphicsContext,
-                   HFONT hfont,
+void paintSkiaText(GraphicsContext*,
+                   HFONT,
                    int numGlyphs,
                    const WORD* glyphs,
                    const int* advances,

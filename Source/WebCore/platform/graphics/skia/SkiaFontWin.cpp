@@ -41,186 +41,7 @@
 #include "SkTemplates.h"
 #include "SkTypeface_win.h"
 
-#include <wtf/ListHashSet.h>
-#include <wtf/Vector.h>
-
 namespace WebCore {
-
-struct CachedOutlineKey {
-    CachedOutlineKey() : font(0), glyph(0), path(0) {}
-    CachedOutlineKey(HFONT f, WORD g) : font(f), glyph(g), path(0) {}
-
-    HFONT font;
-    WORD glyph;
-
-    // The lifetime of this pointer is managed externally to this class. Be sure
-    // to call DeleteOutline to remove items.
-    SkPath* path;
-};
-
-const bool operator==(const CachedOutlineKey& a, const CachedOutlineKey& b)
-{
-    return a.font == b.font && a.glyph == b.glyph;
-}
-
-struct CachedOutlineKeyHash {
-    static unsigned hash(const CachedOutlineKey& key)
-    {
-        unsigned keyBytes;
-        memcpy(&keyBytes, &key.font, sizeof(unsigned));
-        return keyBytes + key.glyph;
-    }
-
-    static unsigned equal(const CachedOutlineKey& a, const CachedOutlineKey& b)
-    {
-        return a.font == b.font && a.glyph == b.glyph;
-    }
-
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-// The global number of glyph outlines we'll cache.
-static const int outlineCacheSize = 256;
-
-typedef ListHashSet<CachedOutlineKey, outlineCacheSize+1, CachedOutlineKeyHash> OutlineCache;
-
-// FIXME: Convert from static constructor to accessor function. WebCore tries to
-// avoid global constructors to save on start-up time.
-static OutlineCache outlineCache;
-
-static SkScalar FIXEDToSkScalar(FIXED fixed)
-{
-    SkFixed skFixed;
-    memcpy(&skFixed, &fixed, sizeof(SkFixed));
-    return SkFixedToScalar(skFixed);
-}
-
-// Removes the given key from the cached outlines, also deleting the path.
-static void deleteOutline(OutlineCache::iterator deleteMe)
-{
-    delete deleteMe->path;
-    outlineCache.remove(deleteMe);
-}
-
-static void addPolyCurveToPath(const TTPOLYCURVE* polyCurve, SkPath* path)
-{
-    switch (polyCurve->wType) {
-    case TT_PRIM_LINE:
-        for (WORD i = 0; i < polyCurve->cpfx; i++) {
-          path->lineTo(FIXEDToSkScalar(polyCurve->apfx[i].x), -FIXEDToSkScalar(polyCurve->apfx[i].y));
-        }
-        break;
-
-    case TT_PRIM_QSPLINE:
-        // FIXME: doesn't this duplicate points if we do the loop > once?
-        for (WORD i = 0; i < polyCurve->cpfx - 1; i++) {
-            SkScalar bx = FIXEDToSkScalar(polyCurve->apfx[i].x);
-            SkScalar by = FIXEDToSkScalar(polyCurve->apfx[i].y);
-
-            SkScalar cx = FIXEDToSkScalar(polyCurve->apfx[i + 1].x);
-            SkScalar cy = FIXEDToSkScalar(polyCurve->apfx[i + 1].y);
-            if (i < polyCurve->cpfx - 2) {
-                // We're not the last point, compute C.
-                cx = SkScalarAve(bx, cx);
-                cy = SkScalarAve(by, cy);
-            }
-
-            // Need to flip the y coordinates since the font's coordinate system is
-            // flipped from ours vertically.
-            path->quadTo(bx, -by, cx, -cy);
-        }
-        break;
-
-    case TT_PRIM_CSPLINE:
-        // FIXME
-        break;
-    }
-}
-
-// The size of the glyph path buffer.
-static const int glyphPathBufferSize = 4096;
-
-// Fills the given SkPath with the outline for the given glyph index. The font
-// currently selected into the given DC is used. Returns true on success.
-static bool getPathForGlyph(HDC dc, WORD glyph, SkPath* path)
-{
-    char buffer[glyphPathBufferSize];
-    GLYPHMETRICS gm;
-    MAT2 mat = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};  // Each one is (fract,value).
-
-    DWORD totalSize = GetGlyphOutlineW(dc, glyph, GGO_GLYPH_INDEX | GGO_NATIVE,
-                                       &gm, glyphPathBufferSize, buffer, &mat);
-    if (totalSize == GDI_ERROR)
-        return false;
-
-    const char* curGlyph = buffer;
-    const char* endGlyph = &buffer[totalSize];
-    while (curGlyph < endGlyph) {
-        const TTPOLYGONHEADER* polyHeader =
-            reinterpret_cast<const TTPOLYGONHEADER*>(curGlyph);
-        path->moveTo(FIXEDToSkScalar(polyHeader->pfxStart.x),
-                     -FIXEDToSkScalar(polyHeader->pfxStart.y));
-
-        const char* curPoly = curGlyph + sizeof(TTPOLYGONHEADER);
-        const char* endPoly = curGlyph + polyHeader->cb;
-        while (curPoly < endPoly) {
-            const TTPOLYCURVE* polyCurve =
-                reinterpret_cast<const TTPOLYCURVE*>(curPoly);
-            addPolyCurveToPath(polyCurve, path);
-            curPoly += sizeof(WORD) * 2 + sizeof(POINTFX) * polyCurve->cpfx;
-        }
-        path->close();
-        curGlyph += polyHeader->cb;
-    }
-
-    return true;
-}
-
-// Returns a SkPath corresponding to the give glyph in the given font. The font
-// should be selected into the given DC. The returned path is owned by the
-// hashtable. Returns 0 on error.
-const SkPath* SkiaWinOutlineCache::lookupOrCreatePathForGlyph(HDC hdc, HFONT font, WORD glyph)
-{
-    CachedOutlineKey key(font, glyph);
-    OutlineCache::iterator found = outlineCache.find(key);
-    if (found != outlineCache.end()) {
-        // Keep in MRU order by removing & reinserting the value.
-        key = *found;
-        outlineCache.remove(found);
-        outlineCache.add(key);
-        return key.path;
-    }
-
-    key.path = new SkPath;
-    if (!getPathForGlyph(hdc, glyph, key.path))
-      return 0;
-
-    if (outlineCache.size() > outlineCacheSize)
-        // The cache is too big, find the oldest value (first in the list).
-        deleteOutline(outlineCache.begin());
-
-    outlineCache.add(key);
-    return key.path;
-}
-
-
-void SkiaWinOutlineCache::removePathsForFont(HFONT hfont)
-{
-    // ListHashSet isn't the greatest structure for deleting stuff out of, but
-    // removing entries will be relatively rare (we don't remove fonts much, nor
-    // do we draw out own glyphs using these routines much either).
-    //
-    // We keep a list of all glyphs we're removing which we do in a separate
-    // pass.
-    Vector<CachedOutlineKey> outlinesToDelete;
-    for (OutlineCache::iterator i = outlineCache.begin();
-         i != outlineCache.end(); ++i)
-        outlinesToDelete.append(*i);
-
-    for (Vector<CachedOutlineKey>::iterator i = outlinesToDelete.begin();
-         i != outlinesToDelete.end(); ++i)
-        deleteOutline(outlineCache.find(*i));
-}
 
 bool windowsCanHandleDrawTextShadow(GraphicsContext *context)
 {
@@ -274,11 +95,7 @@ bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext* context)
     return true;
 }
 
-// Draws the given text string using skia.  Note that gradient or
-// pattern may be NULL, in which case a solid colour is used.
-static bool skiaDrawText(HFONT hfont,
-                         HDC dc,
-                         PlatformContextSkia* platformContext,
+static void skiaDrawText(SkCanvas* canvas,
                          const SkPoint& point,
                          SkPaint* paint,
                          const WORD* glyphs,
@@ -286,45 +103,19 @@ static bool skiaDrawText(HFONT hfont,
                          const GOFFSET* offsets,
                          int numGlyphs)
 {
-    SkCanvas* canvas = platformContext->canvas();
-    if (!platformContext->isNativeFontRenderingAllowed()) {
-        SkASSERT(sizeof(WORD) == sizeof(uint16_t));
-
-        // Reserve space for 64 glyphs on the stack. If numGlyphs is larger, the array
-        // will dynamically allocate it space for numGlyph glyphs.
-        static const size_t kLocalGlyphMax = 64;
-        SkAutoSTArray<kLocalGlyphMax, SkPoint> posStorage(numGlyphs);
-        SkPoint* pos = posStorage.get();
-        SkScalar x = point.fX;
-        SkScalar y = point.fY;
-        for (int i = 0; i < numGlyphs; i++) {
-            pos[i].set(x + (offsets ? offsets[i].du : 0),
-                       y + (offsets ? offsets[i].dv : 0));
-            x += SkIntToScalar(advances[i]);
-        }
-        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
-    } else {
-        float x = point.fX, y = point.fY;
-
-        for (int i = 0; i < numGlyphs; i++) {
-            const SkPath* path = SkiaWinOutlineCache::lookupOrCreatePathForGlyph(dc, hfont, glyphs[i]);
-            if (!path)
-                return false;
-
-            float offsetX = 0.0f, offsetY = 0.0f;
-            if (offsets && (offsets[i].du || offsets[i].dv)) {
-                offsetX = offsets[i].du;
-                offsetY = offsets[i].dv;
-            }
-
-            SkPath newPath;
-            newPath.addPath(*path, x + offsetX, y + offsetY);
-            canvas->drawPath(newPath, *paint);
-
-            x += advances[i];
-        }
+    // Reserve space for 64 glyphs on the stack. If numGlyphs is larger, the array
+    // will dynamically allocate it space for numGlyph glyphs.
+    static const size_t kLocalGlyphMax = 64;
+    SkAutoSTArray<kLocalGlyphMax, SkPoint> posStorage(numGlyphs);
+    SkPoint* pos = posStorage.get();
+    SkScalar x = point.fX;
+    SkScalar y = point.fY;
+    for (int i = 0; i < numGlyphs; i++) {
+        pos[i].set(x + (offsets ? offsets[i].du : 0),
+                   y + (offsets ? offsets[i].dv : 0));
+        x += SkIntToScalar(advances[i]);
     }
-    return true;
+    canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
 }
 
 static void setupPaintForFont(HFONT hfont, SkPaint* paint)
@@ -344,9 +135,26 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint)
     SkTypeface* face = SkCreateTypefaceFromLOGFONT(info);
     paint->setTypeface(face);
     SkSafeUnref(face);
+
+    uint32_t flags = paint->getFlags();
+    // our defaults
+    flags |= SkPaint::kAntiAlias_Flag;
+    flags |= SkPaint::kLCDRenderText_Flag;
+    switch (info.lfQuality) {
+    case NONANTIALIASED_QUALITY:
+        flags &= ~SkPaint::kAntiAlias_Flag;
+        flags &= ~SkPaint::kLCDRenderText_Flag;
+        break;
+    case ANTIALIASED_QUALITY:
+        flags &= ~SkPaint::kLCDRenderText_Flag;
+        break;
+    default:
+        break;
+    }
+    paint->setFlags(flags);
 }
 
-bool paintSkiaText(GraphicsContext* context,
+void paintSkiaText(GraphicsContext* context,
                    HFONT hfont,
                    int numGlyphs,
                    const WORD* glyphs,
@@ -358,22 +166,19 @@ bool paintSkiaText(GraphicsContext* context,
     HGDIOBJ oldFont = SelectObject(dc, hfont);
 
     PlatformContextSkia* platformContext = context->platformContext();
+    SkCanvas* canvas = platformContext->canvas();
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
 
     // Filling (if necessary). This is the common case.
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);
-    paint.setFlags(SkPaint::kAntiAlias_Flag);
-    if (!platformContext->isNativeFontRenderingAllowed()) {
-        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        setupPaintForFont(hfont, &paint);
-    }
+    paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+    setupPaintForFont(hfont, &paint);
+
     bool didFill = false;
 
     if ((textMode & TextModeFill) && (SkColorGetA(paint.getColor()) || paint.getLooper())) {
-        if (!skiaDrawText(hfont, dc, platformContext, *origin, &paint,
-                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
-            return false;
+        skiaDrawText(canvas, *origin, &paint, &glyphs[0], &advances[0], &offsets[0], numGlyphs);
         didFill = true;
     }
 
@@ -384,11 +189,8 @@ bool paintSkiaText(GraphicsContext* context,
 
         paint.reset();
         platformContext->setupPaintForStroking(&paint, 0, 0);
-        paint.setFlags(SkPaint::kAntiAlias_Flag);
-        if (!platformContext->isNativeFontRenderingAllowed()) {
-            paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-            setupPaintForFont(hfont, &paint);
-        }
+        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+        setupPaintForFont(hfont, &paint);
 
         if (didFill) {
             // If there is a shadow and we filled above, there will already be
@@ -403,15 +205,11 @@ bool paintSkiaText(GraphicsContext* context,
             paint.setLooper(0);
         }
 
-        if (!skiaDrawText(hfont, dc, platformContext, *origin, &paint,
-                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
-            return false;
+        skiaDrawText(canvas, *origin, &paint, &glyphs[0], &advances[0], &offsets[0], numGlyphs);
     }
 
     SelectObject(dc, oldFont);
     ReleaseDC(0, dc);
-
-    return true;
 }
 
 }  // namespace WebCore
