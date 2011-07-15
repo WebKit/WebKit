@@ -151,9 +151,9 @@ BUGX WONTFIX : failures/expected = IMAGE
                           unknown_test)
         self.assert_exp('failures/expected/crash.html', IMAGE)
 
-    def test_get_options(self):
+    def test_get_modifiers(self):
         self.parse_exp(self.get_basic_expectations())
-        self.assertEqual(self._exp.get_options(
+        self.assertEqual(self._exp.get_modifiers(
                          self.get_test('passes/text.html')), [])
 
     def test_expectations_json_for_all_platforms(self):
@@ -194,7 +194,7 @@ SKIP : failures/expected/image.html""")
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertTrue(e.fatal)
-            exp_errors = [u"Line:1 Unrecognized option 'foo' failures/expected/text.html",
+            exp_errors = [u"Line:1 Unrecognized modifier 'foo' failures/expected/text.html",
                           u"Line:2 Missing expectations SKIP : failures/expected/image.html"]
             self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
             self.assertEqual(e.errors, exp_errors)
@@ -396,13 +396,13 @@ class ModifierTests(unittest.TestCase):
             matcher = ModifierMatcher(self.FakeTestConfiguration(values))
         expectation = TestExpectationLine()
         expectation.modifiers = modifiers
-        match_result = matcher.match(expectation)
+        matcher.match(expectation)
         self.assertEqual(len(expectation.warnings), 0)
         self.assertEqual(len(expectation.errors), num_errors)
-        self.assertEqual(match_result.num_matches, expected_num_matches,
+        self.assertEqual(expectation.num_matches, expected_num_matches,
              'match(%s, %s) returned -> %d, expected %d' %
              (modifiers, str(self.config.values()),
-              match_result.num_matches, expected_num_matches))
+              expectation.num_matches, expected_num_matches))
 
     def test_bad_match_modifier(self):
         self.match(['foo'], num_errors=1)
@@ -448,7 +448,7 @@ class ModifierTests(unittest.TestCase):
         self.match(['xp', 'release', 'xp', 'release'], num_errors=2)
         self.match(['rebaseline', 'rebaseline'], num_errors=1)
 
-    def test_unknown_option(self):
+    def test_unknown_modifier(self):
         self.match(['vms'], num_errors=1)
 
     def test_duplicate_bugs(self):

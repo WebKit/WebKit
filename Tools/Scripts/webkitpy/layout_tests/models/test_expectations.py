@@ -165,29 +165,40 @@ class TestExpectationSerializer:
 class TestExpectationParser:
     """Provides parsing facilities for lines in the test_expectation.txt file."""
 
+    BUG_MODIFIER_PREFIX = 'bug'
+    BUG_MODIFIER_REGEX = 'bug\d+'
+    REBASELINE_MODIFIER = 'rebaseline'
+    SKIP_MODIFIER = 'skip'
+    SLOW_MODIFIER = 'slow'
+    WONTFIX_MODIFIER = 'wontfix'
+
+    TIMEOUT_EXPECTATION = 'timeout'
+
     def __init__(self, port, test_config, full_test_list, allow_rebaseline_modifier):
         self._port = port
         self._matcher = ModifierMatcher(test_config)
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
-    def parse(self, expectation):
-        expectation.num_matches = self._check_options(self._matcher, expectation)
-        if expectation.num_matches == ModifierMatcher.NO_MATCH:
+    def parse(self, expectation_line):
+        self._matcher.match(expectation_line)
+        self._check_semantics(expectation_line)
+
+        if expectation_line.num_matches == ModifierMatcher.NO_MATCH:
             return
 
-        self._check_options_against_expectations(expectation)
+        self._check_modifiers_against_expectations(expectation_line)
 
-        if self._check_path_does_not_exist(expectation):
+        if self._check_path_does_not_exist(expectation_line):
             return
 
         if not self._full_test_list:
-            expectation.matching_tests = [expectation.name]
+            expectation_line.matching_tests = [expectation_line.name]
         else:
-            expectation.matching_tests = self._collect_matching_tests(expectation.name)
+            expectation_line.matching_tests = self._collect_matching_tests(expectation_line.name)
 
-        expectation.parsed_modifiers = [modifier for modifier in expectation.modifiers if modifier in TestExpectations.MODIFIERS]
-        self._parse_expectations(expectation)
+        expectation_line.parsed_modifiers = [modifier for modifier in expectation_line.modifiers if modifier in TestExpectations.MODIFIERS]
+        self._parse_expectations(expectation_line)
 
     def _parse_expectations(self, expectation_line):
         result = set()
@@ -199,40 +210,35 @@ class TestExpectationParser:
             result.add(expectation)
         expectation_line.parsed_expectations = result
 
-    def _check_options(self, matcher, expectation):
-        match_result = matcher.match(expectation)
-        self._check_semantics(expectation)
-        return match_result.num_matches
-
-    def _check_semantics(self, expectation):
-        has_wontfix = 'wontfix' in expectation.modifiers
+    def _check_semantics(self, expectation_line):
+        has_wontfix = self.WONTFIX_MODIFIER in expectation_line.modifiers
         has_bug = False
-        for opt in expectation.modifiers:
-            if opt.startswith('bug'):
+        for modifier in expectation_line.modifiers:
+            if modifier.startswith(self.BUG_MODIFIER_PREFIX):
                 has_bug = True
-                if re.match('bug\d+', opt):
-                    expectation.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
+                if re.match(self.BUG_MODIFIER_REGEX, modifier):
+                    expectation_line.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
 
         if not has_bug and not has_wontfix:
-            expectation.warnings.append('Test lacks BUG modifier.')
+            expectation_line.warnings.append('Test lacks BUG modifier.')
 
-        if self._allow_rebaseline_modifier and 'rebaseline' in expectation.modifiers:
-            expectation.errors.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
+        if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in expectation_line.modifiers:
+            expectation_line.errors.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
 
-    def _check_options_against_expectations(self, expectation):
-        if 'slow' in expectation.modifiers and 'timeout' in expectation.expectations:
-            expectation.errors.append('A test can not be both SLOW and TIMEOUT. If it times out indefinitely, then it should be just TIMEOUT.')
+    def _check_modifiers_against_expectations(self, expectation_line):
+        if self.SLOW_MODIFIER in expectation_line.modifiers and self.TIMEOUT_EXPECTATION in expectation_line.expectations:
+            expectation_line.errors.append('A test can not be both SLOW and TIMEOUT. If it times out indefinitely, then it should be just TIMEOUT.')
 
-    def _check_path_does_not_exist(self, expectation):
+    def _check_path_does_not_exist(self, expectation_line):
         # WebKit's way of skipping tests is to add a -disabled suffix.
         # So we should consider the path existing if the path or the
         # -disabled version exists.
-        if (not self._port.test_exists(expectation.name)
-            and not self._port.test_exists(expectation.name + '-disabled')):
+        if (not self._port.test_exists(expectation_line.name)
+            and not self._port.test_exists(expectation_line.name + '-disabled')):
             # Log a warning here since you hit this case any
             # time you update test_expectations.txt without syncing
             # the LayoutTests directory
-            expectation.warnings.append('Path does not exist.')
+            expectation_line.warnings.append('Path does not exist.')
             return True
         return False
 
@@ -269,41 +275,41 @@ class TestExpectationParser:
         Any errant whitespace is not preserved.
 
         """
-        expectation = TestExpectationLine()
+        expectation_line = TestExpectationLine()
         comment_index = expectation_string.find("//")
         if comment_index == -1:
             comment_index = len(expectation_string)
         else:
-            expectation.comment = expectation_string[comment_index + 2:]
+            expectation_line.comment = expectation_string[comment_index + 2:]
 
         remaining_string = re.sub(r"\s+", " ", expectation_string[:comment_index].strip())
         if len(remaining_string) == 0:
-            return expectation
+            return expectation_line
 
         parts = remaining_string.split(':')
         if len(parts) != 2:
-            expectation.errors.append("Missing a ':'" if len(parts) < 2 else "Extraneous ':'")
+            expectation_line.errors.append("Missing a ':'" if len(parts) < 2 else "Extraneous ':'")
         else:
             test_and_expectation = parts[1].split('=')
             if len(test_and_expectation) != 2:
-                expectation.errors.append("Missing expectations" if len(test_and_expectation) < 2 else "Extraneous '='")
+                expectation_line.errors.append("Missing expectations" if len(test_and_expectation) < 2 else "Extraneous '='")
 
-        if expectation.is_malformed():
-            expectation.comment = expectation_string
+        if expectation_line.is_malformed():
+            expectation_line.comment = expectation_string
         else:
-            expectation.modifiers = cls._split_space_separated(parts[0])
-            expectation.name = test_and_expectation[0].strip()
-            expectation.expectations = cls._split_space_separated(test_and_expectation[1])
+            expectation_line.modifiers = cls._split_space_separated(parts[0])
+            expectation_line.name = test_and_expectation[0].strip()
+            expectation_line.expectations = cls._split_space_separated(test_and_expectation[1])
 
-        return expectation
+        return expectation_line
 
     @classmethod
     def tokenize_list(cls, expectations_string):
         """Returns a list of TestExpectationLines, one for each line in expectations_string."""
-        expectations = []
+        expectation_lines = []
         for line in expectations_string.split("\n"):
-            expectations.append(cls.tokenize(line))
-        return expectations
+            expectation_lines.append(cls.tokenize(line))
+        return expectation_lines
 
     @classmethod
     def _split_space_separated(cls, space_separated_string):
@@ -345,11 +351,7 @@ class TestExpectationsModel:
         # Maps a test to its list of expectations.
         self._test_to_expectations = {}
 
-        # Maps a test to its list of options (string values)
-        self._test_to_options = {}
-
-        # Maps a test to its list of modifiers: the constants associated with
-        # the options minus any bug or platform strings
+        # Maps a test to list of its modifiers (string values)
         self._test_to_modifiers = {}
 
         # Maps a test to the base path that it was listed with in the list and
@@ -394,11 +396,9 @@ class TestExpectationsModel:
     def get_tests_with_timeline(self, timeline):
         return self._timeline_to_tests[timeline]
 
-    def get_options(self, test):
-        """This returns the entire set of options for the given test
-        (the modifiers plus the BUGXXXX identifier). This is used by the
-        LTTF dashboard."""
-        return self._test_to_options[test]
+    def get_modifiers(self, test):
+        """This returns modifiers for the given test (the modifiers plus the BUGXXXX identifier). This is used by the LTTF dashboard."""
+        return self._test_to_modifiers[test]
 
     def has_modifier(self, test, modifier):
         return test in self._modifier_to_tests[modifier]
@@ -409,19 +409,19 @@ class TestExpectationsModel:
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
-    def add_tests(self, lineno, expectation, overrides_allowed):
+    def add_tests(self, lineno, expectation_line, overrides_allowed):
         """Returns a list of errors, encountered while matching modifiers."""
 
-        if expectation.is_invalid():
+        if expectation_line.is_invalid():
             return
 
-        for test in expectation.matching_tests:
-            if self._already_seen_better_match(test, expectation, lineno, overrides_allowed):
+        for test in expectation_line.matching_tests:
+            if self._already_seen_better_match(test, expectation_line, lineno, overrides_allowed):
                 continue
 
-            self._clear_expectations_for_test(test, expectation.name)
-            self._test_list_paths[test] = (self._port.normalize_test_name(expectation.name), expectation.num_matches, lineno)
-            self.add_test(test, expectation, overrides_allowed)
+            self._clear_expectations_for_test(test, expectation_line.name)
+            self._test_list_paths[test] = (self._port.normalize_test_name(expectation_line.name), expectation_line.num_matches, lineno)
+            self.add_test(test, expectation_line, overrides_allowed)
 
     def add_test(self, test, expectation_line, overrides_allowed):
         """Sets the expected state for a given test.
@@ -439,19 +439,17 @@ class TestExpectationsModel:
         for expectation in expectation_line.parsed_expectations:
             self._expectation_to_tests[expectation].add(test)
 
-        self._test_to_options[test] = expectation_line.modifiers
-        self._test_to_modifiers[test] = set()
+        self._test_to_modifiers[test] = expectation_line.modifiers
         for modifier in expectation_line.parsed_modifiers:
             mod_value = TestExpectations.MODIFIERS[modifier]
             self._modifier_to_tests[mod_value].add(test)
-            self._test_to_modifiers[test].add(mod_value)
 
-        if 'wontfix' in expectation_line.parsed_modifiers:
+        if TestExpectationParser.WONTFIX_MODIFIER in expectation_line.parsed_modifiers:
             self._timeline_to_tests[WONTFIX].add(test)
         else:
             self._timeline_to_tests[NOW].add(test)
 
-        if 'skip' in expectation_line.parsed_modifiers:
+        if TestExpectationParser.SKIP_MODIFIER in expectation_line.parsed_modifiers:
             self._result_type_to_tests[SKIP].add(test)
         elif expectation_line.parsed_expectations == set([PASS]):
             self._result_type_to_tests[PASS].add(test)
@@ -487,10 +485,10 @@ class TestExpectationsModel:
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_better_match(self, test, expectation, lineno, overrides_allowed):
+    def _already_seen_better_match(self, test, expectation_line, lineno, overrides_allowed):
         """Returns whether we've seen a better match already in the file.
 
-        Returns True if we've already seen a expectation.name that matches more of the test
+        Returns True if we've already seen a expectation_line.name that matches more of the test
             than this path does
         """
         # FIXME: See comment below about matching test configs and num_matches.
@@ -499,7 +497,7 @@ class TestExpectationsModel:
             return False
 
         prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
-        base_path = self._port.normalize_test_name(expectation.name)
+        base_path = self._port.normalize_test_name(expectation_line.name)
 
         if len(prev_base_path) > len(base_path):
             # The previous path matched more of the test.
@@ -532,16 +530,16 @@ class TestExpectationsModel:
         # To use the "more modifiers wins" policy, change the errors for overrides
         # to be warnings and return False".
 
-        if prev_num_matches == expectation.num_matches:
-            expectation.errors.append('Duplicate or ambiguous %s.' % expectation_source)
+        if prev_num_matches == expectation_line.num_matches:
+            expectation_line.errors.append('Duplicate or ambiguous %s.' % expectation_source)
             return True
 
-        if prev_num_matches < expectation.num_matches:
-            expectation.errors.append('More specific entry on line %d overrides line %d' % (lineno, prev_lineno))
+        if prev_num_matches < expectation_line.num_matches:
+            expectation_line.errors.append('More specific entry on line %d overrides line %d' % (lineno, prev_lineno))
             # FIXME: return False if we want more specific to win.
             return True
 
-        expectation.errors.append('More specific entry on line %d overrides line %d' % (prev_lineno, lineno))
+        expectation_line.errors.append('More specific entry on line %d overrides line %d' % (prev_lineno, lineno))
         return True
 
 
@@ -556,7 +554,7 @@ class TestExpectations:
       LayoutTests/fast/js/crash.js = CRASH TIMEOUT FAIL PASS
       ...
 
-    To add other options:
+    To add modifiers:
       SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
       DEBUG : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
       DEBUG SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
@@ -610,13 +608,13 @@ class TestExpectations:
 
     BUILD_TYPES = ('debug', 'release')
 
-    MODIFIERS = {'skip': SKIP,
-                 'wontfix': WONTFIX,
-                 'slow': SLOW,
-                 'rebaseline': REBASELINE,
+    MODIFIERS = {TestExpectationParser.SKIP_MODIFIER: SKIP,
+                 TestExpectationParser.WONTFIX_MODIFIER: WONTFIX,
+                 TestExpectationParser.SLOW_MODIFIER: SLOW,
+                 TestExpectationParser.REBASELINE_MODIFIER: REBASELINE,
                  'none': NONE}
 
-    TIMELINES = {'wontfix': WONTFIX,
+    TIMELINES = {TestExpectationParser.WONTFIX_MODIFIER: WONTFIX,
                  'now': NOW}
 
     RESULT_TYPES = {'skip': SKIP,
@@ -698,8 +696,8 @@ class TestExpectations:
         return self._model.get_test_set(modifier, expectation, include_skips)
 
     # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def get_options(self, test):
-        return self._model.get_options(test)
+    def get_modifiers(self, test):
+        return self._model.get_modifiers(test)
 
     # FIXME: Change the callsites to use TestExpectationsModel and remove.
     def get_tests_with_timeline(self, timeline):
@@ -782,11 +780,11 @@ class TestExpectations:
 
         return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
-    def _add_to_all_expectations(self, test, options, expectations):
+    def _add_to_all_expectations(self, test, modifiers, expectations):
         if not test in self._all_expectations:
             self._all_expectations[test] = []
         self._all_expectations[test].append(
-            ModifiersAndExpectations(options, expectations))
+            ModifiersAndExpectations(modifiers, expectations))
 
     def _add_expectations(self, expectation_list, overrides_allowed):
         for lineno, expectation in enumerate(expectation_list, start=1):
@@ -804,10 +802,10 @@ class TestExpectations:
 
 
 class ModifierMatchResult(object):
-    def __init__(self, options):
+    def __init__(self, modifiers):
         self.num_matches = ModifierMatcher.NO_MATCH
-        self.options = options
-        self.modifiers = []
+        self._modifiers = modifiers
+        self._matched_modifiers = []
         self._matched_regexes = set()
         self._matched_macros = set()
 
@@ -862,7 +860,7 @@ class ModifierMatcher(object):
                          TestExpectations.MODIFIERS.keys()[:-1])
     DUPLICATE_REGEXES_ALLOWED = ['bug\w+']
 
-    # Magic value returned when the options don't match.
+    # Magic value returned when the modifiers don't match.
     NO_MATCH = -1
 
     # FIXME: The code currently doesn't detect combinations of modifiers
@@ -891,79 +889,75 @@ class ModifierMatcher(object):
                 self._categories_for_modifiers[modifier] = category
                 self._all_modifiers.add(modifier)
 
-    def match(self, expectation):
+    def match(self, expectation_line):
         """Checks a expectation.modifiers against the config set in the constructor.
         Options may be either actual modifier strings, "macro" strings
         that get expanded to a list of modifiers, or strings that are allowed
-        to be ignored. All of the options must be passed in in lower case.
+        to be ignored. All of the modifiers must be passed in in lower case.
 
         Returns the number of matching categories, or NO_MATCH (-1) if it
         doesn't match or there were errors found. Matches are prioritized
         by the number of matching categories, because the more specific
-        the options list, the more categories will match.
-
-        The results of the most recent match are available in the 'options',
-        'modifiers', 'num_matches', 'errors', and 'warnings' properties.
+        the modifier list, the more categories will match.
         """
-        old_error_count = len(expectation.errors)
-        result = ModifierMatchResult(expectation.modifiers)
-        self._parse(expectation, result)
-        if old_error_count != len(expectation.errors):
-            return result
-        self._count_matches(result)
-        return result
+        old_error_count = len(expectation_line.errors)
+        result = ModifierMatchResult(expectation_line.modifiers)
+        self._parse(expectation_line, result)
+        if old_error_count == len(expectation_line.errors):
+            self._count_matches(result)
+        expectation_line.num_matches = result.num_matches
 
-    def _parse(self, expectation, result):
+    def _parse(self, expectation_line, result):
         # FIXME: Should we warn about lines having every value in a category?
-        for option in result.options:
-            self._parse_one(expectation, option, result)
+        for modifier in result._modifiers:
+            self._parse_one(expectation_line, modifier, result)
 
-    def _parse_one(self, expectation, option, result):
-        if option in self._all_modifiers:
-            self._add_modifier(expectation, option, result)
-        elif option in self.macros:
-            self._expand_macro(expectation, option, result)
-        elif not self._matches_any_regex(expectation, option, result):
-            expectation.errors.append("Unrecognized option '%s'" % option)
+    def _parse_one(self, expectation_line, modifier, result):
+        if modifier in self._all_modifiers:
+            self._add_modifier(expectation_line, modifier, result)
+        elif modifier in self.macros:
+            self._expand_macro(expectation_line, modifier, result)
+        elif not self._matches_any_regex(expectation_line, modifier, result):
+            expectation_line.errors.append("Unrecognized modifier '%s'" % modifier)
 
-    def _add_modifier(self, expectation, option, result):
-        if option in result.modifiers:
-            expectation.errors.append("More than one '%s'" % option)
+    def _add_modifier(self, expectation_line, modifier, result):
+        if modifier in result._matched_modifiers:
+            expectation_line.errors.append("More than one '%s'" % modifier)
         else:
-            result.modifiers.append(option)
+            result._matched_modifiers.append(modifier)
 
-    def _expand_macro(self, expectation, macro, result):
+    def _expand_macro(self, expectation_line, macro, result):
         if macro in result._matched_macros:
-            expectation.errors.append("More than one '%s'" % macro)
+            expectation_line.errors.append("More than one '%s'" % macro)
             return
 
         mods = []
         for modifier in self.macros[macro]:
-            if modifier in result.options:
-                expectation.errors.append("Can't specify both modifier '%s' and macro '%s'" % (modifier, macro))
+            if modifier in result._modifiers:
+                expectation_line.errors.append("Can't specify both modifier '%s' and macro '%s'" % (modifier, macro))
             else:
                 mods.append(modifier)
         result._matched_macros.add(macro)
-        result.modifiers.extend(mods)
+        result._matched_modifiers.extend(mods)
 
-    def _matches_any_regex(self, expectation, option, result):
+    def _matches_any_regex(self, expectation_line, modifier, result):
         for regex_str, pattern in self.regexes_to_ignore.iteritems():
-            if pattern.match(option):
-                self._handle_regex_match(expectation, regex_str, result)
+            if pattern.match(modifier):
+                self._handle_regex_match(expectation_line, regex_str, result)
                 return True
         return False
 
-    def _handle_regex_match(self, expectation, regex_str, result):
+    def _handle_regex_match(self, expectation_line, regex_str, result):
         if (regex_str in result._matched_regexes and
             regex_str not in self.DUPLICATE_REGEXES_ALLOWED):
-            expectation.errors.append("More than one option matching '%s'" %
+            expectation_line.errors.append("More than one modifier matching '%s'" %
                                  regex_str)
         else:
             result._matched_regexes.add(regex_str)
 
     def _count_matches(self, result):
         """Returns the number of modifiers that match the test config."""
-        categorized_modifiers = self._group_by_category(result.modifiers)
+        categorized_modifiers = self._group_by_category(result._matched_modifiers)
         result.num_matches = 0
         for category, modifier in self.test_config.items():
             if category in categorized_modifiers:

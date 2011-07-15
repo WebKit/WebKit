@@ -1,5 +1,22 @@
 2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Clean up test_expectations.py after refactorings.
+        https://bugs.webkit.org/show_bug.cgi?id=64620
+
+        * Renamed all variables holding TestExpectationLine to expectation_line to avoid confusion with
+          its sub-part, the actual expectation.
+        * Renamed all references to options to modifier to eliminate dual terminology.
+        * Made a bunch of parser constants and changed all callsites to use them.
+        * Various other minor clean-ups.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Cleaned up stuff.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Changed callsites after cleanup.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py: Ditto.
+
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Move expectation parsing code to TestExpectationParser.
         https://bugs.webkit.org/show_bug.cgi?id=64605
 

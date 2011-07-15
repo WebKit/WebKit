@@ -112,7 +112,7 @@ class TestExpectationsTestCase(unittest.TestCase):
     def test_valid_modifiers(self):
         self.assert_lines_lint(
             ["INVALID-MODIFIER : passes/text.html = PASS"],
-            "Unrecognized option 'invalid-modifier' "
+            "Unrecognized modifier 'invalid-modifier' "
             "passes/text.html  [test/expectations] [5]")
         self.assert_lines_lint(
             ["SKIP : passes/text.html = PASS"],
