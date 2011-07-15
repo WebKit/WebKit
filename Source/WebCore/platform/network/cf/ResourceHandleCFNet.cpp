@@ -54,6 +54,7 @@
 #include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
 #include <CFNetwork/CFURLConnectionPriv.h>
+#include <CFNetwork/CFURLRequestPriv.h>
 #endif
 
 #if PLATFORM(WIN)
@@ -838,7 +839,7 @@ void WebCoreSynchronousLoaderClient::willSendRequest(ResourceHandle* handle, Res
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     if (!protocolHostAndPortAreEqual(handle->firstRequest().url(), request.url())) {
-        ASSERT(!m_error);
+        ASSERT(!m_error.cfError());
         RetainPtr<CFErrorRef> cfError(AdoptCF, CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorBadServerResponse, 0));
         m_error = cfError.get();
         m_isDone = true;

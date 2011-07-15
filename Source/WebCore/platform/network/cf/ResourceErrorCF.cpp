@@ -31,10 +31,12 @@
 #include "KURL.h"
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/UnusedParam.h>
+
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
-#include <WTF/RetainPtr.h>
 
 namespace WebCore {
 
@@ -116,6 +118,8 @@ void ResourceError::platformCopy(ResourceError& errorCopy) const
 {
 #if PLATFORM(WIN)
     errorCopy.m_certificate = m_certificate;
+#else
+    UNUSED_PARAM(errorCopy);
 #endif
 }
 

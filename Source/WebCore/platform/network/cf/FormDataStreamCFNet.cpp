@@ -37,12 +37,17 @@
 #include "FormData.h"
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <CoreFoundation/CFStreamAbstract.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#elif PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 #define USE_V1_CFSTREAM_CALLBACKS
 #ifdef USE_V1_CFSTREAM_CALLBACKS
