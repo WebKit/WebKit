@@ -1,5 +1,20 @@
 2011-07-15  Gavin Barraclough  <barraclough@apple.com>
 
+        NativeError.prototype objects have [[Class]] of "Object" but should be "Error"
+        https://bugs.webkit.org/show_bug.cgi?id=55346
+
+        Reviewed by Sam Weinig.
+
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+            - Switch to putDirect since we're not the only ones tranitioning this Structure now.
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        * runtime/NativeErrorPrototype.h:
+            - Switch base class to ErrorPrototype.
+
+2011-07-15  Gavin Barraclough  <barraclough@apple.com>
+
         DFG JIT - Where arguments passed are integers, speculate this.
         https://bugs.webkit.org/show_bug.cgi?id=64630
 

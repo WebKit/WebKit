@@ -1,3 +1,16 @@
+2011-07-15  Gavin Barraclough  <barraclough@apple.com>
+
+        NativeError.prototype objects have [[Class]] of "Object" but should be "Error"
+        https://bugs.webkit.org/show_bug.cgi?id=55346
+
+        Reviewed by Sam Weinig.
+
+        Added test case.
+
+        * fast/js/native-error-prototype-expected.txt: Added.
+        * fast/js/native-error-prototype.html: Added.
+        * fast/js/script-tests/native-error-prototype.js: Added.
+
 2011-06-27  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.
