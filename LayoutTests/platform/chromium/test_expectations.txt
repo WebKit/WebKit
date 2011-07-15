@@ -2457,7 +2457,8 @@ BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 
 // Flaky since 2010-09-17?
-BUGCR57950 XP : svg/batik/text/verticalText.svg = CRASH PASS
+// SENORBLANCO:  commenting out for 64368 rebaseline
+// BUGCR57950 XP : svg/batik/text/verticalText.svg = CRASH PASS
 BUGWK58193 WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // BUGCR59415 : cannot repro the flakiness
@@ -3571,16 +3572,67 @@ BUGWK64368 WIN : svg/custom/use-on-disallowed-foreign-object-1.svg = IMAGE
 BUGWK64368 WIN : svg/custom/foreign-object-skew.svg = IMAGE
 BUGWK64368 WIN : svg/custom/use-on-disallowed-foreign-object-5.svg = IMAGE
 BUGWK64368 WIN : svg/custom/linking-a-03-b-all.svg = IMAGE
-BUGWK64368 WIN : svg/custom/use-detach.svg = IMAGE
+BUGWK64368 XP WIN7 : svg/custom/use-detach.svg = IMAGE
 BUGWK64368 WIN : svg/custom/linking-a-03-b-transform.svg = IMAGE
 BUGWK64368 WIN : svg/custom/js-late-pattern-creation.svg = IMAGE
-BUGWK64368 WIN : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE TEXT
-BUGWK64368 WIN : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE TEXT
-BUGWK64368 WIN : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg = IMAGE TEXT
-BUGWK64368 WIN : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE TEXT
-BUGWK64368 WIN : svg/text/bidi-text-query.svg = IMAGE TEXT
+BUGWK64368 XP WIN7 : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE TEXT
+BUGWK64368 XP WIN7 : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE TEXT
+BUGWK64368 XP WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg = IMAGE TEXT
+BUGWK64368 XP WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE TEXT
+BUGWK64368 XP WIN7 : svg/text/bidi-text-query.svg = IMAGE TEXT
 BUGWK64368 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK64368 WIN GPU : fast/canvas/canvas-text-baseline.html = IMAGE
+
+BUGWK64368 XP : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
+BUGWK64368 XP : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
+BUGWK64368 XP : fast/blockflow/english-lr-text.html = IMAGE
+BUGWK64368 XP : fast/blockflow/fallback-orientation.html = IMAGE
+BUGWK64368 XP : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK64368 XP : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK64368 XP : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK64368 XP : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK64368 XP : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK64368 XP : fast/dynamic/text-combine.html = IMAGE
+BUGWK64368 XP : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK64368 XP : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK64368 XP : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK64368 XP : fast/ruby/base-shorter-than-text.html = IMAGE
+BUGWK64368 XP : fast/text/stroking-decorations.html = IMAGE
+BUGWK64368 XP : fast/text/stroking.html = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/g-dirLTR-ubNone.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/g-dirLTR-ubOverride.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/g-dirRTL-ubNone.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/g-dirRTL-ubOverride.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-dirLTR-ubNone.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-dirRTL-ubNone.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/text-dirRTL-ubOverride.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE
+BUGWK64368 XP : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE
+BUGWK64368 XP : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
+BUGWK64368 XP : svg/batik/text/verticalText.svg = IMAGE
+BUGWK64368 XP : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
+BUGWK64368 XP : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE
+BUGWK64368 XP : svg/zoom/text/zoom-foreignObject.svg = IMAGE
 
 // flakiness
 BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS

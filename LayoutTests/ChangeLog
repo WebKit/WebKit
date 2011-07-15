@@ -1,3 +1,9 @@
+2011-07-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Mopping up some more expectations after r91069.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark more tests failing as a result of r91069
