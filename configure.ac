@@ -1110,7 +1110,7 @@ AC_MSG_CHECKING([whether to build plugin process for WebKit2])
 AC_ARG_ENABLE(plugin_process,
             AC_HELP_STRING([--enable-plugin-process],
                            [build plugin process for WebKit2 [default=yes]]),
-                           [], [enable_plugin_process="no"])
+                           [], [enable_plugin_process="yes"])
 # Build the plugin process only when building webkit2.
 if test "$enable_webkit2" = "no"; then
     enable_plugin_process=no
