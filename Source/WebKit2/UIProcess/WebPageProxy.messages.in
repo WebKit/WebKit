@@ -35,6 +35,7 @@ messages -> WebPageProxy {
     DidReceiveEvent(uint32_t type, bool handled)
     StopResponsivenessTimer()
     SetCursor(WebCore::Cursor cursor)
+    SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)
     SetFocus(bool focused)

@@ -1,3 +1,14 @@
+2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+        https://bugs.webkit.org/show_bug.cgi?id=64615
+
+        Reviewed by Anders Carlsson.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::setCursorHiddenUntilMouseMoves): Added this stub.
+        * src/ChromeClientImpl.h:
+
 2011-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled Chromium revision to 92606.

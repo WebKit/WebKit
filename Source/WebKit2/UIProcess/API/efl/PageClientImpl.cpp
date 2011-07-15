@@ -125,6 +125,11 @@ void PageClientImpl::setCursor(const Cursor&)
     notImplemented();
 }
 
+void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
 void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 {
     notImplemented();

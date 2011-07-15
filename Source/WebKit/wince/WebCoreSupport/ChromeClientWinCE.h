@@ -106,6 +106,7 @@ public:
     virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const; // Currently only Mac has a non empty implementation.
     virtual void scrollbarsModeDidChange() const;
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setCursorHiddenUntilMouseMoves(bool);
     // End methods used by HostWindow.
 
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);

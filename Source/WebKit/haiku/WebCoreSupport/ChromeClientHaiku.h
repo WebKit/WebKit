@@ -155,6 +155,7 @@ namespace WebCore {
         virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
 
         virtual void setCursor(const Cursor&);
+        virtual void setCursorHiddenUntilMouseMoves(bool);
 
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.

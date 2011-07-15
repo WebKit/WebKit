@@ -649,6 +649,11 @@ void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
 #endif
 }
 
+void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    m_page->send(Messages::WebPageProxy::SetCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves));
+}
+
 void WebChromeClient::formStateDidChange(const Node*)
 {
     notImplemented();

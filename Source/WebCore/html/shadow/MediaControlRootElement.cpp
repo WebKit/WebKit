@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 #include "MediaControlRootElement.h"
 
+#include "Chrome.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -453,6 +454,9 @@ void MediaControlRootElement::enteredFullscreen()
 
     m_panel->setCanBeDragged(true);
 
+    if (Page* page = m_mediaElement->document()->page())
+        page->chrome()->setCursorHiddenUntilMouseMoves(true);
+
     startHideFullscreenControlsTimer();
 }
 
@@ -547,7 +551,10 @@ void MediaControlRootElement::hideFullscreenControlsTimerFired(Timer<MediaContro
     
     if (!shouldHideControls())
         return;
-    
+
+    if (Page* page = m_mediaElement->document()->page())
+        page->chrome()->setCursorHiddenUntilMouseMoves(true);
+
     makeTransparent();
 }
 

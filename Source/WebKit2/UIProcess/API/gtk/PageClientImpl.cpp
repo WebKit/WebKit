@@ -148,6 +148,11 @@ void PageClientImpl::setCursor(const Cursor& cursor)
         gdk_window_set_cursor(window, newCursor);
 }
 
+void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    notImplemented();
+}
+
 void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 {
     notImplemented();

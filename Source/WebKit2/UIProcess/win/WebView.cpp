@@ -32,6 +32,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "NotImplemented.h"
 #include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
@@ -1054,6 +1055,11 @@ void WebView::setCursor(const WebCore::Cursor& cursor)
         return;
     m_webCoreCursor = cursor.platformCursor()->nativeCursor();
     updateNativeCursor();
+}
+
+void WebView::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
 }
 
 void WebView::setOverrideCursor(HCURSOR overrideCursor)

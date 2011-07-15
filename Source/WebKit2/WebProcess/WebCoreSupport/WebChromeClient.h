@@ -172,6 +172,7 @@ private:
     virtual void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader*);
 
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setCursorHiddenUntilMouseMoves(bool);
 
     // Notification that the given form element has changed. This function
     // will be called frequently, so handling should be very fast.

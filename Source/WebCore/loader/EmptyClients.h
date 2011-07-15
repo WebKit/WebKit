@@ -205,6 +205,7 @@ public:
     virtual void elementDidBlur(const Node*) { }
 
     virtual void setCursor(const Cursor&) { }
+    virtual void setCursorHiddenUntilMouseMoves(bool) { }
 
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 

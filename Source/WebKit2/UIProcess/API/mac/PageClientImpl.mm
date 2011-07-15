@@ -214,6 +214,11 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
         [m_wkView _setCursor:cursor.platformCursor()];
 }
 
+void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    [NSCursor setHiddenUntilMouseMoves:hiddenUntilMouseMoves];
+}
+
 void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 {
 }

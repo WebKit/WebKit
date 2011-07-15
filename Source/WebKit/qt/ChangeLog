@@ -1,3 +1,13 @@
+2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+        https://bugs.webkit.org/show_bug.cgi?id=64615
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::setCursorHiddenUntilMouseMoves): Added this stub.
+
 2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         REGRESSION(91064): Upstream QtWebKit/N9 changes related tovisibleContentRect

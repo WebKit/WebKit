@@ -1,3 +1,31 @@
+2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+        https://bugs.webkit.org/show_bug.cgi?id=64615
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves): Added this stub.
+        * UIProcess/API/efl/PageClientImpl.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves): Ditto.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves): Added. Calls +[NSCursor setHiddenUntilMouseMoves:].
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCursorHiddenUntilMouseMoves): Added. Calls through to the PageClient.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Added SetCursorHiddenUntilMouseMoves message.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setCursorHiddenUntilMouseMoves): Added this stub.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setCursorHiddenUntilMouseMoves): Added. Sends SetCursorHiddenUntilMouseMoves message
+        to the page proxy.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-07-14  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64250

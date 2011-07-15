@@ -128,6 +128,7 @@ public:
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setCursorHiddenUntilMouseMoves(bool);
 
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WTF::AtomicString& type,
         const WebCore::FloatRect& lineRect);

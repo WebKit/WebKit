@@ -1,3 +1,13 @@
+2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+        https://bugs.webkit.org/show_bug.cgi?id=64615
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitSupport/ChromeClientWx.h:
+        (WebCore::ChromeClientWx::setCursorHiddenUntilMouseMoves): Added this stub.
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota
