@@ -1,3 +1,12 @@
+2011-07-14  Eric Seidel  <eric@webkit.org>
+
+        Move webkitpy off of loose mocks
+        https://bugs.webkit.org/show_bug.cgi?id=64508
+
+        Unreviewed.  Fixing a test which fails under test-webkitpy --all (but not in a normal run).
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+
 2011-07-14  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should have a "rebaseline" button

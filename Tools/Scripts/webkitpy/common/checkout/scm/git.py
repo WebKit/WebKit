@@ -100,6 +100,7 @@ class Git(SCM, SVNRepository):
 
     @classmethod
     def find_checkout_root(cls, path):
+        # FIXME: This should use a FileSystem object instead of os.path.
         # "git rev-parse --show-cdup" would be another way to get to the root
         (checkout_root, dot_git) = os.path.split(run_command(['git', 'rev-parse', '--git-dir'], cwd=(path or "./")))
         if not os.path.isabs(checkout_root):  # Sometimes git returns relative paths
@@ -108,7 +109,8 @@ class Git(SCM, SVNRepository):
 
     @classmethod
     def to_object_name(cls, filepath):
-        root_end_with_slash = self._filesystem.join(cls.find_checkout_root(self._filesystem.dirname(filepath)), '')
+        # FIXME: This should use a FileSystem object instead of os.path.
+        root_end_with_slash = os.path.join(cls.find_checkout_root(os.path.dirname(filepath)), '')
         return filepath.replace(root_end_with_slash, '')
 
     @classmethod
