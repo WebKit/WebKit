@@ -536,6 +536,11 @@ WEBCORE_COMMAND(yankAndSelect)
     return _data->_page->writeSelectionToPasteboard([pasteboard name], pasteboardTypes);
 }
 
+- (void)centerSelectionInVisibleArea:(id)sender 
+{ 
+    _data->_page->centerSelectionInVisibleArea();
+}
+
 // This method is needed to support Mac OS X services.
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
@@ -569,7 +574,6 @@ individual methods here with Mac-specific code.
 Editing-related methods still unimplemented that are implemented in WebKit1:
 
 - (void)capitalizeWord:(id)sender;
-- (void)centerSelectionInVisibleArea:(id)sender;
 - (void)changeFont:(id)sender;
 - (void)complete:(id)sender;
 - (void)copyFont:(id)sender;
@@ -697,6 +701,10 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
     
     if (action == @selector(stopSpeaking:))
         return [NSApp isSpeaking];
+    
+    // The centerSelectionInVisibleArea: selector is enabled if there's a selection range or if there's an insertion point in an editable area.
+    if (action == @selector(centerSelectionInVisibleArea:))
+        return _data->_page->editorState().selectionIsRange || (_data->_page->editorState().isContentEditable && !_data->_page->editorState().selectionIsNone);
 
     // Next, handle editor commands. Start by returning YES for anything that is not an editor command.
     // Returning YES is the default thing to do in an AppKit validate method for any selector that is not recognized.

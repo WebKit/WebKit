@@ -53,6 +53,7 @@ public:
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
     
     void hideFindIndicator();
+    void showFindIndicatorInSelection();
 
 private:
     // PageOverlay::Client.

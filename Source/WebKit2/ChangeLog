@@ -1,3 +1,21 @@
+2011-07-15  Ada Chan  <adachan@apple.com>
+
+        Implement "Jump to Selection" in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=64569
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView centerSelectionInVisibleArea:]): Call WebPageProxy::centerSelectionInVisibleArea().
+        (-[WKView validateUserInterfaceItem:]): Enable the centerSelectionInVisibleArea: selector if there's a selection
+        range or if there's an insertion point in an editable area.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::showFindIndicatorInSelection): Call updateFindIndicator() to show the find indicator.
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::centerSelectionInVisibleArea): Use the selection in the focused or main frame.
+        After scrolling the selection into view, flash the find indicator.
+
 2011-07-15  Dan Bernstein  <mitz@apple.com>
 
         Windows build fix.

@@ -33,6 +33,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DocumentMarkerController.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
@@ -225,6 +226,15 @@ void FindController::hideFindIndicator()
     ShareableBitmap::Handle handle;
     m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->userSpaceScaleFactor(), handle, false));
     m_isShowingFindIndicator = false;
+}
+
+void FindController::showFindIndicatorInSelection()
+{
+    Frame* selectedFrame = m_webPage->corePage()->focusController()->focusedOrMainFrame();
+    if (!selectedFrame)
+        return;
+    
+    updateFindIndicator(selectedFrame, false);
 }
 
 Vector<IntRect> FindController::rectsForTextMatches()

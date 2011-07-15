@@ -1235,11 +1235,12 @@ void WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
 
 void WebPage::centerSelectionInVisibleArea()
 {
-    Frame* coreFrame = m_mainFrame->coreFrame();
-    if (!coreFrame)
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
         return;
-
-    coreFrame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
+    
+    frame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
+    m_findController.showFindIndicatorInSelection();
 }
 
 void WebPage::setActive(bool isActive)
