@@ -309,18 +309,17 @@ class TestExpectationsModel:
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
-    def add_tests(self, tests, expectations, test_list_path, lineno,
-                   modifiers, num_matches, options, overrides_allowed):
+    def add_tests(self, lineno, expectation, tests, parsed_expectations, parsed_modifiers, num_matches, overrides_allowed):
         """Returns a list of errors, encountered while matching modifiers."""
         # FIXME: Shouldn't return anything, this is a temporary layering volation.
         errors = []
         for test in tests:
-            if self._already_seen_better_match(test, test_list_path, num_matches, lineno, overrides_allowed, errors):
+            if self._already_seen_better_match(test, expectation.name, num_matches, lineno, overrides_allowed, errors):
                 continue
 
-            self._clear_expectations_for_test(test, test_list_path)
-            self._test_list_paths[test] = (self._port.normalize_test_name(test_list_path), num_matches, lineno)
-            self.add_test(test, modifiers, expectations, options, overrides_allowed)
+            self._clear_expectations_for_test(test, expectation.name)
+            self._test_list_paths[test] = (self._port.normalize_test_name(expectation.name), num_matches, lineno)
+            self.add_test(test, parsed_modifiers, parsed_expectations, expectation.modifiers, overrides_allowed)
 
         return errors
 
@@ -690,110 +689,99 @@ class TestExpectations:
         lineno = 0
         for expectation in expectation_list:
             lineno += 1
-            test_list_path = expectation.name
-            options = expectation.modifiers
             expectations = expectation.expectations
 
             for error in expectation.errors:
                 self._add_error(lineno, error, expectation.comment)
 
-            if not expectations:
+            if not expectation.expectations:
                 continue
 
-            self._add_to_all_expectations(test_list_path,
-                                            " ".join(options).upper(),
-                                            " ".join(expectations).upper())
+            self._add_to_all_expectations(expectation.name,
+                                            " ".join(expectation.modifiers).upper(),
+                                            " ".join(expectation.expectations).upper())
 
-            num_matches = self._check_options(matcher, options, lineno,
-                                              test_list_path)
+            num_matches = self._check_options(matcher, lineno, expectation)
             if num_matches == ModifierMatcher.NO_MATCH:
                 continue
 
-            expectations = self._parse_expectations(expectations, lineno,
-                test_list_path)
+            self._check_options_against_expectations(lineno, expectation)
 
-            self._check_options_against_expectations(options, expectations,
-                lineno, test_list_path)
-
-            if self._check_path_does_not_exist(lineno, test_list_path):
+            if self._check_path_does_not_exist(lineno, expectation):
                 continue
 
             if not self._full_test_list:
-                tests = [test_list_path]
+                tests = [expectation.name]
             else:
-                tests = self._expand_tests(test_list_path)
+                tests = self._expand_tests(expectation.name)
 
-            modifiers = [o for o in options if o in self.MODIFIERS]
+            parsed_modifiers = [modifier for modifier in expectation.modifiers if modifier in self.MODIFIERS]
+            parsed_expectations = self._parse_expectations(lineno, expectation)
+
             # FIXME: Eliminate this awful error plumbing
-            modifier_errors = self._model.add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
+            modifier_errors = self._model.add_tests(lineno, expectation, tests, parsed_expectations, parsed_modifiers, num_matches, overrides_allowed)
             for (message, source) in modifier_errors:
                 self._add_error(lineno, message, source)
 
-
-    # FIXME: Remove, no longer used anywhere?
-    def _get_options_list(self, listString):
-        return [part.strip().lower() for part in listString.strip().split(' ')]
-
-    def _parse_expectations(self, expectations, lineno, test_list_path):
+    def _parse_expectations(self, lineno, expectation_line):
         result = set()
-        for part in expectations:
+        for part in expectation_line.expectations:
             expectation = TestExpectations.expectation_from_string(part)
             if expectation is None:  # Careful, PASS is currently 0.
-                self._add_error(lineno, 'Unsupported expectation: %s' % part, test_list_path)
+                self._add_error(lineno, 'Unsupported expectation: %s' % part, expectation_line.name)
                 continue
             result.add(expectation)
         return result
 
-    def _check_options(self, matcher, options, lineno, test_list_path):
-        match_result = self._check_syntax(matcher, options, lineno,
-                                          test_list_path)
-        self._check_semantics(options, lineno, test_list_path)
+    def _check_options(self, matcher, lineno, expectation):
+        match_result = self._check_syntax(matcher, lineno, expectation)
+        self._check_semantics(lineno, expectation)
         return match_result.num_matches
 
-    def _check_syntax(self, matcher, options, lineno, test_list_path):
-        match_result = matcher.match(options)
+    def _check_syntax(self, matcher, lineno, expectation):
+        match_result = matcher.match(expectation.modifiers)
         for error in match_result.errors:
-            self._add_error(lineno, error, test_list_path)
+            self._add_error(lineno, error, expectation.name)
         for warning in match_result.warnings:
-            self._log_non_fatal_error(lineno, warning, test_list_path)
+            self._log_non_fatal_error(lineno, warning, expectation.name)
         return match_result
 
-    def _check_semantics(self, options, lineno, test_list_path):
-        has_wontfix = 'wontfix' in options
+    def _check_semantics(self, lineno, expectation):
+        has_wontfix = 'wontfix' in expectation.modifiers
         has_bug = False
-        for opt in options:
+        for opt in expectation.modifiers:
             if opt.startswith('bug'):
                 has_bug = True
                 if re.match('bug\d+', opt):
                     self._add_error(lineno,
                         'BUG\d+ is not allowed, must be one of '
                         'BUGCR\d+, BUGWK\d+, BUGV8_\d+, '
-                        'or a non-numeric bug identifier.', test_list_path)
+                        'or a non-numeric bug identifier.', expectation.name)
 
         if not has_bug and not has_wontfix:
-            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.', test_list_path)
+            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.', expectation.name)
 
-        if self._is_lint_mode and 'rebaseline' in options:
+        if self._is_lint_mode and 'rebaseline' in expectation.modifiers:
             self._add_error(lineno,
                 'REBASELINE should only be used for running rebaseline.py. '
-                'Cannot be checked in.', test_list_path)
+                'Cannot be checked in.', expectation.name)
 
-    def _check_options_against_expectations(self, options, expectations, lineno, test_list_path):
-        if 'slow' in options and TIMEOUT in expectations:
+    def _check_options_against_expectations(self, lineno, expectation):
+        if 'slow' in expectation.modifiers and 'timeout' in expectation.expectations:
             self._add_error(lineno,
                 'A test can not be both SLOW and TIMEOUT. If it times out '
-                'indefinitely, then it should be just TIMEOUT.', test_list_path)
+                'indefinitely, then it should be just TIMEOUT.', expectation.name)
 
-    def _check_path_does_not_exist(self, lineno, test_list_path):
+    def _check_path_does_not_exist(self, lineno, expectation):
         # WebKit's way of skipping tests is to add a -disabled suffix.
         # So we should consider the path existing if the path or the
         # -disabled version exists.
-        if (not self._port.test_exists(test_list_path)
-            and not self._port.test_exists(test_list_path + '-disabled')):
+        if (not self._port.test_exists(expectation.name)
+            and not self._port.test_exists(expectation.name + '-disabled')):
             # Log a non fatal error here since you hit this case any
             # time you update test_expectations.txt without syncing
             # the LayoutTests directory
-            self._log_non_fatal_error(lineno, 'Path does not exist.', test_list_path)
+            self._log_non_fatal_error(lineno, 'Path does not exist.', expectation.name)
             return True
         return False
 

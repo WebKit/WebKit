@@ -1,5 +1,17 @@
 2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Plumb the use of TestExpectationLine deeper, clean up.
+        https://bugs.webkit.org/show_bug.cgi?id=64559
+
+        Instead of carrying various bits of TestExpectationLine, plumb it down to its consumers,
+        also cleaning up names and remove an unused TestExpectations._get_options_list member.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove the notion of TestExpectationLine.valid, start storing parsing errors in expectations themselves.
         https://bugs.webkit.org/show_bug.cgi?id=64554
 
