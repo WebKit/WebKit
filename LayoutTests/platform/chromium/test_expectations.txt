@@ -3828,3 +3828,6 @@ BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
 BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = MISSING PASS
 
 BUGCR89372 MAC : svg/dom/use-style-recalc-script-execute-crash.html = CRASH PASS
+
+BUGWK64368 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
+BUGWK64368 WIN GPU : fast/canvas/canvas-text-baseline.html = IMAGE

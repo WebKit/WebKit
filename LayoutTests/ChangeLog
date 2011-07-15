@@ -1,3 +1,14 @@
+2011-07-15  Adrienne Walker  <enne@google.com>
+
+        [chromium] Re-mark tests as failing as a result of r91069
+        https://bugs.webkit.org/show_bug.cgi?id=64368
+
+        Unreviewed.
+
+        senorblanco checked in baselines, but these tests appear to still be failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.
