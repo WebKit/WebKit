@@ -230,9 +230,11 @@ class TestExpectationLine:
         self.expectations = []
         self.comment = None
         self.errors = []
+        self.warnings = []
 
     def is_malformed(self):
         return len(self.errors) > 0
+
 
 # FIXME: Refactor to use TestExpectationLine as data item
 # FIXME: Refactor API to be a proper CRUD.
@@ -312,16 +314,13 @@ class TestExpectationsModel:
     def add_tests(self, lineno, expectation, tests, parsed_expectations, parsed_modifiers, num_matches, overrides_allowed):
         """Returns a list of errors, encountered while matching modifiers."""
         # FIXME: Shouldn't return anything, this is a temporary layering volation.
-        errors = []
         for test in tests:
-            if self._already_seen_better_match(test, expectation.name, num_matches, lineno, overrides_allowed, errors):
+            if self._already_seen_better_match(test, expectation, num_matches, lineno, overrides_allowed):
                 continue
 
             self._clear_expectations_for_test(test, expectation.name)
             self._test_list_paths[test] = (self._port.normalize_test_name(expectation.name), num_matches, lineno)
             self.add_test(test, parsed_modifiers, parsed_expectations, expectation.modifiers, overrides_allowed)
-
-        return errors
 
     def add_test(self, test, modifiers, expectations, options, overrides_allowed):
         """Sets the expected state for a given test.
@@ -389,10 +388,10 @@ class TestExpectationsModel:
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_better_match(self, test, test_list_path, num_matches, lineno, overrides_allowed, errors):
+    def _already_seen_better_match(self, test, expectation, num_matches, lineno, overrides_allowed):
         """Returns whether we've seen a better match already in the file.
 
-        Returns True if we've already seen a test_list_path that matches more of the test
+        Returns True if we've already seen a expectation.name that matches more of the test
             than this path does
         """
         # FIXME: See comment below about matching test configs and num_matches.
@@ -401,7 +400,7 @@ class TestExpectationsModel:
             return False
 
         prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
-        base_path = self._port.normalize_test_name(test_list_path)
+        base_path = self._port.normalize_test_name(expectation.name)
 
         if len(prev_base_path) > len(base_path):
             # The previous path matched more of the test.
@@ -431,19 +430,19 @@ class TestExpectationsModel:
         # this policy permanent, we can probably simplify this code
         # and the ModifierMatcher code a fair amount.
         #
-        # To use the "more modifiers wins" policy, change the "_add_error" lines for overrides
-        # to _log_non_fatal_error() and change the commented-out "return False".
+        # To use the "more modifiers wins" policy, change the errors for overrides
+        # to be warnings and return False".
 
         if prev_num_matches == num_matches:
-            errors.append(('Duplicate or ambiguous %s.' % expectation_source, test))
+            expectation.errors.append('Duplicate or ambiguous %s.' % expectation_source)
             return True
 
         if prev_num_matches < num_matches:
-            errors.append(('More specific entry on line %d overrides line %d' % (lineno, prev_lineno), test_list_path))
+            expectation.errors.append('More specific entry on line %d overrides line %d' % (lineno, prev_lineno))
             # FIXME: return False if we want more specific to win.
             return True
 
-        errors.append(('More specific entry on line %d overrides line %d' % (prev_lineno, lineno), test_list_path))
+        expectation.errors.append('More specific entry on line %d overrides line %d' % (prev_lineno, lineno))
         return True
 
 
@@ -549,12 +548,9 @@ class TestExpectations:
                 and downstream expectations).
         """
         self._port = port
-        self._fs = port._filesystem
         self._full_test_list = tests
         self._test_config = test_config
         self._is_lint_mode = is_lint_mode
-        self._errors = []
-        self._non_fatal_errors = []
         self._model = TestExpectationsModel(port)
 
         # Maps relative test paths as listed in the expectations file to a
@@ -572,7 +568,8 @@ class TestExpectations:
             self._add_expectations(overrides_expectations, overrides_allowed=True)
             self._expectations += overrides_expectations
 
-        self._handle_any_read_errors()
+        self._has_warnings = False
+        self._report_errors()
         self._process_tests_without_expectations()
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
@@ -639,19 +636,31 @@ class TestExpectations:
     def is_rebaselining(self, test):
         return self._model.has_modifier(test, REBASELINE)
 
-    def _handle_any_read_errors(self):
-        if len(self._errors) or len(self._non_fatal_errors):
+    def _report_errors(self):
+        errors = []
+        warnings = []
+        lineno = 0
+        for expectation in self._expectations:
+            lineno += 1
+            for error in expectation.errors:
+                errors.append("Line:%s %s %s" % (lineno, error, expectation.name if expectation.expectations else expectation.comment))
+            for warning in expectation.warnings:
+                warnings.append("Line:%s %s %s" % (lineno, warning, expectation.name if expectation.expectations else expectation.comment))
+
+        if len(errors) or len(warnings):
             _log.error("FAILURES FOR %s" % str(self._test_config))
 
-            for error in self._errors:
+            for error in errors:
                 _log.error(error)
-            for error in self._non_fatal_errors:
-                _log.error(error)
+            for warning in warnings:
+                _log.error(warning)
 
-            if len(self._errors):
-                raise ParseError(fatal=True, errors=self._errors)
-            if len(self._non_fatal_errors) and self._is_lint_mode:
-                raise ParseError(fatal=False, errors=self._non_fatal_errors)
+            if len(errors):
+                raise ParseError(fatal=True, errors=errors)
+            if len(warnings):
+                self._has_warnings = True
+                if self._is_lint_mode:
+                    raise ParseError(fatal=False, errors=warnings)
 
     def _process_tests_without_expectations(self):
         expectations = set([PASS])
@@ -667,8 +676,8 @@ class TestExpectations:
         return ExpectationsJsonEncoder(separators=(',', ':')).encode(
             self._all_expectations)
 
-    def get_non_fatal_errors(self):
-        return self._non_fatal_errors
+    def has_warnings(self):
+        return self._has_warnings
 
     def remove_rebaselined_tests(self, tests):
         """Returns a copy of the expectations with the tests removed."""
@@ -691,9 +700,6 @@ class TestExpectations:
             lineno += 1
             expectations = expectation.expectations
 
-            for error in expectation.errors:
-                self._add_error(lineno, error, expectation.comment)
-
             if not expectation.expectations:
                 continue
 
@@ -701,13 +707,13 @@ class TestExpectations:
                                             " ".join(expectation.modifiers).upper(),
                                             " ".join(expectation.expectations).upper())
 
-            num_matches = self._check_options(matcher, lineno, expectation)
+            num_matches = self._check_options(matcher, expectation)
             if num_matches == ModifierMatcher.NO_MATCH:
                 continue
 
-            self._check_options_against_expectations(lineno, expectation)
+            self._check_options_against_expectations(expectation)
 
-            if self._check_path_does_not_exist(lineno, expectation):
+            if self._check_path_does_not_exist(expectation):
                 continue
 
             if not self._full_test_list:
@@ -716,72 +722,54 @@ class TestExpectations:
                 tests = self._expand_tests(expectation.name)
 
             parsed_modifiers = [modifier for modifier in expectation.modifiers if modifier in self.MODIFIERS]
-            parsed_expectations = self._parse_expectations(lineno, expectation)
+            parsed_expectations = self._parse_expectations(expectation)
 
-            # FIXME: Eliminate this awful error plumbing
-            modifier_errors = self._model.add_tests(lineno, expectation, tests, parsed_expectations, parsed_modifiers, num_matches, overrides_allowed)
-            for (message, source) in modifier_errors:
-                self._add_error(lineno, message, source)
+            self._model.add_tests(lineno, expectation, tests, parsed_expectations, parsed_modifiers, num_matches, overrides_allowed)
 
-    def _parse_expectations(self, lineno, expectation_line):
+    def _parse_expectations(self, expectation_line):
         result = set()
         for part in expectation_line.expectations:
             expectation = TestExpectations.expectation_from_string(part)
             if expectation is None:  # Careful, PASS is currently 0.
-                self._add_error(lineno, 'Unsupported expectation: %s' % part, expectation_line.name)
+                expectation_line.errors.append('Unsupported expectation: %s' % part)
                 continue
             result.add(expectation)
         return result
 
-    def _check_options(self, matcher, lineno, expectation):
-        match_result = self._check_syntax(matcher, lineno, expectation)
-        self._check_semantics(lineno, expectation)
+    def _check_options(self, matcher, expectation):
+        match_result = matcher.match(expectation)
+        self._check_semantics(expectation)
         return match_result.num_matches
 
-    def _check_syntax(self, matcher, lineno, expectation):
-        match_result = matcher.match(expectation.modifiers)
-        for error in match_result.errors:
-            self._add_error(lineno, error, expectation.name)
-        for warning in match_result.warnings:
-            self._log_non_fatal_error(lineno, warning, expectation.name)
-        return match_result
-
-    def _check_semantics(self, lineno, expectation):
+    def _check_semantics(self, expectation):
         has_wontfix = 'wontfix' in expectation.modifiers
         has_bug = False
         for opt in expectation.modifiers:
             if opt.startswith('bug'):
                 has_bug = True
                 if re.match('bug\d+', opt):
-                    self._add_error(lineno,
-                        'BUG\d+ is not allowed, must be one of '
-                        'BUGCR\d+, BUGWK\d+, BUGV8_\d+, '
-                        'or a non-numeric bug identifier.', expectation.name)
+                    expectation.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
 
         if not has_bug and not has_wontfix:
-            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.', expectation.name)
+            expectation.warnings.append('Test lacks BUG modifier.')
 
         if self._is_lint_mode and 'rebaseline' in expectation.modifiers:
-            self._add_error(lineno,
-                'REBASELINE should only be used for running rebaseline.py. '
-                'Cannot be checked in.', expectation.name)
+            expectation.errors.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
 
-    def _check_options_against_expectations(self, lineno, expectation):
+    def _check_options_against_expectations(self, expectation):
         if 'slow' in expectation.modifiers and 'timeout' in expectation.expectations:
-            self._add_error(lineno,
-                'A test can not be both SLOW and TIMEOUT. If it times out '
-                'indefinitely, then it should be just TIMEOUT.', expectation.name)
+            expectation.errors.append('A test can not be both SLOW and TIMEOUT. If it times out indefinitely, then it should be just TIMEOUT.')
 
-    def _check_path_does_not_exist(self, lineno, expectation):
+    def _check_path_does_not_exist(self, expectation):
         # WebKit's way of skipping tests is to add a -disabled suffix.
         # So we should consider the path existing if the path or the
         # -disabled version exists.
         if (not self._port.test_exists(expectation.name)
             and not self._port.test_exists(expectation.name + '-disabled')):
-            # Log a non fatal error here since you hit this case any
+            # Log a warning here since you hit this case any
             # time you update test_expectations.txt without syncing
             # the LayoutTests directory
-            self._log_non_fatal_error(lineno, 'Path does not exist.', expectation.name)
+            expectation.warnings.append('Path does not exist.')
             return True
         return False
 
@@ -807,24 +795,11 @@ class TestExpectations:
             result = [test_list_path, ]
         return result
 
-    def _add_error(self, lineno, msg, path):
-        """Reports an error that will prevent running the tests. Does not
-        immediately raise an exception because we'd like to aggregate all the
-        errors so they can all be printed out."""
-        self._errors.append("Line:%s %s %s" % (lineno, msg, path))
-
-    def _log_non_fatal_error(self, lineno, msg, path):
-        """Reports an error that will not prevent running the tests. These are
-        still errors, but not bad enough to warrant breaking test running."""
-        self._non_fatal_errors.append('Line:%s %s %s' % (lineno, msg, path))
-
 
 class ModifierMatchResult(object):
     def __init__(self, options):
         self.num_matches = ModifierMatcher.NO_MATCH
         self.options = options
-        self.errors = []
-        self.warnings = []
         self.modifiers = []
         self._matched_regexes = set()
         self._matched_macros = set()
@@ -909,8 +884,8 @@ class ModifierMatcher(object):
                 self._categories_for_modifiers[modifier] = category
                 self._all_modifiers.add(modifier)
 
-    def match(self, options):
-        """Checks a list of options against the config set in the constructor.
+    def match(self, expectation):
+        """Checks a expectation.modifiers against the config set in the constructor.
         Options may be either actual modifier strings, "macro" strings
         that get expanded to a list of modifiers, or strings that are allowed
         to be ignored. All of the options must be passed in in lower case.
@@ -923,58 +898,58 @@ class ModifierMatcher(object):
         The results of the most recent match are available in the 'options',
         'modifiers', 'num_matches', 'errors', and 'warnings' properties.
         """
-        result = ModifierMatchResult(options)
-        self._parse(result)
-        if result.errors:
+        old_error_count = len(expectation.errors)
+        result = ModifierMatchResult(expectation.modifiers)
+        self._parse(expectation, result)
+        if old_error_count != len(expectation.errors):
             return result
         self._count_matches(result)
         return result
 
-    def _parse(self, result):
+    def _parse(self, expectation, result):
         # FIXME: Should we warn about lines having every value in a category?
         for option in result.options:
-            self._parse_one(option, result)
+            self._parse_one(expectation, option, result)
 
-    def _parse_one(self, option, result):
+    def _parse_one(self, expectation, option, result):
         if option in self._all_modifiers:
-            self._add_modifier(option, result)
+            self._add_modifier(expectation, option, result)
         elif option in self.macros:
-            self._expand_macro(option, result)
-        elif not self._matches_any_regex(option, result):
-            result.errors.append("Unrecognized option '%s'" % option)
+            self._expand_macro(expectation, option, result)
+        elif not self._matches_any_regex(expectation, option, result):
+            expectation.errors.append("Unrecognized option '%s'" % option)
 
-    def _add_modifier(self, option, result):
+    def _add_modifier(self, expectation, option, result):
         if option in result.modifiers:
-            result.errors.append("More than one '%s'" % option)
+            expectation.errors.append("More than one '%s'" % option)
         else:
             result.modifiers.append(option)
 
-    def _expand_macro(self, macro, result):
+    def _expand_macro(self, expectation, macro, result):
         if macro in result._matched_macros:
-            result.errors.append("More than one '%s'" % macro)
+            expectation.errors.append("More than one '%s'" % macro)
             return
 
         mods = []
         for modifier in self.macros[macro]:
             if modifier in result.options:
-                result.errors.append("Can't specify both modifier '%s' and "
-                                     "macro '%s'" % (modifier, macro))
+                expectation.errors.append("Can't specify both modifier '%s' and macro '%s'" % (modifier, macro))
             else:
                 mods.append(modifier)
         result._matched_macros.add(macro)
         result.modifiers.extend(mods)
 
-    def _matches_any_regex(self, option, result):
+    def _matches_any_regex(self, expectation, option, result):
         for regex_str, pattern in self.regexes_to_ignore.iteritems():
             if pattern.match(option):
-                self._handle_regex_match(regex_str, result)
+                self._handle_regex_match(expectation, regex_str, result)
                 return True
         return False
 
-    def _handle_regex_match(self, regex_str, result):
+    def _handle_regex_match(self, expectation, regex_str, result):
         if (regex_str in result._matched_regexes and
             regex_str not in self.DUPLICATE_REGEXES_ALLOWED):
-            result.errors.append("More than one option matching '%s'" %
+            expectation.errors.append("More than one option matching '%s'" %
                                  regex_str)
         else:
             result._matched_regexes.add(regex_str)

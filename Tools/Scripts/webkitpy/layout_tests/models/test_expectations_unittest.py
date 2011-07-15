@@ -287,8 +287,7 @@ class SemanticTests(Base):
     def test_missing_bugid(self):
         # This should log a non-fatal error.
         self.parse_exp('SLOW : failures/expected/text.html = TEXT')
-        self.assertEqual(
-            len(self._exp.get_non_fatal_errors()), 1)
+        self.assertTrue(self._exp.has_warnings())
 
     def test_slow_and_timeout(self):
         # A test cannot be SLOW and expected to TIMEOUT.
@@ -314,7 +313,7 @@ BUG_OVERRIDE : failures/expected/text.html = IMAGE""", )
     def test_missing_file(self):
         # This should log a non-fatal error.
         self.parse_exp('BUG_TEST : missing_file.html = TEXT')
-        self.assertEqual(len(self._exp.get_non_fatal_errors()), 1)
+        self.assertTrue(self._exp.has_warnings(), 1)
 
 
 class PrecedenceTests(Base):
@@ -395,9 +394,11 @@ class ModifierTests(unittest.TestCase):
         matcher = self.matcher
         if values:
             matcher = ModifierMatcher(self.FakeTestConfiguration(values))
-        match_result = matcher.match(modifiers)
-        self.assertEqual(len(match_result.warnings), 0)
-        self.assertEqual(len(match_result.errors), num_errors)
+        expectation = TestExpectationLine()
+        expectation.modifiers = modifiers
+        match_result = matcher.match(expectation)
+        self.assertEqual(len(expectation.warnings), 0)
+        self.assertEqual(len(expectation.errors), num_errors)
         self.assertEqual(match_result.num_matches, expected_num_matches,
              'match(%s, %s) returned -> %d, expected %d' %
              (modifiers, str(self.config.values()),
