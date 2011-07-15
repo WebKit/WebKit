@@ -687,8 +687,6 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
         return;
     }
 
-    RetainPtr<CFDictionaryRef> connectionProperties(AdoptCF, createConnectionProperties(storedCredentials == AllowStoredCredentials));
-
     handle->createCFURLConnection(storedCredentials == AllowStoredCredentials, ResourceHandle::shouldContentSniffURL(request.url()));
 
     CFURLConnectionScheduleWithRunLoop(handle->connection(), CFRunLoopGetCurrent(), synchronousLoadRunLoopMode());
