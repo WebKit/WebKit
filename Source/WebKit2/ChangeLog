@@ -2,6 +2,12 @@
 
         Windows build fix.
 
+        * UIProcess/win/WebView.cpp:
+
+2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+        Windows build fix.
+
         * UIProcess/win/WebView.h:
 
 2011-07-15  Dan Bernstein  <mitz@apple.com>
