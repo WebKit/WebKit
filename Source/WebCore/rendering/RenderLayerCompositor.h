@@ -217,7 +217,7 @@ private:
     void recursiveRepaintLayerRect(RenderLayer* layer, const IntRect& rect);
 
     typedef HashMap<RenderLayer*, IntRect> OverlapMap;
-    static void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
+    void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer*);
     static bool overlapsCompositedLayers(OverlapMap&, const IntRect& layerBounds);
 

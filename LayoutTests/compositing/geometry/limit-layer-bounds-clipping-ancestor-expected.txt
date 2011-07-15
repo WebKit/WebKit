@@ -9,7 +9,7 @@ middlebottom
   (children 1
     (GraphicsLayer
       (bounds 785.00 2618.00)
-      (children 9
+      (children 6
         (GraphicsLayer
           (position 21.00 21.00)
           (bounds 100.00 100.00)
@@ -35,25 +35,10 @@ middlebottom
           (children 1
             (GraphicsLayer
               (position 5.00 145.00)
-              (bounds 68.00 28.00)
+              (bounds 144.00 24.00)
               (drawsContent 1)
             )
           )
-        )
-        (GraphicsLayer
-          (position 28.00 20.00)
-          (bounds 200.00 200.00)
-          (children 1
-            (GraphicsLayer
-              (position 5.00 2058.00)
-              (drawsContent 1)
-            )
-          )
-        )
-        (GraphicsLayer
-          (position 18.00 240.00)
-          (bounds 220.00 220.00)
-          (drawsContent 1)
         )
         (GraphicsLayer
           (position 28.00 250.00)
@@ -71,17 +56,7 @@ middlebottom
           (children 1
             (GraphicsLayer
               (position 5.00 145.00)
-              (bounds 68.00 28.00)
-              (drawsContent 1)
-            )
-          )
-        )
-        (GraphicsLayer
-          (position 28.00 250.00)
-          (bounds 185.00 200.00)
-          (children 1
-            (GraphicsLayer
-              (position 5.00 2058.00)
+              (bounds 144.00 24.00)
               (drawsContent 1)
             )
           )

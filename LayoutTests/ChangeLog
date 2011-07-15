@@ -1,3 +1,21 @@
+2011-06-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Overlap map for compositing needs to consider clipping
+        https://bugs.webkit.org/show_bug.cgi?id=63493
+
+        Added new test.  limit-layer-bounds-clipping-ancestor had changed
+        behavior because some layers no longer needed to become composited.
+        Adjusted that test to be less platform-specific as well.
+
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor.html:
+        * compositing/layer-creation/overlap-clipping-expected.txt: Added.
+        * compositing/layer-creation/overlap-clipping.html: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Removed.
+        * platform/chromium-gpu/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Removed.
+
 2011-07-15  Kenneth Russell  <kbr@google.com>
 
         Don't restore WebGL context if it was guilty of a graphics reset

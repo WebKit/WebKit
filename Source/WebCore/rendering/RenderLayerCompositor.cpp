@@ -566,7 +566,9 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer*
         boundsComputed = true;
     }
 
-    overlapMap.add(layer, layerBounds);
+    IntRect clipRect = layer->backgroundClipRect(rootRenderLayer(), true);
+    clipRect.intersect(layerBounds);
+    overlapMap.add(layer, clipRect);
 }
 
 void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, RenderLayer* layer)
