@@ -55,7 +55,6 @@ for (var i = 0; i < arguments.length; ++i) {
   argument = arguments[i].value;
   func("context.compileShader(argument)");
   func("context.linkProgram(argument)");
-  func("context.attachShader(argument)");
   func("context.attachShader(program, argument)");
   func("context.attachShader(argument, shader)");
   func("context.detachShader(program, argument)");

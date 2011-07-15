@@ -34,8 +34,8 @@ PASS gl.bindTexture(gl.TEXTURE_2D, texture) was expected value: NO_ERROR.
 PASS gl.blendColor(1.0, 1.0, 1.0, 1.0) was expected value: NO_ERROR.
 PASS gl.blendEquation(gl.FUNC_ADD) was expected value: NO_ERROR.
 PASS gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD) was expected value: NO_ERROR.
-PASS gl.blendFunc(gl.ONE) was expected value: NO_ERROR.
-PASS gl.blendFuncSeparate(gl.ONE, gl.ONE) was expected value: NO_ERROR.
+PASS gl.blendFunc(gl.ONE, gl.ONE) was expected value: NO_ERROR.
+PASS gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE) was expected value: NO_ERROR.
 PASS gl.bufferData(gl.ARRAY_BUFFER, 0, gl.STATIC_DRAW) was expected value: NO_ERROR.
 PASS gl.bufferData(gl.ARRAY_BUFFER, arrayBufferView, gl.STATIC_DRAW) was expected value: NO_ERROR.
 PASS gl.bufferData(gl.ARRAY_BUFFER, arrayBuffer, gl.STATIC_DRAW) was expected value: NO_ERROR.

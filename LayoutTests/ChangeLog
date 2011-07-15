@@ -1,3 +1,17 @@
+2011-07-14  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=64549
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/bad-arguments-test-expected.txt:
+        * fast/canvas/webgl/bad-arguments-test.html:
+        * fast/canvas/webgl/context-lost-expected.txt:
+        * fast/canvas/webgl/context-lost.html:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/null-object-behaviour.html:
+
 2011-07-14  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Introduce pywebsocket-0.6b2

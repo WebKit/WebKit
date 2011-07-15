@@ -7,7 +7,6 @@ PASS Shader Compiled
 PASS getUniformLocation succeeded
 PASS context.compileShader(argument) threw exception TypeError: Type error.
 PASS context.linkProgram(argument) threw exception TypeError: Type error.
-PASS context.attachShader(argument) threw exception TypeError: Type error.
 PASS context.attachShader(program, argument) threw exception TypeError: Type error.
 PASS context.attachShader(argument, shader) threw exception TypeError: Type error.
 PASS context.detachShader(program, argument) threw exception TypeError: Type error.
@@ -34,7 +33,6 @@ PASS context.getShaderInfoLog(argument) threw exception TypeError: Type error.
 PASS context.getShaderSource(argument) threw exception TypeError: Type error.
 PASS context.compileShader(argument) threw exception TypeError: Type error.
 PASS context.linkProgram(argument) threw exception TypeError: Type error.
-PASS context.attachShader(argument) threw exception TypeError: Type error.
 PASS context.attachShader(program, argument) threw exception TypeError: Type error.
 PASS context.attachShader(argument, shader) threw exception TypeError: Type error.
 PASS context.detachShader(program, argument) threw exception TypeError: Type error.
@@ -61,7 +59,6 @@ PASS context.getShaderInfoLog(argument) threw exception TypeError: Type error.
 PASS context.getShaderSource(argument) threw exception TypeError: Type error.
 PASS context.compileShader(argument) is undefined.
 PASS context.linkProgram(argument) is undefined.
-PASS context.attachShader(argument) is undefined.
 PASS context.attachShader(program, argument) is undefined.
 PASS context.attachShader(argument, shader) is undefined.
 PASS context.detachShader(program, argument) is undefined.
@@ -88,7 +85,6 @@ PASS context.getShaderInfoLog(argument) is ''
 PASS context.getShaderSource(argument) is ''
 PASS context.compileShader(argument) is undefined.
 PASS context.linkProgram(argument) is undefined.
-PASS context.attachShader(argument) is undefined.
 PASS context.attachShader(program, argument) is undefined.
 PASS context.attachShader(argument, shader) is undefined.
 PASS context.detachShader(program, argument) is undefined.

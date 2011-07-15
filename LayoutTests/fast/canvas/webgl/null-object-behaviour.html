@@ -20,14 +20,14 @@ var shouldGenerateGLError = wtu.shouldGenerateGLError;
 
 assertMsg(program != null, "Program Compiled");
 assertMsg(shader != null, "Shader Compiled");
-shouldGenerateGLError(context, context.INVALID_VALUE, "context.compileShader()");
-shouldGenerateGLError(context, context.INVALID_VALUE, "context.linkProgram()");
-shouldGenerateGLError(context, context.INVALID_VALUE, "context.attachShader()");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.compileShader(undefined)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.linkProgram(undefined)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.attachShader(undefined, undefined)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.attachShader(program, undefined)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.attachShader(undefined, shader)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.detachShader(program, undefined)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.detachShader(undefined, shader)");
-shouldGenerateGLError(context, context.INVALID_VALUE, "context.shaderSource()");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.shaderSource(undefined, undefined)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.shaderSource(undefined, 'foo')");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.bindAttribLocation(undefined, 0, 'foo')");
 shouldThrow("context.bindBuffer(context.ARRAY_BUFFER, 0)");

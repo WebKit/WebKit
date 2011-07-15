@@ -4,14 +4,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Program Compiled
 PASS Shader Compiled
-PASS context.compileShader() was expected value: INVALID_VALUE.
-PASS context.linkProgram() was expected value: INVALID_VALUE.
-PASS context.attachShader() was expected value: INVALID_VALUE.
+PASS context.compileShader(undefined) was expected value: INVALID_VALUE.
+PASS context.linkProgram(undefined) was expected value: INVALID_VALUE.
+PASS context.attachShader(undefined, undefined) was expected value: INVALID_VALUE.
 PASS context.attachShader(program, undefined) was expected value: INVALID_VALUE.
 PASS context.attachShader(undefined, shader) was expected value: INVALID_VALUE.
 PASS context.detachShader(program, undefined) was expected value: INVALID_VALUE.
 PASS context.detachShader(undefined, shader) was expected value: INVALID_VALUE.
-PASS context.shaderSource() was expected value: INVALID_VALUE.
+PASS context.shaderSource(undefined, undefined) was expected value: INVALID_VALUE.
 PASS context.shaderSource(undefined, 'foo') was expected value: INVALID_VALUE.
 PASS context.bindAttribLocation(undefined, 0, 'foo') was expected value: INVALID_VALUE.
 PASS context.bindBuffer(context.ARRAY_BUFFER, 0) threw exception TypeError: Type error.
