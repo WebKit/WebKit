@@ -36,7 +36,7 @@
 namespace JSC {
 
 class CodeBlock;
-struct ExecState;
+class ExecState;
 
 namespace DFG {
 
