@@ -1,3 +1,9 @@
+2011-07-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-07-15  Kenneth Russell  <kbr@google.com>
 
         Don't restore WebGL context if it was guilty of a graphics reset
