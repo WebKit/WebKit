@@ -148,4 +148,36 @@ test("getNumberOfFailingTests understands NRWT exiting early due to too many fai
     });
 });
 
+test("getNumberOfFailingTests treats build step interruptions as errors", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                isFinished: true,
+                isStarted: true,
+                name: "layout-test",
+                results: [
+                  4,
+                  [
+                      "interrupted",
+                  ]
+                ],
+                step_number: 5,
+                text: [
+                    "layout-test",
+                    "interrupted",
+                ],
+                times: [
+                    1310599204.1231229,
+                    1310600152.973659,
+                ]
+            },
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, -1);
+        equal(tooManyFailures, false);
+    });
+});
+
 })();

@@ -135,6 +135,13 @@ Builder.prototype = {
                 return;
             }
 
+            if (layoutTestStep.results[0] === 4) {
+                // This build step was interrupted (perhaps due to the build slave restarting).
+                PersistentCache.set(cacheKey, result);
+                callback(result.failureCount, result.tooManyFailures);
+                return;
+            }
+
             if (/Exiting early/.test(layoutTestStep.results[1][0]))
                 result.tooManyFailures = true;
 

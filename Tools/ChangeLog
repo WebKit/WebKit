@@ -1,3 +1,23 @@
+2011-07-15  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures how to detect interrupted build steps
+
+        Fixes <http://webkit.org/b/64619> TestFailures page thinks all tests passed in
+        http://build.webkit.org/builders/SnowLeopard%20Intel%20Release%20(WebKit2%20Tests)/builds/13401
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): If the build step has a result code of 4, the
+        build step was interrupted. Treat it as an error (by returning a failureCount of -1).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Added a test for the above.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Bumped the cache version to evict old, buggy
+        cache data that was afflicted by the above bug.
+
 2011-07-15  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests crashes on Apple's Windows port when trying to launch Apache
