@@ -775,12 +775,12 @@ void WebPageProxy::setGestureReachedScrollingLimit(bool limitReached)
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)
-void WebPageProxy::setActualVisibleContentRect(const IntRect& rect)
+void WebPageProxy::setFixedVisibleContentRect(const IntRect& rect)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::SetActualVisibleContentRect(rect), m_pageID);
+    process()->send(Messages::WebPage::SetFixedVisibleContentRect(rect), m_pageID);
 }
 #endif
 

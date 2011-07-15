@@ -831,7 +831,7 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt28dumpUserGestureInFrameLoaderEb @ 830 NONAME
 	_ZNK8QWebPage19supportsContentTypeERK7QString @ 831 NONAME
 	_ZNK8QWebPage21supportedContentTypesEv @ 832 NONAME
-	_ZNK8QWebPage27setActualVisibleContentRectERK5QRect @ 833 NONAME
+	_ZNK8QWebPage26setFixedVisibleContentRectERK5QRect @ 833 NONAME
 	_ZN8QWebPage20setFeaturePermissionEP9QWebFrameNS_7FeatureENS_16PermissionPolicyE @ 834 NONAME
 	_ZN8QWebPage26featurePermissionRequestedEP9QWebFrameNS_7FeatureE @ 835 NONAME
 	_ZN8QWebPage32featurePermissionRequestCanceledEP9QWebFrameNS_7FeatureE @ 836 NONAME

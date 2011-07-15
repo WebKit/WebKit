@@ -1,3 +1,18 @@
+2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Upstream QtWebKit/N9 changes related to visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=64589
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setActualVisibleContentRect):
+        Change to use setFixedVisibleContentRect.
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+        Only set fixedVisibleContentRect for the mainframe.
+        * symbian/eabi/QtWebKitu.def:
+
 2011-07-13  Joseph Pecoraro  <joepeck@webkit.org>
 
         Improve names of some ApplicationCacheStorage accessor methods

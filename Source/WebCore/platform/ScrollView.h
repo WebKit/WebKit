@@ -140,10 +140,10 @@ public:
     // and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
     // included.
     // In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to use
-    // the actualVisibleContentRect instead, though this must be updated manually, e.g after panning ends.
-    IntRect visibleContentRect(bool includeScrollbars = false) const;
-    IntRect actualVisibleContentRect() const { return m_actualVisibleContentRect.isEmpty() ? visibleContentRect() : m_actualVisibleContentRect; }
-    void setActualVisibleContentRect(const IntRect& actualVisibleContentRect) { m_actualVisibleContentRect = actualVisibleContentRect; }
+    // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
+    // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
+    virtual IntRect visibleContentRect(bool includeScrollbars = false) const;
+    void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
     LayoutUnit visibleWidth() const { return visibleContentRect().width(); }
     LayoutUnit visibleHeight() const { return visibleContentRect().height(); }
 
@@ -296,6 +296,8 @@ protected:
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
 
+    IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
+
     IntSize boundsSize() const { return m_boundsSize; }
     void setInitialBoundsSize(const IntSize&);
 
@@ -335,7 +337,7 @@ private:
     // whether it is safe to blit on scroll.
     bool m_canBlitOnScroll;
 
-    IntRect m_actualVisibleContentRect;
+    IntRect m_fixedVisibleContentRect;
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
     IntPoint m_cachedScrollPosition;
     IntSize m_fixedLayoutSize;

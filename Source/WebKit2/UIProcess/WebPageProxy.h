@@ -337,7 +337,7 @@ public:
     Evas_Object* viewObject();
 #endif
 #if ENABLE(TILED_BACKING_STORE)
-    void setActualVisibleContentRect(const WebCore::IntRect& rect);
+    void setFixedVisibleContentRect(const WebCore::IntRect&);
 #endif
 
     void handleMouseEvent(const NativeWebMouseEvent&);

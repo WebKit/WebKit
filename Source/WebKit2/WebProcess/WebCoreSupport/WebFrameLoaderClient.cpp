@@ -1136,16 +1136,16 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool isMainFrame = webPage->mainFrame() == m_frame;
 
 #if ENABLE(TILED_BACKING_STORE)
-    IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->actualVisibleContentRect().size() : IntSize();
+    IntSize currentVisibleContentSize = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->visibleContentRect().size() : IntSize();
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, webPage->resizesToContentsLayoutSize(), isMainFrame && webPage->resizesToContentsEnabled());
 
     if (isMainFrame && webPage->resizesToContentsEnabled()) {
         m_frame->coreFrame()->view()->setDelegatesScrolling(true);
         m_frame->coreFrame()->view()->setPaintsEntireContents(true);
+        // The HistoryController will update the scroll position later if needed.
+        m_frame->coreFrame()->view()->setFixedVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
     }
 
-    // The HistoryController will update the scroll position later if needed.
-    m_frame->coreFrame()->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
 #else
     const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
     m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForResponse(response);

@@ -2643,7 +2643,7 @@ void QWebPage::setActualVisibleContentRect(const QRect& rect) const
         return;
 
     WebCore::FrameView* view = frame->d->frame->view();
-    view->setActualVisibleContentRect(rect);
+    view->setFixedVisibleContentRect(rect);
 }
 
 /*!

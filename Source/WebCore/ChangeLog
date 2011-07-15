@@ -1,3 +1,37 @@
+2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Upstream QtWebKit/N9 changes related to visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=64589
+
+        Reviewed by Simon Hausmann.
+
+        Rename setActualVisibleContentRect to setFixedVisibleContentRect
+        as that makes it more obvious that it is an override. It is also
+        consistent with the setFixedLayout which is often used in
+        conjunction with it.
+
+        Make visibleContentRect return the fixed value if set, and remove
+        all calls to actualVisibleContentRect.
+
+        Also updated the documentation.
+
+        This is similar to what we have on our QtWebKit/N9 branch and is
+        pretty well tested.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        If a fixed visibleContentRect is set, return that.
+        Remove the code returning the contents size when in
+        paintsEntireContents mode as that is wrong and already
+        ifdeffed out for EFL.
+        (WebCore::ScrollView::setScrollPosition):
+        Do not try to be smart and update the fixed visibleContentsRect
+        automatically, as the embedder might ignore the scroll request
+        for various reasons.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::setFixedVisibleContentRect):
+        (WebCore::ScrollView::fixedVisibleContentRect):
+
 2011-07-15  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Rename console.markTimeline() to console.timeStamp() for Firebug compatibility.

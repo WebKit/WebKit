@@ -1,3 +1,28 @@
+2011-07-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Upstream QtWebKit/N9 changes related to visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=64589
+
+        Reviewed by Simon Hausmann.
+
+        Rename setActualVisibleContentRect to setFixedVisibleContentRect
+        as that makes it more obvious that it is an override. It is also
+        consistent with the setFixedLayout which is often used in
+        conjunction with it.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFixedVisibleContentRect):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::setVisibleArea):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Only set fixedVisibleContentRect for the mainframe.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFixedVisibleContentRect):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

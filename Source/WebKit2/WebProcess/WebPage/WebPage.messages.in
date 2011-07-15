@@ -93,7 +93,7 @@ messages -> WebPage {
     SetCustomTextEncodingName(WTF::String encodingName)
 
 #if ENABLE(TILED_BACKING_STORE)
-    SetActualVisibleContentRect(WebCore::IntRect rect)
+    SetFixedVisibleContentRect(WebCore::IntRect rect)
     SetResizesToContentsUsingLayoutSize(WebCore::IntSize size)
 #endif
 

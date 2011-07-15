@@ -637,11 +637,11 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void WebPage::setActualVisibleContentRect(const IntRect& rect)
+void WebPage::setFixedVisibleContentRect(const IntRect& rect)
 {
     Frame* frame = m_page->mainFrame();
 
-    frame->view()->setActualVisibleContentRect(rect);
+    frame->view()->setFixedVisibleContentRect(rect);
 }
 
 void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)

@@ -228,10 +228,8 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (platformWidget())
         return platformVisibleContentRect(includeScrollbars);
 
-#if !PLATFORM(EFL)
-    if (paintsEntireContents())
-        return IntRect(IntPoint(0, 0), contentsSize());
-#endif
+    if (!m_fixedVisibleContentRect.isEmpty())
+        return m_fixedVisibleContentRect;
 
     int verticalScrollbarWidth = verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()
         && !includeScrollbars ? verticalScrollbar()->width() : 0;
@@ -383,8 +381,6 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 #if ENABLE(TILED_BACKING_STORE)
     if (delegatesScrolling()) {
         hostWindow()->delegatedScrollRequested(scrollPoint);
-        if (!m_actualVisibleContentRect.isEmpty())
-            m_actualVisibleContentRect.setLocation(scrollPoint);
         return;
     }
 #endif
