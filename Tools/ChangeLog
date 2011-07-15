@@ -1,3 +1,12 @@
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Switch to use Python enumerate function to enumerate line numbers.
+        https://bugs.webkit.org/show_bug.cgi?id=64602
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Changed to use enumerate.
+
 2011-07-15  Martin Robinson  <mrobinson@igalia.com>
 
         Build fixes for WebKit2. Ensure that all generated sources are

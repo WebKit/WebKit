@@ -639,9 +639,7 @@ class TestExpectations:
     def _report_errors(self):
         errors = []
         warnings = []
-        lineno = 0
-        for expectation in self._expectations:
-            lineno += 1
+        for lineno, expectation in enumerate(self._expectations, start=1):
             for error in expectation.errors:
                 errors.append("Line:%s %s %s" % (lineno, error, expectation.name if expectation.expectations else expectation.comment))
             for warning in expectation.warnings:
@@ -695,9 +693,7 @@ class TestExpectations:
     def _add_expectations(self, expectation_list, overrides_allowed):
         matcher = ModifierMatcher(self._test_config)
 
-        lineno = 0
-        for expectation in expectation_list:
-            lineno += 1
+        for lineno, expectation in enumerate(expectation_list, start=1):
             expectations = expectation.expectations
 
             if not expectation.expectations:
