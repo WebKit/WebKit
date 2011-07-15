@@ -3770,7 +3770,7 @@ BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
 BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 
-BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT
+BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT PASS
 
 // Started around WebKit r90233:r90242
 BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT

@@ -1,3 +1,9 @@
+2011-07-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Updated chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Vincent Scheib  <scheib@chromium.org>
 
         [chromium] updated test expectations.
