@@ -1,3 +1,10 @@
+2011-07-14  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+
 2011-07-14  Darin Adler  <darin@apple.com>
 
         [Mac] Use [NSCursor operationNotAllowedCursor] for CSS no-drop as well as CSS not-allowed

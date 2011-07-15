@@ -427,7 +427,7 @@ private:
             length = 0;
         }
 
-        setValue(selector->style(), length);
+        this->setValue(selector->style(), length);
     }
 };
 
