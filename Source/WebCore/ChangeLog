@@ -1,3 +1,20 @@
+2011-07-14  Adam Barth  <abarth@webkit.org>
+
+        The beforeload event allows tracking URI changes in a frame
+        https://bugs.webkit.org/show_bug.cgi?id=64482
+
+        Reviewed by Nate Chapin.
+
+        Tests: http/tests/security/beforeload-iframe-client-redirect.html
+               http/tests/security/beforeload-iframe-server-redirect.html
+
+        Only dispatch the beforeload event for a frame if we haven't yet
+        committed our first real load.  The URL that we send to our parent will
+        be the same URL the parent seens in the src attribute.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2011-07-14  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.

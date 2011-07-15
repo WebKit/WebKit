@@ -1353,7 +1353,13 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
             loader->setTriggeringAction(NavigationAction(newURL, policyChecker()->loadType(), isFormSubmission));
 
         if (Element* ownerElement = m_frame->ownerElement()) {
-            if (!ownerElement->dispatchBeforeLoadEvent(loader->request().url().string())) {
+            // We skip dispatching the beforeload event if we've already
+            // committed a real document load because the event would leak
+            // subsequent activity by the frame which the parent frame isn't
+            // supposed to learn. For example, if the child frame navigated to
+            // a new URL, the parent frame shouldn't learn the URL.
+            if (!m_stateMachine.committedFirstRealDocumentLoad()
+                && !ownerElement->dispatchBeforeLoadEvent(loader->request().url().string())) {
                 continueLoadAfterNavigationPolicy(loader->request(), formState, false);
                 return;
             }

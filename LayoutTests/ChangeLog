@@ -1,3 +1,19 @@
+2011-07-14  Adam Barth  <abarth@webkit.org>
+
+        The beforeload event allows tracking URI changes in a frame
+        https://bugs.webkit.org/show_bug.cgi?id=64482
+
+        Reviewed by Nate Chapin.
+
+        Test whether the beforeload event is fired for various kinds of redirects.
+
+        * http/tests/security/beforeload-iframe-client-redirect-expected.txt: Added.
+        * http/tests/security/beforeload-iframe-client-redirect.html: Added.
+        * http/tests/security/beforeload-iframe-server-redirect-expected.txt: Added.
+        * http/tests/security/beforeload-iframe-server-redirect.html: Added.
+        * http/tests/security/resources/post-done.html: Added.
+        * http/tests/security/resources/client-redir.html: Added.
+
 2011-07-14  Vincent Scheib  <scheib@chromium.org>
 
         [chromium] updated test expectations.
