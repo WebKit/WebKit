@@ -64,7 +64,7 @@ bool Extensions3DChromium::isEnabled(const String& name)
 
 int Extensions3DChromium::getGraphicsResetStatusARB()
 {
-    return m_internal->isContextLost() ? static_cast<int>(Extensions3D::UNKNOWN_CONTEXT_RESET_ARB) : static_cast<int>(GraphicsContext3D::NO_ERROR);
+    return static_cast<int>(m_internal->getGraphicsResetStatusARB());
 }
 
 void Extensions3DChromium::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)

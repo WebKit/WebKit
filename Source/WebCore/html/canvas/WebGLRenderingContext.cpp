@@ -339,23 +339,7 @@ private:
 
 void WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired()
 {
-    // Timer is started when m_contextLost is false.  It will first call
-    // onLostContext, which will set m_contextLost to true.  Then it will keep
-    // calling restoreContext and reschedule itself until m_contextLost is back
-    // to false.
-    if (!m_context->m_contextLost) {
-        m_context->onLostContext();
-        startOneShot(secondsBetweenRestoreAttempts);
-    } else {
-        // The rendering context is not restored if there is no handler for
-        // the context restored event.
-        if (!m_context->canvas()->hasEventListeners(eventNames().webglcontextrestoredEvent))
-            return;
-
-        m_context->restoreContext();
-        if (m_context->m_contextLost)
-            startOneShot(secondsBetweenRestoreAttempts);
-    }
+    m_context->maybeRestoreContext();
 }
 
 class WebGLRenderingContextLostCallback : public GraphicsContext3D::ContextLostCallback {
@@ -3940,7 +3924,7 @@ void WebGLRenderingContext::forceLostContext()
         return;
     }
 
-    m_restoreTimer.startOneShot(0);
+    maybeRestoreContext();
 }
 
 void WebGLRenderingContext::onLostContext()
@@ -4792,6 +4776,63 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
         m_context->vertexAttribPointer(0, state.size, state.type, state.normalized, state.originalStride, state.offset);
     }
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
+}
+
+void WebGLRenderingContext::maybeRestoreContext()
+{
+    // Timer is started when m_contextLost is false. It will first call
+    // onLostContext, which will set m_contextLost to true. Then it will keep
+    // calling restoreContext and reschedule itself until m_contextLost is back
+    // to false.
+    bool shouldStartTimer = false;
+    bool shouldAttemptRestoreNow = true;
+
+    if (!m_contextLost) {
+        onLostContext();
+        shouldStartTimer = true;
+        shouldAttemptRestoreNow = false;
+    }
+
+    // The rendering context is not restored if there is no handler for
+    // the context restored event.
+    if (!canvas()->hasEventListeners(eventNames().webglcontextrestoredEvent))
+        return;
+
+    int contextLostReason = m_context->getExtensions()->getGraphicsResetStatusARB();
+
+    switch (contextLostReason) {
+    case GraphicsContext3D::NO_ERROR:
+        // The GraphicsContext3D implementation might not fully
+        // support GL_ARB_robustness semantics yet. Alternatively, the
+        // WebGL WEBKIT_lose_context extension might have been used to
+        // force a lost context.
+        break;
+    case Extensions3D::GUILTY_CONTEXT_RESET_ARB:
+        // The rendering context is not restored if this context was
+        // guilty of causing the graphics reset.
+        printWarningToConsole("WARNING: WebGL content on the page caused the graphics card to reset; not restoring the context");
+        return;
+    case Extensions3D::INNOCENT_CONTEXT_RESET_ARB:
+        // Always allow the context to be restored.
+        break;
+    case Extensions3D::UNKNOWN_CONTEXT_RESET_ARB:
+        // Warn. Ideally, prompt the user telling them that WebGL
+        // content on the page might have caused the graphics card to
+        // reset and ask them whether they want to continue running
+        // the content. Only if they say "yes" should we start
+        // attempting to restore the context.
+        printWarningToConsole("WARNING: WebGL content on the page might have caused the graphics card to reset");
+        break;
+    }
+
+    if (shouldAttemptRestoreNow) {
+        restoreContext();
+        if (m_contextLost)
+            shouldStartTimer = true;
+    }
+
+    if (shouldStartTimer)
+        m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
 }
 
 WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)

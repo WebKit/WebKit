@@ -292,6 +292,9 @@ public:
     // GL_CHROMIUM_rate_limit_offscreen_context
     void rateLimitOffscreenContextCHROMIUM();
 
+    // GL_ARB_robustness
+    GC3Denum getGraphicsResetStatusARB();
+
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;

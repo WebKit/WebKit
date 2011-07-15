@@ -610,6 +610,9 @@ public:
     bool simulateVertexAttrib0(GC3Dsizei numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
+    // Helper for restoration after context lost.
+    void maybeRestoreContext();
+
     friend class WebGLStateRestorer;
 };
 

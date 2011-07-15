@@ -1,3 +1,20 @@
+2011-07-15  Kenneth Russell  <kbr@google.com>
+
+        Don't restore WebGL context if it was guilty of a graphics reset
+        https://bugs.webkit.org/show_bug.cgi?id=64497
+
+        Reviewed by Stephen White.
+
+        Actually implement getGraphicsResetStatusARB rather than inferring
+        the status based on whether the context has been lost.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::getGraphicsResetStatusARB):
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::getGraphicsResetStatusARB):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DInternal.h:
+
 2011-07-15  Dan Bernstein  <mitz@apple.com>
 
         Chromium build fix.

@@ -840,6 +840,7 @@ DELEGATE_TO_IMPL_1(waitLatchCHROMIUM, GC3Duint)
 DELEGATE_TO_IMPL_1(setLatchCHROMIUM, GC3Duint)
 
 DELEGATE_TO_IMPL(rateLimitOffscreenContextCHROMIUM)
+DELEGATE_TO_IMPL_R(getGraphicsResetStatusARB, GC3Denum)
 
 //----------------------------------------------------------------------
 // GraphicsContext3D

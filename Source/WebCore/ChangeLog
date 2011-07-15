@@ -1,3 +1,26 @@
+2011-07-15  Kenneth Russell  <kbr@google.com>
+
+        Don't restore WebGL context if it was guilty of a graphics reset
+        https://bugs.webkit.org/show_bug.cgi?id=64497
+
+        Reviewed by Stephen White.
+
+        Use getGraphicsResetStatusARB already defined in Extensions3D to
+        determine why the context was lost, and respond to guilty context
+        notifications by forbidding restoration of the context.
+
+        It isn't currently possible to write an automated test for this.
+        We might consider extending the WEBKIT_lose_context extension to
+        allow a reason to be provided why the context was lost. It was
+        tested manually in Chromium on Windows and Linux with some test
+        cases that provoke actual graphics card resets.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired):
+        (WebCore::WebGLRenderingContext::forceLostContext):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        * html/canvas/WebGLRenderingContext.h:
+
 2011-07-15  Chris Marrin  <cmarrin@apple.com>
 
         Move TransformState to platform/graphics and give it the option to transform just a FloatQuad

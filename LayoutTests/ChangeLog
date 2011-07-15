@@ -1,3 +1,17 @@
+2011-07-15  Kenneth Russell  <kbr@google.com>
+
+        Don't restore WebGL context if it was guilty of a graphics reset
+        https://bugs.webkit.org/show_bug.cgi?id=64497
+
+        Reviewed by Stephen White.
+
+        Updated expectations for context-lost test and added comment about
+        the order of event delivery. Per the specification of the
+        WEBKIT_lose_context extension, the previous expectations were wrong.
+
+        * fast/canvas/webgl/context-lost-expected.txt:
+        * fast/canvas/webgl/context-lost.html:
+
 2011-07-15  Adrienne Walker  <enne@google.com>
 
         [chromium] Re-mark tests as failing as a result of r91069

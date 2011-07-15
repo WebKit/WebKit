@@ -356,6 +356,12 @@ public:
     virtual void deleteTexture(WebGLId) = 0;
 
     virtual void setContextLostCallback(WebGraphicsContextLostCallback* callback) {}
+    // GL_ARB_robustness
+    //
+    // This entry point must provide slightly different semantics than
+    // the GL_ARB_robustness extension; specifically, the lost context
+    // state is sticky, rather than reported only once.
+    virtual WGC3Denum getGraphicsResetStatusARB() { return 0; /* GL_NO_ERROR */ }
 };
 
 } // namespace WebKit
