@@ -56,7 +56,7 @@ const BugzillaConstants = {
     },
 };
 
-function TestFailureBugForm(bugzilla, trac, tester, failingBuildName, passingBuildName, failingTests) {
+function FailingTestsBugForm(bugzilla, trac, tester, failingBuildName, passingBuildName, failingTests) {
     NewBugForm.call(this, bugzilla);
 
     this._trac = trac;
@@ -82,7 +82,7 @@ function TestFailureBugForm(bugzilla, trac, tester, failingBuildName, passingBui
     this.version = BugzillaConstants.Version.Nightly;
 }
 
-TestFailureBugForm.prototype = {
+FailingTestsBugForm.prototype = {
     domElement: function() {
         var form = NewBugForm.prototype.domElement.call(this);
         form.className = 'new-bug-form';
@@ -189,4 +189,4 @@ TestFailureBugForm.prototype = {
     },
 };
 
-TestFailureBugForm.prototype.__proto__ = NewBugForm.prototype;
+FailingTestsBugForm.prototype.__proto__ = NewBugForm.prototype;

@@ -1,3 +1,24 @@
+2011-07-15  Adam Roben  <aroben@apple.com>
+
+        Rename TestFailureBugForm to FailingTestsBugForm
+
+        The new name will match better with a forthcoming FlakyTestBugForm class.
+
+        Fixes <http://webkit.org/b/64598> TestFailures page's TestFailureBugForm class has a bad
+        name
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm.js: Renamed from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailureBugForm.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js: Renamed from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailureBugForm_unittests.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Updated for renames.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Ditto, and
+        reordered <script>s to put files which others depend on for parsing first.
+
 2011-07-15  Adam Barth  <abarth@webkit.org>
 
         NRWT stores the Chromium revision number in full_results.json

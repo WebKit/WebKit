@@ -25,7 +25,7 @@
 
 (function() {
 
-module('TestFailureBugForm');
+module('FailingTestsBugForm');
 
 function MockBuilder(name) {
     this.name = name;
@@ -59,7 +59,7 @@ function createTestForm(testerName, failingBuildName, passingBuildName, failingT
         return '[RESULTS PAGE URL ' + this.name + ', ' + buildName + ']';
     }
 
-    return new TestFailureBugForm(mockBugzilla, mockTrac, mockBuilder, failingBuildName, passingBuildName, failingTests);
+    return new FailingTestsBugForm(mockBugzilla, mockTrac, mockBuilder, failingBuildName, passingBuildName, failingTests);
 }
 
 test('component and keywords are set', 2, function() {

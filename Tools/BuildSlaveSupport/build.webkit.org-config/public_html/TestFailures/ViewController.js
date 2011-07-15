@@ -385,7 +385,7 @@ ViewController.prototype = {
             closedList.appendChildren(closedBugs.map(bugToListItem));
         });
 
-        var bugForm = new TestFailureBugForm(this._bugzilla, this._trac, tester, failingBuildName, passingBuildName, failingTests);
+        var bugForm = new FailingTestsBugForm(this._bugzilla, this._trac, tester, failingBuildName, passingBuildName, failingTests);
 
         var form = bugForm.domElement();
         result.appendChild(form);
