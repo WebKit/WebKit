@@ -26,10 +26,6 @@
 #include "config.h"
 #include "ArrayBuffer.h"
 
-#if USE(V8)
-#include "V8Binding.h"
-#endif
-
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -80,9 +76,6 @@ unsigned ArrayBuffer::byteLength() const
 
 ArrayBuffer::~ArrayBuffer()
 {
-#if USE(V8)
-    v8::V8::AdjustAmountOfExternalAllocatedMemory(-m_sizeInBytes);
-#endif
     WTF::fastFree(m_data);
 }
 
@@ -98,12 +91,8 @@ void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize)
         if (totalSize / numElements != elementByteSize)
             return 0;
     }
-    if (WTF::tryFastCalloc(numElements, elementByteSize).getValue(result)) {
-#if USE(V8)
-        v8::V8::AdjustAmountOfExternalAllocatedMemory(numElements * elementByteSize);
-#endif
+    if (WTF::tryFastCalloc(numElements, elementByteSize).getValue(result))
         return result;
-    }
     return 0;
 }
 
