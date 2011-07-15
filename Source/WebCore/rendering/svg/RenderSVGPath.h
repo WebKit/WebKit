@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class GraphicsContextStateSaver;
 class RenderSVGContainer;
 class SVGStyledTransformableElement;
 
@@ -67,6 +68,11 @@ private:
 
     FloatRect calculateMarkerBoundsIfNeeded();
     void updateCachedBoundaries();
+
+    void setupSquareCapPath(Path*& usePath, int& applyMode);
+    bool setupNonScalingStrokePath(Path*& usePath, GraphicsContextStateSaver&);
+    bool shouldStrokeZeroLengthSubpath() const;
+    FloatRect zeroLengthSubpathRect() const;
 
 private:
     virtual AffineTransform localTransform() const { return m_localTransform; }

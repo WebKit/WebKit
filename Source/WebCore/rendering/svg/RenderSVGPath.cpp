@@ -99,6 +99,9 @@ bool RenderSVGPath::strokeContains(const FloatPoint& point, bool requiresStroke)
     if (requiresStroke && !RenderSVGResource::strokePaintingResource(this, style(), fallbackColor))
         return false;
 
+    if (shouldStrokeZeroLengthSubpath())
+        return zeroLengthSubpathRect().contains(point);
+
     BoundingRectStrokeStyleApplier strokeStyle(this, style());
     return m_path.strokeContains(&strokeStyle, point);
 }
@@ -148,6 +151,50 @@ void RenderSVGPath::layout()
     setNeedsLayout(false);
 }
 
+bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
+{
+    // Spec(11.4): Any zero length subpath shall not be stroked if the ‘stroke-linecap’ property has a value of butt
+    // but shall be stroked if the ‘stroke-linecap’ property has a value of round or square
+    return style()->svgStyle()->capStyle() == SquareCap && !m_fillBoundingBox.width() && !m_fillBoundingBox.height();
+}
+
+FloatRect RenderSVGPath::zeroLengthSubpathRect() const
+{
+    SVGElement* svgElement = static_cast<SVGElement*>(node());
+    float strokeWidth = style()->svgStyle()->strokeWidth().value(svgElement);
+    return FloatRect(m_fillBoundingBox.x() - strokeWidth / 2., m_fillBoundingBox.y() - strokeWidth / 2., strokeWidth, strokeWidth);
+}
+
+void RenderSVGPath::setupSquareCapPath(Path*& usePath, int& applyMode)
+{
+    // Spec(11.4): Any zero length subpath shall not be stroked if the ‘stroke-linecap’ property has a value of butt
+    // but shall be stroked if the ‘stroke-linecap’ property has a value of round or square
+    DEFINE_STATIC_LOCAL(Path, tempPath, ());
+
+    applyMode = ApplyToFillMode;
+    usePath = &tempPath;
+    usePath->clear();
+    usePath->addRect(zeroLengthSubpathRect());
+}
+
+bool RenderSVGPath::setupNonScalingStrokePath(Path*& usePath, GraphicsContextStateSaver& stateSaver)
+{
+    DEFINE_STATIC_LOCAL(Path, tempPath, ());
+
+    SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
+    AffineTransform nonScalingStrokeTransform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
+    if (!nonScalingStrokeTransform.isInvertible())
+        return false;
+
+    tempPath = m_path;
+    usePath = &tempPath;
+    tempPath.transform(nonScalingStrokeTransform);
+
+    stateSaver.save();
+    stateSaver.context()->concatCTM(nonScalingStrokeTransform.inverse());
+    return true;
+}
+
 void RenderSVGPath::fillAndStrokePath(GraphicsContext* context)
 {
     RenderStyle* style = this->style();
@@ -169,31 +216,30 @@ void RenderSVGPath::fillAndStrokePath(GraphicsContext* context)
     if (!strokePaintingResource)
         return;
 
-    Path path;
+    Path* usePath = &m_path;
+    int applyMode = ApplyToStrokeMode;
 
     bool nonScalingStroke = style->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE;
 
     GraphicsContextStateSaver stateSaver(*context, false);
-    if (nonScalingStroke) {
-        SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
-        AffineTransform nonScalingStrokeTransform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
-        if (!nonScalingStrokeTransform.isInvertible())
-            return;
 
-        path = m_path;
-        path.transform(nonScalingStrokeTransform);
-
-        stateSaver.save();
-        context->concatCTM(nonScalingStrokeTransform.inverse());
+    // Spec(11.4): Any zero length subpath shall not be stroked if the ‘stroke-linecap’ property has a value of butt
+    // but shall be stroked if the ‘stroke-linecap’ property has a value of round or square
+    // FIXME: this does not work for zero-length subpaths, only when total path is zero-length
+    if (shouldStrokeZeroLengthSubpath())
+        setupSquareCapPath(usePath, applyMode);
+    else if (nonScalingStroke) {
+       if (!setupNonScalingStrokePath(usePath, stateSaver))
+           return;
     }
 
-    if (strokePaintingResource->applyResource(this, style, context, ApplyToStrokeMode))
-        strokePaintingResource->postApplyResource(this, context, ApplyToStrokeMode, nonScalingStroke ? &path : &m_path);
+    if (strokePaintingResource->applyResource(this, style, context, applyMode))
+        strokePaintingResource->postApplyResource(this, context, applyMode, usePath);
     else if (fallbackColor.isValid()) {
         RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
         fallbackResource->setColor(fallbackColor);
-        if (fallbackResource->applyResource(this, style, context, ApplyToStrokeMode))
-            fallbackResource->postApplyResource(this, context, ApplyToStrokeMode, nonScalingStroke ? &path : &m_path);
+        if (fallbackResource->applyResource(this, style, context, applyMode))
+            fallbackResource->postApplyResource(this, context, applyMode, usePath);
     }
 }
 
@@ -308,6 +354,16 @@ void RenderSVGPath::updateCachedBoundaries()
 
     // Cache _unclipped_ fill bounding box, used for calculations in resources
     m_fillBoundingBox = m_path.boundingRect();
+
+    // Spec(11.4): Any zero length subpath shall not be stroked if the ‘stroke-linecap’ property has a value of butt
+    // but shall be stroked if the ‘stroke-linecap’ property has a value of round or square
+    if (shouldStrokeZeroLengthSubpath()) {
+        m_strokeAndMarkerBoundingBox = zeroLengthSubpathRect();
+        // Cache smallest possible repaint rectangle
+        m_repaintBoundingBox = m_strokeAndMarkerBoundingBox;
+        SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
+        return;
+    }
 
     // Cache _unclipped_ stroke bounding box, used for calculations in resources (includes marker boundaries)
     m_strokeAndMarkerBoundingBox = m_fillBoundingBox;

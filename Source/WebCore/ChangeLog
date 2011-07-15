@@ -1,3 +1,28 @@
+2011-07-15  Rob Buis  <rbuis@rim.com>
+
+        Stroking of zero-length paths in SVG should change according to erratum
+        https://bugs.webkit.org/show_bug.cgi?id=18356
+
+        Reviewed by Nikolas Zimmermann.
+
+        Ensure rendering of zero-length paths with stroke-linecap=square works by
+        creating the square rectangle manually.
+
+        Tests: svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
+               svg/custom/zero-path-square-cap-rendering.svg
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextStateSaver::context):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::strokeContains):
+        (WebCore::RenderSVGPath::shouldStrokeZeroLengthSubpath):
+        (WebCore::RenderSVGPath::zeroLengthSubpathRect):
+        (WebCore::RenderSVGPath::setupSquareCapPath):
+        (WebCore::RenderSVGPath::setupNonScalingStrokePath):
+        (WebCore::RenderSVGPath::fillAndStrokePath):
+        (WebCore::RenderSVGPath::updateCachedBoundaries):
+        * rendering/svg/RenderSVGPath.h:
+
 2011-06-27  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.
