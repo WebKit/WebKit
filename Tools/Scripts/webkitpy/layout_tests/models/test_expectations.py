@@ -143,7 +143,7 @@ class TestExpectationSerializer:
     @classmethod
     def to_string(cls, expectation):
         result = []
-        if expectation.malformed:
+        if expectation.is_malformed():
             result.append(expectation.comment)
         else:
             if expectation.name is None:
@@ -178,7 +178,6 @@ class TestExpectationParser:
 
         """
         expectation = TestExpectationLine()
-        errors = []
         comment_index = expectation_string.find("//")
         if comment_index == -1:
             comment_index = len(expectation_string)
@@ -187,41 +186,31 @@ class TestExpectationParser:
 
         remaining_string = re.sub(r"\s+", " ", expectation_string[:comment_index].strip())
         if len(remaining_string) == 0:
-            expectation.malformed = False
-            expectation.valid = True
-            return expectation, errors
+            return expectation
 
         parts = remaining_string.split(':')
         if len(parts) != 2:
-            errors.append(("Missing a ':' in" if len(parts) < 2 else "Extraneous ':' in", "'" + expectation_string + "'"))
+            expectation.errors.append("Missing a ':'" if len(parts) < 2 else "Extraneous ':'")
         else:
             test_and_expectation = parts[1].split('=')
             if len(test_and_expectation) != 2:
-                errors.append(("Missing expectations in" if len(test_and_expectation) < 2 else "Extraneous '=' in", "'" + expectation_string + "'"))
+                expectation.errors.append("Missing expectations" if len(test_and_expectation) < 2 else "Extraneous '='")
 
-        if len(errors) > 0:
+        if expectation.is_malformed():
             expectation.comment = expectation_string
-            expectation.malformed = True
-            expectation.valid = False
         else:
-            expectation.malformed = False
-            expectation.valid = True
             expectation.modifiers = cls._split_space_separated(parts[0])
             expectation.name = test_and_expectation[0].strip()
             expectation.expectations = cls._split_space_separated(test_and_expectation[1])
 
-        return expectation, errors
+        return expectation
 
     @classmethod
-    def parse_list(cls, expectations_string, validator):
+    def parse_list(cls, expectations_string):
         """Returns a list of TestExpectationLines, one for each line in expectations_string."""
         expectations = []
-        line_number = 0
         for line in expectations_string.split("\n"):
-            expectation, errors = cls.parse(line)
-            line_number += 1
-            expectation.valid = validator.validate(line_number, expectation, errors)
-            expectations.append(expectation)
+            expectations.append(cls.parse(line))
         return expectations
 
     @classmethod
@@ -240,10 +229,10 @@ class TestExpectationLine:
         self.modifiers = []
         self.expectations = []
         self.comment = None
-        # FIXME: Should valid and malformed be a single state flag? Probably not, since "malformed" is also "not valid".
-        self.valid = False
-        self.malformed = False
+        self.errors = []
 
+    def is_malformed(self):
+        return len(self.errors) > 0
 
 # FIXME: Refactor to use TestExpectationLine as data item
 # FIXME: Refactor API to be a proper CRUD.
@@ -576,14 +565,13 @@ class TestExpectations:
         # invalid ones.
         self._all_expectations = {}
 
-        self._matcher = ModifierMatcher(self._test_config)
-        self._overrides_allowed = False
-        self._expectations = TestExpectationParser.parse_list(expectations, self)
+        self._expectations = TestExpectationParser.parse_list(expectations)
+        self._add_expectations(self._expectations, overrides_allowed=False)
 
         if overrides:
-            self._overrides_allowed = True
-            self._expectations += TestExpectationParser.parse_list(overrides, self)
-            self._overrides_allowed = False
+            overrides_expectations = TestExpectationParser.parse_list(overrides)
+            self._add_expectations(overrides_expectations, overrides_allowed=True)
+            self._expectations += overrides_expectations
 
         self._handle_any_read_errors()
         self._process_tests_without_expectations()
@@ -686,7 +674,7 @@ class TestExpectations:
     def remove_rebaselined_tests(self, tests):
         """Returns a copy of the expectations with the tests removed."""
         def without_rebaseline_modifier(expectation):
-            return not (expectation.valid and expectation.name in tests and "rebaseline" in expectation.modifiers)
+            return not (not expectation.is_malformed() and expectation.name in tests and "rebaseline" in expectation.modifiers)
 
         return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
@@ -696,49 +684,51 @@ class TestExpectations:
         self._all_expectations[test].append(
             ModifiersAndExpectations(options, expectations))
 
-    def validate(self, lineno, expectation, syntax_errors):
-        test_list_path = expectation.name
-        options = expectation.modifiers
-        expectations = expectation.expectations
-        matcher = self._matcher
-        overrides_allowed = self._overrides_allowed
+    def _add_expectations(self, expectation_list, overrides_allowed):
+        matcher = ModifierMatcher(self._test_config)
 
-        for (message, source) in syntax_errors:
-            self._add_error(lineno, message, source)
+        lineno = 0
+        for expectation in expectation_list:
+            lineno += 1
+            test_list_path = expectation.name
+            options = expectation.modifiers
+            expectations = expectation.expectations
 
-        if not expectations:
-            return False
+            for error in expectation.errors:
+                self._add_error(lineno, error, expectation.comment)
 
-        self._add_to_all_expectations(test_list_path,
-                                        " ".join(options).upper(),
-                                        " ".join(expectations).upper())
+            if not expectations:
+                continue
 
-        num_matches = self._check_options(matcher, options, lineno,
-                                          test_list_path)
-        if num_matches == ModifierMatcher.NO_MATCH:
-            return False
+            self._add_to_all_expectations(test_list_path,
+                                            " ".join(options).upper(),
+                                            " ".join(expectations).upper())
 
-        expectations = self._parse_expectations(expectations, lineno,
-            test_list_path)
+            num_matches = self._check_options(matcher, options, lineno,
+                                              test_list_path)
+            if num_matches == ModifierMatcher.NO_MATCH:
+                continue
 
-        self._check_options_against_expectations(options, expectations,
-            lineno, test_list_path)
+            expectations = self._parse_expectations(expectations, lineno,
+                test_list_path)
 
-        if self._check_path_does_not_exist(lineno, test_list_path):
-            return False
+            self._check_options_against_expectations(options, expectations,
+                lineno, test_list_path)
 
-        if not self._full_test_list:
-            tests = [test_list_path]
-        else:
-            tests = self._expand_tests(test_list_path)
+            if self._check_path_does_not_exist(lineno, test_list_path):
+                continue
 
-        modifiers = [o for o in options if o in self.MODIFIERS]
-        # FIXME: Eliminate this awful error plumbing
-        modifier_errors = self._model.add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
-        for (message, source) in modifier_errors:
-            self._add_error(lineno, message, source)
+            if not self._full_test_list:
+                tests = [test_list_path]
+            else:
+                tests = self._expand_tests(test_list_path)
 
-        return True
+            modifiers = [o for o in options if o in self.MODIFIERS]
+            # FIXME: Eliminate this awful error plumbing
+            modifier_errors = self._model.add_tests(tests, expectations, test_list_path, lineno, modifiers, num_matches, options, overrides_allowed)
+            for (message, source) in modifier_errors:
+                self._add_error(lineno, message, source)
+
 
     # FIXME: Remove, no longer used anywhere?
     def _get_options_list(self, listString):
@@ -833,7 +823,7 @@ class TestExpectations:
         """Reports an error that will prevent running the tests. Does not
         immediately raise an exception because we'd like to aggregate all the
         errors so they can all be printed out."""
-        self._errors.append('Line:%s %s %s' % (lineno, msg, path))
+        self._errors.append("Line:%s %s %s" % (lineno, msg, path))
 
     def _log_non_fatal_error(self, lineno, msg, path):
         """Reports an error that will not prevent running the tests. These are

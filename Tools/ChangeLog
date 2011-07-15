@@ -1,3 +1,21 @@
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove the notion of TestExpectationLine.valid, start storing parsing errors in expectations themselves.
+        https://bugs.webkit.org/show_bug.cgi?id=64554
+
+        This moves us toward the world where errors are collected on the expectations, which allows us to
+        easily enumerate them, keep association with the point of origin, and freely pass TestExpectationLine instances around.
+
+        Also eliminate the validator idea, since validation is a context-dependent concept and has to be decoupled from initial
+        parsing.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Removed TestExpectation.valid, validator,
+            changed TestExpectationParser to collect errors in TestExpectationLine, refactored surrounding code.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Changed tests to accommodate changes.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py: Ditto.
+
 2011-07-15  Adam Roben  <aroben@apple.com>
 
         Rename TestFailureBugForm to FailingTestsBugForm
