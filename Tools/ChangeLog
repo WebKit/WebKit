@@ -1,3 +1,20 @@
+2011-07-15  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures's list of possibly-flaky tests not so tall
+
+        Fixes <http://webkit.org/b/64618> TestFailures page's list of flaky tests takes up way too
+        much room
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        Removed a no-longer-used .flakiness-example-separator selector.
+
+        (#failure-history > li):
+        (#possibly-flaky-tests > li):
+        (#failure-history > li, #possibly-flaky-tests > li):
+        Use a lot less padding for the possibly-flaky tests.
+
 2011-07-15  Tony Chang  <tony@chromium.org>
 
         [chromium] land linux selection color layout test

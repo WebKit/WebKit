@@ -29,14 +29,17 @@ dt::after {
     padding: 0 0 0 15px;
 }
 
-#failure-history > li, #possibly-flaky-tests > li {
-    background-color: #f0f0f0;
-    padding: 10px;
+#failure-history > li {
     margin-bottom: 10px;
+    padding: 10px 10px 10px 50px;
 }
 
-#failure-history > li {
-    padding-left: 50px;
+#possibly-flaky-tests > li {
+    padding: 1px;
+}
+
+#failure-history > li, #possibly-flaky-tests > li {
+    background-color: #f0f0f0;
 }
 
 .test-list {
@@ -58,11 +61,6 @@ dt::after {
 
 .new-bug-form {
     display: none;
-}
-
-.flakiness-example-separator {
-    padding-left: 5em;
-    font-size: larger;
 }
 
 .disclosure-triangle {
