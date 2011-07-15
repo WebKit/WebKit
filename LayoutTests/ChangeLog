@@ -1,3 +1,9 @@
+2011-07-15  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] updated test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Gavin Barraclough  <barraclough@apple.com>
 
         NativeError.prototype objects have [[Class]] of "Object" but should be "Error"
