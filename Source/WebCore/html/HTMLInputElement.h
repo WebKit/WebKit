@@ -126,9 +126,8 @@ public:
     // 'indeterminate' is a state independent of the checked state that causes the control to draw in a way that hides the actual state.
     bool indeterminate() const { return m_isIndeterminate; }
     void setIndeterminate(bool);
-
-    // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    virtual bool isChecked() const;
+    // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
+    bool shouldAppearChecked() const;
     virtual bool isIndeterminate() const { return indeterminate(); }
 
     int size() const;

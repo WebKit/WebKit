@@ -745,7 +745,7 @@ bool RenderTheme::isChecked(const RenderObject* o) const
     if (!inputElement)
         return false;
 
-    return inputElement->isChecked();
+    return inputElement->shouldAppearChecked();
 }
 
 bool RenderTheme::isIndeterminate(const RenderObject* o) const

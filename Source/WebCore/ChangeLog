@@ -1,3 +1,25 @@
+2011-07-14  SravanKumar S  <sravan.ken@gmail.com>
+
+        Replaced isChecked() with shouldAppearChecked() in HTMLInputElement.cpp along with all the corresponding function calls.
+        https://bugs.webkit.org/show_bug.cgi?id=54476
+
+        Reviewed by Darin Adler.
+
+        No new tests, since existing fast/dom/HTMLInputElement/checked-pseudo-selector.html verifies the patch.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isChecked):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithControl):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::CheckedRadioButtons::removeButton):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldAppearChecked):
+        * html/HTMLInputElement.h: Removed virtual declaration from shouldAppearChecked().
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isChecked):
+
 2011-07-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         <input form="x"> should not associate the input with any forms when there is no  form with id="x"

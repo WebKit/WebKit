@@ -1046,7 +1046,7 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
     
     if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
         return false;
-    if (thisInputElement->isChecked() != otherInputElement->isChecked())
+    if (thisInputElement->shouldAppearChecked() != otherInputElement->shouldAppearChecked())
         return false;
     if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
         return false;
@@ -2919,7 +2919,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 // you can't be both checked and indeterminate.  We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
                 HTMLInputElement* inputElement = e->toInputElement();
-                if (inputElement && inputElement->isChecked() && !inputElement->isIndeterminate())
+                if (inputElement && inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
                     return true;
                 break;
             }

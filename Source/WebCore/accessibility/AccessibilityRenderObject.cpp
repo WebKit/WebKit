@@ -619,7 +619,7 @@ bool AccessibilityRenderObject::isChecked() const
     // First test for native checkedness semantics
     HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
     if (inputElement)
-        return inputElement->isChecked();
+        return inputElement->shouldAppearChecked();
 
     // Else, if this is an ARIA checkbox or radio, respect the aria-checked attribute
     AccessibilityRole ariaRole = ariaRoleAttribute();
