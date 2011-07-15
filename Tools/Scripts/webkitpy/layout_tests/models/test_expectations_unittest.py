@@ -463,64 +463,64 @@ class ModifierTests(unittest.TestCase):
 
 
 class TestExpectationParserTests(unittest.TestCase):
-    def test_blank(self):
-        expectation = TestExpectationParser.parse('')
+    def test_tokenize_blank(self):
+        expectation = TestExpectationParser.tokenize('')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, None)
         self.assertEqual(len(expectation.errors), 0)
 
-    def test_missing_colon(self):
-        expectation = TestExpectationParser.parse('Qux.')
+    def test_tokenize_missing_colon(self):
+        expectation = TestExpectationParser.tokenize('Qux.')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(str(expectation.errors), '["Missing a \':\'"]')
 
-    def test_extra_colon(self):
-        expectation = TestExpectationParser.parse('FOO : : bar')
+    def test_tokenize_extra_colon(self):
+        expectation = TestExpectationParser.tokenize('FOO : : bar')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(expectation.comment, 'FOO : : bar')
         self.assertEqual(str(expectation.errors), '["Extraneous \':\'"]')
 
-    def test_empty_comment(self):
-        expectation = TestExpectationParser.parse('//')
+    def test_tokenize_empty_comment(self):
+        expectation = TestExpectationParser.tokenize('//')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, '')
         self.assertEqual(len(expectation.errors), 0)
 
-    def test_comment(self):
-        expectation = TestExpectationParser.parse('//Qux.')
+    def test_tokenize_comment(self):
+        expectation = TestExpectationParser.tokenize('//Qux.')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(len(expectation.errors), 0)
 
-    def test_missing_equal(self):
-        expectation = TestExpectationParser.parse('FOO : bar')
+    def test_tokenize_missing_equal(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(expectation.comment, 'FOO : bar')
         self.assertEqual(str(expectation.errors), "['Missing expectations\']")
 
-    def test_extra_equal(self):
-        expectation = TestExpectationParser.parse('FOO : bar = BAZ = Qux.')
+    def test_tokenize_extra_equal(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ = Qux.')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(expectation.comment, 'FOO : bar = BAZ = Qux.')
         self.assertEqual(str(expectation.errors), '["Extraneous \'=\'"]')
 
-    def test_valid(self):
-        expectation = TestExpectationParser.parse('FOO : bar = BAZ')
+    def test_tokenize_valid(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, None)
         self.assertEqual(len(expectation.errors), 0)
 
-    def test_valid_with_comment(self):
-        expectation = TestExpectationParser.parse('FOO : bar = BAZ //Qux.')
+    def test_tokenize_valid_with_comment(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ //Qux.')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(str(expectation.modifiers), '[\'foo\']')
         self.assertEqual(str(expectation.expectations), '[\'baz\']')
         self.assertEqual(len(expectation.errors), 0)
 
-    def test_valid_with_multiple_modifiers(self):
-        expectation = TestExpectationParser.parse('FOO1 FOO2 : bar = BAZ //Qux.')
+    def test_tokenize_valid_with_multiple_modifiers(self):
+        expectation = TestExpectationParser.tokenize('FOO1 FOO2 : bar = BAZ //Qux.')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(str(expectation.modifiers), '[\'foo1\', \'foo2\']')
@@ -530,13 +530,13 @@ class TestExpectationParserTests(unittest.TestCase):
 
 class TestExpectationSerializerTests(unittest.TestCase):
     def assert_round_trip(self, in_string, expected_string=None):
-        expectation = TestExpectationParser.parse(in_string)
+        expectation = TestExpectationParser.tokenize(in_string)
         if expected_string is None:
             expected_string = in_string
         self.assertEqual(expected_string, TestExpectationSerializer.to_string(expectation))
 
     def assert_list_round_trip(self, in_string, expected_string=None):
-        expectations = TestExpectationParser.parse_list(in_string)
+        expectations = TestExpectationParser.tokenize_list(in_string)
         if expected_string is None:
             expected_string = in_string
         self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations))

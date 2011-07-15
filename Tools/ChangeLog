@@ -1,5 +1,25 @@
 2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Move expectation parsing code to TestExpectationParser.
+        https://bugs.webkit.org/show_bug.cgi?id=64605
+
+        This is a somewhat mechanical move, with two interesting bits:
+        
+        1) TestExpectationParser.parse methods renamed to tokenize, to better
+        reflect what they do
+
+        2) TestExpectationLine now carries all of its info, from tokens to parsed data,
+        and even the list of tests that it matches (a line may refer to more than one test).
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Moved parsing-related TestExpectaions methods
+            to TestExpectationParser, added more members to TestExpectationLine to carry parsed info, renamed existing parse methods
+            to "tokenize", changed callsites to use new code.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Changed unit tests to reflect renames.
+
+2011-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Switch to use Python enumerate function to enumerate line numbers.
         https://bugs.webkit.org/show_bug.cgi?id=64602
 
