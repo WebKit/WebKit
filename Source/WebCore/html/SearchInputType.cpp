@@ -32,6 +32,7 @@
 #include "SearchInputType.h"
 
 #include "HTMLInputElement.h"
+#include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
@@ -97,6 +98,24 @@ HTMLElement* SearchInputType::resultsButtonElement() const
 HTMLElement* SearchInputType::cancelButtonElement() const
 {
     return m_cancelButton.get();
+}
+
+void SearchInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    if (element()->disabled() || element()->readOnly()) {
+        TextFieldInputType::handleKeydownEvent(event);
+        return;
+    }
+
+    const String& key = event->keyIdentifier();
+    if (key == "U+001B") {
+        RefPtr<HTMLInputElement> input = element();
+        input->setValueForUser("");
+        input->onSearch();
+        event->setDefaultHandled();
+        return;
+    }
+    TextFieldInputType::handleKeydownEvent(event);
 }
 
 void SearchInputType::destroyShadowSubtree()

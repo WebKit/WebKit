@@ -56,6 +56,7 @@ private:
     virtual void destroyShadowSubtree();
     virtual HTMLElement* resultsButtonElement() const;
     virtual HTMLElement* cancelButtonElement() const;
+    virtual void handleKeydownEvent(KeyboardEvent*);
 
     void searchEventTimerFired(Timer<SearchInputType>*);
 

@@ -1,3 +1,16 @@
+2011-07-15  Kentaro Hara  <haraken@google.com>
+
+        Clear the content of a search input form when 'Escape' is pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=51897
+
+        The added test checks if the value in a search input form is cleared
+        and a 'search' event is triggered, when we press 'Escape' key.
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/input-search-press-escape-key-expected.txt: Added.
+        * fast/forms/input-search-press-escape-key.html: Added.
+
 2011-07-14  Hayato Ito  <hayato@chromium.org>
 
         [chromium] updated test expectations.

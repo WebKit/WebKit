@@ -1,3 +1,19 @@
+2011-07-15  Kentaro Hara  <haraken@google.com>
+
+        Clear the content of a search input form when 'Escape' is pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=51897
+
+        This change added handleKeydownEvent() to a search input form,
+        which clears the form and triggers a 'search' event when 'Escape' is pressed.
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/input-search-press-escape-key.html
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::handleKeydownEvent):
+        * html/SearchInputType.h:
+
 2011-07-15  Alexandru Chiculita  <achicu@adobe.com>
 
         Move useRepaintBounds from RenderBlock::layoutRunsAndFloats to LineLayoutState
