@@ -139,22 +139,6 @@ private:
     void checkArgumentTypes();
     void initializeVariableTypes();
 
-    // Returns the node index of the branch node if peephole is okay, NoNode otherwise.
-    NodeIndex detectPeepHoleBranch()
-    {
-        NodeIndex lastNodeIndex = m_jit.graph().m_blocks[m_block]->end - 1;
-
-        // Check that no intervening nodes will be generated.
-        for (NodeIndex index = m_compileIndex + 1; index < lastNodeIndex; ++index) {
-            if (m_jit.graph()[index].shouldGenerate())
-                return NoNode;
-        }
-
-        // Check if the lastNode is a branch on this node.
-        Node& lastNode = m_jit.graph()[lastNodeIndex];
-        return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
-    }
-
     bool isInteger(NodeIndex nodeIndex)
     {
         Node& node = m_jit.graph()[nodeIndex];

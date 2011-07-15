@@ -82,9 +82,6 @@ private:
     void compile(SpeculationCheckIndexIterator&, Node&);
     void compile(SpeculationCheckIndexIterator&, BasicBlock&);
 
-    bool isKnownInteger(NodeIndex);
-    bool isKnownNumeric(NodeIndex);
-
     // These methods are used to plant calls out to C++
     // helper routines to convert between types.
     void valueToNumber(JSValueOperand&, GPRReg result);
@@ -102,7 +99,6 @@ private:
     // internal helpers for add/sub/mul operations
     void knownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
     void basicArithOp(NodeType op, Node&);
-    void compare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ);
 
     EntryLocationVector m_entryLocations;
 };

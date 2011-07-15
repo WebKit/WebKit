@@ -120,46 +120,6 @@ void NonSpeculativeJIT::numberToInt32(FPRReg fpr, GPRReg gpr)
     truncatedToInteger.link(&m_jit);
 }
 
-bool NonSpeculativeJIT::isKnownInteger(NodeIndex nodeIndex)
-{
-    if (isInt32Constant(nodeIndex))
-        return true;
-
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
-
-    DataFormat registerFormat = info.registerFormat();
-    if (registerFormat != DataFormatNone)
-        return (registerFormat | DataFormatJS) == DataFormatJSInteger;
-
-    DataFormat spillFormat = info.spillFormat();
-    if (spillFormat != DataFormatNone)
-        return (spillFormat | DataFormatJS) == DataFormatJSInteger;
-
-    ASSERT(isConstant(nodeIndex));
-    return false;
-}
-
-bool NonSpeculativeJIT::isKnownNumeric(NodeIndex nodeIndex)
-{
-    if (isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex))
-        return true;
-
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
-
-    DataFormat registerFormat = info.registerFormat();
-    if (registerFormat != DataFormatNone)
-        return (registerFormat | DataFormatJS) == DataFormatJSInteger
-            || (registerFormat | DataFormatJS) == DataFormatJSDouble;
-
-    DataFormat spillFormat = info.spillFormat();
-    if (spillFormat != DataFormatNone)
-        return (spillFormat | DataFormatJS) == DataFormatJSInteger
-            || (spillFormat | DataFormatJS) == DataFormatJSDouble;
-
-    ASSERT(isConstant(nodeIndex));
-    return false;
-}
-
 void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute)
 {
     JSValueOperand regArg(this, regChild);
@@ -339,46 +299,6 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     
     done.link(&m_jit);
         
-    jsValueResult(resultGPR, m_compileIndex);
-}
-
-void NonSpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
-{
-    // FIXME: should do some peephole to fuse compare/branch
-        
-    JSValueOperand arg1(this, node.child1());
-    JSValueOperand arg2(this, node.child2());
-    GPRReg arg1GPR = arg1.gpr();
-    GPRReg arg2GPR = arg2.gpr();
-    
-    GPRTemporary result(this, arg2);
-    GPRReg resultGPR = result.gpr();
-    
-    JITCompiler::JumpList slowPath;
-    
-    if (!isKnownInteger(node.child1()))
-        slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
-    if (!isKnownInteger(node.child2()))
-        slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
-    
-    m_jit.compare32(cond, arg1GPR, arg2GPR, resultGPR);
-    
-    JITCompiler::Jump haveResult = m_jit.jump();
-    
-    slowPath.link(&m_jit);
-    
-    silentSpillAllRegisters(resultGPR);
-    setupStubArguments(arg1GPR, arg2GPR);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    appendCallWithExceptionCheck(helperFunction);
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-    silentFillAllRegisters(resultGPR);
-        
-    m_jit.andPtr(TrustedImm32(static_cast<int32_t>(1)), resultGPR);
-    
-    haveResult.link(&m_jit);
-    
-    m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
     jsValueResult(resultGPR, m_compileIndex);
 }
 
@@ -733,27 +653,33 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     }
 
     case CompareLess:
-        compare(node, MacroAssembler::LessThan, operationCompareLess);
+        if (nonSpeculativeCompare(node, MacroAssembler::LessThan, operationCompareLess))
+            return;
         break;
         
     case CompareLessEq:
-        compare(node, MacroAssembler::LessThanOrEqual, operationCompareLessEq);
+        if (nonSpeculativeCompare(node, MacroAssembler::LessThanOrEqual, operationCompareLessEq))
+            return;
         break;
         
     case CompareGreater:
-        compare(node, MacroAssembler::GreaterThan, operationCompareGreater);
+        if (nonSpeculativeCompare(node, MacroAssembler::GreaterThan, operationCompareGreater))
+            return;
         break;
         
     case CompareGreaterEq:
-        compare(node, MacroAssembler::GreaterThanOrEqual, operationCompareGreaterEq);
+        if (nonSpeculativeCompare(node, MacroAssembler::GreaterThanOrEqual, operationCompareGreaterEq))
+            return;
         break;
         
     case CompareEq:
-        compare(node, MacroAssembler::Equal, operationCompareEq);
+        if (nonSpeculativeCompare(node, MacroAssembler::Equal, operationCompareEq))
+            return;
         break;
 
     case CompareStrictEq:
-        compare(node, MacroAssembler::Equal, operationCompareStrictEq);
+        if (nonSpeculativeCompare(node, MacroAssembler::Equal, operationCompareStrictEq))
+            return;
         break;
 
     case GetByVal: {

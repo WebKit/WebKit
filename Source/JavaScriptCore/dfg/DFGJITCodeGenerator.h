@@ -412,6 +412,9 @@ protected:
         info.spill((DataFormat)(spillFormat | DataFormatJS));
     }
 
+    bool isKnownInteger(NodeIndex);
+    bool isKnownNumeric(NodeIndex);
+
     // Checks/accessors for constant values.
     bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
     bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
@@ -531,9 +534,28 @@ protected:
         }
     }
     
+    // Returns the node index of the branch node if peephole is okay, NoNode otherwise.
+    NodeIndex detectPeepHoleBranch()
+    {
+        NodeIndex lastNodeIndex = m_jit.graph().m_blocks[m_block]->end - 1;
+
+        // Check that no intervening nodes will be generated.
+        for (NodeIndex index = m_compileIndex + 1; index < lastNodeIndex; ++index) {
+            if (m_jit.graph()[index].shouldGenerate())
+                return NoNode;
+        }
+
+        // Check if the lastNode is a branch on this node.
+        Node& lastNode = m_jit.graph()[lastNodeIndex];
+        return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
+    }
+
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    
+    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
+    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
     
     void emitBranch(Node&);
     

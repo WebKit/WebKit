@@ -424,7 +424,7 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         if (shouldSpeculateInteger(node.child1(), node.child2()))
             compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
         else
-            compilePeepHoleCall(node, branchNodeIndex, operation);
+            nonSpeculativePeepholeBranch(node, branchNodeIndex, condition, operation);
 
         use(node.child1());
         use(node.child2());
@@ -797,18 +797,10 @@ void SpeculativeJIT::compile(Node& node)
             return;
         break;
 
-    case CompareStrictEq: {
-        SpeculateIntegerOperand op1(this, node.child1());
-        SpeculateIntegerOperand op2(this, node.child2());
-        GPRTemporary result(this, op1, op2);
-
-        m_jit.compare32(JITCompiler::Equal, op1.gpr(), op2.gpr(), result.gpr());
-
-        // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex);
+    case CompareStrictEq:
+        if (compare(node, JITCompiler::Equal, operationCompareStrictEq))
+            return;
         break;
-    }
 
     case GetByVal: {
         NodeIndex alias = node.child3();

@@ -1,3 +1,36 @@
+2011-07-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT is inconsistent about fusing branches and speculating
+        integer comparisons for branches.
+        https://bugs.webkit.org/show_bug.cgi?id=64573
+
+        Reviewed by Gavin Barraclough.
+        
+        This patch moves some of NonSpeculativeJIT's functionality up into the
+        JITCodeGenerator superclass so that it can be used from both JITs.  Now,
+        in cases where the speculative JIT doesn't want to speculate but still
+        wants to emit good code, it can reliably emit the same code sequence as
+        the non-speculative JIT.  This patch also extends the non-speculative
+        JIT's compare optimizations to include compare/branch fusing, and
+        extends the speculative JIT's compare optimizations to cover StrictEqual.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownNumeric):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompare):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::detectPeepHoleBranch):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        * wtf/Platform.h:
+
 2011-07-14  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64250
