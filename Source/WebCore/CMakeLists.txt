@@ -1129,6 +1129,7 @@ SET(WebCore_SOURCES
     platform/graphics/transforms/SkewTransformOperation.cpp
     platform/graphics/transforms/TransformOperations.cpp
     platform/graphics/transforms/TransformationMatrix.cpp
+    platform/graphics/transforms/TransformState.cpp
     platform/graphics/transforms/TranslateTransformOperation.cpp
 
     platform/mock/DeviceOrientationClientMock.cpp
@@ -1191,6 +1192,7 @@ SET(WebCore_SOURCES
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
     rendering/FixedTableLayout.cpp
+    rendering/HitTestingTransformState.cpp
     rendering/HitTestResult.cpp
     rendering/InlineBox.cpp
     rendering/InlineFlowBox.cpp
@@ -1265,7 +1267,6 @@ SET(WebCore_SOURCES
     rendering/RenderWordBreak.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
-    rendering/TransformState.cpp
     rendering/break_lines.cpp
 
     rendering/style/ContentData.cpp

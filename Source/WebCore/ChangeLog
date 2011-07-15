@@ -1,3 +1,35 @@
+2011-07-15  Chris Marrin  <cmarrin@apple.com>
+
+        Move TransformState to platform/graphics and give it the option to transform just a FloatQuad
+        https://bugs.webkit.org/show_bug.cgi?id=64542
+
+        Reviewed by Simon Fraser.
+
+        This is to make it possible to use TransformState in some GraphicsLayer work. HitTestingTransformState
+        was split out and left in rendering since it's not needed in the platform code. Also added a FIXME
+        because HitTestingTransformState should eventually be replaced by TransformState.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/transforms/TransformState.cpp: Copied from Source/WebCore/rendering/TransformState.cpp.
+        (WebCore::TransformState::move):
+        (WebCore::TransformState::flattenWithTransform):
+        * platform/graphics/transforms/TransformState.h: Copied from Source/WebCore/rendering/TransformState.h.
+        (WebCore::TransformState::TransformState):
+        (WebCore::TransformState::setQuad):
+        * rendering/HitTestingTransformState.cpp: Copied from Source/WebCore/rendering/TransformState.cpp.
+        * rendering/HitTestingTransformState.h: Copied from Source/WebCore/rendering/TransformState.h.
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/TransformState.cpp: Removed.
+        * rendering/TransformState.h: Removed.
+
 2011-07-15  Pratik Solanki  <psolanki@apple.com>
 
         Part of https://bugs.webkit.org/show_bug.cgi?id=63674

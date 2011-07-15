@@ -1018,6 +1018,7 @@ SOURCES += \
     platform/graphics/transforms/ScaleTransformOperation.cpp \
     platform/graphics/transforms/SkewTransformOperation.cpp \
     platform/graphics/transforms/TransformOperations.cpp \
+    platform/graphics/transforms/TransformState.cpp \
     platform/graphics/transforms/TranslateTransformOperation.cpp \
     platform/KillRingNone.cpp \
     platform/KURL.cpp \
@@ -1096,6 +1097,7 @@ SOURCES += \
     rendering/CounterNode.cpp \
     rendering/EllipsisBox.cpp \
     rendering/FixedTableLayout.cpp \
+    rendering/HitTestingTransformState.cpp \
     rendering/HitTestResult.cpp \
     rendering/InlineBox.cpp \
     rendering/InlineFlowBox.cpp \
@@ -1169,7 +1171,6 @@ SOURCES += \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/ScrollBehavior.cpp \
-    rendering/TransformState.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
     rendering/style/FillLayer.cpp \
@@ -2013,6 +2014,7 @@ HEADERS += \
     platform/graphics/transforms/SkewTransformOperation.h \
     platform/graphics/transforms/TransformationMatrix.h \
     platform/graphics/transforms/TransformOperations.h \
+    platform/graphics/transforms/TransformState.h \
     platform/graphics/transforms/TranslateTransformOperation.h \
     platform/KillRing.h \
     platform/KURL.h \
@@ -2128,6 +2130,7 @@ HEADERS += \
     rendering/CounterNode.h \
     rendering/EllipsisBox.h \
     rendering/FixedTableLayout.h \
+    rendering/HitTestingTransformState.h \
     rendering/HitTestResult.h \
     rendering/InlineBox.h \
     rendering/InlineFlowBox.h \
@@ -2295,7 +2298,6 @@ HEADERS += \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
     rendering/svg/SVGTextRunRenderingContext.h \
-    rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \

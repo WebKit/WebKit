@@ -44,7 +44,8 @@ void TransformState::move(int x, int y, TransformAccumulation accumulate)
             flatten();
     } else {
         // Just move the point and, optionally, the quad.
-        m_lastPlanarPoint.move(x, y);
+        if (m_mapPoint)
+            m_lastPlanarPoint.move(x, y);
         if (m_mapQuad)
             m_lastPlanarQuad.move(x, y);
     }
@@ -112,12 +113,14 @@ FloatQuad TransformState::mappedQuad() const
 void TransformState::flattenWithTransform(const TransformationMatrix& t)
 {
     if (m_direction == ApplyTransformDirection) {
-        m_lastPlanarPoint = t.mapPoint(m_lastPlanarPoint);
+        if (m_mapPoint)
+            m_lastPlanarPoint = t.mapPoint(m_lastPlanarPoint);
         if (m_mapQuad)
             m_lastPlanarQuad = t.mapQuad(m_lastPlanarQuad);
     } else {
         TransformationMatrix inverseTransform = t.inverse();
-        m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
+        if (m_mapPoint)
+            m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
         if (m_mapQuad)
             m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
     }
@@ -128,50 +131,6 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t)
     if (m_accumulatedTransform)
         m_accumulatedTransform->makeIdentity();
     m_accumulatingTransform = false;
-}
-
-// HitTestingTransformState methods
-void HitTestingTransformState::translate(int x, int y, TransformAccumulation accumulate)
-{
-    m_accumulatedTransform.translate(x, y);    
-    if (accumulate == FlattenTransform)
-        flattenWithTransform(m_accumulatedTransform);
-
-    m_accumulatingTransform = accumulate == AccumulateTransform;
-}
-
-void HitTestingTransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate)
-{
-    m_accumulatedTransform.multiply(transformFromContainer);
-    if (accumulate == FlattenTransform)
-        flattenWithTransform(m_accumulatedTransform);
-
-    m_accumulatingTransform = accumulate == AccumulateTransform;
-}
-
-void HitTestingTransformState::flatten()
-{
-    flattenWithTransform(m_accumulatedTransform);
-}
-
-void HitTestingTransformState::flattenWithTransform(const TransformationMatrix& t)
-{
-    TransformationMatrix inverseTransform = t.inverse();
-    m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
-    m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
-
-    m_accumulatedTransform.makeIdentity();
-    m_accumulatingTransform = false;
-}
-
-FloatPoint HitTestingTransformState::mappedPoint() const
-{
-    return m_accumulatedTransform.inverse().projectPoint(m_lastPlanarPoint);
-}
-
-FloatQuad HitTestingTransformState::mappedQuad() const
-{
-    return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarQuad);
 }
 
 } // namespace WebCore

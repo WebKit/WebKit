@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransformState_h
-#define TransformState_h
+#ifndef HitTestingTransformState_h
+#define HitTestingTransformState_h
 
 #include "AffineTransform.h"
 #include "FloatPoint.h"
@@ -32,59 +32,14 @@
 #include "IntSize.h"
 #include "TransformationMatrix.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class TransformState {
-    WTF_MAKE_NONCOPYABLE(TransformState);
-public:
-    enum TransformDirection { ApplyTransformDirection, UnapplyInverseTransformDirection };
-    enum TransformAccumulation { FlattenTransform, AccumulateTransform };
-
-    // If quad is non-null, it will be mapped
-    TransformState(TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad* quad = 0)
-        : m_lastPlanarPoint(p)
-        , m_accumulatingTransform(false)
-        , m_mapQuad(quad != 0)
-        , m_direction(mappingDirection)
-    {
-        if (quad)
-            m_lastPlanarQuad = *quad;
-    }
-    
-    void move(const IntSize& s, TransformAccumulation accumulate = FlattenTransform)
-    {
-        move(s.width(), s.height(), accumulate);
-    }
-    
-    void move(int x, int y, TransformAccumulation = FlattenTransform);
-    void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform);
-    void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform);
-    void flatten();
-
-    // Return the coords of the point or quad in the last flattened layer
-    FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
-    FloatQuad lastPlanarQuad() const { return m_lastPlanarQuad; }
-
-    // Return the point or quad mapped through the current transform
-    FloatPoint mappedPoint() const;
-    FloatQuad mappedQuad() const;
-
-private:
-    void flattenWithTransform(const TransformationMatrix&);
-    
-    FloatPoint m_lastPlanarPoint;
-    FloatQuad m_lastPlanarQuad;
-
-    // We only allocate the transform if we need to
-    OwnPtr<TransformationMatrix> m_accumulatedTransform;
-    bool m_accumulatingTransform;
-    bool m_mapQuad;
-    TransformDirection m_direction;
-};
-
+// FIXME: Now that TransformState lazily creates its TransformationMatrix it takes up less space.
+// So there's really no need for a ref counted version. So This class should be tossed and replaced
+// with TransformState. There are some minor differences (like the way translate() works slightly
+// differently than move()) so care has to be taken when this is done.
 class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
 public:
     static PassRefPtr<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad)
@@ -132,4 +87,4 @@ private:
 
 } // namespace WebCore
 
-#endif // TransformState_h
+#endif // HitTestingTransformState_h

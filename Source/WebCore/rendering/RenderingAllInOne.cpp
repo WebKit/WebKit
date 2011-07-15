@@ -30,6 +30,7 @@
 #include "CounterNode.cpp"
 #include "EllipsisBox.cpp"
 #include "FixedTableLayout.cpp"
+#include "HitTestingTransformState.cpp"
 #include "HitTestResult.cpp"
 #include "InlineBox.cpp"
 #include "InlineFlowBox.cpp"
@@ -107,5 +108,4 @@
 #include "RenderWordBreak.cpp"
 #include "RootInlineBox.cpp"
 #include "ScrollBehavior.cpp"
-#include "TransformState.cpp"
 #include "break_lines.cpp"

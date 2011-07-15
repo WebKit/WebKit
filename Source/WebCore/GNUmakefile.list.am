@@ -2588,6 +2588,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/transforms/TransformOperation.h \
 	Source/WebCore/platform/graphics/transforms/TransformOperations.cpp \
 	Source/WebCore/platform/graphics/transforms/TransformOperations.h \
+	Source/WebCore/platform/graphics/transforms/TransformState.cpp \
+	Source/WebCore/platform/graphics/transforms/TransformState.h \
 	Source/WebCore/platform/graphics/transforms/TranslateTransformOperation.cpp \
 	Source/WebCore/platform/graphics/transforms/TranslateTransformOperation.h \
 	Source/WebCore/platform/graphics/TypesettingFeatures.h \
@@ -2898,6 +2900,8 @@ webcore_sources += \
 	Source/WebCore/rendering/FixedTableLayout.h \
 	Source/WebCore/rendering/GapRects.h \
 	Source/WebCore/rendering/HitTestRequest.h \
+	Source/WebCore/rendering/HitTestingTransformState.cpp \
+	Source/WebCore/rendering/HitTestingTransformState.h \
 	Source/WebCore/rendering/HitTestResult.cpp \
 	Source/WebCore/rendering/HitTestResult.h \
 	Source/WebCore/rendering/InlineBox.cpp \
@@ -3245,8 +3249,6 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGTextRunRenderingContext.h \
 	Source/WebCore/rendering/TableLayout.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
-	Source/WebCore/rendering/TransformState.cpp \
-	Source/WebCore/rendering/TransformState.h \
 	Source/WebCore/storage/AbstractDatabase.cpp \
 	Source/WebCore/storage/AbstractDatabase.h \
 	Source/WebCore/storage/ChangeVersionWrapper.cpp \

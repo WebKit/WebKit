@@ -63,6 +63,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "HitTestingTransformState.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "OverflowEvent.h"
@@ -82,7 +83,6 @@
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "TextStream.h"
-#include "TransformState.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/StdLibExtras.h>

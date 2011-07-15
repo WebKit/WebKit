@@ -199,8 +199,6 @@
 		0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */; };
 		0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */; };
 		0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */; };
-		0F500AAF0F54DB1B00EEF928 /* TransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F500AAE0F54DB1B00EEF928 /* TransformState.h */; };
-		0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F500AB00F54DB3100EEF928 /* TransformState.cpp */; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580B090F12A2690051D689 /* GraphicsLayer.cpp */; };
@@ -1070,6 +1068,8 @@
 		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
 		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4945BFD313CF809000CC3B38 /* TransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4945BFD113CF809000CC3B38 /* TransformState.cpp */; };
+		4945BFD413CF809000CC3B38 /* TransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4945BFD213CF809000CC3B38 /* TransformState.h */; };
 		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
 		49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */; };
@@ -1086,6 +1086,8 @@
 		494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BD79C0F55C94C00747828 /* JSWebKitPoint.h */; };
 		4958782112A57DDF007238AC /* PlatformCAAnimationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */; };
 		4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4958782012A57DDF007238AC /* PlatformCALayerMac.mm */; };
+		4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */; };
+		4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */; };
 		4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */; };
 		498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */; };
 		498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */; };
@@ -6580,8 +6582,6 @@
 		0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowBlur.cpp; sourceTree = "<group>"; };
 		0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowBlur.h; sourceTree = "<group>"; };
 		0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGAllInOne.cpp; sourceTree = "<group>"; };
-		0F500AAE0F54DB1B00EEF928 /* TransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformState.h; sourceTree = "<group>"; };
-		0F500AB00F54DB3100EEF928 /* TransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformState.cpp; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B090F12A2690051D689 /* GraphicsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayer.cpp; sourceTree = "<group>"; };
@@ -7568,6 +7568,8 @@
 		492863981253B8FC00F792D6 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
 		493E5E0812D6420500020081 /* PlatformCALayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayerClient.h; path = ca/PlatformCALayerClient.h; sourceTree = "<group>"; };
+		4945BFD113CF809000CC3B38 /* TransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformState.cpp; path = transforms/TransformState.cpp; sourceTree = "<group>"; };
+		4945BFD213CF809000CC3B38 /* TransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformState.h; path = transforms/TransformState.h; sourceTree = "<group>"; };
 		49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasGradient.cpp; path = canvas/CanvasGradient.cpp; sourceTree = "<group>"; };
 		49484FB4102CF23C00187DD3 /* CanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasGradient.h; path = canvas/CanvasGradient.h; sourceTree = "<group>"; };
 		49484FB5102CF23C00187DD3 /* CanvasGradient.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasGradient.idl; path = canvas/CanvasGradient.idl; sourceTree = "<group>"; };
@@ -7589,6 +7591,8 @@
 		494BD79C0F55C94C00747828 /* JSWebKitPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPoint.h; sourceTree = "<group>"; };
 		4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformCAAnimationMac.mm; path = ca/mac/PlatformCAAnimationMac.mm; sourceTree = "<group>"; };
 		4958782012A57DDF007238AC /* PlatformCALayerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformCALayerMac.mm; path = ca/mac/PlatformCALayerMac.mm; sourceTree = "<group>"; };
+		4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestingTransformState.cpp; sourceTree = "<group>"; };
+		4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestingTransformState.h; sourceTree = "<group>"; };
 		4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrix.h; sourceTree = "<group>"; };
 		4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSMatrix.h; sourceTree = "<group>"; };
@@ -13921,6 +13925,8 @@
 		49E911B20EF86D27009D0CAF /* transforms */ = {
 			isa = PBXGroup;
 			children = (
+				4945BFD113CF809000CC3B38 /* TransformState.cpp */,
+				4945BFD213CF809000CC3B38 /* TransformState.h */,
 				84D0C4031115F1D40018AA34 /* AffineTransform.cpp */,
 				84D0C4051115F1EA0018AA34 /* AffineTransform.h */,
 				49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */,
@@ -19311,6 +19317,8 @@
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
+				4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */,
+				4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */,
 				930908900AF7EDE40081DF01 /* HitTestRequest.h */,
 				9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */,
 				9307F1D60AF2D59000DBA31A /* HitTestResult.h */,
@@ -19480,8 +19488,6 @@
 				5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
-				0F500AB00F54DB3100EEF928 /* TransformState.cpp */,
-				0F500AAE0F54DB1B00EEF928 /* TransformState.h */,
 				BCA257141293C010007A263D /* VerticalPositionCache.h */,
 			);
 			path = rendering;
@@ -22936,7 +22942,6 @@
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
 				5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */,
-				0F500AAF0F54DB1B00EEF928 /* TransformState.h in Headers */,
 				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
@@ -23097,6 +23102,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
+				4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25737,7 +25744,6 @@
 				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
 				5DB1BC6B10715A6400EFAA49 /* TransformSourceLibxslt.cpp in Sources */,
-				0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
 				14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */,
@@ -25867,6 +25873,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				4945BFD313CF809000CC3B38 /* TransformState.cpp in Sources */,
+				4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
