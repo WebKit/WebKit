@@ -1,3 +1,20 @@
+2011-07-14  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Remove IconDatabase initialization in _ewk_init_body()
+        https://bugs.webkit.org/show_bug.cgi?id=63491
+
+        Make IconDatabase feature optional by removing its initialization from _ewk_init_body().
+        Now IconDatabase must be fully managed by an application:
+        if it doesn't want to use it, there's nothing to do. Otherwise, just call
+        ewk_settings_icon_database_path_set() with the directory path.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_set):
+
 2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         ApplicationCache update should not immediately fail when reaching per-origin quota

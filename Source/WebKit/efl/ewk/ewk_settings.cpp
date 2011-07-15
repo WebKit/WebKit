@@ -140,6 +140,9 @@ const char *ewk_settings_web_database_path_get(void)
 /**
  * Sets directory where to store icon database, opening or closing database.
  *
+ * Icon database must be opened only once. If you try to set a path when the icon
+ * database is already open, this function returns @c EINA_FALSE.
+ *
  * @param directory where to store icon database, must be
  *        write-able, if @c 0 is given, then database is closed
  *
@@ -150,6 +153,11 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
     WebCore::IconDatabase::delayDatabaseCleanup();
 
     if (directory) {
+        if (WebCore::iconDatabase().isEnabled()) {
+            ERR("IconDatabase is already open: %s", _ewk_icon_database_path);
+            return EINA_FALSE;
+        }
+
         struct stat st;
 
         if (stat(directory, &st)) {
