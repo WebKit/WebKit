@@ -44,7 +44,7 @@ BUNDLE_VERSION_Production = $(SYSTEM_VERSION_PREFIX)$(FULL_VERSION);
 BUNDLE_VERSION_ = $(BUNDLE_VERSION_Production);
 
 // The production build always uses the major version with a system version prefix
-SHORT_VERSION_STRING_Production = $(SYSTEM_VERSION_PREFIX)$(MAJOR_VERSION);
+SHORT_VERSION_STRING_Production = $(SYSTEM_VERSION_PREFIX)$(MAJOR_VERSION).$(MINOR_VERSION);
 SHORT_VERSION_STRING_ = $(SHORT_VERSION_STRING_Production);
 
 // Local builds are the full version with a plus suffix.
