@@ -36,6 +36,7 @@
 namespace JSC {
 
 class CodeBlock;
+struct ExecState;
 
 namespace DFG {
 
@@ -163,6 +164,8 @@ public:
 #ifndef NDEBUG
     static const char *opName(NodeType);
 #endif
+
+    void predictArgumentTypes(ExecState*);
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;

@@ -259,8 +259,9 @@ void ProgramExecutable::unlinkCalls()
 }
 
 #if ENABLE(JIT)
-static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+static bool tryDFGCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
+    JSGlobalData* globalData = &exec->globalData();
 #if ENABLE(DFG_JIT)
 #if ENABLE(DFG_JIT_RESTRICTIONS)
     // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
@@ -271,6 +272,8 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
     DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
     if (!parse(dfg, globalData, codeBlock))
         return false;
+
+    dfg.predictArgumentTypes(exec);
 
     DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
     dataFlowJIT.compileFunction(jitCode, jitCodeWithArityCheck);
@@ -329,7 +332,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
-        bool dfgCompiled = tryDFGCompile(&exec->globalData(), m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
+        bool dfgCompiled = tryDFGCompile(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
         if (!dfgCompiled)
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
 

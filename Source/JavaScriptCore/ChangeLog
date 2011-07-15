@@ -1,3 +1,23 @@
+2011-07-15  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT - Where arguments passed are integers, speculate this.
+        https://bugs.webkit.org/show_bug.cgi?id=64630
+
+        Reviewed by Sam Weinig.
+
+        Presently the DFG JIT is overly aggressively predicting double.
+        Use a bit of dynamic information, and curtail this a little.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+            - Check for integer arguments.
+        * dfg/DFGGraph.h:
+            - Function declaration.
+        * runtime/Executable.cpp:
+        (JSC::tryDFGCompile):
+        (JSC::FunctionExecutable::compileForCallInternal):
+            - Add call to predictArgumentTypes.
+
 2011-07-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT is inconsistent about fusing branches and speculating

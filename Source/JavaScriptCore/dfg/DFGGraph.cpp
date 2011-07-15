@@ -176,6 +176,16 @@ void Graph::refChildren(NodeIndex op)
     }
 }
 
+void Graph::predictArgumentTypes(ExecState* exec)
+{
+    size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_argumentPredictions.size());
+
+    for (size_t arg = 1; arg < numberOfArguments; ++arg) {
+        if (exec->argument(arg - 1).isInt32())
+            m_argumentPredictions[arg].m_value |= PredictInt32;
+    }
+}
+
 } } // namespace JSC::DFG
 
 #endif
