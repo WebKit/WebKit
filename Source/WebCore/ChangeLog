@@ -1,5 +1,12 @@
 2011-07-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the build.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+
+2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
         Another Windows build fix; make this method non-pure virtual.
 
         * platform/graphics/GraphicsLayerClient.h:
