@@ -1,5 +1,12 @@
 2011-07-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Another Windows build fix; make this method non-pure virtual.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::didCommitChangesForLayer):
+
+2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
         Fix build error in 32-bit builds.
 
         * rendering/svg/RenderSVGPath.cpp:

@@ -62,7 +62,7 @@ public:
     virtual void notifySyncRequired(const GraphicsLayer*) = 0;
     
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;
-    virtual void didCommitChangesForLayer(const GraphicsLayer*) const = 0;
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
 
     // Multiplier for backing store size, related to high DPI.
     virtual float backingScaleFactor() const = 0;
