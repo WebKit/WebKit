@@ -171,7 +171,6 @@ private:
 
     bool compare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
-    void compilePeepHoleCall(Node&, NodeIndex branchNodeIndex, Z_DFGOperation_EJJ);
 
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)

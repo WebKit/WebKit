@@ -380,37 +380,6 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
         addBranch(m_jit.jump(), notTaken);
 }
 
-void SpeculativeJIT::compilePeepHoleCall(Node& node, NodeIndex branchNodeIndex, Z_DFGOperation_EJJ operation)
-{
-    Node& branchNode = m_jit.graph()[branchNodeIndex];
-    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
-    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
-
-    // The branch instruction will branch to the taken block.
-    // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-    JITCompiler::ResultCondition condition = JITCompiler::NonZero;
-    if (taken == (m_block + 1)) {
-        condition = JITCompiler::Zero;
-        BlockIndex tmp = taken;
-        taken = notTaken;
-        notTaken = tmp;
-    }
-
-    JSValueOperand op1(this, node.child1());
-    JSValueOperand op2(this, node.child2());
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-    flushRegisters();
-
-    GPRResult result(this);
-    callOperation(operation, result.gpr(), op1GPR, op2GPR);
-    addBranch(m_jit.branchTest8(condition, result.gpr()), taken);
-
-    // Check for fall through, otherwise we need to jump.
-    if (notTaken != (m_block + 1))
-        addBranch(m_jit.jump(), notTaken);
-}
-
 // Returns true if the compare is fused with a subsequent branch.
 bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, Z_DFGOperation_EJJ operation)
 {

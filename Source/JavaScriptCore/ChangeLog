@@ -1,3 +1,15 @@
+2011-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculative JIT has dead code for slow calls for branches.
+        https://bugs.webkit.org/show_bug.cgi?id=64653
+
+        Reviewed by Gavin Barraclough.
+        
+        Removed SpeculativeJIT::compilePeepHoleCall.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+
 2011-07-15  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.
