@@ -580,7 +580,7 @@ namespace WebCore {
             m_saveAndRestore = false;
         }
         
-        GraphicsContext* const context() const { return &m_context; }
+        GraphicsContext* context() const { return &m_context; }
 
     private:
         GraphicsContext& m_context;

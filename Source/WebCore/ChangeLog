@@ -1,3 +1,10 @@
+2011-07-15  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextStateSaver::context): Remove a bogus type qualifier.
+
 2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Focus and selection events are not fired when a <select>'s selection
