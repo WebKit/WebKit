@@ -1,3 +1,20 @@
+2011-07-16  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation API crashes on SVGAnimateTransform
+        https://bugs.webkit.org/show_bug.cgi?id=64104
+
+        Added the test to cover assertion in AnimatedTransform list where its
+        value and wrapper length mismatch occurs.
+
+        * svg/animations/script-tests/svgtransform-animation-discrete.js: Added.
+        (sample1):
+        (sample2):
+        (executeTest):
+        * svg/animations/svgtransform-animation-discrete-expected.txt: Added.
+        * svg/animations/svgtransform-animation-discrete.html: Added.
+
 2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Focus and selection events are not fired when a <select>'s selection

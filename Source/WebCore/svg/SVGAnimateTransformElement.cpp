@@ -117,17 +117,17 @@ void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
     ASSERT_NOT_REACHED();
 }
 
-static SVGTransformList* transformListFor(SVGElement* element)
+static PassRefPtr<SVGAnimatedTransformList> animatedTransformListFor(SVGElement* element)
 {
     ASSERT(element);
     if (element->isStyledTransformable())
-        return &static_cast<SVGStyledTransformableElement*>(element)->transform();
+        return static_cast<SVGStyledTransformableElement*>(element)->transformAnimated();
     if (element->hasTagName(SVGNames::textTag))
-        return &static_cast<SVGTextElement*>(element)->transform();
+        return static_cast<SVGTextElement*>(element)->transformAnimated();
     if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
-        return &static_cast<SVGGradientElement*>(element)->gradientTransform();
+        return static_cast<SVGGradientElement*>(element)->gradientTransformAnimated();
     if (element->hasTagName(SVGNames::patternTag))
-        return &static_cast<SVGPatternElement*>(element)->patternTransform();
+        return static_cast<SVGPatternElement*>(element)->patternTransformAnimated();
     return 0;
 }
     
@@ -148,8 +148,10 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
     }
     
     if (baseValue.isEmpty()) {
-        if (SVGTransformList* list = transformListFor(targetElement))
-            list->clear();
+        if (RefPtr<SVGAnimatedTransformList> list = animatedTransformListFor(targetElement)) {
+            list->detachListWrappers(0);
+            list->values().clear();
+        }
     } else
         targetElement->setAttribute(SVGNames::transformAttr, baseValue);
 }
@@ -159,18 +161,21 @@ void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsign
     SVGElement* targetElement = this->targetElement();
     if (!targetElement || determineAnimatedPropertyType(targetElement) == AnimatedUnknown)
         return;
-    SVGTransformList* transformList = transformListFor(targetElement);
-    ASSERT(transformList);
+    RefPtr<SVGAnimatedTransformList> animatedList = animatedTransformListFor(targetElement);
+    ASSERT(animatedList);
     
     if (calcMode() == CalcModeDiscrete)
         percentage = percentage < 0.5 ? 0 : 1;
 
-    if (!isAdditive())
-        transformList->clear();
+    if (!isAdditive()) {
+        animatedList->detachListWrappers(0);
+        animatedList->values().clear();
+    }
     if (isAccumulated() && repeat)
         percentage += repeat;
     SVGTransform transform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentage).addToSVGTransform(m_fromTransform);
-    transformList->append(transform);
+    animatedList->values().append(transform);
+    animatedList->wrappers().append(RefPtr<SVGPropertyTearOff<SVGTransform> >());
 }
     
 bool SVGAnimateTransformElement::calculateFromAndToValues(const String& fromString, const String& toString)
@@ -216,9 +221,10 @@ void SVGAnimateTransformElement::applyResultsToTarget()
     }
 
     // ...except in case where we have additional instances in <use> trees.
-    SVGTransformList* transformList = transformListFor(targetElement);
-    if (!transformList)
+    RefPtr<SVGAnimatedTransformList> animatedList = animatedTransformListFor(targetElement);
+    if (!animatedList)
         return;
+    SVGTransformList* transformList = &animatedList->values();
 
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
