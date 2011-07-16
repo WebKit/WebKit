@@ -1,3 +1,11 @@
+2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build.
+        
+        * WebView.h:
+        (WebView::backingScaleFactor):
+        (WebView::pageScaleFactor):
+
 2011-07-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
