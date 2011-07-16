@@ -400,6 +400,9 @@ class MockBuilder(object):
     def results_url(self):
         return "http://example.com/builders/%s/results/" % self.name()
 
+    def accumulated_results_url(self):
+        return "http://example.com/f/builders/%s/results/" % self.name()
+
     def force_build(self, username, comments):
         log("MOCK: force_build: name=%s, username=%s, comments=%s" % (
             self._name, username, comments))
@@ -835,6 +838,7 @@ class MockTool(object):
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
+        self._chromium_buildbot = MockBuildBot()
         # Various pieces of code (wrongly) call filesystem.chdir(checkout_root).
         # Making the checkout_root exist in the mock filesystem makes that chdir not raise.
         self.filesystem = MockFileSystem(dirs=set([self._scm.checkout_root]))
@@ -850,6 +854,9 @@ class MockTool(object):
 
     def checkout(self):
         return self._checkout
+
+    def chromium_buildbot(self):
+        return self._chromium_buildbot
 
     def ensure_irc_connected(self, delegate):
         if not self._irc:

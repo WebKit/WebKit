@@ -31,7 +31,9 @@
 from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.config.ports import WebKitPort
+from webkitpy.common.memoized import memoized
 from webkitpy.common.net import bugzilla, buildbot, statusserver, web
+from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
 from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.layout_tests import port
@@ -66,6 +68,10 @@ class Host(object):
 
     def port(self):
         return self._port
+
+    @memoized
+    def chromium_buildbot(self):
+        return ChromiumBuildBot()
 
     def ensure_irc_connected(self, irc_delegate):
         if not self._irc:

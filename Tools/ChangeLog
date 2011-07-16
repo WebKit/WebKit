@@ -1,3 +1,20 @@
+2011-07-15  Adam Barth  <abarth@webkit.org>
+
+        gardening server should proxy buildbot status for garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=64588
+
+        Reviewed by Eric Seidel.
+
+        This information will be used to detect build breaks.  I took this
+        opportunity to make ChromiumBuildBot non-static.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+
 2011-07-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [NRWT] Add support for --no-http

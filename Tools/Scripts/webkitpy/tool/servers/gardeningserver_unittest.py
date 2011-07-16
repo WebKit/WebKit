@@ -77,6 +77,10 @@ class GardeningServerTest(unittest.TestCase):
 """
         self._post_to_path("/changelog?revision=2314", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
+    def test_buildbot(self):
+        expected_stdout = '== Begin JSON Response ==\n[{"is_green": true, "name": "Builder1", "activity": "building"}, {"is_green": true, "name": "Builder2", "activity": "idle"}]\n== End JSON Response ==\n'
+        self._post_to_path("/buildbot", expected_stdout=expected_stdout, expected_stderr='')
+
     def test_rollout(self):
         expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason']\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"

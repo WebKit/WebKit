@@ -68,6 +68,10 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         else:
             self._serve_json(commit_info.to_json())
 
+    def buildbot(self):
+        builder_statuses = self.server.tool.chromium_buildbot().builder_statuses()
+        self._serve_json(builder_statuses)
+
     def rollout(self):
         revision = self.query['revision'][0]
         reason = self.query['reason'][0]

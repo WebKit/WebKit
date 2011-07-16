@@ -33,7 +33,6 @@ import urllib
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.buildbot import BuildBot
-from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests.models import test_failures
@@ -92,8 +91,7 @@ class RebaselineTest(AbstractDeclarativeCommand):
 
     def _results_url(self, builder_name):
         # FIXME: Generalize this command to work with non-build.chromium.org builders.
-        # FIXME: We should really get the buildbot from the tool!
-        builder = ChromiumBuildBot().builder_with_name(builder_name)
+        builder = self._tool.chromium_buildbot().builder_with_name(builder_name)
         return builder.accumulated_results_url()
 
     def _baseline_directory(self, builder_name):
