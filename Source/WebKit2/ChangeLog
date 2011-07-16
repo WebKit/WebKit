@@ -1,3 +1,15 @@
+2011-07-15  Pratik Solanki  <psolanki@apple.com>
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=63674
+        Get webkit to compile with USE(CFNETWORK) enabled on Mac
+
+        Reviewed by David Kilzer.
+
+        New WebKitSystemInterface functions for CFNetwork-based loader.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-07-15  Tim Horton  <timothy_horton@apple.com>
 
         Overlay scrollbars in overflow areas no longer pulse when revealed

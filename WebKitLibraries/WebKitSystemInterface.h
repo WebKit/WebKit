@@ -18,6 +18,10 @@ extern "C" {
 
 typedef struct _CFURLResponse* CFURLResponseRef;
 typedef const struct _CFURLRequest* CFURLRequestRef;
+typedef struct _CFURLRequest* CFMutableURLRequestRef;
+
+typedef struct _CFURLCredential* WKCFURLCredentialRef;
+typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
 
 typedef enum {
     WKCertificateParseResultSucceeded  = 0,
@@ -220,6 +224,7 @@ typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 CFURLStorageSessionRef WKCreatePrivateStorageSession(CFStringRef);
 NSURLRequest *WKCopyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest*);
 NSCachedURLResponse *WKCachedResponseForRequest(CFURLStorageSessionRef, NSURLRequest*);
+void WKSetRequestStorageSession(CFURLStorageSessionRef, CFMutableURLRequestRef);
 
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 CFHTTPCookieStorageRef WKCopyHTTPCookieStorage(CFURLStorageSessionRef);
@@ -227,6 +232,12 @@ unsigned WKGetHTTPCookieAcceptPolicy(CFHTTPCookieStorageRef);
 NSArray *WKHTTPCookiesForURL(CFHTTPCookieStorageRef, NSURL *);
 void WKSetHTTPCookiesForURL(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 void WKDeleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *);
+
+CFHTTPCookieStorageRef WKGetDefaultHTTPCookieStorage(void);
+WKCFURLCredentialRef WKCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef);
+void WKSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool flag);
+CFArrayRef WKCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
+void WKCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
 void WKSetVisibleApplicationName(CFStringRef);
 
@@ -412,6 +423,7 @@ typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
 WKScrollbarPainterRef WKMakeScrollbarPainter(int controlSize, bool isHorizontal);
 WKScrollbarPainterRef WKMakeScrollbarReplacementPainter(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
 void WKScrollbarPainterSetDelegate(WKScrollbarPainterRef, id scrollbarPainterDelegate);
+void WKScrollbarPainterSetEnabled(WKScrollbarPainterRef scrollbarPainter, bool enabled);
 void WKScrollbarPainterPaint(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
 void WKScrollbarPainterForceFlashScrollers(WKScrollbarPainterControllerRef);
 int WKScrollbarThickness(int controlSize);

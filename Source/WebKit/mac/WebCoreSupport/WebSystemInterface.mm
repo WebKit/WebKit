@@ -162,6 +162,14 @@ void InitWebCoreSystemInterface(void)
     INIT(AVAssetResolvedURL);
     INIT(Cursor);
 #endif
+#if USE(CFNETWORK)
+    INIT(GetDefaultHTTPCookieStorage);
+    INIT(CopyCredentialFromCFPersistentStorage);
+    INIT(SetCFURLRequestShouldContentSniff);
+    INIT(CFURLRequestCopyHTTPRequestBodyParts);
+    INIT(CFURLRequestSetHTTPRequestBodyParts);
+    INIT(SetRequestStorageSession);
+#endif
 
     INIT(GetAXTextMarkerTypeID);
     INIT(GetAXTextMarkerRangeTypeID);
