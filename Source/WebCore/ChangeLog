@@ -1,3 +1,29 @@
+2011-07-16  Jessie Berlin  <jberlin@apple.com>
+
+        Work towards determining the cause of frequent crashes due to null frame below
+        ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache.
+        https://bugs.webkit.org/show_bug.cgi?id=62764
+
+        Reviewed by Darin Adler.
+
+        No loads should be going on for a DocumentLoader that has been detached from its frame, but
+        that appears to be what is happening in this bug.
+
+        Add assertions with the hope that someone will run into this while debugging and thereby find
+        a reproducible case.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didSendData):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::willCacheResponse):
+
 2011-07-16  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         DOMWindow::open performs a security check on a wrong window
