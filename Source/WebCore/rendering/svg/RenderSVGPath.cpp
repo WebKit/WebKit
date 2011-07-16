@@ -162,7 +162,7 @@ FloatRect RenderSVGPath::zeroLengthSubpathRect() const
 {
     SVGElement* svgElement = static_cast<SVGElement*>(node());
     float strokeWidth = style()->svgStyle()->strokeWidth().value(svgElement);
-    return FloatRect(m_fillBoundingBox.x() - strokeWidth / 2., m_fillBoundingBox.y() - strokeWidth / 2., strokeWidth, strokeWidth);
+    return FloatRect(m_fillBoundingBox.x() - strokeWidth / 2, m_fillBoundingBox.y() - strokeWidth / 2, strokeWidth, strokeWidth);
 }
 
 void RenderSVGPath::setupSquareCapPath(Path*& usePath, int& applyMode)
