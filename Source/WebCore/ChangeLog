@@ -1,3 +1,15 @@
+2011-07-16  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        DOMWindow::open performs a security check on a wrong window
+        https://bugs.webkit.org/show_bug.cgi?id=64651
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/xss-DENIED-window-open-parent.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open):
+
 2011-07-16  Sam Weinig  <sam@webkit.org>
 
         Attribute selectors don't handle glob namespaces (e.g. *|E)

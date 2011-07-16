@@ -1807,7 +1807,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
         if (!activeFrame->loader()->shouldAllowNavigation(targetFrame))
             return 0;
 
-        if (isInsecureScriptAccess(activeWindow, urlString))
+        if (targetFrame->domWindow()->isInsecureScriptAccess(activeWindow, urlString))
             return targetFrame->domWindow();
 
         if (urlString.isEmpty())
