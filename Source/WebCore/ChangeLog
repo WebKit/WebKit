@@ -1,5 +1,13 @@
 2011-07-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows build.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        (WebCore::MediaPlayerPrivate::backingScaleFactor):
+        (WebCore::MediaPlayerPrivate::pageScaleFactor):
+
+2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
         Have GraphicsLayer pull their contentsScale, rather than pushing it onto them
         https://bugs.webkit.org/show_bug.cgi?id=64643
 
