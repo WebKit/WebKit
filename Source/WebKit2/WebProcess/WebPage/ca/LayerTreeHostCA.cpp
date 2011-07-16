@@ -67,7 +67,6 @@ void LayerTreeHostCA::initialize()
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
     m_nonCompositedContentLayer->setSize(m_webPage->size());
-    m_nonCompositedContentLayer->setContentsScale(m_webPage->userSpaceScaleFactor());
     if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
         m_nonCompositedContentLayer->setAcceleratesDrawing(true);
 
@@ -207,6 +206,16 @@ bool LayerTreeHostCA::showRepaintCounter() const
     return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
+float LayerTreeHostCA::backingScaleFactor() const
+{
+    return m_webPage->userSpaceScaleFactor();
+}
+
+float LayerTreeHostCA::pageScaleFactor() const
+{
+    return 1;
+}
+
 void LayerTreeHostCA::performScheduledLayerFlush()
 {
     {
@@ -253,7 +262,6 @@ void LayerTreeHostCA::createPageOverlayLayer()
 
     m_pageOverlayLayer->setDrawsContent(true);
     m_pageOverlayLayer->setSize(m_webPage->size());
-    m_pageOverlayLayer->setContentsScale(m_webPage->userSpaceScaleFactor());
 
     m_rootLayer->addChild(m_pageOverlayLayer.get());
 }

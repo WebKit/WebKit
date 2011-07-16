@@ -325,11 +325,6 @@ public:
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }
     
-    // Change the scale at which the contents are rendered. Note that contentsScale may not return
-    // the same value passed to setContentsScale(), because of clamping and hysteresis.
-    virtual float contentsScale() const { return 1; }
-    virtual void setContentsScale(float) { }
-
     void dumpLayer(TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
     int repaintCount() const { return m_repaintCount; }
@@ -354,6 +349,9 @@ public:
 
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
+
+    virtual void pageScaleFactorChanged() { }
+    void notePageScaleFactorChangedIncludingDescendants();
 
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer

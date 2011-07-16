@@ -222,6 +222,22 @@ void GraphicsLayer::removeFromParent()
     }
 }
 
+void GraphicsLayer::notePageScaleFactorChangedIncludingDescendants()
+{
+    pageScaleFactorChanged();
+
+    if (m_maskLayer)
+        m_maskLayer->pageScaleFactorChanged();
+
+    if (m_replicaLayer)
+        m_replicaLayer->notePageScaleFactorChangedIncludingDescendants();
+
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+    for (size_t i = 0; i < numChildren; ++i)
+        childLayers[i]->notePageScaleFactorChangedIncludingDescendants();
+}
+
 void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
 {
     if (layer)

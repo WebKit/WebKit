@@ -70,6 +70,17 @@ public:
         m_pageOverlayClient->paintPageOverlay(context);
     }
 
+    // Multiplier for backing store size, related to high DPI.
+    virtual float backingScaleFactor() const
+    {
+        return 1;
+    }
+
+    virtual float pageScaleFactor() const
+    {
+        return 1;
+    }
+
     virtual bool showDebugBorders() const
     {
         return m_webViewImpl->page()->settings()->showDebugBorders();

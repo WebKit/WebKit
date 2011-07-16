@@ -128,6 +128,10 @@ public:
 
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip);
 
+    virtual float backingScaleFactor() const;
+    virtual float pageScaleFactor() const;
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const;
+
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
@@ -136,8 +140,6 @@ public:
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
     
-    void pageScaleFactorChanged(float);
-
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
@@ -192,9 +194,6 @@ private:
 
     static int graphicsLayerToCSSProperty(AnimatedPropertyID);
     static AnimatedPropertyID cssToGraphicsLayerProperty(int);
-
-    float pageScaleFactor() const;
-    float backingScaleFactor() const;
 
 #ifndef NDEBUG
     String nameForLayer() const;

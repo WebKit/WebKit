@@ -1111,7 +1111,7 @@ void Frame::pageScaleFactorChanged(float scale)
 
     RenderView* root = contentRenderer();
     if (root && root->compositor())
-        root->compositor()->pageScaleFactorChanged(scale);
+        root->compositor()->pageScaleFactorChanged();
 }
 #endif
 
