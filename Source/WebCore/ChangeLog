@@ -1,3 +1,9 @@
+2011-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WinCE build fix. Unreviewed.
+
+        * dom/SelectElement.cpp:
+
 2011-07-16  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Reviewed by Nikolas Zimmermann.

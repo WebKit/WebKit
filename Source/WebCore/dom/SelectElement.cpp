@@ -558,7 +558,7 @@ void SelectElement::reset(SelectElementData& data, Element* element)
     element->setNeedsStyleRecalc();
 }
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) || OS(WINCE)
 bool SelectElement::platformHandleKeydownEvent(SelectElementData& data, Element* element, KeyboardEvent* event)
 {
 #if ARROW_KEYS_POP_MENU
