@@ -1238,12 +1238,12 @@ void GraphicsLayerQt::setContentsToImage(Image* image)
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerQt::setContentsBackgroundColor(const Color& color)
+void GraphicsLayerQt::setContentsToBackgroundColor(const Color& color)
 {
     m_impl->notifyChange(GraphicsLayerQtImpl::ContentChange);
     m_impl->m_pendingContent.contentType = GraphicsLayerQtImpl::ColorContentType;
     m_impl->m_pendingContent.contentsBackgroundColor = QColor(color);
-    GraphicsLayer::setContentsBackgroundColor(color);
+    GraphicsLayer::setContentsToBackgroundColor(color);
 }
 
 void GraphicsLayerQt::setContentsToMedia(PlatformLayer* media)
