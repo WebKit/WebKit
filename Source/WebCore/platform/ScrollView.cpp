@@ -893,6 +893,7 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
         return;
 
     if (platformWidget()) {
+        notifyPageThatContentAreaWillPaint();
         platformRepaintContentRectangle(paintRect, now);
         return;
     }

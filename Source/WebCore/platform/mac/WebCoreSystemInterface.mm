@@ -126,6 +126,7 @@ CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
 WKScrollbarPainterRef (*wkMakeScrollbarReplacementPainter)(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
 void (*wkScrollbarPainterSetDelegate)(WKScrollbarPainterRef, id scrollbarPainterDelegate);
+void (*wkScrollbarPainterSetEnabled)(WKScrollbarPainterRef, bool enabled);
 void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
 void (*wkScrollbarPainterForceFlashScrollers)(WKScrollbarPainterControllerRef);
 int (*wkScrollbarThickness)(int controlSize);

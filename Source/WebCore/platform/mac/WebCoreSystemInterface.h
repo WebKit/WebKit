@@ -246,6 +246,7 @@ typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
 extern WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
 extern WKScrollbarPainterRef (*wkMakeScrollbarReplacementPainter)(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
 extern void (*wkScrollbarPainterSetDelegate)(WKScrollbarPainterRef, id scrollbarPainterDelegate);
+extern void (*wkScrollbarPainterSetEnabled)(WKScrollbarPainterRef, bool enabled);
 extern void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
 extern void (*wkScrollbarPainterForceFlashScrollers)(WKScrollbarPainterControllerRef);
 extern int (*wkScrollbarThickness)(int controlSize);
