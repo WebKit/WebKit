@@ -177,6 +177,11 @@ def unit_test_list():
     # FIXME: Add a reftest which crashes.
 
     tests.add('websocket/tests/passes/text.html')
+
+    # For --no-http tests, test that platform specific HTTP tests are properly skipped.
+    tests.add('platform/test-snow-leopard/http/test.html')
+    tests.add('platform/test-snow-leopard/websocket/test.html')
+
     return tests
 
 

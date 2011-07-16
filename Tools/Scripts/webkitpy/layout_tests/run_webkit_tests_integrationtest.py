@@ -650,6 +650,27 @@ class MainTest(unittest.TestCase):
         res, buildbot_output, regular_output, user = logging_run(['--additional-platform-directory', 'foo'])
         self.assertTrue('--additional-platform-directory=foo is ignored since it is not absolute\n' in regular_output.get())
 
+    def test_no_http_and_force(self):
+        # See test_run_force, using --force raises an exception.
+        # FIXME: We would like to check the warnings generated.
+        self.assertRaises(ValueError, logging_run, ['--force', '--no-http'])
+
+    @staticmethod
+    def has_test_of_type(tests, type):
+        return [test for test in tests if type in test]
+
+    def test_no_http_tests(self):
+        batch_tests_dryrun = get_tests_run(['LayoutTests/http', 'websocket/'], flatten_batches=True)
+        self.assertTrue(MainTest.has_test_of_type(batch_tests_dryrun, 'http'))
+        self.assertTrue(MainTest.has_test_of_type(batch_tests_dryrun, 'websocket'))
+
+        batch_tests_run_no_http = get_tests_run(['--no-http', 'LayoutTests/http', 'websocket/'], flatten_batches=True)
+        self.assertFalse(MainTest.has_test_of_type(batch_tests_run_no_http, 'http'))
+        self.assertFalse(MainTest.has_test_of_type(batch_tests_run_no_http, 'websocket'))
+
+        batch_tests_run_http = get_tests_run(['--http', 'LayoutTests/http', 'websocket/'], flatten_batches=True)
+        self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'http'))
+        self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 

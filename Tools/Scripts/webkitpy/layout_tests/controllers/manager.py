@@ -279,8 +279,8 @@ class Manager(object):
         self._message_broker = None
         self._expectations = None
 
-        self.HTTP_SUBDIR = port.TEST_PATH_SEPARATOR + 'http' + port.TEST_PATH_SEPARATOR
-        self.WEBSOCKET_SUBDIR = port.TEST_PATH_SEPARATOR + 'websocket' + port.TEST_PATH_SEPARATOR
+        self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR
+        self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._has_http_lock = False
 
@@ -356,6 +356,12 @@ class Manager(object):
             self._options.lint_test_files,
             port.test_expectations_overrides())
 
+    def _is_http_test(self, test):
+        return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
+
+    def _http_tests(self):
+        return set(test for test in self._test_files if self._is_http_test(test))
+
     def parse_expectations(self):
         """Parse the expectations from the test_list files and return a data
         structure holding them. Throws an error if the test_list files have
@@ -385,14 +391,17 @@ class Manager(object):
             return None
 
         skipped = set()
+
+        if not self._options.http:
+            skipped = skipped.union(self._http_tests())
+
         if num_all_test_files > 1 and not self._options.force:
-            skipped = self._expectations.get_tests_with_result_type(
-                           test_expectations.SKIP)
-            self._test_files -= skipped
+            skipped = skipped.union(self._expectations.get_tests_with_result_type(test_expectations.SKIP))
             if self._options.skip_failing_tests:
-                failing = self._expectations.get_tests_with_result_type(
-                               test_expectations.FAIL)
+                failing = self._expectations.get_tests_with_result_type(test_expectations.FAIL)
                 self._test_files -= failing
+
+        self._test_files -= skipped
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
@@ -537,8 +546,7 @@ class Manager(object):
     def _test_requires_lock(self, test_file):
         """Return True if the test needs to be locked when
         running multiple copies of NRWTs."""
-        split_path = test_file.split(self._port.TEST_PATH_SEPARATOR)
-        return 'http' in split_path or 'websocket' in split_path
+        return self._is_http_test(test_file)
 
     def _test_is_slow(self, test_file):
         return self._expectations.has_modifier(test_file, test_expectations.SLOW)
@@ -935,6 +943,7 @@ class Manager(object):
         return unexpected_results['num_regressions']
 
     def start_servers_with_lock(self):
+        assert(self._options.http)
         self._printer.print_update('Acquiring http lock ...')
         self._port.acquire_http_lock()
         self._printer.print_update('Starting HTTP server ...')

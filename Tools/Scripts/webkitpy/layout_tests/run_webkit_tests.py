@@ -153,6 +153,10 @@ def _set_up_derived_options(port, options):
             normalized_platform_directories.append(port.filesystem.normpath(path))
         options.additional_platform_directory = normalized_platform_directories
 
+    if not options.http and options.force:
+        warnings.append("--no-http is ignored since --force is also provided")
+        options.http = True
+
     return warnings
 
 
@@ -317,9 +321,10 @@ def parse_args(args=None):
         optparse.make_option("--no-record-results", action="store_false",
             default=True, dest="record_results",
             help="Don't record the results."),
-        # old-run-webkit-tests also has HTTP toggle options:
-        # --[no-]http                     Run (or do not run) http tests
-        #                                 (default: run)
+        optparse.make_option("--http", action="store_true", dest="http",
+            default=True, help="Run HTTP and WebSocket tests (default)"),
+        optparse.make_option("--no-http", action="store_false", dest="http",
+            help="Don't run HTTP and WebSocket tests"),
     ]
 
     test_options = [

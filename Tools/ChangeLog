@@ -1,3 +1,28 @@
+2011-07-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [NRWT] Add support for --no-http
+        https://bugs.webkit.org/show_bug.cgi?id=64564
+
+        Reviewed by Dirk Pranke.
+
+        Added support for --no-http, which disables both HTTP and websockets tests.
+        It also matches the old-run-webkit-tests behavior if --force is used.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        Fixed HTTP_SUBDIR and WEBSOCKET_SUBDIR as tests do not start with a leading separator.
+        We check if --no-http is set and add the HTTP / websockets tests to the skipped list prior to looking
+        at the expectation file. Fixed the  _test_requires_lock function to use the same code path to determine
+        what is worth have an HTTP lock as --no-http to avoid badness.
+
+        * Scripts/webkitpy/layout_tests/port/test.py: Added 2 new tests to our mock filesystem to validate that
+        we do skip properly HTTP / websocket tests inside platform/.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        Added tests that we properly skip all the tests.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        Added checks for the command line arguments.
+
 2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Focus and selection events are not fired when a <select>'s selection
