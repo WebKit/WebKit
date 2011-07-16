@@ -36,7 +36,7 @@ bool applicationIsMicrosoftMessenger();
 bool applicationIsMicrosoftMyDay();
 bool applicationIsMicrosoftOutlook();
 bool applicationIsSafari();
-bool applicationIsSolarWalk();
+bool applicationIsSolarWalkMac();
 
 } // namespace WebCore
 

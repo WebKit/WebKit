@@ -670,7 +670,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 static bool needsSolarWalkQuirksScript()
 {
     static bool isSolarWalkNeedingQuirksScript = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-    && applicationIsSolarWalk();
+    && applicationIsSolarWalkMac();
     return isSolarWalkNeedingQuirksScript;
 }
 

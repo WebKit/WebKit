@@ -102,7 +102,7 @@ bool applicationIsAperture()
     return isAperture;
 }
 
-bool applicationIsSolarWalk()
+bool applicationIsSolarWalkMac()
 {
     static bool isSolarWalk = mainBundleIsEqualTo("com.vitotechnology.SolarWalkMac");
     return isSolarWalk;
