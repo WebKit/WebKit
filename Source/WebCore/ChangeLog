@@ -1,3 +1,31 @@
+2011-07-16  Sam Weinig  <sam@webkit.org>
+
+        Attribute selectors don't handle glob namespaces (e.g. *|E)
+        https://bugs.webkit.org/show_bug.cgi?id=64567
+
+        Reviewed by Anders Carlsson.
+
+        Change checking of attribute selectors to match CSS 3 Selectors in
+        the presence of namespaces. This entails changing the algorithm to
+        check each attribute on an element as a match for the attribute selector
+        and taking into account a prefix of *.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::attributeQualifiedNameMatches):
+        Checks if the a particular attributes qualified name matches
+        the attribute selector, taking into account a prefix of *.
+
+        (WebCore::attributeValueMatches):
+        Checks if a particular attribute on an element, matches
+        the attribute selector.
+
+        (WebCore::anyAttributeMatches):
+        Top level attribute check. Checks if any of an elements attributes
+        match the attribute selector.
+        
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        Factor out attribute checking code into the above functions.
+
 2011-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WinCE build fix. Unreviewed.

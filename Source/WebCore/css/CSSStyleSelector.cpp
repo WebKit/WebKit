@@ -2391,6 +2391,91 @@ static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
     return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
 }
 
+static bool attributeQualifiedNameMatches(Attribute* attribute, const QualifiedName& selectorAttr)
+{
+    if (selectorAttr.localName() != attribute->localName())
+        return false;
+
+    return selectorAttr.prefix() == starAtom || selectorAttr.namespaceURI() == attribute->namespaceURI();
+}
+
+static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
+{
+    const AtomicString& value = attributeItem->value();
+    if (value.isNull())
+        return false;
+
+    switch (match) {
+    case CSSSelector::Exact:
+        if (caseSensitive ? selectorValue != value : !equalIgnoringCase(selectorValue, value))
+            return false;
+        break;
+    case CSSSelector::List: {
+        // Ignore empty selectors or selectors containing spaces
+        if (selectorValue.contains(' ') || selectorValue.isEmpty())
+            return false;
+
+        unsigned startSearchAt = 0;
+        while (true) {
+            size_t foundPos = value.find(selectorValue, startSearchAt, caseSensitive);
+            if (foundPos == notFound)
+                return false;
+            if (!foundPos || value[foundPos - 1] == ' ') {
+                unsigned endStr = foundPos + selectorValue.length();
+                if (endStr == value.length() || value[endStr] == ' ')
+                    break; // We found a match.
+            }
+            
+            // No match. Keep looking.
+            startSearchAt = foundPos + 1;
+        }
+        break;
+    }
+    case CSSSelector::Contain:
+        if (!value.contains(selectorValue, caseSensitive) || selectorValue.isEmpty())
+            return false;
+        break;
+    case CSSSelector::Begin:
+        if (!value.startsWith(selectorValue, caseSensitive) || selectorValue.isEmpty())
+            return false;
+        break;
+    case CSSSelector::End:
+        if (!value.endsWith(selectorValue, caseSensitive) || selectorValue.isEmpty())
+            return false;
+        break;
+    case CSSSelector::Hyphen:
+        if (value.length() < selectorValue.length())
+            return false;
+        if (!value.startsWith(selectorValue, caseSensitive))
+            return false;
+        // It they start the same, check for exact match or following '-':
+        if (value.length() != selectorValue.length() && value[selectorValue.length()] != '-')
+            return false;
+        break;
+    case CSSSelector::PseudoClass:
+    case CSSSelector::PseudoElement:
+    default:
+        break;
+    }
+
+    return true;
+}
+
+static bool anyAttributeMatches(NamedNodeMap* attributes, CSSSelector::Match match, const QualifiedName& selectorAttr, const AtomicString& selectorValue, bool caseSensitive)
+{
+    for (size_t i = 0; i < attributes->length(); ++i) {
+        Attribute* attributeItem = attributes->attributeItem(i);
+
+        if (!attributeQualifiedNameMatches(attributeItem, selectorAttr))
+            continue;
+
+        if (attributeValueMatches(attributeItem, match, selectorValue, caseSensitive))
+            return true;
+    }
+
+    return false;
+}
+
 bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, unsigned forcePseudoClassMask, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
     ASSERT(e);
@@ -2406,73 +2491,21 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
 
         if (sel->m_match == CSSSelector::Id)
             return e->hasID() && e->idForStyleResolution() == sel->value();
-        
+
         const QualifiedName& attr = sel->attribute();
 
         // FIXME: Handle the case were elementStyle is 0.
-        if (elementStyle && (!e->isStyledElement() || (!static_cast<StyledElement*>(e)->isMappedAttribute(attr) && attr != typeAttr && attr != readonlyAttr))) {
+        if (elementStyle && (!e->isStyledElement() || (!static_cast<StyledElement*>(e)->isMappedAttribute(attr) && attr != typeAttr && attr != readonlyAttr)))
             elementStyle->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.
-        }
 
-        const AtomicString& value = e->getAttribute(attr);
-        if (value.isNull())
-            return false; // attribute is not set
+        NamedNodeMap* attributes = e->attributes(true);
+        if (!attributes)
+            return false;
 
         bool caseSensitive = !m_documentIsHTML || !htmlAttributeHasCaseInsensitiveValue(attr);
 
-        switch (sel->m_match) {
-        case CSSSelector::Exact:
-            if (caseSensitive ? sel->value() != value : !equalIgnoringCase(sel->value(), value))
-                return false;
-            break;
-        case CSSSelector::List:
-        {
-            // Ignore empty selectors or selectors containing spaces
-            if (sel->value().contains(' ') || sel->value().isEmpty())
-                return false;
-
-            unsigned startSearchAt = 0;
-            while (true) {
-                size_t foundPos = value.find(sel->value(), startSearchAt, caseSensitive);
-                if (foundPos == notFound)
-                    return false;
-                if (foundPos == 0 || value[foundPos - 1] == ' ') {
-                    unsigned endStr = foundPos + sel->value().length();
-                    if (endStr == value.length() || value[endStr] == ' ')
-                        break; // We found a match.
-                }
-                
-                // No match. Keep looking.
-                startSearchAt = foundPos + 1;
-            }
-            break;
-        }
-        case CSSSelector::Contain:
-            if (!value.contains(sel->value(), caseSensitive) || sel->value().isEmpty())
-                return false;
-            break;
-        case CSSSelector::Begin:
-            if (!value.startsWith(sel->value(), caseSensitive) || sel->value().isEmpty())
-                return false;
-            break;
-        case CSSSelector::End:
-            if (!value.endsWith(sel->value(), caseSensitive) || sel->value().isEmpty())
-                return false;
-            break;
-        case CSSSelector::Hyphen:
-            if (value.length() < sel->value().length())
-                return false;
-            if (!value.startsWith(sel->value(), caseSensitive))
-                return false;
-            // It they start the same, check for exact match or following '-':
-            if (value.length() != sel->value().length() && value[sel->value().length()] != '-')
-                return false;
-            break;
-        case CSSSelector::PseudoClass:
-        case CSSSelector::PseudoElement:
-        default:
-            break;
-        }
+        if (!anyAttributeMatches(attributes, static_cast<CSSSelector::Match>(sel->m_match), attr, sel->value(), caseSensitive))
+            return false;
     }
     
     if (sel->m_match == CSSSelector::PseudoClass) {

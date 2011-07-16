@@ -1,3 +1,114 @@
+2011-07-16  Sam Weinig  <sam@webkit.org>
+
+        Attribute selectors don't handle glob namespaces (e.g. *|E)
+        https://bugs.webkit.org/show_bug.cgi?id=64567
+
+        Reviewed by Anders Carlsson.
+
+        Update results for correct handling of a * prefix in an attribute selector.
+        Fixes 50 tests.
+
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-104-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-104-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-105-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-105-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-106-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-106-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-107-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-107-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-108-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-108-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-109-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-109-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-110-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-110-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-130-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-130-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-130b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-130b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-131-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-131-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-131b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-131b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-132-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-132-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-132b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-132b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-133-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-133-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-133b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-133b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-134-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-134-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-134b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-134b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-135-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-135-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-135b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-135b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-136-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-136-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-136b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-136b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-173a-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-173a-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-173b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-173b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-174a-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-174a-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-174b-expected.png:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-174b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-104-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-104-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-105-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-105-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-106-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-106-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-107-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-107-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-108-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-108-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-109-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-109-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-110-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-110-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-130-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-130-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-130b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-130b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-131-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-131-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-131b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-131b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-132-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-132-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-132b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-132b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-133-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-133-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-133b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-133b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-134-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-134-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-134b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-134b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-135-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-135-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-135b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-135b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-136-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-136-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-136b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-136b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-173a-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-173a-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-173b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-173b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-174a-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-174a-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-174b-expected.png:
+        * platform/mac/css3/selectors3/xml/css3-modsel-174b-expected.txt:
+
 2011-07-16  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Reviewed by Nikolas Zimmermann.
