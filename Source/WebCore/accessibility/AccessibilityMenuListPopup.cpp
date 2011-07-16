@@ -126,7 +126,7 @@ void AccessibilityMenuListPopup::setMenuList(AccessibilityMenuList* menuList)
 void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
 {
     ASSERT_ARG(optionIndex, optionIndex >= 0);
-    ASSERT_ARG(optionIndex, optionIndex < m_children.size());
+    ASSERT_ARG(optionIndex, optionIndex < static_cast<int>(m_children.size()));
 
     RefPtr<Document> document = m_menuList->renderer()->document();
     AXObjectCache* cache = document->axObjectCache();

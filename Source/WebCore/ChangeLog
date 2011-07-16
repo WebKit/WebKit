@@ -1,3 +1,11 @@
+2011-07-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Build fix. Unreviewed.
+
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+        Cast size_t to int for comparison.
+
 2011-07-15  Andy Estes  <aestes@apple.com>
 
         Rename applicationIsSolarWalk() to applicationIsSolarWalkMac().
