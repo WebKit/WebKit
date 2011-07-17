@@ -176,15 +176,15 @@ class TestExpectationParser:
 
     def __init__(self, port, test_config, full_test_list, allow_rebaseline_modifier):
         self._port = port
-        self._matcher = ModifierMatcher(test_config)
+        self._specificity_calculator = SpecificityCalculator(test_config)
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
     def parse(self, expectation_line):
-        self._matcher.match(expectation_line)
+        self._specificity_calculator.calculate(expectation_line)
         self._check_semantics(expectation_line)
 
-        if expectation_line.num_matches == ModifierMatcher.NO_MATCH:
+        if expectation_line.specificity == SpecificityCalculator.INVALID:
             return
 
         self._check_modifiers_against_expectations(expectation_line)
@@ -329,7 +329,7 @@ class TestExpectationLine:
         self.expectations = []
         self.parsed_expectations = set()
         self.comment = None
-        self.num_matches = ModifierMatcher.NO_MATCH
+        self.specificity = SpecificityCalculator.INVALID
         self.matching_tests = []
         self.errors = []
         self.warnings = []
@@ -497,7 +497,7 @@ class TestExpectationsModel:
         Returns True if we've already seen a expectation_line.name that matches more of the test
             than this path does
         """
-        # FIXME: See comment below about matching test configs and num_matches.
+        # FIXME: See comment below about matching test configs and specificity.
         if not self.has_test(test):
             # We've never seen this test before.
             return False
@@ -530,16 +530,16 @@ class TestExpectationsModel:
         # more modifiers to override lines that matched fewer modifiers.
         # However, we currently view these as errors. If we decide to make
         # this policy permanent, we can probably simplify this code
-        # and the ModifierMatcher code a fair amount.
+        # and the SpecificityCalculator code a fair amount.
         #
         # To use the "more modifiers wins" policy, change the errors for overrides
         # to be warnings and return False".
 
-        if prev_expectation_line.num_matches == expectation_line.num_matches:
+        if prev_expectation_line.specificity == expectation_line.specificity:
             expectation_line.errors.append('Duplicate or ambiguous %s.' % expectation_source)
             return True
 
-        if prev_expectation_line.num_matches < expectation_line.num_matches:
+        if prev_expectation_line.specificity < expectation_line.specificity:
             expectation_line.errors.append('More specific entry on line %d overrides line %d' % (lineno, prev_lineno))
             # FIXME: return False if we want more specific to win.
             return True
@@ -806,31 +806,31 @@ class TestExpectations:
             self._model.add_expectation_line(lineno, expectation_line, overrides_allowed)
 
 
-class ModifierMatchResult(object):
+class SpecificityCalculation(object):
     def __init__(self, modifiers):
-        self.num_matches = ModifierMatcher.NO_MATCH
+        self.specificity = SpecificityCalculator.INVALID
         self._modifiers = modifiers
         self._matched_modifiers = []
         self._matched_regexes = set()
         self._matched_macros = set()
 
 
-class ModifierMatcher(object):
+class SpecificityCalculator(object):
 
     """
-    This class manages the interpretation of the "modifiers" for a given
-    line in the expectations file. Modifiers are the tokens that appear to the
-    left of the colon on a line. For example, "BUG1234", "DEBUG", and "WIN" are
-    all modifiers. This class gets what the valid modifiers are, and which
-    modifiers are allowed to exist together on a line, from the
-    TestConfiguration object that is passed in to the call.
+    This class determines how specific are the modifiers for a given
+    TestExpectationLine. Some modifiers describe a test configuration for which this
+    test expectation is applicable. There is a degree of specificity for these modifiers.
 
-    This class detects *intra*-line errors like unknown modifiers, but
-    does not detect *inter*-line modifiers like duplicate expectations.
+    For example, 'XP RELEASE CPU' is very specific, because it limits applicable test configuration to
+    Windows XP system in Release mode, with CPU-backed graphics.
 
-    More importantly, this class is also used to determine if a given line
-    matches the port in question. Matches are ranked according to the number
-    of modifiers that match on a line. A line with no modifiers matches
+    On the other hand, '' (empty modifier) makes the test applicable to any test configuration.
+
+    This class finds such modifiers, interprets their meaning and determines specificity of
+    a given test expectation.
+
+    The specificity is determined as a count of modifiers that match. A line with no modifiers matches
     everything and has a score of zero. A line with one modifier matches only
     ports that have that modifier and gets a score of 1, and so one. Ports
     that don't match at all get a score of -1.
@@ -853,6 +853,9 @@ class ModifierMatcher(object):
     In addition to the definitions of all of the modifiers, the class
     supports "macros" that are expanded prior to interpretation, and "ignore
     regexes" that can be used to skip over modifiers like the BUG* modifiers.
+
+    This class also detects errors in this test expectation, like unknown modifiers,
+    invalid modifier combinations, and duplicate modifiers.
     """
     MACROS = {
         'mac': ['leopard', 'snowleopard'],
@@ -865,16 +868,16 @@ class ModifierMatcher(object):
                          TestExpectations.MODIFIERS.keys()[:-1])
     DUPLICATE_REGEXES_ALLOWED = ['bug\w+']
 
-    # Magic value returned when the modifiers don't match.
-    NO_MATCH = -1
+    # Magic value returned when the modifiers don't match the configuration at all.
+    INVALID = -1
 
     # FIXME: The code currently doesn't detect combinations of modifiers
     # that are syntactically valid but semantically invalid, like
-    # 'MAC XP'. See ModifierMatchTest.test_invalid_combinations() in the
+    # 'MAC XP'. See SpecificityCalculatorTest.test_invalid_combinations() in the
     # _unittest.py file.
 
     def __init__(self, test_config):
-        """Initialize a ModifierMatcher argument with the TestConfiguration it
+        """Initialize a SpecificityCalculator argument with the TestConfiguration it
         should be matched against."""
         self.test_config = test_config
         self.allowed_configurations = test_config.all_test_configurations()
@@ -894,23 +897,23 @@ class ModifierMatcher(object):
                 self._categories_for_modifiers[modifier] = category
                 self._all_modifiers.add(modifier)
 
-    def match(self, expectation_line):
+    def calculate(self, expectation_line):
         """Checks a expectation.modifiers against the config set in the constructor.
         Options may be either actual modifier strings, "macro" strings
         that get expanded to a list of modifiers, or strings that are allowed
         to be ignored. All of the modifiers must be passed in in lower case.
 
-        Returns the number of matching categories, or NO_MATCH (-1) if it
+        Returns specificity relative to the test configuration, or INVALID (-1) if it
         doesn't match or there were errors found. Matches are prioritized
         by the number of matching categories, because the more specific
         the modifier list, the more categories will match.
         """
         old_error_count = len(expectation_line.errors)
-        result = ModifierMatchResult(expectation_line.modifiers)
+        result = SpecificityCalculation(expectation_line.modifiers)
         self._parse(expectation_line, result)
         if old_error_count == len(expectation_line.errors):
             self._count_matches(result)
-        expectation_line.num_matches = result.num_matches
+        expectation_line.specificity = result.specificity
 
     def _parse(self, expectation_line, result):
         # FIXME: Should we warn about lines having every value in a category?
@@ -963,13 +966,13 @@ class ModifierMatcher(object):
     def _count_matches(self, result):
         """Returns the number of modifiers that match the test config."""
         categorized_modifiers = self._group_by_category(result._matched_modifiers)
-        result.num_matches = 0
+        result.specificity = 0
         for category, modifier in self.test_config.items():
             if category in categorized_modifiers:
                 if modifier in categorized_modifiers[category]:
-                    result.num_matches += 1
+                    result.specificity += 1
                 else:
-                    result.num_matches = self.NO_MATCH
+                    result.specificity = self.INVALID
                     return
 
     def _group_by_category(self, modifiers):

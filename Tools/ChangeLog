@@ -1,3 +1,17 @@
+2011-07-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Rename ModifierMatcher to SpecificityCalculator.
+        https://bugs.webkit.org/show_bug.cgi?id=64660
+
+        It's a little longer than before, but it is much clearer.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Renamed and adjusted
+            all callsites, also rewrote the comments.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Adjusted callsites
+            and renamed tests.
+
 2011-07-15  Adam Barth  <abarth@webkit.org>
 
         gardening server should proxy buildbot status for garden-o-matic

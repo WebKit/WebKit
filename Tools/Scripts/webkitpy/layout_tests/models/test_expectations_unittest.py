@@ -384,82 +384,79 @@ class RebaseliningTest(Base):
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
 
 
-class ModifierTests(unittest.TestCase):
+class SpecificityCalculatorTests(unittest.TestCase):
     def setUp(self):
         port_obj = port.get('test-win-xp', None)
         self.config = port_obj.test_configuration()
-        self.matcher = ModifierMatcher(self.config)
+        self.calculator = SpecificityCalculator(self.config)
 
-    def match(self, modifiers, expected_num_matches=-1, values=None, num_errors=0):
-        matcher = self.matcher
-        if values:
-            matcher = ModifierMatcher(self.FakeTestConfiguration(values))
+    def assert_specificity(self, modifiers, expected_specificity=-1, num_errors=0):
         expectation = TestExpectationLine()
         expectation.modifiers = modifiers
-        matcher.match(expectation)
+        self.calculator.calculate(expectation)
         self.assertEqual(len(expectation.warnings), 0)
         self.assertEqual(len(expectation.errors), num_errors)
-        self.assertEqual(expectation.num_matches, expected_num_matches,
+        self.assertEqual(expectation.specificity, expected_specificity,
              'match(%s, %s) returned -> %d, expected %d' %
              (modifiers, str(self.config.values()),
-              expectation.num_matches, expected_num_matches))
+              expectation.specificity, expected_specificity))
 
     def test_bad_match_modifier(self):
-        self.match(['foo'], num_errors=1)
+        self.assert_specificity(['foo'], num_errors=1)
 
     def test_none(self):
-        self.match([], 0)
+        self.assert_specificity([], 0)
 
     def test_one(self):
-        self.match(['xp'], 1)
-        self.match(['win'], 1)
-        self.match(['release'], 1)
-        self.match(['cpu'], 1)
-        self.match(['x86'], 1)
-        self.match(['leopard'], -1)
-        self.match(['gpu'], -1)
-        self.match(['debug'], -1)
+        self.assert_specificity(['xp'], 1)
+        self.assert_specificity(['win'], 1)
+        self.assert_specificity(['release'], 1)
+        self.assert_specificity(['cpu'], 1)
+        self.assert_specificity(['x86'], 1)
+        self.assert_specificity(['leopard'], -1)
+        self.assert_specificity(['gpu'], -1)
+        self.assert_specificity(['debug'], -1)
 
     def test_two(self):
-        self.match(['xp', 'release'], 2)
-        self.match(['win7', 'release'], -1)
-        self.match(['win7', 'xp'], 1)
+        self.assert_specificity(['xp', 'release'], 2)
+        self.assert_specificity(['win7', 'release'], -1)
+        self.assert_specificity(['win7', 'xp'], 1)
 
     def test_three(self):
-        self.match(['win7', 'xp', 'release'], 2)
-        self.match(['xp', 'debug', 'x86'], -1)
-        self.match(['xp', 'release', 'x86'], 3)
-        self.match(['xp', 'cpu', 'release'], 3)
+        self.assert_specificity(['win7', 'xp', 'release'], 2)
+        self.assert_specificity(['xp', 'debug', 'x86'], -1)
+        self.assert_specificity(['xp', 'release', 'x86'], 3)
+        self.assert_specificity(['xp', 'cpu', 'release'], 3)
 
     def test_four(self):
-        self.match(['xp', 'release', 'cpu', 'x86'], 4)
-        self.match(['win7', 'xp', 'release', 'cpu'], 3)
-        self.match(['win7', 'xp', 'debug', 'cpu'], -1)
+        self.assert_specificity(['xp', 'release', 'cpu', 'x86'], 4)
+        self.assert_specificity(['win7', 'xp', 'release', 'cpu'], 3)
+        self.assert_specificity(['win7', 'xp', 'debug', 'cpu'], -1)
 
     def test_case_insensitivity(self):
-        self.match(['Win'], num_errors=1)
-        self.match(['WIN'], num_errors=1)
-        self.match(['win'], 1)
+        self.assert_specificity(['Win'], num_errors=1)
+        self.assert_specificity(['WIN'], num_errors=1)
+        self.assert_specificity(['win'], 1)
 
     def test_duplicates(self):
-        self.match(['release', 'release'], num_errors=1)
-        self.match(['win', 'xp'], num_errors=1)
-        self.match(['xp', 'xp'], num_errors=1)
-        self.match(['xp', 'release', 'xp', 'release'], num_errors=2)
-        self.match(['rebaseline', 'rebaseline'], num_errors=1)
+        self.assert_specificity(['release', 'release'], num_errors=1)
+        self.assert_specificity(['win', 'xp'], num_errors=1)
+        self.assert_specificity(['xp', 'xp'], num_errors=1)
+        self.assert_specificity(['xp', 'release', 'xp', 'release'], num_errors=2)
+        self.assert_specificity(['rebaseline', 'rebaseline'], num_errors=1)
 
     def test_unknown_modifier(self):
-        self.match(['vms'], num_errors=1)
+        self.assert_specificity(['vms'], num_errors=1)
 
     def test_duplicate_bugs(self):
         # BUG* regexes can appear multiple times.
-        self.match(['bugfoo', 'bugbar'], 0)
+        self.assert_specificity(['bugfoo', 'bugbar'], 0)
 
     def test_regexes_are_ignored(self):
-        self.match(['bug123xy', 'rebaseline', 'wontfix', 'slow', 'skip'], 0)
+        self.assert_specificity(['bug123xy', 'rebaseline', 'wontfix', 'slow', 'skip'], 0)
 
     def test_none_is_invalid(self):
-        self.match(['none'], num_errors=1)
+        self.assert_specificity(['none'], num_errors=1)
 
 
 class TestExpectationParserTests(unittest.TestCase):
