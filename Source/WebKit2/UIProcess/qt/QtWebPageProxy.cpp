@@ -265,6 +265,11 @@ void QtWebPageProxy::setCursor(const WebCore::Cursor& cursor)
     m_viewInterface->didChangeCursor(*cursor.platformCursor());
 }
 
+void QtWebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    notImplemented();
+}
+
 void QtWebPageProxy::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
     m_viewInterface->setViewNeedsDisplay(QRect(rect));
