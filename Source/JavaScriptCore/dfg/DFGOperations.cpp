@@ -421,7 +421,7 @@ bool operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, Encod
 
 bool operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    return JSValue::equal(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+    return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
 bool operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

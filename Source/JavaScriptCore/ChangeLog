@@ -1,3 +1,12 @@
+2011-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT operationCompareEqual does not inline JSValue::equalSlowCaseInline.
+        https://bugs.webkit.org/show_bug.cgi?id=64637
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGOperations.cpp:
+
 2011-07-16  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64657
