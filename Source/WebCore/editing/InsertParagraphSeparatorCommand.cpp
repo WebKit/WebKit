@@ -302,6 +302,12 @@ void InsertParagraphSeparatorCommand::doApply()
         RefPtr<Element> br = createBreakElement(document());
         insertNodeAt(br.get(), insertionPosition);
         insertionPosition = positionInParentAfterNode(br.get());
+        // If the insertion point is a break element, there is nothing else
+        // we need to do.
+        if (visiblePos.deepEquivalent().anchorNode()->renderer()->isBR()) {
+            setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM));
+            return;
+        }
     }
     
     // Move downstream. Typing style code will take care of carrying along the 
