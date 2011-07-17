@@ -350,6 +350,15 @@ public:
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
 
+    virtual void setMaintainsPixelAlignment(bool maintainsAlignment) { m_maintainsPixelAlignment = maintainsAlignment; }
+    virtual bool maintainsPixelAlignment() const { return m_maintainsPixelAlignment; }
+    
+    void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
+    bool appliesPageScale() const { return m_appliesPageScale; }
+
+    float pageScaleFactor() const { return m_client ? m_client->pageScaleFactor() : 1; }
+    float backingScaleFactor() const { return m_client ? m_client->backingScaleFactor() : 1; }
+
     virtual void pageScaleFactorChanged() { }
     void notePageScaleFactorChangedIncludingDescendants();
 
@@ -416,6 +425,8 @@ protected:
     bool m_masksToBounds : 1;
     bool m_drawsContent : 1;
     bool m_acceleratesDrawing : 1;
+    bool m_maintainsPixelAlignment : 1;
+    bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
 
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents

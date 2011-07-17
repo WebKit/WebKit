@@ -211,11 +211,6 @@ float LayerTreeHostCA::backingScaleFactor() const
     return m_webPage->userSpaceScaleFactor();
 }
 
-float LayerTreeHostCA::pageScaleFactor() const
-{
-    return 1;
-}
-
 void LayerTreeHostCA::performScheduledLayerFlush()
 {
     {

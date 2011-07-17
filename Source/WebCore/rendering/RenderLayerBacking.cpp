@@ -105,6 +105,7 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
 #else
     UNUSED_PARAM(name);
 #endif
+    graphicsLayer->setMaintainsPixelAlignment(compositor()->keepLayersPixelAligned());
     return graphicsLayer.release();
 }
 
@@ -115,6 +116,12 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     layerName = nameForLayer();
 #endif
     m_graphicsLayer = createGraphicsLayer(layerName);
+    if (renderer()->isRenderView()) {
+        Frame* frame = toRenderView(renderer())->frameView()->frame();
+        Page* page = frame ? frame->page() : 0;
+        if (page && frame && page->mainFrame() == frame)
+            m_graphicsLayer->setAppliesPageScale();
+    }
     
     updateLayerOpacity(renderer()->style());
     updateLayerTransform(renderer()->style());

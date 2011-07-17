@@ -1,3 +1,85 @@
+2011-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add code to attempt to align compositing layers to pixel boundaries when page scale changes
+        https://bugs.webkit.org/show_bug.cgi?id=64658
+
+        Reviewed by Dan Bernstein.
+        
+        Implemented a new behavior on GraphicsLayerCA which attempts to keep layers pixel
+        aligned as page scale changes.
+        
+        This requires denoting which layer has the page scale on it (it is assumed to be
+        already aligned), via setAppliesPageScale(). We also now pass a scale and offset
+        down through the GraphicsLayer commits, which are used to map layer bounds to display
+        coordinates for rounding.
+
+        * platform/graphics/GraphicsLayer.h: New flags and getters/setters for pixel alignment,
+        and the layer that is the applier of the scale.
+        (WebCore::GraphicsLayer::setMaintainsPixelAlignment):
+        (WebCore::GraphicsLayer::maintainsPixelAlignment):
+        (WebCore::GraphicsLayer::setAppliesPageScale):
+        (WebCore::GraphicsLayer::appliesPageScale):
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer): Initialize the new flags.
+        (WebCore::GraphicsLayer::backingScaleFactor): Utility method that calls the client if there is one.
+        (WebCore::GraphicsLayer::pageScaleFactor): Ditto.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::backingScaleFactor): Provide default implementation.
+        (WebCore::GraphicsLayerClient::pageScaleFactor): Ditto.
+
+        * platform/graphics/ca/GraphicsLayerCA.h: Pass scale and base-relative offset around
+        to methods that need to update geometry during commit.
+        Some new methods related to pixel alignment.
+        
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computePositionRelativeToBase): For single-layer commits,
+        we have to compute the base-relative offset, and whether we're under the layer
+        applying the scale by walking up the tree.
+        
+        (WebCore::GraphicsLayerCA::syncCompositingStateForThisLayerOnly): Call
+        computePositionRelativeToBase() to get scaling parameters for the target layer.
+        
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): Pass flags related to scaling.
+        positionRelativeToBase is an offset relative to the ancestor layer known to be pixel
+        aligned. affectedByPageScale is true for layers which are descendants of the layer
+        which applies the scale.
+        
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Pass scale and offset.
+        (WebCore::GraphicsLayerCA::updateGeometry): Call computePixelAlignment() to get
+        pixel-aligned geometry. This only needs to be applied to layers which render content,
+        so re-organize the code to use the unchanged layer geometry for the structural layer,
+        but to apply the adjusted geometry to the m_layer.
+        
+        (WebCore::GraphicsLayerCA::updateStructuralLayer): Pass scale and offset.
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer): Ditto.
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent): Ditto.
+        (WebCore::GraphicsLayerCA::updateContentsScale): Ditto.
+        (WebCore::GraphicsLayerCA::requiresTiledLayer): Ditto.
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Ditto.
+        (WebCore::GraphicsLayerCA::setKeepPixelAligned): When set, dirties flags
+        for properties that need to be recomputed.
+        (WebCore::GraphicsLayerCA::noteChangesForScaleSensitiveProperties):
+        (WebCore::isIntegral):
+        (WebCore::GraphicsLayerCA::computePixelAlignment): Map our bounds to screen
+        scale, round out to an integral rect, then map it back, adding a fudge factor
+        so that CA backing stores don't end up being smaller than we expect because
+        of integer truncation.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer): Turn on pixel alignment if
+        the compositor says so.
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): Set the RenderView's
+        layer as the one applying the scale, for the main frame.
+
+        * rendering/RenderLayerCompositor.h: New method.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::keepLayersPixelAligned): Master switch for
+        pixel alignment. Default to on.
+        (WebCore::RenderLayerCompositor::ensureRootLayer): Give the two root-ish layers
+        a client so they can ask for page scale if necessary.
+
 2011-07-16  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: Pressing return in a particular document sends the cursor to the end of the document.

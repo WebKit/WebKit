@@ -1,3 +1,15 @@
+2011-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add code to attempt to align compositing layers to pixel boundaries when page scale changes
+        https://bugs.webkit.org/show_bug.cgi?id=64658
+
+        Reviewed by Dan Bernstein.
+
+        Removed implementations of backingScaleFactor() and pageScaleFactor() now
+        that GraphicsLayerClient has default implementations.
+
+        * WebView.h:
+
 2011-07-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.

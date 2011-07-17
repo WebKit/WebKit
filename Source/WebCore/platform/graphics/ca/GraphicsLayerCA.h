@@ -116,9 +116,10 @@ public:
 
     virtual void layerDidDisplay(PlatformLayer*);
 
+    virtual void setMaintainsPixelAlignment(bool);
     virtual void pageScaleFactorChanged();
 
-    void recursiveCommitChanges();
+    void recursiveCommitChanges(float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
@@ -180,13 +181,15 @@ private:
         return m_runningAnimations.find(animationName) != m_runningAnimations.end();
     }
 
-    void commitLayerChangesBeforeSublayers();
+    void commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase);
     void commitLayerChangesAfterSublayers();
+
+    FloatPoint computePositionRelativeToBase(float& pageScale) const;
 
     FloatSize constrainedSize() const;
 
-    bool requiresTiledLayer(const FloatSize&) const;
-    void swapFromOrToTiledLayer(bool useTiledLayer);
+    bool requiresTiledLayer(float pageScaleFactor, const FloatSize&) const;
+    void swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase);
 
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
     void updateContentsTransform();
@@ -195,6 +198,9 @@ private:
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
     virtual void setReplicatedByLayer(GraphicsLayer*);
+
+    void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
+        FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
@@ -263,14 +269,14 @@ private:
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateLayerNames();
     void updateSublayerList();
-    void updateGeometry();
+    void updateGeometry(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateTransform();
     void updateChildrenTransform();
     void updateMasksToBounds();
     void updateContentsOpaque();
     void updateBackfaceVisibility();
-    void updateStructuralLayer();
-    void updateLayerDrawsContent();
+    void updateStructuralLayer(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
+    void updateLayerDrawsContent(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateLayerBackgroundColor();
 
     void updateContentsImage();
@@ -283,14 +289,14 @@ private:
     void updateLayerAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
-    void updateContentsScale();
+    void updateContentsScale(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
         StructuralLayerForPreserves3D,
         StructuralLayerForReplicaFlattening
     };
-    void ensureStructuralLayer(StructuralLayerPurpose);
+    void ensureStructuralLayer(StructuralLayerPurpose, float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
     void setAnimationOnLayer(PlatformCAAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);

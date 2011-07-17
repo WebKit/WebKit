@@ -1,3 +1,16 @@
+2011-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add code to attempt to align compositing layers to pixel boundaries when page scale changes
+        https://bugs.webkit.org/show_bug.cgi?id=64658
+
+        Reviewed by Dan Bernstein.
+        
+        Removed implementation of pageScaleFactor() now that GraphicsLayerClient has
+        a default implementation.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+
 2011-07-16  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Qt Linux Release build after changeset <http://trac.webkit.org/changeset/91097>
