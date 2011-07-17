@@ -30,6 +30,7 @@
 #include <QPainter>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
@@ -63,6 +64,12 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
     QImage image = createQImage();
     QPainter* painter = context.platformContext();
     painter->drawImage(dstPoint, image, QRect(srcRect));
+}
+
+void ShareableBitmap::paint(GraphicsContext& /*context*/, float /*scaleFactor*/, const IntPoint& /*dstPoint*/, const IntRect& /*srcRect*/)
+{
+    // See <https://bugs.webkit.org/show_bug.cgi?id=64663>.
+    notImplemented();
 }
 
 } // namespace WebKit
