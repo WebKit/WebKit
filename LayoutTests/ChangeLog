@@ -1,3 +1,16 @@
+2011-07-16  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64657
+        Converted this value not preserved when accessed via direct eval.
+
+        Reviewed by Oliver Hunt.
+
+        Added test case.
+
+        * fast/js/read-modify-eval-expected.txt:
+        * fast/js/script-tests/read-modify-eval.js:
+        (primitiveThisTest):
+
 2011-07-16  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: Pressing return in a particular document sends the cursor to the end of the document.

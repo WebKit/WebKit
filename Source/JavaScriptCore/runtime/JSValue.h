@@ -152,6 +152,7 @@ namespace JSC {
         bool isBoolean() const;
         bool isNumber() const;
         bool isString() const;
+        bool isPrimitive() const;
         bool isGetterSetter() const;
         bool isObject() const;
         bool inherits(const ClassInfo*) const;

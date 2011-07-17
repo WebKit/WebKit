@@ -208,6 +208,11 @@ namespace JSC {
         return isCell() && asCell()->isString();
     }
 
+    inline bool JSValue::isPrimitive() const
+    {
+        return !isCell() || asCell()->isString();
+    }
+
     inline bool JSValue::isGetterSetter() const
     {
         return isCell() && asCell()->isGetterSetter();

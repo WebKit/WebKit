@@ -1280,7 +1280,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this)
     JSValue v1 = stackFrame.args[0].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    ASSERT(!v1.isCell() || v1.isString());
+    ASSERT(v1.isPrimitive());
 
     JSObject* result = v1.toThisObject(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();

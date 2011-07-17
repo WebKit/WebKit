@@ -413,11 +413,9 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
         emitOpcode(op_create_this);
         instructions().append(m_thisRegister.index());
         instructions().append(funcProto->index());
-    } else if (functionBody->usesThis() || m_shouldEmitDebugHooks) {
-        if (!codeBlock->isStrictMode()) {
-            emitOpcode(op_convert_this);
-            instructions().append(m_thisRegister.index());
-        }
+    } else if (!codeBlock->isStrictMode() && (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
+        emitOpcode(op_convert_this);
+        instructions().append(m_thisRegister.index());
     }
 }
 

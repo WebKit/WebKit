@@ -1,3 +1,38 @@
+2011-07-16  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64657
+        Converted this value not preserved when accessed via direct eval.
+
+        Reviewed by Oliver Hunt.
+
+        Upon entry into a non-strict function, primitive this values should be boxed as Object types
+        (or substituted with the global object) - which is done by op_convert_this. However we only
+        do so where this is used lexically within the function (we omit the conversion op if not).
+        The problem comes if a direct eval (running within the function's scope) accesses the this
+        value.
+
+        We are safe in the case of a single eval, since the this object will be converted within
+        callEval, however the converted value is not preserved, and a new wrapper object is allocated
+        each time eval is invoked. This is inefficient and incorrect, since any changes to the wrapper
+        object will be lost between eval statements.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+            - If a function uses eval, we always need to convert this.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+            - Don't convert primitive values here - this is too late!
+        (JSC::Interpreter::privateExecute):
+            - Changed op_convert_this to call new isPrimitive method.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Changed op_convert_this to call new isPrimitive method.
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSValue::isPrimitive):
+            - Added JSValue::isPrimitive.
+        * runtime/JSValue.h:
+            - Added JSValue::isPrimitive.
+
 2011-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT compare/branch code emits is-integer tests even when a value is

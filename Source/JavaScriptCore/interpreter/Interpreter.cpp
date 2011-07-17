@@ -1240,7 +1240,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);
-    newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = thisValue.toThisObject(newCallFrame);
+    newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = thisValue;
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -4621,7 +4621,7 @@ skip_id_custom_self:
 
         int thisRegister = vPC[1].u.operand;
         JSValue thisVal = callFrame->r(thisRegister).jsValue();
-        if (!thisVal.isCell() || thisVal.isString())
+        if (thisVal.isPrimitive())
             callFrame->uncheckedR(thisRegister) = JSValue(thisVal.toThisObject(callFrame));
 
         vPC += OPCODE_LENGTH(op_convert_this);

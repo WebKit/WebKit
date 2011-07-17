@@ -18,6 +18,8 @@ PASS preIncTest(); is true
 PASS preDecTest(); is true
 PASS postIncTest(); is true
 PASS postDecTest(); is true
+PASS primitiveThisTest.call(1); is true
+PASS strictThisTest.call(1); is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
