@@ -414,6 +414,8 @@ protected:
 
     bool isKnownInteger(NodeIndex);
     bool isKnownNumeric(NodeIndex);
+    
+    bool isKnownNotInteger(NodeIndex);
 
     // Checks/accessors for constant values.
     bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
@@ -555,6 +557,7 @@ protected:
     void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     
     void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
+    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
     bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
     
     void emitBranch(Node&);

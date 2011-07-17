@@ -1,5 +1,28 @@
 2011-07-16  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT compare/branch code emits is-integer tests even when a value is
+        definitely not an integer.
+        https://bugs.webkit.org/show_bug.cgi?id=64654
+
+        Reviewed by Gavin Barraclough.
+        
+        Added the isKnownNotInteger() method, which returns true if a node is
+        definitely not an integer and will always fail any is-integer test.  Then
+        modified the compare and branch code to use this method; if it returns
+        true then is-int tests are omitted and the compiler always emits a slow
+        call.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownNotInteger):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompare):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+
+2011-07-16  Filip Pizlo  <fpizlo@apple.com>
+
         DFG speculative JIT has dead code for slow calls for branches.
         https://bugs.webkit.org/show_bug.cgi?id=64653
 

@@ -365,6 +365,17 @@ bool JITCodeGenerator::isKnownNumeric(NodeIndex nodeIndex)
     return false;
 }
 
+bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    
+    return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble
+        || (info.registerFormat() | DataFormatJS) == DataFormatJSCell
+        || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
+}
+
 JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
 {
     GPRReg scratchGPR;
@@ -531,35 +542,98 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
     GPRReg arg1GPR = arg1.gpr();
     GPRReg arg2GPR = arg2.gpr();
     
-    GPRTemporary result(this, arg2);
-    GPRReg resultGPR = result.gpr();
-    
     JITCompiler::JumpList slowPath;
     
-    if (!isKnownInteger(node.child1()))
-        slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
-    if (!isKnownInteger(node.child2()))
-        slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
+    if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2())) {
+        flushRegisters();
+
+        GPRResult result(this);
+        GPRReg resultGPR = result.gpr();
     
-    addBranch(m_jit.branch32(cond, arg1GPR, arg2GPR), taken);
-    
-    if (!isKnownInteger(node.child1()) || !isKnownInteger(node.child2())) {
-        addBranch(m_jit.jump(), notTaken);
-    
-        slowPath.link(&m_jit);
-    
-        silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(helperFunction);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-        silentFillAllRegisters(resultGPR);
-        
+        callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
         addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
+    } else {
+        GPRTemporary result(this, arg2);
+        GPRReg resultGPR = result.gpr();
+    
+        if (!isKnownInteger(node.child1()))
+            slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
+        if (!isKnownInteger(node.child2()))
+            slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
+    
+        addBranch(m_jit.branch32(cond, arg1GPR, arg2GPR), taken);
+    
+        if (!isKnownInteger(node.child1()) || !isKnownInteger(node.child2())) {
+            addBranch(m_jit.jump(), notTaken);
+    
+            slowPath.link(&m_jit);
+    
+            silentSpillAllRegisters(resultGPR);
+            setupStubArguments(arg1GPR, arg2GPR);
+            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+            appendCallWithExceptionCheck(helperFunction);
+            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            silentFillAllRegisters(resultGPR);
+        
+            addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
+        }
     }
 
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
+}
+
+void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
+{
+    JSValueOperand arg1(this, node.child1());
+    JSValueOperand arg2(this, node.child2());
+    GPRReg arg1GPR = arg1.gpr();
+    GPRReg arg2GPR = arg2.gpr();
+    
+    JITCompiler::JumpList slowPath;
+    
+    if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2())) {
+        flushRegisters();
+        
+        GPRResult result(this);
+        GPRReg resultGPR = result.gpr();
+    
+        callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
+        
+        m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
+        jsValueResult(resultGPR, m_compileIndex);
+    } else {
+        GPRTemporary result(this, arg2);
+        GPRReg resultGPR = result.gpr();
+    
+        if (!isKnownInteger(node.child1()))
+            slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
+        if (!isKnownInteger(node.child2()))
+            slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
+    
+        m_jit.compare32(cond, arg1GPR, arg2GPR, resultGPR);
+    
+        if (!isKnownInteger(node.child1()) || !isKnownInteger(node.child2())) {
+            JITCompiler::Jump haveResult = m_jit.jump();
+    
+            slowPath.link(&m_jit);
+        
+            silentSpillAllRegisters(resultGPR);
+            setupStubArguments(arg1GPR, arg2GPR);
+            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+            appendCallWithExceptionCheck(helperFunction);
+            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            silentFillAllRegisters(resultGPR);
+        
+            m_jit.andPtr(TrustedImm32(1), resultGPR);
+        
+            haveResult.link(&m_jit);
+        }
+        
+        m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
+        
+        jsValueResult(resultGPR, m_compileIndex);
+    }
 }
 
 bool JITCodeGenerator::nonSpeculativeCompare(Node& node, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)
@@ -576,44 +650,8 @@ bool JITCodeGenerator::nonSpeculativeCompare(Node& node, MacroAssembler::Relatio
         
         return true;
     }
-        
-    JSValueOperand arg1(this, node.child1());
-    JSValueOperand arg2(this, node.child2());
-    GPRReg arg1GPR = arg1.gpr();
-    GPRReg arg2GPR = arg2.gpr();
     
-    GPRTemporary result(this, arg2);
-    GPRReg resultGPR = result.gpr();
-    
-    JITCompiler::JumpList slowPath;
-    
-    if (!isKnownInteger(node.child1()))
-        slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
-    if (!isKnownInteger(node.child2()))
-        slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister));
-    
-    m_jit.compare32(cond, arg1GPR, arg2GPR, resultGPR);
-    
-    if (!isKnownInteger(node.child1()) || !isKnownInteger(node.child2())) {
-        JITCompiler::Jump haveResult = m_jit.jump();
-    
-        slowPath.link(&m_jit);
-        
-        silentSpillAllRegisters(resultGPR);
-        setupStubArguments(arg1GPR, arg2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(helperFunction);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-        silentFillAllRegisters(resultGPR);
-        
-        m_jit.andPtr(TrustedImm32(1), resultGPR);
-        
-        haveResult.link(&m_jit);
-    }
-    
-    m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
-    
-    jsValueResult(resultGPR, m_compileIndex);
+    nonSpeculativeNonPeepholeCompare(node, cond, helperFunction);
     
     return false;
 }

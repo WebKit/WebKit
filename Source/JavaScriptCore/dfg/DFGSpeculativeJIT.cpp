@@ -401,16 +401,21 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         return true;
     }
 
-    // Normal case, not fused to branch.
-    SpeculateIntegerOperand op1(this, node.child1());
-    SpeculateIntegerOperand op2(this, node.child2());
-    GPRTemporary result(this, op1, op2);
-
-    m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
-
-    // If we add a DataFormatBool, we should use it here.
-    m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-    jsValueResult(result.gpr(), m_compileIndex);
+    if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2()))
+        nonSpeculativeNonPeepholeCompare(node, condition, operation);
+    else {
+        // Normal case, not fused to branch.
+        SpeculateIntegerOperand op1(this, node.child1());
+        SpeculateIntegerOperand op2(this, node.child2());
+        GPRTemporary result(this, op1, op2);
+        
+        m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
+        
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_compileIndex);
+    }
+    
     return false;
 }
 
