@@ -44,5 +44,11 @@ void ShareableBitmap::paint(WebCore::GraphicsContext&, const WebCore::IntPoint& 
 {
     notImplemented();
 }
+
+void ShareableBitmap::paint(WebCore::GraphicsContext&, float scaleFactor, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect)
+{
+    // See <https://bugs.webkit.org/show_bug.cgi?id=64664>.
+    notImplemented();
+}
         
 } // namespace WebKit

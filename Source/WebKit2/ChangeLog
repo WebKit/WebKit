@@ -1,5 +1,22 @@
 2011-07-16  Daniel Bates  <dbates@webkit.org>
 
+        Fix Win Cairo Debug build after <http://trac.webkit.org/changeset/91085>.
+
+        Add stub implementation of scale factor overloaded ShareableBitmap::paint() for
+        Cairo WebKit2 port after its usage in changeset <http://trac.webkit.org/changeset/91085>.
+
+        Also add stub implementation for GTK.
+
+        We'll need to actually implement this. See <https://bugs.webkit.org/show_bug.cgi?id=64664>
+        and <https://bugs.webkit.org/show_bug.cgi?id=64665> for Cairo and GTK, respectively.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint): Added scale-factor variant.
+        * Shared/gtk/ShareableBitmapGtk.cpp:
+        (WebKit::ShareableBitmap::paint): Added scale-factor variant.
+
+2011-07-16  Daniel Bates  <dbates@webkit.org>
+
         Fix Qt Linux Release build after changeset <http://trac.webkit.org/changeset/91085>
         (https://bugs.webkit.org/show_bug.cgi?id=64611).
 
