@@ -1,5 +1,5 @@
 URL: http://undefined.org/python/#simplejson
-Version: 1.7.3
+Version: 2.1.6
 License: MIT
 License File: LICENSE.txt
 

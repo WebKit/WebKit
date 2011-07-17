@@ -1,3 +1,68 @@
+2011-07-17  Philippe Normand  <pnormand@igalia.com>
+
+        test-webkitpy failing with Python 2.5
+        https://bugs.webkit.org/show_bug.cgi?id=64594
+
+        Reviewed by Eric Seidel.
+
+        Updated simplejson to version 2.1.6 that fixes an issue when
+        dumping slashes. Also use cgi.parse_qs instead of the urlparse
+        version to be compatible with Python2.5. Verified the fix with
+        test-webkitpy on python 2.5 and python 2.6.
+
+        * Scripts/webkitpy/thirdparty/simplejson/README.txt:
+        * Scripts/webkitpy/thirdparty/simplejson/__init__.py:
+        * Scripts/webkitpy/thirdparty/simplejson/_speedups.c:
+        (json_PyOS_string_to_double):
+        (_convertPyInt_AsSsize_t):
+        (_convertPyInt_FromSsize_t):
+        (ascii_escape_char):
+        (ascii_escape_unicode):
+        (ascii_escape_str):
+        (raise_errmsg):
+        (join_list_unicode):
+        (join_list_string):
+        (_build_rval_index_tuple):
+        (scanstring_str):
+        (scanstring_unicode):
+        (py_scanstring):
+        (py_encode_basestring_ascii):
+        (scanner_dealloc):
+        (scanner_traverse):
+        (scanner_clear):
+        (_parse_object_str):
+        (_parse_object_unicode):
+        (_parse_array_str):
+        (_parse_array_unicode):
+        (_parse_constant):
+        (_match_number_str):
+        (_match_number_unicode):
+        (scan_once_str):
+        (scan_once_unicode):
+        (scanner_call):
+        (scanner_new):
+        (scanner_init):
+        (encoder_new):
+        (encoder_init):
+        (encoder_call):
+        (_encoded_const):
+        (encoder_encode_float):
+        (encoder_encode_string):
+        (_steal_list_append):
+        (encoder_listencode_obj):
+        (encoder_listencode_dict):
+        (encoder_listencode_list):
+        (encoder_dealloc):
+        (encoder_traverse):
+        (encoder_clear):
+        (init_speedups):
+        * Scripts/webkitpy/thirdparty/simplejson/decoder.py:
+        * Scripts/webkitpy/thirdparty/simplejson/encoder.py:
+        * Scripts/webkitpy/thirdparty/simplejson/ordered_dict.py: Added.
+        * Scripts/webkitpy/thirdparty/simplejson/scanner.py:
+        * Scripts/webkitpy/thirdparty/simplejson/tool.py: Added.
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+
 2011-07-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Rename ModifierMatcher to SpecificityCalculator.

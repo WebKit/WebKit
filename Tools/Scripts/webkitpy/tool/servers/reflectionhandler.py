@@ -36,6 +36,7 @@ except ImportError:
 
 import BaseHTTPServer
 
+import cgi
 import codecs
 import datetime
 import fnmatch
@@ -63,7 +64,7 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def _handle_request(self):
         if "?" in self.path:
             path, query_string = self.path.split("?", 1)
-            self.query = urlparse.parse_qs(query_string)
+            self.query = cgi.parse_qs(query_string)
         else:
             path = self.path
             self.query = {}
