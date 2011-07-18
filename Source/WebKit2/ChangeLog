@@ -1,3 +1,27 @@
+2011-07-18  Anders Carlsson  <andersca@apple.com>
+
+        Make using lowercase parameter names for AppleConnect be a plug-in quirk
+        https://bugs.webkit.org/show_bug.cgi?id=64638
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Set the WantsLowercaseParameterNames quirk for the AppleConnect plug-in.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add WantsLowercaseParameterNames quirk.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::initialize):
+        If the plug-in has the WantsLowercaseParameterNames quirk, convert the parameter
+        names to lowercase.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Remove the code that would convert the parameters here. Also remove the FIXME; plug-in quirks
+        aren't really the same thing as site-specific quirks.
+
 2011-07-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Consider QTouchWebPage's transform when scrolling the viewport.

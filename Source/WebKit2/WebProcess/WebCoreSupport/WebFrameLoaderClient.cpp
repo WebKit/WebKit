@@ -1259,19 +1259,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
         parameters.toplevelDocumentURL = mainFrame->document()->url().string();
     }
 
-    // <rdar://problem/8440903>: AppleConnect has a bug where it does not
-    // understand the parameter names specified in the <object> element that
-    // embeds its plug-in. This hack works around the issue by converting the
-    // parameter names to lowercase before passing them to the plug-in.
-    // FIXME: This workaround should be dependent on site-specific quirks being
-    // enabled. This requires adding this setting to WebKit2's WebPreferences
-    // implementation. See <https://bugs.webkit.org/show_bug.cgi?id=46076>.
-    if (equalIgnoringCase(mimeType, "application/x-snkp")) {
-        for (size_t i = 0; i < paramNames.size(); ++i)
-            parameters.names[i] = paramNames[i].lower();
-    }
-
 #if PLUGIN_ARCHITECTURE(X11)
+    // FIXME: This should really be X11-specific plug-in quirks.
     if (equalIgnoringCase(mimeType, "application/x-shockwave-flash")) {
         // Currently we don't support transparency and windowed mode.
         // Inject wmode=opaque to make Flash work in these conditions.

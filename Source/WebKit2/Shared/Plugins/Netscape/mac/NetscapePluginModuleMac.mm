@@ -481,13 +481,20 @@ void NetscapePluginModule::determineQuirks()
         }
     }
 
-#ifndef NP_NO_QUICKDRAW
     if (plugin.bundleIdentifier == "com.apple.ist.ds.appleconnect.webplugin") {
+        // <rdar://problem/8440903>: AppleConnect has a bug where it does not
+        // understand the parameter names specified in the <object> element that
+        // embeds its plug-in. 
+        m_pluginQuirks.add(PluginQuirks::WantsLowercaseParameterNames);
+
+#ifndef NP_NO_QUICKDRAW
         // The AppleConnect plug-in uses QuickDraw but doesn't paint or receive events
         // so we'll allow it to be instantiated even though we don't support QuickDraw.
         m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
+#endif
     }
 
+#ifndef NP_NO_QUICKDRAW
     if (plugin.bundleIdentifier == "com.microsoft.sharepoint.browserplugin") {
         // The Microsoft SharePoint plug-in uses QuickDraw but doesn't paint or receive events
         // so we'll allow it to be instantiated even though we don't support QuickDraw.

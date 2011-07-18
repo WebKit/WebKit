@@ -63,6 +63,12 @@ public:
         // Versions of Silverlight prior to 4 never retained the returned NPObject.
         ReturnsNonRetainedScriptableNPObject,
 
+        // Whether the plug-in wants parameter names to be lowercase.
+        // <rdar://problem/8440903>: AppleConnect has a bug where it does not
+        // understand the parameter names specified in the <object> element that
+        // embeds its plug-in. 
+        WantsLowercaseParameterNames,
+
 #ifndef NP_NO_QUICKDRAW
         // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.

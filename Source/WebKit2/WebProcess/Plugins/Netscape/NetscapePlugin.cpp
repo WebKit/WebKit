@@ -460,7 +460,14 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
     Vector<CString> paramNames;
     Vector<CString> paramValues;
     for (size_t i = 0; i < parameters.names.size(); ++i) {
-        paramNames.append(parameters.names[i].utf8());
+        String parameterName = parameters.names[i];
+
+#if PLUGIN_ARCHITECTURE(MAC)
+        if (m_pluginModule->pluginQuirks().contains(PluginQuirks::WantsLowercaseParameterNames))
+            parameterName = parameterName.lower();
+#endif
+
+        paramNames.append(parameterName.utf8());
         paramValues.append(parameters.values[i].utf8());
     }
 
@@ -472,7 +479,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
         values.append(paramValues[i].data());
     }
 
-#if PLATFORM(MAC)
+#if PLUGIN_ARCHITECTURE(MAC)
     if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeTransparentIfBackgroundAttributeExists)) {
         for (size_t i = 0; i < parameters.names.size(); ++i) {
             if (equalIgnoringCase(parameters.names[i], "background")) {
