@@ -43,6 +43,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "HistoryItem.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
 #include "Page.h"
@@ -403,6 +404,7 @@ void DocumentLoader::detachFromFrame()
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheHost->setDOMApplicationCache(0);
 #endif
+    InspectorInstrumentation::loaderDetachedFromFrame(m_frame, this);
     m_frame = 0;
 }
 

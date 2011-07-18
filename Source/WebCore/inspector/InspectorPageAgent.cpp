@@ -558,13 +558,6 @@ Frame* InspectorPageAgent::mainFrame()
     return m_page->mainFrame();
 }
 
-static String pointerAsId(void* pointer)
-{
-    unsigned long long address = reinterpret_cast<uintptr_t>(pointer);
-    // We want 0 to be "", so that JavaScript checks for if (frameId) worked.
-    return String::format("%.0llX", address);
-}
-
 String InspectorPageAgent::createIdentifier()
 {
     return m_agentIdentifierPrefix + String::number(++s_lastUsedIdentifier);
@@ -590,7 +583,14 @@ String InspectorPageAgent::frameId(Frame* frame)
 
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
-    return pointerAsId(loader);
+    if (!loader)
+        return "";
+    String identifier = m_loaderToIdentifier.get(loader);
+    if (identifier.isNull()) {
+        identifier = createIdentifier();
+        m_loaderToIdentifier.set(loader, identifier);
+    }
+    return identifier;
 }
 
 void InspectorPageAgent::frameDestroyed(Frame* frame)
@@ -600,6 +600,13 @@ void InspectorPageAgent::frameDestroyed(Frame* frame)
         m_identifierToFrame.remove(iterator->second);
         m_frameToIdentifier.remove(iterator);
     }
+}
+
+void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader* loader)
+{
+    HashMap<DocumentLoader*, String>::iterator iterator = m_loaderToIdentifier.find(loader);
+    if (iterator != m_loaderToIdentifier.end())
+        m_loaderToIdentifier.remove(iterator);
 }
 
 PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame)

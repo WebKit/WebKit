@@ -103,6 +103,7 @@ public:
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
     void frameDestroyed(Frame*);
+    void loaderDetachedFromFrame(DocumentLoader*);
 
     // Inspector Controller API
     void setFrontend(InspectorFrontend*);
@@ -131,6 +132,7 @@ private:
     Vector<String> m_scriptsToEvaluateOnLoad;
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
+    HashMap<DocumentLoader*, String> m_loaderToIdentifier;
 };
 
 

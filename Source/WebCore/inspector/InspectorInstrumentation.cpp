@@ -646,6 +646,12 @@ void InspectorInstrumentation::frameDestroyedImpl(InstrumentingAgents* instrumen
         inspectorPageAgent->frameDestroyed(frame);
 }
 
+void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents* instrumentingAgents, DocumentLoader* loader)
+{
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
+        inspectorPageAgent->loaderDetachedFromFrame(loader);
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InstrumentingAgents* instrumentingAgents, unsigned int length, unsigned int startLine)
 {
     int timelineAgentId = 0;
