@@ -122,8 +122,6 @@ namespace JSC {
         bool m_evalEnabled;
 
     public:
-        void* operator new(size_t, JSGlobalData*);
-
         explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
@@ -287,8 +285,6 @@ namespace JSC {
         void reset(JSValue prototype);
 
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
-
-        void* operator new(size_t); // can only be allocated with JSGlobalData
     };
 
     JSGlobalObject* asGlobalObject(JSValue);
@@ -378,7 +374,7 @@ namespace JSC {
 
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject)
     {
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure());
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure());
     }
     
     inline JSArray* constructEmptyArray(ExecState* exec)
@@ -388,7 +384,7 @@ namespace JSC {
 
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength)
     {
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), initialLength, CreateInitialized);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), initialLength, CreateInitialized);
     }
 
     inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
@@ -400,7 +396,7 @@ namespace JSC {
     {
         MarkedArgumentBuffer values;
         values.append(singleItemValue);
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), values);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, JSValue singleItemValue)
@@ -410,7 +406,7 @@ namespace JSC {
 
     inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const ArgList& values)
     {
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), values);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, const ArgList& values)

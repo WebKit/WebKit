@@ -143,8 +143,14 @@ long StopWatch::getElapsedMS()
 }
 
 class GlobalObject : public JSGlobalObject {
-public:
+private:
     GlobalObject(JSGlobalData&, Structure*, const Vector<UString>& arguments);
+
+public:
+    static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
+    {
+        return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+    }
     virtual UString className() const { return "global"; }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
@@ -153,22 +159,22 @@ ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     : JSGlobalObject(globalData, structure)
 {
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "debug"), functionDebug));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "quit"), functionQuit));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "gc"), functionGC));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "debug"), functionDebug));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "quit"), functionQuit));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "gc"), functionGC));
 #ifndef NDEBUG
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "releaseExecutableMemory"), functionReleaseExecutableMemory));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "releaseExecutableMemory"), functionReleaseExecutableMemory));
 #endif
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "version"), functionVersion));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "run"), functionRun));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "load"), functionLoad));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "checkSyntax"), functionCheckSyntax));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "readline"), functionReadline));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "version"), functionVersion));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "run"), functionRun));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "load"), functionLoad));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "checkSyntax"), functionCheckSyntax));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "readline"), functionReadline));
 
 #if ENABLE(SAMPLING_FLAGS)
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "setSamplingFlags"), functionSetSamplingFlags));
-    putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "clearSamplingFlags"), functionClearSamplingFlags));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "setSamplingFlags"), functionSetSamplingFlags));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "clearSamplingFlags"), functionClearSamplingFlags));
 #endif
 
     JSObject* array = constructEmptyArray(globalExec());
@@ -227,7 +233,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
 
-    GlobalObject* globalObject = new (&exec->globalData()) GlobalObject(exec->globalData(), GlobalObject::createStructure(exec->globalData(), jsNull()), Vector<UString>());
+    GlobalObject* globalObject = GlobalObject::create(exec->globalData(), GlobalObject::createStructure(exec->globalData(), jsNull()), Vector<UString>());
 
     StopWatch stopWatch;
     stopWatch.start();
@@ -552,7 +558,7 @@ int jscmain(int argc, char** argv, JSGlobalData* globalData)
     Options options;
     parseArguments(argc, argv, options, globalData);
 
-    GlobalObject* globalObject = new (globalData) GlobalObject(*globalData, GlobalObject::createStructure(*globalData, jsNull()), options.arguments);
+    GlobalObject* globalObject = GlobalObject::create(*globalData, GlobalObject::createStructure(*globalData, jsNull()), options.arguments);
     bool success = runWithScripts(globalObject, options.scripts, options.dump);
     if (options.interactive && success)
         runInteractive(globalObject);

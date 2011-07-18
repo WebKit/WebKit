@@ -220,7 +220,7 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identi
         return arguments;
     int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);
 
-    JSValue arguments = JSValue(new (callFrame) Arguments(callFrame));
+    JSValue arguments = JSValue(Arguments::create(callFrame->globalData(), callFrame));
     callFrame->uncheckedR(argumentsRegister) = arguments;
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     

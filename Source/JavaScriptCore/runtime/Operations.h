@@ -49,14 +49,14 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return new (globalData) JSString(globalData, fiberCount, s1, s2);
+            return JSString::create(*globalData, fiberCount, s1, s2);
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
         ropeBuilder.append(s1);
         ropeBuilder.append(s2);
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, JSString* s2)
@@ -74,14 +74,14 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return new (globalData) JSString(globalData, fiberCount, u1, s2);
+            return JSString::create(*globalData, fiberCount, u1, s2);
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
         ropeBuilder.append(u1);
         ropeBuilder.append(s2);
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, const UString& u2)
@@ -99,14 +99,14 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return new (globalData) JSString(globalData, fiberCount, s1, u2);
+            return JSString::create(*globalData, fiberCount, s1, u2);
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
         ropeBuilder.append(s1);
         ropeBuilder.append(u2);
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2)
@@ -121,7 +121,7 @@ namespace JSC {
             return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
-        return new (globalData) JSString(globalData, u1, u2);
+        return JSString::create(*globalData, u1, u2);
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
@@ -142,7 +142,7 @@ namespace JSC {
             return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
-        return new (globalData) JSString(globalData, u1, u2, u3);
+        return JSString::create(*globalData, u1, u2, u3);
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
@@ -160,7 +160,7 @@ namespace JSC {
 
         JSGlobalData* globalData = &exec->globalData();
         if (fiberCount == 3)
-            return new (globalData) JSString(exec, strings[0].jsValue(), strings[1].jsValue(), strings[2].jsValue());
+            return JSString::create(exec, strings[0].jsValue(), strings[1].jsValue(), strings[2].jsValue());
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
@@ -185,7 +185,7 @@ namespace JSC {
         if (overflow)
             return throwOutOfMemoryError(exec);
 
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue)
@@ -232,7 +232,7 @@ namespace JSC {
             return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     // ECMA 11.9.3

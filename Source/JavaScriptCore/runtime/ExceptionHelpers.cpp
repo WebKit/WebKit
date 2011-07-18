@@ -42,10 +42,16 @@
 namespace JSC {
 
 class InterruptedExecutionError : public JSNonFinalObject {
-public:
-    InterruptedExecutionError(JSGlobalData* globalData)
-        : JSNonFinalObject(*globalData, globalData->interruptedExecutionErrorStructure.get())
+private:
+    InterruptedExecutionError(JSGlobalData& globalData)
+        : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
     {
+    }
+
+public:
+    static InterruptedExecutionError* create(JSGlobalData& globalData)
+    {
+        return new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
     }
 
     virtual ComplType exceptionType() const { return Interrupted; }
@@ -55,14 +61,20 @@ public:
 
 JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
 {
-    return new (globalData) InterruptedExecutionError(globalData);
+    return InterruptedExecutionError::create(*globalData);
 }
 
 class TerminatedExecutionError : public JSNonFinalObject {
-public:
-    TerminatedExecutionError(JSGlobalData* globalData)
-        : JSNonFinalObject(*globalData, globalData->terminatedExecutionErrorStructure.get())
+private:
+    TerminatedExecutionError(JSGlobalData& globalData)
+        : JSNonFinalObject(globalData, globalData.terminatedExecutionErrorStructure.get())
     {
+    }
+
+public:
+    static TerminatedExecutionError* create(JSGlobalData& globalData)
+    {
+        return new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
     }
 
     virtual ComplType exceptionType() const { return Terminated; }
@@ -72,7 +84,7 @@ public:
 
 JSObject* createTerminatedExecutionException(JSGlobalData* globalData)
 {
-    return new (globalData) TerminatedExecutionError(globalData);
+    return TerminatedExecutionError::create(*globalData);
 }
 
 JSObject* createStackOverflowError(ExecState* exec)

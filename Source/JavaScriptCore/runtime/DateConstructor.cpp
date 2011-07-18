@@ -142,7 +142,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
         }
     }
 
-    return new (exec) DateInstance(exec, globalObject->dateStructure(), value);
+    return DateInstance::create(exec, globalObject->dateStructure(), value);
 }
     
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)

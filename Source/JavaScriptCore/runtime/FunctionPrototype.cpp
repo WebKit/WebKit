@@ -45,10 +45,10 @@ FunctionPrototype::FunctionPrototype(ExecState* exec, JSGlobalObject* globalObje
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction)
 {
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    *applyFunction = new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
+    putDirectFunctionWithoutTransition(exec, JSFunction::create(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    *applyFunction = JSFunction::create(exec, globalObject, functionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
     putDirectFunctionWithoutTransition(exec, *applyFunction, DontEnum);
-    *callFunction = new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
+    *callFunction = JSFunction::create(exec, globalObject, functionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
     putDirectFunctionWithoutTransition(exec, *callFunction, DontEnum);
 }
 

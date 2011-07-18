@@ -44,7 +44,7 @@ JSValue NumberObject::getJSNumber()
 
 NumberObject* constructNumber(ExecState* exec, JSGlobalObject* globalObject, JSValue number)
 {
-    NumberObject* object = new (exec) NumberObject(exec->globalData(), globalObject->numberObjectStructure());
+    NumberObject* object = NumberObject::create(exec->globalData(), globalObject->numberObjectStructure());
     object->setInternalValue(exec->globalData(), number);
     return object;
 }

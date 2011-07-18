@@ -2052,7 +2052,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSActivation* activation = new (stackFrame.globalData) JSActivation(stackFrame.callFrame, static_cast<FunctionExecutable*>(stackFrame.callFrame->codeBlock()->ownerExecutable()));
+    JSActivation* activation = JSActivation::create(stackFrame.callFrame->globalData(), stackFrame.callFrame, static_cast<FunctionExecutable*>(stackFrame.callFrame->codeBlock()->ownerExecutable()));
     stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(activation));
     return activation;
 }
@@ -2100,7 +2100,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_arguments)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame);
+    Arguments* arguments = Arguments::create(*stackFrame.globalData, stackFrame.callFrame);
     return JSValue::encode(JSValue(arguments));
 }
 
@@ -2108,7 +2108,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_arguments_no_params)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame, Arguments::NoParameters);
+    Arguments* arguments = Arguments::createNoParameters(*stackFrame.globalData, stackFrame.callFrame);
     return JSValue::encode(JSValue(arguments));
 }
 
@@ -3160,7 +3160,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_regexp)
         VM_THROW_EXCEPTION();
     }
 
-    return new (stackFrame.globalData) RegExpObject(stackFrame.callFrame->lexicalGlobalObject(), stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), regExp);
+    return RegExpObject::create(*stackFrame.globalData, stackFrame.callFrame->lexicalGlobalObject(), stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), regExp);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitor)

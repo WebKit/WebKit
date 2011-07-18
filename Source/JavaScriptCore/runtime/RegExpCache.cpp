@@ -38,7 +38,7 @@ RegExp* RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags fl
     RegExpCacheMap::iterator result = m_weakCache.find(key);
     if (result != m_weakCache.end())
         return result->second.get();
-    RegExp* regExp = new (m_globalData) RegExp(m_globalData, patternString, flags);
+    RegExp* regExp = RegExp::createWithoutCaching(*m_globalData, patternString, flags);
 #if ENABLE(REGEXP_TRACING)
     m_globalData->addRegExpToTrace(regExp);
 #endif

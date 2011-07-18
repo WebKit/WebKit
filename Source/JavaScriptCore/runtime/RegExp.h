@@ -38,7 +38,7 @@ namespace JSC {
 
     class RegExp : public JSCell {
     public:
-        static RegExp* create(JSGlobalData*, const UString& pattern, RegExpFlags);
+        static RegExp* create(JSGlobalData&, const UString& pattern, RegExpFlags);
         ~RegExp();
 
         bool global() const { return m_flags & FlagGlobal; }
@@ -75,7 +75,9 @@ namespace JSC {
 
     private:
         friend class RegExpCache;
-        RegExp(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
+        RegExp(JSGlobalData&, const UString&, RegExpFlags);
+
+        static RegExp* createWithoutCaching(JSGlobalData&, const UString&, RegExpFlags);
 
         enum RegExpState {
             ParseError,

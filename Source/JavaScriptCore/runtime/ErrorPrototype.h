@@ -28,9 +28,15 @@ namespace JSC {
     class ObjectPrototype;
 
     class ErrorPrototype : public ErrorInstance {
-    public:
+    protected:
         ErrorPrototype(ExecState*, JSGlobalObject*, Structure*);
 
+    public:
+        static ErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        {
+            return new (allocateCell<ErrorPrototype>(*exec->heap())) ErrorPrototype(exec, globalObject, structure);
+        }
+        
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

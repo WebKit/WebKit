@@ -42,6 +42,11 @@ namespace JSC {
         }
         
         static const ClassInfo s_info;
+        
+        static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
+        {
+            return new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec, value);
+        }
 
     private:
         JSAPIValueWrapper(ExecState* exec, JSValue value)
@@ -56,7 +61,7 @@ namespace JSC {
 
     inline JSValue jsAPIValueWrapper(ExecState* exec, JSValue value)
     {
-        return new (exec) JSAPIValueWrapper(exec, value);
+        return JSAPIValueWrapper::create(exec, value);
     }
 
 } // namespace JSC

@@ -48,10 +48,24 @@ namespace JSC {
 
         typedef JSObjectWithGlobalObject Base;
 
-    public:
         JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeFunction);
         JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeExecutable*);
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
+        
+    public:
+        static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& ident, NativeFunction nativeFunc)
+        {
+            return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure, length, ident, nativeFunc);
+        }
+        static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& ident, NativeExecutable* nativeExec)
+        {
+            return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure, length, ident, nativeExec);
+        }
+        static JSFunction* create(ExecState* exec, FunctionExecutable* funcExec, ScopeChainNode* scopeChain)
+        {
+            return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, funcExec, scopeChain);
+        }
+        
         virtual ~JSFunction();
 
         const UString& name(ExecState*);

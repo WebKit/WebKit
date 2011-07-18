@@ -65,7 +65,7 @@ JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObjec
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
-    return new (exec) JSNotAnObject(exec);
+    return JSNotAnObject::create(exec);
 }
 
 JSObject* JSValue::toThisObjectSlowCase(ExecState* exec) const
@@ -90,7 +90,7 @@ JSObject* JSValue::synthesizeObject(ExecState* exec) const
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
-    return new (exec) JSNotAnObject(exec);
+    return JSNotAnObject::create(exec);
 }
 
 JSObject* JSValue::synthesizePrototype(ExecState* exec) const
@@ -103,7 +103,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
-    return new (exec) JSNotAnObject(exec);
+    return JSNotAnObject::create(exec);
 }
 
 #ifndef NDEBUG

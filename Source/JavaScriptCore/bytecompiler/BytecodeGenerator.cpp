@@ -246,7 +246,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
         FunctionBodyNode* function = functionStack[i];
         globalObject->removeDirect(*m_globalData, function->ident()); // Newly declared functions overwrite existing properties.
 
-        JSValue value = new (exec) JSFunction(exec, makeFunction(exec, function), scopeChain);
+        JSValue value = JSFunction::create(exec, makeFunction(exec, function), scopeChain);
         int index = addGlobalVar(function->ident(), false);
         globalObject->registerAt(index).set(*m_globalData, globalObject, value);
     }

@@ -28,8 +28,14 @@ namespace JSC {
     class NumberPrototype;
 
     class NumberConstructor : public InternalFunction {
-    public:
+    private:
         NumberConstructor(ExecState*, JSGlobalObject*, Structure*, NumberPrototype*);
+        
+    public:
+        static NumberConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NumberPrototype* numPrototype)
+        {
+            return new (allocateCell<NumberConstructor>(*exec->heap())) NumberConstructor(exec, globalObject, structure, numPrototype);
+        }
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

@@ -44,6 +44,10 @@ namespace JSC {
 
     public:
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
+        static JSPropertyNameIterator* create(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot)
+        {
+            return new (allocateCell<JSPropertyNameIterator>(*exec->heap())) JSPropertyNameIterator(exec, propertyNameArrayData, numCacheableSlot);
+        }
         
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {

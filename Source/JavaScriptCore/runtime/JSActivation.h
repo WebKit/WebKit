@@ -40,9 +40,16 @@ namespace JSC {
     class Register;
     
     class JSActivation : public JSVariableObject {
+    private:
         typedef JSVariableObject Base;
-    public:
         JSActivation(CallFrame*, FunctionExecutable*);
+    
+    public:
+        static JSActivation* create(JSGlobalData& globalData, CallFrame* callFrame, FunctionExecutable* funcExec)
+        {
+            return new (allocateCell<JSActivation>(globalData.heap)) JSActivation(callFrame, funcExec);
+        }
+
         virtual ~JSActivation();
 
         virtual void visitChildren(SlotVisitor&);

@@ -30,9 +30,15 @@ namespace JSC {
     class NativeErrorPrototype;
 
     class NativeErrorConstructor : public InternalFunction {
-    public:
+    private:
         NativeErrorConstructor(ExecState*, JSGlobalObject*, Structure*, Structure* prototypeStructure, const UString&);
 
+    public:
+        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& nameAndMessage)
+        {
+            return new (allocateCell<NativeErrorConstructor>(*exec->heap())) NativeErrorConstructor(exec, globalObject, structure, prototypeStructure, nameAndMessage);
+        }
+        
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

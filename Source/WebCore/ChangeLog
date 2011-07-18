@@ -1,3 +1,36 @@
+2011-07-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor JSC to replace JSCell::operator new with static create method
+        https://bugs.webkit.org/show_bug.cgi?id=64466
+
+        Reviewed by Oliver Hunt (oliver@apple.com) and Darin Adler (darin@apple.com).
+
+        First step in a longer refactoring process to remove the use of
+        operator new overloading in order to allocate GC objects and to replace
+        this method with static create methods for each individual type of heap-allocated
+        JS object.  This particular patch only deals with replacing uses of
+        operator new within JSC proper.  Future patches will remove it from the
+        parts that interface with the DOM.  Due to the DOM's continued dependence
+        on it, operator new has not actually been removed from JSCell.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsDateOrNull):
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::nonCachingStaticFunctionGetter):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::nonCachingStaticBackFunctionGetter):
+        (WebCore::nonCachingStaticForwardFunctionGetter):
+        (WebCore::nonCachingStaticGoFunctionGetter):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::nonCachingStaticReplaceFunctionGetter):
+        (WebCore::nonCachingStaticReloadFunctionGetter):
+        (WebCore::nonCachingStaticAssignFunctionGetter):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+
 2011-07-18  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Texmap] [Qt] [WK2] Unsync in TextureMapperNode between parent and child lists cause crashes on WK2.

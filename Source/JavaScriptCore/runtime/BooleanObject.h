@@ -26,9 +26,15 @@
 namespace JSC {
 
     class BooleanObject : public JSWrapperObject {
-    public:
-        explicit BooleanObject(JSGlobalData&, Structure*);
+    protected:
+        BooleanObject(JSGlobalData&, Structure*);
 
+    public:
+        static BooleanObject* create(JSGlobalData& globalData, Structure* structure)
+        {
+            return new (allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);
+        }
+        
         static const ClassInfo s_info;
         
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

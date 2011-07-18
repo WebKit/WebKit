@@ -1,3 +1,252 @@
+2011-07-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor JSC to replace JSCell::operator new with static create method
+        https://bugs.webkit.org/show_bug.cgi?id=64466
+
+        Reviewed by Oliver Hunt (oliver@apple.com) and Darin Adler (darin@apple.com).
+
+        First step in a longer refactoring process to remove the use of
+        operator new overloading in order to allocate GC objects and to replace
+        this method with static create methods for each individual type of heap-allocated
+        JS object.  This particular patch only deals with replacing uses of
+        operator new within JSC proper.  Future patches will remove it from the
+        parts that interface with the DOM.  Due to the DOM's continued dependence
+        on it, operator new has not actually been removed from JSCell.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::create):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::create):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::operator new):
+        (JSC::JSCallbackObject::create):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::staticFunctionGetter):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeConstructor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::createActivation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (GlobalObject::create):
+        (GlobalObject::GlobalObject):
+        (functionRun):
+        (jscmain):
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::createNoParameters):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::create):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::create):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::create):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::create):
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::create):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::create):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::create):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::create):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::StrictModeTypeErrorFunction::create):
+        (JSC::createTypeErrorFunction):
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::create):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorInstance.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::create):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError):
+        (JSC::InterruptedExecutionError::create):
+        (JSC::createInterruptedExecutionException):
+        (JSC::TerminatedExecutionError::TerminatedExecutionError):
+        (JSC::TerminatedExecutionError::create):
+        (JSC::createTerminatedExecutionException):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::create):
+        (JSC::NativeExecutable::create):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::create):
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::make):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        (JSC::FunctionConstructor::create):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::create):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::create):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::create):
+        (JSC::jsAPIValueWrapper):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        * runtime/JSCell.h:
+        (JSC::JSCell::allocateCell):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::create):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::create):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::create):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::putDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::create):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSString.cpp:
+        (JSC::JSString::substringFromRope):
+        (JSC::JSString::replaceCharacter):
+        (JSC::StringObject::create):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::create):
+        (JSC::RopeBuilder::createHasOtherOwner):
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsNontrivialString):
+        (JSC::jsString):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::synthesizeObject):
+        (JSC::JSValue::synthesizePrototype):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/MathObject.h:
+        (JSC::MathObject::create):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::create):
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::create):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::create):
+        * runtime/NumberObject.cpp:
+        (JSC::constructNumber):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::create):
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::create):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::create):
+        * runtime/ObjectPrototype.h:
+        (JSC::ObjectPrototype::create):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::createWithoutCaching):
+        (JSC::RegExp::create):
+        * runtime/RegExp.h:
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::arrayOfMatches):
+        (JSC::constructRegExp):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::create):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::create):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::create):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::create):
+        (JSC::ScopeChainNode::push):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::createEmptyString):
+        (JSC::SmallStrings::createSingleCharacterString):
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::create):
+        * runtime/StringObject.h:
+        (JSC::StringObject::create):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::create):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::create):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::createStructure):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::create):
+
 2011-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Refactor scheduleDispatchFunctionsOnMainThread to fix crash.

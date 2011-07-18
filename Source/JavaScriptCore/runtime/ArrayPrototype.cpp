@@ -582,7 +582,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* resObj = new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
+    JSArray* resObj = JSArray::create(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
     JSValue result = resObj;
     JSGlobalData& globalData = exec->globalData();
     for (unsigned k = 0; k < deleteCount; k++)

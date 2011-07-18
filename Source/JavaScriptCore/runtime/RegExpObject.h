@@ -27,10 +27,22 @@
 namespace JSC {
     
     class RegExpObject : public JSObjectWithGlobalObject {
+    protected:
+        RegExpObject(JSGlobalObject*, Structure*, RegExp*);
+
     public:
+        static RegExpObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+        {
+            return new (allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
+        }
+        
+        static RegExpObject* create(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+        {
+            return new (allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
+        }
+        
         typedef JSObjectWithGlobalObject Base;
 
-        RegExpObject(JSGlobalObject*, Structure*, RegExp*);
         virtual ~RegExpObject();
 
         void setRegExp(JSGlobalData& globalData, RegExp* r) { d->regExp.set(globalData, this, r); }

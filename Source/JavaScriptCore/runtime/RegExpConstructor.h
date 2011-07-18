@@ -56,8 +56,14 @@ namespace JSC {
     };
 
     class RegExpConstructor : public InternalFunction {
-    public:
+    private:
         RegExpConstructor(ExecState*, JSGlobalObject*, Structure*, RegExpPrototype*);
+
+    public:
+        static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
+        {
+            return new (allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(exec, globalObject, structure, regExpPrototype);
+        }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {

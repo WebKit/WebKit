@@ -51,7 +51,7 @@ const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, 0, E
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
 ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
-    : ErrorInstance(&exec->globalData(), structure)
+    : ErrorInstance(exec->globalData(), structure)
 {
     putDirect(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
 

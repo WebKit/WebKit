@@ -28,8 +28,14 @@ namespace JSC {
     class StringPrototype;
 
     class StringConstructor : public InternalFunction {
-    public:
+    private:
         StringConstructor(ExecState*, JSGlobalObject*, Structure*, StringPrototype*);
+        
+    public:
+        static StringConstructor* create(ExecState* exec, JSGlobalObject* globalObject , Structure* structure, StringPrototype* strPrototype)
+        {
+            return new (allocateCell<StringConstructor>(*exec->heap())) StringConstructor(exec, globalObject, structure, strPrototype);
+        }
 
         static const ClassInfo s_info;
 

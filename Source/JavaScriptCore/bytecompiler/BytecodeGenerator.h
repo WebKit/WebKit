@@ -479,7 +479,7 @@ namespace JSC {
 
         FunctionExecutable* makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
         {
-            return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
+            return FunctionExecutable::create(*globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
 
         JSString* addStringConstant(const Identifier&);

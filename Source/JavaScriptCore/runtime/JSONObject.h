@@ -33,9 +33,15 @@ namespace JSC {
     class Stringifier;
 
     class JSONObject : public JSObjectWithGlobalObject {
-    public:
+    private:
         JSONObject(JSGlobalObject*, Structure*);
 
+    public:
+        static JSONObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        {
+            return new (allocateCell<JSONObject>(*exec->heap())) JSONObject(globalObject, structure);
+        }
+        
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);

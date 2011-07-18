@@ -28,8 +28,14 @@ namespace JSC {
     class ObjectPrototype;
 
     class ObjectConstructor : public InternalFunction {
-    public:
+    private:
         ObjectConstructor(ExecState*, JSGlobalObject*, Structure*, ObjectPrototype*);
+    
+    public:
+        static ObjectConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objPrototype)
+        {
+            return new (allocateCell<ObjectConstructor>(*exec->heap())) ObjectConstructor(exec, globalObject, structure, objPrototype);
+        }
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

@@ -1679,7 +1679,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             exceptionValue = createSyntaxError(callFrame, "Invalid flags supplied to RegExp constructor.");
             goto vm_throw;
         }
-        callFrame->uncheckedR(dst) = JSValue(new (globalData) RegExpObject(callFrame->lexicalGlobalObject(), callFrame->scopeChain()->globalObject->regExpStructure(), regExp));
+        callFrame->uncheckedR(dst) = JSValue(RegExpObject::create(globalData, callFrame->lexicalGlobalObject(), callFrame->scopeChain()->globalObject->regExpStructure(), regExp));
 
         vPC += OPCODE_LENGTH(op_new_regexp);
         NEXT_INSTRUCTION();
@@ -3430,7 +3430,7 @@ skip_id_custom_self:
             NEXT_INSTRUCTION();
         }
         if (!arguments) {
-            Arguments* arguments = new (globalData) Arguments(callFrame);
+            Arguments* arguments = Arguments::create(globalData, callFrame);
             callFrame->uncheckedR(argumentsRegister) = JSValue(arguments);
             callFrame->uncheckedR(unmodifiedArgumentsRegister(argumentsRegister)) = JSValue(arguments);
         }
@@ -4560,7 +4560,7 @@ skip_id_custom_self:
 
         int activationReg = vPC[1].u.operand;
         if (!callFrame->r(activationReg).jsValue()) {
-            JSActivation* activation = new (globalData) JSActivation(callFrame, static_cast<FunctionExecutable*>(codeBlock->ownerExecutable()));
+            JSActivation* activation = JSActivation::create(globalData, callFrame, static_cast<FunctionExecutable*>(codeBlock->ownerExecutable()));
             callFrame->r(activationReg) = JSValue(activation);
             callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
         }
@@ -4651,7 +4651,7 @@ skip_id_custom_self:
         int dst = vPC[1].u.operand;
 
         if (!callFrame->r(dst).jsValue()) {
-            Arguments* arguments = new (globalData) Arguments(callFrame);
+            Arguments* arguments = Arguments::create(globalData, callFrame);
             callFrame->uncheckedR(dst) = JSValue(arguments);
             callFrame->uncheckedR(unmodifiedArgumentsRegister(dst)) = JSValue(arguments);
         }
@@ -5113,13 +5113,13 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
         int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);
         if (JSValue arguments = functionCallFrame->uncheckedR(argumentsRegister).jsValue())
             return arguments;
-        JSValue arguments = JSValue(new (callFrame) Arguments(functionCallFrame));
+        JSValue arguments = JSValue(Arguments::create(callFrame->globalData(), functionCallFrame));
         functionCallFrame->r(argumentsRegister) = arguments;
         functionCallFrame->r(realArgumentsRegister) = arguments;
         return arguments;
     }
 
-    Arguments* arguments = new (functionCallFrame) Arguments(functionCallFrame);
+    Arguments* arguments = Arguments::create(functionCallFrame->globalData(), functionCallFrame);
     arguments->copyRegisters(functionCallFrame->globalData());
     return arguments;
 }

@@ -153,7 +153,7 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
 
 JSObject* RegExpConstructor::arrayOfMatches(ExecState* exec) const
 {
-    return new (exec) RegExpMatchesArray(exec, d.get());
+    return RegExpMatchesArray::create(exec, d.get());
 }
 
 JSValue RegExpConstructor::getBackref(ExecState* exec, unsigned i) const
@@ -304,7 +304,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         // If called as a function, this just returns the first argument (see 15.10.3.1).
         if (callAsConstructor) {
             RegExp* regExp = static_cast<RegExpObject*>(asObject(arg0))->regExp();
-            return new (exec) RegExpObject(globalObject, globalObject->regExpStructure(), regExp);
+            return RegExpObject::create(exec, globalObject, globalObject->regExpStructure(), regExp);
         }
         return asObject(arg0);
     }
@@ -322,10 +322,10 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
             return throwError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
     }
 
-    RegExp* regExp = RegExp::create(&exec->globalData(), pattern, flags);
+    RegExp* regExp = RegExp::create(exec->globalData(), pattern, flags);
     if (!regExp->isValid())
         return throwError(exec, createSyntaxError(exec, regExp->errorMessage()));
-    return new (exec) RegExpObject(exec->lexicalGlobalObject(), globalObject->regExpStructure(), regExp);
+    return RegExpObject::create(exec, exec->lexicalGlobalObject(), globalObject->regExpStructure(), regExp);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)

@@ -27,9 +27,15 @@
 namespace JSC {
 
     class RegExpPrototype : public RegExpObject {
-    public:
+    protected:
         RegExpPrototype(ExecState*, JSGlobalObject*, Structure*, RegExp*);
 
+    public:
+        static RegExpPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+        {
+            return new (allocateCell<RegExpPrototype>(*exec->heap())) RegExpPrototype(exec, globalObject, structure, regExp);
+        }
+        
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

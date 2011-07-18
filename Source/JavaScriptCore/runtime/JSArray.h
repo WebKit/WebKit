@@ -60,14 +60,30 @@ namespace JSC {
     class JSArray : public JSNonFinalObject {
         friend class Walker;
 
-    public:
-        JSArray(VPtrStealingHackType);
-
+    protected:
         explicit JSArray(JSGlobalData&, Structure*);
         JSArray(JSGlobalData&, Structure*, unsigned initialLength, ArrayCreationMode);
         JSArray(JSGlobalData&, Structure*, const ArgList& initialValues);
+        
+    public:
+        JSArray(VPtrStealingHackType);
         virtual ~JSArray();
 
+        static JSArray* create(JSGlobalData& globalData, Structure* structure)
+        {
+            return new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+        }
+        
+        static JSArray* create(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode createMode)
+        {
+            return new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, initialLength, createMode);
+        }
+        
+        static JSArray* create(JSGlobalData& globalData, Structure* structure, const ArgList& initialValues)
+        {
+            return new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, initialValues);
+        }
+        
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

@@ -359,7 +359,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
     public:
         static JSFinalObject* create(ExecState* exec, Structure* structure)
         {
-            return new (exec) JSFinalObject(exec->globalData(), structure);
+            return new (allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

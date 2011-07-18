@@ -87,8 +87,8 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     if (!exec->argumentCount())
-        return JSValue::encode(new (exec) StringObject(exec, globalObject->stringObjectStructure()));
-    return JSValue::encode(new (exec) StringObject(exec, globalObject->stringObjectStructure(), exec->argument(0).toString(exec)));
+        return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure()));
+    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->argument(0).toString(exec)));
 }
 
 ConstructType StringConstructor::getConstructData(ConstructData& constructData)

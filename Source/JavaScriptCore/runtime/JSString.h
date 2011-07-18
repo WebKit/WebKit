@@ -180,9 +180,10 @@ namespace JSC {
 
                 Vector<WorkItem, 16> m_workQueue;
         };
-
-        ALWAYS_INLINE JSString(JSGlobalData* globalData, const UString& value)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        
+    private:
+        ALWAYS_INLINE JSString(JSGlobalData& globalData, const UString& value)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(value.length())
             , m_value(value)
             , m_fiberCount(0)
@@ -192,24 +193,24 @@ namespace JSC {
         }
 
         enum HasOtherOwnerType { HasOtherOwner };
-        JSString(JSGlobalData* globalData, const UString& value, HasOtherOwnerType)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, const UString& value, HasOtherOwnerType)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(value.length())
             , m_value(value)
             , m_fiberCount(0)
         {
             ASSERT(!m_value.isNull());
         }
-        JSString(JSGlobalData* globalData, PassRefPtr<StringImpl> value, HasOtherOwnerType)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, PassRefPtr<StringImpl> value, HasOtherOwnerType)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(value->length())
             , m_value(value)
             , m_fiberCount(0)
         {
             ASSERT(!m_value.isNull());
         }
-        JSString(JSGlobalData* globalData, PassRefPtr<RopeImpl> rope)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, PassRefPtr<RopeImpl> rope)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(rope->length())
             , m_fiberCount(1)
         {
@@ -217,8 +218,8 @@ namespace JSC {
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
-        JSString(JSGlobalData* globalData, unsigned fiberCount, JSString* s1, JSString* s2)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, JSString* s2)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(s1->length() + s2->length())
             , m_fiberCount(fiberCount)
         {
@@ -230,8 +231,8 @@ namespace JSC {
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
-        JSString(JSGlobalData* globalData, unsigned fiberCount, JSString* s1, const UString& u2)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, const UString& u2)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(s1->length() + u2.length())
             , m_fiberCount(fiberCount)
         {
@@ -243,8 +244,8 @@ namespace JSC {
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
-        JSString(JSGlobalData* globalData, unsigned fiberCount, const UString& u1, JSString* s2)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, unsigned fiberCount, const UString& u1, JSString* s2)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(u1.length() + s2->length())
             , m_fiberCount(fiberCount)
         {
@@ -271,8 +272,8 @@ namespace JSC {
         }
 
         // This constructor constructs a new string by concatenating u1 & u2.
-        JSString(JSGlobalData* globalData, const UString& u1, const UString& u2)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, const UString& u1, const UString& u2)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(u1.length() + u2.length())
             , m_fiberCount(2)
         {
@@ -283,8 +284,8 @@ namespace JSC {
         }
 
         // This constructor constructs a new string by concatenating u1, u2 & u3.
-        JSString(JSGlobalData* globalData, const UString& u1, const UString& u2, const UString& u3)
-            : JSCell(*globalData, globalData->stringStructure.get())
+        JSString(JSGlobalData& globalData, const UString& u1, const UString& u2, const UString& u3)
+            : JSCell(globalData, globalData.stringStructure.get())
             , m_length(u1.length() + u2.length() + u3.length())
             , m_fiberCount(s_maxInternalRopeLength)
         {
@@ -293,6 +294,48 @@ namespace JSC {
             appendStringInConstruct(index, u2);
             appendStringInConstruct(index, u3);
             ASSERT(index <= s_maxInternalRopeLength);
+        }
+
+    public:
+        static JSString* create(JSGlobalData& globalData, const UString& value)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
+        }
+        static JSString* createHasOtherOwner(JSGlobalData& globalData, const UString& value)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value, HasOtherOwner);
+        }
+        static JSString* createHasOtherOwner(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value, HasOtherOwner);
+        }
+        static JSString* create(JSGlobalData& globalData, PassRefPtr<RopeImpl> rope)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, rope);
+        }
+        static JSString* create(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, JSString* s2)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, s1, s2);
+        }
+        static JSString* create(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, const UString& u2)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, s1, u2);
+        }
+        static JSString* create(JSGlobalData& globalData, unsigned fiberCount, const UString& u1, JSString* s2)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, u1, s2);
+        }
+        static JSString* create(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
+        {
+            return new (allocateCell<JSString>(*exec->heap())) JSString(exec, v1, v2, v3);
+        }
+        static JSString* create(JSGlobalData& globalData, const UString& u1, const UString& u2)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, u1, u2);
+        }
+        static JSString* create(JSGlobalData& globalData, const UString& u1, const UString& u2, const UString& u3)
+        {
+            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, u1, u2, u3);
         }
 
         ~JSString()
@@ -442,7 +485,7 @@ namespace JSC {
     {
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(&c, 1)));
+        return fixupVPtr(globalData, JSString::create(*globalData, UString(&c, 1)));
     }
 
     inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
@@ -452,7 +495,7 @@ namespace JSC {
         UChar c = s.characters()[offset];
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(StringImpl::create(s.impl(), offset, 1))));
+        return fixupVPtr(globalData, JSString::create(*globalData, UString(StringImpl::create(s.impl(), offset, 1))));
     }
 
     inline JSString* jsNontrivialString(JSGlobalData* globalData, const char* s)
@@ -460,13 +503,13 @@ namespace JSC {
         ASSERT(s);
         ASSERT(s[0]);
         ASSERT(s[1]);
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, s));
+        return fixupVPtr(globalData, JSString::create(*globalData, s));
     }
 
     inline JSString* jsNontrivialString(JSGlobalData* globalData, const UString& s)
     {
         ASSERT(s.length() > 1);
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, s));
+        return fixupVPtr(globalData, JSString::create(*globalData, s));
     }
 
     inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
@@ -488,7 +531,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, s));
+        return fixupVPtr(globalData, JSString::create(*globalData, s));
     }
 
     inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)
@@ -516,7 +559,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(StringImpl::create(s.impl(), offset, length)), JSString::HasOtherOwner));
+        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, UString(StringImpl::create(s.impl(), offset, length))));
     }
 
     inline JSString* jsOwnedString(JSGlobalData* globalData, const UString& s)
@@ -529,7 +572,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, new (globalData) JSString(globalData, s, JSString::HasOtherOwner));
+        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, s));
     }
 
     inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }

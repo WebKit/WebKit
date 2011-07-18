@@ -873,9 +873,9 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
             UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
             RegExpFlags flags = (re.caseSensitivity() == Qt::CaseInsensitive) ? FlagIgnoreCase : NoFlags;
 
-            JSC::RegExp* regExp = JSC::RegExp::create(&exec->globalData(), pattern, flags);
+            JSC::RegExp* regExp = JSC::RegExp::create(exec->globalData(), pattern, flags);
             if (regExp->isValid())
-                return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp);
+                return RegExpObject::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp);
             return jsNull();
         }
     }
@@ -908,7 +908,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         dt.isDST = -1;
         double ms = gregorianDateTimeToMS(exec, dt, time.msec(), /*inputIsUTC*/ false);
 
-        return new (exec) DateInstance(exec, exec->lexicalGlobalObject()->dateStructure(), trunc(ms));
+        return DateInstance::create(exec, exec->lexicalGlobalObject()->dateStructure(), trunc(ms));
     }
 
     if (type == QMetaType::QByteArray) {

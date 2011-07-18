@@ -76,8 +76,8 @@ struct RegExpRepresentation {
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
-RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
-    : JSCell(*globalData, globalData->regExpStructure.get())
+RegExp::RegExp(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
+    : JSCell(globalData, globalData.regExpStructure.get())
     , m_state(NotCompiled)
     , m_patternString(patternString)
     , m_flags(flags)
@@ -99,9 +99,14 @@ RegExp::~RegExp()
 {
 }
 
-RegExp* RegExp::create(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
+RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
 {
-    return globalData->regExpCache()->lookupOrCreate(patternString, flags);
+    return new (allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
+}
+
+RegExp* RegExp::create(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
+{
+    return globalData.regExpCache()->lookupOrCreate(patternString, flags);
 }
 
 void RegExp::compile(JSGlobalData* globalData)

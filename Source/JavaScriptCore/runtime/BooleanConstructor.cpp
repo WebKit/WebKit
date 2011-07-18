@@ -40,7 +40,7 @@ BooleanConstructor::BooleanConstructor(ExecState* exec, JSGlobalObject* globalOb
 // ECMA 15.6.2
 JSObject* constructBoolean(ExecState* exec, const ArgList& args)
 {
-    BooleanObject* obj = new (exec) BooleanObject(exec->globalData(), asInternalFunction(exec->callee())->globalObject()->booleanObjectStructure());
+    BooleanObject* obj = BooleanObject::create(exec->globalData(), asInternalFunction(exec->callee())->globalObject()->booleanObjectStructure());
     obj->setInternalValue(exec->globalData(), jsBoolean(args.at(0).toBoolean(exec)));
     return obj;
 }
@@ -71,7 +71,7 @@ CallType BooleanConstructor::getCallData(CallData& callData)
 
 JSObject* constructBooleanFromImmediateBoolean(ExecState* exec, JSGlobalObject* globalObject, JSValue immediateBooleanValue)
 {
-    BooleanObject* obj = new (exec) BooleanObject(exec->globalData(), globalObject->booleanObjectStructure());
+    BooleanObject* obj = BooleanObject::create(exec->globalData(), globalObject->booleanObjectStructure());
     obj->setInternalValue(exec->globalData(), immediateBooleanValue);
     return obj;
 }

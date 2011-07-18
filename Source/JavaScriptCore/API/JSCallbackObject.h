@@ -116,9 +116,23 @@ struct JSCallbackObjectData : WeakHandleOwner {
     
 template <class Base>
 class JSCallbackObject : public Base {
-public:
+protected:
     JSCallbackObject(ExecState*, JSGlobalObject*, Structure*, JSClassRef, void* data);
     JSCallbackObject(JSGlobalData&, JSClassRef, Structure*);
+    // We'd like to use the placement version of operator new defined in JSCell, but 
+    // we can't because Base is a template argument, so we just duplicate the same 
+    // functionality here.
+    void* operator new(size_t, void* ptr) { return ptr; }
+
+public:
+    static JSCallbackObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, void* data)
+    {
+        return new (allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, globalObject, structure, classRef, data);
+    }
+    static JSCallbackObject* create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
+    {
+        return new (allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
+    }
 
     void setPrivate(void* data);
     void* getPrivate();

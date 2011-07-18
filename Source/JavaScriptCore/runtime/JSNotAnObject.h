@@ -37,10 +37,16 @@ namespace JSC {
     // in certain SquirrelFish bytecodes -- effectively it just silently consumes
     // any operations performed on the result of a failed toObject call.
     class JSNotAnObject : public JSNonFinalObject {
-    public:
+    private:
         JSNotAnObject(ExecState* exec)
             : JSNonFinalObject(exec->globalData(), exec->globalData().notAnObjectStructure.get())
         {
+        }
+        
+    public:
+        static JSNotAnObject* create(ExecState* exec)
+        {
+            return new (allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

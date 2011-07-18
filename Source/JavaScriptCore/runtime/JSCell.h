@@ -381,6 +381,11 @@ namespace JSC {
         cell->~JSCell();
     }
 
+    template <typename T> void* allocateCell(Heap& heap)
+    {
+        return heap.allocate(sizeof(T));
+    }
+        
 } // namespace JSC
 
 #endif // JSCell_h

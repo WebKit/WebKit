@@ -30,10 +30,20 @@ namespace WTF {
 namespace JSC {
 
     class DateInstance : public JSWrapperObject {
-    public:
+    protected:
         DateInstance(ExecState*, Structure*, double);
-        explicit DateInstance(ExecState*, Structure*);
-
+        DateInstance(ExecState*, Structure*);
+        
+    public:
+        static DateInstance* create(ExecState* exec, Structure* structure, double date)
+        {
+            return new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure, date);
+        }
+        static DateInstance* create(ExecState* exec, Structure* structure)
+        {
+            return new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
+        }
+        
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }
 
         static JS_EXPORTDATA const ClassInfo s_info;

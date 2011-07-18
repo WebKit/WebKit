@@ -106,7 +106,7 @@ unsigned SmallStrings::count() const
 void SmallStrings::createEmptyString(JSGlobalData* globalData)
 {
     ASSERT(!m_emptyString);
-    m_emptyString = new (globalData) JSString(globalData, "", JSString::HasOtherOwner);
+    m_emptyString = JSString::createHasOtherOwner(*globalData, "");
 }
 
 void SmallStrings::createSingleCharacterString(JSGlobalData* globalData, unsigned char character)
@@ -114,7 +114,7 @@ void SmallStrings::createSingleCharacterString(JSGlobalData* globalData, unsigne
     if (!m_storage)
         m_storage = adoptPtr(new SmallStringsStorage);
     ASSERT(!m_singleCharacterStrings[character]);
-    m_singleCharacterStrings[character] = new (globalData) JSString(globalData, PassRefPtr<StringImpl>(m_storage->rep(character)), JSString::HasOtherOwner);
+    m_singleCharacterStrings[character] = JSString::createHasOtherOwner(*globalData, PassRefPtr<StringImpl>(m_storage->rep(character)));
 }
 
 StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)

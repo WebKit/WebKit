@@ -42,43 +42,43 @@ static const char* sourceURLPropertyName = "sourceURL";
 JSObject* createError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->errorStructure(), message);
 }
 
 JSObject* createEvalError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->evalErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->evalErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createRangeError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->rangeErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->rangeErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createReferenceError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->referenceErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->referenceErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createSyntaxError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->syntaxErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->syntaxErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createTypeError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->typeErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->typeErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createURIError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(&globalObject->globalData(), globalObject->URIErrorConstructor()->errorStructure(), message);
+    return ErrorInstance::create(globalObject->globalData(), globalObject->URIErrorConstructor()->errorStructure(), message);
 }
 
 JSObject* createError(ExecState* exec, const UString& message)
@@ -166,11 +166,17 @@ JSObject* throwSyntaxError(ExecState* exec)
 }
 
 class StrictModeTypeErrorFunction : public InternalFunction {
-public:
+private:
     StrictModeTypeErrorFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
         : InternalFunction(&exec->globalData(), globalObject, structure, exec->globalData().propertyNames->emptyIdentifier)
         , m_message(message)
     {
+    }
+
+public:
+    static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
+    {
+        return new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(exec, globalObject, structure, message);
     }
     
     static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)
@@ -205,7 +211,7 @@ ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
 
 JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
 {
-    return new (exec) StrictModeTypeErrorFunction(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->internalFunctionStructure(), message);
+    return StrictModeTypeErrorFunction::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->internalFunctionStructure(), message);
 }
 
 } // namespace JSC

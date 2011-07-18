@@ -199,10 +199,10 @@ JSString* JSString::substringFromRope(ExecState* exec, unsigned substringStart, 
             return globalData->smallStrings.singleCharacterString(globalData, c);
     }
     if (substringFiberCount == 1)
-        return new (globalData) JSString(globalData, substringFibers[0]);
+        return JSString::create(*globalData, substringFibers[0]);
     if (substringFiberCount == 2)
-        return new (globalData) JSString(globalData, substringFibers[0], substringFibers[1]);
-    return new (globalData) JSString(globalData, substringFibers[0], substringFibers[1], substringFibers[2]);
+        return JSString::create(*globalData, substringFibers[0], substringFibers[1]);
+    return JSString::create(*globalData, substringFibers[0], substringFibers[1], substringFibers[2]);
 }
 
 JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UString& replacement)
@@ -254,7 +254,7 @@ JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UStri
     }
 
     JSGlobalData* globalData = &exec->globalData();
-    return JSValue(new (globalData) JSString(globalData, builder.release()));
+    return JSValue(JSString::create(*globalData, builder.release()));
 }
 
 JSString* JSString::getIndexSlowCase(ExecState* exec, unsigned i)
@@ -298,7 +298,7 @@ UString JSString::toString(ExecState* exec) const
 
 inline StringObject* StringObject::create(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    return new (exec) StringObject(exec->globalData(), globalObject->stringObjectStructure(), string);
+    return new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), globalObject->stringObjectStructure(), string);
 }
 
 JSObject* JSString::toObject(ExecState* exec, JSGlobalObject* globalObject) const

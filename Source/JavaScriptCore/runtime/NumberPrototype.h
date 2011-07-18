@@ -26,9 +26,15 @@
 namespace JSC {
 
     class NumberPrototype : public NumberObject {
-    public:
+    private:
         NumberPrototype(ExecState*, JSGlobalObject*, Structure*);
 
+    public:
+        static NumberPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        {
+            return new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, globalObject, structure);
+        }
+        
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

@@ -52,8 +52,8 @@ namespace JSC {
     protected:
         static const int NUM_PARAMETERS_IS_HOST = 0;
         static const int NUM_PARAMETERS_NOT_COMPILED = -1;
-    
-    public:
+
+    protected:
         ExecutableBase(JSGlobalData& globalData, Structure* structure, int numParameters)
             : JSCell(globalData, structure)
             , m_numParametersForCall(numParameters)
@@ -63,6 +63,12 @@ namespace JSC {
             Weak<ExecutableBase> finalizer(globalData, this, executableFinalizer());
             finalizer.leakHandle();
 #endif
+        }
+        
+    public:
+        static ExecutableBase* create(JSGlobalData& globalData, Structure* structure, int numParameters)
+        {
+            return new (allocateCell<ExecutableBase>(globalData.heap)) ExecutableBase(globalData, structure, numParameters);
         }
 
         bool isHostFunction() const
@@ -166,13 +172,13 @@ namespace JSC {
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
         {
             if (!callThunk)
-                return new (&globalData) NativeExecutable(globalData, JITCode(), function, JITCode(), constructor);
-            return new (&globalData) NativeExecutable(globalData, JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor);
+                return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode(), function, JITCode(), constructor);
+            return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor);
         }
 #else
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
         {
-            return new (&globalData) NativeExecutable(globalData, function, constructor);
+            return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
         }
 #endif
 
@@ -213,13 +219,13 @@ namespace JSC {
 
     class ScriptExecutable : public ExecutableBase {
     public:
-        ScriptExecutable(Structure* structure, JSGlobalData* globalData, const SourceCode& source, bool isInStrictContext)
-            : ExecutableBase(*globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
+        ScriptExecutable(Structure* structure, JSGlobalData& globalData, const SourceCode& source, bool isInStrictContext)
+            : ExecutableBase(globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
-            if (SamplingTool* sampler = globalData->interpreter->sampler())
+            if (SamplingTool* sampler = globalData.interpreter->sampler())
                 sampler->notifyOfScope(*globalData, this);
 #else
             UNUSED_PARAM(globalData);
@@ -290,7 +296,10 @@ namespace JSC {
             return *m_evalCodeBlock;
         }
 
-        static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) { return new (exec) EvalExecutable(exec, source, isInStrictContext); }
+        static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) 
+        {
+            return new (allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext); 
+        }
 
 #if ENABLE(JIT)
         JITCode& generatedJITCode()
@@ -319,7 +328,7 @@ namespace JSC {
     public:
         static ProgramExecutable* create(ExecState* exec, const SourceCode& source)
         {
-            return new (exec) ProgramExecutable(exec, source);
+            return new (allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
         }
 
         ~ProgramExecutable();
@@ -372,17 +381,17 @@ namespace JSC {
     public:
         static FunctionExecutable* create(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return new (exec) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            return new (allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
         }
 
-        static FunctionExecutable* create(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
+        static FunctionExecutable* create(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return new (globalData) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            return new (allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
         }
 
         JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
         {
-            return new (exec) JSFunction(exec, this, scopeChain);
+            return JSFunction::create(exec, this, scopeChain);
         }
         
         // Returns either call or construct bytecode. This can be appropriate
@@ -479,7 +488,7 @@ namespace JSC {
         static const ClassInfo s_info;
 
     private:
-        FunctionExecutable(JSGlobalData*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
+        FunctionExecutable(JSGlobalData&, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
         FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
 
         JSObject* compileForCallInternal(ExecState*, ScopeChainNode*);

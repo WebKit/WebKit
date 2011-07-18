@@ -324,7 +324,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
 
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
-    GetterSetter* getterSetter = new (exec) GetterSetter(exec);
+    GetterSetter* getterSetter = GetterSetter::create(exec);
     putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot);
 
     // putDirect will change our Structure if we add a new property. For
@@ -349,7 +349,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
     }
 
     PutPropertySlot slot;
-    GetterSetter* getterSetter = new (exec) GetterSetter(exec);
+    GetterSetter* getterSetter = GetterSetter::create(exec);
     putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot);
 
     // putDirect will change our Structure if we add a new property. For
@@ -635,7 +635,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
 {
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
-            GetterSetter* accessor = new (exec) GetterSetter(exec);
+            GetterSetter* accessor = GetterSetter::create(exec);
             if (oldDescriptor.getter()) {
                 attributes |= Getter;
                 accessor->setGetter(exec->globalData(), asObject(oldDescriptor.getter()));
