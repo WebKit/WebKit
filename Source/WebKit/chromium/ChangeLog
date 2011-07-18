@@ -1,3 +1,9 @@
+2011-07-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-07-18  James Robinson  <jamesr@chromium.org>
 
         Timer scheduling should be based off the monotonic clock
