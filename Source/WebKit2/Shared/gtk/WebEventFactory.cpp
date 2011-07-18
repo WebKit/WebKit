@@ -50,7 +50,9 @@ static inline WebEvent::Modifiers modifiersForEvent(const GdkEvent* event)
     unsigned modifiers = 0;
     GdkModifierType state;
 
-    ASSERT(gdk_event_get_state(event, &state));
+    // Check for a valid state in GdkEvent.
+    if (!gdk_event_get_state(event, &state))
+        return static_cast<WebEvent::Modifiers>(0);
 
     if (state & GDK_CONTROL_MASK)
         modifiers |= WebEvent::ControlKey;
@@ -127,7 +129,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
                          0 /* deltaY */,
                          0 /* deltaZ */,
                          currentClickCount,
-                         static_cast<WebEvent::Modifiers>(0),
+                         modifiersForEvent(event),
                          gdk_event_get_time(event));
 }
 

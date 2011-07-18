@@ -29,7 +29,6 @@
 #include "WorkQueue.h"
 
 #include "WKBase.h"
-#include <WebCore/NotImplemented.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/gobject/GRefPtr.h>

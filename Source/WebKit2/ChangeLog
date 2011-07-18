@@ -1,3 +1,15 @@
+2011-07-17  Amruth Raj  <amruthraj@motorola.com>
+
+        [GTK] Fix selection of elements in a multi select list and remove an unnecessary include in WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=64666
+
+        Reviewed by Martin Robinson.
+
+        * Platform/gtk/WorkQueueGtk.cpp: Remove an include which is no longer required
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::modifiersForEvent): Fix an incorrect ASSERT statement
+        (WebKit::WebEventFactory::createWebMouseEvent): Call the function to determine the modifier keys
+
 2011-07-17  Lukasz Slachciak  <l.slachciak@samsung.com>
 
         Reviewed by Martin Robinson.
