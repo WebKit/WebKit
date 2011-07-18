@@ -87,7 +87,7 @@ private:
     virtual void didChangeScrollbarsForMainFrame() const;
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     virtual float userSpaceScaleFactor() const { return 1; }
-    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, Vector<WTF::String>&);
+    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&);
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 

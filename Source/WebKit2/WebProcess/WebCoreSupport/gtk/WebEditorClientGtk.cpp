@@ -36,8 +36,9 @@ void WebEditorClient::getEditorCommandsForKeyEvent(const KeyboardEvent* event, V
 {
     ASSERT(event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent);
 
-    // First try to interpret the command in the UI and get the commands.
-    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetEditorCommandsForKeyEvent(),
+    /* First try to interpret the command in the UI and get the commands.
+       UI needs to receive event type because only knows current NativeWebKeyboardEvent.*/
+    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetEditorCommandsForKeyEvent(event->type()),
                                                 Messages::WebPageProxy::GetEditorCommandsForKeyEvent::Reply(pendingEditorCommands),
                                                 m_page->pageID(), CoreIPC::Connection::NoTimeout);
 }

@@ -689,7 +689,10 @@ private:
     void executeSavedCommandBySelector(const String& selector, bool& handled);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
+    void getEditorCommandsForKeyEvent(const AtomicString&, Vector<String>&);
+#endif
+#if PLATFORM(EFL)
     void getEditorCommandsForKeyEvent(Vector<String>&);
 #endif
 

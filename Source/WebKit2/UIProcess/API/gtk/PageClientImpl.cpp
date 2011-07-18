@@ -55,10 +55,11 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
-void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, Vector<WTF::String>& commandList)
+void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, const AtomicString& eventType, Vector<WTF::String>& commandList)
 {
-    ASSERT(event.type == WebEvent::KeyDown || event.type == WebEvent.KeyPress);
-    KeyBindingTranslator::EventType type = WebEvent::KeyDown ? 
+    ASSERT(eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent);
+
+    KeyBindingTranslator::EventType type = eventType == eventNames().keydownEvent ?
         KeyBindingTranslator::KeyDown : KeyBindingTranslator::KeyPress;
     m_keyBindingTranslator.getEditorCommandsForKeyEvent(const_cast<GdkEventKey*>(&event.nativeEvent()->key), type, commandList);
 }

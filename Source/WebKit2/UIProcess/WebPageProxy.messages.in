@@ -139,7 +139,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(GTK)
     # Support for GTK+ platform keybindings
-    GetEditorCommandsForKeyEvent() -> (Vector<WTF::String> commandsList)
+    GetEditorCommandsForKeyEvent(AtomicString eventType) -> (Vector<WTF::String> commandsList)
 #endif
 
     # BackForward messages

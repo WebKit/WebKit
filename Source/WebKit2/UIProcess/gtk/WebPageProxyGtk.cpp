@@ -44,9 +44,9 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     return "Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.7 (KHTML, like Gecko) Version/5.0 Safari/534.7";
 }
 
-void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& commandsList)
+void WebPageProxy::getEditorCommandsForKeyEvent(const AtomicString& eventType, Vector<WTF::String>& commandsList)
 {
-    m_pageClient->getEditorCommandsForKeyEvent(m_keyEventQueue.first(), commandsList);
+    m_pageClient->getEditorCommandsForKeyEvent(m_keyEventQueue.first(), eventType, commandsList);
 }
 
 void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
