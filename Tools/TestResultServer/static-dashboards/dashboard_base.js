@@ -187,7 +187,7 @@ function handleValidHashParameterWrapper(key, value)
 }
 
 var g_defaultCrossDashboardStateValues = {
-    group: '@DEPS - chromium.org',
+    group: '@ToT - chromium.org',
     showAllRuns: false,
     testType: 'layout-tests',
     buildDir : ''

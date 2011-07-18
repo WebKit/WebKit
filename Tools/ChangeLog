@@ -1,3 +1,16 @@
+2011-07-18  Ojan Vafai  <ojan@chromium.org>
+
+        Load ToT chromium bots by default in the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=64756
+
+        Reviewed by Adam Barth.
+
+        For now, these are the most useful bots to look at. Eventually,
+        we may want to load the build.webkit.org bots by default once
+        most of the bots there upload results.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+
 2011-07-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Focus and selection events are not fired when a <select>'s selection
