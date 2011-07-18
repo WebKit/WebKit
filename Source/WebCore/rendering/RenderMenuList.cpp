@@ -26,7 +26,6 @@
 #include "RenderMenuList.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityMenuList.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
@@ -58,7 +57,7 @@ RenderMenuList::RenderMenuList(Element* element)
     , m_innerBlock(0)
     , m_optionsChanged(true)
     , m_optionsWidth(0)
-    , m_lastActiveIndex(-1)
+    , m_lastSelectedIndex(-1)
     , m_popupIsVisible(false)
 {
 }
@@ -205,7 +204,6 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     }
 
     setText(text.stripWhiteSpace());
-    didUpdateActiveOption(optionIndex);
 }
 
 void RenderMenuList::setText(const String& s)
@@ -340,29 +338,16 @@ bool RenderMenuList::multiple()
 }
 #endif
 
-void RenderMenuList::didSetSelectedIndex(int listIndex)
+void RenderMenuList::didSetSelectedIndex()
 {
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    didUpdateActiveOption(select->listToOptionIndex(listIndex));
-}
-
-void RenderMenuList::didUpdateActiveOption(int optionIndex)
-{
-    if (!AXObjectCache::accessibilityEnabled())
+    int index = selectedIndex();
+    if (m_lastSelectedIndex == index)
         return;
 
-    if (m_lastActiveIndex == optionIndex)
-        return;
-    m_lastActiveIndex = optionIndex;
+    m_lastSelectedIndex = index;
 
-    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    if (optionIndex < 0 || optionIndex > static_cast<int>(select->listItems().size()))
-        return;
-
-    ASSERT(toOptionElement(select->listItems()[optionIndex]));
-
-    if (AccessibilityMenuList* menuList = static_cast<AccessibilityMenuList*>(document()->axObjectCache()->get(this)))
-        menuList->didUpdateActiveOption(optionIndex);
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->postNotification(this, AXObjectCache::AXMenuListValueChanged, true, PostSynchronously);
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const

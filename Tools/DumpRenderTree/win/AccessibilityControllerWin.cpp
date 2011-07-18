@@ -44,18 +44,16 @@ AccessibilityController::AccessibilityController()
     , m_scrollingStartEventHook(0)
     , m_valueChangeEventHook(0)
     , m_allEventsHook(0)
-    , m_notificationsEventHook(0)
 {
 }
 
 AccessibilityController::~AccessibilityController()
 {
     setLogFocusEvents(false);
-    setLogAccessibilityEvents(false);
     setLogValueChangeEvents(false);
 
-    if (m_notificationsEventHook)
-        UnhookWinEvent(m_notificationsEventHook);
+    if (m_allEventsHook)
+        UnhookWinEvent(m_allEventsHook);
 
     for (HashMap<PlatformUIElement, JSObjectRef>::iterator it = m_notificationListeners.begin(); it != m_notificationListeners.end(); ++it)
         JSValueUnprotect(frame->globalContext(), it->second);
@@ -130,10 +128,6 @@ static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG id
     switch (event) {
         case EVENT_OBJECT_FOCUS:
             printf("Received focus event for object '%S'.\n", name.c_str());
-            break;
-
-        case EVENT_OBJECT_SELECTION:
-            printf("Received selection event for object '%S'.\n", name.c_str());
             break;
 
         case EVENT_OBJECT_VALUECHANGE: {
@@ -219,24 +213,8 @@ void AccessibilityController::setLogScrollingStartEvents(bool logScrollingStartE
     ASSERT(m_scrollingStartEventHook);
 }
 
-void AccessibilityController::setLogAccessibilityEvents(bool logAccessibilityEvents)
+void AccessibilityController::setLogAccessibilityEvents(bool)
 {
-    if (!!m_allEventsHook == logAccessibilityEvents)
-        return;
-
-    if (!logAccessibilityEvents) {
-        UnhookWinEvent(m_allEventsHook);
-        m_allEventsHook = 0;
-        return;
-    }
-
-    // Ensure that accessibility is initialized for the WebView by querying for
-    // the root accessible object.
-    rootElement();
-
-    m_allEventsHook = SetWinEventHook(EVENT_MIN, EVENT_MAX, GetModuleHandle(0), logEventProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
-
-    ASSERT(m_allEventsHook);
 }
 
 static string stringEvent(DWORD event)
@@ -313,8 +291,8 @@ void AccessibilityController::notificationReceived(PlatformUIElement element, co
 
 void AccessibilityController::addNotificationListener(PlatformUIElement element, JSObjectRef functionCallback)
 {
-    if (!m_notificationsEventHook)
-        m_notificationsEventHook = SetWinEventHook(EVENT_MIN, EVENT_MAX, GetModuleHandle(0), notificationListenerProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
+    if (!m_allEventsHook)
+        m_allEventsHook = SetWinEventHook(EVENT_MIN, EVENT_MAX, GetModuleHandle(0), notificationListenerProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
 
     JSValueProtect(frame->globalContext(), functionCallback);
     m_notificationListeners.add(element, functionCallback);

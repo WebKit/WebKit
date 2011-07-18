@@ -1,3 +1,21 @@
+2011-07-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r91132 and r91135.
+        http://trac.webkit.org/changeset/91132
+        http://trac.webkit.org/changeset/91135
+        https://bugs.webkit.org/show_bug.cgi?id=64681
+
+        Broke GTK and Chromium debug bots (Requested by rniwa on
+        #webkit).
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::~AccessibilityController):
+        (logEventProc):
+        (AccessibilityController::setLogAccessibilityEvents):
+        (AccessibilityController::addNotificationListener):
+
 2011-07-17  Philippe Normand  <pnormand@igalia.com>
 
         test-webkitpy failing with Python 2.5

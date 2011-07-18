@@ -66,7 +66,6 @@ private:
     HWINEVENTHOOK m_scrollingStartEventHook;
 
     HWINEVENTHOOK m_allEventsHook;
-    HWINEVENTHOOK m_notificationsEventHook;
     HashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
 #endif
 };

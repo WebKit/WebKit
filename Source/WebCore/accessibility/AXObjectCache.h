@@ -129,7 +129,6 @@ public:
         AXValueChanged,
         AXScrolledToAnchor,
         AXLiveRegionChanged,
-        AXMenuListItemSelected,
         AXMenuListValueChanged,
         AXRowCountChanged,
         AXRowCollapsed,

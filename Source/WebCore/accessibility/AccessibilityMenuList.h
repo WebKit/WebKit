@@ -42,8 +42,6 @@ public:
     virtual bool isCollapsed() const;
     virtual bool press() const;
 
-    void didUpdateActiveOption(int optionIndex);
-
 private:
     AccessibilityMenuList(RenderMenuList*);
 
