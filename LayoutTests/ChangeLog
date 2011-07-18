@@ -1,3 +1,16 @@
+2011-07-18  Tony Chang  <tony@chromium.org>
+
+        [chromium] Move a Linux specific test into chromium-linux and rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=64632
+
+        Reviewed by Ojan Vafai.
+
+        Rebaselining per the comment in test_expectations.txt.
+
+        * platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-18  Rob Buis  <rbuis@rim.com>
 
         Stroking of zero-length paths in SVG should change according to erratum

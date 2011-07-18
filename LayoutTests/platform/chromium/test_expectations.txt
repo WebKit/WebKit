@@ -144,12 +144,6 @@ BUGCR36681 SKIP : java = TEXT
 // Chrome does not support Java LiveConnect.
 WONTFIX SKIP : java/lc3 = TEXT
 
-// this test doesn't make sense on Win or Mac.
-// TODO: move to platform/chromium-linux/.
-WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
-// Waiting for rebaseline after skia.gyp change
-BUGCR86782 SKIP LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
-
 // Quota API is not supported in DRT yet.
 BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
 BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
