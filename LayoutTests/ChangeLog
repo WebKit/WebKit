@@ -1,3 +1,10 @@
+2011-07-18  Gabor Loki  <loki@webkit.org>
+
+        Qt rebaselines after r91060 and r91116
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: (r91060)
+        * platform/qt/fast/dom/error-to-string-stack-overflow-expected.txt: Added (r91116)
+
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK and Qt rebaselines after r91158.
