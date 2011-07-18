@@ -1,3 +1,13 @@
+2011-07-18  Tab Atkins  <jackalmage@gmail.com>
+
+        Add regression tests for legacy color parsing of valid CSS colors
+        https://bugs.webkit.org/show_bug.cgi?id=64576
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/attribute-legacy-colors-expected.txt:
+        * fast/dom/script-tests/attribute-legacy-colors.js:
+
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         [SVG] [Chromium]: painting-control-04-f.svg and zero-path-square-cap-rendering.svg are failing
