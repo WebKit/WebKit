@@ -86,12 +86,18 @@ MarkedBlock::FreeCell* MarkedBlock::lazySweep()
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.
     
+    void* jsFinalObjectVPtr = m_heap->globalData()->jsFinalObjectVPtr;
+    
     FreeCell* result = 0;
     
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (!m_marks.testAndSet(i)) {
             JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
-            cell->~JSCell();
+            if (cell->vptr() == jsFinalObjectVPtr) {
+                JSFinalObject* object = reinterpret_cast<JSFinalObject*>(cell);
+                object->JSFinalObject::~JSFinalObject();
+            } else
+                cell->~JSCell();
             FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);
             freeCell->next = result;
             result = freeCell;
