@@ -43,6 +43,7 @@ class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
+class ScriptDebugServer;
 
 typedef String ErrorString;
 
@@ -52,12 +53,16 @@ public:
     virtual ~InspectorRuntimeAgent();
 
     // Part of the protocol.
-    void evaluate(ErrorString*, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void evaluate(ErrorString*, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, RefPtr<InspectorObject>* result, bool* wasThrown);
     void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result, bool* wasThrown);
     void releaseObject(ErrorString*, const String& objectId);
     void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    void setScriptDebugServer(ScriptDebugServer*);
+#endif
 
 protected:
     explicit InspectorRuntimeAgent(InjectedScriptManager*);
@@ -65,6 +70,9 @@ protected:
 
 private:
     InjectedScriptManager* m_injectedScriptManager;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    ScriptDebugServer* m_scriptDebugServer;
+#endif
 };
 
 } // namespace WebCore

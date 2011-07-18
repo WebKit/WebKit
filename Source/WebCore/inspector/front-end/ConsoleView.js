@@ -373,7 +373,7 @@ WebInspector.ConsoleView.prototype = {
         if (!expressionString && WebInspector.panels.scripts.paused)
             WebInspector.panels.scripts.getSelectedCallFrameVariables(reportCompletions.bind(this));
         else
-            this.evalInInspectedWindow(expressionString, "completion", true, evaluated.bind(this));
+            this.evalInInspectedWindow(expressionString, "completion", true, true, evaluated.bind(this));
 
         function evaluated(result, wasThrown)
         {
@@ -560,7 +560,7 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, callback)
+    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
             WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, callback);
@@ -577,7 +577,7 @@ WebInspector.ConsoleView.prototype = {
             if (!error)
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -608,7 +608,7 @@ WebInspector.ConsoleView.prototype = {
 
             self.addMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }
-        this.evalInInspectedWindow(str, "console", true, printResult);
+        this.evalInInspectedWindow(str, "console", true, undefined, printResult);
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },

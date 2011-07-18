@@ -1,3 +1,25 @@
+2011-07-18  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not pause on caught exceptions while typing in the console.
+        https://bugs.webkit.org/show_bug.cgi?id=64379
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::setScriptDebugServer):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+
 2011-07-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91132 and r91135.

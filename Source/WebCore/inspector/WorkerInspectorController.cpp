@@ -103,6 +103,10 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
         , 0
 #endif
     );
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
+#endif
 }
  
 WorkerInspectorController::~WorkerInspectorController()

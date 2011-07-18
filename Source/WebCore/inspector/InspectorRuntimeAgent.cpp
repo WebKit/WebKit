@@ -38,10 +38,18 @@
 #include "InspectorValues.h"
 #include <wtf/PassRefPtr.h>
 
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "ScriptDebugServer.h"
+#endif
+
 namespace WebCore {
 
 InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager)
     : m_injectedScriptManager(injectedScriptManager)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    , m_scriptDebugServer(0)
+#endif
 {
 }
 
@@ -49,14 +57,29 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(getDefaultInspectedState());
     if (injectedScript.hasNoValue()) {
         *errorString = "Inspected frame has gone";
         return;
     }
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    ASSERT(m_scriptDebugServer);
+    bool pauseStateChanged = false;
+    ScriptDebugServer::PauseOnExceptionsState presentState = m_scriptDebugServer->pauseOnExceptionsState();
+    if (doNotPauseOnExceptions && *doNotPauseOnExceptions && presentState != ScriptDebugServer::DontPauseOnExceptions) {
+        m_scriptDebugServer->setPauseOnExceptionsState(ScriptDebugServer::DontPauseOnExceptions);
+        pauseStateChanged = true;
+    }
+#endif
+
     injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result, wasThrown);
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (pauseStateChanged)
+        m_scriptDebugServer->setPauseOnExceptionsState(presentState);
+#endif
 }
 
 void InspectorRuntimeAgent::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result, bool* wasThrown)
@@ -99,6 +122,13 @@ void InspectorRuntimeAgent::releaseObjectGroup(ErrorString*, const String& objec
 {
     m_injectedScriptManager->releaseObjectGroup(objectGroup);
 }
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorRuntimeAgent::setScriptDebugServer(ScriptDebugServer* scriptDebugServer)
+{
+    m_scriptDebugServer = scriptDebugServer;
+}
+#endif
 
 } // namespace WebCore
 

@@ -127,6 +127,11 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
         , m_domStorageAgent.get()
 #endif
     );
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
+#endif
+
     InspectorInstrumentation::bindInstrumentingAgents(m_page, m_instrumentingAgents.get());
 }
 
