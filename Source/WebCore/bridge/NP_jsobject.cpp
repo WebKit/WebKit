@@ -241,7 +241,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         RefPtr<JSGlobalData> globalData(&exec->globalData());
         globalData->timeoutChecker.start();
-        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
+        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp->toThisObject(exec), argList);
         globalData->timeoutChecker.stop();
 
         // Convert and return the result of the function call.

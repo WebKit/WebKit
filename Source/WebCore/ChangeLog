@@ -1,3 +1,13 @@
+2011-07-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Speculative fix for Leopard assertions caused by 91095.
+
+        Rubber stamped by Sam Weinig.
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Invoke):
+            - ensure we pass the window shell, not the global object.
+
 2011-07-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor JSC to replace JSCell::operator new with static create method
