@@ -39,7 +39,7 @@ public:
 
     virtual bool handleEvent(QEvent*);
 
-    void setVisibleArea(const QRectF&);
+    void setVisibleContentRect(const QRectF&);
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
     void findZoomableAreaForPoint(const QPoint&);
     void setContentsScale(qreal);

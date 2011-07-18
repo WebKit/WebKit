@@ -67,7 +67,7 @@ public:
     TiledDrawingAreaProxy(PlatformWebView*, WebPageProxy*);
     virtual ~TiledDrawingAreaProxy();
 
-    void setVisibleArea(const WebCore::IntRect& visibleRect);
+    void setVisibleContentRect(const WebCore::IntRect&);
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
 
@@ -135,6 +135,7 @@ private:
     void removeAllTiles();
 
     WebCore::IntRect contentsRect() const;
+    WebCore::IntRect visibleRect() const;
 
     WebCore::IntRect calculateKeepRect(const WebCore::IntRect& visibleRect) const;
     WebCore::IntRect calculateCoverRect(const WebCore::IntRect& visibleRect) const;
@@ -166,7 +167,7 @@ private:
     WebCore::FloatSize m_keepAreaMultiplier;
     WebCore::FloatSize m_coverAreaMultiplier;
 
-    WebCore::IntRect m_visibleArea;
+    WebCore::IntRect m_visibleContentRect;
     float m_contentsScale;
 
     friend class TiledDrawingAreaTile;

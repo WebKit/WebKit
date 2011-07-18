@@ -141,8 +141,8 @@ void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)
 
 void QTouchWebPagePrivate::setViewportRect(const QRectF& viewportRect)
 {
-    const QRectF visibleArea = q->boundingRect().intersected(viewportRect);
-    page->setVisibleArea(visibleArea);
+    const QRectF visibleContentRect = q->boundingRect().intersected(viewportRect);
+    page->setVisibleContentRect(visibleContentRect);
 }
 
 #include "moc_qtouchwebpage.cpp"

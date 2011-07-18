@@ -85,15 +85,14 @@ bool QTouchWebPageProxy::handleEvent(QEvent* ev)
     return QtWebPageProxy::handleEvent(ev);
 }
 
-void QTouchWebPageProxy::setVisibleArea(const QRectF& visibleArea)
+void QTouchWebPageProxy::setVisibleContentRect(const QRectF& visibleContentRect)
 {
     TiledDrawingAreaProxy* tiledDrawingArea = static_cast<TiledDrawingAreaProxy*>(m_webPageProxy->drawingArea());
-    QRect alignedVisibleArea = visibleArea.toAlignedRect();
-    tiledDrawingArea->setVisibleArea(alignedVisibleArea);
+    QRect alignedVisibleContentRect = visibleContentRect.toAlignedRect();
+    tiledDrawingArea->setVisibleContentRect(alignedVisibleContentRect);
 
     // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
-    IntRect contentVisibleArea = tiledDrawingArea->mapToContents(alignedVisibleArea);
-    m_webPageProxy->setFixedVisibleContentRect(contentVisibleArea);
+    m_webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
 }
 
 void QTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)

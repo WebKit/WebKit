@@ -1,3 +1,31 @@
+2011-07-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TiledDrawingArea: map the visibleArea rect from page to tiles coordinates.
+        https://bugs.webkit.org/show_bug.cgi?id=64538
+
+        Reviewed by Benjamin Poulain.
+
+        TiledDrawingAreaProxy expects its coordinates to be scaled according to
+        contentsScale. This patch keep the pushed visibleArea as page coordinates
+        and convert it each time to scaled coordinates in case the contents scale was
+        changed afterward.
+        This is a regression introduced in r90750.
+        Also:
+        - Rename visibleArea to visibleContentRect
+        - Remove an unnecessary mapToContents in QTouchWebPageProxy::setVisibleContentRect
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPagePrivate::setViewportRect):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::invalidate):
+        (WebKit::TiledDrawingAreaProxy::setVisibleContentRect):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+        (WebKit::TiledDrawingAreaProxy::visibleRect):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::setVisibleContentRect):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+
 2011-07-17  Amruth Raj  <amruthraj@motorola.com>
 
         [GTK] Fix selection of elements in a multi select list and remove an unnecessary include in WorkQueue
