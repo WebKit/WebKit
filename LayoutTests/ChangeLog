@@ -1,3 +1,15 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [SVG] [Chromium]: painting-control-04-f.svg and zero-path-square-cap-rendering.svg are failing
+        https://bugs.webkit.org/show_bug.cgi?id=64675
+
+        Rebaseline painting-control-04-f.svg since r91191 fixed it.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-18  Adam Barth  <abarth@webkit.org>
 
         Update baseline.  rbuis says this is an improvement.
