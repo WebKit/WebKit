@@ -2851,11 +2851,6 @@ BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.h
 BUGWK58587 DEBUG GPU LINUX : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
 
-// WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
-// started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
-BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
-
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
 BUGWK56072 VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
 BUGWK56072 VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
@@ -3829,3 +3824,11 @@ BUGCR89372 MAC : svg/dom/use-style-recalc-script-execute-crash.html = CRASH PASS
 BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
+
+// WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
+// started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
+//BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
+//BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGWK64767 BUGLEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGWK64767 LEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
+BUGWK64767 LEOPARD : fast/css/custom-font-xheight.html = TEXT

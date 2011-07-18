@@ -1,3 +1,9 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Chromium failing expectations for some font tests; failures are tracked by the bug 64767.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Focus and selection events are not fired when a <select>'s selection
