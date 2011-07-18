@@ -1,3 +1,46 @@
+2011-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC JIT does not inline GC allocation fast paths
+        https://bugs.webkit.org/show_bug.cgi?id=64582
+
+        Reviewed by Oliver Hunt.
+
+        This addresses inlining allocation for the easiest-to-allocate cases:
+        op_new_object and op_create_this.  Inlining GC allocation fast paths
+        required three changes.  First, the JSGlobalData now saves the vtable
+        pointer of JSFinalObject, since that's what op_new_object and
+        op_create_this allocate.  Second, the Heap exposes a reference to
+        the appropriate SizeClass, so that the JIT may inline accesses
+        directly to the SizeClass for JSFinalObject allocations.  And third,
+        the JIT is extended with code to emit inline fast paths for GC
+        allocation.  A stub call is emitted in the case where the inline fast
+        path fails.
+
+        * heap/Heap.h:
+        (JSC::Heap::sizeClassFor):
+        (JSC::Heap::allocate):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSFinalObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+        * runtime/JSGlobalData.h:
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::JSFinalObject):
+        (JSC::JSObject::offsetOfInheritorID):
+
 2011-07-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor JSC to replace JSCell::operator new with static create method

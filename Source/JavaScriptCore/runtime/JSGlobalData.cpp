@@ -113,6 +113,7 @@ extern JSC_CONST_HASHTABLE HashTable regExpPrototypeTable;
 extern JSC_CONST_HASHTABLE HashTable stringTable;
 extern JSC_CONST_HASHTABLE HashTable stringConstructorTable;
 
+void* JSGlobalData::jsFinalObjectVPtr;
 void* JSGlobalData::jsArrayVPtr;
 void* JSGlobalData::jsByteArrayVPtr;
 void* JSGlobalData::jsStringVPtr;
@@ -132,6 +133,11 @@ void JSGlobalData::storeVPtrs()
     // Enough storage to fit a JSArray, JSByteArray, JSString, or JSFunction.
     // COMPILE_ASSERTS below check that this is true.
     char storage[64];
+
+    COMPILE_ASSERT(sizeof(JSFinalObject) <= sizeof(storage), sizeof_JSFinalObject_must_be_less_than_storage);
+    JSCell* jsFinalObject = new (storage) JSFinalObject(JSFinalObject::VPtrStealingHack);
+    CLOBBER_MEMORY();
+    JSGlobalData::jsFinalObjectVPtr = jsFinalObject->vptr();
 
     COMPILE_ASSERT(sizeof(JSArray) <= sizeof(storage), sizeof_JSArray_must_be_less_than_storage);
     JSCell* jsArray = new (storage) JSArray(JSArray::VPtrStealingHack);

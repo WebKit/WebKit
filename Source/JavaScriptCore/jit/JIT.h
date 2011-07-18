@@ -299,6 +299,9 @@ namespace JSC {
         void testPrototype(JSValue, JumpList& failureCases);
 
         void emitWriteBarrier(RegisterID owner, RegisterID scratch);
+        
+        template<typename T>
+        void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch);
 
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);
@@ -853,6 +856,7 @@ namespace JSC {
         void emitSlow_op_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_convert_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_create_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_div(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_eq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -885,6 +889,7 @@ namespace JSC {
         void emitSlow_op_mul(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_negate(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_neq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_new_object(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_not(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_nstricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_post_dec(Instruction*, Vector<SlowCaseEntry>::iterator&);

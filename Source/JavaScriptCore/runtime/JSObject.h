@@ -48,6 +48,7 @@ namespace JSC {
     
     class HashEntry;
     class InternalFunction;
+    class MarkedBlock;
     class PropertyDescriptor;
     class PropertyNameArray;
     class Structure;
@@ -75,6 +76,7 @@ namespace JSC {
         friend class BatchedTransitionOptimizer;
         friend class JIT;
         friend class JSCell;
+        friend class MarkedBlock;
         friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
@@ -250,6 +252,7 @@ namespace JSC {
 
         static size_t offsetOfInlineStorage();
         static size_t offsetOfPropertyStorage();
+        static size_t offsetOfInheritorID();
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
@@ -357,6 +360,11 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        explicit JSFinalObject(VPtrStealingHackType)
+            : JSObject(VPtrStealingHack, m_inlineStorage)
+        {
+        }
+        
         static JSFinalObject* create(ExecState* exec, Structure* structure)
         {
             return new (allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
@@ -389,6 +397,11 @@ inline size_t JSObject::offsetOfInlineStorage()
 inline size_t JSObject::offsetOfPropertyStorage()
 {
     return OBJECT_OFFSETOF(JSObject, m_propertyStorage);
+}
+
+inline size_t JSObject::offsetOfInheritorID()
+{
+    return OBJECT_OFFSETOF(JSObject, m_inheritorID);
 }
 
 inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)

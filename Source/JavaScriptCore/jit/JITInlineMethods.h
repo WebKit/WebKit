@@ -374,6 +374,31 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
+template<typename T>
+inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
+{
+    NewSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassFor(sizeof(JSFinalObject));
+    loadPtr(&sizeClass->firstFreeCell, result);
+    addSlowCase(branchTestPtr(Zero, result));
+    
+    // remove the object from the free list
+    loadPtr(Address(result), scratch);
+    storePtr(scratch, &sizeClass->firstFreeCell);
+    
+    // initialize the object's vtable
+    storePtr(ImmPtr(m_globalData->jsFinalObjectVPtr), Address(result));
+    
+    // initialize the object's structure
+    storePtr(structure, Address(result, JSCell::structureOffset()));
+    
+    // initialize the inheritor ID
+    storePtr(ImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
+    
+    // initialize the object's property storage pointer
+    addPtr(Imm32(sizeof(JSObject)), result, scratch);
+    storePtr(scratch, Address(result, JSObject::offsetOfPropertyStorage()));
+}
+
 #if USE(JSVALUE32_64)
 
 inline void JIT::emitLoadTag(unsigned index, RegisterID tag)

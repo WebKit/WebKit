@@ -182,6 +182,7 @@ namespace JSC {
 #endif
 
         static void storeVPtrs();
+        static JS_EXPORTDATA void* jsFinalObjectVPtr;
         static JS_EXPORTDATA void* jsArrayVPtr;
         static JS_EXPORTDATA void* jsByteArrayVPtr;
         static JS_EXPORTDATA void* jsStringVPtr;

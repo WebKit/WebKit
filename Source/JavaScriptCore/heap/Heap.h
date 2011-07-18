@@ -82,6 +82,7 @@ namespace JSC {
         inline bool isBusy();
 
         void* allocate(size_t);
+        NewSpace::SizeClass& sizeClassFor(size_t);
         void* allocate(NewSpace::SizeClass&);
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         void collectAllGarbage();
@@ -289,6 +290,11 @@ namespace JSC {
         return forEachBlock(functor);
     }
     
+    inline NewSpace::SizeClass& Heap::sizeClassFor(size_t bytes)
+    {
+        return m_newSpace.sizeClassFor(bytes);
+    }
+    
     inline void* Heap::allocate(NewSpace::SizeClass& sizeClass)
     {
         // This is a light-weight fast path to cover the most common case.
@@ -303,7 +309,7 @@ namespace JSC {
     inline void* Heap::allocate(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-        NewSpace::SizeClass& sizeClass = m_newSpace.sizeClassFor(bytes);
+        NewSpace::SizeClass& sizeClass = sizeClassFor(bytes);
         return allocate(sizeClass);
     }
 

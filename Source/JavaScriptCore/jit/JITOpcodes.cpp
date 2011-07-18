@@ -29,6 +29,7 @@
 #include "JIT.h"
 
 #include "Arguments.h"
+#include "Heap.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
@@ -330,6 +331,14 @@ void JIT::emit_op_jmp(Instruction* currentInstruction)
 
 void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
+    emitAllocateJSFinalObject(ImmPtr(m_codeBlock->globalObject()->emptyObjectStructure()), regT0, regT1);
+    
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
     JITStubCall(this, cti_op_new_object).call(currentInstruction[1].u.operand);
 }
 
@@ -1156,6 +1165,31 @@ void JIT::emit_op_get_callee(Instruction* currentInstruction)
 
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT2);
+    emitJumpSlowCaseIfNotJSCell(regT2, currentInstruction[2].u.operand);
+    loadPtr(Address(regT2, JSCell::structureOffset()), regT1);
+    addSlowCase(branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    
+    // now we know that the prototype is an object, but we don't know if it's got an
+    // inheritor ID
+    
+    loadPtr(Address(regT2, JSObject::offsetOfInheritorID()), regT2);
+    addSlowCase(branchTestPtr(Zero, regT2));
+    
+    // now regT2 contains the inheritorID, which is the structure that the newly
+    // allocated object will have.
+    
+    emitAllocateJSFinalObject(regT2, regT0, regT1);
+    
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCaseIfNotJSCell(iter, currentInstruction[2].u.operand); // not a cell
+    linkSlowCase(iter); // not an object
+    linkSlowCase(iter); // doesn't have an inheritor ID
+    linkSlowCase(iter); // allocation failed
     JITStubCall stubCall(this, cti_op_create_this);
     stubCall.addArgument(currentInstruction[2].u.operand, regT1);
     stubCall.call(currentInstruction[1].u.operand);
