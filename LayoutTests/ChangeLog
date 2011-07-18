@@ -1,3 +1,17 @@
+2011-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaselines after r91158.
+
+        Add failing expectations for tests added in r91125. The failures are tracked by the bug 64675.
+
+        Also remove failing expectations for some editing tests tracked by the Chromium issue 89477
+        because they are now passing.
+
+        * platform/chromium-linux/editing/inserting/5058163-1-expected.png:
+        * platform/chromium-win/editing/inserting/5058163-1-expected.png:
+        * platform/chromium-win/editing/inserting/5058163-1-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-16  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64657

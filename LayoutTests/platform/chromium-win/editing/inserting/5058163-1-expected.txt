@@ -13,15 +13,13 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 450x22 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 448x19
                   text run at (1,1) width 448: "There should be two empty paragraphs after this table and before the next."
-        RenderBlock (anonymous) at (0,28) size 784x20
+        RenderBlock (anonymous) at (0,28) size 784x40
           RenderBR {BR} at (0,0) size 0x19
-        RenderBlock {DIV} at (0,48) size 784x48
-          RenderBlock (anonymous) at (0,0) size 784x20
-            RenderBR {BR} at (0,0) size 0x19
-          RenderTable {TABLE} at (0,20) size 265x28 [border: (1px solid #AAAAAA)]
-            RenderTableSection {TBODY} at (1,1) size 263x26
-              RenderTableRow {TR} at (0,2) size 263x22
-                RenderTableCell {TD} at (2,2) size 259x22 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 257x19
-                    text run at (1,1) width 257: "And the caret should be in the second one."
-caret: position 0 of child 0 {BR} of child 2 {DIV} of child 2 {DIV} of body
+          RenderBR {BR} at (0,20) size 0x19
+        RenderTable {TABLE} at (0,68) size 265x28 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 263x26
+            RenderTableRow {TR} at (0,2) size 263x22
+              RenderTableCell {TD} at (2,2) size 259x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 257x19
+                  text run at (1,1) width 257: "And the caret should be in the second one."
+caret: position 0 of child 2 {BR} of child 2 {DIV} of body

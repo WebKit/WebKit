@@ -3837,5 +3837,5 @@ BUGWK64368 WIN GPU : fast/canvas/canvas-text-baseline.html = IMAGE
 
 BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
-BUGCR89477 : editing/selection/image-before-linebreak.html = IMAGE
-BUGCR89477 : editing/selection/replaced-boundaries-3.html = IMAGE
+BUGWK64675 : svg/W3C-SVG-1.1-SE/painting-control-04-f.svg = IMAGE+TEXT
+BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
