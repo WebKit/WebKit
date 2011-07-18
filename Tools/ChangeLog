@@ -1,3 +1,14 @@
+2011-07-18  Adam Barth  <abarth@webkit.org>
+
+        simplejson has trouble on chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=64757
+
+        Reviewed by Eric Seidel.
+
+        Use the native JSON, if available.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+
 2011-07-18  Ojan Vafai  <ojan@chromium.org>
 
         update the flakiness dashboard to understand the new platforms/formats in test_expectations

@@ -35,7 +35,11 @@ import itertools
 import logging
 import re
 
-import webkitpy.thirdparty.simplejson as simplejson
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
 
 
 _log = logging.getLogger(__name__)
@@ -126,7 +130,7 @@ class ModifiersAndExpectations:
         self.expectations = expectations
 
 
-class ExpectationsJsonEncoder(simplejson.JSONEncoder):
+class ExpectationsJsonEncoder(json.JSONEncoder):
     """JSON encoder that can handle ModifiersAndExpectations objects."""
     def default(self, obj):
         # A ModifiersAndExpectations object has two fields, each of which

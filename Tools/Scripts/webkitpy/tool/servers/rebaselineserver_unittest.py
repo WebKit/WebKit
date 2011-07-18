@@ -28,11 +28,16 @@
 
 import unittest
 
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
+
 from webkitpy.common.net import resultsjsonparser_unittest
 from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
 from webkitpy.layout_tests.port.webkit import WebKitPort
-import webkitpy.thirdparty.simplejson as simplejson
 from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
 from webkitpy.tool.mocktool import MockSCM
 from webkitpy.tool.servers import rebaselineserver
@@ -207,7 +212,7 @@ class RebaselineTestTest(unittest.TestCase):
 
     def test_gather_baselines(self):
         example_json = resultsjsonparser_unittest.ResultsJSONParserTest._example_full_results_json
-        results_json = simplejson.loads(strip_json_wrapper(example_json))
+        results_json = json.loads(strip_json_wrapper(example_json))
         server = RebaselineServer()
         server._test_config = get_test_config()
         server._gather_baselines(results_json)

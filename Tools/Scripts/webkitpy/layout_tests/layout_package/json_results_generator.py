@@ -35,7 +35,12 @@ import urllib2
 import xml.dom.minidom
 
 from webkitpy.layout_tests.layout_package import test_results_uploader
-import webkitpy.thirdparty.simplejson as simplejson
+
+try:
+    import json
+except ImportError:
+    # python 2.5 compatibility
+    import webkitpy.thirdparty.simplejson as json
 
 # A JSON results generator for generic tests.
 # FIXME: move this code out of the layout_package directory.
@@ -57,12 +62,12 @@ def strip_json_wrapper(json_content):
 def load_json(filesystem, file_path):
     content = filesystem.read_text_file(file_path)
     content = strip_json_wrapper(content)
-    return simplejson.loads(content)
+    return json.loads(content)
 
 
 def write_json(filesystem, json_object, file_path):
     # Specify separators in order to get compact encoding.
-    json_data = simplejson.dumps(json_object, separators=(',', ':'))
+    json_data = json.dumps(json_object, separators=(',', ':'))
     json_string = _JSON_PREFIX + json_data + _JSON_SUFFIX
     filesystem.write_text_file(file_path, json_string)
 
@@ -237,10 +242,10 @@ class JSONResultsGeneratorBase(object):
         self._archived_results = None
 
     def generate_json_output(self):
-        json = self.get_json()
-        if json:
+        json_object = self.get_json()
+        if json_object:
             file_path = self._fs.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
-            write_json(self._fs, json, file_path)
+            write_json(self._fs, json_object, file_path)
 
     def generate_times_ms_file(self):
         # FIXME: rename to generate_times_ms_file. This needs to be coordinated with
@@ -429,7 +434,7 @@ class JSONResultsGeneratorBase(object):
             old_results = strip_json_wrapper(old_results)
 
             try:
-                results_json = simplejson.loads(old_results)
+                results_json = json.loads(old_results)
             except:
                 _log.debug("results.json was not valid JSON. Clobbering.")
                 # The JSON file is not valid JSON. Just clobber the results.

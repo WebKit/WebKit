@@ -31,8 +31,6 @@ import logging
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
-import webkitpy.thirdparty.simplejson as simplejson
-
 
 class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase):
     """A JSON results generator for layout tests."""
