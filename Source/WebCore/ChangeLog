@@ -1,3 +1,16 @@
+2011-07-18  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Texmap] [Qt] [WK2] Unsync in TextureMapperNode between parent and child lists cause crashes on WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=62587
+
+        Reviewed by Noam Rosenthal.
+
+        Fix unsync between m_parent and m_children list in child and parent texture mapper nodes 
+        in syncCompositingStateSelf.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+
 2011-07-18  Rob Buis  <rbuis@rim.com>
 
         Stroking of zero-length paths in SVG should change according to erratum

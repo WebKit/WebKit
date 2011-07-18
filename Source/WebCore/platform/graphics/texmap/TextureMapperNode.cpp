@@ -585,15 +585,27 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
         return;
 
     if (m_currentContent.contentType == HTMLContentType && (changeMask & ParentChange)) {
-        m_parent = toTextureMapperNode(graphicsLayer->parent());
-
-        if (!graphicsLayer->parent() && m_parent) {
-            size_t index = m_parent->m_children.find(this);
-            m_parent->m_children.remove(index);
+        TextureMapperNode* newParent = toTextureMapperNode(graphicsLayer->parent());
+        if (newParent != m_parent) {
+            // Remove node from current from child list first.
+            if (m_parent) {
+                size_t index = m_parent->m_children.find(this);
+                m_parent->m_children.remove(index);
+                m_parent = 0;
+            }
+            // Set new node parent and add node to the parents child list.
+            if (newParent) {
+                m_parent = newParent;
+                m_parent->m_children.append(this);
+            }
         }
     }
 
     if (changeMask & ChildrenChange) {
+        // Clear children parent pointer to avoid unsync and crash on node delete.
+        for (size_t i = 0; i < m_children.size(); i++)
+            m_children[i]->m_parent = 0;
+
         m_children.clear();
         for (size_t i = 0; i < graphicsLayer->children().size(); ++i) {
             TextureMapperNode* child = toTextureMapperNode(graphicsLayer->children()[i]);
