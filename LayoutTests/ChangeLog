@@ -1,3 +1,15 @@
+2011-07-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Focus and selection events are not fired when a <select>'s selection
+        changes
+        https://bugs.webkit.org/show_bug.cgi?id=64504
+        <rdar://problem/9319881>
+
+        Reviewed by Alice Liu.
+
+        * platform/win/accessibility/option-element-selection-and-focus-events-expected.txt: Added.
+        * platform/win/accessibility/option-element-selection-and-focus-events.html: Added.
+
 2011-07-18  Tab Atkins  <jackalmage@gmail.com>
 
         Add regression tests for legacy color parsing of valid CSS colors

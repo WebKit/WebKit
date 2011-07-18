@@ -55,7 +55,7 @@ public:
 
     void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
 
-    void didSetSelectedIndex();
+    void didSetSelectedIndex(int listIndex);
 
     String text() const;
 
@@ -124,13 +124,15 @@ private:
     void setTextFromOption(int optionIndex);
     void updateOptionsWidth();
 
+    void didUpdateActiveOption(int optionIndex);
+
     RenderText* m_buttonText;
     RenderBlock* m_innerBlock;
 
     bool m_optionsChanged;
     int m_optionsWidth;
 
-    int m_lastSelectedIndex;
+    int m_lastActiveIndex;
 
     RefPtr<RenderStyle> m_optionStyle;
 

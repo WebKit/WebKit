@@ -82,4 +82,22 @@ bool AccessibilityMenuList::isCollapsed() const
     return !static_cast<RenderMenuList*>(m_renderer)->popupIsVisible();
 }
 
+void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
+{
+    const AccessibilityChildrenVector& childObjects = children();
+    if (childObjects.isEmpty())
+        return;
+
+    ASSERT(childObjects.size() == 1);
+    ASSERT(childObjects[0]->isMenuListPopup());
+
+    RefPtr<Document> document = m_renderer->document();
+    AXObjectCache* cache = document->axObjectCache();
+
+    if (AccessibilityMenuListPopup* popup = static_cast<AccessibilityMenuListPopup*>(childObjects[0].get()))
+        popup->didUpdateActiveOption(optionIndex);
+
+    cache->postNotification(this, document.get(), AXObjectCache::AXMenuListValueChanged, true, PostSynchronously);
+}
+
 } // namespace WebCore
