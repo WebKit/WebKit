@@ -287,6 +287,21 @@ void WebFrameLoaderClient::detachedFromParent3()
 
 void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest& initialRequest, const ResourceResponse& response)
 {
+#if USE(CFNETWORK)
+    ASSERT([WebDownload respondsToSelector:@selector(_downloadWithLoadingCFURLConnection:request:response:delegate:proxy:)]);
+    WebView *webView = getWebView(m_webFrame.get());
+    CFURLConnectionRef connection = handle->connection();
+    WebDownload *download = [WebDownload _downloadWithLoadingCFURLConnection:connection
+                                                                     request:request.cfURLRequest()
+                                                                    response:response.cfURLResponse()
+                                                                    delegate:[webView downloadDelegate]
+                                                                       proxy:nil];
+    setOriginalURLForDownload(download, initialRequest);
+
+    // Release the connection since the NSURLDownload (actually CFURLDownload) will retain the connection and use it.
+    handle->releaseConnectionForDownload();
+    CFRelease(connection);
+#else
     id proxy = handle->releaseProxy();
     ASSERT(proxy);
     
@@ -298,6 +313,7 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
                                                                   proxy:proxy];
     
     setOriginalURLForDownload(download, initialRequest);    
+#endif
 }
 
 void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, const ResourceRequest& initialRequest) const
