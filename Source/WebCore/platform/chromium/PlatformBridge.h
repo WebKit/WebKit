@@ -234,7 +234,7 @@ public:
 
     // SharedTimers -------------------------------------------------------
     static void setSharedTimerFiredFunction(void (*func)());
-    static void setSharedTimerFireTime(double);
+    static void setSharedTimerFireInterval(double);
     static void stopSharedTimer();
 
     // StatsCounters ------------------------------------------------------

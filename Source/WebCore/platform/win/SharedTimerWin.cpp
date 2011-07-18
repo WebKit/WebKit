@@ -146,21 +146,16 @@ static void NTAPI queueTimerProc(PVOID, BOOLEAN)
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
 }
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double interval)
 {
     ASSERT(sharedTimerFiredFunction);
 
-    double interval = fireTime - currentTime();
     unsigned intervalInMS;
-    if (interval < 0)
-        intervalInMS = 0;
-    else {
-        interval *= 1000;
-        if (interval > USER_TIMER_MAXIMUM)
-            intervalInMS = USER_TIMER_MAXIMUM;
-        else
-            intervalInMS = (unsigned)interval;
-    }
+    interval *= 1000;
+    if (interval > USER_TIMER_MAXIMUM)
+        intervalInMS = USER_TIMER_MAXIMUM;
+    else
+        intervalInMS = static_cast<unsigned>(interval);
 
     initializeOffScreenTimerWindow();
     bool timerSet = false;

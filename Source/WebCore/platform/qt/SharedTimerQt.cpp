@@ -92,16 +92,9 @@ SharedTimerQt* SharedTimerQt::inst()
     return timer;
 }
 
-void SharedTimerQt::start(double fireTime)
+void SharedTimerQt::start(double interval)
 {
-    double interval = fireTime - currentTime();
-    unsigned int intervalInMS;
-    if (interval < 0)
-        intervalInMS = 0;
-    else {
-        interval *= 1000;
-        intervalInMS = (unsigned int)interval;
-    }
+    unsigned int intervalInMS = static_cast<unsigned int>(interval * 1000);
 
     m_timer.start(intervalInMS, this);
 }
@@ -128,12 +121,12 @@ void setSharedTimerFiredFunction(void (*f)())
     SharedTimerQt::inst()->m_timerFunction = f;
 }
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double interval)
 {
     if (!QCoreApplication::instance())
         return;
 
-    SharedTimerQt::inst()->start(fireTime);
+    SharedTimerQt::inst()->start(interval);
 }
 
 void stopSharedTimer()

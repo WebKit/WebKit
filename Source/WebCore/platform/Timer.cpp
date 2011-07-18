@@ -181,7 +181,7 @@ void TimerBase::start(double nextFireInterval, double repeatInterval)
     ASSERT(m_thread == currentThread());
 
     m_repeatInterval = repeatInterval;
-    setNextFireTime(currentTime() + nextFireInterval);
+    setNextFireTime(monotonicallyIncreasingTime() + nextFireInterval);
 }
 
 void TimerBase::stop()
@@ -199,7 +199,7 @@ void TimerBase::stop()
 double TimerBase::nextFireInterval() const
 {
     ASSERT(isActive());
-    double current = currentTime();
+    double current = monotonicallyIncreasingTime();
     if (m_nextFireTime < current)
         return 0;
     return m_nextFireTime - current;

@@ -41,9 +41,8 @@ namespace WebCore {
         virtual ~SharedTimer() {}
         virtual void setFiredFunction(void (*)()) = 0;
 
-        // The fire time is relative to the classic POSIX epoch of January 1, 1970,
-        // as the result of currentTime() is.
-        virtual void setFireTime(double) = 0;
+        // The fire interval is in seconds relative to the current monotonic clock time.
+        virtual void setFireInterval(double) = 0;
         virtual void stop() = 0;
     };
 
@@ -51,7 +50,7 @@ namespace WebCore {
     // Implemented by port (since it provides the run loop for the main thread).
     // FIXME: make ports implement MainThreadSharedTimer directly instead.
     void setSharedTimerFiredFunction(void (*)());
-    void setSharedTimerFireTime(double);
+    void setSharedTimerFireInterval(double);
     void stopSharedTimer();
 
     // Implementation of SharedTimer for the main thread.
@@ -62,9 +61,9 @@ namespace WebCore {
             setSharedTimerFiredFunction(function);
         }
         
-        virtual void setFireTime(double fireTime)
+        virtual void setFireInterval(double interval)
         {
-            setSharedTimerFireTime(fireTime);
+            setSharedTimerFireInterval(interval);
         }
         
         virtual void stop()

@@ -62,17 +62,16 @@ void stopSharedTimer()
     }
 }
 
-void addNewTimer(double fireTime)
+void addNewTimer(double interval)
 {
-    double interval = fireTime - currentTime();
     stopSharedTimer();
 
     _sharedTimer = ecore_timer_loop_add(interval, timerEvent, 0);
 }
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double interval)
 {
-    addNewTimer(fireTime);
+    addNewTimer(interval);
 }
 
 }

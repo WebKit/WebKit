@@ -665,9 +665,9 @@ void PlatformBridge::setSharedTimerFiredFunction(void (*func)())
     webKitClient()->setSharedTimerFiredFunction(func);
 }
 
-void PlatformBridge::setSharedTimerFireTime(double fireTime)
+void PlatformBridge::setSharedTimerFireInterval(double interval)
 {
-    webKitClient()->setSharedTimerFireTime(fireTime);
+    webKitClient()->setSharedTimerFireInterval(interval);
 }
 
 void PlatformBridge::stopSharedTimer()

@@ -167,7 +167,7 @@ static void timerFired(CFRunLoopTimerRef, void*)
     [pool drain];
 }
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double interval)
 {
     ASSERT(sharedTimerFiredFunction);
 
@@ -176,7 +176,7 @@ void setSharedTimerFireTime(double fireTime)
         CFRelease(sharedTimer);
     }
 
-    CFAbsoluteTime fireDate = fireTime - kCFAbsoluteTimeIntervalSince1970;
+    CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
     sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
     

@@ -363,7 +363,7 @@ void ThreadCondition::wait(Mutex& mutex)
 
 bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    if (absoluteTime < currentTime())
+    if (absoluteTime < monotonicallyIncreasingTime())
         return false;
 
     if (absoluteTime > INT_MAX) {

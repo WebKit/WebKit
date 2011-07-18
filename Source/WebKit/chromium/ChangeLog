@@ -1,3 +1,17 @@
+2011-07-18  James Robinson  <jamesr@chromium.org>
+
+        Timer scheduling should be based off the monotonic clock
+        https://bugs.webkit.org/show_bug.cgi?id=64544
+
+        Reviewed by Darin Adler.
+
+        Renames setSharedTimerFireTime to setSharedTimerFireInterval to be consistent with WebCore.
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::setSharedTimerFireInterval):
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::setSharedTimerFireInterval):
+
 2011-07-18  Yuzhu Shen  <yzshen@chromium.com>
 
         Reviewed by James Robinson.

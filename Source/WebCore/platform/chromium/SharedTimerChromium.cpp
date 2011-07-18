@@ -35,9 +35,9 @@ void setSharedTimerFiredFunction(void (*f)())
     PlatformBridge::setSharedTimerFiredFunction(f);
 }
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double fireTime)
 {
-    PlatformBridge::setSharedTimerFireTime(fireTime);
+    PlatformBridge::setSharedTimerFireInterval(fireTime);
 }
 
 void stopSharedTimer()

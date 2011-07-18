@@ -213,7 +213,7 @@ void ThreadCondition::wait(Mutex& mutex)
 bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
     // Time is in the past - return right away.
-    if (absoluteTime < currentTime())
+    if (absoluteTime < monotonicallyIncreasingTime())
         return false;
     
     // Time is too far in the future for g_cond_timed_wait - wait forever.

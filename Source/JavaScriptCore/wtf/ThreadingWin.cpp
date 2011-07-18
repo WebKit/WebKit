@@ -483,7 +483,7 @@ void ThreadCondition::broadcast()
 
 DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
 {
-    double currentTime = WTF::currentTime();
+    double currentTime = monotonicallyIncreasingTime();
 
     // Time is in the past - return immediately.
     if (absoluteTime < currentTime)

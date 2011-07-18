@@ -45,13 +45,11 @@ void setSharedTimerFiredFunction(void (*f)())
         JavaSharedClient::GetTimerClient()->setSharedTimerCallback(f);
 }
 
-// The fire time is relative to the classic POSIX epoch of January 1, 1970,
-// as the result of currentTime() is.
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double interval)
 {
-    long long timeInMs = static_cast<long long>((fireTime - WTF::currentTime()) * 1000);
+    long long timeInMs = static_cast<long long>(interval * 1000);
 
-    LOGV("setSharedTimerFireTime: in %ld millisec", timeInMs);
+    LOGV("setSharedTimerFireInterval: in %ld millisec", timeInMs);
     if (JavaSharedClient::GetTimerClient())
         JavaSharedClient::GetTimerClient()->setSharedTimer(timeInMs);
 }

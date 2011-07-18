@@ -48,21 +48,13 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double interval)
 {
     ASSERT(sharedTimerFiredFunction);
 
     CALLBACK_Cancel(&sharedTimerCallback);
 
-    double interval = fireTime - currentTime();
-    int intervalInMS;
-
-    if (interval < 0)
-        intervalInMS = 0;
-    else {
-        interval *= 1000;
-        intervalInMS = static_cast<int>(interval);
-    }
+    int intervalInMS = statit_cast<int>(interval * 1000);
 
     sharedTimerCallback.pfnCancel = 0;
     sharedTimerCallback.pfnNotify = invokeCallback;

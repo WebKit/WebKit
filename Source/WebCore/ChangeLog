@@ -1,3 +1,53 @@
+2011-07-18  James Robinson  <jamesr@chromium.org>
+
+        Timer scheduling should be based off the monotonic clock
+        https://bugs.webkit.org/show_bug.cgi?id=64544
+
+        Reviewed by Darin Adler.
+
+        Changes the Timer scheduling logic from using absolute values in terms of currentTime() to using relative
+        intervals in terms of monotonicallyIncreasingTime().  This provides better standards compliance, compatibility,
+        and predictability when the system clock is adjusted.
+
+        No automated tests since there is no way to modify the system clock from DRT.
+
+        * platform/SharedTimer.h:
+        (WebCore::MainThreadSharedTimer::setFireInterval):
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::updateSharedTimer):
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::start):
+        (WebCore::TimerBase::nextFireInterval):
+        * platform/android/SharedTimerAndroid.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/brew/SharedTimerBrew.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/chromium/PlatformBridge.h:
+        * platform/chromium/SharedTimerChromium.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/efl/SharedTimerEfl.cpp:
+        (WebCore::addNewTimer):
+        (WebCore::setSharedTimerFireInterval):
+        * platform/gtk/SharedTimerGtk.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/haiku/SharedTimerHaiku.cpp:
+        (WebCore::SharedTimerHaiku::start):
+        (WebCore::setSharedTimerFireInterval):
+        * platform/mac/SharedTimerMac.mm:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::SharedTimerQt::start):
+        (WebCore::setSharedTimerFireInterval):
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/wince/SharedTimerWinCE.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * platform/wx/SharedTimerWx.cpp:
+        (WebCore::setSharedTimerFireInterval):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerSharedTimer::setFireInterval):
+
 2011-07-18  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. Fix Windows build. Move static function defaultSessionCookieStorage() to before

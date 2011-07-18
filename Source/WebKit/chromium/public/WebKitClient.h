@@ -47,6 +47,9 @@
 typedef void *HANDLE;
 #endif
 
+// FIXME: remove after rolling deps
+#define WEBKIT_USE_MONOTONIC_CLOCK_FOR_TIMER_SCHEDULING
+
 namespace WebKit {
 
 class WebApplicationCacheHost;
@@ -280,7 +283,7 @@ public:
     // Delayed work is driven by a shared timer.
     typedef void (*SharedTimerFunction)();
     virtual void setSharedTimerFiredFunction(SharedTimerFunction timerFunction) { }
-    virtual void setSharedTimerFireTime(double fireTime) { }
+    virtual void setSharedTimerFireInterval(double) { }
     virtual void stopSharedTimer() { }
 
     // Callable from a background WebKit thread.

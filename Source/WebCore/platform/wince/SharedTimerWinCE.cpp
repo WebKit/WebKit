@@ -88,16 +88,16 @@ void setSharedTimerFiredFunction(void (*f)())
 #define USER_TIMER_MAXIMUM  0x7FFFFFFF
 #define USER_TIMER_MINIMUM  0x0000000A
 
-void setSharedTimerFireTime(double fireTime)
+void setSharedTimerFireInterval(double intervalSeconds)
 {
     ASSERT(sharedTimerFiredFunction);
 
-    double interval = (fireTime - currentTime()) * 1000.;
-    unsigned intervalInMS = interval < USER_TIMER_MINIMUM
+    double intervalMS = intervalSeconds * 1000.;
+    unsigned clampedIntervalMS = intervalMS < USER_TIMER_MINIMUM
         ? USER_TIMER_MINIMUM
-        : interval > USER_TIMER_MAXIMUM
+        : intervalMS > USER_TIMER_MAXIMUM
         ? USER_TIMER_MAXIMUM
-        : static_cast<unsigned>(interval);
+        : static_cast<unsigned>(intervalMS);
 
     if (timerID == TimerIdAuto) {
         KillTimer(timerWindowHandle, TimerIdAuto);
@@ -105,7 +105,7 @@ void setSharedTimerFireTime(double fireTime)
     }
 
     initializeOffScreenTimerWindow();
-    if (SetTimer(timerWindowHandle, TimerIdAuto, intervalInMS, 0))
+    if (SetTimer(timerWindowHandle, TimerIdAuto, clampedIntervalMS, 0))
         timerID = TimerIdAuto;
     else if (timerID != TimerIdManual)
         PostMessage(timerWindowHandle, WM_USER, 0, 0);

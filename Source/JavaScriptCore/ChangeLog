@@ -1,3 +1,26 @@
+2011-07-18  James Robinson  <jamesr@chromium.org>
+
+        Timer scheduling should be based off the monotonic clock
+        https://bugs.webkit.org/show_bug.cgi?id=64544
+
+        Reviewed by Darin Adler.
+
+        Switches ThreadCondition::timedWait and related utility functions from currentTime() to
+        monotonicallyIncreasingTime().
+
+        Add WTF::monotonicallyIncreasingTime() to list of exported functions so it can be accessed from WebCore/WebKit.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::ThreadCondition::timedWait):
+        * wtf/ThreadingWin.cpp:
+        (WTF::absoluteTimeToWaitTimeoutInterval):
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::ThreadCondition::timedWait):
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::ThreadCondition::timedWait):
+
 2011-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSC JIT does not inline GC allocation fast paths

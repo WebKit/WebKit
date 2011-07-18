@@ -39,6 +39,7 @@
 #include "WorkerRunLoop.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -52,7 +53,7 @@ public:
 
     // SharedTimer interface.
     virtual void setFiredFunction(void (*function)()) { m_sharedTimerFunction = function; }
-    virtual void setFireTime(double fireTime) { m_nextFireTime = fireTime; }
+    virtual void setFireInterval(double interval) { m_nextFireTime = interval + monotonicallyIncreasingTime(); }
     virtual void stop() { m_nextFireTime = 0; }
 
     bool isActive() { return m_sharedTimerFunction && m_nextFireTime; }

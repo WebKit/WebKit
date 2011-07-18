@@ -1,3 +1,17 @@
+2011-07-18  James Robinson  <jamesr@chromium.org>
+
+        Timer scheduling should be based off the monotonic clock
+        https://bugs.webkit.org/show_bug.cgi?id=64544
+
+        Reviewed by Darin Adler.
+
+        Converts the WebKit2 RunLoop and CoreIPC timeouts to use monotonicallyIncreasingTime().
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+        (CoreIPC::Connection::waitForSyncReply):
+        * Platform/RunLoop.h:
+
 2011-07-18  Anders Carlsson  <andersca@apple.com>
 
         Make using lowercase parameter names for AppleConnect be a plug-in quirk
