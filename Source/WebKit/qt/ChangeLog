@@ -1,3 +1,13 @@
+2011-07-18  Hui Huang  <hui.2.huang@nokia.com>
+
+        [Qt] Compiling error in Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp with Qt 4.7 or older
+        https://bugs.webkit.org/show_bug.cgi?id=64560
+
+        Reviewed by Noam Rosenthal.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::render):
+
 2011-07-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides

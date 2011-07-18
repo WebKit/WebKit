@@ -1023,7 +1023,11 @@ void tst_QWebElement::render()
         QPainter painter(&chunk);
         painter.fillRect(chunkRect, Qt::white);
         QRect chunkPaintRect(x, 0, chunkWidth, chunkHeight);
+#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
         tables[0].render(&painter, chunkPaintRect);
+#else
+        tables[0].render(&painter);
+#endif
         painter.end();
 
         QVERIFY(chunk == image4.copy(chunkPaintRect));
