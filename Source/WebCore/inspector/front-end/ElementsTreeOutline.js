@@ -46,6 +46,7 @@ WebInspector.ElementsTreeOutline = function() {
     this.showInElementsPanelEnabled = false;
     this.rootDOMNode = null;
     this.focusedDOMNode = null;
+    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
 WebInspector.ElementsTreeOutline.prototype = {
@@ -379,6 +380,24 @@ WebInspector.ElementsTreeOutline.prototype = {
         }
     },
 
+    _contextMenuEventFired: function(event)
+    {
+        if (!this.showInElementsPanelEnabled)
+            return;
+
+        var treeElement = this._treeElementFromEvent(event);
+        if (!treeElement)
+            return;
+
+        function focusElement()
+        {
+            WebInspector.panels.elements.switchToAndFocus(treeElement.representedObject);
+        }
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
+        contextMenu.show(event);
+    },
+
     populateContextMenu: function(contextMenu, event)
     {
         var treeElement = this._treeElementFromEvent(event);
@@ -386,30 +405,21 @@ WebInspector.ElementsTreeOutline.prototype = {
             return false;
 
         var populated;
-        if (this.showInElementsPanelEnabled) {
-            function focusElement()
-            {
-                WebInspector.panels.elements.switchToAndFocus(treeElement.representedObject);
-            }
-            contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
+        var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
+        var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
+        var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+        if (href)
+            populated = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
+        if (tag && treeElement._populateTagContextMenu) {
+            if (populated)
+                contextMenu.appendSeparator();
+            treeElement._populateTagContextMenu(contextMenu, event);
             populated = true;
-        } else {
-            var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
-            var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
-            var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
-            if (href)
-                populated = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
-            if (tag && treeElement._populateTagContextMenu) {
-                if (populated)
-                    contextMenu.appendSeparator();
-                treeElement._populateTagContextMenu(contextMenu, event);
-                populated = true;
-            } else if (textNode && treeElement._populateTextContextMenu) {
-                if (populated)
-                    contextMenu.appendSeparator();
-                treeElement._populateTextContextMenu(contextMenu, textNode);
-                populated = true;
-            }
+        } else if (textNode && treeElement._populateTextContextMenu) {
+            if (populated)
+                contextMenu.appendSeparator();
+            treeElement._populateTextContextMenu(contextMenu, textNode);
+            populated = true;
         }
 
         return populated;

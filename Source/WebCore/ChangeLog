@@ -1,3 +1,16 @@
+2011-07-18  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: "Reveal in Elements Panel" is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=64688
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired.focusElement):
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.ElementsTreeOutline.prototype.populateContextMenu):
+
 2011-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove RenderObject::addLayers second argument
