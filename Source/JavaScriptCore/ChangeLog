@@ -1,3 +1,10 @@
+2011-07-18  Oliver Hunt  <oliver@apple.com>
+
+        Interpreter build-fix
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2011-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not optimize equal-null comparisons and branches.
