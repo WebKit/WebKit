@@ -3177,7 +3177,6 @@ BUGCR79110 WIN LINUX : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 
 
 BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
-BUGWK58328 GPU WIN LINUX DEBUG : compositing/webgl/webgl-reflection.html = IMAGE
 
 BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 

@@ -2,6 +2,14 @@
 
         Unreviewed; updated chromium test expectations.
 
+        Remove a passing test from test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-18  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; updated chromium test expectations.
+
         Remove two tests from test_expectations.txt that have been rebaselined.
 
         * platform/chromium/test_expectations.txt:
