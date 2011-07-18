@@ -45,7 +45,10 @@ void TouchViewInterface::panGestureStarted()
 
 void TouchViewInterface::panGestureRequestScroll(qreal deltaX, qreal deltaY)
 {
-    m_viewportView->d->scroll(deltaX, deltaY);
+    // Translate the delta from page to viewport coordinates.
+    QPointF destInViewportCoords = m_viewportView->mapFromItem(m_pageView, m_pageView->mapFromParent(m_pageView->pos()) + QPointF(deltaX, deltaY));
+    QPointF offsetInViewportCoords = destInViewportCoords - m_viewportView->mapFromItem(m_pageView->parentItem(), m_pageView->pos());
+    m_viewportView->d->scroll(offsetInViewportCoords.x(), offsetInViewportCoords.y());
 }
 
 void TouchViewInterface::panGestureEnded()
