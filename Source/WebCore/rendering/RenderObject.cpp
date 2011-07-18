@@ -442,12 +442,12 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*
         addLayers(curr, parentLayer, newObject, beforeChild);
 }
 
-void RenderObject::addLayers(RenderLayer* parentLayer, RenderObject* newObject)
+void RenderObject::addLayers(RenderLayer* parentLayer)
 {
     if (!parentLayer)
         return;
 
-    RenderObject* object = newObject;
+    RenderObject* object = this;
     RenderLayer* beforeChild = 0;
     WebCore::addLayers(this, parentLayer, object, beforeChild);
 }

@@ -1,3 +1,25 @@
+2011-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove RenderObject::addLayers second argument
+        https://bugs.webkit.org/show_bug.cgi?id=64649
+
+        Reviewed by Benjamin Poulain.
+
+        No change in behavior.
+
+        The code was always passing |this| as the second argument. Thus just
+        removed the argument for clarity.
+
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addLayers): Removed the argument, replaced
+        by |this|.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        Removed the second argument at those 2 call sites.
+
 2011-07-18  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not pause on caught exceptions while typing in the console.

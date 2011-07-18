@@ -160,7 +160,7 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
         RenderLayer* layer = 0;
         if (newChild->firstChild() || newChild->hasLayer()) {
             layer = owner->enclosingLayer();
-            newChild->addLayers(layer, newChild);
+            newChild->addLayers(layer);
         }
 
         // if the new child is visible but this object was not, tell the layer it has some visible content
@@ -220,7 +220,7 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
         RenderLayer* layer = 0;
         if (child->firstChild() || child->hasLayer()) {
             layer = owner->enclosingLayer();
-            child->addLayers(layer, child);
+            child->addLayers(layer);
         }
 
         // if the new child is visible but this object was not, tell the layer it has some visible content
