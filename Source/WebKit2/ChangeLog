@@ -1,5 +1,15 @@
 2011-07-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Push the new viewport rect to the drawing area after committing the scale.
+        https://bugs.webkit.org/show_bug.cgi?id=64597
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::pinchGestureEnded):
+
+2011-07-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Remove the scale commit timer from QTouchWebPage.
         https://bugs.webkit.org/show_bug.cgi?id=64600
 

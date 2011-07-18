@@ -81,6 +81,7 @@ void TouchViewInterface::pinchGestureEnded()
     // FIXME: animate the back zoom in the valid range.
     // FIXME: resume the engine after the animation.
     m_pageView->d->commitScaleChange();
+    m_viewportView->d->viewportRectUpdated();
 }
 
 void TouchViewInterface::setViewNeedsDisplay(const QRect& invalidatedRect)
