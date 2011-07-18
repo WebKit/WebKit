@@ -38,6 +38,34 @@ td:last-of-type {
     margin-left: 20px;
 }
 
+.alert {
+    display: none;
+    background-color: Cornsilk;
+    border: 5px solid Tomato;
+    padding: 10px;
+    margin: 5px auto;
+    font-size: 15px;
+    width: 75%;
+    text-align: center;
+}
+
+.alert .status a {
+    font-weight: normal;
+}
+
+.alert .status ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+    padding: 0 0 0 10px;
+}
+
+.alert .status li {
+    display: inline-block;
+    margin: 0px 5px;
+}
+
 /* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
 .test[data-failure-count="1"][data-new-test="false"] {
     -webkit-transition: 1s opacity;
@@ -64,6 +92,8 @@ td:last-of-type {
 }
 
 .regression li {
+    display: inline-block;
+    margin: 0px 5px;
 }
 
 .regression a {
@@ -198,6 +228,7 @@ td:last-of-type {
 .results-detail .failure-details .missing-data {
     font-style: italic;
     text-align: center;
+    color: #555;
 }
 
 .results-detail .failure-details {

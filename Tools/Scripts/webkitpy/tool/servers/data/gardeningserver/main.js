@@ -1,5 +1,9 @@
 (function() {
 
+var g_updateTimerId = 0;
+
+var kBuildFailedAlertType = 'build-failed';
+
 function dismissButterbar()
 {
     $('.butterbar').fadeOut('fast');
@@ -11,6 +15,32 @@ function displayOnButterbar(message)
     $('.butterbar').fadeIn();
 }
 
+function hideAlert()
+{
+    $('.alert').animate({
+        opacity: 'toggle',
+        height: 'toggle',
+    });
+}
+
+function hideAlertIfOfType(type)
+{
+    if (!$('.alert .status').is(':visible'))
+        return;
+    if ($('.alert .status').attr(config.kAlertTypeAttr) != type)
+        return;
+    hideAlert();
+}
+
+function displayAlert(message, type)
+{
+    $('.alert .status').empty().attr(config.kAlertTypeAttr, type).append(message);
+    $('.alert').animate({
+        opacity: 'toggle',
+        height: 'toggle',
+    });
+}
+
 function setIconState(hasFailures)
 {
     var faviconURL = 'favicon-' + (hasFailures ? 'red' : 'green') + '.png';
@@ -19,7 +49,7 @@ function setIconState(hasFailures)
 
 function showResults(onsuccess)
 {
-    results.fetchResultsByBuilder(config.builders, function(resultsByBuilder) {
+    results.fetchResultsByBuilder(config.kBuilders, function(resultsByBuilder) {
         var unexpectedFailures = results.unexpectedFailuresByTest(resultsByBuilder);
         var hasFailures = !$.isEmptyObject(unexpectedFailures)
         if (!hasFailures) {
@@ -122,6 +152,22 @@ function rebaselineResults()
     checkout.rebaseline(builderName, testName, failureTypeList, dismissButterbar);
 }
 
+function checkBuilderStatuses()
+{
+    results.fetchBuildersWithCompileErrors(function(builderNameList) {
+        if (!builderNameList.length) {
+            hideAlertIfOfType(kBuildFailedAlertType);
+            return;
+        }
+        displayAlert(ui.alertMessageForCompileErrors(builderNameList), kBuildFailedAlertType);
+    });
+}
+
+function update()
+{
+    checkBuilderStatuses();
+}
+
 $('.regression .where a').live('click', showResultsDetail);
 $('.results-detail .actions .dismiss').live('click', hideResultsDetail);
 $('.results-detail .actions .rebaseline').live('click', rebaselineResults);
@@ -130,6 +176,8 @@ $(document).ready(function() {
     showResults(function() {
         $('.butterbar').fadeOut();
     });
+    g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);
+    update();
 });
 
 })();

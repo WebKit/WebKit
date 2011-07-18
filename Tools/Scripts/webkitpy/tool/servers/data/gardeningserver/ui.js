@@ -2,6 +2,13 @@ var ui = ui || {};
 
 (function () {
 
+function displayURLForBuilder(builderName)
+{
+    return 'http://build.chromium.org/p/chromium.webkit/waterfall?' + $.param({
+        'builder': builderName
+    });
+}
+
 function displayNameForBuilder(builderName)
 {
     return builderName.replace(/Webkit /, '');
@@ -42,7 +49,9 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
 
     var where = $('.where', block);
     $.each(resultNodesByBuilder, function(builderName, resultNode) {
-        where.append($('a', '<li><a href="#"></a></li>').attr(config.kBuilderNameAttr, builderName).text(displayNameForBuilder(builderName)));
+        var listElement = $('<li><a href="#"></a></li>');
+        where.append(listElement);
+        $('a', listElement).attr(config.kBuilderNameAttr, builderName).text(displayNameForBuilder(builderName));
     });
 
     return block;
@@ -62,6 +71,20 @@ ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevis
 
     var block = $('<div class="regression-range">Regression Range: <a></a></div>');
     $('a', block).attr('href', href).text(text)
+    return block;
+};
+
+ui.alertMessageForCompileErrors = function(builderNameList)
+{
+    var block = $('<div class="compile-errors">Build Failed:<ul></ul></div>');
+
+    var list = $('ul', block);
+    $.each(builderNameList, function(index, builderName) {
+        var listElement = $('<li><a target="_blank"></a></li>');
+        list.append(listElement);
+        $('a', listElement).attr('href', displayURLForBuilder(builderName)).text(displayNameForBuilder(builderName));
+    });
+
     return block;
 };
 

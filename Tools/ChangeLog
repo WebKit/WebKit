@@ -1,3 +1,33 @@
+2011-07-18  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should be able to determine when compile breaks
+        https://bugs.webkit.org/show_bug.cgi?id=64190
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds a red-ish box to the top of the page whenever there is
+        a compile error on the bots.  The box automatically opens and closes as
+        appropriate and links to the waterfall display.  In the future, we
+        might want to compute a regression range.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/config.js:
+            - Add the build-only bots to the config.  We use these to check
+              whether the build failed, which is faster than waiting for the
+              tester bots to cycle.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+            - Add DOM for the alert bar.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+            - CSS to support the alert bar.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+            - Wiring up events to poll the buildbot to see whether compile has
+              failed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+            - Infrastructure for fetching and parsing the buildbot status JSON
+              blob.  This code could be better factored for testability.  :(
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+            - UI for displaying compile errors.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
 2011-07-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91132 and r91135.

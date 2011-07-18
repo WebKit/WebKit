@@ -51,6 +51,16 @@ test("failureCount", 4, function() {
     equal(ui.failureCount(3), '(Seen 3 times.)');
 });
 
+test("alertMessageForCompileErrors", 1, function() {
+    var message = ui.alertMessageForCompileErrors(['Mock Builder', 'Another Builder']);
+    message.wrap('<wrapper></wrapper>');
+    equal(message.parent().html(),
+        '<div class="compile-errors">Build Failed:<ul>' +
+            '<li><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Mock+Builder">Mock Builder</a></li>' +
+            '<li><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Another+Builder">Another Builder</a></li>' +
+        '</ul></div>');
+});
+
 test("failureDetails", 1, function() {
     var testResults = ui.failureDetails([
         'http://example.com/layout-test-results/foo-bar-diff.txt',

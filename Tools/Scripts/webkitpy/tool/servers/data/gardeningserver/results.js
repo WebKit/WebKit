@@ -482,14 +482,38 @@ results.fetchResultsURLs = function(builderName, testName, failureTypeList, call
     });
 };
 
-results.fetchResultsForBuilder = function(builderName, onsuccess)
+function isBuilderThatOnlyCompiles(builderName)
 {
-    base.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
-        onsuccess(new results.BuilderResults(resultsTree));
+    return config.kBuildersThatOnlyCompile.indexOf(builderName) != -1;
+}
+
+// FIXME: This method isn't tested because we don't have a good strategy for
+// mocking out the network. Maybe all network requests should go through a
+// "net" module?
+results.fetchBuildersWithCompileErrors = function(callback) {
+    $.get('/buildbot', function(builderStatuses) {
+        var brokenBuilders = [];
+
+        $.each(builderStatuses, function(index, builderStatus) {
+            if (builderStatus['is_green'])
+                return;
+            var builderName = builderStatus['name'];
+            if (isBuilderThatOnlyCompiles(builderName))
+                brokenBuilders.push(builderName);
+        });
+
+        callback(brokenBuilders);
     });
 };
 
-results.fetchResultsByBuilder = function(builderNameList, onsuccess)
+results.fetchResultsForBuilder = function(builderName, callback)
+{
+    base.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
+        callback(new results.BuilderResults(resultsTree));
+    });
+};
+
+results.fetchResultsByBuilder = function(builderNameList, callback)
 {
     var resultsByBuilder = {}
     var requestsInFlight = builderNameList.length;
@@ -498,7 +522,7 @@ results.fetchResultsByBuilder = function(builderNameList, onsuccess)
             resultsByBuilder[builderName] = resultsTree;
             --requestsInFlight;
             if (!requestsInFlight)
-                onsuccess(resultsByBuilder);
+                callback(resultsByBuilder);
         });
     });
 };
