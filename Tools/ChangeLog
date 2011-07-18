@@ -1,3 +1,18 @@
+2011-07-18  Ojan Vafai  <ojan@chromium.org>
+
+        update the flakiness dashboard to understand the new platforms/formats in test_expectations
+        https://bugs.webkit.org/show_bug.cgi?id=64743
+
+        Reviewed by Adam Barth.
+
+        The test expectations format changed a long time ago and the flakiness dashboard
+        was never updated to match.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+
 2011-07-18  Eric Seidel  <eric@webkit.org>
 
         webkit-patch apply-attachment does not work when not called from the root of the checkout

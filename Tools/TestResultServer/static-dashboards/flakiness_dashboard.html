@@ -319,24 +319,32 @@ var GTEST_FAILS_MARKER = '\.FAILS_';
 var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
 var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
+
+// FIXME: Make this an array.
 var PLATFORMS = {
-'MAC': 'MAC',
-'LINUX': 'LINUX',
-'WIN': 'WIN',
-'WIN-XP': 'WIN-XP',
-'WIN-VISTA': 'WIN-VISTA'
+    'SNOWLEOPARD': 'SNOWLEOPARD',
+    'LEOPARD': 'LEOPARD',
+    'XP': 'XP',
+    'VISTA': 'VISTA',
+    'WIN7': 'WIN7',
+    'LUCID': 'LUCID'
 };
+
+// FIXME: Make the g_allExpectations data structure explicitly list every platform instead of having a fallbacks concept.
 var PLATFORM_FALLBACKS = {
-'WIN': 'ALL',
-'WIN-XP': 'WIN',
-'WIN-VISTA': 'WIN',
-'LINUX': 'ALL',
-'MAC': 'ALL'
+    'WIN': 'ALL',
+    'XP': 'WIN',
+    'VISTA': 'WIN',
+    'MAC': 'ALL',
+    'SNOWLEOPARD': 'MAC',
+    'LEOPARD': 'MAC',
+    'LINUX': 'ALL',
+    'LUCID': 'LINUX'
 };
 var BUILD_TYPES = {'DEBUG': 'DBG', 'RELEASE': 'RELEASE'};
 var MIN_SECONDS_FOR_SLOW_TEST = 4;
 var MIN_SECONDS_FOR_SLOW_TEST_DEBUG = 2 * MIN_SECONDS_FOR_SLOW_TEST;
-var FAIL_RESULTS = ['IMAGE', 'IMAGE+TEXT', 'TEXT', 'SIMPLIFIED', 'MISSING'];
+var FAIL_RESULTS = ['IMAGE', 'IMAGE+TEXT', 'TEXT', 'MISSING'];
 var CHUNK_SIZE = 25;
 var MAX_RESULTS = 1500;
 
@@ -525,8 +533,27 @@ function platformAndBuildType(builderName)
         // If the build name does not contain a platform
         // or build type, assume Windows Release.
         var currentBuildUppercase = builderName.toUpperCase();
-        var platform = matchingElement(currentBuildUppercase, PLATFORMS) || 'WIN';
-        var buildType = matchingElement(currentBuildUppercase, BUILD_TYPES) || 'RELEASE';
+        
+        var platform;
+        if (stringContains(currentBuildUppercase, 'MAC')) {
+            if (stringContains(currentBuildUppercase, '10.5'))
+                platform = 'LEOPARD';
+            else
+                platform = 'SNOWLEOPARD';
+        } else if (stringContains(currentBuildUppercase, 'WIN7'))
+            platform = 'WIN7';
+        else if (stringContains(currentBuildUppercase, 'VISTA'))
+            platform = 'VISTA';
+        else if (stringContains(currentBuildUppercase, 'WIN'))
+            platform = 'XP';
+        else if (stringContains(currentBuildUppercase, 'LINUX'))
+            platform = 'LUCID';
+        else {
+            platform = '';
+            console.log('Could not resolve platform for builder: ' + builderName);
+        }
+        
+        var buildType = stringContains(currentBuildUppercase, 'DBG') ? 'DEBUG' : 'RELEASE';
         g_perBuilderPlatformAndBuildType[builderName] = {platform: platform, buildType: buildType};
     }
     return g_perBuilderPlatformAndBuildType[builderName];
@@ -733,7 +760,7 @@ function getExpectations(test, platform, buildType)
 
     var platformObject;
     while (platform && !(platformObject = testObject[platform]))
-      platform = PLATFORM_FALLBACKS[platform];
+        platform = PLATFORM_FALLBACKS[platform];
 
     if (platformObject) {
         if (platformObject[buildType])
@@ -836,16 +863,14 @@ function addTestToAllExpectations(test, expectations)
         addFallbacks(function(platformKey) {
             addFallbacks(function(buildTypeKey) {
                 // Setting the ALL key overrides any previously seen expectations.
-                if (platformKey == ALL) {
-                    // FIXME: This is broken. PLATFORMS is an object, not an array.
-                    // Figure out if we should just be deleting this or fixing it.
-                    for (var i = 0; i < PLATFORMS.length; i++) {
-                      if (PLATFORMS[i] in g_allExpectations[test]) {
-                        // Setting the ALL key overrides any previously seen
-                        // expectations.
-                        if (buildTypeKey == ALL)
-                          g_allExpectations[test][PLATFORMS[i]] = {};
-                      }
+                if (platformKey == ALL && g_allExpectations[test]) {
+                    for (var platform in PLATFORM_FALLBACKS) {
+                          if (platform in g_allExpectations[test]) {
+                              // Setting the ALL key overrides any previously seen
+                              // expectations.
+                              if (buildTypeKey == ALL)
+                                  g_allExpectations[test][platform] = {};
+                          }
                     }
                 } else if (buildTypeKey == ALL && g_allExpectations[test])
                     g_allExpectations[test][platformKey] = {}
@@ -859,7 +884,7 @@ function addTestToAllExpectations(test, expectations)
 
                 testHolder[platformKey][buildTypeKey] = expectations[j];
             }, modifiers, BUILD_TYPES);
-        }, modifiers, PLATFORMS);
+        }, modifiers, PLATFORM_FALLBACKS);
     }
 }
 
@@ -986,7 +1011,7 @@ function processTestRunsForBuilder(builderName)
         var rawResults = rawTest.results;
         resultsForTest.rawResults = rawResults;
 
-        // FIXME: Switch to testResultsByBuild
+        // FIXME: Switch to resultsByBuild
         var times = resultsForTest.rawTimes;
         var numTimesSeen = 0;
         var numResultsSeen = 0;
@@ -1689,6 +1714,7 @@ function generatePageForExpectationsUpdate()
         var results = g_testToResultsMap[test];
         for (var i = 0; i < results.length; i++) {
             var thisResult = results[i];
+            
             if (!thisResult.missing && !thisResult.extra)
                 continue;
 

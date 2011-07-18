@@ -904,17 +904,14 @@ function webKitRevisionLink(results, index)
 // @param {Object} results results for the current builder
 // @return Object with these properties:
 //     - testNames: array mapping test index to test names.
-//     - resultsByBuild: array of builds, for each build a (sparse) array of test
-//                                         results by test index.
-//     - flakyTests: array with the boolean value true at test indices that are
-//                                 considered flaky (more than one single-build failure).
-//     - flakyDeltasByBuild: array of builds, for each build a count of flaky
-//                                                 test results by expectation, as well as a total.
-function testResultsByBuild(builderResults)
+//     - resultsByBuild: array of builds, for each build a (sparse) array of test results by test index.
+//     - flakyTests: array with the boolean value true at test indices that are considered flaky (more than one single-build failure).
+//     - flakyDeltasByBuild: array of builds, for each build a count of flaky test results by expectation, as well as a total.
+function decompressResults(builderResults)
 {
     var builderTestResults = builderResults[TESTS_KEY];
     var buildCount = builderResults[FIXABLE_COUNTS_KEY].length;
-    var testResultsByBuild = new Array(buildCount);
+    var resultsByBuild = new Array(buildCount);
     var flakyDeltasByBuild = new Array(buildCount);
 
     // Pre-sizing the test result arrays for each build saves us ~250ms
@@ -922,8 +919,8 @@ function testResultsByBuild(builderResults)
     for (var testName in builderTestResults)
         testCount++;
     for (var i = 0; i < buildCount; i++) {
-        testResultsByBuild[i] = new Array(testCount);
-        testResultsByBuild[i][testCount - 1] = undefined;
+        resultsByBuild[i] = new Array(testCount);
+        resultsByBuild[i][testCount - 1] = undefined;
         flakyDeltasByBuild[i] = {};
     }
 
@@ -948,7 +945,7 @@ function testResultsByBuild(builderResults)
                 oneBuildFailureCount++;
 
             for (var j = 0; j < count; j++) {
-                testResultsByBuild[currentBuildIndex++][testIndex] = value;
+                resultsByBuild[currentBuildIndex++][testIndex] = value;
                 if (currentBuildIndex == buildCount)
                     break;
             }
@@ -991,7 +988,7 @@ function testResultsByBuild(builderResults)
 
     return {
         testNames: testNames,
-        resultsByBuild: testResultsByBuild,
+        resultsByBuild: resultsByBuild,
         flakyTests: flakyTests,
         flakyDeltasByBuild: flakyDeltasByBuild
     };

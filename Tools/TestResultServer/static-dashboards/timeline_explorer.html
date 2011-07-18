@@ -145,7 +145,7 @@ function generatePage()
 function initCurrentBuilderTestResults()
 {
     var startTime = Date.now();
-    g_currentBuilderTestResults = testResultsByBuild(g_resultsByBuilder[g_currentState.builder]);
+    g_currentBuilderTestResults = decompressResults(g_resultsByBuilder[g_currentState.builder]);
     console.log( 'Time to get test results by build: ' + (Date.now() - startTime));
 }
 

@@ -33,7 +33,7 @@
 // A test just consists of calling runExpectationsTest with the appropriate
 // arguments.
 
-// FIXME: Add tests for processMissingAndExtraExpectations
+// FIXME: move this over to using qunit
 
 // Clears out the global objects modified or used by processExpectations and
 // populateExpectationsData. A bit gross since it's digging into implementation
@@ -45,6 +45,8 @@ function setupExpectationsTest()
     g_expectationsByTest = {};
     g_resultsByBuilder = {};
     g_builders = {};
+    g_allExpectations = null;
+    g_allTests = null;
 }
 
 // Processes the expectations for a test and asserts that the final expectations
@@ -70,21 +72,28 @@ function runExpectationsTest(builder, test, expectations, modifiers)
     var resultsForTest = createResultsObjectForTest(test, builder);
     populateExpectationsData(resultsForTest);
 
-    assertEquals(resultsForTest, resultsForTest.expectations, expectations);
-    assertEquals(resultsForTest, resultsForTest.modifiers, modifiers);
+    var message = 'Builder: ' + resultsForTest.builder + ' test: ' + resultsForTest.test;
+    assertEquals(resultsForTest.expectations, expectations, message);
+    assertEquals(resultsForTest.modifiers, modifiers, message);
 }
 
-function assertEquals(resultsForTest, actual, expected)
+function assertEquals(actual, expected, message)
 {
-    if (expected !== actual)
-        throw Error('Builder: ' + resultsForTest.builder + ' test: ' + resultsForTest.test + ' got: ' + actual + ' expected: ' + expected);
+    if (expected !== actual) {
+        if (message)
+            message += ' ';
+        else
+            message = '';
+
+        throw Error(message + 'got: ' + actual + ' expected: ' + expected);
+    }
 }
 
 function throwError(resultsForTests, actual, expected) {}
 
 function testReleaseFail()
 {
-    var builder = 'Webkit';
+    var builder = 'Webkit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'}
@@ -95,7 +104,7 @@ function testReleaseFail()
 
 function testReleaseFailDebugCrashReleaseBuilder()
 {
-    var builder = 'Webkit';
+    var builder = 'Webkit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
@@ -107,7 +116,7 @@ function testReleaseFailDebugCrashReleaseBuilder()
 
 function testReleaseFailDebugCrashDebugBuilder()
 {
-    var builder = 'Webkit(dbg)';
+    var builder = 'Webkit Win (dbg)';
     var test = 'foo/1.html';
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
@@ -127,12 +136,79 @@ function testOverrideJustBuildType()
         {'modifiers': 'WONTFIX MAC', 'expectations': 'FAIL'},
         {'modifiers': 'LINUX DEBUG', 'expectations': 'CRASH'},
     ];
-    runExpectationsTest('Webkit', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
-    runExpectationsTest('Webkit (dbg)(3)', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
+    runExpectationsTest('Webkit Win', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
+    runExpectationsTest('Webkit Win (dbg)(3)', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Linux', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Linux (dbg)(3)', test, 'CRASH', 'LINUX DEBUG');
     runExpectationsTest('Webkit Mac10.5', test, 'FAIL', 'WONTFIX MAC');
     runExpectationsTest('Webkit Mac10.5 (dbg)(3)', test, 'FAIL', 'WONTFIX MAC');
+}
+
+function testPlatformAndBuildType()
+{
+    var runPlatformAndBuildTypeTest = function(builder, expectedPlatform, expectedBuildType) {
+        g_perBuilderPlatformAndBuildType = {};
+        buildInfo = platformAndBuildType(builder);
+        var message = 'Builder: ' + builder;
+        assertEquals(buildInfo.platform, expectedPlatform, message);
+        assertEquals(buildInfo.buildType, expectedBuildType, message);
+    }
+    runPlatformAndBuildTypeTest('Webkit Win (deps)', 'XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Win (deps)(dbg)(1)', 'XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Win (deps)(dbg)(2)', 'XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Linux (deps)', 'LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Linux (deps)(dbg)(1)', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Linux (deps)(dbg)(2)', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6 (deps)', 'SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6 (deps)(dbg)(1)', 'SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6 (deps)(dbg)(2)', 'SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Win', 'XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Vista', 'VISTA', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Win7', 'WIN7', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Win (dbg)(1)', 'XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Win (dbg)(2)', 'XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Linux', 'LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Linux 32', 'LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(1)', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(2)', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.5', 'LEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(1)', 'LEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(2)', 'LEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6', 'SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6 (dbg)', 'SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Chromium Win Release (Tests)', 'XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('Chromium Linux Release (Tests)', 'LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('Chromium Mac Release (Tests)', 'SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Win - GPU', 'XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Vista - GPU', 'VISTA', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Win7 - GPU', 'WIN7', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Win (dbg)(1) - GPU', 'XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Win (dbg)(2) - GPU', 'XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Linux - GPU', 'LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Linux 32 - GPU', 'LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(1) - GPU', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(2) - GPU', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.5 - GPU', 'LEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(1) - GPU', 'LEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(2) - GPU', 'LEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6 - GPU', 'SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('Webkit Mac10.6 (dbg) - GPU', 'SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Win7 Tests - GPU', 'WIN7', 'RELEASE');
+    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(1) - GPU', 'WIN7', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Win7 x64 Tests (dbg)(1) - GPU', 'WIN7', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Win7 x64 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Vista Tests (dbg)(1) - GPU', 'VISTA', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Vista Tests (dbg)(2) - GPU', 'VISTA', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Vista x64 Tests (dbg) - GPU', 'VISTA', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Mac 10.6 Tests - GPU', 'SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('GPU Mac 10.6 Tests (dbg) - GPU', 'SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Mac 10.5 Tests (dbg) - GPU', 'LEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Linux Tests (dbg)(1) - GPU', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Linux Tests (dbg)(2) - GPU', 'LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(1) - GPU', 'WIN7', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
+    runPlatformAndBuildTypeTest('GPU Linux Tests x64 - GPU', 'LUCID', 'RELEASE');
 }
 
 function runTests()
