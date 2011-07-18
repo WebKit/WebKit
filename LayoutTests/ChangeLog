@@ -1,3 +1,10 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK and Qt rebaselines after r91158.
+
+        * platform/gtk/editing/inserting/5058163-1-expected.txt:
+        * platform/qt/editing/inserting/5058163-1-expected.txt:
+
 2011-07-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines after r91158.
