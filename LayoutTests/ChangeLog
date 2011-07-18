@@ -1,3 +1,18 @@
+2011-07-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [REGRESSION] Value 'none' breaks multiple background-image display
+        https://bugs.webkit.org/show_bug.cgi?id=59274
+
+        Reviewed by Simon Fraser.
+
+        When taking fast path for simple color background, we should draw
+        the background only if it is the last in the list of backgrounds.
+        Otherwise, it will obscure the previously drawn backgrounds.
+
+        * fast/backgrounds/background-fast-path-simple-color-expected.png: Added.
+        * fast/backgrounds/background-fast-path-simple-color-expected.txt: Added.
+        * fast/backgrounds/background-fast-path-simple-color.html: Added.
+
 2011-07-18  Yi Shen  <yi.4.shen@nokia.com>
 
         [Qt] ASSERTION FAILED in ResourceHandle::setDefersLoading causes crash

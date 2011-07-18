@@ -626,7 +626,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool colorVisible = bgColor.isValid() && bgColor.alpha() > 0;
     
     // Fast path for drawing simple color backgrounds.
-    if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill) {
+    if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill && !bgLayer->next()) {
         if (!colorVisible)
             return;
 
