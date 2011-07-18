@@ -1,3 +1,29 @@
+2011-07-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        [Qt] ASSERTION FAILED in ResourceHandle::setDefersLoading causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=62808
+
+        The assertion in ResourceHandle::setDefersLoading assumes asynchronous
+        content delivery -- To resume a page, first, its main resource loader
+        calls setDefersLoading to resume loading the main content; then all the
+        sub-resource loaders calls setDefersLoading to resume sub-contents.
+        However, since QNetworkReplyHandler delivers content synchronously,
+        some new sub-resource loaders get created as soon as the main resource
+        loader resumed, and all these new sub-resource loaders set their
+        defersLoading flag to false. Then, the assertion fails for these new
+        sub-resource loaders when calling setDefersLoading on them. As a fix,
+        this path makes QNetworkReplyHandler deliver content asynchronously
+        when its load type is set to SynchronousLoad.
+
+        Reviewed by Benjamin Poulain.
+
+        Test: loader/load-defer-resume-crash.html
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandlerCallQueue::setDeferSignals):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyHandler::setLoadingDeferred):
+
 2011-07-18  Young Han Lee  <joybro@company100.net>
 
         AnimationBase asserts if a test tries to pause during the delay phase

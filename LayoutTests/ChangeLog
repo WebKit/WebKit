@@ -1,3 +1,17 @@
+2011-07-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        [Qt] ASSERTION FAILED in ResourceHandle::setDefersLoading causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=62808
+
+        Added a test for the crash occurs when load deferring is turned off.
+
+        Reviewed by Benjamin Poulain.
+
+        * loader/load-defer-resume-crash-expected.txt: Added.
+        * loader/load-defer-resume-crash.html: Added.
+        * loader/resources/images.html: Added.
+        * platform/chromium/test_expectations.txt: Skip this test since the LayoutTestController::setDefersLoading is not implemented for chromium.
+
 2011-07-18  Young Han Lee  <joybro@company100.net>
 
         AnimationBase asserts if a test tries to pause during the delay phase
