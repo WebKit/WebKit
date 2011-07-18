@@ -1,3 +1,9 @@
+2011-07-18  Adam Barth  <abarth@webkit.org>
+
+        Update baseline.  rbuis says this is an improvement.
+
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt: Added.
+
 2011-07-18  Tony Chang  <tony@chromium.org>
 
         [chromium] Move a Linux specific test into chromium-linux and rebaseline
