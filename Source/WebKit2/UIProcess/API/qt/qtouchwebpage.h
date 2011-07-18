@@ -64,12 +64,9 @@ Q_SIGNALS:
     void loadProgress(int progress);
 
 protected:
-    virtual void timerEvent(QTimerEvent*);
     virtual void resizeEvent(QGraphicsSceneResizeEvent*);
 
 private:
-    Q_PRIVATE_SLOT(d, void onScaleChanged())
-
     QTouchWebPagePrivate* d;
     friend class QTouchWebPagePrivate;
     friend class WebKit::TouchViewInterface;

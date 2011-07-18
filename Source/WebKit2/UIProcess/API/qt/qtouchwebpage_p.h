@@ -22,7 +22,6 @@
 #define qtouchwebpage_p_h
 
 #include <QMenu>
-#include <QBasicTimer>
 #include "qtouchwebpage.h"
 
 class QRectF;
@@ -39,15 +38,10 @@ public:
     void setPage(QTouchWebPageProxy*);
 
     void setViewportRect(const QRectF&);
-
-    void prepareScaleChange();
     void commitScaleChange();
-    void onScaleChanged();
 
     QTouchWebPage* const q;
     QTouchWebPageProxy* page;
-    QBasicTimer m_scaleCommitTimer;
-    bool m_isChangingScale;
 };
 
 #endif /* qtouchwebpage_p_h */

@@ -38,8 +38,6 @@ QTouchWebPage::QTouchWebPage(QGraphicsItem* parent)
 {
     setFocusPolicy(Qt::TabFocus);
     setAcceptTouchEvents(true);
-
-    connect(this, SIGNAL(scaleChanged()), this, SLOT(onScaleChanged()));
 }
 
 QTouchWebPage::~QTouchWebPage()
@@ -87,12 +85,6 @@ bool QTouchWebPage::event(QEvent* ev)
     return QGraphicsWidget::event(ev);
 }
 
-void QTouchWebPage::timerEvent(QTimerEvent* ev)
-{
-    if (ev->timerId() == d->m_scaleCommitTimer.timerId())
-        d->commitScaleChange();
-}
-
 void QTouchWebPage::resizeEvent(QGraphicsSceneResizeEvent* ev)
 {
     d->page->setDrawingAreaSize(ev->newSize().toSize());
@@ -107,29 +99,12 @@ QAction* QTouchWebPage::navigationAction(QtWebKit::NavigationAction which)
 QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
     , page(0)
-    , m_isChangingScale(false)
 {
-}
-
-void QTouchWebPagePrivate::prepareScaleChange()
-{
-    ASSERT(!m_isChangingScale);
-    m_isChangingScale = true;
-    m_scaleCommitTimer.stop();
 }
 
 void QTouchWebPagePrivate::commitScaleChange()
 {
-    ASSERT(m_isChangingScale);
-    m_isChangingScale = false;
-    m_scaleCommitTimer.stop();
     page->setContentsScale(q->scale());
-}
-
-void QTouchWebPagePrivate::onScaleChanged()
-{
-    if (!m_isChangingScale)
-        m_scaleCommitTimer.start(0.1, q);
 }
 
 void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)

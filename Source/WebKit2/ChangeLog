@@ -1,5 +1,24 @@
 2011-07-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Remove the scale commit timer from QTouchWebPage.
+        https://bugs.webkit.org/show_bug.cgi?id=64600
+
+        Reviewed by Benjamin Poulain.
+
+        Since we don't currently need unprepared page view scale changes,
+        this timer isn't useful.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        (QTouchWebPagePrivate::commitScaleChange):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::pinchGestureStarted):
+
+2011-07-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         TiledDrawingArea: map the visibleArea rect from page to tiles coordinates.
         https://bugs.webkit.org/show_bug.cgi?id=64538
 

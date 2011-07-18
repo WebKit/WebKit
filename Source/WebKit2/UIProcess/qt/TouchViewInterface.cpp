@@ -62,7 +62,6 @@ void TouchViewInterface::panGestureCancelled()
 void TouchViewInterface::pinchGestureStarted()
 {
     // FIXME: suspend the engine.
-    m_pageView->d->prepareScaleChange();
     m_pinchStartScale = m_pageView->scale();
 }
 
