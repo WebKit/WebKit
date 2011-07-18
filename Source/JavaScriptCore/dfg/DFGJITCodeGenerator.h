@@ -414,6 +414,7 @@ protected:
 
     bool isKnownInteger(NodeIndex);
     bool isKnownNumeric(NodeIndex);
+    bool isKnownCell(NodeIndex);
     
     bool isKnownNotInteger(NodeIndex);
 
@@ -425,6 +426,12 @@ protected:
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.valueOfDoubleConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
+    bool isNullConstant(NodeIndex nodeIndex)
+    {
+        if (!isConstant(nodeIndex))
+            return false;
+        return valueOfJSConstant(nodeIndex).isNull();
+    }
 
     Identifier* identifier(unsigned index)
     {
@@ -555,6 +562,10 @@ protected:
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    
+    void nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert = false);
+    void nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert = false);
+    bool nonSpeculativeCompareNull(Node&, NodeIndex operand, bool invert = false);
     
     void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
     void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);

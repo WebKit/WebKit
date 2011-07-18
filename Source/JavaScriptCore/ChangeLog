@@ -1,3 +1,31 @@
+2011-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not optimize equal-null comparisons and branches.
+        https://bugs.webkit.org/show_bug.cgi?id=64659
+
+        Reviewed by Gavin Barraclough.
+        
+        Added a peephole-aware compare-to-null implementation to JITCodeGenerator,
+        which is used by both the speculative and non-speculative JIT.  Through
+        the use of the new isNullConstant helper, the two JITs invoke the
+        nonSpecualtiveCompareNull() helper instead of their regular comparison
+        helpers when compiling CompareEq.  Through the use of the new isKnownCell
+        helper, the compare-null code will skip the is-a-cell check if the
+        speculative JIT had been speculating cell.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownCell):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompareNull):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::isNullConstant):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-07-18  James Robinson  <jamesr@chromium.org>
 
         Timer scheduling should be based off the monotonic clock

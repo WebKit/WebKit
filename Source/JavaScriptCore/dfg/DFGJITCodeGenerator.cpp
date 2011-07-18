@@ -365,6 +365,21 @@ bool JITCodeGenerator::isKnownNumeric(NodeIndex nodeIndex)
     return false;
 }
 
+bool JITCodeGenerator::isKnownCell(NodeIndex nodeIndex)
+{
+    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
+    
+    DataFormat registerFormat = info.registerFormat();
+    if (registerFormat != DataFormatNone)
+        return (registerFormat | DataFormatJS) == DataFormatJSCell;
+    
+    DataFormat spillFormat = info.spillFormat();
+    if (spillFormat != DataFormatNone)
+        return (spillFormat | DataFormatJS) == DataFormatJSCell;
+    
+    return false;
+}
+
 bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];
@@ -517,6 +532,99 @@ void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigne
     done.link(&m_jit);
     
     m_jit.addMethodGet(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction);
+}
+
+void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert)
+{
+    JSValueOperand arg(this, operand);
+    GPRReg argGPR = arg.gpr();
+    
+    GPRTemporary result(this, arg);
+    GPRReg resultGPR = result.gpr();
+    
+    JITCompiler::Jump notCell;
+    
+    if (!isKnownCell(operand))
+        notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, argGPR, GPRInfo::tagMaskRegister);
+    
+    m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
+    m_jit.test8(invert ? JITCompiler::Zero : JITCompiler::NonZero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined), resultGPR);
+    
+    if (!isKnownCell(operand)) {
+        JITCompiler::Jump done = m_jit.jump();
+        
+        notCell.link(&m_jit);
+        
+        m_jit.move(argGPR, resultGPR);
+        m_jit.andPtr(JITCompiler::TrustedImm32(~TagBitUndefined), resultGPR);
+        m_jit.comparePtr(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm32(ValueNull), resultGPR);
+        
+        done.link(&m_jit);
+    }
+    
+    m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
+    jsValueResult(resultGPR, m_compileIndex);
+}
+
+void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert)
+{
+    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    
+    if (taken == (m_block + 1)) {
+        invert = !invert;
+        BlockIndex tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    JSValueOperand arg(this, operand);
+    GPRReg argGPR = arg.gpr();
+    
+    GPRTemporary result(this, arg);
+    GPRReg resultGPR = result.gpr();
+    
+    JITCompiler::Jump notCell;
+    
+    if (!isKnownCell(operand))
+        notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, argGPR, GPRInfo::tagMaskRegister);
+    
+    m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
+    addBranch(m_jit.branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined)), taken);
+    
+    if (!isKnownCell(operand)) {
+        addBranch(m_jit.jump(), notTaken);
+        
+        notCell.link(&m_jit);
+        
+        m_jit.move(argGPR, resultGPR);
+        m_jit.andPtr(JITCompiler::TrustedImm32(~TagBitUndefined), resultGPR);
+        addBranch(m_jit.branchPtr(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))), taken);
+    }
+    
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+}
+
+bool JITCodeGenerator::nonSpeculativeCompareNull(Node& node, NodeIndex operand, bool invert)
+{
+    NodeIndex branchNodeIndex = detectPeepHoleBranch();
+    if (branchNodeIndex != NoNode) {
+        ASSERT(node.adjustedRefCount() == 1);
+        
+        nonSpeculativePeepholeBranchNull(operand, branchNodeIndex, invert);
+    
+        use(node.child1());
+        use(node.child2());
+        m_compileIndex = branchNodeIndex;
+        
+        return true;
+    }
+    
+    nonSpeculativeNonPeepholeCompareNull(operand, invert);
+    
+    return false;
 }
 
 void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition cond, Z_DFGOperation_EJJ helperFunction)

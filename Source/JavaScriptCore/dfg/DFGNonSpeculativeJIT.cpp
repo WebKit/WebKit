@@ -673,6 +673,16 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
         
     case CompareEq:
+        if (isNullConstant(node.child1())) {
+            if (nonSpeculativeCompareNull(node, node.child2()))
+                return;
+            break;
+        }
+        if (isNullConstant(node.child2())) {
+            if (nonSpeculativeCompareNull(node, node.child1()))
+                return;
+            break;
+        }
         if (nonSpeculativeCompare(node, MacroAssembler::Equal, operationCompareEq))
             return;
         break;
