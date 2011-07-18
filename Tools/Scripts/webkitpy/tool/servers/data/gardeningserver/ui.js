@@ -31,19 +31,28 @@ ui.urlForRevisionRange = function(firstRevision, lastRevision)
     return 'http://trac.webkit.org/changeset/' + firstRevision;
 };
 
+ui.regressionsContainer = function()
+{
+    return $(
+        '<table class="results-summary">' +
+            '<thead>' +
+                '<tr>' +
+                    '<th>Test</th><th>Bot</th><th>Regression Range</th><th>Frequency</th>' +
+            '</thead>' +
+            '<tbody></tbody>' +
+        '</table>');
+};
+
 ui.summarizeTest = function(testName, resultNodesByBuilder)
 {
     var unexpectedResults = results.collectUnexpectedResults(resultNodesByBuilder);
     var block = $(
-        '<div class="test">' +
-          '<span class="what"><a draggable></a></span>' +
-          '<span>fails on</span>' +
-          '<ul class="where"></ul>' +
-          '<div class="when">' +
-            '<div class="regression-range"></div>' +
-            '<div class="failure-count"></div>' +
-          '</div>' +
-        '</div>');
+        '<tr class="test">' +
+          '<td class="what"><a draggable></a></td>' +
+          '<td class="where"><ul></ul></td>' +
+          '<td class="when"></td>' +
+          '<td class="how-many"></td>' +
+        '</tr>');
     $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
     block.attr(config.kFailureTypesAttr, unexpectedResults);
 
@@ -60,7 +69,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
 ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevision)
 {
     if (!oldestFailingRevision || !newestPassingRevision)
-        return $('<div class="regression-range">Regression Range: Unknown</div>');
+        return $('<div class="regression-range">Unknown</div>');
 
     var impliedFirstFailingRevision = newestPassingRevision + 1;
 
@@ -69,7 +78,7 @@ ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevis
         displayNameForRevision(impliedFirstFailingRevision) :
         displayNameForRevision(impliedFirstFailingRevision) + '-' + displayNameForRevision(oldestFailingRevision);
 
-    var block = $('<div class="regression-range">Regression Range: <a></a></div>');
+    var block = $('<div class="regression-range"><a></a></div>');
     $('a', block).attr('href', href).text(text)
     return block;
 };
@@ -93,8 +102,8 @@ ui.failureCount = function(failureCount)
     if (failureCount < 1)
         return '';
     if (failureCount == 1)
-        return '(Seen once.)';
-    return '(Seen ' + failureCount + ' times.)';
+        return 'Seen once.';
+    return 'Seen ' + failureCount + ' times.';
 };
 
 ui.failureDetails = function(resultsURLs)

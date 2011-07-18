@@ -58,14 +58,15 @@ function showResults(onsuccess)
             $('.results').append(partyTime);
             partyTime.fadeIn(1200).delay(7000).fadeOut();
         } else {
-            var regressions = $('<div class="results-summary regression"></div>');
+            var regressions = ui.regressionsContainer();
+
             $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
                 var testSummary = ui.summarizeTest(testName, resultNodesByBuilder);
-                regressions.append(testSummary);
+                $('tbody', regressions).append(testSummary);
 
                 var builderNameList = base.keys(resultNodesByBuilder);
                 results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
-                    $('.regression-range', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+                    $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
                     if (!newestPassingRevision)
                         return;
                     checkout.existsAtRevision(checkout.subversionURLForTest(testName), newestPassingRevision, function(testExistedBeforeFailure) {
@@ -74,7 +75,7 @@ function showResults(onsuccess)
                 });
                 results.countFailureOccurances(builderNameList, testName, function(failureCount) {
                     $(testSummary).attr(config.kFailureCountAttr, failureCount);
-                    $('.failure-count', testSummary).text(ui.failureCount(failureCount));
+                    $('.how-many', testSummary).text(ui.failureCount(failureCount));
                 });
             });
             $('.results').append(regressions);
@@ -168,7 +169,7 @@ function update()
     checkBuilderStatuses();
 }
 
-$('.regression .where a').live('click', showResultsDetail);
+$('.results-summary .where a').live('click', showResultsDetail);
 $('.results-detail .actions .dismiss').live('click', hideResultsDetail);
 $('.results-detail .actions .rebaseline').live('click', rebaselineResults);
 

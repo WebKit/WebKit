@@ -33,22 +33,22 @@ test("summarizeTest", 3, function() {
 test("summarizeRegressionRange", 3, function() {
     var summaryWithMultipleRevisions = ui.summarizeRegressionRange(0, 0);
     summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
-    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Regression Range: Unknown</div>');
+    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Unknown</div>');
 
     var summaryWithMultipleRevisions = ui.summarizeRegressionRange(90424, 90426);
     summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
-    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Regression Range: <a href="http://trac.webkit.org/log/trunk/?rev=90424&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90424</a></div>');
+    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range"><a href="http://trac.webkit.org/log/trunk/?rev=90424&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90424</a></div>');
 
     var summaryWithOneRevision = ui.summarizeRegressionRange(90425, 90426);
     summaryWithOneRevision.wrap('<wrapper></wrapper>');
-    equal(summaryWithOneRevision.parent().html(), '<div class="regression-range">Regression Range: <a href="http://trac.webkit.org/log/trunk/?rev=90425&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90425</a></div>');
+    equal(summaryWithOneRevision.parent().html(), '<div class="regression-range"><a href="http://trac.webkit.org/log/trunk/?rev=90425&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90425</a></div>');
 });
 
 test("failureCount", 4, function() {
     equal(ui.failureCount(0), '');
-    equal(ui.failureCount(1), '(Seen once.)');
-    equal(ui.failureCount(2), '(Seen 2 times.)');
-    equal(ui.failureCount(3), '(Seen 3 times.)');
+    equal(ui.failureCount(1), 'Seen once.');
+    equal(ui.failureCount(2), 'Seen 2 times.');
+    equal(ui.failureCount(3), 'Seen 3 times.');
 });
 
 test("alertMessageForCompileErrors", 1, function() {

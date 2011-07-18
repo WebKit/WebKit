@@ -16,15 +16,21 @@ table {
     border-collapse: collapse;
 }
 
-td {
+td, th {
     overflow: hidden;
     vertical-align: top;
     border-right: 1px solid #CCC;
 }
 
-td:last-of-type {
+td:last-of-type, th:last-of-type {
     border-right: 0px;
 }
+
+th {
+    border-bottom: 1px solid #CCC;
+}
+
+/*** butterbar ***/
 
 .butterbar {
     background-color: #f3f3f3;
@@ -37,6 +43,8 @@ td:last-of-type {
 .butterbar .hide {
     margin-left: 20px;
 }
+
+/*** alert ***/
 
 .alert {
     display: none;
@@ -66,126 +74,103 @@ td:last-of-type {
     margin: 0px 5px;
 }
 
-/* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
-.test[data-failure-count="1"][data-new-test="false"] {
-    -webkit-transition: 1s opacity;
-    opacity: 0.5;
+/*** results-summary ***/
+
+table.results-summary {
+    width: auto;
+    table-layout: auto;
+    margin: 5px auto;
+    border: 1px solid #CCC;
 }
 
-.results {
-    margin: 10px;
+.results-summary td, .results-summary th {
+    padding: 4px;
 }
 
-.regression {
-    padding: 0 0 10px 0;
-}
-
-.regression .test {
-    margin: 10px 0px;
-}
-
-.regression ul {
-    margin: 0;
+.results-summary ul {
+    margin: 0px;
+    padding: 0px;
     list-style: none;
     display: inline-block;
-    padding: 0 0 0 10px;
 }
 
-.regression li {
+.results-summary li {
     display: inline-block;
     margin: 0px 5px;
 }
 
-.regression a {
+.results-summary a {
     font-weight: normal;
 }
 
-.regression .what a {
+.results-summary .what a {
     text-decoration: none;
+    padding: 1px 2px;
+    color: black;
 }
 
-.regression .what a[draggable].IMAGE\+TEXT::before {
+.results-summary .what a[draggable].IMAGE\+TEXT::after {
     content: 'IMAGE+TEXT';
     color: white;
     background-color: Indigo;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 3px 0 0;
+    margin: 0 0 0 3px;
     border-radius: 4px;
 }
 
-.regression .what a[draggable].IMAGE::before {
+.results-summary .what a[draggable].IMAGE::after {
     content: 'IMAGE';
     color: white;
     background-color: MidnightBlue;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 3px 0 0;
+    margin: 0 0 0 3px;
     border-radius: 4px;
 }
 
-.regression .what a[draggable].TIMEOUT::before {
+.results-summary .what a[draggable].TIMEOUT::after {
     content: 'TIMEOUT';
     color: white;
     background-color: DarkGoldenRod;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 3px 0 0;
+    margin: 0 0 0 3px;
     border-radius: 4px;
 }
 
-.regression .what a[draggable].TEXT::before {
+.results-summary .what a[draggable].TEXT::after {
     content: 'TEXT';
     color: white;
     background-color: DodgerBlue;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 3px 0 0;
+    margin: 0 0 0 3px;
     border-radius: 4px;
 }
 
-.regression .what a[draggable].CRASH::before {
+.results-summary .what a[draggable].CRASH::after {
     content: 'CRASH';
     color: white;
     background-color: Tomato;
     font-size: 10px;
     padding: 1px 2px;
-    margin: 0 3px 0 0;
+    margin: 0 0 0 3px;
     border-radius: 4px;
 }
 
-.regression .test[data-new-test="true"] .what a[draggable]::after {
+.results-summary .test[data-new-test="true"] .what a[draggable]::before {
     content: '(new)';
     margin: 0 3px;
 }
 
-.regression .what a {
-    padding: 1px 2px;
-    border-radius: 4px;
-    color: black;
+/* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
+.results-summary .test[data-failure-count="1"][data-new-test="false"] {
+    -webkit-transition: 1s opacity;
+    opacity: 0.5;
 }
 
-.partytime {
-    display: none;
-    text-align:center;
-}
-
-.regression .where li {
-    margin: 3px;
-    display: inline-block;
-    padding: 1px 2px;
-    border-radius: 4px;
-    color: #555;
-}
-
-.regression .regression-range, .regression .failure-count {
-    padding: 0px 2px;
-    display: inline-block;
-}
-
-.regression .failure-count {
-    color: #555;
-}
+/*** results-detail ***/
 
 .results-detail {
     display: none;
@@ -248,4 +233,11 @@ td:last-of-type {
 
 .results-detail .failure-details td {
     height: 100%;
+}
+
+/*** partytime ***/
+
+.partytime {
+    display: none;
+    text-align: center;
 }

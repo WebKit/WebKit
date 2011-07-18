@@ -1,5 +1,22 @@
 2011-07-18  Adam Barth  <abarth@webkit.org>
 
+        Increase information garden-o-matic information density by switching to a table
+        https://bugs.webkit.org/show_bug.cgi?id=64642
+
+        Reviewed by Dimitri Glazkov.
+
+        The old layout couldn't handle the large number of failures we had
+        today.  This patch switches garden-o-matic to a table-based layout,
+        which can handle many more failures gracefully.  (I expect we'll need
+        more UI iterations.)
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js:
+
+2011-07-18  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should be able to determine when compile breaks
         https://bugs.webkit.org/show_bug.cgi?id=64190
 
