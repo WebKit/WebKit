@@ -1,3 +1,15 @@
+2011-07-18  Yuzhu Shen  <yzshen@chromium.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] WebFontImpl::drawText needs to handle the canvasIsOpaque input.
+        https://bugs.webkit.org/show_bug.cgi?id=64555
+        
+        This change handles canvasIsOpaque for the WEBKIT_USING_SKIA case.
+ 
+        * src/WebFontImpl.cpp: handled canvasIsOpaque.
+        * src/WebFontImpl.h: added method declaration.
+
 2011-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add code to attempt to align compositing layers to pixel boundaries when page scale changes
