@@ -3832,9 +3832,6 @@ BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = MISSING PAS
 
 BUGCR89372 MAC : svg/dom/use-style-recalc-script-execute-crash.html = CRASH PASS
 
-BUGWK64368 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK64368 WIN GPU : fast/canvas/canvas-text-baseline.html = IMAGE
-
 BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 : svg/W3C-SVG-1.1-SE/painting-control-04-f.svg = IMAGE+TEXT

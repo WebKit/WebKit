@@ -1,3 +1,11 @@
+2011-07-18  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; updated chromium test expectations.
+
+        Remove two tests from test_expectations.txt that have been rebaselined.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-18  Gabor Loki  <loki@webkit.org>
 
         Qt rebaselines after r91060 and r91116
