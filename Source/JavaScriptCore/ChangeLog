@@ -1,3 +1,20 @@
+2011-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Refactor scheduleDispatchFunctionsOnMainThread to fix crash.
+        https://bugs.webkit.org/show_bug.cgi?id=64337
+
+        Replace ecore_timer_add to Ecore_Pipe.
+        This is needed because ecore_timer should not be called in a child thread,
+        but in the main thread.
+
+        Reviewed by Antonio Gomes.
+
+        * wtf/efl/MainThreadEfl.cpp:
+        (WTF::pipeObject):
+        (WTF::monitorDispatchFunctions):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2011-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT operationCompareEqual does not inline JSValue::equalSlowCaseInline.
