@@ -118,8 +118,8 @@ class WebKitPortTest(port_testcase.PortTestCase):
         # Check that we read both the expectations file and anything in a
         # Skipped file, and that we include the feature and platform checks.
         files = {
-            '/mock/LayoutTests/platform/testwebkitport/test_expectations.txt': 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n',
-            '/mock/LayoutTests/platform/testwebkitport/Skipped': 'fast/html/keygen.html',
+            '/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt': 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n',
+            '/mock-checkout/LayoutTests/platform/testwebkitport/Skipped': 'fast/html/keygen.html',
         }
         mock_fs = MockFileSystem(files)
         port = TestWebKitPort(filesystem=mock_fs)
@@ -134,17 +134,17 @@ BUG_SKIPPED SKIP : media = FAIL""")
         # Delay setting _executive to avoid logging during construction
         port._executive = MockExecutive(should_log=True)
         port._options = MockOptions(configuration="Release")  # This should not be necessary, but I think TestWebKitPort is actually reading from disk (and thus detects the current configuration).
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release']\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout\n"
         self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
         # Make sure when passed --webkit-test-runner web build the right tool.
         port._options = MockOptions(webkit_test_runner=True, configuration="Release")
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release']\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout\n"
         self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
         # Make sure that failure to build returns False.
         port._executive = MockExecutive(should_log=True, should_throw=True)
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release']\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout\n"
         self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
     def _assert_config_file_for_platform(self, port, platform, config_file):
@@ -185,4 +185,4 @@ BUG_SKIPPED SKIP : media = FAIL""")
         port = TestWebKitPort()
         # Mock out _apache_config_file_name_for_platform to ignore the passed sys.platform value.
         port._apache_config_file_name_for_platform = lambda platform: 'httpd.conf'
-        self.assertEquals(port._path_to_apache_config_file(), '/mock/LayoutTests/http/conf/httpd.conf')
+        self.assertEquals(port._path_to_apache_config_file(), '/mock-checkout/LayoutTests/http/conf/httpd.conf')

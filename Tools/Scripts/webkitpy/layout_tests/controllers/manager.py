@@ -214,7 +214,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         # FIXME: We would like to warn here, but that would cause all passing_run integration tests
         # to fail, since they assert that we have no logging output.
         # The revision lookup always fails when running the tests since it tries to read from
-        # "/mock" using the real file system (since there is no way to mock out detect_scm_system at current).
+        # "/mock-checkout" using the real file system (since there is no way to mock out detect_scm_system at current).
         # Once we fix detect_scm_system to use the mock file system we can add this log back.
         #_log.warn("Failed to determine svn revision for checkout (cwd: %s, webkit_base: %s), leaving 'revision' key blank in full_results.json.\n%s" % (port_obj._filesystem.getcwd(), port_obj.path_from_webkit_base(), e))
         # Handle cases where we're running outside of version control.

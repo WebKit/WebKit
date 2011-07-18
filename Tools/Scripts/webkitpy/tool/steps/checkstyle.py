@@ -45,7 +45,6 @@ class CheckStyle(AbstractStep):
     def run(self, state):
         if not self._options.check_style:
             return
-        os.chdir(self._tool.scm().checkout_root)
 
         args = []
         if self._options.git_commit:
@@ -56,7 +55,7 @@ class CheckStyle(AbstractStep):
         args.extend(self._changed_files(state))
 
         try:
-            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args)
+            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
             if self._options.non_interactive:
                 # We need to re-raise the exception here to have the

@@ -147,7 +147,7 @@ svg/batik/text/smallFonts.svg
         port = MacPort(filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
         # Delay setting a should_log executive to avoid logging from MacPort.__init__.
         port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-safari', '--release', '-NSOpen', 'test.html']\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-safari', '--release', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
 
 

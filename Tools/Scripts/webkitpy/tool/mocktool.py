@@ -479,14 +479,8 @@ class MockBuildBot(object):
 
 
 class MockSCM(object):
-
-    fake_checkout_root = os.path.realpath("/tmp") # realpath is needed to allow for Mac OS X's /private/tmp
-
     def __init__(self, filesystem=None, executive=None):
-        # FIXME: We should probably use real checkout-root detection logic here.
-        # os.getcwd() can't work here because other parts of the code assume that "checkout_root"
-        # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
-        self.checkout_root = self.fake_checkout_root
+        self.checkout_root = "/mock-checkout"
         self.added_paths = set()
         self._filesystem = filesystem or MockFileSystem()
         self._executive = executive or MockExecutive()
@@ -722,9 +716,9 @@ class MockExecutive(object):
         self._should_log = should_log
         self._should_throw = should_throw
 
-    def run_and_throw_if_fail(self, args, quiet=False):
+    def run_and_throw_if_fail(self, args, quiet=False, cwd=None):
         if self._should_log:
-            log("MOCK run_and_throw_if_fail: %s" % args)
+            log("MOCK run_and_throw_if_fail: %s, cwd=%s" % (args, cwd))
         return "MOCK output of child process"
 
     def run_command(self,
@@ -736,7 +730,7 @@ class MockExecutive(object):
                     return_stderr=True,
                     decode_output=False):
         if self._should_log:
-            log("MOCK run_command: %s" % args)
+            log("MOCK run_command: %s, cwd=%s" % (args, cwd))
         if self._should_throw:
             raise ScriptError("MOCK ScriptError")
         return "MOCK output of child process"
@@ -760,7 +754,7 @@ class MockPort(object):
         return "MockPort"
 
     def layout_tests_results_path(self):
-        return "/mock/results.html"
+        return "/mock-results/results.html"
 
     def check_webkit_style_command(self):
         return ["mock-check-webkit-style"]

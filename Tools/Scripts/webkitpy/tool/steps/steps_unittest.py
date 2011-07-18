@@ -76,14 +76,14 @@ class StepsTest(unittest.TestCase):
         tool.port = lambda: mock_port
         step = RunTests(tool, mock_options)
         expected_stderr = """Running Python unit tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy']
+MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl']
+MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
 Running Bindings tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests']
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
 Running JavaScriptCore tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests']
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
 Running run-webkit-tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--no-new-test-results', '--no-launch-safari', '--exit-after-n-failures=20', '--quiet']
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--no-new-test-results', '--no-launch-safari', '--exit-after-n-failures=20', '--quiet'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr)

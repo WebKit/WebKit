@@ -255,9 +255,9 @@ class PortTest(unittest.TestCase):
     def test_uses_test_expectations_file(self):
         filesystem = MockFileSystem()
         port = Port(port_name='foo', filesystem=filesystem)
-        port.path_to_test_expectations_file = lambda: '/mock/test_expectations.txt'
+        port.path_to_test_expectations_file = lambda: '/mock-results/test_expectations.txt'
         self.assertFalse(port.uses_test_expectations_file())
-        port._filesystem = MockFileSystem({'/mock/test_expectations.txt': ''})
+        port._filesystem = MockFileSystem({'/mock-results/test_expectations.txt': ''})
         self.assertTrue(port.uses_test_expectations_file())
 
 

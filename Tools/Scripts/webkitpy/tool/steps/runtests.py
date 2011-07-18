@@ -49,22 +49,22 @@ class RunTests(AbstractStep):
         python_unittests_command = self._tool.port().run_python_unittests_command()
         if python_unittests_command:
             log("Running Python unit tests")
-            self._tool.executive.run_and_throw_if_fail(python_unittests_command)
+            self._tool.executive.run_and_throw_if_fail(python_unittests_command, cwd=self._tool.scm().checkout_root)
 
         perl_unittests_command = self._tool.port().run_perl_unittests_command()
         if perl_unittests_command:
             log("Running Perl unit tests")
-            self._tool.executive.run_and_throw_if_fail(perl_unittests_command)
+            self._tool.executive.run_and_throw_if_fail(perl_unittests_command, cwd=self._tool.scm().checkout_root)
 
         bindings_tests_command = self._tool.port().run_bindings_tests_command()
         if bindings_tests_command:
             log("Running Bindings tests")
-            self._tool.executive.run_and_throw_if_fail(bindings_tests_command)
+            self._tool.executive.run_and_throw_if_fail(bindings_tests_command, cwd=self._tool.scm().checkout_root)
 
         javascriptcore_tests_command = self._tool.port().run_javascriptcore_tests_command()
         if javascriptcore_tests_command:
             log("Running JavaScriptCore tests")
-            self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True)
+            self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True, cwd=self._tool.scm().checkout_root)
 
         log("Running run-webkit-tests")
         args = self._tool.port().run_webkit_tests_command()
@@ -75,5 +75,5 @@ class RunTests(AbstractStep):
 
         if self._options.quiet:
             args.append("--quiet")
-        self._tool.executive.run_and_throw_if_fail(args)
+        self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
 

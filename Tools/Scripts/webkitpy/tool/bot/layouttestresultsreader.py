@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.steps.runtests import RunTests
@@ -71,11 +69,11 @@ class LayoutTestResultsReader(object):
         # 2. This uses the "old" ports.py infrastructure instead of the new layout_tests/port
         # which will not support Chromium.  However the new arch doesn't work with old-run-webkit-tests
         # so we have to use this for now.
-        return os.path.dirname(results_path)
+        return self._tool.filesystem.dirname(results_path)
 
     def archive(self, patch):
         results_directory = self._results_directory()
-        results_name, _ = os.path.splitext(os.path.basename(results_directory))
+        results_name, _ = self._tool.filesystem.splitext(self._tool.filesystem.basename(results_directory))
         # Note: We name the zip with the bug_id instead of patch_id to match work_item_log_path().
         zip_path = self._tool.workspace.find_unused_filename(self._archive_directory, "%s-%s" % (patch.bug_id(), results_name), "zip")
         if not zip_path:

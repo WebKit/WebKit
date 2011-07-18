@@ -1,3 +1,54 @@
+2011-07-18  Eric Seidel  <eric@webkit.org>
+
+        webkit-patch apply-attachment does not work when not called from the root of the checkout
+        https://bugs.webkit.org/show_bug.cgi?id=64751
+
+        Reviewed by Adam Barth.
+
+        Last week I removed a os.chdir in EnsureWorkingDirectoryClean, which
+        is a step that we run for most commands (as one of the earliest steps).
+        EnsureWorkingDirectoryClean was incorrectly calling os.chdir to change
+        the CWD to the checkout root.  This magically made a bunch of otherwise
+        wrong code work.
+
+        When I realized that apply-attachment no longer worked as expected today,
+        I went and fixed the bug, then realizing that we were not testing
+        what the cwd was when running various commands.  I fixed our MockExecutive
+        to always log what the cwd is and fixed a whole bunch of places
+        where we needed to be setting the cwd.
+
+        Hopefully this will solve our cwd problems once and for-all, and webkit-patch
+        will again correctly work when called from any directory (including outside
+        of a webkit checkout).
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/steps/build.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/editchangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/update.py:
+
 2011-07-18  Adam Barth  <abarth@webkit.org>
 
         Increase information garden-o-matic information density by switching to a table

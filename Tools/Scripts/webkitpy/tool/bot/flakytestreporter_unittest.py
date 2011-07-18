@@ -99,7 +99,7 @@ blocked: 50856
 
     def test_report_flaky_tests_creating_bug(self):
         tool = MockTool()
-        tool.filesystem = MockFileSystem({"/mock/foo/bar-diffs.txt": "mock"})
+        tool.filesystem = MockFileSystem({"/mock-results/foo/bar-diffs.txt": "mock"})
         tool.status_server = MockStatusServer(bot_id="mock-bot-id")
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None

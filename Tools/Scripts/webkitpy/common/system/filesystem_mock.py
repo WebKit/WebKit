@@ -80,7 +80,7 @@ class MockFileSystem(object):
         return home_directory + self.sep + parts[1]
 
     def path_to_module(self, module_name):
-        return "/mock/Tools/Scripts/webkitpy/%s" % module_name
+        return "/mock-checkout/Tools/Scripts/webkitpy/%s" % module_name
 
     def chdir(self, path):
         path = self.normpath(path)

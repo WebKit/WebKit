@@ -1500,7 +1500,7 @@ class GitTestWithMock(unittest.TestCase):
 
     def test_create_patch(self):
         scm = self.make_scm(logging_executive=True)
-        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD']\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--']\nMOCK run_command: ['git', 'log', '-25']\n"
+        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD'], cwd=/mock-checkoutMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--'], cwd=/mock-checkoutMOCK run_command: ['git', 'log', '-25'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, scm.create_patch, expected_stderr=expected_stderr)
 
     def test_push_local_commits_to_server_with_username_and_password(self):

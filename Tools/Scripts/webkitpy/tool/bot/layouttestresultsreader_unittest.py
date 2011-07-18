@@ -39,7 +39,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
     def test_missing_layout_test_results(self):
         tool = MockTool()
         reader = LayoutTestResultsReader(tool, "/var/logs")
-        results_path = '/mock/results.html'
+        results_path = '/mock-results/results.html'
         tool.filesystem = MockFileSystem({results_path: None})
         # Make sure that our filesystem mock functions as we expect.
         self.assertRaises(IOError, tool.filesystem.read_text_file, results_path)
@@ -61,12 +61,13 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         tool = MockTool()
         reader = LayoutTestResultsReader(tool, "/var/logs")
         patch = tool.bugs.fetch_attachment(128)
+        tool.filesystem = MockFileSystem()
         # Should fail because the results_directory does not exist.
-        expected_stderr = "/mock does not exist, not archiving.\n"
+        expected_stderr = "/mock-results does not exist, not archiving.\n"
         archive = OutputCapture().assert_outputs(self, reader.archive, [patch], expected_stderr=expected_stderr)
         self.assertEqual(archive, None)
 
-        results_directory = "/mock"
+        results_directory = "/mock-results"
         # Sanity check what we assume our mock results directory is.
         self.assertEqual(reader._results_directory(), results_directory)
         tool.filesystem.maybe_make_directory(results_directory)

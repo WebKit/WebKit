@@ -86,7 +86,7 @@ class AbstractQueueTest(CommandsTest):
         if port:
             expected_run_args.append("--port=%s" % port)
         expected_run_args.extend(run_args)
-        tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
+        tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args, cwd='/mock-checkout')
 
     def test_run_webkit_patch(self):
         self._assert_run_webkit_patch([1])
@@ -135,7 +135,7 @@ class FeederQueueTest(QueuesTest):
         queue = TestFeederQueue()
         tool = MockTool(log_executive=True)
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("feeder-queue", MockSCM.fake_checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr("feeder-queue"),
             "should_proceed_with_work_item": "",
             "next_work_item": "",
             "process_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
@@ -236,7 +236,7 @@ class CommitQueueTest(QueuesTest):
 
     def test_commit_queue(self):
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
@@ -255,7 +255,7 @@ MOCK: release_work_item: commit-queue 197
 
     def test_commit_queue_failure(self):
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
@@ -282,23 +282,23 @@ MOCK: release_work_item: commit-queue 197
 
     def test_rollout(self):
         tool = MockTool(log_executive=True)
-        tool.filesystem.write_text_file('/mock/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
+        tool.filesystem.write_text_file('/mock-results/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean']
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 197]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 197], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Built patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Passed tests
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 197
@@ -314,16 +314,16 @@ MOCK: release_work_item: commit-queue 197
         rollout_patch = tool.bugs.fetch_attachment(106)  # _patch6, a rollout patch.
         assert(rollout_patch.is_rollout())
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing rollout patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean']
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 106]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 106], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 106]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 106], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 106
@@ -351,7 +351,7 @@ MOCK: release_work_item: commit-queue 106
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue(MockTool())
         queue.begin_work_queue()
-        queue._tool.filesystem.write_text_file('/mock/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
+        queue._tool.filesystem.write_text_file('/mock-results/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         queue._options = Mock()
         queue._options.port = None
         expected_stderr = """MOCK: update_status: commit-queue Cleaned working directory
@@ -410,7 +410,7 @@ The commit-queue is continuing to process your patch.
 class StyleQueueTest(QueuesTest):
     def test_style_queue(self):
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue", MockSCM.fake_checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
             "next_work_item": "",
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
             "process_work_item": "MOCK: update_status: style-queue Pass\nMOCK: release_work_item: style-queue 197\n",

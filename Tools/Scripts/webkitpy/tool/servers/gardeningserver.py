@@ -53,7 +53,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "gardeningserver")
 
     def _run_webkit_patch(self, args):
-        return self.server.tool.executive.run_command([self.server.tool.path()] + args)
+        return self.server.tool.executive.run_command([self.server.tool.path()] + args, cwd=self.server.tool.scm().checkout_root)
 
     def changelog(self):
         revision = self.query['revision'][0]
@@ -61,7 +61,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         if revision > head_revision:
             # Updating the working copy could conflict with any rebaselines we have in progress.
             update_webkit_command = self.server.tool.port().update_webkit_command()
-            self.server.tool.executive.run_and_throw_if_fail(update_webkit_command, quiet=True)
+            self.server.tool.executive.run_and_throw_if_fail(update_webkit_command, quiet=True, cwd=self.server.tool.scm().checkout_root)
         commit_info = self.server.tool.checkout().commit_info_for_revision(revision)
         if not commit_info:
             self.send_error(404, "File not found")

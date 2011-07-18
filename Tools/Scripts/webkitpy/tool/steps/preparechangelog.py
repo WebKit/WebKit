@@ -60,7 +60,6 @@ class PrepareChangeLog(AbstractStep):
         if self.cached_lookup(state, "changelogs"):
             self._ensure_bug_url(state)
             return
-        os.chdir(self._tool.scm().checkout_root)
         args = self._tool.port().prepare_changelog_command()
         if state.get("bug_id"):
             args.append("--bug=%s" % state["bug_id"])
@@ -74,7 +73,7 @@ class PrepareChangeLog(AbstractStep):
         args.extend(self._changed_files(state))
 
         try:
-            self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
+            self._tool.executive.run_and_throw_if_fail(args, self._options.quiet, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
             error("Unable to prepare ChangeLogs.")
         self.did_modify_checkout(state)

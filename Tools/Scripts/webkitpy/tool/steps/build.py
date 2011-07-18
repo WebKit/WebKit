@@ -41,7 +41,7 @@ class Build(AbstractStep):
         ]
 
     def build(self, build_style):
-        self._tool.executive.run_and_throw_if_fail(self._tool.port().build_webkit_command(build_style=build_style), self._options.quiet)
+        self._tool.executive.run_and_throw_if_fail(self._tool.port().build_webkit_command(build_style=build_style), self._options.quiet, cwd=self._tool.scm().checkout_root)
 
     def run(self, state):
         if not self._options.build:

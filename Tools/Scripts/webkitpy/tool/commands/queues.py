@@ -95,7 +95,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         # (where we write both to a log file and to the console at once),
         # but the queues don't need live-progress, a dump-of-output at the
         # end should be sufficient.
-        return self._tool.executive.run_and_throw_if_fail(webkit_patch_args)
+        return self._tool.executive.run_and_throw_if_fail(webkit_patch_args, cwd=self._tool.scm().checkout_root)
 
     def _log_directory(self):
         return os.path.join("..", "%s-logs" % self.name)

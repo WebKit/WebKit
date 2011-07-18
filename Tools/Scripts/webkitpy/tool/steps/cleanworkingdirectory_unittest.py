@@ -37,7 +37,7 @@ class CleanWorkingDirectoryTest(unittest.TestCase):
     def test_run(self):
         tool = MockTool()
         tool._scm = Mock()
-        tool._scm.checkout_root = '/mock'
+        tool._scm.checkout_root = '/mock-checkout'
         step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
         step.run({})
         self.assertEqual(tool._scm.ensure_no_local_commits.call_count, 1)

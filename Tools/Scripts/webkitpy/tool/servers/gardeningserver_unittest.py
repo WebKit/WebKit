@@ -70,7 +70,7 @@ class GardeningServerTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
     def test_changelog(self):
-        expected_stderr = "MOCK run_and_throw_if_fail: ['mock-update-webkit']\n"
+        expected_stderr = "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n"
         expected_stdout = """== Begin JSON Response ==
 {"bug_id": 42, "author_email": "abarth@webkit.org", "reviewer_text": "Darin Adler", "author_name": "Adam Barth", "changed_files": ["path/to/file", "another/file"]}
 == End JSON Response ==
@@ -82,11 +82,11 @@ class GardeningServerTest(unittest.TestCase):
         self._post_to_path("/buildbot", expected_stdout=expected_stdout, expected_stderr='')
 
     def test_rollout(self):
-        expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason']\n"
+        expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rollout?revision=2314&reason=MOCK+rollout+reason", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
     def test_rebaseline(self):
-        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html', 'txt']\n"
+        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html', 'txt'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&suffix=txt", expected_stderr=expected_stderr, expected_stdout=expected_stdout)

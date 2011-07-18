@@ -45,7 +45,7 @@ def _throwing_run_command(args):
 
 class TrivialMockPort(object):
     def results_directory(self):
-        return "/mock/results"
+        return "/mock-results"
 
 
 class MockFile(object):
@@ -95,7 +95,7 @@ class TestServerProcess(unittest.TestCase):
             return
         server_process = FakeServerProcess(port_obj=TrivialMockPort(), name="test", cmd=["test"], executive=MockExecutive2(run_command_fn=_logging_run_command))
         server_process._proc = MockProc(server_process)
-        expected_stdout = "['/usr/bin/sample', 1, 10, 10, '-file', '/mock/results/test-1.sample.txt']\n"
+        expected_stdout = "['/usr/bin/sample', 1, 10, 10, '-file', '/mock-results/test-1.sample.txt']\n"
         OutputCapture().assert_outputs(self, server_process._sample, expected_stdout=expected_stdout)
 
     def test_sample_process_throws_exception(self):

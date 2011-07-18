@@ -45,7 +45,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         ews = TestEWS()
         ews.bind_to_tool(MockTool())
         ews._options = MockOptions(port=None, confirm=False)
-        OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_stderr=self._default_begin_work_queue_stderr(ews.name, ews._tool.scm().checkout_root))
+        OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_stderr=self._default_begin_work_queue_stderr(ews.name))
         ews._expected_failures.unexpected_failures_observed = lambda results: set(["foo.html", "bar.html"])
         task = Mock()
         patch = ews._tool.bugs.fetch_attachment(197)
@@ -59,7 +59,7 @@ class EarlyWarningSytemTest(QueuesTest):
             "port": ews.port_name,
         }
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, ews._tool.scm().checkout_root),
+            "begin_work_queue": self._default_begin_work_queue_stderr(ews.name),
             "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "",
             "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
