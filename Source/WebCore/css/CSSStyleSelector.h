@@ -304,6 +304,9 @@ public:
             mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
         };
 
+        StyleImage* styleImage(CSSPropertyID, CSSValue*);
+        StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
+
     private:
         static RenderStyle* s_styleNotYetAvailable;
 
@@ -346,9 +349,6 @@ public:
 #endif
 
         void loadPendingImages();
-        
-        StyleImage* styleImage(CSSPropertyID, CSSValue* value);
-        StyleImage* cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue* value);
 
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),

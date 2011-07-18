@@ -25,9 +25,11 @@
 #include "config.h"
 #include "CSSStyleApplyProperty.h"
 
+#include "CSSCursorImageValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueList.h"
+#include "CursorList.h"
 #include "Document.h"
 #include "Element.h"
 #include "Pair.h"
@@ -504,6 +506,52 @@ public:
     }
 };
 
+class ApplyPropertyCursor : public ApplyPropertyBase {
+private:
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
+    {
+        selector->style()->setCursor(selector->parentStyle()->cursor());
+        selector->style()->setCursorList(selector->parentStyle()->cursors());
+    }
+
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
+    {
+        selector->style()->clearCursorList();
+        selector->style()->setCursor(RenderStyle::initialCursor());
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        selector->style()->clearCursorList();
+        if (value->isValueList()) {
+            CSSValueList* list = static_cast<CSSValueList*>(value);
+            int len = list->length();
+            selector->style()->setCursor(CURSOR_AUTO);
+            for (int i = 0; i < len; i++) {
+                CSSValue* item = list->itemWithoutBoundsCheck(i);
+                if (!item->isPrimitiveValue())
+                    continue;
+                CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+                int type = primitiveValue->primitiveType();
+                if (type == CSSPrimitiveValue::CSS_URI) {
+                    if (primitiveValue->isCursorImageValue()) {
+                        CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
+                        if (image->updateIfSVGCursorIsUsed(selector->element())) // Elements with SVG cursors are not allowed to share style.
+                            selector->style()->setUnique();
+                        selector->style()->addCursor(selector->cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
+                    }
+                } else if (type == CSSPrimitiveValue::CSS_IDENT)
+                    selector->style()->setCursor(*primitiveValue);
+            }
+        } else if (value->isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+            int type = primitiveValue->primitiveType();
+            if (type == CSSPrimitiveValue::CSS_IDENT && selector->style()->cursor() != ECursor(*primitiveValue))
+                selector->style()->setCursor(*primitiveValue);
+        }
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -617,6 +665,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
     setPropertyHandler(CSSPropertyLetterSpacing, new ApplyPropertyComputeLength<int, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>(&RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing, &RenderStyle::initialLetterWordSpacing));
     setPropertyHandler(CSSPropertyWordSpacing, new ApplyPropertyComputeLength<int, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>(&RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, &RenderStyle::initialLetterWordSpacing));
+
+    setPropertyHandler(CSSPropertyCursor, new ApplyPropertyCursor());
 
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
     setPropertyHandler(CSSPropertyFontVariant, new ApplyPropertyFont<FontSmallCaps>(&FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff));

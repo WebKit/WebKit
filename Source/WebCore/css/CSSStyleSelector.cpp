@@ -3813,44 +3813,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWhiteSpace:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
         return;
-    case CSSPropertyCursor:
-        if (isInherit) {
-            m_style->setCursor(m_parentStyle->cursor());
-            m_style->setCursorList(m_parentStyle->cursors());
-            return;
-        }
-        m_style->clearCursorList();
-        if (isInitial) {
-            m_style->setCursor(RenderStyle::initialCursor());
-            return;
-        }
-        if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
-            int len = list->length();
-            m_style->setCursor(CURSOR_AUTO);
-            for (int i = 0; i < len; i++) {
-                CSSValue* item = list->itemWithoutBoundsCheck(i);
-                if (!item->isPrimitiveValue())
-                    continue;
-                primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                int type = primitiveValue->primitiveType();
-                if (type == CSSPrimitiveValue::CSS_URI) {
-                    if (primitiveValue->isCursorImageValue()) {
-                        CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
-                        if (image->updateIfSVGCursorIsUsed(m_element)) // Elements with SVG cursors are not allowed to share style.
-                            m_style->setUnique();
-                        m_style->addCursor(cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
-                    }
-                } else if (type == CSSPrimitiveValue::CSS_IDENT)
-                    m_style->setCursor(*primitiveValue);
-            }
-        } else if (primitiveValue) {
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_IDENT && m_style->cursor() != ECursor(*primitiveValue))
-                m_style->setCursor(*primitiveValue);
-        }
-        return;
-    
 // uri || inherit
     case CSSPropertyListStyleImage:
     {
@@ -5428,6 +5390,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTransformOriginY:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
+    case CSSPropertyCursor:
         ASSERT_NOT_REACHED();
         return;
 #if ENABLE(SVG)
