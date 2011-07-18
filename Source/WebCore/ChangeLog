@@ -1,3 +1,22 @@
+2011-07-18  Dan Bernstein  <mitz@apple.com>
+
+        Specify a cascade list consisting of the last resort font for Core Text
+        https://bugs.webkit.org/show_bug.cgi?id=64747
+
+        Reviewed by Sam Weinig.
+
+        No new tests, because this does not affect behavior.
+
+        This prevents Core Text from taking its default, longer fallback list when the primary font does
+        not include a character. This is OK to do because WebKit never uses the results of Core Text
+        fallback anyway.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::cascadeToLastResortFontDescriptor): Added. Returns a CTFontDescriptor with a cascade
+        list consisting of the last resort font.
+        (WebCore::FontPlatformData::ctFont): Changed to include the cascadeToLastResortFontDescriptor
+        in the returned font.
+
 2011-07-18  James Robinson  <jamesr@chromium.org>
 
         Timer scheduling should be based off the monotonic clock

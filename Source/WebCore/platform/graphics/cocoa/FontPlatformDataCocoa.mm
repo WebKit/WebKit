@@ -176,28 +176,46 @@ inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
     return TextSpacingProportional;
 }
 
+static CTFontDescriptorRef cascadeToLastResortFontDescriptor()
+{
+    static CTFontDescriptorRef descriptor;
+    if (descriptor)
+        return descriptor;
+
+    const void* keys[] = { kCTFontCascadeListAttribute };
+    const void* descriptors[] = { CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0) };
+    const void* values[] = { CFArrayCreate(kCFAllocatorDefault, descriptors, sizeof(descriptors) / sizeof(*descriptors), &kCFTypeArrayCallBacks) };
+    RetainPtr<CFDictionaryRef> attributes(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, keys, values, sizeof(keys) / sizeof(*keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    descriptor = CTFontDescriptorCreateWithAttributes(attributes.get());
+
+    return descriptor;
+}
+
 CTFontRef FontPlatformData::ctFont() const
 {
-    if (m_widthVariant == RegularWidth) {
-        if (m_font)
-            return toCTFontRef(m_font);
-        if (!m_CTFont)
-            m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
+    if (m_CTFont)
         return m_CTFont.get();
-    }
-    
-    if (!m_CTFont) {
+
+    m_CTFont = toCTFontRef(m_font);
+    if (m_CTFont)
+        m_CTFont.adoptCF(CTFontCreateCopyWithAttributes(m_CTFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
+    else
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
+
+    if (m_widthVariant != RegularWidth) {
         int featureTypeValue = kTextSpacingType;
         int featureSelectorValue = mapFontWidthVariantToCTFeatureSelector(m_widthVariant);
-        RetainPtr<CTFontRef> sourceFont(AdoptCF, CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
-        RetainPtr<CTFontDescriptorRef> sourceDescriptor(AdoptCF, CTFontCopyFontDescriptor(sourceFont.get()));
+        RetainPtr<CTFontDescriptorRef> sourceDescriptor(AdoptCF, CTFontCopyFontDescriptor(m_CTFont.get()));
         RetainPtr<CFNumberRef> featureType(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureTypeValue));
         RetainPtr<CFNumberRef> featureSelector(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureSelectorValue));
         RetainPtr<CTFontDescriptorRef> newDescriptor(AdoptCF, CTFontDescriptorCreateCopyWithFeature(sourceDescriptor.get(), featureType.get(), featureSelector.get()));
         RetainPtr<CTFontRef> newFont(AdoptCF, CTFontCreateWithFontDescriptor(newDescriptor.get(), m_size, 0));
 
-        m_CTFont = newFont.get() ? newFont : sourceFont;
+        if (newFont)
+            m_CTFont = newFont;
     }
+
     return m_CTFont.get();
 }
 
