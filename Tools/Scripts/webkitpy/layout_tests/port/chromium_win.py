@@ -101,18 +101,13 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def setup_environ_for_server(self):
         env = chromium.ChromiumPort.setup_environ_for_server(self)
         # Put the cygwin directory first in the path to find cygwin1.dll.
-        env["PATH"] = "%s;%s" % (
-            self.path_from_chromium_base("third_party", "cygwin", "bin"),
-            env["PATH"])
+        env["PATH"] = "%s;%s" % (self.path_from_chromium_base("third_party", "cygwin", "bin"), env["PATH"])
         # Configure the cygwin directory so that pywebsocket finds proper
         # python executable to run cgi program.
-        env["CYGWIN_PATH"] = self.path_from_chromium_base(
-            "third_party", "cygwin", "bin")
+        env["CYGWIN_PATH"] = self.path_from_chromium_base("third_party", "cygwin", "bin")
         if (sys.platform in ("cygwin", "win32") and self.get_option('register_cygwin')):
-            setup_mount = self.path_from_chromium_base("third_party",
-                                                       "cygwin",
-                                                       "setup_mount.bat")
-            self._executive.run_command([setup_mount])
+            setup_mount = self.path_from_chromium_base("third_party", "cygwin", "setup_mount.bat")
+            self._executive.run_command([setup_mount])  # Paths are all absolute, so this does not require a cwd.
         return env
 
     def baseline_search_path(self):
