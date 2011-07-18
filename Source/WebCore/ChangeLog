@@ -1,3 +1,19 @@
+2011-07-18  Young Han Lee  <joybro@company100.net>
+
+        AnimationBase asserts if a test tries to pause during the delay phase
+        https://bugs.webkit.org/show_bug.cgi?id=59475
+
+        Reviewed by Simon Fraser.
+
+        There is no more assertion failure after r90765, but the testcase still fails due to
+        the miscalculation of the pauseTime. This patch pauses the animation at its startTime
+        if a test tries to pause it during the delay phase.
+
+        Test: transitions/transition-in-delay-phase.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+
 2011-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Web Inspector: provide unique identifiers for loaders

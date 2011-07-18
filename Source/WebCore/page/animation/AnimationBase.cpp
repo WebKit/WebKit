@@ -1449,7 +1449,10 @@ void AnimationBase::freezeAtTime(double t)
     }
 
     ASSERT(m_startTime);        // if m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
-    m_pauseTime = m_startTime + t - m_animation->delay();
+    if (t <= m_animation->delay())
+        m_pauseTime = m_startTime;
+    else
+        m_pauseTime = m_startTime + t - m_animation->delay();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->hasLayer()) {
