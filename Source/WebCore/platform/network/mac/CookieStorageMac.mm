@@ -28,8 +28,6 @@
 
 #import "ResourceHandle.h"
 
-#if !USE(CFNETWORK)
-
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
@@ -117,5 +115,3 @@ void stopObservingCookieChanges()
 }
 
 }
-
-#endif // !USE(CFNETWORK)

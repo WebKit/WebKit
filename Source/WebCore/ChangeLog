@@ -5,6 +5,24 @@
 
         Reviewed by David Kilzer.
 
+        Get coookie storage code to work with USE(CFNETWORK) enabled on Mac.
+
+        No new tests because no change in functionality.
+
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::defaultCookieStorage):
+        (WebCore::defaultSessionCookieStorage):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createPrivateBrowsingStorageSession):
+        * platform/network/mac/CookieStorageMac.mm:
+
+2011-07-18  Pratik Solanki  <psolanki@apple.com>
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=63674
+        Get webkit to compile with USE(CFNETWORK) enabled on Mac
+
+        Reviewed by David Kilzer.
+
         * WebCore.exp.in:
 
 2011-07-18  Gavin Barraclough  <barraclough@apple.com>

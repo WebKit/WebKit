@@ -770,7 +770,11 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 
 RetainPtr<CFURLStorageSessionRef> ResourceHandle::createPrivateBrowsingStorageSession(CFStringRef identifier)
 {
+#if PLATFORM(WIN)
     return RetainPtr<CFURLStorageSessionRef>(AdoptCF, wkCreatePrivateStorageSession(identifier, defaultStorageSession()));
+#else
+    return RetainPtr<CFURLStorageSessionRef>(AdoptCF, wkCreatePrivateStorageSession(identifier));
+#endif
 }
 
 String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()

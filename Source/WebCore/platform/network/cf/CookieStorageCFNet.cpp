@@ -33,9 +33,14 @@
 #include "LoaderRunLoopCF.h"
 #include "ResourceHandle.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#elif PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 #if USE(PLATFORM_STRATEGIES)
 #include "CookiesStrategy.h"
@@ -62,14 +67,13 @@ RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage()
 
 #if USE(CFNETWORK)
 
-static RetainPtr<CFHTTPCookieStorageRef>& defaultSessionCookieStorage()
+CFHTTPCookieStorageRef defaultCookieStorage()
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
-#if USE(CFURLSTORAGESESSIONS) && PLATFORM(WIN)
-    if (!cookieStorage && ResourceHandle::defaultStorageSession())
-        cookieStorage.adoptCF(wkCopyHTTPCookieStorage(ResourceHandle::defaultStorageSession()));
+#if PLATFORM(WIN)
+    if (CFHTTPCookieStorageRef defaultCookieStorage = defaultSessionCookieStorage().get())
+        return defaultCookieStorage;
 #endif
-    return cookieStorage;
+    return wkGetDefaultHTTPCookieStorage();
 }
 
 CFHTTPCookieStorageRef currentCookieStorage()
@@ -79,6 +83,20 @@ CFHTTPCookieStorageRef currentCookieStorage()
     if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
         return cookieStorage;
     return defaultCookieStorage();
+}
+
+#endif
+
+#if USE(CFNETWORK) && PLATFORM(WIN)
+
+static RetainPtr<CFHTTPCookieStorageRef>& defaultSessionCookieStorage()
+{
+    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
+#if USE(CFURLSTORAGESESSIONS)
+    if (!cookieStorage && ResourceHandle::defaultStorageSession())
+        cookieStorage.adoptCF(wkCopyHTTPCookieStorage(ResourceHandle::defaultStorageSession()));
+#endif
+    return cookieStorage;
 }
 
 void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage)
@@ -103,13 +121,6 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
     else
 #endif
         privateBrowsingCookieStorage().adoptCF(wkCreateInMemoryHTTPCookieStorage());
-}
-
-CFHTTPCookieStorageRef defaultCookieStorage()
-{
-    if (CFHTTPCookieStorageRef defaultCookieStorage = defaultSessionCookieStorage().get())
-        return defaultCookieStorage;
-    return wkGetDefaultHTTPCookieStorage();
 }
 
 static void notifyCookiesChangedOnMainThread(void*)
@@ -165,6 +176,6 @@ void stopObservingCookieChanges()
     CFHTTPCookieStorageUnscheduleFromRunLoop(cookieStorage, runLoop, kCFRunLoopCommonModes);
 }
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFNETWORK) && PLATFORM(WIN)
 
 } // namespace WebCore
