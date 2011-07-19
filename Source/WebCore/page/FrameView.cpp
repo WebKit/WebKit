@@ -2632,7 +2632,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         bool horizontalWritingMode = root->style()->isHorizontalWritingMode();
         int docLogicalWidth = horizontalWritingMode ? root->documentRect().width() : root->documentRect().height();
         if (docLogicalWidth > pageLogicalWidth) {
-            flooredPageLogicalWidth = std::min<int>(docLogicalWidth, pageLogicalWidth * maximumShrinkFactor);
+            flooredPageLogicalWidth = std::min<float>(docLogicalWidth, pageLogicalWidth * maximumShrinkFactor);
             if (pageLogicalHeight)
                 root->setPageLogicalHeight(flooredPageLogicalWidth / pageSize.width() * pageSize.height());
             root->setLogicalWidth(flooredPageLogicalWidth);

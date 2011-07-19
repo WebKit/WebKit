@@ -1,3 +1,16 @@
+2011-07-19  Dan Bernstein  <mitz@apple.com>
+
+        Nothing printed when specifying a very large maximum layout width
+        https://bugs.webkit.org/show_bug.cgi?id=64831
+
+        Reviewed by Beth Dakin.
+
+        I am not adding a test because the DumpRenderTree printing test machinery is based on PrintContext,
+        which does not exercise the code path on which this bug lies.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination): Fixed an integer overflow.
+
 2011-07-19  Nate Chapin  <japhet@chromium.org>
 
         [V8] Wait until no v8 context is on the stack before
