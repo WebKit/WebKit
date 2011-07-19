@@ -229,6 +229,10 @@ namespace WebCore {
 
     bool isUndefinedOrNull(v8::Handle<v8::Value> value);
 
+    // Returns true if the provided object is to be considered a 'host object', as used in the
+    // HTML5 structured clone algorithm.
+    bool isHostObject(v8::Handle<v8::Object>);
+
     v8::Handle<v8::Boolean> v8Boolean(bool value);
 
     String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value);

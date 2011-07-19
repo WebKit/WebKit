@@ -1,3 +1,87 @@
+2011-07-15  Luke Zarko  <lukezarko@gmail.com>
+
+       Bring V8's SerializedScriptValue implementation up to date.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63481
+
+        Reviewed by David Levin.
+        
+        The HTML5 Structured Clone algorithm (http://www.whatwg.org/specs/web-apps/current-work/multipage/urls.html#safe-passing-of-structured-data) has been updated since the V8 version of SerializedScriptValue was first implemented. This patch aims to bring this implementation up to date. It:
+        
+        - Introduces the new HTML5 DOM error codes for TIMEOUT_ERR, INVALID_NODE_TYPE_ERR, DATA_CLONE_ERR
+        - Handles cyclic structures and equality of reference preservation for cloned values
+        - Allows DataViews to be constructed on the native side using the existing wrapper techniques
+        - Amends tests and introduces new ones to check for correctness (the bulk of the patch)
+        - Tolerates the old version of the serialized object format
+        
+        The patch permits the cloning of JavaScript typed arrays. This functionality is in active use already and was supported (somewhat inefficiently) by the existing code through an artifact of implementation.
+
+        Tests: fast/dom/Window/window-postmessage-clone-deep-array.html
+               fast/dom/Window/window-postmessage-clone-really-deep-array.html
+               fast/dom/Window/window-postmessage-clone.html
+               fast/canvas/webgl/array-message-passing.html
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::V8ObjectMap::Writer::writeVersion):
+        (WebCore::V8ObjectMap::Writer::writeArrayBuffer):
+        (WebCore::V8ObjectMap::Writer::writeArrayBufferView):
+        (WebCore::V8ObjectMap::Writer::writeObjectReference):
+        (WebCore::V8ObjectMap::Writer::writeReferenceCount):
+        (WebCore::V8ObjectMap::Writer::writeGenerateFreshObject):
+        (WebCore::V8ObjectMap::Writer::writeGenerateFreshArray):
+        (WebCore::V8ObjectMap::Writer::doWriteArrayBuffer):
+        (WebCore::V8ObjectMap::Serializer::Serializer):
+        (WebCore::V8ObjectMap::Serializer::serialize):
+        (WebCore::V8ObjectMap::Serializer::StateBase::execDepth):
+        (WebCore::V8ObjectMap::Serializer::AbstractObjectState::AbstractObjectState):
+        (WebCore::V8ObjectMap::Serializer::AbstractObjectState::advance):
+        (WebCore::V8ObjectMap::Serializer::AbstractObjectState::execDepth):
+        (WebCore::V8ObjectMap::Serializer::execDepth):
+        (WebCore::V8ObjectMap::Serializer::push):
+        (WebCore::V8ObjectMap::Serializer::pop):
+        (WebCore::V8ObjectMap::Serializer::handleError):
+        (WebCore::V8ObjectMap::Serializer::writeAndGreyArrayBufferView):
+        (WebCore::V8ObjectMap::Serializer::writeArrayBuffer):
+        (WebCore::V8ObjectMap::Serializer::greyObject):
+        (WebCore::V8ObjectMap::Serializer::doSerialize):
+        (WebCore::V8ObjectMap::Reader::Reader):
+        (WebCore::V8ObjectMap::Reader::read):
+        (WebCore::V8ObjectMap::Reader::readVersion):
+        (WebCore::V8ObjectMap::Reader::setVersion):
+        (WebCore::V8ObjectMap::Reader::undoReadTag):
+        (WebCore::V8ObjectMap::Reader::readArrayBufferViewSubTag):
+        (WebCore::V8ObjectMap::Reader::doReadArrayBuffer):
+        (WebCore::V8ObjectMap::Reader::readArrayBuffer):
+        (WebCore::V8ObjectMap::Reader::readArrayBufferView):
+        (WebCore::V8ObjectMap::Deserializer::Deserializer):
+        (WebCore::V8ObjectMap::Deserializer::deserialize):
+        (WebCore::V8ObjectMap::Deserializer::newArray):
+        (WebCore::V8ObjectMap::Deserializer::consumeTopOfStack):
+        (WebCore::V8ObjectMap::Deserializer::completeArray):
+        (WebCore::V8ObjectMap::Deserializer::newObject):
+        (WebCore::V8ObjectMap::Deserializer::completeObject):
+        (WebCore::V8ObjectMap::Deserializer::completeSparseArray):
+        (WebCore::V8ObjectMap::Deserializer::pushObjectReference):
+        (WebCore::V8ObjectMap::Deserializer::tryGetObjectFromObjectReference):
+        (WebCore::V8ObjectMap::Deserializer::objectReferenceCount):
+        (WebCore::V8ObjectMap::Deserializer::openComposite):
+        (WebCore::V8ObjectMap::Deserializer::closeComposite):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::isHostObject):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallback):
+        * dom/DOMCoreException.idl:
+        * dom/ExceptionCode.cpp:
+        * dom/ExceptionCode.h:
+        * html/canvas/ArrayBuffer.cpp:
+        (WebCore::ArrayBuffer::create):
+        * html/canvas/ArrayBuffer.h:
+        * html/canvas/DataView.cpp:
+        (WebCore::DataView::create):
+        * html/canvas/DataView.h:
+
 2011-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Possible recursion in GraphicsLayerCA::updateGeometry()

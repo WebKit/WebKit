@@ -61,6 +61,7 @@ BUGWK55913 DEBUG : jquery/dimensions.html = TIMEOUT PASS
 
 BUGWK64498 SLOW DEBUG : fast/encoding/parser-tests-40.html = PASS
 BUGWK64502 SLOW DEBUG : fast/forms/form-associated-element-crash3.html = PASS
+WONTFIX SLOW : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS
@@ -1555,9 +1556,6 @@ BUGCR24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
 // Flaky timeouts first appearing at r27764 (webkit 48947)
 BUGCR9798 WIN : http/tests/cookies/multiple-cookies.html = TIMEOUT PASS
-
-// WebKit update: 49213:49221
-BUGCR24063 : fast/dom/Window/window-postmessage-clone.html = FAIL
 
 // Got slow with V8 update to 1.3.15. Debug logging perhaps?
 BUGCR24182 DEBUG SLOW : fast/forms/input-implicit-length-limit.html = PASS

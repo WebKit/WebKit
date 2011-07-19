@@ -154,7 +154,7 @@ function addDateSuccess()
     } catch (err) {
         testPassed("Exception thrown");
         code = err.code;
-        shouldBe("code", "DOMException.NOT_SUPPORTED_ERR");
+        shouldBe("code", "DOMException.DATA_CLONE_ERR");
     }
 
     debug("Try to insert data where key path yields a Date key:");

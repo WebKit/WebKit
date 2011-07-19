@@ -57,14 +57,10 @@ namespace WebCore {
         NETWORK_ERR = 19,
         ABORT_ERR = 20,
         URL_MISMATCH_ERR = 21,
-        QUOTA_EXCEEDED_ERR = 22
-
-        // Introduced in File API:
-        // http://www.w3.org/TR/file-upload/#dfn-fileerror
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-        , NOT_READABLE_ERR = 24
-        , ENCODING_ERR = 26
-#endif
+        QUOTA_EXCEEDED_ERR = 22,
+        TIMEOUT_ERR = 23,
+        INVALID_NODE_TYPE_ERR = 24,
+        DATA_CLONE_ERR = 25
     };
 
     enum ExceptionType {

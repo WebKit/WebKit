@@ -1,3 +1,60 @@
+2011-07-15  Luke Zarko  <lukezarko@gmail.com>
+
+       Bring V8's SerializedScriptValue implementation up to date.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63481
+
+        Reviewed by David Levin.
+        
+        This patch refactors window-postmessage-clone into a script test, checks additional functionality set forth in the standard, and fixes up expectations. It also checks for typed array message passing.
+
+        * fast/canvas/webgl/array-message-passing-expected.txt: Added.
+        * fast/canvas/webgl/array-message-passing.html: Added.
+        * fast/canvas/webgl/script-tests/array-message-passing.js: Added.
+        (classCompare):
+        (bufferCompare):
+        (viewCompare):
+        (typedArrayCompare):
+        (dataViewCompare):
+        (createBuffer):
+        (createTypedArray):
+        (createTypedArrayOverBuffer):
+        (testList):
+        (doneTest):
+        (windowHandleMessage):
+        * fast/dom/Window/script-tests/postmessage-clone-deep-array.js: Added.
+        * fast/dom/Window/script-tests/postmessage-clone-really-deep-array.js: Added.
+        * fast/dom/Window/script-tests/postmessage-clone.js: Added.
+        (thunk):
+        * fast/dom/Window/script-tests/postmessage-test.js: Copied from LayoutTests/fast/dom/Window/window-postmessage-clone.html.
+        ():
+        (safeToString):
+        (shouldBe):
+        (shouldBeIdentical):
+        (doPass):
+        (doFail):
+        (window.doPassFail):
+        (onmessage):
+        (ConstructorWithPrototype):
+        (window.tryPostMessage):
+        * fast/dom/Window/window-postmessage-clone-deep-array-expected.txt: Added.
+        * fast/dom/Window/window-postmessage-clone-deep-array.html: Added.
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone-really-deep-array-expected.txt: Added.
+        * fast/dom/Window/window-postmessage-clone-really-deep-array.html: Added.
+        * fast/dom/Window/window-postmessage-clone.html:
+        * fast/dom/Window/window-properties-expected.txt: Also fixed this due to r91061.
+        * platform/chromium/fast/canvas/webgl/array-message-passing-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-deep-array-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-really-deep-array-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r91290.

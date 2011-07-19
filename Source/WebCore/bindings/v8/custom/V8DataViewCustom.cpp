@@ -41,6 +41,13 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function", V8Proxy::TypeError);
 
+    if (!args.Length()) {
+        // see constructWebGLArray -- we don't seem to be able to distingish between
+        // 'new DataView()' and the call used to construct the cached DataView object.
+        RefPtr<DataView> dataView = DataView::create(0);
+        V8DOMWrapper::setDOMWrapper(args.Holder(), &info, dataView.get());
+        return toV8(dataView.release(), args.Holder());
+    }
     if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0]))
         return V8Proxy::throwTypeError();
     return constructWebGLArrayWithArrayBufferArgument<DataView, char>(args, &info, v8::kExternalByteArray, false);

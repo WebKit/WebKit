@@ -74,6 +74,11 @@ module core {
         const unsigned short      ABORT_ERR                      = 20;
         const unsigned short      URL_MISMATCH_ERR               = 21;
         const unsigned short      QUOTA_EXCEEDED_ERR             = 22;
+        // TIMEOUT_ERR is currently unused but was added for completeness.
+        const unsigned short      TIMEOUT_ERR                    = 23;
+        // INVALID_NODE_TYPE_ERR is currently unused but was added for completeness.
+        const unsigned short      INVALID_NODE_TYPE_ERR          = 24;
+        const unsigned short      DATA_CLONE_ERR                 = 25;
     };
 
 }

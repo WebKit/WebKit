@@ -34,6 +34,7 @@ namespace WebCore {
 
 class DataView : public ArrayBufferView {
 public:
+    static PassRefPtr<DataView> create(unsigned length);
     static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);
 
     virtual bool isDataView() const { return true; }

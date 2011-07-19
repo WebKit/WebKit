@@ -1,0 +1,5 @@
+Tests that we abort cloning overdeep arrays.
+
+PASS: 'postMessage(reallyDeepArray)' threw Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: eventData is done of type string
+

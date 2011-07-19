@@ -1,12 +1,10 @@
-CONSOLE MESSAGE: line 74: TypeError: No default value
-CONSOLE MESSAGE: line 74: TypeError: No default value
 Tests that we clone object hierarchies
 
-FAIL: 'postMessage((function(){}))' should throw but didn't
-PASS: 'postMessage(window)' threw TypeError: Type error
+PASS: 'postMessage((function(){}))' threw Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: 'postMessage(window)' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: 'postMessage(({get a() { throw "x" }}))' threw x
-FAIL: 'postMessage(imageData.data)' should throw but didn't
-FAIL: 'postMessage(mutatedImageData.data)' should throw but didn't
+PASS: 'postMessage(imageData.data)' threw Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: 'postMessage(mutatedImageData.data)' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: 'postMessage((function() {return {get a() { throw "accessor-exn"; }};})())' threw accessor-exn
 PASS: 'postMessage((function() {var obja = {get p() { throw "accessor-exn"; }}; return {get a() { return obja; }};})())' threw accessor-exn
 PASS: lastIndex initially correct: was 3
@@ -30,7 +28,6 @@ PASS: eventData is a,a,b,a,b of type object
 PASS: eventData is a,a,b,[object Object] of type object
 PASS: eventData is 1,2,3 of type object
 PASS: eventData is ,,1 of type object
-FAIL: eventData is null should be function () {} of type function
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
 PASS: eventData is [object Object] of type object
 PASS: eventData is === to eventData.self
@@ -65,33 +62,33 @@ PASS: reference equality preserved
 PASS: accessors used
 PASS: reference equality preserved (opposite order)
 PASS: accessors used (opposite order)
-FAIL: accessor value was nullified
+PASS: accessor value was nullified
 PASS: non-accessor value was not nullified
-FAIL: accessor value was nullified
+PASS: accessor value was nullified
 PASS: non-accessor value was not nullified
 PASS: non-accessor value was not nullified
-FAIL: accessor value was nullified
+PASS: accessor value was nullified
 PASS: non-accessor value was not nullified
 PASS: accessor value was not nullified
 PASS: accessor value was not nullified
-FAIL: accessor value was nullified
+PASS: accessor value was nullified
 PASS: non-accessor value was not nullified
 PASS: non-accessor value was not nullified
 PASS: non-accessor value is defined
 PASS: non-accessor value was not nullified
 PASS: non-accessor value is defined
-FAIL: accessor value was nullified
+PASS: accessor value was nullified
 PASS: non-accessor value was not nullified
-FAIL: accessor value was nullified
+PASS: accessor value was nullified
 PASS: window.pcalled === true
 PASS: window.acalled === true
-FAIL: window.bcalled === undefined
+PASS: window.bcalled === undefined
 PASS: Date values correct (0)
 PASS: Date values correct (1)
-FAIL: References to dates correct (0)
+PASS: References to dates correct (0)
 PASS: References to dates correct (1)
 PASS: Regexp value correct (0)
-FAIL: References to regexps correct (0)
+PASS: References to regexps correct (0)
 PASS: References to regexps correct (1)
 PASS: global set (0)
 PASS: global set (1)
@@ -102,10 +99,10 @@ PASS: multiline set (1)
 PASS: lastIndex correct (0)
 PASS: lastIndex correct (1)
 PASS: eventData is 2 of type number
-FAIL: file references transfer
+PASS: file references transfer
 PASS: FileList should not respect reference equality
 PASS: FileList should not respect reference equality
-FAIL: FileList respects self-reference equality
+PASS: FileList respects self-reference equality
 PASS: FileList length sent correctly
 PASS: FileList should not respect reference equality (0)
 PASS: FileList should not respect reference equality (1)

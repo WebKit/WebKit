@@ -43,7 +43,7 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBuffer* other)
     return ArrayBuffer::create(other->data(), other->byteLength());
 }
 
-PassRefPtr<ArrayBuffer> ArrayBuffer::create(void* source, unsigned byteLength)
+PassRefPtr<ArrayBuffer> ArrayBuffer::create(const void* source, unsigned byteLength)
 {
     void* data = tryAllocate(byteLength, 1);
     if (!data)

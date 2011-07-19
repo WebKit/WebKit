@@ -31,20 +31,42 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
+#include "ArrayBuffer.h"
+#include "ArrayBufferView.h"
 #include "Blob.h"
 #include "ByteArray.h"
 #include "CanvasPixelArray.h"
+#include "DataView.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
+#include "Float32Array.h"
+#include "Float64Array.h"
 #include "ImageData.h"
+#include "Int16Array.h"
+#include "Int32Array.h"
+#include "Int8Array.h"
 #include "SharedBuffer.h"
+#include "Uint16Array.h"
+#include "Uint32Array.h"
+#include "Uint8Array.h"
+#include "V8ArrayBuffer.h"
+#include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
+#include "V8DataView.h"
 #include "V8File.h"
 #include "V8FileList.h"
+#include "V8Float32Array.h"
+#include "V8Float64Array.h"
 #include "V8ImageData.h"
+#include "V8Int16Array.h"
+#include "V8Int32Array.h"
+#include "V8Int8Array.h"
 #include "V8Proxy.h"
+#include "V8Uint16Array.h"
+#include "V8Uint32Array.h"
+#include "V8Uint8Array.h"
 #include "V8Utilities.h"
 
 #include <wtf/Assertions.h>
@@ -52,35 +74,144 @@
 #include <wtf/Vector.h>
 
 // FIXME: consider crashing in debug mode on deserialization errors
+// NOTE: be sure to change wireFormatVersion as necessary!
 
 namespace WebCore {
 
 namespace {
 
+// This code implements the HTML5 Structured Clone algorithm:
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/urls.html#safe-passing-of-structured-data
+
+// V8ObjectMap is a map from V8 objects to arbitrary values of type T.
+// V8 objects (or handles to V8 objects) cannot be used as keys in ordinary wtf::HashMaps;
+// this class should be used instead. GCObject must be a subtype of v8::Object.
+// Suggested usage:
+//     V8ObjectMap<v8::Object, int> map;
+//     v8::Handle<v8::Object> obj = ...;
+//     map.set(obj, 42);
+template<typename GCObject, typename T>
+class V8ObjectMap {
+public:
+    bool contains(const v8::Handle<GCObject>& handle)
+    {
+        return m_map.contains(*handle);
+    }
+
+    bool tryGet(const v8::Handle<GCObject>& handle, T* valueOut)
+    {
+        typename HandleToT::iterator result = m_map.find(*handle);
+        if (result != m_map.end()) {
+            *valueOut = result->second;
+            return true;
+        }
+        return false;
+    }
+
+    void set(const v8::Handle<GCObject>& handle, const T& value)
+    {
+        m_map.set(*handle, value);
+    }
+
+    uint32_t size()
+    {
+        return m_map.size();
+    }
+
+private:
+    // This implementation uses GetIdentityHash(), which sets a hidden property on the object containing
+    // a random integer (or returns the one that had been previously set). This ensures that the table
+    // never needs to be rebuilt across garbage collections at the expense of doing additional allocation
+    // and making more round trips into V8. Note that since GetIdentityHash() is defined only on
+    // v8::Objects, this V8ObjectMap cannot be used to map v8::Strings to T (because the public V8 API
+    // considers a v8::String to be a v8::Primitive).
+
+    // If V8 exposes a way to get at the address of the object held by a handle, then we can produce
+    // an alternate implementation that does not need to do any V8-side allocation; however, it will
+    // need to rehash after every garbage collection because a key object may have been moved.
+    template<typename G>
+    struct V8HandlePtrHash {
+        static unsigned hash(const G* key)
+        {
+            v8::Handle<G> objHandle(const_cast<G*>(key));
+            return static_cast<unsigned>(objHandle->GetIdentityHash());
+        }
+        static bool equal(const G* a, const G* b)
+        {
+            return v8::Handle<G>(const_cast<G*>(a)) == v8::Handle<G>(const_cast<G*>(b));
+        }
+        // For HashArg.
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    typedef WTF::HashMap<GCObject*, T, V8HandlePtrHash<GCObject> > HandleToT;
+    HandleToT m_map;
+};
+
 typedef UChar BufferValueType;
 
-// Serialization format is a sequence of (tag, optional data)
-// pairs. Tag always takes exactly one byte.
+// Serialization format is a sequence of tags followed by zero or more data arguments.
+// Tags always take exactly one byte. A serialized stream first begins with
+// a complete VersionTag. If the stream does not begin with a VersionTag, we assume that
+// the stream is in format 0.
+
+// This format is private to the implementation of SerializedScriptValue. Do not rely on it
+// externally. It is safe to persist a SerializedScriptValue as a binary blob, but this
+// code should always be used to interpret it.
+
+// WebCoreStrings are read as (length:uint32_t, string:UTF8[length]).
+// RawStrings are read as (length:uint32_t, string:UTF8[length]).
+// RawFiles are read as (path:WebCoreString, url:WebCoreStrng, type:WebCoreString).
+// There is a reference table that maps object references (uint32_t) to v8::Values.
+// Tokens marked with (ref) are inserted into the reference table and given the next object reference ID after decoding.
+// All tags except InvalidTag, PaddingTag, ReferenceCountTag, VersionTag, GenerateFreshObjectTag
+//     and GenerateFreshArrayTag push their results to the deserialization stack.
+// There is also an 'open' stack that is used to resolve circular references. Objects or arrays may
+//     contain self-references. Before we begin to deserialize the contents of these values, they
+//     are first given object reference IDs (by GenerateFreshObjectTag/GenerateFreshArrayTag);
+//     these reference IDs are then used with ObjectReferenceTag to tie the recursive knot.
 enum SerializationTag {
-    InvalidTag = '!',
-    PaddingTag = '\0',
-    UndefinedTag = '_',
-    NullTag = '0',
-    TrueTag = 'T',
-    FalseTag = 'F',
-    StringTag = 'S',
-    Int32Tag = 'I',
-    Uint32Tag = 'U',
-    DateTag = 'D',
-    NumberTag = 'N',
-    BlobTag = 'b',
-    FileTag = 'f',
-    FileListTag = 'l',
-    ImageDataTag = '#',
-    ArrayTag = '[',
-    ObjectTag = '{',
-    SparseArrayTag = '@',
-    RegExpTag = 'R',
+    InvalidTag = '!', // Causes deserialization to fail.
+    PaddingTag = '\0', // Is ignored (but consumed).
+    UndefinedTag = '_', // -> <undefined>
+    NullTag = '0', // -> <null>
+    TrueTag = 'T', // -> <true>
+    FalseTag = 'F', // -> <false>
+    StringTag = 'S', // string:RawString -> string
+    Int32Tag = 'I', // value:ZigZag-encoded int32 -> Integer
+    Uint32Tag = 'U', // value:uint32_t -> Integer
+    DateTag = 'D', // value:double -> Date (ref)
+    NumberTag = 'N', // value:double -> Number
+    BlobTag = 'b', // url:WebCoreString, type:WebCoreString, size:uint64_t -> Blob (ref)
+    FileTag = 'f', // file:RawFile -> File (ref)
+    FileListTag = 'l', // length:uint32_t, files:RawFile[length] -> FileList (ref)
+    ImageDataTag = '#', // width:uint32_t, height:uint32_t, pixelDataLength:uint32_t, data:byte[pixelDataLength] -> ImageData (ref)
+    ArrayTag = '[', // length:uint32_t -> pops the last array from the open stack;
+                    //                    fills it with the last length elements pushed on the deserialization stack
+    ObjectTag = '{', // numProperties:uint32_t -> pops the last object from the open stack;
+                     //                           fills it with the last numProperties name,value pairs pushed onto the deserialization stack
+    SparseArrayTag = '@', // numProperties:uint32_t, length:uint32_t -> pops the last object from the open stack;
+                          //                                            fills it with the last numProperties name,value pairs pushed onto the deserialization stack
+    RegExpTag = 'R', // pattern:RawString, flags:uint32_t -> RegExp (ref)
+    ArrayBufferTag = 'B', // byteLength:uint32_t, data:byte[byteLength] -> ArrayBuffer (ref)
+    ArrayBufferViewTag = 'V', // subtag:byte, byteOffset:uint32_t, byteLength:uint32_t -> ArrayBufferView (ref). Consumes an ArrayBuffer from the top of the deserialization stack.
+    ObjectReferenceTag = '^', // ref:uint32_t -> reference table[ref]
+    GenerateFreshObjectTag = 'o', // -> empty object allocated an object ID and pushed onto the open stack (ref)
+    GenerateFreshArrayTag = 'a', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
+    ReferenceCountTag = '?', // refTableSize:uint32_t -> If the reference table is not refTableSize big, fails.
+    VersionTag = 0xFF // version:uint32_t -> Uses this as the file version.
+};
+
+enum ArrayBufferViewSubTag {
+    ByteArrayTag = 'b',
+    UnsignedByteArrayTag = 'B',
+    ShortArrayTag = 'w',
+    UnsignedShortArrayTag = 'W',
+    IntArrayTag = 'd',
+    UnsignedIntArrayTag = 'D',
+    FloatArrayTag = 'f',
+    DoubleArrayTag = 'F',
+    DataViewTag = '?'
 };
 
 static bool shouldCheckForCycles(int depth)
@@ -91,6 +222,9 @@ static bool shouldCheckForCycles(int depth)
     // is a power of two.
     return !(depth & (depth - 1));
 }
+
+// Increment this for each incompatible change to the wire format.
+static const uint32_t wireFormatVersion = 1;
 
 static const int maxDepth = 20000;
 
@@ -159,6 +293,12 @@ public:
         doWriteWebCoreString(string);
     }
 
+    void writeVersion()
+    {
+        append(VersionTag);
+        doWriteUint32(wireFormatVersion);
+    }
+
     void writeInt32(int32_t value)
     {
         append(Int32Tag);
@@ -211,6 +351,44 @@ public:
         }
     }
 
+    void writeArrayBuffer(const ArrayBuffer& arrayBuffer)
+    {
+        append(ArrayBufferTag);
+        doWriteArrayBuffer(arrayBuffer);
+    }
+
+    void writeArrayBufferView(const ArrayBufferView& arrayBufferView)
+    {
+        append(ArrayBufferViewTag);
+#ifndef NDEBUG
+        const ArrayBuffer& arrayBuffer = *arrayBufferView.buffer();
+        ASSERT(static_cast<const uint8_t*>(arrayBuffer.data()) + arrayBufferView.byteOffset() ==
+               static_cast<const uint8_t*>(arrayBufferView.baseAddress()));
+#endif
+        if (arrayBufferView.isByteArray())
+            append(ByteArrayTag);
+        else if (arrayBufferView.isUnsignedByteArray())
+            append(UnsignedByteArrayTag);
+        else if (arrayBufferView.isShortArray())
+            append(ShortArrayTag);
+        else if (arrayBufferView.isUnsignedShortArray())
+            append(UnsignedShortArrayTag);
+        else if (arrayBufferView.isIntArray())
+            append(IntArrayTag);
+        else if (arrayBufferView.isUnsignedIntArray())
+            append(UnsignedIntArrayTag);
+        else if (arrayBufferView.isFloatArray())
+            append(FloatArrayTag);
+        else if (arrayBufferView.isDoubleArray())
+            append(DoubleArrayTag);
+        else if (arrayBufferView.isDataView())
+            append(DataViewTag);
+        else
+            ASSERT_NOT_REACHED();
+        doWriteUint32(arrayBufferView.byteOffset());
+        doWriteUint32(arrayBufferView.byteLength());
+    }
+
     void writeImageData(uint32_t width, uint32_t height, const uint8_t* pixelData, uint32_t pixelDataLength)
     {
         append(ImageDataTag);
@@ -234,6 +412,12 @@ public:
         doWriteUint32(length);
     }
 
+    void writeObjectReference(uint32_t reference)
+    {
+        append(ObjectReferenceTag);
+        doWriteUint32(reference);
+    }
+
     void writeObject(uint32_t numProperties)
     {
         append(ObjectTag);
@@ -253,7 +437,31 @@ public:
         return m_buffer;
     }
 
+    void writeReferenceCount(uint32_t numberOfReferences)
+    {
+        append(ReferenceCountTag);
+        doWriteUint32(numberOfReferences);
+    }
+
+    void writeGenerateFreshObject()
+    {
+        append(GenerateFreshObjectTag);
+    }
+
+    void writeGenerateFreshArray(uint32_t length)
+    {
+        append(GenerateFreshArrayTag);
+        doWriteUint32(length);
+    }
+
 private:
+    void doWriteArrayBuffer(const ArrayBuffer& arrayBuffer)
+    {
+        uint32_t byteLength = arrayBuffer.byteLength();
+        doWriteUint32(byteLength);
+        append(static_cast<const uint8_t*>(arrayBuffer.data()), byteLength);
+    }
+
     void doWriteString(const char* data, int length)
     {
         doWriteUint32(static_cast<uint32_t>(length));
@@ -340,6 +548,7 @@ public:
     enum Status {
         Success,
         InputError,
+        DataCloneError,
         JSException,
         JSFailure
     };
@@ -348,7 +557,9 @@ public:
         : m_writer(writer)
         , m_tryCatch(tryCatch)
         , m_depth(0)
+        , m_execDepth(0)
         , m_status(Success)
+        , m_nextObjectReference(0)
     {
         ASSERT(!tryCatch.HasCaught());
     }
@@ -356,6 +567,7 @@ public:
     Status serialize(v8::Handle<v8::Value> value)
     {
         v8::HandleScope scope;
+        m_writer.writeVersion();
         StateBase* state = doSerialize(value, 0);
         while (state)
             state = state->advance(*this);
@@ -363,7 +575,6 @@ public:
     }
 
     // Functions used by serialization states.
-
     StateBase* doSerialize(v8::Handle<v8::Value> value, StateBase* next);
 
     StateBase* checkException(StateBase* state)
@@ -410,6 +621,10 @@ private:
         // the next state to process or null when this is the final
         // state.
         virtual StateBase* advance(Serializer&) = 0;
+
+        // Returns 1 if this state is currently serializing a property
+        // via an accessor and 0 otherwise.
+        virtual uint32_t execDepth() const { return 0; }
 
     protected:
         StateBase(v8::Handle<v8::Value> composite, StateBase* next)
@@ -485,11 +700,13 @@ private:
             , m_index(0)
             , m_numSerializedProperties(0)
             , m_nameDone(false)
+            , m_isSerializingAccessor(false)
         {
         }
 
         virtual StateBase* advance(Serializer& serializer)
         {
+            m_isSerializingAccessor = false;
             if (!m_index) {
                 m_propertyNames = composite()->GetPropertyNames();
                 if (StateBase* newState = serializer.checkException(this))
@@ -498,6 +715,7 @@ private:
                     return serializer.reportFailure(this);
             }
             while (m_index < m_propertyNames->Length()) {
+                bool isAccessor = false;
                 if (!m_nameDone) {
                     v8::Local<v8::Value> propertyName = m_propertyNames->Get(m_index);
                     if (StateBase* newState = serializer.checkException(this))
@@ -508,6 +726,9 @@ private:
                     if (StateBase* newState = serializer.checkException(this))
                         return newState;
                     bool hasIndexedProperty = !hasStringProperty && propertyName->IsUint32() && composite()->HasRealIndexedProperty(propertyName->Uint32Value());
+                    if (StateBase* newState = serializer.checkException(this))
+                        return newState;
+                    isAccessor = hasStringProperty && composite()->HasRealNamedCallbackProperty(propertyName.As<v8::String>());
                     if (StateBase* newState = serializer.checkException(this))
                         return newState;
                     if (hasStringProperty || hasIndexedProperty)
@@ -530,11 +751,20 @@ private:
                 m_propertyName.Clear();
                 ++m_index;
                 ++m_numSerializedProperties;
+                m_isSerializingAccessor = isAccessor;
+                // If we return early here, it's either because we have pushed a new state onto the
+                // serialization state stack or because we have encountered an error (and in both cases
+                // we are unwinding the native stack). We reset m_isSerializingAccessor at the beginning
+                // of advance() for this case (because advance() will be called on us again once we
+                // are the top of the stack).
                 if (StateBase* newState = serializer.doSerialize(value, this))
                     return newState;
+                m_isSerializingAccessor = false;
             }
             return objectDone(m_numSerializedProperties, serializer);
         }
+
+        virtual uint32_t execDepth() const { return m_isSerializingAccessor ? 1 : 0; }
 
     protected:
         virtual StateBase* objectDone(unsigned numProperties, Serializer&) = 0;
@@ -545,6 +775,9 @@ private:
         unsigned m_index;
         unsigned m_numSerializedProperties;
         bool m_nameDone;
+        // Used along with execDepth() to determine the number of
+        // accessors under which the serializer is currently serializing.
+        bool m_isSerializingAccessor;
     };
 
     class ObjectState : public AbstractObjectState {
@@ -575,9 +808,16 @@ private:
         }
     };
 
+    uint32_t execDepth() const
+    {
+        return m_execDepth;
+    }
+
     StateBase* push(StateBase* state)
     {
         ASSERT(state);
+        if (state->nextState())
+            m_execDepth += state->nextState()->execDepth();
         ++m_depth;
         return checkComposite(state) ? state : handleError(InputError, state);
     }
@@ -587,6 +827,8 @@ private:
         ASSERT(state);
         --m_depth;
         StateBase* next = state->nextState();
+        if (next)
+            m_execDepth -= next->execDepth();
         delete state;
         return next;
     }
@@ -599,6 +841,8 @@ private:
             StateBase* tmp = state->nextState();
             delete state;
             state = tmp;
+            if (state)
+                m_execDepth -= state->execDepth();
         }
         return new ErrorState;
     }
@@ -663,6 +907,39 @@ private:
         m_writer.writeRegExp(regExp->GetSource(), regExp->GetFlags());
     }
 
+    StateBase* writeAndGreyArrayBufferView(v8::Handle<v8::Object> object, StateBase* next)
+    {
+        ASSERT(!object.IsEmpty());
+        ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(object);
+        if (!arrayBufferView)
+            return 0;
+        v8::Handle<v8::Value> underlyingBuffer = toV8(arrayBufferView->buffer());
+        if (underlyingBuffer.IsEmpty())
+            return handleError(DataCloneError, next);
+        StateBase* stateOut = doSerialize(underlyingBuffer, 0);
+        if (stateOut)
+            return handleError(DataCloneError, next);
+        m_writer.writeArrayBufferView(*arrayBufferView);
+        // This should be safe: we serialize something that we know to be a wrapper (see
+        // the toV8 call above), so the call to doSerialize above should neither cause
+        // the stack to overflow nor should it have the potential to reach this
+        // ArrayBufferView again. We do need to grey the underlying buffer before we grey
+        // its view, however; ArrayBuffers may be shared, so they need to be given reference IDs,
+        // and an ArrayBufferView cannot be constructed without a corresponding ArrayBuffer
+        // (or without an additional tag that would allow us to do two-stage construction
+        // like we do for Objects and Arrays).
+        greyObject(object);
+        return 0;
+    }
+
+    void writeArrayBuffer(v8::Handle<v8::Value> value)
+    {
+        ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(value.As<v8::Object>());
+        if (!arrayBuffer)
+            return;
+        m_writer.writeArrayBuffer(*arrayBuffer);
+    }
+
     static StateBase* newArrayState(v8::Handle<v8::Array> array, StateBase* next)
     {
         // FIXME: use plain Array state when we can quickly check that
@@ -676,17 +953,42 @@ private:
         return new ObjectState(object, next);
     }
 
+    // Marks object as having been visited by the serializer and assigns it a unique object reference ID.
+    // An object may only be greyed once.
+    void greyObject(const v8::Handle<v8::Object>& object)
+    {
+        ASSERT(!m_objectPool.contains(object));
+        uint32_t objectReference = m_nextObjectReference++;
+        m_objectPool.set(object, objectReference);
+    }
+
     Writer& m_writer;
     v8::TryCatch& m_tryCatch;
     int m_depth;
+    int m_execDepth;
     Status m_status;
+    typedef V8ObjectMap<v8::Object, uint32_t> ObjectPool;
+    ObjectPool m_objectPool;
+    uint32_t m_nextObjectReference;
 };
 
 Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, StateBase* next)
 {
-    if (value.IsEmpty())
+    if (m_execDepth + (next ? next->execDepth() : 0) > 1) {
+        m_writer.writeNull();
+        return 0;
+    }
+    m_writer.writeReferenceCount(m_nextObjectReference);
+    uint32_t objectReference;
+    if ((value->IsObject() || value->IsDate() || value->IsRegExp())
+        && m_objectPool.tryGet(value.As<v8::Object>(), &objectReference)) {
+        // Note that IsObject() also detects wrappers (eg, it will catch the things
+        // that we grey and write below).
+        ASSERT(!value->IsString());
+        m_writer.writeObjectReference(objectReference);
+    } else if (value.IsEmpty())
         return reportFailure(next);
-    if (value->IsUndefined())
+    else if (value->IsUndefined())
         m_writer.writeUndefined();
     else if (value->IsNull())
         m_writer.writeNull();
@@ -698,26 +1000,43 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         m_writer.writeInt32(value->Int32Value());
     else if (value->IsUint32())
         m_writer.writeUint32(value->Uint32Value());
-    else if (value->IsDate())
-        m_writer.writeDate(value->NumberValue());
     else if (value->IsNumber())
         m_writer.writeNumber(value.As<v8::Number>()->Value());
+    else if (V8ArrayBufferView::HasInstance(value))
+        return writeAndGreyArrayBufferView(value.As<v8::Object>(), next);
     else if (value->IsString())
         writeString(value);
-    else if (value->IsArray())
-        return push(newArrayState(value.As<v8::Array>(), next));
-    else if (V8File::HasInstance(value))
-        writeFile(value);
-    else if (V8Blob::HasInstance(value))
-        writeBlob(value);
-    else if (V8FileList::HasInstance(value))
-        writeFileList(value);
-    else if (V8ImageData::HasInstance(value))
-        writeImageData(value);
-    else if (value->IsRegExp())
-        writeRegExp(value);
-    else if (value->IsObject())
-        return push(newObjectState(value.As<v8::Object>(), next));
+    else {
+        v8::Handle<v8::Object> jsObject = value.As<v8::Object>();
+        if (jsObject.IsEmpty())
+            return handleError(DataCloneError, next);
+        greyObject(jsObject);
+        if (value->IsDate())
+            m_writer.writeDate(value->NumberValue());
+        else if (value->IsArray()) {
+            m_writer.writeGenerateFreshArray(value.As<v8::Array>()->Length());
+            return push(newArrayState(value.As<v8::Array>(), next));
+        } else if (V8File::HasInstance(value))
+            writeFile(value);
+        else if (V8Blob::HasInstance(value))
+            writeBlob(value);
+        else if (V8FileList::HasInstance(value))
+            writeFileList(value);
+        else if (V8ImageData::HasInstance(value))
+            writeImageData(value);
+        else if (value->IsRegExp())
+            writeRegExp(value);
+        else if (V8ArrayBuffer::HasInstance(value))
+            writeArrayBuffer(value);
+        else if (value->IsObject()) {
+            // FIXME: We need to check if jsObject is a 'native Error' and if so throw a DataCloneError.
+            if (isHostObject(jsObject) || jsObject->IsCallable())
+                return handleError(DataCloneError, next);
+            m_writer.writeGenerateFreshObject();
+            return push(newObjectState(jsObject, next));
+        } else
+            return handleError(DataCloneError, next);
+    }
     return 0;
 }
 
@@ -726,9 +1045,15 @@ class CompositeCreator {
 public:
     virtual ~CompositeCreator() { }
 
-    virtual bool createArray(uint32_t length, v8::Handle<v8::Value>* value) = 0;
-    virtual bool createObject(uint32_t numProperties, v8::Handle<v8::Value>* value) = 0;
-    virtual bool createSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value) = 0;
+    virtual bool consumeTopOfStack(v8::Handle<v8::Value>*) = 0;
+    virtual uint32_t objectReferenceCount() = 0;
+    virtual void pushObjectReference(const v8::Handle<v8::Value>&) = 0;
+    virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>*) = 0;
+    virtual bool newArray(uint32_t length) = 0;
+    virtual bool newObject() = 0;
+    virtual bool completeArray(uint32_t length, v8::Handle<v8::Value>*) = 0;
+    virtual bool completeObject(uint32_t numProperties, v8::Handle<v8::Value>*) = 0;
+    virtual bool completeSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>*) = 0;
 };
 
 // Reader is responsible for deserializing primitive types and
@@ -739,6 +1064,7 @@ public:
         : m_buffer(buffer)
         , m_length(length)
         , m_position(0)
+        , m_version(0)
     {
         ASSERT(length >= 0);
     }
@@ -751,6 +1077,19 @@ public:
         if (!readTag(&tag))
             return false;
         switch (tag) {
+        case ReferenceCountTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t referenceTableSize;
+            if (!doReadUint32(&referenceTableSize))
+                return false;
+            // If this test fails, then the serializer and deserializer disagree about the assignment
+            // of object reference IDs. On the deserialization side, this means there are too many or too few
+            // calls to pushObjectReference.
+            if (referenceTableSize != creator.objectReferenceCount())
+                return false;
+            return true;
+        }
         case InvalidTag:
             return false;
         case PaddingTag:
@@ -782,6 +1121,7 @@ public:
         case DateTag:
             if (!readDate(value))
                 return false;
+            creator.pushObjectReference(*value);
             break;
         case NumberTag:
             if (!readNumber(value))
@@ -790,36 +1130,41 @@ public:
         case BlobTag:
             if (!readBlob(value))
                 return false;
+            creator.pushObjectReference(*value);
             break;
         case FileTag:
             if (!readFile(value))
                 return false;
+            creator.pushObjectReference(*value);
             break;
         case FileListTag:
             if (!readFileList(value))
                 return false;
+            creator.pushObjectReference(*value);
             break;
         case ImageDataTag:
             if (!readImageData(value))
                 return false;
+            creator.pushObjectReference(*value);
             break;
         case ArrayTag: {
             uint32_t length;
             if (!doReadUint32(&length))
                 return false;
-            if (!creator.createArray(length, value))
+            if (!creator.completeArray(length, value))
                 return false;
             break;
         }
         case RegExpTag:
             if (!readRegExp(value))
                 return false;
+            creator.pushObjectReference(*value);
             break;
         case ObjectTag: {
             uint32_t numProperties;
             if (!doReadUint32(&numProperties))
                 return false;
-            if (!creator.createObject(numProperties, value))
+            if (!creator.completeObject(numProperties, value))
                 return false;
             break;
         }
@@ -830,7 +1175,50 @@ public:
                 return false;
             if (!doReadUint32(&length))
                 return false;
-            if (!creator.createSparseArray(numProperties, length, value))
+            if (!creator.completeSparseArray(numProperties, length, value))
+                return false;
+            break;
+        }
+        case ArrayBufferViewTag: {
+            if (m_version <= 0)
+                return false;
+            if (!readArrayBufferView(value, creator))
+                return false;
+            creator.pushObjectReference(*value);
+            break;
+        }
+        case ArrayBufferTag: {
+            if (m_version <= 0)
+                return false;
+            if (!readArrayBuffer(value))
+                return false;
+            creator.pushObjectReference(*value);
+            break;
+        }
+        case GenerateFreshObjectTag: {
+            if (m_version <= 0)
+                return false;
+            if (!creator.newObject())
+                return false;
+            return true;
+        }
+        case GenerateFreshArrayTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t length;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.newArray(length))
+                return false;
+            return true;
+        }
+        case ObjectReferenceTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t reference;
+            if (!doReadUint32(&reference))
+                return false;
+            if (!creator.tryGetObjectFromObjectReference(reference, value))
                 return false;
             break;
         }
@@ -840,12 +1228,50 @@ public:
         return !value->IsEmpty();
     }
 
+    bool readVersion(uint32_t& version)
+    {
+        SerializationTag tag;
+        if (!readTag(&tag)) {
+            // This is a nullary buffer. We're still version 0.
+            version = 0;
+            return true;
+        }
+        if (tag != VersionTag) {
+            // Versions of the format past 0 start with the version tag.
+            version = 0;
+            // Put back the tag.
+            undoReadTag();
+            return true;
+        }
+        // Version-bearing messages are obligated to finish the version tag.
+        return doReadUint32(&version);
+    }
+
+    void setVersion(uint32_t version)
+    {
+        m_version = version;
+    }
+
 private:
     bool readTag(SerializationTag* tag)
     {
         if (m_position >= m_length)
             return false;
         *tag = static_cast<SerializationTag>(m_buffer[m_position++]);
+        return true;
+    }
+
+    void undoReadTag()
+    {
+        if (m_position > 0)
+            --m_position;
+    }
+
+    bool readArrayBufferViewSubTag(ArrayBufferViewSubTag* tag)
+    {
+        if (m_position >= m_length)
+            return false;
+        *tag = static_cast<ArrayBufferViewSubTag>(m_buffer[m_position++]);
         return true;
     }
 
@@ -930,6 +1356,107 @@ private:
         m_position += pixelDataLength;
         *value = toV8(imageData.release());
         return true;
+    }
+
+    PassRefPtr<ArrayBuffer> doReadArrayBuffer()
+    {
+        uint32_t byteLength;
+        if (!doReadUint32(&byteLength))
+            return 0;
+        if (m_position + byteLength > m_length)
+            return 0;
+        const void* bufferStart = m_buffer + m_position;
+        RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::create(bufferStart, byteLength);
+        m_position += byteLength;
+        return arrayBuffer.release();
+    }
+
+    bool readArrayBuffer(v8::Handle<v8::Value>* value)
+    {
+        RefPtr<ArrayBuffer> arrayBuffer = doReadArrayBuffer();
+        if (!arrayBuffer)
+            return false;
+        *value = toV8(arrayBuffer.release());
+        return true;
+    }
+
+    bool readArrayBufferView(v8::Handle<v8::Value>* value, CompositeCreator& creator)
+    {
+        ArrayBufferViewSubTag subTag;
+        uint32_t byteOffset;
+        uint32_t byteLength;
+        RefPtr<ArrayBuffer> arrayBuffer;
+        v8::Handle<v8::Value> arrayBufferV8Value;
+        if (!readArrayBufferViewSubTag(&subTag))
+            return false;
+        if (!doReadUint32(&byteOffset))
+            return false;
+        if (!doReadUint32(&byteLength))
+            return false;
+        if (!creator.consumeTopOfStack(&arrayBufferV8Value))
+            return false;
+        arrayBuffer = V8ArrayBuffer::toNative(arrayBufferV8Value.As<v8::Object>());
+        if (!arrayBuffer)
+            return false;
+        switch (subTag) {
+        case ByteArrayTag:
+            *value = toV8(Int8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        case UnsignedByteArrayTag:
+            *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        case ShortArrayTag: {
+            uint32_t shortLength = byteLength / sizeof(int16_t);
+            if (shortLength * sizeof(int16_t) != byteLength)
+                return false;
+            *value = toV8(Int16Array::create(arrayBuffer.release(), byteOffset, shortLength));
+            break;
+        }
+        case UnsignedShortArrayTag: {
+            uint32_t shortLength = byteLength / sizeof(uint16_t);
+            if (shortLength * sizeof(uint16_t) != byteLength)
+                return false;
+            *value = toV8(Uint16Array::create(arrayBuffer.release(), byteOffset, shortLength));
+            break;
+        }
+        case IntArrayTag: {
+            uint32_t intLength = byteLength / sizeof(int32_t);
+            if (intLength * sizeof(int32_t) != byteLength)
+                return false;
+            *value = toV8(Int32Array::create(arrayBuffer.release(), byteOffset, intLength));
+            break;
+        }
+        case UnsignedIntArrayTag: {
+            uint32_t intLength = byteLength / sizeof(uint32_t);
+            if (intLength * sizeof(uint32_t) != byteLength)
+                return false;
+            *value = toV8(Uint32Array::create(arrayBuffer.release(), byteOffset, intLength));
+            break;
+        }
+        case FloatArrayTag: {
+            uint32_t floatLength = byteLength / sizeof(float);
+            if (floatLength * sizeof(float) != byteLength)
+                return false;
+            *value = toV8(Float32Array::create(arrayBuffer.release(), byteOffset, floatLength));
+            break;
+        }
+        case DoubleArrayTag: {
+            uint32_t floatLength = byteLength / sizeof(double);
+            if (floatLength * sizeof(double) != byteLength)
+                return false;
+            *value = toV8(Float64Array::create(arrayBuffer.release(), byteOffset, floatLength));
+            break;
+        }
+        case DataViewTag:
+            *value = toV8(DataView::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        default:
+            return false;
+        }
+        // The various *Array::create() methods will return null if the range the view expects is
+        // mismatched with the range the buffer can provide or if the byte offset is not aligned
+        // to the size of the element type.
+        return !value->IsEmpty();
     }
 
     bool readRegExp(v8::Handle<v8::Value>* value)
@@ -1037,35 +1564,67 @@ private:
     const uint8_t* m_buffer;
     const unsigned m_length;
     unsigned m_position;
+    uint32_t m_version;
 };
 
 class Deserializer : public CompositeCreator {
 public:
     explicit Deserializer(Reader& reader)
         : m_reader(reader)
+        , m_version(0)
     {
     }
 
     v8::Handle<v8::Value> deserialize()
     {
+        if (!m_reader.readVersion(m_version) || m_version > wireFormatVersion)
+            return v8::Null();
+        m_reader.setVersion(m_version);
         v8::HandleScope scope;
         while (!m_reader.isEof()) {
             if (!doDeserialize())
                 return v8::Null();
         }
-        if (stackDepth() != 1)
+        if (stackDepth() != 1 || m_objectReferenceStack.size())
             return v8::Null();
-        return scope.Close(element(0));
+        v8::Handle<v8::Value> result = scope.Close(element(0));
+        return result;
     }
 
-    virtual bool createArray(uint32_t length, v8::Handle<v8::Value>* value)
+    virtual bool newArray(uint32_t length)
     {
-        if (length > stackDepth())
-            return false;
         v8::Local<v8::Array> array = v8::Array::New(length);
         if (array.IsEmpty())
             return false;
+        openComposite(array);
+        return true;
+    }
+
+    virtual bool consumeTopOfStack(v8::Handle<v8::Value>* object)
+    {
+        if (stackDepth() < 1)
+            return false;
+        *object = element(stackDepth() - 1);
+        pop(1);
+        return true;
+    }
+
+    virtual bool completeArray(uint32_t length, v8::Handle<v8::Value>* value)
+    {
+        if (length > stackDepth())
+            return false;
+        v8::Local<v8::Array> array;
+        if (m_version > 0) {
+            v8::Local<v8::Value> composite;
+            if (!closeComposite(&composite))
+                return false;
+            array = composite.As<v8::Array>();
+        } else
+            array = v8::Array::New(length);
+        if (array.IsEmpty())
+            return false;
         const int depth = stackDepth() - length;
+        // The V8 API ensures space exists for any index argument to Set; it will (eg) resize arrays as necessary.
         for (unsigned i = 0; i < length; ++i)
             array->Set(i, element(depth + i));
         pop(length);
@@ -1073,20 +1632,61 @@ public:
         return true;
     }
 
-    virtual bool createObject(uint32_t numProperties, v8::Handle<v8::Value>* value)
+    virtual bool newObject()
     {
         v8::Local<v8::Object> object = v8::Object::New();
+        if (object.IsEmpty())
+            return false;
+        openComposite(object);
+        return true;
+    }
+
+    virtual bool completeObject(uint32_t numProperties, v8::Handle<v8::Value>* value)
+    {
+        v8::Local<v8::Object> object;
+        if (m_version > 0) {
+            v8::Local<v8::Value> composite;
+            if (!closeComposite(&composite))
+                return false;
+            object = composite.As<v8::Object>();
+        } else
+            object = v8::Object::New();
         if (object.IsEmpty())
             return false;
         return initializeObject(object, numProperties, value);
     }
 
-    virtual bool createSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value)
+    virtual bool completeSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value)
     {
-        v8::Local<v8::Array> array = v8::Array::New(length);
+        v8::Local<v8::Array> array;
+        if (m_version > 0) {
+            v8::Local<v8::Value> composite;
+            if (!closeComposite(&composite))
+                return false;
+            array = composite.As<v8::Array>();
+        } else
+            array = v8::Array::New(length);
         if (array.IsEmpty())
             return false;
         return initializeObject(array, numProperties, value);
+    }
+
+    virtual void pushObjectReference(const v8::Handle<v8::Value>& object)
+    {
+        m_objectPool.append(object);
+    }
+
+    virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>* object)
+    {
+        if (reference >= m_objectPool.size())
+            return false;
+        *object = m_objectPool[reference];
+        return object;
+    }
+
+    virtual uint32_t objectReferenceCount()
+    {
+        return m_objectPool.size();
     }
 
 private:
@@ -1131,8 +1731,30 @@ private:
         return m_stack[index];
     }
 
+    void openComposite(const v8::Local<v8::Value>& object)
+    {
+        uint32_t newObjectReference = m_objectPool.size();
+        m_objectReferenceStack.append(newObjectReference);
+        m_objectPool.append(object);
+    }
+
+    bool closeComposite(v8::Handle<v8::Value>* object)
+    {
+        if (!m_objectReferenceStack.size())
+            return false;
+        uint32_t objectReference = m_objectReferenceStack[m_objectReferenceStack.size() - 1];
+        m_objectReferenceStack.shrink(m_objectReferenceStack.size() - 1);
+        if (objectReference >= m_objectPool.size())
+            return false;
+        *object = m_objectPool[objectReference];
+        return true;
+    }
+
     Reader& m_reader;
     Vector<v8::Local<v8::Value> > m_stack;
+    Vector<v8::Handle<v8::Value> > m_objectPool;
+    Vector<uint32_t> m_objectReferenceStack;
+    uint32_t m_version;
 };
 
 } // namespace
@@ -1232,22 +1854,28 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
             return;
         }
     }
-    if (status == Serializer::InputError) {
+    switch (status) {
+    case Serializer::InputError:
+    case Serializer::DataCloneError:
         // If there was an input error, throw a new exception outside
         // of the TryCatch scope.
         didThrow = true;
-        throwError(NOT_SUPPORTED_ERR);
+        throwError(DATA_CLONE_ERR);
         return;
-    }
-    if (status == Serializer::JSFailure) {
+    case Serializer::JSFailure:
         // If there was a JS failure (but no exception), there's not
         // much we can do except for unwinding the C++ stack by
         // pretending there was a JS exception.
         didThrow = true;
         return;
+    case Serializer::Success:
+        m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
+        return;
+    case Serializer::JSException:
+        // We should never get here because this case was handled above.
+        break;
     }
-    ASSERT(status == Serializer::Success);
-    m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
+    ASSERT_NOT_REACHED();
 }
 
 SerializedScriptValue::SerializedScriptValue(const String& wireData)

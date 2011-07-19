@@ -72,7 +72,10 @@ static const char* const exceptionNames[] = {
     "NETWORK_ERR",
     "ABORT_ERR",
     "URL_MISMATCH_ERR",
-    "QUOTA_EXCEEDED_ERR"
+    "QUOTA_EXCEEDED_ERR",
+    "TIMEOUT_ERR",
+    "INVALID_NODE_TYPE_ERR",
+    "DATA_CLONE_ERR"
 };
 
 static const char* const exceptionDescriptions[] = {
@@ -98,7 +101,10 @@ static const char* const exceptionDescriptions[] = {
     "A network error occured.",
     "The user aborted a request.",
     "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL.",
-    "An attempt was made to add something to storage that exceeded the quota."
+    "An attempt was made to add something to storage that exceeded the quota.",
+    "A timeout occurred.",
+    "The supplied node is invalid or has an invalid ancestor for this operation.",
+    "An object could not be cloned."
 };
 
 static const char* const rangeExceptionNames[] = {
