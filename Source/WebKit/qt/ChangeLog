@@ -1,3 +1,18 @@
+2011-07-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Fix leak of QWebPage in errorPageExtension tests
+        https://bugs.webkit.org/show_bug.cgi?id=64814
+
+        Reviewed by Noam Rosenthal.
+
+        QWebView::setPage() doesn't take ownership, so the ErrorPages were leaking. So now
+        allocate them on the stack. This shouldn't change any behavior.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::errorPageExtension):
+        (tst_QWebPage::errorPageExtensionInIFrames):
+        (tst_QWebPage::errorPageExtensionInFrameset):
+
 2011-07-18  Hui Huang  <hui.2.huang@nokia.com>
 
         [Qt] Compiling error in Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp with Qt 4.7 or older

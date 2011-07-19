@@ -2511,42 +2511,42 @@ public:
 
 void tst_QWebPage::errorPageExtension()
 {
-    ErrorPage* page = new ErrorPage;
-    m_view->setPage(page);
+    ErrorPage page;
+    m_view->setPage(&page);
 
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
 
     m_view->setUrl(QUrl("data:text/html,foo"));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
 
-    page->mainFrame()->setUrl(QUrl("http://non.existent/url"));
+    page.mainFrame()->setUrl(QUrl("http://non.existent/url"));
     QTRY_COMPARE(spyLoadFinished.count(), 2);
-    QCOMPARE(page->mainFrame()->toPlainText(), QString("error"));
-    QCOMPARE(page->history()->count(), 2);
-    QCOMPARE(page->history()->currentItem().url(), QUrl("http://non.existent/url"));
-    QCOMPARE(page->history()->canGoBack(), true);
-    QCOMPARE(page->history()->canGoForward(), false);
+    QCOMPARE(page.mainFrame()->toPlainText(), QString("error"));
+    QCOMPARE(page.history()->count(), 2);
+    QCOMPARE(page.history()->currentItem().url(), QUrl("http://non.existent/url"));
+    QCOMPARE(page.history()->canGoBack(), true);
+    QCOMPARE(page.history()->canGoForward(), false);
 
-    page->triggerAction(QWebPage::Back);
-    QTRY_COMPARE(page->history()->canGoBack(), false);
-    QTRY_COMPARE(page->history()->canGoForward(), true);
+    page.triggerAction(QWebPage::Back);
+    QTRY_COMPARE(page.history()->canGoBack(), false);
+    QTRY_COMPARE(page.history()->canGoForward(), true);
 
-    page->triggerAction(QWebPage::Forward);
-    QTRY_COMPARE(page->history()->canGoBack(), true);
-    QTRY_COMPARE(page->history()->canGoForward(), false);
+    page.triggerAction(QWebPage::Forward);
+    QTRY_COMPARE(page.history()->canGoBack(), true);
+    QTRY_COMPARE(page.history()->canGoForward(), false);
 
-    page->triggerAction(QWebPage::Back);
-    QTRY_COMPARE(page->history()->canGoBack(), false);
-    QTRY_COMPARE(page->history()->canGoForward(), true);
-    QTRY_COMPARE(page->history()->currentItem().url(), QUrl("data:text/html,foo"));
+    page.triggerAction(QWebPage::Back);
+    QTRY_COMPARE(page.history()->canGoBack(), false);
+    QTRY_COMPARE(page.history()->canGoForward(), true);
+    QTRY_COMPARE(page.history()->currentItem().url(), QUrl("data:text/html,foo"));
 
     m_view->setPage(0);
 }
 
 void tst_QWebPage::errorPageExtensionInIFrames()
 {
-    ErrorPage* page = new ErrorPage;
-    m_view->setPage(page);
+    ErrorPage page;
+    m_view->setPage(&page);
 
     m_view->page()->mainFrame()->load(QUrl(
         "data:text/html,"
@@ -2556,22 +2556,22 @@ void tst_QWebPage::errorPageExtensionInIFrames()
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
 
-    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
+    QCOMPARE(page.mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
 
     m_view->setPage(0);
 }
 
 void tst_QWebPage::errorPageExtensionInFrameset()
 {
-    ErrorPage* page = new ErrorPage;
-    m_view->setPage(page);
+    ErrorPage page;
+    m_view->setPage(&page);
 
     m_view->load(QUrl("qrc:///resources/index.html"));
 
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
-    QCOMPARE(page->mainFrame()->childFrames().count(), 2);
-    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
+    QCOMPARE(page.mainFrame()->childFrames().count(), 2);
+    QCOMPARE(page.mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
 
     m_view->setPage(0);
 }
