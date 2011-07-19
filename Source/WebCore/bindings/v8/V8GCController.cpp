@@ -389,14 +389,6 @@ public:
                 if (!values.isEmpty())
                     v8::V8::AddImplicitReferences(wrapper, values.data(), values.size());
             }
-
-        } else if (typeInfo->isSubclass(&V8CSSRuleList::info)) {
-            CSSRuleList* cssRuleList = static_cast<CSSRuleList*>(object);
-            GroupId groupId(cssRuleList);
-            StyleList* styleList = cssRuleList->styleList();
-            if (styleList)
-                groupId = calculateGroupId(styleList);
-            m_grouper.append(GrouperItem(groupId, wrapper));
         }
     }
 
