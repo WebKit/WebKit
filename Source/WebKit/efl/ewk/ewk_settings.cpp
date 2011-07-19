@@ -44,11 +44,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if USE(SOUP)
-#include "ResourceHandle.h"
-#include <libsoup/soup.h>
-#endif
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #include "appcache/ApplicationCacheStorage.h"
 
@@ -289,56 +284,6 @@ Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* c
 
     surface = icon->nativeImageForCurrentFrame();
     return ewk_util_image_from_cairo_surface_add(canvas, surface);
-}
-
-/**
- * Sets the given proxy URI to network backend.
- *
- * @param proxy URI to set
- */
-void ewk_settings_proxy_uri_set(const char* proxy)
-{
-#if USE(SOUP)
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-
-    if (!proxy) {
-        ERR("no proxy uri. remove proxy feature in soup.");
-        soup_session_remove_feature_by_type(session, SOUP_TYPE_PROXY_RESOLVER);
-        return;
-    }
-
-    SoupURI* uri = soup_uri_new(proxy);
-    EINA_SAFETY_ON_NULL_RETURN(uri);
-
-    g_object_set(session, SOUP_SESSION_PROXY_URI, uri, NULL);
-    soup_uri_free(uri);
-#elif USE(CURL)
-    EINA_SAFETY_ON_TRUE_RETURN(1);
-#endif
-}
-
-/**
- * Gets the proxy URI from the network backend.
- *
- * @return current proxy URI or @c 0 if it's not set
- */
-const char* ewk_settings_proxy_uri_get(void)
-{
-#if USE(SOUP)
-    SoupURI* uri;
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    g_object_get(session, SOUP_SESSION_PROXY_URI, &uri, NULL);
-
-    if (!uri) {
-        ERR("no proxy uri");
-        return 0;
-    }
-
-    WTF::String proxy = soup_uri_to_string(uri, EINA_FALSE);
-    return eina_stringshare_add(proxy.utf8().data());
-#elif USE(CURL)
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
-#endif
 }
 
 /**

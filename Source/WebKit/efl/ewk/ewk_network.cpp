@@ -1,0 +1,93 @@
+/*
+    Copyright (C) 2011 Samsung Electronics
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
+
+#include "config.h"
+#include "ewk_network.h"
+
+#include "NetworkStateNotifier.h"
+#include "ewk_logging.h"
+#include <Eina.h>
+#include <wtf/text/CString.h>
+
+#if USE(SOUP)
+#include "ResourceHandle.h"
+#include <libsoup/soup.h>
+#endif
+
+/**
+ * Sets the given proxy URI to network backend.
+ *
+ * @param proxy URI to set.
+ */
+void ewk_network_proxy_uri_set(const char* proxy)
+{
+#if USE(SOUP)
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+
+    if (!proxy) {
+        ERR("no proxy uri. remove proxy feature in soup.");
+        soup_session_remove_feature_by_type(session, SOUP_TYPE_PROXY_RESOLVER);
+        return;
+    }
+
+    SoupURI* uri = soup_uri_new(proxy);
+    EINA_SAFETY_ON_NULL_RETURN(uri);
+
+    g_object_set(session, SOUP_SESSION_PROXY_URI, uri, NULL);
+    soup_uri_free(uri);
+#elif USE(CURL)
+    EINA_SAFETY_ON_TRUE_RETURN(1);
+#endif
+}
+
+/**
+ * Gets the proxy URI from the network backend.
+ *
+ * The returned string should be freed by eina_stringshare_del() after use.
+ *
+ * @return current proxy URI or @c 0 if it's not set.
+ */
+const char* ewk_network_proxy_uri_get(void)
+{
+#if USE(SOUP)
+    SoupURI* uri;
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    g_object_get(session, SOUP_SESSION_PROXY_URI, &uri, NULL);
+
+    if (!uri) {
+        ERR("no proxy uri");
+        return 0;
+    }
+
+    WTF::String proxy = soup_uri_to_string(uri, EINA_FALSE);
+    return eina_stringshare_add(proxy.utf8().data());
+#elif USE(CURL)
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
+#endif
+}
+
+/**
+ * Sets if network backend is online or not.
+ * 
+ * @param online @c EINA_FALSE if network is disconnected.
+ */
+void ewk_network_state_notifier_online_set(Eina_Bool online)
+{
+    WebCore::networkStateNotifier().setOnLine(online);
+}

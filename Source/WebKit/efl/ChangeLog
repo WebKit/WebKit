@@ -1,3 +1,24 @@
+2011-07-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add ewk_network.cpp|h files.
+        https://bugs.webkit.org/show_bug.cgi?id=63315
+
+        ewk_network.cpp|h files are added to ewk in order to support APIs related to networking.
+        In addition, ewk_network_state_notifier_online_set() is added to ewk_network.cpp in order
+        to notify NetworkStateNotifier of network status.
+
+        Reviewed by Antonio Gomes.
+
+        * CMakeListsEfl.txt:
+        * ewk/EWebKit.h:
+        * ewk/ewk_network.cpp: Added.
+        (ewk_network_proxy_uri_set):
+        (ewk_network_proxy_uri_get):
+        (ewk_network_state_notifier_online_set):
+        * ewk/ewk_network.h:
+        * ewk/ewk_settings.cpp:
+        * ewk/ewk_settings.h:
+
 2011-07-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides

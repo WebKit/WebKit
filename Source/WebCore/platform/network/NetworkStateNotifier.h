@@ -68,7 +68,7 @@ public:
 
 #if (PLATFORM(QT) && USE(QT_BEARER))
     void setNetworkAccessAllowed(bool);
-#elif PLATFORM(ANDROID) || PLATFORM(CHROMIUM)
+#elif PLATFORM(ANDROID) || PLATFORM(CHROMIUM) || PLATFORM(EFL)
     void setOnLine(bool);
 #endif
 

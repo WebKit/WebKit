@@ -1,7 +1,5 @@
 /*
-    Copyright (C) 2008-2009 INdT - Instituto Nokia de Tecnologia
-    Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2011 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,26 +18,25 @@
 */
 
 /**
- * @file    EWebKit.h
- * @brief   Contains the header files that are required by WebKit-EFL.
- *
- * It includes the all header files that are exported to public API and Evas header.
+ * @file    ewk_network.h
+ * @brief   Describes the network API.
  */
 
-#ifndef EWebKit_h
-#define EWebKit_h
+#ifndef ewk_network_h
+#define ewk_network_h
 
-#include "ewk_auth.h"
-#include "ewk_contextmenu.h"
-#include "ewk_cookies.h"
-#include "ewk_frame.h"
-#include "ewk_history.h"
-#include "ewk_main.h"
-#include "ewk_network.h"
-#include "ewk_settings.h"
-#include "ewk_view.h"
-#include "ewk_window_features.h"
+#include <Eina.h>
 
-#include <Evas.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif // EWebKit_h
+EAPI void             ewk_network_proxy_uri_set(const char* proxy);
+EAPI const char*      ewk_network_proxy_uri_get(void);
+
+EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
+
+#ifdef __cplusplus
+}
+#endif
+#endif // ewk_network_h

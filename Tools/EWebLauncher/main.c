@@ -898,7 +898,7 @@ main(int argc, char *argv[])
 
     proxyUri = getenv("http_proxy");
     if (proxyUri)
-        ewk_settings_proxy_uri_set(proxyUri);
+        ewk_network_proxy_uri_set(proxyUri);
 
     browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
