@@ -1,3 +1,16 @@
+2011-07-19  MORITA Hajime  <morrita@google.com>
+
+        Crash in CompositeEditCommand::replaceTextInNodePreservingMarkers.
+        https://bugs.webkit.org/show_bug.cgi?id=64738
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/undo/replace-text-in-node-preserving-markers-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::copyMarkers):
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+
 2011-07-19  Mike West  <mkwst@chromium.org>
 
         Sending a `Ping-From` header for cross-origin pings from non-HTTPS documents.

@@ -229,6 +229,19 @@
 
 2011-07-19  Abhishek Arya  <inferno@chromium.org>
 
+        Crash in CompositeEditCommand::replaceTextInNodePreservingMarkers
+        https://bugs.webkit.org/show_bug.cgi?id=64738
+
+        Tests that we do not crash when replacing text in node preserving
+        markers.
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt: Added
+        * editing/undo/replace-text-in-node-preserving-markers-crash.html: Added.
+
+2011-07-19  Abhishek Arya  <inferno@chromium.org>
+
         Tests that we do not crash when removing unrendering nodes
         in a replacement fragment.
         https://bugs.webkit.org/show_bug.cgi?id=64801

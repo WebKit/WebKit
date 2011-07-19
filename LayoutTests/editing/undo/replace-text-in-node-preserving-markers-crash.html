@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<style>
+.editing { width: 12px; }
+</style>
+<script src="../editing.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function editingTest() {
+    moveSelectionForwardByWordCommand();
+    moveSelectionForwardByWordCommand();
+    deleteCommand();
+    deleteCommand();
+    deleteCommand();
+    deleteCommand();
+}
+</script>
+<div contenteditable class="editing">
+<ul>PASSED<symbol id="test">abcd efg hijkl
+<script>
+runEditingTest();
+</script>
+</html>

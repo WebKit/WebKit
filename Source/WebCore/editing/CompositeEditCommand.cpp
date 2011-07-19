@@ -337,18 +337,27 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
     return Position(textNode.release(), start.offsetInContainerNode() + text.length());
 }
 
+static void copyMarkers(const Vector<DocumentMarker*>& markerPointers, Vector<DocumentMarker>& markers)
+{
+    size_t arraySize = markerPointers.size();
+    markers.reserveCapacity(arraySize);
+    for (size_t i = 0; i < arraySize; ++i)
+        markers.append(*markerPointers[i]);
+}
+
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
     DocumentMarkerController* markerController = document()->markers();
-    Vector<DocumentMarker*> markers = markerController->markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers());
+    Vector<DocumentMarker> markers;
+    copyMarkers(markerController->markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers()), markers);
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
     for (size_t i = 0; i < markers.size(); ++i) {
-        if (markers[i]->hasDescription())
-            markerController->addMarker(newRange.get(), markers[i]->type(), markers[i]->description());
+        if (markers[i].hasDescription())
+            markerController->addMarker(newRange.get(), markers[i].type(), markers[i].description());
         else
-            markerController->addMarker(newRange.get(), markers[i]->type());
+            markerController->addMarker(newRange.get(), markers[i].type());
     }
 }
 
