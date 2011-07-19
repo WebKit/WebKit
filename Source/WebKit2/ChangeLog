@@ -1,3 +1,15 @@
+2011-07-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Add back a change that was accidentally removed in r91266.
+        
+        Make sure to retain the WKPasteboardFilePromiseOwner before calling draggedImage because draggedImage releases
+        its responder. Also make the comment more explicit, to keep this mistake from being made in the future.
+        
+        Rubber-stamped by Darin Adler.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::dragEnded):
+
 2011-07-18  Brian Weinstein  <bweinstein@apple.com>
 
         Speculative fix for: Crash under WebPage::platformDragEnded when dragging on Mac
