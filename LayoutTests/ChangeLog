@@ -1,5 +1,11 @@
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium test expectation update after r91229.
 
         * platform/chromium/test_expectations.txt:

@@ -3829,6 +3829,5 @@ BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
-BUGWK64767 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 
 BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
