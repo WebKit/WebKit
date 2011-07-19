@@ -1,3 +1,13 @@
+2011-07-19  Robert Hogan  <robert@webkit.org>
+
+        Add platform-specific results for r91277.
+
+        Unreviewed, add platform-specific results.
+
+        * platform/gtk/fast/table/align-right-within-left-aligned-div-expected.txt: Added.
+        * platform/mac/fast/table/align-right-within-left-aligned-div-expected.txt: Added.
+        * platform/qt/fast/table/align-right-within-left-aligned-div-expected.txt: Added.
+
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines r91269 and r91277.
