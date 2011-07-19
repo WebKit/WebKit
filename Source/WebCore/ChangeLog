@@ -1,3 +1,16 @@
+2011-07-19  Nate Chapin  <japhet@chromium.org>
+
+        [V8] Wait until no v8 context is on the stack before
+        cancelling pending indexed db transactions.
+        https://bugs.webkit.org/show_bug.cgi?id=64552
+
+        Reviewed by Adam Barth.
+
+        Test: storage/indexeddb/transaction-abort-with-js-recursion.html
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::didLeaveScriptContext):
+
 2011-07-19  MORITA Hajime  <morrita@google.com>
 
         Crash in CompositeEditCommand::replaceTextInNodePreservingMarkers.

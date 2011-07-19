@@ -611,17 +611,17 @@ void V8Proxy::didLeaveScriptContext()
     Page* page = m_frame->page();
     if (!page)
         return;
+    // If we've just left a top level script context and local storage has been
+    // instantiated, we must ensure that any storage locks have been freed.
+    // Per http://dev.w3.org/html5/spec/Overview.html#storage-mutex
+    if (m_recursion)
+        return;
 #if ENABLE(INDEXED_DATABASE)
     // If we've just left a script context and indexed database has been
     // instantiated, we must let its transaction coordinator know so it can terminate
     // any not-yet-started transactions.
     IDBPendingTransactionMonitor::abortPendingTransactions();
 #endif // ENABLE(INDEXED_DATABASE)
-    // If we've just left a top level script context and local storage has been
-    // instantiated, we must ensure that any storage locks have been freed.
-    // Per http://dev.w3.org/html5/spec/Overview.html#storage-mutex
-    if (m_recursion != 0)
-        return;
     if (page->group().hasLocalStorage())
         page->group().localStorage()->unlock();
 }

@@ -1,0 +1,72 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+var transaction;
+var store;
+var db;
+var body = document.getElementsByTagName("body")[0];
+
+description("Test that pending transactions are not aborted during recursive JS calls until all JS is finished.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function setup() {
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    request = evalAndLog("webkitIndexedDB.open('transaction-abort-with-js-recursion')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersion() {
+    db = evalAndLog("db = event.target.result");
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = click;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function click() {
+    body.onclick = test;
+    var pendingTransaction = evalAndLog("pendingTransaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    pendingTransaction.onsuccess = unexpectedErrorCallback;
+    pendingTransaction.onerror = unexpectedErrorCallback;
+    pendingTransaction.onabort = abortCallback;
+    var event = document.createEvent("MouseEvent");
+    event.initMouseEvent("click", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    body.dispatchEvent(event);
+    var store = evalAndLog("store = pendingTransaction.objectStore('objectStore')");
+    shouldBeTrue("store !== undefined");
+    body.onclick = undefined;
+}
+
+function test()
+{
+    debug("Start re-entrant JS");
+    store = db.createObjectStore('objectStore', null);
+    transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    debug("End re-entrant JS");
+}
+
+
+function abortCallback()
+{
+    debug("Pending transaction aborted");
+    done();
+}
+
+setup();
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>
