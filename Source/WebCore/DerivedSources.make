@@ -78,6 +78,7 @@ DOM_CLASSES = \
     LowPass2FilterNode \
     OfflineAudioCompletionEvent \
     RealtimeAnalyserNode \
+    WaveShaperNode \
     BarInfo \
     BeforeLoadEvent \
     BeforeProcessEvent \

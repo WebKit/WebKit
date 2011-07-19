@@ -5860,6 +5860,15 @@
 		FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */; };
 		FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */; };
 		FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */; };
+		FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */; };
+		FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7F298B13D4C0CB00AD9535 /* WaveShaperDSPKernel.h */; };
+		FD7F299313D4C0CB00AD9535 /* WaveShaperNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */; };
+		FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7F298D13D4C0CB00AD9535 /* WaveShaperNode.h */; };
+		FD7F299613D4C0CB00AD9535 /* WaveShaperProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */; };
+		FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */; };
+		FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */; };
+		FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */; };
+		FD8E9BDF13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8E9BDE13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
 		FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */; };
 		FDA15E9F12B03EE1003A583A /* JSAudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */; };
@@ -12581,6 +12590,16 @@
 		FD6ED2C9136B8E9D003CF072 /* DynamicsCompressorNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DynamicsCompressorNode.idl; sourceTree = "<group>"; };
 		FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicsCompressorNode.h; sourceTree = "<group>"; };
+		FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperDSPKernel.cpp; sourceTree = "<group>"; };
+		FD7F298B13D4C0CB00AD9535 /* WaveShaperDSPKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveShaperDSPKernel.h; sourceTree = "<group>"; };
+		FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperNode.cpp; sourceTree = "<group>"; };
+		FD7F298D13D4C0CB00AD9535 /* WaveShaperNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveShaperNode.h; sourceTree = "<group>"; };
+		FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaveShaperNode.idl; sourceTree = "<group>"; };
+		FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperProcessor.cpp; sourceTree = "<group>"; };
+		FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveShaperProcessor.h; sourceTree = "<group>"; };
+		FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveShaperNode.cpp; sourceTree = "<group>"; };
+		FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveShaperNode.h; sourceTree = "<group>"; };
+		FD8E9BDE13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveShaperNodeCustom.cpp; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
 		FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBuffer.h; sourceTree = "<group>"; };
 		FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNode.cpp; sourceTree = "<group>"; };
@@ -18535,6 +18554,7 @@
 				49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */,
 				49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */,
 				49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */,
+				FD8E9BDE13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */,
 				3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */,
@@ -19973,6 +19993,13 @@
 				FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */,
 				FD315FF412B0267600C1A359 /* RealtimeAnalyserNode.h */,
 				FD315FF512B0267600C1A359 /* RealtimeAnalyserNode.idl */,
+				FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */,
+				FD7F298B13D4C0CB00AD9535 /* WaveShaperDSPKernel.h */,
+				FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */,
+				FD7F298D13D4C0CB00AD9535 /* WaveShaperNode.h */,
+				FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */,
+				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
+				FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */,
 			);
 			path = webaudio;
 			sourceTree = "<group>";
@@ -20110,6 +20137,8 @@
 				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
 				FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */,
 				FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */,
+				FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */,
+				FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */,
 			);
 			name = WebAudio;
 			sourceTree = "<group>";
@@ -23110,6 +23139,10 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
 				4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */,
+				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
+				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
+				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
+				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
 				5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -25882,6 +25915,11 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				4945BFD313CF809000CC3B38 /* TransformState.cpp in Sources */,
 				4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */,
+				FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */,
+				FD7F299313D4C0CB00AD9535 /* WaveShaperNode.cpp in Sources */,
+				FD7F299613D4C0CB00AD9535 /* WaveShaperProcessor.cpp in Sources */,
+				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,
+				FD8E9BDF13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp in Sources */,
 				5913A24113D49EBA00F5B05C /* IdentifiersFactory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

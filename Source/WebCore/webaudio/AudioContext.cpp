@@ -56,6 +56,7 @@
 #include "OfflineAudioDestinationNode.h"
 #include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
+#include "WaveShaperNode.h"
 #include "ScriptCallStack.h"
 
 #if DEBUG_AUDIONODE_REFERENCES
@@ -322,6 +323,13 @@ PassRefPtr<BiquadFilterNode> AudioContext::createBiquadFilter()
     ASSERT(isMainThread());
     lazyInitialize();
     return BiquadFilterNode::create(this, m_destinationNode->sampleRate());
+}
+
+PassRefPtr<WaveShaperNode> AudioContext::createWaveShaper()
+{
+    ASSERT(isMainThread());
+    lazyInitialize();
+    return WaveShaperNode::create(this);
 }
 
 PassRefPtr<LowPass2FilterNode> AudioContext::createLowPass2Filter()

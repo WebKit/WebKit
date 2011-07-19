@@ -60,6 +60,7 @@ class HighPass2FilterNode;
 class ConvolverNode;
 class DynamicsCompressorNode;
 class RealtimeAnalyserNode;
+class WaveShaperNode;
 class JavaScriptAudioNode;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
@@ -107,6 +108,7 @@ public:
     PassRefPtr<AudioBufferSourceNode> createBufferSource();
     PassRefPtr<AudioGainNode> createGainNode();
     PassRefPtr<BiquadFilterNode> createBiquadFilter();
+    PassRefPtr<WaveShaperNode> createWaveShaper();
     PassRefPtr<DelayNode> createDelayNode();
     PassRefPtr<LowPass2FilterNode> createLowPass2Filter();
     PassRefPtr<HighPass2FilterNode> createHighPass2Filter();

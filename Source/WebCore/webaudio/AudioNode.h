@@ -69,6 +69,7 @@ public:
         NodeTypeChannelMerger,
         NodeTypeAnalyser,
         NodeTypeDynamicsCompressor,
+        NodeTypeWaveShaper,
         NodeTypeEnd
     };
 

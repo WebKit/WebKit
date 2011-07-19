@@ -1,3 +1,45 @@
+2011-07-19  Chris Rogers  <crogers@google.com>
+
+        Implement WaveShaperNode for Web Audio API
+        https://bugs.webkit.org/show_bug.cgi?id=64644
+
+        Reviewed by Kenneth Russell.
+        
+        No new tests since audio API is not yet implemented.
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWaveShaperNodeCustom.cpp: Added.
+        (WebCore::JSWaveShaperNode::setCurve):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createWaveShaper):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+        * webaudio/AudioNode.h:
+        * webaudio/WaveShaperDSPKernel.cpp: Added.
+        (WebCore::WaveShaperDSPKernel::process):
+        * webaudio/WaveShaperDSPKernel.h: Added.
+        (WebCore::WaveShaperDSPKernel::WaveShaperDSPKernel):
+        (WebCore::WaveShaperDSPKernel::reset):
+        (WebCore::WaveShaperDSPKernel::waveShaperProcessor):
+        * webaudio/WaveShaperNode.cpp: Added.
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        (WebCore::WaveShaperNode::setCurve):
+        (WebCore::WaveShaperNode::curve):
+        * webaudio/WaveShaperNode.h: Added.
+        (WebCore::WaveShaperNode::create):
+        (WebCore::WaveShaperNode::waveShaperProcessor):
+        * webaudio/WaveShaperNode.idl: Added.
+        * webaudio/WaveShaperProcessor.cpp: Added.
+        (WebCore::WaveShaperProcessor::WaveShaperProcessor):
+        (WebCore::WaveShaperProcessor::~WaveShaperProcessor):
+        (WebCore::WaveShaperProcessor::createKernel):
+        (WebCore::WaveShaperProcessor::setCurve):
+        (WebCore::WaveShaperProcessor::process):
+        * webaudio/WaveShaperProcessor.h: Added.
+        (WebCore::WaveShaperProcessor::curve):
+
 2011-07-19  Robert Hogan  <robert@webkit.org>
 
         REGRESSION: Incorrect layout at recline-online.com

@@ -64,6 +64,7 @@ module webaudio {
         AudioGainNode createGainNode();
         DelayNode createDelayNode();
         BiquadFilterNode createBiquadFilter();
+        WaveShaperNode createWaveShaper();
         LowPass2FilterNode createLowPass2Filter();
         HighPass2FilterNode createHighPass2Filter();
         AudioPannerNode createPanner();
