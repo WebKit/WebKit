@@ -544,7 +544,7 @@ function platformAndBuildType(builderName)
             platform = 'WIN7';
         else if (stringContains(currentBuildUppercase, 'VISTA'))
             platform = 'VISTA';
-        else if (stringContains(currentBuildUppercase, 'WIN'))
+        else if (stringContains(currentBuildUppercase, 'WIN') || stringContains(currentBuildUppercase, 'XP'))
             platform = 'XP';
         else if (stringContains(currentBuildUppercase, 'LINUX'))
             platform = 'LUCID';
