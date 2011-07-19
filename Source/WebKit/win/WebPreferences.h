@@ -438,6 +438,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE hixie76WebSocketProtocolEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setHixie76WebSocketProtocolEnabled(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE mediaPlaybackRequiresUserGesture(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMediaPlaybackRequiresUserGesture(BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE mediaPlaybackAllowsInline(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMediaPlaybackAllowsInline(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

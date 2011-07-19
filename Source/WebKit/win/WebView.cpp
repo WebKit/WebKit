@@ -4870,6 +4870,16 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setFullScreenEnabled(enabled);
 #endif
 
+    hr = prefsPrivate->mediaPlaybackRequiresUserGesture(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setMediaPlaybackRequiresUserGesture(enabled);
+
+    hr = prefsPrivate->mediaPlaybackAllowsInline(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setMediaPlaybackAllowsInline(enabled);
+
     return S_OK;
 }
 

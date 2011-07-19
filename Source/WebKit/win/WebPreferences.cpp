@@ -268,6 +268,9 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey), kCFBooleanTrue);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey), kCFBooleanTrue);
+
     defaultSettings = defaults;
 }
 
@@ -954,6 +957,34 @@ HRESULT STDMETHODCALLTYPE WebPreferences::hixie76WebSocketProtocolEnabled(
     /* [retval][out] */ BOOL* enabled)
 {
     *enabled = boolValueForKey(CFSTR(WebKitHixie76WebSocketProtocolEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setMediaPlaybackRequiresUserGesture(
+    /* [in] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::mediaPlaybackRequiresUserGesture(
+    /* [retval][out] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setMediaPlaybackAllowsInline(
+    /* [in] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::mediaPlaybackAllowsInline(
+    /* [retval][out] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey));
     return S_OK;
 }
 

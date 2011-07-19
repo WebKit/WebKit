@@ -1,3 +1,23 @@
+2011-07-18  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64742
+        Expose WebPreferences for media playback requiring user gestures and inline playback
+
+        Reviewed by Simon Fraser.
+
+        Two new WebPreferences: MediaPlaybackRequiresUserGesture and
+        MediaPlaybackAllowsInline.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMediaPlaybackRequiresUserGesture):
+        (WKPreferencesGetMediaPlaybackRequiresUserGesture):
+        (WKPreferencesSetMediaPlaybackAllowsInline):
+        (WKPreferencesGetMediaPlaybackAllowsInline):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-07-18  James Robinson  <jamesr@chromium.org>
 
         Timer scheduling should be based off the monotonic clock

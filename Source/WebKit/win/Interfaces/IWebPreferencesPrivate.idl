@@ -130,4 +130,10 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setHixie76WebSocketProtocolEnabled([in] BOOL enabled);
     HRESULT hixie76WebSocketProtocolEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setMediaPlaybackRequiresUserGesture([in] BOOL);
+    HRESULT mediaPlaybackRequiresUserGesture([out, retval] BOOL*);
+
+    HRESULT setMediaPlaybackAllowsInline([in] BOOL);
+    HRESULT mediaPlaybackAllowsInline([out, retval] BOOL*);
 }

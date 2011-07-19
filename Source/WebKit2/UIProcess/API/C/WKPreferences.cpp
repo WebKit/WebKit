@@ -571,3 +571,23 @@ bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef preference
 {
     return toImpl(preferencesRef)->hixie76WebSocketProtocolEnabled();
 }
+
+void WKPreferencesSetMediaPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setMediaPlaybackRequiresUserGesture(flag);
+}
+
+bool WKPreferencesGetMediaPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaPlaybackRequiresUserGesture();
+}
+
+void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setMediaPlaybackAllowsInline(flag);
+}
+
+bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaPlaybackAllowsInline();
+}

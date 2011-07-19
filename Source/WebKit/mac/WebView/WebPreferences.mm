@@ -377,6 +377,9 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitHixie76WebSocketProtocolEnabledKey,
+        [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
+
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
@@ -1482,6 +1485,26 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isHixie76WebSocketProtocolEnabled
 {
     return [self _boolValueForKey:WebKitHixie76WebSocketProtocolEnabledKey];
+}
+
+- (BOOL)mediaPlaybackRequiresUserGesture
+{
+    return [self _boolValueForKey:WebKitMediaPlaybackRequiresUserGesturePreferenceKey];
+}
+
+- (void)setMediaPlaybackRequiresUserGesture:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaPlaybackRequiresUserGesturePreferenceKey];
+}
+
+- (BOOL)mediaPlaybackAllowsInline
+{
+    return [self _boolValueForKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
+}
+
+- (void)setMediaPlaybackAllowsInline:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
 }
 @end
 

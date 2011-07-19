@@ -1593,6 +1593,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(WEB_SOCKETS)
     settings->setUseHixie76WebSocketProtocol([preferences isHixie76WebSocketProtocolEnabled]);
 #endif
+    settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
+    settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

@@ -205,6 +205,8 @@ Settings::Settings(Page* page)
 #if ENABLE(WEB_SOCKETS)
     , m_useHixie76WebSocketProtocol(true)
 #endif
+    , m_mediaPlaybackRequiresUserGesture(false)
+    , m_mediaPlaybackAllowsInline(true)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

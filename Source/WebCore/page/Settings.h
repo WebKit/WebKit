@@ -432,6 +432,12 @@ namespace WebCore {
         bool useHixie76WebSocketProtocol() { return m_useHixie76WebSocketProtocol; }
 #endif
 
+        void setMediaPlaybackRequiresUserGesture(bool flag) { m_mediaPlaybackRequiresUserGesture = flag; };
+        bool mediaPlaybackRequiresUserGesture() const { return m_mediaPlaybackRequiresUserGesture; }
+
+        void setMediaPlaybackAllowsInline(bool flag) { m_mediaPlaybackAllowsInline = flag; };
+        bool mediaPlaybackAllowsInline() const { return m_mediaPlaybackAllowsInline; }
+
     private:
         Page* m_page;
 
@@ -544,6 +550,8 @@ namespace WebCore {
 #if ENABLE(WEB_SOCKETS)
         bool m_useHixie76WebSocketProtocol : 1;
 #endif
+        bool m_mediaPlaybackRequiresUserGesture : 1;
+        bool m_mediaPlaybackAllowsInline : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

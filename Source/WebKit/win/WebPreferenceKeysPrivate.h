@@ -154,3 +154,8 @@
 #define WebKitFullScreenEnabledPreferenceKey "WebKitFullScreenEnabled"
 
 #define WebKitHixie76WebSocketProtocolEnabledPreferenceKey "WebKitHixie76WebSocketProtocolEnabled"
+
+#define WebKitMediaPlaybackRequiresUserGesturePreferenceKey "WebKitMediaPlaybackRequiresUserGesture"
+
+#define WebKitMediaPlaybackAllowsInlinePreferenceKey "WebKitMediaPlaybackAllowsInline"
+

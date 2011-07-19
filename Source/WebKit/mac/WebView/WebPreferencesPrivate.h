@@ -210,6 +210,12 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (BOOL)hyperlinkAuditingEnabled;
 - (void)setHyperlinkAuditingEnabled:(BOOL)enabled;
 
+- (void)setMediaPlaybackRequiresUserGesture:(BOOL)flag;
+- (BOOL)mediaPlaybackRequiresUserGesture;
+
+- (void)setMediaPlaybackAllowsInline:(BOOL)flag;
+- (BOOL)mediaPlaybackAllowsInline;
+
 // Other private methods
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;

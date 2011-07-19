@@ -108,6 +108,8 @@
 #define WebKitHyperlinkAuditingEnabledPreferenceKey @"WebKitHyperlinkAuditingEnabled"
 #define WebKitAVFoundationEnabledKey @"WebKitAVFoundationEnabled"
 #define WebKitHixie76WebSocketProtocolEnabledKey @"WebKitHixie76WebSocketProtocolEnabled"
+#define WebKitMediaPlaybackRequiresUserGesturePreferenceKey @"WebKitMediaPlaybackRequiresUserGesture"
+#define WebKitMediaPlaybackAllowsInlinePreferenceKey @"WebKitMediaPlaybackAllowsInline"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

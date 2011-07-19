@@ -184,6 +184,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     document->registerForDocumentActivationCallbacks(this);
     document->registerForMediaVolumeCallbacks(this);
     document->registerForPrivateBrowsingStateChangedCallbacks(this);
+    
+    if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture())
+        m_restrictions |= RequireUserGestureForRateChangeRestriction;
 }
 
 HTMLMediaElement::~HTMLMediaElement()
