@@ -1,3 +1,18 @@
+2011-07-19  Daniel Bates  <dbates@webkit.org>
+
+        Rename variable isEmptyTextPatch in svn-{apply, unapply}
+        https://bugs.webkit.org/show_bug.cgi?id=64648
+
+        Reviewed by Adam Roben.
+
+        Rename the variable isEmptyTextPatch to hasTextChunks, which is
+        more descriptive and makes its usage read well in control statements.
+
+        * Scripts/svn-apply:
+        (patch):
+        * Scripts/svn-unapply:
+        (patch):
+
 2011-07-19  Adam Roben  <aroben@apple.com>
 
         Make TestFailures show existing bugs and a new bug link for flaky tests

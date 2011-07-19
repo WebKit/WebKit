@@ -145,7 +145,7 @@ sub patch($)
 
     my $fullPath = $diffHashRef->{indexPath};
     my $isSvnBinary = $diffHashRef->{isBinary} && $diffHashRef->{isSvn};
-    my $isEmptyTextPatch = !$patch || !$diffHashRef->{numTextChunks};
+    my $hasTextChunks = $patch && $diffHashRef->{numTextChunks};
 
     $directoriesToCheck{dirname($fullPath)} = 1;
 
@@ -155,7 +155,7 @@ sub patch($)
     $addition = 1 if ($diffHashRef->{isNew} || $diffHashRef->{copiedFromPath} || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
 
-    if (!$addition && !$deletion && !$isSvnBinary && !$isEmptyTextPatch) {
+    if (!$addition && !$deletion && !$isSvnBinary && $hasTextChunks) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
