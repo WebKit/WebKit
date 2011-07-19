@@ -64,15 +64,15 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createTimeStampData(const String&);
 
-        static PassRefPtr<InspectorObject> createResourceSendRequestData(unsigned long identifier, const ResourceRequest&);
+        static PassRefPtr<InspectorObject> createResourceSendRequestData(const String& resourceId, const ResourceRequest&);
 
         static PassRefPtr<InspectorObject> createScheduleResourceRequestData(const String&);
 
-        static PassRefPtr<InspectorObject> createResourceReceiveResponseData(unsigned long identifier, const ResourceResponse&);
+        static PassRefPtr<InspectorObject> createResourceReceiveResponseData(const String& resourceId, const ResourceResponse&);
 
-        static PassRefPtr<InspectorObject> createReceiveResourceData(unsigned long identifier);
+        static PassRefPtr<InspectorObject> createReceiveResourceData(const String& resourceId);
 
-        static PassRefPtr<InspectorObject> createResourceFinishData(unsigned long identifier, bool didFail, double finishTime);
+        static PassRefPtr<InspectorObject> createResourceFinishData(const String& resourceId, bool didFail, double finishTime);
 
         static PassRefPtr<InspectorObject> createPaintData(const IntRect&);
 

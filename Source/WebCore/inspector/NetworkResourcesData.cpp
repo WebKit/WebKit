@@ -47,8 +47,8 @@ namespace WebCore {
 
 
 // ResourceData
-NetworkResourcesData::ResourceData::ResourceData(unsigned long identifier, const String& loaderId)
-    : m_identifier(identifier)
+NetworkResourcesData::ResourceData::ResourceData(const String& resourceId, const String& loaderId)
+    : m_resourceId(resourceId)
     , m_loaderId(loaderId)
     , m_isContentPurged(false)
     , m_type(InspectorPageAgent::OtherResource)
@@ -130,15 +130,15 @@ NetworkResourcesData::~NetworkResourcesData()
     clear();
 }
 
-void NetworkResourcesData::resourceCreated(unsigned long identifier, const String& loaderId)
+void NetworkResourcesData::resourceCreated(const String& resourceId, const String& loaderId)
 {
-    ensureNoDataForIdentifier(identifier);
-    m_identifierToResourceDataMap.set(identifier, new ResourceData(identifier, loaderId));
+    ensureNoDataForResourceId(resourceId);
+    m_resourceIdToResourceDataMap.set(resourceId, new ResourceData(resourceId, loaderId));
 }
 
-void NetworkResourcesData::responseReceived(unsigned long identifier, const String& frameId, const ResourceResponse& response)
+void NetworkResourcesData::responseReceived(const String& resourceId, const String& frameId, const ResourceResponse& response)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return;
     resourceData->setFrameId(frameId);
@@ -146,25 +146,25 @@ void NetworkResourcesData::responseReceived(unsigned long identifier, const Stri
     resourceData->createDecoder(response.mimeType(), response.textEncodingName());
 }
 
-void NetworkResourcesData::setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType type)
+void NetworkResourcesData::setResourceType(const String& resourceId, InspectorPageAgent::ResourceType type)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return;
     resourceData->setType(type);
 }
 
-InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(unsigned long identifier)
+InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(const String& resourceId)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return InspectorPageAgent::OtherResource;
     return resourceData->type();
 }
 
-void NetworkResourcesData::setResourceContent(unsigned long identifier, const String& content)
+void NetworkResourcesData::setResourceContent(const String& resourceId, const String& content)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return;
     int dataLength = 2 * content.length();
@@ -173,15 +173,15 @@ void NetworkResourcesData::setResourceContent(unsigned long identifier, const St
     if (resourceData->isContentPurged())
         return;
     if (ensureFreeSpace(dataLength) && !resourceData->isContentPurged()) {
-        m_identifiersDeque.append(identifier);
+        m_resourceIdsDeque.append(resourceId);
         resourceData->setContent(content);
         m_contentSize += dataLength;
     }
 }
 
-void NetworkResourcesData::maybeAddResourceData(unsigned long identifier, const char* data, int dataLength)
+void NetworkResourcesData::maybeAddResourceData(const String& resourceId, const char* data, int dataLength)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return;
     if (!resourceData->decoder())
@@ -191,15 +191,15 @@ void NetworkResourcesData::maybeAddResourceData(unsigned long identifier, const 
     if (resourceData->isContentPurged())
         return;
     if (ensureFreeSpace(dataLength) && !resourceData->isContentPurged()) {
-        m_identifiersDeque.append(identifier);
+        m_resourceIdsDeque.append(resourceId);
         resourceData->appendData(data, dataLength);
         m_contentSize += dataLength;
     }
 }
 
-void NetworkResourcesData::maybeDecodeDataToContent(unsigned long identifier)
+void NetworkResourcesData::maybeDecodeDataToContent(const String& resourceId)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return;
     if (!resourceData->hasData())
@@ -210,46 +210,46 @@ void NetworkResourcesData::maybeDecodeDataToContent(unsigned long identifier)
         m_contentSize -= resourceData->purgeContent();
 }
 
-void NetworkResourcesData::addCachedResource(unsigned long identifier, CachedResource* cachedResource)
+void NetworkResourcesData::addCachedResource(const String& resourceId, CachedResource* cachedResource)
 {
-    if (!m_identifierToResourceDataMap.contains(identifier))
+    if (!m_resourceIdToResourceDataMap.contains(resourceId))
         return;
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
 
     resourceData->setCachedResource(cachedResource);
 }
 
-void NetworkResourcesData::addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer> buffer, const String& textEncodingName)
+void NetworkResourcesData::addResourceSharedBuffer(const String& resourceId, PassRefPtr<SharedBuffer> buffer, const String& textEncodingName)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (!resourceData)
         return;
     resourceData->setBuffer(buffer);
     resourceData->setTextEncodingName(textEncodingName);
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::data(unsigned long identifier)
+NetworkResourcesData::ResourceData const* NetworkResourcesData::data(const String& resourceId)
 {
-    return m_identifierToResourceDataMap.get(identifier);
+    return m_resourceIdToResourceDataMap.get(resourceId);
 }
 
 void NetworkResourcesData::clear(const String& preservedLoaderId)
 {
-    m_identifiersDeque.clear();
+    m_resourceIdsDeque.clear();
     m_contentSize = 0;
 
     ResourceDataMap preservedMap;
 
     ResourceDataMap::iterator it;
-    ResourceDataMap::iterator end = m_identifierToResourceDataMap.end();
-    for (it = m_identifierToResourceDataMap.begin(); it != end; ++it) {
+    ResourceDataMap::iterator end = m_resourceIdToResourceDataMap.end();
+    for (it = m_resourceIdToResourceDataMap.begin(); it != end; ++it) {
         ResourceData* resourceData = it->second;
         if (!preservedLoaderId.isNull() && resourceData->loaderId() == preservedLoaderId)
             preservedMap.set(it->first, it->second);
         else
             delete resourceData;
     }
-    m_identifierToResourceDataMap.swap(preservedMap);
+    m_resourceIdToResourceDataMap.swap(preservedMap);
 }
 
 void NetworkResourcesData::setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
@@ -260,14 +260,14 @@ void NetworkResourcesData::setResourcesDataSizeLimits(int maximumResourcesConten
 }
 
 
-void NetworkResourcesData::ensureNoDataForIdentifier(unsigned long identifier)
+void NetworkResourcesData::ensureNoDataForResourceId(const String& resourceId)
 {
-    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
     if (resourceData) {
         if (resourceData->hasContent() || resourceData->hasData())
             m_contentSize -= resourceData->purgeContent();
         delete resourceData;
-        m_identifierToResourceDataMap.remove(identifier);
+        m_resourceIdToResourceDataMap.remove(resourceId);
     }
 }
 
@@ -277,8 +277,8 @@ bool NetworkResourcesData::ensureFreeSpace(int size)
         return false;
 
     while (size > m_maximumResourcesContentSize - m_contentSize) {
-        unsigned long identifier = m_identifiersDeque.takeFirst();
-        ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+        String resourceId = m_resourceIdsDeque.takeFirst();
+        ResourceData* resourceData = m_resourceIdToResourceDataMap.get(resourceId);
         if (resourceData)
             m_contentSize -= resourceData->purgeContent();
     }

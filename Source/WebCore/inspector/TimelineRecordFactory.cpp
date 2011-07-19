@@ -129,38 +129,38 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createScheduleResourceRequest
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(unsigned long identifier, const ResourceRequest& request)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(const String& resourceId, const ResourceRequest& request)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("identifier", identifier);
+    data->setString("identifier", resourceId);
     data->setString("url", request.url().string());
     data->setString("requestMethod", request.httpMethod());
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(unsigned long identifier, const ResourceResponse& response)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(const String& resourceId, const ResourceResponse& response)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("identifier", identifier);
+    data->setString("identifier", resourceId);
     data->setNumber("statusCode", response.httpStatusCode());
     data->setString("mimeType", response.mimeType());
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(unsigned long identifier, bool didFail, double finishTime)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(const String& resourceId, bool didFail, double finishTime)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("identifier", identifier);
+    data->setString("identifier", resourceId);
     data->setBoolean("didFail", didFail);
     if (finishTime)
         data->setNumber("networkTime", finishTime);
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(unsigned long identifier)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& resourceId)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("identifier", identifier);
+    data->setString("identifier", resourceId);
     return data.release();
 }
     

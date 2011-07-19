@@ -1,3 +1,70 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Backend should provide network resource identifiers that are unique across navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=64746
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        * inspector/IdentifiersFactory.cpp:
+        (WebCore::IdentifiersFactory::createIdentifier):
+        (WebCore::IdentifiersFactory::resourceId):
+        (WebCore::IdentifiersFactory::addProcessIdPrefixTo):
+        * inspector/IdentifiersFactory.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::markResourceAsCached):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::setInitialScriptContent):
+        (WebCore::InspectorResourceAgent::setInitialXHRContent):
+        (WebCore::InspectorResourceAgent::didReceiveXHRResponse):
+        (WebCore::InspectorResourceAgent::didCreateWebSocket):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didCloseWebSocket):
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::resourceCreated):
+        (WebCore::NetworkResourcesData::responseReceived):
+        (WebCore::NetworkResourcesData::setResourceType):
+        (WebCore::NetworkResourcesData::resourceType):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::addCachedResource):
+        (WebCore::NetworkResourcesData::addResourceSharedBuffer):
+        (WebCore::NetworkResourcesData::data):
+        (WebCore::NetworkResourcesData::clear):
+        (WebCore::NetworkResourcesData::ensureNoDataForResourceId):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::resourceId):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+        (WebCore::TimelineRecordFactory::createReceiveResourceData):
+        * inspector/TimelineRecordFactory.h:
+
 2011-07-19  Jessie Berlin  <jberlin@apple.com>
 
         Fix assertion failure seen in plugins/return-npobject.html on Windows XP Debug bots.

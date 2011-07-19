@@ -36,7 +36,10 @@ class IdentifiersFactory {
 public:
     static void setProcessId(long processId) { s_processId = processId; }
     static String createIdentifier();
+    static String resourceId(unsigned long identifier);
 private:
+    static String addProcessIdPrefixTo(const String& id);
+
     static long s_processId;
 };
 

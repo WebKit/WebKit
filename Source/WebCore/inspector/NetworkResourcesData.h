@@ -51,9 +51,9 @@ public:
     class ResourceData {
         friend class NetworkResourcesData;
     public:
-        ResourceData(unsigned long identifier, const String& loaderId);
+        ResourceData(const String& resourceId, const String& loaderId);
 
-        unsigned long identifier() const { return m_identifier; }
+        String resourceId() const { return m_resourceId; }
         String loaderId() const { return m_loaderId; }
 
         String frameId() const { return m_frameId; }
@@ -90,7 +90,7 @@ public:
         void appendData(const char* data, int dataLength);
         int decodeDataToContent();
 
-        unsigned long m_identifier;
+        String m_resourceId;
         String m_loaderId;
         String m_frameId;
         String m_url;
@@ -110,28 +110,28 @@ public:
 
     ~NetworkResourcesData();
 
-    void resourceCreated(unsigned long identifier, const String& loaderId);
-    void responseReceived(unsigned long identifier, const String& frameId, const ResourceResponse&);
-    void setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType);
-    InspectorPageAgent::ResourceType resourceType(unsigned long identifier);
-    void setResourceContent(unsigned long identifier, const String& content);
-    void maybeAddResourceData(unsigned long identifier, const char* data, int dataLength);
-    void maybeDecodeDataToContent(unsigned long identifier);
-    void addCachedResource(unsigned long identifier, CachedResource*);
-    void addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer>, const String& textEncodingName);
-    ResourceData const* data(unsigned long identifier);
+    void resourceCreated(const String& resourceId, const String& loaderId);
+    void responseReceived(const String& resourceId, const String& frameId, const ResourceResponse&);
+    void setResourceType(const String& resourceId, InspectorPageAgent::ResourceType);
+    InspectorPageAgent::ResourceType resourceType(const String& resourceId);
+    void setResourceContent(const String& resourceId, const String& content);
+    void maybeAddResourceData(const String& resourceId, const char* data, int dataLength);
+    void maybeDecodeDataToContent(const String& resourceId);
+    void addCachedResource(const String& resourceId, CachedResource*);
+    void addResourceSharedBuffer(const String& resourceId, PassRefPtr<SharedBuffer>, const String& textEncodingName);
+    ResourceData const* data(const String& resourceId);
     void clear(const String& preservedLoaderId = String());
 
     void setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
 private:
-    void ensureNoDataForIdentifier(unsigned long identifier);
+    void ensureNoDataForResourceId(const String& resourceId);
     bool ensureFreeSpace(int size);
 
-    Deque<unsigned long> m_identifiersDeque;
+    Deque<String> m_resourceIdsDeque;
 
-    typedef HashMap<unsigned long, ResourceData*> ResourceDataMap;
-    ResourceDataMap m_identifierToResourceDataMap;
+    typedef HashMap<String, ResourceData*> ResourceDataMap;
+    ResourceDataMap m_resourceIdToResourceDataMap;
     int m_contentSize;
     int m_maximumResourcesContentSize;
     int m_maximumSingleResourceContentSize;

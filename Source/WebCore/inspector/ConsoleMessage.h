@@ -53,7 +53,7 @@ class ConsoleMessage {
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, unsigned long identifier);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, const String& resourceId);
     ~ConsoleMessage();
 
     void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*);
@@ -77,7 +77,7 @@ private:
     unsigned m_line;
     String m_url;
     unsigned m_repeatCount;
-    unsigned int m_requestId;
+    String m_requestId;
 };
 
 } // namespace WebCore

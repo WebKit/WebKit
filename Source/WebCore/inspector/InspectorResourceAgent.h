@@ -122,7 +122,7 @@ public:
     void disable(ErrorString*);
     void setUserAgentOverride(ErrorString*, const String& userAgent);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
-    void getResourceContent(ErrorString*, unsigned long identifier, String* content, bool* base64Encoded);
+    void getResourceContent(ErrorString*, const String& resourceId, String* content, bool* base64Encoded);
     void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
 
     void clearBrowserCache(ErrorString*);

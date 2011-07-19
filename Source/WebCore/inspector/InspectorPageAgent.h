@@ -111,6 +111,7 @@ public:
 
     // Cross-agents API
     Frame* mainFrame();
+    String createIdentifier();
     Frame* frameForId(const String& frameId);
     String frameId(Frame*);
     String loaderId(DocumentLoader*);

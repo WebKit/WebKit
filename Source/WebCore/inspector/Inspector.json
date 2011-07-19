@@ -494,7 +494,7 @@
                 "name": "getResourceContent",
                 "description": "Returns content of the given resource.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Identifier of the resource to get content for." }
+                    { "name": "identifier", "type": "string", "description": "Identifier of the resource to get content for." }
                 ],
                 "returns": [
                     { "name": "content", "type": "string", "description": "Resource content." },
@@ -515,7 +515,7 @@
                 "name": "requestWillBeSent",
                 "description": "Fired when page is about to send HTTP request.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "frameId", "type": "string", "description": "Frame identifier." },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
@@ -529,14 +529,14 @@
                 "name": "resourceMarkedAsCached",
                 "description": "Fired when request is known to be served from disk cache.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." }
+                    { "name": "identifier", "type": "string", "description": "Request identifier." }
                 ]
             },
             {
                 "name": "responseReceived",
                 "description": "Fired when HTTP response is available.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." },
                     { "name": "response", "$ref": "ResourceResponse", "description": "Response data." }
@@ -546,7 +546,7 @@
                 "name": "dataReceived",
                 "description": "Fired when data chunk was received over the network.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "dataLength", "type": "integer", "description": "Data chunk length." },
                     { "name": "encodedDataLength", "type": "integer", "description": "Actual bytes received (might be less than dataLength for compressed encodings)." }
@@ -556,7 +556,7 @@
                 "name": "loadingFinished",
                 "description": "Fired when HTTP request has finished loading.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." }
                 ]
             },
@@ -564,7 +564,7 @@
                 "name": "loadingFailed",
                 "description": "Fired when HTTP request has failed to load.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "errorText", "type": "string", "description": "User friendly error message." },
                     { "name": "canceled", "type": "boolean", "optional": true, "description": "True if loading was canceled." }
@@ -574,7 +574,7 @@
                 "name": "resourceLoadedFromMemoryCache",
                 "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "frameId", "type": "string", "description": "Frame identifier." },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
@@ -586,7 +586,7 @@
                 "name": "initialContentSet",
                 "description": "Fired for worker scripts when their content becomes available.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "content", "type": "string", "description": "Resource content." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." }
                 ]
@@ -595,7 +595,7 @@
                 "name": "webSocketWillSendHandshakeRequest",
                 "description": "Fired when WebSocket is about to initiate handshake.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "request", "type": "object", "description": "WebSocket request data." }
                 ]
@@ -604,7 +604,7 @@
                 "name": "webSocketHandshakeResponseReceived",
                 "description": "Fired when WebSocket handshake response becomes available.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "response", "type": "object", "description": "WebSocket response data." }
                 ]
@@ -613,7 +613,7 @@
                 "name": "webSocketCreated",
                 "description": "Fired upon WebSocket creation.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "url", "type": "string", "description": "WebSocket request URL." }
                 ]
             },
@@ -621,7 +621,7 @@
                 "name": "webSocketClosed",
                 "description": "Fired when WebSocket is closed.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "identifier", "type": "string", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." }
                 ]
             }

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IdentifiersFactory.h"
 
+#include <wtf/text/StringBuilder.h>
+
 #if ENABLE(INSPECTOR)
 
 #include <wtf/text/StringBuilder.h>
@@ -42,10 +44,22 @@ long IdentifiersFactory::s_processId;
 // static
 String IdentifiersFactory::createIdentifier()
 {
+    return addProcessIdPrefixTo(String::number(++s_lastUsedIdentifier));
+}
+
+// static
+String IdentifiersFactory::resourceId(unsigned long identifier)
+{
+    return addProcessIdPrefixTo(String::number(identifier));
+}
+
+// static
+String IdentifiersFactory::addProcessIdPrefixTo(const String& id)
+{
     StringBuilder builder;
     builder.append(String::number(s_processId));
     builder.append(".");
-    builder.append(String::number(++s_lastUsedIdentifier));
+    builder.append(id);
     return builder.toString();
 }
 

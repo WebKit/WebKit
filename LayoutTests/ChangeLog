@@ -1,3 +1,13 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Backend should provide network resource identifiers that are unique across navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=64746
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-network-resource-expected.txt:
+
 2011-07-19  Jeremy Moskovich  <jeremy@chromium.org>
 
         [chromium] rebaseline Chromium results after r91249 .

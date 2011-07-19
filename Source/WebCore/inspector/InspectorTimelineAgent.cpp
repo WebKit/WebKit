@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "Event.h"
+#include "IdentifiersFactory.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
@@ -290,7 +291,8 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(identifier, request));
+    String resourceId = IdentifiersFactory::resourceId(identifier);
+    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(resourceId, request));
     record->setString("type", TimelineRecordType::ResourceSendRequest);
     setHeapSizeStatistic(record.get());
     m_frontend->eventRecorded(record.release());
@@ -298,7 +300,8 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
 
 void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier)
 {
-    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(identifier), TimelineRecordType::ResourceReceivedData);
+    String resourceId = IdentifiersFactory::resourceId(identifier);
+    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(resourceId), TimelineRecordType::ResourceReceivedData);
 }
 
 void InspectorTimelineAgent::didReceiveResourceData()
@@ -308,7 +311,8 @@ void InspectorTimelineAgent::didReceiveResourceData()
     
 void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
 {
-    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(identifier, response), TimelineRecordType::ResourceReceiveResponse);
+    String resourceId = IdentifiersFactory::resourceId(identifier);
+    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(resourceId, response), TimelineRecordType::ResourceReceiveResponse);
 }
 
 void InspectorTimelineAgent::didReceiveResourceResponse()
@@ -321,7 +325,8 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
     pushGCEventRecords();
     // Sometimes network stack can provide for us exact finish loading time. In the other case we will use currentTime.
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->setObject("data", TimelineRecordFactory::createResourceFinishData(identifier, didFail, finishTime * 1000));
+    String resourceId = IdentifiersFactory::resourceId(identifier);
+    record->setObject("data", TimelineRecordFactory::createResourceFinishData(resourceId, didFail, finishTime * 1000));
     record->setString("type", TimelineRecordType::ResourceFinish);
     setHeapSizeStatistic(record.get());
     m_frontend->eventRecorded(record.release());

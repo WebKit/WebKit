@@ -31,6 +31,7 @@
 #include "Console.h"
 #include "ConsoleMessage.h"
 #include "DOMWindow.h"
+#include "IdentifiersFactory.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
@@ -225,7 +226,8 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const R
 
     if (response.httpStatusCode() >= 400) {
         String message = "Failed to load resource: the server responded with a status of " + String::number(response.httpStatusCode()) + " (" + response.httpStatusText() + ')';
-        addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier)));
+        String resourceId = IdentifiersFactory::resourceId(identifier);
+        addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), resourceId)));
     }
 }
 
@@ -238,7 +240,8 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
     String message = "Failed to load resource";
     if (!error.localizedDescription().isEmpty())
         message += ": " + error.localizedDescription();
-    addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier)));
+    String resourceId = IdentifiersFactory::resourceId(identifier);
+    addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), resourceId)));
 }
 
 void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
