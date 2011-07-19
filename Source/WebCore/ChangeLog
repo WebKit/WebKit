@@ -1,3 +1,15 @@
+2011-07-18  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION(91209?): fast/css/custom-font-xheight.html is failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=64767
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont): Undo the cascade list optimization on Leopard for custom
+        fonts, because adding a cascade list apparently breaks the font.
+
 2011-07-18  Matthew Delaney  <mdelaney@apple.com>
 
         Remove drawsUsingCopy now that all ports handle the copying

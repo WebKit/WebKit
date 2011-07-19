@@ -200,8 +200,13 @@ CTFontRef FontPlatformData::ctFont() const
     m_CTFont = toCTFontRef(m_font);
     if (m_CTFont)
         m_CTFont.adoptCF(CTFontCreateCopyWithAttributes(m_CTFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
-    else
+    else {
+#if !defined(BUILDING_ON_LEOPARD)
         m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
+#else
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0);
+#endif
+    }
 
     if (m_widthVariant != RegularWidth) {
         int featureTypeValue = kTextSpacingType;
