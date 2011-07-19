@@ -57,18 +57,20 @@ sub main()
         "merge-regexp:s" => \@mergeRegexps,
         "merge-depth:i" => \$mergeDepth
     );
-    my $fileName = $ARGV[0];
-    die $usage if (!$getOptionsResult || !$fileName);
+    die $usage if (!$getOptionsResult || !scalar(@ARGV));
 
-    open FILE, "<$fileName" or die "bad file: $fileName";
-    my @file = <FILE>;
-    close FILE;
+    my @lines = ();
+    foreach my $fileName (@ARGV) {
+        open FILE, "<$fileName" or die "bad file: $fileName";
+        push(@lines, <FILE>);
+        close FILE;
+    }
 
     my %callstacks = ();
     my $byteCountTotal = 0;
 
-    for (my $i = 0; $i < @file; $i++) {
-        my $line = $file[$i];
+    for (my $i = 0; $i < @lines; $i++) {
+        my $line = $lines[$i];
         my ($callCount, $byteCount);
 
         # First try malloc_history format
@@ -86,7 +88,7 @@ sub main()
             if ($byteCount) {
                 while (!($line =~ "Call stack: ")) {
                     $i++;
-                    $line = $file[$i];
+                    $line = $lines[$i];
                 }
             }
         }
@@ -99,15 +101,15 @@ sub main()
             $callCount = 1;
             ($byteCount) = ($line =~ /Key: (?:\d+), (\d+) bytes/);
             if ($byteCount) {
-                $line = $file[++$i];
+                $line = $lines[++$i];
                 my @tempStack;
-                while ($file[$i+1] !~ /^(?:-|\d)/) {
+                while ($lines[$i+1] !~ /^(?:-|\d)/) {
                     if ($line =~ /\): (.*)$/) {
                         my $call = $1;
                         $call =~ s/\r$//;
                         unshift(@tempStack, $call);
                     }
-                    $line = $file[++$i];
+                    $line = $lines[++$i];
                 }            
                 $line = join(" | ", @tempStack);
             }

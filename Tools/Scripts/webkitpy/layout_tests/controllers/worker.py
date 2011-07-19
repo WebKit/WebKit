@@ -120,14 +120,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._done = True
 
     def _run_test(self, test_input):
-        # Before running the test, we wait for any crash reporters to finish
-        # running. On Mac, ReportCrash chews up a bunch of resources and
-        # causes the tests to become unstable, so we don't want to run in
-        # parallel with ReportCrash.
-        #
-        # Temporarily disabled to see how this code effect performance on the buildbots.
-        # self._port.executive.wait_newest(self._port.is_crash_reporter)
-
         test_timeout_sec = self.timeout(test_input)
         start = time.time()
         self._worker_connection.post_message('started_test', test_input, test_timeout_sec)

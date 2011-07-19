@@ -2241,7 +2241,7 @@ sub epiloguesAndPrologues($$)
 sub parseLeaksandPrintUniqueLeaks()
 {
     return unless @leaksFilenames;
-     
+
     my $mergedFilenames = join " ", @leaksFilenames;
     my $parseMallocHistoryTool = sourceDir() . "/Tools/Scripts/parse-malloc-history";
     

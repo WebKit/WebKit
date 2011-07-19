@@ -47,6 +47,9 @@ class TrivialMockPort(object):
     def results_directory(self):
         return "/mock-results"
 
+    def check_for_leaks(self, process_name, process_pid):
+        pass
+
 
 class MockFile(object):
     def __init__(self, server_process):
@@ -83,7 +86,7 @@ class FakeServerProcess(server_process.ServerProcess):
 
 class TestServerProcess(unittest.TestCase):
     def test_broken_pipe(self):
-        server_process = FakeServerProcess(port_obj=None, name="test", cmd=["test"])
+        server_process = FakeServerProcess(port_obj=TrivialMockPort(), name="test", cmd=["test"])
         server_process.write("should break")
         self.assertTrue(server_process.crashed)
         self.assertEquals(server_process._proc, None)

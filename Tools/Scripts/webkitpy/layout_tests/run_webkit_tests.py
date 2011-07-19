@@ -241,22 +241,20 @@ def parse_args(args=None):
             help="Force garbage collection between each test"),
         optparse.make_option("--complex-text", action="store_true", default=False,
             help="Use the complex text code path for all text (Mac OS X and Windows only)"),
+        optparse.make_option("-l", "--leaks", action="store_true", default=False,
+            help="Enable leaks checking (Mac OS X only)"),
+        optparse.make_option("-g", "--guard-malloc", action="store_true", default=False,
+            help="Enable malloc guard (Mac OS X only)"),
         optparse.make_option("--threaded", action="store_true", default=False,
             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--webkit-test-runner", "-2", action="store_true",
             help="Use WebKitTestRunner rather than DumpRenderTree."),
     ]
 
-    # Missing Mac-specific old-run-webkit-tests options:
-    # FIXME: Need: -g, --guard for guard malloc support on Mac.
-    # FIXME: Need: -l --leaks    Enable leaks checking.
-
     old_run_webkit_tests_compat = [
         # FIXME: Remove this option once the bots don't refer to it.
         # results.html is smart enough to figure this out itself.
         _compat_shim_option("--use-remote-links-to-tests"),
-        # FIXME: Implement leak detection.
-        _compat_shim_option("--leaks"),
     ]
 
     results_options = [

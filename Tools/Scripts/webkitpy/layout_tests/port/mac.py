@@ -32,10 +32,112 @@ import logging
 import platform
 import re
 
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
 _log = logging.getLogger(__name__)
+
+
+# If other ports/platforms decide to support --leaks, we should see about sharing as much of this code as possible.
+class LeakDetector(object):
+    def __init__(self, port):
+        # We should operate on a "platform" not a port here.
+        self._port = port
+        self._executive = port._executive
+        self._filesystem = port._filesystem
+
+    # We exclude the following reported leaks so they do not get in our way when looking for WebKit leaks:
+    # This allows us ignore known leaks and only be alerted when new leaks occur. Some leaks are in the old
+    # versions of the system frameworks that are being used by the leaks bots. Even though a leak has been
+    # fixed, it will be listed here until the bot has been updated with the newer frameworks.
+    def _types_to_exlude_from_leaks(self):
+        # Currently we don't have any type excludes from OS leaks, but we will likely again in the future.
+        return []
+
+    def _callstacks_to_exclude_from_leaks(self):
+        callstacks = [
+            "Flash_EnforceLocalSecurity",  # leaks in Flash plug-in code, rdar://problem/4449747
+        ]
+        if self._port.is_leopard():
+            callstacks += [
+                "CFHTTPMessageAppendBytes",  # leak in CFNetwork, rdar://problem/5435912
+                "sendDidReceiveDataCallback",  # leak in CFNetwork, rdar://problem/5441619
+                "_CFHTTPReadStreamReadMark",  # leak in CFNetwork, rdar://problem/5441468
+                "httpProtocolStart",  # leak in CFNetwork, rdar://problem/5468837
+                "_CFURLConnectionSendCallbacks",  # leak in CFNetwork, rdar://problem/5441600
+                "DispatchQTMsg",  # leak in QuickTime, PPC only, rdar://problem/5667132
+                "QTMovieContentView createVisualContext",  # leak in QuickTime, PPC only, rdar://problem/5667132
+                "_CopyArchitecturesForJVMVersion",  # leak in Java, rdar://problem/5910823
+            ]
+        elif self._port.is_snowleopard():
+            callstacks += [
+                "readMakerNoteProps",  # <rdar://problem/7156432> leak in ImageIO
+                "QTKitMovieControllerView completeUISetup",  # <rdar://problem/7155156> leak in QTKit
+                "getVMInitArgs",  # <rdar://problem/7714444> leak in Java
+                "Java_java_lang_System_initProperties",  # <rdar://problem/7714465> leak in Java
+                "glrCompExecuteKernel",  # <rdar://problem/7815391> leak in graphics driver while using OpenGL
+                "NSNumberFormatter getObjectValue:forString:errorDescription:",  # <rdar://problem/7149350> Leak in NSNumberFormatter
+            ]
+        return callstacks
+
+    def _leaks_args(self, pid):
+        leaks_args = []
+        for callstack in self._callstacks_to_exclude_from_leaks():
+            leaks_args += ['--exclude-callstack="%s"' % callstack]  # Callstacks can have spaces in them, so we quote the arg to prevent confusing perl's optparse.
+        for excluded_type in self._types_to_exlude_from_leaks():
+            leaks_args += ['--exclude-type="%s"' % excluded_type]
+        leaks_args.append(pid)
+        return leaks_args
+
+    def _parse_leaks_output(self, leaks_output, process_pid):
+        count, bytes = re.search(r'Process %s: (\d+) leaks? for (\d+) total' % process_pid, leaks_output).groups()
+        excluded_match = re.search(r'(\d+) leaks? excluded', leaks_output)
+        excluded = excluded_match.group(0) if excluded_match else 0
+        return int(count), int(excluded), int(bytes)
+
+    def leaks_files_in_directory(self, directory):
+        return self._filesystem.glob(self._filesystem.join(directory, "leaks-*"))
+
+    def leaks_file_name(self, process_name, process_pid):
+        # We include the number of files this worker has already written in the name to prevent overwritting previous leak results..
+        return "leaks-%s-%s.txt" % (process_name, process_pid)
+
+    def parse_leak_files(self, leak_files):
+        merge_depth = 5  # ORWT had a --merge-leak-depth argument, but that seems out of scope for the run-webkit-tests tool.
+        args = [
+            '--merge-depth',
+            merge_depth,
+        ] + leak_files
+        parse_malloc_history_output = self._port._run_script("parse-malloc-history", args, include_configuration_arguments=False)
+
+        unique_leak_count = len(re.findall(r'^(\d*)\scalls', parse_malloc_history_output))
+        total_bytes = int(re.search(r'^total\:\s(.*)\s\(', parse_malloc_history_output).group(1))
+        return (total_bytes, unique_leak_count)
+
+    def check_for_leaks(self, process_name, process_pid):
+        _log.debug("Checking for leaks in %s" % process_name)
+        try:
+            leaks_output = self._port._run_script("run-leaks", self._leaks_args(process_pid), include_configuration_arguments=False)
+        except ScriptError, e:
+            _log.warn("Failed to run leaks tool: %s" % e.message_with_output())
+            return
+
+        count, excluded, bytes = self._parse_leaks_output(leaks_output, process_pid)
+        adjusted_count = count - excluded
+        if not adjusted_count:
+            return
+
+        leaks_filename = self.leaks_file_name(process_name, process_pid)
+        leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
+        self._filesystem.write_text_file(leaks_output_path, leaks_output)
+
+        # FIXME: Ideally we would not be logging from the worker process, but rather pass the leak
+        # information back to the manager and have it log.
+        if excluded:
+            _log.info("%s leaks (%s bytes including %s excluded leaks) were found, details in %s" % (adjusted_count, bytes, excluded, leaks_output_path))
+        else:
+            _log.info("%s leaks (%s bytes) were found, details in %s" % (count, bytes, leaks_output_path))
 
 
 def os_version(os_version_string=None, supported_versions=None):
@@ -92,6 +194,7 @@ class MacPort(WebKitPort):
             self._version = port_name[len('mac-'):]
             assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'mac'
+        self._leak_detector = LeakDetector(self)
 
     def baseline_search_path(self):
         search_paths = self.FALLBACK_PATHS[self._version]
@@ -99,16 +202,51 @@ class MacPort(WebKitPort):
             search_paths.insert(0, self._wk2_port_name())
         return map(self._webkit_baseline_path, search_paths)
 
+    def setup_environ_for_server(self):
+        env = WebKitPort.setup_environ_for_server(self)
+        if self.get_option('leaks'):
+            env['MallocStackLogging'] = '1'
+        if self.get_option('guard_malloc'):
+            env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
+        return env
+
+    # Belongs on a Platform object.
+    def is_leopard(self):
+        return self._version == "leopard"
+
+    # Belongs on a Platform object.
+    def is_snowleopard(self):
+        return self._version == "snowleopard"
+
+    # Belongs on a Platform object.
     def is_crash_reporter(self, process_name):
         return re.search(r'ReportCrash', process_name)
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
         build_java = ["/usr/bin/make", "-C", java_tests_path]
-        if self._executive.run_command(build_java, return_exit_code=True):
+        if self._executive.run_command(build_java, return_exit_code=True):  # Paths are absolute, so we don't need to set a cwd.
             _log.error("Failed to build Java support files: %s" % build_java)
             return False
         return True
+
+    def check_for_leaks(self, process_name, process_pid):
+        if not self.get_option('leaks'):
+            return
+        # We could use http://code.google.com/p/psutil/ to get the process_name from the pid.
+        self._leak_detector.check_for_leaks(process_name, process_pid)
+
+    def print_leaks_summary(self):
+        if not self.get_option('leaks'):
+            return
+        # We're in the manager process, so the leak detector will not have a valid list of leak files.
+        # FIXME: This is a hack, but we don't have a better way to get this information from the workers yet.
+        leaks_files = self._leak_detector.leaks_files_in_directory(self.results_directory())
+        if not leaks_files:
+            return
+        total_bytes, unique_leaks = self.parse_leak_files(leaks_files)
+        _log.info("%s total leaks found for a total of %s!" % (self._total_leaks, total_bytes))
+        _log.info("%s unique leaks found!" % unique_leaks)
 
     def _check_port_build(self):
         return self._build_java_test_support()

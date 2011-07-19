@@ -117,11 +117,9 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         if not result:
-            _log.error('For complete Windows build requirements, please '
-                       'see:')
+            _log.error('For complete Windows build requirements, please see:')
             _log.error('')
-            _log.error('    http://dev.chromium.org/developers/how-tos/'
-                       'build-instructions-windows')
+            _log.error('    http://dev.chromium.org/developers/how-tos/build-instructions-windows')
         return result
 
     def relative_test_filename(self, filename):
@@ -133,8 +131,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
     #
     def _build_path(self, *comps):
         if self.get_option('build_directory'):
-            return self._filesystem.join(self.get_option('build_directory'),
-                                         *comps)
+            return self._filesystem.join(self.get_option('build_directory'), *comps)
 
         p = self.path_from_chromium_base('webkit', *comps)
         if self._filesystem.exists(p):
@@ -148,12 +145,10 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return False
 
     def _lighttpd_path(self, *comps):
-        return self.path_from_chromium_base('third_party', 'lighttpd', 'win',
-                                            *comps)
+        return self.path_from_chromium_base('third_party', 'lighttpd', 'win', *comps)
 
     def _path_to_apache(self):
-        return self.path_from_chromium_base('third_party', 'cygwin', 'usr',
-                                            'sbin', 'httpd')
+        return self.path_from_chromium_base('third_party', 'cygwin', 'usr', 'sbin', 'httpd')
 
     def _path_to_apache_config_file(self):
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'cygwin-httpd.conf')
@@ -182,5 +177,4 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_wdiff(self):
-        return self.path_from_chromium_base('third_party', 'cygwin', 'bin',
-                                            'wdiff.exe')
+        return self.path_from_chromium_base('third_party', 'cygwin', 'bin', 'wdiff.exe')

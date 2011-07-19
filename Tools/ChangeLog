@@ -1,3 +1,49 @@
+2011-07-18  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests should support --leaks
+        https://bugs.webkit.org/show_bug.cgi?id=63832
+
+        Reviewed by Dirk Pranke.
+
+        This may not be sufficient to actually transition over the leaks bot,
+        but this is a huge step in the right direction.
+
+        I had to make parse-malloc-history understand being passed more than
+        one file (to avoid the silly cat | nonsense in old-run-webkit-tests).
+
+        I removed some dead code relating to previous iterations of our crash detection.
+
+        I created a new class "LeakDetector" to encapsulate all this logic.
+        Eventually we should consider pulling that class out of mac.py and
+        sharing with other ports.  However given that ORWT has had
+        --leaks support on Mac for almost 7 years and no other port has added
+        it, leaves me to believe we're in no rush to move LeakDetector.
+
+        I've tested --leaks locally.  I suspect there are more bugs to shake out
+        but it seems to work well enough to start.
+
+        I also added support for --guard-malloc, but have not tested it much.  It
+        should be viewed as experimental at this time.
+
+        I also fixed various os.path uses to self._filesystem as I was reading
+        through the various files to understand how best to fix this bug.
+
+        * Scripts/old-run-webkit-tests:
+        (parseLeaksandPrintUniqueLeaks):
+        * Scripts/parse-malloc-history:
+        (main):
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-07-19  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should have a "Triage Failures" button for iterating over failures

@@ -54,11 +54,17 @@ class ServerProcess:
 
     def __init__(self, port_obj, name, cmd, env=None, executive=Executive()):
         self._port = port_obj
-        self._name = name
+        self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
         self._env = env
         self._reset()
         self._executive = executive
+
+    def name(self):
+        return self._name
+
+    def pid(self):
+        return self._proc.pid
 
     def _reset(self):
         self._proc = None
@@ -216,9 +222,7 @@ class ServerProcess:
                 return output
 
             # Nope - wait for more data.
-            (read_fds, write_fds, err_fds) = select.select(select_fds, [],
-                                                           select_fds,
-                                                           deadline - now)
+            (read_fds, write_fds, err_fds) = select.select(select_fds, [], select_fds, deadline - now)
             try:
                 if out_fd in read_fds:
                     self._output += self._proc.stdout.read()
@@ -231,6 +235,8 @@ class ServerProcess:
         """Stop (shut down) the subprocess), if it is running."""
         if not self._proc:
             return
+
+        self._port.check_for_leaks(self.name(), self.pid())
 
         pid = self._proc.pid
         self._proc.stdin.close()
@@ -248,8 +254,7 @@ class ServerProcess:
             while self._proc.poll() is None and time.time() < timeout:
                 time.sleep(0.1)
             if self._proc.poll() is None:
-                _log.warning('stopping %s timed out, killing it' %
-                             self._name)
+                _log.warning('stopping %s timed out, killing it' % self._name)
                 self._executive.kill_process(self._proc.pid)
                 _log.warning('killed')
         self._reset()

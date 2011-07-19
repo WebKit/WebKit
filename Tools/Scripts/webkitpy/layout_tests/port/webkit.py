@@ -55,7 +55,9 @@ class WebKitPort(Port):
         # FIXME: Disable pixel tests until they are run by default on build.webkit.org.
         self.set_option_default("pixel_tests", False)
         # WebKit ports expect a 35s timeout, or 350s timeout when running with -g/--guard-malloc.
-        self.set_option_default("time_out_ms", 35000)
+        # FIXME: --guard-malloc is only supported on Mac, so this logic should be in mac.py.
+        default_time_out_seconds = 350 if self.get_option('guard_malloc') else 35
+        self.set_option_default("time_out_ms", default_time_out_seconds * 1000)
 
     def driver_name(self):
         if self.get_option('webkit_test_runner'):
@@ -115,7 +117,7 @@ class WebKitPort(Port):
             run_script_command.extend(self._arguments_for_configuration())
         if args:
             run_script_command.extend(args)
-        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir())  # It's unclear if setting cwd is necessary for all callers.
+        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir())
 
     def _build_driver(self):
         try:
@@ -450,11 +452,6 @@ class WebKitDriver(Driver):
 
     def poll(self):
         return self._server_process.poll()
-
-    def restart(self):
-        self._server_process.stop()
-        self._server_process.start()
-        return
 
     def detected_crash(self):
         # FIXME: We can't just check self._server_process.crashed for two reasons:

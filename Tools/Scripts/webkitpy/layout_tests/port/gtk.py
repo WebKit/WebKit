@@ -47,8 +47,7 @@ class GtkDriver(webkit.WebKitDriver):
         environment = self._port.setup_environ_for_server()
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % (display_id)
-        self._server_process = server_process.ServerProcess(self._port,
-            self._port.driver_name(), self.cmd_line(), environment)
+        self._server_process = server_process.ServerProcess(self._port, self._port.driver_name(), self.cmd_line(), environment)
 
     def stop(self):
         webkit.WebKitDriver.stop(self)

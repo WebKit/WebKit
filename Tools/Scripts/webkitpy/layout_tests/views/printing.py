@@ -343,8 +343,7 @@ class Printer(object):
     def _print_unexpected_test_result(self, result):
         """Prints one unexpected test result line."""
         desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type][0]
-        self.write("  %s -> unexpected %s" %
-                   (result.test_name, desc), "unexpected")
+        self.write("  %s -> unexpected %s" % (result.test_name, desc), "unexpected")
 
     def print_progress(self, result_summary, retrying, test_list):
         """Print progress through the tests as determined by --print."""

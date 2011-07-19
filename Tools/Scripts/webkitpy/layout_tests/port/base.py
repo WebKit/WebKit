@@ -288,6 +288,18 @@ class Port(object):
     def is_crash_reporter(self, process_name):
         return False
 
+    def check_for_leaks(self, process_name, process_pid):
+        # Subclasses should check for leaks in the running process
+        # and print any necessary warnings if leaks are found.
+        # FIXME: We should consider moving much of this logic into
+        # Executive and make it platform-specific instead of port-specific.
+        pass
+
+    def print_leaks_summary(self):
+        # Subclasses can override this to print a summary of leaks found
+        # while running the layout tests.
+        pass
+
     def driver_name(self):
         """Returns the name of the actual binary that is performing the test,
         so that it can be referred to in log messages. In most cases this
@@ -852,8 +864,7 @@ class Port(object):
             # If ruby failed to run for some reason, log the command
             # output and stop trying.
             self._pretty_patch_available = False
-            _log.error("Failed to run PrettyPatch (%s):\n%s" % (command,
-                       e.message_with_output()))
+            _log.error("Failed to run PrettyPatch (%s):\n%s" % (command, e.message_with_output()))
             return self._pretty_patch_error_html
 
     def default_configuration(self):

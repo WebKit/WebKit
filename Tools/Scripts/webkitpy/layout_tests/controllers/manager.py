@@ -493,16 +493,11 @@ class Manager(object):
         else:
             skip_chunk = skipped
 
-        result_summary = ResultSummary(self._expectations,
-            self._test_files | skip_chunk)
-        self._print_expected_results_of_type(result_summary,
-            test_expectations.PASS, "passes")
-        self._print_expected_results_of_type(result_summary,
-            test_expectations.FAIL, "failures")
-        self._print_expected_results_of_type(result_summary,
-            test_expectations.FLAKY, "flaky")
-        self._print_expected_results_of_type(result_summary,
-            test_expectations.SKIP, "skipped")
+        result_summary = ResultSummary(self._expectations, self._test_files | skip_chunk)
+        self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes")
+        self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures")
+        self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky")
+        self._print_expected_results_of_type(result_summary, test_expectations.SKIP, "skipped")
 
         if self._options.force:
             self._printer.print_expected('Running all tests, including '
@@ -719,8 +714,7 @@ class Manager(object):
         thread_timings = []
 
         self._printer.print_update('Sharding tests ...')
-        locked_shards, unlocked_shards = self._shard_tests(file_list,
-            int(self._options.child_processes), self._options.experimental_fully_parallel)
+        locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.experimental_fully_parallel)
 
         # FIXME: We don't have a good way to coordinate the workers so that
         # they don't try to run the shards that need a lock if we don't actually
@@ -738,15 +732,12 @@ class Manager(object):
         num_workers = min(int(self._options.child_processes), len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
 
-        manager_connection = manager_worker_broker.get(self._port, self._options,
-                                                       self, worker.Worker)
+        manager_connection = manager_worker_broker.get(self._port, self._options, self, worker.Worker)
 
         if self._options.dry_run:
-            return (keyboard_interrupted, interrupted, thread_timings,
-                    self._group_stats, self._all_results)
+            return (keyboard_interrupted, interrupted, thread_timings, self._group_stats, self._all_results)
 
-        self._printer.print_update('Starting %s ...' %
-                                   grammar.pluralize('worker', num_workers))
+        self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
         for worker_number in xrange(num_workers):
             worker_connection = manager_connection.start_worker(worker_number)
             worker_state = _WorkerState(worker_number, worker_connection)
@@ -772,10 +763,6 @@ class Manager(object):
 
         try:
             while not self.is_done():
-                # Temporarily disabled to see how this code effect performance on the buildbots.
-                # if self._port.executive.running_pids(self._port.is_crash_reporter):
-                #     self._printer.print_update("Waiting for crash reporter ...")
-                #     self._port.executive.wait_newest(self._port.is_crash_reporter)
                 manager_connection.run_message_loop(delay_secs=1.0)
 
             # Make sure all of the workers have shut down (if possible).
@@ -808,8 +795,7 @@ class Manager(object):
         thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]
 
         # FIXME: should this be a class instead of a tuple?
-        return (interrupted, keyboard_interrupted, thread_timings,
-                self._group_stats, self._all_results)
+        return (interrupted, keyboard_interrupted, thread_timings, self._group_stats, self._all_results)
 
     def update(self):
         self.update_summary(self._current_result_summary)
@@ -902,19 +888,13 @@ class Manager(object):
 
         end_time = time.time()
 
-        self._print_timing_statistics(end_time - start_time,
-                                      thread_timings, test_timings,
-                                      individual_test_timings,
-                                      result_summary)
-
+        self._print_timing_statistics(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary)
         self._print_result_summary(result_summary)
 
         sys.stdout.flush()
         sys.stderr.flush()
 
-        self._printer.print_one_line_summary(result_summary.total,
-                                             result_summary.expected,
-                                             result_summary.unexpected)
+        self._printer.print_one_line_summary(result_summary.total, result_summary.expected, result_summary.unexpected)
 
         unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True, interrupted=interrupted)
         self._printer.print_unexpected_results(unexpected_results)
@@ -925,10 +905,9 @@ class Manager(object):
 
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
-        if (self._options.record_results and not self._options.dry_run and
-            not keyboard_interrupted):
-            # Write the same data to log files and upload generated JSON files
-            # to appengine server.
+        if (self._options.record_results and not self._options.dry_run and not keyboard_interrupted):
+            self._port.print_leaks_summary()
+            # Write the same data to log files and upload generated JSON files to appengine server.
             summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False, interrupted=interrupted)
             self._upload_json_files(summarized_results, result_summary, individual_test_timings)
 
