@@ -1,3 +1,80 @@
+2011-07-19  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Adds some methods to retrieve accessible information from tables and
+        table cells. Also refactors WebAccessibilityObject to use WebPrivatePtr
+        instead of its own implementation that didn't allow access to subclasses
+        of AccessibilityObject.
+        https://bugs.webkit.org/show_bug.cgi?id=64805
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebAccessibilityObject.h:
+        (WebKit::WebAccessibilityObject::WebAccessibilityObject):
+        (WebKit::WebAccessibilityObject::isNull):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::reset):
+        (WebKit::WebAccessibilityObject::assign):
+        (WebKit::WebAccessibilityObject::equals):
+        (WebKit::WebAccessibilityObject::accessibilityDescription):
+        (WebKit::WebAccessibilityObject::actionVerb):
+        (WebKit::WebAccessibilityObject::canSetFocusAttribute):
+        (WebKit::WebAccessibilityObject::canSetValueAttribute):
+        (WebKit::WebAccessibilityObject::isValid):
+        (WebKit::WebAccessibilityObject::childCount):
+        (WebKit::WebAccessibilityObject::childAt):
+        (WebKit::WebAccessibilityObject::firstChild):
+        (WebKit::WebAccessibilityObject::focusedChild):
+        (WebKit::WebAccessibilityObject::lastChild):
+        (WebKit::WebAccessibilityObject::nextSibling):
+        (WebKit::WebAccessibilityObject::parentObject):
+        (WebKit::WebAccessibilityObject::previousSibling):
+        (WebKit::WebAccessibilityObject::canSetSelectedAttribute):
+        (WebKit::WebAccessibilityObject::isAnchor):
+        (WebKit::WebAccessibilityObject::isChecked):
+        (WebKit::WebAccessibilityObject::isCollapsed):
+        (WebKit::WebAccessibilityObject::isFocused):
+        (WebKit::WebAccessibilityObject::isEnabled):
+        (WebKit::WebAccessibilityObject::isHovered):
+        (WebKit::WebAccessibilityObject::isIndeterminate):
+        (WebKit::WebAccessibilityObject::isLinked):
+        (WebKit::WebAccessibilityObject::isMultiSelectable):
+        (WebKit::WebAccessibilityObject::isOffScreen):
+        (WebKit::WebAccessibilityObject::isPasswordField):
+        (WebKit::WebAccessibilityObject::isPressed):
+        (WebKit::WebAccessibilityObject::isReadOnly):
+        (WebKit::WebAccessibilityObject::isSelected):
+        (WebKit::WebAccessibilityObject::isVisible):
+        (WebKit::WebAccessibilityObject::isVisited):
+        (WebKit::WebAccessibilityObject::boundingBoxRect):
+        (WebKit::WebAccessibilityObject::helpText):
+        (WebKit::WebAccessibilityObject::headingLevel):
+        (WebKit::WebAccessibilityObject::hitTest):
+        (WebKit::WebAccessibilityObject::keyboardShortcut):
+        (WebKit::WebAccessibilityObject::performDefaultAction):
+        (WebKit::WebAccessibilityObject::roleValue):
+        (WebKit::WebAccessibilityObject::selectionEnd):
+        (WebKit::WebAccessibilityObject::selectionStart):
+        (WebKit::WebAccessibilityObject::setFocused):
+        (WebKit::WebAccessibilityObject::stringValue):
+        (WebKit::WebAccessibilityObject::title):
+        (WebKit::WebAccessibilityObject::url):
+        (WebKit::WebAccessibilityObject::node):
+        (WebKit::WebAccessibilityObject::document):
+        (WebKit::WebAccessibilityObject::hasComputedStyle):
+        (WebKit::WebAccessibilityObject::computedStyleDisplay):
+        (WebKit::WebAccessibilityObject::accessibilityIsIgnored):
+        (WebKit::WebAccessibilityObject::lineBreaks):
+        (WebKit::WebAccessibilityObject::columnCount):
+        (WebKit::WebAccessibilityObject::rowCount):
+        (WebKit::WebAccessibilityObject::cellForColumnAndRow):
+        (WebKit::WebAccessibilityObject::cellColumnIndex):
+        (WebKit::WebAccessibilityObject::cellColumnSpan):
+        (WebKit::WebAccessibilityObject::cellRowIndex):
+        (WebKit::WebAccessibilityObject::cellRowSpan):
+        (WebKit::WebAccessibilityObject::WebAccessibilityObject):
+        (WebKit::WebAccessibilityObject::operator=):
+        (WebKit::WebAccessibilityObject::operator WTF::PassRefPtr<WebCore::AccessibilityObject>):
+
 2011-07-19  Robert Sesek  <rsesek@chromium.org>
 
         [Chromium] Need to remove app/ from DEPS

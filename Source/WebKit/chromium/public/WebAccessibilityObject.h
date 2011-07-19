@@ -33,16 +33,17 @@
 
 #include "WebAccessibilityRole.h"
 #include "WebCommon.h"
+#include "WebPrivatePtr.h"
 #include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class AccessibilityObject; }
 namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
+namespace WebCore { class AccessibilityObject; }
+
 namespace WebKit {
 
-class WebAccessibilityObjectPrivate;
 class WebNode;
 class WebDocument;
 class WebString;
@@ -55,8 +56,8 @@ class WebAccessibilityObject {
 public:
     ~WebAccessibilityObject() { reset(); }
 
-    WebAccessibilityObject() : m_private(0) { }
-    WebAccessibilityObject(const WebAccessibilityObject& o) : m_private(0) { assign(o); }
+    WebAccessibilityObject() { }
+    WebAccessibilityObject(const WebAccessibilityObject& o) { assign(o); }
     WebAccessibilityObject& operator=(const WebAccessibilityObject& o)
     {
         assign(o);
@@ -67,7 +68,7 @@ public:
     WEBKIT_API void assign(const WebAccessibilityObject&);
     WEBKIT_API bool equals(const WebAccessibilityObject&) const;
 
-    bool isNull() const { return !m_private; }
+    bool isNull() const { return m_private.isNull(); }
 
     WEBKIT_API WebString accessibilityDescription() const;
     WEBKIT_API WebString actionVerb() const;
@@ -124,6 +125,17 @@ public:
     WEBKIT_API bool accessibilityIsIgnored() const;
     WEBKIT_API bool lineBreaks(WebVector<int>&) const;
 
+    // For a table
+    WEBKIT_API unsigned columnCount() const;
+    WEBKIT_API unsigned rowCount() const;
+    WEBKIT_API WebAccessibilityObject cellForColumnAndRow(unsigned column, unsigned row) const;
+
+    // For a table cell
+    WEBKIT_API unsigned cellColumnIndex() const;
+    WEBKIT_API unsigned cellColumnSpan() const;
+    WEBKIT_API unsigned cellRowIndex() const;
+    WEBKIT_API unsigned cellRowSpan() const;
+
 #if WEBKIT_IMPLEMENTATION
     WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>&);
     WebAccessibilityObject& operator=(const WTF::PassRefPtr<WebCore::AccessibilityObject>&);
@@ -131,8 +143,7 @@ public:
 #endif
 
 private:
-    void assign(WebAccessibilityObjectPrivate*);
-    WebAccessibilityObjectPrivate* m_private;
+    WebPrivatePtr<WebCore::AccessibilityObject> m_private;
 };
 
 } // namespace WebKit
