@@ -3836,6 +3836,4 @@ BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 
 BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = TIMEOUT
 
-// Jeremy - Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=64668 .
-BUGCR87045 LINUX : fast/speech/speech-bidi-rendering.html = IMAGE
-BUGCR87045 LINUX : fast/speech/input-text-speechbutton.html = IMAGE
+BUGCR89717 : fast/speech/input-text-speechbutton.html = TIMEOUT

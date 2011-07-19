@@ -1,3 +1,14 @@
+2011-07-19  Jeremy Moskovich  <jeremy@chromium.org>
+
+        [chromium] rebaseline Chromium results after r91249 .
+        Unreviewed.
+
+        * platform/chromium-linux/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/chromium-win/fast/speech/input-text-speechbutton-expected.txt: Added.
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-19  Sam Weinig  <sam@webkit.org>
 
         Check in Leopard specific results for Selectors 3 tests.
