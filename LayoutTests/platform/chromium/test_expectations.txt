@@ -3832,3 +3832,5 @@ BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 BUGWK64767 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 BUGWK64767 LEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGWK64767 LEOPARD : fast/css/custom-font-xheight.html = TEXT
+
+BUGCR89673 : fast/js/object-prototype-properties.html = TEXT

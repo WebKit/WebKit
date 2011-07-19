@@ -1,3 +1,9 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing test expectation for object-prototype-properties.html after r91225.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-18  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64678
