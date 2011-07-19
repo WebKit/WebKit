@@ -1,0 +1,15 @@
+This is a test case for bug 64678.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS toString() threw exception TypeError: 'undefined' is not an object (evaluating 'toString()').
+PASS toLocaleString() threw exception TypeError: 'undefined' is not an object (evaluating 'toLocaleString()').
+PASS valueOf() threw exception TypeError: 'undefined' is not an object (evaluating 'valueOf()').
+PASS hasProperty('hasProperty') threw exception ReferenceError: Can't find variable: hasProperty.
+PASS propertyIsEnumerable('hasProperty') threw exception TypeError: 'undefined' is not an object (evaluating 'propertyIsEnumerable('hasProperty')').
+PASS isPrototypeOf(this) threw exception TypeError: 'undefined' is not an object (evaluating 'isPrototypeOf(this)').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

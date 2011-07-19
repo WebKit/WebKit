@@ -1,3 +1,39 @@
+2011-07-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64678
+        Fix bugs in Object.prototype this handling.
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/resources/js-test-pre.js:
+            - Updated harness to not call Object.prototype.toString on undefined.
+        * fast/js/eval-var-decl-expected.txt:
+        * fast/js/object-prototype-properties-expected.txt: Added.
+        * fast/js/object-prototype-properties.html: Added.
+        * fast/js/object-prototype-toLocaleString-expected.txt
+        * fast/js/script-tests/eval-var-decl.js:
+            - Fix test case, calling hasProperty with undefined as the this value should throw.
+        * fast/js/script-tests/object-prototype-properties.js: Added.
+            - Place for test cases for Object.prototype properties; to being with, check that calling these methods on undefined throws!
+        * fast/js/script-tests/object-prototype-toLocaleString.js:
+            - Added test cases for correct behaviour when this is a string primitive.
+        * sputnik/Conformance/11_Expressions/11.1_Primary_Expressions/11.1.1_The_this_Keyword/S11.1.1_A2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.11_String.prototype.replace/S15.5.4.11_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.13_String.prototype.slice/S15.5.4.13_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.15_String.prototype.substring/S15.5.4.15_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.4_String.prototype.charAt/S15.5.4.4_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.5_String.prototype.charCodeAt/S15.5.4.5_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.6_String.prototype.concat/S15.5.4.6_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.7_String.prototype.indexOf/S15.5.4.7_A1_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.8_String.prototype.lastIndexOf/S15.5.4.8_A1_T3-expected.txt:
+            - These test cases are all incorrect. (See https://bugs.ecmascript.org/show_bug.cgi?id=117).
+              We were incorrectly passing 15.5.4.11_String.prototype.replace, this should fail, as the others do.
+              All the other 15.5.4 tests were failing & are still failing, but now have a better error message.
+              S11.1.1_A2 is also invalid, calling toString() passing undefined as this should throw.
+
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo.

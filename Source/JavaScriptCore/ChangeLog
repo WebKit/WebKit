@@ -1,3 +1,22 @@
+2011-07-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64678
+        Fix bugs in Object.prototype this handling.
+
+        Reviewed by Oliver Hunt.
+
+        undefined/null this values should throw TypeErrors, not convert to the global object,
+        also, to toLocaleString should be calling the ToObject & invoking the object's toString
+        function, even for values that are already strings.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+
 2011-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC lazy sweep does not inline the common cases of cell destruction.

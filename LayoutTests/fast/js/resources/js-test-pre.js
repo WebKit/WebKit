@@ -65,7 +65,7 @@ function isResultCorrect(_actual, _expected)
         return true;
     if (typeof(_expected) == "number" && isNaN(_expected))
         return typeof(_actual) == "number" && isNaN(_actual);
-    if (Object.prototype.toString.call(_expected) == Object.prototype.toString.call([]))
+    if (_expected && (Object.prototype.toString.call(_expected) == Object.prototype.toString.call([])))
         return areArraysEqual(_actual, _expected);
     return false;
 }
