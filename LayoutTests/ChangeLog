@@ -1,5 +1,11 @@
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix a typo.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add Chromium failing expectations for some font tests; failures are tracked by the bug 64767.
 
         * platform/chromium/test_expectations.txt:
