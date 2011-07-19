@@ -268,7 +268,7 @@ class TestExpectationParser:
             expectation_line.matching_tests.append(expectation_line.path)
 
     @classmethod
-    def tokenize(cls, expectation_string):
+    def tokenize(cls, expectation_string, line_number=None):
         """Tokenizes a line from test_expectations.txt and returns an unparsed TestExpectationLine instance.
 
         The format of a test expectation line is:
@@ -279,6 +279,7 @@ class TestExpectationParser:
 
         """
         expectation_line = TestExpectationLine()
+        expectation_line.line_number = line_number
         comment_index = expectation_string.find("//")
         if comment_index == -1:
             comment_index = len(expectation_string)
@@ -310,8 +311,10 @@ class TestExpectationParser:
     def tokenize_list(cls, expectations_string):
         """Returns a list of TestExpectationLines, one for each line in expectations_string."""
         expectation_lines = []
+        line_number = 0
         for line in expectations_string.split("\n"):
-            expectation_lines.append(cls.tokenize(line))
+            line_number += 1
+            expectation_lines.append(cls.tokenize(line, line_number))
         return expectation_lines
 
     @classmethod
@@ -326,6 +329,7 @@ class TestExpectationLine:
 
     def __init__(self):
         """Initializes a blank-line equivalent of an expectation."""
+        self.line_number = None
         self.name = None
         self.path = None
         self.modifiers = []
@@ -365,7 +369,7 @@ class TestExpectationsModel:
         # Maps a test to list of its modifiers (string values)
         self._test_to_modifiers = {}
 
-        # Maps a test to a tuple of line number and TestExpectationLine instance.
+        # Maps a test to a TestExpectationLine instance.
         self._test_to_expectation_line = {}
 
         # List of tests that are in the overrides file (used for checking for
@@ -419,18 +423,18 @@ class TestExpectationsModel:
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
-    def add_expectation_line(self, lineno, expectation_line, overrides_allowed):
+    def add_expectation_line(self, expectation_line, overrides_allowed):
         """Returns a list of errors, encountered while matching modifiers."""
 
         if expectation_line.is_invalid():
             return
 
         for test in expectation_line.matching_tests:
-            if self._already_seen_better_match(test, expectation_line, lineno, overrides_allowed):
+            if self._already_seen_better_match(test, expectation_line, overrides_allowed):
                 continue
 
             self._clear_expectations_for_test(test, expectation_line)
-            self._test_to_expectation_line[test] = (expectation_line, lineno)
+            self._test_to_expectation_line[test] = expectation_line
             self._add_test(test, expectation_line, overrides_allowed)
 
     def _add_test(self, test, expectation_line, overrides_allowed):
@@ -483,7 +487,7 @@ class TestExpectationsModel:
             self._remove_from_sets(test, self._timeline_to_tests)
             self._remove_from_sets(test, self._result_type_to_tests)
 
-        self._test_to_expectation_line[test] = (expectation_line, 0)
+        self._test_to_expectation_line[test] = expectation_line
 
     def _remove_from_sets(self, test, dict):
         """Removes the given test from the sets in the dictionary.
@@ -495,7 +499,7 @@ class TestExpectationsModel:
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_better_match(self, test, expectation_line, lineno, overrides_allowed):
+    def _already_seen_better_match(self, test, expectation_line, overrides_allowed):
         """Returns whether we've seen a better match already in the file.
 
         Returns True if we've already seen a expectation_line.name that matches more of the test
@@ -506,7 +510,7 @@ class TestExpectationsModel:
             # We've never seen this test before.
             return False
 
-        prev_expectation_line, prev_lineno = self._test_to_expectation_line[test]
+        prev_expectation_line = self._test_to_expectation_line[test]
 
         if len(prev_expectation_line.path) > len(expectation_line.path):
             # The previous path matched more of the test.
@@ -544,11 +548,11 @@ class TestExpectationsModel:
             return True
 
         if prev_expectation_line.specificity < expectation_line.specificity:
-            expectation_line.errors.append('More specific entry on line %d overrides line %d' % (lineno, prev_lineno))
+            expectation_line.errors.append('More specific entry on line %d overrides line %d' % (expectation_line.line_number, prev_expectation_line.line_number))
             # FIXME: return False if we want more specific to win.
             return True
 
-        expectation_line.errors.append('More specific entry on line %d overrides line %d' % (prev_lineno, lineno))
+        expectation_line.errors.append('More specific entry on line %d overrides line %d' % (prev_expectation_line.line_number, expectation_line.line_number))
         return True
 
 
@@ -745,13 +749,11 @@ class TestExpectations:
     def _report_errors(self):
         errors = []
         warnings = []
-        lineno = 0
         for expectation in self._expectations:
-            lineno += 1
             for error in expectation.errors:
-                errors.append("Line:%s %s %s" % (lineno, error, expectation.name if expectation.expectations else expectation.comment))
+                errors.append("Line:%s %s %s" % (expectation.line_number, error, expectation.name if expectation.expectations else expectation.comment))
             for warning in expectation.warnings:
-                warnings.append("Line:%s %s %s" % (lineno, warning, expectation.name if expectation.expectations else expectation.comment))
+                warnings.append("Line:%s %s %s" % (expectation.line_number, warning, expectation.name if expectation.expectations else expectation.comment))
 
         if len(errors) or len(warnings):
             _log.error("FAILURES FOR %s" % str(self._test_config))
@@ -772,7 +774,7 @@ class TestExpectations:
         if self._full_test_list:
             for test in self._full_test_list:
                 if not self._model.has_test(test):
-                    self._model.add_expectation_line(0, TestExpectationLine.create_passing_expectation(test), overrides_allowed=False)
+                    self._model.add_expectation_line(TestExpectationLine.create_passing_expectation(test), overrides_allowed=False)
 
     def get_expectations_json_for_all_platforms(self):
         # Specify separators in order to get compact encoding.
@@ -796,9 +798,7 @@ class TestExpectations:
             ModifiersAndExpectations(modifiers, expectations))
 
     def _add_expectations(self, expectation_list, overrides_allowed):
-        lineno = 0
         for expectation_line in expectation_list:
-            lineno += 1
             if not expectation_line.expectations:
                 continue
 
@@ -807,7 +807,7 @@ class TestExpectations:
                                             " ".join(expectation_line.expectations).upper())
 
             self._parser.parse(expectation_line)
-            self._model.add_expectation_line(lineno, expectation_line, overrides_allowed)
+            self._model.add_expectation_line(expectation_line, overrides_allowed)
 
 
 class SpecificityCalculation(object):

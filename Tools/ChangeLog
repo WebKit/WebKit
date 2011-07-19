@@ -1,3 +1,12 @@
+2011-07-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Store line number on TestExpectationLine.
+        https://bugs.webkit.org/show_bug.cgi?id=64800
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Refactored to store line number on TestExpectationLine instances.
+
 2011-07-19  Ojan Vafai  <ojan@chromium.org>
 
         fix flakiness dashboard for XP bots with XP in the name instead of WIN
