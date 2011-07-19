@@ -83,7 +83,6 @@ namespace WebCore {
         GraphicsContext* context() const;
 
         bool isAccelerated() const { return m_accelerateRendering; }
-        bool drawsUsingCopy() const; // If the image buffer has to render using a copied image, it will return true.
         PassRefPtr<Image> copyImage() const; // Return a new image that is a copy of the buffer.
 
         PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&) const;

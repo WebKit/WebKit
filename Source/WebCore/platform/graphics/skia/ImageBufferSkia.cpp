@@ -97,11 +97,6 @@ size_t ImageBuffer::dataSize() const
     return m_size.width() * m_size.height() * 4;
 }
 
-bool ImageBuffer::drawsUsingCopy() const
-{
-    return false;
-}
-
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     m_context->platformContext()->makeGrContextCurrent();

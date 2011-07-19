@@ -281,8 +281,6 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r, bool u
         if (imageBuffer) {
             if (m_presentedImage)
                 context->drawImage(m_presentedImage.get(), ColorSpaceDeviceRGB, r, CompositeSourceOver, useLowQualityScale);
-            else if (imageBuffer->drawsUsingCopy())
-                context->drawImage(copiedImage(), ColorSpaceDeviceRGB, r, CompositeSourceOver, useLowQualityScale);
             else
                 context->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, r, CompositeSourceOver, useLowQualityScale);
         }

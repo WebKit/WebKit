@@ -121,11 +121,6 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-bool ImageBuffer::drawsUsingCopy() const
-{
-    return false;
-}
-
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     return StillImage::create(m_data.m_pixmap);

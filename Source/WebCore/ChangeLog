@@ -1,3 +1,29 @@
+2011-07-18  Matthew Delaney  <mdelaney@apple.com>
+
+        Remove drawsUsingCopy now that all ports handle the copying
+        https://bugs.webkit.org/show_bug.cgi?id=64768
+        
+        Introduced in https://bugs.webkit.org/show_bug.cgi?id=43507, ImageBuffer::drawsUsingCopy
+        was used to know whether or not an ImageBuffer should be explicitly copied before being
+        painted into a context (as was used in HTMLCanvasElement::paint). All platforms now
+        handle the logic of copying or not in their ImageBuffer::draw() implementations, so
+        drawsUsingCopy() is no longer needed. This patch removes it.
+
+        Reviewed by Dan Bernstein.
+
+        No new tests; does not affect behavior.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::isAccelerated):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        * platform/graphics/wx/ImageBufferWx.cpp:
+
 2011-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [REGRESSION] Resource preserving fails when frameNavigated event is dispatched on NetworkPanel.

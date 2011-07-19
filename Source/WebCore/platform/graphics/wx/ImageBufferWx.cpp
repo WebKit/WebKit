@@ -88,11 +88,6 @@ String ImageBuffer::toDataURL(const String&, const double*) const
     return String();
 }
 
-bool ImageBuffer::drawsUsingCopy() const
-{
-    return true;
-}
-
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     notImplemented();

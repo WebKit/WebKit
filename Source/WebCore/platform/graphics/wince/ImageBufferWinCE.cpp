@@ -98,11 +98,6 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-bool ImageBuffer::drawsUsingCopy() const
-{
-    return true;
-}
-
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     return adoptRef(new BufferedImage(&m_data));

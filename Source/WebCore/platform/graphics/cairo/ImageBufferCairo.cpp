@@ -86,11 +86,6 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-bool ImageBuffer::drawsUsingCopy() const
-{
-    return false;
-}
-
 PassRefPtr<Image> ImageBuffer::copyImage() const
 {
     // BitmapImage will release the passed in surface on destruction
