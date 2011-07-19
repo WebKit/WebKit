@@ -26,6 +26,17 @@
 
 2011-07-19  Rob Buis  <rbuis@rim.com>
 
+        REGRESSION (r91187-r91192): svg/W3C-SVG-1.1/animate-elem-80-t.svg failing on SnowLeopard Intel Debug (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=64820
+
+        Reviewed by Darin Adler.
+
+        Update result after r91192.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt:
+
+2011-07-19  Rob Buis  <rbuis@rim.com>
+
         REGRESSION (r89951): svg/foreignObject/text-tref-02-b.svg failing on Leopard Intel Release (Tests)
         https://bugs.webkit.org/show_bug.cgi?id=64817
 
