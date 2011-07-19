@@ -1,3 +1,34 @@
+2011-07-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Google Calendar thinks we're mobile
+        https://bugs.webkit.org/show_bug.cgi?id=63994
+
+        Reviewed by Xan Lopez.
+
+        Further special-case Google Calendar, for it thinks WebKit+Linux
+        means mobile, so we also have to spoof the OS.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::userAgent): use the new WebKitGTK+
+        private API that centralizes the logic now.
+        * tests/testwebsettings.c: Add tests to make sure the Google
+        special-cases only apply for the expected domains and when quirks
+        special-casing is enabled.
+        (test_non_quirky_user_agents):
+        (test_webkit_web_settings_user_agent):
+        * webkit/webkitwebsettings.cpp:
+        (webkitUserAgent): make it static.
+        (safariUserAgent): returns a fake Safari in Mac OS X User-Agent.
+        (initializeDomainsList): moved from FrameLoaderClientGtk.
+        (isGoogleDomain):ditto.
+        (isGoogleCalendar): ditto.
+        (userAgentForURL): ditto.
+        (webkitWebSettingsUserAgentForUri): centralize the whole
+        user agent spoofing logic in this new private API that can be used
+        by the browser to know what's going to happen for a specific URI
+        and also allows our API testing.
+        * webkit/webkitwebsettingsprivate.h:
+
 2011-07-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides

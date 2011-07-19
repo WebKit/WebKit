@@ -23,9 +23,12 @@
 
 #if GTK_CHECK_VERSION(2, 14, 0)
 
+/* Private API */
+char* webkitWebSettingsUserAgentForURI(WebKitWebSettings *settings, const char *uri);
+
 static void test_webkit_web_settings_copy(void)
 {
-    WebKitWebSettings* settings = webkit_web_settings_new();
+    WebKitWebSettings *settings = webkit_web_settings_new();
 
     // Set some non-default settings to verify that settings are properly copied.
     g_object_set(settings,
@@ -34,12 +37,12 @@ static void test_webkit_web_settings_copy(void)
                  "auto-load-images", FALSE,
                  "default-encoding", "utf-8", NULL);
 
-    WebKitWebSettings* copy = webkit_web_settings_copy(settings);
+    WebKitWebSettings *copy = webkit_web_settings_copy(settings);
 
     gboolean enableWebGL = FALSE;
     gboolean enableFullscreen = FALSE;
     gboolean autoLoadImages = FALSE;
-    char* defaultEncoding = NULL;
+    char *defaultEncoding = 0;
     g_object_get(copy,
                  "enable-fullscreen", &enableFullscreen,
                  "enable-webgl", &enableWebGL,
@@ -53,12 +56,37 @@ static void test_webkit_web_settings_copy(void)
     g_free(defaultEncoding);
 }
 
+static void test_non_quirky_user_agents(WebKitWebSettings *settings, const char *defaultUserAgent)
+{
+    char *userAgent = 0;
+
+    // test a custom UA string
+    userAgent = 0;
+    g_object_set(settings, "user-agent", "testwebsettings/0.1", NULL);
+    g_object_get(settings,"user-agent", &userAgent, NULL);
+    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
+    g_free(userAgent);
+
+    // setting it to NULL or an empty value should give us the default UA string
+    userAgent = 0;
+    g_object_set(settings, "user-agent", 0, NULL);
+    g_object_get(settings,"user-agent", &userAgent, NULL);
+    g_assert_cmpstr(userAgent, ==, defaultUserAgent);
+    g_free(userAgent);
+
+    userAgent = 0;
+    g_object_set(settings, "user-agent", "", NULL);
+    g_object_get(settings,"user-agent", &userAgent, NULL);
+    g_assert_cmpstr(userAgent, ==, defaultUserAgent);
+    g_free(userAgent);
+}
+
 static void test_webkit_web_settings_user_agent(void)
 {
-    WebKitWebSettings* settings;
-    GtkWidget* webView;
-    gchar* defaultUserAgent;
-    gchar* userAgent;
+    WebKitWebSettings *settings;
+    GtkWidget *webView;
+    char *defaultUserAgent;
+    char *userAgent = 0;
     g_test_bug("17375");
 
     webView = webkit_web_view_new();
@@ -67,31 +95,59 @@ static void test_webkit_web_settings_user_agent(void)
     settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView));
     defaultUserAgent = g_strdup(webkit_web_settings_get_user_agent(settings));
 
-    // test a custom UA string
-    userAgent = NULL;
-    g_object_set(G_OBJECT(settings), "user-agent", "testwebsettings/0.1", NULL);
-    g_object_get(G_OBJECT(settings),"user-agent", &userAgent, NULL);
+    test_non_quirky_user_agents(settings, defaultUserAgent);
+
+    /* Test quirky google domains */
+    g_object_set(settings, "user-agent", "testwebsettings/0.1", NULL);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com/");
     g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
     g_free(userAgent);
 
-    // setting it to NULL or an empty value should give us the default UA string
-    userAgent = NULL;
-    g_object_set(G_OBJECT(settings), "user-agent", NULL, NULL);
-    g_object_get(G_OBJECT(settings),"user-agent", &userAgent, NULL);
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://gmail.com/");
+    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
+    g_free(userAgent);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com.br/");
+    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
+    g_free(userAgent);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://calendar.google.com/");
+    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
+    g_free(userAgent);
+
+    /* Now enable quirks handling */
+    g_object_set(settings, "enable-site-specific-quirks", TRUE, NULL);
+
+    test_non_quirky_user_agents(settings, defaultUserAgent);
+
+    g_object_set(settings, "user-agent", "testwebsettings/0.1", NULL);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com/");
     g_assert_cmpstr(userAgent, ==, defaultUserAgent);
     g_free(userAgent);
 
-    userAgent = NULL;
-    g_object_set(G_OBJECT(settings), "user-agent", "", NULL);
-    g_object_get(G_OBJECT(settings),"user-agent", &userAgent, NULL);
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://gmail.com/");
     g_assert_cmpstr(userAgent, ==, defaultUserAgent);
+    g_free(userAgent);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.com.br/");
+    g_assert_cmpstr(userAgent, ==, defaultUserAgent);
+    g_free(userAgent);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://www.google.uk.not.com.br/");
+    g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
+    g_free(userAgent);
+
+    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://calendar.google.com/");
+    g_assert(g_str_has_prefix(userAgent, "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; en_US) AppleWebKit/"));
     g_free(userAgent);
 
     g_free(defaultUserAgent);
     g_object_unref(webView);
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
@@ -103,7 +159,7 @@ int main(int argc, char** argv)
 }
 
 #else
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     g_critical("You will need gtk-2.14.0 to run the unit tests. Doing nothing now.");
     return 0;

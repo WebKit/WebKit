@@ -82,9 +82,9 @@ struct _WebKitWebSettingsPrivate {
 
 WEBKIT_API void webkit_web_settings_add_extra_plugin_directory(WebKitWebView*, const gchar* directory);
 
-GSList* webkitWebViewGetEnchantDicts(WebKitWebView*);
+WEBKIT_API char* webkitWebSettingsUserAgentForURI(WebKitWebSettings*, const gchar* uri);
 
-WTF::String webkitUserAgent();
+GSList* webkitWebViewGetEnchantDicts(WebKitWebView*);
 
 }
 

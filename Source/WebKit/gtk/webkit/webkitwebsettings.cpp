@@ -29,6 +29,7 @@
 #include "EditingBehavior.h"
 #include "FileSystem.h"
 #include "GOwnPtr.h"
+#include "KURL.h"
 #include "PluginDatabase.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
@@ -171,7 +172,7 @@ static String webkitOSVersion()
     return uaOSVersion;
 }
 
-String webkitUserAgent()
+static String webkitUserAgent()
 {
     // We mention Safari since many broken sites check for it (OmniWeb does this too)
     // We re-use the WebKit version, though it doesn't seem to matter much in practice
@@ -179,6 +180,18 @@ String webkitUserAgent()
     DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
     DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), webkitOSVersion(), ") AppleWebKit/", uaVersion) +
                                                  makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion)));
+
+    return staticUA;
+}
+
+static String safariUserAgent()
+{
+    // We mention Safari since many broken sites check for it (OmniWeb does this too)
+    // We re-use the WebKit version, though it doesn't seem to matter much in practice
+
+    DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
+    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; en_US) AppleWebKit/", uaVersion) +
+                                                 makeString(" (KHTML, like Gecko) Version/5.0.5 Safari/", uaVersion)));
 
     return staticUA;
 }
@@ -1317,6 +1330,170 @@ const gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webSettings)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(webSettings), 0);
     return webSettings->priv->userAgent.data();
+}
+
+static void initializeDomainsList(HashSet<String>& googleDomains)
+{
+    // Google search domains.
+    googleDomains.add("biz");
+    googleDomains.add("com");
+    googleDomains.add("net");
+    googleDomains.add("org");
+    googleDomains.add("ae");
+    googleDomains.add("ag");
+    googleDomains.add("am");
+    googleDomains.add("at");
+    googleDomains.add("az");
+    googleDomains.add("be");
+    googleDomains.add("bi");
+    googleDomains.add("ca");
+    googleDomains.add("cc");
+    googleDomains.add("cd");
+    googleDomains.add("cg");
+    googleDomains.add("ch");
+    googleDomains.add("cl");
+    googleDomains.add("com.br");
+    googleDomains.add("com.do");
+    googleDomains.add("co.uk");
+    googleDomains.add("co.kr");
+    googleDomains.add("co.jp");
+    googleDomains.add("de");
+    googleDomains.add("dj");
+    googleDomains.add("dk");
+    googleDomains.add("ee");
+    googleDomains.add("es");
+    googleDomains.add("fi");
+    googleDomains.add("fm");
+    googleDomains.add("fr");
+    googleDomains.add("gg");
+    googleDomains.add("gl");
+    googleDomains.add("gm");
+    googleDomains.add("gs");
+    googleDomains.add("hn");
+    googleDomains.add("hu");
+    googleDomains.add("ie");
+    googleDomains.add("it");
+    googleDomains.add("je");
+    googleDomains.add("kz");
+    googleDomains.add("li");
+    googleDomains.add("lt");
+    googleDomains.add("lu");
+    googleDomains.add("lv");
+    googleDomains.add("ma");
+    googleDomains.add("ms");
+    googleDomains.add("mu");
+    googleDomains.add("mw");
+    googleDomains.add("nl");
+    googleDomains.add("no");
+    googleDomains.add("nu");
+    googleDomains.add("pl");
+    googleDomains.add("pn");
+    googleDomains.add("pt");
+    googleDomains.add("ru");
+    googleDomains.add("rw");
+    googleDomains.add("sh");
+    googleDomains.add("sk");
+    googleDomains.add("sm");
+    googleDomains.add("st");
+    googleDomains.add("td");
+    googleDomains.add("tk");
+    googleDomains.add("tp");
+    googleDomains.add("tv");
+    googleDomains.add("us");
+    googleDomains.add("uz");
+    googleDomains.add("ws");
+}
+
+static void initializeOtherGoogleDomains(Vector<String>& otherGoogleDomains)
+{
+    otherGoogleDomains.append("gmail.com");
+    otherGoogleDomains.append("youtube.com");
+    otherGoogleDomains.append("gstatic.com");
+    otherGoogleDomains.append("ytimg.com");
+}
+
+static bool isGoogleDomain(String host)
+{
+    DEFINE_STATIC_LOCAL(HashSet<String>, googleDomains, ());
+    DEFINE_STATIC_LOCAL(Vector<String>, otherGoogleDomains, ());
+
+    if (googleDomains.isEmpty())
+        initializeDomainsList(googleDomains);
+
+    if (otherGoogleDomains.isEmpty())
+        initializeOtherGoogleDomains(otherGoogleDomains);
+
+    // First check if this is one of the various google.com international domains.
+    int position = host.find(".google.");
+    if (position > 0 && googleDomains.contains(host.substring(position + sizeof(".google.") - 1)))
+        return true;
+
+    // Then we check the possibility of it being one of the other, .com-only google domains.
+    for (unsigned int i = 0; i < otherGoogleDomains.size(); i++) {
+        if (host.endsWith(otherGoogleDomains.at(i)))
+            return true;
+    }
+
+    return false;
+}
+
+static bool isGoogleCalendar(const KURL& url)
+{
+    if (url.host().find("calendar.google.") == 0
+        || (url.host().find("google.com") && url.path().startsWith("/calendar")))
+        return true;
+
+    return false;
+}
+
+static String userAgentForURL(const KURL& url)
+{
+    // For Google domains, drop the browser's custom User Agent string, and use the
+    // standard WebKit/Safari one, so they don't give us a broken experience. Calendar
+    // thinks "Linux WebKit" means mobile.
+    if (isGoogleCalendar(url))
+        return safariUserAgent();
+
+    if (isGoogleDomain(url.host()))
+        return webkitUserAgent();
+
+    return String();
+}
+
+/*
+ * Private usage only.
+ * webkitWebSettingsUserAgentForURI:
+ * @web_settings: the #WebKitWebSettings object to query
+ * @uri: the URI we want to know the User-Agent for
+ *
+ * Some web sites have been using User-Agent parsing heavily to decide
+ * the kind of content that is sent to the browser. When
+ * WebKitWebSettings:enable-site-specific-quirks is enabled WebKitGTK+
+ * will use its knowledge of sites doing bad things and lie to them by
+ * sending either the default User-Agent, i.e. not using the one
+ * specified by the browser in WebKitWebSettings:user-agent, or the
+ * Safari one (including lying about the underlying operating system).
+ *
+ * This function allows the browser to figure out what User-Agent is
+ * going to be sent to a particular URI.
+ *
+ * Please note that if WebKitWebSettings:use-site-specific-quirks is
+ * turned off calling this function is the same as calling
+ * webkit_web_settings_get_user_agent(), except you have to free the
+ * result.
+ *
+ * Returns: (transfer full): a newly allocated string containing the
+ * User-Agent that will be sent for the given URI.
+ */
+char* webkitWebSettingsUserAgentForURI(WebKitWebSettings* webSettings, const char* uri)
+{
+    if (webSettings->priv->enableSiteSpecificQuirks) {
+        String userAgentString = userAgentForURL(WebCore::KURL(WebCore::KURL(), String::fromUTF8(uri)));
+        if (!userAgentString.isEmpty())
+            return g_strdup(userAgentString.utf8().data());
+    }
+
+    return g_strdup(webkit_web_settings_get_user_agent(webSettings));
 }
 
 namespace WebKit {
