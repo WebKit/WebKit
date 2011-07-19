@@ -1,5 +1,11 @@
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaseline after r91290.
+
+        * platform/chromium/fast/js/array-prototype-properties-expected.txt: Added.
+
+2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium Windows rebaseline after r91277, and Chromium rebaseline for r91284.
 
         * platform/chromium/fast/js/string-prototype-properties-expected.txt: Added.
