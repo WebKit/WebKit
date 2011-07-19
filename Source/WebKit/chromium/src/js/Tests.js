@@ -536,6 +536,17 @@ TestSuite.prototype.testNetworkTiming = function()
 };
 
 
+TestSuite.prototype.testSharedWorker = function()
+{
+    function didEvaluateInConsole(resultText) {
+        this.assertEquals("2011", resultText);
+        this.releaseControl();
+    }
+    this.evaluateInConsole_("globalVar", didEvaluateInConsole.bind(this));
+    this.takeControl();
+};
+
+
 /**
  * Serializes options collection to string.
  * @param {HTMLOptionsCollection} options
@@ -614,7 +625,7 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
 {
     WebInspector.showConsole();
     WebInspector.console.prompt.text = code;
-    WebInspector.console.promptElement.dispatchEvent( TestSuite.createKeyEvent("Enter"));
+    WebInspector.console.promptElement.dispatchEvent(TestSuite.createKeyEvent("Enter"));
 
     this.addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
         function(commandResult) {

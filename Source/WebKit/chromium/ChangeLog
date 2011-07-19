@@ -1,3 +1,14 @@
+2011-07-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: add sanity test for shared worker inspector
+        https://bugs.webkit.org/show_bug.cgi?id=64799
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testSharedWorker):
+        (.TestSuite.prototype.evaluateInConsole_):
+
 2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Rename agentIdentifierPrefix to processId, move out from page agent and make static.
