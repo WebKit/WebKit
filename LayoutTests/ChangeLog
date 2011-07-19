@@ -1,5 +1,16 @@
 2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions]Parse -webkit-region-overflow property
+        https://bugs.webkit.org/show_bug.cgi?id=64444
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/script-tests/webkit-region-overflow-parsing.js: Added.
+        * fast/regions/webkit-region-overflow-parsing-expected.txt: Added.
+        * fast/regions/webkit-region-overflow-parsing.html: Added.
+
+2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
         hover then un-hover makes state change
         https://bugs.webkit.org/show_bug.cgi?id=56401
 

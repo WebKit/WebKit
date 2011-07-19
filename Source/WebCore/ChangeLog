@@ -1,5 +1,37 @@
 2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions]Parse -webkit-region-overflow property
+        https://bugs.webkit.org/show_bug.cgi?id=64444
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/webkit-region-overflow-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator RegionOverflow):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::regionOverflow):
+        (WebCore::InheritedFlags::setRegionOverflow):
+        (WebCore::InheritedFlags::initialRegionOverflow):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
+2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
         hover then un-hover makes state change
         https://bugs.webkit.org/show_bug.cgi?id=56401
 

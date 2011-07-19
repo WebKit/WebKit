@@ -136,6 +136,7 @@ public:
     AtomicString m_flowThread;
     AtomicString m_regionThread;
     int m_regionIndex;
+    RegionOverflow m_regionOverflow;
 #endif
 
 #if ENABLE(CSS_EXCLUSIONS)

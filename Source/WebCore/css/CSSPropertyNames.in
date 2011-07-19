@@ -329,6 +329,7 @@ z-index
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 -webkit-flow
 -webkit-content-order
+-webkit-region-overflow
 #endif
 #if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 -webkit-wrap-shape

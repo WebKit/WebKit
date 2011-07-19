@@ -747,6 +747,7 @@ public:
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
     const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }
     int regionIndex() const { return rareNonInheritedData->m_regionIndex; }
+    RegionOverflow regionOverflow() const { return rareNonInheritedData->m_regionOverflow; }
 #endif
 
     // Apple-specific property getter methods
@@ -1101,6 +1102,7 @@ public:
     void setFlowThread(const AtomicString& flowThread) { SET_VAR(rareNonInheritedData, m_flowThread, flowThread); }
     void setRegionThread(const AtomicString& regionThread) { SET_VAR(rareNonInheritedData, m_regionThread, regionThread); }
     void setRegionIndex(int regionIndex) { SET_VAR(rareNonInheritedData, m_regionIndex, regionIndex); }
+    void setRegionOverflow(RegionOverflow regionOverflow) { SET_VAR(rareNonInheritedData, m_regionOverflow, regionOverflow); }
 #endif
 
     // Apple-specific property setters
@@ -1346,6 +1348,7 @@ public:
     static const AtomicString& initialFlowThread() { return nullAtom; }
     static const AtomicString& initialRegionThread() { return nullAtom; }
     static int initialRegionIndex() { return 0; }
+    static RegionOverflow initialRegionOverflow() { return AutoRegionOverflow; }
 #endif
 
     // Keep these at the end.

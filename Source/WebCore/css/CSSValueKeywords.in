@@ -816,3 +816,9 @@ optimizeQuality
 nonzero
 evenodd
 #endif
+
+#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
+// -webkit-region-overflow
+// auto
+-webkit-break
+#endif

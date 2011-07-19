@@ -1338,6 +1338,35 @@ template<> inline CSSPrimitiveValue::operator EMarqueeBehavior() const
     }
 }
 
+#if ENABLE(CSS_REGIONS)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionOverflow e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case AutoRegionOverflow:
+        m_value.ident = CSSValueAuto;
+        break;
+    case BreakRegionOverflow:
+        m_value.ident = CSSValueWebkitBreak;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator RegionOverflow() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return AutoRegionOverflow;
+    case CSSValueWebkitBreak:
+        return BreakRegionOverflow;
+    default:
+        ASSERT_NOT_REACHED();
+        return AutoRegionOverflow;
+    }
+}
+#endif
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeDirection e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

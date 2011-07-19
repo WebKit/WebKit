@@ -4829,6 +4829,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(regionIndex, RegionIndex);
         m_style->setRegionIndex(clampToInteger(primitiveValue->getDoubleValue()));
         return;
+    case CSSPropertyWebkitRegionOverflow:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
+        return;
 #endif
     case CSSPropertyWebkitMarqueeDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
