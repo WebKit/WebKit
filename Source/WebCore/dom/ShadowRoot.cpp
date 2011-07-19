@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "NodeRareData.h"
+#include "ShadowContentElement.h"
 #include "ShadowContentSelector.h"
 
 namespace WebCore {
@@ -49,6 +50,7 @@ ShadowRoot::ShadowRoot(Document* document)
 
 ShadowRoot::~ShadowRoot()
 {
+    ASSERT(!m_inclusions || m_inclusions->isEmpty());
 }
 
 String ShadowRoot::nodeName() const
@@ -95,12 +97,14 @@ void ShadowRoot::recalcStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-ShadowContentElement* ShadowRoot::activeContentElement()
+ShadowContentElement* ShadowRoot::includerFor(Node* node) const
 {
-    ShadowContentSelector* selector = ShadowContentSelector::currentInstance();
-    if (!selector || selector->shadowRoot() != this)
+    if (!m_inclusions)
         return 0;
-    return selector->activeElement();
+    ShadowInclusion* found = m_inclusions->find(node);
+    if (!found)
+        return 0;
+    return found->includer();
 }
 
 void ShadowRoot::hostChildrenChanged()
@@ -136,5 +140,18 @@ void ShadowRoot::attach()
     ShadowContentSelector selector(this);
     TreeScope::attach();
 }
+
+ShadowInclusionSet* ShadowRoot::inclusions() const
+{
+    return m_inclusions.get();
+}
+
+ShadowInclusionSet* ShadowRoot::ensureInclusions()
+{
+    if (!m_inclusions)
+        m_inclusions = adoptPtr(new ShadowInclusionSet());
+    return m_inclusions.get();
+}
+
 
 }

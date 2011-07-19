@@ -1,3 +1,14 @@
+2011-07-18  MORITA Hajime  <morrita@google.com>
+
+        [ShadowContentElement] forwarded node should be able to access its hosting content element.
+        https://bugs.webkit.org/show_bug.cgi?id=64251
+
+        Reviewed by Dimitri Glazkov.
+
+        Added GTK symbols for new window.internals methods.
+        
+        * Source/autotools/symbols.filter:
+
 2011-07-15  Martin Robinson  <mrobinson@igalia.com>
 
         Build fixes for WebKit2. Ensure that all generated sources are
