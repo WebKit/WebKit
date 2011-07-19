@@ -1,3 +1,13 @@
+2011-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Resource preserving fails when frameNavigated event is dispatched on NetworkPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=64748
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._frameNavigated):
+
 2011-07-18  Brian Weinstein  <bweinstein@apple.com>
 
         Prep work for: Crash under WebPage::platformDragEnded when dragging on Mac
