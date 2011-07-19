@@ -1,3 +1,13 @@
+2011-07-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: implement import/export for timeline data.
+        https://bugs.webkit.org/show_bug.cgi?id=64601
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/timeline/timeline-load-expected.txt: Added.
+        * inspector/timeline/timeline-load.html: Added.
+
 2011-07-19  Gabor Loki  <loki@webkit.org>
 
         [Qt] Add missing expected file after r91191

@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "ScriptFunctionCall.h"
+#include "UserGestureIndicator.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -91,6 +92,7 @@ private:
     virtual void contextMenuItemSelected(ContextMenuItem* item)
     {
         if (m_frontendHost) {
+            UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
             int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
 
             ScriptFunctionCall function(m_webInspector, "contextMenuItemSelected");

@@ -33,6 +33,7 @@ WebInspector.TimelinePanel = function()
     WebInspector.Panel.call(this, "timeline");
 
     this.element.appendChild(this._createTopPane());
+    this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
     this.element.tabIndex = 0;
 
     this._sidebarBackgroundElement = document.createElement("div");
@@ -99,6 +100,9 @@ WebInspector.TimelinePanel = function()
     this._calculator._showShortEvents = this.toggleFilterButton.toggled;
     this._timeStampRecords = [];
     this._expandOffset = 15;
+
+    this._createFileSelector();
+    this._model = new WebInspector.TimelineModel(this);
 
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onTimelineEventRecorded, this);
 }
@@ -217,6 +221,43 @@ WebInspector.TimelinePanel.prototype = {
         this.recordsCounter.className = "timeline-records-counter";
     },
 
+    _createFileSelector: function()
+    {
+        if (this._fileSelectorElement)
+            this.element.removeChild(this._fileSelectorElement);
+
+        var fileSelectorElement = document.createElement("input");
+        fileSelectorElement.type = "file";
+        fileSelectorElement.style.opacity = 0;
+        fileSelectorElement.onchange = this._importFromFile.bind(this);
+        this.element.appendChild(fileSelectorElement);
+        this._fileSelectorElement = fileSelectorElement;
+    },
+
+    _contextMenu: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("&Export Timeline data\u2026"), this._exportToFile.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("&Import Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
+        contextMenu.show(event);
+    },
+
+    _exportToFile: function()
+    {
+        this._model._exportToFile();
+    },
+
+    _importFromFile: function()
+    {
+        if (this.toggleTimelineButton.toggled)
+            WebInspector.timelineManager.stop();
+
+        this._clearPanel();
+
+        this._model._importFromFile(this._fileSelectorElement.files[0]);
+        this._createFileSelector();
+    },
+
     _updateRecordsCounter: function()
     {
         this.recordsCounter.textContent = WebInspector.UIString("%d of %d captured records are visible", this._rootRecord._visibleRecordsCount, this._rootRecord._allRecordsCount);
@@ -314,6 +355,7 @@ WebInspector.TimelinePanel.prototype = {
                 this._clearPanel();
             }
         }
+        this._model._addRecord(record);
         this._innerAddRecordToTimeline(record, this._rootRecord);
         this._scheduleRefresh();
     },
@@ -444,6 +486,7 @@ WebInspector.TimelinePanel.prototype = {
         this._adjustScrollPosition(0);
         this._refresh();
         this._closeRecordDetails();
+        this._model._reset();
     },
 
     show: function()
@@ -1170,5 +1213,74 @@ WebInspector.TimelineExpandableElement.prototype = {
     _dispose: function()
     {
         this._element.parentElement.removeChild(this._element);
+    }
+}
+
+WebInspector.TimelineModel = function(timelinePanel)
+{
+    this._panel = timelinePanel;
+    this._records = [];
+}
+
+WebInspector.TimelineModel.prototype = {
+    _addRecord: function(record)
+    {
+        this._records.push(record);
+    },
+
+    _importNextChunk: function(data, index)
+    {
+        for (var i = 0; i < 20 && index < data.length; ++i, ++index)
+            this._panel._addRecordToTimeline(data[index]);
+
+        if (index !== data.length)
+            setTimeout(this._importNextChunk.bind(this, data, index), 0);
+    },
+
+    _importFromFile: function(file)
+    {
+        function onLoad(e)
+        {
+            var data = JSON.parse(e.target.result);
+            var version = data[0];
+            this._importNextChunk(data, 1);
+        }
+
+        function onError(e)
+        {
+            switch(e.target.error.code) {
+            case e.target.error.NOT_FOUND_ERR:
+                WebInspector.log(WebInspector.UIString('Timeline.importFromFile: File "%s" not found.', file.name));
+            break;
+            case e.target.error.NOT_READABLE_ERR:
+                WebInspector.log(WebInspector.UIString('Timeline.importFromFile: File "%s" is not readable', file.name));
+            break;
+            case e.target.error.ABORT_ERR:
+                break;
+            default:
+                WebInspector.log(WebInspector.UIString('Timeline.importFromFile: An error occurred while reading the file "%s"', file.name));
+            }
+        }
+
+        var reader = new FileReader();
+        reader.onload = onLoad.bind(this);
+        reader.onerror = onError;
+        reader.readAsText(file);
+    },
+
+    _exportToFile: function()
+    {
+        var records = ['[' + JSON.stringify(window.navigator.appVersion)];
+        for (var i = 0; i < this._records.length - 1; ++i)
+            records.push(JSON.stringify(this._records[i]));
+        records.push(JSON.stringify(this._records[this._records.length - 1]) + "]");
+
+        var now= new Date();
+        InspectorFrontendHost.saveAs("TimelineRawData-" + now.toRFC3339() + ".json", records.join(",\n"));
+    },
+
+    _reset: function()
+    {
+        this._records = [];
     }
 }

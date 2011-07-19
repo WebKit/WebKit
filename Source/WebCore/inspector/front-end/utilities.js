@@ -688,6 +688,23 @@ Number.constrain = function(num, min, max)
     return num;
 }
 
+Date.prototype.toRFC3339 = function()
+{
+    function leadZero(x)
+    {
+        return x > 9 ? x : '0' + x
+    }
+    var offset = Math.abs(this.getTimezoneOffset());
+    var offsetString = Math.floor(offset / 60) + ':' + leadZero(offset % 60);
+    return this.getFullYear() + '-' +
+           leadZero(this.getMonth() + 1) + '-' +
+           leadZero(this.getDate()) + 'T' +
+           leadZero(this.getHours()) + ':' +
+           leadZero(this.getMinutes()) + ':' +
+           leadZero(this.getSeconds()) +
+           (!offset ? "Z" : (this.getTimezoneOffset() > 0 ? '-' : '+') + offsetString);
+}
+
 HTMLTextAreaElement.prototype.moveCursorToEnd = function()
 {
     var length = this.value.length;

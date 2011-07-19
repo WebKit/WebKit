@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+    InspectorTest.addSniffer(WebInspector.TimelineModel.prototype, "_importNextChunk", importNextChunk);
+    InspectorFrontendHost.saveAs = saveAs;
+    var data = [
+        {"startTime":1310749854316.8408,"data":{"identifier":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
+        {"startTime":1310749855118.9329,"data":{"identifier":43,"statusCode":200,"mimeType":"text/html"},"children":[],"endTime":1310749855118.968,"type":"ResourceReceiveResponse","usedHeapSize":1819936,"totalHeapSize":7629120},
+        {"startTime":1310749855136.245,"data":{"identifier":44,"url":"http://www.webkit.org/css/main.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855136.655,"data":{"identifier":45,"url":"http://www.webkit.org/css/green.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.023,"data":{"identifier":46,"url":"http://www.webkit.org/css/blue.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.342,"data":{"identifier":47,"url":"http://www.webkit.org/css/yellow.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.656,"data":{"identifier":48,"url":"http://www.webkit.org/css/pink.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.989,"data":{"identifier":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855138.308,"data":{"identifier":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}];
+
+    WebInspector.panels.timeline._model._importNextChunk(data, 0);
+
+    function importNextChunk()
+    {
+        WebInspector.panels.timeline._model._exportToFile();
+    }
+
+    function saveAs(name, saveData)
+    {
+        saveData = JSON.parse(saveData);
+        saveData.shift(); // strip version info
+        if (JSON.stringify(data) == JSON.stringify(saveData))
+            InspectorTest.addResult("passed");
+        else
+            InspectorTest.addResult("saved data is not equal to restored");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline save/load functionality.
+</p>
+
+</body>
+</html>
