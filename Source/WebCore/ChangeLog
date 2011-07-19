@@ -1,3 +1,21 @@
+2011-07-19  Jessie Berlin  <jberlin@apple.com>
+
+        GTK + QT build fix.
+
+        Rubber-stamped by Daniel Bates and Alexey Proskuryakov.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didSendData):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::willCacheResponse):
+
 2011-07-19  Chris Rogers  <crogers@google.com>
 
         Fix web audio compile on mac port
