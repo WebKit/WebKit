@@ -1,3 +1,18 @@
+2011-07-19  Sam Weinig  <sam@webkit.org>
+
+        webkit-patch rebaseline crashes on use
+        https://bugs.webkit.org/show_bug.cgi?id=64775
+
+        Reviewed by Adam Roben.
+
+        Fix incorrectly spelled attribute name.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        The attribute is test_name, not filename.
+
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        Add test for tests_matching_failure_types.
+
 2011-07-18  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests should support --leaks

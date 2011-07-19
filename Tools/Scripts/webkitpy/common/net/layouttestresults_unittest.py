@@ -61,6 +61,49 @@ class ORWTResultsHTMLParserTest(unittest.TestCase):
 </html>
 """
 
+    _example_results_html_with_failing_tests = """
+<html>
+<head>
+<title>Layout Test Results</title>
+</head>
+<body>
+<p>Tests where results did not match expected results:</p>
+<table>
+<tr>
+<td><a href="http://trac.webkit.org/export/91245/trunk/LayoutTests/compositing/plugins/composited-plugin.html">compositing/plugins/composited-plugin.html</a></td>
+<td>
+<a href="compositing/plugins/composited-plugin-expected.txt">expected</a>
+</td>
+<td>
+<a href="compositing/plugins/composited-plugin-actual.txt">actual</a>
+</td>
+<td>
+<a href="compositing/plugins/composited-plugin-diffs.txt">diff</a>
+</td>
+<td>
+<a href="compositing/plugins/composited-plugin-pretty-diff.html">pretty diff</a>
+</td>
+</tr>
+</table>
+<p>Tests that had stderr output:</p>
+<table>
+<tr>
+<td><a href="/var/lib/buildbot/build/gtk-linux-64-release/build/LayoutTests/accessibility/aria-activedescendant-crash.html">accessibility/aria-activedescendant-crash.html</a></td>
+<td><a href="accessibility/aria-activedescendant-crash-stderr.txt">stderr</a></td>
+</tr>
+<td><a href="/var/lib/buildbot/build/gtk-linux-64-release/build/LayoutTests/http/tests/security/canvas-remote-read-svg-image.html">http/tests/security/canvas-remote-read-svg-image.html</a></td>
+<td><a href="http/tests/security/canvas-remote-read-svg-image-stderr.txt">stderr</a></td>
+</tr>
+</table><p>Tests that had no expected results (probably new):</p>
+<table>
+<tr>
+<td><a href="/var/lib/buildbot/build/gtk-linux-64-release/build/LayoutTests/fast/repaint/no-caret-repaint-in-non-content-editable-element.html">fast/repaint/no-caret-repaint-in-non-content-editable-element.html</a></td>
+<td><a href="fast/repaint/no-caret-repaint-in-non-content-editable-element-actual.txt">result</a></td>
+</tr>
+</table></body>
+</html>
+"""
+
     def test_parse_layout_test_results(self):
         failures = [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
         testname = 'fast/repaint/no-caret-repaint-in-non-content-editable-element.html'
@@ -96,3 +139,8 @@ class LayoutTestResultsTest(unittest.TestCase):
         self.assertEqual(LayoutTestResults.results_from_string(""), None)
         results = LayoutTestResults.results_from_string(ORWTResultsHTMLParserTest._example_results_html)
         self.assertEqual(len(results.failing_tests()), 0)
+
+    def test_tests_matching_failure_types(self):
+        results = LayoutTestResults.results_from_string(ORWTResultsHTMLParserTest._example_results_html_with_failing_tests)
+        failing_tests = results.tests_matching_failure_types([test_failures.FailureTextMismatch])
+        self.assertEqual(len(results.failing_tests()), 1)
