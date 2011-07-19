@@ -157,6 +157,25 @@ public:
         return info.registerFormat() == DataFormatDouble;
     }
 
+    // Called on an operand once it has been consumed by a parent node.
+    void use(NodeIndex nodeIndex)
+    {
+        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+
+        // use() returns true when the value becomes dead, and any
+        // associated resources may be freed.
+        if (!info.use())
+            return;
+
+        // Release the associated machine registers.
+        DataFormat registerFormat = info.registerFormat();
+        if (registerFormat == DataFormatDouble)
+            m_fprs.release(info.fpr());
+        else if (registerFormat != DataFormatNone)
+            m_gprs.release(info.gpr());
+    }
+
     static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR);
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
@@ -357,25 +376,6 @@ protected:
         return unboxDouble(gpr, fprAllocate());
     }
 
-    // Called on an operand once it has been consumed by a parent node.
-    void use(NodeIndex nodeIndex)
-    {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        // use() returns true when the value becomes dead, and any
-        // associated resources may be freed.
-        if (!info.use())
-            return;
-
-        // Release the associated machine registers.
-        DataFormat registerFormat = info.registerFormat();
-        if (registerFormat == DataFormatDouble)
-            m_fprs.release(info.fpr());
-        else if (registerFormat != DataFormatNone)
-            m_gprs.release(info.gpr());
-    }
-
     // Spill a VirtualRegister to the RegisterFile.
     void spill(VirtualRegister spillMe)
     {
@@ -559,9 +559,9 @@ protected:
         return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
     }
 
-    JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
+    JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
-    void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     
     void nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert = false);
     void nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert = false);
@@ -612,6 +612,10 @@ protected:
             info.initJSValue(nodeIndex, node.refCount(), reg, format);
         }
     }
+    void integerResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
+    {
+        integerResult(reg, nodeIndex, DataFormatInteger, mode);
+    }
     void noResult(NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == UseChildrenCalledExplicitly)
@@ -643,6 +647,10 @@ protected:
         m_gprs.retain(reg, virtualRegister, SpillOrderJS);
         GenerationInfo& info = m_generationInfo[virtualRegister];
         info.initJSValue(nodeIndex, node.refCount(), reg, format);
+    }
+    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
+    {
+        jsValueResult(reg, nodeIndex, DataFormatJS, mode);
     }
     void doubleResult(FPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
@@ -995,6 +1003,11 @@ public:
             m_gprOrInvalid = m_jit->fillInteger(index(), m_format);
         return m_gprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     JITCodeGenerator* m_jit;
@@ -1032,6 +1045,11 @@ public:
             m_fprOrInvalid = m_jit->fillDouble(index());
         return m_fprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     JITCodeGenerator* m_jit;
@@ -1067,6 +1085,11 @@ public:
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillJSValue(index());
         return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(m_index);
     }
 
 private:

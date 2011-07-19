@@ -293,6 +293,11 @@ public:
             m_gprOrInvalid = m_jit->fillSpeculateIntStrict(index());
         return m_gprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     SpeculativeJIT* m_jit;
@@ -364,6 +369,11 @@ public:
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillSpeculateCell(index());
         return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(m_index);
     }
 
 private:

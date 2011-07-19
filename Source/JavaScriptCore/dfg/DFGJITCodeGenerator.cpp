@@ -391,15 +391,8 @@ bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
         || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
 }
 
-JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
+JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
 {
-    GPRReg scratchGPR;
-    
-    if (resultGPR == baseGPR)
-        scratchGPR = tryAllocate();
-    else
-        scratchGPR = resultGPR;
-    
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
@@ -511,7 +504,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
     m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(valueGPR), static_cast<int8_t>(scratchGPR));
 }
 
-void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
+void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
 {
     JITCompiler::Call slowCall;
     JITCompiler::DataLabelPtr structToCompare, protoObj, protoStructToCompare, putFunction;
@@ -527,7 +520,7 @@ void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, unsigne
     wrongStructure.link(&m_jit);
     wrongProtoStructure.link(&m_jit);
     
-    slowCall = cachedGetById(baseGPR, resultGPR, identifierNumber, slowPathTarget, GetMethod);
+    slowCall = cachedGetById(baseGPR, resultGPR, scratchGPR, identifierNumber, slowPathTarget, GetMethod);
     
     done.link(&m_jit);
     
@@ -653,16 +646,22 @@ void JITCodeGenerator::nonSpeculativePeepholeBranch(Node& node, NodeIndex branch
     JITCompiler::JumpList slowPath;
     
     if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2())) {
-        flushRegisters();
-
         GPRResult result(this);
         GPRReg resultGPR = result.gpr();
     
+        arg1.use();
+        arg2.use();
+    
+        flushRegisters();
+
         callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
         addBranch(m_jit.branchTest8(callResultCondition, resultGPR), taken);
     } else {
         GPRTemporary result(this, arg2);
         GPRReg resultGPR = result.gpr();
+    
+        arg1.use();
+        arg2.use();
     
         if (!isKnownInteger(node.child1()))
             slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
@@ -701,18 +700,24 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
     JITCompiler::JumpList slowPath;
     
     if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2())) {
-        flushRegisters();
-        
         GPRResult result(this);
         GPRReg resultGPR = result.gpr();
     
+        arg1.use();
+        arg2.use();
+    
+        flushRegisters();
+        
         callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
         
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
     } else {
         GPRTemporary result(this, arg2);
         GPRReg resultGPR = result.gpr();
+
+        arg1.use();
+        arg2.use();
     
         if (!isKnownInteger(node.child1()))
             slowPath.append(m_jit.branchPtr(MacroAssembler::Below, arg1GPR, GPRInfo::tagTypeNumberRegister));
@@ -740,7 +745,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
         
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
         
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
     }
 }
 
@@ -752,8 +757,6 @@ bool JITCodeGenerator::nonSpeculativeCompare(Node& node, MacroAssembler::Relatio
         
         nonSpeculativePeepholeBranch(node, branchNodeIndex, cond, helperFunction);
     
-        use(node.child1());
-        use(node.child2());
         m_compileIndex = branchNodeIndex;
         
         return true;
@@ -786,6 +789,9 @@ void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex bran
     
     GPRTemporary result(this);
     GPRReg resultGPR = result.gpr();
+    
+    arg1.use();
+    arg2.use();
     
     if (isKnownCell(node.child1()) && isKnownCell(node.child2())) {
         // see if we get lucky: if the arguments are cells and they reference the same
@@ -838,6 +844,9 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
     
     GPRTemporary result(this);
     GPRReg resultGPR = result.gpr();
+    
+    arg1.use();
+    arg2.use();
     
     if (isKnownCell(node.child1()) && isKnownCell(node.child2())) {
         // see if we get lucky: if the arguments are cells and they reference the same
@@ -898,7 +907,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
         done2.link(&m_jit);
     }
     
-    jsValueResult(resultGPR, m_compileIndex);
+    jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 bool JITCodeGenerator::nonSpeculativeStrictEq(Node& node, bool invert)
@@ -912,8 +921,6 @@ bool JITCodeGenerator::nonSpeculativeStrictEq(Node& node, bool invert)
         
         nonSpeculativePeepholeStrictEq(node, branchNodeIndex, invert);
     
-        use(node.child1());
-        use(node.child2());
         m_compileIndex = branchNodeIndex;
         
         return true;
@@ -931,6 +938,8 @@ void JITCodeGenerator::emitBranch(Node& node)
     
     GPRTemporary result(this);
     GPRReg resultGPR = result.gpr();
+    
+    value.use();
     
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
@@ -951,7 +960,7 @@ void JITCodeGenerator::emitBranch(Node& node)
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
     
-    noResult(m_compileIndex);
+    noResult(m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 void JITCodeGenerator::emitCall(Node& node)

@@ -1,3 +1,49 @@
+2011-07-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT sometimes emits spill code even when the respective values
+        are never needed.
+        https://bugs.webkit.org/show_bug.cgi?id=64774
+
+        Reviewed by Gavin Barraclough.
+        
+        The main high-level change is that it is now easier to call use() on a
+        virtual register.  JSValueOperand and its other-typed relatives now have
+        a handy use() method, and jsValueResult() and friends now make it easier to
+        pass UseChildrenCalledExplicitly.
+        
+        The rest of this patch hoists the call to use() as high as possible for
+        all of those cases where either flushRegisters() or silentSpillAllRegisters()
+        may be called.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::cachedGetMethod):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeStrictEq):
+        (JSC::DFG::JITCodeGenerator::emitBranch):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::use):
+        (JSC::DFG::JITCodeGenerator::integerResult):
+        (JSC::DFG::JITCodeGenerator::jsValueResult):
+        (JSC::DFG::IntegerOperand::use):
+        (JSC::DFG::DoubleOperand::use):
+        (JSC::DFG::JSValueOperand::use):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::valueToNumber):
+        (JSC::DFG::NonSpeculativeJIT::valueToInt32):
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateStrictInt32Operand::use):
+        (JSC::DFG::SpeculateCellOperand::use):
+
 2011-07-19  Xan Lopez  <xlopez@igalia.com>
 
         ARMv7 backend broken, lacks 3 parameter rshift32 method

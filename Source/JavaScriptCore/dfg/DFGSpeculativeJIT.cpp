@@ -849,6 +849,11 @@ void SpeculativeJIT::compile(Node& node)
         Node& baseNode = m_jit.graph()[node.child1()];
         if (baseNode.op != GetLocal || m_jit.graph().getPrediction(baseNode.local()) != PredictArray)
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+
+        base.use();
+        property.use();
+        value.use();
+        
         MacroAssembler::Jump withinArrayBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
 
         // Code to handle put beyond array bounds.
@@ -883,7 +888,7 @@ void SpeculativeJIT::compile(Node& node)
 
         wasBeyondArrayBounds.link(&m_jit);
 
-        noResult(m_compileIndex);
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -961,12 +966,21 @@ void SpeculativeJIT::compile(Node& node)
     case GetById: {
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this, base);
-
+        
+        GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR;
+        
+        if (resultGPR == baseGPR)
+            scratchGPR = tryAllocate();
+        else
+            scratchGPR = resultGPR;
+        
+        base.use();
 
-        cachedGetById(base.gpr(), resultGPR, node.identifierNumber());
+        cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
 
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
         
@@ -974,11 +988,20 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this, base);
 
+        GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR;
+        
+        if (resultGPR == baseGPR)
+            scratchGPR = tryAllocate();
+        else
+            scratchGPR = resultGPR;
+        
+        base.use();
 
-        cachedGetMethod(base.gpr(), resultGPR, node.identifierNumber());
+        cachedGetMethod(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
 
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -986,10 +1009,17 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());
         GPRTemporary scratch(this);
-
-        cachedPutById(base.gpr(), value.gpr(), scratch.gpr(), node.identifierNumber(), NotDirect);
         
-        noResult(m_compileIndex);
+        GPRReg baseGPR = base.gpr();
+        GPRReg valueGPR = value.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        base.use();
+        value.use();
+
+        cachedPutById(baseGPR, valueGPR, scratchGPR, node.identifierNumber(), NotDirect);
+        
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -997,10 +1027,17 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());
         GPRTemporary scratch(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg valueGPR = value.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        base.use();
+        value.use();
 
-        cachedPutById(base.gpr(), value.gpr(), scratch.gpr(), node.identifierNumber(), Direct);
+        cachedPutById(baseGPR, valueGPR, scratchGPR, node.identifierNumber(), Direct);
 
-        noResult(m_compileIndex);
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 

@@ -59,6 +59,7 @@ EntryLocation::EntryLocation(MacroAssembler::Label entry, NonSpeculativeJIT* jit
 void NonSpeculativeJIT::valueToNumber(JSValueOperand& operand, GPRReg gpr)
 {
     GPRReg jsValueGpr = operand.gpr();
+    operand.use();
 
     JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
     JITCompiler::Jump nonNumeric = m_jit.branchTestPtr(MacroAssembler::Zero, jsValueGpr, GPRInfo::tagTypeNumberRegister);
@@ -87,6 +88,7 @@ void NonSpeculativeJIT::valueToNumber(JSValueOperand& operand, GPRReg gpr)
 void NonSpeculativeJIT::valueToInt32(JSValueOperand& operand, GPRReg result)
 {
     GPRReg jsValueGpr = operand.gpr();
+    operand.use();
 
     JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
 
@@ -126,6 +128,9 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
     GPRReg regArgGPR = regArg.gpr();
     GPRTemporary result(this, regArg);
     GPRReg resultGPR = result.gpr();
+    
+    regArg.use();
+    use(immChild);
 
     JITCompiler::Jump notInt;
     
@@ -220,7 +225,7 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
     
     done.link(&m_jit);
         
-    jsValueResult(resultGPR, m_compileIndex);
+    jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
@@ -234,6 +239,9 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     GPRTemporary result(this);
 
     GPRReg resultGPR = result.gpr();
+    
+    arg1.use();
+    arg2.use();
     
     JITCompiler::JumpList slowPath;
     
@@ -299,7 +307,7 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
     
     done.link(&m_jit);
         
-    jsValueResult(resultGPR, m_compileIndex);
+    jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Node& node)
@@ -447,15 +455,16 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         if ((childInfo.registerFormat() | DataFormatJS) == DataFormatJSDouble) {
             DoubleOperand op1(this, node.child1());
             GPRTemporary result(this);
+            op1.use();
             numberToInt32(op1.fpr(), result.gpr());
-            integerResult(result.gpr(), m_compileIndex);
+            integerResult(result.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
             break;
         }
 
         JSValueOperand op1(this, node.child1());
         GPRTemporary result(this, op1);
         valueToInt32(op1, result.gpr());
-        integerResult(result.gpr(), m_compileIndex);
+        integerResult(result.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -474,7 +483,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         JSValueOperand op1(this, node.child1());
         GPRTemporary result(this);
         valueToNumber(op1, result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex);
+        jsValueResult(result.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -537,6 +546,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     
         FPRReg op1FPR = op1Double.fpr();
         FPRReg op2FPR = op2Double.fpr();
+        
+        op1.use();
+        op2.use();
     
         JITCompiler::Jump firstOpNotInt;
         JITCompiler::Jump secondOpNotInt;
@@ -623,17 +635,19 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         
         done.link(&m_jit);
     
-        jsValueResult(X86Registers::edx, m_compileIndex);
+        jsValueResult(X86Registers::edx, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
     case LogicalNot: {
         JSValueOperand arg1(this, node.child1());
         GPRTemporary result(this);
-
+        
         GPRReg arg1GPR = arg1.gpr();
         GPRReg resultGPR = result.gpr();
         
+        arg1.use();
+
         m_jit.move(arg1GPR, resultGPR);
         m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), resultGPR);
         JITCompiler::Jump fastCase = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR, TrustedImm32(static_cast<int32_t>(~1)));
@@ -648,7 +662,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         fastCase.link(&m_jit);
 
         m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueTrue)), resultGPR);
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -703,6 +717,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRReg propertyGPR = property.gpr();
         GPRReg storageGPR = storage.gpr();
         GPRReg cleanIndexGPR = cleanIndex.gpr();
+        
+        base.use();
+        property.use();
 
         JITCompiler::Jump baseNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
@@ -739,7 +756,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         done.link(&m_jit);
 
-        jsValueResult(storageGPR, m_compileIndex);
+        jsValueResult(storageGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -751,12 +768,15 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRReg arg1GPR = arg1.gpr();
         GPRReg arg2GPR = arg2.gpr();
         GPRReg arg3GPR = arg3.gpr();
+        
+        arg1.use();
+        arg2.use();
+        arg3.use();
         flushRegisters();
 
-        GPRResult result(this);
         callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
 
-        noResult(m_compileIndex);
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -765,12 +785,20 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRReg baseGPR = base.gpr();
         GPRTemporary result(this, base);
         GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR;
+        
+        if (resultGPR == baseGPR)
+            scratchGPR = tryAllocate();
+        else
+            scratchGPR = resultGPR;
+        
+        base.use();
 
         JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
-        cachedGetById(baseGPR, resultGPR, node.identifierNumber(), notCell);
+        cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell);
 
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -779,12 +807,19 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRReg baseGPR = base.gpr();
         GPRTemporary result(this, base);
         GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR;
+        if (resultGPR == baseGPR)
+            scratchGPR = tryAllocate();
+        else
+            scratchGPR = resultGPR;
+        
+        base.use();
 
         JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
-        cachedGetMethod(baseGPR, resultGPR, node.identifierNumber(), notCell);
+        cachedGetMethod(baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell);
 
-        jsValueResult(resultGPR, m_compileIndex);
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -794,12 +829,16 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRTemporary scratch(this);
         GPRReg valueGPR = value.gpr();
         GPRReg baseGPR = base.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        base.use();
+        value.use();
         
         JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
-        cachedPutById(baseGPR, valueGPR, scratch.gpr(), node.identifierNumber(), NotDirect, notCell);
+        cachedPutById(baseGPR, valueGPR, scratchGPR, node.identifierNumber(), NotDirect, notCell);
 
-        noResult(m_compileIndex);
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -810,11 +849,14 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRReg valueGPR = value.gpr();
         GPRReg baseGPR = base.gpr();
         
+        base.use();
+        value.use();
+        
         JITCompiler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
         cachedPutById(baseGPR, valueGPR, scratch.gpr(), node.identifierNumber(), Direct, notCell);
 
-        noResult(m_compileIndex);
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
@@ -924,6 +966,10 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         GPRReg baseReg = base.gpr();
         GPRReg prototypeReg = prototype.gpr();
         GPRReg scratchReg = scratch.gpr();
+        
+        value.use();
+        base.use();
+        prototype.use();
 
         // Check that operands are cells (base is checked by CheckHasInstance, so we can just assert).
         MacroAssembler::Jump valueNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueReg, GPRInfo::tagMaskRegister);
@@ -973,7 +1019,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         wasNotInstance.link(&m_jit);
         wasNotDefaultHasInstance.link(&m_jit);
-        jsValueResult(scratchReg, m_compileIndex);
+        jsValueResult(scratchReg, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
