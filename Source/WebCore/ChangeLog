@@ -1,3 +1,17 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(91209?): fast/css/custom-font-xheight.html is failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=64767
+
+        Add a runtime check for font cascading optimization.
+
+        It's a constant value in Mac port so hopefully gcc will constant-propagate the value
+        and eliminate the function altogether.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::canSetCascadeListForCustomFont): Added.
+        (WebCore::FontPlatformData::ctFont):
+
 2011-07-18  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] forwarded node should be able to access its hosting content element.
