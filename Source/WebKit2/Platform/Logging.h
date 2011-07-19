@@ -26,8 +26,8 @@
 #ifndef WebKitLogging_h
 #define WebKitLogging_h
 
-#include "PlatformString.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 #if !LOG_DISABLED
 
