@@ -1,3 +1,19 @@
+2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Buildbot marks a nrwt bot red when tests are missing results
+        https://bugs.webkit.org/show_bug.cgi?id=64812
+
+        Reviewed by Tony Chang.
+
+        Added "missing results" label for tests that are missing results.
+
+        buildbot Now reports shows a label "X missing results" on a run when X tests were missing
+        expected results on that run.
+
+        Also rephrased "X failed" and "X were flaky" to "X failures" and "X flakes".
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-07-19  Adam Roben  <aroben@apple.com>
 
         Extract some of FailingTestsBugForm's code into a base class
