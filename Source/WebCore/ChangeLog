@@ -1,3 +1,10 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leopard build fix after r91229.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont):
+
 2011-07-18  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION(91209?): fast/css/custom-font-xheight.html is failing on Leopard

@@ -204,7 +204,7 @@ CTFontRef FontPlatformData::ctFont() const
 #if !defined(BUILDING_ON_LEOPARD)
         m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
 #else
-        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0);
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
 #endif
     }
 
