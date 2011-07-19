@@ -101,7 +101,7 @@ bool SubtreeModificationEventListener::operator==(const EventListener& listener)
 
 void SubtreeModificationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    if (event->type() == eventNames().DOMSubtreeModifiedEvent)
+    if (event->type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement != event->target())
         m_trefElement->updateReferencedText();
 }
 
