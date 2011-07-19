@@ -188,7 +188,7 @@ private:
 
     FloatSize constrainedSize() const;
 
-    bool requiresTiledLayer(float pageScaleFactor, const FloatSize&) const;
+    bool requiresTiledLayer(float pageScaleFactor) const;
     void swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase);
 
     CompositingCoordinatesOrientation defaultContentsOrientation() const;

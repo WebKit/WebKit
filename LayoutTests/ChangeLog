@@ -1,3 +1,16 @@
+2011-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Possible recursing in GraphicsLayerCA::updateGeometry()
+        https://bugs.webkit.org/show_bug.cgi?id=64815
+
+        Reviewed by Sam Weinig.
+        
+        New tests that scales a page so that a compositing layer falls
+        close to the tiling threshold.
+
+        * compositing/scaling/tiled-layer-recursion-expected.txt: Added.
+        * compositing/scaling/tiled-layer-recursion.html: Added.
+
 2011-07-19  Rob Buis  <rbuis@rim.com>
 
         REGRESSION (r89951): svg/foreignObject/text-tref-02-b.svg failing on Leopard Intel Release (Tests)

@@ -1010,7 +1010,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     FloatSize pixelAlignmentOffset;
     computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
-    bool needTiledLayer = requiresTiledLayer(pageScaleFactor, scaledSize);
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledLayer)
         swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
 
@@ -1262,7 +1262,7 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
 
 void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    bool needTiledLayer = requiresTiledLayer(pageScaleFactor, m_size);
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledLayer)
         swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
 
@@ -1988,7 +1988,7 @@ static float clampedContentsScaleForScale(float scale)
 
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    bool needTiledLayer = requiresTiledLayer(pageScaleFactor, m_size);
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledLayer)
         swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
 
@@ -2042,7 +2042,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
     return constrainedSize;
 }
 
-bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor, const FloatSize& size) const
+bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
     if (!m_drawsContent || !m_allowTiledLayer)
         return false;
@@ -2050,7 +2050,7 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor, const FloatSize&
     float contentsScale = pageScaleFactor * backingScaleFactor();
 
     // FIXME: catch zero-size height or width here (or earlier)?
-    return size.width() * contentsScale > cMaxPixelDimension || size.height() * contentsScale > cMaxPixelDimension;
+    return m_size.width() * contentsScale > cMaxPixelDimension || m_size.height() * contentsScale > cMaxPixelDimension;
 }
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase)

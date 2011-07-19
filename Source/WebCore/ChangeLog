@@ -1,3 +1,28 @@
+2011-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Possible recursion in GraphicsLayerCA::updateGeometry()
+        https://bugs.webkit.org/show_bug.cgi?id=64815
+
+        Reviewed by Sam Weinig.
+        
+        It was possible to recurse via updateGeometry/swapFromOrToTiledLayer/
+        updateContentsScale because updateGeometry() and updateContentsScale()
+        used different sizes; updateGeometry() used the scaled size, while
+        updateContentsScale() used the unscaled size.
+        
+        Always use the unscaled size; the scaled size will be at most a couple
+        of pixels bigger, and our threshold is not close to the max texture
+        size limit, so using the slightly smaller size is OK.
+
+        Test: compositing/scaling/tiled-layer-recursion.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent):
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        (WebCore::GraphicsLayerCA::requiresTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Parse -webkit-region-overflow property
