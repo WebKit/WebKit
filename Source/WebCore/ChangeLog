@@ -1,3 +1,26 @@
+2011-07-19  Jessie Berlin  <jberlin@apple.com>
+
+        Work towards determining the cause of frequent crashes due to null frame below
+        ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache.
+        https://bugs.webkit.org/show_bug.cgi?id=62764
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make these unexpected cases crash in the WebKit nightlies so we can gather more
+        information and potentially find a repro case.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didSendData):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::willCacheResponse):
+
 2011-07-19  Dan Bernstein  <mitz@apple.com>
 
         Nothing printed when specifying a very large maximum layout width

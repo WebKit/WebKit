@@ -224,7 +224,10 @@ void ResourceLoader::clearResourceData()
 
 void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
@@ -247,12 +250,18 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
 }
 
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     ASSERT(!m_reachedTerminalState);
 
     // Protect this in this delegate method since the additional processing can do
@@ -270,6 +279,10 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
 void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
 {
+    if (!m_cancelled && !fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!m_cancelled && !fastMallocSize(documentLoader()->frame()))
+        CRASH();
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData in a way that invalidates them. This
     // happens with the steps listed in 3266216
@@ -444,13 +457,19 @@ void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int lengt
 
 void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     didFinishLoading(finishTime);
 }
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForError(this, error))
         return;
@@ -460,19 +479,28 @@ void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 
 void ResourceLoader::wasBlocked(ResourceHandle*)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     didFail(blockedError());
 }
 
 void ResourceLoader::cannotShowURL(ResourceHandle*)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     didFail(cannotShowURLError());
 }
 
 bool ResourceLoader::shouldUseCredentialStorage()
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     RefPtr<ResourceLoader> protector(this);
     return frameLoader()->client()->shouldUseCredentialStorage(documentLoader(), identifier());
 }
@@ -508,7 +536,10 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
 
 void ResourceLoader::willCacheResponse(ResourceHandle*, CacheStoragePolicy& policy)
 {
-    ASSERT(documentLoader()->frame());
+    if (!fastMallocSize(documentLoader()->applicationCacheHost()))
+        CRASH();
+    if (!fastMallocSize(documentLoader()->frame()))
+        CRASH();
     // <rdar://problem/7249553> - There are reports of crashes with this method being called
     // with a null m_frame->settings(), which can only happen if the frame doesn't have a page.
     // Sadly we have no reproducible cases of this.
