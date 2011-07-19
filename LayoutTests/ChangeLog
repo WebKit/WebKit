@@ -1,3 +1,15 @@
+2011-07-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64677
+        Fix bugs in String.prototype this handling.
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/script-tests/string-prototype-properties.js: Added.
+        * fast/js/string-prototype-properties-expected.txt: Added.
+        * fast/js/string-prototype-properties.html: Added.
+            - Added layout test for string prototype functions with undefined/number as this value.
+
 2011-07-19  Robert Hogan  <robert@webkit.org>
 
         REGRESSION: Incorrect layout at recline-online.com

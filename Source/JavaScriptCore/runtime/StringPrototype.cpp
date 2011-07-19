@@ -297,7 +297,9 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    JSString* sourceVal = thisValue.toThisJSString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    JSString* sourceVal = thisValue.isString() ? asString(thisValue) : jsString(exec, thisValue.toString(exec));
     JSValue pattern = exec->argument(0);
     JSValue replacement = exec->argument(1);
     JSGlobalData* globalData = &exec->globalData();
@@ -487,7 +489,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     unsigned len = s.length();
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
@@ -507,7 +509,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     unsigned len = s.length();
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
@@ -541,7 +543,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     int len = s.length();
 
     JSValue a0 = exec->argument(0);
@@ -572,7 +574,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     int len = s.length();
 
     JSValue a0 = exec->argument(0);
@@ -601,7 +603,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
@@ -650,7 +652,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
@@ -678,7 +680,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     int len = s.length();
 
     JSValue a0 = exec->argument(0);
@@ -705,7 +707,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toThisString(exec);
+    UString s = thisValue.toString(exec);
     JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
@@ -769,16 +771,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
-        return throwVMTypeError(exec);
     unsigned len;
     JSString* jsString = 0;
     UString uString;
     if (thisValue.isString()) {
         jsString = static_cast<JSString*>(thisValue.asCell());
         len = jsString->length();
+    } else if (thisValue.isUndefinedOrNull()) {
+        // CheckObjectCoercible
+        return throwVMTypeError(exec);
     } else {
-        uString = thisValue.toThisObject(exec)->toString(exec);
+        uString = thisValue.toString(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         len = uString.length();
     }
 
@@ -806,16 +811,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
-        return throwVMTypeError(exec);
     int len;
     JSString* jsString = 0;
     UString uString;
     if (thisValue.isString()) {
         jsString = static_cast<JSString*>(thisValue.asCell());
         len = jsString->length();
+    } else if (thisValue.isUndefinedOrNull()) {
+        // CheckObjectCoercible
+        return throwVMTypeError(exec);
     } else {
-        uString = thisValue.toThisObject(exec)->toString(exec);
+        uString = thisValue.toString(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         len = uString.length();
     }
 
@@ -854,7 +862,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    JSString* sVal = thisValue.toThisJSString(exec);
+    JSString* sVal = thisValue.isString() ? asString(thisValue) : jsString(exec, thisValue.toString(exec));
     const UString& s = sVal->value(exec);
 
     int sSize = s.length();
@@ -894,7 +902,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    JSString* sVal = thisValue.toThisJSString(exec);
+    JSString* sVal = thisValue.isString() ? asString(thisValue) : jsString(exec, thisValue.toString(exec));
     const UString& s = sVal->value(exec);
 
     int sSize = s.length();
@@ -937,8 +945,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
 
-    UString s = thisValue.toThisString(exec);
     JSValue a0 = exec->argument(0);
     return JSValue::encode(jsNumber(localeCompare(s, a0.toString(exec))));
 }
@@ -946,70 +954,90 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<big>", s, "</big>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<small>", s, "</small>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<blink>", s, "</blink>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<b>", s, "</b>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<tt>", s, "</tt>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<i>", s, "</i>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<strike>", s, "</strike>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<sub>", s, "</sub>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     return JSValue::encode(jsMakeNontrivialString(exec, "<sup>", s, "</sup>"));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     JSValue a0 = exec->argument(0);
     return JSValue::encode(jsMakeNontrivialString(exec, "<font color=\"", a0.toString(exec), "\">", s, "</font>"));
 }
@@ -1017,7 +1045,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     JSValue a0 = exec->argument(0);
 
     uint32_t smallInteger;
@@ -1060,7 +1090,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     JSValue a0 = exec->argument(0);
     return JSValue::encode(jsMakeNontrivialString(exec, "<a name=\"", a0.toString(exec), "\">", s, "</a>"));
 }
@@ -1068,7 +1100,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    UString s = thisValue.toThisString(exec);
+    if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
+        return throwVMTypeError(exec);
+    UString s = thisValue.toString(exec);
     JSValue a0 = exec->argument(0);
     UString linkText = a0.toString(exec);
 
@@ -1113,7 +1147,7 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
 {
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwTypeError(exec);
-    UString str = thisValue.toThisString(exec);
+    UString str = thisValue.toString(exec);
     unsigned left = 0;
     if (trimKind & TrimLeft) {
         while (left < str.length() && isTrimWhitespace(str[left]))
