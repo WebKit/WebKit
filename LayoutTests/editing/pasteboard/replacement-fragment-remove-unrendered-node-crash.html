@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+Test passes if it does not crash.
+<input id="test" contenteditable="true">
+<script src="../editing.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+s.setPosition(e, 10500000000);
+insertHTMLCommand("<noscript>baz");
+</script>
+</html>

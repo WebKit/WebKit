@@ -1,3 +1,14 @@
+2011-07-19  Abhishek Arya  <inferno@chromium.org>
+
+        Tests that we do not crash when removing unrendering nodes
+        in a replacement fragment.
+        https://bugs.webkit.org/show_bug.cgi?id=64801
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/pasteboard/replacement-fragment-remove-unrendered-node-crash-expected.txt: Added.
+        * editing/pasteboard/replacement-fragment-remove-unrendered-node-crash.html: Added.
+
 2011-07-19  Rob Buis  <rbuis@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64673
