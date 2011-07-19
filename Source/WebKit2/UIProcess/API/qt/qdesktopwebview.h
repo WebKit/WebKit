@@ -40,6 +40,8 @@ class QWEBKIT_EXPORT QDesktopWebView : public QGraphicsWidget {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
 
+    Q_ENUMS(NavigationAction)
+
 public:
     QDesktopWebView();
     virtual ~QDesktopWebView();
@@ -47,7 +49,7 @@ public:
     QUrl url() const;
     QString title() const;
 
-    QAction* navigationAction(QtWebKit::NavigationAction which) const;
+    Q_INVOKABLE QAction* navigationAction(QtWebKit::NavigationAction which) const;
 
 public Q_SLOTS:
      void load(const QUrl&);
