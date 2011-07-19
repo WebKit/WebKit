@@ -63,6 +63,9 @@ bool screenIsMonochrome(Widget*)
 
 FloatRect screenRect(Widget* widget)
 {
+    if (!widget)
+        return FloatRect();
+
     int x, y, w, h;
     Evas* e = widget->evas();
 

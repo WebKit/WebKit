@@ -1,3 +1,19 @@
+2011-07-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Account for the invalid pointer case in WebCore::screenRect()
+        https://bugs.webkit.org/show_bug.cgi?id=64543
+
+        Reviewed by Antonio Gomes.
+
+        Fix a regression introduced in r88245: it assumes the pointer passed
+        to screenRect() is always valid.
+        fast/frames/crash-removed-iframe.html proves this is not always true,
+        so we need to do some sanity check on the pointer before using it.
+        No new tests as this has been caught by the current test suite.
+
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenRect):
+
 2011-07-19  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Antonio Gomes.
