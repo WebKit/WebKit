@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '92892'
+  'chromium_rev': '93069'
 }
 
 deps = {
@@ -89,8 +89,6 @@ deps = {
   # webkit dependencies
   'webkit': Var('chromium_svn')+'/webkit@'+Var('chromium_rev'),
 
-  'app':
-    Var('chromium_svn')+'/app@'+Var('chromium_rev'), # needed by appcache
   'gpu':
     Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
   'ipc':

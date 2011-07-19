@@ -55,7 +55,6 @@ Source/WebKit/chromium/.gclient_entries
 # Ignore Chromium dependencies
 Source/WebKit/chromium/.gclient
 Source/WebKit/chromium/.gclient_entries
-Source/WebKit/chromium/app/
 Source/WebKit/chromium/base/
 Source/WebKit/chromium/chromium_deps/
 Source/WebKit/chromium/crypto/
