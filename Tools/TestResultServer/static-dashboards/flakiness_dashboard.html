@@ -754,27 +754,11 @@ function getExpectations(test, platform, buildType)
     if (!testObject)
         return null;
 
-    var platformObject;
-    while (platform && !(platformObject = testObject[platform]))
-        platform = PLATFORM_FALLBACKS[platform];
-
-    if (platformObject) {
-        if (platformObject[buildType])
-            return platformObject[buildType];
-
-        if (platformObject[ALL])
-            return platformObject[ALL];
-
-        if (testObject[ALL]) {
-            var allPlatformObject = testObject[ALL];
-            if (allPlatformObject[buildType])
-                return allPlatformObject[buildType];
-
-            if (allPlatformObject[ALL])
-                return allPlatformObject[ALL];
-         }
-    }
-    return null;
+    var platformObject = testObject[platform];
+    if (!platformObject)
+        return null;
+        
+    return platformObject[buildType];
 }
 
 function populateExpectationsData(resultsObject)
@@ -839,48 +823,47 @@ function populateExpectationsData(resultsObject)
     resultsObject.modifiersHTML += htmlArrays.modifiers.join('<div class=separator></div>');
 }
 
-function addFallbacks(callback, candidates, validValues)
-{
-    var hasAnyValidValues = false;
-    for (var i = 0; i < candidates.length; i++) {
-        if (candidates[i] in validValues) {
-            hasAnyValidValues = true;
-            callback(candidates[i]);
-        }
-    }
-    if (!hasAnyValidValues)
-        callback(ALL);
-}
-
 function addTestToAllExpectations(test, expectations)
 {
+    if (!g_allExpectations[test])
+        g_allExpectations[test] = {};
+
     for (var j = 0; j < expectations.length; j++) {
         var modifiers = expectations[j].modifiers.split(' ');
-        addFallbacks(function(platformKey) {
-            addFallbacks(function(buildTypeKey) {
-                // Setting the ALL key overrides any previously seen expectations.
-                if (platformKey == ALL && g_allExpectations[test]) {
-                    for (var platform in PLATFORM_FALLBACKS) {
-                          if (platform in g_allExpectations[test]) {
-                              // Setting the ALL key overrides any previously seen
-                              // expectations.
-                              if (buildTypeKey == ALL)
-                                  g_allExpectations[test][platform] = {};
-                          }
-                    }
-                } else if (buildTypeKey == ALL && g_allExpectations[test])
-                    g_allExpectations[test][platformKey] = {}
+        var allPlatforms = [];
+        var allBuildTypes = [];
+        modifiers.forEach(function(modifier) {
+            if (modifier in BUILD_TYPES) {
+                allBuildTypes.push(modifier);
+                return;
+            }
+            
+            if (PLATFORMS.indexOf(modifier) != -1) {
+                allPlatforms.push(modifier);
+                return;
+            }
+            
+            if (modifier in PLATFORM_UNIONS) {
+                PLATFORM_UNIONS[modifier].forEach(function(platform) {
+                    allPlatforms.push(platform);
+                });
+            }
+        })
+        
+        if (!allPlatforms.length)
+            allPlatforms = PLATFORMS;
+            
+        if (!allBuildTypes.length)
+            allBuildTypes = Object.keys(BUILD_TYPES);
+        
+        allPlatforms.forEach(function(platform) {
+            if (!g_allExpectations[test][platform])
+                g_allExpectations[test][platform] = {};
 
-                if (!g_allExpectations[test])
-                    g_allExpectations[test] = {};
-
-                var testHolder = g_allExpectations[test];
-                if (!testHolder[platformKey])
-                    testHolder[platformKey] = {}
-
-                testHolder[platformKey][buildTypeKey] = expectations[j];
-            }, modifiers, BUILD_TYPES);
-        }, modifiers, PLATFORM_FALLBACKS);
+            allBuildTypes.forEach(function(buildType) {
+                g_allExpectations[test][platform][buildType] = expectations[j];
+            }); 
+        });
     }
 }
 
@@ -907,8 +890,7 @@ function processExpectations()
         expectationsArray.push({path: path, expectations: g_expectationsByTest[path]});
 
     // Sort the array to hit more specific paths last. More specific
-    // paths (e.g. foo/bar/baz.html) override entries for less-specific ones
-    // (e.g. foo/bar).
+    // paths (e.g. foo/bar/baz.html) override entries for less-specific ones (e.g. foo/bar).
     expectationsArray.sort(alphanumericCompare('path'));
 
     var allTests = getAllTests();
