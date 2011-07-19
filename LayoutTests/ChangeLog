@@ -1,3 +1,15 @@
+2011-07-19  Rob Buis  <rbuis@rim.com>
+
+        REGRESSION (r89951): svg/foreignObject/text-tref-02-b.svg failing on Leopard Intel Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=64817
+
+        Rubber stamped by Darin Adler.
+
+        Remove outdated, incorrect test results, hopefully the generic mac results are good enough.
+
+        * platform/mac-leopard/svg/foreignObject/text-tref-02-b-expected.png: Removed.
+        * platform/mac-leopard/svg/foreignObject/text-tref-02-b-expected.txt: Removed.
+
 2011-07-19  Robert Hogan  <robert@webkit.org>
 
         Add platform-specific results for r91277.
