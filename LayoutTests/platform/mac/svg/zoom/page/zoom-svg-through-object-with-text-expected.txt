@@ -7,12 +7,12 @@ layer at (0,0) size 800x26
         layer at (0,0) size 59x13
           RenderView at (0,0) size 59x13
         layer at (0,0) size 59x13
-          RenderSVGRoot {svg} at (0,0) size 59x13
-            RenderSVGPath {rect} at (0,0) size 59x13 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=59.00] [height=13.00]
-            RenderSVGPath {circle} at (25,2) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [cx=29.50] [cy=6.50] [r=4.27]
-            RenderSVGText {text} at (5,2) size 29x18 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 29x18
-                chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 4 width 29.00: "Text"
+          RenderSVGRoot {svg} at (0,0) size 49x13
+            RenderSVGPath {rect} at (0,0) size 49x12 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=59.00] [height=13.00]
+            RenderSVGPath {circle} at (20,1) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [cx=29.50] [cy=6.50] [r=4.27]
+            RenderSVGText {text} at (5,1) size 31x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 31x19
+                chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 4 width 30.24: "Text"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,22 @@
+2011-07-19  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION (r88913): Preview in Safari's snippet editor has a fixed height instead of filling the entire pane
+        https://bugs.webkit.org/show_bug.cgi?id=64059
+
+        REGRESSION (r88913): <object> has wrong computed height
+        https://bugs.webkit.org/show_bug.cgi?id=62769
+
+        Reviewed by Rob Buis.
+
+        Add new layout test in fast/css covering both bugs.
+        Update svg/zoom/page results (this is a progression, but the test itself remains broken, see comment inline).
+
+        * fast/css/replaced-element-implicit-size.html: Added.
+        * platform/mac/fast/css/replaced-element-implicit-size-expected.png: Added.
+        * platform/mac/fast/css/replaced-element-implicit-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-text-expected.png:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-text-expected.txt:
+
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium test expectations.

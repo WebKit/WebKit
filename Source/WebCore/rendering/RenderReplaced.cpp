@@ -297,27 +297,39 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
         // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
         if (hasIntrinsicWidth)
             return computeIntrinsicLogicalWidth(contentRenderer, includeMaxWidth);
+
+        // Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px. If 300px is too
+        // wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(cDefaultWidth, includeMaxWidth);
     }
 
-    // Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px. If 300px is too
-    // wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
     return computeReplacedLogicalWidthRespectingMinMaxWidth(intrinsicLogicalWidth(), includeMaxWidth);
+}
+
+bool RenderReplaced::logicalHeightIsAuto() const
+{
+    Length logicalHeightLength = style()->logicalHeight();
+    if (logicalHeightLength.isAuto())
+        return true;
+    
+    // For percentage heights: The percentage is calculated with respect to the height of the generated box's
+    // containing block. If the height of the containing block is not specified explicitly (i.e., it depends
+    // on content height), and this element is not absolutely positioned, the value computes to 'auto'.
+    if (!logicalHeightLength.isPercent() || isPositioned() || document()->inQuirksMode())
+        return false;
+
+    for (RenderBlock* cb = containingBlock(); !cb->isRenderView(); cb = cb->containingBlock()) {
+        if (cb->isTableCell() || (!cb->style()->logicalHeight().isAuto() || (!cb->style()->top().isAuto() && !cb->style()->bottom().isAuto())))
+            return false;
+    }
+
+    return true;
 }
 
 LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
-    // If the height of the containing block is not specified explicitly (i.e., it depends on
-    // content height), and this element is not absolutely positioned, the value computes to 'auto'.
-    bool heightIsAuto = style()->logicalHeight().isAuto();
-    if (!document()->inQuirksMode() && !isPositioned() && style()->logicalHeight().isPercent()) {
-        if (RenderObject* containingBlock = this->containingBlock()) {
-            while (containingBlock->isAnonymous())
-                containingBlock = containingBlock->containingBlock();
-            heightIsAuto = !containingBlock->style()->logicalHeight().isSpecified();
-        }
-    }
-
+    bool heightIsAuto = logicalHeightIsAuto();
     if (style()->logicalHeight().isSpecified() && !heightIsAuto)
         return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style()->logicalHeight()));
 
@@ -350,10 +362,12 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
         // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
         if (hasIntrinsicHeight)
             return computeIntrinsicLogicalHeight(contentRenderer);
+
+        // Otherwise, if 'height' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'height' must be set to the height
+        // of the largest rectangle that has a 2:1 ratio, has a height not greater than 150px, and has a width not greater than the device width.
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(cDefaultHeight);
     }
 
-    // Otherwise, if 'height' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'height' must be set to the height
-    // of the largest rectangle that has a 2:1 ratio, has a height not greater than 150px, and has a width not greater than the device width.
     return computeReplacedLogicalHeightRespectingMinMaxHeight(intrinsicLogicalHeight());
 }
 

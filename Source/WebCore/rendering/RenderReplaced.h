@@ -62,6 +62,7 @@ private:
     virtual RenderBox* embeddedContentBox() const { return 0; }
     int computeIntrinsicLogicalWidth(RenderBox* contentRenderer, bool includeMaxWidth) const;
     int computeIntrinsicLogicalHeight(RenderBox* contentRenderer) const;
+    bool logicalHeightIsAuto() const;
 
     virtual const char* renderName() const { return "RenderReplaced"; }
 

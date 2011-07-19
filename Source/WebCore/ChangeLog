@@ -1,3 +1,33 @@
+2011-07-19  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION (r88913): Preview in Safari's snippet editor has a fixed height instead of filling the entire pane
+        https://bugs.webkit.org/show_bug.cgi?id=64059
+
+        REGRESSION (r88913): <object> has wrong computed height
+        https://bugs.webkit.org/show_bug.cgi?id=62769
+
+        Reviewed by Rob Buis.
+
+        Fix misinterpretation of CSS 2.1 - "10.5 Content height: the 'height' property".
+        It says "If the height of the containing block is not specified explicitelz (i.e. it depends on the
+        content height), and this element is not absolutely positioned, the value computes to 'auto'".
+
+        Checking whether the containing block height depends on the content height is not equal to checking
+        whether the height property is set on the containing block, there are other ways to implicitly specify
+        the height by setting top & bottom. Fix that by checking whether the containing block has a height
+        property or top & bottom set.
+
+        While I was at it, make computeReplacedLogicalWidth/Height a bit more explicit to make it easier to compare
+        the code with the spec quoatations - this doesn't change the functionality only the readability.
+        
+        Test: fast/css/replaced-element-implicit-size.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth): Cleanup comment, make code more explicit.
+        (WebCore::RenderReplaced::logicalHeightIsAuto): Add helper method used by computeReplacedLogicalHeight.
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight): Fix height=auto detection.
+        * rendering/RenderReplaced.h:
+
 2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(91209?): fast/css/custom-font-xheight.html is failing on Leopard
