@@ -1,3 +1,15 @@
+2011-07-19  Chris Fleizach  <cfleizach@apple.com>
+
+        If the control associated with a <label> is hidden, the label is also hidden (incorrectly)
+        https://bugs.webkit.org/show_bug.cgi?id=64752
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/label-element-with-hidden-control.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+
 2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Backend should provide network resource identifiers that are unique across navigation.

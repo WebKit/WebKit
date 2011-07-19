@@ -1658,6 +1658,11 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     if (!isControl())
         return false;
 
+    // If this control is ignored (because it's invisible), 
+    // then the label needs to be exposed so it can be visible to accessibility.
+    if (accessibilityIsIgnored())
+        return true;
+    
     // checkbox or radio buttons don't expose the title ui element unless it has a title already
     if (isCheckboxOrRadio() && getAttribute(titleAttr).isEmpty())
         return false;
