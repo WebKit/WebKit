@@ -54,6 +54,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
           '<td class="how-many"></td>' +
         '</tr>');
     $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
+    block.attr(config.kTestNameAttr, testName);
     block.attr(config.kFailureTypesAttr, unexpectedResults);
 
     var where = $('.where', block);

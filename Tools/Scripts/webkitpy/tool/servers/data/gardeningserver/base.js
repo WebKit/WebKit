@@ -97,4 +97,18 @@ base.jsonp = function(url, onsuccess)
     });
 };
 
+base.RequestTracker = function(requestsInFlight, callback, args)
+{
+    this.m_requestsInFlight = requestsInFlight;
+    this.m_callback = callback;
+    this.m_args = args || [];
+};
+
+base.RequestTracker.prototype.requestComplete = function()
+{
+    --this.m_requestsInFlight;
+    if (!this.m_requestsInFlight)
+        this.m_callback.apply(null, this.m_args);
+};
+
 })();

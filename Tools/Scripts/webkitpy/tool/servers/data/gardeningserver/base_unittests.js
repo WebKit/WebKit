@@ -48,6 +48,30 @@ test("keys", 4, function() {
     deepEqual(base.keys({"a": 1, "b": { "c" : 1}}), ["a", "b"]);
 });
 
+test("RequestTracker", 3, function() {
+    var ready = false;
+    var tracker = new base.RequestTracker(1, function() {
+        ok(ready);
+    });
+    ready = true;
+    tracker.requestComplete();
+    ready = false;
+
+    tracker = new base.RequestTracker(2, function(parameter) {
+        ok(ready);
+        equals(parameter, 'argument');
+    }, ['argument']);
+    tracker.requestComplete();
+    ready = true;
+    tracker.requestComplete();
+    ready = false;
+
+    tracker = new base.RequestTracker(0, function() {
+        ok(false);
+    });
+    tracker.requestComplete();
+});
+
 test("filterTree", 2, function() {
     var tree = {
         'path': {

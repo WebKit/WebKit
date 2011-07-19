@@ -47,52 +47,103 @@ function setIconState(hasFailures)
     $('#favicon').attr('href', faviconURL);
 }
 
-function showResults(onsuccess)
+function togglePartyTime(hasFailures)
+{
+    if (!hasFailures) {
+        $('.results').text('No failures. Party time!');
+        var partyTime = $('<div class="partytime"><img src="partytime.gif"></div>');
+        $('.results').append(partyTime);
+        partyTime.fadeIn(1200).delay(7000).fadeOut();
+        return;
+    }
+    $('.results').empty();
+}
+
+function ensureResultsSummaryContainer()
+{
+    var container = $('.results-summary');
+    if (container.length)
+        return container;
+    container = ui.regressionsContainer();
+    $('.results').append(container);
+    return container;
+}
+
+function detachRepairedTestsAndPrepareTestMap(unexpectedFailures)
+{
+    var testMap = {};
+
+    $('.test').each(function() {
+        var testSummary = $(this);
+        var testName = testSummary.attr(config.kTestNameAttr);
+        if (!(testName in unexpectedFailures))
+            testSummary.slideUp(function() { testSummary.detach(); });
+        else
+            testMap[testName] = testSummary;
+    });
+
+    return testMap;
+}
+
+function prepareTestSummary(testName, resultNodesByBuilder, callback)
+{
+    var testSummary = ui.summarizeTest(testName, resultNodesByBuilder);
+    var builderNameList = base.keys(resultNodesByBuilder);
+
+    results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
+        $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+    });
+
+    results.countFailureOccurances(builderNameList, testName, function(failureCount) {
+        $(testSummary).attr(config.kFailureCountAttr, failureCount);
+        $('.how-many', testSummary).text(ui.failureCount(failureCount));
+    });
+
+    callback(testSummary);
+}
+
+function updateResultsSummary(callback)
 {
     results.fetchResultsByBuilder(config.kBuilders, function(resultsByBuilder) {
         var unexpectedFailures = results.unexpectedFailuresByTest(resultsByBuilder);
         var hasFailures = !$.isEmptyObject(unexpectedFailures)
-        if (!hasFailures) {
-            $('.results').text('No failures. Party time!');
-            var partyTime = $('<div class="partytime"><img src="partytime.gif"></div>');
-            $('.results').append(partyTime);
-            partyTime.fadeIn(1200).delay(7000).fadeOut();
-        } else {
-            var regressions = ui.regressionsContainer();
 
-            $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
-                var testSummary = ui.summarizeTest(testName, resultNodesByBuilder);
-                $('tbody', regressions).append(testSummary);
-
-                var builderNameList = base.keys(resultNodesByBuilder);
-                results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
-                    $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
-                    if (!newestPassingRevision)
-                        return;
-                    checkout.existsAtRevision(checkout.subversionURLForTest(testName), newestPassingRevision, function(testExistedBeforeFailure) {
-                        $(testSummary).attr('data-new-test', !testExistedBeforeFailure);
-                    });
-                });
-                results.countFailureOccurances(builderNameList, testName, function(failureCount) {
-                    $(testSummary).attr(config.kFailureCountAttr, failureCount);
-                    $('.how-many', testSummary).text(ui.failureCount(failureCount));
-                });
-            });
-            $('.results').append(regressions);
-        }
+        togglePartyTime(hasFailures);
         setIconState(hasFailures);
-        onsuccess();
+
+        var container = ensureResultsSummaryContainer();
+        var testMap = detachRepairedTestsAndPrepareTestMap(unexpectedFailures);
+
+        var newTestSummaries = $();
+        var requestTracker = new base.RequestTracker(base.keys(unexpectedFailures).length, function() {
+            newTestSummaries.fadeIn();
+            callback()
+        });
+
+        $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
+            prepareTestSummary(testName, resultNodesByBuilder, function(testSummary) {
+                var existingElement = testMap[testName];
+                if (existingElement) {
+                    existingElement.replaceWith(testSummary);
+                    requestTracker.requestComplete();
+                    return;
+                }
+                $('tbody', container).append(testSummary);
+                newTestSummaries = newTestSummaries.add(testSummary);
+                requestTracker.requestComplete();
+            });
+        });
     });
 }
 
 function showResultsDetail()
 {
-    var testBlock = $(this).parents('.test');
+    var testSummary = $(this).parents('.test');
     var builderName = $(this).attr(config.kBuilderNameAttr);
-    var testName = $('.what', testBlock).text();
+    var testName = testSummary.attr(config.kTestNameAttr);
 
     // FIXME: It's lame that we have two different representations of multiple failure types.
-    var failureTypes = testBlock.attr(config.kFailureTypesAttr);
+    var failureTypes = testSummary.attr(config.kFailureTypesAttr);
     var failureTypeList = failureTypes.split(' ');
 
     var content = $('.results-detail .content');
@@ -166,6 +217,8 @@ function checkBuilderStatuses()
 
 function update()
 {
+    displayOnButterbar('Loading...');
+    updateResultsSummary(dismissButterbar);
     checkBuilderStatuses();
 }
 
@@ -174,9 +227,6 @@ $('.results-detail .actions .dismiss').live('click', hideResultsDetail);
 $('.results-detail .actions .rebaseline').live('click', rebaselineResults);
 
 $(document).ready(function() {
-    showResults(function() {
-        $('.butterbar').fadeOut();
-    });
     g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);
     update();
 });

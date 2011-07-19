@@ -177,7 +177,7 @@ ResultsCache.prototype._fetch = function(key, callback)
 // FIXME: Consider using setTimeout to make this method always asynchronous.
 ResultsCache.prototype.get = function(key, callback)
 {
-    if (key in this._cache) {
+    if (this._cache[key]) {
         callback(this._cache[key]);
         return;
     }

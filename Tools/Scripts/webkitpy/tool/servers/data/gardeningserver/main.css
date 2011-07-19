@@ -87,6 +87,10 @@ table.results-summary {
     padding: 4px;
 }
 
+.results-summary tbody tr {
+    display: none;
+}
+
 .results-summary ul {
     margin: 0px;
     padding: 0px;
@@ -159,13 +163,8 @@ table.results-summary {
     border-radius: 4px;
 }
 
-.results-summary .test[data-new-test="true"] .what a[draggable]::before {
-    content: '(new)';
-    margin: 0 3px;
-}
-
 /* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
-.results-summary .test[data-failure-count="1"][data-new-test="false"] {
+.results-summary .test[data-failure-count="1"] {
     -webkit-transition: 1s opacity;
     opacity: 0.5;
 }
