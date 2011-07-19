@@ -424,6 +424,17 @@ bool operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSVal
     return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
+bool operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+    
+    ASSERT(op1.isCell());
+    ASSERT(op2.isCell());
+    
+    return JSValue::strictEqualSlowCaseInline(exec, op1, op2);
+}
+
 bool operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));

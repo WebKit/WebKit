@@ -688,7 +688,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
 
     case CompareStrictEq:
-        if (nonSpeculativeCompare(node, MacroAssembler::Equal, operationCompareStrictEq))
+        if (nonSpeculativeStrictEq(node))
             return;
         break;
 

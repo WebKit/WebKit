@@ -764,6 +764,166 @@ bool JITCodeGenerator::nonSpeculativeCompare(Node& node, MacroAssembler::Relatio
     return false;
 }
 
+void JITCodeGenerator::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex branchNodeIndex, bool invert)
+{
+    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+
+    // The branch instruction will branch to the taken block.
+    // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
+    if (taken == (m_block + 1)) {
+        invert = !invert;
+        BlockIndex tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+    
+    JSValueOperand arg1(this, node.child1());
+    JSValueOperand arg2(this, node.child2());
+    GPRReg arg1GPR = arg1.gpr();
+    GPRReg arg2GPR = arg2.gpr();
+    
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    if (isKnownCell(node.child1()) && isKnownCell(node.child2())) {
+        // see if we get lucky: if the arguments are cells and they reference the same
+        // cell, then they must be strictly equal.
+        addBranch(m_jit.branchPtr(JITCompiler::Equal, arg1GPR, arg2GPR), invert ? notTaken : taken);
+        
+        silentSpillAllRegisters(resultGPR);
+        setupStubArguments(arg1GPR, arg2GPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationCompareStrictEqCell);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+        
+        addBranch(m_jit.branchTest8(invert ? JITCompiler::NonZero : JITCompiler::Zero, resultGPR), taken);
+    } else {
+        m_jit.orPtr(arg1GPR, arg2GPR, resultGPR);
+        
+        JITCompiler::Jump twoCellsCase = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR, GPRInfo::tagMaskRegister);
+        
+        JITCompiler::Jump numberCase = m_jit.branchTestPtr(JITCompiler::NonZero, resultGPR, GPRInfo::tagTypeNumberRegister);
+        
+        addBranch(m_jit.branch32(invert ? JITCompiler::NotEqual : JITCompiler::Equal, arg1GPR, arg2GPR), taken);
+        addBranch(m_jit.jump(), notTaken);
+        
+        twoCellsCase.link(&m_jit);
+        addBranch(m_jit.branchPtr(JITCompiler::Equal, arg1GPR, arg2GPR), invert ? notTaken : taken);
+        
+        numberCase.link(&m_jit);
+        
+        silentSpillAllRegisters(resultGPR);
+        setupStubArguments(arg1GPR, arg2GPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationCompareStrictEq);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+        
+        addBranch(m_jit.branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, resultGPR), taken);
+    }
+    
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+}
+
+void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert)
+{
+    JSValueOperand arg1(this, node.child1());
+    JSValueOperand arg2(this, node.child2());
+    GPRReg arg1GPR = arg1.gpr();
+    GPRReg arg2GPR = arg2.gpr();
+    
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    if (isKnownCell(node.child1()) && isKnownCell(node.child2())) {
+        // see if we get lucky: if the arguments are cells and they reference the same
+        // cell, then they must be strictly equal.
+        JITCompiler::Jump notEqualCase = m_jit.branchPtr(JITCompiler::NotEqual, arg1GPR, arg2GPR);
+        
+        m_jit.move(JITCompiler::TrustedImmPtr(JSValue::encode(jsBoolean(!invert))), resultGPR);
+        
+        JITCompiler::Jump done = m_jit.jump();
+
+        notEqualCase.link(&m_jit);
+        
+        silentSpillAllRegisters(resultGPR);
+        setupStubArguments(arg1GPR, arg2GPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationCompareStrictEqCell);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+        
+        m_jit.andPtr(JITCompiler::TrustedImm32(1), resultGPR);
+        m_jit.or32(JITCompiler::TrustedImm32(ValueFalse), resultGPR);
+        
+        done.link(&m_jit);
+    } else {
+        m_jit.orPtr(arg1GPR, arg2GPR, resultGPR);
+        
+        JITCompiler::Jump twoCellsCase = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR, GPRInfo::tagMaskRegister);
+        
+        JITCompiler::Jump numberCase = m_jit.branchTestPtr(JITCompiler::NonZero, resultGPR, GPRInfo::tagTypeNumberRegister);
+        
+        m_jit.compare32(invert ? JITCompiler::NotEqual : JITCompiler::Equal, arg1GPR, arg2GPR, resultGPR);
+        
+        JITCompiler::Jump done1 = m_jit.jump();
+        
+        twoCellsCase.link(&m_jit);
+        JITCompiler::Jump notEqualCase = m_jit.branchPtr(JITCompiler::NotEqual, arg1GPR, arg2GPR);
+        
+        m_jit.move(JITCompiler::TrustedImmPtr(JSValue::encode(jsBoolean(!invert))), resultGPR);
+        
+        JITCompiler::Jump done2 = m_jit.jump();
+        
+        numberCase.link(&m_jit);
+        notEqualCase.link(&m_jit);
+        
+        silentSpillAllRegisters(resultGPR);
+        setupStubArguments(arg1GPR, arg2GPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationCompareStrictEq);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+        
+        m_jit.andPtr(JITCompiler::TrustedImm32(1), resultGPR);
+
+        done1.link(&m_jit);
+
+        m_jit.or32(JITCompiler::TrustedImm32(ValueFalse), resultGPR);
+        
+        done2.link(&m_jit);
+    }
+    
+    jsValueResult(resultGPR, m_compileIndex);
+}
+
+bool JITCodeGenerator::nonSpeculativeStrictEq(Node& node, bool invert)
+{
+    if (!invert && (isKnownNumeric(node.child1()) || isKnownNumeric(node.child2())))
+        return nonSpeculativeCompare(node, MacroAssembler::Equal, operationCompareStrictEq);
+    
+    NodeIndex branchNodeIndex = detectPeepHoleBranch();
+    if (branchNodeIndex != NoNode) {
+        ASSERT(node.adjustedRefCount() == 1);
+        
+        nonSpeculativePeepholeStrictEq(node, branchNodeIndex, invert);
+    
+        use(node.child1());
+        use(node.child2());
+        m_compileIndex = branchNodeIndex;
+        
+        return true;
+    }
+    
+    nonSpeculativeNonPeepholeStrictEq(node, invert);
+    
+    return false;
+}
+
 void JITCodeGenerator::emitBranch(Node& node)
 {
     JSValueOperand value(this, node.child1());

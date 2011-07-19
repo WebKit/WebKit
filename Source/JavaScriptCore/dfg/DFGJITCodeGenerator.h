@@ -571,6 +571,10 @@ protected:
     void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
     bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
     
+    void nonSpeculativePeepholeStrictEq(Node&, NodeIndex branchNodeIndex, bool invert = false);
+    void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
+    bool nonSpeculativeStrictEq(Node&, bool invert = false);
+    
     void emitBranch(Node&);
     
     MacroAssembler::Address addressOfCallData(int idx)

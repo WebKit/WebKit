@@ -782,7 +782,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case CompareStrictEq:
-        if (compare(node, JITCompiler::Equal, operationCompareStrictEq))
+        if (nonSpeculativeStrictEq(node))
             return;
         break;
 

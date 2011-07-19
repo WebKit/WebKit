@@ -82,6 +82,7 @@ bool operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValu
 bool operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+bool operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 bool operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 void* operationVirtualCall(ExecState*);
 void* operationLinkCall(ExecState*);

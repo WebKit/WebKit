@@ -1,3 +1,28 @@
+2011-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not optimize strict equality as effectively as the old JIT does.
+        https://bugs.webkit.org/show_bug.cgi?id=64759
+
+        Reviewed by Gavin Barraclough.
+        
+        This adds a more complete set of strict equality optimizations.  If either
+        operand is known numeric, then the code reverts to the old style of optimizing
+        (first try integer comparison).  Otherwise it uses the old JIT's trick of
+        first simultaneously checking if both operands are either numbers or cells;
+        if not then a fast path is taken.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeStrictEq):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-07-18  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64760
