@@ -1,3 +1,15 @@
+2011-07-19  Jessie Berlin  <jberlin@apple.com>
+
+        Fix assertion failure seen in plugins/return-npobject.html on Windows XP Debug bots.
+
+        Rubber-stamped by Adam Roben.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveData):
+        It is possible for a subclass to cancel the load from within didReceiveData, which would
+        set m_documentLoader to 0.
+        Remove the assertion I added that the DocumentLoader's frame is non-null.
+
 2011-07-19  Steve Block  <steveblock@google.com>
 
         REGRESSION (r82194): jvalueToJavaValue() does not correctly set length of String property

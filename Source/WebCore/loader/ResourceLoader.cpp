@@ -270,7 +270,6 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
 void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
 {
-    ASSERT(documentLoader()->frame());
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData in a way that invalidates them. This
     // happens with the steps listed in 3266216
