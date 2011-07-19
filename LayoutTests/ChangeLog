@@ -1,3 +1,13 @@
+2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        hover then un-hover makes state change
+        https://bugs.webkit.org/show_bug.cgi?id=56401
+
+        Reviewed by David Hyatt.
+
+        * fast/dynamic/hover-before-position-after-style-change-expected.txt: Added.
+        * fast/dynamic/hover-before-position-after-style-change.html: Added.
+
 2011-07-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64677
