@@ -1,3 +1,20 @@
+2011-07-19  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION: Incorrect layout at recline-online.com
+        https://bugs.webkit.org/show_bug.cgi?id=64030
+
+        Reviewed by David Hyatt.
+
+        http://trac.webkit.org/changeset/68362 dropped the check for cases
+        where the render box is floating or inline. When the box is left or right
+        aligned it is considered to be floating and needs to its margins set appropriately.
+
+        Test: fast/table/align-right-within-left-aligned-div.html
+              created by Dominic Cooney <dominicc@chromium.org>
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+
 2011-07-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash when removing unrenderered nodes in replacement fragment.

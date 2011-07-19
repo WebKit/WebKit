@@ -1605,7 +1605,7 @@ void RenderBox::computeLogicalWidth()
     }
 
     // Margin calculations.
-    if (logicalWidthLength.isAuto() || hasPerpendicularContainingBlock || isFloating() || isInline()) {
+    if (logicalWidthLength.isAuto() || hasPerpendicularContainingBlock) {
         setMarginStart(style()->marginStart().calcMinValue(containerLogicalWidth));
         setMarginEnd(style()->marginEnd().calcMinValue(containerLogicalWidth));
     } else
@@ -1691,7 +1691,14 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, int 
     const RenderStyle* containingBlockStyle = containingBlock->style();
     Length marginStartLength = style()->marginStartUsing(containingBlockStyle);
     Length marginEndLength = style()->marginEndUsing(containingBlockStyle);
-    
+
+    if (isFloating() || isInline()) {
+        // Inline blocks/tables and floats don't have their margins increased.
+        containingBlock->setMarginStartForChild(this, marginStartLength.calcMinValue(containerWidth));
+        containingBlock->setMarginEndForChild(this, marginEndLength.calcMinValue(containerWidth));
+        return;
+    }
+
     // Case One: The object is being centered in the containing block's available logical width.
     if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
         || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock->style()->textAlign() == WEBKIT_CENTER)) {

@@ -1,3 +1,14 @@
+2011-07-19  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION: Incorrect layout at recline-online.com
+        https://bugs.webkit.org/show_bug.cgi?id=64030
+
+        Reviewed by David Hyatt.
+
+        * fast/table/align-right-within-left-aligned-div-expected.png: Added.
+        * fast/table/align-right-within-left-aligned-div-expected.txt: Added.
+        * fast/table/align-right-within-left-aligned-div.html: Added.
+
 2011-07-19  Abhishek Arya  <inferno@chromium.org>
 
         Tests that we do not crash when removing unrendering nodes
