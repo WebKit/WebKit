@@ -1,3 +1,19 @@
+2011-07-19  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Fix microphone icon placement in speech input control for dir=rtl.
+        https://bugs.webkit.org/show_bug.cgi?id=64668
+
+        Reviewed by Dimitri Glazkov.
+
+        Modify default stylesheet to propagate dir=rtl from the outer input
+        control to the shadow DOM container.  This makes the microphone
+        icon appear on the left for dir=rtl, which is the desired behavior.
+
+        Test: fast/speech/speech-bidi-rendering.html
+
+        * css/html.css:
+        (input[x-webkit-speech][dir=rtl]::-webkit-textfield-decoration-container):
+
 2011-07-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Account for the invalid pointer case in WebCore::screenRect()

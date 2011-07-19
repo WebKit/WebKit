@@ -473,6 +473,10 @@ input::-webkit-input-speech-button {
     vertical-align: top;
     -webkit-box-flex: 0;
 }
+
+input[x-webkit-speech][dir=rtl]::-webkit-textfield-decoration-container {
+    direction: rtl;
+}
 #endif
 
 keygen, select {

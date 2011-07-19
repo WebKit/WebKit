@@ -1,3 +1,16 @@
+2011-07-19  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Fix microphone icon placement in speech input control for dir=rtl.
+        https://bugs.webkit.org/show_bug.cgi?id=64668
+
+        Reviewed by Dimitri Glazkov.
+
+        Added test that verifies placement of microphone icon for dir=rtl.
+
+        * fast/speech/speech-bidi-rendering.html: Added.
+        * platform/mac/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/mac/fast/speech/speech-bidi-rendering-expected.txt: Added.
+
 2011-07-19  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Edit Chromium test expectation for http/tests/websocket/tests/hybi/reserved-opcodes.html.
