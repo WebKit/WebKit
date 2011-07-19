@@ -1,3 +1,27 @@
+2011-07-18  Andy Estes  <aestes@apple.com>
+
+        Solar Walk app-specific hack accidentally strips stylesheets from the document.
+        https://bugs.webkit.org/show_bug.cgi?id=64777
+
+        Reviewed by Adam Barth.
+        
+        Solar Walk uses a self-closed title tag in its documents ("<title />").
+        The HTML5 parser does not recognize this as a valid self-closing tag,
+        so it treats the remainder of the document as title text.
+        
+        We work around this in WebKit by injecting a script that calls
+        document.write() on the contents of document.title, thereby restoring
+        the contents of the document. Unfortunately this overwrote several
+        <style> tags that existed before the <title>, thereby causing the
+        document to not have the intended styling.
+        
+        Fix this by having the injected script concatenate document.title to
+        the document instead of overwriting it during document.write(). We can
+        also take the opportunity to remove document.title since it does not
+        contain useful information.
+
+        * Misc/SolarWalkQuirksUserScript.js:
+
 2011-07-18  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64742

@@ -28,7 +28,10 @@
     {  
         // Solar Walk uses a self closing title tag, so to match the behavior of the old parser, 
         // we write the contents of the title element to the end of the document so it can be re-parsed.
-        document.write(document.title);
+        document.write(document.documentElement.outerHTML + document.title);
+        
+        // Remove <title> since SolarWalk intended it to be empty.
+        document.head.removeChild(document.title);
     }
 
     addEventListener("load", reparseTitle, false);
