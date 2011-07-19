@@ -1,3 +1,9 @@
+2011-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update after r91229.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-18  MORITA Hajime  <morrita@google.com>
 
         [ShadowContentElement] forwarded node should be able to access its hosting content element.
