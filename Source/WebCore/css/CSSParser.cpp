@@ -793,7 +793,7 @@ void CSSParser::checkForOrphanedUnits()
     }
 }
 
-inline PassRefPtr<CSSValue> CSSParser::parseValidPrimitive(int id, CSSParserValue* value)
+inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int id, CSSParserValue* value)
 {
     if (id)
         return primitiveValueCache()->createIdentifierValue(id);
@@ -5049,7 +5049,7 @@ bool CSSParser::parseFlex(int propId, bool important)
     static const double unsetValue = -1;
     double positiveFlex = unsetValue;
     double negativeFlex = unsetValue;
-    RefPtr<CSSValue> preferredSize;
+    RefPtr<CSSPrimitiveValue> preferredSize;
 
     while (CSSParserValue* arg = args->current()) {
         if (validUnit(arg, FNumber | FNonNeg, m_strict)) {
@@ -5080,7 +5080,7 @@ bool CSSParser::parseFlex(int propId, bool important)
     if (!preferredSize)
         preferredSize = primitiveValueCache()->createIdentifierValue(CSSValueAuto);
 
-    RefPtr<CSSFlexValue> flex = CSSFlexValue::create(positiveFlex, negativeFlex, preferredSize);
+    RefPtr<CSSFlexValue> flex = CSSFlexValue::create(clampToFloat(positiveFlex), clampToFloat(negativeFlex), preferredSize);
     addProperty(propId, flex.release(), important);
     return true;
 #else

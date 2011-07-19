@@ -38,7 +38,7 @@ namespace WebCore {
 
 class CSSFlexValue : public CSSValue {
 public:
-    static PassRefPtr<CSSFlexValue> create(double positiveFlex, double negativeFlex, PassRefPtr<CSSValue> preferredSize)
+    static PassRefPtr<CSSFlexValue> create(float positiveFlex, float negativeFlex, PassRefPtr<CSSPrimitiveValue> preferredSize)
     {
         return adoptRef(new CSSFlexValue(positiveFlex, negativeFlex, preferredSize));
     }
@@ -47,17 +47,23 @@ public:
 
     virtual String cssText() const;
 
+    virtual bool isFlexValue() const { return true; }
+
+    float positiveFlex() { return m_positiveFlex; }
+    float negativeFlex() { return m_negativeFlex; }
+    CSSPrimitiveValue* preferredSize() { return m_preferredSize.get(); }
+
 private:
-    CSSFlexValue(double positiveFlex, double negativeFlex, PassRefPtr<CSSValue> preferredSize)
+    CSSFlexValue(float positiveFlex, float negativeFlex, PassRefPtr<CSSPrimitiveValue> preferredSize)
         : m_positiveFlex(positiveFlex)
         , m_negativeFlex(negativeFlex)
         , m_preferredSize(preferredSize)
     {
     }
 
-    double m_positiveFlex;
-    double m_negativeFlex;
-    RefPtr<CSSValue> m_preferredSize;
+    float m_positiveFlex;
+    float m_negativeFlex;
+    RefPtr<CSSPrimitiveValue> m_preferredSize;
 };
 
 }

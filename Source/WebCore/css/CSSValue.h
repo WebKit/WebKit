@@ -54,6 +54,9 @@ public:
 
     virtual bool isBorderImageValue() const { return false; }
     virtual bool isCursorImageValue() const { return false; }
+#if ENABLE(CSS3_FLEXBOX)
+    virtual bool isFlexValue() const { return false; }
+#endif
     virtual bool isFontFamilyValue() const { return false; }
     virtual bool isFontValue() const { return false; }
     virtual bool isImageGeneratorValue() const { return false; }

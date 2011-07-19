@@ -68,7 +68,7 @@ namespace WebCore {
         static bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important, bool strict);
         static bool parseColor(RGBA32& color, const String&, bool strict = false);
         static bool parseSystemColor(RGBA32& color, const String&, Document*);
-        PassRefPtr<CSSValue> parseValidPrimitive(int propId, CSSParserValue*);
+        PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int propId, CSSParserValue*);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
         bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* styleSourceData = 0);
         bool parseMediaQuery(MediaList*, const String&);

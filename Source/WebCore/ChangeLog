@@ -1,3 +1,31 @@
+2011-07-19  Tony Chang  <tony@chromium.org>
+
+        use more specific types in CSSFlexValue
+        https://bugs.webkit.org/show_bug.cgi?id=64763
+
+        Reviewed by Ojan Vafai.
+
+        No new tests because no change in functionality.
+
+        * css/CSSFlexValue.h:
+        (WebCore::CSSFlexValue::create):
+        (WebCore::CSSFlexValue::isFlexValue): Make it possible to tell if
+            we're a flex value or not.  Will be needed when we're copying
+            values to RenderStyle.
+        (WebCore::CSSFlexValue::positiveFlex): Use floats for positive and
+            negative flex because in the render code, we use floats.
+        (WebCore::CSSFlexValue::negativeFlex): Add accessors for these since
+            we'll need it when reading the flex values.
+        (WebCore::CSSFlexValue::preferredSize):
+        (WebCore::CSSFlexValue::CSSFlexValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValidPrimitive): Make the type more
+            specific.
+        (WebCore::CSSParser::parseFlex):
+        * css/CSSParser.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFlexValue):
+
 2011-07-19  Chris Fleizach  <cfleizach@apple.com>
 
         If the control associated with a <label> is hidden, the label is also hidden (incorrectly)
