@@ -1,3 +1,12 @@
+2011-07-18  Tab Atkins  <jackalmage@gmail.com>
+
+        Tab Atkins is not in committers.py (as a non-committer)
+        https://bugs.webkit.org/show_bug.cgi?id=64770
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-18  Ojan Vafai  <ojan@chromium.org>
 
         Load ToT chromium bots by default in the flakiness dashboard
