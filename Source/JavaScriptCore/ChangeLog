@@ -16,6 +16,35 @@
 
 2011-07-19  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=64679
+        Fix bugs in Array.prototype this handling.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+            - These methods should throw if this value is undefined.
+
+2011-07-19  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=64677
         Fix bugs in String.prototype this handling.
 
