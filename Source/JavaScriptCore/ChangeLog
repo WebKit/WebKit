@@ -1,5 +1,36 @@
 2011-07-18  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=64760
+        DFG JIT - Should be able to compile program code.
+
+        Reviewed by Geoff Garen.
+
+        Add support for op_end, hooks to compile program code in Executable.cpp.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+            - Add support for op_end
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+            - Added, separate out steps of compileFunction.
+        (JSC::DFG::JITCompiler::compile):
+            - Added, compile program code.
+        (JSC::DFG::JITCompiler::compileFunction):
+            - Sections separated out to helper functions.
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::JITCompiler):
+            - Added m_exceptionCheckCount.
+        * runtime/Executable.cpp:
+        (JSC::tryDFGCompile):
+        (JSC::tryDFGCompileFunction):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+            - Renamed tryDFGCompile to tryDFGCompileFunction, added tryDFGCompile to compile program code.
+
+2011-07-18  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=64678
         Fix bugs in Object.prototype this handling.
 

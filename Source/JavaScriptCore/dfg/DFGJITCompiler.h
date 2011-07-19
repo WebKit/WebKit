@@ -110,9 +110,11 @@ public:
         : m_globalData(globalData)
         , m_graph(dfg)
         , m_codeBlock(codeBlock)
+        , m_exceptionCheckCount(0)
     {
     }
 
+    void compile(JITCode& entry);
     void compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
@@ -279,6 +281,11 @@ public:
     }
 
 private:
+    // Internal implementation to compile.
+    void compileEntry();
+    void compileBody();
+    void link(LinkBuffer&);
+
     // These methods used in linking the speculative & non-speculative paths together.
     void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);
     void fillInt32ToInteger(NodeIndex, GPRReg);
@@ -296,7 +303,9 @@ private:
     CodeBlock* m_codeBlock;
 
     // Vector of calls out from JIT code, including exception handler information.
+    // Count of the number of CallRecords with exception handlers.
     Vector<CallRecord> m_calls;
+    unsigned m_exceptionCheckCount;
 
     struct PropertyAccessRecord {
         PropertyAccessRecord(Call functionCall, int8_t deltaCheckImmToCall, int8_t deltaCallToStructCheck, int8_t deltaCallToLoadOrStore, int8_t deltaCallToSlowCase, int8_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)

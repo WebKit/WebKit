@@ -43,6 +43,51 @@ namespace JSC {
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0 };
 
 #if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
+static bool tryDFGCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode)
+{
+#if ENABLE(DFG_JIT_RESTRICTIONS)
+    // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
+    if (codeBlock->numberOfJumpTargets())
+        return false;
+#endif
+
+    JSGlobalData* globalData = &exec->globalData();
+    DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
+    if (!parse(dfg, globalData, codeBlock))
+        return false;
+
+    dfg.predictArgumentTypes(exec);
+
+    DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
+    dataFlowJIT.compile(jitCode);
+    return true;
+}
+
+static bool tryDFGCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+{
+#if ENABLE(DFG_JIT_RESTRICTIONS)
+    // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
+    if (codeBlock->numberOfJumpTargets())
+        return false;
+#endif
+
+    JSGlobalData* globalData = &exec->globalData();
+    DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
+    if (!parse(dfg, globalData, codeBlock))
+        return false;
+
+    dfg.predictArgumentTypes(exec);
+
+    DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
+    dataFlowJIT.compileFunction(jitCode, jitCodeWithArityCheck);
+    return true;
+}
+#else
+static bool tryDFGCompile(ExecState*, CodeBlock*, JITCode&) { return false; }
+static bool tryDFGCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&) { return false; }
+#endif
+
 class ExecutableFinalizer : public WeakHandleOwner {
     virtual void finalize(Handle<Unknown> handle, void*)
     {
@@ -226,7 +271,9 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
-        m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_programCodeBlock.get());
+        bool dfgCompiled = tryDFGCompile(exec, m_programCodeBlock.get(), m_jitCodeForCall);
+        if (!dfgCompiled)
+            m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_programCodeBlock.get());
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
             m_programCodeBlock->discardBytecode();
@@ -257,36 +304,6 @@ void ProgramExecutable::unlinkCalls()
     m_programCodeBlock->unlinkCalls();
 #endif
 }
-
-#if ENABLE(JIT)
-static bool tryDFGCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
-{
-    JSGlobalData* globalData = &exec->globalData();
-#if ENABLE(DFG_JIT)
-#if ENABLE(DFG_JIT_RESTRICTIONS)
-    // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
-    if (codeBlock->numberOfJumpTargets())
-        return false;
-#endif
-
-    DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
-    if (!parse(dfg, globalData, codeBlock))
-        return false;
-
-    dfg.predictArgumentTypes(exec);
-
-    DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
-    dataFlowJIT.compileFunction(jitCode, jitCodeWithArityCheck);
-    return true;
-#else
-    UNUSED_PARAM(globalData);
-    UNUSED_PARAM(codeBlock);
-    UNUSED_PARAM(jitCode);
-    UNUSED_PARAM(jitCodeWithArityCheck);
-    return false;
-#endif
-}
-#endif
 
 void ProgramExecutable::visitChildren(SlotVisitor& visitor)
 {
@@ -332,7 +349,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
-        bool dfgCompiled = tryDFGCompile(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
+        bool dfgCompiled = tryDFGCompileFunction(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
         if (!dfgCompiled)
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
 

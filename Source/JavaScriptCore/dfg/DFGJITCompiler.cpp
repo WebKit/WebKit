@@ -223,38 +223,21 @@ void JITCompiler::linkSpeculationChecks(SpeculativeJIT& speculative, NonSpeculat
     ASSERT(!(entriesIter != entriesEnd));
 }
 
-void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+void JITCompiler::compileEntry()
 {
-    // === Stage 1 - Function header code generation ===
-    //
     // This code currently matches the old JIT. In the function header we need to
     // pop the return address (since we do not allow any recursion on the machine
     // stack), and perform a fast register file check.
-
-    // This is the main entry point, without performing an arity check.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56292
     // We'll need to convert the remaining cti_ style calls (specifically the register file
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
-    // If we needed to perform an arity check we will already have moved the return address,
-    // so enter after this.
-    Label fromArityCheck(this);
+}
 
-    // Setup a pointer to the codeblock in the CallFrameHeader.
-    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
-
-    // Plant a check that sufficient space is available in the RegisterFile.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
-    addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
-    Jump registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), GPRInfo::regT1);
-    // Return here after register file check.
-    Label fromRegisterFileCheck = label();
-
-
-    // === Stage 2 - Function body code generation ===
-    //
+void JITCompiler::compileBody()
+{
     // We generate the speculative code path, followed by the non-speculative
     // code for the function. Next we need to link the two together, making
     // bail-outs from the speculative path jump to the corresponding point on
@@ -304,24 +287,17 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         nonSpeculative.compile(checkIterator);
     }
 
-    // === Stage 3 - Function footer code generation ===
-    //
-    // Generate code to lookup and jump to exception handlers, to perform the slow
-    // register file check (if the fast one in the function header fails), and
-    // generate the entry point with arity check.
-
     // Iterate over the m_calls vector, checking for exception checks,
     // and linking them to here.
-    unsigned exceptionCheckCount = 0;
     for (unsigned i = 0; i < m_calls.size(); ++i) {
         Jump& exceptionCheck = m_calls[i].m_exceptionCheck;
         if (exceptionCheck.isSet()) {
             exceptionCheck.link(this);
-            ++exceptionCheckCount;
+            ++m_exceptionCheckCount;
         }
     }
     // If any exception checks were linked, generate code to lookup a handler.
-    if (exceptionCheckCount) {
+    if (m_exceptionCheckCount) {
         // lookupExceptionHandler is passed two arguments, exec (the CallFrame*), and
         // an identifier for the operation that threw the exception, which we can use
         // to look up handler information. The identifier we use is the return address
@@ -334,38 +310,11 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         // and the address of the handler in returnValueGPR2.
         jump(GPRInfo::returnValueGPR2);
     }
+}
 
-    // Generate the register file check; if the fast check in the function head fails,
-    // we need to call out to a helper function to check whether more space is available.
-    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    registerFileCheck.link(this);
-    move(stackPointerRegister, GPRInfo::argumentGPR0);
-    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    Call callRegisterFileCheck = call();
-    jump(fromRegisterFileCheck);
-
-    // The fast entry point into a function does not check the correct number of arguments
-    // have been passed to the call (we only use the fast entry point where we can statically
-    // determine the correct number of arguments have been passed, or have already checked).
-    // In cases where an arity check is necessary, we enter here.
-    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    Label arityCheck = label();
-    preserveReturnAddressAfterCall(GPRInfo::regT2);
-    emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
-    branch32(Equal, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
-    move(stackPointerRegister, GPRInfo::argumentGPR0);
-    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    Call callArityCheck = call();
-    move(GPRInfo::regT0, GPRInfo::callFrameRegister);
-    jump(fromArityCheck);
-
-
-    // === Stage 4 - Link ===
-    //
+void JITCompiler::link(LinkBuffer& linkBuffer)
+{
     // Link the code, populate data in CodeBlock data structures.
-
-    LinkBuffer linkBuffer(*m_globalData, this, m_globalData->executableAllocator);
-
 #if DFG_DEBUG_VERBOSE
     fprintf(stderr, "JIT code start at %p\n", linkBuffer.debugAddress());
 #endif
@@ -377,7 +326,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     }
 
     if (m_codeBlock->needsCallReturnIndices()) {
-        m_codeBlock->callReturnIndexVector().reserveCapacity(exceptionCheckCount);
+        m_codeBlock->callReturnIndexVector().reserveCapacity(m_exceptionCheckCount);
         for (unsigned i = 0; i < m_calls.size(); ++i) {
             if (m_calls[i].m_handlesExceptions) {
                 unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_calls[i].m_call);
@@ -419,6 +368,75 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         info.cachedPrototype.setLocation(linkBuffer.locationOf(m_methodGets[i].m_protoObj));
         info.callReturnLocation = linkBuffer.locationOf(m_methodGets[i].m_slowCall);
     }
+}
+
+void JITCompiler::compile(JITCode& entry)
+{
+    // Preserve the return address to the callframe.
+    compileEntry();
+    // Generate the body of the program.
+    compileBody();
+    // Link
+    LinkBuffer linkBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    link(linkBuffer);
+    entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
+}
+
+void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+{
+    compileEntry();
+
+    // === Function header code generation ===
+    // This is the main entry point, without performing an arity check.
+    // If we needed to perform an arity check we will already have moved the return address,
+    // so enter after this.
+    Label fromArityCheck(this);
+    // Setup a pointer to the codeblock in the CallFrameHeader.
+    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
+    // Plant a check that sufficient space is available in the RegisterFile.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
+    addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    Jump registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), GPRInfo::regT1);
+    // Return here after register file check.
+    Label fromRegisterFileCheck = label();
+
+
+    // === Function body code generation ===
+    compileBody();
+
+    // === Function footer code generation ===
+    //
+    // Generate code to perform the slow register file check (if the fast one in
+    // the function header fails), and generate the entry point with arity check.
+    //
+    // Generate the register file check; if the fast check in the function head fails,
+    // we need to call out to a helper function to check whether more space is available.
+    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
+    registerFileCheck.link(this);
+    move(stackPointerRegister, GPRInfo::argumentGPR0);
+    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    Call callRegisterFileCheck = call();
+    jump(fromRegisterFileCheck);
+    
+    // The fast entry point into a function does not check the correct number of arguments
+    // have been passed to the call (we only use the fast entry point where we can statically
+    // determine the correct number of arguments have been passed, or have already checked).
+    // In cases where an arity check is necessary, we enter here.
+    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
+    Label arityCheck = label();
+    preserveReturnAddressAfterCall(GPRInfo::regT2);
+    emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
+    branch32(Equal, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
+    move(stackPointerRegister, GPRInfo::argumentGPR0);
+    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    Call callArityCheck = call();
+    move(GPRInfo::regT0, GPRInfo::callFrameRegister);
+    jump(fromArityCheck);
+
+
+    // === Link ===
+    LinkBuffer linkBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    link(linkBuffer);
     
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.
     linkBuffer.link(callRegisterFileCheck, cti_register_file_check);

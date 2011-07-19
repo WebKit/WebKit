@@ -1112,10 +1112,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_loop_if_greatereq);
         }
 
-        case op_ret: {
+        case op_ret:
             addToGraph(Return, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_ret);
-        }
+            
+        case op_end:
+            addToGraph(Return, get(currentInstruction[1].u.operand));
+            LAST_OPCODE(op_end);
             
         case op_call: {
             NodeIndex call = addCall(interpreter, currentInstruction, Call);
