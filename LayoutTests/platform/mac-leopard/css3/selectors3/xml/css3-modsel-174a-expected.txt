@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x216
+  RenderBlock {test} at (0,0) size 800x216
+    RenderBlock {parsererror} at (16,16) size 768x148 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x22
+        RenderText {#text} at (0,0) size 324x22
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (18,60) size 732x28
+        RenderText {#text} at (0,0) size 693x28
+          text run at (0,0) width 693: "error on line 4 at column 62: Namespaced Attribute attribute in 'http://css.example.net/' redefined"
+          text run at (693,0) width 0: " "
+          text run at (0,14) width 693: "error on line 5 at column 97: Namespaced Attribute attribute in 'http://css.example.net/' redefined"
+          text run at (693,14) width 0: " "
+      RenderBlock {h3} at (18,106) size 732x22
+        RenderText {#text} at (0,0) size 429x22
+          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+    RenderBlock {tests} at (0,180) size 800x36 [color=#FF0000]
+      RenderBlock {testA} at (0,0) size 800x18 [color=#008000]
+        RenderText {#text} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."
+      RenderBlock {testB} at (0,18) size 800x18 [color=#008000]
+        RenderText {#text} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."

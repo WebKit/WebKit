@@ -1,3 +1,22 @@
+2011-07-19  Sam Weinig  <sam@webkit.org>
+
+        Check in Leopard specific results for Selectors 3 tests.
+
+        * platform/mac-leopard/css3/selectors3: Added.
+        * platform/mac-leopard/css3/selectors3/html: Added.
+        * platform/mac-leopard/css3/selectors3/html/css3-modsel-24-expected.txt: Copied from platform/mac/css3/selectors3/html/css3-modsel-24-expected.txt.
+        * platform/mac-leopard/css3/selectors3/html/css3-modsel-68-expected.txt: Copied from platform/mac/css3/selectors3/html/css3-modsel-68-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xhtml: Added.
+        * platform/mac-leopard/css3/selectors3/xhtml/css3-modsel-174a-expected.txt: Copied from platform/mac/css3/selectors3/xhtml/css3-modsel-174a-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xhtml/css3-modsel-174b-expected.txt: Copied from platform/mac/css3/selectors3/xhtml/css3-modsel-174b-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xhtml/css3-modsel-24-expected.txt: Copied from platform/mac/css3/selectors3/xhtml/css3-modsel-24-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xhtml/css3-modsel-68-expected.txt: Copied from platform/mac/css3/selectors3/xhtml/css3-modsel-68-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xml: Added.
+        * platform/mac-leopard/css3/selectors3/xml/css3-modsel-174a-expected.txt: Copied from platform/mac/css3/selectors3/xml/css3-modsel-174a-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xml/css3-modsel-174b-expected.txt: Copied from platform/mac/css3/selectors3/xml/css3-modsel-174b-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xml/css3-modsel-24-expected.txt: Copied from platform/mac/css3/selectors3/xml/css3-modsel-24-expected.txt.
+        * platform/mac-leopard/css3/selectors3/xml/css3-modsel-68-expected.txt: Copied from platform/mac/css3/selectors3/xml/css3-modsel-68-expected.txt.
+
 2011-07-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: implement import/export for timeline data.
