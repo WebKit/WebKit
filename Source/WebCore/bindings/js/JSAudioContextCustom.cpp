@@ -93,7 +93,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
         audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate, ec);
         if (ec) {
             setDOMException(exec, ec);
-            return jsUndefined();
+            return throwVMError(exec, createSyntaxError(exec, "Error creating OfflineAudioContext"));
         }
     }
 
@@ -138,13 +138,13 @@ JSValue JSAudioContext::createBuffer(ExecState* exec)
     float sampleRate = exec->argument(2).toFloat(exec);
 
     if (numberOfChannels <= 0 || numberOfChannels > 10)
-        return throwVMError(exec, createSyntaxError(exec, "Invalid number of channels"));
+        return throwError(exec, createSyntaxError(exec, "Invalid number of channels"));
 
     if (numberOfFrames <= 0)
-        return throwVMError(exec, createSyntaxError(exec, "Invalid number of frames"));
+        return throwError(exec, createSyntaxError(exec, "Invalid number of frames"));
 
     if (sampleRate <= 0)
-        return throwVMError(exec, createSyntaxError(exec, "Invalid sample rate"));
+        return throwError(exec, createSyntaxError(exec, "Invalid sample rate"));
 
     RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(numberOfChannels, numberOfFrames, sampleRate);
     if (!audioBuffer.get())

@@ -1,3 +1,14 @@
+2011-07-19  Chris Rogers  <crogers@google.com>
+
+        Fix web audio compile on mac port
+        https://bugs.webkit.org/show_bug.cgi?id=64836
+
+        Unreviewed build fix.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        (WebCore::JSAudioContext::createBuffer):
+
 2011-07-19  Jessie Berlin  <jberlin@apple.com>
 
         Work towards determining the cause of frequent crashes due to null frame below
