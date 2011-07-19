@@ -1,3 +1,16 @@
+2011-07-19  Mike West  <mkwst@chromium.org>
+
+        Sending a `Ping-From` header for cross-origin pings from non-HTTPS documents.
+        https://bugs.webkit.org/show_bug.cgi?id=64789
+
+        Also a drive-by cleanup of whitespace.
+
+        Reviewed by Nate Chapin.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+
 2011-07-15  Luke Zarko  <lukezarko@gmail.com>
 
        Bring V8's SerializedScriptValue implementation up to date.

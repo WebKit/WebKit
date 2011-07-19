@@ -1,3 +1,14 @@
+2011-07-19  Mike West  <mkwst@chromium.org>
+
+        Sending a `Ping-From` header for cross-origin pings from non-HTTPS documents.
+        https://bugs.webkit.org/show_bug.cgi?id=64789
+
+        Also a drive-by cleanup of whitespace.
+
+        Reviewed by Nate Chapin.
+
+        * http/tests/navigation/ping-cross-origin-expected.txt:
+
 2011-07-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64809

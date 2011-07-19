@@ -61,7 +61,7 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
         request.setHTTPReferrer(frame->loader()->outgoingReferrer());
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
-    
+
     // Leak the ping loader, since it will kill itself as soon as it receives a response.
     PingLoader* leakedPingLoader = pingLoader.leakPtr();
     UNUSED_PARAM(leakedPingLoader);
@@ -82,12 +82,13 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
     RefPtr<SecurityOrigin> pingOrigin = SecurityOrigin::create(pingURL);
     FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin->toString());
     request.setHTTPHeaderField("Ping-To", destinationURL);
-    if (sourceOrigin->isSameSchemeHostPort(pingOrigin.get()))
-        request.setHTTPHeaderField("Ping-From", frame->document()->url());
-    else if (!SecurityOrigin::shouldHideReferrer(pingURL, frame->loader()->outgoingReferrer()))
+    if (!SecurityOrigin::shouldHideReferrer(pingURL, frame->loader()->outgoingReferrer())) {
+      request.setHTTPHeaderField("Ping-From", frame->document()->url());
+      if (!sourceOrigin->isSameSchemeHostPort(pingOrigin.get()))
         request.setHTTPReferrer(frame->loader()->outgoingReferrer());
+    }
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
-    
+
     // Leak the ping loader, since it will kill itself as soon as it receives a response.
     PingLoader* leakedPingLoader = pingLoader.leakPtr();
     UNUSED_PARAM(leakedPingLoader);
