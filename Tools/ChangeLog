@@ -1,5 +1,18 @@
 2011-07-19  Sam Weinig  <sam@webkit.org>
 
+        Remove obsolete Mac NRWT test bots
+        https://bugs.webkit.org/show_bug.cgi?id=64806
+
+        Reviewed by Adam Roben.
+
+        Remove "Leopard Intel Release (NRWT)" and "SnowLeopard Intel Release (NRWT)"
+        which have been disconnected for some time and have been obsoleted by
+        the main testers using NRWT.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2011-07-19  Sam Weinig  <sam@webkit.org>
+
         webkit-patch rebaseline crashes on use
         https://bugs.webkit.org/show_bug.cgi?id=64775
 

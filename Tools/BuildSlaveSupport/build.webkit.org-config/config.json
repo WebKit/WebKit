@@ -59,8 +59,6 @@
                     { "name": "google-mac-4", "platform": "chromium-mac" },
                     { "name": "google-linux-1", "platform": "chromium-linux" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
-                    { "name": "google-new-tests", "platform": "mac-snowleopard" },
-                    { "name": "google-new-tests-leopard", "platform": "mac-leopard" },
                     { "name": "google-linux-flexbox", "platform": "chromium-linux" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
@@ -218,16 +216,6 @@
                       "slavenames": ["google-linux-2"]
                     },
                     {
-                      "name": "Leopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests-leopard",
-                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-new-tests-leopard"]
-                    },
-                    {
-                      "name": "SnowLeopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests",
-                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["google-new-tests"]
-                    },
-                    {
                       "name": "Chromium Linux Release (Flexbox)", "type": "NewBuildAndTest", "builddir": "chromium-linux-flexbox",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-flexbox"]
@@ -262,10 +250,10 @@
                                        "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-leopard", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)", "Leopard Intel Release (NRWT)"]
+                      "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Release (NRWT)", "SnowLeopard Intel Debug (Build)",
+                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Debug (Build)",
                                        "CSSRegions SnowLeopard Intel Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
