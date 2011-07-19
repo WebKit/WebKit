@@ -1,3 +1,19 @@
+2011-07-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        [JSC] WebKit allocates gigabytes of memory when doing repeated string concatenation
+        https://bugs.webkit.org/show_bug.cgi?id=63918
+
+        Reviewed by Darin Adler.
+
+        When allocating JSStrings during concatenation, we needed to call the Heap's reportExtraMemoryCost
+        method due to additional string copying within several of the constructors when dealing with 
+        UStrings.  This has been added to the UString version of the appendStringInConstruct method 
+        within the JSString class.
+
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::appendStringInConstruct):
+
 2011-07-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64677

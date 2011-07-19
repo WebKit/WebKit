@@ -200,6 +200,7 @@ namespace JSC {
             , m_fiberCount(0)
         {
             ASSERT(!m_value.isNull());
+            Heap::heap(this)->reportExtraMemoryCost(value.impl()->cost());
         }
         JSString(JSGlobalData& globalData, PassRefPtr<StringImpl> value, HasOtherOwnerType)
             : JSCell(globalData, globalData.stringStructure.get())
@@ -393,6 +394,7 @@ namespace JSC {
             StringImpl* impl = string.impl();
             impl->ref();
             m_fibers[index++] = impl;
+            Heap::heap(this)->reportExtraMemoryCost(string.impl()->cost());
         }
 
         void appendStringInConstruct(unsigned& index, JSString* jsString)
