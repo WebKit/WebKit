@@ -1,3 +1,39 @@
+2011-07-19  Adam Roben  <aroben@apple.com>
+
+        Extract some of FailingTestsBugForm's code into a base class
+
+        Prep work for fixing <http://webkit.org/b/63728> TestFailures page should make it easy to
+        file bugs about flaky tests
+
+        Reviewed by Sam Weinig.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm.js:
+        Moved BugzillaConstants to new WebKitBugzilla file. Moved a bunch of other code from here to
+        TestRelatedBugForm.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js:
+        Moved some tests to TestRelatedBugForm_unittests.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm.js: Added.
+        (TestRelatedBugForm):
+        (TestRelatedBugForm.prototype.domElement):
+        (TestRelatedBugForm.prototype._computeOperatingSystem):
+        (TestRelatedBugForm.prototype._computePlatform):
+        Code came from FailingTestsBugForm.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm_unittests.js:
+        Added. Tests came from FailingTestsBugForm_unittests.js
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBugzilla.js:
+        Added. Code came from FailingTestsBugForm.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        TestRelatedBugForm.js and WebKitBugzilla.js. Moved Bugzilla.js out of the list of files that
+        need to be pulled in early for parsing reasons.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Pull in TestRelatedBugForm and tests and WebKitBugzilla.
+
 2011-07-19  Sam Weinig  <sam@webkit.org>
 
         Remove obsolete Mac NRWT test bots

@@ -27,10 +27,6 @@
 
 module('FailingTestsBugForm');
 
-function MockBuilder(name) {
-    this.name = name;
-}
-
 function createTestForm(testerName, failingBuildName, passingBuildName, failingTests) {
     var mockBugzilla = {};
     mockBugzilla.baseURL = '[BUGZILLA BASE URL]';
@@ -62,48 +58,10 @@ function createTestForm(testerName, failingBuildName, passingBuildName, failingT
     return new FailingTestsBugForm(mockBugzilla, mockTrac, mockBuilder, failingBuildName, passingBuildName, failingTests);
 }
 
-test('component and keywords are set', 2, function() {
+test('keywords are set', 1, function() {
     var form = createTestForm('Windows 7 Release (Tests)', 'r10 (5)', 'r8 (2)', ['css1/basic/class_as_selector.html']);
 
-    equal(form.component, BugzillaConstants.Component.ToolsTests);
-    deepEqual(form.keywords.split(', '), [BugzillaConstants.Keyword.LayoutTestFailure, BugzillaConstants.Keyword.MakingBotsRed, BugzillaConstants.Keyword.Regression]);
-});
-
-const testers = {
-    'GTK Linux 32-bit Release': {
-        operatingSystem: '',
-        platform: '',
-    },
-    'Leopard Intel Release (Tests)': {
-        operatingSystem: BugzillaConstants.OperatingSystem.Leopard,
-        platform: BugzillaConstants.Platform.Macintosh,
-    },
-    'SnowLeopard Intel Release (Tests)': {
-        operatingSystem: BugzillaConstants.OperatingSystem.SnowLeopard,
-        platform: BugzillaConstants.Platform.Macintosh,
-    },
-    'Windows 7 Release (Tests)': {
-        operatingSystem: BugzillaConstants.OperatingSystem.Windows7,
-        platform: BugzillaConstants.Platform.PC,
-    },
-    'Windows XP Debug (Tests)': {
-        operatingSystem: BugzillaConstants.OperatingSystem.WindowsXP,
-        platform: BugzillaConstants.Platform.PC,
-    },
-};
-
-test('operating system is deduced', 5, function() {
-    for (var name in testers) {
-        var form = createTestForm(name, 'r10 (5)', 'r8 (2)', ['css1/basic/class_as_selector.html']);
-        equal(form.operatingSystem, testers[name].operatingSystem);
-    }
-});
-
-test('platform is deduced', 5, function() {
-    for (var name in testers) {
-        var form = createTestForm(name, 'r10 (5)', 'r8 (2)', ['css1/basic/class_as_selector.html']);
-        equal(form.platform, testers[name].platform);
-    }
+    deepEqual(form.keywords.split(', '), [WebKitBugzilla.Keyword.LayoutTestFailure, WebKitBugzilla.Keyword.MakingBotsRed, WebKitBugzilla.Keyword.Regression]);
 });
 
 const testCases = [

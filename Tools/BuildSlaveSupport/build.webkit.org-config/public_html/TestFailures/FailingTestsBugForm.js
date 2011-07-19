@@ -23,93 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: These should probably move to some WebKitBugzilla class (or similar).
-const BugzillaConstants = {
-    Component: {
-        ToolsTests: 'Tools / Tests',
-    },
-
-    Keyword: {
-        LayoutTestFailure: 'LayoutTestFailure',
-        MakingBotsRed: 'MakingBotsRed',
-        Regression: 'Regression',
-    },
-
-    OperatingSystem: {
-        Leopard: 'Mac OS X 10.5',
-        SnowLeopard: 'Mac OS X 10.6',
-        Windows7: 'Windows 7',
-        WindowsXP: 'Windows XP',
-    },
-
-    Platform: {
-        Macintosh: 'Macintosh',
-        PC: 'PC',
-    },
-
-    Product: {
-        WebKit: 'WebKit',
-    },
-
-    Version: {
-        Nightly: '528+ (Nightly Build)',
-    },
-};
-
 function FailingTestsBugForm(bugzilla, trac, tester, failingBuildName, passingBuildName, failingTests) {
-    NewBugForm.call(this, bugzilla);
+    TestRelatedBugForm.call(this, bugzilla, tester);
 
     this._trac = trac;
-    this._tester = tester;
     this._failingBuildName = failingBuildName;
     this._passingBuildName = passingBuildName;
     this._failingTests = failingTests;
 
-    this.component = BugzillaConstants.Component.ToolsTests;
     this.description = this._createBugDescription();
     // FIXME: When a newly-added test has been failing since its introduction, it isn't really a
     // "regression". We should use different keywords in that case. <http://webkit.org/b/61645>
-    this.keywords = [
-        BugzillaConstants.Keyword.LayoutTestFailure,
-        BugzillaConstants.Keyword.MakingBotsRed,
-        BugzillaConstants.Keyword.Regression
-    ].join(', ');
-    this.operatingSystem = this._computeOperatingSystem();
-    this.platform = this._computePlatform();
-    this.product = BugzillaConstants.Product.WebKit;
+    this.keywords += ', ' + WebKitBugzilla.Keyword.Regression;
     this.title = this._createBugTitle();
     this.url = this._failingResultsHTMLURL();
-    this.version = BugzillaConstants.Version.Nightly;
 }
 
 FailingTestsBugForm.prototype = {
-    domElement: function() {
-        var form = NewBugForm.prototype.domElement.call(this);
-        form.className = 'new-bug-form';
-        form.target = '_blank';
-        return form;
-    },
-
-    _computeOperatingSystem: function() {
-        if (/Windows 7/.test(this._tester.name))
-            return BugzillaConstants.OperatingSystem.Windows7;
-        if (/Windows XP/.test(this._tester.name))
-            return BugzillaConstants.OperatingSystem.WindowsXP;
-        if (/SnowLeopard/.test(this._tester.name))
-            return BugzillaConstants.OperatingSystem.SnowLeopard;
-        if (/Leopard/.test(this._tester.name))
-            return BugzillaConstants.OperatingSystem.Leopard;
-        return '';
-    },
-
-    _computePlatform: function() {
-        if (/Windows/.test(this._tester.name))
-            return BugzillaConstants.Platform.PC;
-        if (/Leopard/.test(this._tester.name))
-            return BugzillaConstants.Platform.Macintosh;
-        return '';
-    },
-
     _createBugDescription: function() {
         var firstSuspectRevision = this._passingRevision() ? this._passingRevision() + 1 : this._failingRevision();
         var lastSuspectRevision = this._failingRevision();
@@ -189,4 +119,4 @@ FailingTestsBugForm.prototype = {
     },
 };
 
-FailingTestsBugForm.prototype.__proto__ = NewBugForm.prototype;
+FailingTestsBugForm.prototype.__proto__ = TestRelatedBugForm.prototype;
