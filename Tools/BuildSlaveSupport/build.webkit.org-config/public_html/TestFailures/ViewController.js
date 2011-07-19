@@ -103,13 +103,15 @@ ViewController.prototype = {
 
                 item.appendChild(self._domForRegressionRange(builder, buildName, passingBuildName, failingTestNames));
 
-                if (passingBuildName || !stillFetchingData)
-                    item.appendChild(self._domForNewAndExistingBugs(builder, buildName, passingBuildName, failingTestNames));
+                if (passingBuildName || !stillFetchingData) {
+                    var bugForm = new FailingTestsBugForm(self._bugzilla, self._trac, builder, buildName, passingBuildName, failingTestNames);
+                    item.appendChild(self._domForNewAndExistingBugs(builder, failingTestNames, bugForm))
+                }
             });
 
             self._mainContentElement.removeAllChildren();
             self._mainContentElement.appendChild(list);
-            self._mainContentElement.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky, buildNames.length));
+            self._mainContentElement.appendChild(self._domForPossiblyFlakyTests(builder, data.possiblyFlaky, buildNames));
 
             if (!stillFetchingData)
                 PersistentCache.prune();
@@ -323,7 +325,7 @@ ViewController.prototype = {
         return link;
     },
 
-    _domForNewAndExistingBugs: function(tester, failingBuildName, passingBuildName, failingTests) {
+    _domForNewAndExistingBugs: function(tester, failingTests, bugForm) {
         var result = document.createDocumentFragment();
 
         if (!this._bugzilla)
@@ -385,8 +387,6 @@ ViewController.prototype = {
             closedList.appendChildren(closedBugs.map(bugToListItem));
         });
 
-        var bugForm = new FailingTestsBugForm(this._bugzilla, this._trac, tester, failingBuildName, passingBuildName, failingTests);
-
         var form = bugForm.domElement();
         result.appendChild(form);
 
@@ -400,7 +400,7 @@ ViewController.prototype = {
         return result;
     },
 
-    _domForPossiblyFlakyTests: function(builder, possiblyFlakyTestData, buildCount) {
+    _domForPossiblyFlakyTests: function(builder, possiblyFlakyTestData, allBuilds) {
         var result = document.createDocumentFragment();
         var flakyTests = Object.keys(possiblyFlakyTestData);
         if (!flakyTests.length)
@@ -428,21 +428,24 @@ ViewController.prototype = {
 
             var failures = possiblyFlakyTestData[testName];
 
-            item.appendChild(document.createTextNode(testName + ' (failed ' + failures.length + ' out of ' + buildCount + ' times)'));
+            item.appendChild(document.createTextNode(testName + ' (failed ' + failures.length + ' out of ' + allBuilds.length + ' times)'));
 
-            var failureList = document.createElement('ol');
-            item.appendChild(failureList);
+            var container = document.createElement('div');
+            item.appendChild(container);
 
-            failureList.className = 'flakiness-examples-list';
+            container.className = 'expandable';
 
             disclosureTriangle.addEventListener('click', function() {
                 item.toggleStyleClass('expanded');
-                if (!item.hasStyleClass('expanded')) {
-                    failureList.style.height = '';
+                if (!item.hasStyleClass('expanded'))
                     return;
-                }
 
-                if (!failureList.firstChild) {
+                if (!container.firstChild) {
+                    var failureList = document.createElement('ol');
+                    container.appendChild(failureList);
+
+                    failureList.className = 'flakiness-examples-list';
+
                     failureList.appendChildren(failures.map(function(historyItem) {
                         var item = document.createElement('li');
                         item.appendChild(self._domForBuildName(builder, historyItem.build));
@@ -450,12 +453,11 @@ ViewController.prototype = {
                         item.appendChild(self._domForFailureDiagnosis(builder, historyItem.build, testName, historyItem.result));
                         return item;
                     }));
-                }
 
-                // CSS transitions can't transition to a value of 'auto', so we find out the actual
-                // value using getComputedStyle and transition to that.
-                failureList.style.height = 'auto';
-                failureList.style.height = getComputedStyle(failureList).height;
+                    var failingBuildNames = failures.map(function(historyItem) { return historyItem.build });
+                    var bugForm = new FlakyTestBugForm(self._bugzilla, builder, failingBuildNames, testName, allBuilds.last(), allBuilds[0], allBuilds.length);
+                    container.appendChild(self._domForNewAndExistingBugs(builder, [testName], bugForm));
+                }
             });
 
             return item;

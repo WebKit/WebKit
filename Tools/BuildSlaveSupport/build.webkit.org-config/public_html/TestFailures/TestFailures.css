@@ -31,15 +31,24 @@ dt::after {
 
 #failure-history > li {
     margin-bottom: 10px;
-    padding: 10px 10px 10px 50px;
+    padding: 10px;
 }
 
 #possibly-flaky-tests > li {
-    padding: 1px;
+    padding: 1px 0px;
 }
 
 #failure-history > li, #possibly-flaky-tests > li {
     background-color: #f0f0f0;
+    padding-left: 50px;
+}
+
+#possibly-flaky-tests > li > :first-child {
+    margin-left: -50px;
+}
+
+.flakiness-examples-list {
+    padding: 0;
 }
 
 .test-list {
@@ -75,8 +84,11 @@ dt::after {
     -webkit-transform: rotateZ(90deg);
 }
 
-.flakiness-examples-list {
-    -webkit-transition: height 0.25s;
+.expandable {
     height: 0px;
     overflow: hidden;
+}
+
+.expanded > .expandable {
+    height: auto;
 }

@@ -1,3 +1,59 @@
+2011-07-19  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures show existing bugs and a new bug link for flaky tests
+
+        Fixes <http://webkit.org/b/63728> TestFailures page should make it easy to file bugs about
+        flaky tests
+        and
+        <http://webkit.org/b/63830> TestFailures page doesn't show related bugs for possibly-flaky
+        tests, but should
+
+        Reviewed by Sam Weinig.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm.js:
+        Added. This is what's used to file new bugs about flaky tests.
+        (FlakyTestBugForm): Calls up to the base class, stores the arguments, and sets our
+        title, description, and URL.
+
+        (FlakyTestBugForm.prototype._createBugDescription):
+        (FlakyTestBugForm.prototype._createBugTitle):
+        These do what they say.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm_unittests.js:
+        Added. Tests of the above.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (#failure-history > li):
+        (#possibly-flaky-tests > li):
+        (#failure-history > li, #possibly-flaky-tests > li):
+        (#possibly-flaky-tests > li > :first-child):
+        (.flakiness-examples-list):
+        Styling to account for the new elements.
+
+        (.expandable):
+        (.expanded > .expandable):
+        Generalized the .flakiness-example-list code to a generic .expandable class. Removed the
+        transition properties because we can't transition to/from 'auto' (but really would like
+        to!).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Moved code to create the FailingTestsBugForm
+        here from _domForNewAndExistingBugs. Updated for changes to _domForPossiblyFlakyTests.
+        (ViewController.prototype._domForNewAndExistingBugs): Changed to take a NewBugForm as an
+        argument instead of creating one ourselves.
+        (ViewController.prototype._domForPossiblyFlakyTests): Changed to take all analyzed builds as
+        an argument instead of just the number of analyzed builds. Put the examples list inside a
+        container <div>, which is also used to hold the new/existing bugs UI. Removed code to deal
+        with animating the height of the examples list; we don't do this anymore because it's hard
+        to make it work correctly with the asynchronous loading of existing bugs. When we populate
+        the examples list, also set up the new/existing bug UI.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Pull in
+        FlakyTestBugForm.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        Pull in FlakyTestBugForm and its tests.
+
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Buildbot marks a nrwt bot red when tests are missing results
