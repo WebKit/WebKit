@@ -247,10 +247,10 @@ JavaValue jvalueToJavaValue(const jvalue& value, const JavaType& type)
     case JavaTypeString:
         {
             jstring javaString = static_cast<jstring>(value.l);
-            const UChar* a = getUCharactersFromJStringInEnv(getJNIEnv(), javaString);
+            const UChar* characters = getUCharactersFromJStringInEnv(getJNIEnv(), javaString);
             // We take a copy to allow the Java String to be released.
-            result.m_stringValue = String(a).threadsafeCopy();
-            releaseUCharactersForJStringInEnv(getJNIEnv(), javaString, a);
+            result.m_stringValue = String(characters, getJNIEnv()->GetStringLength(javaString));
+            releaseUCharactersForJStringInEnv(getJNIEnv(), javaString, characters);
         }
         break;
     case JavaTypeBoolean:

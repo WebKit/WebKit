@@ -1,3 +1,15 @@
+2011-07-19  Steve Block  <steveblock@google.com>
+
+        REGRESSION (r82194): jvalueToJavaValue() does not correctly set length of String property
+        https://bugs.webkit.org/show_bug.cgi?id=64730
+
+        Reviewed by Alexey Proskuryakov.
+
+        Covered by existing tests.
+
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::jvalueToJavaValue):
+
 2011-07-19  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [V8] Don't put CSSRuleLists in object groups.
