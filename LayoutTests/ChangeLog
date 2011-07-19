@@ -11,6 +11,15 @@
 
         Reviewed by Oliver Hunt.
 
+        Ooops! - failed to commit the new sputnik results.
+
+2011-07-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64678
+        Fix bugs in Object.prototype this handling.
+
+        Reviewed by Oliver Hunt.
+
         * fast/js/resources/js-test-pre.js:
             - Updated harness to not call Object.prototype.toString on undefined.
         * fast/js/eval-var-decl-expected.txt:

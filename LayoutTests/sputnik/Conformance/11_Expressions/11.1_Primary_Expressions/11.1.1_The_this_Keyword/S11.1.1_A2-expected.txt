@@ -1,6 +1,6 @@
 S11.1.1_A2
 
-PASS 
+FAIL TypeError: 'undefined' is not an object (evaluating 'toString()')
 
 TEST COMPLETE
 
