@@ -97,6 +97,9 @@ Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orient
     // alone when sizing).
     int thickness = m_theme->scrollbarThickness(controlSize);
     Widget::setFrameRect(IntRect(0, 0, thickness, thickness));
+
+    if (m_scrollableArea)
+        m_currentPos = static_cast<float>(m_scrollableArea->scrollPosition(this));
 }
 
 Scrollbar::~Scrollbar()
