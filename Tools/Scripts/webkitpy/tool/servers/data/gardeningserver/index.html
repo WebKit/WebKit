@@ -12,14 +12,21 @@
 <body>
 <div class="butterbar"><span class="status">Loading...</span></div>
 <div class="alert"><span class="status"></span></div>
-<div class="results"></div>
+<div class="results">
+    <div class="content"></div>
+    <div class="toolbar">
+        <div class="actions">
+            <button class="triage">Triage Failures</button>
+        </div>
+    </div>
+</div>
 <div class="results-detail">
     <div class="toolbar">
         <div class="actions">
-            <a class="rebaseline" href="#">Rebaseline</a>
-            <a class="dismiss" href="#">Close</a>
+            <button class="rebaseline default">Rebaseline</button><button class="previous">&#9664;</button><button class="next">&#9654;</button><button class="dismiss">Close</button>
         </div>
         <div class="status"></div>
+        <div class="clear"></div>
     </div>
     <div class="content"></div>
 </div>

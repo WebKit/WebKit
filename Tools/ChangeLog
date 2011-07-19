@@ -1,5 +1,35 @@
 2011-07-19  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should have a "Triage Failures" button for iterating over failures
+        https://bugs.webkit.org/show_bug.cgi?id=64769
+
+        Reviewed by Eric Seidel.
+
+        This patch adds some global static state and refactors things a bit so
+        that we can iterate over all the failures in the details pane.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base.js:
+            - Add a generic callback iterator to iterate through a series of
+              callbacks. We use this to iterate through the failures we want to
+              display the details of.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+            - Add a toolbar for the results summary and change the buttons to
+              be real buttons.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css:
+            - Make the detail pane 75% of the window.
+            - Make the buttons pretty.
+            - Allow the failure type badges to apply to the details pane as well.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+            - Restructure how we bring up the details pane so we can iterate
+              through a bunch of failures.
+            - Remove the transition between results details because it's
+              annoying when you want to click through a bunch of failures.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+            - Add some more structure to the title bar for the results details
+              so it's clearer which results we're currently displaying.
+
+2011-07-19  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should live update as conditions change on the buildbot
         https://bugs.webkit.org/show_bug.cgi?id=64646
 

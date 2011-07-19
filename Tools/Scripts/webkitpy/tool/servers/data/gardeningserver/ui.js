@@ -48,20 +48,20 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
     var unexpectedResults = results.collectUnexpectedResults(resultNodesByBuilder);
     var block = $(
         '<tr class="test">' +
-          '<td class="what"><a draggable></a></td>' +
+          '<td class="what"><a class="test-name"></a></td>' +
           '<td class="where"><ul></ul></td>' +
           '<td class="when"></td>' +
           '<td class="how-many"></td>' +
         '</tr>');
-    $('.what a', block).text(testName).attr('href', ui.urlForTest(testName)).attr('class', unexpectedResults.join(' '));
+    $('.test-name', block).text(testName).attr('href', ui.urlForTest(testName)).addClass(unexpectedResults.join(' '));
     block.attr(config.kTestNameAttr, testName);
     block.attr(config.kFailureTypesAttr, unexpectedResults);
 
     var where = $('.where', block);
     $.each(resultNodesByBuilder, function(builderName, resultNode) {
-        var listElement = $('<li><a href="#"></a></li>');
+        var listElement = $('<li class="builder-name"></li>');
+        listElement.attr(config.kBuilderNameAttr, builderName).text(displayNameForBuilder(builderName));
         where.append(listElement);
-        $('a', listElement).attr(config.kBuilderNameAttr, builderName).text(displayNameForBuilder(builderName));
     });
 
     return block;
@@ -79,7 +79,7 @@ ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevis
         displayNameForRevision(impliedFirstFailingRevision) :
         displayNameForRevision(impliedFirstFailingRevision) + '-' + displayNameForRevision(oldestFailingRevision);
 
-    var block = $('<div class="regression-range"><a></a></div>');
+    var block = $('<div class="regression-range"><a target="_blank"></a></div>');
     $('a', block).attr('href', href).text(text)
     return block;
 };
@@ -105,6 +105,23 @@ ui.failureCount = function(failureCount)
     if (failureCount == 1)
         return 'Seen once.';
     return 'Seen ' + failureCount + ' times.';
+};
+
+ui.failureDetailsStatus = function(testName, selectedBuilderName, failureTypes, builderNameList)
+{
+    var block = $('<span><span class="test-name"></span><span class="builder-list"></span></span>');
+    $('.test-name', block).addClass(failureTypes).text(testName);
+
+    var builderList = $('.builder-list', block);
+    $.each(builderNameList, function(index, builderName) {
+        var builder = $('<span class="builder-name"></span>')
+        builder.text(builderName);
+        if (builderName == selectedBuilderName)
+            builder.addClass('selected');
+        builderList.append(builder);
+    });
+
+    return block;
 };
 
 ui.failureDetails = function(resultsURLs)

@@ -99,16 +99,51 @@ base.jsonp = function(url, onsuccess)
 
 base.RequestTracker = function(requestsInFlight, callback, args)
 {
-    this.m_requestsInFlight = requestsInFlight;
-    this.m_callback = callback;
-    this.m_args = args || [];
+    this._requestsInFlight = requestsInFlight;
+    this._callback = callback;
+    this._args = args || [];
 };
 
 base.RequestTracker.prototype.requestComplete = function()
 {
-    --this.m_requestsInFlight;
-    if (!this.m_requestsInFlight)
-        this.m_callback.apply(null, this.m_args);
+    --this._requestsInFlight;
+    if (!this._requestsInFlight)
+        this._callback.apply(null, this._args);
+};
+
+base.CallbackIterator = function(callback, listOfArgumentArrays)
+{
+    this._callback = callback;
+    this._nextIndex = 0;
+    this._listOfArgumentArrays = listOfArgumentArrays;
+};
+
+base.CallbackIterator.prototype.hasNext = function()
+{
+    return this._nextIndex < this._listOfArgumentArrays.length;
+};
+
+base.CallbackIterator.prototype.hasPrevious = function()
+{
+    return this._nextIndex - 2 >= 0;
+};
+
+base.CallbackIterator.prototype.callNext = function()
+{
+    if (!this.hasNext())
+        return;
+    var args = this._listOfArgumentArrays[this._nextIndex];
+    this._nextIndex++;
+    this._callback.apply(null, args);
+};
+
+base.CallbackIterator.prototype.callPrevious = function()
+{
+    if (!this.hasPrevious())
+        return;
+    var args = this._listOfArgumentArrays[this._nextIndex - 2];
+    this._nextIndex--;
+    this._callback.apply(null, args);
 };
 
 })();

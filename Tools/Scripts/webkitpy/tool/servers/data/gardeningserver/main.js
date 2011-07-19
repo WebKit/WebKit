@@ -1,6 +1,7 @@
 (function() {
 
 var g_updateTimerId = 0;
+var g_resultsDetailsIterator = null;
 
 var kBuildFailedAlertType = 'build-failed';
 
@@ -12,7 +13,7 @@ function dismissButterbar()
 function displayOnButterbar(message)
 {
     $('.butterbar .status').text(message);
-    $('.butterbar').fadeIn();
+    $('.butterbar').fadeIn('fast');
 }
 
 function hideAlert()
@@ -47,16 +48,24 @@ function setIconState(hasFailures)
     $('#favicon').attr('href', faviconURL);
 }
 
+function toggleButton(button, isEnabled)
+{
+    if (isEnabled)
+        button.removeAttr('disabled');
+    else
+        button.attr('disabled', true)
+}
+
 function togglePartyTime(hasFailures)
 {
     if (!hasFailures) {
-        $('.results').text('No failures. Party time!');
+        $('.results .content').text('No failures. Party time!');
         var partyTime = $('<div class="partytime"><img src="partytime.gif"></div>');
-        $('.results').append(partyTime);
+        $('.results .content').append(partyTime);
         partyTime.fadeIn(1200).delay(7000).fadeOut();
         return;
     }
-    $('.results').empty();
+    $('.results .content').empty();
 }
 
 function ensureResultsSummaryContainer()
@@ -65,7 +74,7 @@ function ensureResultsSummaryContainer()
     if (container.length)
         return container;
     container = ui.regressionsContainer();
-    $('.results').append(container);
+    $('.results .content').append(container);
     return container;
 }
 
@@ -117,6 +126,7 @@ function updateResultsSummary(callback)
         var newTestSummaries = $();
         var requestTracker = new base.RequestTracker(base.keys(unexpectedFailures).length, function() {
             newTestSummaries.fadeIn();
+            $('.results .toolbar').fadeIn();
             callback()
         });
 
@@ -136,59 +146,104 @@ function updateResultsSummary(callback)
     });
 }
 
-function showResultsDetail()
+function showResultsDetail(testName, selectedBuilderName, failureTypeListByBuilder)
 {
-    var testSummary = $(this).parents('.test');
-    var builderName = $(this).attr(config.kBuilderNameAttr);
-    var testName = testSummary.attr(config.kTestNameAttr);
-
-    // FIXME: It's lame that we have two different representations of multiple failure types.
-    var failureTypes = testSummary.attr(config.kFailureTypesAttr);
-    var failureTypeList = failureTypes.split(' ');
+    var builderNameList = base.keys(failureTypeListByBuilder);
+    var failureTypeList = failureTypeListByBuilder[selectedBuilderName];
+    var failureTypes = failureTypeList.join(' ');
 
     var content = $('.results-detail .content');
-    if ($('.failure-details', content).attr(config.kBuilderNameAttr) == builderName &&
+
+    if ($('.failure-details', content).attr(config.kBuilderNameAttr) == selectedBuilderName &&
         $('.failure-details', content).attr(config.kTestNameAttr) == testName &&
         $('.failure-details', content).attr(config.kFailureTypesAttr) == failureTypes)
         return;
 
     displayOnButterbar('Loading...');
 
-    results.fetchResultsURLs(builderName, testName, failureTypeList, function(resultsURLs) {
+    results.fetchResultsURLs(selectedBuilderName, testName, failureTypeList, function(resultsURLs) {
         var status = $('.results-detail .toolbar .status');
 
-        function updateResults()
-        {
-            status.text(testName + ' [' + builderName + ']');
-            content.empty();
-            content.append(ui.failureDetails(resultsURLs));
-            $('.results-detail .actions .rebaseline').toggle(results.canRebaseline(failureTypeList));
-            $('.failure-details', content).attr(config.kBuilderNameAttr, builderName);
-            $('.failure-details', content).attr(config.kTestNameAttr, testName);
-            $('.failure-details', content).attr(config.kFailureTypesAttr, failureTypes);
-        }
+        status.empty();
+        content.empty();
 
-        var children = content.children();
-        if (children.length && $('.results-detail').is(":visible")) {
-            // The results-detail pane is already open. Let's do a quick cross-fade.
-            status.fadeOut('fast');
-            children.fadeOut('fast', function() {
-                updateResults();
-                status.fadeIn('fast');
-                content.children().hide().fadeIn('fast', dismissButterbar);
-            });
-        } else {
-            updateResults();
+        status.append(ui.failureDetailsStatus(testName, selectedBuilderName, failureTypes, builderNameList));
+        content.append(ui.failureDetails(resultsURLs));
+
+        toggleButton($('.results-detail .actions .next'), g_resultsDetailsIterator.hasNext());
+        toggleButton($('.results-detail .actions .previous'), g_resultsDetailsIterator.hasPrevious());
+        toggleButton($('.results-detail .actions .rebaseline'), results.canRebaseline(failureTypeList));
+
+        $('.failure-details', content).attr(config.kBuilderNameAttr, selectedBuilderName);
+        $('.failure-details', content).attr(config.kTestNameAttr, testName);
+        $('.failure-details', content).attr(config.kFailureTypesAttr, failureTypes);
+
+        if (!$('.results-detail').is(":visible"))
             $('.results-detail').fadeIn('fast', dismissButterbar);
-        }
+        else
+            dismissButterbar();
     });
 }
 
 function hideResultsDetail()
 {
     $('.results-detail').fadeOut('fast', function() {
+        $('.results-detail .status').empty();
         $('.results-detail .content').empty();
+        // Strictly speaking, we don't need to clear g_resultsDetailsIterator,
+        // but doing so helps the garbage collector free memory.
+        g_resultsDetailsIterator = null;
     });
+}
+
+function nextResultsDetail()
+{
+    g_resultsDetailsIterator.callNext();
+}
+
+function previousResultsDetail()
+{
+    g_resultsDetailsIterator.callPrevious();
+}
+
+function resultsDetailArgumentsForBuilderElement(builderBlock)
+{
+    var selectedBuilderName = builderBlock.attr(config.kBuilderNameAttr);
+
+    var testSummary = builderBlock.parents('.test');
+    var testName = testSummary.attr(config.kTestNameAttr);
+
+    // FIXME: It's lame that we have two different representations of multiple failure types.
+    var failureTypes = testSummary.attr(config.kFailureTypesAttr);
+    var failureTypeList = failureTypes.split(' ');
+
+    var failureTypeListByBuilder = {}
+    $('.where .builder-name', testSummary).each(function() {
+        var builderName = $(this).attr(config.kBuilderNameAttr);
+        // FIXME: We should understand that tests can fail in different ways
+        // on different builders.
+        failureTypeListByBuilder[builderName] = failureTypeList;
+    });
+
+    return [testName, selectedBuilderName, failureTypeListByBuilder];
+}
+
+function prepareResultsDetailsIterator(query)
+{
+    var listOfResultsDetailArguments = [];
+
+    query.each(function() {
+        var resultsDetailArguments = resultsDetailArgumentsForBuilderElement($(this));
+        listOfResultsDetailArguments.push(resultsDetailArguments);
+    });
+
+    return new base.CallbackIterator(showResultsDetail, listOfResultsDetailArguments);
+}
+
+function triageFailures()
+{
+    g_resultsDetailsIterator = prepareResultsDetailsIterator($('.results .test .builder-name'));
+    g_resultsDetailsIterator.callNext();
 }
 
 function rebaselineResults()
@@ -222,9 +277,11 @@ function update()
     checkBuilderStatuses();
 }
 
-$('.results-summary .where a').live('click', showResultsDetail);
-$('.results-detail .actions .dismiss').live('click', hideResultsDetail);
+$('.results .toolbar .triage').live('click', triageFailures);
+$('.results-detail .actions .next').live('click', nextResultsDetail);
+$('.results-detail .actions .previous').live('click', previousResultsDetail);
 $('.results-detail .actions .rebaseline').live('click', rebaselineResults);
+$('.results-detail .actions .dismiss').live('click', hideResultsDetail);
 
 $(document).ready(function() {
     g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);

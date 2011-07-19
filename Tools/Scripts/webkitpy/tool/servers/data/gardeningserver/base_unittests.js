@@ -72,6 +72,38 @@ test("RequestTracker", 3, function() {
     tracker.requestComplete();
 });
 
+test("CallbackIterator", 22, function() {
+    var expected = 0;
+    var iterator = new base.CallbackIterator(function(a, b) {
+        equals(a, 'ArgA' + expected);
+        equals(b, 'ArgB' + expected);
+        ++expected;
+    }, [
+        ['ArgA0', 'ArgB0'],
+        ['ArgA1', 'ArgB1'],
+        ['ArgA2', 'ArgB2'],
+    ]);
+    ok(iterator.hasNext())
+    ok(!iterator.hasPrevious())
+    iterator.callNext();
+    ok(iterator.hasNext())
+    ok(!iterator.hasPrevious())
+    iterator.callNext();
+    ok(iterator.hasNext())
+    ok(iterator.hasPrevious())
+    iterator.callNext();
+    ok(!iterator.hasNext())
+    ok(iterator.hasPrevious())
+    expected = 1;
+    iterator.callPrevious();
+    ok(iterator.hasNext())
+    ok(iterator.hasPrevious())
+    expected = 0;
+    iterator.callPrevious();
+    ok(iterator.hasNext())
+    ok(!iterator.hasPrevious())
+});
+
 test("filterTree", 2, function() {
     var tree = {
         'path': {
