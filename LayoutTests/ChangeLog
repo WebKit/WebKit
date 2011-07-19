@@ -1,3 +1,13 @@
+2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaselines r91269 and r91277.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png: Added.
+        * platform/chromium-mac/fast/table/align-right-within-left-aligned-div-expected.png: Added.
+        * platform/chromium-mac/fast/table/align-right-within-left-aligned-div-expected.txt: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png: Added.
+
 2011-07-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Parse -webkit-region-overflow property
