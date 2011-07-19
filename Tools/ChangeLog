@@ -1,3 +1,9 @@
+2011-07-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, don't add the debug prefix as 2.9 no longer uses one.
+
+        * waf/build/wxpresets.py:
+
 2011-07-19  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests should only enable MallocStackLogging for DRT
