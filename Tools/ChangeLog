@@ -1,3 +1,12 @@
+2011-07-19  Cary Clark  <caryclark@google.com>
+
+        add myself to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=64816
+
+        No review needed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-19  Daniel Bates  <dbates@webkit.org>
 
         Rename variable isEmptyTextPatch in svn-{apply, unapply}
