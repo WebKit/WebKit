@@ -320,15 +320,12 @@ var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
 var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
 
-// FIXME: Make this an array.
-var PLATFORMS = {
-    'SNOWLEOPARD': 'SNOWLEOPARD',
-    'LEOPARD': 'LEOPARD',
-    'XP': 'XP',
-    'VISTA': 'VISTA',
-    'WIN7': 'WIN7',
-    'LUCID': 'LUCID'
-};
+var PLATFORMS = ['SNOWLEOPARD', 'LEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID'];
+var PLATFORM_UNIONS = {
+    'MAC': ['LEOPARD', 'SNOWLEOPARD'],
+    'WIN': ['XP', 'VISTA', 'WIN7'],
+    'LINUX': ['LUCID']
+}
 
 // FIXME: Make the g_allExpectations data structure explicitly list every platform instead of having a fallbacks concept.
 var PLATFORM_FALLBACKS = {
@@ -711,11 +708,10 @@ function addTestsForBuilder(builder, testMapToPopulate)
 }
 
 // Map of all tests to true values by platform and build type.
-// e.g. g_allTestsByPlatformAndBuildType['WIN']['DEBUG'] will have the union
-// of all tests run on the win-debug builders.
+// e.g. g_allTestsByPlatformAndBuildType['XP']['DEBUG'] will have the union
+// of all tests run on the xp-debug builders.
 var g_allTestsByPlatformAndBuildType = {};
-for (var platform in PLATFORMS)
-    g_allTestsByPlatformAndBuildType[platform] = {};
+PLATFORMS.forEach(function(platform) { g_allTestsByPlatformAndBuildType[platform] = {}; });
 
 // Map of all tests to true values by platform and build type.
 // e.g. g_allTestsByPlatformAndBuildType['WIN']['DEBUG'] will have the union
@@ -1688,18 +1684,13 @@ function addUpdate(testsNeedingUpdate, test, builderName, missing, extra)
 // are for real result changes, like SLOW, and excludes modifiers
 // that specificy things like platform, build_type, bug.
 // @param {string} modifierString String containing all modifiers.
-// @return {string} String containing only modifiers that effect
-//     the results.
+// @return {string} String containing only modifiers that effect the results.
 function realModifiers(modifierString)
 {
-    var newModifiers = [];
     var modifiers = modifierString.split(' ');;
-    for (var j = 0; j < modifiers.length; j++) {
-        var modifier = modifiers[j];
-        if (!(modifier in BUILD_TYPES) && !(modifier in PLATFORMS) && !startsWith(modifier, 'BUG'))
-            newModifiers.push(modifier);
-    }
-    return newModifiers.join(' ');
+    return modifiers.filter(function(modifier) {
+        return !(modifier in BUILD_TYPES) && PLATFORMS.indexOf(modifier) == -1 && !(modifier in PLATFORM_UNIONS) && !startsWith(modifier, 'BUG');
+    }).join(' ');
 }
 
 function generatePageForExpectationsUpdate()

@@ -1,3 +1,13 @@
+2011-07-19  Ojan Vafai  <ojan@chromium.org>
+
+        cleanup some of the PLATFORM logic in the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=64821
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2011-07-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Store line number on TestExpectationLine.

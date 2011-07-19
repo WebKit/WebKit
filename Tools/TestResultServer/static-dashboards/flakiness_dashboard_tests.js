@@ -212,6 +212,22 @@ function testPlatformAndBuildType()
     runPlatformAndBuildTypeTest('XP Tests', 'XP', 'RELEASE');
 }
 
+function testRealModifiers()
+{
+    assertEquals(realModifiers('BUGFOO LINUX LEOPARD WIN DEBUG SLOW'), 'SLOW');
+    assertEquals(realModifiers('BUGFOO LUCID MAC XP RELEASE SKIP'), 'SKIP');
+    assertEquals(realModifiers('BUGFOO'), '');
+}
+
+function testAllTestsWithSamePlatformAndBuildType()
+{
+    // FIXME: test that allTestsWithSamePlatformAndBuildType actually returns the right set of tests.
+    for (var i = 0; i < PLATFORMS.length; i++) {
+        if (!g_allTestsByPlatformAndBuildType[PLATFORMS[i]])
+            throw Error(PLATFORMS[i] + ' is not in g_allTestsByPlatformAndBuildType');
+    }
+}
+
 function runTests()
 {
     document.body.innerHTML = '<pre id=unittest-results></pre>';
