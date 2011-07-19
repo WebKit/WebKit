@@ -1,3 +1,20 @@
+2011-07-19  Lukasz Slachciak  <lukasz.slachciak@gmail.com>
+
+        [GTK] [WK2] Implement missing initializeLogChannel function.
+        https://bugs.webkit.org/show_bug.cgi?id=63381
+
+        Reviewed by Martin Robinson.
+
+        Implemented logging for GTK platform in WebKit2 - function initializeLogChannel is called for all ports,
+        so added missing implementation. Aslo helper function added for getting channels from names.
+
+        * GNUmakefile.am: Added reference to new file LoggingGtk.cpp.
+        * Platform/Logging.cpp: Logging implementation for GTK port enabled.
+        (WebKit::getChannelFromName): Helper to connect name with WTFLogChannel.
+        * Platform/Logging.h: New helper method added.
+        * Platform/gtk/LoggingGtk.cpp: Added. GTK logging implementation.
+        (WebKit::initializeLogChannel): Channel is initialized if its name is found in WEBKIT_DEBUG.
+
 2011-07-19  Brian Weinstein  <bweinstein@apple.com>
 
         Add back a change that was accidentally removed in r91266.

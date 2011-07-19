@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +38,38 @@ WTFLogChannel LogView         = { 0x00000008, "WebKit2LogLevel", WTFLogChannelOf
 WTFLogChannel LogIconDatabase = { 0x00000010, "WebKit2LogLevel", WTFLogChannelOff };
 WTFLogChannel LogKeyHandling  = { 0x00000020, "WebKit2LogLevel", WTFLogChannelOff };
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(GTK)
 void initializeLogChannel(WTFLogChannel* channel)
 {
     // FIXME: Each platform will need to define their own initializeLogChannel().
+}
+#endif
+
+#if PLATFORM(GTK)
+WTFLogChannel* getChannelFromName(const String& channelName)
+{
+    if (!(channelName.length() >= 2))
+        return 0;
+
+    if (equalIgnoringCase(channelName, String("SessionState")))
+        return &LogSessionState;
+
+    if (equalIgnoringCase(channelName, String("ContextMenu")))
+        return &LogContextMenu;
+
+    if (equalIgnoringCase(channelName, String("TextInput")))
+        return &LogTextInput;
+
+    if (equalIgnoringCase(channelName, String("View")))
+        return &LogView;
+
+    if (equalIgnoringCase(channelName, String("IconDatabase")))
+        return &LogIconDatabase;
+
+    if (equalIgnoringCase(channelName, String("KeyHandling")))
+        return &LogKeyHandling;
+
+    return 0;
 }
 #endif
 
