@@ -1,3 +1,24 @@
+2011-07-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Prep work for: Crash under WebPage::platformDragEnded when dragging on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=64766
+        <rdar://problem/9548174>
+        
+        Reviewed by Darin Adler.
+
+        Add a DragClient function that is called when a drag is ended, and call it from DragController::dragEnded.
+        This isn't used yet, but will be used by WebKit2 on Mac.
+        
+        This patch also cleans up style in DragClient.h.
+
+        No change in behavior, no tests needed.
+
+        * page/DragClient.h:
+        (WebCore::DragClient::dragEnded): Stub virtual implementation for now, this will be used by
+            WebKit2 on Mac.
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnded): Call DragClient::dragEnded.
+
 2011-07-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Focus and selection events are not fired when a <select>'s selection
