@@ -1,3 +1,12 @@
+2011-07-19  Tony Chang  <tony@chromium.org>
+
+        [chromium] remove BUG_DRT tests that the flakiness dashboard say are passing
+        https://bugs.webkit.org/show_bug.cgi?id=64819
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-15  Luke Zarko  <lukezarko@gmail.com>
 
        Bring V8's SerializedScriptValue implementation up to date.

@@ -2471,32 +2471,21 @@ BUGWK49265 MAC LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edg
 
 // Not investigated.
 BUG_DRT MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE
-BUG_DRT MAC : fast/dom/Window/Plug-ins.html = TIMEOUT PASS
-BUG_DRT MAC : fast/dom/Window/alert-undefined.html = TIMEOUT PASS
-BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT DEBUG : fast/frames/calculate-round.html = TIMEOUT PASS
 BUG_DRT BUGCR43890 WIN DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR43890 MAC DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-double-onchange.html = FAIL
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-script-onchange.html = FAIL
-BUG_DRT MAC : fast/images/extra-image-in-image-document.html = TIMEOUT PASS
-BUG_DRT MAC : fast/loader/font-face-empty.html = TIMEOUT PASS
-BUG_DRT MAC : fast/loader/for-window-event-onload-scripts.html = TIMEOUT PASS
-BUG_DRT MAC : fast/loader/fragment-after-redirect-gets-back-entry.html = TIMEOUT PASS
 BUG_DRT DEBUG : fast/loader/non-deferred-substitute-load.html = CRASH
 BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUG_DRT LINUX : fast/table/border-changes.html = TIMEOUT PASS
-BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
-BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS CRASH TEXT
+BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS TEXT
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
-// Crashes with DRT and is a text failure with TestShell
-BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
+BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
-BUG_DRT WIN LINUX : svg/custom/use-instanceRoot-event-bubbling.xhtml = TIMEOUT PASS
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
 // The test says you should see numbers, but we display letters.
