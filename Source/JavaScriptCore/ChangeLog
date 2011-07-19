@@ -1,3 +1,13 @@
+2011-07-19  Xan Lopez  <xlopez@igalia.com>
+
+        ARMv7 backend broken, lacks 3 parameter rshift32 method
+        https://bugs.webkit.org/show_bug.cgi?id=64571
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::rshift32): add missing rshift32 method.
+
 2011-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not optimize strict equality as effectively as the old JIT does.
