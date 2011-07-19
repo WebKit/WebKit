@@ -3833,3 +3833,5 @@ BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 
 BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
+
+BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = TIMEOUT

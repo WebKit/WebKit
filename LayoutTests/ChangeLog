@@ -1,3 +1,9 @@
+2011-07-19  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Edit Chromium test expectation for http/tests/websocket/tests/hybi/reserved-opcodes.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-19  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         Reviewed by Antonio Gomes.
