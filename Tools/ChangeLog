@@ -1,3 +1,33 @@
+2011-07-19  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests should only enable MallocStackLogging for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=64792
+
+        Reviewed by Adam Barth.
+
+        The previous code would enable it for all servers launched
+        by the port, which included Apache, the python websocket server
+        as well as ImageDiff.  Now only DumpRenderTree will have
+        MallocStackLogging enabled or the GuardMalloc library injected.
+
+        I also cleaned up the websocket_server code to use filesystem
+        while I was in it.
+
+        I also made DRT restart every 1000 tests when running with
+        --leaks enabled.  I believe this made the --leaks run slightly
+        faster, but it still takes over an hour on my machine. :(
+
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+
 2011-07-19  Ojan Vafai  <ojan@chromium.org>
 
         remove the concept of platform fallbacks

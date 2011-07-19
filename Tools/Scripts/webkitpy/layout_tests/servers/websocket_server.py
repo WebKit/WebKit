@@ -82,16 +82,15 @@ class PyWebSocket(http_server.Lighttpd):
             self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         # Webkit tests
+        # FIXME: This is the wrong way to detect if we're in Chrome vs. WebKit!
+        # The port objects are supposed to abstract this.
         if self._root:
-            self._layout_tests = os.path.abspath(self._root)
-            self._web_socket_tests = os.path.abspath(
-                os.path.join(self._root, 'http', 'tests',
-                             'websocket', 'tests'))
+            self._layout_tests = self._filesystem.abspath(self._root)
+            self._web_socket_tests = self._filesystem.abspath(self._filesystem.join(self._root, 'http', 'tests', 'websocket', 'tests'))
         else:
             try:
                 self._layout_tests = self._port_obj.layout_tests_dir()
-                self._web_socket_tests = os.path.join(self._layout_tests,
-                     'http', 'tests', 'websocket', 'tests')
+                self._web_socket_tests = self._filesystem.join(self._layout_tests, 'http', 'tests', 'websocket', 'tests')
             except:
                 self._web_socket_tests = None
 
@@ -103,34 +102,32 @@ class PyWebSocket(http_server.Lighttpd):
     def _prepare_config(self):
         time_str = time.strftime('%d%b%Y-%H%M%S')
         log_file_name = self._log_prefix + time_str
+        # FIXME: Doesn't Executive have a devnull, so that we don't have to use os.devnull directly?
         self._wsin = open(os.devnull, 'r')
 
-        error_log = os.path.join(self._output_dir, log_file_name + "-err.txt")
-
-        output_log = os.path.join(self._output_dir, log_file_name + "-out.txt")
+        error_log = self._filesystem.join(self._output_dir, log_file_name + "-err.txt")
+        output_log = self._filesystem.join(self._output_dir, log_file_name + "-out.txt")
         self._wsout = self._filesystem.open_text_file_for_writing(output_log)
 
         from webkitpy.thirdparty.autoinstalled.pywebsocket import mod_pywebsocket
         python_interp = sys.executable
-        pywebsocket_base = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__)))), 'thirdparty',
-            'autoinstalled', 'pywebsocket')
-        pywebsocket_script = os.path.join(pywebsocket_base, 'mod_pywebsocket',
-            'standalone.py')
+        # FIXME: Use self._filesystem.path_to_module(self.__module__) instead of __file__
+        # I think this is trying to get the chrome directory?  Doesn't the port object know that?
+        pywebsocket_base = self._filesystem.join(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.abspath(__file__)))), 'thirdparty', 'autoinstalled', 'pywebsocket')
+        pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,
             '--server-host', '127.0.0.1',
             '--port', str(self._port),
-            '--document-root', os.path.join(self._layout_tests, 'http', 'tests'),
+            # FIXME: Don't we have a self._port_obj.layout_test_path?
+            '--document-root', self._filesystem.join(self._layout_tests, 'http', 'tests'),
             '--scan-dir', self._web_socket_tests,
             '--cgi-paths', '/websocket/tests',
             '--log-file', error_log,
         ]
 
-        handler_map_file = os.path.join(self._web_socket_tests,
-                                        'handler_map.txt')
-        if os.path.exists(handler_map_file):
+        handler_map_file = self._filesystem.join(self._web_socket_tests, 'handler_map.txt')
+        if self._filesystem.exists(handler_map_file):
             _log.debug('Using handler_map_file: %s' % handler_map_file)
             start_cmd.append('--websock-handlers-map-file')
             start_cmd.append(handler_map_file)
@@ -142,7 +139,8 @@ class PyWebSocket(http_server.Lighttpd):
                               '-c', self._certificate])
 
         self._start_cmd = start_cmd
-        self._env = self._port_obj.setup_environ_for_server()
+        server_name = self._filesystem.basename(pywebsocket_script)
+        self._env = self._port_obj.setup_environ_for_server(server_name)
         self._env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep + self._env.get('PYTHONPATH', ''))
 
     def _remove_stale_logs(self):

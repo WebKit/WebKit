@@ -124,6 +124,7 @@ class ServerProcess:
             self._proc.stdin.write(input)
         except IOError, e:
             self.stop()
+            # stop() calls _reset(), so we have to set crashed to True after calling stop().
             self.crashed = True
 
     def read_line(self, timeout):
@@ -160,8 +161,7 @@ class ServerProcess:
                 string is returned.
         """
         if size <= 0:
-            raise ValueError('ServerProcess.read() called with a '
-                             'non-positive size: %d ' % size)
+            raise ValueError('ServerProcess.read() called with a non-positive size: %d ' % size)
         return self._read(timeout, size)
 
     def _check_for_crash(self):
@@ -236,7 +236,9 @@ class ServerProcess:
         if not self._proc:
             return
 
-        self._port.check_for_leaks(self.name(), self.pid())
+        # Only bother to check for leaks if the process is still running.
+        if self.poll() is None:
+            self._port.check_for_leaks(self.name(), self.pid())
 
         pid = self._proc.pid
         self._proc.stdin.close()

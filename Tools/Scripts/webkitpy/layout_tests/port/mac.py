@@ -118,7 +118,10 @@ class LeakDetector(object):
     def check_for_leaks(self, process_name, process_pid):
         _log.debug("Checking for leaks in %s" % process_name)
         try:
-            leaks_output = self._port._run_script("run-leaks", self._leaks_args(process_pid), include_configuration_arguments=False)
+            # Oddly enough, run-leaks (or the underlying leaks tool) does not seem to always output utf-8,
+            # thus we pass decode_output=False.  Without this code we've seen errors like:
+            # "UnicodeDecodeError: 'utf8' codec can't decode byte 0x88 in position 779874: unexpected code byte"
+            leaks_output = self._port._run_script("run-leaks", self._leaks_args(process_pid), include_configuration_arguments=False, decode_output=False)
         except ScriptError, e:
             _log.warn("Failed to run leaks tool: %s" % e.message_with_output())
             return
@@ -130,7 +133,7 @@ class LeakDetector(object):
 
         leaks_filename = self.leaks_file_name(process_name, process_pid)
         leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
-        self._filesystem.write_text_file(leaks_output_path, leaks_output)
+        self._filesystem.write_binary_file(leaks_output_path, leaks_output)
 
         # FIXME: Ideally we would not be logging from the worker process, but rather pass the leak
         # information back to the manager and have it log.
@@ -195,6 +198,10 @@ class MacPort(WebKitPort):
             assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'mac'
         self._leak_detector = LeakDetector(self)
+        if self.get_option("leaks"):
+            # DumpRenderTree slows down noticably if we run more than about 1000 tests in a batch
+            # with MallocStackLogging enabled.
+            self.set_option_default("batch_size", 1000)
 
     def baseline_search_path(self):
         search_paths = self.FALLBACK_PATHS[self._version]
@@ -202,12 +209,13 @@ class MacPort(WebKitPort):
             search_paths.insert(0, self._wk2_port_name())
         return map(self._webkit_baseline_path, search_paths)
 
-    def setup_environ_for_server(self):
-        env = WebKitPort.setup_environ_for_server(self)
-        if self.get_option('leaks'):
-            env['MallocStackLogging'] = '1'
-        if self.get_option('guard_malloc'):
-            env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
+    def setup_environ_for_server(self, server_name=None):
+        env = WebKitPort.setup_environ_for_server(self, server_name)
+        if server_name == self.driver_name():
+            if self.get_option('leaks'):
+                env['MallocStackLogging'] = '1'
+            if self.get_option('guard_malloc'):
+                env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
         return env
 
     # Belongs on a Platform object.
@@ -244,7 +252,7 @@ class MacPort(WebKitPort):
         leaks_files = self._leak_detector.leaks_files_in_directory(self.results_directory())
         if not leaks_files:
             return
-        total_bytes, unique_leaks = self.parse_leak_files(leaks_files)
+        total_bytes, unique_leaks = self._leak_detector.parse_leak_files(leaks_files)
         _log.info("%s total leaks found for a total of %s!" % (self._total_leaks, total_bytes))
         _log.info("%s unique leaks found!" % unique_leaks)
 

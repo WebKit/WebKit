@@ -44,10 +44,11 @@ class GtkDriver(webkit.WebKitDriver):
         display_id = self._worker_number + 1
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         self._xvfb_process = subprocess.Popen(run_xvfb)
-        environment = self._port.setup_environ_for_server()
+        server_name = self._port.driver_name()
+        environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % (display_id)
-        self._server_process = server_process.ServerProcess(self._port, self._port.driver_name(), self.cmd_line(), environment)
+        self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(), environment)
 
     def stop(self):
         webkit.WebKitDriver.stop(self)
@@ -64,8 +65,8 @@ class GtkPort(webkit.WebKitPort):
     def create_driver(self, worker_number):
         return GtkDriver(self, worker_number)
 
-    def setup_environ_for_server(self):
-        environment = webkit.WebKitPort.setup_environ_for_server(self)
+    def setup_environ_for_server(self, server_name=None):
+        environment = webkit.WebKitPort.setup_environ_for_server(self, server_name)
         environment['GTK_MODULES'] = 'gail'
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs/resources/inspector')

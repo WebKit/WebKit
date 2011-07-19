@@ -180,7 +180,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                                       os.path.join(tmp_module_path, lib_file))
 
         self._start_cmd = start_cmd
-        self._env = self._port_obj.setup_environ_for_server()
+        self._env = self._port_obj.setup_environ_for_server('lighttpd')
         self._mappings = mappings
 
     def _remove_stale_logs(self):

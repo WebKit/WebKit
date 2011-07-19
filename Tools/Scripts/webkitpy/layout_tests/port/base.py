@@ -234,7 +234,8 @@ class Port(object):
             httpd_path = self._path_to_lighttpd()
 
         try:
-            env = self.setup_environ_for_server()
+            server_name = self._filesystem.basename(httpd_path)
+            env = self.setup_environ_for_server(server_name)
             return self._executive.run_command([httpd_path, "-v"], env=env, return_exit_code=True) == 0
         except OSError:
             _log.error("No httpd found. Cannot run http tests.")
@@ -662,7 +663,7 @@ class Port(object):
         """Perform port-specific work at the beginning of a test run."""
         pass
 
-    def setup_environ_for_server(self):
+    def setup_environ_for_server(self, server_name=None):
         """Perform port-specific work at the beginning of a server launch.
 
         Returns:

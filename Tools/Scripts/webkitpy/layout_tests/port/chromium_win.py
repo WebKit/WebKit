@@ -98,7 +98,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
             assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'win'
 
-    def setup_environ_for_server(self):
+    def setup_environ_for_server(self, server_name=None):
         env = chromium.ChromiumPort.setup_environ_for_server(self)
         # Put the cygwin directory first in the path to find cygwin1.dll.
         env["PATH"] = "%s;%s" % (self.path_from_chromium_base("third_party", "cygwin", "bin"), env["PATH"])

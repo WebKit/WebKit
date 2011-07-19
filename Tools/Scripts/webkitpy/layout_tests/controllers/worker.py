@@ -68,8 +68,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._filesystem = port.filesystem
         self._batch_count = 0
         self._batch_size = self._options.batch_size
-        tests_run_filename = self._filesystem.join(port.results_directory(),
-                                                   "tests_run%d.txt" % self._worker_number)
+        tests_run_filename = self._filesystem.join(port.results_directory(), "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
     def cancel(self):

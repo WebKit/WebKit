@@ -111,13 +111,13 @@ class WebKitPort(Port):
             config_args.append(port_flag)
         return config_args
 
-    def _run_script(self, script_name, args=None, include_configuration_arguments=True):
+    def _run_script(self, script_name, args=None, include_configuration_arguments=True, decode_output=True):
         run_script_command = [self._config.script_path(script_name)]
         if include_configuration_arguments:
             run_script_command.extend(self._arguments_for_configuration())
         if args:
             run_script_command.extend(args)
-        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir())
+        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output)
 
     def _build_driver(self):
         try:
@@ -444,11 +444,12 @@ class WebKitDriver(Driver):
         return cmd
 
     def start(self):
-        environment = self._port.setup_environ_for_server()
+        server_name = self._port.driver_name()
+        environment = self._port.setup_environ_for_server(server_name)
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-        self._server_process = server_process.ServerProcess(self._port, self._port.driver_name(), self.cmd_line(), environment)
+        self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(), environment)
 
     def poll(self):
         return self._server_process.poll()
