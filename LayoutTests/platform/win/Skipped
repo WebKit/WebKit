@@ -1280,6 +1280,7 @@ fast/dom/Range/scale-page-client-rects.html
 fast/repaint/scale-page-shrink.html
 fast/transforms/selection-bounds-in-transformed-view.html
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+compositing/scaling/tiled-layer-recursion.html
 
 # Quota API is not supported.
 storage/storageinfo-query-usage.html

@@ -593,6 +593,7 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // Needs eventSender.scalePageBy().
 BUGWK58013 : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
 BUGWK58013 : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = TEXT
+BUGWK58013 : compositing/scaling/tiled-layer-recursion.html = TEXT
 
 // -----------------------------------------------------------------
 // Inspector tests
