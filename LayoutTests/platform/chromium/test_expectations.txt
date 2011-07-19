@@ -3736,11 +3736,6 @@ BUGCR89282 SNOWLEOPARD : fast/forms/input-appearance-range.html = IMAGE
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
-// We now follow the ES5 spec with regards to the semantics of the receiver
-// given through eval to builtins (undefined). Test assumes that the global
-// object is given as receiver.
-BUGCR85394 : fast/js/eval-var-decl.html = TEXT
-
 BUGRNIWA : editing/selection/extend-inside-transforms-backward.html = FAIL PASS
 BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
 
