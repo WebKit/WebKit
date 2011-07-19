@@ -722,6 +722,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginX, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX));
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginY, new ApplyPropertyLength<>(&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY));
+    setPropertyHandler(CSSPropertyWebkitPerspectiveOrigin, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyWebkitPerspectiveOriginX), propertyHandler(CSSPropertyWebkitPerspectiveOriginY)));
     setPropertyHandler(CSSPropertyWebkitTransformOriginX, new ApplyPropertyLength<>(&RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, &RenderStyle::initialTransformOriginX));
     setPropertyHandler(CSSPropertyWebkitTransformOriginY, new ApplyPropertyLength<>(&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY));
 }

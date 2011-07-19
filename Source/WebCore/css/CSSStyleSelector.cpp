@@ -5034,10 +5034,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setPerspective(perspectiveValue);
         return;
     }
-    case CSSPropertyWebkitPerspectiveOrigin:
-        HANDLE_INHERIT_AND_INITIAL(perspectiveOriginX, PerspectiveOriginX)
-        HANDLE_INHERIT_AND_INITIAL(perspectiveOriginY, PerspectiveOriginY)
-        return;
     case CSSPropertyWebkitAnimation:
         if (isInitial)
             m_style->clearAnimations();
@@ -5390,6 +5386,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTransformOriginY:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
+    case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyCursor:
         ASSERT_NOT_REACHED();
         return;
