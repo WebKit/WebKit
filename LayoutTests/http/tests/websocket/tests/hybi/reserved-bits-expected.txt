@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 0: One or more reserved bits are on: reserved1 = 1, reserved2 = 0, reserved3 = 0
+CONSOLE MESSAGE: line 0: One or more reserved bits are on: reserved1 = 0, reserved2 = 1, reserved3 = 0
+CONSOLE MESSAGE: line 0: One or more reserved bits are on: reserved1 = 0, reserved2 = 0, reserved3 = 1
+Test whether WebSocket rejects frames whose reserved bit is on.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Bit 1: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Bit 2: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Bit 3: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

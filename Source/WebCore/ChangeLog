@@ -1,3 +1,65 @@
+2011-07-19  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Implement hybi framing
+        https://bugs.webkit.org/show_bug.cgi?id=64522
+
+        Reviewed by Kent Tamura.
+
+        Implement WebSocket framing protocol which is mainly described in
+        <http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10#section-4> and
+        <http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-10#section-6>.
+
+        Hybi protocol introduces a new frame format which is drastically different from
+        the old one. Notable differences are:
+        - Binary data support.
+        - Fragmentation support: a single message can be fragmented to multiple frames.
+        - Ping-pong support.
+        - Masking: frame content of a client must be masked to prevent cross-protocol attacks.
+
+        This patch covers the following features:
+        - Send a pong frame when a ping frame is received.
+        - Receive fragmented frames.
+        - Receive masked frames. (Servers do not have to mask frames, but they may if they wish.)
+
+        The following features are NOT implemented yet:
+        - Send or receive binary messages.
+        - Send a ping message.
+        - Send fragmented frames. (It is unclear whether this is necessary.)
+        - Rewrite the frame content by WebSocket protocol extensions (like frame compression).
+
+        New tests: http/tests/websocket/tests/hybi/broken-utf8.html
+                   http/tests/websocket/tests/hybi/fragmented-control-frame.html
+                   http/tests/websocket/tests/hybi/fragmented-frames.html
+                   http/tests/websocket/tests/hybi/interleaved-fragments.html
+                   http/tests/websocket/tests/hybi/long-control-frame.html
+                   http/tests/websocket/tests/hybi/masked-frames.html
+                   http/tests/websocket/tests/hybi/pong.html
+                   http/tests/websocket/tests/hybi/reserved-bits.html
+                   http/tests/websocket/tests/hybi/reserved-opcodes.html
+                   http/tests/websocket/tests/hybi/too-long-payload.html
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::send):
+        The original content of send() was moved to a private method sendFrameHixie76().
+        (WebCore::WebSocketChannel::fail):
+        Stop handling incoming data after the WebSocket connection is failed.
+        It was unclear to me whether we should do the same thing for hixie-76 connection;
+        for now, I kept the original behavior.
+        (WebCore::WebSocketChannel::processBuffer):
+        (WebCore::WebSocketChannel::resumeTimerFired):
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        (WebCore::WebSocketChannel::closingTimerFired):
+        (WebCore::WebSocketChannel::parseFrame):
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::processFrameHixie76):
+        (WebCore::WebSocketChannel::sendFrame):
+        (WebCore::WebSocketChannel::sendFrameHixie76):
+        * websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::isNonControlOpCode):
+        (WebCore::WebSocketChannel::isControlOpCode):
+        (WebCore::WebSocketChannel::isReservedOpCode):
+
 2011-07-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION (r88913): Preview in Safari's snippet editor has a fixed height instead of filling the entire pane

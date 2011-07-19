@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -88,6 +88,45 @@ namespace WebCore {
         void startClosingHandshake();
         void closingTimerFired(Timer<WebSocketChannel>*);
 
+        // Hybi-10 opcodes.
+        typedef unsigned int OpCode;
+        static const OpCode OpCodeContinuation;
+        static const OpCode OpCodeText;
+        static const OpCode OpCodeBinary;
+        static const OpCode OpCodeClose;
+        static const OpCode OpCodePing;
+        static const OpCode OpCodePong;
+
+        static bool isNonControlOpCode(OpCode opCode) { return opCode == OpCodeContinuation || opCode == OpCodeText || opCode == OpCodeBinary; }
+        static bool isControlOpCode(OpCode opCode) { return opCode == OpCodeClose || opCode == OpCodePing || opCode == OpCodePong; }
+        static bool isReservedOpCode(OpCode opCode) { return !isNonControlOpCode(opCode) && !isControlOpCode(opCode); }
+
+        enum ParseFrameResult {
+            FrameOK,
+            FrameIncomplete,
+            FrameError
+        };
+
+        struct FrameData {
+            OpCode opCode;
+            bool final;
+            bool reserved1;
+            bool reserved2;
+            bool reserved3;
+            bool masked;
+            const char* payload;
+            size_t payloadLength;
+            const char* frameEnd;
+        };
+
+        ParseFrameResult parseFrame(FrameData&); // May modify part of m_buffer to unmask the frame.
+
+        bool processFrame();
+        bool processFrameHixie76();
+
+        bool sendFrame(OpCode, const char* data, size_t dataLength);
+        bool sendFrameHixie76(const char* data, size_t dataLength);
+
         ScriptExecutionContext* m_context;
         WebSocketChannelClient* m_client;
         OwnPtr<WebSocketHandshake> m_handshake;
@@ -107,6 +146,11 @@ namespace WebCore {
         unsigned long m_identifier; // m_identifier == 0 means that we could not obtain a valid identifier.
 
         bool m_useHixie76Protocol;
+
+        // Private members only for hybi-10 protocol.
+        bool m_hasContinuousFrame;
+        OpCode m_continuousFrameOpCode;
+        Vector<char> m_continuousFrameData;
     };
 
 } // namespace WebCore

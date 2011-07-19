@@ -1,3 +1,61 @@
+2011-07-19  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Implement hybi framing
+        https://bugs.webkit.org/show_bug.cgi?id=64522
+
+        Reviewed by Kent Tamura.
+
+        Fix existing tests so they match the new frame format, and add tests for the new frame types
+        and error conditions related to the new frame format.
+
+        Unskip hybi tests on mac, win and chromium. Other ports (wk2, qt and gtk) still skip these tests
+        because they do not support changing the value of "WebKitHixie76WebSocketProtocolEnabled"
+        preference key via layoutTestController.overridePreferences() yet.
+
+        * http/tests/websocket/tests/hybi/broken-utf8-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/broken-utf8.html: Added.
+        * http/tests/websocket/tests/hybi/broken-utf8_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/client-close-expected.txt:
+        * http/tests/websocket/tests/hybi/client-close.html:
+        The format of a close frame has been changed. Currently, we do not include any payload
+        in a close frame, thus it must start with "\x88\x80" (see section 4.1 of hybi-10
+        specification for more details).
+        * http/tests/websocket/tests/hybi/client-close_wsh.py:
+        * http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/fragmented-control-frame.html: Added.
+        * http/tests/websocket/tests/hybi/fragmented-control-frame_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/fragmented-frames-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/fragmented-frames.html: Added.
+        * http/tests/websocket/tests/hybi/fragmented-frames_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/interleaved-fragments.html: Added.
+        * http/tests/websocket/tests/hybi/interleaved-fragments_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/long-control-frame-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/long-control-frame.html: Added.
+        * http/tests/websocket/tests/hybi/long-control-frame_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/masked-frames-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/masked-frames.html: Added.
+        * http/tests/websocket/tests/hybi/masked-frames_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/pong-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/pong.html: Added.
+        * http/tests/websocket/tests/hybi/pong_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/reserved-bits-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/reserved-bits.html: Added.
+        * http/tests/websocket/tests/hybi/reserved-bits_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/reserved-opcodes-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/reserved-opcodes.html: Added.
+        * http/tests/websocket/tests/hybi/reserved-opcodes_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/send2_wsh.py:
+        Send two text frames at once.
+        * http/tests/websocket/tests/hybi/too-long-payload-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/too-long-payload.html: Added.
+        * http/tests/websocket/tests/hybi/too-long-payload_wsh.py: Added.
+        * platform/chromium/test_expectations.txt:
+        Derive test expectations of hixie76 tests, because these tests are likely to behave
+        the same way as hixie76 tests. Will be checked later whether they really do.
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-07-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION (r88913): Preview in Safari's snippet editor has a fixed height instead of filling the entire pane

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML>
 <html>
 <head>
 <link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
@@ -8,34 +8,31 @@
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
-description("WebSocket: Test client-initiated close.");
+description("Tests whether WebSocket correctly aborts the connection when it receives a frame with too long payload.");
 
 window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/client-close");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/too-long-payload");
 var closeEvent;
-var receivedMessage;
 
 ws.onopen = function()
 {
-    debug("Connected");
-    ws.close();
+    debug("onopen() was called.");
 };
 
-ws.onmessage = function(messageEvent)
+ws.onmessage = function(event)
 {
-    debug("Received: " + messageEvent.data);
-    receivedMessage = messageEvent.data;
+    var message = event.data;
+    testFailed("onmessage() was called. (message = \"" + message + "\")");
 };
 
 ws.onclose = function(event)
 {
-    debug("Closed");
+    debug("onclose() was called.");
     closeEvent = event;
-    shouldBeEqualToString("receivedMessage", "close_frame[:2]='\\x88\\x80'");
-    shouldBeTrue("closeEvent.wasClean");
+    shouldBeFalse("closeEvent.wasClean");
     finishJSTest();
 };
 

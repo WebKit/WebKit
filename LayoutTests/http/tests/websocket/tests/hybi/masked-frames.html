@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Receive masked WebSocket frames.");
+
+window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+
+var url = "ws://localhost:8880/websocket/tests/hybi/masked-frames";
+var ws = new WebSocket(url);
+var closeEvent;
+var expectedMessages = ["First message", "Fragmented message", ""];
+var actualMessages = [];
+
+ws.onopen = function()
+{
+    debug("onopen() was called.");
+    ws.close();
+};
+
+ws.onmessage = function(event)
+{
+    var message = event.data;
+    debug("onmessage() was called. (message = \"" + message + "\")");
+    if (message === "END") {
+        ws.close();
+        return;
+    }
+    actualMessages.push(message);
+};
+
+ws.onclose = function(event)
+{
+    closeEvent = event;
+    shouldBeTrue("actualMessages.length === expectedMessages.length");
+    for (var i = 0; i < expectedMessages.length; ++i)
+        shouldBeEqualToString("actualMessages[" + i + "]", expectedMessages[i]);
+    shouldBeTrue("closeEvent.wasClean");
+    finishJSTest();
+};
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

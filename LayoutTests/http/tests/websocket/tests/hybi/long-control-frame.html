@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML>
 <html>
 <head>
 <link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
@@ -7,35 +7,27 @@
 <body>
 <div id="description"></div>
 <div id="console"></div>
-<script type="text/javascript">
-description("WebSocket: Test client-initiated close.");
+<script>
+description("Test whether WebSocket rejects control frames longer than 125 bytes.");
 
 window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/client-close");
+var url = "ws://localhost:8880/websocket/tests/hybi/long-control-frame";
+var ws = new WebSocket(url);
 var closeEvent;
-var receivedMessage;
+var message;
 
 ws.onopen = function()
 {
-    debug("Connected");
-    ws.close();
-};
-
-ws.onmessage = function(messageEvent)
-{
-    debug("Received: " + messageEvent.data);
-    receivedMessage = messageEvent.data;
+    debug("onopen() was called.");
 };
 
 ws.onclose = function(event)
 {
-    debug("Closed");
     closeEvent = event;
-    shouldBeEqualToString("receivedMessage", "close_frame[:2]='\\x88\\x80'");
-    shouldBeTrue("closeEvent.wasClean");
+    shouldBeFalse("closeEvent.wasClean");
     finishJSTest();
 };
 

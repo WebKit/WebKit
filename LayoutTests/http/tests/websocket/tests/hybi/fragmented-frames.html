@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML>
 <html>
 <head>
 <link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
@@ -7,35 +7,39 @@
 <body>
 <div id="description"></div>
 <div id="console"></div>
-<script type="text/javascript">
-description("WebSocket: Test client-initiated close.");
+<script>
+description("Receive fragmented WebSocket frames.");
 
 window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/client-close");
+var url = "ws://localhost:8880/websocket/tests/hybi/fragmented-frames";
+var ws = new WebSocket(url);
 var closeEvent;
-var receivedMessage;
+var expectedMessages = ["First message", "Second message", "Third message"];
+var actualMessages = [];
 
 ws.onopen = function()
 {
-    debug("Connected");
+    debug("onopen() was called.");
     ws.close();
 };
 
-ws.onmessage = function(messageEvent)
+ws.onmessage = function(event)
 {
-    debug("Received: " + messageEvent.data);
-    receivedMessage = messageEvent.data;
+    var message = event.data;
+    debug("onmessage() was called. (message = \"" + message + "\")");
+    actualMessages.push(message);
 };
 
 ws.onclose = function(event)
 {
-    debug("Closed");
     closeEvent = event;
-    shouldBeEqualToString("receivedMessage", "close_frame[:2]='\\x88\\x80'");
     shouldBeTrue("closeEvent.wasClean");
+    shouldBeTrue("actualMessages.length === expectedMessages.length");
+    for (var i = 0; i < expectedMessages.length; ++i)
+        shouldBeEqualToString("actualMessages[" + i + "]", expectedMessages[i]);
     finishJSTest();
 };
 

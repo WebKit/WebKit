@@ -1346,8 +1346,5 @@ fast/workers/worker-crash-with-invalid-location.html
 # Need to implement getFormValue().
 plugins/form-value.html
 
-# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
-http/tests/websocket/tests/hybi/
-
 # Needs generated results
 css3/selectors3

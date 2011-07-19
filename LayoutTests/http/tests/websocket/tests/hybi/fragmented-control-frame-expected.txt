@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 0: Received fragmented control frame: opcode = 9
+Test whether WebSocket rejects a fragmented control frame and aborts the connection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+onopen() was called.
+PASS closeEvent.wasClean is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
