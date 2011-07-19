@@ -811,6 +811,7 @@ SOURCES += \
     inspector/ConsoleMessage.cpp \
     inspector/DOMNodeHighlighter.cpp \
     inspector/EventsCollector.cpp \
+    inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InjectedScriptManager.cpp \
@@ -1772,6 +1773,7 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/DOMNodeHighlighter.h \
     inspector/EventsCollector.h \
+    inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
     inspector/InjectedScriptManager.h \

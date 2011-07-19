@@ -858,6 +858,7 @@ SET(WebCore_SOURCES
     inspector/ConsoleMessage.cpp
     inspector/DOMNodeHighlighter.cpp
     inspector/EventsCollector.cpp
+    inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptHost.cpp
     inspector/InjectedScriptManager.cpp

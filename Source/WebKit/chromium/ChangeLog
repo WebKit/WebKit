@@ -1,3 +1,16 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Rename agentIdentifierPrefix to processId, move out from page agent and make static.
+        https://bugs.webkit.org/show_bug.cgi?id=64729
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setAgentIdentifierPrefix):
+        (WebKit::WebDevToolsAgentImpl::setProcessId):
+        * src/WebDevToolsAgentImpl.h:
+
 2011-07-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

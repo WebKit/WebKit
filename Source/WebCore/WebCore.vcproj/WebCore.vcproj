@@ -67982,6 +67982,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\IdentifiersFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\IdentifiersFactory.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorResourceAgent.cpp"
 				>
 			</File>

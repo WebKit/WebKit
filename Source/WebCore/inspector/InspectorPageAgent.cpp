@@ -47,6 +47,7 @@
 #include "FrameLoadRequest.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
@@ -69,7 +70,6 @@ namespace WebCore {
 namespace {
 // This should be kept the same as the one in front-end/utilities.js
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
-static unsigned int s_lastUsedIdentifier = 0;
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -280,11 +280,6 @@ void InspectorPageAgent::clearFrontend()
 {
     m_instrumentingAgents->setInspectorPageAgent(0);
     m_frontend = 0;
-}
-
-void InspectorPageAgent::setAgentIdentifierPrefix(const String& prefix)
-{
-    m_agentIdentifierPrefix = prefix.isEmpty() ? String("") : prefix + ".";
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source)
@@ -558,11 +553,6 @@ Frame* InspectorPageAgent::mainFrame()
     return m_page->mainFrame();
 }
 
-String InspectorPageAgent::createIdentifier()
-{
-    return m_agentIdentifierPrefix + String::number(++s_lastUsedIdentifier);
-}
-
 Frame* InspectorPageAgent::frameForId(const String& frameId)
 {
     return frameId.isEmpty() ? 0 : m_identifierToFrame.get(frameId);
@@ -574,7 +564,7 @@ String InspectorPageAgent::frameId(Frame* frame)
         return "";
     String identifier = m_frameToIdentifier.get(frame);
     if (identifier.isNull()) {
-        identifier = createIdentifier();
+        identifier = IdentifiersFactory::createIdentifier();
         m_frameToIdentifier.set(frame, identifier);
         m_identifierToFrame.set(identifier, frame);
     }
@@ -587,7 +577,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
         return "";
     String identifier = m_loaderToIdentifier.get(loader);
     if (identifier.isNull()) {
-        identifier = createIdentifier();
+        identifier = IdentifiersFactory::createIdentifier();
         m_loaderToIdentifier.set(loader, identifier);
     }
     return identifier;

@@ -93,7 +93,7 @@ public:
     void connectFrontend();
     void disconnectFrontend();
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
-    void setAgentIdentifierPrefix(const String&);
+    void setProcessId(long);
 
     void showConsole();
     void inspect(Node*);

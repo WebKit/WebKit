@@ -316,9 +316,14 @@ void WebDevToolsAgentImpl::clearBrowserCookies()
     m_client->clearBrowserCookies();
 }
 
+// FIXME: remove once renamed to setProcessId downstream.
 void WebDevToolsAgentImpl::setAgentIdentifierPrefix(const WebString& prefix)
 {
-    inspectorController()->setAgentIdentifierPrefix(prefix);
+}
+
+void WebDevToolsAgentImpl::setProcessId(long processId)
+{
+    inspectorController()->setProcessId(processId);
 }
 
 void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& script)

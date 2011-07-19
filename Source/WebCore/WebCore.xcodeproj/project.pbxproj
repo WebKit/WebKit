@@ -1438,6 +1438,8 @@
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		590E1B4B11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */; };
+		5913A24113D49EBA00F5B05C /* IdentifiersFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5913A23F13D49EBA00F5B05C /* IdentifiersFactory.cpp */; };
+		5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5913A24013D49EBA00F5B05C /* IdentifiersFactory.h */; };
 		59309A1111F4AE5800250603 /* DeviceOrientationClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */; };
 		59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		593D3EAF1325328C0057E7EE /* JavaMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D3EAE1325328C0057E7EE /* JavaMethod.h */; };
@@ -7980,6 +7982,8 @@
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
 		590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeviceOrientationEventCustom.cpp; sourceTree = "<group>"; };
+		5913A23F13D49EBA00F5B05C /* IdentifiersFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdentifiersFactory.cpp; sourceTree = "<group>"; };
+		5913A24013D49EBA00F5B05C /* IdentifiersFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdentifiersFactory.h; sourceTree = "<group>"; };
 		59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceOrientationClientMock.cpp; path = mock/DeviceOrientationClientMock.cpp; sourceTree = "<group>"; };
 		59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceOrientationClientMock.h; path = mock/DeviceOrientationClientMock.h; sourceTree = "<group>"; };
 		593AB6971355CD9200FC8211 /* PositionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionCallback.idl; sourceTree = "<group>"; };
@@ -13375,6 +13379,8 @@
 				4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */,
 				22777B48134A018C008EA455 /* EventsCollector.cpp */,
 				22777B49134A018C008EA455 /* EventsCollector.h */,
+				5913A23F13D49EBA00F5B05C /* IdentifiersFactory.cpp */,
+				5913A24013D49EBA00F5B05C /* IdentifiersFactory.h */,
 				F3644AFD1119805900E0D537 /* InjectedScript.cpp */,
 				F3644AFE1119805900E0D537 /* InjectedScript.h */,
 				7A0E76F610BF08ED00A0276E /* InjectedScriptHost.cpp */,
@@ -23104,6 +23110,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
 				4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */,
+				5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25875,6 +25882,7 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				4945BFD313CF809000CC3B38 /* TransformState.cpp in Sources */,
 				4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */,
+				5913A24113D49EBA00F5B05C /* IdentifiersFactory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

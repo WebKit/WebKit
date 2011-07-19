@@ -1956,6 +1956,8 @@ webcore_sources += \
 	Source/WebCore/inspector/DOMNodeHighlighter.h \
 	Source/WebCore/inspector/EventsCollector.cpp \
 	Source/WebCore/inspector/EventsCollector.h \
+	Source/WebCore/inspector/IdentifiersFactory.cpp \
+	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScript.cpp \
 	Source/WebCore/inspector/InjectedScript.h \
 	Source/WebCore/inspector/InjectedScriptHost.cpp \

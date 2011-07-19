@@ -3274,6 +3274,8 @@
             'inspector/DOMNodeHighlighter.h',
             'inspector/EventsCollector.cpp',
             'inspector/EventsCollector.h',
+            'inspector/IdentifiersFactory.cpp',
+            'inspector/IdentifiersFactory.h',
             'inspector/InjectedScript.cpp',
             'inspector/InjectedScript.h',
             'inspector/InjectedScriptHost.cpp',

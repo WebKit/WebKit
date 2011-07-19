@@ -35,6 +35,7 @@
 
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "IdentifiersFactory.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
@@ -354,9 +355,9 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     m_inspectorAgent->restore();
 }
 
-void InspectorController::setAgentIdentifierPrefix(const String& prefix)
+void InspectorController::setProcessId(long processId)
 {
-    m_pageAgent->setAgentIdentifierPrefix(prefix);
+    IdentifiersFactory::setProcessId(processId);
 }
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)

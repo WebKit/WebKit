@@ -1,3 +1,28 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Rename agentIdentifierPrefix to processId, move out from page agent and make static.
+        https://bugs.webkit.org/show_bug.cgi?id=64729
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/IdentifiersFactory.cpp: Added.
+        (WebCore::IdentifiersFactory::createIdentifier):
+        * inspector/IdentifiersFactory.h: Added.
+        (WebCore::IdentifiersFactory::setProcessId):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setProcessId):
+        * inspector/InspectorController.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameId):
+        (WebCore::InspectorPageAgent::loaderId):
+        * inspector/InspectorPageAgent.h:
+
 2011-07-19  Jeremy Moskovich  <jeremy@chromium.org>
 
         Fix microphone icon placement in speech input control for dir=rtl.
