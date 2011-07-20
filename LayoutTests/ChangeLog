@@ -1,3 +1,10 @@
+2011-07-19  Hayato Ito  <hayato@chromium.org>
+
+        [chromium] More chromium rebaseline for r91249.
+        Unreviewed.
+
+        * platform/chromium-mac-leopard/fast/speech/speech-bidi-rendering-expected.png: Added.
+
 2011-07-19  Leo Yang  <leoyang.webkit@gmail.com>
 
         SVG: Missing implementation of <altGlyphDef>, <altGlyphItem> and <glyphRef>
