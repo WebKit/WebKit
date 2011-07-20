@@ -1,3 +1,10 @@
+2011-07-19  Adam Roben  <aroben@apple.com>
+
+        Skip some more tests on WebKit2 that rely on unimplemented test harness APIs
+
+        * platform/wk2/Skipped: Added svg/animations/svgtransform-animation-discrete.html and
+        fast/forms/input-search-press-escape-key.html.
+
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Apparently my rebaseline was incorrect for r91294.

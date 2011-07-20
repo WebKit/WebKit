@@ -492,6 +492,7 @@ svg/animations/svgPreserveAspectRatio-animation-1.html
 svg/animations/svgrect-animation-1.html
 svg/animations/svgrect-animation-2.html
 svg/animations/svgtransform-animation-1.html
+svg/animations/svgtransform-animation-discrete.html
 svg/animations/svgstring-animation-fallback-to-discrete.html
 svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg
@@ -1845,6 +1846,7 @@ fast/dom/shadow/shadow-host-transfer-focus.html
 fast/dom/shadow/tab-order-iframe-and-shadow.html
 fast/events/onchange-setvalue.html
 fast/forms/focus-with-display-block.html
+fast/forms/input-search-press-escape-key.html
 fast/forms/radio-group-keyboard-change-event.html
 fast/forms/search-disabled-readonly.html
 fast/forms/ValidityState-valueMissing-002.html
