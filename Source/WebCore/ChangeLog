@@ -1,3 +1,17 @@
+2011-07-20  Cary Clark  <caryclark@google.com>
+
+        update FontSkia to match platform context convention
+        https://bugs.webkit.org/show_bug.cgi?id=64795
+
+        Reviewed by James Robinson.
+
+        No new tests. This platform variant is not
+        built at this time.
+
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::Font::drawGlyphs):
+        Call makeGrContextCurrent instead of the obsolete prepareForSoftwareDraw.
+
 2011-07-20  Brian Weinstein  <bweinstein@apple.com>
 
         Build fix after r91384. Add an ASSERT_UNSED for the timer.
