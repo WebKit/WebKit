@@ -1,3 +1,12 @@
+2011-07-20  Ilya Sherman  <isherman@chromium.org>
+
+        Remove TODO in WebNode.h from a two-sided patch that has now landed
+        https://bugs.webkit.org/show_bug.cgi?id=64840
+
+        Reviewed by Darin Fisher.
+
+        * public/WebNode.h:
+
 2011-07-20  Glen Shires  <gshires@google.com>
 
         Bug 64625: Add isSpeechInputEnabled flag to WebContextMenuData.
