@@ -47,7 +47,7 @@ FloatSize SVGShadowTreeContainerElement::containerTranslation() const
     return FloatSize(m_xOffset.value(this), m_yOffset.value(this));
 }
 
-PassRefPtr<Element> SVGShadowTreeContainerElement::cloneElementWithoutAttributesAndChildren() const
+PassRefPtr<Element> SVGShadowTreeContainerElement::cloneElementWithoutAttributesAndChildren()
 {
     return adoptRef(new SVGShadowTreeContainerElement(document()));
 }

@@ -39,8 +39,8 @@ public:
     int marginWidth() const { return m_marginWidth; }
     int marginHeight() const { return m_marginHeight; }
 
-    int width() const;
-    int height() const;
+    int width();
+    int height();
 
     void setRemainsAliveOnRemovalFromTree(bool);
 #if ENABLE(FULLSCREEN_API)

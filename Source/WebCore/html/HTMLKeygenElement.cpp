@@ -62,7 +62,7 @@ protected:
     }
 
 private:
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren()
     {
         return create(document());
     }

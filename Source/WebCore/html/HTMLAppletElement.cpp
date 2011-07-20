@@ -150,7 +150,7 @@ void HTMLAppletElement::defaultEventHandler(Event* event)
     widget->handleEvent(event);
 }
 
-RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
+RenderWidget* HTMLAppletElement::renderWidgetForJSBindings()
 {
     if (!canEmbedJava())
         return 0;

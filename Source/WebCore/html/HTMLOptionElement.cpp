@@ -161,7 +161,7 @@ void HTMLOptionElement::setValue(const String& value)
     setAttribute(valueAttr, value);
 }
 
-bool HTMLOptionElement::selected() const
+bool HTMLOptionElement::selected()
 {
     if (HTMLSelectElement* select = ownerSelectElement())
         select->recalcListItemsIfNeeded();

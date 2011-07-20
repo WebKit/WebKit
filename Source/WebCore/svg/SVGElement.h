@@ -57,7 +57,7 @@ public:
     SVGSVGElement* ownerSVGElement() const;
     SVGElement* viewportElement() const;
 
-    SVGDocumentExtensions* accessDocumentSVGExtensions() const;
+    SVGDocumentExtensions* accessDocumentSVGExtensions();
 
     virtual bool isStyled() const { return false; }
     virtual bool isStyledTransformable() const { return false; }
@@ -82,7 +82,7 @@ public:
 
     const HashSet<SVGElementInstance*>& instancesForElement() const;
 
-    bool boundingBox(FloatRect&, SVGLocatable::StyleUpdateStrategy = SVGLocatable::AllowStyleUpdate) const;
+    bool boundingBox(FloatRect&, SVGLocatable::StyleUpdateStrategy = SVGLocatable::AllowStyleUpdate);
 
     void setCursorElement(SVGCursorElement*);
     void cursorElementRemoved();

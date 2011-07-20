@@ -85,9 +85,9 @@ WebNamedNodeMap WebElement::attributes() const
     return WebNamedNodeMap(m_private->attributes());
 }
 
-WebString WebElement::innerText() const
+WebString WebElement::innerText()
 {
-    return constUnwrap<Element>()->innerText();
+    return unwrap<Element>()->innerText();
 }
 
 WebString WebElement::computeInheritedLanguage() const

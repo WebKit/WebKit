@@ -103,7 +103,7 @@ void SVGAnimateElement::adjustForInheritance(SVGElement* targetElement, const Qu
         getPropertyValue(svgParent, attributeName, value);
 }
 
-bool SVGAnimateElement::hasValidAttributeType() const
+bool SVGAnimateElement::hasValidAttributeType()
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)

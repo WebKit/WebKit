@@ -174,7 +174,7 @@ SVGElement* SVGElement::viewportElement() const
     return 0;
 }
 
-SVGDocumentExtensions* SVGElement::accessDocumentSVGExtensions() const
+SVGDocumentExtensions* SVGElement::accessDocumentSVGExtensions()
 {
     // This function is provided for use by SVGAnimatedProperty to avoid
     // global inclusion of Document.h in SVG code.
@@ -211,14 +211,14 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
     return rareSVGData()->elementInstances();
 }
 
-bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy) const
+bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
     if (isStyledLocatable()) {
-        rect = static_cast<const SVGStyledLocatableElement*>(this)->getBBox(styleUpdateStrategy);
+        rect = static_cast<SVGStyledLocatableElement*>(this)->getBBox(styleUpdateStrategy);
         return true;
     }
     if (hasTagName(SVGNames::textTag)) {
-        rect = static_cast<const SVGTextElement*>(this)->getBBox(styleUpdateStrategy);
+        rect = static_cast<SVGTextElement*>(this)->getBBox(styleUpdateStrategy);
         return true;
     }
     return false;

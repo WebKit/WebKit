@@ -82,7 +82,7 @@ private:
     virtual bool isURLAttribute(Attribute*) const;
     virtual const QualifiedName& imageSourceAttributeName() const;
 
-    virtual RenderWidget* renderWidgetForJSBindings() const;
+    virtual RenderWidget* renderWidgetForJSBindings();
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

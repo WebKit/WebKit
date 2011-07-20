@@ -105,7 +105,7 @@ private:
 
     virtual void accessKeyAction(bool sendToAnyElement);
 
-    virtual bool shouldUseInputMethod() const;
+    virtual bool shouldUseInputMethod();
 
     int m_rows;
     int m_cols;

@@ -160,17 +160,17 @@ public:
     int clientTop();
     int clientWidth();
     int clientHeight();
-    virtual int scrollLeft() const;
-    virtual int scrollTop() const;
+    virtual int scrollLeft();
+    virtual int scrollTop();
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
-    virtual int scrollWidth() const;
-    virtual int scrollHeight() const;
+    virtual int scrollWidth();
+    virtual int scrollHeight();
 
-    IntRect boundsInWindowSpace() const;
+    IntRect boundsInWindowSpace();
 
-    PassRefPtr<ClientRectList> getClientRects() const;
-    PassRefPtr<ClientRect> getBoundingClientRect() const;
+    PassRefPtr<ClientRectList> getClientRects();
+    PassRefPtr<ClientRect> getBoundingClientRect();
     
     // Returns the absolute bounding box translated into screen coordinates:
     IntRect screenRect() const;
@@ -262,8 +262,8 @@ public:
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     void blur();
 
-    String innerText() const;
-    String outerText() const;
+    String innerText();
+    String outerText();
  
     virtual String title() const;
 
@@ -423,7 +423,7 @@ private:
     // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
     // are used instead.
     virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 
     QualifiedName m_tagName;
     virtual NodeRareData* createRareData();

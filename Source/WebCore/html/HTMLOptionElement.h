@@ -49,7 +49,7 @@ public:
     virtual String value() const;
     void setValue(const String&);
 
-    virtual bool selected() const;
+    virtual bool selected();
     void setSelected(bool);
 
     HTMLSelectElement* ownerSelectElement() const;

@@ -371,7 +371,7 @@ void SVGStyledElement::insertedIntoDocument()
     buildPendingResourcesIfNeeded();
 }
 
-void SVGStyledElement::buildPendingResourcesIfNeeded() const
+void SVGStyledElement::buildPendingResourcesIfNeeded()
 {
     Document* document = this->document();
     if (!needsPendingResourceHandling() || !document)

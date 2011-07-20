@@ -54,7 +54,7 @@ PassRefPtr<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const Qualif
     return adoptRef(new SVGAnimateMotionElement(tagName, document));
 }
 
-bool SVGAnimateMotionElement::hasValidAttributeType() const
+bool SVGAnimateMotionElement::hasValidAttributeType()
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)

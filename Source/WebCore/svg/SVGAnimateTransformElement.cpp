@@ -60,7 +60,7 @@ PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const 
     return adoptRef(new SVGAnimateTransformElement(tagName, document));
 }
 
-bool SVGAnimateTransformElement::hasValidAttributeType() const
+bool SVGAnimateTransformElement::hasValidAttributeType()
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)

@@ -80,7 +80,7 @@ bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestRes
     return defaultArea;
 }
 
-HTMLImageElement* HTMLMapElement::imageElement() const
+HTMLImageElement* HTMLMapElement::imageElement()
 {
     RefPtr<HTMLCollection> coll = document()->images();
     for (Node* curr = coll->firstItem(); curr; curr = coll->nextItem()) {

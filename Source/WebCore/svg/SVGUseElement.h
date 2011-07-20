@@ -43,7 +43,7 @@ class SVGUseElement : public SVGStyledTransformableElement,
 public:
     static PassRefPtr<SVGUseElement> create(const QualifiedName&, Document*);
 
-    SVGElementInstance* instanceRoot() const;
+    SVGElementInstance* instanceRoot();
     SVGElementInstance* animatedInstanceRoot() const;
     SVGElementInstance* instanceForShadowTreeElement(Node*) const;
     void invalidateShadowTree();
@@ -69,7 +69,7 @@ private:
     virtual void attach();
     virtual void detach();
 
-    virtual void toClipPath(Path&) const;
+    virtual void toClipPath(Path&);
 
     static void removeDisallowedElementsFromSubtree(Node* element);
 

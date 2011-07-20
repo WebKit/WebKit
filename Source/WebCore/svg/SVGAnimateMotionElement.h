@@ -34,7 +34,7 @@ public:
 private:
     SVGAnimateMotionElement(const QualifiedName&, Document*);
 
-    virtual bool hasValidAttributeType() const;
+    virtual bool hasValidAttributeType();
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);

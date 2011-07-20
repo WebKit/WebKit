@@ -50,12 +50,12 @@ SVGStyledTransformableElement::~SVGStyledTransformableElement()
 {
 }
 
-AffineTransform SVGStyledTransformableElement::getCTM(StyleUpdateStrategy styleUpdateStrategy) const
+AffineTransform SVGStyledTransformableElement::getCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);
 }
 
-AffineTransform SVGStyledTransformableElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy) const
+AffineTransform SVGStyledTransformableElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope, styleUpdateStrategy);
 }
@@ -135,7 +135,7 @@ SVGElement* SVGStyledTransformableElement::farthestViewportElement() const
     return SVGTransformable::farthestViewportElement(this);
 }
 
-FloatRect SVGStyledTransformableElement::getBBox(StyleUpdateStrategy styleUpdateStrategy) const
+FloatRect SVGStyledTransformableElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
@@ -146,7 +146,7 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
     return new (arena) RenderSVGPath(this);
 }
 
-void SVGStyledTransformableElement::toClipPath(Path& path) const
+void SVGStyledTransformableElement::toClipPath(Path& path)
 {
     toPathData(path);
     // FIXME: How do we know the element has done a layout?

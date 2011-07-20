@@ -337,11 +337,11 @@ public:
     virtual bool isMouseFocusable() const;
     virtual Node* focusDelegate();
 
-    bool isContentEditable() const;
+    bool isContentEditable();
 
     bool rendererIsEditable() const { return rendererIsEditable(Editable); }
     bool rendererIsRichlyEditable() const { return rendererIsEditable(RichlyEditable); }
-    virtual bool shouldUseInputMethod() const;
+    virtual bool shouldUseInputMethod();
     virtual IntRect getRect() const;
     IntRect renderRect(bool* isReplaced);
 

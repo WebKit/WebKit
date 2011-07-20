@@ -86,7 +86,7 @@ public:
 
     String getParameter(const String&) const;
 
-    String text() const;
+    String text();
 
     String toString() const;
 

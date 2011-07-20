@@ -115,7 +115,7 @@ private:
     virtual float calculateDistance(const String& /*fromString*/, const String& /*toString*/) { return -1.f; }
     virtual Path animationPath() const { return Path(); }
 
-    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to) const;
+    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;
     void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;

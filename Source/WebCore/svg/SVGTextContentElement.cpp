@@ -105,19 +105,19 @@ PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
 
 }
 
-unsigned SVGTextContentElement::getNumberOfChars() const
+unsigned SVGTextContentElement::getNumberOfChars()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     return SVGTextQuery(renderer()).numberOfCharacters();
 }
 
-float SVGTextContentElement::getComputedTextLength() const
+float SVGTextContentElement::getComputedTextLength()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     return SVGTextQuery(renderer()).textLength();
 }
 
-float SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode& ec) const
+float SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode& ec)
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -130,7 +130,7 @@ float SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchar
     return SVGTextQuery(renderer()).subStringLength(charnum, nchars);
 }
 
-FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned charnum, ExceptionCode& ec) const
+FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned charnum, ExceptionCode& ec)
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -142,7 +142,7 @@ FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned charnum, Excep
     return SVGTextQuery(renderer()).startPositionOfCharacter(charnum);
 }
 
-FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned charnum, ExceptionCode& ec) const
+FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned charnum, ExceptionCode& ec)
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -154,7 +154,7 @@ FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned charnum, Excepti
     return SVGTextQuery(renderer()).endPositionOfCharacter(charnum);
 }
 
-FloatRect SVGTextContentElement::getExtentOfChar(unsigned charnum, ExceptionCode& ec) const
+FloatRect SVGTextContentElement::getExtentOfChar(unsigned charnum, ExceptionCode& ec)
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -166,7 +166,7 @@ FloatRect SVGTextContentElement::getExtentOfChar(unsigned charnum, ExceptionCode
     return SVGTextQuery(renderer()).extentOfCharacter(charnum);
 }
 
-float SVGTextContentElement::getRotationOfChar(unsigned charnum, ExceptionCode& ec) const
+float SVGTextContentElement::getRotationOfChar(unsigned charnum, ExceptionCode& ec)
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -178,13 +178,13 @@ float SVGTextContentElement::getRotationOfChar(unsigned charnum, ExceptionCode& 
     return SVGTextQuery(renderer()).rotationOfCharacter(charnum);
 }
 
-int SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const
+int SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point)
 {
     document()->updateLayoutIgnorePendingStylesheets();
     return SVGTextQuery(renderer()).characterNumberAtPosition(point);
 }
 
-void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, ExceptionCode& ec) const
+void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, ExceptionCode& ec)
 {
     unsigned numberOfChars = getNumberOfChars();
     if (charnum >= numberOfChars) {

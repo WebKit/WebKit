@@ -79,15 +79,15 @@ public:
         LENGTHADJUST_SPACINGANDGLYPHS = SVGLengthAdjustSpacingAndGlyphs
     };
 
-    unsigned getNumberOfChars() const;
-    float getComputedTextLength() const;
-    float getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode&) const;
-    FloatPoint getStartPositionOfChar(unsigned charnum, ExceptionCode&) const;
-    FloatPoint getEndPositionOfChar(unsigned charnum, ExceptionCode&) const;
-    FloatRect getExtentOfChar(unsigned charnum, ExceptionCode&) const;
-    float getRotationOfChar(unsigned charnum, ExceptionCode&) const;
-    int getCharNumAtPosition(const FloatPoint&) const;
-    void selectSubString(unsigned charnum, unsigned nchars, ExceptionCode&) const;
+    unsigned getNumberOfChars();
+    float getComputedTextLength();
+    float getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode&);
+    FloatPoint getStartPositionOfChar(unsigned charnum, ExceptionCode&);
+    FloatPoint getEndPositionOfChar(unsigned charnum, ExceptionCode&);
+    FloatRect getExtentOfChar(unsigned charnum, ExceptionCode&);
+    float getRotationOfChar(unsigned charnum, ExceptionCode&);
+    int getCharNumAtPosition(const FloatPoint&);
+    void selectSubString(unsigned charnum, unsigned nchars, ExceptionCode&);
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
 

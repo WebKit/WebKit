@@ -97,14 +97,14 @@ HTMLFormControlElement* GetButtonToActivate(HTMLFormElement* form)
 
 // Returns true if the selected state of all the options matches the default
 // selected state.
-bool IsSelectInDefaultState(const HTMLSelectElement* select)
+bool IsSelectInDefaultState(HTMLSelectElement* select)
 {
     const Vector<Element*>& listItems = select->listItems();
     if (select->multiple() || select->size() > 1) {
         for (Vector<Element*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
             if (!(*i)->hasLocalName(HTMLNames::optionTag))
                 continue;
-            const HTMLOptionElement* optionElement = static_cast<const HTMLOptionElement*>(*i);
+            HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
             if (optionElement->selected() != optionElement->defaultSelected())
                 return false;
         }
@@ -113,11 +113,11 @@ bool IsSelectInDefaultState(const HTMLSelectElement* select)
 
     // The select is rendered as a combobox (called menulist in WebKit). At
     // least one item is selected, determine which one.
-    const HTMLOptionElement* initialSelected = 0;
+    HTMLOptionElement* initialSelected = 0;
     for (Vector<Element*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
         if (!(*i)->hasLocalName(HTMLNames::optionTag))
             continue;
-        const HTMLOptionElement* optionElement = static_cast<const HTMLOptionElement*>(*i);
+        HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
         if (optionElement->defaultSelected()) {
             // The page specified the option to select.
             initialSelected = optionElement;
@@ -126,21 +126,21 @@ bool IsSelectInDefaultState(const HTMLSelectElement* select)
         if (!initialSelected)
             initialSelected = optionElement;
     }
-    return initialSelected ? initialSelected->selected() : true;
+    return !initialSelected || initialSelected->selected();
 }
 
 // Returns true if the form element is in its default state, false otherwise.
 // The default state is the state of the form element on initial load of the
 // page, and varies depending upon the form element. For example, a checkbox is
 // in its default state if the checked state matches the state of the checked attribute.
-bool IsInDefaultState(const HTMLFormControlElement* formElement)
+bool IsInDefaultState(HTMLFormControlElement* formElement)
 {
     if (formElement->hasTagName(HTMLNames::inputTag)) {
-        const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(formElement);
+        const HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(formElement);
         if (inputElement->isCheckbox() || inputElement->isRadioButton())
             return inputElement->checked() == inputElement->hasAttribute(checkedAttr);
     } else if (formElement->hasTagName(HTMLNames::selectTag))
-        return IsSelectInDefaultState(static_cast<const HTMLSelectElement*>(formElement));
+        return IsSelectInDefaultState(static_cast<HTMLSelectElement*>(formElement));
     return true;
 }
 

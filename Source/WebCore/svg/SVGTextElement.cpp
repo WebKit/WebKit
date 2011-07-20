@@ -93,17 +93,17 @@ SVGElement* SVGTextElement::farthestViewportElement() const
     return SVGTransformable::farthestViewportElement(this);
 }
 
-FloatRect SVGTextElement::getBBox(StyleUpdateStrategy styleUpdateStrategy) const
+FloatRect SVGTextElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
 
-AffineTransform SVGTextElement::getCTM(StyleUpdateStrategy styleUpdateStrategy) const
+AffineTransform SVGTextElement::getCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);
 }
 
-AffineTransform SVGTextElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy) const
+AffineTransform SVGTextElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope, styleUpdateStrategy);
 }

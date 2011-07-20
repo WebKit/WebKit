@@ -467,7 +467,7 @@ void HTMLAnchorElement::setSearch(const String& value)
     setHref(url.string());
 }
 
-String HTMLAnchorElement::text() const
+String HTMLAnchorElement::text()
 {
     return innerText();
 }

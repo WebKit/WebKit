@@ -68,7 +68,7 @@ protected:
 private:
     SVGAnimatedTypeAnimator* ensureAnimator();
     
-    virtual bool hasValidAttributeType() const;
+    virtual bool hasValidAttributeType();
     AnimatedPropertyType m_animatedPropertyType;
 
     AnimatedPropertyValueType m_fromPropertyValueType;

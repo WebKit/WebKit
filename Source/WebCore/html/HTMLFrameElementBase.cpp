@@ -235,7 +235,7 @@ bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const
     return attr->name() == srcAttr;
 }
 
-int HTMLFrameElementBase::width() const
+int HTMLFrameElementBase::width()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (!renderBox())
@@ -243,7 +243,7 @@ int HTMLFrameElementBase::width() const
     return renderBox()->width();
 }
 
-int HTMLFrameElementBase::height() const
+int HTMLFrameElementBase::height()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (!renderBox())

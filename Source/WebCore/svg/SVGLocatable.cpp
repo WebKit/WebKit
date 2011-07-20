@@ -64,7 +64,7 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
     return farthest;
 }
 
-FloatRect SVGLocatable::getBBox(const SVGElement* element, StyleUpdateStrategy styleUpdateStrategy)
+FloatRect SVGLocatable::getBBox(SVGElement* element, StyleUpdateStrategy styleUpdateStrategy)
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
@@ -77,7 +77,7 @@ FloatRect SVGLocatable::getBBox(const SVGElement* element, StyleUpdateStrategy s
     return element->renderer()->objectBoundingBox();
 }
 
-AffineTransform SVGLocatable::computeCTM(const SVGElement* element, CTMScope mode, StyleUpdateStrategy styleUpdateStrategy)
+AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, StyleUpdateStrategy styleUpdateStrategy)
 {
     ASSERT(element);
     if (styleUpdateStrategy == AllowStyleUpdate)
@@ -104,7 +104,7 @@ AffineTransform SVGLocatable::computeCTM(const SVGElement* element, CTMScope mod
     return ctm;
 }
 
-AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, ExceptionCode& ec, StyleUpdateStrategy styleUpdateStrategy) const
+AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, ExceptionCode& ec, StyleUpdateStrategy styleUpdateStrategy)
 {
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 

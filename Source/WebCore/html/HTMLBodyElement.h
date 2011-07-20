@@ -83,14 +83,14 @@ private:
     
     virtual bool supportsFocus() const;
 
-    virtual int scrollLeft() const;
+    virtual int scrollLeft();
     virtual void setScrollLeft(int scrollLeft);
     
-    virtual int scrollTop() const;
+    virtual int scrollTop();
     virtual void setScrollTop(int scrollTop);
     
-    virtual int scrollHeight() const;
-    virtual int scrollWidth() const;
+    virtual int scrollHeight();
+    virtual int scrollWidth();
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

@@ -70,7 +70,7 @@ private:
 
     virtual void dispatchLoadEvent();
 
-    PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
         DECLARE_ANIMATED_STRING(Href, href)

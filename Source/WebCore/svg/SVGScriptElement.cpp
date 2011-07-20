@@ -263,7 +263,7 @@ void SVGScriptElement::dispatchLoadEvent()
     }
 }
 
-PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren() const
+PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren()
 {
     return adoptRef(new SVGScriptElement(tagQName(), document(), false, alreadyStarted()));
 }

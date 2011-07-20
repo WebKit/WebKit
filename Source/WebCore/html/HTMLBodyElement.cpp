@@ -302,7 +302,7 @@ static int adjustForZoom(int value, Document* document)
     return static_cast<int>(value / zoomFactor);
 }
 
-int HTMLBodyElement::scrollLeft() const
+int HTMLBodyElement::scrollLeft()
 {
     // Update the document's layout.
     Document* document = this->document();
@@ -324,7 +324,7 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
     view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->pageScaleFactor()), view->scrollY()));
 }
 
-int HTMLBodyElement::scrollTop() const
+int HTMLBodyElement::scrollTop()
 {
     // Update the document's layout.
     Document* document = this->document();
@@ -346,7 +346,7 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
     view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->pageScaleFactor())));
 }
 
-int HTMLBodyElement::scrollHeight() const
+int HTMLBodyElement::scrollHeight()
 {
     // Update the document's layout.
     Document* document = this->document();
@@ -355,7 +355,7 @@ int HTMLBodyElement::scrollHeight() const
     return view ? adjustForZoom(view->contentsHeight(), document) : 0;    
 }
 
-int HTMLBodyElement::scrollWidth() const
+int HTMLBodyElement::scrollWidth()
 {
     // Update the document's layout.
     Document* document = this->document();

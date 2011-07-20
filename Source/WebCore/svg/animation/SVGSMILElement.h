@@ -49,11 +49,11 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
-    virtual bool hasValidAttributeType() const = 0;
+    virtual bool hasValidAttributeType() = 0;
 
     SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
 
-    SVGElement* targetElement() const;
+    SVGElement* targetElement();
     void resetTargetElement() { m_targetElement = 0; }
     const QualifiedName& attributeName() const { return m_attributeName; }
 
@@ -154,7 +154,7 @@ private:
     };
     bool parseCondition(const String&, BeginOrEnd beginOrEnd);
     void parseBeginOrEnd(const String&, BeginOrEnd beginOrEnd);
-    Element* eventBaseFor(const Condition&) const;
+    Element* eventBaseFor(const Condition&);
 
     void connectConditions();
     void disconnectConditions();

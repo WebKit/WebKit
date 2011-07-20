@@ -249,7 +249,7 @@ private:
     virtual bool isEnumeratable() const;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void aboutToUnload();
-    virtual bool shouldUseInputMethod() const;
+    virtual bool shouldUseInputMethod();
 
     virtual const AtomicString& formControlName() const;
 

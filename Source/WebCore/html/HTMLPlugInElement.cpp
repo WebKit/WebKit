@@ -81,7 +81,7 @@ void HTMLPlugInElement::detach()
     HTMLFrameOwnerElement::detach();
 }
 
-PassScriptInstance HTMLPlugInElement::getInstance() const
+PassScriptInstance HTMLPlugInElement::getInstance()
 {
     Frame* frame = document()->frame();
     if (!frame)
@@ -98,7 +98,7 @@ PassScriptInstance HTMLPlugInElement::getInstance() const
     return m_instance;
 }
 
-Widget* HTMLPlugInElement::pluginWidget() const
+Widget* HTMLPlugInElement::pluginWidget()
 {
     if (m_inBeforeLoadEventHandler) {
         // The plug-in hasn't loaded yet, and it makes no sense to try to load if beforeload handler happened to touch the plug-in element.

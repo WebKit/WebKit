@@ -495,7 +495,7 @@ void HTMLInputElement::aboutToUnload()
     frame->editor()->textFieldDidEndEditing(this);
 }
 
-bool HTMLInputElement::shouldUseInputMethod() const
+bool HTMLInputElement::shouldUseInputMethod()
 {
     return m_inputType->shouldUseInputMethod();
 }

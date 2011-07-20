@@ -66,7 +66,7 @@ private:
 
     virtual void dispatchLoadEvent();
 
-    PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 };
 
 } //namespace

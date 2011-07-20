@@ -210,7 +210,7 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
     return clone.release();
 }
 
-PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren() const
+PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren()
 {
     return document()->createElement(tagQName(), false);
 }
@@ -465,7 +465,7 @@ int Element::clientHeight()
     return 0;
 }
 
-int Element::scrollLeft() const
+int Element::scrollLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -473,7 +473,7 @@ int Element::scrollLeft() const
     return 0;
 }
 
-int Element::scrollTop() const
+int Element::scrollTop()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -495,7 +495,7 @@ void Element::setScrollTop(int newTop)
         rend->setScrollTop(static_cast<int>(newTop * rend->style()->effectiveZoom()));
 }
 
-int Element::scrollWidth() const
+int Element::scrollWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -503,7 +503,7 @@ int Element::scrollWidth() const
     return 0;
 }
 
-int Element::scrollHeight() const
+int Element::scrollHeight()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
@@ -511,7 +511,7 @@ int Element::scrollHeight() const
     return 0;
 }
 
-IntRect Element::boundsInWindowSpace() const
+IntRect Element::boundsInWindowSpace()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -523,7 +523,7 @@ IntRect Element::boundsInWindowSpace() const
 #if ENABLE(SVG)
     if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
-        const SVGElement* svgElement = static_cast<const SVGElement*>(this);
+        SVGElement* svgElement = static_cast<SVGElement*>(this);
         FloatRect localRect;
         if (svgElement->boundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
@@ -546,7 +546,7 @@ IntRect Element::boundsInWindowSpace() const
     return result;
 }
 
-PassRefPtr<ClientRectList> Element::getClientRects() const
+PassRefPtr<ClientRectList> Element::getClientRects()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -579,7 +579,7 @@ PassRefPtr<ClientRectList> Element::getClientRects() const
     return ClientRectList::create(quads);
 }
 
-PassRefPtr<ClientRect> Element::getBoundingClientRect() const
+PassRefPtr<ClientRect> Element::getBoundingClientRect()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -587,7 +587,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
 #if ENABLE(SVG)
     if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
-        const SVGElement* svgElement = static_cast<const SVGElement*>(this);
+        SVGElement* svgElement = static_cast<SVGElement*>(this);
         FloatRect localRect;
         if (svgElement->boundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
@@ -1696,7 +1696,7 @@ void Element::blur()
     }
 }
 
-String Element::innerText() const
+String Element::innerText()
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
     document()->updateLayoutIgnorePendingStylesheets();
@@ -1707,7 +1707,7 @@ String Element::innerText() const
     return plainText(rangeOfContents(const_cast<Element*>(this)).get());
 }
 
-String Element::outerText() const
+String Element::outerText()
 {
     // Getting outerText is the same as getting innerText, only
     // setting is different. You would think this should get the plain

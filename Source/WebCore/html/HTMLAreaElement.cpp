@@ -179,7 +179,7 @@ Path HTMLAreaElement::getRegion(const IntSize& size) const
     return path;
 }
 
-HTMLImageElement* HTMLAreaElement::imageElement() const
+HTMLImageElement* HTMLAreaElement::imageElement()
 {
     Node* mapElement = parentNode();
     if (!mapElement || !mapElement->hasTagName(mapTag))

@@ -92,7 +92,7 @@ PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Do
     return adoptRef(new SVGUseElement(tagName, document));
 }
 
-SVGElementInstance* SVGUseElement::instanceRoot() const
+SVGElementInstance* SVGUseElement::instanceRoot()
 {
     // If there is no element instance tree, force immediate SVGElementInstance tree
     // creation by asking the document to invoke our recalcStyle function - as we can't
@@ -675,7 +675,7 @@ void SVGUseElement::detach()
     detachInstance();
 }
 
-static bool isDirectReference(Node* node)
+static bool isDirectReference(const Node* node)
 {
     return node->hasTagName(SVGNames::pathTag)
            || node->hasTagName(SVGNames::rectTag)
@@ -686,7 +686,7 @@ static bool isDirectReference(Node* node)
            || node->hasTagName(SVGNames::textTag);
 }
 
-void SVGUseElement::toClipPath(Path& path) const
+void SVGUseElement::toClipPath(Path& path)
 {
     ASSERT(path.isEmpty());
 

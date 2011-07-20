@@ -1385,7 +1385,7 @@ bool WebViewImpl::setComposition(
     // node, which doesn't exist any longer.
     PassRefPtr<Range> range = editor->compositionRange();
     if (range) {
-        const Node* node = range->startContainer();
+        Node* node = range->startContainer();
         if (!node || !node->isContentEditable())
             return false;
     }
@@ -1434,7 +1434,7 @@ bool WebViewImpl::confirmComposition(const WebString& text)
     // node, which doesn't exist any longer.
     PassRefPtr<Range> range = editor->compositionRange();
     if (range) {
-        const Node* node = range->startContainer();
+        Node* node = range->startContainer();
         if (!node || !node->isContentEditable())
             return false;
     }
@@ -1483,7 +1483,7 @@ WebTextInputType WebViewImpl::textInputType()
     if (!selection)
         return type;
 
-    const Node* node = selection->start().containerNode();
+    Node* node = selection->start().containerNode();
     if (!node)
         return type;
 

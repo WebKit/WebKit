@@ -36,8 +36,8 @@ class SVGStyledTransformableElement : public SVGStyledLocatableElement,
 public:
     virtual ~SVGStyledTransformableElement();
 
-    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
-    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate);
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate);
     virtual SVGElement* nearestViewportElement() const;
     virtual SVGElement* farthestViewportElement() const;
 
@@ -45,11 +45,11 @@ public:
     virtual AffineTransform animatedLocalTransform() const;
     virtual AffineTransform* supplementalTransform();
 
-    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
 
     // "base class" methods for all the elements which render as paths
     virtual void toPathData(Path&) const { }
-    virtual void toClipPath(Path&) const;
+    virtual void toClipPath(Path&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
 protected:

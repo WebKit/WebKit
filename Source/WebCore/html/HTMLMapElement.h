@@ -41,7 +41,7 @@ public:
 
     bool mapMouseEvent(int x, int y, const IntSize&, HitTestResult&);
     
-    HTMLImageElement* imageElement() const;
+    HTMLImageElement* imageElement();
     PassRefPtr<HTMLCollection> areas();
 
 private:

@@ -35,9 +35,9 @@ public:
     virtual SVGElement* nearestViewportElement() const;
     virtual SVGElement* farthestViewportElement() const;
 
-    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
-    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
-    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
+    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate);
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate);
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGLocatable::localCoordinateSpaceTransform(mode); }
 

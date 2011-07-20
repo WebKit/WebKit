@@ -40,9 +40,9 @@ class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     virtual ~HTMLPlugInElement();
 
-    PassScriptInstance getInstance() const;
+    PassScriptInstance getInstance();
 
-    Widget* pluginWidget() const;
+    Widget* pluginWidget();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();
@@ -66,7 +66,7 @@ protected:
 private:
     virtual void defaultEventHandler(Event*);
 
-    virtual RenderWidget* renderWidgetForJSBindings() const = 0;
+    virtual RenderWidget* renderWidgetForJSBindings() = 0;
 
 protected:
     AtomicString m_name;

@@ -419,7 +419,7 @@ void SVGSMILElement::attributeChanged(Attribute* attr, bool preserveDecls)
     }
 }
 
-inline Element* SVGSMILElement::eventBaseFor(const Condition& condition) const
+inline Element* SVGSMILElement::eventBaseFor(const Condition& condition)
 {
     return condition.m_baseID.isEmpty() ? targetElement() : treeScope()->getElementById(condition.m_baseID);
 }
@@ -489,7 +489,7 @@ void SVGSMILElement::reschedule()
         m_timeContainer->schedule(this);
 }
 
-SVGElement* SVGSMILElement::targetElement() const
+SVGElement* SVGSMILElement::targetElement()
 {
     if (m_targetElement)
         return m_targetElement;
@@ -500,7 +500,7 @@ SVGElement* SVGSMILElement::targetElement() const
         return 0;
     
     m_targetElement = static_cast<SVGElement*>(target);
-    document()->accessSVGExtensions()->addAnimationElementToTarget(const_cast<SVGSMILElement*>(this), m_targetElement);
+    document()->accessSVGExtensions()->addAnimationElementToTarget(this, m_targetElement);
     return m_targetElement;
 }
 

@@ -86,7 +86,7 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
-    void buildPendingResourcesIfNeeded() const;
+    void buildPendingResourcesIfNeeded();
 
     HashSet<SVGStyledElement*> m_elementsWithRelativeLengths;
 

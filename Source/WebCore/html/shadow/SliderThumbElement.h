@@ -60,7 +60,7 @@ public:
 private:
     SliderThumbElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
     virtual bool isEnabledFormControl() const;
     virtual bool isReadOnlyFormControl() const;
     virtual Node* focusDelegate();
@@ -82,7 +82,7 @@ inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* docum
     return adoptRef(new SliderThumbElement(document));
 }
 
-inline PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren() const
+inline PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren()
 {
     return create(document());
 }

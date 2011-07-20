@@ -1,3 +1,21 @@
+2011-07-20  Peter Kasting  <pkasting@google.com>
+
+        Remove "const" from obviously-non-const accessors
+        https://bugs.webkit.org/show_bug.cgi?id=62302
+
+        Reviewed by Darin Adler.
+
+        * public/WebElement.h:
+        * src/WebElement.cpp:
+        (WebKit::WebElement::innerText): Not const due to call to newly-non-const Element::innerText().
+        * src/WebSearchableFormData.cpp: Use non-const Node*s for code that calls newly non-const accessors.
+        (HTMLNames::IsSelectInDefaultState):
+        (HTMLNames::IsInDefaultState):
+        * src/WebViewImpl.cpp: Use non-const Node*s for code that calls newly non-const accessors.
+        (WebKit::WebViewImpl::setComposition):
+        (WebKit::WebViewImpl::confirmComposition):
+        (WebKit::WebViewImpl::textInputType):
+
 2011-07-20  Ilya Sherman  <isherman@chromium.org>
 
         Remove TODO in WebNode.h from a two-sided patch that has now landed

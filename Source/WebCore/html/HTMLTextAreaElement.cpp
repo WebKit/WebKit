@@ -452,7 +452,7 @@ bool HTMLTextAreaElement::lastChangeWasUserEdit() const
     return toRenderTextControl(renderer())->lastChangeWasUserEdit();
 }
 
-bool HTMLTextAreaElement::shouldUseInputMethod() const
+bool HTMLTextAreaElement::shouldUseInputMethod()
 {
     return true;
 }

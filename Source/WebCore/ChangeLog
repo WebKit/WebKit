@@ -1,3 +1,149 @@
+2011-07-20  Peter Kasting  <pkasting@google.com>
+
+        Remove "const" from obviously-non-const accessors
+        https://bugs.webkit.org/show_bug.cgi?id=62302
+
+        Reviewed by Darin Adler.
+
+        No functional change, so no new tests.
+
+        * WebCore.exp.in: Adjust function names to reflect non-constness.
+        * dom/Element.cpp:
+        (WebCore::Element::cloneElementWithoutAttributesAndChildren): Not const, calls non-const function Document::createElement().
+        (WebCore::Element::scrollLeft): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::scrollTop): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::scrollWidth): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::scrollHeight): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::boundsInWindowSpace): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::getClientRects): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::getBoundingClientRect): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::innerText): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Element::outerText): Not const, calls newly non-const function Element::innerText().
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::Node::shouldUseInputMethod): Not const, calls newly non-const function Node::isContentEditable().
+        * dom/Node.h:
+        * dom/OptionElement.h: Virtual function OptionElement::selected() not const because HTMLOptionElement implementation is non-const.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::text): Not const, calls newly non-const function Element::innerText().
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings): Not const, calls non-const function RenderApplet::createWidgetIfNecessary().
+        * html/HTMLAppletElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::imageElement): Not const, calls newly non-const function HTMLMapElement::imageElement().
+        * html/HTMLAreaElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::HTMLBodyElement::scrollTop): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::HTMLBodyElement::scrollHeight): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::HTMLBodyElement::scrollWidth): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        * html/HTMLBodyElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings): Not const, calls non-const function Document::createElement().
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::width): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::HTMLFrameElementBase::height): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::width): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::HTMLImageElement::height): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldUseInputMethod): Virtual function not const because Node implementation is non-const.
+        * html/HTMLInputElement.h:
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::KeygenSelectElement::cloneElementWithoutAttributesAndChildren): Virtual function not const because Element implementation is non-const.
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement): Not const, calls non-const function Document::images().
+        * html/HTMLMapElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::selected): Not const, calls non-const function HTMLSelectElement::recalcListItemsIfNeeded().
+        * html/HTMLOptionElement.h:
+        * html/HTMLPlugInElement.cpp: Virtual function HTMLPlugInElement::renderWidgetForJSBindings() not const because various subclass implementations are non-const.
+        (WebCore::HTMLPlugInElement::getInstance): Not const, calls newly non-const function HTMLPlugInElement::pluginWidget().
+        (WebCore::HTMLPlugInElement::pluginWidget): Not const, calls newly non-const function HTMLPlugInElement::renderWidgetForJSBindings().
+        * html/HTMLPlugInElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::cloneElementWithoutAttributesAndChildren): Virtual function not const because Element implementation is non-const.
+        * html/HTMLScriptElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::shouldUseInputMethod): Virtual function not const because Node implementation is non-const.
+        * html/HTMLTextAreaElement.h:
+        * html/shadow/SliderThumbElement.h:
+        (WebCore::SliderThumbElement::cloneElementWithoutAttributesAndChildren): Virtual function not const because Element implementation is non-const.
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::cloneElementWithoutAttributesAndChildren): Virtual function not const because Element implementation is non-const.
+        * rendering/svg/SVGShadowTreeElements.h:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::hasValidAttributeType): Not const, calls newly non-const function SVGSMILElement::targetElement().
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType): Not const, calls newly non-const function SVGSMILElement::targetElement().
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType): Not const, calls newly non-const function SVGSMILElement::targetElement().
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation): Not const, calls newly non-const function SVGSMILElement::targetElement().
+        * svg/SVGAnimationElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::accessDocumentSVGExtensions): Not const, calls non-const function Document::accessSVGExtensions().
+        (WebCore::SVGElement::boundingBox): Not const, calls newly non-const function SVGStyledLocatableElement::getBBox().
+        * svg/SVGElement.h:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getBBox): Argument not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets() on argument.
+        (WebCore::SVGLocatable::computeCTM): Argument not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets() on argument.
+        (WebCore::SVGLocatable::getTransformToElement): Not const, calls newly non-const function SVGLocatable::getCTM().
+        * svg/SVGLocatable.h: Virtual functions SVGLocatable::getBBox(), SVGLocatable::getCTM(), and SVGLocatable::getScreenCTM() not const because various subclass implementations are non-const.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::cloneElementWithoutAttributesAndChildren): Virtual function not const because Element implementation is non-const.
+        * svg/SVGScriptElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded): Not const, calls non-const function Document::accessSVGExtensions().
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::getBBox): Not const, calls newly non-const static function SVGLocatable::getBBox().
+        (WebCore::SVGStyledLocatableElement::getCTM): Not const, calls newly non-const static function SVGLocatable::computeCTM().
+        (WebCore::SVGStyledLocatableElement::getScreenCTM): Not const, calls newly non-const static function SVGLocatable::computeCTM().
+        * svg/SVGStyledLocatableElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::getCTM): Not const, calls newly non-const static function SVGLocatable::computeCTM().
+        (WebCore::SVGStyledTransformableElement::getScreenCTM): Not const, calls newly non-const static function SVGLocatable::computeCTM().
+        (WebCore::SVGStyledTransformableElement::getBBox): Not const, calls newly non-const static function SVGLocatable::getBBox().
+        (WebCore::SVGStyledTransformableElement::toClipPath): Virtual function not const because SVGUseElement implementation is non-const.
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::getNumberOfChars): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getComputedTextLength): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getSubStringLength): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getStartPositionOfChar): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getEndPositionOfChar): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getExtentOfChar): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getRotationOfChar): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::getCharNumAtPosition): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::SVGTextContentElement::selectSubString): Not const, calls newly non-const static function SVGTextContentElement::getNumberOfChars().
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::getBBox): Not const, calls newly non-const static function SVGLocatable::getBBox().
+        (WebCore::SVGTextElement::getCTM): Not const, calls newly non-const static function SVGLocatable::computeCTM().
+        (WebCore::SVGTextElement::getScreenCTM): Not const, calls newly non-const static function SVGLocatable::computeCTM().
+        * svg/SVGTextElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::instanceRoot): Not const, calls non-const function Document::updateLayoutIgnorePendingStylesheets().
+        (WebCore::isDirectReference):
+        (WebCore::SVGUseElement::toClipPath): Not const, calls non-const function Document::accessSVGExtensions().
+        * svg/SVGUseElement.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::eventBaseFor): Not const, calls newly non-const function SVGSMILElement::targetElement().
+        (WebCore::SVGSMILElement::targetElement): Not const, calls non-const function Document::accessSVGExtensions().
+        * svg/animation/SVGSMILElement.h: Virtual function SVGSMILElement::hasValidAttributeType() not const because various subclass implementations are non-const.
+
 2011-07-20  Andy Estes  <aestes@apple.com>
 
         Fix the Mac build after r91392.

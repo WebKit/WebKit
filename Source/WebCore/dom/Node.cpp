@@ -762,7 +762,7 @@ const AtomicString& Node::virtualNamespaceURI() const
     return nullAtom;
 }
 
-bool Node::isContentEditable() const
+bool Node::isContentEditable()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     return rendererIsEditable(Editable);
@@ -795,7 +795,7 @@ bool Node::rendererIsEditable(EditableLevel editableLevel) const
     return false;
 }
 
-bool Node::shouldUseInputMethod() const
+bool Node::shouldUseInputMethod()
 {
     return isContentEditable();
 }

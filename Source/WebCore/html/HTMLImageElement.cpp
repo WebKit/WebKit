@@ -257,7 +257,7 @@ void HTMLImageElement::removedFromTree(bool deep)
     HTMLElement::removedFromTree(deep);
 }
 
-int HTMLImageElement::width(bool ignorePendingStylesheets) const
+int HTMLImageElement::width(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
@@ -280,7 +280,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
     return box ? adjustForAbsoluteZoom(box->contentWidth(), box) : 0;
 }
 
-int HTMLImageElement::height(bool ignorePendingStylesheets) const
+int HTMLImageElement::height(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value

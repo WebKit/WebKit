@@ -42,7 +42,7 @@ private:
 
     virtual void defaultEventHandler(Event*);
 
-    virtual RenderWidget* renderWidgetForJSBindings() const;
+    virtual RenderWidget* renderWidgetForJSBindings();
 
     void setupApplet() const;
     bool canEmbedJava() const;
