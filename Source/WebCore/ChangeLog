@@ -1,3 +1,12 @@
+2011-07-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: don't send Console.enable messages in case of workers
+        https://bugs.webkit.org/show_bug.cgi?id=64853
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.js:
+
 2011-07-20  Boris Smus  <smus@chromium.org>
 
         Add a resourceLink audit formatter to make it possible for devtools

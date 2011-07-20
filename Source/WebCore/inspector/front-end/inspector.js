@@ -560,7 +560,10 @@ WebInspector.doLoadedDone = function()
 
     if (WebInspector.settings.monitoringXHREnabled.get())
         ConsoleAgent.setMonitoringXHREnabled(true);
-    ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
+
+    // There is no console agent for workers yet.
+    if (!WebInspector.WorkerManager.isWorkerFrontend())
+        ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
 
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
