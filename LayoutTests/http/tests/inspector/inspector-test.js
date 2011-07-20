@@ -263,7 +263,7 @@ InspectorTest.assertEquals = function(expected, found, message)
 
 InspectorTest.assertTrue = function(found, message)
 {
-    InspectorTest.assertEquals(true, !!found);
+    InspectorTest.assertEquals(true, !!found, message);
 }
 
 InspectorTest.safeWrap = function(func, onexception)

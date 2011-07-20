@@ -127,6 +127,7 @@ public:
 
     void clearBrowserCache(ErrorString*);
     void clearBrowserCookies(ErrorString*);
+    void setCacheDisabled(ErrorString*, bool cacheDisabled);
 
 private:
     InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*);

@@ -39,6 +39,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageOverlay.h"
@@ -314,6 +315,11 @@ void WebDevToolsAgentImpl::clearBrowserCache()
 void WebDevToolsAgentImpl::clearBrowserCookies()
 {
     m_client->clearBrowserCookies();
+}
+
+void WebDevToolsAgentImpl::setCacheDisabled(bool cacheDisabled)
+{
+    memoryCache()->setDisabled(cacheDisabled);
 }
 
 // FIXME: remove once renamed to setProcessId downstream.

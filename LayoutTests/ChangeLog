@@ -1,3 +1,22 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for disabling cache in web inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=64097
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest):
+        * http/tests/inspector/network/network-disable-cache-memory-expected.txt: Added.
+        * http/tests/inspector/network/network-disable-cache-memory.html: Added.
+        * http/tests/inspector/network/network-disable-cache-xhrs-expected.txt: Added.
+        * http/tests/inspector/network/network-disable-cache-xhrs.html: Added.
+        * http/tests/inspector/network/resources/resource.php:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-07-20  Stephen White  <senorblanco@chromium.org>
 
         Chromium test_expectations update for tests now passing on WIN7.

@@ -32,7 +32,11 @@ WebInspector.NetworkManager = function()
 {
     WebInspector.Object.call(this);
     this._dispatcher = new WebInspector.NetworkDispatcher(this);
+    if (WebInspector.settings.cacheDisabled.get())
+        NetworkAgent.setCacheDisabled(true);
     NetworkAgent.enable();
+    
+    WebInspector.settings.cacheDisabled.addChangeListener(this._cacheDisabledSettingChanged.bind(this));
 }
 
 WebInspector.NetworkManager.EventTypes = {
@@ -62,6 +66,11 @@ WebInspector.NetworkManager.prototype = {
     inflightResourceForURL: function(url)
     {
         return this._dispatcher._inflightResourcesByURL[url];
+    },
+    
+    _cacheDisabledSettingChanged: function(event)
+    {
+        NetworkAgent.setCacheDisabled(event.data);
     }
 }
 

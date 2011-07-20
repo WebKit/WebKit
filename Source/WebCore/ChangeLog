@@ -1,3 +1,31 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for disabling cache in web inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=64097
+
+        Reviewed by Pavel Feldman.
+
+        Tests: http/tests/inspector/network/network-disable-cache-memory.html
+               http/tests/inspector/network/network-disable-cache-xhrs.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::setCacheDisabled):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::enable):
+        (WebCore::InspectorResourceAgent::disable):
+        (WebCore::InspectorResourceAgent::setCacheDisabled):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.inflightResourceForURL):
+        (WebInspector.NetworkManager.prototype._cacheDisabledSettingChanged):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+
 2011-07-20  Peter Kasting  <pkasting@google.com>
 
         Remove "const" from obviously-non-const accessors

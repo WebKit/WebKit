@@ -53,7 +53,8 @@ var Preferences = {
     saveAsAvailable: false,
     useLowerCaseMenuTitlesOnWindows: false,
     canInspectWorkers: false,
-    canClearCacheAndCookies: false
+    canClearCacheAndCookies: false,
+    canDisableCache: false
 }
 
 WebInspector.Settings = function()
@@ -82,6 +83,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("domBreakpoints", []);
     this.installApplicationSetting("xhrBreakpoints", []);
     this.installApplicationSetting("workerInspectionEnabled", []);
+    this.installApplicationSetting("cacheDisabled", false);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

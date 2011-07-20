@@ -74,6 +74,7 @@ namespace ResourceAgentState {
 static const char resourceAgentEnabled[] = "resourceAgentEnabled";
 static const char extraRequestHeaders[] = "extraRequestHeaders";
 static const char backgroundEventsCollectionEnabled[] = "backgroundEventsCollectionEnabled";
+static const char cacheDisabled[] = "cacheDisabled";
 }
 
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
@@ -216,6 +217,12 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
 
     request.setReportLoadTiming(true);
     request.setReportRawHeaders(true);
+
+    if (m_state->getBoolean(ResourceAgentState::cacheDisabled)) {
+        request.setCachePolicy(ReloadIgnoringCacheData);
+        request.setHTTPHeaderField("Pragma", "no-cache");
+        request.setHTTPHeaderField("Cache-Control", "no-cache");
+    }
 
     RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
     RefPtr<InspectorArray> callStackValue;
@@ -435,12 +442,15 @@ void InspectorResourceAgent::enable()
         return;
     m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, true);
     m_instrumentingAgents->setInspectorResourceAgent(this);
+
+    m_client->setCacheDisabled(m_state->getBoolean(ResourceAgentState::cacheDisabled));
 }
 
 void InspectorResourceAgent::disable(ErrorString*)
 {
     m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, false);
     m_instrumentingAgents->setInspectorResourceAgent(0);
+    m_client->setCacheDisabled(false);
 }
 
 void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
@@ -497,6 +507,12 @@ void InspectorResourceAgent::clearBrowserCache(ErrorString*)
 void InspectorResourceAgent::clearBrowserCookies(ErrorString*)
 {
     m_client->clearBrowserCookies();
+}
+
+void InspectorResourceAgent::setCacheDisabled(ErrorString*, bool cacheDisabled)
+{
+    m_client->setCacheDisabled(cacheDisabled);
+    m_state->setBoolean(ResourceAgentState::cacheDisabled, cacheDisabled);
 }
 
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)

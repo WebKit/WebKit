@@ -54,6 +54,7 @@ public:
 
     virtual void clearBrowserCache() { }
     virtual void clearBrowserCookies() { }
+    virtual void setCacheDisabled(bool) { }
 
     bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };

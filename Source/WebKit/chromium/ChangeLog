@@ -1,3 +1,19 @@
+2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for disabling cache in web inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=64097
+
+        Reviewed by Pavel Feldman.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::setCacheDisabled):
+        * src/InspectorClientImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setCacheDisabled):
+        * src/WebDevToolsAgentImpl.h:
+        * src/js/DevTools.js:
+        ():
+
 2011-07-20  Peter Kasting  <pkasting@google.com>
 
         Remove "const" from obviously-non-const accessors
