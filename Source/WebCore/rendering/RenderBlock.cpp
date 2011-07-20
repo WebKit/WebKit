@@ -2701,7 +2701,7 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
         RenderInline* flow = *it;
         RenderBlock* block = flow->containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
-            accumulatedPaintOffset.move(block->location());
+            accumulatedPaintOffset.moveBy(block->location());
         ASSERT(block);   
         flow->paintOutline(info.context, accumulatedPaintOffset);
     }
@@ -2807,13 +2807,13 @@ static int inlineDirectionOffset(RenderBlock* rootBlock, const IntSize& offsetFr
     return rootBlock->isHorizontalWritingMode() ? offsetFromRootBlock.width() : offsetFromRootBlock.height();
 }
 
-IntRect RenderBlock::logicalRectToPhysicalRect(const IntPoint& rootBlockPhysicalPosition, const IntRect& logicalRect)
+LayoutRect RenderBlock::logicalRectToPhysicalRect(const LayoutPoint& rootBlockPhysicalPosition, const LayoutRect& logicalRect)
 {
-    IntRect result;
+    LayoutRect result;
     if (isHorizontalWritingMode())
         result = logicalRect;
     else
-        result = IntRect(logicalRect.y(), logicalRect.x(), logicalRect.height(), logicalRect.width());
+        result = LayoutRect(logicalRect.y(), logicalRect.x(), logicalRect.height(), logicalRect.width());
     flipForWritingMode(result);
     result.moveBy(rootBlockPhysicalPosition);
     return result;

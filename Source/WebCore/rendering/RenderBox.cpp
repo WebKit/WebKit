@@ -3120,7 +3120,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
     RenderBox* closestRenderer = 0;
     LayoutPoint adjustedPoint = point;
     if (isTableRow())
-        adjustedPoint.move(location());
+        adjustedPoint.moveBy(location());
 
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
         if ((!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlow() )

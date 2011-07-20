@@ -91,7 +91,7 @@ public:
     void setY(int y) { m_y = y; }
 
     void move(const IntSize& s) { move(s.width(), s.height()); } 
-    void move(const IntPoint& offset) { move(offset.x(), offset.y()); }
+    void moveBy(const IntPoint& offset) { move(offset.x(), offset.y()); }
     void move(int dx, int dy) { m_x += dx; m_y += dy; }
     void scale(float sx, float sy)
     {

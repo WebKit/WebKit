@@ -69,7 +69,7 @@ IntRect FilterEffect::requestedRegionOfInputImageData(const IntRect& effectRect)
 {
     ASSERT(hasResult());
     IntPoint location = m_absolutePaintRect.location();
-    location.move(-effectRect.location());
+    location.moveBy(-effectRect.location());
     return IntRect(location, m_absolutePaintRect.size());
 }
 

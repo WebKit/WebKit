@@ -61,17 +61,17 @@ void RoundedRect::Radii::scale(float factor)
 
 void RoundedRect::Radii::expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth)
 {
-    m_topLeft.setWidth(max(0, m_topLeft.width() + leftWidth));
-    m_topLeft.setHeight(max(0, m_topLeft.height() + topWidth));
+    m_topLeft.setWidth(max<LayoutUnit>(0, m_topLeft.width() + leftWidth));
+    m_topLeft.setHeight(max<LayoutUnit>(0, m_topLeft.height() + topWidth));
 
-    m_topRight.setWidth(max(0, m_topRight.width() + rightWidth));
-    m_topRight.setHeight(max(0, m_topRight.height() + topWidth));
+    m_topRight.setWidth(max<LayoutUnit>(0, m_topRight.width() + rightWidth));
+    m_topRight.setHeight(max<LayoutUnit>(0, m_topRight.height() + topWidth));
 
-    m_bottomLeft.setWidth(max(0, m_bottomLeft.width() + leftWidth));
-    m_bottomLeft.setHeight(max(0, m_bottomLeft.height() + bottomWidth));
+    m_bottomLeft.setWidth(max<LayoutUnit>(0, m_bottomLeft.width() + leftWidth));
+    m_bottomLeft.setHeight(max<LayoutUnit>(0, m_bottomLeft.height() + bottomWidth));
 
-    m_bottomRight.setWidth(max(0, m_bottomRight.width() + rightWidth));
-    m_bottomRight.setHeight(max(0, m_bottomRight.height() + bottomWidth));
+    m_bottomRight.setWidth(max<LayoutUnit>(0, m_bottomRight.width() + rightWidth));
+    m_bottomRight.setHeight(max<LayoutUnit>(0, m_bottomRight.height() + bottomWidth));
 }
 
 void RoundedRect::inflateWithRadii(LayoutUnit size)

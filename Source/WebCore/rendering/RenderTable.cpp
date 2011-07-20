@@ -531,12 +531,12 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintOutline(paintInfo.context, LayoutRect(paintOffset, size()));
 }
 
-void RenderTable::subtractCaptionRect(IntRect& rect) const
+void RenderTable::subtractCaptionRect(LayoutRect& rect) const
 {
     if (!m_caption)
         return;
 
-    int captionLogicalHeight = m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter();
+    LayoutUnit captionLogicalHeight = m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter();
     bool captionIsBefore = (m_caption->style()->captionSide() != CAPBOTTOM) ^ style()->isFlippedBlocksWritingMode();
     if (style()->isHorizontalWritingMode()) {
         rect.setHeight(rect.height() - captionLogicalHeight);

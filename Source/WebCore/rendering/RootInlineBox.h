@@ -138,7 +138,7 @@ public:
     bool hasAnnotationsBefore() const { return m_hasAnnotationsBefore; }
     bool hasAnnotationsAfter() const { return m_hasAnnotationsAfter; }
 
-    IntRect paddedLayoutOverflowRect(int endPadding) const;
+    LayoutRect paddedLayoutOverflowRect(LayoutUnit endPadding) const;
 
     void ascentAndDescentForBox(InlineBox*, GlyphOverflowAndFallbackFontsMap&, LayoutUnit& ascent, LayoutUnit& descent, bool& affectsAscent, bool& affectsDescent) const;
     LayoutUnit verticalPositionForBox(InlineBox*, VerticalPositionCache&);

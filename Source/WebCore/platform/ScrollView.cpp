@@ -1142,7 +1142,7 @@ IntPoint ScrollView::convertFromScrollbarToContainingView(const Scrollbar* scrol
 {
     // Scrollbars won't be transformed within us
     IntPoint newPoint = localPoint;
-    newPoint.move(scrollbar->location());
+    newPoint.moveBy(scrollbar->location());
     return newPoint;
 }
 
@@ -1150,7 +1150,7 @@ IntPoint ScrollView::convertFromContainingViewToScrollbar(const Scrollbar* scrol
 {
     IntPoint newPoint = parentPoint;
     // Scrollbars won't be transformed within us
-    newPoint.move(-scrollbar->location());
+    newPoint.moveBy(-scrollbar->location());
     return newPoint;
 }
 

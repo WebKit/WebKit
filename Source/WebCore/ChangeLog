@@ -1,3 +1,59 @@
+2011-07-20  Levi Weintraub  <leviw@chromium.org>
+
+        Bring Int/Float graphics classes closer to parity
+        https://bugs.webkit.org/show_bug.cgi?id=64833
+
+        Reviewed by James Robinson.
+
+        In preparation of switching to Floating point data structures, bringing the
+        functionality and method names of the Int/Float graphics classes close together.
+
+        Also fixing some compiler errors when using Floats for layout units along the way.
+
+        No new tests, no functionality change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRenderer):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::operator-): Adding a single-parameter version.
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::isZero): Adding isZero that uses epsilon for floats.
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::moveBy): Renaming IntPoint version to moveBy to mirror FloatPoint.
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::Radii::expand): Switching to specific templatized max.
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::requestedRegionOfInputImageData):
+        * rendering/RenderBlock.cpp: Moving outstanding Int* functions to Layout units.
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        (WebCore::RenderBlock::logicalRectToPhysicalRect):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::subtractCaptionRect):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleOrColLogicalWidth):
+        (WebCore::RenderTableCell::setOverrideSizeFromRowHeight):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paddedLayoutOverflowRect):
+        (WebCore::setAscentAndDescent):
+        * rendering/RootInlineBox.h:
+
 2011-07-20  Scott Graham  <scottmg@chromium.org>
 
         mouseover reporting incorrect mouse button, when the button isn't

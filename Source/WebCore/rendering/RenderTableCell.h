@@ -96,7 +96,7 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
-    void paintBackgroundsBehindCell(PaintInfo&, const IntPoint&, RenderObject* backgroundObject);
+    void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderObject* backgroundObject);
 
     int cellBaselinePosition() const;
 
@@ -150,7 +150,7 @@ private:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
 
-    void paintCollapsedBorder(GraphicsContext*, const IntRect&);
+    void paintCollapsedBorder(GraphicsContext*, const LayoutRect&);
 
     int m_row;
     int m_column;

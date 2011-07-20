@@ -216,8 +216,8 @@ private:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
-    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
-    virtual void paintMask(PaintInfo&, const IntPoint&);
+    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
+    virtual void paintMask(PaintInfo&, const LayoutPoint&);
     virtual void layout();
     virtual void computePreferredLogicalWidths();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
@@ -235,7 +235,7 @@ private:
 
     virtual void addOverflowFromChildren();
 
-    void subtractCaptionRect(IntRect&) const;
+    void subtractCaptionRect(LayoutRect&) const;
 
     void recalcCaption(RenderBlock*) const;
     void recalcSections() const;

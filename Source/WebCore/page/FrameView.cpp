@@ -2703,7 +2703,7 @@ IntPoint FrameView::convertFromRenderer(const RenderObject* renderer, const IntP
     IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, false, true /* use transforms */));
 
     // Convert from page ("absolute") to FrameView coordinates.
-    point.move(-scrollPosition());
+    point.moveBy(-scrollPosition());
     return point;
 }
 
