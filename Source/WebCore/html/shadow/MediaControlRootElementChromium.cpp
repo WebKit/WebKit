@@ -30,6 +30,7 @@
 #include "MediaControlRootElementChromium.h"
 
 #include "MediaControlElements.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "RenderTheme.h"
 
@@ -49,6 +50,7 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(HTMLMediaElemen
     , m_volumeSliderContainer(0)
     , m_panel(0)
     , m_opaque(true)
+    , m_isMouseOverControls(false)
 {
 }
 
@@ -209,6 +211,9 @@ void MediaControlRootElementChromium::playbackProgressed()
 {
     m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
+
+    if (!m_isMouseOverControls && m_mediaElement->hasVideo())
+        makeTransparent();
 }
 
 void MediaControlRootElementChromium::playbackStopped()
@@ -257,6 +262,32 @@ bool MediaControlRootElementChromium::shouldHideControls()
 void MediaControlRootElementChromium::loadedMetadata()
 {
     reset();
+}
+
+bool MediaControlRootElementChromium::containsRelatedTarget(Event* event)
+{
+    if (!event->isMouseEvent())
+        return false;
+    EventTarget* relatedTarget = static_cast<MouseEvent*>(event)->relatedTarget();
+    if (!relatedTarget)
+        return false;
+    return contains(relatedTarget->toNode());
+}
+
+void MediaControlRootElementChromium::defaultEventHandler(Event* event)
+{
+    MediaControls::defaultEventHandler(event);
+
+    if (event->type() == eventNames().mouseoverEvent) {
+        if (!containsRelatedTarget(event)) {
+            m_isMouseOverControls = true;
+            if (!m_mediaElement->canPlay())
+                makeOpaque();
+        }
+    } else if (event->type() == eventNames().mouseoutEvent) {
+        if (!containsRelatedTarget(event))
+            m_isMouseOverControls = false;
+    }
 }
 
 void MediaControlRootElementChromium::changedClosedCaptionsVisibility()

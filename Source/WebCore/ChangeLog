@@ -1,3 +1,22 @@
+2011-07-19  Steve Lacey  <sjl@chromium.org>
+
+        [chromium] Media player controls do not fade out.
+        https://bugs.webkit.org/show_bug.cgi?id=64837
+
+        Media controls were not fading out when the mouse leaves the video
+        due to underlying changes in webkit media controls.
+        Fix was to copy missing code from MediaControlRootElement to
+        MediaControlRootElementChromium.
+
+        Reviewed by Dimitri Glazkov.
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        (WebCore::MediaControlRootElementChromium::playbackProgressed):
+        (WebCore::MediaControlRootElementChromium::containsRelatedTarget):
+        (WebCore::MediaControlRootElementChromium::defaultEventHandler):
+        * html/shadow/MediaControlRootElementChromium.h:
+
 2011-07-19  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSSPropertyCounterIncrement and CounterReset in CSSStyleApplyProperty.

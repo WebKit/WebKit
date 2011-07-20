@@ -89,7 +89,11 @@ public:
 private:
     MediaControlRootElementChromium(HTMLMediaElement*);
 
+    virtual void defaultEventHandler(Event*);
+
     virtual const AtomicString& shadowPseudoId() const;
+
+    bool containsRelatedTarget(Event*);
 
     HTMLMediaElement* m_mediaElement;
 
@@ -103,6 +107,7 @@ private:
     MediaControlPanelElement* m_panel;
 
     bool m_opaque;
+    bool m_isMouseOverControls;
 };
 
 }
