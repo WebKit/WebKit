@@ -1,3 +1,16 @@
+2011-07-20  Eric Seidel  <eric@webkit.org>
+
+        Make kill-old-processes kill httpd on mac
+        https://bugs.webkit.org/show_bug.cgi?id=64898
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/kill-old-processes:
+         - The line endings seem to have flipped again,
+           Thus making this diff gigantic.  The only line
+           changed is the "httpd" line.  I suspect we'll need
+           to set the line ending style from an svn checkout.
+
 2011-07-20  Ojan Vafai  <ojan@chromium.org>
 
         show a list of average test times in the treemap
