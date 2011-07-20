@@ -112,10 +112,22 @@ $('header-container').innerHTML = htmlForTestTypeSwitcher();
 
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/";
 
+function humanReadableTime(milliseconds)
+{
+    if (milliseconds < 1000)
+        return milliseconds + 'ms';
+    else if (milliseconds < 60000)
+        return Math.floor(milliseconds / 1000).toPrecision(2) + 's';
+
+    var minutes = Math.floor(milliseconds / 60000);
+    var seconds = Math.floor((milliseconds - minutes * 60000) / 1000);
+    return minutes + 'm' + seconds + 's';
+}
+
 // This looks like:
 // { "data": {"$area": (sum of all timings)},
-//     "name": (name of this node),
-//     "children": [ (child nodes, in the same format as this) ] }
+//   "name": (name of this node),
+//   "children": [ (child nodes, in the same format as this) ] }
 // childCount is added just to be includes in the node's name
 function convertToWebTreemapFormat(treename, tree)
 {
@@ -128,7 +140,7 @@ function convertToWebTreemapFormat(treename, tree)
             var time = treeNode;
             var node = {
                 "data": {"$area": time},
-                "name": name + " (" + time + "ms)"
+                "name": name + " (" + humanReadableTime(time) + ")"
             };
             children.push(node);
             total += time;
@@ -149,7 +161,7 @@ function convertToWebTreemapFormat(treename, tree)
 
     return {
         "data": {"$area": total},
-        "name": treename + " (" + total + "ms - " + childCount + " tests)",
+        "name": treename + " (" + humanReadableTime(total) + " - " + childCount + " tests)",
         "children": children,
         "childCount": childCount
     };
