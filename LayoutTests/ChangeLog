@@ -1,3 +1,10 @@
+2011-07-20  Gabor Loki  <loki@webkit.org>
+
+        [Qt] Add missing expected file after r91345 and r91269
+
+        * platform/qt/fast/forms/input-appearance-number-rtl-expected.txt: Added. (r91345)
+        * platform/qt/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Added. (r91269)
+
 2011-07-20  Kentaro Hara  <haraken@google.com>
 
         The value of a number input form continues to increase/decrease even if we disable the input form.
