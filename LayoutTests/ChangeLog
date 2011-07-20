@@ -1,5 +1,11 @@
 2011-07-20  Gabor Loki  <loki@webkit.org>
 
+        [Qt] Skip a spinbutton test after r91353
+
+        * platform/qt/Skipped:
+
+2011-07-20  Gabor Loki  <loki@webkit.org>
+
         [Qt] Add missing expected file after r91345 and r91269
 
         * platform/qt/fast/forms/input-appearance-number-rtl-expected.txt: Added. (r91345)
