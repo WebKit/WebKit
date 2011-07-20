@@ -1,3 +1,16 @@
+2011-07-20  James Simonsen  <simonjam@chromium.org>
+
+        Refuse to run scripts inside the SVG shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=64776
+
+        This is a rollback of r90970. The hack that was removed there was also protecting us from
+        two further bugs that have been discovered. So, the hack is going back in.
+
+        Reviewed by Tony Gentilcore.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+
 2011-07-20  David Levin  <levin@chromium.org>
 
         gtk shouldn't have global variables for timers.

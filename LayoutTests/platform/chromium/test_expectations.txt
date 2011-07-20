@@ -3801,8 +3801,6 @@ BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
 
 BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = MISSING PASS
 
-BUGCR89372 MAC : svg/dom/use-style-recalc-script-execute-crash.html = CRASH PASS
-
 BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT

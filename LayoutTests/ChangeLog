@@ -1,3 +1,12 @@
+2011-07-20  James Simonsen  <simonjam@chromium.org>
+
+        Refuse to run scripts inside the SVG shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=64776
+
+        Reviewed by Tony Gentilcore.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: add keyboard shortcuts to load/save operations in Timeline panel.
