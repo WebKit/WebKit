@@ -1526,6 +1526,11 @@ public:
         m_formatter.vfpOp(OP_VSUB_T2, OP_VSUB_T2b, true, rn, rd, rm);
     }
 
+    void nop()
+    {
+        m_formatter.oneWordOp8Imm8(OP_NOP_T1, 0);
+    }
+
     AssemblerLabel label()
     {
         return m_formatter.label();

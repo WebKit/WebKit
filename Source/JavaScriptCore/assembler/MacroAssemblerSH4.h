@@ -1721,6 +1721,12 @@ public:
         oldJump.link(this);
         return tailRecursiveCall();
     }
+
+    void nop()
+    {
+        m_assembler.nop();
+    }
+
 protected:
     SH4Assembler::Condition SH4Condition(RelationalCondition cond)
     {

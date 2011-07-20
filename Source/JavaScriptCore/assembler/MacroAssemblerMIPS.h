@@ -1762,6 +1762,10 @@ public:
         return branchDouble(DoubleEqualOrUnordered, reg, scratch);
     }
 
+    void nop()
+    {
+        m_assembler.nop();
+    }
 
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.

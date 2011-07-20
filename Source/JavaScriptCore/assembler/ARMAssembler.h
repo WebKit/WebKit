@@ -167,6 +167,7 @@ namespace JSC {
             CLZ = 0x016f0f10,
             BKPT = 0xe1200070,
             BLX = 0x012fff30,
+            NOP_T2 = 0xf3af8000,
 #endif
 #if WTF_ARM_ARCH_AT_LEAST(7)
             MOVW = 0x03000000,
@@ -570,6 +571,11 @@ namespace JSC {
             // Cannot access to Zero memory address
             dtr_dr(true, ARMRegisters::S0, ARMRegisters::S0, ARMRegisters::S0);
 #endif
+        }
+        
+        void nop()
+        {
+            m_buffer.putInt(OP_NOP_T2);
         }
 
         void bx(int rm, Condition cc = AL)

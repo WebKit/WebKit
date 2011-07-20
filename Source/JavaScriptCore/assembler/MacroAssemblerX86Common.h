@@ -1193,6 +1193,11 @@ public:
         ASSERT(cond == Below || cond == BelowOrEqual || cond == Above || cond == AboveOrEqual);
         return static_cast<RelationalCondition>(X86Assembler::ConditionB + X86Assembler::ConditionA - cond);
     }
+    
+    void nop()
+    {
+        m_assembler.nop();
+    }
 
 protected:
     X86Assembler::Condition x86Condition(RelationalCondition cond)
