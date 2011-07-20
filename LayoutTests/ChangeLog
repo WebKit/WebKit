@@ -1,3 +1,12 @@
+2011-07-20  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations changes.
+
+        Pre-emptively mark some test failures/timeouts from an upcoming skia
+        change in Chrome.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-20  James Simonsen  <simonjam@chromium.org>
 
         Refuse to run scripts inside the SVG shadow DOM

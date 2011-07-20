@@ -978,6 +978,12 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // shadow rendering issues
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 
+// This test is slow due to Mesa slowness.
+WONTFIX GPU WIN LINUX : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
+
+// This test is overly-finicky about pixel values.
+BUGWK64876 GPU WIN LINUX : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
+
 
 // -----------------------------------------------------------------
 // Other failures
@@ -1931,7 +1937,9 @@ BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
+// This test times out due to Mesa slowness.
+BUGWK45991 GPU LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT TIMEOUT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
