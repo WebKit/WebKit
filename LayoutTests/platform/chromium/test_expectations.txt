@@ -3820,3 +3820,5 @@ BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = TIMEOUT
 
 BUGCR89717 : fast/speech/input-text-speechbutton.html = TIMEOUT
+
+BUGWK64844 DEBUG : svg/custom/crash-textPath-attributes.html = CRASH

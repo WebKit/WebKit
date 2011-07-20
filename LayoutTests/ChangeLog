@@ -1,3 +1,10 @@
+2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update. svg/custom/crash-textPath-attributes.html is hitting an assertion.
+        The failure is tracked by the bug 64844.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-19  Adam Roben  <aroben@apple.com>
 
         Skip some more tests on WebKit2 that rely on unimplemented test harness APIs
