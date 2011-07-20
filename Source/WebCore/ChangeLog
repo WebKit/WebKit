@@ -1,3 +1,31 @@
+2011-07-20  Scott Graham  <scottmg@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        REGRESSION (r39725?): Resources removed from document can not be freed
+        until the document is deleted
+        https://bugs.webkit.org/show_bug.cgi?id=61006
+
+        Upon completing a load start a Timer to iterate through
+        CachedResourceLoader's m_documentResources map to check for any items
+        that have only one reference (thus being the reference in the map
+        itself). The map should really be weak, but because the
+        CachedResourceHandle achieves bookkeeping work in addition to
+        reference counting, this is a simpler and more localized way to free
+        the used memory while maintaining the other behaviour (when
+        CachedResource is used as proxy).
+
+        No new layout tests, but with this patch the testcase at
+        https://bugs.webkit.org/attachment.cgi?id=93850 should no longer
+        consume 400MB of ram on load.
+
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::getHandleCount):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadDone):
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResources):
+        * loader/cache/CachedResourceLoader.h:
+
 2011-07-20  James Robinson  <jamesr@chromium.org>
 
         Revert worker and WebKit2 runloops to use currentTime() for scheduling instead of the monotonic clock

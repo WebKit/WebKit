@@ -182,6 +182,7 @@ public:
     CachedMetadata* cachedMetadata(unsigned dataTypeID) const;
 
     bool canDelete() const { return !hasClients() && !m_request && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
+    bool hasOneHandle() const { return m_handleCount == 1; }
 
     bool isExpired() const;
 
