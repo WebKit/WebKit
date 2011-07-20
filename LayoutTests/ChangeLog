@@ -1,3 +1,14 @@
+2011-07-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: add keyboard shortcuts to load/save operations in Timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=64864
+
+        Export/import were renamed to save/load.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/timeline/timeline-load.html:
+
 2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium test expectation update.

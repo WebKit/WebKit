@@ -7,7 +7,7 @@
 function test()
 {
     WebInspector.showPanel("timeline");
-    InspectorTest.addSniffer(WebInspector.TimelineModel.prototype, "_importNextChunk", importNextChunk);
+    InspectorTest.addSniffer(WebInspector.TimelineModel.prototype, "_loadNextChunk", loadNextChunk);
     InspectorFrontendHost.saveAs = saveAs;
     var data = [
         {"startTime":1310749854316.8408,"data":{"identifier":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
@@ -20,11 +20,11 @@ function test()
         {"startTime":1310749855137.989,"data":{"identifier":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
         {"startTime":1310749855138.308,"data":{"identifier":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}];
 
-    WebInspector.panels.timeline._model._importNextChunk(data, 0);
+    WebInspector.panels.timeline._model._loadNextChunk(data, 0);
 
-    function importNextChunk()
+    function loadNextChunk()
     {
-        WebInspector.panels.timeline._model._exportToFile();
+        WebInspector.panels.timeline._model._saveToFile();
     }
 
     function saveAs(name, saveData)

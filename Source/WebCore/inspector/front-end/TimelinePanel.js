@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -104,6 +104,7 @@ WebInspector.TimelinePanel = function()
     this._createFileSelector();
     this._model = new WebInspector.TimelineModel(this);
 
+    this._registerShortcuts();
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onTimelineEventRecorded, this);
 }
 
@@ -221,6 +222,26 @@ WebInspector.TimelinePanel.prototype = {
         this.recordsCounter.className = "timeline-records-counter";
     },
 
+    _registerShortcuts: function()
+    {
+        var shortcut = WebInspector.KeyboardShortcut;
+        var modifiers = shortcut.Modifiers;
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Timeline Panel"));
+
+        this._shortcuts[shortcut.makeKey("e", modifiers.CtrlOrMeta)] = this._toggleTimelineButtonClicked.bind(this);
+        section.addKey(shortcut.shortcutToString("e", modifiers.CtrlOrMeta), WebInspector.UIString("Start/stop recording"));
+
+        var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold);
+        this._shortcuts[shortcut.makeKey("f", modifiers.Shift | modifiers.CtrlOrMeta)] = this._toggleFilterButtonClicked.bind(this);
+        section.addKey(shortcut.shortcutToString("f", modifiers.Shift | modifiers.CtrlOrMeta), WebInspector.UIString("Toggle filter for the records that are shorter than %s", shortRecordThresholdTitle));
+
+        this._shortcuts[shortcut.makeKey("s", modifiers.CtrlOrMeta)] = this._saveToFile.bind(this);
+        section.addKey(shortcut.shortcutToString("s", modifiers.CtrlOrMeta), WebInspector.UIString("Save Timeline data\u2026"));
+
+        this._shortcuts[shortcut.makeKey("o", modifiers.CtrlOrMeta)] = this._fileSelectorElement.click.bind(this._fileSelectorElement);
+        section.addKey(shortcut.shortcutToString("o", modifiers.CtrlOrMeta), WebInspector.UIString("Load Timeline data\u2026"));
+    },
+
     _createFileSelector: function()
     {
         if (this._fileSelectorElement)
@@ -229,7 +250,7 @@ WebInspector.TimelinePanel.prototype = {
         var fileSelectorElement = document.createElement("input");
         fileSelectorElement.type = "file";
         fileSelectorElement.style.opacity = 0;
-        fileSelectorElement.onchange = this._importFromFile.bind(this);
+        fileSelectorElement.onchange = this._loadFromFile.bind(this);
         this.element.appendChild(fileSelectorElement);
         this._fileSelectorElement = fileSelectorElement;
     },
@@ -237,24 +258,24 @@ WebInspector.TimelinePanel.prototype = {
     _contextMenu: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("&Export Timeline data\u2026"), this._exportToFile.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("&Import Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
+        contextMenu.appendItem(WebInspector.UIString("&Save Timeline data\u2026"), this._saveToFile.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("L&oad Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
         contextMenu.show(event);
     },
 
-    _exportToFile: function()
+    _saveToFile: function()
     {
-        this._model._exportToFile();
+        this._model._saveToFile();
     },
 
-    _importFromFile: function()
+    _loadFromFile: function()
     {
         if (this.toggleTimelineButton.toggled)
             WebInspector.timelineManager.stop();
 
         this._clearPanel();
 
-        this._model._importFromFile(this._fileSelectorElement.files[0]);
+        this._model._loadFromFile(this._fileSelectorElement.files[0]);
         this._createFileSelector();
     },
 
@@ -304,11 +325,13 @@ WebInspector.TimelinePanel.prototype = {
         return eventDividerPadding;
     },
 
-    _timelinesOverviewItemSelected: function(event) {
+    _timelinesOverviewItemSelected: function(event)
+    {
         this._overviewPane.showTimelines();
     },
 
-    _memoryOverviewItemSelected: function(event) {
+    _memoryOverviewItemSelected: function(event)
+    {
         this._overviewPane.showMemoryGraph(this._rootRecord.children);
     },
 
@@ -1228,37 +1251,37 @@ WebInspector.TimelineModel.prototype = {
         this._records.push(record);
     },
 
-    _importNextChunk: function(data, index)
+    _loadNextChunk: function(data, index)
     {
         for (var i = 0; i < 20 && index < data.length; ++i, ++index)
             this._panel._addRecordToTimeline(data[index]);
 
         if (index !== data.length)
-            setTimeout(this._importNextChunk.bind(this, data, index), 0);
+            setTimeout(this._loadNextChunk.bind(this, data, index), 0);
     },
 
-    _importFromFile: function(file)
+    _loadFromFile: function(file)
     {
         function onLoad(e)
         {
             var data = JSON.parse(e.target.result);
             var version = data[0];
-            this._importNextChunk(data, 1);
+            this._loadNextChunk(data, 1);
         }
 
         function onError(e)
         {
             switch(e.target.error.code) {
             case e.target.error.NOT_FOUND_ERR:
-                WebInspector.log(WebInspector.UIString('Timeline.importFromFile: File "%s" not found.', file.name));
+                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" not found.', file.name));
             break;
             case e.target.error.NOT_READABLE_ERR:
-                WebInspector.log(WebInspector.UIString('Timeline.importFromFile: File "%s" is not readable', file.name));
+                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" is not readable', file.name));
             break;
             case e.target.error.ABORT_ERR:
                 break;
             default:
-                WebInspector.log(WebInspector.UIString('Timeline.importFromFile: An error occurred while reading the file "%s"', file.name));
+                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: An error occurred while reading the file "%s"', file.name));
             }
         }
 
@@ -1268,12 +1291,12 @@ WebInspector.TimelineModel.prototype = {
         reader.readAsText(file);
     },
 
-    _exportToFile: function()
+    _saveToFile: function()
     {
         var records = ['[' + JSON.stringify(window.navigator.appVersion)];
-        for (var i = 0; i < this._records.length - 1; ++i)
+        for (var i = 0; i < this._records.length; ++i)
             records.push(JSON.stringify(this._records[i]));
-        records.push(JSON.stringify(this._records[this._records.length - 1]) + "]");
+            records[records.length - 1] = records[records.length - 1] + "]";
 
         var now= new Date();
         InspectorFrontendHost.saveAs("TimelineRawData-" + now.toRFC3339() + ".json", records.join(",\n"));
