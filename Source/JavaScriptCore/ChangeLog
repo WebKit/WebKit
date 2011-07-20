@@ -1,3 +1,16 @@
+2011-07-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64678
+        Fix bugs in Object.prototype this handling.
+
+        Reviewed by Darin Adler.
+
+        Fix ES5.1 correctness issues identified by Mads Ager.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+            - ES5.1 expects toString of undefined/null to produce "[object Undefined]"/"[object Null]".
+
 2011-07-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         [JSC] WebKit allocates gigabytes of memory when doing repeated string concatenation
