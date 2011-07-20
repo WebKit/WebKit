@@ -1,3 +1,15 @@
+2011-07-20  Steve Block  <steveblock@google.com>
+
+        [V8] JavaMethodJobject::signature() incorrectly encodes arguments of type JavaTypeString
+        https://bugs.webkit.org/show_bug.cgi?id=62389
+
+        Reviewed by Tony Gentilcore.
+
+        Covered by existing tests.
+
+        * bridge/jni/JavaMethodJobject.cpp:
+        (JavaMethodJobject::signature):
+
 2011-07-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: sidebar width sometimes is not restored

@@ -130,7 +130,11 @@ const char* JavaMethodJobject::signature() const
                 appendClassName(signatureBuilder, javaClassName.data());
             else {
                 signatureBuilder.append(signatureFromJavaType(type));
-                if (type == JavaTypeObject) {
+                if (type == JavaTypeObject
+#if USE(V8)
+                    || type == JavaTypeString
+#endif
+                    ) {
                     appendClassName(signatureBuilder, javaClassName.data());
                     signatureBuilder.append(';');
                 }
@@ -143,7 +147,11 @@ const char* JavaMethodJobject::signature() const
             appendClassName(signatureBuilder, returnType);
         else {
             signatureBuilder.append(signatureFromJavaType(m_returnType));
-            if (m_returnType == JavaTypeObject) {
+            if (m_returnType == JavaTypeObject
+#if USE(V8)
+                || m_returnType == JavaTypeString
+#endif
+                ) {
                 appendClassName(signatureBuilder, returnType);
                 signatureBuilder.append(';');
             }
