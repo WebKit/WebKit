@@ -39,6 +39,7 @@
 #include "Timer.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -58,9 +59,10 @@ class PurgeScratchBufferTimer : public TimerBase {
 private:
     virtual void fired() { purgeScratchBuffer(); }
 };
-static PurgeScratchBufferTimer purgeScratchBufferTimer;
+
 static void scheduleScratchBufferPurge()
 {
+    DEFINE_STATIC_LOCAL(PurgeScratchBufferTimer, purgeScratchBufferTimer, ());
     if (purgeScratchBufferTimer.isActive())
         purgeScratchBufferTimer.stop();
     purgeScratchBufferTimer.startOneShot(2);

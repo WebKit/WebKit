@@ -1,3 +1,17 @@
+2011-07-20  David Levin  <levin@chromium.org>
+
+        gtk shouldn't have global variables for timers.
+        https://bugs.webkit.org/show_bug.cgi?id=64871
+
+        Reviewed by Martin Robinson.
+
+        No new functionality exposed so no new tests.
+
+        * platform/graphics/cairo/ContextShadowCairo.cpp:
+        (WebCore::scheduleScratchBufferPurge): Changed global variable to DEFINE_STATIC_LOCAL.
+        * platform/gtk/WidgetRenderingContext.cpp:
+        (WebCore::scheduleScratchBufferPurge): Ditto.
+
 2011-07-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] REGRESSION(r86436): does not add newlines when return is pressed with some modifiers held

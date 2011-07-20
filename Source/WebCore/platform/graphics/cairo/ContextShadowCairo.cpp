@@ -37,6 +37,7 @@
 #include "PlatformContextCairo.h"
 #include "Timer.h"
 #include <cairo.h>
+#include <wtf/StdLibExtras.h>
 
 using WTF::max;
 
@@ -55,9 +56,10 @@ class PurgeScratchBufferTimer : public TimerBase {
 private:
     virtual void fired() { purgeScratchBuffer(); }
 };
-static PurgeScratchBufferTimer purgeScratchBufferTimer;
+
 static void scheduleScratchBufferPurge()
 {
+    DEFINE_STATIC_LOCAL(PurgeScratchBufferTimer, purgeScratchBufferTimer, ());
     if (purgeScratchBufferTimer.isActive())
         purgeScratchBufferTimer.stop();
     purgeScratchBufferTimer.startOneShot(2);
