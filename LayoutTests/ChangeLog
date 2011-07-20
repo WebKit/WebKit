@@ -1,3 +1,9 @@
+2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed expectation fix.
