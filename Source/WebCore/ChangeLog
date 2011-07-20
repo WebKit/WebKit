@@ -1,3 +1,15 @@
+2011-07-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] REGRESSION(r86436): does not add newlines when return is pressed with some modifiers held
+        https://bugs.webkit.org/show_bug.cgi?id=64867
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/KeyBindingTranslator.cpp:
+        (WebCore::KeyBindingTranslator::getEditorCommandsForKeyEvent):
+        special-case enter keys so that their commands are returned
+        whatever the modifiers state.
+
 2011-07-20  Mike Reed  <reed@google.com>
 
         [skia] disable lcd text when drawing on a transparent layer or canvas

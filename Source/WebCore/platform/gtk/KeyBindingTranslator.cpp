@@ -179,10 +179,6 @@ KeyBindingTranslator::KeyBindingTranslator()
     g_signal_connect(m_nativeWidget.get(), "show-help", G_CALLBACK(showHelpCallback), this);
 }
 
-static const unsigned CtrlKey = 1 << 0;
-static const unsigned AltKey = 1 << 1;
-static const unsigned ShiftKey = 1 << 2;
-
 struct KeyCombinationEntry {
     unsigned gdkKeyCode;
     unsigned state;
@@ -201,20 +197,6 @@ static const KeyCombinationEntry keyDownEntries[] = {
 static const KeyCombinationEntry keyPressEntries[] = {
     { GDK_Tab,       0,                              "InsertTab"     },
     { GDK_Tab,       GDK_SHIFT_MASK,                 "InsertBacktab" },
-    { GDK_Tab,       0,                              "InsertTab"     },
-    { GDK_Tab,       GDK_SHIFT_MASK,                 "InsertBacktab" },
-    { GDK_Return,    0,                              "InsertNewline" },
-    { GDK_Return,    GDK_CONTROL_MASK,               "InsertNewline" },
-    { GDK_Return,    GDK_MOD1_MASK,                  "InsertNewline" },
-    { GDK_Return,    GDK_MOD1_MASK | GDK_SHIFT_MASK, "InsertNewline" },
-    { GDK_KP_Enter,  0,                              "InsertNewline" },
-    { GDK_KP_Enter,  GDK_CONTROL_MASK,               "InsertNewline" },
-    { GDK_KP_Enter,  GDK_MOD1_MASK,                  "InsertNewline" },
-    { GDK_KP_Enter,  GDK_MOD1_MASK | GDK_SHIFT_MASK, "InsertNewline" },
-    { GDK_ISO_Enter, 0,                              "InsertNewline" },
-    { GDK_ISO_Enter, GDK_CONTROL_MASK,               "InsertNewline" },
-    { GDK_ISO_Enter, GDK_MOD1_MASK,                  "InsertNewline" },
-    { GDK_ISO_Enter, GDK_MOD1_MASK | GDK_SHIFT_MASK, "InsertNewline" },
 };
 
 void KeyBindingTranslator::getEditorCommandsForKeyEvent(GdkEventKey* event, EventType type, Vector<WTF::String>& commandList)
@@ -243,12 +225,18 @@ void KeyBindingTranslator::getEditorCommandsForKeyEvent(GdkEventKey* event, Even
             keyPressCommandsMap.set(keyPressEntries[i].state << 16 | keyPressEntries[i].gdkKeyCode, keyPressEntries[i].name);
     }
 
+    // Special-case enter keys for we want them to work regardless of modifier.
+    if ((event->keyval == GDK_Return || event->keyval == GDK_KP_Enter || event->keyval == GDK_ISO_Enter) && type == KeyPress) {
+        commandList.append("InsertNewLine");
+        return;
+    }
+
     // For keypress events, we want charCode(), but keyCode() does that.
     int mapKey = event->state << 16 | event->keyval;
     if (mapKey) {
         HashMap<int, const char*>* commandMap = type == KeyDown ?  &keyDownCommandsMap : &keyPressCommandsMap;
         if (const char* commandString = commandMap->get(mapKey)) {
-            commandList.append(commandString);  
+            commandList.append(commandString);
             return;
         }
     }
