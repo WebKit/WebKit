@@ -109,6 +109,8 @@ int MouseEvent::which() const
     // For the DOM, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
     // So we must add 1.
+    if (!m_buttonDown)
+        return 0;
     return m_button + 1;
 }
 

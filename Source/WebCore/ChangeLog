@@ -1,3 +1,18 @@
+2011-07-20  Scott Graham  <scottmg@chromium.org>
+
+        mouseover reporting incorrect mouse button, when the button isn't
+        down. https://bugs.webkit.org/show_bug.cgi?id=64882
+
+        Reviewed by Eric Seidel.
+
+        Don't increment the button returned in 'which' unless the button is
+        actually down.
+
+        Test: fast/events/mouseover-button.html
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::which):
+
 2011-07-20  Kenneth Russell  <kbr@google.com>
 
         Add restoreContext() to WEBKIT_lose_context

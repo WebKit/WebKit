@@ -1,3 +1,16 @@
+2011-07-20  Scott Graham  <scottmg@chromium.org>
+
+        mouseover event reporting incorrect button in 'which'.
+        https://bugs.webkit.org/show_bug.cgi?id=64882
+
+        New test, move in/out of iframe with none/left/middle buttons down.
+
+        Reviewed by Eric Seidel.
+
+        * fast/events/mouseover-button-expected.txt: Added.
+        * fast/events/mouseover-button.html: Added.
+        * fast/events/resources/mouseover-button-iframe.html: Added.
+
 2011-07-20  Kenneth Russell  <kbr@google.com>
 
         Add restoreContext() to WEBKIT_lose_context
