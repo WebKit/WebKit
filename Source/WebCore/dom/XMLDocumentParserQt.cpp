@@ -552,10 +552,10 @@ void XMLDocumentParser::parseEndElement()
 {
     exitText();
 
-    Node* n = m_currentNode;
+    RefPtr<ContainerNode> n = m_currentNode;
     n->finishParsingChildren();
 
-    if (m_scriptingPermission == FragmentScriptingNotAllowed && n->isElementNode() && toScriptElement(static_cast<Element*>(n))) {
+    if (m_scriptingPermission == FragmentScriptingNotAllowed && n->isElementNode() && toScriptElement(static_cast<Element*>(n.get()))) {
         popCurrentNode();
         ExceptionCode ec;
         n->remove(ec);
@@ -568,7 +568,7 @@ void XMLDocumentParser::parseEndElement()
         return;
     }
 
-    Element* element = static_cast<Element*>(n);
+    Element* element = static_cast<Element*>(n.get());
 
     // The element's parent may have already been removed from document.
     // Parsing continues in this case, but scripts aren't executed.

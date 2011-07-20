@@ -202,6 +202,7 @@ public:
 #endif
 
     virtual bool isMediaControlElement() const { return false; }
+    virtual bool isMediaControls() const { return false; }
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }

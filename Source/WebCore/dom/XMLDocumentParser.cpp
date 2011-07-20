@@ -286,7 +286,7 @@ void XMLDocumentParser::insertErrorMessageBlock()
     // Create elements for display
     ExceptionCode ec = 0;
     Document* document = this->document();
-    Element* documentElement = document->documentElement();
+    RefPtr<Element> documentElement = document->documentElement();
     if (!documentElement) {
         RefPtr<Element> rootElement = document->createElement(htmlTag, false);
         document->appendChild(rootElement, ec);
