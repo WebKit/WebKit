@@ -1,3 +1,10 @@
+2011-07-20  Andy Estes  <aestes@apple.com>
+
+        Fix the Mac build after r91392.
+
+        * WebCore.xcodeproj/project.pbxproj: StyleFlexibleBoxData.h should be a
+        private forwarding header of WebCore.
+
 2011-07-20  Jeffrey Pfau  <jpfau@apple.com>
 
         New Token class for XML
