@@ -1,3 +1,10 @@
+2011-07-20  Hayato Ito  <hayato@chromium.org>
+
+        Fix Chromium test expectations for r91331.
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-19  Gabor Loki  <loki@webkit.org>
 
         Move platform independent expected.txts out of platform/mac
