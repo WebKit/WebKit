@@ -1,3 +1,16 @@
+2011-07-20  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Qt5 Build Fix: Disable the legacy mac assert macros.
+
+        This is done in order to prevent collision with the recently
+        introduced function QSslCertificate::verify() in Qt5.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64855
+
+        Reviewed by Simon Hausmann.
+
+        * Source/WebKit.pri:
+
 2011-07-19  Robert Sesek  <rsesek@chromium.org>
 
         [Chromium] Need to remove app/ from DEPS
