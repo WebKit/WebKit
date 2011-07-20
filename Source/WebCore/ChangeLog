@@ -1,3 +1,19 @@
+2011-07-20  Mike Reed  <reed@google.com>
+
+        [skia] disable lcd text when drawing on a transparent layer or canvas
+        https://bugs.webkit.org/show_bug.cgi?id=64873
+
+        Reviewed by Stephen White.
+
+        No new tests. canvas sites illustrate the bug. DRT disables LCD
+        so existing layouttests are not affected by this change.
+
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::isCanvasMultiLayered):
+        (WebCore::disableTextLCD):
+        (WebCore::setupPaintForFont):
+        (WebCore::paintSkiaText):
+
 2011-07-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: add keyboard shortcuts to load/save operations in Timeline panel.

@@ -118,7 +118,25 @@ static void skiaDrawText(SkCanvas* canvas,
     canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
 }
 
-static void setupPaintForFont(HFONT hfont, SkPaint* paint)
+static bool isCanvasMultiLayered(SkCanvas* canvas)
+{
+    SkCanvas::LayerIter layerIterator(canvas, false);
+    layerIterator.next();
+    return !layerIterator.done();
+}
+
+// lifted from FontSkia.cpp
+static bool disableTextLCD(PlatformContextSkia* skiaContext)
+{
+    // Our layers only have a single alpha channel. This means that subpixel
+    // rendered text cannot be compositied correctly when the layer is
+    // collapsed. Therefore, subpixel text is disabled when we are drawing
+    // onto a layer or when the compositor is being used.
+    return isCanvasMultiLayered(skiaContext->canvas())
+           || skiaContext->isDrawingToImageBuffer();
+}
+
+static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* pcs)
 {
     //  FIXME:
     //  Much of this logic could also happen in
@@ -139,7 +157,11 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint)
     uint32_t flags = paint->getFlags();
     // our defaults
     flags |= SkPaint::kAntiAlias_Flag;
-    flags |= SkPaint::kLCDRenderText_Flag;
+    if (disableTextLCD(pcs))
+        flags &= ~SkPaint::kLCDRenderText_Flag;
+    else
+        flags |= SkPaint::kLCDRenderText_Flag;
+
     switch (info.lfQuality) {
     case NONANTIALIASED_QUALITY:
         flags &= ~SkPaint::kAntiAlias_Flag;
@@ -173,7 +195,7 @@ void paintSkiaText(GraphicsContext* context,
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);
     paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    setupPaintForFont(hfont, &paint);
+    setupPaintForFont(hfont, &paint, platformContext);
 
     bool didFill = false;
 
@@ -190,7 +212,7 @@ void paintSkiaText(GraphicsContext* context,
         paint.reset();
         platformContext->setupPaintForStroking(&paint, 0, 0);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        setupPaintForFont(hfont, &paint);
+        setupPaintForFont(hfont, &paint, platformContext);
 
         if (didFill) {
             // If there is a shadow and we filled above, there will already be
