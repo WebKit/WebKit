@@ -120,9 +120,44 @@ void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)
     setNeedsWillValidateCheck();
 }
 
+static bool shouldAutofocus(HTMLFormControlElement* element)
+{
+    if (!element->autofocus())
+        return false;
+    if (!element->renderer())
+        return false;
+    if (element->document()->ignoreAutofocus())
+        return false;
+    if (element->isReadOnlyFormControl())
+        return false;
+
+    // FIXME: Should this set of hasTagName checks be replaced by a
+    // virtual member function?
+    if (element->hasTagName(inputTag))
+        return !static_cast<HTMLInputElement*>(element)->isInputTypeHidden();
+    if (element->hasTagName(selectTag))
+        return true;
+    if (element->hasTagName(keygenTag))
+        return true;
+    if (element->hasTagName(buttonTag))
+        return true;
+    if (element->hasTagName(textareaTag))
+        return true;
+
+    return false;
+}
+
+static void focusPostAttach(Node* element) 
+{ 
+    static_cast<Element*>(element)->focus(); 
+    element->deref(); 
+}
+
 void HTMLFormControlElement::attach()
 {
     ASSERT(!attached());
+
+    suspendPostAttachCallbacks();
 
     HTMLElement::attach();
 
@@ -132,17 +167,12 @@ void HTMLFormControlElement::attach()
     if (renderer())
         renderer()->updateFromElement();
 
-    // Focus the element if it should honour its autofocus attribute.
-    // We have to determine if the element is a TextArea/Input/Button/Select,
-    // if input type hidden ignore autofocus. So if disabled or readonly.
-    bool isInputTypeHidden = false;
-    if (hasTagName(inputTag))
-        isInputTypeHidden = static_cast<HTMLInputElement*>(this)->isInputTypeHidden();
+    if (shouldAutofocus(this)) {
+        ref();
+        queuePostAttachCallback(focusPostAttach, this);
+    }
 
-    if (autofocus() && renderer() && !document()->ignoreAutofocus() && !isReadOnlyFormControl() &&
-            ((hasTagName(inputTag) && !isInputTypeHidden) || hasTagName(selectTag) ||
-              hasTagName(keygenTag) || hasTagName(buttonTag) || hasTagName(textareaTag)))
-         focus();
+    resumePostAttachCallbacks();
 }
 
 void HTMLFormControlElement::willMoveToNewOwnerDocument()
