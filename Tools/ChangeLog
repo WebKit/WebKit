@@ -1,3 +1,16 @@
+2011-07-19  Eric Seidel  <eric@webkit.org>
+
+        parse-malloc-history always exits 1, causing NRWT to fail
+        https://bugs.webkit.org/show_bug.cgi?id=64835
+
+        Reviewed by Adam Barth.
+
+        ORWT just never checked the return code. :)
+
+        * Scripts/parse-malloc-history:
+        (main):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2011-07-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, don't add the debug prefix as 2.9 no longer uses one.

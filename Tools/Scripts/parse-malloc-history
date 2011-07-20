@@ -163,6 +163,7 @@ sub main()
     }
 
     print "total: " . commify($byteCountTotalReported) . " bytes (" . commify($byteCountTotal - $byteCountTotalReported) . " bytes excluded).\n";
+    return 0;
 }
 
 exit(main());

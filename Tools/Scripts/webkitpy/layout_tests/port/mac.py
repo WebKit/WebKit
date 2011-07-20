@@ -109,7 +109,11 @@ class LeakDetector(object):
             '--merge-depth',
             merge_depth,
         ] + leak_files
-        parse_malloc_history_output = self._port._run_script("parse-malloc-history", args, include_configuration_arguments=False)
+        try:
+            parse_malloc_history_output = self._port._run_script("parse-malloc-history", args, include_configuration_arguments=False)
+        except ScriptError, e:
+            _log.warn("Failed to parse leaks output: %s" % e.message_with_output())
+            return
 
         unique_leak_count = len(re.findall(r'^(\d*)\scalls', parse_malloc_history_output))
         total_bytes = int(re.search(r'^total\:\s(.*)\s\(', parse_malloc_history_output).group(1))
