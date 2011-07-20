@@ -259,6 +259,12 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
 
     if (r.isContentEditable()) {
         data.isEditable = true;
+#if ENABLE(INPUT_SPEECH)
+        if (r.innerNonSharedNode()->hasTagName(HTMLNames::inputTag)) {
+            data.isSpeechInputEnabled = 
+                static_cast<HTMLInputElement*>(r.innerNonSharedNode())->isSpeechEnabled();
+        }  
+#endif
         if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
             data.isSpellCheckingEnabled = true;
             // Spellchecking might be enabled for the field, but could be disabled on the node.

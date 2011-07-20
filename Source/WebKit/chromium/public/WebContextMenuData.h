@@ -109,6 +109,9 @@ struct WebContextMenuData {
     // The raw text of the selection in context.
     WebString selectedText;
 
+    // Whether speech input is enabled.
+    bool isSpeechInputEnabled;
+
     // Whether spell checking is enabled.
     bool isSpellCheckingEnabled;
 
@@ -162,6 +165,7 @@ struct WebContextMenuData {
         : mediaType(MediaTypeNone)
         , isImageBlocked(false)
         , mediaFlags(MediaNone)
+        , isSpeechInputEnabled(false)
         , isSpellCheckingEnabled(false)
         , isEditable(false)
         , writingDirectionDefault(CheckableMenuItemDisabled)
