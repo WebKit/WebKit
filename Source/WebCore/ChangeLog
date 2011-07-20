@@ -1,3 +1,19 @@
+2011-07-20  Tony Chang  <tony@chromium.org>
+
+        Stale pointer due to floats not removed (flexible box display)
+        https://bugs.webkit.org/show_bug.cgi?id=64603
+
+        Reviewed by David Hyatt.
+
+        Flexbox items should avoid floats.
+
+        Test: fast/flexbox/horizontal-box-float-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::avoidsFloats):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isDeprecatedFlexItem):
+
 2011-07-20  Scott Graham  <scottmg@chromium.org>
 
         Reviewed by Antti Koivisto.
