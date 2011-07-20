@@ -1,3 +1,17 @@
+2011-07-20  tkent@chromium.org  <tkent@chromium.org@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+
+        input type=number doesn't render correctly in rtl.
+        https://bugs.webkit.org/show_bug.cgi?id=59703
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/input-appearance-number-rtl.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/fast/forms/input-appearance-number-rtl-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-number-rtl-expected.txt: Added.
+        * platform/qt/test_expectations.txt:
+
 2011-07-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64678

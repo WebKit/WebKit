@@ -3743,6 +3743,9 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRA
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
+// New test. Need platform-dependent baseline files.
+BUGWK59703 : fast/forms/input-appearance-number-rtl.html = FAIL
+
 BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = TEXT PASS

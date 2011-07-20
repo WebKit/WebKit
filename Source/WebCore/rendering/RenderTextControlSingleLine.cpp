@@ -276,7 +276,10 @@ void RenderTextControlSingleLine::layout()
     // Ignores the paddings for the inner spin button.
     if (RenderBox* innerSpinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0) {
         RenderBox* parentBox = innerSpinBox->parentBox();
-        innerSpinBox->setLocation(LayoutPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
+        if (containerRenderer && !containerRenderer->style()->isLeftToRightDirection())
+            innerSpinBox->setLocation(LayoutPoint(-paddingLeft(), -paddingTop()));
+        else
+            innerSpinBox->setLocation(LayoutPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
         innerSpinBox->setHeight(height() - borderTop() - borderBottom());
     }
 

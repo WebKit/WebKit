@@ -420,9 +420,12 @@ input[type="search"] {
 }
 
 input::-webkit-textfield-decoration-container {
-    direction: ltr;
     display: -webkit-box;
     -webkit-box-align: center;
+}
+
+input[type="search"]::-webkit-textfield-decoration-container {
+    direction: ltr;
 }
 
 input[type="search"]::-webkit-search-cancel-button {
@@ -472,10 +475,6 @@ input::-webkit-input-speech-button {
     display: block;
     vertical-align: top;
     -webkit-box-flex: 0;
-}
-
-input[x-webkit-speech][dir=rtl]::-webkit-textfield-decoration-container {
-    direction: rtl;
 }
 #endif
 

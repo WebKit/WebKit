@@ -1,3 +1,22 @@
+2011-07-20  Kent Tamura  <tkent@chromium.org>
+
+        input type=number doesn't render correctly in rtl.
+        https://bugs.webkit.org/show_bug.cgi?id=59703
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/forms/input-appearance-number-rtl.html
+
+        * css/html.css:
+        (input[type="search"]::-webkit-textfield-decoration-container):
+        Set "direction: ltr;" only for type=search because we'd like to
+        respect text direction except type=search.
+        (input[x-webkit-speech][di=rtl]::-webkit-input-speech-button):
+        Remove a workaround.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        Support for RTL in the spin button location adjustment.
+
 2011-07-19  Steve Lacey  <sjl@chromium.org>
 
         [chromium] Media player controls do not fade out.
