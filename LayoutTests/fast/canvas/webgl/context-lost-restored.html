@@ -22,24 +22,64 @@ function init()
         window.initNonKhronosFramework(true);
     }
 
-    description("Tests behavior under a restored context");
+    description("Tests behavior under a restored context.");
 
-    canvas = document.getElementById("canvas");
-    canvas.addEventListener("webglcontextlost", testLostContext);
-    canvas.addEventListener("webglcontextrestored", testRestoredContext);
-
-    gl = wtu.create3DContext(canvas);
     shouldGenerateGLError = wtu.shouldGenerateGLError;
+    runTests();
+}
 
+function runTests()
+{
+    testLosingContext();
+    testLosingAndRestoringContext();
+
+    finish();
+}
+
+function setupTest()
+{
+    canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    gl = wtu.create3DContext(canvas);
     extension = gl.getExtension(extension_name);
     if (!extension) {
         debug(extension_name + " extension not found.");
-        finish();
-        return;
+        return false;
     }
+    return true;
+}
+
+function testLosingContext()
+{
+    if (!setupTest())
+        return;
+
+    debug("Test losing a context and inability to restore it.");
+
+    canvas.addEventListener("webglcontextlost", testLostContext);
 
     testOriginalContext();
     extension.loseContext();
+    // FIXME: this isn't yet spec compliant.
+    shouldGenerateGLError(gl, gl.INVALID_OPERATION, "extension.restoreContext()");
+    debug("");
+}
+
+function testLosingAndRestoringContext()
+{
+    if (!setupTest())
+        return;
+
+    debug("Test losing and restoring a context.");
+
+    canvas.addEventListener("webglcontextlost", testLostContext);
+    canvas.addEventListener("webglcontextrestored", testRestoredContext);
+
+    testOriginalContext();
+    extension.loseContext();
+    extension.restoreContext();
+    debug("");
 }
 
 function testRendering()
@@ -105,8 +145,6 @@ function testRestoredContext()
     // Validate new resources created in testRendering().
     testResources(gl.NO_ERROR);
     debug("");
-
-    finish();
 }
 
 function finish() {
@@ -125,6 +163,5 @@ function finish() {
 <body onload="init()">
 <div id="description"></div>
 <div id="console"></div>
-<canvas id="canvas" width="1px" height="1px"></canvas>
 </body>
 </html>

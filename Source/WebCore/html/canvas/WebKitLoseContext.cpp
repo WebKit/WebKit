@@ -54,7 +54,12 @@ PassOwnPtr<WebKitLoseContext> WebKitLoseContext::create(WebGLRenderingContext* c
 
 void WebKitLoseContext::loseContext()
 {
-    m_context->forceLostContext();
+    m_context->forceLostContext(WebGLRenderingContext::SyntheticLostContext);
+}
+
+void WebKitLoseContext::restoreContext()
+{
+    m_context->forceRestoreContext();
 }
 
 } // namespace WebCore

@@ -30,5 +30,6 @@ module html {
         OmitConstructor
     ] WebKitLoseContext {
         [StrictTypeChecking] void loseContext();
+        [StrictTypeChecking] void restoreContext();
     };
 }

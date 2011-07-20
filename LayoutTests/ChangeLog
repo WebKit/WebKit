@@ -1,3 +1,16 @@
+2011-07-20  Kenneth Russell  <kbr@google.com>
+
+        Add restoreContext() to WEBKIT_lose_context
+        https://bugs.webkit.org/show_bug.cgi?id=58626
+
+        Reviewed by James Robinson.
+
+        Used the new WEBKIT_lose_context restoreContext() entry point in
+        the associated layout test.
+
+        * fast/canvas/webgl/context-lost-restored-expected.txt:
+        * fast/canvas/webgl/context-lost-restored.html:
+
 2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for disabling cache in web inspector.
