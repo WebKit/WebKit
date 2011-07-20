@@ -1,3 +1,12 @@
+2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Apparently my rebaseline was incorrect for r91294.
+
+        Remove expected results and skip compositing/scaling/tiled-layer-recursion.html on Chromium
+        because it's missing expected results.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Skip compositing/scaling/tiled-layer-recursion.html on chromium
