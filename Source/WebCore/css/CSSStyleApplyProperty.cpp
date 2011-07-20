@@ -26,6 +26,7 @@
 #include "CSSStyleApplyProperty.h"
 
 #include "CSSCursorImageValue.h"
+#include "CSSFlexValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueList.h"
@@ -213,11 +214,13 @@ enum LengthIntrinsic {IntrinsicDisabled = 0, IntrinsicEnabled = 1};
 enum LengthMinIntrinsic {MinIntrinsicDisabled = 0, MinIntrinsicEnabled = 1};
 enum LengthNone {NoneDisabled = 0, NoneEnabled = 1};
 enum LengthUndefined {UndefinedDisabled = 0, UndefinedEnabled = 1};
+enum LengthFlexDirection {FlexDirectionDisabled = 0, FlexWidth = 1, FlexHeight};
 template <LengthAuto autoEnabled = AutoDisabled,
           LengthIntrinsic intrinsicEnabled = IntrinsicDisabled,
           LengthMinIntrinsic minIntrinsicEnabled = MinIntrinsicDisabled,
           LengthNone noneEnabled = NoneDisabled,
-          LengthUndefined noneUndefined = UndefinedDisabled>
+          LengthUndefined noneUndefined = UndefinedDisabled,
+          LengthFlexDirection flexDirection = FlexDirectionDisabled>
 class ApplyPropertyLength : public ApplyPropertyDefaultBase<Length> {
 public:
     ApplyPropertyLength(GetterFunction getter, SetterFunction setter, InitialFunction initial)
@@ -228,8 +231,26 @@ public:
 private:
     virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
+#if ENABLE(CSS3_FLEXBOX)
+        if (!value->isPrimitiveValue()) {
+            if (!flexDirection || !value->isFlexValue())
+                return;
+
+            CSSFlexValue* flexValue = static_cast<CSSFlexValue*>(value);
+            value = flexValue->preferredSize();
+
+            if (flexDirection == FlexWidth) {
+                selector->style()->setFlexboxWidthPositiveFlex(flexValue->positiveFlex());
+                selector->style()->setFlexboxWidthNegativeFlex(flexValue->negativeFlex());
+            } else if (flexDirection == FlexHeight) {
+                selector->style()->setFlexboxHeightPositiveFlex(flexValue->positiveFlex());
+                selector->style()->setFlexboxHeightNegativeFlex(flexValue->negativeFlex());
+            }
+        }
+#else
         if (!value->isPrimitiveValue())
             return;
+#endif
 
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (noneEnabled && primitiveValue->getIdent() == CSSValueNone)
@@ -749,8 +770,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBottom, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::bottom, &RenderStyle::setBottom, &RenderStyle::initialOffset));
     setPropertyHandler(CSSPropertyLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset));
 
-    setPropertyHandler(CSSPropertyWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize));
-    setPropertyHandler(CSSPropertyHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>(&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize));
+    setPropertyHandler(CSSPropertyWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled, FlexWidth>(&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize));
+    setPropertyHandler(CSSPropertyHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled, FlexHeight>(&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize));
 
     setPropertyHandler(CSSPropertyTextIndent, new ApplyPropertyLength<>(&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent));
 

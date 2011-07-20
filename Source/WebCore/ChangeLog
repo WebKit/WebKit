@@ -1,3 +1,18 @@
+2011-07-20  Tony Chang  <tony@chromium.org>
+
+        Pass -webkit-flex() values on to RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=64038
+
+        Reviewed by Eric Seidel.
+
+        No new tests, this just copies data to RenderStyle, which we can
+        then access when doing layout.  Tests will come with the layout
+        changes.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+
 2011-07-20  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix the GTK build after changeset 91396 <http://trac.webkit.org/changeset/91396>
