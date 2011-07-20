@@ -45,7 +45,6 @@ class LayerTexture;
 
 class RenderSurfaceChromium {
     WTF_MAKE_NONCOPYABLE(RenderSurfaceChromium);
-    friend class LayerRendererChromium;
 public:
     explicit RenderSurfaceChromium(CCLayerImpl*);
     ~RenderSurfaceChromium();
@@ -58,13 +57,37 @@ public:
     String name() const;
     void dumpSurface(TextStream&, int indent) const;
 
-    FloatPoint contentRectCenter() const { return FloatRect(m_contentRect).center(); }
-    IntRect contentRect() const { return m_contentRect; }
-
     // Returns the rect that encloses the RenderSurface including any reflection.
     FloatRect drawableContentRect() const;
 
-    TransformationMatrix drawTransform() const { return m_drawTransform; }
+    Vector<RefPtr<CCLayerImpl> >& layerList() { return m_layerList; }
+    void clearLayerList();
+
+    const IntRect& contentRect() const { return m_contentRect; }
+    void setContentRect(const IntRect& contentRect) { m_contentRect = contentRect; }
+
+    float drawOpacity() const { return m_drawOpacity; }
+    void setDrawOpacity(float drawOpacity) { m_drawOpacity = drawOpacity; }
+
+    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
+    void setDrawTransform(const TransformationMatrix& drawTransform) { m_drawTransform = drawTransform; }
+
+    CCLayerImpl* maskLayer() const { return m_maskLayer; }
+    void setMaskLayer(CCLayerImpl* maskLayer) { m_maskLayer = maskLayer; }
+
+    const TransformationMatrix& originTransform() const { return m_originTransform; }
+    void setOriginTransform(const TransformationMatrix& originTransform) { m_originTransform = originTransform; }
+
+    const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
+    void setReplicaDrawTransform(const TransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
+
+    const IntRect& scissorRect() const { return m_scissorRect; }
+    void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
+
+    bool skipsDraw() const { return m_skipsDraw; }
+    void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
+
+    LayerTexture* contentsTexture() const { return m_contentsTexture.get(); }
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> MaskProgram;

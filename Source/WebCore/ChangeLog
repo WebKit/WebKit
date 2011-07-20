@@ -1,3 +1,49 @@
+2011-07-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] LayerRendererChromium shouldn't be a friend of RenderSurfaceChromium
+        https://bugs.webkit.org/show_bug.cgi?id=64834
+
+        Reviewed by Kenneth Russell.
+
+        Uses setters and getters to access RenderSurfaceChromium's private member variables instead of directly
+        accessing them via a friend declaration. This cleans up a minor code smell and will be helpful for future
+        refactoring.
+
+        Refactor only, no change in behavior.  Tested by compositing/ tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateCompositorResources):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::copyOffscreenTextureToDisplay):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::clearLayerList):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (WebCore::RenderSurfaceChromium::layerList):
+        (WebCore::RenderSurfaceChromium::contentRect):
+        (WebCore::RenderSurfaceChromium::setContentRect):
+        (WebCore::RenderSurfaceChromium::drawOpacity):
+        (WebCore::RenderSurfaceChromium::setDrawOpacity):
+        (WebCore::RenderSurfaceChromium::drawTransform):
+        (WebCore::RenderSurfaceChromium::setDrawTransform):
+        (WebCore::RenderSurfaceChromium::maskLayer):
+        (WebCore::RenderSurfaceChromium::setMaskLayer):
+        (WebCore::RenderSurfaceChromium::originTransform):
+        (WebCore::RenderSurfaceChromium::setOriginTransform):
+        (WebCore::RenderSurfaceChromium::replicaDrawTransform):
+        (WebCore::RenderSurfaceChromium::setReplicaDrawTransform):
+        (WebCore::RenderSurfaceChromium::scissorRect):
+        (WebCore::RenderSurfaceChromium::setScissorRect):
+        (WebCore::RenderSurfaceChromium::skipsDraw):
+        (WebCore::RenderSurfaceChromium::setSkipsDraw):
+        (WebCore::RenderSurfaceChromium::contentsTexture):
+
 2011-07-19  Jessie Berlin  <jberlin@apple.com>
 
         GTK + QT build fix.

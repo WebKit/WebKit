@@ -173,6 +173,11 @@ void RenderSurfaceChromium::draw(const IntRect&)
     drawSurface(m_maskLayer, m_drawTransform);
 }
 
+void RenderSurfaceChromium::clearLayerList()
+{
+    m_layerList.clear();
+}
+
 String RenderSurfaceChromium::name() const
 {
     return String::format("RenderSurface(id=%d,owner=%s)", m_owningLayer->id(), m_owningLayer->name().utf8().data());
