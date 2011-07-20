@@ -3118,6 +3118,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.h \
+	Source/WebCore/rendering/style/StyleFlexibleBoxData.cpp \
+	Source/WebCore/rendering/style/StyleFlexibleBoxData.h \
 	Source/WebCore/rendering/style/StyleGeneratedImage.cpp \
 	Source/WebCore/rendering/style/StyleGeneratedImage.h \
 	Source/WebCore/rendering/style/StyleImage.h \

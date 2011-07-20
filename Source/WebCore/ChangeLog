@@ -1,3 +1,51 @@
+2011-07-20  Tony Chang  <tony@chromium.org>
+
+        add new flexbox data to StyleRareNonInheritedData
+        https://bugs.webkit.org/show_bug.cgi?id=64765
+
+        Reviewed by David Hyatt.
+
+        Add placeholders for the positive and negative flex values for the
+        width and the height.  When we get to the other properties (flex-pack,
+        flex-align, etc), we'll add more to the StyleFlexibleBoxData class
+
+        No new tests, these values aren't hooked up to anything yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::flexboxWidthPositiveFlex):
+        (WebCore::InheritedFlags::flexboxWidthNegativeFlex):
+        (WebCore::InheritedFlags::flexboxHeightPositiveFlex):
+        (WebCore::InheritedFlags::flexboxHeightNegativeFlex):
+        (WebCore::InheritedFlags::setFlexboxWidthPositiveFlex):
+        (WebCore::InheritedFlags::setFlexboxWidthNegativeFlex):
+        (WebCore::InheritedFlags::setFlexboxHeightPositiveFlex):
+        (WebCore::InheritedFlags::setFlexboxHeightNegativeFlex):
+        (WebCore::InheritedFlags::initialFlexboxWidthPositiveFlex):
+        (WebCore::InheritedFlags::initialFlexboxWidthNegativeFlex):
+        (WebCore::InheritedFlags::initialFlexboxHeightPositiveFlex):
+        (WebCore::InheritedFlags::initialFlexboxHeightNegativeFlex):
+        * rendering/style/StyleAllInOne.cpp:
+        * rendering/style/StyleFlexibleBoxData.cpp: Added.
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h: Added.
+        (WebCore::StyleFlexibleBoxData::create):
+        (WebCore::StyleFlexibleBoxData::copy):
+        (WebCore::StyleFlexibleBoxData::operator!=):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-07-20  Cary Clark  <caryclark@google.com>
 
         update FontSkia to match platform context convention

@@ -43,6 +43,7 @@ class AnimationList;
 class CSSStyleSelector;
 class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
+class StyleFlexibleBoxData;
 class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
@@ -91,6 +92,9 @@ public:
     float opacity; // Whether or not we're transparent.
 
     DataRef<StyleDeprecatedFlexibleBoxData> m_deprecatedFlexibleBox; // Flexible box properties
+#if ENABLE(CSS3_FLEXBOX)
+    DataRef<StyleFlexibleBoxData> m_flexibleBox;
+#endif
     DataRef<StyleMarqueeData> m_marquee; // Marquee properties
     DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
     DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)
