@@ -98,8 +98,9 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage() const
+PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyPreference) const
 {
+    ASSERT(copyPreference == CopyBackingStore);
     return adoptRef(new BufferedImage(&m_data));
 }
 
@@ -111,14 +112,14 @@ void ImageBuffer::clip(GraphicsContext*, const FloatRect&) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op , bool useLowQualityScale)
 {
-    RefPtr<Image> imageCopy = copyImage();
+    RefPtr<Image> imageCopy = copyImage(CopyBackingStore);
     context->drawImage(imageCopy.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    RefPtr<Image> imageCopy = copyImage();
+    RefPtr<Image> imageCopy = copyImage(CopyBackingStore);
     imageCopy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 

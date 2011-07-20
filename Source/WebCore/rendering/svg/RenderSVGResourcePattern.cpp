@@ -124,7 +124,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
         if (!tileImage)
             return false;
 
-        RefPtr<Image> copiedImage = tileImage->copyImage();
+        RefPtr<Image> copiedImage = tileImage->copyImage(CopyBackingStore);
         if (!copiedImage)
             return false;
 

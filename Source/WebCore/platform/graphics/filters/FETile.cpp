@@ -79,7 +79,7 @@ void FETile::apply()
     tileImageContext->translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
     tileImageContext->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
 
-    RefPtr<Pattern> pattern = Pattern::create(tileImage->copyImage(), true, true);
+    RefPtr<Pattern> pattern = Pattern::create(tileImage->copyImage(CopyBackingStore), true, true);
 
     AffineTransform patternTransform;
     patternTransform.translate(inMaxEffectLocation.x() - maxEffectLocation.x(), inMaxEffectLocation.y() - maxEffectLocation.y());

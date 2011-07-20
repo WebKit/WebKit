@@ -121,8 +121,9 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage() const
+PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyPreference) const
 {
+    ASSERT(copyPreference == CopyBackingStore);
     return StillImage::create(m_data.m_pixmap);
 }
 
@@ -131,7 +132,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 {
     if (destContext == context()) {
         // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
-        RefPtr<Image> copy = copyImage();
+        RefPtr<Image> copy = copyImage(CopyBackingStore);
         destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, useLowQualityScale);
     } else
         destContext->drawImage(m_data.m_image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
@@ -142,7 +143,7 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
 {
     if (destContext == context()) {
         // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
-        RefPtr<Image> copy = copyImage();
+        RefPtr<Image> copy = copyImage(CopyBackingStore);
         copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
     } else
         m_data.m_image->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);

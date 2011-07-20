@@ -86,8 +86,9 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage() const
+PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyPreference) const
 {
+    ASSERT(copyPreference == CopyBackingStore);
     // BitmapImage will release the passed in surface on destruction
     return BitmapImage::create(copyCairoImageSurface(m_data.m_surface).leakRef());
 }

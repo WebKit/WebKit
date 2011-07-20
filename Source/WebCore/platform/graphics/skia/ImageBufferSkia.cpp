@@ -97,8 +97,9 @@ size_t ImageBuffer::dataSize() const
     return m_size.width() * m_size.height() * 4;
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage() const
+PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyPreference) const
 {
+    ASSERT(copyPreference == CopyBackingStore);
     m_context->platformContext()->makeGrContextCurrent();
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), true);
 }
