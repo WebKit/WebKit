@@ -1,5 +1,13 @@
 2011-07-20  Stephen White  <senorblanco@chromium.org>
 
+        Chromium test_expectations update for tests now passing on WIN7.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-20  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; chromium test_expectations update.
 
         Mark some tests as passing on the GPU after
