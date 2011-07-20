@@ -1,3 +1,10 @@
+2011-07-20  Tony Chang  <tony@chromium.org>
+
+        Remove stray reference to StyleFlexibleBoxData.h that was accidentally
+        added in r91402.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-07-20  Levi Weintraub  <leviw@chromium.org>
 
         Bring Int/Float graphics classes closer to parity
