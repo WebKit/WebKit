@@ -1,3 +1,19 @@
+2011-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r91136-r91146): 40 tests failing on Windows 7 Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=64808
+
+        Reviewed by Adam Roben.
+
+        Initializing m_uncommittedChanges to a non-zero value
+        caused the first call to noteLayerPropertyChanged() to
+        not call m_client->notifySyncRequired(). This resulted in
+        animations never getting committed on Windows, which broke
+        a lot of tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+
 2011-07-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRendererChromium shouldn't be a friend of RenderSurfaceChromium
