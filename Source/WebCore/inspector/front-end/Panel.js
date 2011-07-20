@@ -74,7 +74,7 @@ WebInspector.Panel.prototype = {
 
         WebInspector.currentFocusElement = this.defaultFocusedElement;
 
-        this.restoreSidebarWidth();
+        this._restoreSidebarWidth();
         this._restoreScrollPositions();
         WebInspector.extensionServer.notifyPanelShown(this.name);
     },
@@ -349,7 +349,10 @@ WebInspector.Panel.prototype = {
         if (typeof width === "undefined")
             width = this._currentSidebarWidth;
 
-        width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
+        var maxWidth = window.innerWidth / 2;
+        if (!maxWidth)
+            maxWidth = width;
+        width = Number.constrain(width, Preferences.minSidebarWidth, maxWidth);
 
         this._currentSidebarWidth = width;
         this.setSidebarWidth(width);
@@ -363,7 +366,7 @@ WebInspector.Panel.prototype = {
         this.sidebarResizeElement.style.left = (width - 3) + "px";
     },
 
-    restoreSidebarWidth: function()
+    _restoreSidebarWidth: function()
     {
         var sidebarWidth = WebInspector.settings[this._sidebarWidthSettingName()].get();
         this.updateSidebarWidth(sidebarWidth);

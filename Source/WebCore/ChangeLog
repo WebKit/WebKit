@@ -1,3 +1,16 @@
+2011-07-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: sidebar width sometimes is not restored
+        https://bugs.webkit.org/show_bug.cgi?id=64869
+
+        Make sure sidebar width is restored even if window initial size has not been set yet.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.updateSidebarWidth):
+
 2011-07-20  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: remove dead code (WebInspector.drawLoadingPieChart)
