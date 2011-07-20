@@ -1,5 +1,20 @@
 2011-07-20  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 88137.
+
+    2011-06-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rolling out r84528.
+        http://trac.webkit.org/changeset/84528
+        https://bugs.webkit.org/show_bug.cgi?id=62100
+
+        * fast/dom/shadow/import-shadowroot-expected.txt: Removed.
+        * fast/dom/shadow/import-shadowroot.html: Removed.
+
+2011-07-20  Lucas Forschler  <lforschler@apple.com>
+
     Merged 88071.
 
     2011-06-03  Adam Barth  <abarth@webkit.org>
