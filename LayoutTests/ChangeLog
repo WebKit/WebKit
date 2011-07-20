@@ -1,3 +1,12 @@
+2011-07-20  Stephen White  <senorblanco@chromium.org>
+
+        Remove some more passing tests from chromium GPU expectations
+        (just required a clobber).
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-20  Scott Graham  <scottmg@chromium.org>
 
         mouseover event reporting incorrect button in 'which'.

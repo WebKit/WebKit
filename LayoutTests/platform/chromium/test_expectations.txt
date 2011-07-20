@@ -975,9 +975,6 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // Test failures with Skia GPU rendering of canvas 2D
 // -----------------------------------------------------------------
 
-// shadow rendering issues
-BUGCR79896 GPU WIN : fast/canvas/canvas-shadow.html = TEXT
-
 // This test is slow due to Mesa slowness.
 WONTFIX GPU WIN LINUX : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 
@@ -1943,7 +1940,6 @@ BUGWK45991 GPU LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEX
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 GPU WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.scale.html = TEXT
