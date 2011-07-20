@@ -43,7 +43,9 @@ class GtkDriver(webkit.WebKitDriver):
     def start(self):
         display_id = self._worker_number + 1
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
-        self._xvfb_process = subprocess.Popen(run_xvfb)
+        devnull = open(os.devnull, 'w')
+        self._xvfb_process = subprocess.Popen(run_xvfb, stderr=devnull)
+        devnull.close()
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number

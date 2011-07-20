@@ -1,3 +1,15 @@
+2011-07-20  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] [NRWT] Xvfb produces a lot of stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=64669
+
+        Reviewed by Philippe Normand.
+
+        Redirect the stderr output of the driver's Xvfb process
+        to /dev/null to suppress unneeded output.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+
 2011-07-19  Eric Seidel  <eric@webkit.org>
 
         parse-malloc-history always exits 1, causing NRWT to fail
