@@ -49,6 +49,7 @@ class HttpLock(object):
         self._filesystem = filesystem or FileSystem()
         self._lock_path = lock_path
         if not self._lock_path:
+            # FIXME: FileSystem should have an accessor for tempdir()
             self._lock_path = tempfile.gettempdir()
         self._lock_file_prefix = lock_file_prefix
         self._lock_file_path_prefix = self._filesystem.join(self._lock_path, self._lock_file_prefix)
@@ -69,7 +70,7 @@ class HttpLock(object):
 
     def _lock_file_list(self):
         """Return the list of lock files sequentially."""
-        lock_list = glob.glob(self._lock_file_path_prefix + '*')
+        lock_list = self._filesystem.glob(self._lock_file_path_prefix + '*')
         lock_list.sort(key=self._extract_lock_number)
         return lock_list
 
@@ -80,7 +81,7 @@ class HttpLock(object):
             return 0
         return self._extract_lock_number(lock_list[-1]) + 1
 
-    def _curent_lock_pid(self):
+    def _current_lock_pid(self):
         """Return with the current lock pid. If the lock is not valid
         it deletes the lock file."""
         lock_list = self._lock_file_list()
@@ -88,7 +89,7 @@ class HttpLock(object):
             _log.debug("No lock file list")
             return
         try:
-            current_lock_file = self._filesystem.read_text_file(lock_list[0])
+            current_pid = self._filesystem.read_text_file(lock_list[0])
             if not (current_pid and self._executive.check_running_pid(int(current_pid))):
                 _log.debug("Removing stuck lock file: %s" % lock_list[0])
                 self._filesystem.remove(lock_list[0])
@@ -115,6 +116,7 @@ class HttpLock(object):
 
         self._process_lock_file_name = (self._lock_file_path_prefix + str(self._next_lock_number()))
         _log.debug("Creating lock file: %s" % self._process_lock_file_name)
+        # FIXME: Executive.py should have an accessor for getpid()
         self._filesystem.write_text_file(self._process_lock_file_name, str(os.getpid()))
         self._guard_lock.release_lock()
         return True
@@ -126,7 +128,8 @@ class HttpLock(object):
             _log.debug("Warning, http locking failed!")
             return
 
-        while self._curent_lock_pid() != os.getpid():
+        # FIXME: This can hang forever!
+        while self._current_lock_pid() != os.getpid():
             time.sleep(1)
 
         _log.debug("HTTP lock acquired")

@@ -715,6 +715,11 @@ class MockExecutive(object):
     def __init__(self, should_log=False, should_throw=False):
         self._should_log = should_log
         self._should_throw = should_throw
+        # FIXME: Once executive wraps os.getpid() we can just use a static pid for "this" process.
+        self._running_pids = [os.getpid()]
+
+    def check_running_pid(self, pid):
+        return pid in self._running_pids
 
     def run_and_throw_if_fail(self, args, quiet=False, cwd=None):
         if self._should_log:
