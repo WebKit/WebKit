@@ -1,3 +1,13 @@
+2011-07-19  Gabor Loki  <loki@webkit.org>
+
+        Move platform independent expected.txts out of platform/mac
+        https://bugs.webkit.org/show_bug.cgi?id=64796
+
+        Reviewed by Rob Buis.
+
+        * fast/css/replaced-element-implicit-size-expected.txt: Renamed from LayoutTests/platform/mac/fast/css/replaced-element-implicit-size-expected.txt.
+        * svg/custom/zero-path-square-cap-rendering-expected.txt: Renamed from LayoutTests/platform/mac/svg/custom/zero-path-square-cap-rendering-expected.txt.
+
 2011-07-19  Hayato Ito  <hayato@chromium.org>
 
         [chromium] More chromium rebaseline for r91249.
