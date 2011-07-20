@@ -1,3 +1,10 @@
+2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speculative build fix after r91355.
+
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+
 2011-07-20  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update the tracklists to the latest spec
