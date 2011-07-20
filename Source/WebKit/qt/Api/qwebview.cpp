@@ -372,7 +372,7 @@ void QWebViewPrivate::detachCurrentPage()
     Makes \a page the new web page of the web view.
 
     The parent QObject of the provided page remains the owner
-    of the object. If the current document is a child of the web
+    of the object. If the current page is a child of the web
     view, it will be deleted.
 
     \sa page()

@@ -1,5 +1,14 @@
 2011-07-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] Improve documentation of QWebView::setPage()
+        https://bugs.webkit.org/show_bug.cgi?id=64827
+
+        Reviewed by Noam Rosenthal.
+
+        * Api/qwebview.cpp: Use the word 'page' to refer to a QWebPage instead of 'document'.
+
+2011-07-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] Fix leak of QWebPage in errorPageExtension tests
         https://bugs.webkit.org/show_bug.cgi?id=64814
 
