@@ -3562,46 +3562,6 @@ String CSSStyleSelector::pageName(int /* pageIndex */) const
     return "";
 }
 
-static void applyCounterList(RenderStyle* style, CSSValueList* list, bool isReset)
-{
-    CounterDirectiveMap& map = style->accessCounterDirectives();
-    typedef CounterDirectiveMap::iterator Iterator;
-
-    Iterator end = map.end();
-    for (Iterator it = map.begin(); it != end; ++it)
-        if (isReset)
-            it->second.m_reset = false;
-        else
-            it->second.m_increment = false;
-
-    int length = list ? list->length() : 0;
-    for (int i = 0; i < length; ++i) {
-        CSSValue* currValue = list->itemWithoutBoundsCheck(i);
-        if (!currValue->isPrimitiveValue())
-            continue;
-
-        Pair* pair = static_cast<CSSPrimitiveValue*>(currValue)->getPairValue();
-        if (!pair || !pair->first() || !pair->second())
-            continue;
-
-        AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
-        // FIXME: What about overflow?
-        int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
-        CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).first->second;
-        if (isReset) {
-            directives.m_reset = true;
-            directives.m_resetValue = value;
-        } else {
-            if (directives.m_increment)
-                directives.m_incrementValue += value;
-            else {
-                directives.m_increment = true;
-                directives.m_incrementValue = value;
-            }
-        }
-    }
-}
-
 void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue *value, RenderStyle* style)
 {
     initElement(0);
@@ -4187,14 +4147,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 m_style->setQuotes(adoptRef(QuotesData::create(0)));
         }
         return;
-
-    case CSSPropertyCounterIncrement:
-        applyCounterList(style(), value->isValueList() ? static_cast<CSSValueList*>(value) : 0, false);
-        return;
-    case CSSPropertyCounterReset:
-        applyCounterList(style(), value->isValueList() ? static_cast<CSSValueList*>(value) : 0, true);
-        return;
-
     case CSSPropertyFontFamily: {
         // list of strings and ids
         if (isInherit) {
@@ -5333,6 +5285,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderSpacing:
     case CSSPropertyWebkitBorderHorizontalSpacing:
     case CSSPropertyWebkitBorderVerticalSpacing:
+    case CSSPropertyCounterIncrement:
+    case CSSPropertyCounterReset:
     case CSSPropertyLetterSpacing:
     case CSSPropertyWordSpacing:
     case CSSPropertyFontStyle:

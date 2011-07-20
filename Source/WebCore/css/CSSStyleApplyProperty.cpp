@@ -506,6 +506,60 @@ public:
     }
 };
 
+enum CounterBehavior {Increment = 0, Reset};
+template <CounterBehavior counterBehavior>
+class ApplyPropertyCounter : public ApplyPropertyBase {
+private:
+    virtual void applyInheritValue(CSSStyleSelector*) const { }
+    virtual void applyInitialValue(CSSStyleSelector*) const { }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isValueList())
+            return;
+
+        CSSValueList* list = static_cast<CSSValueList*>(value);
+
+        CounterDirectiveMap& map = selector->style()->accessCounterDirectives();
+        typedef CounterDirectiveMap::iterator Iterator;
+
+        Iterator end = map.end();
+        for (Iterator it = map.begin(); it != end; ++it)
+            if (counterBehavior)
+                it->second.m_reset = false;
+            else
+                it->second.m_increment = false;
+
+        int length = list ? list->length() : 0;
+        for (int i = 0; i < length; ++i) {
+            CSSValue* currValue = list->itemWithoutBoundsCheck(i);
+            if (!currValue->isPrimitiveValue())
+                continue;
+
+            Pair* pair = static_cast<CSSPrimitiveValue*>(currValue)->getPairValue();
+            if (!pair || !pair->first() || !pair->second())
+                continue;
+
+            AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
+            // FIXME: What about overflow?
+            int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
+            CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).first->second;
+            if (counterBehavior) {
+                directives.m_reset = true;
+                directives.m_resetValue = value;
+            } else {
+                if (directives.m_increment)
+                    directives.m_incrementValue += value;
+                else {
+                    directives.m_increment = true;
+                    directives.m_incrementValue = value;
+                }
+            }
+        }
+    }
+};
+
+
 class ApplyPropertyCursor : public ApplyPropertyBase {
 private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
@@ -667,6 +721,9 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWordSpacing, new ApplyPropertyComputeLength<int, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>(&RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, &RenderStyle::initialLetterWordSpacing));
 
     setPropertyHandler(CSSPropertyCursor, new ApplyPropertyCursor());
+
+    setPropertyHandler(CSSPropertyCounterIncrement, new ApplyPropertyCounter<Increment>());
+    setPropertyHandler(CSSPropertyCounterReset, new ApplyPropertyCounter<Reset>());
 
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
     setPropertyHandler(CSSPropertyFontVariant, new ApplyPropertyFont<FontSmallCaps>(&FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff));
