@@ -317,8 +317,12 @@ PASS inner.SQLException.isInner is true
 PASS inner.SQLException.constructor.isInner is true
 PASS inner.SVGAElement.isInner is true
 PASS inner.SVGAElement.constructor.isInner is true
+PASS inner.SVGAltGlyphDefElement.isInner is true
+PASS inner.SVGAltGlyphDefElement.constructor.isInner is true
 PASS inner.SVGAltGlyphElement.isInner is true
 PASS inner.SVGAltGlyphElement.constructor.isInner is true
+PASS inner.SVGAltGlyphItemElement.isInner is true
+PASS inner.SVGAltGlyphItemElement.constructor.isInner is true
 PASS inner.SVGAngle.isInner is true
 PASS inner.SVGAngle.constructor.isInner is true
 PASS inner.SVGAnimateColorElement.isInner is true
@@ -449,6 +453,8 @@ PASS inner.SVGGElement.isInner is true
 PASS inner.SVGGElement.constructor.isInner is true
 PASS inner.SVGGlyphElement.isInner is true
 PASS inner.SVGGlyphElement.constructor.isInner is true
+PASS inner.SVGGlyphRefElement.isInner is true
+PASS inner.SVGGlyphRefElement.constructor.isInner is true
 PASS inner.SVGGradientElement.isInner is true
 PASS inner.SVGGradientElement.constructor.isInner is true
 PASS inner.SVGHKernElement.isInner is true
