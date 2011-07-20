@@ -2,9 +2,6 @@
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-// New test. Need platform-dependent baseline files.
-BUGWK59703 : fast/forms/input-appearance-number-rtl.html = FAIL
-
 BUGWK64002 : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
 
 SKIP BUGWK64002 : fast/forms/textfield-overflow-by-value-update.html = PASS FAIL

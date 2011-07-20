@@ -1,3 +1,11 @@
+2011-07-20  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed expectation fix.
+        Forgot to remove fast/forms/input-appearance-number-rtl.html form test_expectations.txt
+        in http://trac.webkit.org/changeset/91356 that added platform specific result for this test.
+
+        * platform/qt/test_expectations.txt:
+
 2011-07-20  Gabor Loki  <loki@webkit.org>
 
         [Qt] Skip a spinbutton test after r91353
