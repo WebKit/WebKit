@@ -306,7 +306,7 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
                 unsigned char b = SkMulDiv255Ceiling(srcPixel[2], alpha);
                 destRow[x] = SkPackARGB32(alpha, r, g, b);
             } else
-                destRow[x] = SkPackARGB32(srcPixel[3], srcPixel[0], srcPixel[1], srcPixel[2]);
+                destRow[x] = SkPackARGB32NoCheck(srcPixel[3], srcPixel[0], srcPixel[1], srcPixel[2]);
         }
         srcRow += srcBytesPerRow;
     }
