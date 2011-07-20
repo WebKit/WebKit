@@ -1,3 +1,17 @@
+2011-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Codeblock doesn't visit cached structures in global resolve instructions
+        https://bugs.webkit.org/show_bug.cgi?id=64889
+
+        Reviewed by Sam Weinig.
+
+        Visit the global resolve instructions.  This fixes a couple
+        of random crashes seen in the jquery tests when using the
+        interpreter.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+
 2011-07-20  James Robinson  <jamesr@chromium.org>
 
         Revert worker and WebKit2 runloops to use currentTime() for scheduling instead of the monotonic clock
