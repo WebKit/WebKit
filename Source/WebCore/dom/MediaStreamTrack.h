@@ -22,19 +22,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#ifndef MediaStreamTrack_h
+#define MediaStreamTrack_h
 
-    interface [
-        Conditional=MEDIA_STREAM|VIDEO_TRACK,
-        LegacyDefaultOptionalArguments,
-        GenerateNativeConverter,
-    ] MultipleTrackList : TrackList {
-        boolean isEnabled(in unsigned long index)
-            raises(DOMException);
-        void enable(in unsigned long index)
-            raises(DOMException);
-        void disable(in unsigned long index)
-            raises(DOMException);
-    };
+#if ENABLE(MEDIA_STREAM)
 
-}
+#include "PlatformString.h"
+#include "MediaStreamFrameController.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class MediaStreamTrack : public RefCounted<MediaStreamTrack>,
+                         public MediaStreamFrameController::GenericClient {
+public:
+    static PassRefPtr<MediaStreamTrack> create(const String& id, const String& kind, const String& label);
+    virtual ~MediaStreamTrack();
+
+    const String& kind() const;
+    const String& label() const;
+
+    bool enabled() const;
+    void setEnabled(bool enabled);
+
+private:
+    MediaStreamTrack(const String& id, const String& kind, const String& label);
+
+    String m_id;
+    String m_kind;
+    String m_label;
+    bool m_enabled;
+};
+
+typedef Vector<RefPtr<MediaStreamTrack> > TrackVector;
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // MediaStreamTrack_h

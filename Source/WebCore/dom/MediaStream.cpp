@@ -32,14 +32,15 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStream> MediaStream::create(MediaStreamFrameController* frameController, const String& label)
+PassRefPtr<MediaStream> MediaStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream)
 {
-    return adoptRef(new MediaStream(frameController, label));
+    return adoptRef(new MediaStream(frameController, label, tracks, isLocalMediaStream));
 }
 
-MediaStream::MediaStream(MediaStreamFrameController* frameController, const String& label, bool isLocalMediaStream)
+MediaStream::MediaStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream)
     : MediaStreamClient(frameController, label, isLocalMediaStream)
     , m_readyState(LIVE)
+    , m_tracks(tracks)
 {
 }
 

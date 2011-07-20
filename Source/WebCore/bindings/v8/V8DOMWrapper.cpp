@@ -47,7 +47,6 @@
 #include "V8EventListener.h"
 #include "V8EventListenerList.h"
 #include "V8EventSource.h"
-#include "V8ExclusiveTrackList.h"
 #include "V8FileReader.h"
 #include "V8FileWriter.h"
 #include "V8HTMLCollection.h"
@@ -61,7 +60,6 @@
 #include "V8Location.h"
 #include "V8MediaStream.h"
 #include "V8MessageChannel.h"
-#include "V8MultipleTrackList.h"
 #include "V8NamedNodeMap.h"
 #include "V8Node.h"
 #include "V8NodeFilterCondition.h"
@@ -71,7 +69,6 @@
 #include "V8SharedWorker.h"
 #include "V8SharedWorkerContext.h"
 #include "V8StyleSheet.h"
-#include "V8TrackList.h"
 #include "V8WebSocket.h"
 #include "V8Worker.h"
 #include "V8WorkerContext.h"
@@ -457,17 +454,6 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 
     if (MediaStream* stream = target->toMediaStream())
         return toV8(stream);
-#endif
-
-#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
-    if (MultipleTrackList* multipleTrackList = target->toMultipleTrackList())
-        return toV8(multipleTrackList);
-
-    if (ExclusiveTrackList* exclusiveTrackList = target->toExclusiveTrackList())
-        return toV8(exclusiveTrackList);
-
-    if (TrackList* trackList = target->toTrackList())
-        return toV8(trackList);
 #endif
 
     ASSERT(0);

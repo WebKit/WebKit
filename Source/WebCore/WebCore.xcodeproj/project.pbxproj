@@ -1176,6 +1176,14 @@
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
 		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
+		49C9F32313D574F90052600A /* MediaStreamTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F31D13D574F80052600A /* MediaStreamTrackList.h */; };
+		49C9F32413D574F90052600A /* MediaStreamTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F31E13D574F80052600A /* MediaStreamTrackList.cpp */; };
+		49C9F32613D574F90052600A /* MediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F32013D574F90052600A /* MediaStreamTrack.h */; };
+		49C9F32713D574F90052600A /* MediaStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F32113D574F90052600A /* MediaStreamTrack.cpp */; };
+		49C9F48E13D57D320052600A /* JSMediaStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */; };
+		49C9F48F13D57D320052600A /* JSMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */; };
+		49C9F49013D57D320052600A /* JSMediaStreamTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */; };
+		49C9F49113D57D320052600A /* JSMediaStreamTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
 		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */; };
@@ -4046,18 +4054,6 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
-		B12D233E13560282002A28D4 /* ExclusiveTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */; };
-		B12D233F13560282002A28D4 /* ExclusiveTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D233613560282002A28D4 /* ExclusiveTrackList.h */; };
-		B12D234113560282002A28D4 /* MultipleTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D233813560282002A28D4 /* MultipleTrackList.cpp */; };
-		B12D234213560282002A28D4 /* MultipleTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D233913560282002A28D4 /* MultipleTrackList.h */; };
-		B12D234413560282002A28D4 /* TrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D233B13560282002A28D4 /* TrackList.cpp */; };
-		B12D234513560282002A28D4 /* TrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D233C13560282002A28D4 /* TrackList.h */; };
-		B12D236513560330002A28D4 /* JSTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D23631356032F002A28D4 /* JSTrackList.cpp */; };
-		B12D236613560330002A28D4 /* JSTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D236413560330002A28D4 /* JSTrackList.h */; };
-		B12D23691356033F002A28D4 /* JSExclusiveTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D23671356033F002A28D4 /* JSExclusiveTrackList.cpp */; };
-		B12D236A1356033F002A28D4 /* JSExclusiveTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */; };
-		B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */; };
-		B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */; };
 		B14353D4138EA8ED00D53276 /* MediaStreamContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D0138EA8ED00D53276 /* MediaStreamContainer.h */; };
 		B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */; };
 		B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D2138EA8ED00D53276 /* MediaStreamList.h */; };
@@ -7733,6 +7729,16 @@
 		49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3D.h; sourceTree = "<group>"; };
 		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
+		49C9F31C13D574F80052600A /* MediaStreamTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrackList.idl; sourceTree = "<group>"; };
+		49C9F31D13D574F80052600A /* MediaStreamTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackList.h; sourceTree = "<group>"; };
+		49C9F31E13D574F80052600A /* MediaStreamTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackList.cpp; sourceTree = "<group>"; };
+		49C9F31F13D574F80052600A /* MediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrack.idl; sourceTree = "<group>"; };
+		49C9F32013D574F90052600A /* MediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrack.h; sourceTree = "<group>"; };
+		49C9F32113D574F90052600A /* MediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrack.cpp; sourceTree = "<group>"; };
+		49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrack.cpp; sourceTree = "<group>"; };
+		49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrack.h; sourceTree = "<group>"; };
+		49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackList.cpp; sourceTree = "<group>"; };
+		49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrackList.h; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
 		49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix3DTransformOperation.h; path = transforms/Matrix3DTransformOperation.h; sourceTree = "<group>"; };
 		49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerspectiveTransformOperation.cpp; path = transforms/PerspectiveTransformOperation.cpp; sourceTree = "<group>"; };
@@ -10531,21 +10537,6 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
-		B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusiveTrackList.cpp; sourceTree = "<group>"; };
-		B12D233613560282002A28D4 /* ExclusiveTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusiveTrackList.h; sourceTree = "<group>"; };
-		B12D233713560282002A28D4 /* ExclusiveTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExclusiveTrackList.idl; sourceTree = "<group>"; };
-		B12D233813560282002A28D4 /* MultipleTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultipleTrackList.cpp; sourceTree = "<group>"; };
-		B12D233913560282002A28D4 /* MultipleTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipleTrackList.h; sourceTree = "<group>"; };
-		B12D233A13560282002A28D4 /* MultipleTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MultipleTrackList.idl; sourceTree = "<group>"; };
-		B12D233B13560282002A28D4 /* TrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackList.cpp; sourceTree = "<group>"; };
-		B12D233C13560282002A28D4 /* TrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackList.h; sourceTree = "<group>"; };
-		B12D233D13560282002A28D4 /* TrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TrackList.idl; sourceTree = "<group>"; };
-		B12D23631356032F002A28D4 /* JSTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackList.cpp; sourceTree = "<group>"; };
-		B12D236413560330002A28D4 /* JSTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTrackList.h; sourceTree = "<group>"; };
-		B12D23671356033F002A28D4 /* JSExclusiveTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExclusiveTrackList.cpp; sourceTree = "<group>"; };
-		B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExclusiveTrackList.h; sourceTree = "<group>"; };
-		B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMultipleTrackList.cpp; sourceTree = "<group>"; };
-		B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMultipleTrackList.h; sourceTree = "<group>"; };
 		B14353D0138EA8ED00D53276 /* MediaStreamContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamContainer.h; sourceTree = "<group>"; };
 		B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamList.cpp; sourceTree = "<group>"; };
 		B14353D2138EA8ED00D53276 /* MediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamList.h; sourceTree = "<group>"; };
@@ -17236,8 +17227,6 @@
 				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
 				93F9B7720BA5FDDC00854064 /* JSEntityReference.cpp */,
 				93F9B7730BA5FDDC00854064 /* JSEntityReference.h */,
-				B12D23671356033F002A28D4 /* JSExclusiveTrackList.cpp */,
-				B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */,
 				FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */,
 				FE80DA600E9C4703000D6F75 /* JSGeolocation.h */,
 				FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */,
@@ -17248,8 +17237,10 @@
 				B1E545D813462B0B0092A545 /* JSMediaStream.h */,
 				B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */,
 				B14353F7138EA95B00D53276 /* JSMediaStreamList.h */,
-				B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */,
-				B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */,
+				49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */,
+				49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */,
+				49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */,
+				49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */,
 				BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */,
 				BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */,
 				14DC0D3509FED073007B0235 /* JSNode.cpp */,
@@ -17278,8 +17269,6 @@
 				49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
-				B12D23631356032F002A28D4 /* JSTrackList.cpp */,
-				B12D236413560330002A28D4 /* JSTrackList.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -19755,9 +19744,6 @@
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */,
 				A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */,
-				B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */,
-				B12D233613560282002A28D4 /* ExclusiveTrackList.h */,
-				B12D233713560282002A28D4 /* ExclusiveTrackList.idl */,
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
@@ -19778,6 +19764,12 @@
 				B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */,
 				B14353D2138EA8ED00D53276 /* MediaStreamList.h */,
 				B14353D3138EA8ED00D53276 /* MediaStreamList.idl */,
+				49C9F31F13D574F80052600A /* MediaStreamTrack.idl */,
+				49C9F32013D574F90052600A /* MediaStreamTrack.h */,
+				49C9F32113D574F90052600A /* MediaStreamTrack.cpp */,
+				49C9F31C13D574F80052600A /* MediaStreamTrackList.idl */,
+				49C9F31D13D574F80052600A /* MediaStreamTrackList.h */,
+				49C9F31E13D574F80052600A /* MediaStreamTrackList.cpp */,
 				E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */,
 				E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */,
 				E1ADECD00E76ADAB004A1A5E /* MessageChannel.idl */,
@@ -19794,9 +19786,6 @@
 				141B94E509EC4223000E9413 /* MouseEvent.idl */,
 				85031B310A44EFC700F992E0 /* MouseRelatedEvent.cpp */,
 				85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */,
-				B12D233813560282002A28D4 /* MultipleTrackList.cpp */,
-				B12D233913560282002A28D4 /* MultipleTrackList.h */,
-				B12D233A13560282002A28D4 /* MultipleTrackList.idl */,
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
@@ -19910,9 +19899,6 @@
 				933A142D0B7D188600A53FFD /* TextEvent.h */,
 				933A142C0B7D188600A53FFD /* TextEvent.idl */,
 				A77B419F12E675A90054343D /* TextEventInputType.h */,
-				B12D233B13560282002A28D4 /* TrackList.cpp */,
-				B12D233C13560282002A28D4 /* TrackList.h */,
-				B12D233D13560282002A28D4 /* TrackList.idl */,
 				5DB1BC6810715A6400EFAA49 /* TransformSource.h */,
 				5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */,
 				854FE72C0A2297BE0058D7AD /* Traversal.cpp */,
@@ -21267,7 +21253,6 @@
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */,
 				148AFDA50AF58360008CC700 /* ExceptionHandlers.h in Headers */,
-				B12D233F13560282002A28D4 /* ExclusiveTrackList.h in Headers */,
 				6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */,
 				6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */,
 				A75E8B890E1DE2D6007F2481 /* FEBlend.h in Headers */,
@@ -21780,7 +21765,6 @@
 				E0FEF372B37C53EAC1C1FBEE /* JSEventSource.h in Headers */,
 				BC60901F0E91B8EC000C68B5 /* JSEventTarget.h in Headers */,
 				3314ACEC10892086000F0E56 /* JSExceptionBase.h in Headers */,
-				B12D236A1356033F002A28D4 /* JSExclusiveTrackList.h in Headers */,
 				BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */,
 				893C47B81238A099002B3D86 /* JSFileCallback.h in Headers */,
 				898785B1122CA2A7003AABDA /* JSFileEntry.h in Headers */,
@@ -21916,7 +21900,6 @@
 				898785B7122CA2A7003AABDA /* JSMetadata.h in Headers */,
 				898785B9122CA2A7003AABDA /* JSMetadataCallback.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
-				B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
 				A9D247F80D757E3400FDF959 /* JSNavigator.h in Headers */,
@@ -22127,7 +22110,6 @@
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
 				BCEF45F60E687B5C001C1287 /* JSTextMetrics.h in Headers */,
 				E446141B0CD6826900FADA75 /* JSTimeRanges.h in Headers */,
-				B12D236613560330002A28D4 /* JSTrackList.h in Headers */,
 				1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */,
 				A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */,
 				49EECF0D105070C400099FAB /* JSUint16Array.h in Headers */,
@@ -22282,7 +22264,6 @@
 				935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */,
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
-				B12D234213560282002A28D4 /* MultipleTrackList.h in Headers */,
 				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
@@ -23065,7 +23046,6 @@
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
 				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
-				B12D234513560282002A28D4 /* TrackList.h in Headers */,
 				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
@@ -23237,6 +23217,10 @@
 				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
 				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
 				5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */,
+				49C9F32313D574F90052600A /* MediaStreamTrackList.h in Headers */,
+				49C9F32613D574F90052600A /* MediaStreamTrack.h in Headers */,
+				49C9F48F13D57D320052600A /* JSMediaStreamTrack.h in Headers */,
+				49C9F49113D57D320052600A /* JSMediaStreamTrackList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24200,7 +24184,6 @@
 				93831B570D087D6000E5C984 /* ExceptionCode.cpp in Sources */,
 				A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */,
 				148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */,
-				B12D233E13560282002A28D4 /* ExclusiveTrackList.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */,
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
@@ -24708,7 +24691,6 @@
 				BC275B8111C5D2B400C9206C /* JSEventSourceCustom.cpp in Sources */,
 				BC6090200E91B8EC000C68B5 /* JSEventTarget.cpp in Sources */,
 				3314ACEB10892086000F0E56 /* JSExceptionBase.cpp in Sources */,
-				B12D23691356033F002A28D4 /* JSExclusiveTrackList.cpp in Sources */,
 				BC00F0140E0A189500FD04E3 /* JSFile.cpp in Sources */,
 				893C47B71238A099002B3D86 /* JSFileCallback.cpp in Sources */,
 				898785B0122CA2A7003AABDA /* JSFileEntry.cpp in Sources */,
@@ -24878,7 +24860,6 @@
 				898785B6122CA2A7003AABDA /* JSMetadata.cpp in Sources */,
 				898785B8122CA2A7003AABDA /* JSMetadataCallback.cpp in Sources */,
 				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,
-				B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */,
 				65DF31FB09D1CC60000BE325 /* JSMutationEvent.cpp in Sources */,
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
 				BCD9C2630C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp in Sources */,
@@ -25107,7 +25088,6 @@
 				933A14B80B7D1D5200A53FFD /* JSTextEvent.cpp in Sources */,
 				BCEF45F50E687B5C001C1287 /* JSTextMetrics.cpp in Sources */,
 				E446141A0CD6826900FADA75 /* JSTimeRanges.cpp in Sources */,
-				B12D236513560330002A28D4 /* JSTrackList.cpp in Sources */,
 				1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */,
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
@@ -25267,7 +25247,6 @@
 				93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */,
 				85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
-				B12D234113560282002A28D4 /* MultipleTrackList.cpp in Sources */,
 				B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */,
 				85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */,
 				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
@@ -25871,7 +25850,6 @@
 				7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
-				B12D234413560282002A28D4 /* TrackList.cpp in Sources */,
 				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
 				494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */,
 				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
@@ -26023,6 +26001,10 @@
 				24D912B013CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp in Sources */,
 				24D912B713CA9A6900D21915 /* SVGAltGlyphItemElement.cpp in Sources */,
 				24D912BD13CA9A9700D21915 /* SVGGlyphRefElement.cpp in Sources */,
+				49C9F32413D574F90052600A /* MediaStreamTrackList.cpp in Sources */,
+				49C9F32713D574F90052600A /* MediaStreamTrack.cpp in Sources */,
+				49C9F48E13D57D320052600A /* JSMediaStreamTrack.cpp in Sources */,
+				49C9F49013D57D320052600A /* JSMediaStreamTrackList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

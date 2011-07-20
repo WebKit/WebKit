@@ -29,9 +29,7 @@
 
 #include "Event.h"
 #include "EventNames.h"
-#include "ExclusiveTrackList.h"
 #include "MediaStreamFrameController.h"
-#include "MultipleTrackList.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -59,20 +57,14 @@ public:
     Callback m_callback;
 };
 
-PassRefPtr<LocalMediaStream> LocalMediaStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
+PassRefPtr<LocalMediaStream> LocalMediaStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks)
 {
-    return adoptRef(new LocalMediaStream(frameController, label, audioTracks, videoTracks));
+    return adoptRef(new LocalMediaStream(frameController, label, tracks));
 }
 
-LocalMediaStream::LocalMediaStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
-    : MediaStream(frameController, label, true)
-    , m_audioTracks(audioTracks)
-    , m_videoTracks(videoTracks)
+LocalMediaStream::LocalMediaStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MediaStreamTrackList> tracks)
+    : MediaStream(frameController, label, tracks, true)
 {
-    ASSERT(m_audioTracks);
-    ASSERT(m_videoTracks);
-    m_audioTracks->associateStream(label);
-    m_videoTracks->associateStream(label);
 }
 
 LocalMediaStream::~LocalMediaStream()
@@ -94,20 +86,7 @@ void LocalMediaStream::detachEmbedder()
 
 void LocalMediaStream::streamEnded()
 {
-    m_audioTracks->clear();
-    m_videoTracks->clear();
-
     MediaStream::streamEnded();
-}
-
-PassRefPtr<MultipleTrackList> LocalMediaStream::audioTracks() const
-{
-    return m_audioTracks;
-}
-
-PassRefPtr<ExclusiveTrackList> LocalMediaStream::videoTracks() const
-{
-    return m_videoTracks;
 }
 
 void LocalMediaStream::stop()
@@ -116,8 +95,6 @@ void LocalMediaStream::stop()
         return;
 
     mediaStreamFrameController()->stopGeneratedStream(label());
-    m_audioTracks->clear();
-    m_videoTracks->clear();
 
     m_readyState = ENDED;
 

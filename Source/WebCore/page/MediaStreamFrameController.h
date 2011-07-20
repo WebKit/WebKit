@@ -37,12 +37,11 @@
 
 namespace WebCore {
 
-class ExclusiveTrackList;
 class Frame;
 class LocalMediaStream;
 class MediaStream;
 class MediaStreamController;
-class MultipleTrackList;
+class MediaStreamTrackList;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
 class Page;
@@ -76,7 +75,7 @@ public:
         virtual void detachEmbedder() { }
 
     protected:
-        // Used for objects that are optionally associated to the frame controller after construction, like the track lists.
+        // Used for objects that are optionally associated to the frame controller after construction, like the MediaStreamTracks.
         void associateFrameController(MediaStreamFrameController* frameController, const IdType& id)
         {
             ASSERT(!m_frameController && !m_clientId);
@@ -155,30 +154,22 @@ public:
     // Create a new generated stream asynchronously with the provided options.
     void generateStream(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
 
-    // Stop a generated stream.
+    // Stop a local media stream.
     void stopGeneratedStream(const String& streamLabel);
 
-    // Enable/disable an audio track in a generated stream.
-    void enableAudioTrack(const String& streamLabel, unsigned long index);
-    void disableAudioTrack(const String& streamLabel, unsigned long index);
-
-    // Select a video track in a generated stream.
-    void selectVideoTrack(const String& streamLabel, long index);
+    // Enable/disable an track.
+    void setMediaStreamTrackEnabled(const String& trackId, bool enabled);
 
     // --- Calls coming back from the controller. --- //
 
     // Report the generation of a new local stream.
-    void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
+    void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks);
 
     // Report a failure in the generation of a new stream.
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
 
     // Report the end of a stream for external reasons.
     void streamFailed(const String& streamLabel);
-
-    // Report the unexpected unavailability of a live media track.
-    void audioTrackFailed(const String& streamLabel, unsigned long index);
-    void videoTrackFailed(const String& streamLabel, unsigned long index);
 
 private:
     class Request;

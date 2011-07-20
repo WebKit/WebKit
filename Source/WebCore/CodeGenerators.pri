@@ -139,17 +139,17 @@ IDL_BINDINGS += \
     dom/EventException.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
-    dom/ExclusiveTrackList.idl \
     dom/HashChangeEvent.idl \
     dom/KeyboardEvent.idl \
     dom/LocalMediaStream.idl \
     dom/MediaStream.idl \
     dom/MediaStreamList.idl \
+    dom/MediaStreamTrack.idl \
+    dom/MediaStreamTrackList.idl \
     dom/MouseEvent.idl \
     dom/MessageChannel.idl \
     dom/MessageEvent.idl \
     dom/MessagePort.idl \
-    dom/MultipleTrackList.idl \
     dom/MutationEvent.idl \
     dom/NamedNodeMap.idl \
     dom/Node.idl \
@@ -171,7 +171,6 @@ IDL_BINDINGS += \
     dom/Touch.idl \
     dom/TouchEvent.idl \
     dom/TouchList.idl \
-    dom/TrackList.idl \
     dom/TreeWalker.idl \
     dom/UIEvent.idl \
     dom/WebKitAnimationEvent.idl \

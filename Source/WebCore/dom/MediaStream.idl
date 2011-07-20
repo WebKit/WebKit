@@ -23,12 +23,15 @@
  */
 
 module core {
+
     interface [
         LegacyDefaultOptionalArguments,
         Conditional=MEDIA_STREAM,
         EventTarget
     ] MediaStream {
         readonly attribute DOMString label;
+        readonly attribute MediaStreamTrackList tracks;
+
         // FIXME: implement the record method when MediaStreamRecorder is available.
 
         const unsigned short LIVE = 1;

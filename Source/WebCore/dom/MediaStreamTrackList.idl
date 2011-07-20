@@ -22,45 +22,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamClient_h
-#define MediaStreamClient_h
+module core {
 
-#if ENABLE(MEDIA_STREAM)
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=MEDIA_STREAM,
+        HasIndexGetter
+    ] MediaStreamTrackList {
+        MediaStreamTrack item(in [IsIndex] unsigned long index);
 
-#include <wtf/Forward.h>
+        readonly attribute unsigned long length;
+    };
 
-namespace WebCore {
-
-class SecurityOrigin;
-
-enum GenerateStreamOptionFlag {
-    GenerateStreamRequestAudio = 1,
-    GenerateStreamRequestVideoFacingUser = 1 << 1,
-    GenerateStreamRequestVideoFacingEnvironment = 1 << 2,
-};
-
-typedef unsigned GenerateStreamOptionFlags;
-
-class MediaStreamClient {
-public:
-    // Notify the embedder client about the page controller being destroyed.
-    virtual void mediaStreamDestroyed() = 0;
-
-    // Generate a new local stream.
-    virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
-
-    // Stop a generated stream.
-    virtual void stopGeneratedStream(const String& streamLabel) = 0;
-
-    // Enable/disable an track.
-    virtual void setMediaStreamTrackEnabled(const String& trackId, bool enabled) = 0;
-
-protected:
-    virtual ~MediaStreamClient() { }
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamClient_h
+}

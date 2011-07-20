@@ -25,21 +25,11 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
-        Conditional=MEDIA_STREAM|VIDEO_TRACK,
-        EventTarget
-    ] TrackList {
-        readonly attribute unsigned long length;
-        DOMString getID(in unsigned long index)
-            raises(DOMException);
-        DOMString getKind(in unsigned long index)
-            raises(DOMException);
-        DOMString getLabel(in unsigned long index)
-            raises(DOMException);
-        DOMString getLanguage(in unsigned long index)
-            raises(DOMException);
-
-        attribute EventListener onchange;
+        Conditional=MEDIA_STREAM,
+    ] MediaStreamTrack {
+      readonly attribute DOMString kind;
+      readonly attribute DOMString label;
+               attribute boolean enabled;
     };
 
 }

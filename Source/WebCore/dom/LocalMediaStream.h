@@ -32,18 +32,12 @@
 
 namespace WebCore {
 
-class ExclusiveTrackList;
-class MultipleTrackList;
-
 class LocalMediaStream : public MediaStream {
 public:
-    static PassRefPtr<LocalMediaStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
+    static PassRefPtr<LocalMediaStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks);
     virtual ~LocalMediaStream();
 
     void stop();
-
-    PassRefPtr<MultipleTrackList> audioTracks() const;
-    PassRefPtr<ExclusiveTrackList> videoTracks() const;
 
     // MediaStreamFrameController::StreamClient implementation.
     virtual void detachEmbedder();
@@ -52,15 +46,15 @@ public:
     // EventTarget.
     virtual LocalMediaStream* toLocalMediaStream();
 
+protected:
+    virtual bool isLocalMediaStream() const { return true; }
+
 private:
-    LocalMediaStream(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
+    LocalMediaStream(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks);
     class DispatchUpdateTask;
     friend class DispatchUpdateTask;
 
     void onStop();
-
-    RefPtr<MultipleTrackList> m_audioTracks;
-    RefPtr<ExclusiveTrackList> m_videoTracks;
 };
 
 } // namespace WebCore

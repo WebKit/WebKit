@@ -47,7 +47,6 @@ namespace WebCore {
     class Event;
     class EventListener;
     class EventSource;
-    class ExclusiveTrackList;
     class FileReader;
     class FileWriter;
     class IDBDatabase;
@@ -58,14 +57,12 @@ namespace WebCore {
     class LocalMediaStream;
     class MediaStream;
     class MessagePort;
-    class MultipleTrackList;
     class Node;
     class Notification;
     class SVGElementInstance;
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerContext;
-    class TrackList;
     class WebSocket;
     class Worker;
     class XMLHttpRequest;
@@ -155,12 +152,6 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         virtual MediaStream* toMediaStream();
         virtual LocalMediaStream* toLocalMediaStream();
-#endif
-
-#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
-        virtual TrackList* toTrackList();
-        virtual MultipleTrackList* toMultipleTrackList();
-        virtual ExclusiveTrackList* toExclusiveTrackList();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

@@ -22,44 +22,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MultipleTrackList_h
-#define MultipleTrackList_h
+#ifndef MediaStreamTrackList_h
+#define MediaStreamTrackList_h
 
-#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
+#if ENABLE(MEDIA_STREAM)
 
-#include "TrackList.h"
-#include <wtf/Vector.h>
+#include "MediaStreamTrack.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-typedef Vector<bool> EnabledTracks;
-
-class MultipleTrackList : public TrackList {
+class MediaStreamTrackList : public RefCounted<MediaStreamTrackList> {
 public:
-    static PassRefPtr<MultipleTrackList> create(const TrackVector&, const EnabledTracks&);
-    virtual ~MultipleTrackList();
+    static PassRefPtr<MediaStreamTrackList> create(const TrackVector& m_tracks);
+    virtual ~MediaStreamTrackList();
 
-    bool isEnabled(unsigned long index, ExceptionCode&) const;
-    void enable(unsigned long index, ExceptionCode&);
-    void disable(unsigned long index, ExceptionCode&);
+    // DOM methods & attributes for MediaStreamTrackList
+    unsigned length() const;
+    PassRefPtr<MediaStreamTrack> item(unsigned index) const;
 
-    virtual void clear();
-
-#if ENABLE(MEDIA_STREAM)
-    virtual void trackFailed(unsigned long index);
-#endif
-
-    // EventTarget implementation.
-    virtual MultipleTrackList* toMultipleTrackList();
+    void associateStream(const String& label) { m_associatedStreamLabel = label; }
 
 private:
-    MultipleTrackList(const TrackVector&, const EnabledTracks&);
+    MediaStreamTrackList(const TrackVector& m_tracks);
 
-    Vector<bool> m_isEnabled;
+    TrackVector m_tracks;
+    String m_associatedStreamLabel;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
+#endif // ENABLE(MEDIA_STREAM)
 
-#endif // MultipleTrackList_h
+#endif // MediaStreamTrackList_h

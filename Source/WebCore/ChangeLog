@@ -1,3 +1,75 @@
+2011-07-20  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update the tracklists to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=64791
+
+        Reviewed by Tony Gentilcore.
+
+        The test harness will be forthcoming very soon now, introducing tests for this.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/DOMAllInOne.cpp:
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * dom/ExclusiveTrackList.cpp: Removed.
+        * dom/LocalMediaStream.cpp:
+        (WebCore::LocalMediaStream::create):
+        (WebCore::LocalMediaStream::LocalMediaStream):
+        (WebCore::LocalMediaStream::streamEnded):
+        (WebCore::LocalMediaStream::stop):
+        * dom/LocalMediaStream.h:
+        (WebCore::LocalMediaStream::isLocalMediaStream):
+        * dom/LocalMediaStream.idl:
+        * dom/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        * dom/MediaStream.h:
+        (WebCore::MediaStream::tracks):
+        * dom/MediaStream.idl:
+        * dom/MediaStreamTrack.cpp: Copied from Source/WebCore/dom/ExclusiveTrackList.h.
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::~MediaStreamTrack):
+        (WebCore::MediaStreamTrack::kind):
+        (WebCore::MediaStreamTrack::label):
+        (WebCore::MediaStreamTrack::enabled):
+        (WebCore::MediaStreamTrack::setEnabled):
+        * dom/MediaStreamTrack.h: Renamed from Source/WebCore/dom/MultipleTrackList.h.
+        * dom/MediaStreamTrack.idl: Renamed from Source/WebCore/dom/ExclusiveTrackList.idl.
+        * dom/MediaStreamTrackList.cpp: Renamed from Source/WebCore/dom/ExclusiveTrackList.h.
+        (WebCore::MediaStreamTrackList::create):
+        (WebCore::MediaStreamTrackList::MediaStreamTrackList):
+        (WebCore::MediaStreamTrackList::~MediaStreamTrackList):
+        (WebCore::MediaStreamTrackList::length):
+        (WebCore::MediaStreamTrackList::item):
+        * dom/MediaStreamTrackList.h: Renamed from Source/WebCore/dom/TrackList.idl.
+        (WebCore::MediaStreamTrackList::associateStream):
+        * dom/MediaStreamTrackList.idl: Renamed from Source/WebCore/dom/MultipleTrackList.idl.
+        * dom/MultipleTrackList.cpp: Removed.
+        * dom/TrackList.cpp: Removed.
+        * dom/TrackList.h: Removed.
+        * page/MediaStreamClient.h:
+        * page/MediaStreamController.cpp:
+        (WebCore::MediaStreamController::setMediaStreamTrackEnabled):
+        (WebCore::MediaStreamController::streamGenerated):
+        * page/MediaStreamController.h:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::setMediaStreamTrackEnabled):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        * page/MediaStreamFrameController.h:
+
 2011-07-20  Andrew Wason  <rectalogic@rectalogic.com>
 
         [Qt] Make OpenGL symbol resolver transparent

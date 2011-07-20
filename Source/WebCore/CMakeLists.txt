@@ -155,14 +155,12 @@ SET(WebCore_IDL_FILES
     dom/ErrorEvent.idl
     dom/EventException.idl
     dom/Event.idl
-    dom/ExclusiveTrackList.idl
     dom/HashChangeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
     dom/MessagePort.idl
     dom/MouseEvent.idl
-    dom/MultipleTrackList.idl
     dom/MutationEvent.idl
     dom/NamedNodeMap.idl
     dom/NodeFilter.idl
@@ -182,7 +180,6 @@ SET(WebCore_IDL_FILES
     dom/TouchEvent.idl
     dom/Touch.idl
     dom/TouchList.idl
-    dom/TrackList.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
@@ -541,7 +538,6 @@ SET(WebCore_SOURCES
     dom/ExceptionBase.cpp
     dom/ExceptionCode.cpp
     dom/ExceptionCodePlaceholder.cpp
-    dom/ExclusiveTrackList.cpp
     dom/IconURL.cpp
     dom/KeyboardEvent.cpp
     dom/MessageChannel.cpp
@@ -550,7 +546,6 @@ SET(WebCore_SOURCES
     dom/MessagePort.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
-    dom/MultipleTrackList.cpp
     dom/MutationEvent.cpp
     dom/NamedNodeMap.cpp
     dom/NameNodeList.cpp
@@ -594,7 +589,6 @@ SET(WebCore_SOURCES
     dom/Touch.cpp
     dom/TouchEvent.cpp
     dom/TouchList.cpp
-    dom/TrackList.cpp
     dom/TransformSourceLibxslt.cpp
     dom/Traversal.cpp
     dom/TreeScope.cpp
@@ -2022,16 +2016,20 @@ IF (ENABLE_MEDIA_STREAM)
         dom/LocalMediaStream.cpp
         dom/MediaStream.cpp
         dom/MediaStreamList.cpp
+        dom/MediaStreamTrack.cpp
+        dom/MediaStreamTrackList.cpp
         dom/StreamEvent.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
     )
 
     LIST(APPEND WebCore_IDL_FILES
-        dom/GeneratedStream.idl
-        dom/Stream.idl
+        dom/LocalMediaStream.idl
+        dom/MediaStream.idl
+        dom/MediaStreamList.idl
+        dom/MediaStreamTrack.idl
+        dom/MediaStreamTrackList.idl
         dom/StreamEvent.idl
-        dom/StreamList.idl
         page/NavigatorUserMediaError.idl
     )
 ENDIF ()

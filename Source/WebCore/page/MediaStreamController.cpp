@@ -27,9 +27,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ExclusiveTrackList.h"
 #include "MediaStreamFrameController.h"
-#include "MultipleTrackList.h"
+#include "MediaStreamTrackList.h"
 #include "SecurityOrigin.h"
 #include <wtf/Vector.h>
 
@@ -119,22 +118,12 @@ void MediaStreamController::stopGeneratedStream(const String& streamLabel)
     m_client->stopGeneratedStream(streamLabel);
 }
 
-void MediaStreamController::enableAudioTrack(const String& streamLabel, unsigned long index)
+void MediaStreamController::setMediaStreamTrackEnabled(const String& trackId, bool enabled)
 {
-    m_client->enableAudioTrack(streamLabel, index);
+    m_client->setMediaStreamTrackEnabled(trackId, enabled);
 }
 
-void MediaStreamController::disableAudioTrack(const String& streamLabel, unsigned long index)
-{
-    m_client->disableAudioTrack(streamLabel, index);
-}
-
-void MediaStreamController::selectVideoTrack(const String& streamLabel, long index)
-{
-    m_client->selectVideoTrack(streamLabel, index);
-}
-
-void MediaStreamController::streamGenerated(int controllerRequestId, const String& streamLabel, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
+void MediaStreamController::streamGenerated(int controllerRequestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks)
 {
     // Don't assert since the frame controller can have been destroyed while the request reply was coming back.
     if (m_requests.contains(controllerRequestId)) {
@@ -142,7 +131,7 @@ void MediaStreamController::streamGenerated(int controllerRequestId, const Strin
         registerStream(streamLabel, request.frameController());
         m_requests.remove(controllerRequestId);
         ASSERT(request.frameController());
-        request.frameController()->streamGenerated(request.localId(), streamLabel, audioTracks, videoTracks);
+        request.frameController()->streamGenerated(request.localId(), streamLabel, tracks);
     }
 }
 
@@ -161,20 +150,6 @@ void MediaStreamController::streamFailed(const String& streamLabel)
     // Don't assert since the frame controller can have been destroyed by the time this is called.
     if (m_streams.contains(streamLabel))
         m_streams.get(streamLabel)->streamFailed(streamLabel);
-}
-
-void MediaStreamController::audioTrackFailed(const String& streamLabel, unsigned long index)
-{
-    // Don't assert since the frame controller can have been destroyed by the time this is called.
-    if (m_streams.contains(streamLabel))
-        m_streams.get(streamLabel)->audioTrackFailed(streamLabel, index);
-}
-
-void MediaStreamController::videoTrackFailed(const String& streamLabel, unsigned long index)
-{
-    // Don't assert since the frame controller can have been destroyed by the time this is called.
-    if (m_streams.contains(streamLabel))
-        m_streams.get(streamLabel)->videoTrackFailed(streamLabel, index);
 }
 
 } // namespace WebCore

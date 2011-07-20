@@ -105,12 +105,6 @@
 #include "MediaStream.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
-#include "ExclusiveTrackList.h"
-#include "MultipleTrackList.h"
-#include "TrackList.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -206,17 +200,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 
     if (MediaStream* stream = target->toMediaStream())
         return toJS(exec, globalObject, stream);
-#endif
-
-#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
-    if (MultipleTrackList* multipleTrackList = target->toMultipleTrackList())
-        return toJS(exec, globalObject, multipleTrackList);
-
-    if (ExclusiveTrackList* exclusiveTrackList = target->toExclusiveTrackList())
-        return toJS(exec, globalObject, exclusiveTrackList);
-
-    if (TrackList* trackList = target->toTrackList())
-        return toJS(exec, globalObject, trackList);
 #endif
 
     ASSERT_NOT_REACHED();

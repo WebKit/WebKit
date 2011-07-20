@@ -22,43 +22,53 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExclusiveTrackList_h
-#define ExclusiveTrackList_h
+#include "config.h"
+#include "MediaStreamTrack.h"
 
-#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
-
-#include "TrackList.h"
-#include <wtf/Vector.h>
+#if ENABLE(MEDIA_STREAM)
 
 namespace WebCore {
 
-class ExclusiveTrackList : public TrackList {
-public:
-    static const long NoSelection = -1;
+PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(const String& id, const String& kind, const String& label)
+{
+    return adoptRef(new MediaStreamTrack(id, kind, label));
+}
 
-    static PassRefPtr<ExclusiveTrackList> create(const TrackVector&, long selectedIndex = NoSelection);
-    virtual ~ExclusiveTrackList();
+MediaStreamTrack::MediaStreamTrack(const String& id, const String& kind, const String& label)
+    : m_id(id)
+    , m_kind(kind)
+    , m_label(label)
+    , m_enabled(true)
+{
+}
 
-    int selectedIndex() const { return m_selectedIndex; }
-    void select(long index, ExceptionCode&);
+MediaStreamTrack::~MediaStreamTrack()
+{
+}
 
-    virtual void clear();
+const String& MediaStreamTrack::kind() const
+{
+    return m_kind;
+}
 
-#if ENABLE(MEDIA_STREAM)
-    virtual void trackFailed(unsigned long index);
-#endif
+const String& MediaStreamTrack::label() const
+{
+    return m_label;
+}
 
-    // EventTarget implementation.
-    virtual ExclusiveTrackList* toExclusiveTrackList();
+bool MediaStreamTrack::enabled() const
+{
+    return m_enabled;
+}
 
-private:
-    ExclusiveTrackList(const TrackVector&, long selectedIndex);
+void MediaStreamTrack::setEnabled(bool enabled)
+{
+    m_enabled = enabled;
 
-    long m_selectedIndex;
-};
+    if (mediaStreamFrameController())
+        mediaStreamFrameController()->setMediaStreamTrackEnabled(m_id, enabled);
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
-
-#endif // ExclusiveTrackList_h
+#endif // ENABLE(MEDIA_STREAM)

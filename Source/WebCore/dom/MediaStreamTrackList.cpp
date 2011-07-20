@@ -22,19 +22,40 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#include "config.h"
+#include "MediaStreamTrackList.h"
 
-    interface [
-        Conditional=MEDIA_STREAM|VIDEO_TRACK,
-        LegacyDefaultOptionalArguments,
-        GenerateNativeConverter,
-    ] ExclusiveTrackList : TrackList {
-        // FIXME: the spec says unsigned long, but -1 is used when nothing is selected.
-        // A bug has been already submitted to the spec draft.
-        // http://www.w3.org/Bugs/Public/show_bug.cgi?id=12600
-        readonly attribute long selectedIndex;
-        void select(in long index)
-            raises(DOMException);
-    };
+#if ENABLE(MEDIA_STREAM)
 
+namespace WebCore {
+
+PassRefPtr<MediaStreamTrackList> MediaStreamTrackList::create(const TrackVector& tracks)
+{
+    return adoptRef(new MediaStreamTrackList(tracks));
 }
+
+MediaStreamTrackList::MediaStreamTrackList(const TrackVector& tracks)
+    : m_tracks(tracks)
+{
+}
+
+MediaStreamTrackList::~MediaStreamTrackList()
+{
+}
+
+unsigned MediaStreamTrackList::length() const
+{
+    return m_tracks.size();
+}
+
+PassRefPtr<MediaStreamTrack> MediaStreamTrackList::item(unsigned index) const
+{
+    if (index < m_tracks.size())
+        return m_tracks.at(index);
+    else
+        return PassRefPtr<MediaStreamTrack>();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

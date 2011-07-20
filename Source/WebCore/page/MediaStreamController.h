@@ -36,10 +36,9 @@
 
 namespace WebCore {
 
-class ExclusiveTrackList;
 class MediaStreamClient;
 class MediaStreamFrameController;
-class MultipleTrackList;
+class MediaStreamTrackList;
 class SecurityOrigin;
 
 class MediaStreamController {
@@ -53,15 +52,13 @@ public:
 
     void generateStream(MediaStreamFrameController*, int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>);
     void stopGeneratedStream(const String& streamLabel);
-    void enableAudioTrack(const String& streamLabel, unsigned long index);
-    void disableAudioTrack(const String& streamLabel, unsigned long index);
-    void selectVideoTrack(const String& streamLabel, long index);
 
-    void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
+    // Enable/disable an track.
+    void setMediaStreamTrackEnabled(const String& trackId, bool enabled);
+
+    void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks);
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
     void streamFailed(const String& streamLabel);
-    void audioTrackFailed(const String& streamLabel, unsigned long index);
-    void videoTrackFailed(const String& streamLabel, unsigned long index);
 
 private:
     int registerRequest(int localRequestId, MediaStreamFrameController*);

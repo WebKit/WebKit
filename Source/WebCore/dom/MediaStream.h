@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "MediaStreamFrameController.h"
+#include "MediaStreamTrackList.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -47,15 +48,15 @@ public:
         ENDED = 2
     };
 
-    static PassRefPtr<MediaStream> create(MediaStreamFrameController*, const String& label);
+    static PassRefPtr<MediaStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream = false);
     virtual ~MediaStream();
-
-    // FIXME: implement the record method when MediaStreamRecorder is available.
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
     unsigned short readyState() const { return m_readyState; }
     const String& label() const { return clientId(); }
+
+    PassRefPtr<MediaStreamTrackList> tracks() { return m_tracks; }
 
     // MediaStreamFrameController::MediaStreamClient implementation.
     virtual void streamEnded();
@@ -68,7 +69,7 @@ public:
     using RefCounted<MediaStream>::deref;
 
 protected:
-    MediaStream(MediaStreamFrameController*, const String& label, bool isLocalMediaStream = false);
+    MediaStream(MediaStreamFrameController*, const String& label, PassRefPtr<MediaStreamTrackList> tracks, bool isLocalMediaStream);
 
     // EventTarget implementation.
     virtual EventTargetData* eventTargetData();
@@ -84,6 +85,8 @@ private:
     virtual void derefEventTarget() { deref(); }
 
     EventTargetData m_eventTargetData;
+
+    RefPtr<MediaStreamTrackList> m_tracks;
 };
 
 } // namespace WebCore

@@ -23,16 +23,13 @@
  */
 
 module core {
+
     interface [
         Conditional=MEDIA_STREAM,
         GenerateNativeConverter,
         EventTarget
     ] LocalMediaStream : MediaStream {
         void stop();
-
-        // Track control.
-        readonly attribute MultipleTrackList audioTracks;
-        readonly attribute ExclusiveTrackList videoTracks;
     };
 
 }

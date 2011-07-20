@@ -160,8 +160,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEvent.h \
 	DerivedSources/WebCore/JSEventSource.cpp \
 	DerivedSources/WebCore/JSEventSource.h \
-	DerivedSources/WebCore/JSExclusiveTrackList.cpp \
-	DerivedSources/WebCore/JSExclusiveTrackList.h \
 	DerivedSources/WebCore/JSFile.cpp \
 	DerivedSources/WebCore/JSFileError.cpp \
 	DerivedSources/WebCore/JSFileError.h \
@@ -359,6 +357,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaStream.h \
 	DerivedSources/WebCore/JSMediaStreamList.cpp \
 	DerivedSources/WebCore/JSMediaStreamList.h \
+	DerivedSources/WebCore/JSMediaStreamTrack.cpp \
+	DerivedSources/WebCore/JSMediaStreamTrack.h \
+	DerivedSources/WebCore/JSMediaStreamTrackList.cpp \
+	DerivedSources/WebCore/JSMediaStreamTrackList.h \
 	DerivedSources/WebCore/JSMediaQueryList.cpp \
 	DerivedSources/WebCore/JSMediaQueryList.h \
 	DerivedSources/WebCore/JSMemoryInfo.cpp \
@@ -371,8 +373,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMessagePort.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
-	DerivedSources/WebCore/JSMultipleTrackList.cpp \
-	DerivedSources/WebCore/JSMultipleTrackList.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
 	DerivedSources/WebCore/JSNamedNodeMap.cpp \
@@ -487,8 +487,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTouch.h \
 	DerivedSources/WebCore/JSTouchList.cpp \
 	DerivedSources/WebCore/JSTouchList.h \
-	DerivedSources/WebCore/JSTrackList.cpp \
-	DerivedSources/WebCore/JSTrackList.h \
 	DerivedSources/WebCore/JSTreeWalker.cpp \
 	DerivedSources/WebCore/JSTreeWalker.h \
 	DerivedSources/WebCore/JSUIEvent.cpp \
@@ -1176,8 +1174,6 @@ webcore_sources += \
 	Source/WebCore/dom/ExceptionCode.h \
 	Source/WebCore/dom/ExceptionCodePlaceholder.cpp \
 	Source/WebCore/dom/ExceptionCodePlaceholder.h \
-	Source/WebCore/dom/ExclusiveTrackList.cpp \
-	Source/WebCore/dom/ExclusiveTrackList.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \
 	Source/WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
 	Source/WebCore/dom/ExceptionCodePlaceholder.h \
@@ -1194,6 +1190,10 @@ webcore_sources += \
 	Source/WebCore/dom/MediaStreamContainer.h \
 	Source/WebCore/dom/MediaStreamList.cpp \
 	Source/WebCore/dom/MediaStreamList.h \
+	Source/WebCore/dom/MediaStreamTrack.cpp \
+	Source/WebCore/dom/MediaStreamTrack.h \
+	Source/WebCore/dom/MediaStreamTrackList.cpp \
+	Source/WebCore/dom/MediaStreamTrackList.h \
 	Source/WebCore/dom/MessageChannel.cpp \
 	Source/WebCore/dom/MessageChannel.h \
 	Source/WebCore/dom/MessageEvent.cpp \
@@ -1206,8 +1206,6 @@ webcore_sources += \
 	Source/WebCore/dom/MouseEvent.h \
 	Source/WebCore/dom/MouseRelatedEvent.cpp \
 	Source/WebCore/dom/MouseRelatedEvent.h \
-	Source/WebCore/dom/MultipleTrackList.cpp \
-	Source/WebCore/dom/MultipleTrackList.h \
 	Source/WebCore/dom/MutationEvent.cpp \
 	Source/WebCore/dom/MutationEvent.h \
 	Source/WebCore/dom/NamedNodeMap.cpp \
@@ -1300,8 +1298,6 @@ webcore_sources += \
 	Source/WebCore/dom/TextEventInputType.h \
 	Source/WebCore/dom/Text.h \
 	Source/WebCore/dom/TouchList.h \
-	Source/WebCore/dom/TrackList.cpp \
-	Source/WebCore/dom/TrackList.h \
 	Source/WebCore/dom/TransformSource.h \
 	Source/WebCore/dom/TransformSourceLibxslt.cpp \
 	Source/WebCore/dom/Traversal.cpp \
