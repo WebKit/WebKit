@@ -1,3 +1,19 @@
+2011-07-20  James Robinson  <jamesr@chromium.org>
+
+        Revert worker and WebKit2 runloops to use currentTime() for scheduling instead of the monotonic clock
+        https://bugs.webkit.org/show_bug.cgi?id=64841
+
+        Reviewed by Mark Rowe.
+
+        http://trac.webkit.org/changeset/91206 converted most of WebKit's deferred work scheduling to using the
+        monotonic clock instead of WTF::currentTime().  This broke many plugin tests on WebKit2 for reasons that are
+        unclear.  This reverts everything except for WebCore::ThreadTimers back to the previous behavior.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+        (CoreIPC::Connection::waitForSyncReply):
+        * Platform/RunLoop.h:
+
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r91307.

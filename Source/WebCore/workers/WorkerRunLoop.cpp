@@ -53,7 +53,7 @@ public:
 
     // SharedTimer interface.
     virtual void setFiredFunction(void (*function)()) { m_sharedTimerFunction = function; }
-    virtual void setFireInterval(double interval) { m_nextFireTime = interval + monotonicallyIncreasingTime(); }
+    virtual void setFireInterval(double interval) { m_nextFireTime = interval + currentTime(); }
     virtual void stop() { m_nextFireTime = 0; }
 
     bool isActive() { return m_sharedTimerFunction && m_nextFireTime; }

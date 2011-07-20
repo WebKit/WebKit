@@ -255,7 +255,7 @@ void ThreadCondition::wait(Mutex& mutex)
 
 bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    double currentTime = monotonicallyIncreasingTime();
+    double currentTime = WTF::currentTime();
 
     // Time is in the past - return immediately.
     if (absoluteTime < currentTime)

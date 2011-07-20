@@ -344,7 +344,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
         }
     }
     
-    double absoluteTime = monotonicallyIncreasingTime() + timeout;
+    double absoluteTime = currentTime() + timeout;
     
     std::pair<unsigned, uint64_t> messageAndDestination(std::make_pair(messageID.toInt(), destinationID));
     
@@ -435,7 +435,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
     if (timeout == NoTimeout)
         timeout = 1e10;
 
-    double absoluteTime = monotonicallyIncreasingTime() + timeout;
+    double absoluteTime = currentTime() + timeout;
 
     bool timedOut = false;
     while (!timedOut) {
