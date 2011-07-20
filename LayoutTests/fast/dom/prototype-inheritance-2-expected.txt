@@ -290,7 +290,9 @@ Never found Option
 Never found ProcessingInstruction
 Never found Range
 Never found SVGAElement
+Never found SVGAltGlyphDefElement
 Never found SVGAltGlyphElement
+Never found SVGAltGlyphItemElement
 Never found SVGAngle
 Never found SVGAnimateColorElement
 Never found SVGAnimateElement
@@ -355,6 +357,7 @@ Never found SVGFontFaceUriElement
 Never found SVGForeignObjectElement
 Never found SVGGElement
 Never found SVGGlyphElement
+Never found SVGGlyphRefElement
 Never found SVGGradientElement
 Never found SVGHKernElement
 Never found SVGImageElement

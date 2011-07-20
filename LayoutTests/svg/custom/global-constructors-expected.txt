@@ -93,9 +93,9 @@ PASS SVGTSpanElement.toString() is '[object SVGTSpanElementConstructor]'
 PASS SVGTRefElement.toString() is '[object SVGTRefElementConstructor]'
 PASS SVGTextPathElement.toString() is '[object SVGTextPathElementConstructor]'
 PASS SVGAltGlyphElement.toString() is '[object SVGAltGlyphElementConstructor]'
-FAIL SVGAltGlyphDefElement.toString() should be [object SVGAltGlyphDefElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGAltGlyphDefElement
-FAIL SVGAltGlyphItemElement.toString() should be [object SVGAltGlyphItemElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGAltGlyphItemElement
-FAIL SVGGlyphRefElement.toString() should be [object SVGGlyphRefElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGGlyphRefElement
+PASS SVGAltGlyphDefElement.toString() is '[object SVGAltGlyphDefElementConstructor]'
+PASS SVGAltGlyphItemElement.toString() is '[object SVGAltGlyphItemElementConstructor]'
+PASS SVGGlyphRefElement.toString() is '[object SVGGlyphRefElementConstructor]'
 PASS SVGPaint.toString() is '[object SVGPaintConstructor]'
 PASS SVGMarkerElement.toString() is '[object SVGMarkerElementConstructor]'
 FAIL SVGColorProfileElement.toString() should be [object SVGColorProfileElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGColorProfileElement
