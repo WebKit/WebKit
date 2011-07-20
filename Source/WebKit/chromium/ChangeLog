@@ -1,3 +1,9 @@
+2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-07-19  Dominic Mazzoni  <dmazzoni@google.com>
 
         Adds some methods to retrieve accessible information from tables and
