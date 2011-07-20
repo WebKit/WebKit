@@ -1,3 +1,10 @@
+2011-07-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Build fix after r91384. Add an ASSERT_UNSED for the timer.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResourcesTimerFired):
+
 2011-07-20  Tony Chang  <tony@chromium.org>
 
         Stale pointer due to floats not removed (flexible box display)

@@ -575,6 +575,8 @@ void CachedResourceLoader::loadDone()
 // remove it from the map.
 void CachedResourceLoader::garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>* timer)
 {
+    ASSERT_UNUSED(timer, timer == &m_garbageCollectDocumentResourcesTimer);
+
     Vector<String, 10> toDelete;
 
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != m_documentResources.end(); ++it) {
