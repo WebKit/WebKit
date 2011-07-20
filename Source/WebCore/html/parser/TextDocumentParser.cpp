@@ -63,7 +63,7 @@ void TextDocumentParser::insertFakePreElement()
     RefPtr<Attribute> styleAttribute = Attribute::createMapped("style", "word-wrap: break-word; white-space: pre-wrap;");
     RefPtr<NamedNodeMap> attributes = NamedNodeMap::create();
     attributes->insertAttribute(styleAttribute.release(), false);
-    AtomicHTMLToken fakePre(HTMLToken::StartTag, preTag.localName(), attributes.release());
+    AtomicHTMLToken fakePre(HTMLTokenTypes::StartTag, preTag.localName(), attributes.release());
 
     treeBuilder()->constructTreeFromAtomicToken(fakePre);
     m_haveInsertedFakePreElement = true;

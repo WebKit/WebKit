@@ -34,7 +34,7 @@ HTMLSourceTracker::HTMLSourceTracker()
 
 void HTMLSourceTracker::start(const HTMLInputStream& input, HTMLToken& token)
 {
-    m_sourceFromPreviousSegments = token.type() == HTMLToken::Uninitialized ? String() : m_sourceFromPreviousSegments + m_source.toString();
+    m_sourceFromPreviousSegments = token.type() == HTMLTokenTypes::Uninitialized ? String() : m_sourceFromPreviousSegments + m_source.toString();
     m_source = input.current();
     token.setBaseOffset(input.current().numberOfCharactersConsumed() - m_sourceFromPreviousSegments.length());
 }
@@ -48,7 +48,7 @@ void HTMLSourceTracker::end(const HTMLInputStream& input, HTMLToken& token)
 
 String HTMLSourceTracker::sourceForToken(const HTMLToken& token)
 {
-    if (token.type() == HTMLToken::EndOfFile)
+    if (token.type() == HTMLTokenTypes::EndOfFile)
         return String(); // Hides the null character we use to mark the end of file.
 
     if (!m_cachedSourceForToken.isEmpty())

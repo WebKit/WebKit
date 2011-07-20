@@ -174,15 +174,15 @@ void HTMLPreloadScanner::scan()
 void HTMLPreloadScanner::processToken()
 {
     if (m_inStyle) {
-        if (m_token.type() == HTMLToken::Character)
+        if (m_token.type() == HTMLTokenTypes::Character)
             m_cssScanner.scan(m_token, scanningBody());
-        else if (m_token.type() == HTMLToken::EndTag) {
+        else if (m_token.type() == HTMLTokenTypes::EndTag) {
             m_inStyle = false;
             m_cssScanner.reset();
         }
     }
 
-    if (m_token.type() != HTMLToken::StartTag)
+    if (m_token.type() != HTMLTokenTypes::StartTag)
         return;
 
     PreloadTask task(m_token);

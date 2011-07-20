@@ -234,7 +234,7 @@ bool XSSAuditor::filterTokenInitial(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
 
-    if (token.type() != HTMLToken::StartTag)
+    if (token.type() != HTMLTokenTypes::StartTag)
         return false;
 
     bool didBlockScript = eraseDangerousAttributesIfInjected(token);
@@ -266,8 +266,8 @@ bool XSSAuditor::filterTokenAfterScriptStartTag(HTMLToken& token)
     ASSERT(m_state == AfterScriptStartTag);
     m_state = Initial;
 
-    if (token.type() != HTMLToken::Character) {
-        ASSERT(token.type() == HTMLToken::EndTag || token.type() == HTMLToken::EndOfFile);
+    if (token.type() != HTMLTokenTypes::Character) {
+        ASSERT(token.type() == HTMLTokenTypes::EndTag || token.type() == HTMLTokenTypes::EndOfFile);
         return false;
     }
 
@@ -286,7 +286,7 @@ bool XSSAuditor::filterTokenAfterScriptStartTag(HTMLToken& token)
 bool XSSAuditor::filterScriptToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, scriptTag));
 
     if (eraseAttributeIfInjected(token, srcAttr, blankURL().string()))
@@ -300,7 +300,7 @@ bool XSSAuditor::filterScriptToken(HTMLToken& token)
 bool XSSAuditor::filterObjectToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, objectTag));
 
     bool didBlockScript = false;
@@ -315,7 +315,7 @@ bool XSSAuditor::filterObjectToken(HTMLToken& token)
 bool XSSAuditor::filterParamToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, paramTag));
 
     size_t indexOfNameAttribute;
@@ -334,7 +334,7 @@ bool XSSAuditor::filterParamToken(HTMLToken& token)
 bool XSSAuditor::filterEmbedToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, embedTag));
 
     bool didBlockScript = false;
@@ -348,7 +348,7 @@ bool XSSAuditor::filterEmbedToken(HTMLToken& token)
 bool XSSAuditor::filterAppletToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, appletTag));
 
     bool didBlockScript = false;
@@ -362,7 +362,7 @@ bool XSSAuditor::filterAppletToken(HTMLToken& token)
 bool XSSAuditor::filterIframeToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, iframeTag));
 
     return eraseAttributeIfInjected(token, srcAttr);
@@ -371,7 +371,7 @@ bool XSSAuditor::filterIframeToken(HTMLToken& token)
 bool XSSAuditor::filterMetaToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, metaTag));
 
     return eraseAttributeIfInjected(token, http_equivAttr);
@@ -380,7 +380,7 @@ bool XSSAuditor::filterMetaToken(HTMLToken& token)
 bool XSSAuditor::filterBaseToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, baseTag));
 
     return eraseAttributeIfInjected(token, hrefAttr);
@@ -389,7 +389,7 @@ bool XSSAuditor::filterBaseToken(HTMLToken& token)
 bool XSSAuditor::filterFormToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, formTag));
 
     return eraseAttributeIfInjected(token, actionAttr);

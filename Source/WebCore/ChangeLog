@@ -1,3 +1,165 @@
+2011-07-20  Jeffrey Pfau  <jpfau@apple.com>
+
+        New Token class for XML
+        https://bugs.webkit.org/show_bug.cgi?id=64764
+
+        Reviewed by Adam Barth.
+
+        Refactor HTMLToken into MarkupTokenBase and add new XMLToken
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addSource):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertDoctype):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::checkForMetaCharset):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLPreloadScanner::processToken):
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::start):
+        (WebCore::HTMLSourceTracker::sourceForToken):
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLTokenTypes::DoctypeData::DoctypeData):
+        (WebCore::HTMLToken::appendToName):
+        (WebCore::HTMLToken::name):
+        (WebCore::HTMLToken::forceQuirks):
+        (WebCore::HTMLToken::setForceQuirks):
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        (WebCore::AtomicHTMLToken::type):
+        (WebCore::AtomicHTMLToken::selfClosing):
+        (WebCore::AtomicHTMLToken::characters):
+        (WebCore::AtomicHTMLToken::comment):
+        (WebCore::AtomicHTMLToken::publicIdentifier):
+        (WebCore::AtomicHTMLToken::systemIdentifier):
+        (WebCore::AtomicHTMLToken::forceQuirks):
+        (WebCore::AtomicHTMLToken::usesName):
+        (WebCore::AtomicHTMLToken::usesAttributes):
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::saveEndTagNameIfNeeded):
+        (WebCore::HTMLTokenizer::flushBufferedEndTag):
+        (WebCore::HTMLTokenizer::nextToken):
+        (WebCore::HTMLTokenizer::haveBufferedCharacterToken):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processFakeStartTag):
+        (WebCore::HTMLTreeBuilder::processFakeEndTag):
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInButtonScope):
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHeadNoscript):
+        (WebCore::HTMLTreeBuilder::defaultForAfterHead):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        * html/parser/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::updateTokenizerState):
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterTokenInitial):
+        (WebCore::XSSAuditor::filterTokenAfterScriptStartTag):
+        (WebCore::XSSAuditor::filterScriptToken):
+        (WebCore::XSSAuditor::filterObjectToken):
+        (WebCore::XSSAuditor::filterParamToken):
+        (WebCore::XSSAuditor::filterEmbedToken):
+        (WebCore::XSSAuditor::filterAppletToken):
+        (WebCore::XSSAuditor::filterIframeToken):
+        (WebCore::XSSAuditor::filterMetaToken):
+        (WebCore::XSSAuditor::filterBaseToken):
+        (WebCore::XSSAuditor::filterFormToken):
+        * xml/parser/MarkupTokenBase.h: Added.
+        (WebCore::DoctypeDataBase::DoctypeDataBase):
+        (WebCore::MarkupTokenBase::MarkupTokenBase):
+        (WebCore::MarkupTokenBase::~MarkupTokenBase):
+        (WebCore::MarkupTokenBase::clear):
+        (WebCore::MarkupTokenBase::isUninitialized):
+        (WebCore::MarkupTokenBase::startIndex):
+        (WebCore::MarkupTokenBase::endIndex):
+        (WebCore::MarkupTokenBase::setBaseOffset):
+        (WebCore::MarkupTokenBase::end):
+        (WebCore::MarkupTokenBase::makeEndOfFile):
+        (WebCore::MarkupTokenBase::beginStartTag):
+        (WebCore::MarkupTokenBase::beginEndTag):
+        (WebCore::MarkupTokenBase::ensureIsCharacterToken):
+        (WebCore::MarkupTokenBase::beginComment):
+        (WebCore::MarkupTokenBase::beginDOCTYPE):
+        (WebCore::MarkupTokenBase::appendToCharacter):
+        (WebCore::MarkupTokenBase::appendToComment):
+        (WebCore::MarkupTokenBase::addNewAttribute):
+        (WebCore::MarkupTokenBase::beginAttributeName):
+        (WebCore::MarkupTokenBase::endAttributeName):
+        (WebCore::MarkupTokenBase::beginAttributeValue):
+        (WebCore::MarkupTokenBase::endAttributeValue):
+        (WebCore::MarkupTokenBase::appendToAttributeName):
+        (WebCore::MarkupTokenBase::appendToAttributeValue):
+        (WebCore::MarkupTokenBase::type):
+        (WebCore::MarkupTokenBase::selfClosing):
+        (WebCore::MarkupTokenBase::setSelfClosing):
+        (WebCore::MarkupTokenBase::attributes):
+        (WebCore::MarkupTokenBase::eraseCharacters):
+        (WebCore::MarkupTokenBase::eraseValueOfAttribute):
+        (WebCore::MarkupTokenBase::characters):
+        (WebCore::MarkupTokenBase::comment):
+        (WebCore::MarkupTokenBase::publicIdentifier):
+        (WebCore::MarkupTokenBase::systemIdentifier):
+        (WebCore::MarkupTokenBase::setPublicIdentifierToEmptyString):
+        (WebCore::MarkupTokenBase::setSystemIdentifierToEmptyString):
+        (WebCore::MarkupTokenBase::appendToPublicIdentifier):
+        (WebCore::MarkupTokenBase::appendToSystemIdentifier):
+        (WebCore::MarkupTokenBase::printString):
+        (WebCore::MarkupTokenBase::printAttrs):
+        (WebCore::MarkupTokenBase::appendToName):
+        (WebCore::MarkupTokenBase::name):
+        * xml/parser/XMLToken.h: Added.
+        (WebCore::XMLToken::XMLToken):
+        (WebCore::XMLToken::clear):
+        (WebCore::XMLToken::appendToName):
+        (WebCore::XMLToken::name):
+        (WebCore::XMLToken::beginDOCTYPE):
+        (WebCore::XMLToken::beginXMLDeclaration):
+        (WebCore::XMLToken::appendToXMLVersion):
+        (WebCore::XMLToken::beginXMLEncoding):
+        (WebCore::XMLToken::appendToXMLEncoding):
+        (WebCore::XMLToken::setXMLStandalone):
+        (WebCore::XMLToken::beginProcessingInstruction):
+        (WebCore::XMLToken::appendToProcessingInstructionTarget):
+        (WebCore::XMLToken::appendToProcessingInstructionData):
+        (WebCore::XMLToken::beginCDATA):
+        (WebCore::XMLToken::appendToCDATA):
+        (WebCore::XMLToken::beginEntity):
+        (WebCore::XMLToken::print):
+        (WebCore::XMLToken::XMLDeclarationData::XMLDeclarationData):
+
 2011-07-20  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         WebKit crashes on selection when documentElement is removed.

@@ -42617,6 +42617,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\xml\parser\MarkupTokenBase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\xml\parser\XMLDocumentParser.h"
 					>
 				</File>

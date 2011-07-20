@@ -2497,6 +2497,7 @@ HEADERS += \
     workers/WorkerRunLoop.h \
     workers/WorkerScriptLoader.h \
     workers/WorkerThread.h \
+    xml/parser/MarkupTokenBase.h \
     xml/parser/XMLDocumentParser.h \
     xml/DOMParser.h \
     xml/NativeXPathNSResolver.h \

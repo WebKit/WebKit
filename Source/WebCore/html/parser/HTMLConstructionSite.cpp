@@ -223,7 +223,7 @@ void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertDoctype(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::DOCTYPE);
+    ASSERT(token.type() == HTMLTokenTypes::DOCTYPE);
     attach(m_attachmentRoot, DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
     
     // DOCTYPE nodes are only processed when parsing fragments w/o contextElements, which
@@ -243,19 +243,19 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertComment(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLTokenTypes::Comment);
     attach(currentNode(), Comment::create(currentNode()->document(), token.comment()));
 }
 
 void HTMLConstructionSite::insertCommentOnDocument(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLTokenTypes::Comment);
     attach(m_attachmentRoot, Comment::create(m_document, token.comment()));
 }
 
 void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLTokenTypes::Comment);
     ContainerNode* parent = m_openElements.rootNode();
     attach(parent, Comment::create(parent->document(), token.comment()));
 }
@@ -297,7 +297,7 @@ void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken& token)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     RefPtr<Element> element = attachToCurrent(createHTMLElement(token));
     // Normally HTMLElementStack is responsible for calling finishParsingChildren,
     // but self-closing elements are never in the element stack so the stack
@@ -326,7 +326,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLTokenTypes::StartTag);
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
 
     RefPtr<Element> element = attachToCurrent(createElement(token, namespaceURI));
@@ -421,7 +421,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Elem
     // spec implies it should be "1".  Minefield matches the HTML5 spec here.
 
     ASSERT(element->isHTMLElement()); // otherwise localName() might be wrong.
-    AtomicHTMLToken fakeToken(HTMLToken::StartTag, element->localName(), cloneAttributes(element));
+    AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, element->localName(), cloneAttributes(element));
     return createHTMLElement(fakeToken);
 }
 

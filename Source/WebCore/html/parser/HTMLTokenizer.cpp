@@ -187,8 +187,8 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 
 inline void HTMLTokenizer::saveEndTagNameIfNeeded()
 {
-    ASSERT(m_token->type() != HTMLToken::Uninitialized);
-    if (m_token->type() == HTMLToken::StartTag)
+    ASSERT(m_token->type() != HTMLTokenTypes::Uninitialized);
+    if (m_token->type() == HTMLTokenTypes::StartTag)
         m_appropriateEndTagName = m_token->name();
 }
 
@@ -227,9 +227,9 @@ bool HTMLTokenizer::emitEndOfFile(SegmentedString& source)
 
 bool HTMLTokenizer::flushBufferedEndTag(SegmentedString& source)
 {
-    ASSERT(m_token->type() == HTMLToken::Character || m_token->type() == HTMLToken::Uninitialized);
+    ASSERT(m_token->type() == HTMLTokenTypes::Character || m_token->type() == HTMLTokenTypes::Uninitialized);
     source.advance(m_lineNumber);
-    if (m_token->type() == HTMLToken::Character)
+    if (m_token->type() == HTMLTokenTypes::Character)
         return true;
     m_token->beginEndTag(m_bufferedEndTagName);
     m_bufferedEndTagName.clear();
@@ -259,7 +259,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 {
     // If we have a token in progress, then we're supposed to be called back
     // with the same token so we can finish it.
-    ASSERT(!m_token || m_token == &token || token.type() == HTMLToken::Uninitialized);
+    ASSERT(!m_token || m_token == &token || token.type() == HTMLTokenTypes::Uninitialized);
     m_token = &token;
 
     if (!m_bufferedEndTagName.isEmpty() && !isEndTagBufferingState(m_state)) {
@@ -307,7 +307,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         if (cc == '&')
             ADVANCE_TO(CharacterReferenceInDataState);
         else if (cc == '<') {
-            if (m_token->type() == HTMLToken::Character) {
+            if (m_token->type() == HTMLTokenTypes::Character) {
                 // We have a bunch of character tokens queued up that we
                 // are emitting lazily here.
                 return true;
@@ -1692,7 +1692,7 @@ inline void HTMLTokenizer::parseError()
 
 inline bool HTMLTokenizer::haveBufferedCharacterToken()
 {
-    return m_token->type() == HTMLToken::Character;
+    return m_token->type() == HTMLTokenTypes::Character;
 }
 
 }

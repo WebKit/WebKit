@@ -26,14 +26,11 @@
 #ifndef HTMLToken_h
 #define HTMLToken_h
 
-#include "NamedNodeMap.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#include "MarkupTokenBase.h"
 
 namespace WebCore {
 
-class HTMLToken {
-    WTF_MAKE_NONCOPYABLE(HTMLToken); WTF_MAKE_FAST_ALLOCATED;
+class HTMLTokenTypes {
 public:
     enum Type {
         Uninitialized,
@@ -45,339 +42,45 @@ public:
         EndOfFile,
     };
 
-    class Range {
+    class DoctypeData : public DoctypeDataBase {
+        WTF_MAKE_NONCOPYABLE(DoctypeData);
     public:
-        int m_start;
-        int m_end;
+        DoctypeData()
+            : DoctypeDataBase()
+            , m_forceQuirks(false)
+        {
+        }
+
+        bool m_forceQuirks;
     };
+};
 
-    class Attribute {
-    public:
-        Range m_nameRange;
-        Range m_valueRange;
-        WTF::Vector<UChar, 32> m_name;
-        WTF::Vector<UChar, 32> m_value;
-    };
-
-    typedef WTF::Vector<Attribute, 10> AttributeList;
-    typedef WTF::Vector<UChar, 1024> DataVector;
-
-    HTMLToken() { clear(); }
-
-    void clear()
-    {
-        m_type = Uninitialized;
-        m_range.m_start = 0;
-        m_range.m_end = 0;
-        m_baseOffset = 0;
-        m_data.clear();
-    }
-
-    bool isUninitialized() { return m_type == Uninitialized; }
-
-    int startIndex() const { return m_range.m_start; }
-    int endIndex() const { return m_range.m_end; }
-
-    void setBaseOffset(int offset)
-    {
-        m_baseOffset = offset;
-    }
-
-    void end(int endOffset)
-    {
-        m_range.m_end = endOffset - m_baseOffset;
-    }
-
-    void makeEndOfFile()
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = EndOfFile;
-    }
-
-    void beginStartTag(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == Uninitialized);
-        m_type = StartTag;
-        m_selfClosing = false;
-        m_currentAttribute = 0;
-        m_attributes.clear();
-
-        m_data.append(character);
-    }
-
-    template<typename T>
-    void beginEndTag(T characters)
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = EndTag;
-        m_selfClosing = false;
-        m_currentAttribute = 0;
-        m_attributes.clear();
-
-        m_data.append(characters);
-    }
-
-    // Starting a character token works slightly differently than starting
-    // other types of tokens because we want to save a per-character branch.
-    void ensureIsCharacterToken()
-    {
-        ASSERT(m_type == Uninitialized || m_type == Character);
-        m_type = Character;
-    }
-
-    void beginComment()
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = Comment;
-    }
-
-    void beginDOCTYPE()
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = DOCTYPE;
-        m_doctypeData = adoptPtr(new DoctypeData());
-    }
-
-    void beginDOCTYPE(UChar character)
-    {
-        ASSERT(character);
-        beginDOCTYPE();
-        m_data.append(character);
-    }
-
+class HTMLToken : public MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData> {
+public:
     void appendToName(UChar character)
     {
-        ASSERT(character);
-        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        m_data.append(character);
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
+        MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData>::appendToName(character);
     }
-
-    template<typename T>
-    void appendToCharacter(T characters)
-    {
-        ASSERT(m_type == Character);
-        m_data.append(characters);
-    }
-
-    void appendToComment(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == Comment);
-        m_data.append(character);
-    }
-
-    void addNewAttribute()
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes.grow(m_attributes.size() + 1);
-        m_currentAttribute = &m_attributes.last();
-#ifndef NDEBUG
-        m_currentAttribute->m_nameRange.m_start = 0;
-        m_currentAttribute->m_nameRange.m_end = 0;
-        m_currentAttribute->m_valueRange.m_start = 0;
-        m_currentAttribute->m_valueRange.m_end = 0;
-#endif
-    }
-
-    void beginAttributeName(int offset)
-    {
-        m_currentAttribute->m_nameRange.m_start = offset - m_baseOffset;
-    }
-
-    void endAttributeName(int offset)
-    {
-        int index = offset - m_baseOffset;
-        m_currentAttribute->m_nameRange.m_end = index;
-        m_currentAttribute->m_valueRange.m_start = index;
-        m_currentAttribute->m_valueRange.m_end = index;
-    }
-
-    void beginAttributeValue(int offset)
-    {
-        m_currentAttribute->m_valueRange.m_start = offset - m_baseOffset;
-#ifndef NDEBUG
-        m_currentAttribute->m_valueRange.m_end = 0;
-#endif
-    }
-
-    void endAttributeValue(int offset)
-    {
-        m_currentAttribute->m_valueRange.m_end = offset - m_baseOffset;
-    }
-
-    void appendToAttributeName(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        // FIXME: We should be able to add the following ASSERT once we fix
-        // https://bugs.webkit.org/show_bug.cgi?id=62971
-        //   ASSERT(m_currentAttribute->m_nameRange.m_start);
-        m_currentAttribute->m_name.append(character);
-    }
-
-    void appendToAttributeValue(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        ASSERT(m_currentAttribute->m_valueRange.m_start);
-        m_currentAttribute->m_value.append(character);
-    }
-
-    void appendToAttributeValue(size_t i, const String& value)
-    {
-        ASSERT(!value.isEmpty());
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes[i].m_value.append(value.characters(), value.length());
-    }
-
-    Type type() const { return m_type; }
-
-    bool selfClosing() const
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        return m_selfClosing;
-    }
-
-    void setSelfClosing()
-    {
-        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
-        m_selfClosing = true;
-    }
-
-    const AttributeList& attributes() const
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        return m_attributes;
-    }
-
+    
     const DataVector& name() const
     {
-        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        return m_data;
-    }
-
-    void eraseCharacters()
-    {
-        ASSERT(m_type == Character);
-        m_data.clear();
-    }
-
-    void eraseValueOfAttribute(size_t i)
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes[i].m_value.clear();
-    }
-
-    const DataVector& characters() const
-    {
-        ASSERT(m_type == Character);
-        return m_data;
-    }
-
-    const DataVector& comment() const
-    {
-        ASSERT(m_type == Comment);
-        return m_data;
-    }
-
-    // FIXME: Distinguish between a missing public identifer and an empty one.
-    const WTF::Vector<UChar>& publicIdentifier() const
-    {
-        ASSERT(m_type == DOCTYPE);
-        return m_doctypeData->m_publicIdentifier;
-    }
-
-    // FIXME: Distinguish between a missing system identifer and an empty one.
-    const WTF::Vector<UChar>& systemIdentifier() const
-    {
-        ASSERT(m_type == DOCTYPE);
-        return m_doctypeData->m_systemIdentifier;
-    }
-
-    void setPublicIdentifierToEmptyString()
-    {
-        ASSERT(m_type == DOCTYPE);
-        m_doctypeData->m_hasPublicIdentifier = true;
-        m_doctypeData->m_publicIdentifier.clear();
-    }
-
-    void setSystemIdentifierToEmptyString()
-    {
-        ASSERT(m_type == DOCTYPE);
-        m_doctypeData->m_hasSystemIdentifier = true;
-        m_doctypeData->m_systemIdentifier.clear();
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
+        return MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData>::name();
     }
 
     bool forceQuirks() const
     {
-        ASSERT(m_type == DOCTYPE);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
         return m_doctypeData->m_forceQuirks;
     }
 
     void setForceQuirks()
     {
-        ASSERT(m_type == DOCTYPE);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
         m_doctypeData->m_forceQuirks = true;
     }
 
-    void appendToPublicIdentifier(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == DOCTYPE);
-        ASSERT(m_doctypeData->m_hasPublicIdentifier);
-        m_doctypeData->m_publicIdentifier.append(character);
-    }
-
-    void appendToSystemIdentifier(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == DOCTYPE);
-        ASSERT(m_doctypeData->m_hasSystemIdentifier);
-        m_doctypeData->m_systemIdentifier.append(character);
-    }
-
-private:
-    // FIXME: I'm not sure what the final relationship between HTMLToken and
-    // AtomicHTMLToken will be.  I'm marking this a friend for now, but we'll
-    // want to end up with a cleaner interface between the two classes.
-    friend class AtomicHTMLToken;
-
-    class DoctypeData {
-        WTF_MAKE_NONCOPYABLE(DoctypeData);
-    public:
-        DoctypeData()
-            : m_hasPublicIdentifier(false)
-            , m_hasSystemIdentifier(false)
-            , m_forceQuirks(false)
-        {
-        }
-
-        bool m_hasPublicIdentifier;
-        bool m_hasSystemIdentifier;
-        bool m_forceQuirks;
-        WTF::Vector<UChar> m_publicIdentifier;
-        WTF::Vector<UChar> m_systemIdentifier;
-    };
-
-    Type m_type;
-    Range m_range; // Always starts at zero.
-    int m_baseOffset;
-
-    // "name" for DOCTYPE, StartTag, and EndTag
-    // "characters" for Character
-    // "data" for Comment
-    DataVector m_data;
-
-    // For DOCTYPE
-    OwnPtr<DoctypeData> m_doctypeData;
-
-    // For StartTag and EndTag
-    bool m_selfClosing;
-    AttributeList m_attributes;
-
-    // A pointer into m_attributes used during lexing.
-    Attribute* m_currentAttribute;
 };
 
 // FIXME: This class should eventually be named HTMLToken once we move the
@@ -389,32 +92,34 @@ public:
         : m_type(token.type())
     {
         switch (m_type) {
-        case HTMLToken::Uninitialized:
+        case HTMLTokenTypes::Uninitialized:
             ASSERT_NOT_REACHED();
             break;
-        case HTMLToken::DOCTYPE:
+        case HTMLTokenTypes::DOCTYPE:
             m_name = AtomicString(token.name().data(), token.name().size());
             m_doctypeData = token.m_doctypeData.release();
             break;
-        case HTMLToken::EndOfFile:
+        case HTMLTokenTypes::EndOfFile:
             break;
-        case HTMLToken::StartTag:
-        case HTMLToken::EndTag: {
+        case HTMLTokenTypes::StartTag:
+        case HTMLTokenTypes::EndTag: {
             m_selfClosing = token.selfClosing();
             m_name = AtomicString(token.name().data(), token.name().size());
             initializeAttributes(token.attributes());
             break;
         }
-        case HTMLToken::Comment:
+        case HTMLTokenTypes::Comment:
             m_data = String(token.comment().data(), token.comment().size());
             break;
-        case HTMLToken::Character:
+        case HTMLTokenTypes::Character:
             m_externalCharacters = &token.characters();
+            break;
+        default:
             break;
         }
     }
 
-    AtomicHTMLToken(HTMLToken::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
+    AtomicHTMLToken(HTMLTokenTypes::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
         : m_type(type)
         , m_name(name)
         , m_attributes(attributes)
@@ -422,7 +127,7 @@ public:
         ASSERT(usesName());
     }
 
-    HTMLToken::Type type() const { return m_type; }
+    HTMLTokenTypes::Type type() const { return m_type; }
 
     const AtomicString& name() const
     {
@@ -438,7 +143,7 @@ public:
 
     bool selfClosing() const
     {
-        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
         return m_selfClosing;
     }
 
@@ -464,49 +169,49 @@ public:
 
     const HTMLToken::DataVector& characters() const
     {
-        ASSERT(m_type == HTMLToken::Character);
+        ASSERT(m_type == HTMLTokenTypes::Character);
         return *m_externalCharacters;
     }
 
     const String& comment() const
     {
-        ASSERT(m_type == HTMLToken::Comment);
+        ASSERT(m_type == HTMLTokenTypes::Comment);
         return m_data;
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.
     WTF::Vector<UChar>& publicIdentifier() const
     {
-        ASSERT(m_type == HTMLToken::DOCTYPE);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
         return m_doctypeData->m_publicIdentifier;
     }
 
     // FIXME: Distinguish between a missing system identifer and an empty one.
     WTF::Vector<UChar>& systemIdentifier() const
     {
-        ASSERT(m_type == HTMLToken::DOCTYPE);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
         return m_doctypeData->m_systemIdentifier;
     }
 
     bool forceQuirks() const
     {
-        ASSERT(m_type == HTMLToken::DOCTYPE);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
         return m_doctypeData->m_forceQuirks;
     }
 
 private:
-    HTMLToken::Type m_type;
+    HTMLTokenTypes::Type m_type;
 
     void initializeAttributes(const HTMLToken::AttributeList& attributes);
     
     bool usesName() const
     {
-        return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE;
+        return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE;
     }
 
     bool usesAttributes() const
     {
-        return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag;
+        return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag;
     }
 
     // "name" for DOCTYPE, StartTag, and EndTag
@@ -526,7 +231,7 @@ private:
     const HTMLToken::DataVector* m_externalCharacters;
 
     // For DOCTYPE
-    OwnPtr<HTMLToken::DoctypeData> m_doctypeData;
+    OwnPtr<HTMLTokenTypes::DoctypeData> m_doctypeData;
 
     // For StartTag and EndTag
     bool m_selfClosing;

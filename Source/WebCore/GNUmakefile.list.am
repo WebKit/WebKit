@@ -3806,6 +3806,7 @@ webcore_sources += \
 	Source/WebCore/workers/WorkerScriptLoader.h \
 	Source/WebCore/workers/WorkerThread.cpp \
 	Source/WebCore/workers/WorkerThread.h \
+	Source/WebCore/xml/parser/MarkupTokenBase.h \
 	Source/WebCore/xml/parser/NewXMLDocumentParser.cpp \
 	Source/WebCore/xml/parser/NewXMLDocumentParser.h \
 	Source/WebCore/xml/parser/XMLDocumentParser.cpp \
