@@ -845,7 +845,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global), dst, regT1, regT0);
+    map(m_bytecodeOffset + (dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global)), dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
