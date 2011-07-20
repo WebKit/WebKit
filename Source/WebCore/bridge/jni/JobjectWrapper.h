@@ -30,38 +30,26 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "JNIUtility.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-class JobjectWrapper {
-friend class JavaArray;
-friend class JavaField;
-friend class JavaFieldJobject;
-friend class JavaInstance;
-friend class JavaInstanceJobject;
-
+class JobjectWrapper : public RefCounted<JobjectWrapper> {
 public:
+    static PassRefPtr<JobjectWrapper> create(jobject object) { return adoptRef(new JobjectWrapper(object)); }
+    ~JobjectWrapper();
+
     jobject instance() const { return m_instance; }
     void setInstance(jobject instance) { m_instance = instance; }
 
-    void ref() { m_refCount++; }
-    void deref()
-    {
-        if (!--m_refCount)
-            delete this;
-    }
-
-protected:
+private:
     JobjectWrapper(jobject);
-    ~JobjectWrapper();
 
     jobject m_instance;
-
-private:
     JNIEnv* m_env;
-    unsigned int m_refCount;
 };
 
 } // namespace Bindings

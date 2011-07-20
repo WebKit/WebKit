@@ -41,7 +41,7 @@
 using namespace JSC::Bindings;
 
 JavaInstanceJobject::JavaInstanceJobject(jobject instance)
-    : m_instance(new JobjectWrapper(instance))
+    : m_instance(JobjectWrapper::create(instance))
 {
 }
 

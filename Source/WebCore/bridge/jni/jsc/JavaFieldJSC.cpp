@@ -58,13 +58,13 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
         fieldName = env->NewStringUTF("<Unknown>");
     m_name = JavaString(env, fieldName);
 
-    m_field = new JobjectWrapper(aField);
+    m_field = JobjectWrapper::create(aField);
 }
 
 jvalue JavaField::dispatchValueFromInstance(ExecState* exec, const JavaInstance* instance, const char* name, const char* sig, JavaType returnType) const
 {
     jobject jinstance = instance->javaInstance();
-    jobject fieldJInstance = m_field->m_instance;
+    jobject fieldJInstance = m_field->instance();
     JNIEnv* env = getJNIEnv();
     jvalue result;
 
@@ -151,7 +151,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
 void JavaField::dispatchSetValueToInstance(ExecState* exec, const JavaInstance* instance, jvalue javaValue, const char* name, const char* sig) const
 {
     jobject jinstance = instance->javaInstance();
-    jobject fieldJInstance = m_field->m_instance;
+    jobject fieldJInstance = m_field->instance();
     JNIEnv* env = getJNIEnv();
 
     jclass cls = env->GetObjectClass(fieldJInstance);

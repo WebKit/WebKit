@@ -42,7 +42,7 @@ JavaFieldJobject::JavaFieldJobject(JNIEnv* env, jobject aField)
     jstring fieldName = static_cast<jstring>(callJNIMethod<jobject>(aField, "getName", "()Ljava/lang/String;"));
     m_name = JavaString(env, fieldName);
 
-    m_field = new JobjectWrapper(aField);
+    m_field = JobjectWrapper::create(aField);
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

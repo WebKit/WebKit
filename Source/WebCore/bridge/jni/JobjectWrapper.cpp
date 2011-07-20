@@ -29,14 +29,11 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include <assert.h>
-
 using namespace JSC::Bindings;
 
 JobjectWrapper::JobjectWrapper(jobject instance)
-    : m_refCount(0)
 {
-    assert(instance);
+    ASSERT(instance);
 
     // Cache the JNIEnv used to get the global ref for this java instanace.
     // It'll be used to delete the reference.

@@ -1,3 +1,42 @@
+2011-07-20  Steve Block  <steveblock@google.com>
+
+        JobjectWrapper should inherit from RefCounted rather than implementing its own ref counting
+        https://bugs.webkit.org/show_bug.cgi?id=55786
+
+        Also adds static create() method and cleans up use of data members.
+
+        Reviewed by Tony Gentilcore.
+
+        No new tests, refactoring only.
+
+        * bridge/jni/JobjectWrapper.cpp:
+        (JobjectWrapper::JobjectWrapper):
+        * bridge/jni/JobjectWrapper.h:
+        (JSC::Bindings::JobjectWrapper::create):
+        * bridge/jni/jsc/JavaArrayJSC.cpp:
+        (JavaArray::JavaArray):
+        * bridge/jni/jsc/JavaArrayJSC.h:
+        (JSC::Bindings::JavaArray::javaArray):
+        * bridge/jni/jsc/JavaFieldJSC.cpp:
+        (JavaField::JavaField):
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::JavaInstance):
+        (JavaInstance::getClass):
+        (JavaInstance::stringValue):
+        (JavaInstance::numberValue):
+        (JavaInstance::booleanValue):
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        (JSC::Bindings::JavaInstance::javaInstance):
+        * bridge/jni/v8/JavaFieldJobjectV8.cpp:
+        (JavaFieldJobject::JavaFieldJobject):
+        * bridge/jni/v8/JavaInstanceJobjectV8.cpp:
+        (JavaInstanceJobject::JavaInstanceJobject):
+        * bridge/jni/v8/JavaInstanceJobjectV8.h:
+        (JSC::Bindings::JavaInstanceJobject::javaInstance):
+
 2011-07-20  Kentaro Hara  <haraken@google.com>
 
         The value of a number input form continues to increase/decrease even if we disable the input form.

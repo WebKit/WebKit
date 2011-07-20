@@ -56,7 +56,7 @@ public:
     virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
     virtual JSValue invokeMethod(ExecState* exec, RuntimeMethod* method);
 
-    jobject javaInstance() const { return m_instance->m_instance; }
+    jobject javaInstance() const { return m_instance->instance(); }
 
     JSValue stringValue(ExecState*) const;
     JSValue numberValue(ExecState*) const;

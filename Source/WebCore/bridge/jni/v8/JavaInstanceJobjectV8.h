@@ -53,7 +53,7 @@ public:
     virtual void begin();
     virtual void end();
 
-    jobject javaInstance() const { return m_instance->m_instance; }
+    jobject javaInstance() const { return m_instance->instance(); }
 
 protected:
     RefPtr<JobjectWrapper> m_instance;
