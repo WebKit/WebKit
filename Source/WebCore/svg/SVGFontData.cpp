@@ -142,7 +142,7 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
 
     String language;
     bool isVerticalText = false;
-    String altGlyphName;
+    Vector<String> altGlyphNames;
 
     if (renderObject) {
         RenderObject* parentRenderObject = renderObject->isText() ? renderObject->parent() : renderObject;
@@ -154,15 +154,17 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
 
             if (parentRenderObjectElement->hasTagName(SVGNames::altGlyphTag)) {
                 SVGAltGlyphElement* altGlyph = static_cast<SVGAltGlyphElement*>(parentRenderObjectElement);
-                if (!altGlyph->hasValidGlyphElement(altGlyphName))
-                    altGlyphName = emptyString();
+                if (!altGlyph->hasValidGlyphElements(altGlyphNames))
+                    altGlyphNames.clear();
             }
         }
     }
 
     Vector<SVGGlyph> glyphs;
-    if (!altGlyphName.isEmpty()) {
-        associatedFontElement->collectGlyphsForGlyphName(altGlyphName, glyphs);
+    size_t altGlyphNamesSize = altGlyphNames.size();
+    if (altGlyphNamesSize) {
+        for (size_t index = 0; index < altGlyphNamesSize; ++index)
+            associatedFontElement->collectGlyphsForGlyphName(altGlyphNames[index], glyphs);
 
         // Assign the unicodeStringLength now that its known.
         size_t glyphsSize = glyphs.size();

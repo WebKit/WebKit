@@ -441,7 +441,9 @@ contains(DEFINES, ENABLE_SVG=1) {
   IDL_BINDINGS += \
     svg/SVGZoomEvent.idl \
     svg/SVGAElement.idl \
+    svg/SVGAltGlyphDefElement.idl \
     svg/SVGAltGlyphElement.idl \
+    svg/SVGAltGlyphItemElement.idl \
     svg/SVGAngle.idl \
     svg/SVGAnimateColorElement.idl \
     svg/SVGAnimateMotionElement.idl \
@@ -508,6 +510,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     svg/SVGForeignObjectElement.idl \
     svg/SVGGElement.idl \
     svg/SVGGlyphElement.idl \
+    svg/SVGGlyphRefElement.idl \
     svg/SVGGradientElement.idl \
     svg/SVGHKernElement.idl \
     svg/SVGImageElement.idl \

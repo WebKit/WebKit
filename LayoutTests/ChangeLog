@@ -1,3 +1,18 @@
+2011-07-19  Leo Yang  <leoyang.webkit@gmail.com>
+
+        SVG: Missing implementation of <altGlyphDef>, <altGlyphItem> and <glyphRef>
+        https://bugs.webkit.org/show_bug.cgi?id=60850
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG spec: http://www.w3.org/TR/SVG/text.html#AlternateGlyphDefinitions.
+        This patch is to implement SVG <altGlyphDef>, <altGlyphItem> and <glyphRef>
+        elements for alternative glyph features.
+
+        Updated test expectation.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+
 2011-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium test expectation update. svg/custom/crash-textPath-attributes.html is hitting an assertion.

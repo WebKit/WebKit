@@ -2331,7 +2331,9 @@ HEADERS += \
     svg/properties/SVGStaticPropertyWithParentTearOff.h \
     svg/properties/SVGTransformListPropertyTearOff.h \
     svg/SVGAElement.h \
+    svg/SVGAltGlyphDefElement.h \
     svg/SVGAltGlyphElement.h \
+    svg/SVGAltGlyphItemElement.h \
     svg/SVGAngle.h \
     svg/SVGAnimateColorElement.h \
     svg/SVGAnimatedAngle.h \
@@ -2411,6 +2413,7 @@ HEADERS += \
     svg/SVGForeignObjectElement.h \
     svg/SVGGElement.h \
     svg/SVGGlyphElement.h \
+    svg/SVGGlyphRefElement.h \
     svg/SVGGradientElement.h \
     svg/SVGHKernElement.h \
     svg/SVGImageElement.h \
@@ -3338,7 +3341,9 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGImageLoader.cpp \
               svg/ColorDistance.cpp \
               svg/SVGAElement.cpp \
+              svg/SVGAltGlyphDefElement.cpp \
               svg/SVGAltGlyphElement.cpp \
+              svg/SVGAltGlyphItemElement.cpp \
               svg/SVGAngle.cpp \
               svg/SVGAnimateColorElement.cpp \
               svg/SVGAnimatedAngle.cpp \
@@ -3412,6 +3417,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGForeignObjectElement.cpp \
               svg/SVGGElement.cpp \
               svg/SVGGlyphElement.cpp \
+              svg/SVGGlyphRefElement.cpp \
               svg/SVGGradientElement.cpp \
               svg/SVGHKernElement.cpp \
               svg/SVGImageElement.cpp \

@@ -1691,7 +1691,9 @@ __ZN7WebCore8createCFERKNS_15ProtectionSpaceE
 
 #if ENABLE(SVG) && ENABLE(SVG_DOM_OBJC_BINDINGS)
 .objc_class_name_DOMSVGAElement
+.objc_class_name_DOMSVGAltGlyphDefElement
 .objc_class_name_DOMSVGAltGlyphElement
+.objc_class_name_DOMSVGAltGlyphItemElement
 .objc_class_name_DOMSVGAngle
 .objc_class_name_DOMSVGAnimateColorElement
 .objc_class_name_DOMSVGAnimatedAngle
@@ -1719,6 +1721,7 @@ __ZN7WebCore8createCFERKNS_15ProtectionSpaceE
 .objc_class_name_DOMSVGElementInstanceList
 .objc_class_name_DOMSVGEllipseElement
 .objc_class_name_DOMSVGGElement
+.objc_class_name_DOMSVGGlyphRefElement
 .objc_class_name_DOMSVGGradientElement
 .objc_class_name_DOMSVGImageElement
 .objc_class_name_DOMSVGLength

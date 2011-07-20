@@ -1,3 +1,16 @@
+2011-07-19  Leo Yang  <leoyang.webkit@gmail.com>
+
+        SVG: Missing implementation of <altGlyphDef>, <altGlyphItem> and <glyphRef>
+        https://bugs.webkit.org/show_bug.cgi?id=60850
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG spec: http://www.w3.org/TR/SVG/text.html#AlternateGlyphDefinitions.
+        This patch is to implement SVG <altGlyphDef>, <altGlyphItem> and <glyphRef>
+        elements for alternative glyph features.
+
+        * MigrateHeaders.make:
+
 2011-07-18  Andy Estes  <aestes@apple.com>
 
         Solar Walk app-specific hack accidentally strips stylesheets from the document.

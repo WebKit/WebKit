@@ -147,7 +147,9 @@ static void createElementClassMap()
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
     addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
+    addElementClass(SVGNames::altGlyphDefTag, [DOMSVGAltGlyphDefElement class]);
     addElementClass(SVGNames::altGlyphTag, [DOMSVGAltGlyphElement class]);
+    addElementClass(SVGNames::altGlyphItemTag, [DOMSVGAltGlyphItemElement class]);
 #if ENABLE(SVG_ANIMATION)
     addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
     addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
@@ -196,6 +198,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::font_face_srcTag, [DOMSVGFontFaceSrcElement class]);
     addElementClass(SVGNames::font_face_uriTag, [DOMSVGFontFaceUriElement class]);
     addElementClass(SVGNames::glyphTag, [DOMSVGGlyphElement class]);
+    addElementClass(SVGNames::glyphRefTag, [DOMSVGGlyphRefElement class]);
 #endif
     addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
     addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);

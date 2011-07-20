@@ -27,7 +27,9 @@
 
 #include "ColorDistance.cpp"
 #include "SVGAElement.cpp"
+#include "SVGAltGlyphDefElement.cpp"
 #include "SVGAltGlyphElement.cpp"
+#include "SVGAltGlyphItemElement.cpp"
 #include "SVGAngle.cpp"
 #include "SVGAnimateColorElement.cpp"
 #include "SVGAnimatedAngle.cpp"
@@ -102,6 +104,7 @@
 #include "SVGForeignObjectElement.cpp"
 #include "SVGGElement.cpp"
 #include "SVGGlyphElement.cpp"
+#include "SVGGlyphRefElement.cpp"
 #include "SVGGradientElement.cpp"
 #include "SVGHKernElement.cpp"
 #include "SVGImageElement.cpp"

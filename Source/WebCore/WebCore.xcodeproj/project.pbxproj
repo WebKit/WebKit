@@ -615,6 +615,33 @@
 		22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */ = {isa = PBXBuildFile; fileRef = 22BD9F7D1353625C009BD102 /* ImageBufferData.h */; };
 		22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */; };
 		245D80A313280E40003492A6 /* SQLCallbackWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 245D80A213280E40003492A6 /* SQLCallbackWrapper.h */; };
+		24AA568D13CC94CE00E902F6 /* DOMSVGAltGlyphItemElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 24D912A313CA977D00D21915 /* DOMSVGAltGlyphItemElementInternal.h */; };
+		24AA568E13CC950900E902F6 /* DOMSVGAltGlyphItemElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 24D912A113CA977D00D21915 /* DOMSVGAltGlyphItemElement.h */; };
+		24AA569013CC952F00E902F6 /* DOMSVGAltGlyphDefElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 24D9129B13CA975A00D21915 /* DOMSVGAltGlyphDefElement.h */; };
+		24AA569213CC954E00E902F6 /* DOMSVGAltGlyphDefElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 24D9129D13CA975A00D21915 /* DOMSVGAltGlyphDefElementInternal.h */; };
+		24AA569713CC95A800E902F6 /* DOMSVGGlyphRefElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 24D912A713CA97CF00D21915 /* DOMSVGGlyphRefElement.h */; };
+		24AA569913CC95CC00E902F6 /* DOMSVGGlyphRefElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 24D912A913CA97CF00D21915 /* DOMSVGGlyphRefElementInternal.h */; };
+		24D9129113CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D9128F13CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp */; };
+		24D9129213CA951E00D21915 /* JSSVGAltGlyphDefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D9129013CA951E00D21915 /* JSSVGAltGlyphDefElement.h */; };
+		24D9129513CA956100D21915 /* JSSVGAltGlyphItemElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D9129313CA956100D21915 /* JSSVGAltGlyphItemElement.cpp */; };
+		24D9129613CA956100D21915 /* JSSVGAltGlyphItemElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D9129413CA956100D21915 /* JSSVGAltGlyphItemElement.h */; };
+		24D9129813CA96DE00D21915 /* JSSVGGlyphRefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D9129713CA96DE00D21915 /* JSSVGGlyphRefElement.cpp */; };
+		24D9129A13CA971400D21915 /* JSSVGGlyphRefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D9129913CA971400D21915 /* JSSVGGlyphRefElement.h */; };
+		24D9129E13CA975A00D21915 /* DOMSVGAltGlyphDefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D9129B13CA975A00D21915 /* DOMSVGAltGlyphDefElement.h */; };
+		24D9129F13CA975A00D21915 /* DOMSVGAltGlyphDefElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24D9129C13CA975A00D21915 /* DOMSVGAltGlyphDefElement.mm */; };
+		24D912A013CA975A00D21915 /* DOMSVGAltGlyphDefElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D9129D13CA975A00D21915 /* DOMSVGAltGlyphDefElementInternal.h */; };
+		24D912A413CA977D00D21915 /* DOMSVGAltGlyphItemElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912A113CA977D00D21915 /* DOMSVGAltGlyphItemElement.h */; };
+		24D912A513CA977D00D21915 /* DOMSVGAltGlyphItemElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24D912A213CA977D00D21915 /* DOMSVGAltGlyphItemElement.mm */; };
+		24D912A613CA977D00D21915 /* DOMSVGAltGlyphItemElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912A313CA977D00D21915 /* DOMSVGAltGlyphItemElementInternal.h */; };
+		24D912AA13CA97CF00D21915 /* DOMSVGGlyphRefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912A713CA97CF00D21915 /* DOMSVGGlyphRefElement.h */; };
+		24D912AB13CA97CF00D21915 /* DOMSVGGlyphRefElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24D912A813CA97CF00D21915 /* DOMSVGGlyphRefElement.mm */; };
+		24D912AC13CA97CF00D21915 /* DOMSVGGlyphRefElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912A913CA97CF00D21915 /* DOMSVGGlyphRefElementInternal.h */; };
+		24D912B013CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D912AD13CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp */; };
+		24D912B113CA9A1F00D21915 /* SVGAltGlyphDefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912AE13CA9A1F00D21915 /* SVGAltGlyphDefElement.h */; };
+		24D912B713CA9A6900D21915 /* SVGAltGlyphItemElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D912B413CA9A6900D21915 /* SVGAltGlyphItemElement.cpp */; };
+		24D912B813CA9A6900D21915 /* SVGAltGlyphItemElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912B513CA9A6900D21915 /* SVGAltGlyphItemElement.h */; };
+		24D912BD13CA9A9700D21915 /* SVGGlyphRefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24D912BA13CA9A9700D21915 /* SVGGlyphRefElement.cpp */; };
+		24D912BE13CA9A9700D21915 /* SVGGlyphRefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 24D912BB13CA9A9700D21915 /* SVGGlyphRefElement.h */; };
 		24F54EAC101FE914000AE741 /* ApplicationCacheHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */; };
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
@@ -6135,8 +6162,12 @@
 				A8F46B380CB20A9D003A9670 /* DOMSVG.h in Copy Generated Headers */,
 				A8F46AE40CB20A9D003A9670 /* DOMSVGAElement.h in Copy Generated Headers */,
 				A80F3B620CCDCE24002DD990 /* DOMSVGAElementInternal.h in Copy Generated Headers */,
+				24AA569013CC952F00E902F6 /* DOMSVGAltGlyphDefElement.h in Copy Generated Headers */,
+				24AA569213CC954E00E902F6 /* DOMSVGAltGlyphDefElementInternal.h in Copy Generated Headers */,
 				E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */,
 				E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */,
+				24AA568E13CC950900E902F6 /* DOMSVGAltGlyphItemElement.h in Copy Generated Headers */,
+				24AA568D13CC94CE00E902F6 /* DOMSVGAltGlyphItemElementInternal.h in Copy Generated Headers */,
 				A80F3B3B0CCDCE24002DD990 /* DOMSVGAngle.h in Copy Generated Headers */,
 				A80F3B860CCDCE24002DD990 /* DOMSVGAngleInternal.h in Copy Generated Headers */,
 				A8F46A890CB20A9D003A9670 /* DOMSVGAnimateColorElement.h in Copy Generated Headers */,
@@ -6262,6 +6293,8 @@
 				A8F46AA20CB20A9D003A9670 /* DOMSVGGElement.h in Copy Generated Headers */,
 				A80F3B630CCDCE24002DD990 /* DOMSVGGElementInternal.h in Copy Generated Headers */,
 				B27B285D0CEF0D7200D39D54 /* DOMSVGGlyphElement.h in Copy Generated Headers */,
+				24AA569713CC95A800E902F6 /* DOMSVGGlyphRefElement.h in Copy Generated Headers */,
+				24AA569913CC95CC00E902F6 /* DOMSVGGlyphRefElementInternal.h in Copy Generated Headers */,
 				A8F46A880CB20A9D003A9670 /* DOMSVGGradientElement.h in Copy Generated Headers */,
 				A80F3B780CCDCE24002DD990 /* DOMSVGGradientElementInternal.h in Copy Generated Headers */,
 				A8F46AAE0CB20A9D003A9670 /* DOMSVGImageElement.h in Copy Generated Headers */,
@@ -7049,6 +7082,30 @@
 		22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferDataCG.h; sourceTree = "<group>"; };
 		2442BBF81194C9D300D49469 /* HashChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashChangeEvent.h; sourceTree = "<group>"; };
 		245D80A213280E40003492A6 /* SQLCallbackWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLCallbackWrapper.h; sourceTree = "<group>"; };
+		24D9128F13CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAltGlyphDefElement.cpp; sourceTree = "<group>"; };
+		24D9129013CA951E00D21915 /* JSSVGAltGlyphDefElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAltGlyphDefElement.h; sourceTree = "<group>"; };
+		24D9129313CA956100D21915 /* JSSVGAltGlyphItemElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAltGlyphItemElement.cpp; sourceTree = "<group>"; };
+		24D9129413CA956100D21915 /* JSSVGAltGlyphItemElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAltGlyphItemElement.h; sourceTree = "<group>"; };
+		24D9129713CA96DE00D21915 /* JSSVGGlyphRefElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGGlyphRefElement.cpp; sourceTree = "<group>"; };
+		24D9129913CA971400D21915 /* JSSVGGlyphRefElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGGlyphRefElement.h; sourceTree = "<group>"; };
+		24D9129B13CA975A00D21915 /* DOMSVGAltGlyphDefElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAltGlyphDefElement.h; sourceTree = "<group>"; };
+		24D9129C13CA975A00D21915 /* DOMSVGAltGlyphDefElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGAltGlyphDefElement.mm; sourceTree = "<group>"; };
+		24D9129D13CA975A00D21915 /* DOMSVGAltGlyphDefElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAltGlyphDefElementInternal.h; sourceTree = "<group>"; };
+		24D912A113CA977D00D21915 /* DOMSVGAltGlyphItemElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAltGlyphItemElement.h; sourceTree = "<group>"; };
+		24D912A213CA977D00D21915 /* DOMSVGAltGlyphItemElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGAltGlyphItemElement.mm; sourceTree = "<group>"; };
+		24D912A313CA977D00D21915 /* DOMSVGAltGlyphItemElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAltGlyphItemElementInternal.h; sourceTree = "<group>"; };
+		24D912A713CA97CF00D21915 /* DOMSVGGlyphRefElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGGlyphRefElement.h; sourceTree = "<group>"; };
+		24D912A813CA97CF00D21915 /* DOMSVGGlyphRefElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGGlyphRefElement.mm; sourceTree = "<group>"; };
+		24D912A913CA97CF00D21915 /* DOMSVGGlyphRefElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGGlyphRefElementInternal.h; sourceTree = "<group>"; };
+		24D912AD13CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAltGlyphDefElement.cpp; sourceTree = "<group>"; };
+		24D912AE13CA9A1F00D21915 /* SVGAltGlyphDefElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAltGlyphDefElement.h; sourceTree = "<group>"; };
+		24D912AF13CA9A1F00D21915 /* SVGAltGlyphDefElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAltGlyphDefElement.idl; sourceTree = "<group>"; };
+		24D912B413CA9A6900D21915 /* SVGAltGlyphItemElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAltGlyphItemElement.cpp; sourceTree = "<group>"; };
+		24D912B513CA9A6900D21915 /* SVGAltGlyphItemElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAltGlyphItemElement.h; sourceTree = "<group>"; };
+		24D912B613CA9A6900D21915 /* SVGAltGlyphItemElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAltGlyphItemElement.idl; sourceTree = "<group>"; };
+		24D912BA13CA9A9700D21915 /* SVGGlyphRefElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGlyphRefElement.cpp; sourceTree = "<group>"; };
+		24D912BB13CA9A9700D21915 /* SVGGlyphRefElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyphRefElement.h; sourceTree = "<group>"; };
+		24D912BC13CA9A9700D21915 /* SVGGlyphRefElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGGlyphRefElement.idl; sourceTree = "<group>"; };
 		24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheHost.cpp; sourceTree = "<group>"; };
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
@@ -14773,9 +14830,15 @@
 				85ACEF740ACDCFCE001214FF /* DOMSVGAElement.h */,
 				85ACEF750ACDCFCE001214FF /* DOMSVGAElement.mm */,
 				A8E544150CA9D1C10097D09B /* DOMSVGAElementInternal.h */,
+				24D9129B13CA975A00D21915 /* DOMSVGAltGlyphDefElement.h */,
+				24D9129C13CA975A00D21915 /* DOMSVGAltGlyphDefElement.mm */,
+				24D9129D13CA975A00D21915 /* DOMSVGAltGlyphDefElementInternal.h */,
 				65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */,
 				65AA6BAD0D974A00000541AE /* DOMSVGAltGlyphElement.mm */,
 				65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */,
+				24D912A113CA977D00D21915 /* DOMSVGAltGlyphItemElement.h */,
+				24D912A213CA977D00D21915 /* DOMSVGAltGlyphItemElement.mm */,
+				24D912A313CA977D00D21915 /* DOMSVGAltGlyphItemElementInternal.h */,
 				854163690AC7180B0001E01B /* DOMSVGAngle.h */,
 				854163680AC7180B0001E01B /* DOMSVGAngle.mm */,
 				A8E544130CA9D1C10097D09B /* DOMSVGAngleInternal.h */,
@@ -14979,6 +15042,9 @@
 				B27B28300CEF0C3500D39D54 /* DOMSVGGlyphElement.h */,
 				B27B28310CEF0C3500D39D54 /* DOMSVGGlyphElement.mm */,
 				B27B28320CEF0C3500D39D54 /* DOMSVGGlyphElementInternal.h */,
+				24D912A713CA97CF00D21915 /* DOMSVGGlyphRefElement.h */,
+				24D912A813CA97CF00D21915 /* DOMSVGGlyphRefElement.mm */,
+				24D912A913CA97CF00D21915 /* DOMSVGGlyphRefElementInternal.h */,
 				85C9A2EC0AD7E90300FBFF1E /* DOMSVGGradientElement.h */,
 				85C9A2ED0AD7E90300FBFF1E /* DOMSVGGradientElement.mm */,
 				A8E5444B0CA9D1C10097D09B /* DOMSVGGradientElementInternal.h */,
@@ -16769,8 +16835,12 @@
 			children = (
 				B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */,
 				B20111060AB7740500DB0E68 /* JSSVGAElement.h */,
+				24D9128F13CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp */,
+				24D9129013CA951E00D21915 /* JSSVGAltGlyphDefElement.h */,
 				6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */,
 				6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */,
+				24D9129313CA956100D21915 /* JSSVGAltGlyphItemElement.cpp */,
+				24D9129413CA956100D21915 /* JSSVGAltGlyphItemElement.h */,
 				B222F6960AB771950022EFAD /* JSSVGAngle.cpp */,
 				B222F6970AB771950022EFAD /* JSSVGAngle.h */,
 				B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */,
@@ -16903,6 +16973,8 @@
 				B2FA3CB30AB75A6E000E5AC4 /* JSSVGGElement.h */,
 				B27B28210CEF0C0700D39D54 /* JSSVGGlyphElement.cpp */,
 				B27B28220CEF0C0700D39D54 /* JSSVGGlyphElement.h */,
+				24D9129713CA96DE00D21915 /* JSSVGGlyphRefElement.cpp */,
+				24D9129913CA971400D21915 /* JSSVGGlyphRefElement.h */,
 				B2FA3CB40AB75A6E000E5AC4 /* JSSVGGradientElement.cpp */,
 				B2FA3CB50AB75A6E000E5AC4 /* JSSVGGradientElement.h */,
 				848522771190162C006EDC7F /* JSSVGHKernElement.cpp */,
@@ -17427,9 +17499,15 @@
 				B22277DD0D00BF1F0071B782 /* SVGAElement.cpp */,
 				B22277DE0D00BF1F0071B782 /* SVGAElement.h */,
 				B22277DF0D00BF1F0071B782 /* SVGAElement.idl */,
+				24D912AD13CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp */,
+				24D912AE13CA9A1F00D21915 /* SVGAltGlyphDefElement.h */,
+				24D912AF13CA9A1F00D21915 /* SVGAltGlyphDefElement.idl */,
 				65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */,
 				65653F2B0D9727D200CA9723 /* SVGAltGlyphElement.h */,
 				65653F2C0D9727D200CA9723 /* SVGAltGlyphElement.idl */,
+				24D912B413CA9A6900D21915 /* SVGAltGlyphItemElement.cpp */,
+				24D912B513CA9A6900D21915 /* SVGAltGlyphItemElement.h */,
+				24D912B613CA9A6900D21915 /* SVGAltGlyphItemElement.idl */,
 				B22277E00D00BF1F0071B782 /* SVGAngle.cpp */,
 				B22277E10D00BF1F0071B782 /* SVGAngle.h */,
 				B22277E20D00BF1F0071B782 /* SVGAngle.idl */,
@@ -17654,6 +17732,9 @@
 				B2A1F2A40CEF0ABF00442F6A /* SVGGlyphElement.cpp */,
 				B2A1F2A50CEF0ABF00442F6A /* SVGGlyphElement.h */,
 				B2A1F2A60CEF0ABF00442F6A /* SVGGlyphElement.idl */,
+				24D912BA13CA9A9700D21915 /* SVGGlyphRefElement.cpp */,
+				24D912BB13CA9A9700D21915 /* SVGGlyphRefElement.h */,
+				24D912BC13CA9A9700D21915 /* SVGGlyphRefElement.idl */,
 				3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */,
 				B22278930D00BF200071B782 /* SVGGradientElement.cpp */,
 				B22278940D00BF200071B782 /* SVGGradientElement.h */,
@@ -20807,8 +20888,12 @@
 				85A0F97E0AC7163D00161FDC /* DOMSVG.h in Headers */,
 				85ACEF7C0ACDCFCE001214FF /* DOMSVGAElement.h in Headers */,
 				85ACEF890ACDD04A001214FF /* DOMSVGAElementInternal.h in Headers */,
+				24D9129E13CA975A00D21915 /* DOMSVGAltGlyphDefElement.h in Headers */,
+				24D912A013CA975A00D21915 /* DOMSVGAltGlyphDefElementInternal.h in Headers */,
 				65AA6BAF0D974A00000541AE /* DOMSVGAltGlyphElement.h in Headers */,
 				65AA6BB10D974A00000541AE /* DOMSVGAltGlyphElementInternal.h in Headers */,
+				24D912A413CA977D00D21915 /* DOMSVGAltGlyphItemElement.h in Headers */,
+				24D912A613CA977D00D21915 /* DOMSVGAltGlyphItemElementInternal.h in Headers */,
 				854163790AC7180B0001E01B /* DOMSVGAngle.h in Headers */,
 				8541639E0AC718680001E01B /* DOMSVGAngleInternal.h in Headers */,
 				850361320ACE007C001F3D9E /* DOMSVGAnimateColorElement.h in Headers */,
@@ -20941,6 +21026,8 @@
 				85C9A31B0AD7E9A400FBFF1E /* DOMSVGGElementInternal.h in Headers */,
 				B27B283B0CEF0C3600D39D54 /* DOMSVGGlyphElement.h in Headers */,
 				B27B283D0CEF0C3600D39D54 /* DOMSVGGlyphElementInternal.h in Headers */,
+				24D912AA13CA97CF00D21915 /* DOMSVGGlyphRefElement.h in Headers */,
+				24D912AC13CA97CF00D21915 /* DOMSVGGlyphRefElementInternal.h in Headers */,
 				85C9A2F70AD7E90300FBFF1E /* DOMSVGGradientElement.h in Headers */,
 				85C9A31C0AD7E9A400FBFF1E /* DOMSVGGradientElementInternal.h in Headers */,
 				84852283119016A7006EDC7F /* DOMSVGHKernElement.h in Headers */,
@@ -21895,7 +21982,9 @@
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
 				B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */,
+				24D9129213CA951E00D21915 /* JSSVGAltGlyphDefElement.h in Headers */,
 				6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */,
+				24D9129613CA956100D21915 /* JSSVGAltGlyphItemElement.h in Headers */,
 				B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */,
 				B2FA3D370AB75A6F000E5AC4 /* JSSVGAnimateColorElement.h in Headers */,
 				B2FA3D390AB75A6F000E5AC4 /* JSSVGAnimatedAngle.h in Headers */,
@@ -21963,6 +22052,7 @@
 				B2FA3D990AB75A6F000E5AC4 /* JSSVGForeignObjectElement.h in Headers */,
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
 				B27B28280CEF0C0700D39D54 /* JSSVGGlyphElement.h in Headers */,
+				24D9129A13CA971400D21915 /* JSSVGGlyphRefElement.h in Headers */,
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
 				8485227C1190162C006EDC7F /* JSSVGHKernElement.h in Headers */,
 				B2FA3D9F0AB75A6F000E5AC4 /* JSSVGImageElement.h in Headers */,
@@ -22686,7 +22776,9 @@
 				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
 				62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */,
 				B22279740D00BF220071B782 /* SVGAElement.h in Headers */,
+				24D912B113CA9A1F00D21915 /* SVGAltGlyphDefElement.h in Headers */,
 				65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */,
+				24D912B813CA9A6900D21915 /* SVGAltGlyphItemElement.h in Headers */,
 				B22279770D00BF220071B782 /* SVGAngle.h in Headers */,
 				B222797A0D00BF220071B782 /* SVGAnimateColorElement.h in Headers */,
 				087B84961272CEC800A14417 /* SVGAnimatedAngle.h in Headers */,
@@ -22783,6 +22875,7 @@
 				B2227A270D00BF220071B782 /* SVGGElement.h in Headers */,
 				087E0AF713606D0B00FA4BA8 /* SVGGlyph.h in Headers */,
 				B2A1F2AE0CEF0ABF00442F6A /* SVGGlyphElement.h in Headers */,
+				24D912BE13CA9A9700D21915 /* SVGGlyphRefElement.h in Headers */,
 				3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */,
 				B2227A2A0D00BF220071B782 /* SVGGradientElement.h in Headers */,
 				650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */,
@@ -25921,6 +26014,15 @@
 				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,
 				FD8E9BDF13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp in Sources */,
 				5913A24113D49EBA00F5B05C /* IdentifiersFactory.cpp in Sources */,
+				24D9129113CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp in Sources */,
+				24D9129513CA956100D21915 /* JSSVGAltGlyphItemElement.cpp in Sources */,
+				24D9129813CA96DE00D21915 /* JSSVGGlyphRefElement.cpp in Sources */,
+				24D9129F13CA975A00D21915 /* DOMSVGAltGlyphDefElement.mm in Sources */,
+				24D912A513CA977D00D21915 /* DOMSVGAltGlyphItemElement.mm in Sources */,
+				24D912AB13CA97CF00D21915 /* DOMSVGGlyphRefElement.mm in Sources */,
+				24D912B013CA9A1F00D21915 /* SVGAltGlyphDefElement.cpp in Sources */,
+				24D912B713CA9A6900D21915 /* SVGAltGlyphItemElement.cpp in Sources */,
+				24D912BD13CA9A9700D21915 /* SVGGlyphRefElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

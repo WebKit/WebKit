@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Leo Yang <leoyang@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,42 +17,49 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAltGlyphElement_h
-#define SVGAltGlyphElement_h
+#ifndef SVGGlyphRefElement_h
+#define SVGGlyphRefElement_h
 
-#if ENABLE(SVG_FONTS)
-#include "SVGTextPositioningElement.h"
+#if ENABLE(SVG) && ENABLE(SVG_FONTS)
+#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class SVGGlyphElement;
-
-class SVGAltGlyphElement : public SVGTextPositioningElement,
-                           public SVGURIReference {
+class SVGGlyphRefElement: public SVGStyledElement,
+                          public SVGURIReference {
 public:
-    static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGGlyphRefElement> create(const QualifiedName&, Document*);
 
+    bool hasValidGlyphElement(String& glyphName) const;
+    virtual void parseMappedAttribute(Attribute*);
+
+    // DOM interface
     const AtomicString& glyphRef() const;
     void setGlyphRef(const AtomicString&, ExceptionCode&);
-    const AtomicString& format() const;
-    void setFormat(const AtomicString&, ExceptionCode&);
-
-    bool hasValidGlyphElements(Vector<String>& glyphNames) const;
+    float x() const { return m_x; }
+    void setX(float, ExceptionCode&);
+    float y() const { return m_y; }
+    void setY(float, ExceptionCode&);
+    float dx() const { return m_dx; }
+    void setDx(float, ExceptionCode&);
+    float dy() const { return m_dy; }
+    void setDy(float, ExceptionCode&);
 
 private:
-    SVGAltGlyphElement(const QualifiedName&, Document*);
+    SVGGlyphRefElement(const QualifiedName&, Document*);
 
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(Node*) const;
-
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAltGlyphElement)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGlyphRefElement)
         DECLARE_ANIMATED_STRING(Href, href)
     END_DECLARE_ANIMATED_PROPERTIES
+
+    float m_x;
+    float m_y;
+    float m_dx;
+    float m_dy;
 };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(SVG)
+#endif
 #endif

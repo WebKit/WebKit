@@ -25,7 +25,9 @@
  */
 
 #import <WebCore/DOMSVGAElement.h>
+#import <WebCore/DOMSVGAltGlyphDefElement.h>
 #import <WebCore/DOMSVGAltGlyphElement.h>
+#import <WebCore/DOMSVGAltGlyphItemElement.h>
 #import <WebCore/DOMSVGAngle.h>
 #import <WebCore/DOMSVGAnimateColorElement.h>
 #import <WebCore/DOMSVGAnimateElement.h>
@@ -94,6 +96,7 @@
 #import <WebCore/DOMSVGForeignObjectElement.h>
 #import <WebCore/DOMSVGGElement.h>
 #import <WebCore/DOMSVGGlyphElement.h>
+#import <WebCore/DOMSVGGlyphRefElement.h>
 #import <WebCore/DOMSVGGradientElement.h>
 #import <WebCore/DOMSVGImageElement.h>
 #import <WebCore/DOMSVGLangSpace.h>

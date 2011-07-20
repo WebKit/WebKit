@@ -197,8 +197,12 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMSVG.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGAltGlyphDefElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGAltGlyphDefElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAltGlyphElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAltGlyphElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGAltGlyphItemElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGAltGlyphItemElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAngle.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAngleInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAnimateColorElement.h \
@@ -324,6 +328,8 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMSVGGElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGGElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGGlyphElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGGlyphRefElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGGlyphRefElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGGradientElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGGradientElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGImageElement.h \

@@ -724,9 +724,9 @@ module window {
 #endif
 
 #if defined(ENABLE_SVG_FONTS) && ENABLE_SVG_FONTS
-//      attribute SVGAltGlyphDefElementConstructor SVGAltGlyphDefElement;
+        attribute SVGAltGlyphDefElementConstructor SVGAltGlyphDefElement;
         attribute SVGAltGlyphElementConstructor SVGAltGlyphElement;
-//      attribute SVGAltGlyphItemElementConstructor SVGAltGlyphItemElement;
+        attribute SVGAltGlyphItemElementConstructor SVGAltGlyphItemElement;
 //      attribute SVGDefinitionSrcElementConstructor SVGDefinitionSrcElement;
         attribute SVGFontElementConstructor SVGFontElement;
         attribute SVGFontFaceElementConstructor SVGFontFaceElement;
@@ -735,7 +735,7 @@ module window {
         attribute SVGFontFaceSrcElementConstructor SVGFontFaceSrcElement;
         attribute SVGFontFaceUriElementConstructor SVGFontFaceUriElement;
         attribute SVGGlyphElementConstructor SVGGlyphElement;
-//      attribute SVGGlyphRefElementConstructor SVGGlyphRefElement;
+        attribute SVGGlyphRefElementConstructor SVGGlyphRefElement;
         attribute SVGHKernElementConstructor SVGHKernElement;
         attribute SVGMissingGlyphElementConstructor SVGMissingGlyphElement;
         attribute SVGVKernElementConstructor SVGVKernElement;

@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +28,7 @@
 #include "ExceptionCode.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
+#include "SVGAltGlyphDefElement.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
@@ -85,15 +87,23 @@ RenderObject* SVGAltGlyphElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderSVGTSpan(this);
 }
 
-bool SVGAltGlyphElement::hasValidGlyphElement(String& glyphName) const
+bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
 {
-    // FIXME: No support for altGlyphDef/glyphRef.
-    // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=60850.
-    glyphName = getTarget(fastGetAttribute(XLinkNames::hrefAttr));
-    Element* element = treeScope()->getElementById(glyphName);
-    if (!element || !element->hasTagName(SVGNames::glyphTag))
+    String target = getTarget(fastGetAttribute(XLinkNames::hrefAttr));
+    Element* element = treeScope()->getElementById(target);
+    if (!element)
         return false;
-    return true;
+
+    if (element->hasTagName(SVGNames::glyphTag)) {
+        glyphNames.append(target);
+        return true;
+    }
+
+    if (element->hasTagName(SVGNames::altGlyphDefTag)
+        && static_cast<SVGAltGlyphDefElement*>(element)->hasValidGlyphElements(glyphNames))
+        return true;
+
+    return false;
 }
 
 }

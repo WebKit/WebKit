@@ -3433,8 +3433,12 @@ webcore_sources += \
 	Source/WebCore/svg/RadialGradientAttributes.h \
 	Source/WebCore/svg/SVGAElement.cpp \
 	Source/WebCore/svg/SVGAElement.h \
+	Source/WebCore/svg/SVGAltGlyphDefElement.cpp \
+	Source/WebCore/svg/SVGAltGlyphDefElement.h \
 	Source/WebCore/svg/SVGAltGlyphElement.cpp \
 	Source/WebCore/svg/SVGAltGlyphElement.h \
+	Source/WebCore/svg/SVGAltGlyphItemElement.cpp \
+	Source/WebCore/svg/SVGAltGlyphItemElement.h \
 	Source/WebCore/svg/SVGAngle.cpp \
 	Source/WebCore/svg/SVGAngle.h \
 	Source/WebCore/svg/SVGAnimateColorElement.cpp \
@@ -3589,6 +3593,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGGElement.h \
 	Source/WebCore/svg/SVGGlyphElement.cpp \
 	Source/WebCore/svg/SVGGlyphElement.h \
+	Source/WebCore/svg/SVGGlyphRefElement.cpp \
+	Source/WebCore/svg/SVGGlyphRefElement.h \
 	Source/WebCore/svg/SVGGlyphMap.h \
 	Source/WebCore/svg/SVGGradientElement.cpp \
 	Source/WebCore/svg/SVGGradientElement.h \
@@ -4220,8 +4226,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSElementTimeControl.h \
 	DerivedSources/WebCore/JSSVGAElement.cpp \
 	DerivedSources/WebCore/JSSVGAElement.h \
+	DerivedSources/WebCore/JSSVGAltGlyphDefElement.cpp \
+	DerivedSources/WebCore/JSSVGAltGlyphDefElement.h \
 	DerivedSources/WebCore/JSSVGAltGlyphElement.cpp \
 	DerivedSources/WebCore/JSSVGAltGlyphElement.h \
+	DerivedSources/WebCore/JSSVGAltGlyphItemElement.cpp \
+	DerivedSources/WebCore/JSSVGAltGlyphItemElement.h \
 	DerivedSources/WebCore/JSSVGAngle.cpp \
 	DerivedSources/WebCore/JSSVGAngle.h \
 	DerivedSources/WebCore/JSSVGAnimateColorElement.cpp \
@@ -4356,6 +4366,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGGElement.h \
 	DerivedSources/WebCore/JSSVGGlyphElement.cpp \
 	DerivedSources/WebCore/JSSVGGlyphElement.h \
+	DerivedSources/WebCore/JSSVGGlyphRefElement.cpp \
+	DerivedSources/WebCore/JSSVGGlyphRefElement.h \
 	DerivedSources/WebCore/JSSVGGradientElement.cpp \
 	DerivedSources/WebCore/JSSVGGradientElement.h \
 	DerivedSources/WebCore/JSSVGHKernElement.cpp \

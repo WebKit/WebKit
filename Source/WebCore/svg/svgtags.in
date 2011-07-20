@@ -5,8 +5,6 @@ guardFactoryWith="ENABLE(SVG)"
 a
 #if ENABLE_SVG_FONTS
 altGlyph
-#endif
-#if 0
 altGlyphDef
 altGlyphItem
 #endif
@@ -68,11 +66,7 @@ foreignObject
 g
 #if ENABLE_SVG_FONTS
 glyph
-#endif
-#if 0
 glyphRef
-#endif
-#if ENABLE_SVG_FONTS
 hkern interfaceName=SVGHKernElement, JSInterfaceName=SVGElement
 #endif
 image

@@ -372,7 +372,9 @@ DOM_CLASSES = \
     StreamEvent \
     StringCallback \
     SVGAElement \
+    SVGAltGlyphDefElement \
     SVGAltGlyphElement \
+    SVGAltGlyphItemElement \
     SVGAngle \
     SVGAnimateColorElement \
     SVGAnimateElement \
@@ -442,6 +444,7 @@ DOM_CLASSES = \
     SVGForeignObjectElement \
     SVGGElement \
     SVGGlyphElement \
+    SVGGlyphRefElement \
     SVGGradientElement \
     SVGHKernElement \
     SVGImageElement \

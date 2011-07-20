@@ -1662,7 +1662,9 @@ IF (ENABLE_SVG)
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp
         svg/SVGAElement.cpp
+        svg/SVGAltGlyphDefElement.cpp
         svg/SVGAltGlyphElement.cpp
+        svg/SVGAltGlyphItemElement.cpp
         svg/SVGAngle.cpp
         svg/SVGAnimateColorElement.cpp
         svg/SVGAnimatedAngle.cpp
@@ -1737,6 +1739,7 @@ IF (ENABLE_SVG)
         svg/SVGForeignObjectElement.cpp
         svg/SVGGElement.cpp
         svg/SVGGlyphElement.cpp
+        svg/SVGGlyphRefElement.cpp
         svg/SVGGradientElement.cpp
         svg/SVGHKernElement.cpp
         svg/SVGImageElement.cpp
@@ -1820,7 +1823,9 @@ IF (ENABLE_SVG)
 
     LIST(APPEND WebCore_IDL_FILES
         svg/SVGAElement.idl
+        svg/SVGAltGlyphDefElement.idl
         svg/SVGAltGlyphElement.idl
+        svg/SVGAltGlyphItemElement.idl
         svg/SVGAngle.idl
         svg/SVGAnimateColorElement.idl
         svg/SVGAnimateMotionElement.idl
@@ -1887,6 +1892,7 @@ IF (ENABLE_SVG)
         svg/SVGForeignObjectElement.idl
         svg/SVGGElement.idl
         svg/SVGGlyphElement.idl
+        svg/SVGGlyphRefElement.idl
         svg/SVGGradientElement.idl
         svg/SVGHKernElement.idl
         svg/SVGImageElement.idl
