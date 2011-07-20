@@ -789,6 +789,13 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         setNeedsValidityCheck();
     } else if (attr->name() == patternAttr || attr->name() == precisionAttr || attr->name() == stepAttr)
         setNeedsValidityCheck();
+    else if (attr->name() == disabledAttr) {
+        m_inputType->disabledAttributeChanged();
+        HTMLTextFormControlElement::parseMappedAttribute(attr);
+    } else if (attr->name() == readonlyAttr) {
+        m_inputType->readonlyAttributeChanged();
+        HTMLTextFormControlElement::parseMappedAttribute(attr);
+    }
 #if ENABLE(DATALIST)
     else if (attr->name() == listAttr)
         m_hasNonEmptyList = !attr->isEmpty();

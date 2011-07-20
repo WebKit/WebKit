@@ -1,3 +1,27 @@
+2011-07-20  Kentaro Hara  <haraken@google.com>
+
+        The value of a number input form continues to increase/decrease even if we disable the input form.
+        https://bugs.webkit.org/show_bug.cgi?id=64786
+
+        Reviewed by Kent Tamura.
+
+        The value of the number input form continues to increase/decrease in the following scenario:
+        (1) Click the spin button of the number input form.
+        (2) Hook the 'mouseup' event and disable the number input form.
+        (3) Enable the number input form after some delay (e.g. 50ms).
+
+        What is happening above is as follows:
+        (1) When the 'mousedown' event happens, the repeating timer of the spin button starts.
+        (2) If the input form is not disabled, the repeating timer stops at the 'mouseup' event.
+        However, if the input form is disabled, the 'mouseup' event is ignored, failing to stop
+        the repeating timer.
+        (3) The value continues to increase/decrease, since the repeating timer is still working.
+
+        The added test checks if the value does not continue to increase/decrease when we do the above operation.
+
+        * fast/forms/spin-button-gets-disabled-or-readonly-expected.txt: Added.
+        * fast/forms/spin-button-gets-disabled-or-readonly.html: Added.
+
 2011-07-20  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Expectation update for some forms and speech tests.

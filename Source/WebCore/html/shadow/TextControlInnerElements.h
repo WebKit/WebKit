@@ -98,6 +98,7 @@ public:
 
     static PassRefPtr<SpinButtonElement> create(Document*);
     UpDownState upDownState() const { return m_upDownState; }
+    virtual void releaseCapture();
 
 private:
     SpinButtonElement(Document*);

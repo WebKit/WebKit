@@ -238,6 +238,18 @@ void TextFieldInputType::destroyShadowSubtree()
     m_container.clear();
 }
 
+void TextFieldInputType::disabledAttributeChanged()
+{
+    if (m_innerSpinButton)
+        m_innerSpinButton->releaseCapture();
+}
+
+void TextFieldInputType::readonlyAttributeChanged()
+{
+    if (m_innerSpinButton)
+        m_innerSpinButton->releaseCapture();
+}
+
 bool TextFieldInputType::shouldUseInputMethod() const
 {
     return true;

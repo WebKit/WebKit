@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class SpinButtonElement;
+
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
 class TextFieldInputType : public InputType {
@@ -58,6 +60,8 @@ protected:
     virtual bool needsContainer() const;
     virtual void createShadowSubtree();
     virtual void destroyShadowSubtree();
+    virtual void disabledAttributeChanged();
+    virtual void readonlyAttributeChanged();
 
 private:
     virtual bool isTextField() const;
@@ -76,7 +80,7 @@ private:
     RefPtr<HTMLElement> m_innerBlock;
     RefPtr<HTMLElement> m_innerText;
     RefPtr<HTMLElement> m_placeholder;
-    RefPtr<HTMLElement> m_innerSpinButton;
+    RefPtr<SpinButtonElement> m_innerSpinButton;
 #if ENABLE(INPUT_SPEECH)
     RefPtr<HTMLElement> m_speechButton;
 #endif

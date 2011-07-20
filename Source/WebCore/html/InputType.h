@@ -229,6 +229,8 @@ public:
     virtual bool supportsPlaceholder() const;
     virtual void updatePlaceholderText();
     virtual void multipleAttributeChanged();
+    virtual void disabledAttributeChanged();
+    virtual void readonlyAttributeChanged();
 
     // Parses the specified string for the type, and return
     // the double value for the parsing result if the parsing

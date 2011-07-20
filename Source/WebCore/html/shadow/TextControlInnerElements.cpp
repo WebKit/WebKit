@@ -252,13 +252,7 @@ const AtomicString& SpinButtonElement::shadowPseudoId() const
 
 void SpinButtonElement::detach()
 {
-    stopRepeatingTimer();
-    if (m_capturing) {
-        if (Frame* frame = document()->frame()) {
-            frame->eventHandler()->setCapturingMouseEventsNode(0);
-            m_capturing = false;
-        }
-    }
+    releaseCapture();
     HTMLDivElement::detach();
 }
 
@@ -315,19 +309,23 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             m_upDownState = local.y() < box->height() / 2 ? Up : Down;
             if (m_upDownState != oldUpDownState)
                 renderer()->repaint();
-        } else {
-            if (m_capturing) {
-                stopRepeatingTimer();
-                if (Frame* frame = document()->frame()) {
-                    frame->eventHandler()->setCapturingMouseEventsNode(0);
-                    m_capturing = false;
-                }
-            }
-        }
+        } else
+            releaseCapture();
     }
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+void SpinButtonElement::releaseCapture()
+{
+    stopRepeatingTimer();
+    if (m_capturing) {
+        if (Frame* frame = document()->frame()) {
+            frame->eventHandler()->setCapturingMouseEventsNode(0);
+            m_capturing = false;
+        }
+    }
 }
 
 void SpinButtonElement::startRepeatingTimer()
