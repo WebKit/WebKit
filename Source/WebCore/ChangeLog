@@ -1,3 +1,52 @@
+2011-07-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: move Network log view to an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=62006
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onWindowMessage):
+        * inspector/front-end/IFrameView.js: Added.
+        (WebInspector.IFrameView):
+        (WebInspector.IFrameView.prototype._innerShow):
+        (WebInspector.IFrameView.prototype._innerHide):
+        (WebInspector.IFrameView.prototype.attach):
+        (WebInspector.IFrameView.prototype._attachIFrameAndInitialize):
+        (WebInspector.IFrameView.prototype.addStylesheets):
+        (WebInspector.IFrameView.prototype._setDocumentType):
+        (WebInspector.IFrameView.prototype._propagateBodyStyle):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype.initializeView):
+        (WebInspector.NetworkLogView.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.NetworkLogView.prototype._createTable):
+        (WebInspector.NetworkLogView.prototype._updateDividersIfNeeded):
+        (WebInspector.NetworkLogView.prototype.show):
+        (WebInspector.NetworkLogView.prototype._reset):
+        (WebInspector.NetworkLogView.prototype.switchToDetailedView):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkLogView.prototype.get _setLargerResources):
+        (WebInspector.NetworkLogView.prototype._updateHighlightIfMatched):
+        (WebInspector.NetworkLogView.prototype.performSearch):
+        (WebInspector.NetworkLogView.prototype.searchCanceled):
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype._onSearchCountUpdated):
+        (WebInspector.NetworkDataGridNode.prototype.select):
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype._positionElement):
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype._innerShow):
+        (WebInspector.View.prototype.show):
+        (WebInspector.View.prototype._innerHide):
+        (WebInspector.View.prototype.hide):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/dataGrid.css: Added.
+        * inspector/front-end/inspectorCommon.css: Added.
+        * inspector/front-end/networkLogView.css: Copied from Source/WebCore/inspector/front-end/networkPanel.css.
+
 2011-07-20  Steve Block  <steveblock@google.com>
 
         JobjectWrapper should inherit from RefCounted rather than implementing its own ref counting

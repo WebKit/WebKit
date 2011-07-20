@@ -546,12 +546,6 @@ WebInspector.doLoadedDone = function()
 
     window.addEventListener("resize", this.windowResize.bind(this), true);
 
-    document.addEventListener("focus", this.focusChanged.bind(this), true);
-    document.addEventListener("keydown", this.documentKeyDown.bind(this), false);
-    document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
-    document.addEventListener("copy", this.documentCopy.bind(this), true);
-    document.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
-
     var errorWarningCount = document.getElementById("error-warning-count");
     errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);
     this._updateErrorAndWarningCounts();
@@ -996,20 +990,22 @@ WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, e
     this._elementDraggingEventListener = dividerDrag;
     this._elementEndDraggingEventListener = elementDragEnd;
 
-    document.addEventListener("mousemove", dividerDrag, true);
-    document.addEventListener("mouseup", elementDragEnd, true);
+    var targetDocument = event.target.ownerDocument;
+    targetDocument.addEventListener("mousemove", dividerDrag, true);
+    targetDocument.addEventListener("mouseup", elementDragEnd, true);
 
-    document.body.style.cursor = cursor;
+    targetDocument.body.style.cursor = cursor;
 
     event.preventDefault();
 }
 
 WebInspector.elementDragEnd = function(event)
 {
-    document.removeEventListener("mousemove", this._elementDraggingEventListener, true);
-    document.removeEventListener("mouseup", this._elementEndDraggingEventListener, true);
+    var targetDocument = event.target.ownerDocument;
+    targetDocument.removeEventListener("mousemove", this._elementDraggingEventListener, true);
+    targetDocument.removeEventListener("mouseup", this._elementEndDraggingEventListener, true);
 
-    document.body.style.removeProperty("cursor");
+    targetDocument.body.style.removeProperty("cursor");
 
     delete this._elementDraggingEventListener;
     delete this._elementEndDraggingEventListener;
@@ -1429,6 +1425,12 @@ WebInspector.completeURL = function(baseURL, href)
 
 WebInspector.addMainEventListeners = function(doc)
 {
+    doc.addEventListener("focus", this.focusChanged.bind(this), true);
+    doc.addEventListener("keydown", this.documentKeyDown.bind(this), false);
+    doc.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
+    doc.addEventListener("copy", this.documentCopy.bind(this), true);
+    doc.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
+
     doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), false);
     doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), false);
     doc.addEventListener("click", this.documentClick.bind(this), true);

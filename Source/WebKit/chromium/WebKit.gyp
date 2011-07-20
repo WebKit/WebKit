@@ -724,7 +724,6 @@
                 }],
             ],
         },
-
         {
             'target_name': 'inspector_resources',
             'type': 'none',
@@ -818,6 +817,7 @@
                     '<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/devTools.css',
+                    '<@(webinspector_standalone_css_files)',
                 ],
                 'images': [
                     '<@(webinspector_image_files)',

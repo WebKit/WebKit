@@ -56,6 +56,7 @@
     <file>HeapSnapshotWorker.js</file>
     <file>HeapSnapshotWorkerDispatcher.js</file>
     <file>HelpScreen.js</file>
+    <file>IFrameView.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
@@ -133,11 +134,14 @@
     <file>WorkersSidebarPane.js</file>
     <file>UglifyJS/parse-js.js</file>
     <file>audits.css</file>
+    <file>dataGrid.css</file>
     <file>goToLineDialog.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>inspector.css</file>
+    <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>
+    <file>networkLogView.css</file>
     <file>networkPanel.css</file>
     <file>popover.css</file>
     <file>textViewer.css</file>

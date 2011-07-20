@@ -68477,6 +68477,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\dataGrid.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DebuggerModel.js"
 					>
 				</File>
@@ -68601,6 +68605,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\IFrameView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ImageView.js"
 					>
 				</File>
@@ -68621,11 +68629,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\inspectorCommon.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\InspectorFrontendHostStub.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\networkLogView.css"
 					>
 				</File>
 				<File

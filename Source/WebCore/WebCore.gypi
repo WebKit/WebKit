@@ -6293,6 +6293,7 @@
             'inspector/front-end/HeapSnapshotWorker.js',
             'inspector/front-end/HeapSnapshotWorkerDispatcher.js',
             'inspector/front-end/HelpScreen.js',
+            'inspector/front-end/IFrameView.js',
             'inspector/front-end/ImageView.js',
             'inspector/front-end/InspectorFrontendHostStub.js',
             'inspector/front-end/InjectedFakeWorker.js',
@@ -6379,6 +6380,12 @@
             'inspector/front-end/networkPanel.css',
             'inspector/front-end/popover.css',
             'inspector/front-end/textViewer.css',
+            '<@(webinspector_standalone_css_files)',
+        ],
+        'webinspector_standalone_css_files': [
+            'inspector/front-end/dataGrid.css',
+            'inspector/front-end/inspectorCommon.css',
+            'inspector/front-end/networkLogView.css',
         ],
         'webinspector_uglifyjs_files': [
             'inspector/front-end/UglifyJS/parse-js.js',

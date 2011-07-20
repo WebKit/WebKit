@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +47,11 @@ WebInspector.View.prototype = {
             this.hide();
     },
 
+    _innerShow: function()
+    {
+        this.element.addStyleClass("visible");
+    },
+
     show: function(parentElement)
     {
         this._visible = true;
@@ -55,12 +61,17 @@ WebInspector.View.prototype = {
         }
         if (!this.element.parentNode && this.attach)
             this.attach();
-        this.element.addStyleClass("visible");
+        this._innerShow();
+    },
+
+    _innerHide: function()
+    {
+        this.element.removeStyleClass("visible");
     },
 
     hide: function()
     {
-        this.element.removeStyleClass("visible");
+        this._innerHide();
         this._visible = false;
     },
 

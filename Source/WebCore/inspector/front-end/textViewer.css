@@ -188,16 +188,6 @@
     background-color: rgb(220, 220, 255);
 }
 
-.webkit-search-result {
-    -webkit-border-radius: 4px;
-    padding: 2px 2px 2px 3px;
-    margin: -2px -2px -2px -3px;
-    opacity: 0.8;
-    -webkit-box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
-    background-color: rgb(241, 234, 0);
-    color: black;
-}
-
 .webkit-highlighted-line.webkit-line-content {
     -webkit-animation: "fadeout" 2s 0s;
 }

@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkLogView = function()
+WebInspector.NetworkLogView = function(parent)
 {
     function eventsCollectionEnabled(error, enabled)
     {
@@ -36,7 +36,13 @@ WebInspector.NetworkLogView = function()
     }
     NetworkAgent.isBackgroundEventsCollectionEnabled(eventsCollectionEnabled.bind(this));
 
-    WebInspector.View.call(this);
+    // FIXME: some of the styles should be loaded on demand by components that need them.
+    var styles = [
+        "inspectorCommon.css",
+        "dataGrid.css",
+        "networkLogView.css"
+    ];
+    WebInspector.IFrameView.call(this, parent, styles);
 
     this._allowResourceSelection = false;
     this._resources = [];
@@ -54,27 +60,8 @@ WebInspector.NetworkLogView = function()
 
     this._categories = WebInspector.resourceCategories;
 
-    this.element.id = "network-container";
-
-    this._createSortingFunctions();
-    this._createTable();
-    this._createTimelineGrid();
     this._createStatusbarButtons();
     this._createFilterStatusBarItems();
-    this._createSummaryBar();
-
-    if (!this.useLargeRows)
-        this._setLargerResources(this.useLargeRows);
-
-    this._allowPopover = true;
-    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
-    // Enable faster hint.
-    this._popoverHelper.setTimeout(100);
-
-    this.calculator = new WebInspector.NetworkTransferTimeCalculator();
-    this._filter(this._filterAllElement, false);
-
-    this.switchToDetailedView();
 
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
@@ -86,6 +73,29 @@ WebInspector.NetworkLogView = function()
 }
 
 WebInspector.NetworkLogView.prototype = {
+    initializeView: function()
+    {
+        this.element.id = "network-container";
+
+        this._createSortingFunctions();
+        this._createTable();
+        this._createTimelineGrid();
+        this._createSummaryBar();
+
+        if (!this.useLargeRows)
+            this._setLargerResources(this.useLargeRows);
+
+        this._allowPopover = true;
+        this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
+        // Enable faster hint.
+        this._popoverHelper.setTimeout(100);
+
+        this.calculator = new WebInspector.NetworkTransferTimeCalculator();
+        this._filter(this._filterAllElement, false);
+
+        this.switchToDetailedView();
+    },
+
     get statusBarItems()
     {
         return [this._largerResourcesButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement];
@@ -113,6 +123,8 @@ WebInspector.NetworkLogView.prototype = {
 
     elementsToRestoreScrollPositionsFor: function()
     {
+        if (!this._dataGrid) // Not initialized yet.
+            return [];
         return [this.element, this._dataGrid.scrollContainer];
     },
 
@@ -168,11 +180,13 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.resizeMethod = WebInspector.DataGrid.ResizeMethod.Last;
         this._dataGrid.element.addStyleClass("network-log-grid");
         this._dataGrid.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
+
+        this.element.appendChild(this._dataGrid.element);
+
+        // Event listeners need to be added _after_ we attach to the document, so that owner document is properly update.
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
         this._dataGrid.addEventListener("width changed", this._updateDividersIfNeeded, this);
         this._dataGrid.scrollContainer.addEventListener("scroll", this._updateOffscreenRows.bind(this));
-
-        this.element.appendChild(this._dataGrid.element);
 
         this._patchTimelineHeader();
     },
@@ -470,6 +484,8 @@ WebInspector.NetworkLogView.prototype = {
 
     _updateDividersIfNeeded: function(force)
     {
+        if (!this._dataGrid)
+            return;
         var timelineColumn = this._dataGrid.columns.timeline;
         for (var i = 0; i < this._dataGrid.resizers.length; ++i) {
             if (timelineColumn.ordinal === this._dataGrid.resizers[i].rightNeighboringColumnID) {
@@ -598,7 +614,7 @@ WebInspector.NetworkLogView.prototype = {
 
     show: function()
     {
-        WebInspector.View.prototype.show.call(this);
+        WebInspector.IFrameView.prototype.show.call(this);
         this._refreshIfNeeded();
         this._dataGrid.updateWidths();
     },
@@ -663,12 +679,12 @@ WebInspector.NetworkLogView.prototype = {
 
     _reset: function()
     {
-        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventNames.ViewCleared);
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.ViewCleared);
 
-        this._popoverHelper.hidePopup();
         this._clearSearchMatchedList();
+        if (this._popoverHelper)
+            this._popoverHelper.hidePopup();
 
-        // Begin reset timeline
         if (this._calculator)
             this._calculator.reset();
 
@@ -678,14 +694,15 @@ WebInspector.NetworkLogView.prototype = {
         this._staleResources = [];
         this._resourceGridNodes = {};
 
-        this._dataGrid.removeChildren();
-        this._updateDividersIfNeeded(true);
-        // End reset timeline.
+        if (this._dataGrid) {
+            this._dataGrid.removeChildren();
+            this._updateDividersIfNeeded(true);
+            this._updateSummaryBar();
+        }
 
         this._mainResourceLoadTime = -1;
         this._mainResourceDOMContentTime = -1;
 
-        this._updateSummaryBar();
     },
 
     get resources()
@@ -779,8 +796,12 @@ WebInspector.NetworkLogView.prototype = {
 
     switchToDetailedView: function()
     {
+        if (!this._dataGrid)
+            return;
         if (this._dataGrid.selectedNode)
             this._dataGrid.selectedNode.selected = false;
+
+        this.element.removeStyleClass("brief-mode");
 
         this._dataGrid.showColumn("method");
         this._dataGrid.showColumn("status");
@@ -803,6 +824,8 @@ WebInspector.NetworkLogView.prototype = {
 
     switchToBriefView: function()
     {
+        this.element.addStyleClass("brief-mode");
+
         this._dataGrid.hideColumn("method");
         this._dataGrid.hideColumn("status");
         this._dataGrid.hideColumn("type");
@@ -835,7 +858,7 @@ WebInspector.NetworkLogView.prototype = {
             this._dataGrid.element.removeStyleClass("small");
             this._timelineGrid.element.removeStyleClass("small");
         }
-        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventNames.RowSizeChanged, { largeRows: enabled });
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.RowSizeChanged, { largeRows: enabled });
         this._updateOffscreenRows();
     },
 
@@ -1088,7 +1111,7 @@ WebInspector.NetworkLogView.prototype = {
         if (matchedResourceIndex === -1)
             return;
 
-        WebInspector.searchController.updateSearchMatchesCount(this._matchedResources.length, this);
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, this._matchedResources.length);
 
         if (this._currentMatchedResourceIndex !== -1 && this._currentMatchedResourceIndex !== matchedResourceIndex)
             return;
@@ -1151,8 +1174,7 @@ WebInspector.NetworkLogView.prototype = {
         }
 
         this._highlightNthMatchedResource(newMatchedResourceIndex, !sortOrFilterApplied);
-
-        WebInspector.searchController.updateSearchMatchesCount(this._matchedResources.length, this);
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, this._matchedResources.length);
     },
 
     jumpToPreviousSearchResult: function()
@@ -1172,16 +1194,17 @@ WebInspector.NetworkLogView.prototype = {
     searchCanceled: function()
     {
         this._clearSearchMatchedList();
-        WebInspector.searchController.updateSearchMatchesCount(0, this);
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, 0);
     }
 };
 
-WebInspector.NetworkLogView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.NetworkLogView.prototype.__proto__ = WebInspector.IFrameView.prototype;
 
-WebInspector.NetworkLogView.EventNames = {
+WebInspector.NetworkLogView.EventTypes = {
     ViewCleared: "ViewCleared",
     RowSizeChanged: "RowSizeChanged",
-    ResourceSelected: "ResourceSelected"
+    ResourceSelected: "ResourceSelected",
+    SearchCountUpdated: "SearchCountUpdated"
 };
 
 WebInspector.NetworkPanel = function()
@@ -1189,9 +1212,7 @@ WebInspector.NetworkPanel = function()
     WebInspector.Panel.call(this, "network");
 
     this.createSidebar();
-    this._networkLogView = new WebInspector.NetworkLogView();
-
-    this.sidebarElement.appendChild(this._networkLogView.element);
+    this._networkLogView = new WebInspector.NetworkLogView(this.sidebarElement);
 
     this._viewsContainerElement = document.createElement("div");
     this._viewsContainerElement.id = "network-views";
@@ -1201,9 +1222,10 @@ WebInspector.NetworkPanel = function()
 
     this.element.appendChild(this._viewsContainerElement);
 
-    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventNames.ViewCleared, this._onViewCleared, this);
-    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventNames.RowSizeChanged, this._onRowSizeChanged, this);
-    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventNames.ResourceSelected, this._onResourceSelected, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.ViewCleared, this._onViewCleared, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.RowSizeChanged, this._onRowSizeChanged, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.ResourceSelected, this._onResourceSelected, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, this._onSearchCountUpdated, this);
 
     this._closeButtonElement = document.createElement("button");
     this._closeButtonElement.id = "network-close-button";
@@ -1313,6 +1335,11 @@ WebInspector.NetworkPanel.prototype = {
             this._viewsContainerElement.removeStyleClass("small");
         else
             this._viewsContainerElement.addStyleClass("small");
+    },
+
+    _onSearchCountUpdated: function(event)
+    {
+        WebInspector.searchController.updateSearchMatchesCount(event.data, this);
     },
 
     _onResourceSelected: function(event)
@@ -1715,7 +1742,7 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     select: function()
     {
-        this._parentView.dispatchEventToListeners(WebInspector.NetworkLogView.EventNames.ResourceSelected, this._resource);
+        this._parentView.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.ResourceSelected, this._resource);
         WebInspector.DataGridNode.prototype.select.apply(this, arguments);
     },
 

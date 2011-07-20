@@ -29,6 +29,8 @@
  * http://ejohn.org/files/jsdiff.js (released under the MIT license).
  */
 
+function setupPrototypeUtilities() {
+
 Function.prototype.bind = function(thisObject)
 {
     var func = this;
@@ -250,7 +252,7 @@ Element.prototype.isInsertionCaretInside = function()
 
 Element.prototype.createChild = function(elementName, className)
 {
-    var element = document.createElement(elementName);
+    var element = this.ownerDocument.createElement(elementName);
     if (className)
         element.className = className;
     this.appendChild(element);
@@ -326,9 +328,9 @@ Text.prototype.select = function(start, end)
     if (start < 0)
         start = end + start;
 
-    var selection = window.getSelection();
+    var selection = this.ownerDocument.defaultView.getSelection();
     selection.removeAllRanges();
-    var range = document.createRange();
+    var range = this.ownerDocument.createRange();
     range.setStart(this, start);
     range.setEnd(this, end);
     selection.addRange(range);
@@ -355,16 +357,6 @@ Element.prototype.__defineGetter__("selectionLeftOffset", function() {
 
     return leftOffset;
 });
-
-Node.prototype.isWhitespace = isNodeWhitespace;
-Node.prototype.displayName = nodeDisplayName;
-Node.prototype.isAncestor = function(node)
-{
-    return isAncestorNode(this, node);
-};
-Node.prototype.isDescendant = isDescendantNode;
-Node.prototype.traverseNextNode = traverseNextNode;
-Node.prototype.traversePreviousNode = traversePreviousNode;
 
 String.prototype.hasSubstring = function(string, caseInsensitive)
 {
@@ -476,7 +468,7 @@ String.prototype.removeURLFragment = function()
     return this.substring(0, fragmentIndex);
 }
 
-function isNodeWhitespace()
+window.isNodeWhitespace = function()
 {
     if (!this || this.nodeType !== Node.TEXT_NODE)
         return false;
@@ -559,7 +551,7 @@ function nodeDisplayName()
     return this.nodeName.toLowerCase().collapseWhitespace();
 }
 
-function isAncestorNode(ancestor, node)
+window.isAncestorNode = function(ancestor, node)
 {
     if (!node || !ancestor)
         return false;
@@ -573,7 +565,7 @@ function isAncestorNode(ancestor, node)
     return false;
 }
 
-function isDescendantNode(descendant)
+window.isDescendantNode = function(descendant)
 {
     return isAncestorNode(descendant, this);
 }
@@ -617,15 +609,20 @@ function traversePreviousNode(stayWithin)
     return this.parentNode;
 }
 
-function getDocumentForNode(node)
-{
-    return node.nodeType == Node.DOCUMENT_NODE ? node : node.ownerDocument;
-}
-
-function parentNode(node)
+window.parentNode = function(node)
 {
     return node.parentNode;
 }
+
+Node.prototype.isWhitespace = isNodeWhitespace;
+Node.prototype.displayName = nodeDisplayName;
+Node.prototype.isAncestor = function(node)
+{
+    return isAncestorNode(this, node);
+};
+Node.prototype.isDescendant = isDescendantNode;
+Node.prototype.traverseNextNode = traverseNextNode;
+Node.prototype.traversePreviousNode = traversePreviousNode;
 
 Number.millisToString = function(ms, higherResolution)
 {
@@ -968,6 +965,10 @@ String.format = function(format, substitutions, formatters, initialValue, append
     return { formattedResult: result, unusedSubstitutions: unusedSubstitutions };
 }
 
+} // setupPrototypeUtilities()
+
+setupPrototypeUtilities();
+
 function isEnterKey(event) {
     // Check if in IME.
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
@@ -984,7 +985,8 @@ function highlightSearchResults(element, resultRanges, changes)
     changes = changes || [];
     var highlightNodes = [];
     var lineText = element.textContent;
-    var textNodeSnapshot = document.evaluate(".//text()", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var ownerDocument = element.ownerDocument;
+    var textNodeSnapshot = ownerDocument.evaluate(".//text()", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
     var snapshotLength = textNodeSnapshot.snapshotLength;
     var snapshotNodeOffset = 0;
@@ -1016,7 +1018,7 @@ function highlightSearchResults(element, resultRanges, changes)
             textNodeOffset = 0;
         }
 
-        var highlightNode = document.createElement("span");
+        var highlightNode = ownerDocument.createElement("span");
         highlightNode.className = "webkit-search-result";
         highlightNode.textContent = lineText.substring(startOffset, endOffset);
 
@@ -1029,7 +1031,7 @@ function highlightSearchResults(element, resultRanges, changes)
             textNode.parentElement.insertBefore(highlightNode, textNode);
             changes.push({ node: highlightNode, type: "added", nextSibling: textNode, parent: textNode.parentElement });
 
-            var prefixNode = document.createTextNode(text.substring(0, textNodeOffset));
+            var prefixNode = ownerDocument.createTextNode(text.substring(0, textNodeOffset));
             textNode.parentElement.insertBefore(prefixNode, highlightNode);
             changes.push({ node: prefixNode, type: "added", nextSibling: highlightNode, parent: textNode.parentElement });
             highlightNodes.push(highlightNode);

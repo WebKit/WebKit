@@ -447,7 +447,8 @@ WebInspector.ExtensionServer.prototype = {
         if (event.data !== "registerExtension")
             return;
         if (!this._allowedOrigins.hasOwnProperty(event.origin)) {
-            console.error("Ignoring unauthorized client request from " + event.origin);
+            if (event.origin !== location.origin) // Just ignore inspector frames.
+                console.error("Ignoring unauthorized client request from " + event.origin);
             return;
         }
         var port = event.ports[0];
