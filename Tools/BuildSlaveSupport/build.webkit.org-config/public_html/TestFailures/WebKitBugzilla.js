@@ -51,6 +51,6 @@ const WebKitBugzilla = {
     },
 
     Version: {
-        Nightly: '528+ (Nightly Build)',
+        Nightly: '528+ (Nightly build)',
     },
 };
