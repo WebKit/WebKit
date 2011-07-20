@@ -1161,36 +1161,6 @@ WebInspector.log = function(message, messageLevel)
     logMessage(message);
 }
 
-WebInspector.drawLoadingPieChart = function(canvas, percent) {
-    var g = canvas.getContext("2d");
-    var darkColor = "rgb(122, 168, 218)";
-    var lightColor = "rgb(228, 241, 251)";
-    var cx = 8;
-    var cy = 8;
-    var r = 7;
-
-    g.beginPath();
-    g.arc(cx, cy, r, 0, Math.PI * 2, false);
-    g.closePath();
-
-    g.lineWidth = 1;
-    g.strokeStyle = darkColor;
-    g.fillStyle = lightColor;
-    g.fill();
-    g.stroke();
-
-    var startangle = -Math.PI / 2;
-    var endangle = startangle + (percent * Math.PI * 2);
-
-    g.beginPath();
-    g.moveTo(cx, cy);
-    g.arc(cx, cy, r, startangle, endangle, false);
-    g.closePath();
-
-    g.fillStyle = darkColor;
-    g.fill();
-}
-
 WebInspector.inspect = function(payload, hints)
 {
     var object = WebInspector.RemoteObject.fromPayload(payload);

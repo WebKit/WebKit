@@ -1,5 +1,14 @@
 2011-07-20  Andrey Kosyakov  <caseq@chromium.org>
 
+        Web Inspector: remove dead code (WebInspector.drawLoadingPieChart)
+        https://bugs.webkit.org/show_bug.cgi?id=64868
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/inspector.js:
+
+2011-07-20  Andrey Kosyakov  <caseq@chromium.org>
+
         Web Inspector: move Network log view to an iframe
         https://bugs.webkit.org/show_bug.cgi?id=62006
 
