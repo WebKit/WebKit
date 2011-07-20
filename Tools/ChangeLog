@@ -1,3 +1,25 @@
+2011-07-20  Eric Seidel  <eric@webkit.org>
+
+        Move HttpLock to using a FileSystem object
+        https://bugs.webkit.org/show_bug.cgi?id=64885
+
+        Reviewed by Adam Barth.
+
+        There is no functional change here.  Just moving off
+        of direct os.foo calls to their filesystem equivalent.
+
+        This makes it possible to now unittest HttpLock using a
+        MockFileSystem instead of needing to talk to the filesystem directly.
+
+        This also will have changed any port test cases which were using a
+        mock file system to now have an HttpLock based on a mock filesystem
+        instead.  I saw no change in the unittests so it's possible
+        we're not testing that configuration (or more likely that it "just works").
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+        * Scripts/webkitpy/layout_tests/port/http_lock_unittest.py:
+
 2011-07-20  Adam Barth  <abarth@webkit.org>
 
         NRWT results uses too much space per run

@@ -31,11 +31,10 @@ import unittest
 
 
 class HttpLockTest(unittest.TestCase):
-
+    # FIXME: These tests all touch the real disk, but could be written to a MockFileSystem instead.
     def __init__(self, testFunc):
         self.http_lock_obj = http_lock.HttpLock(None, "WebKitTestHttpd.lock.", "WebKitTest.lock")
-        self.lock_file_path_prefix = os.path.join(self.http_lock_obj._lock_path,
-                                                  self.http_lock_obj._lock_file_prefix)
+        self.lock_file_path_prefix = os.path.join(self.http_lock_obj._lock_path, self.http_lock_obj._lock_file_prefix)
         self.lock_file_name = self.lock_file_path_prefix + "0"
         self.guard_lock_file = self.http_lock_obj._guard_lock_file
         self.clean_all_lockfile()

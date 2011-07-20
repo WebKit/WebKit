@@ -44,25 +44,23 @@ _log = logging.getLogger(__name__)
 
 
 class HttpLock(object):
-
-    def __init__(self, lock_path, lock_file_prefix="WebKitHttpd.lock.",
-                 guard_lock="WebKit.lock"):
+    def __init__(self, lock_path, lock_file_prefix="WebKitHttpd.lock.", guard_lock="WebKit.lock", filesystem=None, executive=None):
+        self._executive = executive or Executive()
+        self._filesystem = filesystem or FileSystem()
         self._lock_path = lock_path
         if not self._lock_path:
             self._lock_path = tempfile.gettempdir()
         self._lock_file_prefix = lock_file_prefix
-        self._lock_file_path_prefix = os.path.join(self._lock_path,
-                                                   self._lock_file_prefix)
-        self._guard_lock_file = os.path.join(self._lock_path, guard_lock)
+        self._lock_file_path_prefix = self._filesystem.join(self._lock_path, self._lock_file_prefix)
+        self._guard_lock_file = self._filesystem.join(self._lock_path, guard_lock)
         self._guard_lock = FileLock(self._guard_lock_file)
         self._process_lock_file_name = ""
-        self._executive = Executive()
 
     def cleanup_http_lock(self):
         """Delete the lock file if exists."""
-        if os.path.exists(self._process_lock_file_name):
+        if self._filesystem.exists(self._process_lock_file_name):
             _log.debug("Removing lock file: %s" % self._process_lock_file_name)
-            FileSystem().remove(self._process_lock_file_name)
+            self._filesystem.remove(self._process_lock_file_name)
 
     def _extract_lock_number(self, lock_file_name):
         """Return the lock number from lock file."""
@@ -90,12 +88,10 @@ class HttpLock(object):
             _log.debug("No lock file list")
             return
         try:
-            current_lock_file = open(lock_list[0], 'r')
-            current_pid = current_lock_file.readline()
-            current_lock_file.close()
+            current_lock_file = self._filesystem.read_text_file(lock_list[0])
             if not (current_pid and self._executive.check_running_pid(int(current_pid))):
                 _log.debug("Removing stuck lock file: %s" % lock_list[0])
-                FileSystem().remove(lock_list[0])
+                self._filesystem.remove(lock_list[0])
                 return
         except IOError, e:
             _log.debug("IOError: %s" % e)
@@ -103,14 +99,13 @@ class HttpLock(object):
         except OSError, e:
             _log.debug("OSError: %s" % e)
             return
-        result = int(current_pid)
-        return result
+        return int(current_pid)
 
     def _create_lock_file(self):
         """The lock files are used to schedule the running test sessions in first
         come first served order. The guard lock ensures that the lock numbers are
         sequential."""
-        if not os.path.exists(self._lock_path):
+        if not self._filesystem.exists(self._lock_path):
             _log.debug("Lock directory does not exist: %s" % self._lock_path)
             return False
 
@@ -118,12 +113,9 @@ class HttpLock(object):
             _log.debug("Guard lock timed out!")
             return False
 
-        self._process_lock_file_name = (self._lock_file_path_prefix +
-                                        str(self._next_lock_number()))
+        self._process_lock_file_name = (self._lock_file_path_prefix + str(self._next_lock_number()))
         _log.debug("Creating lock file: %s" % self._process_lock_file_name)
-        lock_file = open(self._process_lock_file_name, 'w')
-        lock_file.write(str(os.getpid()))
-        lock_file.close()
+        self._filesystem.write_text_file(self._process_lock_file_name, str(os.getpid()))
         self._guard_lock.release_lock()
         return True
 

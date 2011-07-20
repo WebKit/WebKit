@@ -711,7 +711,7 @@ class Port(object):
         self._websocket_server = server
 
     def acquire_http_lock(self):
-        self._http_lock = http_lock.HttpLock(None)
+        self._http_lock = http_lock.HttpLock(None, filesystem=self._filesystem, executive=self._executive)
         self._http_lock.wait_for_httpd_lock()
 
     def stop_helper(self):
