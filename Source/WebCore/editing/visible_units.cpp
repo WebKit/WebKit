@@ -989,7 +989,7 @@ bool isEndOfBlock(const VisiblePosition &pos)
 
 VisiblePosition startOfDocument(const Node* node)
 {
-    if (!node)
+    if (!node || !node->document() || !node->document()->documentElement())
         return VisiblePosition();
     
     return VisiblePosition(firstPositionInNode(node->document()->documentElement()), DOWNSTREAM);
