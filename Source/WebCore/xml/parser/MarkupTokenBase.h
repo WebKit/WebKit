@@ -31,6 +31,10 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 class DoctypeDataBase {

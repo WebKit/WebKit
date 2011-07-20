@@ -1,3 +1,11 @@
+2011-07-20  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the GTK build after changeset 91396 <http://trac.webkit.org/changeset/91396>
+        (https://bugs.webkit.org/show_bug.cgi?id=64764).
+
+        * xml/parser/MarkupTokenBase.h: #include <stdio.h> in debug build for printf(3), which is used in
+        MarkupTokenBase::printString() and MarkupTokenBase::printAttrs().
+
 2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for disabling cache in web inspector.
