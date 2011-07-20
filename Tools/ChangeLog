@@ -1,3 +1,18 @@
+2011-07-20  Eric Seidel  <eric@webkit.org>
+
+        Teach build.webkit.org how to identify leaks in NRWT output
+        https://bugs.webkit.org/show_bug.cgi?id=64891
+
+        Reviewed by Adam Barth.
+
+        This was the last remaining piece blocking turning on
+        NRWT for the leaks bot, so I did that in this change too.
+        If for some reason we see trouble on the bots, I'll
+        revert that part of this change.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * Scripts/run-webkit-tests:
+
 2011-07-20  Ojan Vafai  <ojan@chromium.org>
 
         make the treemap display more human friendly
