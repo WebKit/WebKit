@@ -16,90 +16,124 @@ layer at (0,0) size 800x600
                   RenderTextControl {INPUT} at (0,0) size 104x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (104,11) size 0x0
                   RenderTextControl {INPUT} at (0,16) size 104x16 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (92,3) size 10x10
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 100x10
+                      RenderBlock {DIV} at (0,0) size 90x10
+                      RenderBlock {DIV} at (90,0) size 10x10
                   RenderBR {BR} at (104,27) size 0x0
                   RenderTextControl {INPUT} at (0,32) size 106x18 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (106,44) size 0x0
                   RenderTextControl {INPUT} at (0,50) size 106x18 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (93,3) size 11x11
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 102x12
+                      RenderBlock {DIV} at (0,0) size 91x12
+                      RenderBlock {DIV} at (91,0) size 11x11
                   RenderBR {BR} at (106,62) size 0x0
                   RenderTextControl {INPUT} at (0,68) size 109x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (109,81) size 0x0
                   RenderTextControl {INPUT} at (0,87) size 109x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (95,3) size 12x12
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 105x13
+                      RenderBlock {DIV} at (0,0) size 93x13
+                      RenderBlock {DIV} at (93,0) size 12x12
                   RenderBR {BR} at (109,100) size 0x0
                   RenderTextControl {INPUT} at (2,108) size 131x20 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (135,122) size 0x0
                   RenderTextControl {INPUT} at (2,132) size 131x20 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (115,3) size 14x14
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 127x14
+                      RenderBlock {DIV} at (0,0) size 113x14
+                      RenderBlock {DIV} at (113,0) size 14x14
                   RenderBR {BR} at (135,146) size 0x0
                   RenderTextControl {INPUT} at (2,156) size 133x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (137,171) size 0x0
                   RenderTextControl {INPUT} at (2,181) size 133x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (116,3) size 15x15
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 129x15
+                      RenderBlock {DIV} at (0,0) size 114x15
+                      RenderBlock {DIV} at (114,0) size 15x15
                   RenderBR {BR} at (137,196) size 0x0
                   RenderTextControl {INPUT} at (2,206) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (159,222) size 0x0
                   RenderTextControl {INPUT} at (2,232) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (137,3) size 16x16
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
+                      RenderBlock {DIV} at (0,0) size 135x16
+                      RenderBlock {DIV} at (135,0) size 16x16
                   RenderBR {BR} at (159,248) size 0x0
                   RenderTextControl {INPUT} at (2,258) size 158x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (162,274) size 0x0
                   RenderTextControl {INPUT} at (2,284) size 158x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (139,2) size 17x17
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 154x16
+                      RenderBlock {DIV} at (0,0) size 137x16
+                      RenderBlock {DIV} at (137,0) size 17x17
                   RenderBR {BR} at (162,300) size 0x0
               RenderTableCell {TD} at (168,5) size 215x304 [r=0 c=1 rs=1 cs=1]
                 RenderBlock {DIV} at (1,1) size 213x302
                   RenderTextControl {INPUT} at (2,2) size 179x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (183,19) size 0x0
                   RenderTextControl {INPUT} at (2,29) size 179x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (159,2) size 18x18
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 175x17
+                      RenderBlock {DIV} at (0,0) size 157x17
+                      RenderBlock {DIV} at (157,0) size 18x18
                   RenderBR {BR} at (183,46) size 0x0
                   RenderTextControl {INPUT} at (2,56) size 182x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (186,74) size 0x0
                   RenderTextControl {INPUT} at (2,85) size 182x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (160,2) size 20x20
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 178x19
+                      RenderBlock {DIV} at (0,0) size 158x19
+                      RenderBlock {DIV} at (158,0) size 20x20
                   RenderBR {BR} at (186,103) size 0x0
                   RenderTextControl {INPUT} at (2,114) size 204x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (208,132) size 0x0
                   RenderTextControl {INPUT} at (2,144) size 204x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (181,2) size 21x21
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 200x20
+                      RenderBlock {DIV} at (0,0) size 179x20
+                      RenderBlock {DIV} at (179,0) size 21x21
                   RenderBR {BR} at (208,162) size 0x0
                   RenderTextControl {INPUT} at (2,174) size 206x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (210,194) size 0x0
                   RenderTextControl {INPUT} at (2,206) size 206x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (182,3) size 22x22
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 202x22
+                      RenderBlock {DIV} at (0,0) size 180x22
+                      RenderBlock {DIV} at (180,0) size 22x22
                   RenderBR {BR} at (210,226) size 0x0
                   RenderTextControl {INPUT} at (2,238) size 209x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (213,259) size 0x0
                   RenderTextControl {INPUT} at (2,271) size 209x29 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (184,3) size 23x23
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 205x23
+                      RenderBlock {DIV} at (0,0) size 182x23
+                      RenderBlock {DIV} at (182,0) size 23x23
                   RenderBR {BR} at (213,292) size 0x0
               RenderTableCell {TD} at (385,14) size 264x286 [r=0 c=2 rs=1 cs=1]
                 RenderBlock {DIV} at (1,1) size 262x284
                   RenderTextControl {INPUT} at (2,2) size 231x30 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (235,24) size 0x0
                   RenderTextControl {INPUT} at (2,36) size 231x30 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (204,2) size 25x25
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 227x24
+                      RenderBlock {DIV} at (0,0) size 202x24
+                      RenderBlock {DIV} at (202,0) size 25x25
                   RenderBR {BR} at (235,58) size 0x0
                   RenderTextControl {INPUT} at (2,70) size 234x31 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (238,92) size 0x0
                   RenderTextControl {INPUT} at (2,105) size 234x31 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (206,2) size 26x26
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 230x25
+                      RenderBlock {DIV} at (0,0) size 204x25
+                      RenderBlock {DIV} at (204,0) size 26x26
                   RenderBR {BR} at (238,127) size 0x0
                   RenderTextControl {INPUT} at (2,140) size 255x32 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (259,163) size 0x0
                   RenderTextControl {INPUT} at (2,176) size 255x32 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (226,2) size 27x27
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 251x26
+                      RenderBlock {DIV} at (0,0) size 224x26
+                      RenderBlock {DIV} at (224,0) size 27x27
                   RenderBR {BR} at (259,199) size 0x0
                   RenderTextControl {INPUT} at (2,212) size 258x33 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (262,236) size 0x0
                   RenderTextControl {INPUT} at (2,249) size 258x33 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                    RenderBlock {DIV} at (228,2) size 28x28
+                    RenderDeprecatedFlexibleBox {DIV} at (2,3) size 254x27
+                      RenderBlock {DIV} at (0,0) size 226x27
+                      RenderBlock {DIV} at (226,0) size 28x28
                   RenderBR {BR} at (262,273) size 0x0
       RenderBlock (anonymous) at (0,350) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (137,3) size 16x16
+          RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
+            RenderBlock {DIV} at (0,0) size 135x16
+            RenderBlock {DIV} at (135,0) size 16x16
         RenderTextControl {INPUT} at (161,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
 layer at (13,50) size 100x10 scrollWidth 140
@@ -107,7 +141,7 @@ layer at (13,50) size 100x10 scrollWidth 140
     RenderText {#text} at (1,0) size 138x10
       text run at (1,0) width 138: "A quick brown fox jumps over the lazy dog"
 layer at (13,66) size 90x10 scrollWidth 140
-  RenderBlock {DIV} at (2,3) size 90x10
+  RenderBlock {DIV} at (0,0) size 90x10
     RenderText {#text} at (1,0) size 138x10
       text run at (1,0) width 138: "A quick brown fox jumps over the lazy dog"
 layer at (13,82) size 102x12 scrollWidth 181
@@ -115,7 +149,7 @@ layer at (13,82) size 102x12 scrollWidth 181
     RenderText {#text} at (1,0) size 179x12
       text run at (1,0) width 179: "A quick brown fox jumps over the lazy dog"
 layer at (13,100) size 91x12 scrollWidth 181
-  RenderBlock {DIV} at (2,3) size 91x12
+  RenderBlock {DIV} at (0,0) size 91x12
     RenderText {#text} at (1,0) size 179x12
       text run at (1,0) width 179: "A quick brown fox jumps over the lazy dog"
 layer at (13,118) size 105x13 scrollWidth 200
@@ -123,7 +157,7 @@ layer at (13,118) size 105x13 scrollWidth 200
     RenderText {#text} at (1,0) size 198x13
       text run at (1,0) width 198: "A quick brown fox jumps over the lazy dog"
 layer at (13,137) size 93x13 scrollWidth 200
-  RenderBlock {DIV} at (2,3) size 93x13
+  RenderBlock {DIV} at (0,0) size 93x13
     RenderText {#text} at (1,0) size 198x13
       text run at (1,0) width 198: "A quick brown fox jumps over the lazy dog"
 layer at (15,158) size 127x14 scrollWidth 210
@@ -131,7 +165,7 @@ layer at (15,158) size 127x14 scrollWidth 210
     RenderText {#text} at (1,0) size 208x14
       text run at (1,0) width 208: "A quick brown fox jumps over the lazy dog"
 layer at (15,182) size 113x14 scrollWidth 210
-  RenderBlock {DIV} at (2,3) size 113x14
+  RenderBlock {DIV} at (0,0) size 113x14
     RenderText {#text} at (1,0) size 208x14
       text run at (1,0) width 208: "A quick brown fox jumps over the lazy dog"
 layer at (15,206) size 129x15 scrollWidth 227
@@ -139,7 +173,7 @@ layer at (15,206) size 129x15 scrollWidth 227
     RenderText {#text} at (1,0) size 225x15
       text run at (1,0) width 225: "A quick brown fox jumps over the lazy dog"
 layer at (15,231) size 114x15 scrollWidth 227
-  RenderBlock {DIV} at (2,3) size 114x15
+  RenderBlock {DIV} at (0,0) size 114x15
     RenderText {#text} at (1,0) size 225x15
       text run at (1,0) width 225: "A quick brown fox jumps over the lazy dog"
 layer at (15,256) size 151x16 scrollWidth 246
@@ -147,7 +181,7 @@ layer at (15,256) size 151x16 scrollWidth 246
     RenderText {#text} at (1,0) size 244x16
       text run at (1,0) width 244: "A quick brown fox jumps over the lazy dog"
 layer at (15,282) size 135x16 scrollWidth 246
-  RenderBlock {DIV} at (2,3) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
     RenderText {#text} at (1,0) size 244x16
       text run at (1,0) width 244: "A quick brown fox jumps over the lazy dog"
 layer at (15,308) size 154x16 scrollWidth 265
@@ -155,7 +189,7 @@ layer at (15,308) size 154x16 scrollWidth 265
     RenderText {#text} at (1,0) size 263x16
       text run at (1,0) width 263: "A quick brown fox jumps over the lazy dog"
 layer at (15,334) size 137x16 scrollWidth 265
-  RenderBlock {DIV} at (2,3) size 137x16
+  RenderBlock {DIV} at (0,0) size 137x16
     RenderText {#text} at (1,0) size 263x16
       text run at (1,0) width 263: "A quick brown fox jumps over the lazy dog"
 layer at (181,55) size 175x17 scrollWidth 274
@@ -163,7 +197,7 @@ layer at (181,55) size 175x17 scrollWidth 274
     RenderText {#text} at (1,0) size 272x17
       text run at (1,0) width 272: "A quick brown fox jumps over the lazy dog"
 layer at (181,82) size 157x17 scrollWidth 274
-  RenderBlock {DIV} at (2,3) size 157x17
+  RenderBlock {DIV} at (0,0) size 157x17
     RenderText {#text} at (1,0) size 272x17
       text run at (1,0) width 272: "A quick brown fox jumps over the lazy dog"
 layer at (181,109) size 178x19 scrollWidth 289
@@ -171,7 +205,7 @@ layer at (181,109) size 178x19 scrollWidth 289
     RenderText {#text} at (1,0) size 287x18
       text run at (1,0) width 287: "A quick brown fox jumps over the lazy dog"
 layer at (181,138) size 158x19 scrollWidth 289
-  RenderBlock {DIV} at (2,3) size 158x19
+  RenderBlock {DIV} at (0,0) size 158x19
     RenderText {#text} at (1,0) size 287x18
       text run at (1,0) width 287: "A quick brown fox jumps over the lazy dog"
 layer at (181,167) size 200x20 scrollWidth 308
@@ -179,7 +213,7 @@ layer at (181,167) size 200x20 scrollWidth 308
     RenderText {#text} at (1,0) size 306x19
       text run at (1,0) width 306: "A quick brown fox jumps over the lazy dog"
 layer at (181,197) size 179x20 scrollWidth 308
-  RenderBlock {DIV} at (2,3) size 179x20
+  RenderBlock {DIV} at (0,0) size 179x20
     RenderText {#text} at (1,0) size 306x19
       text run at (1,0) width 306: "A quick brown fox jumps over the lazy dog"
 layer at (181,227) size 202x22 scrollWidth 335
@@ -187,7 +221,7 @@ layer at (181,227) size 202x22 scrollWidth 335
     RenderText {#text} at (1,0) size 333x21
       text run at (1,0) width 333: "A quick brown fox jumps over the lazy dog"
 layer at (181,259) size 180x22 scrollWidth 335
-  RenderBlock {DIV} at (2,3) size 180x22
+  RenderBlock {DIV} at (0,0) size 180x22
     RenderText {#text} at (1,0) size 333x21
       text run at (1,0) width 333: "A quick brown fox jumps over the lazy dog"
 layer at (181,291) size 205x23 scrollWidth 355
@@ -195,7 +229,7 @@ layer at (181,291) size 205x23 scrollWidth 355
     RenderText {#text} at (1,0) size 353x22
       text run at (1,0) width 353: "A quick brown fox jumps over the lazy dog"
 layer at (181,324) size 182x23 scrollWidth 355
-  RenderBlock {DIV} at (2,3) size 182x23
+  RenderBlock {DIV} at (0,0) size 182x23
     RenderText {#text} at (1,0) size 353x22
       text run at (1,0) width 353: "A quick brown fox jumps over the lazy dog"
 layer at (398,64) size 227x24 scrollWidth 371
@@ -203,7 +237,7 @@ layer at (398,64) size 227x24 scrollWidth 371
     RenderText {#text} at (1,0) size 369x23
       text run at (1,0) width 369: "A quick brown fox jumps over the lazy dog"
 layer at (398,98) size 202x24 scrollWidth 371
-  RenderBlock {DIV} at (2,3) size 202x24
+  RenderBlock {DIV} at (0,0) size 202x24
     RenderText {#text} at (1,0) size 369x23
       text run at (1,0) width 369: "A quick brown fox jumps over the lazy dog"
 layer at (398,132) size 230x25 scrollWidth 389
@@ -211,7 +245,7 @@ layer at (398,132) size 230x25 scrollWidth 389
     RenderText {#text} at (1,0) size 387x24
       text run at (1,0) width 387: "A quick brown fox jumps over the lazy dog"
 layer at (398,167) size 204x25 scrollWidth 389
-  RenderBlock {DIV} at (2,3) size 204x25
+  RenderBlock {DIV} at (0,0) size 204x25
     RenderText {#text} at (1,0) size 387x24
       text run at (1,0) width 387: "A quick brown fox jumps over the lazy dog"
 layer at (398,202) size 251x26 scrollWidth 405
@@ -219,7 +253,7 @@ layer at (398,202) size 251x26 scrollWidth 405
     RenderText {#text} at (1,0) size 403x25
       text run at (1,0) width 403: "A quick brown fox jumps over the lazy dog"
 layer at (398,238) size 224x26 scrollWidth 405
-  RenderBlock {DIV} at (2,3) size 224x26
+  RenderBlock {DIV} at (0,0) size 224x26
     RenderText {#text} at (1,0) size 403x25
       text run at (1,0) width 403: "A quick brown fox jumps over the lazy dog"
 layer at (398,274) size 254x27 scrollWidth 418
@@ -227,10 +261,10 @@ layer at (398,274) size 254x27 scrollWidth 418
     RenderText {#text} at (1,0) size 416x26
       text run at (1,0) width 416: "A quick brown fox jumps over the lazy dog"
 layer at (398,311) size 226x27 scrollWidth 418
-  RenderBlock {DIV} at (2,3) size 226x27
+  RenderBlock {DIV} at (0,0) size 226x27
     RenderText {#text} at (1,0) size 416x26
       text run at (1,0) width 416: "A quick brown fox jumps over the lazy dog"
 layer at (12,363) size 135x16
-  RenderBlock {DIV} at (2,3) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
 layer at (171,363) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16

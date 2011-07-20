@@ -3512,7 +3512,6 @@ BUGWK63700 : fast/html/details-remove-summary-4.html = FAIL
 BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = TEXT IMAGE+TEXT PASS
-BUGWK59208 WIN MAC : fast/speech/input-appearance-searchandspeech.html = FAIL
 
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
@@ -3742,9 +3741,6 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = CRA
 
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
-
-// New test. Need platform-dependent baseline files.
-BUGWK59703 : fast/forms/input-appearance-number-rtl.html = FAIL
 
 BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 

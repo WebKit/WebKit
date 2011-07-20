@@ -1,3 +1,22 @@
+2011-07-20  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Expectation update for some forms and speech tests.
+
+        * platform/chromium-linux/fast/forms/input-appearance-number-rtl-expected.png: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-number-rtl-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-number-rtl-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-appearance-number-rtl-expected.txt: Added.
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91285.
