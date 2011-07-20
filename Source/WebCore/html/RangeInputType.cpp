@@ -156,10 +156,10 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
     Node* targetNode = event->target()->toNode();
     if (event->button() != LeftButton || !targetNode || (targetNode != element() && !targetNode->isDescendantOf(element()->shadowRoot())))
         return;
-
     SliderThumbElement* thumb = sliderThumbElementOf(element());
+    if (targetNode == thumb)
+        return;
     thumb->dragFrom(event->absoluteLocation());
-    event->setDefaultHandled();
 }
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
