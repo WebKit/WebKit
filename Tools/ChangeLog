@@ -1,3 +1,14 @@
+2011-07-20  Adam Barth  <abarth@webkit.org>
+
+        NRWT results uses too much space per run
+        https://bugs.webkit.org/show_bug.cgi?id=64845
+
+        Reviewed by Ojan Vafai.
+
+        Removing these files saves about 750K per build.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
 2011-07-20  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] [NRWT] Xvfb produces a lot of stderr output

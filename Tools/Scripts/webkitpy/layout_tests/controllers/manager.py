@@ -1084,6 +1084,14 @@ class Manager(object):
 
         generator.upload_json_files(json_files)
 
+        incremental_results_path = self._fs.join(self._results_directory, "incremental_results.json")
+
+        # Remove these files from the results directory so they don't take up too much space on the buildbot.
+        # The tools use the version we uploaded to the results server anyway.
+        self._fs.remove(expectations_path)
+        self._fs.remove(times_json_path)
+        self._fs.remove(incremental_results_path)
+
     def print_config(self):
         """Prints the configuration for the test run."""
         p = self._printer
