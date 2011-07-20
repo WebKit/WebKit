@@ -1,3 +1,20 @@
+2011-07-20  Ojan Vafai  <ojan@chromium.org>
+
+        show a list of average test times in the treemap
+        https://bugs.webkit.org/show_bug.cgi?id=64899
+
+        Reviewed by Adam Roben.
+
+        For now, you click a link and it replaces the treemap
+        with a reverse sorted list of directories based on
+        average test runtime within that directory.
+
+        To cut some of the noise, we don't show directories
+        that only have one test in them or where the average
+        runtime is less than 100ms.
+
+        * TestResultServer/static-dashboards/treemap.html:
+
 2011-07-20  Eric Seidel  <eric@webkit.org>
 
         Teach build.webkit.org how to identify leaks in NRWT output

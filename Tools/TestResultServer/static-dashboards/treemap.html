@@ -45,6 +45,14 @@ body {
     left: 0;
 }
 
+td:first-child {
+    text-align: left;
+}
+
+td {
+    text-align: right;
+}
+
 #map {
     display: -moz-box;
     display: -webkit-box;
@@ -104,7 +112,7 @@ body {
 <script src='webtreemap.js'></script>
 
 <div id='header-container'></div>
-<p>Click on a box to zoom in.    Click on the outermost box to zoom out.</p>
+<p>Click on a box to zoom in. Click on the outermost box to zoom out. <a href="" onclick="showAverages();return false;">Show averages</a></p>
 <div id='map'></div>
 
 <script>
@@ -115,9 +123,9 @@ var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/";
 function humanReadableTime(milliseconds)
 {
     if (milliseconds < 1000)
-        return milliseconds + 'ms';
+        return Math.floor(milliseconds) + 'ms';
     else if (milliseconds < 60000)
-        return Math.floor(milliseconds / 1000).toPrecision(2) + 's';
+        return (milliseconds / 1000).toPrecision(2) + 's';
 
     var minutes = Math.floor(milliseconds / 60000);
     var seconds = Math.floor((milliseconds - minutes * 60000) / 1000);
@@ -129,7 +137,7 @@ function humanReadableTime(milliseconds)
 //   "name": (name of this node),
 //   "children": [ (child nodes, in the same format as this) ] }
 // childCount is added just to be includes in the node's name
-function convertToWebTreemapFormat(treename, tree)
+function convertToWebTreemapFormat(treename, tree, path)
 {
     var total = 0;
     var childCount = 0;
@@ -146,7 +154,8 @@ function convertToWebTreemapFormat(treename, tree)
             total += time;
             childCount++;
         } else {
-            var subtree = convertToWebTreemapFormat(name, treeNode);
+            var newPath = path ? path + '/' + name : name;
+            var subtree = convertToWebTreemapFormat(name, treeNode, newPath);
             children.push(subtree);
             total += subtree["data"]["$area"];
             childCount += subtree["childCount"];
@@ -163,8 +172,57 @@ function convertToWebTreemapFormat(treename, tree)
         "data": {"$area": total},
         "name": treename + " (" + humanReadableTime(total) + " - " + childCount + " tests)",
         "children": children,
-        "childCount": childCount
+        "childCount": childCount,
+        "path": path
     };
+}
+
+function listOfAllNonLeafNodes(tree, list)
+{
+    if (!tree.children)
+        return;
+
+    if (!list)
+        list = [];
+    list.push(tree);
+
+    tree.children.forEach(function(child) {
+        listOfAllNonLeafNodes(child, list);
+    });
+    return list;
+}
+
+function reverseSortByAverage(list)
+{
+    list.sort(function(a, b) {
+        var avgA = a.data['$area'] / a.childCount;
+        var avgB = b.data['$area'] / b.childCount;
+        return avgB - avgA;
+    });
+}
+
+function showAverages()
+{
+    if (!document.getElementById('map'))
+        return;
+
+    var table = document.createElement('table');
+    table.innerHTML = '<th>directory</th><th># tests</th><th>avg time / test</th>';
+
+    var allNodes = listOfAllNonLeafNodes(g_webTree);
+    reverseSortByAverage(allNodes);
+    allNodes.forEach(function(node) {
+        var average = node.data['$area'] / node.childCount;
+        if (average > 100 && node.childCount != 1) {
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td></td><td>' + node.childCount + '</td><td>' + humanReadableTime(average) + '</td>';
+            tr.querySelector('td').innerText = node.path;
+            table.appendChild(tr);
+        }
+    });
+
+    var map = document.getElementById('map');
+    map.parentNode.replaceChild(table, map);
 }
 
 var g_resultsByBuilder = {};
@@ -180,6 +238,7 @@ function ADD_RESULTS(data)
 }
 
 var g_isGeneratingPage = false;
+var g_webTree;
 
 function generatePage()
 {
@@ -191,8 +250,8 @@ function generatePage()
     g_isGeneratingPage = true;
 
     var rawTree = g_resultsByBuilder[g_currentState.builder];
-    var webtree = convertToWebTreemapFormat('LayoutTests', rawTree);
-    appendTreemap($('map'), webtree);
+    g_webTree = convertToWebTreemapFormat('LayoutTests', rawTree);
+    appendTreemap($('map'), g_webTree);
 
     if (g_currentState.treemapfocus)
         focusPath(webtree, g_currentState.treemapfocus)
