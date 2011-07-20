@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) || defined(QT_OPENGL_SHIMS)
 
 #define DISABLE_SHIMS
 #include "OpenGLShims.h"
@@ -26,11 +26,22 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
+#define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \
+    openGLFunctionTable()->FunctionName = ::FunctionName
+#else
 #define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \
     openGLFunctionTable()->FunctionName = reinterpret_cast<FunctionName##Type>(lookupOpenGLFunctionAddress(#FunctionName, success))
+#endif
 
 namespace WebCore {
 
+#if PLATFORM(QT)
+static void* getProcAddress(const char* procName)
+{
+    return QGLContext::currentContext()->getProcAddress(QString::fromLatin1(procName));
+}
+#else
 typedef void* (*glGetProcAddressType) (const char* procName);
 static void* getProcAddress(const char* procName)
 {
@@ -47,6 +58,7 @@ static void* getProcAddress(const char* procName)
         return dlsym(RTLD_DEFAULT, procName);
     return getProcAddressFunction(procName);
 }
+#endif
 
 static void* lookupOpenGLFunctionAddress(const char* functionName, bool& success)
 {

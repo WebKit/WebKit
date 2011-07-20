@@ -28,7 +28,9 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if defined(TEXMAP_OPENGL_ES_2)
+#if PLATFORM(QT)
+#include <cairo/OpenGLShims.h>
+#elif defined(TEXMAP_OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #elif OS(MAC_OS_X)
@@ -37,7 +39,7 @@
 #include <GL/gl.h>
 #endif
 
-#ifndef TEXMAP_OPENGL_ES_2
+#if !defined(TEXMAP_OPENGL_ES_2) && !PLATFORM(QT)
 extern "C" {
     void glUniform1f(GLint, GLfloat);
     void glUniform1i(GLint, GLint);
@@ -388,6 +390,9 @@ void TextureMapperGL::initializeShaders()
 void TextureMapperGL::beginPainting()
 {
 #if PLATFORM(QT)
+    if (!initializeOpenGLShims())
+        return;
+
     glGetIntegerv(GL_CURRENT_PROGRAM, &m_data->previousProgram);
     QPainter* painter = m_context->platformContext();
     painter->save();

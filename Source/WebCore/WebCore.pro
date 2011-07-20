@@ -3622,7 +3622,9 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         platform/graphics/qt/Extensions3DQt.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp
 
-        INCLUDEPATH += $$PWD/platform/graphics/gpu
+    INCLUDEPATH += $$PWD/platform/graphics/gpu
+
+    CONFIG += opengl-shims
 }
 
 contains(DEFINES, ENABLE_MHTML=1) {
@@ -3670,8 +3672,15 @@ contains(CONFIG, texmap) {
     !symbian:!win32-*:contains(QT_CONFIG, opengl) {
         HEADERS += platform/graphics/opengl/TextureMapperGL.h
         SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
+        CONFIG += opengl-shims
     }
 } else {
     HEADERS += platform/graphics/qt/GraphicsLayerQt.h
     SOURCES += platform/graphics/qt/GraphicsLayerQt.cpp
+}
+
+contains(CONFIG, opengl-shims) {
+    HEADERS += platform/graphics/cairo/OpenGLShims.h
+    SOURCES += platform/graphics/cairo/OpenGLShims.cpp
+    DEFINES += QT_OPENGL_SHIMS=1
 }

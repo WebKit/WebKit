@@ -17,7 +17,11 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#if PLATFORM(QT)
+#include <QGLContext>
+#else
 #include <GL/gl.h>
+#endif
 
 typedef struct _OpenGLFunctionTable OpenGLFunctionTable;
 
@@ -223,43 +227,56 @@ typedef struct _OpenGLFunctionTable {
 #define glAttachShader                         LOOKUP_GL_FUNCTION(glAttachShader)
 #define glBindAttribLocation                   LOOKUP_GL_FUNCTION(glBindAttribLocation)
 #define glBindBuffer                           LOOKUP_GL_FUNCTION(glBindBuffer)
-#define glBindFramebufferEXT                   LOOKUP_GL_FUNCTION(glBindFramebuffer)
-#define glBindRenderbufferEXT                  LOOKUP_GL_FUNCTION(glBindRenderbuffer)
+#define glBindFramebufferEXT                   glBindFramebuffer
+#define glBindFramebuffer                      LOOKUP_GL_FUNCTION(glBindFramebuffer)
+#define glBindRenderbufferEXT                  glBindRenderbuffer
+#define glBindRenderbuffer                     LOOKUP_GL_FUNCTION(glBindRenderbuffer)
 #define glBlendColor                           LOOKUP_GL_FUNCTION(glBlendColor)
 #define glBlendEquation                        LOOKUP_GL_FUNCTION(glBlendEquation)
 #define glBlendEquationSeparate                LOOKUP_GL_FUNCTION(glBlendEquationSeparate)
 #define glBlendFuncSeparate                    LOOKUP_GL_FUNCTION(glBlendFuncSeparate)
-#define glBlitFramebufferEXT                   LOOKUP_GL_FUNCTION(glBlitFramebuffer)
+#define glBlitFramebufferEXT                   glBlitFramebuffer
+#define glBlitFramebuffer                      LOOKUP_GL_FUNCTION(glBlitFramebuffer)
 #define glBufferData                           LOOKUP_GL_FUNCTION(glBufferData)
 #define glBufferSubData                        LOOKUP_GL_FUNCTION(glBufferSubData)
-#define glCheckFramebufferStatusEXT            LOOKUP_GL_FUNCTION(glCheckFramebufferStatus)
+#define glCheckFramebufferStatusEXT            glCheckFramebufferStatus
+#define glCheckFramebufferStatus               LOOKUP_GL_FUNCTION(glCheckFramebufferStatus)
 #define glCompileShader                        LOOKUP_GL_FUNCTION(glCompileShader)
 #define glCreateProgram                        LOOKUP_GL_FUNCTION(glCreateProgram)
 #define glCreateShader                         LOOKUP_GL_FUNCTION(glCreateShader)
 #define glDeleteBuffers                        LOOKUP_GL_FUNCTION(glDeleteBuffers)
-#define glDeleteFramebuffersEXT                LOOKUP_GL_FUNCTION(glDeleteFramebuffers)
+#define glDeleteFramebuffersEXT                glDeleteFramebuffers
+#define glDeleteFramebuffers                   LOOKUP_GL_FUNCTION(glDeleteFramebuffers)
 #define glDeleteProgram                        LOOKUP_GL_FUNCTION(glDeleteProgram)
-#define glDeleteRenderbuffersEXT               LOOKUP_GL_FUNCTION(glDeleteRenderbuffers)
+#define glDeleteRenderbuffersEXT               glDeleteRenderbuffers
+#define glDeleteRenderbuffers                  LOOKUP_GL_FUNCTION(glDeleteRenderbuffers)
 #define glDeleteShader                         LOOKUP_GL_FUNCTION(glDeleteShader)
 #define glDetachShader                         LOOKUP_GL_FUNCTION(glDetachShader)
 #define glDisableVertexAttribArray             LOOKUP_GL_FUNCTION(glDisableVertexAttribArray)
 #define glEnableVertexAttribArray              LOOKUP_GL_FUNCTION(glEnableVertexAttribArray)
-#define glFramebufferRenderbufferEXT           LOOKUP_GL_FUNCTION(glFramebufferRenderbuffer)
-#define glFramebufferTexture2DEXT              LOOKUP_GL_FUNCTION(glFramebufferTexture2D)
+#define glFramebufferRenderbufferEXT           glFramebufferRenderbuffer
+#define glFramebufferRenderbuffer              LOOKUP_GL_FUNCTION(glFramebufferRenderbuffer)
+#define glFramebufferTexture2DEXT              glFramebufferTexture2D
+#define glFramebufferTexture2D                 LOOKUP_GL_FUNCTION(glFramebufferTexture2D)
 #define glGenBuffers                           LOOKUP_GL_FUNCTION(glGenBuffers)
-#define glGenerateMipmapEXT                    LOOKUP_GL_FUNCTION(glGenerateMipmap)
-#define glGenFramebuffersEXT                   LOOKUP_GL_FUNCTION(glGenFramebuffers)
-#define glGenRenderbuffersEXT                  LOOKUP_GL_FUNCTION(glGenRenderbuffers)
+#define glGenerateMipmapEXT                    glGenerateMipmap
+#define glGenerateMipmap                       LOOKUP_GL_FUNCTION(glGenerateMipmap)
+#define glGenFramebuffersEXT                   glGenFramebuffers
+#define glGenFramebuffers                      LOOKUP_GL_FUNCTION(glGenFramebuffers)
+#define glGenRenderbuffersEXT                  glGenRenderbuffers
+#define glGenRenderbuffers                     LOOKUP_GL_FUNCTION(glGenRenderbuffers)
 #define glGetActiveAttrib                      LOOKUP_GL_FUNCTION(glGetActiveAttrib)
 #define glGetActiveUniform                     LOOKUP_GL_FUNCTION(glGetActiveUniform)
 #define glGetAttachedShaders                   LOOKUP_GL_FUNCTION(glGetAttachedShaders)
 #define glGetAttribLocation                    LOOKUP_GL_FUNCTION(glGetAttribLocation)
+#define glGetBufferParameterivEXT              glGetBufferParameteriv
 #define glGetBufferParameteriv                 LOOKUP_GL_FUNCTION(glGetBufferParameteriv)
-#define glGetBufferParameterivEXT              LOOKUP_GL_FUNCTION(glGetBufferParameteriv)
-#define glGetFramebufferAttachmentParameterivEXT LOOKUP_GL_FUNCTION(glGetFramebufferAttachmentParameteriv)
+#define glGetFramebufferAttachmentParameterivEXT glGetFramebufferAttachmentParameteriv
+#define glGetFramebufferAttachmentParameteriv  LOOKUP_GL_FUNCTION(glGetFramebufferAttachmentParameteriv)
 #define glGetProgramInfoLog                    LOOKUP_GL_FUNCTION(glGetProgramInfoLog)
 #define glGetProgramiv                         LOOKUP_GL_FUNCTION(glGetProgramiv)
-#define glGetRenderbufferParameterivEXT        LOOKUP_GL_FUNCTION(glGetRenderbufferParameteriv)
+#define glGetRenderbufferParameterivEXT        glGetRenderbufferParameteriv
+#define glGetRenderbufferParameteriv           LOOKUP_GL_FUNCTION(glGetRenderbufferParameteriv)
 #define glGetShaderInfoLog                     LOOKUP_GL_FUNCTION(glGetShaderInfoLog)
 #define glGetShaderiv                          LOOKUP_GL_FUNCTION(glGetShaderiv)
 #define glGetShaderSource                      LOOKUP_GL_FUNCTION(glGetShaderSource)
@@ -270,13 +287,17 @@ typedef struct _OpenGLFunctionTable {
 #define glGetVertexAttribiv                    LOOKUP_GL_FUNCTION(glGetVertexAttribiv)
 #define glGetVertexAttribPointerv              LOOKUP_GL_FUNCTION(glGetVertexAttribPointerv)
 #define glIsBuffer                             LOOKUP_GL_FUNCTION(glIsBuffer)
-#define glIsFramebufferEXT                     LOOKUP_GL_FUNCTION(glIsFramebuffer)
+#define glIsFramebufferEXT                     glIsFramebuffer
+#define glIsFramebuffer                        LOOKUP_GL_FUNCTION(glIsFramebuffer)
 #define glIsProgram                            LOOKUP_GL_FUNCTION(glIsProgram)
-#define glIsRenderbufferEXT                    LOOKUP_GL_FUNCTION(glIsRenderbuffer)
+#define glIsRenderbufferEXT                    glIsRenderbuffer
+#define glIsRenderbuffer                       LOOKUP_GL_FUNCTION(glIsRenderbuffer)
 #define glIsShader                             LOOKUP_GL_FUNCTION(glIsShader)
 #define glLinkProgram                          LOOKUP_GL_FUNCTION(glLinkProgram)
-#define glRenderbufferStorageEXT               LOOKUP_GL_FUNCTION(glRenderbufferStorage)
-#define glRenderbufferStorageMultisampleEXT    LOOKUP_GL_FUNCTION(glRenderbufferStorageMultisample)
+#define glRenderbufferStorageEXT               glRenderbufferStorage
+#define glRenderbufferStorage                  LOOKUP_GL_FUNCTION(glRenderbufferStorage)
+#define glRenderbufferStorageMultisampleEXT    glRenderbufferStorageMultisample
+#define glRenderbufferStorageMultisample       LOOKUP_GL_FUNCTION(glRenderbufferStorageMultisample)
 #define glSampleCoverage                       LOOKUP_GL_FUNCTION(glSampleCoverage)
 #define glShaderSource                         LOOKUP_GL_FUNCTION(glShaderSource)
 #define glStencilFuncSeparate                  LOOKUP_GL_FUNCTION(glStencilFuncSeparate)
