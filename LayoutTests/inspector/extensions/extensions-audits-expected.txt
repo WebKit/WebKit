@@ -19,6 +19,7 @@ Added audit category.
 {
     return 4;
 }
+         error.html:10
     Passed rule
      this rule always passes ok
   Extension audits that fail

@@ -290,6 +290,7 @@ function AuditResultImpl(id)
     this.createURL = bind(this._nodeFactory, null, "url");
     this.createSnippet = bind(this._nodeFactory, null, "snippet");
     this.createText = bind(this._nodeFactory, null, "text");
+    this.createResourceLink = bind(this._nodeFactory, null, "resourceLink");
 }
 
 AuditResultImpl.prototype = {
