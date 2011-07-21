@@ -1,3 +1,47 @@
+2011-07-20  Tim Horton  <timothy_horton@apple.com>
+
+        Scrollbar color heuristic needs to be hooked up in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=64220
+        <rdar://problem/9589140>
+
+        Reviewed by Darin Adler.
+
+        Store the scroller style on ScrollableArea, and recompute it whenever
+        the document or body element background color changes or the base background
+        color of the scrollview changes. Also, make sure to repaint the scrollbars
+        whenever the style changes.
+
+        No new tests, since this code is only enabled on future versions of Mac OS X.
+
+        * WebCore.exp.in:
+        * page/Frame.cpp:
+        (WebCore::Frame::getDocumentBackgroundColor):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle):
+        (WebCore::FrameView::setBaseBackgroundColor):
+        (WebCore::FrameView::documentBackgroundColor): Renamed.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollbarOverlayStyle):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollbarOverlayStyle):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollbarOverlayStyle):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::updateScrollbarOverlayStyle):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::toNSScrollerKnobStyle):
+        (WebCore::ScrollView::platformSetScrollbarOverlayStyle):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::toScrollbarPainterKnobStyle):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+
 2011-07-20  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSSPropertyWebkitTransformOriginZ and Origin in CSSStyleApplyProperty.

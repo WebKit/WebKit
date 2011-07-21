@@ -77,7 +77,8 @@ public:
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
     bool hasOverlayScrollbars() const;
-    virtual ScrollbarOverlayStyle recommendedScrollbarOverlayStyle() const { return ScrollbarOverlayStyleDefault; }
+    virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
+    ScrollbarOverlayStyle scrollbarOverlayStyle() const { return m_scrollbarOverlayStyle; }
 
     ScrollAnimator* scrollAnimator() const;
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
@@ -167,6 +168,8 @@ private:
 
     ScrollElasticity m_verticalScrollElasticity;
     ScrollElasticity m_horizontalScrollElasticity;
+
+    ScrollbarOverlayStyle m_scrollbarOverlayStyle;
 
 protected:
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;

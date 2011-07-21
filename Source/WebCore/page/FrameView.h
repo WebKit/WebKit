@@ -140,7 +140,7 @@ public:
     void resetScrollbars();
     void resetScrollbarsAndClearContentsSize();
     void detachCustomScrollbars();
-    virtual ScrollbarOverlayStyle recommendedScrollbarOverlayStyle() const;
+    virtual void recalculateScrollbarOverlayStyle();
 
     void clear();
 
@@ -221,6 +221,8 @@ public:
 
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
+
+    Color documentBackgroundColor() const;
 
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     

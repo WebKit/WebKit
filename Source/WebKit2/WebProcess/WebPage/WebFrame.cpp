@@ -561,7 +561,12 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
 {
     if (!m_coreFrame)
         return false;
-    Color bgColor = m_coreFrame->getDocumentBackgroundColor();
+
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return false;
+
+    Color bgColor = view->documentBackgroundColor();
     if (!bgColor.isValid())
         return false;
 

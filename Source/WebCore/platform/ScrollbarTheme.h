@@ -53,6 +53,7 @@ public:
 
     virtual bool supportsControlTints() const { return false; }
     virtual bool usesOverlayScrollbars() const { return false; }
+    virtual void updateScrollbarOverlayStyle(Scrollbar*) { }
 
     virtual void themeChanged() {}
     

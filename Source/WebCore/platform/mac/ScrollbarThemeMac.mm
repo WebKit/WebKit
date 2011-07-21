@@ -161,6 +161,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
     scrollbarMap()->add(scrollbar, scrollbarPainter);
     updateEnabledState(scrollbar);
+    updateScrollbarOverlayStyle(scrollbar);
 #else
     scrollbarMap()->add(scrollbar);
 #endif
@@ -176,6 +177,7 @@ void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScroll
 {
     scrollbarMap()->set(scrollbar, newPainter);
     updateEnabledState(scrollbar);
+    updateScrollbarOverlayStyle(scrollbar);
 }
 
 WKScrollbarPainterRef ScrollbarThemeMac::painterForScrollbar(Scrollbar* scrollbar)
@@ -223,6 +225,29 @@ bool ScrollbarThemeMac::usesOverlayScrollbars() const
     return wkScrollbarPainterUsesOverlayScrollers();
 #else
     return false;
+#endif
+}
+
+#if USE(WK_SCROLLBAR_PAINTER)
+static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
+{
+    switch (style) {
+    case ScrollbarOverlayStyleDark:
+        return wkScrollerKnobStyleDark;
+    case ScrollbarOverlayStyleLight:
+        return wkScrollerKnobStyleLight;
+    default:
+        return wkScrollerKnobStyleDefault;
+    }
+}
+#endif
+
+void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar* scrollbar)
+{
+#if USE(WK_SCROLLBAR_PAINTER)
+    wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->scrollbarOverlayStyle()));
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 
@@ -432,20 +457,6 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
     }
 }
 
-#if USE(WK_SCROLLBAR_PAINTER)
-static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
-{
-    switch (style) {
-    case ScrollbarOverlayStyleDark:
-        return wkScrollerKnobStyleDark;
-    case ScrollbarOverlayStyleLight:
-        return wkScrollerKnobStyleLight;
-    default:
-        return wkScrollerKnobStyleDefault;
-    }
-}
-#endif
-
 void ScrollbarThemeMac::updateEnabledState(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
@@ -480,10 +491,6 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     
     ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
     scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
-
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->recommendedScrollbarOverlayStyle()));
-#endif
     
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(damageRect);

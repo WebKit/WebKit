@@ -182,6 +182,9 @@ void ScrollableArea::willEndLiveResize()
 void ScrollableArea::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
     scrollAnimator()->didAddVerticalScrollbar(scrollbar);
+
+    // <rdar://problem/9797253> AppKit resets the scrollbar's style when you attach a scrollbar
+    setScrollbarOverlayStyle(scrollbarOverlayStyle());
 }
 
 void ScrollableArea::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
@@ -192,6 +195,9 @@ void ScrollableArea::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollableArea::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
     scrollAnimator()->didAddHorizontalScrollbar(scrollbar);
+
+    // <rdar://problem/9797253> AppKit resets the scrollbar's style when you attach a scrollbar
+    setScrollbarOverlayStyle(scrollbarOverlayStyle());
 }
 
 void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
@@ -203,6 +209,21 @@ bool ScrollableArea::hasOverlayScrollbars() const
 {
     return (verticalScrollbar() && verticalScrollbar()->isOverlayScrollbar())
         || (horizontalScrollbar() && horizontalScrollbar()->isOverlayScrollbar());
+}
+
+void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
+{
+    m_scrollbarOverlayStyle = overlayStyle;
+
+    if (horizontalScrollbar()) {
+        ScrollbarTheme::nativeTheme()->updateScrollbarOverlayStyle(horizontalScrollbar());
+        horizontalScrollbar()->invalidate();
+    }
+    
+    if (verticalScrollbar()) {
+        ScrollbarTheme::nativeTheme()->updateScrollbarOverlayStyle(verticalScrollbar());
+        verticalScrollbar()->invalidate();
+    }
 }
 
 bool ScrollableArea::isPinnedInDirection(const IntSize& scrollDelta) const

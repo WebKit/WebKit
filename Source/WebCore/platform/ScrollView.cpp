@@ -779,6 +779,12 @@ Scrollbar* ScrollView::scrollbarAtPoint(const IntPoint& windowPoint)
     return 0;
 }
 
+void ScrollView::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
+{
+    ScrollableArea::setScrollbarOverlayStyle(overlayStyle);
+    platformSetScrollbarOverlayStyle(overlayStyle);
+}
+
 void ScrollView::wheelEvent(PlatformWheelEvent& e)
 {
     // We don't allow mouse wheeling to happen in a ScrollView that has had its scrollbars explicitly disabled.
@@ -1276,6 +1282,10 @@ void ScrollView::platformSetScrollbarsSuppressed(bool)
 }
 
 void ScrollView::platformSetScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously)
+{
+}
+
+void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle)
 {
 }
 

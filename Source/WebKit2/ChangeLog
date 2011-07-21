@@ -1,3 +1,19 @@
+2011-07-20  Tim Horton  <timothy_horton@apple.com>
+
+        Scrollbar color heuristic needs to be hooked up in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=64220
+        <rdar://problem/9589140>
+
+        Reviewed by Darin Adler.
+
+        Store the scroller style on ScrollableArea, and recompute it whenever
+        the document or body element background color changes or the base background
+        color of the scrollview changes. Also, make sure to repaint the scrollbars
+        whenever the style changes.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::getDocumentBackgroundColor):
+
 2011-07-20  James Robinson  <jamesr@chromium.org>
 
         Revert worker and WebKit2 runloops to use currentTime() for scheduling instead of the monotonic clock
