@@ -50,7 +50,6 @@ ShadowRoot::ShadowRoot(Document* document)
 
 ShadowRoot::~ShadowRoot()
 {
-    ASSERT(!m_inclusions || m_inclusions->isEmpty());
 }
 
 String ShadowRoot::nodeName() const
@@ -101,7 +100,7 @@ ShadowContentElement* ShadowRoot::includerFor(Node* node) const
 {
     if (!m_inclusions)
         return 0;
-    ShadowInclusion* found = m_inclusions->find(node);
+    ShadowInclusion* found = m_inclusions->findInclusionFor(node);
     if (!found)
         return 0;
     return found->includer();
@@ -137,19 +136,25 @@ void ShadowRoot::setApplyAuthorSheets(bool value)
 
 void ShadowRoot::attach()
 {
-    ShadowContentSelector selector(this);
+    // Children of m_inclusions is populated lazily in
+    // ensureInclusions(), and here we just ensure that
+    // it is in clean state.
+    ASSERT(!m_inclusions || !m_inclusions->hasChildren());
     TreeScope::attach();
+    if (m_inclusions)
+        m_inclusions->didSelectInclusion();
 }
 
-ShadowInclusionSet* ShadowRoot::inclusions() const
+ShadowContentSelector* ShadowRoot::inclusions() const
 {
     return m_inclusions.get();
 }
 
-ShadowInclusionSet* ShadowRoot::ensureInclusions()
+ShadowContentSelector* ShadowRoot::ensureInclusions()
 {
     if (!m_inclusions)
-        m_inclusions = adoptPtr(new ShadowInclusionSet());
+        m_inclusions = adoptPtr(new ShadowContentSelector());
+    m_inclusions->willSelectInclusionOver(this);
     return m_inclusions.get();
 }
 

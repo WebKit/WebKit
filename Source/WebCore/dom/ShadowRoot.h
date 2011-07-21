@@ -33,7 +33,7 @@ namespace WebCore {
 
 class Document;
 class ShadowContentElement;
-class ShadowInclusionSet;
+class ShadowContentSelector;
 
 class ShadowRoot : public TreeScope {
 public:
@@ -49,8 +49,8 @@ public:
     virtual bool applyAuthorSheets() const;
     void setApplyAuthorSheets(bool);
 
-    ShadowInclusionSet* inclusions() const;
-    ShadowInclusionSet* ensureInclusions();
+    ShadowContentSelector* inclusions() const;
+    ShadowContentSelector* ensureInclusions();
 
 private:
     ShadowRoot(Document*);
@@ -64,7 +64,7 @@ private:
     bool hasContentElement() const;
 
     bool m_applyAuthorSheets;
-    OwnPtr<ShadowInclusionSet> m_inclusions;
+    OwnPtr<ShadowContentSelector> m_inclusions;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)

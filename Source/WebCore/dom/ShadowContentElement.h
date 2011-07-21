@@ -33,94 +33,10 @@
 
 #include "StyledElement.h"
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-class ShadowContentElement;
-
-class ShadowInclusion : public RefCounted<ShadowInclusion> {
-public:
-    static PassRefPtr<ShadowInclusion> create(ShadowContentElement*, Node*);
-
-    ShadowContentElement* includer() const { return m_includer; }
-    Node* content() const { return m_content.get(); }
-    ShadowInclusion* next() const { return m_next.get(); }
-    ShadowInclusion* previous() const { return m_previous.get(); }
-
-    void append(PassRefPtr<ShadowInclusion>);
-    void unlink();
-
-private:
-    explicit ShadowInclusion(ShadowContentElement* includer, Node* content)
-        : m_includer(includer), m_content(content)
-    { }
-
-    ShadowContentElement* m_includer;
-    RefPtr<Node> m_content;
-    RefPtr<ShadowInclusion> m_next;
-    RefPtr<ShadowInclusion> m_previous;
-};
-
-inline PassRefPtr<ShadowInclusion> ShadowInclusion::create(ShadowContentElement* includer, Node* content)
-{
-    return adoptRef(new ShadowInclusion(includer, content));
-}
-
-class ShadowInclusionList {
-public:
-    ShadowInclusionList();
-    ~ShadowInclusionList();
-
-    ShadowInclusion* first() const { return m_first.get(); }
-    ShadowInclusion* last() const { return m_last.get(); }
-    ShadowInclusion* find(Node*) const;
-    bool isEmpty() const { return !m_first; }
-
-    void clear();
-    void append(PassRefPtr<ShadowInclusion>);
-    void append(ShadowContentElement*, Node*);
-
-private:
-    RefPtr<ShadowInclusion> m_first;
-    RefPtr<ShadowInclusion> m_last;
-};
-
-inline void ShadowInclusionList::append(ShadowContentElement* includer, Node* node)
-{
-    append(ShadowInclusion::create(includer, node));
-}
-
-class ShadowInclusionSet {
-public:
-    void add(ShadowInclusion* value) { m_set.add(value); }
-    void remove(ShadowInclusion* value) { m_set.remove(value); }
-    bool isEmpty() const { return m_set.isEmpty(); }
-    ShadowInclusion* find(Node* key) const;
-
-private:
-    struct Translator {
-    public:
-        static unsigned hash(const Node* key) { return PtrHash<const Node*>::hash(key); }
-        static bool equal(const ShadowInclusion* inclusion, const Node* content) { return inclusion->content() == content; }
-    };
-
-    struct Hash {
-        static unsigned hash(ShadowInclusion* key) { return PtrHash<const Node*>::hash(key->content()); }
-        static bool equal(ShadowInclusion* a, ShadowInclusion* b) { return a->content() == b->content(); }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    typedef HashSet<ShadowInclusion*, Hash> PointerSet;
-
-    PointerSet m_set;
-};
-
-inline ShadowInclusion* ShadowInclusionSet::find(Node* key) const
-{
-    PointerSet::iterator found = m_set.find<Node*, ShadowInclusionSet::Translator>(key);
-    return found != m_set.end() ? *found : 0;
-}
+class ShadowInclusionList;
 
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
 // You should create ShadowContentElement during the host construction.
@@ -133,7 +49,7 @@ public:
     virtual void attach();
     virtual void detach();
 
-    const ShadowInclusionList* inclusions() const { return &m_inclusions; }
+    const ShadowInclusionList* inclusions() const { return m_inclusions.get(); }
 
 protected:
     ShadowContentElement(const QualifiedName&, Document*);
@@ -143,7 +59,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
 
-    ShadowInclusionList m_inclusions;
+    OwnPtr<ShadowInclusionList> m_inclusions;
 };
 
 inline ShadowContentElement* toShadowContentElement(Node* node)
