@@ -1,3 +1,9 @@
+2011-07-21  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: one liner typo fix in Inspector.json.
+
+        * inspector/Inspector.json:
+
 2011-07-21  Sam Weinig  <sam@webkit.org>
 
         CSS top margin collapses when paginating

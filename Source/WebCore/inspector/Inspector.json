@@ -261,7 +261,7 @@
                 "parameters": [
                     { "name": "objectId", "type": "string", "description": "Identifier of the object to call function on." },
                     { "name": "functionDeclaration", "type": "string", "description": "Declaration of the function to call." },
-                    { "name": "arguments", "type": "array", "items": { "type": "objectId", "description": "Identifier of the argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." }
+                    { "name": "arguments", "type": "array", "items": { "type": "string", "description": "Identifier of the argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
