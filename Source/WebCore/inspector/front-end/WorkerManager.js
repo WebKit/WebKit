@@ -105,7 +105,8 @@ WebInspector.WorkerManager.prototype = {
     {
         var url = location.href + "&dedicatedWorkerId=" + workerId;
         url = url.replace("docked=true&", "");
-        var workerInspectorWindow = window.open(url);
+        // Set location=0 just to make sure the front-end will be opened in a separate window, not in new tab.
+        var workerInspectorWindow = window.open(url, undefined, "location=0");
         this._workerIdToWindow[workerId] = workerInspectorWindow;
         workerInspectorWindow.addEventListener("beforeunload", this._workerInspectorClosing.bind(this, workerId), true);
     },

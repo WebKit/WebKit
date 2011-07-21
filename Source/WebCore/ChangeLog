@@ -1,3 +1,13 @@
+2011-07-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: always open dedicated worker inspector in a new window not a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=64872
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype.openWorkerInspector):
+
 2011-07-21  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] Shadow inclusion cache should be managed by ShadowContentSelector
