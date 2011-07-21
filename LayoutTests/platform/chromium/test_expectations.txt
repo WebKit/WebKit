@@ -2040,7 +2040,7 @@ BUGCR48144 LINUX : fast/js/activation-object-function-lifetime.html = CRASH PASS
 // Failing/flaky.
 BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 WIN LINUX : fast/js/function-apply-aliased.html = TEXT PASS
-BUGCR48239 : fast/js/function-apply-many-args.html = TEXT
+BUGCR48239 : fast/js/function-apply-many-args.html = TEXT TIMEOUT
 
 // The error gives a different line number than upstream.  Maybe a V8/JSC
 // difference?

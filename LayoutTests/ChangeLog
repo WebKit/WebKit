@@ -1,3 +1,14 @@
+2011-07-21  John Knottenbelt  <jknotten@chromium.org>
+
+        [Chromium] Mark fast/js/function-apply-many-args.html as timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=64955
+
+        The test is timing out on Mac Debug.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: RuntimeAgent.evaluateOn should not require "return X;" syntax.
