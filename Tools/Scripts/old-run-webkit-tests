@@ -179,6 +179,12 @@ my $shouldWaitForHTTPD = 0;
 my $useWebKitTestRunner = 0;
 my $noBuildDumpTool = 0;
 
+# These arguments are ignored, but exist for compatibility with new-run-webkit-tests.
+my $builderName = '';
+my $buildNumber = '';
+my $masterName = '';
+my $testResultsServer = '';
+
 my @leaksFilenames;
 
 if (isWindows() || isMsys()) {
@@ -371,6 +377,11 @@ my $getOptionsResult = GetOptions(
     'valgrind' => \$useValgrind,
     'verbose|v' => \$verbose,
     'webkit-test-runner|2' => \$useWebKitTestRunner,
+    # These arguments are ignored (but are used by new-run-webkit-tests).
+    'builder-name' => \$builderName,
+    'build-number' => \$buildNumber,
+    'master-name' => \$masterName,
+    'test-results-server' => \$testResultsServer,
 );
 
 if (!$getOptionsResult || $showHelp) {
