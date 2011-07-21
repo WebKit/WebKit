@@ -1,5 +1,23 @@
 2011-07-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 89595.
+
+    2011-06-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        RefPtr m_style in MediaQueryEvaluator in case of callers like
+        MediaQueryMatcher::prepareEvaluator that do not retain its reference.
+        https://bugs.webkit.org/show_bug.cgi?id=63264
+
+        Test: fast/css/media-query-evaluator-crash.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryEvaluator.h:
+
+2011-07-21  Lucas Forschler  <lforschler@apple.com>
+
     Merged 89492.
 
     2011-06-22  Annie Sullivan  <sullivan@chromium.org>
