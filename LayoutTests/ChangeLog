@@ -1,5 +1,12 @@
 2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add crash expectation to fast/canvas/webgl/renderbuffer-initialization.html on Chromium Windows,
+        tracked by the bug 64920.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         [chromium] Shadow-related tests need rebaselining after r85299
         https://bugs.webkit.org/show_bug.cgi?id=59782
 

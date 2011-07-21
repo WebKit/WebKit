@@ -3792,3 +3792,5 @@ BUGWK64844 DEBUG : svg/custom/crash-textPath-attributes.html = CRASH
 BUGWK64874 MAC DEBUG : css3/images/optimize-contrast-canvas.html = CRASH
 BUGRNIWA LEOPARD DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
 BUGRNIWA DEBUG : jquery/css.html = PASS TIMEOUT
+
+BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = CRASH PASS
