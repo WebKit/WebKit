@@ -141,7 +141,6 @@ public:
     virtual CGImageRef getCGImageRef() { return 0; }
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) { return 0; }
     virtual RetainPtr<CFArrayRef> getCGImageArray() { return 0; }
-    static RetainPtr<CGImageRef> imageWithColorSpace(CGImageRef originalImage, ColorSpace);
 #endif
 
 #if PLATFORM(WIN)

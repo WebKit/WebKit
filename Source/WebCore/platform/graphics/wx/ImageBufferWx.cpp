@@ -88,9 +88,8 @@ String ImageBuffer::toDataURL(const String&, const double*) const
     return String();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyPreference) const
+PassRefPtr<Image> ImageBuffer::copyImage() const
 {
-    ASSERT(copyPreference == CopyBackingStore);
     notImplemented();
     return 0;
 }
@@ -103,14 +102,14 @@ void ImageBuffer::clip(GraphicsContext*, const FloatRect&) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    RefPtr<Image> imageCopy = copyImage(CopyBackingStore);
+    RefPtr<Image> imageCopy = copyImage();
     context->drawImage(imageCopy.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    RefPtr<Image> imageCopy = copyImage(CopyBackingStore);
+    RefPtr<Image> imageCopy = copyImage();
     imageCopy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 

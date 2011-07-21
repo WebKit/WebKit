@@ -58,11 +58,6 @@ namespace WebCore {
         Unaccelerated,
         Accelerated
     };
-    
-    enum BackingStoreCopy {
-        CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
-        DontCopyBackingStore // Subsequent draws may affect the copy.
-    };
 
     class ImageBuffer {
         WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
@@ -88,7 +83,7 @@ namespace WebCore {
         GraphicsContext* context() const;
 
         bool isAccelerated() const { return m_accelerateRendering; }
-        PassRefPtr<Image> copyImage(BackingStoreCopy copyPreference = CopyBackingStore) const;
+        PassRefPtr<Image> copyImage() const; // Return a new image that is a copy of the buffer.
 
         PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&) const;
         PassRefPtr<ByteArray> getPremultipliedImageData(const IntRect&) const;
@@ -108,15 +103,14 @@ namespace WebCore {
 #endif
 
     private:
-#if USE(CG)
-        NativeImagePtr copyNativeImage(BackingStoreCopy copyPreference = CopyBackingStore) const;
-#endif
-
         void clip(GraphicsContext*, const FloatRect&) const;
 
-        void draw(GraphicsContext*, ColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
-        void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
-
+        // The draw method draws the contents of the buffer without copying it.
+        void draw(GraphicsContext*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
+                             CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+        void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+        
         inline void genericConvertToLuminanceMask();
 
         friend class GraphicsContext;

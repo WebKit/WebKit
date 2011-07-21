@@ -227,7 +227,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
         if (!buffer) // failed to allocate image
             return 0;
         draw(buffer->context(), rect(), rect(), ColorSpaceDeviceRGB, CompositeSourceOver);
-        m_frameCache = buffer->copyImage(CopyBackingStore);
+        m_frameCache = buffer->copyImage();
     }
     return m_frameCache->nativeImageForCurrentFrame();
 }

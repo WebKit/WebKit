@@ -177,74 +177,72 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyPreference) const
+PassRefPtr<Image> ImageBuffer::copyImage() const
 {
-    RetainPtr<CGImageRef> image = copyNativeImage(copyPreference);
-
-    if (!image)
-        return 0;
-
-    return BitmapImage::create(image.get());
-}
-
-NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyPreference) const
-{
-    CGImageRef image = 0;
-    if (!m_accelerateRendering) {
-        switch (copyPreference) {
-        case DontCopyBackingStore:
-            image = CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_data.m_bytesPerRow, m_data.m_colorSpace, m_data.m_bitmapInfo, m_data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault);
-            break;
-        case CopyBackingStore:
-            image = CGBitmapContextCreateImage(context()->platformContext());
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
+    // BitmapImage will release the passed in CGImage on destruction
+    CGImageRef ctxImage = 0;
+    if (!m_accelerateRendering)
+        ctxImage = CGBitmapContextCreateImage(context()->platformContext());
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else
-        image = wkIOSurfaceContextCreateImage(context()->platformContext());
+        ctxImage = wkIOSurfaceContextCreateImage(context()->platformContext());
 #endif
-
-    return image;
+    return BitmapImage::create(ctxImage);
 }
 
-void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, bool useLowQualityScale)
+static CGImageRef cgImage(const IntSize& size, const ImageBufferData& data)
 {
-    ASSERT_UNUSED(useLowQualityScale, !useLowQualityScale);
-    ColorSpace colorSpace = (destContext == m_context) ? ColorSpaceDeviceRGB : styleColorSpace;
-
-    RetainPtr<CGImageRef> image;
-    if (destContext == m_context)
-        image.adoptCF(copyNativeImage(CopyBackingStore)); // Drawing into our own buffer, need to deep copy.
-    else
-        image.adoptCF(copyNativeImage(DontCopyBackingStore));
-
-    destContext->drawNativeImage(image.get(), m_size, colorSpace, destRect, srcRect, op);
+    return CGImageCreate(size.width(), size.height(), 8, 32, data.m_bytesPerRow,
+                         data.m_colorSpace, data.m_bitmapInfo, data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault);
 }
 
-void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+                       CompositeOperator op, bool useLowQualityScale)
 {
     if (!m_accelerateRendering) {
-        if (context == m_context) {
-            RefPtr<Image> copy = copyImage(CopyBackingStore); // Drawing into our own buffer, need to deep copy.
-            copy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        if (destContext == context()) {
+            // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+            RefPtr<Image> copy = copyImage();
+            destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, useLowQualityScale);
         } else {
-            RefPtr<Image> imageForRendering = copyImage(DontCopyBackingStore);
-            imageForRendering->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+            RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
+            destContext->drawImage(imageForRendering.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
         }
     } else {
-        RefPtr<Image> copy = copyImage(CopyBackingStore);
-        copy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        RefPtr<Image> copy = copyImage();
+        ColorSpace colorSpace = (destContext == context()) ? ColorSpaceDeviceRGB : styleColorSpace;
+        destContext->drawImage(copy.get(), colorSpace, destRect, srcRect, op, useLowQualityScale);
+    }
+}
+
+void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+{
+    if (!m_accelerateRendering) {
+        if (destContext == context()) {
+            // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
+            RefPtr<Image> copy = copyImage();
+            copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        } else {
+            RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
+            imageForRendering->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        }
+    } else {
+        RefPtr<Image> copy = copyImage();
+        copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
     }
 }
 
 void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) const
 {
     CGContextRef platformContextToClip = contextToClip->platformContext();
-    RetainPtr<CGImageRef> image(AdoptCF, copyNativeImage(DontCopyBackingStore));
+    RetainPtr<CGImageRef> image;
+    if (!m_accelerateRendering)
+        image.adoptCF(cgImage(m_size, m_data));
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    else
+        image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
+#endif
     CGContextTranslateCTM(platformContextToClip, rect.x(), rect.y() + rect.height());
     CGContextScaleCTM(platformContextToClip, 1, -1);
     CGContextClipToMask(platformContextToClip, FloatRect(FloatPoint(), rect.size()), image.get());
@@ -348,7 +346,13 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    RetainPtr<CGImageRef> image(AdoptCF, copyNativeImage(CopyBackingStore));
+    RetainPtr<CGImageRef> image;
+    if (!m_accelerateRendering)
+        image.adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    else
+        image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
+#endif
 
     if (!image)
         return "data:,";
