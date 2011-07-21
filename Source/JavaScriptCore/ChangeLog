@@ -1,3 +1,17 @@
+2011-07-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculative JIT sometimes claims to use compare operands twice, leading to
+        use count corruption.
+        https://bugs.webkit.org/show_bug.cgi?id=64903
+
+        Reviewed by Gavin Barraclough.
+        
+        Move the calls to use() in SpeculativeJIT::compare() so that they only happen
+        if the JITCodeGenerator's helper method (which also calls use()) is not called.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+
 2011-07-20  Oliver Hunt  <oliver@apple.com>
 
         Don't throw away code when JSGarbageCollect API is called

@@ -390,13 +390,13 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         // so can be no intervening nodes to also reference the compare. 
         ASSERT(node.adjustedRefCount() == 1);
 
-        if (shouldSpeculateInteger(node.child1(), node.child2()))
+        if (shouldSpeculateInteger(node.child1(), node.child2())) {
             compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
-        else
+            use(node.child1());
+            use(node.child2());
+        } else
             nonSpeculativePeepholeBranch(node, branchNodeIndex, condition, operation);
 
-        use(node.child1());
-        use(node.child2());
         m_compileIndex = branchNodeIndex;
         return true;
     }
