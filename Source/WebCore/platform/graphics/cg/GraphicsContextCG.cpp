@@ -893,8 +893,10 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
+
+    save();
+
     CGContextRef context = platformContext();
-    CGContextSaveGState(context);
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
     m_data->beginTransparencyLayer();
@@ -907,9 +909,9 @@ void GraphicsContext::endTransparencyLayer()
         return;
     CGContextRef context = platformContext();
     CGContextEndTransparencyLayer(context);
-    CGContextRestoreGState(context);
     m_data->endTransparencyLayer();
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+
+    restore();
 }
 
 void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace colorSpace)
