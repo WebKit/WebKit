@@ -1,3 +1,9 @@
+2011-07-20  Chang Shu  <cshu@webkit.org>
+
+        Adding myself to the reviewers list; No review needed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-20  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests --leaks does not restart DumpRenderTree often enough
