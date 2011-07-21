@@ -66350,6 +66350,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGParsingError.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGPathBlender.h"
 				>
 			</File>

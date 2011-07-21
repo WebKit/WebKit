@@ -5862,6 +5862,7 @@
             'svg/SVGPaint.cpp',
             'svg/SVGParserUtilities.cpp',
             'svg/SVGParserUtilities.h',
+            'svg/SVGParsingError.h',
             'svg/SVGPathBlender.cpp',
             'svg/SVGPathBlender.h',
             'svg/SVGPathBuilder.cpp',

@@ -2429,6 +2429,7 @@ HEADERS += \
     svg/SVGNumberList.h \
     svg/SVGPaint.h \
     svg/SVGParserUtilities.h \
+    svg/SVGParsingError.h \
     svg/SVGPathBuilder.h \
     svg/SVGPathConsumer.h \
     svg/SVGPathElement.h \

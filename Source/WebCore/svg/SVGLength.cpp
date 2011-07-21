@@ -31,6 +31,7 @@
 #include "RenderObject.h"
 #include "RenderPart.h"
 #include "RenderView.h"
+#include "SVGException.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
@@ -163,6 +164,21 @@ bool SVGLength::operator==(const SVGLength& other) const
 bool SVGLength::operator!=(const SVGLength& other) const
 {
     return !operator==(other);
+}
+
+SVGLength SVGLength::construct(SVGLengthMode mode, const String& valueAsString, SVGParsingError& parseError, SVGLengthNegativeValuesMode negativeValuesMode)
+{
+    ExceptionCode ec = 0;
+    SVGLength length(mode);
+
+    length.setValueAsString(valueAsString, ec);
+
+    if (ec)
+        parseError = ParsingAttributeFailedError;
+    else if (negativeValuesMode == ForbidNegativeLengths && length.valueInSpecifiedUnits() < 0)
+        parseError = NegativeValueForbiddenError;
+
+    return length;
 }
 
 SVGLengthType SVGLength::unitType() const

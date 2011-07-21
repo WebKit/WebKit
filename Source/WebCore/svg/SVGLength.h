@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "ExceptionCode.h"
+#include "SVGParsingError.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
@@ -47,6 +48,11 @@ enum SVGLengthMode {
     LengthModeWidth = 0,
     LengthModeHeight,
     LengthModeOther
+};
+
+enum SVGLengthNegativeValuesMode {
+    AllowNegativeLengths,
+    ForbidNegativeLengths
 };
 
 class QualifiedName;
@@ -77,6 +83,8 @@ public:
 
     bool operator==(const SVGLength&) const;
     bool operator!=(const SVGLength&) const;
+
+    static SVGLength construct(SVGLengthMode, const String&, SVGParsingError&, SVGLengthNegativeValuesMode = AllowNegativeLengths);
 
     float value(const SVGElement* context) const;
     float value(const SVGElement* context, ExceptionCode&) const;

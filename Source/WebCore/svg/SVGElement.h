@@ -24,17 +24,12 @@
 
 #if ENABLE(SVG)
 #include "SVGLocatable.h"
+#include "SVGParsingError.h"
 #include "SVGPropertyInfo.h"
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-
-enum SVGParsingError {
-    NoError,
-    ParsingAttributeFailedError,
-    NegativeValueForbiddenError
-};
 
 class AffineTransform;
 class CSSCursorImageValue;

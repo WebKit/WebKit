@@ -1,3 +1,29 @@
+2011-07-20  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Errors encountered within SVG documents should be reported to the console
+        https://bugs.webkit.org/show_bug.cgi?id=62599
+        <rdar://problem/9727074>
+
+        Add SVGLength::construct, which can be used to construct an SVGLength
+        as normal, but returns an SVGParsingError via a reference argument.
+        The function also takes another argument, which is whether or not
+        the SVGLength value is allowed to be negative. If not, an error is
+        thrown. It defaults to allowing negatives if not specified.
+
+        * GNUmakefile.list.am:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::construct):
+        (WebCore::SVGLength::rawValue):
+        * svg/SVGLength.h:
+        * svg/SVGElement.h:
+        * svg/SVGParsingError.h: Added.
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-07-20  Levi Weintraub  <leviw@chromium.org>
 
         Switch getTransformFromContainer and its uses to new layout types

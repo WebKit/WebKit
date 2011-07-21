@@ -672,6 +672,7 @@
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
 		2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */; };
+		2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
@@ -7156,6 +7157,7 @@
 		29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheMac.mm; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
+		2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGParsingError.h; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -17790,6 +17792,7 @@
 				B22278BF0D00BF200071B782 /* SVGPaint.idl */,
 				B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */,
 				B22278C10D00BF200071B782 /* SVGParserUtilities.h */,
+				2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */,
 				84C6784A1214814700A92902 /* SVGPathBlender.cpp */,
 				84C6784B1214814700A92902 /* SVGPathBlender.h */,
 				8476C9E711DF6A2900555B02 /* SVGPathBuilder.cpp */,
@@ -22899,6 +22902,7 @@
 				B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */,
 				B2227A540D00BF220071B782 /* SVGPaint.h in Headers */,
 				B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */,
+				2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */,
 				84C6784D1214814700A92902 /* SVGPathBlender.h in Headers */,
 				8476C9EB11DF6A2900555B02 /* SVGPathBuilder.h in Headers */,
 				8419D2A7120D92D000141F8F /* SVGPathByteStream.h in Headers */,
