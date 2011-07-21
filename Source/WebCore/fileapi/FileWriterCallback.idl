@@ -31,7 +31,6 @@
 module fileapi {
     interface [
         Conditional=FILE_SYSTEM,
-        LegacyDefaultOptionalArguments,
         Callback
     ] FileWriterCallback {
         boolean handleEvent(in FileWriter fileWriter);

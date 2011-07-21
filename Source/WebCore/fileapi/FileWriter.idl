@@ -32,7 +32,6 @@
 module html {
     interface [
         Conditional=FILE_SYSTEM,
-        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CallWith=ScriptExecutionContext,
         EventTarget,

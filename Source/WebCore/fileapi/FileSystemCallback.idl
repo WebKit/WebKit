@@ -31,7 +31,6 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
-        LegacyDefaultOptionalArguments,
         Callback
     ] FileSystemCallback {
         boolean handleEvent(in DOMFileSystem fileSystem);

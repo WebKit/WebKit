@@ -31,7 +31,6 @@
 module html {
     interface [
         Conditional=FILE_SYSTEM,
-        LegacyDefaultOptionalArguments,
     ] FileWriterSync {
         // synchronous write/modify methods
         void write(in Blob data) raises (FileException);

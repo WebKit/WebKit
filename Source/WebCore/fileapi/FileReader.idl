@@ -32,7 +32,6 @@
 module html {
     interface [
         Conditional=BLOB,
-        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CanBeConstructed,
         CallWith=ScriptExecutionContext,

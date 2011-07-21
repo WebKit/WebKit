@@ -1,3 +1,35 @@
+2011-07-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from FileAPI
+        https://bugs.webkit.org/show_bug.cgi?id=64539
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * fileapi/Blob.idl:
+        * fileapi/DirectoryEntry.idl:
+        * fileapi/DirectoryEntrySync.idl:
+        * fileapi/DirectoryReader.idl:
+        * fileapi/EntriesCallback.idl:
+        * fileapi/Entry.idl:
+        * fileapi/EntryArray.idl:
+        * fileapi/EntryArraySync.idl:
+        * fileapi/EntryCallback.idl:
+        * fileapi/EntrySync.idl:
+        * fileapi/ErrorCallback.idl:
+        * fileapi/FileCallback.idl:
+        * fileapi/FileEntry.idl:
+        * fileapi/FileList.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * fileapi/FileSystemCallback.idl:
+        * fileapi/FileWriter.idl:
+        * fileapi/FileWriterCallback.idl:
+        * fileapi/FileWriterSync.idl:
+        * fileapi/MetadataCallback.idl:
+        * fileapi/WebKitBlobBuilder.idl:
+
 2011-07-21  Tony Chang  <tony@chromium.org>
 
         sort WebCore.xcodeproj

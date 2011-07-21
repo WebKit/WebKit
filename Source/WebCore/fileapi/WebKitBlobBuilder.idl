@@ -30,7 +30,6 @@
 
 module html {
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         GenerateNativeConverter,
         NoStaticTables

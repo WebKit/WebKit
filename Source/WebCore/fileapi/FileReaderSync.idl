@@ -31,7 +31,6 @@
 module html {
     interface [
         Conditional=BLOB,
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         NoStaticTables
     ] FileReaderSync {

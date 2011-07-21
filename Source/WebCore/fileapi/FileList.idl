@@ -26,7 +26,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         HasIndexGetter,
         NoStaticTables
     ] FileList {
