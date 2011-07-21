@@ -1,3 +1,11 @@
+2011-07-21  Ojan Vafai  <ojan@chromium.org>
+
+        Fix issue throwing a 500 to the bots. We were modifying
+        the dictionary during an iteration over it's keys and would get
+        RuntimeError: dictionary changed size during iteration
+
+        * TestResultServer/model/jsonresults.py:
+
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
         ORWT fails to consume some NRWT arguments

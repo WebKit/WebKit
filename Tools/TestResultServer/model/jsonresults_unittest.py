@@ -618,6 +618,9 @@ class JsonResultsTest(unittest.TestCase):
                        "foo.DISABLED_bar2": {
                            "results": "[1,\"I\"]",
                            "times": "[1,0]"},
+                       "foo.bar3": {
+                           "results": "[1,\"I\"]",
+                           "times": "[1,0]"},
                        "foo.FAILS_bar3": {
                            "results": "[1,\"I\"]",
                            "times": "[1,0]"},

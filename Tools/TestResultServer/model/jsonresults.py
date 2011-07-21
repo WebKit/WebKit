@@ -209,14 +209,14 @@ class JsonResults(object):
     @classmethod
     def _remove_gtest_modifiers(cls, builder, json):
         tests = json[builder][JSON_RESULTS_TESTS]
+        new_tests = {}
         for name, test in tests.iteritems():
             new_name = name.replace('.FLAKY_', '.', 1)
             new_name = new_name.replace('.FAILS_', '.', 1)
             new_name = new_name.replace('.MAYBE_', '.', 1)
             new_name = new_name.replace('.DISABLED_', '.', 1)
-            if new_name != name:
-                tests[new_name] = test
-                del tests[name]
+            new_tests[new_name] = test
+        json[builder][JSON_RESULTS_TESTS] = new_tests
 
     @classmethod
     def _check_json(cls, builder, json):
