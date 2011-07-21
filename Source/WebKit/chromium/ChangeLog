@@ -1,3 +1,15 @@
+2011-07-20  Al Patrick  <apatrick@chromium.org>
+
+        Set the parent context to that of the associated view when calling GraphicsContext3DChromium::copyTextureToParentCHROMIUM.
+        This fixes a race condition whereby the view window does not exist when the offscreen context is created. It allows
+        accelerated 2D canvases to be added to newly created window.
+        https://bugs.webkit.org/show_bug.cgi?id=64905
+
+        Reviewed by James Robinson.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::copyTextureToParentTextureCHROMIUM):
+
 2011-07-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for disabling cache in web inspector.

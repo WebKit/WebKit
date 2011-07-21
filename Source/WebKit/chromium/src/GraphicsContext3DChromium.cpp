@@ -831,7 +831,13 @@ DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei,
 DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
 DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
-DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, Platform3DObject, Platform3DObject)
+
+void GraphicsContext3DInternal::copyTextureToParentTextureCHROMIUM(Platform3DObject texture, Platform3DObject parentTexture)
+{
+    m_impl->setParentContext(m_webViewImpl->graphicsContext3D());
+    m_impl->copyTextureToParentTextureCHROMIUM(texture, parentTexture);
+}
+
 DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 DELEGATE_TO_IMPL_1(getParentToChildLatchCHROMIUM, GC3Duint*)
