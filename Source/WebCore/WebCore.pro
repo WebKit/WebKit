@@ -3226,7 +3226,6 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
     HEADERS += \
         dom/LocalMediaStream.h \
         dom/MediaStream.h \
-        dom/MediaStreamContainer.h \
         dom/MediaStreamList.h \
         dom/MediaStreamTrack.h \
         dom/MediaStreamTrackList.h \

@@ -2519,7 +2519,6 @@
             'dom/LocalMediaStream.h',
             'dom/MediaStream.cpp',
             'dom/MediaStream.h',
-            'dom/MediaStreamContainer.h',
             'dom/MediaStreamList.cpp',
             'dom/MediaStreamList.h',
             'dom/MediaStreamTrack.cpp',

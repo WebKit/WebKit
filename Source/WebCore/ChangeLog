@@ -1,3 +1,23 @@
+2011-07-21  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Merging MediaStreamContainer and MediaStreamList
+        https://bugs.webkit.org/show_bug.cgi?id=64794
+
+        Reviewed by Tony Gentilcore.
+
+        * GNUmakefile.list.am:
+        * dom/MediaStreamContainer.h: Removed.
+        * dom/MediaStreamList.cpp:
+        (WebCore::MediaStreamList::create):
+        (WebCore::MediaStreamList::MediaStreamList):
+        (WebCore::MediaStreamList::length):
+        (WebCore::MediaStreamList::item):
+        (WebCore::MediaStreamList::add):
+        (WebCore::MediaStreamList::remove):
+        (WebCore::MediaStreamList::contains):
+        (WebCore::MediaStreamList::get):
+        * dom/MediaStreamList.h:
+
 2011-07-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: always open dedicated worker inspector in a new window not a new tab

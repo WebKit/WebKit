@@ -45974,10 +45974,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\MediaStreamContainer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\MediaStreamList.cpp"
 				>
 				<FileConfiguration

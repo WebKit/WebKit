@@ -27,17 +27,14 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamContainer.h"
-
 namespace WebCore {
 
-PassRefPtr<MediaStreamList> MediaStreamList::create(PassRefPtr<MediaStreamContainer> streams)
+PassRefPtr<MediaStreamList> MediaStreamList::create()
 {
-    return adoptRef(new MediaStreamList(streams));
+    return adoptRef(new MediaStreamList());
 }
 
-MediaStreamList::MediaStreamList(PassRefPtr<MediaStreamContainer> streams)
-    : m_streams(streams)
+MediaStreamList::MediaStreamList()
 {
 }
 
@@ -47,15 +44,49 @@ MediaStreamList::~MediaStreamList()
 
 unsigned MediaStreamList::length() const
 {
-    return m_streams->length();
+    return m_streams.size();
 }
 
 PassRefPtr<MediaStream> MediaStreamList::item(unsigned index) const
 {
-    if (index < m_streams->length())
-        return m_streams->item(index);
+    HashMap<String, RefPtr<MediaStream> >::const_iterator i = m_streams.begin();
+    for (unsigned j = 0; i != m_streams.end(); ++i, ++j) {
+        if (j == index)
+            return i->second;
+    }
     return PassRefPtr<MediaStream>();
 }
+
+void MediaStreamList::add(PassRefPtr<MediaStream> stream)
+{
+    RefPtr<MediaStream> s = stream;
+    ASSERT(!contains(s));
+    m_streams.add(s->label(), s);
+}
+
+void MediaStreamList::remove(PassRefPtr<MediaStream> stream)
+{
+    RefPtr<MediaStream> s = stream;
+    ASSERT(contains(s));
+    m_streams.remove(s->label());
+}
+
+bool MediaStreamList::contains(PassRefPtr<MediaStream> stream) const
+{
+    RefPtr<MediaStream> s = stream;
+    return m_streams.contains(s->label());
+}
+
+bool MediaStreamList::contains(const String& label) const
+{
+    return m_streams.contains(label);
+}
+
+PassRefPtr<MediaStream> MediaStreamList::get(const String& label) const
+{
+    return m_streams.get(label);
+}
+
 
 } // namespace WebCore
 

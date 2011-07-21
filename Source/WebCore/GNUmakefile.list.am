@@ -1187,7 +1187,6 @@ webcore_sources += \
 	Source/WebCore/dom/MappedAttributeEntry.h \
 	Source/WebCore/dom/MediaStream.cpp \
 	Source/WebCore/dom/MediaStream.h \
-	Source/WebCore/dom/MediaStreamContainer.h \
 	Source/WebCore/dom/MediaStreamList.cpp \
 	Source/WebCore/dom/MediaStreamList.h \
 	Source/WebCore/dom/MediaStreamTrack.cpp \

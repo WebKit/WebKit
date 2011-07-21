@@ -27,29 +27,34 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Forward.h>
+#include "MediaStream.h"
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class MediaStream;
-class MediaStreamContainer;
-
 class MediaStreamList : public RefCounted<MediaStreamList> {
 public:
-    static PassRefPtr<MediaStreamList> create(PassRefPtr<MediaStreamContainer> streams);
+    static PassRefPtr<MediaStreamList> create();
     virtual ~MediaStreamList();
 
     // DOM methods & attributes for MediaStreamList
-    virtual unsigned length() const;
-    virtual PassRefPtr<MediaStream> item(unsigned index) const;
+    unsigned length() const;
+    PassRefPtr<MediaStream> item(unsigned index) const;
+
+    // List manipulation
+    void add(PassRefPtr<MediaStream>);
+    void remove(PassRefPtr<MediaStream>);
+    bool contains(PassRefPtr<MediaStream>) const;
+    bool contains(const String& label) const;
+    PassRefPtr<MediaStream> get(const String& label) const;
 
 private:
-    MediaStreamList(PassRefPtr<MediaStreamContainer> streams);
+    MediaStreamList();
 
-    RefPtr<MediaStreamContainer> m_streams;
+    HashMap<String, RefPtr<MediaStream> > m_streams;
 };
 
 } // namespace WebCore

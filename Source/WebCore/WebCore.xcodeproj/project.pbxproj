@@ -4059,7 +4059,6 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
-		B14353D4138EA8ED00D53276 /* MediaStreamContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D0138EA8ED00D53276 /* MediaStreamContainer.h */; };
 		B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */; };
 		B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D2138EA8ED00D53276 /* MediaStreamList.h */; };
 		B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */; };
@@ -10547,7 +10546,6 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
-		B14353D0138EA8ED00D53276 /* MediaStreamContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamContainer.h; sourceTree = "<group>"; };
 		B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamList.cpp; sourceTree = "<group>"; };
 		B14353D2138EA8ED00D53276 /* MediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamList.h; sourceTree = "<group>"; };
 		B14353D3138EA8ED00D53276 /* MediaStreamList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamList.idl; sourceTree = "<group>"; };
@@ -19775,7 +19773,6 @@
 				B1E545741346291F0092A545 /* MediaStream.cpp */,
 				B1E545751346291F0092A545 /* MediaStream.h */,
 				B1E545761346291F0092A545 /* MediaStream.idl */,
-				B14353D0138EA8ED00D53276 /* MediaStreamContainer.h */,
 				B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */,
 				B14353D2138EA8ED00D53276 /* MediaStreamList.h */,
 				B14353D3138EA8ED00D53276 /* MediaStreamList.idl */,
@@ -22256,7 +22253,6 @@
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
 				B1E5457E1346291F0092A545 /* MediaStream.h in Headers */,
 				B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */,
-				B14353D4138EA8ED00D53276 /* MediaStreamContainer.h in Headers */,
 				B1E54598134629C10092A545 /* MediaStreamController.h in Headers */,
 				B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */,
 				B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */,
