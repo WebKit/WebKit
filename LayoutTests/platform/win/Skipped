@@ -1079,14 +1079,15 @@ sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.
 # LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
 printing/page-format-data.html
 
-# Need to implement inner-spin-button
-# https://bugs.webkit.org/show_bug.cgi?id=38381
+# Implement spinbutton support in RenderThemeSafari 
+# https://bugs.webkit.org/show_bug.cgi?id=54662
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-appearance-spinbutton-layer.html
 fast/forms/input-appearance-spinbutton-visibility.html
 fast/forms/input-number-events.html
 fast/forms/input-number-large-padding.html
 fast/forms/input-spinbutton-capturing.html
+fast/forms/spin-button-gets-disabled-or-readonly.html
 
 # Color input is not yet enabled.
 fast/forms/color
