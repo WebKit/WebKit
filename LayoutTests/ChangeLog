@@ -1,5 +1,14 @@
 2011-07-21  John Knottenbelt  <jknotten@chromium.org>
 
+        [Chromium] Fix test expectations, mark fast/forms/input-file-label.html as crashy.
+        https://bugs.webkit.org/show_bug.cgi?id=64949
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-21  John Knottenbelt  <jknotten@chromium.org>
+
         [Chromium] Mark fast/dom/DeviceOrientation/no-synchronous-events.html as crashy.
         https://bugs.webkit.org/show_bug.cgi?id=64947
 
