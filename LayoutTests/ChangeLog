@@ -1,3 +1,14 @@
+2011-07-21  John Knottenbelt  <jknotten@chromium.org>
+
+        [Chromium] Mark http/tests/inspector/console-websocket-error.html as timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=64957
+
+        This test times out on Linux Debug.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Sam Weinig  <sam@webkit.org>
 
         CSS top margin collapses when paginating

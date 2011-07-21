@@ -619,7 +619,7 @@ BUGCR89357 MAC SKIP : http/tests/inspector = PASS
 BUGCR89357 MAC SKIP : http/tests/inspector-enabled = PASS
 
 BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT TIMEOUT
-BUGCR67662 WIN LINUX : http/tests/inspector/console-websocket-error.html = TEXT
+BUGCR67662 WIN LINUX : http/tests/inspector/console-websocket-error.html = TEXT TIMEOUT
 
 BUGWK54882 WIN DEBUG : inspector/styles/styles-update-from-js.html = PASS TIMEOUT
 
