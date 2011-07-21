@@ -203,6 +203,14 @@ bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, Lega
     if (!m_element->document()->frame()->script()->canExecuteScripts(AboutToExecuteScript))
         return false;
 
+    // FIXME: This is non-standard. Remove this after https://bugs.webkit.org/show_bug.cgi?id=62412.
+    Node* ancestor = m_element->parentNode();
+    while (ancestor) {
+        if (ancestor->isSVGShadowRoot())
+            return false;
+        ancestor = ancestor->parentNode();
+    }
+
     if (!isScriptForEventSupported())
         return false;
 
