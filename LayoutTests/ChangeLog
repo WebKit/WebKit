@@ -1,5 +1,22 @@
 2011-07-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 89831.
+
+    2011-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Crash in TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=63334
+
+        Added a test to ensure WebKit does not crash when iterating through letters in a RTL block
+        with first-letter rule applied where letters are not contiguous.
+
+        * editing/text-iterator/first-letter-rtl-crash-expected.txt: Added.
+        * editing/text-iterator/first-letter-rtl-crash.html: Added.
+
+2011-07-21  Lucas Forschler  <lforschler@apple.com>
+
     Merged 89780.
 
     2011-07-21  Lucas Forschler  <lforschler@apple.com>
