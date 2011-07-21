@@ -144,7 +144,7 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, boo
 
     if (!repaintContainer && useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
-        getTransformFromContainer(0, IntSize(), t);
+        getTransformFromContainer(0, LayoutSize(), t);
         transformState.applyTransform(t);
     }
     
@@ -159,7 +159,7 @@ void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Transfo
 
     if (useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
-        getTransformFromContainer(0, IntSize(), t);
+        getTransformFromContainer(0, LayoutSize(), t);
         transformState.applyTransform(t);
     }
 }

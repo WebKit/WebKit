@@ -1887,7 +1887,7 @@ bool RenderObject::shouldUseTransformFromContainer(const RenderObject* container
 #endif
 }
 
-void RenderObject::getTransformFromContainer(const RenderObject* containerObject, const IntSize& offsetInContainer, TransformationMatrix& transform) const
+void RenderObject::getTransformFromContainer(const RenderObject* containerObject, const LayoutSize& offsetInContainer, TransformationMatrix& transform) const
 {
     transform.makeIdentity();
     transform.translate(offsetInContainer.width(), offsetInContainer.height());

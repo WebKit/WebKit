@@ -2931,7 +2931,7 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
     RenderObject* containerRenderer = containerLayer ? containerLayer->renderer() : 0;
     if (renderer()->shouldUseTransformFromContainer(containerRenderer)) {
         TransformationMatrix containerTransform;
-        renderer()->getTransformFromContainer(containerRenderer, toSize(offset), containerTransform);
+        renderer()->getTransformFromContainer(containerRenderer, toLayoutSize(offset), containerTransform);
         transformState->applyTransform(containerTransform, HitTestingTransformState::AccumulateTransform);
     } else {
         transformState->translate(offset.x(), offset.y(), HitTestingTransformState::AccumulateTransform);

@@ -1,3 +1,28 @@
+2011-07-20  Levi Weintraub  <leviw@chromium.org>
+
+        Switch getTransformFromContainer and its uses to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=64908
+
+        Reviewed by Simon Fraser.
+
+        Switching getTransformFromContainer and its uses to use the new Layout
+        Types from strictly integer ones.
+
+        No new tests, no new functionality.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createLocalTransformState):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTransformFromContainer):
+        * rendering/RenderObject.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+
 2011-07-20  Tim Horton  <timothy_horton@apple.com>
 
         Scrollbar color heuristic needs to be hooked up in WebKit1
