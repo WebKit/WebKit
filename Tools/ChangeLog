@@ -1,5 +1,17 @@
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
+        Merge TestFailures and garden-o-matic unit tests harness
+        https://bugs.webkit.org/show_bug.cgi?id=64984
+
+        Reviewed by Adam Roben.
+
+        One unit testing framework is better than two.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-more-unittests.html: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+
+2011-07-21  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Adam Roben.
 
         Move garden-o-matic files into the same directory as TestFailures to
