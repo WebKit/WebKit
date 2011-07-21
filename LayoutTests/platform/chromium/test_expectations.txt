@@ -3787,3 +3787,5 @@ BUGRNIWA DEBUG : jquery/css.html = PASS TIMEOUT
 BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = CRASH PASS
 
 BUGWK64857 LINUX : fast/speech/input-text-speechbutton.html = TEXT
+
+BUGWK64940 MAC WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = CRASH PASS
