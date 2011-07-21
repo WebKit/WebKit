@@ -596,5 +596,53 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             ["001.html", "002.html"])
 
+    def test_remove_gtest_modifiers(self):
+        self._test_merge(
+            # Aggregated results
+            {"builds": ["2", "1"],
+             "tests": {"foo.bar": {
+                           "results": "[50,\"F\"]",
+                           "times": "[50,0]"},
+                       "foo.bar2": {
+                           "results": "[100,\"I\"]",
+                           "times": "[100,0]"},
+                       "foo.FAILS_bar3": {
+                           "results": "[100,\"I\"]",
+                           "times": "[100,0]"},
+                       }},
+            # Incremental results
+            {"builds": ["3"],
+             "tests": {"foo.FLAKY_bar": {
+                           "results": "[1,\"F\"]",
+                           "times": "[1,0]"},
+                       "foo.DISABLED_bar2": {
+                           "results": "[1,\"I\"]",
+                           "times": "[1,0]"},
+                       "foo.FAILS_bar3": {
+                           "results": "[1,\"I\"]",
+                           "times": "[1,0]"},
+                       "foo.MAYBE_bar4": {
+                           "results": "[1,\"I\"]",
+                           "times": "[1,0]"}},
+             "version": 4},
+            # Expected results
+            {"builds": ["3", "2", "1"],
+             "tests": {"foo.bar": {
+                           "results": "[51,\"F\"]",
+                           "times": "[51,0]"},
+                       "foo.bar2": {
+                           "results": "[101,\"I\"]",
+                           "times": "[101,0]"},
+                       "foo.bar3": {
+                           "results": "[1,\"I\"]",
+                           "times": "[1,0]"},
+                       "foo.FAILS_bar3": {
+                              "results": "[1,\"N\"],[100,\"I\"]",
+                              "times": "[101,0]"},
+                       "foo.bar4": {
+                           "results": "[1,\"I\"]",
+                           "times": "[1,0]"}},
+             "version": 3})
+
 if __name__ == '__main__':
     unittest.main()

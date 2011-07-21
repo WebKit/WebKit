@@ -207,6 +207,18 @@ class JsonResults(object):
         return result
 
     @classmethod
+    def _remove_gtest_modifiers(cls, builder, json):
+        tests = json[builder][JSON_RESULTS_TESTS]
+        for name, test in tests.iteritems():
+            new_name = name.replace('.FLAKY_', '.', 1)
+            new_name = new_name.replace('.FAILS_', '.', 1)
+            new_name = new_name.replace('.MAYBE_', '.', 1)
+            new_name = new_name.replace('.DISABLED_', '.', 1)
+            if new_name != name:
+                tests[new_name] = test
+                del tests[name]
+
+    @classmethod
     def _check_json(cls, builder, json):
         version = json[JSON_RESULTS_VERSION_KEY]
         if version > JSON_RESULTS_HIERARCHICAL_VERSION:
@@ -247,6 +259,9 @@ class JsonResults(object):
         logging.info("Checking incremental json...")
         if not cls._check_json(builder, incremental_json):
             return None
+
+        # FIXME: We should probably avoid doing this for layout tests.
+        cls._remove_gtest_modifiers(builder, incremental_json)
 
         logging.info("Loading existing aggregated json...")
         aggregated_json = cls._load_json(aggregated)

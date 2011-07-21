@@ -1,3 +1,17 @@
+2011-07-21  Ojan Vafai  <ojan@chromium.org>
+
+        normalize gtest names in the result json
+        https://bugs.webkit.org/show_bug.cgi?id=64971
+
+        Reviewed by Eric Seidel.
+
+        This will make the resulting JSON smaller and make the
+        flakiness dashboard much more sane (e.g. we won't need to
+        show you the FLAKY_ version and the normal version).
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2011-07-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Reenable ORWT for the --leaks bot.
