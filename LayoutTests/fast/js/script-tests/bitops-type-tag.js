@@ -7,4 +7,6 @@ shouldBe("aDouble>>0", "100000000");
 shouldBe("aDouble>>0|0", "100000000");
 shouldBe("aDouble|0", "100000000");
 
+shouldBe("(function(x){ return 2147483648>>>x; })(31)", "1");
+
 var successfullyParsed = true;

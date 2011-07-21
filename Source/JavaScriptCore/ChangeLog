@@ -1,3 +1,14 @@
+2011-07-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64909
+        DFG JIT - Missing ToInt32 conversions for double constants.
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::toInt32):
+            - We cannot trivially omit ToInt32 conversions on double constants.
+
 2011-07-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG speculative JIT sometimes claims to use compare operands twice, leading to

@@ -200,8 +200,7 @@ private:
             JSValue v = valueOfJSConstant(index);
             if (v.isInt32())
                 return getJSConstant(node.constantNumber());
-            if (v.isNumber())
-                return getJSConstant(node.constantNumber());
+            // FIXME: We could convert the double ToInteger at this point.
         }
 
         return addToGraph(ValueToInt32, index);

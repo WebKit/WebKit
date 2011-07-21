@@ -1,3 +1,14 @@
+2011-07-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64909
+        DFG JIT - Missing ToInt32 conversions for double constants.
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/bitops-type-tag-expected.txt:
+        * fast/js/script-tests/bitops-type-tag.js:
+            - Test case for DFG JIT.
+
 2011-07-20  Stephen White  <senorblanco@chromium.org>
 
         Remove some more passing tests from chromium GPU expectations
