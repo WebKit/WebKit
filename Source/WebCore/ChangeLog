@@ -1,3 +1,12 @@
+2011-07-21  Tony Chang  <tony@chromium.org>
+
+        sort WebCore.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=64901
+
+        Unreviewed, just using sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-07-21  Enrica Casucci  <enrica@apple.com>
 
         Cannot click to position the caret to the right of an image with display:block style.
